@@ -19,12 +19,7 @@ const selectedFiles: Ref<any[]> = ref([])
 const onDropped = (acceptedFiles: any[], rejectedFiles: any[]) => {
   if (rejectedFiles.length > 0) {
     rejectedFiles.forEach((rejectedFile) => {
-        console.log(rejectedFile);
-      Toast.error(
-        t('products.limitedProduct.technicalFiles.errors.notAllowed', {
-          file: rejectedFile.file.name,
-        }),
-      );
+      alert("File rejected!")
     });
   }
 

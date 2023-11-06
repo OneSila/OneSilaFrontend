@@ -1,4 +1,5 @@
 export const routes = [
   { path: '/auth/login', name: 'auth.login', component: () => import('./login/LoginController.vue') },
-  { path: '/auth/profile', name: 'auth.profile', component: () => import('./profile/ProfileController.vue') },
+  { path: '/auth/register', name: 'auth.register', component: () => import('./register/RegisterController.vue') },
+  { path: '/auth/recover', name: 'auth.recover', component: () => import('./recover/RecoverController.vue') }
 ]

@@ -8,7 +8,7 @@
         <div>
           <img :src="currentFlag" alt="image" class="h-5 w-5 rounded-full object-cover" />
         </div>
-        <div class="text-base font-bold uppercase">{{ store.locale }}</div>
+        <div class="text-base font-bold uppercase">{{ locale.toUpperCase() }}</div>
         <span class="shrink-0">
           <Icon name="angle-down" />
         </span>
@@ -20,7 +20,7 @@
               <button
                 type="button"
                 class="w-full hover:text-primary"
-                :class="{ 'bg-primary/10 text-primary': i18n.locale === item.code }"
+                :class="{ 'bg-primary/10 text-primary': locale === item.code }"
                 @click="changeLanguage(item), close()"
               >
                 <img
@@ -42,27 +42,29 @@
 import { defineProps, reactive, computed } from 'vue';
 import Icon from "../../atoms/icon/Icon.vue";
 import Popper from 'vue3-popper';
+import { useI18n } from 'vue-i18n';
+
+const { locale } = useI18n();
 
 const store = {
-  rtlClass: 'ltr', // This can be dynamic based on your app's settings
-  locale: 'EN', // Default language
+  rtlClass: 'ltr',
+  locale: 'EN',
   languageList: [
-    { code: 'EN', name: 'English' },
-    { code: 'FR', name: 'French' },
-    { code: 'DE', name: 'German' },
+    { code: 'en', name: 'English' },
+    { code: 'nl', name: 'Dutch' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
   ]
 };
 
-const i18n = reactive({
-  locale: 'EN' // Default language
-});
+
 
 const changeLanguage = (item: any) => {
-  i18n.locale = item.code;
-  // You can add more logic here if needed
+  locale.value = item.code;
 };
 
 const currentFlag = computed(() => {
-  return `/src/assets/images/flags/${i18n.locale.toUpperCase()}.svg`;
+  return `/src/assets/images/flags/${locale.value.toUpperCase()}.svg`;
 });
+
 </script>

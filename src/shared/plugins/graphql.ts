@@ -40,9 +40,7 @@ export default {
     app.provide(NetworkKey, network);
 
     app.use(urql, {
-      url:
-        import.meta.env.VITE_APP_API_GRAPHQL_URL ||
-        'https://dev.tim.slaap.be/graphql/',
+      url: import.meta.env.VITE_APP_API_GRAPHQL_URL,
       requestPolicy: 'cache-and-network',
       exchanges: [
         dedupExchange,

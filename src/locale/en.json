@@ -1,7 +1,53 @@
 {
   "shared": {
     "button": {
-      "login": "Sign in"
+      "login": "Sign in",
+      "register": "Sign up",
+      "recover": "Recover"
+    }
+  },
+  "auth": {
+    "login": {
+      "header": "Sign in",
+      "description": "Enter your username and password to login",
+      "labels": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "placeholders": {
+        "email": "Enter Email",
+        "password": "Enter Password"
+      },
+      "recover": "Recover account",
+      "registerPrompt": "Don't have an account?",
+      "register": "SIGN UP"
+    },
+    "register": {
+      "header": "Sign up",
+      "description": "Enter your username and password to register",
+      "labels": {
+        "companyName": "Company Name",
+        "email": "Email",
+        "password": "Password"
+      },
+      "placeholders": {
+        "companyName": "Enter company name",
+        "email": "Enter Email",
+        "password": "Enter Password"
+      },
+      "loginPrompt": "Already have an account?",
+      "login": "SIGN IN"
+    },
+    "recover": {
+      "header": "Recover account",
+      "descriptionSent": "An email was sent to the provided email. Please check the email for further instructions.",
+      "description": "Enter your email to recover your account",
+      "labels": {
+        "email": "Email"
+      },
+      "placeholders": {
+        "email": "Enter Email"
+      }
     }
   }
 }

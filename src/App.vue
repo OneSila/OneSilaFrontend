@@ -21,7 +21,7 @@ const onMeLoaded = (me) => {
   if (me) {
     refreshUser(auth, {
       id: parseInt(me.id),
-      email: me.email,
+      username: me.username,
       language: me.language.toLowerCase(),
       showOnboarding: me.showOnboarding,
     });

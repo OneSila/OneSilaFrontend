@@ -1,1 +1,53 @@
-{}
+{
+  "shared": {
+    "button": {
+      "login": "Inloggen",
+      "register": "Registreren",
+      "recover": "Herstellen"
+    }
+  },
+  "auth": {
+    "login": {
+      "header": "Inloggen",
+      "description": "Voer uw gebruikersnaam en wachtwoord in om in te loggen",
+      "labels": {
+        "email": "E-mail",
+        "password": "Wachtwoord"
+      },
+      "placeholders": {
+        "email": "Voer e-mail in",
+        "password": "Voer wachtwoord in"
+      },
+      "recover": "Account herstellen",
+      "registerPrompt": "Heb je geen account?",
+      "register": "REGISTREREN"
+    },
+    "register": {
+      "header": "Registreren",
+      "description": "Voer uw gebruikersnaam en wachtwoord in om te registreren",
+      "labels": {
+        "companyName": "Bedrijfsnaam",
+        "email": "E-mail",
+        "password": "Wachtwoord"
+      },
+      "placeholders": {
+        "companyName": "Voer bedrijfsnaam in",
+        "email": "Voer e-mail in",
+        "password": "Voer wachtwoord in"
+      },
+      "loginPrompt": "Heb je al een account?",
+      "login": "INLOGGEN"
+    },
+    "recover": {
+      "header": "Account herstellen",
+      "descriptionSent": "Een e-mail is verzonden naar het opgegeven e-mailadres. Controleer de e-mail voor verdere instructies.",
+      "description": "Voer uw e-mail in om uw account te herstellen",
+      "labels": {
+        "email": "E-mail"
+      },
+      "placeholders": {
+        "email": "Voer e-mail in"
+      }
+    }
+  }
+}

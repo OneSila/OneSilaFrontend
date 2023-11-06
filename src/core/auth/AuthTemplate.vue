@@ -29,6 +29,9 @@
           </div>
           <div class="w-full max-w-[440px] lg:mt-16">
             <slot name="right-section-content"/>
+            <div class="absolute bottom-6 w-full text-center dark:text-white">
+              <slot name="footer"/>
+            </div>
           </div>
         </div>
       </div>
@@ -36,3 +39,5 @@
     </div>
   </div>
 </template>
+<script setup lang="ts">
+</script>

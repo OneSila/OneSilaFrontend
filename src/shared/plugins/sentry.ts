@@ -19,7 +19,7 @@ export default {
       integrations: [
         new BrowserTracing({
           routingInstrumentation: Sentry.vueRouterInstrumentation(getRouter()),
-          tracingOrigins: ["localhost", "dev.tim.slaap.be", "tim.slaap.be", /^\//],
+          tracingOrigins: ["localhost", /^\//],
         }),
       ],
       // Since volume isn't a concern in this application, we'll start

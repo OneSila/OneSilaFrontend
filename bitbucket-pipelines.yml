@@ -23,7 +23,7 @@ pipelines:
               variables:
                 USER: $SSH_USER
                 SERVER: $SSH_HOST
-                REMOTE_PATH: '/home/tim'
+                REMOTE_PATH: '/home/onesilla'
                 LOCAL_PATH: 'dist.zip'
             - cat ./scripts/deploy.sh | ssh $SSH_USER@$SSH_HOST
     master:
@@ -47,6 +47,6 @@ pipelines:
               variables:
                 USER: $SSH_USER
                 SERVER: $SSH_HOST
-                REMOTE_PATH: '/home/tim'
+                REMOTE_PATH: '/home/onesilla'
                 LOCAL_PATH: 'dist.zip'
             - cat ./scripts/deploy.sh | ssh $SSH_USER@$SSH_HOST

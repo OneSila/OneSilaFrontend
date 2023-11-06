@@ -6,6 +6,6 @@ defineProps<{ name: string; modelValue?: boolean }>()
   <label class="radio-input">
     <input type="radio" :name="name" :checked="modelValue" @change="(event) => $emit('update:modelValue', (event.target as any).checked)" />
 
-    <span class="ml-2"><slot /></span>
+    <span><slot /></span>
   </label>
 </template>

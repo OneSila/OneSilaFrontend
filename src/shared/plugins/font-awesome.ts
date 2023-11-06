@@ -66,6 +66,7 @@ import {
   faFont,
   faSquare,
   faLock,
+  faBuilding,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -131,6 +132,7 @@ library.add(faCode as IconDefinition);
 library.add(faFont as IconDefinition);
 library.add(faSquare as IconDefinition);
 library.add(faLock as IconDefinition);
+library.add(faBuilding as IconDefinition);
 
 export default {
   install(app) {

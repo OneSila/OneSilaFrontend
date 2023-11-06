@@ -1,1 +1,53 @@
-{}
+{
+  "shared": {
+    "button": {
+      "login": "Se connecter",
+      "register": "S'inscrire",
+      "recover": "Récupérer"
+    }
+  },
+  "auth": {
+    "login": {
+      "header": "Se connecter",
+      "description": "Entrez votre nom d'utilisateur et mot de passe pour vous connecter",
+      "labels": {
+        "email": "E-mail",
+        "password": "Mot de passe"
+      },
+      "placeholders": {
+        "email": "Entrez l'e-mail",
+        "password": "Entrez le mot de passe"
+      },
+      "recover": "Récupérer le compte",
+      "registerPrompt": "Vous n'avez pas de compte?",
+      "register": "S'INSCRIRE"
+    },
+    "register": {
+      "header": "S'inscrire",
+      "description": "Entrez votre nom d'utilisateur et mot de passe pour vous inscrire",
+      "labels": {
+        "companyName": "Nom de l'entreprise",
+        "email": "E-mail",
+        "password": "Mot de passe"
+      },
+      "placeholders": {
+        "companyName": "Entrez le nom de l'entreprise",
+        "email": "Entrez l'e-mail",
+        "password": "Entrez le mot de passe"
+      },
+      "loginPrompt": "Vous avez déjà un compte?",
+      "login": "SE CONNECTER"
+    },
+    "recover": {
+      "header": "Récupérer le compte",
+      "descriptionSent": "Un e-mail a été envoyé à l'adresse fournie. Veuillez vérifier l'e-mail pour de plus amples instructions.",
+      "description": "Entrez votre e-mail pour récupérer votre compte",
+      "labels": {
+        "email": "E-mail"
+      },
+      "placeholders": {
+        "email": "Entrez l'e-mail"
+      }
+    }
+  }
+}

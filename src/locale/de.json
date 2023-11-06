@@ -1,1 +1,53 @@
-{}
+{
+  "shared": {
+    "button": {
+      "login": "Anmelden",
+      "register": "Registrieren",
+      "recover": "Wiederherstellen"
+    }
+  },
+  "auth": {
+    "login": {
+      "header": "Anmelden",
+      "description": "Geben Sie Ihren Benutzernamen und Ihr Passwort ein, um sich anzumelden",
+      "labels": {
+        "email": "E-Mail",
+        "password": "Passwort"
+      },
+      "placeholders": {
+        "email": "E-Mail eingeben",
+        "password": "Passwort eingeben"
+      },
+      "recover": "Konto wiederherstellen",
+      "registerPrompt": "Noch kein Konto?",
+      "register": "REGISTRIEREN"
+    },
+    "register": {
+      "header": "Registrieren",
+      "description": "Geben Sie Ihren Benutzernamen und Ihr Passwort ein, um sich zu registrieren",
+      "labels": {
+        "companyName": "Firmenname",
+        "email": "E-Mail",
+        "password": "Passwort"
+      },
+      "placeholders": {
+        "companyName": "Firmenname eingeben",
+        "email": "E-Mail eingeben",
+        "password": "Passwort eingeben"
+      },
+      "loginPrompt": "Bereits ein Konto?",
+      "login": "ANMELDEN"
+    },
+    "recover": {
+      "header": "Konto wiederherstellen",
+      "descriptionSent": "Eine E-Mail wurde an die angegebene E-Mail gesendet. Bitte überprüfen Sie die E-Mail auf weitere Anweisungen.",
+      "description": "Geben Sie Ihre E-Mail ein, um Ihr Konto wiederherzustellen",
+      "labels": {
+        "email": "E-Mail"
+      },
+      "placeholders": {
+        "email": "E-Mail eingeben"
+      }
+    }
+  }
+}

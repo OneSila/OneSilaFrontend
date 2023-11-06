@@ -7,8 +7,6 @@ import { Link } from '../../atoms/link';
 import { Logo } from '../logo';
 
 import NavItems from './NavItems.vue';
-import UserNav from './UserNav.vue';
-import NavPopover from './NavPopover.vue';
 
 const screen = injectScreen();
 const auth = injectAuth();
@@ -20,9 +18,6 @@ const auth = injectAuth();
     class="nav-bar border-b-2 border-gray-300 bg-white"
     gap="4"
   >
-    <FlexCell>
-      <NavPopover />
-    </FlexCell>
 
     <FlexCell>
       <Link path="/" inline-block>
@@ -42,7 +37,7 @@ const auth = injectAuth();
         <template #default="{ environment }">
           <Flex class="h-full" gap="6">
             <FlexCell center>
-              <NavItems v-if="isAuthenticated(auth) && !auth.shareLink" />
+              <NavItems v-if="isAuthenticated(auth)" />
             </FlexCell>
 
             <FlexCell
@@ -50,7 +45,6 @@ const auth = injectAuth();
               center
               grow
             >
-              <GlobalSearch />
             </FlexCell>
 
             <FlexCell v-if="environment?.environment === 'dev'" center>
@@ -63,7 +57,6 @@ const auth = injectAuth();
     </FlexCell>
 
     <FlexCell v-if="isAuthenticated(auth)" class="border-gray-300">
-      <UserNav />
     </FlexCell>
   </Flex>
 </template>

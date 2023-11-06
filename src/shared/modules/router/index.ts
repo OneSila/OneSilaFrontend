@@ -1,7 +1,7 @@
 import * as VueRouter from 'vue-router';
 
 import { routes as authRoutes } from '../../../core/auth/routes';
-
+import { PUBLIC_ROUTES } from '../../utils/constants'
 import { detectAuth, isAuthenticated } from '../auth';
 import { Toast } from '../toast';
 
@@ -11,7 +11,13 @@ export function buildRouter() {
   router = VueRouter.createRouter({
     history: VueRouter.createWebHistory(),
     routes: [
-      ...authRoutes
+      ...authRoutes,
+      {
+        path: '',
+        name: 'dashboard',
+        component: () =>
+          import('../../../core/dashboard/dasboard/DashboardController.vue'),
+      },
     ],
   });
 
@@ -20,6 +26,9 @@ export function buildRouter() {
 
     const routeName = (to.name as string) || '';
 
+    if (PUBLIC_ROUTES.includes(routeName)) {
+      return next();
+    }
 
     if (routeName.includes('login') && isAuthenticated(auth)) {
       return next({ name: 'dashboard' });
