@@ -1,81 +1,75 @@
 <script lang="ts" setup>
-import { reactive, Ref, ref } from 'vue';
-import { useMutation } from 'vql';
+import { reactive, ref, Ref } from 'vue';
+import { useMutation } from '@vue/apollo-composable';
+import gql from 'graphql-tag';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { injectAuth, refreshUser, removeAuth } from '../../../../../shared/modules/auth';
+import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
 import { useSafeRequest } from '../../../../../shared/modules/network';
 import { useEnterKeyboardListener } from '../../../../../shared/modules/keyboard';
-
 import { Button } from '../../../../../shared/components/atoms/button';
 import { TextInputPrepend } from '../../../../../shared/components/atoms/text-input-prepend';
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../shared/components/atoms/link';
 
+const LOGIN_MUTATION = gql`
+mutation Login($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    username
+    firstName
+    lastName
+  }
+}`;
+
 const { t, locale } = useI18n();
-const { executeMutation, fetching } = useMutation();
 const router = useRouter();
+const auth = injectAuth();
+const errors: Ref<any[]> = ref([]);
 
 const form = reactive({
   username: '',
   password: '',
 });
 
-const errors: Ref<any[]> = ref([]);
+const safeRequest = useSafeRequest(errors);
 
-const safeRequest = useSafeRequest(errors, () => {
-  errors.value = [];
-
-  if (!form.username) {
-    errors.value.push(t('auth.login.missingEmail'));
-  }
-
-  if (!form.password) {
-    errors.value.push(t('auth.login.missingPassword'));
-  }
-});
-
-const auth = injectAuth();
+const { mutate, loading } = useMutation(LOGIN_MUTATION);
 
 const onLoginClicked = async () => {
-  if (fetching.value) {
+  if (loading.value) {
     return;
   }
 
-  const data = await safeRequest(() =>
-    executeMutation({
+  try {
+    const response = await safeRequest(() => mutate({
       username: form.username,
       password: form.password,
-    }),
-  );
+    }));
 
-  if (!data || !data.login) {
-    // Handle login error (wrong credentials, server error, etc.)
-    return;
+    if (response.login) {
+      const user = response.login;
+      user.id = 1;
+      user.language = 'en';
+      refreshUser(auth, {
+        id: user.id,
+        username: user.username,
+        language: user.language,
+        firstName: user.firstName,
+        lastName: user.lastName
+      });
+
+      locale.value = user.language;
+      router.replace({ name: 'dashboard' });
+    } else {
+      errors.value.push(t('auth.login.failed'));
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    errors.value.push(error);
   }
-
-  const user = data.login;
-  user.id = 1;
-  user.language = 'en';
-
-  refreshUser(auth, {
-    id: user.id,
-    username: user.username,
-    language: user.language, // Make sure language is returned from the server, or default it
-  });
-
-
-  console.log(auth)
-  // Set the local UI state to match the user's preferred language
-  locale.value = auth.user.language;
-
-  // Redirect to the dashboard
-  router.replace({ name: 'dashboard' });
 };
 
-useEnterKeyboardListener(() => {
-  onLoginClicked();
-});
+useEnterKeyboardListener(onLoginClicked);
 </script>
 
 <template>
@@ -110,13 +104,3 @@ useEnterKeyboardListener(() => {
     </div>
   </div>
 </template>
-
-
-
-<gql mutation>
-mutation Login($username: String!, $password: String!) {
-  login(username: $username, password: $password) {
-    username
-  }
-}
-</gql>

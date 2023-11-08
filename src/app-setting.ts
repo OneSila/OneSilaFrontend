@@ -18,7 +18,7 @@ export default {
         val = val || $themeConfig.layout;
         store.toggleLayout(val);
 
-        val = localStorage.getItem('i18n_locale'); // en, da, de, el, es, fr, hu, it, ja, pl, pt, ru, sv, tr, zh
+        val = localStorage.getItem('i18n_locale');
 
         val = val || $themeConfig.locale;
 
@@ -36,7 +36,7 @@ export default {
         val = val || $themeConfig.animation;
         store.toggleAnimation(val);
 
-        val = localStorage.getItem('navbar'); // navbar-sticky, navbar-floating, navbar-static
+        val = localStorage.getItem('navbar');
         val = val || $themeConfig.navbar;
         store.toggleNavbar(val);
 

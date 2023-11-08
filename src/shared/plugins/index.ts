@@ -11,7 +11,6 @@ import screen from './screen';
 import universalModal from './universal-modal';
 import vueOutsideClickedDirective from './vue-outside-clicked-directive';
 import toast from './toast';
-import vueTour from './vue-tour';
 
 export default {
   install(app) {
@@ -25,7 +24,6 @@ export default {
     app.use(universalModal);
     app.use(toast);
     app.use(vueOutsideClickedDirective);
-    app.use(vueTour);
     app.use(pooper);
   },
 } as Plugin;

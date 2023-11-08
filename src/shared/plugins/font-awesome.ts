@@ -67,6 +67,13 @@ import {
   faSquare,
   faLock,
   faBuilding,
+  faArrowLeft,
+  faAnglesLeft,
+  faAnglesRight,
+  faChevronRight,
+  faChevronLeft,
+  faChevronDown,
+  faSignOut
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -133,6 +140,13 @@ library.add(faFont as IconDefinition);
 library.add(faSquare as IconDefinition);
 library.add(faLock as IconDefinition);
 library.add(faBuilding as IconDefinition);
+library.add(faArrowLeft as IconDefinition);
+library.add(faAnglesLeft as IconDefinition);
+library.add(faAnglesRight as IconDefinition);
+library.add(faChevronRight as IconDefinition);
+library.add(faChevronLeft as IconDefinition);
+library.add(faChevronDown as IconDefinition);
+library.add(faSignOut as IconDefinition);
 
 export default {
   install(app) {

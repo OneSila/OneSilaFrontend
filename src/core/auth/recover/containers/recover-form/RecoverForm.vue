@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {reactive, Ref, ref} from 'vue';
-import {useMutation} from 'vql';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 
@@ -41,21 +40,6 @@ const safeRequest = useSafeRequest(errors, () => {
 const auth = injectAuth();
 
 const onRecoverClicked = async () => {
-  if (fetching.value) {
-    return;
-  }
-
-  const data = await safeRequest(() =>
-      executeMutation({
-        email: form.email,
-      }),
-  );
-
-  if (!data) {
-    return;
-  }
-
-  requestSent.value = true;
   alert('recover account')
 };
 
@@ -93,13 +77,3 @@ useEnterKeyboardListener(() => {
     </template>
   </div>
 </template>
-
-
-
-<gql mutation>
-mutation Recover($email: String!) {
-  recover(email: $email) {
-    email
-  }
-}
-</gql>

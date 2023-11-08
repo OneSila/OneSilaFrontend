@@ -8,9 +8,8 @@ const rotateX = plugin(function ({ addUtilities }) {
 });
 
 module.exports = {
-  // mode: 'jit',
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  important: true,
+  // important: true,
   purge: false,
   darkMode: 'class',
   theme: {
@@ -85,37 +84,12 @@ module.exports = {
                     },
                 },
             }),
-      minHeight: {
-        '32': '3rem',
-        '34': '4rem',
-        '36': '5rem',
-        '40': '7rem',
-        '44': '9rem',
-        '52': '13rem',
-      },
-      minWidth: {
-        38: '6rem',
-        40: '7rem',
-        44: '9rem',
-        48: '11rem',
-        52: '13rem',
-        56: '15rem',
-      },
-      maxWidth: {
-        44: '9rem',
-        48: '11rem',
-        52: '13rem',
-        56: '15rem',
-        60: '17rem',
-        64: '19rem',
-        68: '21rem',
-        136: '42rem',
-      },
-      spacing: {
-        4.5: '18px',
-        120: '30rem',
-        160: '40rem',
-      },
+            spacing: {
+                4.5: '18px',
+            },
+    width: {
+        '90': '90%', // Adds w-90 utility for width: 90%
+      }
     },
   },
   plugins: [

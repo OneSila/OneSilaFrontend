@@ -1,0 +1,54 @@
+<template>
+  <div class="dropdown shrink-0">
+      <Popper :placement="'bottom-start'" offsetDistance="8" class="!block">
+          <button type="button" class="relative group block">
+            <Icon name="user" class="w-9 h-9 rounded-full object-cover saturate-50 group-hover:saturate-100" />
+          </button>
+          <template #content="{ close }">
+              <ul class="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">
+                  <li>
+                      <div class="flex items-center px-4 py-4">
+                          <div class="ltr:pl-4 rtl:pr-4 truncate">
+                              <h4 class="text-base">
+                                {{ user.firstName }} {{ user.lastName }}
+                              </h4>
+                              <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;">{{ user.username }}</a>
+                          </div>
+                      </div>
+                  </li>
+                  <li>
+                      <router-link to="/users/profile" class="dark:hover:text-white" @click="close()">
+                          <Icon name="user" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+
+                          Profile
+                      </router-link>
+                  </li>
+                  <li class="border-t border-white-light dark:border-white-light/10">
+                      <Button class="text-danger !py-3 " @click="logout()">
+                          <Icon name="sign-out" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+
+                          Sign Out
+                      </Button>
+                  </li>
+              </ul>
+          </template>
+      </Popper>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { Icon } from "../../atoms/icon";
+import { injectAuth, removeAuth } from "../../../modules/auth";
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+
+const auth = injectAuth();
+const user = ref(auth.user)
+const router = useRouter();
+
+const logout = () => {
+    removeAuth(auth);
+    router.replace({ name: 'auth.login' });
+};
+
+</script>

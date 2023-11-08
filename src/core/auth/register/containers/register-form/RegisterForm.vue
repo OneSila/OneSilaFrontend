@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {reactive, Ref, ref} from 'vue';
-import {useMutation} from 'vql';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 
@@ -18,7 +17,6 @@ import TextInputPrepend from "../../../../../shared/components/atoms/text-input-
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 
 const {t, locale} = useI18n();
-const {executeMutation, fetching} = useMutation();
 const router = useRouter();
 
 const form = reactive({
@@ -48,21 +46,6 @@ const safeRequest = useSafeRequest(errors, () => {
 const auth = injectAuth();
 
 const onLoginClicked = async () => {
-  if (fetching.value) {
-    return;
-  }
-
-  const data = await safeRequest(() =>
-      executeMutation({
-        companyName: form.companyName,
-        username: form.username,
-        password: form.password,
-      }),
-  );
-
-  if (!data) {
-    return;
-  }
 
   alert('register')
 
@@ -105,13 +88,3 @@ useEnterKeyboardListener(() => {
     </div>
   </div>
 </template>
-
-
-
-<gql mutation>
-mutation Register($companyName: String!, $username: String!, $password: String!) {
-  register(companyName: $companyName, username: $username, password: $password) {
-    username
-  }
-}
-</gql>

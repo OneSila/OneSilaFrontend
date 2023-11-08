@@ -26,16 +26,16 @@ export function buildRouter() {
 
     const routeName = (to.name as string) || '';
 
-    if (PUBLIC_ROUTES.includes(routeName)) {
-      return next();
-    }
-
     if (routeName.includes('login') && isAuthenticated(auth)) {
       return next({ name: 'dashboard' });
     }
 
     if (!routeName.includes('login') && !isAuthenticated(auth)) {
       return next({ name: 'auth.login' });
+    }
+
+    if (PUBLIC_ROUTES.includes(routeName)) {
+      return next();
     }
 
     return next();

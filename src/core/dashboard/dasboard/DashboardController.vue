@@ -1,53 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { useQuery } from 'vql';
-import { useSafeRequest } from '../../../shared/modules/network'; // Adjust the path to your actual useSafeRequest location
+import { ref, watch } from 'vue';
+import { useQuery, useResult } from '@vue/apollo-composable';
+import gql from 'graphql-tag';
+import { useSafeRequest } from '../../../shared/modules/network'; // Adjust the path if necessary
 
-// Define a reactive reference for errors
-const errors = ref([]);
-
-// Use the useSafeRequest composition function
-const safeRequest = useSafeRequest(errors);
-
-// Define the reactive data properties for the query
-const { data, executeQuery, fetching } = useQuery({
-  // If you want to manually trigger the query, you can use a computed prop based on some other reactive property
-  pause: computed(() => false),
-});
-
-// Function to run the query
-const runQuery = async () => {
-  // Use safeRequest to handle the network request with error management
-  await safeRequest(() => executeQuery());
-};
-
-// A watch to log the result once it's available
-watch(data, (newData) => {
-  if (newData && newData.companies) {
-    console.log('Companies:', newData.companies.edges);
-  }
-}, {
-  immediate: true,
-});
-
-// Execute the query on component mount
-runQuery();
-</script>
-
-<template>
-  <div class="companies-query">
-    <!-- You can use slots or template logic to display data here -->
-    <div v-if="fetching">Loading companies...</div>
-    <div v-if="errors.length" class="errors">
-      <!-- Handle and display errors here -->
-    </div>
-    <div v-if="data && data.companies">
-      <!-- Loop through and display companies here -->
-    </div>
-  </div>
-</template>
-
-<gql>
+// GraphQL query defined with gql
+const COMPANIES_QUERY = gql`
 query Companies {
   companies {
     edges {
@@ -56,5 +14,41 @@ query Companies {
       }
     }
   }
-}
-</gql>
+}`;
+
+// Use the useSafeRequest composition function
+const errors = ref([]);
+const safeRequest = useSafeRequest(errors);
+
+// Apollo query
+const { result, loading, error, refetch } = useQuery(COMPANIES_QUERY);
+
+// Refetch the query on component mount
+safeRequest(refetch);
+
+// Use result composable to get a reactive result of the query
+const companies = useResult(result, null, data => data.companies.edges);
+
+// Watch for errors
+watch(error, (errorValue) => {
+  if (errorValue) {
+    errors.value.push(errorValue);
+  }
+});
+
+</script>
+
+<template>
+  <div class="companies-query">
+    <div v-if="loading.value">Loading companies...</div>
+    <div v-if="errors.length" class="errors">
+      <!-- Handle and display errors here -->
+      <span v-for="(error, index) in errors" :key="index">{{ error.message }}</span>
+    </div>
+    <div v-if="companies">
+      <div v-for="companyEdge in companies" :key="companyEdge.node.id">
+        {{ companyEdge.node.id }}
+      </div>
+    </div>
+  </div>
+</template>
