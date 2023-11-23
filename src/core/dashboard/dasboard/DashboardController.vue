@@ -11,6 +11,7 @@ query Companies {
     edges {
       node {
         id
+        name
       }
     }
   }
@@ -47,7 +48,7 @@ watch(error, (errorValue) => {
     </div>
     <div v-if="companies">
       <div v-for="companyEdge in companies" :key="companyEdge.node.id">
-        {{ companyEdge.node.id }}
+        {{ companyEdge.node.name }}
       </div>
     </div>
   </div>

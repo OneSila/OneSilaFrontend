@@ -3,7 +3,6 @@ import { Plugin } from 'vue';
 import router from './router';
 import i18n from './i18n';
 import sentry from './sentry';
-import graphql from './graphql';
 import sharedComponents from './shared-components';
 import fontAwesome from './font-awesome';
 import pooper from './pooper';
@@ -17,7 +16,6 @@ export default {
     app.use(router);
     app.use(i18n);
     app.use(sentry);
-    app.use(graphql);
     app.use(sharedComponents);
     app.use(fontAwesome);
     app.use(screen);

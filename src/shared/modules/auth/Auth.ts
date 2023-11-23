@@ -59,6 +59,9 @@ export const removeAuth = (auth: Auth): void => {
   const {mutate, loading} = useMutation(LOGOUT_MUTATION);
   const response = safeRequest(() => mutate());
 
+  // console.log(apolloClient.cache)
+  // apolloClient.resetStore();
+
   localStorage.removeItem('auth_user');
   auth.user = {
     id: null,

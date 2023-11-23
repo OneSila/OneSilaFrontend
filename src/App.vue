@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import {injectAuth, refreshUser, isAuthenticated, removeAuth} from './shared/modules/auth';
+import { injectAuth, isAuthenticated } from './shared/modules/auth';
 import { ref } from "vue";
 
 import SideBar from './shared/components/molecules/nav-bar/SideBar.vue';
