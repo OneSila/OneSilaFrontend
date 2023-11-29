@@ -1,18 +1,15 @@
 import { inject, InjectionKey, reactive } from 'vue';
-import { useMutation, provideApolloClient } from '@vue/apollo-composable';
 import apolloClient from '../../../../apollo-client';
 import gql from 'graphql-tag';
-import { useSafeRequest } from '../network';
-import { Ref} from "vue/dist/vue";
-import { ref } from 'vue';
 export const AuthKey: InjectionKey<Auth> = Symbol('Auth');
 
+
 export type User = {
-  id: number | null;
   username: string;
   language: string;
   firstName: string;
   lastName: string;
+  company: object | null;
 };
 
 export interface Auth {
@@ -22,7 +19,7 @@ export interface Auth {
 
 export const detectAuth = (): Auth => {
   const storedUser = localStorage.getItem('auth_user');
-  const user = storedUser ? JSON.parse(storedUser) : { id: null, username: '', language: 'en', firstName: '', lastName: '' };
+  const user = storedUser ? JSON.parse(storedUser) : { username: '', language: 'en-gb', firstName: '', lastName: '', company: null };
 
   const isAuthenticated = !!storedUser;
 
@@ -42,38 +39,49 @@ export const refreshUser = (auth: Auth, user: User): void => {
   auth.isAuthenticated = true;
 };
 
+export const setCompanyToUser = (auth: Auth, company: { id: string; name: string }): void => {
+  const updatedUser = {
+    ...auth.user,
+    company: company,
+  };
+
+  localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+  auth.user = updatedUser;
+};
+
 export const replaceAuth = (auth: Auth, newUser: User): void => {
   refreshUser(auth, newUser);
 };
 
-export const removeAuth = (auth: Auth): void => {
-
-  provideApolloClient(apolloClient);
-  const errors: Ref<any[]> = ref([]);
-  const safeRequest = useSafeRequest(errors);
+export const removeAuth = async (auth) => {
   const LOGOUT_MUTATION = gql`
-        mutation Logout {
-          logout
-        }`;
+    mutation Logout {
+      logout
+    }
+  `;
 
-  const {mutate, loading} = useMutation(LOGOUT_MUTATION);
-  const response = safeRequest(() => mutate());
-
-  // console.log(apolloClient.cache)
-  // apolloClient.resetStore();
-
-  localStorage.removeItem('auth_user');
-  auth.user = {
-    id: null,
-    username: '',
-    language: 'en',
-    firstName: '',
-    lastName: '',
-  };
-  auth.isAuthenticated = false;
+  try {
+    await apolloClient.mutate({
+      mutation: LOGOUT_MUTATION,
+    });
+    await apolloClient.clearStore();
+    localStorage.removeItem('auth_user');
+    auth.user = {
+      username: '',
+      language: 'en-gb',
+      firstName: '',
+      lastName: '',
+      company: null
+    };
+    auth.isAuthenticated = false;
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
 };
 
 export const isAuthenticated = (auth: Auth): boolean => auth.isAuthenticated;
+
+export const hasCompany = (auth) => auth.user && auth.user.company != null;
 
 export const injectAuth = (): Auth => {
   const auth = inject(AuthKey);

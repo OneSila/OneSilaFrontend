@@ -1,8 +1,9 @@
 import * as VueRouter from 'vue-router';
 
 import { routes as authRoutes } from '../../../core/auth/routes';
+import { routes as profileRoutes } from '../../../core/profile/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
-import { detectAuth, isAuthenticated } from '../auth';
+import { detectAuth, isAuthenticated, hasCompany } from '../auth';
 import { Toast } from '../toast';
 
 let router: VueRouter.Router;
@@ -12,6 +13,7 @@ export function buildRouter() {
     history: VueRouter.createWebHistory(),
     routes: [
       ...authRoutes,
+      ...profileRoutes,
       {
         path: '',
         name: 'dashboard',
@@ -21,25 +23,34 @@ export function buildRouter() {
     ],
   });
 
-  router.beforeEach((to, from, next) => {
-    const auth = detectAuth();
+router.beforeEach((to, from, next) => {
+  const auth = detectAuth();
+  const routeName = (to.name as string) || '';
 
-    const routeName = (to.name as string) || '';
 
-    if (routeName.includes('login') && isAuthenticated(auth)) {
-      return next({ name: 'dashboard' });
-    }
-
-    if (!routeName.includes('login') && !isAuthenticated(auth)) {
-      return next({ name: 'auth.login' });
-    }
-
-    if (PUBLIC_ROUTES.includes(routeName)) {
+    // Authenticated but does not have a company
+  if (isAuthenticated(auth) && !hasCompany(auth)) {
+    if (routeName === 'auth.register.company') {
       return next();
     }
+    return next({ name: 'auth.register.company' });
+  }
 
-    return next();
-  });
+  // Authenticated and trying to access a public page
+  if (PUBLIC_ROUTES.includes(routeName) && isAuthenticated(auth) && hasCompany(auth)) {
+    alert('1')
+    return next({ name: 'dashboard' });
+  }
+
+  // Not authenticated and trying to access a non-public page
+  if (!PUBLIC_ROUTES.includes(routeName) && !isAuthenticated(auth)) {
+    alert('2')
+    return next({ name: 'auth.login' });
+  }
+
+  // All other cases
+  return next();
+});
 
   router.onError((error) => {
     const regexes = [

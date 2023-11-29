@@ -73,7 +73,10 @@ import {
   faChevronRight,
   faChevronLeft,
   faChevronDown,
-  faSignOut
+  faSignOut,
+  faPhone,
+  faGlobe,
+  faLanguage,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -147,6 +150,9 @@ library.add(faChevronRight as IconDefinition);
 library.add(faChevronLeft as IconDefinition);
 library.add(faChevronDown as IconDefinition);
 library.add(faSignOut as IconDefinition);
+library.add(faPhone as IconDefinition);
+library.add(faGlobe as IconDefinition);
+library.add(faLanguage as IconDefinition);
 
 export default {
   install(app) {

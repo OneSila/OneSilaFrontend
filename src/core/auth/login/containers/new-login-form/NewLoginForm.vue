@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { reactive, ref, Ref } from 'vue';
-import { useMutation } from '@vue/apollo-composable';
 import gql from 'graphql-tag';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -11,61 +10,49 @@ import { Button } from '../../../../../shared/components/atoms/button';
 import { TextInputPrepend } from '../../../../../shared/components/atoms/text-input-prepend';
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../shared/components/atoms/link';
-
-const LOGIN_MUTATION = gql`
-mutation Login($username: String!, $password: String!) {
-  login(username: $username, password: $password) {
-    username
-    firstName
-    lastName
-  }
-}`;
+import apolloClient from '../../../../../../apollo-client';
+import { loginMutation } from '../../../../../shared/api/mutations/auth.js'
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const auth = injectAuth();
-const errors: Ref<any[]> = ref([]);
 
 const form = reactive({
   username: '',
   password: '',
 });
 
-const safeRequest = useSafeRequest(errors);
-
-const { mutate, loading } = useMutation(LOGIN_MUTATION);
-
 const onLoginClicked = async () => {
-  if (loading.value) {
-    return;
-  }
-
   try {
-    const response = await safeRequest(() => mutate({
-      username: form.username,
-      password: form.password,
-    }));
+    const { data } = await apolloClient.mutate({
+      mutation: loginMutation,
+      variables: {
+        username: form.username,
+        password: form.password,
+      },
+    });
 
-    if (response.login) {
-      const user = response.login;
-      user.id = 1;
-      user.language = 'en';
+    if (data && data.login) {
+      const user = data.login;
+      console.log(user)
       refreshUser(auth, {
-        id: user.id,
         username: user.username,
         language: user.language,
         firstName: user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        company: user.multiTenantCompany
       });
 
+      // Assuming locale is a reactive ref from useI18n()
       locale.value = user.language;
-      router.replace({ name: 'dashboard' });
+
+      // Use router.push() instead of router.replace() if you want to navigate without replacing the history entry
+      router.push({ name: 'dashboard' });
     } else {
-      errors.value.push(t('auth.login.failed'));
+      throw new Error(t('auth.login.failed'));
     }
   } catch (error) {
     console.error('Login error:', error);
-    errors.value.push(error);
   }
 };
 

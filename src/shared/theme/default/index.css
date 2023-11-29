@@ -504,6 +504,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         /* @apply absolute z-10 mt-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]; */
         @apply my-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]  text-black dark:text-white-dark;
     }
+
+    .dropdown ul li > span > a,
     .dropdown ul li > a,
     .dropdown ul li > button {
         @apply flex items-center px-4 py-2 hover:bg-primary/10 hover:text-primary;

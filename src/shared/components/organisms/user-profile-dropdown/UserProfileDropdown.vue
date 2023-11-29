@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { Icon } from "../../atoms/icon";
+import { injectAuth, removeAuth } from "../../../modules/auth";
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { Link } from "../../atoms/link";
+
+const auth = injectAuth();
+const user = ref(auth.user)
+const router = useRouter();
+
+const logout = async () => {
+
+  await removeAuth(auth);
+  router.replace({ name: 'auth.login' });
+};
+
+
+</script>
+
 <template>
   <div class="dropdown shrink-0">
       <Popper :placement="'bottom-start'" offsetDistance="8" class="!block">
@@ -17,11 +37,10 @@
                       </div>
                   </li>
                   <li>
-                      <router-link to="/users/profile" class="dark:hover:text-white" @click="close()">
+                      <Link :path="{name: 'profile.user'}" class="dark:hover:text-white" @click="close()" block>
                           <Icon name="user" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-
                           Profile
-                      </router-link>
+                      </Link>
                   </li>
                   <li class="border-t border-white-light dark:border-white-light/10">
                       <Button class="text-danger !py-3 " @click="logout()">
@@ -35,20 +54,3 @@
       </Popper>
   </div>
 </template>
-
-<script setup lang="ts">
-import { Icon } from "../../atoms/icon";
-import { injectAuth, removeAuth } from "../../../modules/auth";
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
-
-const auth = injectAuth();
-const user = ref(auth.user)
-const router = useRouter();
-
-const logout = () => {
-    removeAuth(auth);
-    router.replace({ name: 'auth.login' });
-};
-
-</script>

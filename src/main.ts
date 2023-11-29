@@ -1,4 +1,4 @@
-import { createApp, provide, h } from 'vue';
+import { createApp,  provide, h } from 'vue';
 import { DefaultApolloClient } from '@vue/apollo-composable'
 import App from './App.vue';
 import apolloClient from '../apollo-client';
@@ -9,13 +9,20 @@ import appSetting from './app-setting';
 import PerfectScrollbar from 'vue3-perfect-scrollbar';
 import { reactive } from 'vue';
 import { AuthKey, detectAuth } from "./shared/modules/auth";
+import VueApolloComponents from '@vue/apollo-components'
+import { createApolloProvider } from "@vue/apollo-option";
+
+const apolloProvider = createApolloProvider({
+  defaultClient: apolloClient,
+})
 
 const app = createApp({
-  setup() {
-    provide(DefaultApolloClient, apolloClient);
-  },
   render: () => h(App),
-});
+})
+
+app.use(apolloProvider)
+
+app.use(VueApolloComponents)
 
 app.use(plugins);
 

@@ -1,35 +1,36 @@
 export const navSections = [
 
     {
-        items: [
-            {
-                route: { name: 'dashboard' },
-                title: 'Products',
-                icon: 'envelope'
-            },
-            {
-                route: { name: 'dashboard' },
-                title: 'Stock',
-                icon: 'envelope'
-            },
-        ]
-    },
-    {
-    title: 'PROPERTIES',
     items: [
         {
-            title: 'Properties',
+            title: 'Contacts',
             icon: 'envelope',
             subItemsKey: 'properties',
             "subItems": [
-                {
-                    route: { name: 'dashboard' },
-                    title: 'Properties',
-                },
-                                    {
-                    route: { name: 'dashboard' },
-                    title: 'Properties values'
-                },
+                    {
+                        route: { name: 'dashboard' },
+                        title: 'Customers'
+                    },
+                    {
+                        route: { name: 'dashboard' },
+                        title: 'Suppliers',
+                    },
+                    {
+                        route: { name: 'dashboard' },
+                        title: 'Persons'
+                    },
+                    {
+                        route: { name: 'dashboard' },
+                        title: 'Internal Companies'
+                    },
+                    {
+                        route: { name: 'dashboard' },
+                        title: 'Shipping Addresses'
+                    },
+                    {
+                        route: { name: 'dashboard' },
+                        title: 'Invoice Addresses'
+                    },
                 ]
             },
         ]

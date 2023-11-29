@@ -1,3 +1,50 @@
+<script setup lang="ts">
+import { onMounted, watch, reactive, computed } from 'vue';
+import Icon from "../../atoms/icon/Icon.vue";
+import Popper from 'vue3-popper';
+import { useI18n } from 'vue-i18n';
+import { injectAuth } from '../../../modules/auth';
+
+
+const auth = injectAuth();
+const { locale } = useI18n();
+
+const store = reactive({
+  rtlClass: 'ltr',
+  locale: auth.user?.language || 'en-gb',
+  languageList: [
+    { code: 'en-gb', name: 'English' },
+    { code: 'nl', name: 'Dutch' },
+  ],
+});
+
+// Change language method
+const changeLanguage = (item: any) => {
+  locale.value = item.code;
+  auth.user.language = item.code;
+};
+
+// Watch for changes in auth.user.language and update the locale accordingly
+watch(() => auth.user.language, (newLang) => {
+  if (newLang) {
+    locale.value = newLang;
+  }
+}, { immediate: true });
+
+// Computed property for the current flag image
+const currentFlag = computed(() => {
+  return `/src/assets/images/flags/${locale.value.toUpperCase()}.svg`;
+});
+
+// Ensure the flag and language display update when the language changes
+onMounted(() => {
+  if (auth.user?.language) {
+    locale.value = auth.user.language;
+  }
+});
+</script>
+
+
 <template>
   <div class="dropdown">
     <Popper :placement="store.rtlClass === 'rtl' ? 'bottom-start' : 'bottom-end'" offsetDistance="8">
@@ -37,34 +84,3 @@
     </Popper>
   </div>
 </template>
-
-<script setup lang="ts">
-import { defineProps, reactive, computed } from 'vue';
-import Icon from "../../atoms/icon/Icon.vue";
-import Popper from 'vue3-popper';
-import { useI18n } from 'vue-i18n';
-
-const { locale } = useI18n();
-
-const store = {
-  rtlClass: 'ltr',
-  locale: 'EN',
-  languageList: [
-    { code: 'en', name: 'English' },
-    { code: 'nl', name: 'Dutch' },
-    { code: 'fr', name: 'French' },
-    { code: 'de', name: 'German' },
-  ]
-};
-
-
-
-const changeLanguage = (item: any) => {
-  locale.value = item.code;
-};
-
-const currentFlag = computed(() => {
-  return `/src/assets/images/flags/${locale.value.toUpperCase()}.svg`;
-});
-
-</script>

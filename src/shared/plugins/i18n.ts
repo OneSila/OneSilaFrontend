@@ -6,8 +6,8 @@ import locale from '../../locale';
 export default {
   install(app) {
     const i18n = createI18n({
-      locale: import.meta.env.VITE_APP_LOCALE || 'en',
-      fallbackLocale: 'en',
+      locale: import.meta.env.VITE_APP_LOCALE || 'en-gb',
+      fallbackLocale: 'en-gb',
       allowComposition: true,
       globalInjection: true,
       messages: locale as any,

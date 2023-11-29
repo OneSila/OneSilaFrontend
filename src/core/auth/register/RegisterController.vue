@@ -24,7 +24,8 @@
         </template>
 
     <template v-slot:right-section-content>
-        <RegisterForm />
+        <RegisterCompanyForm v-if="router.currentRoute.value.name === 'auth.register.company'"/>
+        <RegisterForm v-else />
     </template>
   </AuthTemplate>
 </template>
@@ -33,7 +34,8 @@
 
 import Logo from "../../../shared/components/molecules/logo/Logo.vue";
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
-import RegisterForm from "./containers/register-form/RegisterForm.vue";
+import { RegisterForm } from "./containers/register-form";
+import { RegisterCompanyForm } from "./containers/register-company-form";
 import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
 
 import bgGradient from '../../../assets/images/auth/bg-gradient.png';
@@ -44,6 +46,8 @@ import polygonObject from '../../../assets/images/auth/polygon-object.svg';
 import registerImage from '../../../assets/images/auth/register.svg';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 
 </script>

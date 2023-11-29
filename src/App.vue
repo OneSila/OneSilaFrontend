@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { injectAuth, isAuthenticated } from './shared/modules/auth';
+import { hasCompany, injectAuth, isAuthenticated } from './shared/modules/auth';
 import { ref } from "vue";
 
 import SideBar from './shared/components/molecules/nav-bar/SideBar.vue';
@@ -27,7 +27,7 @@ const toggleSidebar = () => {
 <template>
     <div class="app">
 
-      <div v-if="isAuthenticated(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical full ltr"
+      <div v-if="isAuthenticated(auth) && hasCompany(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical full ltr"
                 :class="[sidebar ? 'toggle-sidebar' : '']">
 
         <div class="relative">
