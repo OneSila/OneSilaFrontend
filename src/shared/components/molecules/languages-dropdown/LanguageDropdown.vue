@@ -55,7 +55,6 @@ onMounted(() => {
         <div>
           <img :src="currentFlag" alt="image" class="h-5 w-5 rounded-full object-cover" />
         </div>
-        <div class="text-base font-bold uppercase">{{ locale.toUpperCase() }}</div>
         <span class="shrink-0">
           <Icon name="angle-down" />
         </span>
