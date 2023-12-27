@@ -17,7 +17,7 @@ export const navSections = [
                     },
                     {
                         route: { name: 'dashboard' },
-                        title: 'Persons'
+                        title: 'People'
                     },
                     {
                         route: { name: 'dashboard' },
