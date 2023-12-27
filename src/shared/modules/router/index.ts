@@ -38,13 +38,11 @@ router.beforeEach((to, from, next) => {
 
   // Authenticated and trying to access a public page
   if (PUBLIC_ROUTES.includes(routeName) && isAuthenticated(auth) && hasCompany(auth)) {
-    alert('1')
     return next({ name: 'dashboard' });
   }
 
   // Not authenticated and trying to access a non-public page
   if (!PUBLIC_ROUTES.includes(routeName) && !isAuthenticated(auth)) {
-    alert('2')
     return next({ name: 'auth.login' });
   }
 

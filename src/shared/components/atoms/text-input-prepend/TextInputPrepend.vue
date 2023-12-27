@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label :for="id">{{ label }}</label>
+    <Label :for="id">{{ label }}</Label>
     <div class="relative">
       <input
         :value="modelValue"
@@ -19,6 +19,7 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
+import { Label } from '../label'
 
 const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue']);
 </script>

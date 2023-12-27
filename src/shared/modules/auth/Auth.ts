@@ -10,6 +10,7 @@ export type User = {
   firstName: string;
   lastName: string;
   company: object | null;
+  companyOwner: boolean;
 };
 
 export interface Auth {
@@ -19,7 +20,7 @@ export interface Auth {
 
 export const detectAuth = (): Auth => {
   const storedUser = localStorage.getItem('auth_user');
-  const user = storedUser ? JSON.parse(storedUser) : { username: '', language: 'en-gb', firstName: '', lastName: '', company: null };
+  const user = storedUser ? JSON.parse(storedUser) : { username: '', language: null, firstName: '', lastName: '', company: null, companyOwner: false };
 
   const isAuthenticated = !!storedUser;
 
@@ -49,6 +50,16 @@ export const setCompanyToUser = (auth: Auth, company: { id: string; name: string
   auth.user = updatedUser;
 };
 
+export const setLanguageToUser = (auth: Auth, language: string ): void => {
+  const updatedUser = {
+    ...auth.user,
+    language: language,
+  };
+
+  localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+  auth.user = updatedUser;
+};
+
 export const replaceAuth = (auth: Auth, newUser: User): void => {
   refreshUser(auth, newUser);
 };
@@ -68,10 +79,11 @@ export const removeAuth = async (auth) => {
     localStorage.removeItem('auth_user');
     auth.user = {
       username: '',
-      language: 'en-gb',
+      language: null,
       firstName: '',
       lastName: '',
-      company: null
+      company: null,
+      companyOwner: false
     };
     auth.isAuthenticated = false;
   } catch (error) {
@@ -82,6 +94,7 @@ export const removeAuth = async (auth) => {
 export const isAuthenticated = (auth: Auth): boolean => auth.isAuthenticated;
 
 export const hasCompany = (auth) => auth.user && auth.user.company != null;
+export const isCompanyOwner = (auth: Auth): boolean => auth.user.companyOwner;
 
 export const injectAuth = (): Auth => {
   const auth = inject(AuthKey);

@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:ltr:mr-auto sm:rtl:ml-auto flex w-90">
+  <div class="sm:ltr:mr-auto sm:rtl:ml-auto flex w-80">
       <form
           class="sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 z-10 w-full sm:w-1/3"
           :class="{ '!block': search }"

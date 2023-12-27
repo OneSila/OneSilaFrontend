@@ -37,10 +37,16 @@ const logout = async () => {
                       </div>
                   </li>
                   <li>
-                      <Link :path="{name: 'profile.user'}" class="dark:hover:text-white" @click="close()" block>
-                          <Icon name="user" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                          Profile
-                      </Link>
+                    <Link :path="{name: 'profile.user'}" class="dark:hover:text-white" @click="close()" block>
+                        <Icon name="user" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                        Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link :path="{name: 'profile.company'}" class="dark:hover:text-white" @click="close()" block>
+                        <Icon name="building" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                        Company
+                    </Link>
                   </li>
                   <li class="border-t border-white-light dark:border-white-light/10">
                       <Button class="text-danger !py-3 " @click="logout()">

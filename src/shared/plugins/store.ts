@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
-import i18n from './i18n';
+import apolloClient from '../../../apollo-client';
 import appSetting from './../../app-setting';
+import { languagesQuery } from '../api/queries/languages.js';
+import { DEFAULT_LANGUAGE } from '../utils/constants'
 
 export const useAppStore = defineStore('app', {
     state: () => ({
@@ -9,34 +11,42 @@ export const useAppStore = defineStore('app', {
         theme: 'light',
         menu: 'vertical',
         layout: 'full',
-        rtlClass: 'ltr',
         animation: '',
         navbar: 'navbar-sticky',
-        locale: 'en',
+        locale: localStorage.getItem('i18n_locale') || DEFAULT_LANGUAGE.code,
         sidebar: false,
-        languageList: [
-            { code: 'zh', name: 'Chinese' },
-            { code: 'da', name: 'Danish' },
-            { code: 'en', name: 'English' },
-            { code: 'fr', name: 'French' },
-            { code: 'de', name: 'German' },
-            { code: 'el', name: 'Greek' },
-            { code: 'hu', name: 'Hungarian' },
-            { code: 'it', name: 'Italian' },
-            { code: 'ja', name: 'Japanese' },
-            { code: 'pl', name: 'Polish' },
-            { code: 'pt', name: 'Portuguese' },
-            { code: 'ru', name: 'Russian' },
-            { code: 'es', name: 'Spanish' },
-            { code: 'sv', name: 'Swedish' },
-            { code: 'tr', name: 'Turkish' },
-            { code: 'ae', name: 'Arabic' },
-        ],
+        expireLanguageList: null ,
+        languageList: [],
+        rtlClass: 'ltr',
         isShowMainLoader: true,
         semidark: false,
     }),
 
     actions: {
+        async fetchLanguages() {
+          let expireLanguageList: string | null = localStorage.getItem('expireLanguageList');
+          let expireLanguageListDate: Date | null = expireLanguageList ? new Date(expireLanguageList) : null;
+
+          if (!expireLanguageListDate || new Date() > expireLanguageListDate) {
+            const { data } = await apolloClient.query({
+              query: languagesQuery,
+            });
+
+            if (data && data.languages) {
+              this.languageList = data.languages;
+              localStorage.setItem('languageList', JSON.stringify(data.languages));
+
+              const newExpireDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000));
+              localStorage.setItem('expireLanguageList', newExpireDate.toISOString());
+            }
+          } else {
+            const storedLanguages = localStorage.getItem('languageList');
+            this.languageList = storedLanguages ? JSON.parse(storedLanguages) : [];
+          }
+        },
+    updateRTLClass(bidi: boolean) {
+      this.rtlClass = bidi ? 'rtl' : 'ltr';
+    },
         setMainLayout(payload: any = null) {
             this.mainLayout = payload; //app , auth
         },
@@ -73,12 +83,6 @@ export const useAppStore = defineStore('app', {
             localStorage.setItem('layout', payload);
             this.layout = payload;
         },
-        toggleRTL(payload: any = null) {
-            payload = payload || this.rtlClass; // rtl, ltr
-            localStorage.setItem('rtlClass', payload);
-            this.rtlClass = payload;
-            document.querySelector('html')?.setAttribute('dir', this.rtlClass || 'ltr');
-        },
         toggleAnimation(payload: any = null) {
             payload = payload || this.animation; // animate__fadeIn, animate__fadeInDown, animate__fadeInUp, animate__fadeInLeft, animate__fadeInRight, animate__slideInDown, animate__slideInLeft, animate__slideInRight, animate__zoomIn
             payload = payload?.trim();
@@ -96,15 +100,22 @@ export const useAppStore = defineStore('app', {
             localStorage.setItem('semidark', payload);
             this.semidark = payload;
         },
-        toggleLocale(payload: any = null) {
-            payload = payload || this.locale;
-            localStorage.setItem('i18n_locale', payload);
-            this.locale = payload;
-            if(this.locale?.toLowerCase() === 'ae') {
-                this.toggleRTL('rtl');
-            } else {
-                this.toggleRTL('ltr');
-            }
+        toggleRTL(bidi: boolean) {
+          const rtlClass = bidi ? 'rtl' : 'ltr';
+          localStorage.setItem('rtlClass', rtlClass);
+          this.rtlClass = rtlClass;
+          document.querySelector('html')?.setAttribute('dir', rtlClass);
+        },
+
+        toggleLocale(languageCode: string) {
+          localStorage.setItem('i18n_locale', languageCode);
+          this.locale = languageCode;
+
+          // @ts-ignore
+          const language = this.languageList.find(lang => lang.code === languageCode);
+          // @ts-ignore
+          const isRTL = language ? language.bidi : false;
+          this.toggleRTL(isRTL);
         },
         toggleSidebar(state: boolean = false) {
             this.sidebar = !this.sidebar;

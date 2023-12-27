@@ -88,7 +88,7 @@ module.exports = {
                 4.5: '18px',
             },
     width: {
-        '90': '90%', // Adds w-90 utility for width: 90%
+        '80': '80%', // Adds w-80 utility for width: 80%
       }
     },
   },

@@ -2,12 +2,15 @@
 import { reactive, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { ApolloMutation } from '@vue/apollo-components';
-import { setCompanyToUser, injectAuth } from '../../../../../shared/modules/auth';
+import { ApolloMutation, ApolloQuery } from '@vue/apollo-components';
+import { setCompanyToUser, injectAuth, removeAuth } from '../../../../../shared/modules/auth';
 import { Button } from "../../../../../shared/components/atoms/button";
+import { Label } from "../../../../../shared/components/atoms/label";
+import { Selector } from "../../../../../shared/components/atoms/selector";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
 import { registerCompanyMutation } from '../../../../../shared/api/mutations/auth.js'
+import { languagesQuery, countriesQuery } from "../../../../../shared/api/queries/languages";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -39,21 +42,35 @@ const onCompanyRegistered = ({ data }) => {
 
     <div>
     <div class="mb-10">
-      <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.header') }}</h1>
-      <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.description') }}</p>
+      <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.company.header') }}</h1>
+      <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.company.description') }}</p>
+      <p class="text-base font-bold leading-normal text-danger">{{ t('auth.register.company.languageDisclaimer') }}</p>
     </div>
-      <TextInputPrepend id="companyName" v-model="form.name" :label="t('auth.register.company.labels.companyName')" :placeholder="t('auth.register.company.placeholders.companyName')" type="text">
+      <TextInputPrepend id="companyName" v-model="form.name" :label="t('auth.register.company.labels.companyName')" :placeholder="t('auth.register.company.placeholders.companyName')" type="text" class="mb-2">
         <Icon name="building"/>
       </TextInputPrepend>
-      <TextInputPrepend id="country" v-model="form.country" :label="t('auth.register.company.labels.country')" :placeholder="t('auth.register.company.placeholders.country')" type="text">
-        <Icon name="globe"/>
-      </TextInputPrepend>
-      <TextInputPrepend id="phoneNumber" v-model="form.phoneNumber" :label="t('auth.register.company.labels.phoneNumber')" :placeholder="t('auth.register.company.placeholders.phoneNumber')" type="tel">
+      <TextInputPrepend id="phoneNumber" v-model="form.phoneNumber" :label="t('auth.register.company.labels.phoneNumber')" :placeholder="t('auth.register.company.placeholders.phoneNumber')" type="tel" class="mb-2">
         <Icon name="phone"/>
       </TextInputPrepend>
-      <TextInputPrepend id="language" v-model="form.language" :label="t('auth.register.company.labels.language')" :placeholder="t('auth.register.company.placeholders.language')" type="text">
-        <Icon name="language"/>
-      </TextInputPrepend>
+
+    <div class="mb-2">
+      <Label>{{ t('auth.register.company.placeholders.country') }}</Label>
+      <ApolloQuery :query="countriesQuery">
+        <template v-slot="{ result: { data } }">
+            <Selector v-if="data" v-model="form.country" :options="data.countries" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.country')" filterable />
+        </template>
+      </ApolloQuery>
+    </div>
+
+    <div>
+      <Label>{{ t('auth.register.company.placeholders.language') }}</Label>
+    <ApolloQuery :query="languagesQuery">
+      <template v-slot="{ result: { data } }">
+          <Selector v-if="data" v-model="form.language" :options="data.languages" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.language')" filterable />
+      </template>
+    </ApolloQuery>
+    </div>
+
 
     <div>
 

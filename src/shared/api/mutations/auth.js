@@ -21,6 +21,7 @@ mutation Login($username: String!, $password: String!) {
     firstName
     lastName
     language
+    isMultiTenantCompanyOwner
     multiTenantCompany {
       id
     }
@@ -37,6 +38,20 @@ export const registerCompanyMutation = gql`
     }) {
       id
       name
+    }
+  }
+`;
+
+export const inviteMemberMutation = gql`
+  mutation inviteMember($username: String!, $language: String!, $firstName: String!, $lastName: String!) {
+    inviteUser(data: {
+      username: $username,
+      language: $language,
+      firstName: $firstName,
+      lastName: $lastName
+    }) {
+      firstName
+      lastName
     }
   }
 `;

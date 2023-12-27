@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { reactive, ref, Ref } from 'vue';
-import gql from 'graphql-tag';
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
-import { useSafeRequest } from '../../../../../shared/modules/network';
 import { useEnterKeyboardListener } from '../../../../../shared/modules/keyboard';
 import { Button } from '../../../../../shared/components/atoms/button';
 import { TextInputPrepend } from '../../../../../shared/components/atoms/text-input-prepend';
@@ -34,13 +32,13 @@ const onLoginClicked = async () => {
 
     if (data && data.login) {
       const user = data.login;
-      console.log(user)
       refreshUser(auth, {
         username: user.username,
         language: user.language,
         firstName: user.firstName,
         lastName: user.lastName,
-        company: user.multiTenantCompany
+        company: user.multiTenantCompany,
+        companyOwner: user.isMultiTenantCompanyOwner
       });
 
       // Assuming locale is a reactive ref from useI18n()

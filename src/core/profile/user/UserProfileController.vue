@@ -1,50 +1,72 @@
-<template>
-  <ProfileTemplate>
-    <template v-slot:background-image>
-      <BackgroundImage :src="bgGradient" alt="image" />
-    </template>
-
-    <template v-slot:foreground-images>
-      <BackgroundImage :src="comingSoonObject1" alt="image" classModifier="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
-      <BackgroundImage :src="comingSoonObject2" alt="image" classModifier="absolute left-24 top-0 h-40 md:left-[30%]" />
-      <BackgroundImage :src="comingSoonObject3" alt="image" classModifier="absolute right-0 top-0 h-[300px]" />
-      <BackgroundImage :src="polygonObject" alt="image" classModifier="absolute bottom-0 end-[28%]" />
-    </template>
-
-    <template v-slot:left-section>
-        <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" />
-        <Flex class="mt-24 hidden w-full max-w-[430px] lg:block" center>
-          <Image :source="loginImage" alt="Cover Image" class="w-full" />
-        </Flex>
-    </template>
-
-        <template v-slot:right-section-header>
-          <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
-          <LanguageDropdown class="ms-auto w-max"/>
-        </template>
-
-    <template v-slot:right-section-content>
-        <NewLoginForm />
-    </template>
-
-  </ProfileTemplate>
-</template>
-
 <script lang="ts" setup>
+import { ref, watch } from 'vue';
+import ProfileTemplate from "./ProfileTemplate.vue";
+import { ShowProfile } from './containers/show-profile';
+import { ProfileEditForm } from "./containers/profile-edit-form";
+import { Button } from "../../../shared/components/atoms/button";
+import { ApolloSubscription } from "./../../../shared/components/molecules/apollo-subscription";
+import { meSubscription } from "./../../../shared/api/subscriptions/me";
+import IconPencilPaper from '../../../shared/components/atoms/icons/icon-pencil-paper.vue';
+import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
+import { useI18n } from 'vue-i18n';
 
-import Logo from "../../../shared/components/molecules/logo/Logo.vue";
-import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
-import NewLoginForm from "./containers/new-login-form/ProfileEditForm.vue";
-import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
+const { t } = useI18n();
+const editView = ref(false);
+const unsavedChanges = ref(false);
 
-import bgGradient from '../../../assets/images/auth/bg-gradient.png';
-import comingSoonObject1 from '../../../assets/images/auth/coming-soon-object1.png';
-import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.png';
-import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
-import polygonObject from '../../../assets/images/auth/polygon-object.svg';
-import loginImage from '../../../assets/images/auth/login.svg';
-import Image from "../../../shared/components/atoms/image/Image.vue";
-import ProfileTemplate from "../user/ProfileTemplate.vue";
+const toggleEditView = () => {
+  if (unsavedChanges.value && !confirm(t('profile.unsavedChanges'))) {
+    return;
+  }
+  editView.value = !editView.value;
+};
 
+watch(editView, (newVal) => {
+  if (!newVal) {
+    unsavedChanges.value = false;
+  }
+});
+
+const handleUnsavedChanges = (hasChanges) => {
+  unsavedChanges.value = hasChanges;
+};
+
+const handleUpdateComplete = () => {
+  editView.value = false;
+};
 
 </script>
+
+<template>
+  <ProfileTemplate>
+    <template v-slot:info>
+      <div class="pt-5">
+        <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-5 mb-5">
+          <div class="panel">
+            <div class="flex items-center justify-between mb-5">
+              <h5 class="font-semibold text-lg dark:text-white-light">{{ t('profile.labels.editProfile') }}</h5>
+              <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView">
+                <IconPencilPaper v-if="!editView"/>
+                <IconX v-else/>
+              </Button>
+            </div>
+
+            <ApolloSubscription :subscription="meSubscription">
+              <template v-slot:default="{ loading, error, result }">
+                <template v-if="!loading && result">
+                  <div v-if="!editView">
+                    <ShowProfile :me-data="result.me" />
+                  </div>
+                  <div v-else>
+                    <ProfileEditForm :me-data="result.me" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
+                  </div>
+                </template>
+                <p v-if="error">{{ error.message }}</p>
+              </template>
+            </ApolloSubscription>
+          </div>
+        </div>
+      </div>
+    </template>
+  </ProfileTemplate>
+</template>

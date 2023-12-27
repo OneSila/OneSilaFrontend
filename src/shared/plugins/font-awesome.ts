@@ -77,6 +77,18 @@ import {
   faPhone,
   faGlobe,
   faLanguage,
+  faCalendar,
+  faMapPin,
+  faMapLocation,
+  faMapMarker,
+  faSignsPost,
+  faCity,
+  faReceipt,
+  faCrown,
+  faTimesCircle,
+  faCheckCircle,
+  faTrashAlt,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -153,6 +165,18 @@ library.add(faSignOut as IconDefinition);
 library.add(faPhone as IconDefinition);
 library.add(faGlobe as IconDefinition);
 library.add(faLanguage as IconDefinition);
+library.add(faCalendar as IconDefinition);
+library.add(faMapPin as IconDefinition);
+library.add(faMapLocation as IconDefinition);
+library.add(faMapMarker as IconDefinition);
+library.add(faSignsPost as IconDefinition);
+library.add(faCity as IconDefinition);
+library.add(faReceipt as IconDefinition);
+library.add(faCrown as IconDefinition);
+library.add(faTimesCircle as IconDefinition);
+library.add(faCheckCircle as IconDefinition);
+library.add(faTrashAlt as IconDefinition);
+library.add(faPlus as IconDefinition);
 
 export default {
   install(app) {

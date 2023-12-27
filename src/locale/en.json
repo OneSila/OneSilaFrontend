@@ -28,15 +28,41 @@
       "labels": {
         "companyName": "Company Name",
         "email": "Email",
-        "password": "Password"
+        "password": "Password",
+        "confirmPassword": "Confirm password"
       },
       "placeholders": {
         "companyName": "Enter company name",
         "email": "Enter Email",
-        "password": "Enter Password"
+        "password": "Enter Password",
+        "confirmPassword": "Enter Password again"
       },
       "loginPrompt": "Already have an account?",
-      "login": "SIGN IN"
+      "login": "SIGN IN",
+      "company": {
+        "header": "Sign up",
+        "description": "Enter your company details",
+        "languageDisclaimer": "The company language CANNOT BE CHANGED LATER ON",
+        "labels": {
+          "companyName": "Company Name",
+          "phoneNumber": "Phone Number",
+          "country": "Country",
+          "language": "Language"
+        },
+        "placeholders": {
+          "companyName": "Enter company name",
+          "phoneNumber": "Enter phone number",
+          "country": "Country",
+          "language": "Language",
+          "selector": {
+            "country": "Select country",
+            "language": "Select language"
+          }
+        },
+        "button": {
+          "createCompany": "Create Company"
+        }
+      }
     },
     "recover": {
       "header": "Recover account",
@@ -48,6 +74,62 @@
       "placeholders": {
         "email": "Enter Email"
       }
+    }
+  },
+  "profile": {
+    "labels": {
+      "joined": "Joined",
+      "phone": "Phone",
+      "whatsApp": "WhatsApp",
+      "telegram": "Telegram",
+      "timezone": "Timezone",
+      "updateButton": "Update",
+      "editProfile": "Edit Profile",
+      "mobileNumber": "Mobile Number",
+      "whatsappNumber": "WhatsApp Number",
+      "telegramNumber": "Telegram Number",
+      "firstName": "First Name",
+      "lastName": "Last Name"
+    },
+    "placeholders": {
+      "mobileNumber": "Enter your mobile number",
+      "whatsappNumber": "Enter your WhatsApp number",
+      "telegramNumber": "Enter your Telegram number",
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name"
+    },
+   "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
+   "changesMade": "Changes were made"
+  },
+  "companyProfile": {
+    "labels": {
+      "companyName": "Company Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "address1": "Address Line 1",
+      "address2": "Address Line 2",
+      "postcode": "Postcode",
+      "city": "City",
+      "vatNumber": "VAT Number",
+      "website": "Website",
+      "updateButton": "Update Company",
+      "editProfile": "Edit Profile"
+    },
+    "placeholders": {
+      "companyName": "Enter company name",
+      "email": "Enter email address",
+      "phoneNumber": "Enter phone number",
+      "address1": "Enter address line 1",
+      "address2": "Enter address line 2",
+      "postcode": "Enter postcode",
+      "city": "Enter city",
+      "vatNumber": "Enter VAT number",
+      "website": "Enter website URL"
+    },
+    "messages": {
+      "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
+      "changesMade": "Changes were made",
+      "joined": "Joined"
     }
   }
 }

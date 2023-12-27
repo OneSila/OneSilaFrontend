@@ -3,51 +3,65 @@ import { onMounted, watch, reactive, computed } from 'vue';
 import Icon from "../../atoms/icon/Icon.vue";
 import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
-import { injectAuth } from '../../../modules/auth';
+const { locale } = useI18n();
+import { injectAuth, isAuthenticated, setLanguageToUser } from '../../../modules/auth';
+import { useAppStore } from '../../../../shared/plugins/store';
+import apolloClient from '../../../../../apollo-client';
+import { changeLanguageMutation } from '../../../api/mutations/languages.js'
 
 
 const auth = injectAuth();
-const { locale } = useI18n();
+const app = useAppStore();
 
-const store = reactive({
-  rtlClass: 'ltr',
-  locale: auth.user?.language || 'en-gb',
-  languageList: [
-    { code: 'en-gb', name: 'English' },
-    { code: 'nl', name: 'Dutch' },
-  ],
-});
+app.fetchLanguages();
+const changeLanguage = async (item: any) => {
 
-// Change language method
-const changeLanguage = (item: any) => {
-  locale.value = item.code;
-  auth.user.language = item.code;
+  if (isAuthenticated(auth)) {
+
+      const { data } = await apolloClient.mutate({
+      mutation: changeLanguageMutation,
+      variables: {
+        newLanguage: item.code,
+      },
+    });
+
+    if (data && data.updateMe) {
+      setLanguageToUser(auth, data.updateMe.language);
+    }
+
+  } else {
+    locale.value = item.code;
+    app.toggleLocale(item.code);
+    }
 };
 
-// Watch for changes in auth.user.language and update the locale accordingly
 watch(() => auth.user.language, (newLang) => {
   if (newLang) {
-    locale.value = newLang;
+      locale.value = newLang;
+      app.toggleLocale(newLang);
   }
 }, { immediate: true });
 
-// Computed property for the current flag image
 const currentFlag = computed(() => {
   return `/src/assets/images/flags/${locale.value.toUpperCase()}.svg`;
 });
 
-// Ensure the flag and language display update when the language changes
 onMounted(() => {
-  if (auth.user?.language) {
+  if (isAuthenticated(auth)) {
     locale.value = auth.user.language;
+    app.toggleLocale(auth.user.language);
+  } else {
+    locale.value = app.locale;
+    app.toggleLocale(app.locale);
   }
 });
+
 </script>
 
 
 <template>
   <div class="dropdown">
-    <Popper :placement="store.rtlClass === 'rtl' ? 'bottom-start' : 'bottom-end'" offsetDistance="8">
+    <Popper :placement="app.rtlClass === 'rtl' ? 'bottom-start' : 'bottom-end'" offsetDistance="8">
       <button
         type="button"
         class="flex items-center gap-2.5 rounded-lg border border-white-dark/30 bg-white px-2 py-1.5 text-white-dark hover:border-primary hover:text-primary dark:bg-black"
@@ -62,7 +76,7 @@ onMounted(() => {
       </button>
       <template #content="{ close }">
         <ul class="!px-2 text-dark dark:text-white-dark grid grid-cols-2 gap-2 font-semibold dark:text-white-light/90 w-[280px]">
-          <template v-for="item in store.languageList" :key="item.code">
+          <template v-for="item in app.languageList" :key="item.code">
             <li>
               <button
                 type="button"

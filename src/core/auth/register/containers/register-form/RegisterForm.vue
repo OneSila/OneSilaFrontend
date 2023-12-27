@@ -41,13 +41,14 @@ const afterRegister = async () => {
 
     if (data && data.login) {
       const user = data.login;
-      console.log(user)
+
       refreshUser(auth, {
         username: user.username,
         language: user.language,
         firstName: user.firstName,
         lastName: user.lastName,
-        company: user.multiTenantCompany
+        company: user.multiTenantCompany,
+        companyOwner: user.isMultiTenantCompanyOwner
       });
 
       locale.value = user.language;
