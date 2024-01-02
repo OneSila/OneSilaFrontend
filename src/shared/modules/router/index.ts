@@ -5,6 +5,7 @@ import { routes as profileRoutes } from '../../../core/profile/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
 import { detectAuth, isAuthenticated, hasCompany } from '../auth';
 import { Toast } from '../toast';
+import { useAppStore } from '../../plugins/store';
 
 let router: VueRouter.Router;
 
@@ -45,6 +46,10 @@ router.beforeEach((to, from, next) => {
   if (!PUBLIC_ROUTES.includes(routeName) && !isAuthenticated(auth)) {
     return next({ name: 'auth.login' });
   }
+
+  // make sure we refresh filters each click
+  const appStore = useAppStore();
+  appStore.resetSearchConfig();
 
   // All other cases
   return next();

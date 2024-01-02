@@ -2,10 +2,10 @@
 import { ref, watch } from 'vue';
 import ProfileTemplate from "./ProfileTemplate.vue";
 import { ShowProfile } from './containers/show-profile';
-import { ProfileEditForm } from "./containers/profile-edit-form";
+import { ProfileEdit } from "./containers/profile-edit";
 import { Button } from "../../../shared/components/atoms/button";
 import { ApolloSubscription } from "./../../../shared/components/molecules/apollo-subscription";
-import { meSubscription } from "./../../../shared/api/subscriptions/me";
+import { meSubscription } from "../../../shared/api/subscriptions/me.js";
 import IconPencilPaper from '../../../shared/components/atoms/icons/icon-pencil-paper.vue';
 import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
 import { useI18n } from 'vue-i18n';
@@ -58,7 +58,7 @@ const handleUpdateComplete = () => {
                     <ShowProfile :me-data="result.me" />
                   </div>
                   <div v-else>
-                    <ProfileEditForm :me-data="result.me" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
+                    <ProfileEdit :me-data="result.me" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
                   </div>
                 </template>
                 <p v-if="error">{{ error.message }}</p>

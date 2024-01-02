@@ -1,8 +1,5 @@
-import _debounce from 'lodash/debounce';
 import _slugify from '@sindresorhus/slugify';
 import { useI18n } from 'vue-i18n';
-
-export const debounce = _debounce;
 
 export const isIntegrated = () => window.location !== window.parent.location;
 
@@ -36,6 +33,23 @@ export const booleanify = (
   }
 
   return value === 'true';
+};
+
+export const booleanifyIfNeeded = (value?: any) => {
+
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  const booleanStringValues = ['true', 'false', 'null', 'all'];
+
+  if (booleanStringValues.includes(value)) {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    if (value === 'null' || value === 'all') return null;
+  }
+
+  return value;
 };
 
 export const booleanSelectify = (value?: any) =>

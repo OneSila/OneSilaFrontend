@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Label :for="id">{{ label }}</Label>
+    <Label :for="id" class="mb-2">{{ label }}</Label>
     <div class="relative">
       <input
         :value="modelValue"

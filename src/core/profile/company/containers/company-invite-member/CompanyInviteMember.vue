@@ -5,6 +5,9 @@ import { TextInputPrepend } from '../../../../../shared/components/atoms/text-in
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { Card } from '../../../../../shared/components/atoms/card';
 import { inviteMemberMutation } from '../../../../../shared/api/mutations/auth';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
   language: String
@@ -28,20 +31,20 @@ const afterInvite = () => {
 
 <template>
   <Card class="w-1/3">
-    <TextInputPrepend id="firstName" v-model="form.firstName" class="mb-2" label="First Name" placeholder="Enter first name">
+    <TextInputPrepend id="firstName" v-model="form.firstName" class="mb-2" :label="t('profile.labels.firstName')" :placeholder="t('profile.placeholders.firstName')">
       <Icon name="user"/>
     </TextInputPrepend>
-    <TextInputPrepend id="lastName" v-model="form.lastName" class="mb-2" label="Last Name" placeholder="Enter last name">
+    <TextInputPrepend id="lastName" v-model="form.lastName" class="mb-2" :label="t('profile.labels.lastName')" :placeholder="t('profile.placeholders.lastName')">
       <Icon name="user"/>
     </TextInputPrepend>
-    <TextInputPrepend id="username" v-model="form.username" class="mb-2" label="Email" placeholder="Enter email">
+    <TextInputPrepend id="username" v-model="form.username" class="mb-2" :label="t('companyProfile.labels.email')" :placeholder="t('companyProfile.placeholders.email')">
       <Icon name="envelope"/>
     </TextInputPrepend>
 
     <ApolloMutation :mutation="inviteMemberMutation" :variables="form" @done="afterInvite">
       <template v-slot="{ mutate, loading, error }">
-        <Button :disabled="loading" @click="mutate()">
-          Invite
+        <Button :disabled="loading" @click="mutate()" custom-class="btn btn-primary">
+          {{ t('shared.button.invite') }}
         </Button>
         <p v-if="error">{{ error.message }}</p>
       </template>

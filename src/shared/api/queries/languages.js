@@ -20,3 +20,11 @@ query countries{
   }
 }
 `;
+
+export const timezonesQuery = gql`
+query timezones {
+  timezones {
+    key
+  }
+}
+`;

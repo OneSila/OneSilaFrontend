@@ -1,10 +1,14 @@
 export interface FilteredMember {
+  id: string;
+  isActive: boolean;
   fullName: string;
   email: string;
   invitationAccepted: boolean;
   isOwner: boolean;
 }
 export interface CompanyUser {
+  id: string;
+  isActive: boolean;
   email: string;
   lastName: string;
   firstName: string;

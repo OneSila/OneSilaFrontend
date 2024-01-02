@@ -28,6 +28,20 @@ mutation Login($username: String!, $password: String!) {
   }
 }`;
 
+export const loginTokenMutation = gql`
+mutation loginToken($token: String!) {
+  authenticateToken(token: $token) {
+    username
+    firstName
+    lastName
+    language
+    isMultiTenantCompanyOwner
+    multiTenantCompany {
+      id
+    }
+  }
+}`;
+
 export const registerCompanyMutation = gql`
   mutation RegisterCompany($country: String!, $name: String!, $language: String!, $phoneNumber: String!) {
     registerMyMultiTenantCompany(data: {
@@ -52,6 +66,16 @@ export const inviteMemberMutation = gql`
     }) {
       firstName
       lastName
+    }
+  }
+`;
+
+export const requestLoginLinkMutation = gql`
+  mutation recoveryToken($username: String!) {
+    recoveryToken(data: { username: $username }) {
+        id
+        createdAt
+        expiresAt
     }
   }
 `;

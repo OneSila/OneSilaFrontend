@@ -1017,38 +1017,47 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import gql from 'graphql-tag';
-import {companiesQuery} from '../../../shared/api/queries/companies.js'
+import { ref, watch } from 'vue';
+import { companiesQuery } from '../../../shared/api/queries/companies.js'
+import { languagesQuery } from '../../../shared/api/queries/languages.js'
+import { SearchConfig, FilterType, OrderCriteria, BaseFilter } from '../../../shared/components/organisms/general-search/searchConfig'
+import { FilterManager } from '../../../shared/components/molecules/filter-manager'
 
+const searchConfig: SearchConfig = {
+  search: true,
+};
 
 </script>
 
 
 <template>
   <div class="companies-query">
-    <ApolloQuery :query="companiesQuery">
+    <FilterManager :searchConfig="searchConfig">
+      <template v-slot:variables="{ filterVariables, orderVariables }">
+        <ApolloQuery :query="companiesQuery" :variables="{ filters: filterVariables }">
 
-      <template v-slot="{ result: { loading, error, data }, query }">
+              <template v-slot="{ result: { loading, error, data }, query }">
 
-            <!-- Loading -->
-    <div v-if="loading" class="loading apollo">Loading...</div>
+                    <!-- Loading -->
+            <div v-if="loading" class="loading apollo">Loading...</div>
 
-    <!-- Error -->
-    <div v-else-if="error" class="error apollo">An error occurred</div>
+            <!-- Error -->
+            <div v-else-if="error" class="error apollo">An error occurred</div>
 
-    <!-- Result -->
-    <div v-else-if="data" class="result apollo">
-          <div v-for="companyEdge in data.companies.edges" :key="companyEdge.node.id">
-            {{ companyEdge.node.name }}
-          </div>
-    </div>
+            <!-- Result -->
+            <div v-else-if="data" class="result apollo">
+                  <div v-for="companyEdge in data.companies.edges" :key="companyEdge.node.id">
+                    {{ companyEdge.node.name }}
+                  </div>
+            </div>
 
-    <!-- No result -->
-    <div v-else class="no-result apollo">No result :(</div>
+            <!-- No result -->
+            <div v-else class="no-result apollo">No result :(</div>
 
+        </template>
+      </ApolloQuery>
       </template>
-    </ApolloQuery>
+    </FilterManager>
   </div>
 </template>
 

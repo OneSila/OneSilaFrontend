@@ -20,6 +20,7 @@ export const useAppStore = defineStore('app', {
         rtlClass: 'ltr',
         isShowMainLoader: true,
         semidark: false,
+        searchConfig: null,
     }),
 
     actions: {
@@ -125,6 +126,13 @@ export const useAppStore = defineStore('app', {
             setTimeout(() => {
                 this.isShowMainLoader = false;
             }, 500);
+        },
+        setSearchConfig(newConfig) {
+            this.searchConfig = newConfig;
+        },
+
+        resetSearchConfig() {
+            this.searchConfig = null; // Reset to no configuration
         },
     },
     getters: {},

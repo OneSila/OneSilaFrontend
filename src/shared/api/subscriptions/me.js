@@ -31,6 +31,8 @@ export const meCompanySubscription = gql`
       vatNumber
       website
       multitenantuserSet {
+          id
+          isActive
           email
           lastName
           firstName

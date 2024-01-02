@@ -9,6 +9,7 @@ const props = defineProps<{
   disabled?: boolean;
   secret?: boolean;
   number?: boolean;
+  minNumber?: number;
   maxNumber?: number;
   focused?: boolean;
 }>();
@@ -39,7 +40,7 @@ defineExpose({
     ref="input"
     class="text-input focus:outline-none focus:border-sky-500 focus:ring-sky-500 block rounded-md px-3 py-2 text-sm placeholder:italic focus:ring-1"
     :type="secret ? 'password' : number ? 'number' : 'text'"
-    :min="number ? '1' : undefined"
+    :min="number && minNumber ? minNumber : undefined"
     :max="number && maxNumber ? maxNumber : undefined"
     :step="number ? '1' : undefined"
     :class="{

@@ -1,0 +1,62 @@
+<template>
+  <AuthTemplate>
+    <template v-slot:background-image>
+      <BackgroundImage :src="bgGradient" alt="image" />
+    </template>
+
+    <template v-slot:foreground-images>
+      <BackgroundImage :src="comingSoonObject1" alt="image" classModifier="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
+      <BackgroundImage :src="comingSoonObject2" alt="image" classModifier="absolute left-24 top-0 h-40 md:left-[30%]" />
+      <BackgroundImage :src="comingSoonObject3" alt="image" classModifier="absolute right-0 top-0 h-[300px]" />
+      <BackgroundImage :src="polygonObject" alt="image" classModifier="absolute bottom-0 end-[28%]" />
+    </template>
+
+    <template v-slot:left-section>
+        <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" />
+        <Flex class="mt-24 hidden w-full max-w-[430px] lg:block" center>
+          <Image :source="recoverAccount" alt="Cover Image" class="w-full" />
+        </Flex>
+    </template>
+
+    <template v-slot:right-section-header>
+      <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
+      <LanguageDropdown class="ms-auto w-max"/>
+    </template>
+
+    <template v-slot:right-section-content>
+      <div class="mb-7">
+        <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
+          {{ t('auth.recover.tokenHeader') }}
+        </h1>
+        <p>{{ t('auth.recover.tokenDescription') }}</p>
+      </div>
+      <LoginTokenForm :token="token" :button-label="t('auth.recover.button.recover')" />
+    </template>
+
+  </AuthTemplate>
+</template>
+
+<script lang="ts" setup>
+
+import { ref } from 'vue';
+import Logo from "../../../shared/components/molecules/logo/Logo.vue";
+import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
+import { LoginTokenForm } from "./containers/login-token-form";
+import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
+import bgGradient from '../../../assets/images/auth/bg-gradient.png';
+import comingSoonObject1 from '../../../assets/images/auth/coming-soon-object1.png';
+import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.png';
+import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
+import polygonObject from '../../../assets/images/auth/polygon-object.svg';
+import recoverAccount from '../../../assets/images/auth/recover-account.svg';
+import Image from "../../../shared/components/atoms/image/Image.vue";
+import AuthTemplate from "../AuthTemplate.vue";
+import { useI18n } from 'vue-i18n';
+import { useRouter, useRoute } from 'vue-router';
+
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const token = ref(route.params.token);
+
+</script>

@@ -3,7 +3,10 @@
     "button": {
       "login": "Sign in",
       "register": "Sign up",
-      "recover": "Recover"
+      "recover": "Recover",
+      "update": "Update",
+      "invite": "Invite",
+      "search": "Search"
     }
   },
   "auth": {
@@ -67,7 +70,14 @@
     "recover": {
       "header": "Recover account",
       "descriptionSent": "An email was sent to the provided email. Please check the email for further instructions.",
+      "descriptionCountdown": "Your recovery link will expire in:",
       "description": "Enter your email to recover your account",
+      "tokenHeader": "Recover Account",
+      "tokenDescription": "You are one step away. Please confirm your account recovery.",
+      "tokenLoginFailed": "Failed to authenticate token.",
+      "button": {
+        "recover": "Recover"
+      },
       "labels": {
         "email": "Email"
       },
@@ -77,6 +87,10 @@
     }
   },
   "profile": {
+    "tabs": {
+      "general": "General",
+      "security": "Security"
+    },
     "labels": {
       "joined": "Joined",
       "phone": "Phone",
@@ -89,14 +103,20 @@
       "whatsappNumber": "WhatsApp Number",
       "telegramNumber": "Telegram Number",
       "firstName": "First Name",
-      "lastName": "Last Name"
+      "lastName": "Last Name",
+      "generalInformation": "General Information",
+      "changePassword": "Change password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password"
     },
     "placeholders": {
       "mobileNumber": "Enter your mobile number",
       "whatsappNumber": "Enter your WhatsApp number",
       "telegramNumber": "Enter your Telegram number",
       "firstName": "Enter your first name",
-      "lastName": "Enter your last name"
+      "lastName": "Enter your last name",
+      "newPassword": "Enter your new password",
+      "confirmNewPassword": "Confirm your new password"
     },
    "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
    "changesMade": "Changes were made"
@@ -113,7 +133,8 @@
       "vatNumber": "VAT Number",
       "website": "Website",
       "updateButton": "Update Company",
-      "editProfile": "Edit Profile"
+      "editProfile": "Edit Profile",
+      "members": "Members"
     },
     "placeholders": {
       "companyName": "Enter company name",

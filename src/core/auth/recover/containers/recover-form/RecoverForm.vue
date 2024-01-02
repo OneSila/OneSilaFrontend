@@ -2,50 +2,53 @@
 import {reactive, Ref, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
-
-import {
-  injectAuth,
-  refreshUser,
-  replaceAuth,
-} from '../../../../../shared/modules/auth';
-import {useSafeRequest} from '../../../../../shared/modules/network';
-import {useEnterKeyboardListener} from '../../../../../shared/modules/keyboard';
-
-
 import {Button} from '../../../../../shared/components/atoms/button';
+import { requestLoginLinkMutation } from '../../../../../shared/api/mutations/auth.js'
 import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
-import Link from "../../../../../shared/components/atoms/link/Link.vue";
-import bgGradient from "../../../../../assets/images/auth/bg-gradient.png";
 
-const {t, locale} = useI18n();
-const {executeMutation, fetching} = useMutation();
+const { t } = useI18n();
 const router = useRouter();
 
 const form = reactive({
   email: '',
 });
 
-const errors: Ref<any[]> = ref([]);
 const requestSent = ref(false);
+const countdown = ref('');
+const countdownInterval = ref();
 
-const safeRequest = useSafeRequest(errors, () => {
-  errors.value = [];
+const startCountdown = (createdAt, expiresAt) => {
+  const endTime = new Date(expiresAt).getTime();
+  countdownInterval.value = setInterval(() => {
+    const now = new Date().getTime();
+    const timeLeft = endTime - now;
 
-  if (!form.email) {
-    errors.value.push(t('auth.login.missingEmail'));
-  }
-});
-
-const auth = injectAuth();
-
-const onRecoverClicked = async () => {
-  alert('recover account')
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval.value);
+      countdown.value = '00:00:00';
+    } else {
+      countdown.value = formatTime(timeLeft);
+    }
+  }, 1000);
 };
 
-useEnterKeyboardListener(() => {
-  onRecoverClicked();
-});
+const formatTime = (milliseconds) => {
+  let seconds = Math.floor(milliseconds / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+
+  seconds %= 60;
+  minutes %= 60;
+  hours %= 24;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+const onRecoverClicked = async (response) => {
+  requestSent.value = true;
+  startCountdown(response.data.recoveryToken?.createdAt, response.data.recoveryToken?.expiresAt);
+};
+
 </script>
 
 <template>
@@ -56,6 +59,10 @@ useEnterKeyboardListener(() => {
             {{ t('auth.recover.header') }}
         </h1>
         <p>{{ t('auth.recover.descriptionSent') }}</p>
+        <p class="mt-4">{{ t('auth.recover.descriptionCountdown') }}</p>
+      <p class="text-2xl font-bold text-primary dark:text-yellow-300 mt-2">
+        {{ countdown }}
+      </p>
     </div>
     </template>
     <template v-else>
@@ -70,9 +77,13 @@ useEnterKeyboardListener(() => {
     </TextInputPrepend>
 
     <div>
-      <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" @click="onRecoverClicked()">
-        {{ t('shared.button.recover') }}
-      </Button>
+    <ApolloMutation :mutation="requestLoginLinkMutation" :variables="{ username: form.email }" @done="onRecoverClicked">
+      <template v-slot="{ mutate, loading, error }">
+        <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" :disabled="loading" @click="mutate()">          {{ t('shared.button.recover') }}
+        </Button>
+        <p v-if="error">{{ error.message }}</p>
+      </template>
+    </ApolloMutation>
     </div>
     </template>
   </div>

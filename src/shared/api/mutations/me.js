@@ -1,29 +1,8 @@
 import { gql } from 'graphql-tag';
 
-// export const updateMeMutation = gql`
-//     mutation updateMe($firstName: String!, $lastName: String!, $mobileNumber: String, $whatsappNumber: String, $telegramNumber: String) {
-//       updateMe(data: {firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, telegramNumber: $telegramNumber}) {
-//         username
-//         lastName
-//         firstName
-//         mobileNumber
-//         whatsappNumber
-//         telegramNumber
-//         avatar {
-//           name
-//           path
-//           url
-//         }
-//         timezone
-//         isMultiTenantCompanyOwner
-//         dateJoined
-//       }
-//     }
-// `;
-
 export const updateMeMutation = gql`
-    mutation updateMe($mobileNumber: String, $whatsappNumber: String, $telegramNumber: String) {
-      updateMe(data: {mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, telegramNumber: $telegramNumber}) {
+    mutation updateMe($firstName: String!, $lastName: String!, $mobileNumber: String, $whatsappNumber: String, $telegramNumber: String, $timezone: String) {
+      updateMe(data: {firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, telegramNumber: $telegramNumber, timezone: $timezone}) {
         username
         lastName
         firstName

@@ -18,10 +18,10 @@
         </Flex>
     </template>
 
-        <template v-slot:right-section-header>
-          <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
-          <LanguageDropdown class="ms-auto w-max"/>
-        </template>
+    <template v-slot:right-section-header>
+      <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
+      <LanguageDropdown class="ms-auto w-max"/>
+    </template>
 
     <template v-slot:right-section-content>
         <RecoverForm />
@@ -34,7 +34,7 @@
 
 import Logo from "../../../shared/components/molecules/logo/Logo.vue";
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
-import RecoverForm from "./containers/recover-form/RecoverForm.vue";
+import { RecoverForm } from "./containers/recover-form";
 import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
 
 import bgGradient from '../../../assets/images/auth/bg-gradient.png';

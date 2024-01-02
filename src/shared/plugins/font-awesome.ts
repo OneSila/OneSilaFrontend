@@ -88,7 +88,9 @@ import {
   faTimesCircle,
   faCheckCircle,
   faTrashAlt,
-  faPlus
+  faPlus,
+  faIdCard,
+  faFilter
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -177,6 +179,8 @@ library.add(faTimesCircle as IconDefinition);
 library.add(faCheckCircle as IconDefinition);
 library.add(faTrashAlt as IconDefinition);
 library.add(faPlus as IconDefinition);
+library.add(faIdCard as IconDefinition);
+library.add(faFilter as IconDefinition);
 
 export default {
   install(app) {
