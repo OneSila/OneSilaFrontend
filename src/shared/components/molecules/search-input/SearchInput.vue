@@ -28,7 +28,15 @@ const route = useRoute();
 
 const updateRoute = debounce((newValue) => {
   if (props.updateRoute) {
-    router.push({ query: { ...route.query, [props.routeKey]: newValue } });
+    const updatedQuery = { ...route.query };
+
+    if (newValue !== '') {
+      updatedQuery[props.routeKey] = newValue;
+    } else {
+      delete updatedQuery[props.routeKey];
+    }
+
+    router.push({ query: updatedQuery });
   }
 }, props.debounce);
 

@@ -81,6 +81,7 @@ export interface SliderFilter extends BaseFilter {
 
 export interface OrderCriteria {
   name: string;
+  label: string;
   type: OrderType;
 }
 
@@ -89,6 +90,7 @@ export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFil
 export interface SearchConfig {
   search: boolean;
   cols?: number;
+  orderKey?: string;
   filters?: SearchFilter[];
   orders?: OrderCriteria[];
 }
@@ -96,6 +98,7 @@ export interface SearchConfig {
 
 export const defaultSearchConfig: SearchConfig = {
   search: false,
+  orderKey: "sort",
   cols: 1,
   filters: [],
   orders: []

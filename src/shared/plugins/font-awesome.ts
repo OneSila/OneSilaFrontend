@@ -90,7 +90,13 @@ import {
   faTrashAlt,
   faPlus,
   faIdCard,
-  faFilter
+  faFilter,
+  faSort,
+  faSortAsc,
+  faSortDesc,
+  faArrowDownWideShort,
+  faArrowUpWideShort,
+  faArrowRotateRight
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -181,6 +187,12 @@ library.add(faTrashAlt as IconDefinition);
 library.add(faPlus as IconDefinition);
 library.add(faIdCard as IconDefinition);
 library.add(faFilter as IconDefinition);
+library.add(faSort as IconDefinition);
+library.add(faSortAsc as IconDefinition);
+library.add(faSortDesc as IconDefinition);
+library.add(faArrowDownWideShort as IconDefinition);
+library.add(faArrowUpWideShort as IconDefinition);
+library.add(faArrowRotateRight as IconDefinition);
 
 export default {
   install(app) {

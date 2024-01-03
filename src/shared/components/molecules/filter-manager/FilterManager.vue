@@ -2,7 +2,7 @@
 import { ref, watch, defineProps } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '../../../plugins/store';
-import { booleanifyIfNeeded } from '../../../utils'
+import { booleanifyIfNeeded, getSelectedOrderIndex } from '../../../utils'
 import {SearchConfig, BaseFilter, OrderCriteria} from '../../organisms/general-search/searchConfig'
 
 const appStore = useAppStore();
@@ -19,23 +19,47 @@ if (props.searchConfig.search) {
   keysToWatch.value.push('search');
 }
 
+if (props.searchConfig.orderKey) {
+  keysToWatch.value.push(props.searchConfig.orderKey);
+}
+
 props.searchConfig.filters?.forEach((filter: BaseFilter) => {
   keysToWatch.value.push(filter.name);
-});
-
-props.searchConfig.orders?.forEach((order: OrderCriteria) => {
-  keysToWatch.value.push(order.name);
 });
 
 watch(() => route.query, (newQuery) => {
   const updatedVariables = {};
   keysToWatch.value.forEach(key => {
-    if (newQuery[key] !== undefined) {
+    if (newQuery[key] !== undefined && key != props.searchConfig.orderKey) {
       updatedVariables[key] = booleanifyIfNeeded(newQuery[key]);
     }
   });
   filterVariables.value = updatedVariables;
-  // For orderVariables, implement similar logic when orders are available
+
+  if (props.searchConfig.orderKey && newQuery[props.searchConfig.orderKey]) {
+    const selectedIndex = getSelectedOrderIndex(
+      props.searchConfig.orders,
+      newQuery,
+      props.searchConfig.orderKey
+    );
+
+    if (selectedIndex !== -1) {
+      const selectedOrder = props.searchConfig.orders ? props.searchConfig.orders[selectedIndex] : null;
+
+      if (selectedOrder) {
+        orderVariables.value = {
+          [selectedOrder.name]: selectedOrder.type
+        };
+      } else {
+        orderVariables.value = {};
+      }
+    } else {
+      orderVariables.value = {};
+    }
+  }
+
+  console.log(orderVariables.value)
+
 }, { immediate: true });
 
 </script>

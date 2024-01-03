@@ -1020,11 +1020,60 @@
 import { ref, watch } from 'vue';
 import { companiesQuery } from '../../../shared/api/queries/companies.js'
 import { languagesQuery } from '../../../shared/api/queries/languages.js'
-import { SearchConfig, FilterType, OrderCriteria, BaseFilter } from '../../../shared/components/organisms/general-search/searchConfig'
+import { SearchConfig, FilterType, OrderType } from '../../../shared/components/organisms/general-search/searchConfig'
 import { FilterManager } from '../../../shared/components/molecules/filter-manager'
 
 const searchConfig: SearchConfig = {
   search: true,
+  orderKey: "sort",
+  filters: [
+    {
+      type: FilterType.Boolean,
+      label: 'Is supplier',
+      name: 'isSupplier',
+      strict: true,
+    },
+    {
+      type: FilterType.Choice,
+      label: 'Test',
+      name: 'testChoice',
+      options: [{id: '1', test: "Test 1"}, {id: '2', test: "Test 2"}],
+      labelBy: "test",
+      valueBy: "id",
+      default: '2'
+    },
+    {
+      type: FilterType.Query,
+      query: languagesQuery,
+      label: 'Languages',
+      name: 'testQuery',
+      labelBy: "name",
+      valueBy: "code",
+      dataKey: "languages",
+      default: "en",
+      filterable: true,
+    },
+    //   {
+    //   type: FilterType.Value,
+    //   label: 'Age',
+    //   name: 'testValues',
+    //   minNumber: 18,
+    //   default: 25,
+    //   number: true
+    // },
+  ],
+  orders: [
+    {
+      name: "name",
+      label: "Name",
+      type: OrderType.ASC
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: OrderType.DESC
+    }
+  ]
 };
 
 </script>
@@ -1034,7 +1083,7 @@ const searchConfig: SearchConfig = {
   <div class="companies-query">
     <FilterManager :searchConfig="searchConfig">
       <template v-slot:variables="{ filterVariables, orderVariables }">
-        <ApolloQuery :query="companiesQuery" :variables="{ filters: filterVariables }">
+        <ApolloQuery :query="companiesQuery" :variables="{ filters: filterVariables, order: orderVariables }">
 
               <template v-slot="{ result: { loading, error, data }, query }">
 

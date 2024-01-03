@@ -59,6 +59,19 @@ export const truncate = (text: string, max = 10) => {
   return text.substring(0, max - 1) + (text.length > max ? '...' : '');
 };
 
+export const getSelectedOrderIndex = (orders, routeQuery, orderKey = 'sort') => {
+  const orderValue = String(routeQuery[orderKey]);
+  if (!orderValue) return -1;
+
+  const isDescending = orderValue.startsWith('-');
+  const orderName = isDescending ? orderValue.substring(1) : orderValue;
+
+  return orders?.findIndex(order =>
+    order.name === orderName &&
+    (isDescending ? order.type === 'DESC' : order.type === 'ASC')
+  ) ?? -1;
+};
+
 export const dataImageToBlob = (image: string) => {
   if (!window || window.window !== window) {
     throw new Error('This module is only available in browser');

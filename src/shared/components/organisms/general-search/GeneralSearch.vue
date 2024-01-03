@@ -7,7 +7,7 @@
       :debounce="1000"
       routeKey="search"
     />
-    <GeneralFilter v-if="searchConfig.filters?.length > 0" :searchConfig="searchConfig" />
+    <GeneralFilter :searchConfig="searchConfig" @filters-reset="clearSearchInput" />
   </div>
 </template>
 
@@ -26,6 +26,9 @@ const appStore = useAppStore();
 const searchConfig = ref<SearchConfig>(defaultSearchConfig);
 const route = useRoute();
 
+const clearSearchInput = () => {
+  search.value = '';
+};
 
 watch(() => route.query[routeKey.value], (newQueryValue) => {
   if (newQueryValue && typeof newQueryValue === 'string') {
