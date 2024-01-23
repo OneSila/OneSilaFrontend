@@ -4,11 +4,13 @@ import Icon from "../../atoms/icon/Icon.vue";
 import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
-import { injectAuth, isAuthenticated, setLanguageToUser } from '../../../modules/auth';
+import { injectAuth, isAuthenticated, setLanguageToUser, isActive } from '../../../modules/auth';
 import { useAppStore } from '../../../../shared/plugins/store';
 import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 
 const auth = injectAuth();
 const app = useAppStore();
@@ -16,8 +18,7 @@ const app = useAppStore();
 app.fetchLanguages();
 const changeLanguage = async (item: any) => {
 
-  if (isAuthenticated(auth)) {
-
+  if (isAuthenticated(auth) && isActive(auth)) {
       const { data } = await apolloClient.mutate({
       mutation: changeLanguageMutation,
       variables: {

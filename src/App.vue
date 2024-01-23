@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { hasCompany, injectAuth, isAuthenticated } from './shared/modules/auth';
+import { hasCompany, injectAuth, isActive, isAuthenticated } from './shared/modules/auth';
 import { ref } from "vue";
 import { useAppStore } from './shared/plugins/store';
 import SideBar from './shared/components/molecules/nav-bar/SideBar.vue';
 import HeaderBar from './shared/components/molecules/nav-bar/HeaderBar.vue';
-
-
 const sidebar: any = ref(false);
 
 const { locale } = useI18n();
@@ -28,7 +26,7 @@ const toggleSidebar = () => {
 <template>
     <div class="app">
 
-      <div v-if="isAuthenticated(auth) && hasCompany(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical"
+      <div v-if="isAuthenticated(auth) && hasCompany(auth) && isActive(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical"
                 :class="[sidebar ? 'toggle-sidebar' : '', app.rtlClass]">
 
         <div class="relative">

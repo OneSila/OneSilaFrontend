@@ -4,6 +4,7 @@ import { injectAuth, removeAuth } from "../../../modules/auth";
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { Link } from "../../atoms/link";
+import { Button } from "../../atoms/button";
 
 const auth = injectAuth();
 const user = ref(auth.user)

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import ProfileTemplate from "./ProfileTemplate.vue";
 import { ShowProfile } from './containers/show-profile';
 import { ProfileEdit } from "./containers/profile-edit";
@@ -11,8 +12,10 @@ import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const route = useRoute();
 const editView = ref(false);
 const unsavedChanges = ref(false);
+const tabItems = ref();
 
 const toggleEditView = () => {
   if (unsavedChanges.value && !confirm(t('profile.unsavedChanges'))) {
@@ -34,6 +37,20 @@ const handleUnsavedChanges = (hasChanges) => {
 const handleUpdateComplete = () => {
   editView.value = false;
 };
+
+
+onMounted(() => {
+  tabItems.value = [
+      { name: 'general', label: t('profile.tabs.general'), icon: 'id-card' },
+      { name: 'security', label: t('profile.tabs.security'), icon: 'cog' }
+    ];
+
+  const tabQueryParam = route.query.tab;
+  if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
+    editView.value = true;
+  }
+
+});
 
 </script>
 
@@ -58,7 +75,7 @@ const handleUpdateComplete = () => {
                     <ShowProfile :me-data="result.me" />
                   </div>
                   <div v-else>
-                    <ProfileEdit :me-data="result.me" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
+                    <ProfileEdit :me-data="result.me" :tabs="tabItems" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
                   </div>
                 </template>
                 <p v-if="error">{{ error.message }}</p>

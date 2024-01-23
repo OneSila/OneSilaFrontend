@@ -3,7 +3,7 @@ import * as VueRouter from 'vue-router';
 import { routes as authRoutes } from '../../../core/auth/routes';
 import { routes as profileRoutes } from '../../../core/profile/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
-import { detectAuth, isAuthenticated, hasCompany } from '../auth';
+import { detectAuth, isAuthenticated, hasCompany, isActive, removeAuth } from '../auth';
 import { Toast } from '../toast';
 import { useAppStore } from '../../plugins/store';
 
@@ -29,7 +29,7 @@ router.beforeEach((to, from, next) => {
   const routeName = (to.name as string) || '';
 
 
-    // Authenticated but does not have a company
+  // Authenticated but does not have a company
   if (isAuthenticated(auth) && !hasCompany(auth)) {
     if (routeName === 'auth.register.company') {
       return next();
@@ -37,8 +37,18 @@ router.beforeEach((to, from, next) => {
     return next({ name: 'auth.register.company' });
   }
 
+  // Authenticated but not active => didn't accepted the invitation
+  if (isAuthenticated(auth) && !isActive(auth)) {
+    if (routeName === 'auth.accept.invite.token') {
+      return next();
+    }
+    // we don't have the token to redirect too so if you are authenticated but not active we will just logout and go back to login
+    removeAuth(auth);
+    return next({ name: 'auth.login' });
+  }
+
   // Authenticated and trying to access a public page
-  if (PUBLIC_ROUTES.includes(routeName) && isAuthenticated(auth) && hasCompany(auth)) {
+  if (PUBLIC_ROUTES.includes(routeName) && isAuthenticated(auth) && hasCompany(auth) && isActive(auth)) {
     return next({ name: 'dashboard' });
   }
 

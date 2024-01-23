@@ -38,13 +38,12 @@ const onLoginClicked = async () => {
         firstName: user.firstName,
         lastName: user.lastName,
         company: user.multiTenantCompany,
-        companyOwner: user.isMultiTenantCompanyOwner
+        companyOwner: user.isMultiTenantCompanyOwner,
+        active: user.isActive
       });
 
-      // Assuming locale is a reactive ref from useI18n()
       locale.value = user.language;
 
-      // Use router.push() instead of router.replace() if you want to navigate without replacing the history entry
       router.push({ name: 'dashboard' });
     } else {
       throw new Error(t('auth.login.failed'));

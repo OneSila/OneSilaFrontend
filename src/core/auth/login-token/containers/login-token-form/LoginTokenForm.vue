@@ -1,46 +1,58 @@
 <script lang="ts" setup>
+import { reactive, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
-import { loginTokenMutation } from '../../../../../shared/api/mutations/auth.js';
+import { acceptUserInvitationMutation } from '../../../../../shared/api/mutations/auth.js';
+import apolloClient from '../../../../../../apollo-client';
 import { Button } from '../../../../../shared/components/atoms/button';
+import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
+import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const auth = injectAuth();
 
-const props = defineProps({
-  token: String,
-  buttonLabel: String
+const form = reactive({
+  password: '',
+  confirmPassword: ''
 });
 
-const onLoginCompleted = (response) => {
-  const user = response.data.authenticateToken;
-  if (user) {
-    refreshUser(auth, {
-      username: user.username,
-      language: user.language,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      company: user.multiTenantCompany,
-      companyOwner: user.isMultiTenantCompanyOwner
-    });
+const isFormValid = computed(() => {
+  return form.password && form.password === form.confirmPassword;
+});
 
-    router.push({ name: 'profile.user' });
+const onAcceptInvitationCompleted = async (response) => {
+
+  if (response.data.acceptUserInvitation) {
+    router.push({ name: 'dashboard' });
   } else {
-    console.error('Token authentication failed');
+    // add a toast
   }
+
 };
 </script>
 
-
 <template>
-  <ApolloMutation :mutation="loginTokenMutation" :variables="{ token }" @done="onLoginCompleted">
-    <template v-slot="{ mutate, loading, error }">
-      <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" :disabled="loading" @click="mutate()">
-        {{ buttonLabel }}
-      </Button>
-      <p v-if="error">{{ error.message }}</p>
-    </template>
-  </ApolloMutation>
+  <div>
+    <TextInputPrepend id="password" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
+      <Icon name="lock"/>
+    </TextInputPrepend>
+    <TextInputPrepend id="confirmPassword" v-model="form.confirmPassword" :label="t('auth.register.labels.confirmPassword')" :placeholder="t('auth.register.placeholders.confirmPassword')" type="password">
+      <Icon name="lock"/>
+    </TextInputPrepend>
+
+    <ApolloMutation :mutation="acceptUserInvitationMutation" :variables="{ password: form.password, language: locale }" @done="onAcceptInvitationCompleted">
+      <template v-slot="{ mutate, loading, error }">
+        <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
+                :disabled="loading || !isFormValid"
+                @click="mutate">
+          {{ t('auth.acceptInvitation.button.setPassword') }}
+        </Button>
+        <p v-if="error">{{ error.message }}</p>
+      </template>
+    </ApolloMutation>
+  </div>
 </template>
+
+

@@ -12,6 +12,7 @@ export const updateMeMutation = gql`
         avatarResizedFullUrl
         timezone
         isMultiTenantCompanyOwner
+        isActive
         dateJoined
       }
     }
@@ -32,4 +33,22 @@ export const updateMyCompanyMutation = gql`
       website
     }
   }
+`;
+
+export const updateMyPasswordMutation = gql`
+    mutation updateMyPassword($password: String!) {
+      updateMyPassword(data: {password: $password}) {
+        username
+        lastName
+        firstName
+        mobileNumber
+        whatsappNumber
+        telegramNumber
+        avatarResizedFullUrl
+        timezone
+        isMultiTenantCompanyOwner
+        isActive
+        dateJoined
+      }
+    }
 `;

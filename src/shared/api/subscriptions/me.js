@@ -11,6 +11,7 @@ export const meSubscription = gql`
         telegramNumber
         timezone
         isMultiTenantCompanyOwner
+        isActive
         dateJoined
         avatarResizedFullUrl
       }
@@ -37,6 +38,7 @@ export const meCompanySubscription = gql`
           lastName
           firstName
           isMultiTenantCompanyOwner
+          isActive
           invitationAccepted
         }
     }

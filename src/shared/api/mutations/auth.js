@@ -22,6 +22,7 @@ mutation Login($username: String!, $password: String!) {
     lastName
     language
     isMultiTenantCompanyOwner
+    isActive
     multiTenantCompany {
       id
     }
@@ -36,6 +37,22 @@ mutation loginToken($token: String!) {
     lastName
     language
     isMultiTenantCompanyOwner
+    isActive
+    multiTenantCompany {
+      id
+    }
+  }
+}`;
+
+export const acceptUserInvitationMutation = gql`
+mutation loginToken($language: String!, $password: String!) {
+  acceptUserInvitation(data: {language: $language, password: $password}){
+    username
+    firstName
+    lastName
+    language
+    isMultiTenantCompanyOwner
+    isActive
     multiTenantCompany {
       id
     }

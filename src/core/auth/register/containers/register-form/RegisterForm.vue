@@ -48,7 +48,8 @@ const afterRegister = async () => {
         firstName: user.firstName,
         lastName: user.lastName,
         company: user.multiTenantCompany,
-        companyOwner: user.isMultiTenantCompanyOwner
+        companyOwner: user.isMultiTenantCompanyOwner,
+        active: user.isActive
       });
 
       locale.value = user.language;

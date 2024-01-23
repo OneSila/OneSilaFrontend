@@ -1,3 +1,68 @@
+<script lang="ts" setup>
+
+import { ref } from 'vue';
+import Logo from "../../../shared/components/molecules/logo/Logo.vue";
+import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
+import { LoginTokenForm } from "./containers/login-token-form";
+import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
+import bgGradient from '../../../assets/images/auth/bg-gradient.png';
+import comingSoonObject1 from '../../../assets/images/auth/coming-soon-object1.png';
+import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.png';
+import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
+import polygonObject from '../../../assets/images/auth/polygon-object.svg';
+import recoverAccount from '../../../assets/images/auth/recover-account.svg';
+import Image from "../../../shared/components/atoms/image/Image.vue";
+import AuthTemplate from "../AuthTemplate.vue";
+import { injectAuth, refreshUser } from '../../../shared/modules/auth';
+import { loginTokenMutation } from '../../../shared/api/mutations/auth.js';
+import apolloClient from '../../../../apollo-client';
+
+import { useI18n } from 'vue-i18n';
+import { useRouter, useRoute } from 'vue-router';
+
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
+const token = ref(route.params.token);
+const auth = injectAuth();
+const errors = ref([]);
+
+const executeMutation = async () => {
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: loginTokenMutation,
+      variables: { token: token.value },
+    });
+
+    if (data && data.authenticateToken) {
+      const user = data.authenticateToken;
+      refreshUser(auth, {
+        username: user.username,
+        language: user.language,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        company: user.multiTenantCompany,
+        companyOwner: user.isMultiTenantCompanyOwner,
+        active: user.isActive
+      });
+
+      router.push({
+          name: 'profile.user',
+          query: { tab: 'security' }
+      });
+    } else {
+      throw new Error(t('auth.recover.tokenFailed'));
+    }
+  } catch (err) {
+    console.error('Token authentication failed:', err);
+    errors.value = err.graphQLErrors.map(x => x.message);
+  }
+};
+
+executeMutation();
+
+</script>
+
 <template>
   <AuthTemplate>
     <template v-slot:background-image>
@@ -28,35 +93,12 @@
         <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
           {{ t('auth.recover.tokenHeader') }}
         </h1>
-        <p>{{ t('auth.recover.tokenDescription') }}</p>
+        <div v-if="errors.length">
+          <p v-for="error in errors">{{ error }}</p>
+        </div>
       </div>
-      <LoginTokenForm :token="token" :button-label="t('auth.recover.button.recover')" />
+
     </template>
 
   </AuthTemplate>
 </template>
-
-<script lang="ts" setup>
-
-import { ref } from 'vue';
-import Logo from "../../../shared/components/molecules/logo/Logo.vue";
-import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
-import { LoginTokenForm } from "./containers/login-token-form";
-import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
-import bgGradient from '../../../assets/images/auth/bg-gradient.png';
-import comingSoonObject1 from '../../../assets/images/auth/coming-soon-object1.png';
-import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.png';
-import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
-import polygonObject from '../../../assets/images/auth/polygon-object.svg';
-import recoverAccount from '../../../assets/images/auth/recover-account.svg';
-import Image from "../../../shared/components/atoms/image/Image.vue";
-import AuthTemplate from "../AuthTemplate.vue";
-import { useI18n } from 'vue-i18n';
-import { useRouter, useRoute } from 'vue-router';
-
-const { t } = useI18n();
-const router = useRouter();
-const route = useRoute();
-const token = ref(route.params.token);
-
-</script>

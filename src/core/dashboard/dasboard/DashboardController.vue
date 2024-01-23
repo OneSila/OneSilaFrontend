@@ -1063,16 +1063,16 @@ const searchConfig: SearchConfig = {
     // },
   ],
   orders: [
-    {
-      name: "name",
-      label: "Name",
-      type: OrderType.ASC
-    },
-    {
-      name: "name",
-      label: "Name",
-      type: OrderType.DESC
-    }
+    // {
+    //   name: "name",
+    //   label: "Name",
+    //   type: OrderType.ASC
+    // },
+    // {
+    //   name: "name",
+    //   label: "Name",
+    //   type: OrderType.DESC
+    // }
   ]
 };
 
