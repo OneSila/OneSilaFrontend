@@ -5,31 +5,15 @@ export const navSections = [
         {
             title: 'Contacts',
             icon: 'envelope',
-            subItemsKey: 'properties',
+            subItemsKey: 'contacts',
             "subItems": [
                     {
                         route: { name: 'dashboard' },
-                        title: 'Customers'
+                        title: 'Companies'
                     },
                     {
-                        route: { name: 'dashboard' },
-                        title: 'Suppliers',
-                    },
-                    {
-                        route: { name: 'dashboard' },
-                        title: 'People'
-                    },
-                    {
-                        route: { name: 'dashboard' },
-                        title: 'Internal Companies'
-                    },
-                    {
-                        route: { name: 'dashboard' },
-                        title: 'Shipping Addresses'
-                    },
-                    {
-                        route: { name: 'dashboard' },
-                        title: 'Invoice Addresses'
+                        route: { name: 'people.list' },
+                        title: 'People',
                     },
                 ]
             },

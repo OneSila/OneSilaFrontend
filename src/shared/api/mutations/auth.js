@@ -29,8 +29,8 @@ mutation Login($username: String!, $password: String!) {
   }
 }`;
 
-export const loginTokenMutation = gql`
-mutation loginToken($token: String!) {
+export const authenticateTokenMutation = gql`
+mutation authenticateToken($token: String!) {
   authenticateToken(token: $token) {
     username
     firstName
@@ -45,7 +45,7 @@ mutation loginToken($token: String!) {
 }`;
 
 export const acceptUserInvitationMutation = gql`
-mutation loginToken($language: String!, $password: String!) {
+mutation acceptUserInvitation($language: String!, $password: String!) {
   acceptUserInvitation(data: {language: $language, password: $password}){
     username
     firstName

@@ -26,3 +26,31 @@ export const companiesQuery = gql`
     }
   }
 `;
+
+export const peopleQuery = gql`
+query People($first: Int, $last: Int, $after: String, $before: String, $order: PersonOrder) {
+  people(first: $first, last: $last, after: $after, before: $before, order: $order) {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        company {
+          name
+        }
+        phone
+        email
+        language
+      }
+      cursor
+    }
+    totalCount
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+`;

@@ -5,6 +5,7 @@ export enum FilterType {
   Query = "Query",
   Calendar = "Calendar",
   Slider = "Slider",
+  Checkbox = "Checkbox",
 }
 
 export enum OrderType {
@@ -79,13 +80,19 @@ export interface SliderFilter extends BaseFilter {
   type: FilterType.Slider;
 }
 
+export interface CheckboxFilter extends BaseFilter {
+  type: FilterType.Checkbox;
+  uncheckedValue?: 'null' | 'false';
+}
+
+
 export interface OrderCriteria {
   name: string;
   label: string;
   type: OrderType;
 }
 
-export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | CalendarFilter | SliderFilter;
+export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | CalendarFilter | SliderFilter | CheckboxFilter;
 
 export interface SearchConfig {
   search: boolean;
@@ -93,6 +100,7 @@ export interface SearchConfig {
   orderKey?: string;
   filters?: SearchFilter[];
   orders?: OrderCriteria[];
+  limitPerPage?: number;
 }
 
 
@@ -101,5 +109,15 @@ export const defaultSearchConfig: SearchConfig = {
   orderKey: "sort",
   cols: 1,
   filters: [],
-  orders: []
+  orders: [],
+  limitPerPage: 20
 };
+
+export const defaultSearchConfigVals = {
+  search: false,
+  orderKey: "sort",
+  cols: 1,
+  filters: [],
+  orders: [],
+  limitPerPage: 20
+} as const;

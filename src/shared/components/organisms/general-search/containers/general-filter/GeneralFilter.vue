@@ -77,7 +77,6 @@ const resetFilters = () => {
 
   <GeneralOrdering :search-config="searchConfig" v-if="searchConfig.orders?.length > 0"  />
 
-
     <Button
         v-if="hasFilters"
         custom-class="flex items-center ml-2 p-2 w-10 h-10 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60 bg-red-50"

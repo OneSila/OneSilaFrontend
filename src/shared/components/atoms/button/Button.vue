@@ -39,6 +39,7 @@ const onClicked = (event) => {
 <template>
   <button
     :class="classs"
+    :style="{ opacity: props.disabled ? 0.6 : 1 }"
     type="button"
     @click="onClicked"
   >
@@ -46,6 +47,3 @@ const onClicked = (event) => {
     <slot v-else />
   </button>
 </template>
-
-
-<style scoped></style>

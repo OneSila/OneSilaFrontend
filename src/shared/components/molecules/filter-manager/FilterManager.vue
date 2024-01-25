@@ -3,14 +3,22 @@ import { ref, watch, defineProps } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '../../../plugins/store';
 import { booleanifyIfNeeded, getSelectedOrderIndex } from '../../../utils'
-import {SearchConfig, BaseFilter, OrderCriteria} from '../../organisms/general-search/searchConfig'
+import { defaultSearchConfigVals, SearchConfig, BaseFilter, OrderCriteria} from '../../organisms/general-search/searchConfig'
 
 const appStore = useAppStore();
 const props = defineProps<{ searchConfig: SearchConfig }>();
 
 const route = useRoute();
 const filterVariables = ref({});
-const orderVariables = ref({}); // Placeholder for future implementation
+const orderVariables = ref({});
+
+// pagination variations
+const first = ref<number | null>(null);
+const last = ref<number | null>(null);
+const before = ref<string | null>(null);
+const after = ref<string | null>(null);
+
+const limit: number = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
 
 const keysToWatch = ref<string[]>([]);
 appStore.setSearchConfig(props.searchConfig);
@@ -26,6 +34,18 @@ if (props.searchConfig.orderKey) {
 props.searchConfig.filters?.forEach((filter: BaseFilter) => {
   keysToWatch.value.push(filter.name);
 });
+
+const setPaginationVariables = (
+  firstVal: number | null = null,
+  lastVal: number | null = null,
+  beforeVal: string | null = null,
+  afterVal: string | null = null
+) => {
+  first.value = firstVal;
+  last.value = lastVal;
+  before.value = beforeVal;
+  after.value = afterVal;
+};
 
 watch(() => route.query, (newQuery) => {
   const updatedVariables = {};
@@ -58,12 +78,36 @@ watch(() => route.query, (newQuery) => {
     }
   }
 
-  console.log(orderVariables.value)
+  // now let's deal with pagination
+  const beforeValue = typeof newQuery.before === 'string' ? newQuery.before : null;
+  const afterValue = typeof newQuery.after === 'string' ? newQuery.after : null;
+
+  if (newQuery.before) {
+    setPaginationVariables(null, limit, beforeValue, null);
+  }
+  if (newQuery.after) {
+    setPaginationVariables(limit, null, null, afterValue);
+  }
+  if (newQuery.last === 'true') {
+    setPaginationVariables(null, limit, null, null);
+  }
+  if (newQuery.first === 'true') {
+    setPaginationVariables(limit, null, null, null);
+  }
+
+  // if no parameter show first page
+  if (first.value == null && last.value == null && before.value == null && after.value == null) {
+    first.value = limit;
+  }
 
 }, { immediate: true });
 
 </script>
 
 <template>
-  <slot name="variables" :filterVariables="filterVariables" :orderVariables="orderVariables"></slot>
+  <slot name="variables"
+        :filterVariables="filterVariables"
+        :orderVariables="orderVariables"
+        :pagination="{ first: first, last: last, before: before, after: after }"
+  ></slot>
 </template>

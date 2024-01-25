@@ -10,6 +10,7 @@ import { FilterChoice } from './containers/filter-choice';
 import { FilterQuery } from './containers/filter-query';
 import { FilterCalendar } from './containers/filter-calendar';
 import { FilterSlider } from './containers/filter-slider';
+import { FilterCheckbox } from './containers/filter-checkbox';
 
 const props = defineProps<{ filters: BaseFilter[], cols: number }>();
 const emit = defineEmits(['cancel-clicked', 'submit-clicked']);
@@ -26,6 +27,7 @@ const getFilterComponent = (type) => {
     case FilterType.Query: return FilterQuery;
     case FilterType.Calendar: return FilterCalendar;
     case FilterType.Slider: return FilterSlider;
+    case FilterType.Checkbox: return FilterCheckbox;
     default: return null;
   }
 };

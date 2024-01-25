@@ -2,6 +2,7 @@ import * as VueRouter from 'vue-router';
 
 import { routes as authRoutes } from '../../../core/auth/routes';
 import { routes as profileRoutes } from '../../../core/profile/routes';
+import { routes as contactsRoutes } from '../../../core/contacts/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
 import { detectAuth, isAuthenticated, hasCompany, isActive, removeAuth } from '../auth';
 import { Toast } from '../toast';
@@ -15,6 +16,7 @@ export function buildRouter() {
     routes: [
       ...authRoutes,
       ...profileRoutes,
+      ...contactsRoutes,
       {
         path: '',
         name: 'dashboard',

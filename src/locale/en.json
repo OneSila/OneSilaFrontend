@@ -1,5 +1,20 @@
 {
+  "pagination": {
+    "first": "First",
+    "prev": "Prev",
+    "next": "Next",
+    "last": "Last",
+    "total": "Total of {num}"
+  },
   "shared": {
+    "alert": {
+      "mutationAlert": {
+        "title": "Are you sure?",
+        "text": "You won't be able to revert this!",
+        "confirmButtonText": "Yes, delete it!",
+        "cancelButtonText": "No, cancel!"
+      }
+    },
     "button": {
       "login": "Sign in",
       "register": "Sign up",

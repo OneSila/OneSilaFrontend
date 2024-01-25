@@ -14,7 +14,7 @@ import recoverAccount from '../../../assets/images/auth/recover-account.svg';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
 import { injectAuth, refreshUser } from '../../../shared/modules/auth';
-import { loginTokenMutation } from '../../../shared/api/mutations/auth.js';
+import { authenticateTokenMutation } from '../../../shared/api/mutations/auth.js';
 import apolloClient from '../../../../apollo-client';
 
 import { useI18n } from 'vue-i18n';
@@ -30,7 +30,7 @@ const errors = ref([]);
 const executeMutation = async () => {
   try {
     const { data } = await apolloClient.mutate({
-      mutation: loginTokenMutation,
+      mutation: authenticateTokenMutation,
       variables: { token: token.value },
     });
 

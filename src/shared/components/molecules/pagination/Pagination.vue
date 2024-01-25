@@ -1,181 +1,125 @@
 <script setup lang="ts">
-import { TertiaryButton } from '../tertiary-button';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { Button } from './../../atoms/button';
+import { Icon } from './../../atoms/icon';
+import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
   defineProps<{
-    page?: number;
-    pages?: number;
-    hasNext?: boolean;
-    breakRows?: boolean;
+    pageInfo: {
+      endCursor: string;
+      startCursor: string;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    };
+    alignment: 'start' | 'center' | 'end';
+    buttonClass: 'default' | 'solid' | 'rounded';
+    useIcons: boolean;
   }>(),
-  { page: 1, pages: 1, hasNext: true },
+  {
+    alignment: 'center',
+    buttonClass: 'default',
+    useIcons: false
+  }
 );
 
-const visiblePages = () => {
-  const pages: number[] = [];
+const { t } = useI18n();
+const router = useRouter();
 
-  for (let page = 1; page <= props.pages; page++) {
-    const pagesLeft = props.pages - props.page;
+const buttonClasses = {
+  default: `
+    flex justify-center font-semibold px-3.5 py-2 rounded transition
+    text-dark hover:text-primary border-2 border-[#e0e6ed]
+    dark:border-[#191e3a] hover:border-primary dark:hover:border-primary dark:text-white-light
+  `,
+  solid: `
+    flex justify-center font-semibold px-3.5 py-2 rounded transition
+    bg-white-light text-dark hover:text-white hover:bg-primary
+    dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary
+  `,
+  rounded: `
+    flex justify-center font-semibold p-2 rounded-full transition
+    bg-white-light text-dark hover:text-white hover:bg-primary
+    dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary
+  `
+};
 
-    if (props.page > 4 && props.page - page > 3) {
-      continue;
-    }
+const alignmentClasses = computed(() => {
+  switch (props.alignment) {
+    case 'start':
+      return 'justify-start';
+    case 'end':
+      return 'justify-end';
+    default:
+      return 'justify-center';
+  }
+});
 
-    if (pagesLeft > 3 && page < props.page + 4) {
-      pages.push(page);
-    }
 
-    if (pagesLeft <= 3) {
-      pages.push(page);
+const updateQueryParams = (updates) => {
+  const newQuery = { ...router.currentRoute.value.query };
+  const paginationKeys = ['before', 'after', 'first', 'last'];
+  paginationKeys.forEach(key => {
+    delete newQuery[key];
+  });
+
+  for (const key in updates) {
+    if (updates[key] !== null) {
+      newQuery[key] = updates[key];
     }
   }
 
-  return pages;
+  router.push({ query: newQuery });
 };
 
-const showPreviousButton = () => {
-  return props.page > 1;
-};
+// Pagination control methods
+const clickFirst = () => updateQueryParams({first: 'true'});
+const clickLast = () => updateQueryParams({ last: 'true' });
+const clickNext = () => props.pageInfo.hasNextPage && updateQueryParams({ after: props.pageInfo.endCursor });
+const clickPrevious = () => props.pageInfo.hasPreviousPage && updateQueryParams({ before: props.pageInfo.startCursor });
 
-const showPreviousEllipses = () => {
-  return props.page > 5;
-};
+const buttons = computed(() => [
+  {
+    key: 'first',
+    action: clickFirst,
+    label: t('pagination.first'),
+    icon: 'angle-double-left',
+    disabled: !props.pageInfo.hasPreviousPage
+  },
+  {
+    key: 'prev',
+    action: clickPrevious,
+    label: t('pagination.prev'),
+    icon: 'chevron-left',
+    disabled: !props.pageInfo.hasPreviousPage
+  },
+  {
+    key: 'next',
+    action: clickNext,
+    label: t('pagination.next'),
+    icon: 'chevron-right',
+    disabled: !props.pageInfo.hasNextPage
+  },
+  {
+    key: 'last',
+    action: clickLast,
+    label: t('pagination.last'),
+    icon: 'angle-double-right',
+    disabled: !props.pageInfo.hasNextPage
+  }
+]);
 
-const showFirstPageButton = () => {
-  return props.page > 4;
-};
-
-const showNextButton = () => {
-  return props.page < props.pages || props.hasNext;
-};
-
-const showNextEllipses = () => {
-  return props.pages - props.page > 4;
-};
-
-const showLastPageButton = () => {
-  return props.pages - props.page > 3;
-};
-
-const isActivePage = (page: number) => {
-  return page === props.page;
-};
 </script>
 
+
 <template>
-  <div class="pagination">
-    <Flex v-if="breakRows" class="broken-pagination" gap="2" vertical>
-      <FlexCell>
-        <Flex gap="2">
-          <FlexCell v-if="showFirstPageButton()" grow>
-            <TertiaryButton
-              class="w-full px-2"
-              :inverse="isActivePage(1)"
-              @click="$emit('next', 1)"
-              >&laquo;&laquo; First</TertiaryButton
-            >
-          </FlexCell>
-
-          <FlexCell v-if="showLastPageButton()" grow>
-            <TertiaryButton
-              class="w-full px-2"
-              :inverse="isActivePage(pages)"
-              @click="$emit('next', pages)"
-              >Last ({{ pages }}) &raquo;&raquo;</TertiaryButton
-            >
-          </FlexCell>
-        </Flex>
-      </FlexCell>
-
-      <FlexCell>
-        <Flex gap="2" between>
-          <FlexCell
-            v-for="currentPage in visiblePages()"
-            :key="`page-item-${currentPage}`"
-            class="page-item w-full"
-          >
-            <TertiaryButton
-              class="px-2 w-full"
-              :inverse="isActivePage(currentPage)"
-              @click="$emit('next', currentPage)"
-              >{{ currentPage }}</TertiaryButton
-            >
-          </FlexCell>
-        </Flex>
-      </FlexCell>
-
-      <FlexCell>
-        <Flex gap="2">
-          <FlexCell v-if="showPreviousButton()" grow>
-            <TertiaryButton
-              class="w-full px-2"
-              @click="$emit('previous', page - 1)"
-              >&laquo; Prev</TertiaryButton
-            >
-          </FlexCell>
-
-          <FlexCell v-if="showNextButton()" grow>
-            <TertiaryButton class="w-full px-2" @click="$emit('next', page + 1)"
-              >Next &raquo;</TertiaryButton
-            >
-          </FlexCell>
-        </Flex>
-      </FlexCell>
-    </Flex>
-
-    <Flex v-else class="unbreakable-pagination" gap="2" wrap>
-      <FlexCell>
-        <TertiaryButton
-          v-if="showPreviousButton()"
-          class="px-2"
-          @click="$emit('previous', page - 1)"
-          >&laquo; Prev</TertiaryButton
-        >
-      </FlexCell>
-
-      <FlexCell v-if="showFirstPageButton()" class="page-item">
-        <TertiaryButton
-          class="px-2"
-          :inverse="isActivePage(1)"
-          @click="$emit('next', 1)"
-          >1</TertiaryButton
-        >
-      </FlexCell>
-
-      <FlexCell v-if="showPreviousEllipses()">..</FlexCell>
-
-      <FlexCell
-        v-for="currentPage in visiblePages()"
-        :key="`page-item-${currentPage}`"
-        class="page-item"
-      >
-        <TertiaryButton
-          class="px-2"
-          :inverse="isActivePage(currentPage)"
-          @click="$emit('next', currentPage)"
-          >{{ currentPage }}</TertiaryButton
-        >
-      </FlexCell>
-
-      <FlexCell v-if="showNextEllipses()">..</FlexCell>
-
-      <FlexCell v-if="showLastPageButton()" class="page-item">
-        <TertiaryButton
-          class="px-2"
-          :inverse="isActivePage(pages)"
-          @click="$emit('next', pages)"
-          >{{ pages }}</TertiaryButton
-        >
-      </FlexCell>
-
-      <FlexCell>
-        <TertiaryButton
-          v-if="showNextButton()"
-          class="px-2"
-          @click="$emit('next', page + 1)"
-          >Next &raquo;</TertiaryButton
-        >
-      </FlexCell>
-    </Flex>
-  </div>
+  <ul :class="`flex items-center space-x-1 rtl:space-x-reverse m-auto ${alignmentClasses}`">
+    <li v-for="button in buttons" :key="button.key" >
+      <Button :customClass="buttonClasses[buttonClass]" @click="button.action" :disabled="button.disabled">
+        <Icon v-if="useIcons && button.icon" :name="button.icon" />
+        <span v-else>{{ button.label }}</span>
+      </Button>
+    </li>
+  </ul>
 </template>

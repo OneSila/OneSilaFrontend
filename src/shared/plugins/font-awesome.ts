@@ -9,6 +9,7 @@ import {
   faAngleDown,
   faAngleRight,
   faAngleDoubleRight,
+  faAngleDoubleLeft,
   faBoxes,
   faBars,
   faSlidersH,
@@ -105,6 +106,7 @@ library.add(faFire as IconDefinition);
 library.add(faAngleDown as IconDefinition);
 library.add(faAngleRight as IconDefinition);
 library.add(faAngleDoubleRight as IconDefinition);
+library.add(faAngleDoubleLeft as IconDefinition);
 library.add(faBoxes as IconDefinition);
 library.add(faBars as IconDefinition);
 library.add(faSlidersH as IconDefinition);

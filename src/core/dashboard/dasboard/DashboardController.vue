@@ -1028,31 +1028,30 @@ const searchConfig: SearchConfig = {
   orderKey: "sort",
   filters: [
     {
-      type: FilterType.Boolean,
+      type: FilterType.Checkbox,
       label: 'Is supplier',
       name: 'isSupplier',
-      strict: true,
     },
-    {
-      type: FilterType.Choice,
-      label: 'Test',
-      name: 'testChoice',
-      options: [{id: '1', test: "Test 1"}, {id: '2', test: "Test 2"}],
-      labelBy: "test",
-      valueBy: "id",
-      default: '2'
-    },
-    {
-      type: FilterType.Query,
-      query: languagesQuery,
-      label: 'Languages',
-      name: 'testQuery',
-      labelBy: "name",
-      valueBy: "code",
-      dataKey: "languages",
-      default: "en",
-      filterable: true,
-    },
+    // {
+    //   type: FilterType.Choice,
+    //   label: 'Test',
+    //   name: 'testChoice',
+    //   options: [{id: '1', test: "Test 1"}, {id: '2', test: "Test 2"}],
+    //   labelBy: "test",
+    //   valueBy: "id",
+    //   default: '2'
+    // },
+    // {
+    //   type: FilterType.Query,
+    //   query: languagesQuery,
+    //   label: 'Languages',
+    //   name: 'testQuery',
+    //   labelBy: "name",
+    //   valueBy: "code",
+    //   dataKey: "languages",
+    //   default: "en",
+    //   filterable: true,
+    // },
     //   {
     //   type: FilterType.Value,
     //   label: 'Age',
