@@ -6,7 +6,7 @@ import { CompanyProfileEditForm } from "./containers/company-profile-edit-form";
 import { CompanyMembersList } from "./containers/company-members-list";
 import { Button } from "../../../shared/components/atoms/button";
 import { ApolloSubscription } from "./../../../shared/components/molecules/apollo-subscription";
-import { meCompanySubscription } from "./../../../shared/api/subscriptions/me";
+import { meCompanySubscription } from "./../../../shared/api/subscriptions/me.js";
 import IconPencilPaper from '../../../shared/components/atoms/icons/icon-pencil-paper.vue';
 import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
 import { useI18n } from 'vue-i18n';

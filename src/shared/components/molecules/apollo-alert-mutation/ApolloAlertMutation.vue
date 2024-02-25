@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import {defineProps, defineEmits, onMounted} from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 
@@ -14,12 +14,6 @@ interface SwalOptions {
   padding?: string;
 }
 
-interface SwalClasses {
-  popup?: string;
-  confirmButton?: string;
-  cancelButton?: string;
-}
-
 const { t } = useI18n();
 
 const props = defineProps({
@@ -30,7 +24,11 @@ const props = defineProps({
   swalClasses: Object as () => SwalClasses
 });
 
-const emit = defineEmits(['done']);
+interface SwalClasses {
+  popup?: string;
+  confirmButton?: string;
+  cancelButton?: string;
+}
 
 const defaultSwalOptions = {
   title: t('shared.alert.mutationAlert.title'),
@@ -47,7 +45,8 @@ const defaultSwalClasses = {
   popup: 'sweet-alerts',
   confirmButton: 'btn btn-secondary',
   cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3'
-};
+}
+
 const confirmAndMutate = async (mutate) => {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: { ...defaultSwalClasses, ...props.swalClasses },
@@ -61,6 +60,7 @@ const confirmAndMutate = async (mutate) => {
   }
 };
 
+const emit = defineEmits(['done']);
 
 const handleDone = (result) => {
   emit('done', result);

@@ -20,11 +20,9 @@ const app = createApp({
   render: () => h(App),
 })
 
-app.use(apolloProvider)
-
-app.use(VueApolloComponents)
-
 app.use(plugins);
+app.use(apolloProvider)
+app.use(VueApolloComponents)
 
 const auth = reactive(detectAuth());
 app.provide(AuthKey, auth);

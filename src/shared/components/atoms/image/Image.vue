@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ source: any; cover?: boolean }>()
+const props = defineProps<{ source: any; cover?: boolean; alt: string; }>()
 
 const emit = defineEmits<{
   (e: 'loaded', size: { width: number; height: number; }): void
@@ -16,5 +16,5 @@ const onLoaded = (event) => {
 </script>
 
 <template>
-  <img :src="source" :class="classMap" @load="onLoaded" />
+  <img :src="source" :class="classMap" :alt="alt" @load="onLoaded" />
 </template>

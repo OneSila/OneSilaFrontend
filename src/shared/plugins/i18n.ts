@@ -9,8 +9,11 @@ export default {
     const i18n = createI18n({
       locale: import.meta.env.VITE_APP_LOCALE || DEFAULT_LANGUAGE.code,
       fallbackLocale: DEFAULT_LANGUAGE.code,
+      legacy: false,
       allowComposition: true,
       globalInjection: true,
+      fallbackWarn: false,
+      missingWarn: false,
       messages: locale as any,
     });
 

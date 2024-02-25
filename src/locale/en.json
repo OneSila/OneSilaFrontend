@@ -21,7 +21,18 @@
       "recover": "Recover",
       "update": "Update",
       "invite": "Invite",
-      "search": "Search"
+      "search": "Search",
+      "save": "Save",
+      "back": "Back",
+      "cancel": "Cancel",
+      "saveAndContinue": "Save & Continue",
+      "delete": "Delete",
+      "edit": "Edit",
+      "show": "Show",
+      "submit": "Submit"
+    },
+    "labels": {
+      "name": "Name"
     }
   },
   "auth": {
@@ -172,6 +183,28 @@
       "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
       "changesMade": "Changes were made",
       "joined": "Joined"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "companies": {
+      "title": "Companies",
+      "create": {
+        "button": "Add Company",
+        "title": "Create Company"
+      },
+      "labels": {
+        "eori": "Eori number",
+        "vat": "VAT number",
+        "supplier": "Supplier",
+        "customer": "Customer",
+        "influencer": "Influencer",
+        "internalCompany": "Internal Company"
+      }
+
+    },
+    "people": {
+      "title": "People"
     }
   }
 }
