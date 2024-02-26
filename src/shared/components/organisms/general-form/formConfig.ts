@@ -209,19 +209,24 @@ export const cleanUpDataForMutation = (formData, fields) => {
       }
 
   // Check if fieldValue is already in the correct format
-  if (Array.isArray(fieldValue) && fieldValue.every(item => typeof item === 'object' && item.hasOwnProperty(field.formMapIdentifier))) {
-    // Map each item to an object that only contains the formMapIdentifier key
-    cleanedData[field.name] = fieldValue.map(item => ({
-      [field.formMapIdentifier]: item[field.formMapIdentifier]
-    }));
-    return;
-  }
+      if (field.multiple) {
+          if (Array.isArray(fieldValue) && fieldValue.every(item => typeof item === 'object' && item.hasOwnProperty(field.formMapIdentifier))) {
+            // Map each item to an object that only contains the formMapIdentifier key
+            cleanedData[field.name] = fieldValue.map(item => ({
+              [field.formMapIdentifier]: item[field.formMapIdentifier]
+            }));
+            return;
+          }
+      } else {
+        cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue[field.formMapIdentifier] }
+        return;
+      }
 
       let newValue;
       if (field.multiple) {
         newValue = fieldValue.map(value => ({ [field.formMapIdentifier]: value }));
       } else {
-        newValue = [{ [field.formMapIdentifier]: fieldValue }];
+        newValue = { [field.formMapIdentifier]: fieldValue };
       }
       cleanedData[field.name] = newValue;
     }

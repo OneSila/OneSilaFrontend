@@ -8,7 +8,6 @@ export const createEanCodeMutation = gql`
       product {
         id
         sku
-        // Additional fields as needed
       }
     }
   }
@@ -22,7 +21,6 @@ export const createEanCodesMutation = gql`
       product {
         id
         sku
-        // Additional fields as needed
       }
     }
   }
@@ -36,7 +34,6 @@ export const updateEanCodeMutation = gql`
       product {
         id
         sku
-        // Additional fields as needed
       }
     }
   }

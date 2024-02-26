@@ -12,7 +12,6 @@ export const createProductMutation = gql`
         rate
       }
       alwaysOnStock
-      // Additional fields as needed
     }
   }
 `;
@@ -24,7 +23,6 @@ export const createProductsMutation = gql`
       sku
       active
       type
-      // Additional fields as needed
     }
   }
 `;
@@ -36,7 +34,6 @@ export const updateProductMutation = gql`
       sku
       active
       type
-      // Additional fields as needed
     }
   }
 `;
@@ -63,7 +60,6 @@ export const createBundleProductMutation = gql`
       id
       sku
       active
-      // Additional fields specific to BundleProduct
     }
   }
 `;
@@ -74,7 +70,6 @@ export const createBundleProductsMutation = gql`
       id
       sku
       active
-      // Additional fields specific to BundleProduct
     }
   }
 `;
@@ -85,7 +80,6 @@ export const updateBundleProductMutation = gql`
       id
       sku
       active
-      // Additional fields specific to BundleProduct
     }
   }
 `;
@@ -112,7 +106,6 @@ export const createUmbrellaProductMutation = gql`
       id
       sku
       active
-      // Additional fields specific to UmbrellaProduct
     }
   }
 `;
@@ -123,7 +116,6 @@ export const createUmbrellaProductsMutation = gql`
       id
       sku
       active
-      // Additional fields specific to UmbrellaProduct
     }
   }
 `;
@@ -134,7 +126,6 @@ export const updateUmbrellaProductMutation = gql`
       id
       sku
       active
-      // Additional fields specific to UmbrellaProduct
     }
   }
 `;
@@ -161,7 +152,6 @@ export const createProductVariationMutation = gql`
       id
       sku
       active
-      // Additional fields specific to ProductVariation
     }
   }
 `;
@@ -172,7 +162,6 @@ export const createProductVariationsMutation = gql`
       id
       sku
       active
-      // Additional fields specific to ProductVariation
     }
   }
 `;
@@ -183,7 +172,6 @@ export const updateProductVariationMutation = gql`
       id
       sku
       active
-      // Additional fields specific to ProductVariation
     }
   }
 `;

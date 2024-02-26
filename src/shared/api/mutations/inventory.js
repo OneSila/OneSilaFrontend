@@ -7,12 +7,10 @@ export const createInventoryMutation = gql`
       product {
         id
         sku
-        // other product fields as needed
       }
       stocklocation {
         id
         name
-        // other stocklocation fields as needed
       }
       quantity
     }
@@ -26,12 +24,10 @@ export const createInventoriesMutation = gql`
       product {
         id
         sku
-        // other product fields as needed
       }
       stocklocation {
         id
         name
-        // other stocklocation fields as needed
       }
       quantity
     }
@@ -45,12 +41,10 @@ export const updateInventoryMutation = gql`
       product {
         id
         sku
-        // other product fields as needed
       }
       stocklocation {
         id
         name
-        // other stocklocation fields as needed
       }
       quantity
     }

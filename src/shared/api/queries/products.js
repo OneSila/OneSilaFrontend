@@ -44,7 +44,6 @@ export const bundleProductsQuery = gql`
           id
           sku
           active
-          // Additional BundleProduct fields
         }
         cursor
       }
@@ -67,7 +66,6 @@ export const umbrellaProductsQuery = gql`
           id
           sku
           active
-          // Additional UmbrellaProduct fields
         }
         cursor
       }
@@ -90,7 +88,6 @@ export const productVariationsQuery = gql`
           id
           sku
           active
-          // Additional ProductVariation fields
         }
         cursor
       }
@@ -209,7 +206,6 @@ export const getProductQuery = gql`
         id
         name
       }
-      // Additional fields as needed
     }
   }
 `;
@@ -220,7 +216,6 @@ export const getBundleProductQuery = gql`
       id
       sku
       active
-      // Additional fields specific to BundleProduct
     }
   }
 `;
@@ -231,7 +226,6 @@ export const getUmbrellaProductQuery = gql`
       id
       sku
       active
-      // Additional fields specific to UmbrellaProduct
     }
   }
 `;
@@ -242,7 +236,6 @@ export const getProductVariationQuery = gql`
       id
       sku
       active
-      // Additional fields specific to ProductVariation
     }
   }
 `;

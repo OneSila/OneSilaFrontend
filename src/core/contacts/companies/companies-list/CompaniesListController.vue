@@ -2,7 +2,6 @@
 
 import {  SearchConfig, FilterType} from "../../../../shared/components/organisms/general-search/searchConfig";
 import { useI18n } from 'vue-i18n';
-import { FilterManager } from "../../../../shared/components/molecules/filter-manager";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
@@ -32,8 +31,8 @@ const searchConfig: SearchConfig = {
           {
       type: FilterType.Boolean,
       strict: true,
-      name: 'isInflucener',
-      label: t('contacts.companies.labels.influencer')
+      name: 'isInfluencer',
+      label: t('contacts.companies.labels.Influencer')
     },
           {
       type: FilterType.Boolean,
@@ -93,18 +92,12 @@ const generalListingConfig: ListingConfig = {
 
 
    <template v-slot:content>
-      <FilterManager :searchConfig="searchConfig">
-      <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-          <GeneralListing
-            :config="generalListingConfig"
-            :query="companiesQuery"
-            :query-key="'companies'"
-            :filter-variables="filterVariables"
-            :order-variables="orderVariables"
-            :pagination="pagination"
-        />
-      </template>
-    </FilterManager>
+        <GeneralListing
+          :searchConfig="searchConfig"
+          :config="generalListingConfig"
+          :query="companiesQuery"
+          :query-key="'companies'"
+      />
    </template>
   </CompaniesTemplate>
 </template>

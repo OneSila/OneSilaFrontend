@@ -6,6 +6,10 @@
           <slot name="buttons"></slot>
       </div>
   </div>
-    <slot name="content"></slot>
+    <div class="mt-2 h-full">
+      <slot name="content"></slot>
+    </div>
   </div>
 </template>
+<script setup lang="ts">
+</script>

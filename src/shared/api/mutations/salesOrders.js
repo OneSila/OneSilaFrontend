@@ -5,7 +5,6 @@ export const createOrderMutation = gql`
     createOrder(data: $data) {
       id
       reference
-      // Additional fields as needed
     }
   }
 `;
@@ -15,7 +14,6 @@ export const createOrdersMutation = gql`
     createOrders(data: $data) {
       id
       reference
-      // Additional fields as needed
     }
   }
 `;
@@ -25,7 +23,6 @@ export const updateOrderMutation = gql`
     updateOrder(data: $data) {
       id
       reference
-      // Additional fields as needed
     }
   }
 `;
@@ -45,7 +42,6 @@ export const createOrderItemMutation = gql`
       }
       quantity
       price
-      // Additional fields as needed
     }
   }
 `;
@@ -64,7 +60,6 @@ export const createOrderItemsMutation = gql`
       }
       quantity
       price
-      // Additional fields as needed
     }
   }
 `;
@@ -83,7 +78,6 @@ export const updateOrderItemMutation = gql`
       }
       quantity
       price
-      // Additional fields as needed
     }
   }
 `;
@@ -113,7 +107,6 @@ export const createOrderNoteMutation = gql`
         reference
       }
       note
-      // Additional fields as needed
     }
   }
 `;
@@ -127,7 +120,6 @@ export const createOrderNotesMutation = gql`
         reference
       }
       note
-      // Additional fields as needed
     }
   }
 `;
@@ -141,7 +133,6 @@ export const updateOrderNoteMutation = gql`
         reference
       }
       note
-      // Additional fields as needed
     }
   }
 `;

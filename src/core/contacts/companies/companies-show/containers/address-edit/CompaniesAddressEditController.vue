@@ -72,7 +72,7 @@ const formConfig: FormConfig = {
       {
         type: FieldType.Query,
         name: 'country',
-        label: t('contacts.companies.address.placeholders.country'),
+        label: t('shared.placeholder.country'),
         labelBy: 'name',
         valueBy: 'code',
         query: countriesQuery,

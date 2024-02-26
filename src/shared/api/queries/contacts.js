@@ -43,8 +43,8 @@ query getCompany ($id: GlobalID!) {
 `;
 
 export const companyAddressesQuery = gql`
-query companyAddresses($filters: AddressFilter) {
-  addresses(filters: $filters) {
+query companyAddresses($filter: AddressFilter) {
+  addresses(filters: $filter) {
     edges {
       node {
         id
@@ -148,7 +148,6 @@ export const customersQuery = gql`
             id
             name
           }
-          // Additional fields as needed
         }
         cursor
       }
@@ -178,7 +177,6 @@ export const getCustomerQuery = gql`
         id
         name
       }
-      // Additional fields as needed
     }
   }
 `;

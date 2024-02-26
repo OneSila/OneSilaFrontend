@@ -9,7 +9,7 @@ import { FilterManager } from "../../../../shared/components/molecules/filter-ma
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
-import PeopleListTemplate  from "./PeopleListTemplate.vue"
+import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import IconUserPlus from "../../../../shared/components/atoms/icons/icon-user-plus.vue";
 import {GeneralListing} from "../../../../shared/components/organisms/general-listing";
 import {ListingConfig, FieldType} from "../../../../shared/components/organisms/general-listing/listingConfig";
@@ -23,7 +23,7 @@ const searchConfig: SearchConfig = {
 };
 
 const generalListingConfig: ListingConfig = {
-  headers: ['Name', 'Email', 'Phone', 'Company', 'Language'],
+  headers: [t('shared.labels.firstName'), t('shared.labels.email'), t('contacts.people.labels.company'), t('shared.placeholder.language')],
   fields: [
     {
       name: 'firstName',
@@ -34,11 +34,7 @@ const generalListingConfig: ListingConfig = {
       type: FieldType.Text,
     },
     {
-      name: 'phone',
-      type: FieldType.Text,
-    },
-    {
-      name: 'name',
+      name: 'companyName',
       type: FieldType.NestedText,
       keys: ['company', 'name']
     },
@@ -53,8 +49,7 @@ const generalListingConfig: ListingConfig = {
   addActions: true,
   addEdit: true,
   editUrlName: 'people.edit',
-  showUrlName: 'people.show',
-  addShow: true,
+  addShow: false,
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePersonMutation,
@@ -64,7 +59,7 @@ const generalListingConfig: ListingConfig = {
 </script>
 
 <template>
-  <PeopleListTemplate>
+  <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="[{ path: { name: 'people.list' }, name: 'People' }]" />
@@ -73,28 +68,21 @@ const generalListingConfig: ListingConfig = {
     <template v-slot:buttons>
         <div>
           <Link :path="{ name: 'people.create' }">
-          <button type="button" class="btn btn-primary">
-              <icon-user-plus class="ltr:mr-2 rtl:ml-2" />
-              Add Contact
-          </button>
+          <Button type="button" class="btn btn-primary">
+              {{  t('contacts.companies.people.button') }}
+          </Button>
         </Link>
       </div>
     </template>
 
 
    <template v-slot:content>
-      <FilterManager :searchConfig="searchConfig">
-      <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-          <GeneralListing
-            :config="generalListingConfig"
-            :query="peopleQuery"
-            :query-key="'people'"
-            :filter-variables="filterVariables"
-            :order-variables="orderVariables"
-            :pagination="pagination"
-        />
-      </template>
-    </FilterManager>
+     <GeneralListing
+         :searchConfig="searchConfig"
+          :config="generalListingConfig"
+          :query="peopleQuery"
+          :query-key="'people'"
+      />
    </template>
-  </PeopleListTemplate>
+  </GeneralTemplate>
 </template>

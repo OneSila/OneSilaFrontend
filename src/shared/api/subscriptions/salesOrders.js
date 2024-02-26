@@ -26,7 +26,6 @@ export const orderSubscription = gql`
       reasonForSale
       createdAt
       updatedAt
-      // Additional fields as needed
     }
   }
 `;
@@ -45,7 +44,6 @@ export const orderItemSubscription = gql`
       }
       quantity
       price
-      // Additional fields as needed
     }
   }
 `;
@@ -59,7 +57,6 @@ export const orderNoteSubscription = gql`
         reference
       }
       note
-      // Additional fields as needed
     }
   }
 `;

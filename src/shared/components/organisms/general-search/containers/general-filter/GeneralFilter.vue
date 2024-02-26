@@ -51,7 +51,7 @@ props.searchConfig.filters?.forEach((filter: BaseFilter) => {
 });
 
 const hasFilters = computed(() => {
-  return keysToWatch.value.some(key => route.query[key] !== undefined);
+  return keysToWatch.value.some(key => route.query[key] !== undefined && route.query[key] !== undefined);
 });
 
 const resetFilters = () => {

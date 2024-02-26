@@ -9,5 +9,4 @@ export const routes = [
   { path: '/people', name: 'people.list', component: () => import('./people/people-list/PeopleListController.vue') },
   { path: '/people/create', name: 'people.create', component: () => import('./people/person-create/PeopleCreateController.vue') },
   { path: '/people/edit/:id', name: 'people.edit', component: () => import('./people/person-edit/PeopleEditController.vue') },
-  { path: '/people/show/:id', name: 'people.show', component: () => import('./people/person-show/PeopleShowController.vue') },
 ]

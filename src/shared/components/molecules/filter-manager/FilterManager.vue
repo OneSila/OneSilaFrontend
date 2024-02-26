@@ -52,6 +52,9 @@ watch(() => route.query, (newQuery) => {
   keysToWatch.value.forEach(key => {
     if (newQuery[key] !== undefined && key != props.searchConfig.orderKey) {
       updatedVariables[key] = booleanifyIfNeeded(newQuery[key]);
+      if (updatedVariables[key] === null) {
+        delete updatedVariables[key];
+      }
     }
   });
   filterVariables.value = updatedVariables;

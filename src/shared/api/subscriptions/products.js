@@ -12,7 +12,6 @@ export const productSubscription = gql`
         rate
       }
       alwaysOnStock
-      // Additional fields as needed
     }
   }
 `;
@@ -23,7 +22,6 @@ export const bundleProductSubscription = gql`
       id
       sku
       active
-      // Additional fields specific to BundleProduct
     }
   }
 `;
@@ -34,7 +32,6 @@ export const umbrellaProductSubscription = gql`
       id
       sku
       active
-      // Additional fields specific to UmbrellaProduct
     }
   }
 `;
@@ -45,7 +42,6 @@ export const productVariationSubscription = gql`
       id
       sku
       active
-      // Additional fields specific to ProductVariation
     }
   }
 `;

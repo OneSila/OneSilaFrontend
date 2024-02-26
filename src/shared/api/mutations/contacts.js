@@ -156,7 +156,6 @@ export const createCustomerMutation = gql`
       isCustomer
       isInfluencer
       isInternalCompany
-      // Additional fields as needed
     }
   }
 `;
@@ -172,7 +171,6 @@ export const createCustomersMutation = gql`
       isCustomer
       isInfluencer
       isInternalCompany
-      // Additional fields as needed
     }
   }
 `;
@@ -188,7 +186,6 @@ export const updateCustomerMutation = gql`
       isCustomer
       isInfluencer
       isInternalCompany
-      // Additional fields as needed
     }
   }
 `;

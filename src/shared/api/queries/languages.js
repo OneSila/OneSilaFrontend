@@ -12,6 +12,17 @@ query languages {
 }
 `;
 
+export const customerLanguagesQuery = gql`
+  query customerLanguages {
+    customerLanguages{
+      name
+      code
+    }
+  }
+`;
+
+
+
 export const countriesQuery = gql`
 query countries{
   countries{

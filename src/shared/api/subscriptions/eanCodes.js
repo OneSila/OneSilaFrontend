@@ -8,7 +8,6 @@ export const eanCodeSubscription = gql`
       product {
         id
         sku
-        // Additional fields as needed for Product
       }
     }
   }

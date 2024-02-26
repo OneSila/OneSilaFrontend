@@ -10,7 +10,6 @@ export const eanCodesQuery = gql`
           product {
             id
             sku
-            // Additional fields as needed for Product
           }
         }
         cursor
@@ -34,7 +33,6 @@ export const getEanCodeQuery = gql`
       product {
         id
         sku
-        // Additional fields as needed for Product
       }
     }
   }

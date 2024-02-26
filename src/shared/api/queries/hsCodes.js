@@ -11,7 +11,6 @@ export const hsCodesQuery = gql`
           product {
             id
             name
-            // Additional fields as needed for Product
           }
         }
         cursor
@@ -36,7 +35,6 @@ export const getHsCodeQuery = gql`
       product {
         id
         name
-        // Additional fields as needed for Product
       }
     }
   }

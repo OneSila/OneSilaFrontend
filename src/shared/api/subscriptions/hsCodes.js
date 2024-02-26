@@ -9,7 +9,6 @@ export const hsCodeSubscription = gql`
       product {
         id
         name
-        // Additional fields as needed for Product
       }
     }
   }

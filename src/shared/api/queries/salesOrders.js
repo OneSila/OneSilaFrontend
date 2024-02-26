@@ -28,7 +28,6 @@ export const ordersQuery = gql`
           reasonForSale
           createdAt
           updatedAt
-          // Additional fields as needed
         }
         cursor
       }
@@ -59,7 +58,6 @@ export const orderItemsQuery = gql`
           }
           quantity
           price
-          // Additional fields as needed
         }
         cursor
       }
@@ -85,7 +83,6 @@ export const orderNotesQuery = gql`
             reference
           }
           note
-          // Additional fields as needed
         }
         cursor
       }
@@ -126,7 +123,6 @@ export const getOrderQuery = gql`
       reasonForSale
       createdAt
       updatedAt
-      // Additional fields as needed
     }
   }
 `;
@@ -145,7 +141,6 @@ export const getOrderItemQuery = gql`
       }
       quantity
       price
-      // Additional fields as needed
     }
   }
 `;
@@ -159,7 +154,6 @@ export const getOrderNoteQuery = gql`
         reference
       }
       note
-      // Additional fields as needed
     }
   }
 `;

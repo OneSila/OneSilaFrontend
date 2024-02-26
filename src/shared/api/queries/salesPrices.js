@@ -9,7 +9,6 @@ export const salesPricesQuery = gql`
           product {
             id
             name
-            // Additional Product fields
           }
           currency {
             id
@@ -17,7 +16,6 @@ export const salesPricesQuery = gql`
           }
           amount
           discountAmount
-          // Additional fields as needed
         }
         cursor
       }
@@ -49,9 +47,7 @@ export const salesPriceListsQuery = gql`
           customers {
             id
             name
-            // Additional Customer fields
           }
-          // Additional fields as needed
         }
         cursor
       }
@@ -75,15 +71,12 @@ export const salesPriceListItemsQuery = gql`
           salespricelist {
             id
             name
-            // Additional SalesPriceList fields
           }
           product {
             id
             name
-            // Additional Product fields
           }
           salesprice
-          // Additional fields as needed
         }
         cursor
       }
@@ -105,7 +98,6 @@ export const getSalesPriceQuery = gql`
       product {
         id
         name
-        // Additional Product fields
       }
       currency {
         id
@@ -113,7 +105,6 @@ export const getSalesPriceQuery = gql`
       }
       amount
       discountAmount
-      // Additional fields as needed
     }
   }
 `;
@@ -133,9 +124,7 @@ export const getSalesPriceListQuery = gql`
       customers {
         id
         name
-        // Additional Customer fields
       }
-      // Additional fields as needed
     }
   }
 `;
@@ -147,15 +136,12 @@ export const getSalesPriceListItemQuery = gql`
       salespricelist {
         id
         name
-        // Additional SalesPriceList fields
       }
       product {
         id
         name
-        // Additional Product fields
       }
       salesprice
-      // Additional fields as needed
     }
   }
 `;

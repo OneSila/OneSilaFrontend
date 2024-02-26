@@ -15,7 +15,7 @@
 import { SearchInput } from "../../molecules/search-input";
 import { GeneralFilter } from "./containers/general-filter";
 import { ref, watch } from 'vue';
-import { useAppStore } from '../../../../shared/plugins/store';
+import { useAppStore } from '../../../plugins/store';
 import { defaultSearchConfig, SearchConfig } from './searchConfig'
 import { useRoute } from 'vue-router';
 
@@ -30,11 +30,6 @@ const clearSearchInput = () => {
   search.value = '';
 };
 
-watch(() => route.query[routeKey.value], (newQueryValue) => {
-  if (newQueryValue && typeof newQueryValue === 'string') {
-    search.value = newQueryValue;
-  }
-}, { immediate: true });
 
 watch(
   () => appStore.searchConfig,
@@ -45,5 +40,11 @@ watch(
   },
   { immediate: true }
 );
+
+watch(() => route.query[routeKey.value], (newQueryValue) => {
+  if (newQueryValue && typeof newQueryValue === 'string') {
+    search.value = newQueryValue;
+  }
+}, { immediate: true });
 
 </script>

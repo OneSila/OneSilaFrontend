@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ source: any; cover?: boolean; alt: string; }>()
+const props = defineProps<{ source: any; cover?: boolean; alt?: string; }>()
 
 const emit = defineEmits<{
   (e: 'loaded', size: { width: number; height: number; }): void

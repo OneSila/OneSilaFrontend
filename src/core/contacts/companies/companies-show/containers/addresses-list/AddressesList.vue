@@ -66,17 +66,13 @@ const generalListingConfig: ListingConfig = {
     </template>
 
    <template v-slot:content>
-      <FilterManager :searchConfig="searchConfig">
-      <template v-slot:variables="{ pagination }">
-        <GeneralListing
-          :config="generalListingConfig"
-          :query="companyAddressesQuery"
-          :query-key="'addresses'"
-          :filter-variables="{'company': {'id': {'exact': id}}}"
-          :pagination="pagination"
-      />
-      </template>
-    </FilterManager>
+      <GeneralListing
+        :search-config="searchConfig"
+        :config="generalListingConfig"
+        :query="companyAddressesQuery"
+        :query-key="'addresses'"
+        :fixed-filter-variables="{'company': {'id': {'exact': id}}}"
+    />
    </template>
   </CompaniesTemplate>
 </template>

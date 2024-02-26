@@ -19,7 +19,7 @@ const { t } = useI18n();
 const props = defineProps({
   mutation: Object,
   mutationVariables: Object,
-  refetchQueries: Array,
+  refetchQueries: Function,
   swalOptions: Object as () => SwalOptions,
   swalClasses: Object as () => SwalClasses
 });
