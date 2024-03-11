@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { Checkbox } from '../../../../../atoms/checkbox';
-import { Label } from '../../../../../atoms/label';
 import { CheckboxFormField } from '../../../formConfig';
 
 const props = defineProps<{
   field: CheckboxFormField;
   modelValue: boolean;
 }>();
+
 const emit = defineEmits(['update:modelValue']);
 
 const updateValue = (newValue) => {
@@ -18,7 +18,6 @@ const updateValue = (newValue) => {
 
 <template>
   <div class="field-checkbox">
-    <Label class="mr-2">{{ field.label }}</Label>
     <Checkbox
       :model-value="modelValue"
       @update:modelValue="updateValue"

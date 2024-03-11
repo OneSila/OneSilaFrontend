@@ -97,7 +97,20 @@ import {
   faSortDesc,
   faArrowDownWideShort,
   faArrowUpWideShort,
-  faArrowRotateRight
+  faArrowRotateRight,
+  faCartShopping,
+  faWarehouse,
+  faBox,
+  faPhotoFilm,
+  faSitemap,
+  faNoteSticky,
+  faMoneyBill,
+  faRectangleList,
+  faTag,
+  faTruckRampBox,
+  faScrewdriverWrench,
+  faBarcode,
+  faQrcode
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -195,6 +208,19 @@ library.add(faSortDesc as IconDefinition);
 library.add(faArrowDownWideShort as IconDefinition);
 library.add(faArrowUpWideShort as IconDefinition);
 library.add(faArrowRotateRight as IconDefinition);
+library.add(faCartShopping as IconDefinition);
+library.add(faWarehouse as IconDefinition);
+library.add(faBox as IconDefinition);
+library.add(faPhotoFilm as IconDefinition);
+library.add(faSitemap as IconDefinition);
+library.add(faNoteSticky as IconDefinition);
+library.add(faMoneyBill as IconDefinition);
+library.add(faRectangleList as IconDefinition);
+library.add(faTag as IconDefinition);
+library.add(faTruckRampBox as IconDefinition);
+library.add(faScrewdriverWrench as IconDefinition);
+library.add(faBarcode as IconDefinition);
+library.add(faQrcode as IconDefinition);
 
 export default {
   install(app) {

@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const getCompanySubscription = gql`
-subscription getSupplier ($id: String!) {
+subscription getCompany ($id: String!) {
   company(pk: $id) {
     id
     name
@@ -19,6 +19,20 @@ subscription getSupplier ($id: String!) {
   }
 }`;
 
+export const getSupplierSubscription = gql`
+subscription getSupplier ($id: String!) {
+  supplier(pk: $id) {
+    id
+    name
+    isSupplier
+    vatNumber
+    eoriNumber
+    relatedCompanies {
+      id
+      name
+    }
+  }
+}`;
 export const getPersonSubscription = gql`
   subscription getPerson($pk: String!) {
     person(pk: $pk) {
@@ -36,7 +50,7 @@ export const getPersonSubscription = gql`
   }
 `;
 
-export const customerSubscription = gql`
+export const getCustomerSubscription = gql`
   subscription getCustomerSubscription($pk: String!) {
     customer(pk: $pk) {
       id

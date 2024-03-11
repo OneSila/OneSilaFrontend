@@ -13,9 +13,9 @@ const props = withDefaults(
       hasNextPage: boolean;
       hasPreviousPage: boolean;
     };
-    alignment: 'start' | 'center' | 'end';
-    buttonClass: 'default' | 'solid' | 'rounded';
-    useIcons: boolean;
+    alignment?: 'start' | 'center' | 'end';
+    buttonClass?: 'default' | 'solid' | 'rounded';
+    useIcons?: boolean;
   }>(),
   {
     alignment: 'center',

@@ -29,10 +29,16 @@
       "delete": "Delete",
       "edit": "Edit",
       "show": "Show",
-      "submit": "Submit"
+      "submit": "Submit",
+      "add": "Add"
     },
     "labels": {
-      "name": "Name"
+      "name": "Name",
+      "active": "Active",
+      "actions": "Actions"
+    },
+    "tabs": {
+      "general": "General"
     }
   },
   "auth": {
@@ -206,5 +212,106 @@
     "people": {
       "title": "People"
     }
+  },
+  "products": {
+    "title": "Products",
+    "hsCodes": {
+      "title": "Hs Codes"
+    },
+    "eanCodes": {
+      "title": "Ean Codes"
+    },
+    "translation": {
+        "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
+        "successfullyUpdated": "The product translation has been successfully updated."
+      },
+    "products": {
+      "tabs": {
+        "content": "Content",
+         "variations": "Variations",
+        "media": "Media",
+        "price": "Price",
+        "priceLists": "Price Lists",
+        "inventory": "Inventory",
+        "supplierProducts": "Supplier Products",
+        "saleOrders": "Sale Orders",
+        "properties": "Properties",
+        "hsCodes": "HS Codes",
+        "eanCodes": "EAN Codes"
+      },
+      "inspector": {
+        "labels": {
+          "missingInfo": "Missing informations"
+        }
+      },
+      "labels": {
+        "type": "Type",
+        "taxRate": "Tax Rate",
+        "alwaysOnStock": "Always on Stock",
+        "sku": "SKU"
+      }
+    }
+  },
+  "inventory": {
+    "title": "Inventory",
+    "inventoryLocation": {
+      "title": "Inventory Location"
+    }
+  },
+  "sales": {
+    "title": "Sales",
+    "customers": {
+        "title": "Customers"
+      },
+    "orders": {
+        "title": "Orders"
+      },
+    "pricesLists": {
+        "title": "Prices Lists"
+      },
+    "prices": {
+    "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
+      "labels": {
+        "amount": "Amount",
+        "discountAmount": "Discount Amount"
+      },
+      "placeholders": {
+        "amount": "Enter amount",
+        "discountAmount": "Enter discount amount"
+      }
+    }
+  },
+  "purchasing": {
+    "title": "Purchasing",
+    "suppliers": {
+      "title": "Suppliers"
+    },
+    "products": {
+      "title": "Products"
+    },
+    "orders": {
+      "title": "Purchasing Orders"
+    }
+  },
+  "media": {
+    "title": "Media",
+    "images": {
+      "title": "Images"
+    },
+    "videos": {
+      "title": "Videos"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "currencies": {
+        "title": "Currencies"
+      },
+    "taxes": {
+        "title": "Taxes"
+      },
+    "units": {
+        "title": "Units"
+      }
   }
 }

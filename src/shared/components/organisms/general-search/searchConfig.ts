@@ -1,12 +1,4 @@
-export enum FilterType {
-  Boolean = "Boolean",
-  Value = "Value",
-  Choice = "Choice",
-  Query = "Query",
-  Calendar = "Calendar",
-  Slider = "Slider",
-  Checkbox = "Checkbox",
-}
+import { FieldType } from '../../../../shared/utils/constants.js'
 
 export enum OrderType {
   ASC = 'ASC',
@@ -15,7 +7,7 @@ export enum OrderType {
 
 
 export interface BaseFilter {
-  type: FilterType;
+  type: FieldType;
   name: string;
   label: string;
   default?: any;
@@ -23,7 +15,7 @@ export interface BaseFilter {
 }
 
 export interface BooleanFilter extends BaseFilter {
-  type: FilterType.Boolean;
+  type: FieldType.Boolean;
   strict: boolean;
   dropdownPosition?: string;
   placeholder?: string;
@@ -31,7 +23,7 @@ export interface BooleanFilter extends BaseFilter {
 
 
 export interface ValueFilter extends BaseFilter {
-  type: FilterType.Value;
+  type: FieldType.Text;
   placeholder?: string;
   error?: boolean;
   transparent?: boolean;
@@ -43,7 +35,7 @@ export interface ValueFilter extends BaseFilter {
 
 
 export interface ChoiceFilter extends BaseFilter {
-  type: FilterType.Choice;
+  type: FieldType.Choice;
   options: any[];
   labelBy: string;
   valueBy: string;
@@ -57,7 +49,7 @@ export interface ChoiceFilter extends BaseFilter {
 }
 
 export interface QueryFilter extends BaseFilter {
-  type: FilterType.Query;
+  type: FieldType.Query;
   labelBy: string;
   valueBy: string;
   query: string;
@@ -72,16 +64,16 @@ export interface QueryFilter extends BaseFilter {
 }
 
 
-export interface CalendarFilter extends BaseFilter {
-  type: FilterType.Calendar;
+export interface DateFilter extends BaseFilter {
+  type: FieldType.Date;
 }
 
 export interface SliderFilter extends BaseFilter {
-  type: FilterType.Slider;
+  type: FieldType.Slider;
 }
 
 export interface CheckboxFilter extends BaseFilter {
-  type: FilterType.Checkbox;
+  type: FieldType.Checkbox;
   uncheckedValue?: 'null' | 'false';
 }
 
@@ -92,7 +84,7 @@ export interface OrderCriteria {
   type: OrderType;
 }
 
-export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | CalendarFilter | SliderFilter | CheckboxFilter;
+export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | DateFilter | SliderFilter | CheckboxFilter;
 
 export interface SearchConfig {
   search: boolean;

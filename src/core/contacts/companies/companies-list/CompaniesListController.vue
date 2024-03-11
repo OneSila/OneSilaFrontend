@@ -1,88 +1,30 @@
 <script setup lang="ts">
 
-import {  SearchConfig, FilterType} from "../../../../shared/components/organisms/general-search/searchConfig";
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
-import CompaniesTemplate  from "../CompaniesTemplate.vue"
-import {ListingConfig, FieldType} from "../../../../shared/components/organisms/general-listing/listingConfig";
-import { companiesQuery } from "../../../../shared/api/queries/contacts.js";
-import { deleteCompanyMutation } from "../../../../shared/api/mutations/contacts.js"
+import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
+import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 
 const { t } = useI18n();
-const searchConfig: SearchConfig = {
-  search: true,
-  orderKey: "sort",
-  filters: [
-    {
-      type: FilterType.Boolean,
-      strict: true,
-      name: 'isSupplier',
-      label: t('contacts.companies.labels.supplier')
-    },
-          {
-      type: FilterType.Boolean,
-      strict: true,
-      name: 'isCustomer',
-      label: t('contacts.companies.labels.customer')
-    },
-          {
-      type: FilterType.Boolean,
-      strict: true,
-      name: 'isInfluencer',
-      label: t('contacts.companies.labels.Influencer')
-    },
-          {
-      type: FilterType.Boolean,
-      strict: true,
-      name: 'isInternalCompany',
-      label: t('contacts.companies.labels.internalCompany')
-    },
-  ],
-  orders: []
-};
 
-const generalListingConfig: ListingConfig = {
-  headers: [t('shared.labels.name'),t('contacts.companies.labels.eori'), t('contacts.companies.labels.vat')],
-  fields: [
-    {
-      name: 'name',
-      type: FieldType.Text,
-    },
-    {
-      name: 'eoriNumber',
-      type: FieldType.Text,
-    },
-    {
-      name: 'vatNumber',
-      type: FieldType.Text,
-    },
-  ],
-  identifierKey: 'id',
-  addActions: true,
-  addEdit: true,
-  editUrlName: 'companies.edit',
-  showUrlName: 'companies.show',
-  addShow: true,
-  addDelete: true,
-  addPagination: true,
-  deleteMutation: deleteCompanyMutation,
-};
+const searchConfig = searchConfigConstructor(t);
+const listingConfig = listingConfigConstructor(t);
 
 </script>
 
 <template>
-  <CompaniesTemplate>
+  <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'companies.list' }, name: t('contacts.companies.title') }]" />
+      <Breadcrumbs :links="[{ path: { name: 'contacts.companies.list' }, name: t('contacts.companies.title') }]" />
     </template>
 
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'companies.create' }">
+          <Link :path="{ name: 'contacts.companies.create' }">
           <Button class="btn btn-primary">
               {{  t('contacts.companies.create.button') }}
           </Button>
@@ -94,10 +36,10 @@ const generalListingConfig: ListingConfig = {
    <template v-slot:content>
         <GeneralListing
           :searchConfig="searchConfig"
-          :config="generalListingConfig"
-          :query="companiesQuery"
-          :query-key="'companies'"
+          :config="listingConfig"
+          :query="listingQuery"
+          :query-key="listingQueryKey"
       />
    </template>
-  </CompaniesTemplate>
+  </GeneralTemplate>
 </template>

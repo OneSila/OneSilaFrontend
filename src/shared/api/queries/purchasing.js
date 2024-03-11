@@ -8,9 +8,10 @@ export const supplierProductsQuery = gql`
           id
           sku
           name
+          unitPrice
           currency {
             id
-            name
+            symbol
           }
           unit {
             id
@@ -19,7 +20,7 @@ export const supplierProductsQuery = gql`
           quantity
           product {
             id
-            name
+            sku
           }
           supplier {
             id
@@ -45,9 +46,10 @@ export const getSupplierProductQuery = gql`
       id
       sku
       name
+      unitPrice
       currency {
         id
-        name
+        symbol
       }
       unit {
         id
@@ -56,7 +58,7 @@ export const getSupplierProductQuery = gql`
       quantity
       product {
         id
-        name
+        sku
       }
       supplier {
         id
@@ -73,6 +75,7 @@ export const purchaseOrdersQuery = gql`
         node {
           id
           status
+          totalValue
           supplier {
             id
             name
@@ -80,15 +83,15 @@ export const purchaseOrdersQuery = gql`
           orderReference
           currency {
             id
-            name
+            symbol
           }
           invoiceAddress {
             id
-            name
+            address1
           }
-          deliveryAddress {
+          shippingAddress {
             id
-            name
+            address1
           }
         }
         cursor
@@ -109,6 +112,7 @@ export const getPurchaseOrderQuery = gql`
     purchaseOrder(id: $id) {
       id
       status
+      totalValue
       supplier {
         id
         name
@@ -116,15 +120,15 @@ export const getPurchaseOrderQuery = gql`
       orderReference
       currency {
         id
-        name
+        symbol
       }
       invoiceAddress {
         id
-        name
+        address1
       }
-      deliveryAddress {
+      shippingAddress {
         id
-        name
+        address1
       }
     }
   }
@@ -145,7 +149,7 @@ export const purchaseOrderItemsQuery = gql`
             name
           }
           quantity
-          price
+          unitPrice
         }
         cursor
       }
@@ -173,7 +177,7 @@ export const getPurchaseOrderItemQuery = gql`
         name
       }
       quantity
-      price
+      unitPrice
     }
   }
 `;

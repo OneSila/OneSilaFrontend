@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { Selector } from '../../../../../atoms/selector';
-import { Label } from '../../../../../atoms/label';
 import { ChoiceFormField } from '../../../formConfig';
 
 const props = defineProps<{
@@ -26,23 +25,20 @@ const disabled = props.field.disabled === true;
 
 <template>
   <div class="field-choice">
-    <Label semi-bold class="mb-2">{{ field.label }}</Label>
-    <div>
-      <Selector
-        :model-value="modelValue"
-        @update:modelValue="updateValue"
-        :options="field.options"
-        :label-by="field.labelBy"
-        :value-by="field.valueBy"
-        :placeholder="field.placeholder"
-        :dropdown-position="dropdownPosition"
-        :mandatory="mandatory"
-        :multiple="multiple"
-        :filterable="filterable"
-        :removable="removable"
-        :limit="limit"
-        :disabled="disabled"
-      />
-    </div>
+    <Selector
+      :model-value="modelValue"
+      @update:modelValue="updateValue"
+      :options="field.options"
+      :label-by="field.labelBy"
+      :value-by="field.valueBy"
+      :placeholder="field.placeholder"
+      :dropdown-position="dropdownPosition"
+      :mandatory="mandatory"
+      :multiple="multiple"
+      :filterable="filterable"
+      :removable="removable"
+      :limit="limit"
+      :disabled="disabled"
+    />
   </div>
 </template>

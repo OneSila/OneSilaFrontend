@@ -1,3 +1,5 @@
+import { gql } from 'graphql-tag';
+
 export const supplierProductSubscription = gql`
   subscription getSupplierProductSubscription($pk: String!) {
     supplierProduct(pk: $pk) {
@@ -30,22 +32,23 @@ export const purchaseOrderSubscription = gql`
     purchaseOrder(pk: $pk) {
       id
       status
+      totalValue
       supplier {
         id
         name
       }
       orderReference
-      currency {
-        id
-        name
-      }
       invoiceAddress {
         id
-        name
+        address1
+        address2
+        address3
       }
-      deliveryAddress {
+      shippingAddress {
         id
-        name
+        address1
+        address2
+        address3
       }
     }
   }

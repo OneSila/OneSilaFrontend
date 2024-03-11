@@ -6,11 +6,15 @@ export const createInventoryMutation = gql`
       id
       product {
         id
-        sku
+        ... on ProductType {
+          sku
+        }
       }
       stocklocation {
         id
-        name
+        ... on InventoryLocationType {
+          name
+        }
       }
       quantity
     }
@@ -35,16 +39,20 @@ export const createInventoriesMutation = gql`
 `;
 
 export const updateInventoryMutation = gql`
-  mutation updateInventory($data: InventoryLocationInput!) {
+  mutation updateInventory($data: InventoryPartialInput!) {
     updateInventory(data: $data) {
       id
       product {
         id
-        sku
+        ... on ProductType {
+          sku
+        }
       }
       stocklocation {
         id
-        name
+        ... on InventoryLocationType {
+          name
+        }
       }
       quantity
     }

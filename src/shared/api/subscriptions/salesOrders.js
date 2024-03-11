@@ -5,17 +5,22 @@ export const orderSubscription = gql`
     order(pk: $pk) {
       id
       reference
-      company {
+      totalValue
+      customer {
         id
         name
       }
       invoiceAddress {
         id
-        address
+        address1
+        address2
+        address3
       }
       shippingAddress {
         id
-        address
+        address1
+        address2
+        address3
       }
       currency {
         id

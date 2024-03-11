@@ -1,21 +1,12 @@
-import { Url } from '../../../../shared/utils/constants.js'
-export enum FieldType {
-  Boolean = "Boolean",
-  Value = "Value",
-  Choice = "Choice",
-  Query = "Query",
-  Calendar = "Calendar",
-  Slider = "Slider",
-  Checkbox = "Checkbox",
-  Hidden = "Hidden",
-  ProxyChoice = "ProxyChoice"
-}
+import { Url, FieldType } from '../../../../shared/utils/constants.js'
 
 export interface BaseFormField {
   type: FieldType;
   name: string;
+  optional?: boolean;
   label?: string;
   disabled?: boolean;
+  default?: any;
   customCss?: string; // Custom CSS for individual form fields
   customCssClass?: string; // Custom CSS class for individual form fields
 }
@@ -28,7 +19,7 @@ export interface BooleanFormField extends BaseFormField {
 }
 
 export interface ValueFormField extends BaseFormField {
-  type: FieldType.Value;
+  type: FieldType.Text;
   placeholder?: string;
   error?: boolean;
   transparent?: boolean;
@@ -84,8 +75,8 @@ export interface QueryFormField extends BaseFormField {
   limit?: number;
 }
 
-export interface CalendarFormField extends BaseFormField {
-  type: FieldType.Calendar;
+export interface DateFormField extends BaseFormField {
+  type: FieldType.Date;
 }
 
 export interface SliderFormField extends BaseFormField {
@@ -107,7 +98,7 @@ export enum FormType {
 }
 
 export type FormField = BooleanFormField | ValueFormField | ChoiceFormField | ProxyChoiceFormField | QueryFormField |
-    CalendarFormField | SliderFormField | CheckboxFormField | HiddenFormField;
+    DateFormField | SliderFormField | CheckboxFormField | HiddenFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;
@@ -118,11 +109,13 @@ export interface FormConfig {
   query?: string; // Optional, used only for Edit forms
   queryVariables?: Record<string, any>; // Variables for the query
   queryDataKey?: string; // Key to extract data from query response
+  queryData?: any; // if we already have the data and we don't want get it again we can pass this and we will avoid another query
   submitUrl: Url; // URL for form submission
   submitLabel?: string; // label for submit / save button
   addSubmitAndContinue?: boolean; // if we have or not the submit and continue button
   submitAndContinueLabel?: string; // the label of the save and stay on page button
   submitAndContinueUrl?: Url; // URL for submit and continue operation
+  hideButtons?: boolean; // sometimes we want to show the buttons in a different place that the fixed one so we can hide them like this
   addCancel?: boolean;  // if we add the cancel / back button
   cancelLabel?: string; // label for cancel / back button
   cancelUrl?: Url; // url to land after cancel
@@ -172,7 +165,7 @@ export function getEnhancedConfig(config: Partial<FormConfig>, defaultTranslatio
 
 
 
-export const cleanUpDataForMutation = (formData, fields) => {
+export const cleanUpDataForMutation = (formData, fields, formType) => {
   let cleanedData = { ...formData };
 
   fields.forEach(field => {
@@ -203,12 +196,13 @@ export const cleanUpDataForMutation = (formData, fields) => {
       }
     } else if (field.type === FieldType.Query && field.formMapIdentifier) {
 
-      if (fieldValue == null) {
+      // we only want to ignore this value if we create, if we edit we might want to delete the old value and replace with a new one
+      if (fieldValue == null && formType === FormType.CREATE) {
         delete cleanedData[field.name];
         return;
       }
 
-  // Check if fieldValue is already in the correct format
+      // Check if fieldValue is already in the correct format
       if (field.multiple) {
           if (Array.isArray(fieldValue) && fieldValue.every(item => typeof item === 'object' && item.hasOwnProperty(field.formMapIdentifier))) {
             // Map each item to an object that only contains the formMapIdentifier key
@@ -218,7 +212,12 @@ export const cleanUpDataForMutation = (formData, fields) => {
             return;
           }
       } else {
-        cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue[field.formMapIdentifier] }
+        if (typeof fieldValue === 'object' && fieldValue != null  && field.formMapIdentifier) {
+            cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue[field.formMapIdentifier] };
+        } else {
+            cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue};
+        }
+
         return;
       }
 

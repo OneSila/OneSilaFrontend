@@ -6,7 +6,7 @@ export const createSalesPriceMutation = gql`
       id
       product {
         id
-        name
+        sku
       }
       currency {
         id
@@ -24,7 +24,7 @@ export const createSalesPricesMutation = gql`
       id
       product {
         id
-        name
+        sku
       }
       currency {
         id
@@ -42,7 +42,7 @@ export const updateSalesPriceMutation = gql`
       id
       product {
         id
-        name
+        sku
       }
       currency {
         id
@@ -76,6 +76,7 @@ export const createSalesPriceListMutation = gql`
       id
       name
       discount
+      notes
       currency {
         id
         symbol
@@ -108,6 +109,7 @@ export const updateSalesPriceListMutation = gql`
       id
       name
       discount
+      notes
       currency {
         id
         symbol
@@ -144,7 +146,7 @@ export const createSalesPriceListItemMutation = gql`
       }
       product {
         id
-        name
+        sku
       }
       salesprice
     }
@@ -161,7 +163,7 @@ export const createSalesPriceListItemsMutation = gql`
       }
       product {
         id
-        name
+        sku
       }
       salesprice
     }
@@ -178,7 +180,7 @@ export const updateSalesPriceListItemMutation = gql`
       }
       product {
         id
-        name
+        sku
       }
       salesprice
     }

@@ -1,78 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType, FieldType, FormConfig } from '../../../../shared/components/organisms/general-form/formConfig';
+import { FormType } from '../../../../shared/components/organisms/general-form/formConfig';
 import { createPersonMutation } from "../../../../shared/api/mutations/contacts.js"
-import { customerLanguagesQuery } from "../../../../shared/api/queries/languages.js";
-import { companiesQuery } from "../../../../shared/api/queries/contacts.js";
+import { baseFormConfigConstructor } from "../configs";
+import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
+import { Card } from "../../../../shared/components/atoms/card";
+import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 
 const { t } = useI18n();
 
-const formConfig: FormConfig = {
-  cols: 1,
-  type: FormType.CREATE,
-  mutation: createPersonMutation,
-  mutationKey: 'createPerson',
-  submitUrl: { name: 'people.list' },
-  submitAndContinueUrl: { name: 'people.edit' },
-  fields: [
-      {
-        type: FieldType.Value,
-        name: 'firstName',
-        label: t('shared.labels.firstName'),
-        placeholder: t('shared.placeholder.firstName')
-      },
-      {
-        type: FieldType.Value,
-        name: 'lastName',
-        label: t('shared.labels.lastName'),
-        placeholder: t('shared.placeholder.lastName')
-      },
-      {
-        type: FieldType.Value,
-        name: 'email',
-        label: t('shared.labels.email'),
-        placeholder: t('shared.placeholder.email')
-      },
-      {
-        type: FieldType.Value,
-        name: 'phone',
-        label: t('shared.labels.phone'),
-        placeholder: t('shared.placeholder.phone')
-      },
-      {
-        type: FieldType.Query,
-        name: 'language',
-        label: t('shared.placeholder.language'),
-        labelBy: 'name',
-        valueBy: 'code',
-        query: customerLanguagesQuery,
-        dataKey: 'customerLanguages',
-        isEdge: false,
-        multiple: false,
-        filterable: true,
-      },
-      {
-        type: FieldType.Query,
-        name: 'company',
-        label: t('contacts.people.labels.company'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: companiesQuery,
-        dataKey: 'companies',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        formMapIdentifier: 'id',
-      }
-    ],
+const formConfig = {
+  ...baseFormConfigConstructor(
+    t,
+    FormType.CREATE,
+    createPersonMutation,
+    'createPerson'
+  ),
+  submitAndContinueUrl: { name: 'contacts.people.edit' }
 };
 
 </script>
 
 <template>
-  <div>
-    <GeneralForm :config="formConfig" />
-  </div>
+  <GeneralTemplate>
+
+    <template v-slot:breadcrumbs>
+      <Breadcrumbs
+          :links="[{ path: { name: 'contacts.people.list' }, name: t('contacts.people.title') },
+                   { path: { name: 'contacts.people.create' }, name: t('contacts.people.create.title') }]" />
+    </template>
+
+   <template v-slot:content>
+      <Card class="p-2">
+        <GeneralForm :config="formConfig" />
+      </Card>
+   </template>
+  </GeneralTemplate>
 </template>

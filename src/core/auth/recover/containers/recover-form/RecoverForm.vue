@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {reactive, Ref, ref} from 'vue';
+import {reactive, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {Button} from '../../../../../shared/components/atoms/button';

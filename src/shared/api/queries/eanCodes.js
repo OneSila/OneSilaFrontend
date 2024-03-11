@@ -9,7 +9,9 @@ export const eanCodesQuery = gql`
           eanCode
           product {
             id
-            sku
+            ... on ProductType {
+              sku
+            }
           }
         }
         cursor
@@ -32,7 +34,9 @@ export const getEanCodeQuery = gql`
       eanCode
       product {
         id
-        sku
+        ... on ProductType {
+          sku
+        }
       }
     }
   }

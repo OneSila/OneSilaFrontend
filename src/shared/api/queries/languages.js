@@ -21,7 +21,14 @@ export const customerLanguagesQuery = gql`
   }
 `;
 
-
+export const translationLanguagesQuery = gql`
+  query translationLanguages {
+    translationLanguages {
+      code
+      name
+    }
+  }
+`;
 
 export const countriesQuery = gql`
 query countries{

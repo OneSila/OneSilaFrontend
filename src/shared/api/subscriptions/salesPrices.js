@@ -6,7 +6,7 @@ export const salesPriceSubscription = gql`
       id
       product {
         id
-        name
+        sku
       }
       currency {
         id
@@ -48,7 +48,7 @@ export const salesPriceListItemSubscription = gql`
       }
       product {
         id
-        name
+        sku
       }
       salesprice
     }

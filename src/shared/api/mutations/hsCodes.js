@@ -6,6 +6,12 @@ export const createHsCodeMutation = gql`
       id
       name
       code
+      product {
+        id
+        ... on ProductType {
+          sku
+        }
+      }
     }
   }
 `;
@@ -16,12 +22,18 @@ export const createHsCodesMutation = gql`
       id
       name
       code
+      product {
+        id
+        ... on ProductType {
+          sku
+        }
+      }
     }
   }
 `;
 
 export const updateHsCodeMutation = gql`
-  mutation updateHsCode($data: HsCodeInput!) {
+  mutation updateHsCode($data: HsCodePartialInput!) {
     updateHsCode(data: $data) {
       id
       name

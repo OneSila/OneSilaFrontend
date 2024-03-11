@@ -160,6 +160,21 @@ export const createCustomerMutation = gql`
   }
 `;
 
+export const createSupplierMutation = gql`
+  mutation createSupplier($data: SupplierInput!) {
+    createSupplier(data: $data) {
+      id
+      name
+      vatNumber
+      eoriNumber
+      isSupplier
+      isCustomer
+      isInfluencer
+      isInternalCompany
+    }
+  }
+`;
+
 export const createCustomersMutation = gql`
   mutation createCustomers($data: [CustomerInput!]!) {
     createCustomers(data: $data) {
@@ -190,6 +205,21 @@ export const updateCustomerMutation = gql`
   }
 `;
 
+export const updateSupplierMutation = gql`
+  mutation updateSupplier($data: SupplierPartialInput!) {
+    updateSupplier(data: $data) {
+      id
+      name
+      vatNumber
+      eoriNumber
+      isSupplier
+      isCustomer
+      isInfluencer
+      isInternalCompany
+    }
+  }
+`;
+
 export const deleteCustomerMutation = gql`
   mutation deleteCustomer($id: GlobalID!) {
     deleteCustomer(data: {id: $id}) {
@@ -198,6 +228,13 @@ export const deleteCustomerMutation = gql`
   }
 `;
 
+export const deleteSupplierMutation = gql`
+  mutation deleteSupplier($id: GlobalID!) {
+    deleteSupplier(data: {id: $id}) {
+      id
+    }
+  }
+`;
 export const deleteCustomersMutation = gql`
   mutation deleteCustomers($ids: [GlobalID!]!) {
     deleteCustomers(data: {ids: $ids}) {

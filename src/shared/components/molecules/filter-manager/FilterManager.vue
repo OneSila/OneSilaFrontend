@@ -9,7 +9,7 @@ const appStore = useAppStore();
 const props = defineProps<{ searchConfig: SearchConfig }>();
 
 const route = useRoute();
-const filterVariables = ref({});
+const filterVariables = ref<Record<string, string> | null>({});
 const orderVariables = ref({});
 
 // pagination variations
@@ -57,7 +57,12 @@ watch(() => route.query, (newQuery) => {
       }
     }
   });
-  filterVariables.value = updatedVariables;
+
+  if (Object.keys(updatedVariables).length === 0) {
+    filterVariables.value = null;
+  } else {
+    filterVariables.value = updatedVariables;
+  }
 
   if (props.searchConfig.orderKey && newQuery[props.searchConfig.orderKey]) {
     const selectedIndex = getSelectedOrderIndex(

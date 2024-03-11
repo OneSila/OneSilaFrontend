@@ -39,18 +39,16 @@ const handleUpdateComplete = () => {
 };
 
 
-onMounted(() => {
-  tabItems.value = [
-      { name: 'general', label: t('profile.tabs.general'), icon: 'id-card' },
-      { name: 'security', label: t('profile.tabs.security'), icon: 'cog' }
-    ];
+tabItems.value = [
+    { name: 'general', label: t('profile.tabs.general'), icon: 'id-card' },
+    { name: 'security', label: t('profile.tabs.security'), icon: 'cog' }
+  ];
 
-  const tabQueryParam = route.query.tab;
-  if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
-    editView.value = true;
-  }
+const tabQueryParam = route.query.tab;
+if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
+  editView.value = true;
+}
 
-});
 
 </script>
 

@@ -8,11 +8,12 @@ export const salesPricesQuery = gql`
           id
           product {
             id
-            name
+            sku
           }
           currency {
             id
             symbol
+            isoCode
           }
           amount
           discountAmount
@@ -30,6 +31,30 @@ export const salesPricesQuery = gql`
   }
 `;
 
+export const getSalesPriceByProductAndCurrencyQuery = gql`
+  query getSalesPriceByProductAndCurrency($currencyId: GlobalID!, $productId: GlobalID!) {
+    salesPrices(filters:  {currency: {id:{exact: $currencyId}}, product: {id: {exact: $productId}}}) {
+      edges {
+        node {
+          id
+          product {
+            id
+            sku
+          }
+          currency {
+            id
+            symbol
+            isoCode
+          }
+          amount
+          discountAmount
+        }
+      }
+    }
+  }
+`;
+
+
 export const salesPriceListsQuery = gql`
   query SalesPriceLists($first: Int, $last: Int, $after: String, $before: String, $order: SalesPriceListOrder, $filter: SalesPriceListFilter) {
     salesPriceLists(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
@@ -38,9 +63,11 @@ export const salesPriceListsQuery = gql`
           id
           name
           discount
+          notes
           currency {
             id
             symbol
+            isoCode
           }
           vatIncluded
           autoUpdate
@@ -74,7 +101,7 @@ export const salesPriceListItemsQuery = gql`
           }
           product {
             id
-            name
+            sku
           }
           salesprice
         }
@@ -97,11 +124,12 @@ export const getSalesPriceQuery = gql`
       id
       product {
         id
-        name
+        sku
       }
       currency {
         id
         symbol
+        isoCode
       }
       amount
       discountAmount
@@ -115,9 +143,11 @@ export const getSalesPriceListQuery = gql`
       id
       name
       discount
+      notes
       currency {
         id
         symbol
+        isoCode
       }
       vatIncluded
       autoUpdate
@@ -139,7 +169,7 @@ export const getSalesPriceListItemQuery = gql`
       }
       product {
         id
-        name
+        sku
       }
       salesprice
     }

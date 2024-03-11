@@ -70,6 +70,62 @@ query companyAddresses($filter: AddressFilter) {
 }
 `;
 
+export const companyInvoiceAddressesQuery = gql`
+query invoiceAddresses {
+  invoiceAddresses {
+    edges {
+      node {
+        id
+        isInvoiceAddress
+        isShippingAddress
+        address1
+        address2
+        address3
+        postcode
+        city
+        country
+      }
+      cursor
+    }
+    totalCount
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+`;
+
+export const companyShippingAddressesQuery = gql`
+query companyAddresses {
+  shippingAddresses {
+    edges {
+      node {
+        id
+        isInvoiceAddress
+        isShippingAddress
+        address1
+        address2
+        address3
+        postcode
+        city
+        country
+      }
+      cursor
+    }
+    totalCount
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+`;
+
 export const getCompanyAddressQuery = gql`
 query getCompanyAddress ($id: GlobalID!){
   address (id: $id) {
@@ -86,6 +142,33 @@ query getCompanyAddress ($id: GlobalID!){
 }
 `;
 
+export const peopleFilterQuery = gql`
+query People($first: Int, $last: Int, $after: String, $before: String, $order: PersonOrder, $filter: PersonFilter) {
+  people(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        company {
+          name
+        }
+        phone
+        email
+        language
+      }
+      cursor
+    }
+    totalCount
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+`;
 export const peopleQuery = gql`
 query People($first: Int, $last: Int, $after: String, $before: String, $order: PersonOrder) {
   people(first: $first, last: $last, after: $after, before: $before, order: $order) {
@@ -162,9 +245,59 @@ export const customersQuery = gql`
   }
 `;
 
+export const suppliersQuery = gql`
+  query Suppliers($first: Int, $last: Int, $after: String, $before: String, $order: SupplierOrder, $filter: SupplierFilter) {
+    suppliers(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          vatNumber
+          eoriNumber
+          isSupplier
+          isCustomer
+          isInfluencer
+          isInternalCompany
+          relatedCompanies {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getCustomerQuery = gql`
   query getCustomer($id: GlobalID!) {
     customer(id: $id) {
+      id
+      name
+      vatNumber
+      eoriNumber
+      isSupplier
+      isCustomer
+      isInfluencer
+      isInternalCompany
+      relatedCompanies {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const getSupplierQuery = gql`
+  query getSupplier($id: GlobalID!) {
+    supplier(id: $id) {
       id
       name
       vatNumber

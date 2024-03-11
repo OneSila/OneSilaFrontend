@@ -1,14 +1,9 @@
+import { FieldType } from '../../../../shared/utils/constants.js'
+
 export interface PaginationConfig {
   alignment: 'start' | 'center' | 'end';
   buttonClass: 'default' | 'solid' | 'rounded';
   useIcons: boolean;
-}
-export enum FieldType {
-  Text = "Text",
-  Image = "Image",
-  NestedText = "NestedText",
-  Array = "Array",
-  Boolean = 'Boolean'
 }
 export interface BaseListingField {
   name: string;
@@ -22,6 +17,9 @@ export interface TextField extends BaseListingField {
   type: FieldType.Text;
 }
 
+export interface DateField extends BaseListingField {
+  type: FieldType.Date;
+}
 export interface BoleanField extends BaseListingField {
   type: FieldType.Boolean;
 }
@@ -43,13 +41,15 @@ export const accessNestedProperty = (obj, keys) => {
   }, obj);
 };
 
-export type ListingField = TextField | BoleanField | ImageField | NestedTextField;
+export type ListingField = TextField | BoleanField | ImageField | NestedTextField | DateField;
 
 export interface ListingConfig {
   headers: string[];
   fields: ListingField[];
   identifierVariables?: Record<string, string>;
+  urlQueryParams?: Record<string, string>;
   identifierKey?: string; // most times it will be 'id'
+  paramIdentifier?: string; // most times it will be 'id'
   addEdit?: boolean;
   editUrlName?: string;
   addShow?: boolean;

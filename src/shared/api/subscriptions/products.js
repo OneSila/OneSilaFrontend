@@ -7,9 +7,12 @@ export const productSubscription = gql`
       sku
       active
       type
+      proxyId
+      name
       taxRate {
         id
         rate
+        name
       }
       alwaysOnStock
     }

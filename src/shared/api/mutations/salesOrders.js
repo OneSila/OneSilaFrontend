@@ -23,6 +23,33 @@ export const updateOrderMutation = gql`
     updateOrder(data: $data) {
       id
       reference
+      customer {
+          id
+          ... on CustomerType {
+            name
+          }
+        }
+        invoiceAddress {
+          ... on InvoiceAddressType {
+            id
+            address1
+          }
+        }
+        shippingAddress {
+          ... on ShippingAddressType {
+            id
+            address1
+          }
+        }
+        currency {
+          id
+          ... on CurrencyType {
+            symbol
+          }
+        }
+      priceInclVat
+      status
+      reasonForSale
     }
   }
 `;
@@ -38,7 +65,7 @@ export const createOrderItemMutation = gql`
       }
       product {
         id
-        name
+        sku
       }
       quantity
       price
@@ -74,7 +101,7 @@ export const updateOrderItemMutation = gql`
       }
       product {
         id
-        name
+        sku
       }
       quantity
       price

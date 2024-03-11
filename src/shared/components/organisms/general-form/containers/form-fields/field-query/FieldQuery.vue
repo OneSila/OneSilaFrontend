@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { Selector } from '../../../../../atoms/selector';
-import { Label } from '../../../../../atoms/label';
 import { QueryFormField } from '../../../formConfig';
 
 const props = defineProps<{
@@ -20,7 +19,6 @@ const multiple = props.field.multiple || false;
 const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
 const limit = props.field.limit || null;
-const disabled = props.field.disabled === true;
 
 const cleanedData = (rawData) => {
   if (props.field.isEdge && rawData?.edges) {
@@ -33,8 +31,23 @@ const cleanedData = (rawData) => {
 
 <template>
   <div class="field-item">
-    <Label semi-bold class="mb-2">{{ field.label }}</Label>
-    <ApolloQuery :query="field.query" :variables="field.queryVariables">
+    <Selector
+      v-if="field.disabled"
+      :modelValue="modelValue"
+      @update:modelValue="updateValue"
+      :options="[]"
+      :label-by="field.labelBy"
+      :value-by="field.valueBy"
+      :placeholder="field.placeholder"
+      :dropdown-position="dropdownPosition"
+      :mandatory="mandatory"
+      :multiple="multiple"
+      :filterable="filterable"
+      :removable="removable"
+      :limit="limit"
+      :disabled="true"
+    />
+    <ApolloQuery v-else :query="field.query" :variables="field.queryVariables">
       <template v-slot="{ result: { data } }">
         <Selector
           v-if="data && data[field.dataKey]"
@@ -50,7 +63,7 @@ const cleanedData = (rawData) => {
           :filterable="filterable"
           :removable="removable"
           :limit="limit"
-          :disabled="disabled"
+          :disabled="field.disabled"
         />
       </template>
     </ApolloQuery>

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import Logo from "../logo/Logo.vue";
 import { Icon } from "../../atoms/icon";
 import SideItems from "./SideItems.vue";
+import SideSettingsItems from "./SideSettingsItems.vue";
 
 const emit = defineEmits(['hide-sidebar']);
 
@@ -49,12 +50,24 @@ onMounted(() => {
                         swipeEasing: true,
                         wheelPropagation: false,
                     }"
-                    class="h-[calc(100vh-80px)] relative"
+                    class="h-[calc(100vh-80px)] relative perfect-scrollbar"
                 >
                     <SideItems />
-
+                    <SideSettingsItems />
                 </perfect-scrollbar>
             </div>
         </nav>
     </div>
 </template>
+
+<style scoped>
+.perfect-scrollbar {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+}
+
+.side-settings-items {
+  margin-top: auto;
+}
+</style>

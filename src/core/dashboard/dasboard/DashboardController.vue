@@ -3,138 +3,35 @@
     import apexchart from 'vue3-apexcharts';
 
     import IconHorizontalDots from '../../../shared/components/atoms/icons/icon-horizontal-dots.vue';
-    import IconTrendingUp from '../../../shared/components/atoms/icons/icon-trending-up.vue';
-    import IconPlus from '../../../shared/components/atoms/icons/icon-plus.vue';
+    import IconDollarSign from '../../../shared/components/atoms/icons/icon-dollar-sign.vue';
+    import IconInbox from '../../../shared/components/atoms/icons/icon-inbox.vue';
+    import IconTag from '../../../shared/components/atoms/icons/icon-tag.vue';
     import IconCreditCard from '../../../shared/components/atoms/icons/icon-credit-card.vue';
-    import IconMail from '../../../shared/components/atoms/icons/icon-mail.vue';
-    import IconChecks from '../../../shared/components/atoms/icons/icon-checks.vue';
-    import IconFile from '../../../shared/components/atoms/icons/icon-file.vue';
-    import IconServer from '../../../shared/components/atoms/icons/icon-server.vue';
-    import IconChrome from '../../../shared/components/atoms/icons/icon-chrome.vue';
-    import IconSafari from '../../../shared/components/atoms/icons/icon-safari.vue';
-    import IconGlobe from '../../../shared/components/atoms/icons/icon-globe.vue';
-    import IconUsersGroup from '../../../shared/components/atoms/icons/icon-users-group.vue';
-    import IconLink from '../../../shared/components/atoms/icons/icon-link.vue';
-    import IconChatDots from '../../../shared/components/atoms/icons/icon-chat-dots.vue';
-    import IconThumbUp from '../../../shared/components/atoms/icons/icon-thumb-up.vue';
-    import IconCaretsDown from '../../../shared/components/atoms/icons/icon-carets-down.vue';
-    import IconSquareCheck from '../../../shared/components/atoms/icons/icon-square-check.vue';
-    import IconClock from '../../../shared/components/atoms/icons/icon-clock.vue';
-    import Breadcrumbs from "../../../shared/components/molecules/breadcrumbs/Breadcrumbs.vue";
+    import IconShoppingCart from '../../../shared/components/atoms/icons/icon-shopping-cart.vue';
+    import IconArrowLeft from '../../../shared/components/atoms/icons/icon-arrow-left.vue';
+    import IconCashBanknotes from '../../../shared/components/atoms/icons/icon-cash-banknotes.vue';
+    import IconUser from '../../../shared/components/atoms/icons/icon-user.vue';
+    import IconNetflix from '../../../shared/components/atoms/icons/icon-netflix.vue';
+    import IconBolt from '../../../shared/components/atoms/icons/icon-bolt.vue';
+    import IconPlus from '../../../shared/components/atoms/icons/icon-plus.vue';
+    import IconCaretDown from '../../../shared/components/atoms/icons/icon-caret-down.vue';
+    import IconMultipleForwardRight from '../../../shared/components/atoms/icons/icon-multiple-forward-right.vue';
+    
 
-    // statistics
-    const totalVisit = computed(() => {
-        const isDark: boolean = false;
+    const isDark =  true ; // take this from theme in the future
+    const isRtl = true; // take this from language
+
+    const revenueChart = computed(() => {
+
+
         return {
             chart: {
-                height: 58,
-                type: 'line',
+                height: 325,
+                type: 'area',
                 fontFamily: 'Nunito, sans-serif',
-                sparkline: {
-                    enabled: true,
+                zoom: {
+                    enabled: false,
                 },
-                dropShadow: {
-                    enabled: true,
-                    blur: 3,
-                    color: '#009688',
-                    opacity: 0.4,
-                },
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 2,
-            },
-            colors: ['#009688'],
-            grid: {
-                padding: {
-                    top: 5,
-                    bottom: 5,
-                    left: 5,
-                    right: 5,
-                },
-            },
-            tooltip: {
-                x: {
-                    show: false,
-                },
-                y: {
-                    title: {
-                        formatter: (val: any) => {
-                            return '';
-                        },
-                    },
-                },
-            },
-        };
-    });
-
-    const totalVisitSeries = ref([
-        {
-            data: [21, 9, 36, 12, 44, 25, 59, 41, 66, 25],
-        },
-    ]);
-
-    //paid visit
-    const paidVisit = computed(() => {
-        const isDark: boolean = false;
-        return {
-            chart: {
-                height: 58,
-                type: 'line',
-                fontFamily: 'Nunito, sans-serif',
-                sparkline: {
-                    enabled: true,
-                },
-                dropShadow: {
-                    enabled: true,
-                    blur: 3,
-                    color: '#e2a03f',
-                    opacity: 0.4,
-                },
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 2,
-            },
-            colors: ['#e2a03f'],
-            grid: {
-                padding: {
-                    top: 5,
-                    bottom: 5,
-                    left: 5,
-                    right: 5,
-                },
-            },
-            tooltip: {
-                x: {
-                    show: false,
-                },
-                y: {
-                    title: {
-                        formatter: (val: any) => {
-                            return '';
-                        },
-                    },
-                },
-            },
-        };
-    });
-
-    const paidVisitSeries = ref([
-        {
-            data: [22, 19, 30, 47, 32, 44, 34, 55, 41, 69],
-        },
-    ]);
-
-    // unique visitors
-    const uniqueVisitor = computed(() => {
-        const isDark: boolean = false;
-        const isRtl = false;
-        return {
-            chart: {
-                height: 360,
-                type: 'bar',
-                fontFamily: 'Nunito, sans-serif',
                 toolbar: {
                     show: false,
                 },
@@ -143,659 +40,404 @@
                 enabled: false,
             },
             stroke: {
+                show: true,
+                curve: 'smooth',
                 width: 2,
-                colors: ['transparent'],
+                lineCap: 'square',
             },
-            colors: ['#5c1ac3', '#ffbb44'],
             dropShadow: {
                 enabled: true,
-                blur: 3,
-                color: '#515365',
-                opacity: 0.4,
+                opacity: 0.2,
+                blur: 10,
+                left: -7,
+                top: 22,
             },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    borderRadius: 10,
-                },
+            colors: isDark ? ['#2196f3', '#e7515a'] : ['#1b55e2', '#e7515a'],
+            markers: {
+                discrete: [
+                    {
+                        seriesIndex: 0,
+                        dataPointIndex: 6,
+                        fillColor: '#1b55e2',
+                        strokeColor: 'transparent',
+                        size: 7,
+                    },
+                    {
+                        seriesIndex: 1,
+                        dataPointIndex: 5,
+                        fillColor: '#e7515a',
+                        strokeColor: 'transparent',
+                        size: 7,
+                    },
+                ],
             },
-            legend: {
-                position: 'bottom',
-                horizontalAlign: 'center',
-                fontSize: '14px',
-                itemMargin: {
-                    horizontal: 8,
-                    vertical: 8,
-                },
-            },
-            grid: {
-                borderColor: isDark ? '#191e3a' : '#e0e6ed',
-                padding: {
-                    left: 20,
-                    right: 20,
-                },
-            },
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+                crosshairs: {
                     show: true,
-                    color: isDark ? '#3b3f5c' : '#e0e6ed',
+                },
+                labels: {
+                    offsetX: isRtl ? 2 : 0,
+                    offsetY: 5,
+                    style: {
+                        fontSize: '12px',
+                        cssClass: 'apexcharts-xaxis-title',
+                    },
                 },
             },
             yaxis: {
-                tickAmount: 6,
-                opposite: isRtl ? true : false,
+                tickAmount: 7,
                 labels: {
-                    offsetX: isRtl ? -10 : 0,
+                    formatter: (value: number) => {
+                        return value / 1000 + 'K';
+                    },
+                    offsetX: isRtl ? -30 : -10,
+                    offsetY: 0,
+                    style: {
+                        fontSize: '12px',
+                        cssClass: 'apexcharts-yaxis-title',
+                    },
+                },
+                opposite: isRtl ? true : false,
+            },
+            grid: {
+                borderColor: isDark ? '#191e3a' : '#e0e6ed',
+                strokeDashArray: 5,
+                xaxis: {
+                    lines: {
+                        show: true,
+                    },
+                },
+                yaxis: {
+                    lines: {
+                        show: false,
+                    },
+                },
+                padding: {
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
                 },
             },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: isDark ? 'dark' : 'light',
-                    type: 'vertical',
-                    shadeIntensity: 0.3,
-                    inverseColors: false,
-                    opacityFrom: 1,
-                    opacityTo: 0.8,
-                    stops: [0, 100],
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                fontSize: '16px',
+                markers: {
+                    width: 10,
+                    height: 10,
+                    offsetX: -2,
+                },
+                itemMargin: {
+                    horizontal: 10,
+                    vertical: 5,
                 },
             },
             tooltip: {
                 marker: {
                     show: true,
                 },
-                y: {
-                    formatter: (val: any) => {
-                        return val;
-                    },
+                x: {
+                    show: false,
+                },
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    inverseColors: !1,
+                    opacityFrom: isDark ? 0.19 : 0.28,
+                    opacityTo: 0.05,
+                    stops: isDark ? [100, 100] : [45, 100],
                 },
             },
         };
     });
 
-    const uniqueVisitorSeries = ref([
+    const revenueSeries = ref([
         {
-            name: 'Direct',
-            data: [58, 44, 55, 57, 56, 61, 58, 63, 60, 66, 56, 63],
+            name: 'Income',
+            data: [16800, 16800, 15500, 17800, 15500, 17000, 19000, 16000, 15000, 17000, 14000, 17000],
         },
         {
-            name: 'Organic',
-            data: [91, 76, 85, 101, 98, 87, 105, 91, 114, 94, 66, 70],
+            name: 'Expenses',
+            data: [16500, 17500, 16200, 17300, 16000, 19500, 16000, 17000, 16000, 19000, 18000, 19000],
         },
     ]);
 
-    // followers
-    const followers = computed(() => {
-        const isDark: boolean = false;
+    // sales by category
+    const salesByCategory = computed(() => {
         return {
             chart: {
-                height: 160,
-                type: 'area',
+                type: 'donut',
+                height: 460,
                 fontFamily: 'Nunito, sans-serif',
-                sparkline: {
-                    enabled: true,
-                },
+            },
+            dataLabels: {
+                enabled: false,
             },
             stroke: {
-                curve: 'smooth',
-                width: 2,
+                show: true,
+                width: 25,
+                colors: isDark ? '#0e1726' : '#fff',
             },
-            colors: ['#4361ee'],
-            grid: {
-                padding: {
-                    top: 5,
+            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f'] : ['#e2a03f', '#5c1ac3', '#e7515a'],
+            legend: {
+                position: 'bottom',
+                horizontalAlign: 'center',
+                fontSize: '14px',
+                markers: {
+                    width: 10,
+                    height: 10,
+                    offsetX: -2,
                 },
+                height: 50,
+                offsetY: 20,
             },
-            yaxis: {
-                show: false,
-            },
-            tooltip: {
-                x: {
-                    show: false,
-                },
-                y: {
-                    title: {
-                        formatter: (val: any) => {
-                            return '';
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '65%',
+                        background: 'transparent',
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true,
+                                fontSize: '29px',
+                                offsetY: -10,
+                            },
+                            value: {
+                                show: true,
+                                fontSize: '26px',
+                                color: isDark ? '#bfc9d4' : undefined,
+                                offsetY: 16,
+                                formatter: (val: any) => {
+                                    return val;
+                                },
+                            },
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                color: '#888ea8',
+                                fontSize: '29px',
+                                formatter: (w: any) => {
+                                    return w.globals.seriesTotals.reduce(function (a: any, b: any) {
+                                        return a + b;
+                                    }, 0);
+                                },
+                            },
                         },
                     },
                 },
             },
-            option: { fill: null },
-
-            if(isDark: boolean) {
-                option: {
-                    fill: {
-                        type: 'gradient';
-                        gradient: {
-                            type: 'vertical';
-                            shadeIntensity: 1;
-                            inverseColors: !1;
-                            opacityFrom: 0.3;
-                            opacityTo: 0.05;
-                            stops: [100, 100];
-                        }
-                    }
-                }
+            labels: ['Apparel', 'Sports', 'Others'],
+            states: {
+                hover: {
+                    filter: {
+                        type: 'none',
+                        value: 0.15,
+                    },
+                },
+                active: {
+                    filter: {
+                        type: 'none',
+                        value: 0.15,
+                    },
+                },
             },
         };
     });
 
-    const followersSeries = ref([
-        {
-            data: [38, 60, 38, 52, 36, 40, 28],
-        },
-    ]);
+    const salesByCategorySeries = ref([985, 737, 270]);
 
-    // referral
-    const referral = computed(() => {
-        const isDark: boolean = false;
+    // daily sales
+    const dailySales = computed(() => {
         return {
             chart: {
                 height: 160,
-                type: 'area',
+                type: 'bar',
                 fontFamily: 'Nunito, sans-serif',
-                sparkline: {
-                    enabled: true,
+                toolbar: {
+                    show: false,
                 },
+                stacked: true,
+                stackType: '100%',
+            },
+            dataLabels: {
+                enabled: false,
             },
             stroke: {
-                curve: 'smooth',
-                width: 2,
+                show: true,
+                width: 1,
             },
-            colors: ['#e7515a'],
-            grid: {
-                padding: {
-                    top: 5,
+            colors: ['#e2a03f', '#e0e6ed'],
+            responsive: [
+                {
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            position: 'bottom',
+                            offsetX: -10,
+                            offsetY: 0,
+                        },
+                    },
                 },
+            ],
+            xaxis: {
+                labels: {
+                    show: false,
+                },
+                categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
             },
             yaxis: {
                 show: false,
             },
-            tooltip: {
-                x: {
-                    show: false,
-                },
-                y: {
-                    title: {
-                        formatter: (val: any) => {
-                            return '';
-                        },
-                    },
+            fill: {
+                opacity: 1,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '25%',
                 },
             },
-
-            if(isDark: boolean) {
-                option: {
-                    fill: {
-                        type: 'gradient';
-                        gradient: {
-                            type: 'vertical';
-                            shadeIntensity: 1;
-                            inverseColors: !1;
-                            opacityFrom: 0.3;
-                            opacityTo: 0.05;
-                            stops: [100, 100];
-                        }
-                    }
-                }
-            },
-        };
-    });
-
-    const referralSeries = ref([
-        {
-            data: [60, 28, 52, 38, 40, 36, 38],
-        },
-    ]);
-
-    // engagement
-    const engagement = computed(() => {
-        const isDark: boolean = false;
-        return {
-            chart: {
-                height: 160,
-                type: 'area',
-                fontFamily: 'Nunito, sans-serif',
-                sparkline: {
-                    enabled: true,
-                },
-            },
-            stroke: {
-                curve: 'smooth',
-                width: 2,
-            },
-            colors: ['#1abc9c'],
-            grid: {
-                padding: {
-                    top: 5,
-                },
-            },
-            yaxis: {
+            legend: {
                 show: false,
             },
-            tooltip: {
-                x: {
-                    show: false,
-                },
-                y: {
-                    title: {
-                        formatter: (val: any) => {
-                            return '';
-                        },
+            grid: {
+                show: false,
+                xaxis: {
+                    lines: {
+                        show: false,
                     },
                 },
-            },
-
-            if(isDark: boolean) {
-                option: {
-                    fill: {
-                        type: 'gradient';
-                        gradient: {
-                            type: 'vertical';
-                            shadeIntensity: 1;
-                            inverseColors: !1;
-                            opacityFrom: 0.3;
-                            opacityTo: 0.05;
-                            stops: [100, 100];
-                        }
-                    }
-                }
+                padding: {
+                    top: 10,
+                    right: -20,
+                    bottom: -20,
+                    left: -20,
+                },
             },
         };
     });
 
-    const engagementSeries = ref([
+    const dailySalesSeries = ref([
         {
             name: 'Sales',
-            data: [28, 50, 36, 60, 38, 52, 38],
+            data: [44, 55, 41, 67, 22, 43, 21],
+        },
+        {
+            name: 'Last Week',
+            data: [13, 23, 20, 8, 13, 27, 33],
+        },
+    ]);
+
+    // total orders
+    const totalOrders = computed(() => {
+        return {
+            chart: {
+                height: 290,
+                type: 'area',
+                fontFamily: 'Nunito, sans-serif',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+            },
+            colors: isDark ? ['#00ab55'] : ['#00ab55'],
+            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            yaxis: {
+                min: 0,
+                show: false,
+            },
+            grid: {
+                padding: {
+                    top: 125,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                },
+            },
+            fill: {
+                opacity: 1,
+                type: 'gradient',
+                gradient: {
+                    type: 'vertical',
+                    shadeIntensity: 1,
+                    inverseColors: !1,
+                    opacityFrom: 0.3,
+                    opacityTo: 0.05,
+                    stops: [100, 100],
+                },
+            },
+            tooltip: {
+                x: {
+                    show: false,
+                },
+            },
+        };
+    });
+
+    const totalOrdersSeries = ref([
+        {
+            name: 'Sales',
+            data: [28, 40, 36, 52, 38, 60, 38, 52, 36, 40],
         },
     ]);
 </script>
 
 <template>
     <div>
-        <Breadcrumbs :links="[{ path: { name: 'dashboard' }, name: 'Dashboard' }]" />
+        <ul class="flex space-x-2 rtl:space-x-reverse">
+            <li>
+                <a href="javascript:;" class="text-primary hover:underline">Dashboard</a>
+            </li>
+            <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                <span>Sales</span>
+            </li>
+        </ul>
+
         <div class="pt-5">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <div class="panel h-full sm:col-span-2 lg:col-span-1">
-                    <!-- statistics -->
+            <div class="grid xl:grid-cols-3 gap-6 mb-6">
+                <div class="panel h-full xl:col-span-2">
                     <div class="flex items-center justify-between dark:text-white-light mb-5">
-                        <h5 class="font-semibold text-lg">Statistics</h5>
-                        <div class="dropdown">
-                            <Popper :placement="'bottom-end'" offsetDistance="0" class="align-middle">
-                                <button type="button">
+                        <h5 class="font-semibold text-lg">Revenue</h5>
+                        <div class="dropdown ltr:ml-auto rtl:mr-auto">
+                            <Popper :placement="isRtl ? 'bottom-start' : 'bottom-end'" offsetDistance="0" class="align-middle">
+                                <a href="javascript:;">
                                     <icon-horizontal-dots class="text-black/70 dark:text-white/70 hover:!text-primary" />
-                                </button>
+                                </a>
                                 <template #content="{ close }">
                                     <ul @click="close()">
                                         <li>
-                                            <a href="javascript:;">This Week</a>
+                                            <a href="javascript:;">Weekly</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:;">Last Week</a>
+                                            <a href="javascript:;">Monthly</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:;">This Month</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">Last Month</a>
+                                            <a href="javascript:;">Yearly</a>
                                         </li>
                                     </ul>
                                 </template>
                             </Popper>
                         </div>
                     </div>
-                    <div class="grid sm:grid-cols-2 gap-8 text-sm text-[#515365] font-bold">
-                        <div>
-                            <div>
-                                <div>Total Visits</div>
-                                <div class="text-[#f8538d] text-lg">423,964</div>
-                            </div>
-                            <apexchart height="58" :options="totalVisit" :series="totalVisitSeries" class="overflow-hidden">
-                                <!-- loader -->
-                                <div class="min-h-[58px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
-                                    <span
-                                        class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"
-                                    ></span>
-                                </div>
-                            </apexchart>
-                        </div>
-
-                        <div>
-                            <div>
-                                <div>Paid Visits</div>
-                                <div class="text-[#f8538d] text-lg">7,929</div>
-                            </div>
-                            <apexchart height="58" :options="paidVisit" :series="paidVisitSeries" class="overflow-hidden">
-                                <!-- loader -->
-                                <div class="min-h-[58px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
-                                    <span
-                                        class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"
-                                    ></span>
-                                </div>
-                            </apexchart>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel h-full">
-                    <div class="flex items-center justify-between dark:text-white-light mb-5">
-                        <h5 class="font-semibold text-lg">Expenses</h5>
-                        <div class="dropdown">
-                            <Popper :placement="'bottom-end'" offsetDistance="0" class="align-middle">
-                                <button type="button">
-                                    <icon-horizontal-dots class="text-black/70 dark:text-white/70 hover:!text-primary" />
-                                </button>
-                                <template #content="{ close }">
-                                    <ul @click="close()">
-                                        <li>
-                                            <a href="javascript:;">This Week</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">Last Week</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">This Month</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">Last Month</a>
-                                        </li>
-                                    </ul>
-                                </template>
-                            </Popper>
-                        </div>
-                    </div>
-                    <div class="text-[#e95f2b] text-3xl font-bold my-10">
-                        <span class="ltr:mr-2 rtl:ml-2">$ 45,141</span>
-                        <span class="text-black text-sm dark:text-white-light ltr:mr-1 rtl:ml-1">this week </span>
-                        <icon-trending-up class="text-success inline" />
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:shadow-none dark:bg-dark-light/10">
-                            <div
-                                class="bg-gradient-to-r from-[#4361ee] to-[#805dca] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
-                                style="width: 65%"
-                            ></div>
-                        </div>
-                        <span class="ltr:ml-5 rtl:mr-5 dark:text-white-light">57%</span>
-                    </div>
-                </div>
-
-                <div
-                    class="panel h-full overflow-hidden before:bg-[#1937cc] before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between"
-                    style="background: linear-gradient(0deg, #00c6fb -227%, #005bea) !important"
-                >
-                    <div class="flex items-start justify-between text-white-light mb-16 z-[7]">
-                        <h5 class="font-semibold text-lg">Total Balance</h5>
-
-                        <div class="relative text-xl whitespace-nowrap">
-                            $ 41,741.42
-                            <span class="table text-[#d3d3d3] bg-[#4361ee] rounded p-1 text-xs mt-1 ltr:ml-auto rtl:mr-auto">+ 2453</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between z-10">
-                        <div class="flex items-center justify-between">
-                            <a
-                                href="javascript:;"
-                                class="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2"
-                            >
-                                <icon-plus />
-                            </a>
-                            <a href="javascript:;" class="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] grid place-content-center">
-                                <icon-credit-card />
-                            </a>
-                        </div>
-                        <a href="javascript:;" class="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#4361ee] z-10"> Upgrade </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid lg:grid-cols-3 gap-6 mb-6">
-                <div class="panel h-full p-0 lg:col-span-2">
-                    <div class="flex items-start justify-between dark:text-white-light mb-5 p-5 border-b border-[#e0e6ed] dark:border-[#1b2e4b]">
-                        <h5 class="font-semibold text-lg">Unique Visitors</h5>
-                        <div class="dropdown">
-                            <Popper :placement="'bottom-end'" offsetDistance="0" class="align-middle">
-                                <button type="button">
-                                    <icon-horizontal-dots class="text-black/70 dark:text-white/70 hover:!text-primary" />
-                                </button>
-                                <template #content="{ close }">
-                                    <ul @click="close()">
-                                        <li>
-                                            <a href="javascript:;">View</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">Update</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">Download</a>
-                                        </li>
-                                    </ul>
-                                </template>
-                            </Popper>
-                        </div>
-                    </div>
-
-                    <apexchart height="360" :options="uniqueVisitor" :series="uniqueVisitorSeries" class="overflow-hidden">
-                        <!-- loader -->
-                        <div class="min-h-[360px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
-                            <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
-                        </div>
-                    </apexchart>
-                </div>
-
-                <div class="panel h-full">
-                    <div class="flex items-start justify-between dark:text-white-light mb-5 -mx-5 p-5 pt-0 border-b border-[#e0e6ed] dark:border-[#1b2e4b]">
-                        <h5 class="font-semibold text-lg">Activity Log</h5>
-                        <div class="dropdown">
-                            <Popper :placement="'bottom-end'" offsetDistance="0" class="align-middle">
-                                <button type="button">
-                                    <icon-horizontal-dots class="text-black/70 dark:text-white/70 hover:!text-primary" />
-                                </button>
-                                <template #content="{ close }">
-                                    <ul @click="close()">
-                                        <li>
-                                            <a href="javascript:;">View All</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;">Mark as Read</a>
-                                        </li>
-                                    </ul>
-                                </template>
-                            </Popper>
-                        </div>
-                    </div>
-                    <perfect-scrollbar
-                        :options="{
-                            swipeEasing: true,
-                            wheelPropagation: false,
-                        }"
-                        class="relative h-[360px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3"
-                    >
-                        <div class="space-y-7">
-                            <div class="flex">
-                                <div
-                                    class="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4"
-                                >
-                                    <div class="bg-secondary shadow shadow-secondary w-8 h-8 rounded-full flex items-center justify-center text-white">
-                                        <icon-plus class="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold dark:text-white-light">
-                                        New project created : <a href="javascript:;" class="text-success">[VRISTO Admin Template]</a>
-                                    </h5>
-                                    <p class="text-white-dark text-xs">27 Feb, 2020</p>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div
-                                    class="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4"
-                                >
-                                    <div class="bg-success shadow-success w-8 h-8 rounded-full flex items-center justify-center text-white">
-                                        <icon-mail class="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold dark:text-white-light">
-                                        Mail sent to <a href="javascript:;" class="text-white-dark">HR</a> and
-                                        <a href="javascript:;" class="text-white-dark">Admin</a>
-                                    </h5>
-                                    <p class="text-white-dark text-xs">28 Feb, 2020</p>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div
-                                    class="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4"
-                                >
-                                    <div class="bg-primary w-8 h-8 rounded-full flex items-center justify-center text-white">
-                                        <icon-checks class="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold dark:text-white-light">Server Logs Updated</h5>
-                                    <p class="text-white-dark text-xs">27 Feb, 2020</p>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div
-                                    class="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4"
-                                >
-                                    <div class="bg-danger w-8 h-8 rounded-full flex items-center justify-center text-white">
-                                        <icon-checks class="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold dark:text-white-light">
-                                        Task Completed : <a href="javascript:;" class="text-success">[Backup Files EOD]</a>
-                                    </h5>
-                                    <p class="text-white-dark text-xs">01 Mar, 2020</p>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div
-                                    class="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4"
-                                >
-                                    <div class="bg-warning w-8 h-8 rounded-full flex items-center justify-center text-white">
-                                        <icon-file class="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold dark:text-white-light">Documents Submitted from <a href="javascript:;">Sara</a></h5>
-                                    <p class="text-white-dark text-xs">10 Mar, 2020</p>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div class="shrink-0 ltr:mr-2 rtl:ml-2">
-                                    <div class="bg-dark w-8 h-8 rounded-full flex items-center justify-center text-white">
-                                        <icon-server class="w-4 h-4" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold dark:text-white-light">Server rebooted successfully</h5>
-                                    <p class="text-white-dark text-xs">06 Apr, 2020</p>
-                                </div>
-                            </div>
-                        </div>
-                    </perfect-scrollbar>
-                </div>
-            </div>
-
-            <div class="grid sm:grid-cols-3 xl:grid-cols-5 gap-6 mb-6">
-                <div class="panel h-full sm:col-span-3 xl:col-span-2">
-                    <div class="flex items-start justify-between mb-5">
-                        <h5 class="font-semibold text-lg dark:text-white-light">Visitors by Browser</h5>
-                    </div>
-                    <div class="flex flex-col space-y-5">
-                        <div class="flex items-center">
-                            <div class="w-9 h-9">
-                                <div
-                                    class="bg-primary/10 text-primary rounded-xl w-9 h-9 flex justify-center items-center dark:bg-primary dark:text-white-light"
-                                >
-                                    <icon-chrome class="w-5 h-5" />
-                                </div>
-                            </div>
-                            <div class="px-3 flex-initial w-full">
-                                <div class="w-summary-info flex justify-between font-semibold text-white-dark mb-1">
-                                    <h6>Chrome</h6>
-                                    <p class="ltr:ml-auto rtl:mr-auto text-xs">65%</p>
-                                </div>
-                                <div>
-                                    <div class="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-dark-light/10 dark:shadow-none">
-                                        <div
-                                            class="bg-gradient-to-r from-[#009ffd] to-[#2a2a72] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
-                                            style="width: 65%"
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-9 h-9">
-                                <div class="bg-danger/10 text-danger rounded-xl w-9 h-9 flex justify-center items-center dark:bg-danger dark:text-white-light">
-                                    <icon-safari class="w-5 h-5" />
-                                </div>
-                            </div>
-                            <div class="px-3 flex-initial w-full">
-                                <div class="w-summary-info flex justify-between font-semibold text-white-dark mb-1">
-                                    <h6>Safari</h6>
-                                    <p class="ltr:ml-auto rtl:mr-auto text-xs">40%</p>
-                                </div>
-                                <div>
-                                    <div class="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-dark-light/10 dark:shadow-none">
-                                        <div
-                                            class="bg-gradient-to-r from-[#a71d31] to-[#3f0d12] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
-                                            style="width: 40%"
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-9 h-9">
-                                <div
-                                    class="bg-warning/10 text-warning rounded-xl w-9 h-9 flex justify-center items-center dark:bg-warning dark:text-white-light"
-                                >
-                                    <icon-globe class="w-5 h-5" />
-                                </div>
-                            </div>
-                            <div class="px-3 flex-initial w-full">
-                                <div class="w-summary-info flex justify-between font-semibold text-white-dark mb-1">
-                                    <h6>Others</h6>
-                                    <p class="ltr:ml-auto rtl:mr-auto text-xs">25%</p>
-                                </div>
-                                <div>
-                                    <div class="w-full rounded-full h-5 p-1 bg-dark-light overflow-hidden shadow-3xl dark:bg-dark-light/10 dark:shadow-none">
-                                        <div
-                                            class="bg-gradient-to-r from-[#fe5f75] to-[#fc9842] w-full h-full rounded-full relative before:absolute before:inset-y-0 ltr:before:right-0.5 rtl:before:left-0.5 before:bg-white before:w-2 before:h-2 before:rounded-full before:m-auto"
-                                            style="width: 25%"
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel h-full p-0">
-                    <div class="flex p-5">
-                        <div
-                            class="shrink-0 bg-primary/10 text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light"
-                        >
-                            <icon-users-group class="w-5 h-5" />
-                        </div>
-                        <div class="ltr:ml-3 rtl:mr-3 font-semibold">
-                            <p class="text-xl dark:text-white-light">31.6K</p>
-                            <h5 class="text-[#506690] text-xs">Followers</h5>
-                        </div>
-                    </div>
-                    <div class="h-40">
-                        <apexchart height="160" :options="followers" :series="followersSeries" class="w-full absolute bottom-0 overflow-hidden">
+                    <p class="text-lg dark:text-white-light/90">Total Profit <span class="text-primary ml-2">$10,840</span></p>
+                    <div class="relative">
+                        <apexchart height="325" :options="revenueChart" :series="revenueSeries" class="bg-white dark:bg-black rounded-lg overflow-hidden">
                             <!-- loader -->
-                            <div class="min-h-[160px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
+                            <div class="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
                                 <span
                                     class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"
                                 ></span>
@@ -804,46 +446,19 @@
                     </div>
                 </div>
 
-                <div class="panel h-full p-0">
-                    <div class="flex p-5">
-                        <div
-                            class="shrink-0 bg-danger/10 text-danger rounded-xl w-11 h-11 flex justify-center items-center dark:bg-danger dark:text-white-light"
+                <div class="panel h-full">
+                    <div class="flex items-center mb-5">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Sales By Category</h5>
+                    </div>
+                    <div>
+                        <apexchart
+                            height="460"
+                            :options="salesByCategory"
+                            :series="salesByCategorySeries"
+                            class="bg-white dark:bg-black rounded-lg overflow-hidden"
                         >
-                            <icon-link class="w-5 h-5" />
-                        </div>
-                        <div class="ltr:ml-3 rtl:mr-3 font-semibold">
-                            <p class="text-xl dark:text-white-light">1,900</p>
-                            <h5 class="text-[#506690] text-xs">Referral</h5>
-                        </div>
-                    </div>
-                    <div class="h-40">
-                        <apexchart height="160" :options="referral" :series="referralSeries" class="w-full absolute bottom-0 overflow-hidden">
                             <!-- loader -->
-                            <div class="min-h-[160px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
-                                <span
-                                    class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"
-                                ></span>
-                            </div>
-                        </apexchart>
-                    </div>
-                </div>
-
-                <div class="panel h-full p-0">
-                    <div class="flex p-5">
-                        <div
-                            class="shrink-0 bg-success/10 text-success rounded-xl w-11 h-11 flex justify-center items-center dark:bg-success dark:text-white-light"
-                        >
-                            <icon-chat-dots class="w-5 h-5" />
-                        </div>
-                        <div class="ltr:ml-3 rtl:mr-3 font-semibold">
-                            <p class="text-xl dark:text-white-light">18.2%</p>
-                            <h5 class="text-[#506690] text-xs">Engagement</h5>
-                        </div>
-                    </div>
-                    <div class="h-40">
-                        <apexchart height="160" :options="engagement" :series="engagementSeries" class="w-full absolute bottom-0 overflow-hidden">
-                            <!-- loader -->
-                            <div class="min-h-[160px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
+                            <div class="min-h-[460px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
                                 <span
                                     class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"
                                 ></span>
@@ -853,107 +468,45 @@
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <div class="panel h-full">
-                    <div class="flex items-start border-b border-[#e0e6ed] dark:border-[#1b2e4b] -m-5 mb-5 p-5">
-                        <div class="shrink-0 ring-2 ring-white-light dark:ring-dark rounded-full ltr:mr-4 rtl:ml-4">
-                            <img src="/assets/images/profile-1.jpeg" alt="" class="w-10 h-10 rounded-full object-cover" />
-                        </div>
-                        <div class="font-semibold">
-                            <h6>Jimmy Turner</h6>
-                            <p class="text-xs text-white-dark mt-1">Monday, Nov 18</p>
+            <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+                <div class="panel h-full sm:col-span-2 xl:col-span-1">
+                    <div class="flex items-center mb-5">
+                        <h5 class="font-semibold text-lg dark:text-white-light">
+                            Daily Sales <span class="block text-white-dark text-sm font-normal">Go to columns for details.</span>
+                        </h5>
+                        <div class="ltr:ml-auto rtl:mr-auto relative">
+                            <div class="w-11 h-11 text-warning bg-[#ffeccb] dark:bg-warning dark:text-[#ffeccb] grid place-content-center rounded-full">
+                                <icon-dollar-sign />
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <div class="text-white-dark pb-8">
-                            "Duis aute irure dolor" in reprehenderit in voluptate velit esse cillum "dolore eu fugiat" nulla pariatur. Excepteur sint occaecat
-                            cupidatat non proident.
-                        </div>
-                        <div class="w-full absolute bottom-0 flex items-center justify-between p-5 -mx-5">
-                            <div class="flex items-center">
-                                <icon-thumb-up class="w-5 h-5 text-info inline ltr:mr-1.5 rtl:ml-1.5 relative -top-0.5" />
-                                <span class="dark:text-info">551 Likes</span>
+                        <apexchart height="160" :options="dailySales" :series="dailySalesSeries" class="bg-white dark:bg-black rounded-lg overflow-hidden">
+                            <!-- loader -->
+                            <div class="min-h-[175px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
+                                <span
+                                    class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"
+                                ></span>
                             </div>
-                            <a
-                                href="javascript:;"
-                                class="flex items-center bg-success/30 text-success rounded-md px-1.5 py-1 text-xs hover:shadow-[0_10px_20px_-10px] hover:shadow-success"
-                                >Read More
-                                <icon-carets-down class="w-4 h-4 rtl:rotate-90 -rotate-90 ltr:ml-1.5 rtl:mr-1.5" />
-                            </a>
-                        </div>
+                        </apexchart>
                     </div>
                 </div>
 
                 <div class="panel h-full">
-                    <div class="flex items-center justify-between border-b border-[#e0e6ed] dark:border-[#1b2e4b] -m-5 mb-5 p-5">
-                        <div class="flex">
-                            <div class="media-aside align-self-start">
-                                <div class="shrink-0 ring-2 ring-white-light dark:ring-dark rounded-full ltr:mr-4 rtl:ml-4">
-                                    <img src="/assets/images/g-8.png" alt="" class="w-10 h-10 rounded-full object-cover" />
-                                </div>
-                            </div>
-                            <div class="font-semibold">
-                                <h6>Dev Summit - New York</h6>
-                                <p class="text-xs text-white-dark mt-1">Bronx, NY</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="font-semibold text-center pb-8">
-                        <div class="mb-4 text-primary">4 Members Going</div>
-                        <div class="flex items-center justify-center gap-3 pb-8">
-                            <img
-                                class="w-10 h-10 ring-2 ring-white-light dark:ring-dark rounded-lg overflow-hidden object-cover"
-                                src="/assets/images/profile-1.jpeg"
-                                alt=""
-                            />
-                            <img
-                                class="w-10 h-10 ring-2 ring-white-light dark:ring-dark rounded-lg overflow-hidden object-cover"
-                                src="/assets/images/profile-2.jpeg"
-                                alt=""
-                            />
-                            <img
-                                class="w-10 h-10 ring-2 ring-white-light dark:ring-dark rounded-lg overflow-hidden object-cover"
-                                src="/assets/images/profile-3.jpeg"
-                                alt=""
-                            />
-                            <img
-                                class="w-10 h-10 ring-2 ring-white-light dark:ring-dark rounded-lg overflow-hidden object-cover"
-                                src="/assets/images/profile-4.jpeg"
-                                alt=""
-                            />
-                        </div>
-
-                        <div class="w-full absolute bottom-0 flex items-center justify-between p-5 -mx-5">
-                            <a href="javascript:;" class="btn btn-secondary btn-lg w-full border-0 bg-gradient-to-r from-[#3d38e1] to-[#1e9afe]"
-                                >View Details</a
-                            >
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel h-full">
-                    <div class="flex items-center justify-between border-b border-[#e0e6ed] dark:border-[#1b2e4b] -m-5 mb-5 p-5">
-                        <a href="javascript:;" class="flex font-semibold">
-                            <div class="shrink-0 bg-secondary w-10 h-10 rounded-md flex items-center justify-center text-white ltr:mr-4 rtl:ml-4">
-                                <span>FD</span>
-                            </div>
-                            <div>
-                                <h6>Figma Design</h6>
-                                <p class="text-xs text-white-dark mt-1">Design Reset</p>
-                            </div>
-                        </a>
-                        <div class="dropdown">
-                            <Popper :placement="'bottom-end'" offsetDistance="0" class="align-middle">
-                                <button type="button">
+                    <div class="flex items-center dark:text-white-light mb-5">
+                        <h5 class="font-semibold text-lg">Summary</h5>
+                        <div class="dropdown ltr:ml-auto rtl:mr-auto">
+                            <Popper :placement="isRtl ? 'bottom-start' : 'bottom-end'" offsetDistance="0" class="align-middle">
+                                <a href="javascript:;">
                                     <icon-horizontal-dots class="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary" />
-                                </button>
+                                </a>
                                 <template #content="{ close }">
                                     <ul @click="close()">
                                         <li>
-                                            <a href="javascript:;">View Project</a>
+                                            <a href="javascript:;">View Report</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:;">Edit Project</a>
+                                            <a href="javascript:;">Edit Report</a>
                                         </li>
                                         <li>
                                             <a href="javascript:;">Mark as Done</a>
@@ -963,51 +516,400 @@
                             </Popper>
                         </div>
                     </div>
-                    <div class="group">
-                        <div class="mb-5">
-                            <div class="text-white-dark">
-                                Doloribus nisi vel suscipit modi, optio ex repudiandae voluptatibus officiis commodi. Nesciunt quas aut neque incidunt!
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between mb-2 font-semibold">
-                            <div class="flex items-center">
-                                <icon-square-check class="w-4 h-4 text-success" />
-
-                                <div class="ltr:ml-2 rtl:mr-2 text-xs">5 Tasks</div>
-                            </div>
-                            <p class="text-primary">65%</p>
-                        </div>
-                        <div class="rounded-full h-2.5 p-0.5 bg-dark-light dark:bg-dark-light/10 mb-5">
-                            <div class="bg-gradient-to-r from-[#1e9afe] to-[#60dfcd] h-full rounded-full" style="width: 65%"></div>
-                        </div>
-                        <div class="flex items-end justify-between">
-                            <div class="flex items-center rounded-full bg-danger/20 px-2 py-1 text-xs text-danger font-semibold">
-                                <icon-clock class="w-3 h-3 ltr:mr-1 rtl:ml-1" />
-
-                                3 Days Left
-                            </div>
-                            <div class="flex items-center justify-center group-hover:-space-x-2 rtl:space-x-reverse rtl:group-hover:space-x-reverse">
-                                <span
-                                    class="bg-[#bfc9d4] dark:bg-dark w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold transition-all duration-300 opacity-0 group-hover:opacity-100"
-                                    >+6</span
+                    <div class="space-y-9">
+                        <div class="flex items-center">
+                            <div class="w-9 h-9 ltr:mr-3 rtl:ml-3">
+                                <div
+                                    class="bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light rounded-full w-9 h-9 grid place-content-center"
                                 >
-                                <img
-                                    class="w-9 h-9 border-2 border-white dark:border-dark rounded-full object-cover transition-all duration-300"
-                                    src="/assets/images/profile-6.jpeg"
-                                    alt=""
-                                />
-                                <img
-                                    class="w-9 h-9 border-2 border-white dark:border-dark rounded-full object-cover transition-all duration-300"
-                                    src="/assets/images/profile-7.jpeg"
-                                    alt=""
-                                />
-                                <img
-                                    class="w-9 h-9 border-2 border-white dark:border-dark rounded-full object-cover transition-all duration-300"
-                                    src="/assets/images/profile-8.jpeg"
-                                    alt=""
-                                />
+                                    <icon-inbox />
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex font-semibold text-white-dark mb-2">
+                                    <h6>Income</h6>
+                                    <p class="ltr:ml-auto rtl:mr-auto">$92,600</p>
+                                </div>
+                                <div class="rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
+                                    <div class="bg-gradient-to-r from-[#7579ff] to-[#b224ef] w-11/12 h-full rounded-full"></div>
+                                </div>
                             </div>
                         </div>
+                        <div class="flex items-center">
+                            <div class="w-9 h-9 ltr:mr-3 rtl:ml-3">
+                                <div
+                                    class="bg-success-light dark:bg-success text-success dark:text-success-light rounded-full w-9 h-9 grid place-content-center"
+                                >
+                                    <icon-tag />
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex font-semibold text-white-dark mb-2">
+                                    <h6>Profit</h6>
+                                    <p class="ltr:ml-auto rtl:mr-auto">$37,515</p>
+                                </div>
+                                <div class="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
+                                    <div class="bg-gradient-to-r from-[#3cba92] to-[#0ba360] w-full h-full rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-9 h-9 ltr:mr-3 rtl:ml-3">
+                                <div
+                                    class="bg-warning-light dark:bg-warning text-warning dark:text-warning-light rounded-full w-9 h-9 grid place-content-center"
+                                >
+                                    <icon-credit-card />
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex font-semibold text-white-dark mb-2">
+                                    <h6>Expenses</h6>
+                                    <p class="ltr:ml-auto rtl:mr-auto">$55,085</p>
+                                </div>
+                                <div class="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
+                                    <div class="bg-gradient-to-r from-[#f09819] to-[#ff5858] w-full h-full rounded-full" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel h-full p-0">
+                    <div class="flex items-center justify-between w-full p-5 absolute">
+                        <div class="relative">
+                            <div
+                                class="text-success dark:text-success-light bg-success-light dark:bg-success w-11 h-11 rounded-lg flex items-center justify-center"
+                            >
+                                <icon-shopping-cart />
+                            </div>
+                        </div>
+                        <h5 class="font-semibold text-2xl ltr:text-right rtl:text-left dark:text-white-light">
+                            3,192
+                            <span class="block text-sm font-normal">Total Orders</span>
+                        </h5>
+                    </div>
+                    <apexchart height="290" :options="totalOrders" :series="totalOrdersSeries" class="bg-white dark:bg-black rounded-lg overflow-hidden">
+                        <!-- loader -->
+                        <div class="min-h-[290px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
+                            <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
+                        </div>
+                    </apexchart>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-1 xl:grid-cols-1 gap-6 mb-6">
+
+                <div class="panel h-full">
+                    <div class="flex items-center justify-between dark:text-white-light mb-5">
+                        <h5 class="font-semibold text-lg">Transactions</h5>
+                        <div class="dropdown ltr:ml-auto rtl:mr-auto">
+                            <Popper :placement="isRtl ? 'bottom-start' : 'bottom-end'" offsetDistance="0" class="align-middle">
+                                <a href="javascript:;">
+                                    <icon-horizontal-dots class="text-black/70 dark:text-white/70 hover:!text-primary" />
+                                </a>
+                                <template #content="{ close }">
+                                    <ul @click="close()">
+                                        <li>
+                                            <a href="javascript:;">View Report</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">Edit Report</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">Mark as Done</a>
+                                        </li>
+                                    </ul>
+                                </template>
+                            </Popper>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="space-y-6">
+                            <div class="flex">
+                                <span
+                                    class="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
+                                    >SP</span
+                                >
+                                <div class="px-3 flex-1">
+                                    <div>Shaun Park</div>
+                                    <div class="text-xs text-white-dark dark:text-gray-500">10 Jan 1:00PM</div>
+                                </div>
+                                <span class="text-success text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre">+$36.11</span>
+                            </div>
+                            <div class="flex">
+                                <span
+                                    class="shrink-0 grid place-content-center w-9 h-9 rounded-md bg-warning-light dark:bg-warning text-warning dark:text-warning-light"
+                                >
+                                    <icon-cash-banknotes />
+                                </span>
+                                <div class="px-3 flex-1">
+                                    <div>Cash withdrawal</div>
+                                    <div class="text-xs text-white-dark dark:text-gray-500">04 Jan 1:00PM</div>
+                                </div>
+                                <span class="text-danger text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre">-$16.44</span>
+                            </div>
+                            <div class="flex">
+                                <span
+                                    class="shrink-0 grid place-content-center w-9 h-9 rounded-md bg-danger-light dark:bg-danger text-danger dark:text-danger-light"
+                                >
+                                    <icon-user class="w-6 h-6" />
+                                </span>
+                                <div class="px-3 flex-1">
+                                    <div>Amy Diaz</div>
+                                    <div class="text-xs text-white-dark dark:text-gray-500">10 Jan 1:00PM</div>
+                                </div>
+                                <span class="text-success text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre">+$66.44</span>
+                            </div>
+                            <div class="flex">
+                                <span
+                                    class="shrink-0 grid place-content-center w-9 h-9 rounded-md bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light"
+                                >
+                                    <icon-netflix />
+                                </span>
+                                <div class="px-3 flex-1">
+                                    <div>Netflix</div>
+                                    <div class="text-xs text-white-dark dark:text-gray-500">04 Jan 1:00PM</div>
+                                </div>
+                                <span class="text-danger text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre">-$32.00</span>
+                            </div>
+                            <div class="flex">
+                                <span
+                                    class="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light"
+                                    >DA</span
+                                >
+                                <div class="px-3 flex-1">
+                                    <div>Daisy Anderson</div>
+                                    <div class="text-xs text-white-dark dark:text-gray-500">10 Jan 1:00PM</div>
+                                </div>
+                                <span class="text-success text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre">+$10.08</span>
+                            </div>
+                            <div class="flex">
+                                <span
+                                    class="shrink-0 grid place-content-center w-9 h-9 rounded-md bg-primary-light dark:bg-primary text-primary dark:text-primary-light"
+                                >
+                                    <icon-bolt />
+                                </span>
+                                <div class="px-3 flex-1">
+                                    <div>Electricity Bill</div>
+                                    <div class="text-xs text-white-dark dark:text-gray-500">04 Jan 1:00PM</div>
+                                </div>
+                                <span class="text-danger text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre">-$22.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="panel h-full w-full">
+                    <div class="flex items-center justify-between mb-5">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Recent Orders</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="ltr:rounded-l-md rtl:rounded-r-md">Customer</th>
+                                    <th>Product</th>
+                                    <th>Invoice</th>
+                                    <th>Price</th>
+                                    <th class="ltr:rounded-r-md rtl:rounded-l-md">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="min-w-[150px] text-black dark:text-white">
+                                        <div class="flex items-center">
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-6.jpeg" alt="avatar" />
+                                            <span class="whitespace-nowrap">Luke Ivory</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-primary">Headphone</td>
+                                    <td><router-link to="/apps/invoice/preview">#46894</router-link></td>
+                                    <td>$56.07</td>
+                                    <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex items-center">
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-7.jpeg" alt="avatar" />
+                                            <span class="whitespace-nowrap">Andy King</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-info">Nike Sport</td>
+                                    <td><router-link to="/apps/invoice/preview">#76894</router-link></td>
+                                    <td>$126.04</td>
+                                    <td><span class="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span></td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex items-center">
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-8.jpeg" alt="avatar" />
+                                            <span class="whitespace-nowrap">Laurie Fox</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-warning">Sunglasses</td>
+                                    <td><router-link to="/apps/invoice/preview">#66894</router-link></td>
+                                    <td>$56.07</td>
+                                    <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex items-center">
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-9.jpeg" alt="avatar" />
+                                            <span class="whitespace-nowrap">Ryan Collins</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-danger">Sport</td>
+                                    <td><router-link to="/apps/invoice/preview">#75844</router-link></td>
+                                    <td>$110.00</td>
+                                    <td><span class="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span></td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex items-center">
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-10.jpeg" alt="avatar" />
+                                            <span class="whitespace-nowrap">Irene Collins</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-secondary">Speakers</td>
+                                    <td><router-link to="/apps/invoice/preview">#46894</router-link></td>
+                                    <td>$56.07</td>
+                                    <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel h-full w-full">
+                    <div class="flex items-center justify-between mb-5">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Top Selling Product</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr class="border-b-0">
+                                    <th class="ltr:rounded-l-md rtl:rounded-r-md">Product</th>
+                                    <th>Price</th>
+                                    <th>Discount</th>
+                                    <th>Sold</th>
+                                    <th class="ltr:rounded-r-md rtl:rounded-l-md">Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="min-w-[150px] text-black dark:text-white">
+                                        <div class="flex">
+                                            <img
+                                                class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
+                                                src="/assets/images/product-headphones.jpg"
+                                                alt="avatar"
+                                            />
+                                            <p class="whitespace-nowrap">Headphone <span class="text-primary block text-xs">Digital</span></p>
+                                        </div>
+                                    </td>
+                                    <td>$168.09</td>
+                                    <td>$60.09</td>
+                                    <td>170</td>
+                                    <td>
+                                        <a class="text-danger flex items-center" href="javascript:;">
+                                            <icon-multiple-forward-right class="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
+
+                                            Direct
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex">
+                                            <img
+                                                class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
+                                                src="/assets/images/product-shoes.jpg"
+                                                alt="avatar"
+                                            />
+                                            <p class="whitespace-nowrap">Shoes <span class="text-warning block text-xs">Faishon</span></p>
+                                        </div>
+                                    </td>
+                                    <td>$126.04</td>
+                                    <td>$47.09</td>
+                                    <td>130</td>
+                                    <td>
+                                        <a class="text-success flex items-center" href="javascript:;">
+                                            <icon-multiple-forward-right class="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
+
+                                            Google
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex">
+                                            <img
+                                                class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
+                                                src="/assets/images/product-watch.jpg"
+                                                alt="avatar"
+                                            />
+                                            <p class="whitespace-nowrap">Watch <span class="text-danger block text-xs">Accessories</span></p>
+                                        </div>
+                                    </td>
+                                    <td>$56.07</td>
+                                    <td>$20.00</td>
+                                    <td>66</td>
+                                    <td>
+                                        <a class="text-warning flex items-center" href="javascript:;">
+                                            <icon-multiple-forward-right class="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
+
+                                            Ads
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex">
+                                            <img
+                                                class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
+                                                src="/assets/images/product-laptop.jpg"
+                                                alt="avatar"
+                                            />
+                                            <p class="whitespace-nowrap">Laptop <span class="text-primary block text-xs">Digital</span></p>
+                                        </div>
+                                    </td>
+                                    <td>$110.00</td>
+                                    <td>$33.00</td>
+                                    <td>35</td>
+                                    <td>
+                                        <a class="text-secondary flex items-center" href="javascript:;">
+                                            <icon-multiple-forward-right class="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
+                                            Email
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
+                                    <td class="text-black dark:text-white">
+                                        <div class="flex">
+                                            <img
+                                                class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
+                                                src="/assets/images/product-camera.jpg"
+                                                alt="avatar"
+                                            />
+                                            <p class="whitespace-nowrap">Camera <span class="text-primary block text-xs">Digital</span></p>
+                                        </div>
+                                    </td>
+                                    <td>$56.07</td>
+                                    <td>$26.04</td>
+                                    <td>30</td>
+                                    <td>
+                                        <a class="text-primary flex items-center" href="javascript:;">
+                                            <icon-multiple-forward-right class="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
+                                            Referral
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

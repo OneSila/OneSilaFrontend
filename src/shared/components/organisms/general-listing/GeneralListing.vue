@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+
 import { defineProps, ref } from 'vue';
 import { Button } from '././../../atoms/button';
 import { ApolloAlertMutation } from '././../../molecules/apollo-alert-mutation';
-import { ListingConfig, FieldType, accessNestedProperty } from './listingConfig';
+import { ListingConfig, accessNestedProperty } from './listingConfig';
+import { FieldType} from "../../../utils/constants";
 import { Pagination } from "../../molecules/pagination";
 import { Image } from "../../atoms/image";
 import { Link } from "../../atoms/link";
@@ -28,6 +30,23 @@ const props = withDefaults(
   }
 );
 
+const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+};
+
+const getShowRoute = (item) => {
+  const params = {
+    ...props.config.identifierVariables,
+    [props.config.paramIdentifier || 'id']: item.node[props.config.identifierKey]
+  };
+
+  return {
+    name: props.config.showUrlName,
+    params,
+    query: { ...props.config.urlQueryParams }
+  };
+};
+
 </script>
 
 <template>
@@ -48,7 +67,7 @@ const props = withDefaults(
               <thead>
               <tr>
                 <th v-for="header in config.headers" :key="header">{{ header }}</th>
-                <th v-if="config.addActions" class="!text-center">Actions</th>
+                <th v-if="config.addActions" class="!text-end">{{ t('shared.labels.actions')}}</th>
               </tr>
               </thead>
               <tbody>
@@ -64,17 +83,23 @@ const props = withDefaults(
                   <template v-else-if="field.type === FieldType.NestedText">
                     {{ accessNestedProperty(item.node, field.keys) }}
                   </template>
+                  <template v-else-if="field.type === FieldType.Date">
+                    {{ formatDate(item.node[field.name]) }}
+                  </template>
                   <template v-else-if="field.type === FieldType.Boolean">
                         <Icon v-if="item.node[field.name]" name="check-circle" class="ml-2 text-green-500" />
                         <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </template>
                 </td>
                 <td v-if="config.addActions">
-                  <div class="flex gap-4 items-center justify-center">
-                    <Link v-if="config.addShow" :path="{ name: config.showUrlName, params: { ...config.identifierVariables, id: item.node[config.identifierKey] }}">
+                  <div class="flex gap-4 items-center justify-end">
+                    <Link v-if="config.addShow" :path="getShowRoute(item)">
                       <Button class="btn btn-sm btn-outline-secondary">{{ t('shared.button.show') }}</Button>
                     </Link>
-                    <Link v-if="config.addEdit" :path="{ name: config.editUrlName, params: { ...config.identifierVariables, id: item.node[config.identifierKey] }}">
+                    <Link v-if="config.addEdit"
+                          :path="{ name: config.editUrlName,
+                                   params: { ...config.identifierVariables, id: item.node[config.identifierKey] },
+                                   query: {...config.urlQueryParams}}">
                       <Button class="btn btn-sm btn-outline-primary">{{ t('shared.button.edit') }}</Button>
                     </Link>
                     <ApolloAlertMutation

@@ -1,5 +1,6 @@
 import { Url } from '../../../../shared/utils/constants.js'
-import { FieldType } from "../general-listing/listingConfig";
+import { FieldType} from "../../../../shared/utils/constants.js";
+
 export interface ShowBaseField {
   name: string;
   icon?: string;
@@ -42,6 +43,12 @@ export interface ArrayField extends ShowBaseField {
 
 export type ShowField = ArrayField | TextField | BooleanField | ImageField | NestedTextField;
 
+export const updateField = (showConfig, fieldName, newConfig) => {
+  const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
+  if (fieldIndex !== -1) {
+    showConfig.fields[fieldIndex] = { ...showConfig.fields[fieldIndex], ...newConfig };
+  }
+};
 export interface ShowConfig {
   cols?: 1 | 2;
   subscription: string;

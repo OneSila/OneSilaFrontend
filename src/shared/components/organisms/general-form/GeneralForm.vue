@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+
+import { ref, watch } from 'vue';
 import { FormCreate } from './containers/form-create';
 import { FormEdit } from './containers/form-edit';
 import { getEnhancedConfig, FormConfig, FormType, FormConfigDefaultTranslations } from './formConfig';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const props = defineProps<{ config: FormConfig;}>();
+const props = withDefaults(
+  defineProps<{
+    config: FormConfig;
+    fieldsToClear?: string[] | null
+  }>(),
+  { fieldsToClear: null },
+);
+
+const emits = defineEmits(['formUpdated']);
 const enhancedConfig = ref();
 
-onMounted(() => {
+const handleFormUpdate = (updatedForm) => {
+  emits('formUpdated', updatedForm);
+};
+
+watch(() => props.config, (newConfig) => {
   const defaultTranslations: FormConfigDefaultTranslations = {
     submitLabel: t('shared.button.save'),
     cancelLabel: t('shared.button.back'),
@@ -17,14 +30,14 @@ onMounted(() => {
     deleteLabel: t('shared.button.delete')
   };
 
-  enhancedConfig.value = getEnhancedConfig(props.config, defaultTranslations);
-});
+  enhancedConfig.value = getEnhancedConfig(newConfig, defaultTranslations);
+}, { immediate: true, deep: true });
 
 </script>
 
 <template>
   <div v-if="enhancedConfig">
-    <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" />
-    <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" />
+    <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @formUpdated="handleFormUpdate" />
+    <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @formUpdated="handleFormUpdate" />
   </div>
 </template>

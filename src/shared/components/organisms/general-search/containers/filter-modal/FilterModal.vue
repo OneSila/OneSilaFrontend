@@ -3,13 +3,14 @@ import { useI18n } from 'vue-i18n';
 
 import { reactive, computed } from 'vue';
 import { Card } from '../../../../../components/atoms/card';
-import { FilterType, BaseFilter } from "../../searchConfig";
+import { BaseFilter } from "../../searchConfig";
+import { FieldType } from '../../../../../utils/constants'
 
 import { FilterBoolean } from './containers/filter-boolean';
 import { FilterValue } from './containers/filter-value';
 import { FilterChoice } from './containers/filter-choice';
 import { FilterQuery } from './containers/filter-query';
-import { FilterCalendar } from './containers/filter-calendar';
+import { FilterDate } from './containers/filter-date';
 import { FilterSlider } from './containers/filter-slider';
 import { FilterCheckbox } from './containers/filter-checkbox';
 
@@ -24,13 +25,13 @@ const updateFilterValue = (name, value) => {
 };
 const getFilterComponent = (type) => {
   switch (type) {
-    case FilterType.Boolean: return FilterBoolean;
-    case FilterType.Value: return FilterValue;
-    case FilterType.Choice: return FilterChoice;
-    case FilterType.Query: return FilterQuery;
-    case FilterType.Calendar: return FilterCalendar;
-    case FilterType.Slider: return FilterSlider;
-    case FilterType.Checkbox: return FilterCheckbox;
+    case FieldType.Boolean: return FilterBoolean;
+    case FieldType.Text: return FilterValue;
+    case FieldType.Choice: return FilterChoice;
+    case FieldType.Query: return FilterQuery;
+    case FieldType.Date: return FilterDate;
+    case FieldType.Slider: return FilterSlider;
+    case FieldType.Checkbox: return FilterCheckbox;
     default: return null;
   }
 };

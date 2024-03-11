@@ -7,21 +7,9 @@ export const ordersQuery = gql`
         node {
           id
           reference
-          company {
+          customer {
             id
             name
-          }
-          invoiceAddress {
-            id
-            address
-          }
-          shippingAddress {
-            id
-            address
-          }
-          currency {
-            id
-            symbol
           }
           priceInclVat
           status
@@ -54,7 +42,7 @@ export const orderItemsQuery = gql`
           }
           product {
             id
-            name
+            sku
           }
           quantity
           price
@@ -83,6 +71,7 @@ export const orderNotesQuery = gql`
             reference
           }
           note
+          createdAt
         }
         cursor
       }
@@ -102,22 +91,22 @@ export const getOrderQuery = gql`
     order(id: $id) {
       id
       reference
-      company {
-        id
-        name
-      }
-      invoiceAddress {
-        id
-        address
-      }
-      shippingAddress {
-        id
-        address
-      }
-      currency {
-        id
-        symbol
-      }
+      customer {
+          id
+          name
+        }
+        invoiceAddress {
+            id
+            address1
+        }
+        shippingAddress {
+            id
+            address1
+        }
+        currency {
+          id
+          symbol
+        }
       priceInclVat
       status
       reasonForSale
@@ -137,7 +126,7 @@ export const getOrderItemQuery = gql`
       }
       product {
         id
-        name
+        sku
       }
       quantity
       price
@@ -154,6 +143,7 @@ export const getOrderNoteQuery = gql`
         reference
       }
       note
+      createdAt
     }
   }
 `;

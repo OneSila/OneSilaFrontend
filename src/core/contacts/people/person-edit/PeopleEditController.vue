@@ -3,89 +3,59 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FieldType, FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
-import {deletePersonMutation, updatePersonMutation} from "../../../../shared/api/mutations/contacts.js";
-import { companiesQuery, getPersonQuery} from "../../../../shared/api/queries/contacts.js";
-import { customerLanguagesQuery } from "../../../../shared/api/queries/languages.js";
+import { FormType } from "../../../../shared/components/organisms/general-form/formConfig";
+import { FieldType } from "../../../../shared/utils/constants";
+import { updatePersonMutation } from "../../../../shared/api/mutations/contacts.js";
+import { getPersonQuery } from "../../../../shared/api/queries/contacts.js";
+import { baseFormConfigConstructor } from "../configs";
+import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
+import { Card } from "../../../../shared/components/atoms/card";
+import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
+
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const id = ref(route.params.id);
 
-const formConfig: FormConfig = {
-  cols: 1,
-  type: FormType.EDIT,
-  mutation: updatePersonMutation,
-  mutationKey: 'updatePerson',
+const baseForm = baseFormConfigConstructor(
+  t,
+  FormType.EDIT,
+  updatePersonMutation,
+  'updatePerson'
+);
+
+const formConfig = {
+  ...baseForm,
   mutationId: id.value.toString(),
   query: getPersonQuery,
-  queryVariables: {id: id.value},
+  queryVariables: { id: id.value },
   queryDataKey: 'person',
-  deleteMutation: deletePersonMutation,
-  submitUrl: { name: 'people.list' },
   fields: [
-      {
-        type: FieldType.Hidden,
-        name: 'id',
-        value: id.value.toString()
-      },
-      {
-        type: FieldType.Value,
-        name: 'firstName',
-        label: t('shared.labels.firstName'),
-        placeholder: t('shared.placeholder.firstName')
-      },
-      {
-        type: FieldType.Value,
-        name: 'lastName',
-        label: t('shared.labels.lastName'),
-        placeholder: t('shared.placeholder.lastName')
-      },
-      {
-        type: FieldType.Value,
-        name: 'email',
-        label: t('shared.labels.email'),
-        placeholder: t('shared.placeholder.email')
-      },
-      {
-        type: FieldType.Value,
-        name: 'phone',
-        label: t('shared.labels.phone'),
-        placeholder: t('shared.placeholder.phone')
-      },
-      {
-        type: FieldType.Query,
-        name: 'language',
-        label: t('shared.placeholder.language'),
-        labelBy: 'name',
-        valueBy: 'code',
-        query: customerLanguagesQuery,
-        dataKey: 'customerLanguages',
-        isEdge: false,
-        multiple: false,
-        filterable: true,
-      },
-      {
-        type: FieldType.Query,
-        name: 'company',
-        label: t('contacts.people.labels.company'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: companiesQuery,
-        dataKey: 'companies',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        formMapIdentifier: 'id',
-      }
-    ],
+    {
+      type: FieldType.Hidden,
+      name: 'id',
+      value: id.value.toString()
+    },
+    ...baseForm.fields
+  ]
 };
 
 </script>
 
 <template>
-  <div>
-    <GeneralForm :config="formConfig" />
-  </div>
+    <GeneralTemplate>
+
+    <template v-slot:breadcrumbs>
+      <Breadcrumbs
+          :links="[{ path: { name: 'contacts.people.list' }, name: t('contacts.people.title') },
+                   { path: { name: 'contacts.people.edit' }, name: t('contacts.people.edit.title') }]" />
+    </template>
+
+   <template v-slot:content>
+      <Card class="p-2 w-1/2">
+        <GeneralForm :config="formConfig" />
+      </Card>
+   </template>
+  </GeneralTemplate>
 </template>

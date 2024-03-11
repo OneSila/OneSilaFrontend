@@ -196,13 +196,10 @@ export const createProductTranslationMutation = gql`
   mutation createProductTranslation($data: ProductTranslationInput!) {
     createProductTranslation(data: $data) {
       id
-      product {
-        id
-        sku
-      }
       name
       shortDescription
       description
+      urlKey
     }
   }
 `;
@@ -211,13 +208,10 @@ export const createProductTranslationsMutation = gql`
   mutation createProductTranslations($data: [ProductTranslationInput!]!) {
     createProductTranslations(data: $data) {
       id
-      product {
-        id
-        sku
-      }
       name
       shortDescription
       description
+      urlKey
     }
   }
 `;
@@ -226,13 +220,10 @@ export const updateProductTranslationMutation = gql`
   mutation updateProductTranslation($data: ProductTranslationPartialInput!) {
     updateProductTranslation(data: $data) {
       id
-      product {
-        id
-        sku
-      }
       name
       shortDescription
       description
+      urlKey
     }
   }
 `;

@@ -2,7 +2,8 @@
 
 import { FieldNestedText } from './../field-nested-text';
 import { ArrayField } from '../../showConfig';
-import { accessNestedProperty, FieldType } from '../../../general-listing/listingConfig';
+import { accessNestedProperty } from '../../../general-listing/listingConfig';
+import { FieldType} from "../../../../../utils/constants";
 import { Icon } from "../../../../atoms/icon";
 import { Label } from "../../../../atoms/label";
 

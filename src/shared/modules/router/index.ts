@@ -3,6 +3,11 @@ import * as VueRouter from 'vue-router';
 import { routes as authRoutes } from '../../../core/auth/routes';
 import { routes as profileRoutes } from '../../../core/profile/routes';
 import { routes as contactsRoutes } from '../../../core/contacts/routes';
+import { routes as salesRoutes } from '../../../core/sales/routes';
+import { routes as purchasingRoutes } from '../../../core/purchasing/routes';
+import { routes as inventoryRoutes } from '../../../core/inventory/routes';
+import { routes as productsRoutes } from '../../../core/products/routes';
+import { routes as settingsRoutes } from '../../../core/settings/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
 import { detectAuth, isAuthenticated, hasCompany, isActive, removeAuth } from '../auth';
 import { Toast } from '../toast';
@@ -17,6 +22,11 @@ export function buildRouter() {
       ...authRoutes,
       ...profileRoutes,
       ...contactsRoutes,
+      ...salesRoutes,
+      ...purchasingRoutes,
+      ...inventoryRoutes,
+      ...productsRoutes,
+      ...settingsRoutes,
       {
         path: '',
         name: 'dashboard',

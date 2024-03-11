@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
-export const productsQuery = gql`
-  query Products($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
+export const productsQuery = gql`  
+query Products($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
     products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
@@ -9,19 +9,14 @@ export const productsQuery = gql`
           sku
           active
           type
+          proxyId
           taxRate {
             id
+            name
             rate
           }
           alwaysOnStock
-          umbrellaVariations {
-            id
-            name
-          }
-          bundleVariations {
-            id
-            name
-          }
+        
         }
         cursor
       }
@@ -129,6 +124,25 @@ export const productTranslationsQuery = gql`
   }
 `;
 
+export const getProductTranslationByLanguageQuery = gql`
+  query getProductTranslationByLanguageQuery($languageCode: String!, $productId: GlobalID!) {
+    productTranslations(filters: 
+      {language: {exact: $languageCode},
+        product: {id: {exact: $productId}}
+      }) {
+      edges {
+        node {
+          id
+          name
+          shortDescription
+          description
+          urlKey
+        }
+      }
+    }
+  }
+`;
+
 export const umbrellaVariationsQuery = gql`
   query UmbrellaVariations($first: Int, $last: Int, $after: String, $before: String, $order: UmbrellaVariationOrder, $filter: UmbrellaVariationFilter) {
     umbrellaVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
@@ -142,6 +156,7 @@ export const umbrellaVariationsQuery = gql`
           variation {
             id
             sku
+            active
           }
         }
         cursor
@@ -170,6 +185,7 @@ export const bundleVariationsQuery = gql`
           variation {
             id
             sku
+            active
           }
           quantity
         }
@@ -193,19 +209,13 @@ export const getProductQuery = gql`
       sku
       active
       type
+      proxyId
       taxRate {
         id
         rate
+        name
       }
       alwaysOnStock
-      umbrellaVariations {
-        id
-        name
-      }
-      bundleVariations {
-        id
-        name
-      }
     }
   }
 `;

@@ -8,10 +8,6 @@ export const hsCodesQuery = gql`
           id
           name
           code
-          product {
-            id
-            name
-          }
         }
         cursor
       }
@@ -34,7 +30,9 @@ export const getHsCodeQuery = gql`
       code
       product {
         id
-        name
+        ... on ProductType {
+          sku
+        }
       }
     }
   }

@@ -6,9 +6,10 @@ export const createSupplierProductMutation = gql`
       id
       sku
       name
+      unitPrice
       currency {
         id
-        name
+        symbol
       }
       unit {
         id
@@ -17,7 +18,7 @@ export const createSupplierProductMutation = gql`
       quantity
       product {
         id
-        name
+        sku
       }
       supplier {
         id
@@ -35,7 +36,7 @@ export const createSupplierProductsMutation = gql`
       name
       currency {
         id
-        name
+        symbol
       }
       unit {
         id
@@ -44,7 +45,7 @@ export const createSupplierProductsMutation = gql`
       quantity
       product {
         id
-        name
+        sku
       }
       supplier {
         id
@@ -60,6 +61,7 @@ export const updateSupplierProductMutation = gql`
       id
       sku
       name
+      unitPrice
       currency {
         id
         name
@@ -71,7 +73,7 @@ export const updateSupplierProductMutation = gql`
       quantity
       product {
         id
-        name
+        sku
       }
       supplier {
         id
@@ -103,6 +105,7 @@ export const createPurchaseOrderMutation = gql`
     createPurchaseOrder(data: $data) {
       id
       status
+      totalValue
       supplier {
         id
         name
@@ -110,15 +113,15 @@ export const createPurchaseOrderMutation = gql`
       orderReference
       currency {
         id
-        name
+        symbol
       }
       invoiceAddress {
         id
-        name
+        address1
       }
-      deliveryAddress {
+      shippingAddress {
         id
-        name
+        address1
       }
     }
   }
@@ -129,6 +132,7 @@ export const createPurchaseOrdersMutation = gql`
     createPurchaseOrders(data: $data) {
       id
       status
+      totalValue
       supplier {
         id
         name
@@ -136,15 +140,15 @@ export const createPurchaseOrdersMutation = gql`
       orderReference
       currency {
         id
-        name
+        symbol
       }
       invoiceAddress {
         id
-        name
+        address1
       }
-      deliveryAddress {
+      shippingAddress {
         id
-        name
+        address1
       }
     }
   }
@@ -155,6 +159,7 @@ export const updatePurchaseOrderMutation = gql`
     updatePurchaseOrder(data: $data) {
       id
       status
+      totalValue
       supplier {
         id
         name
@@ -162,15 +167,15 @@ export const updatePurchaseOrderMutation = gql`
       orderReference
       currency {
         id
-        name
+        symbol
       }
       invoiceAddress {
         id
-        name
+        address1
       }
-      deliveryAddress {
+      shippingAddress {
         id
-        name
+        address1
       }
     }
   }
@@ -205,7 +210,7 @@ export const createPurchaseOrderItemMutation = gql`
         name
       }
       quantity
-      price
+      unitPrice
     }
   }
 `;
@@ -223,7 +228,7 @@ export const createPurchaseOrderItemsMutation = gql`
         name
       }
       quantity
-      price
+      unitPrice
     }
   }
 `;
@@ -241,7 +246,7 @@ export const updatePurchaseOrderItemMutation = gql`
         name
       }
       quantity
-      price
+      unitPrice
     }
   }
 `;

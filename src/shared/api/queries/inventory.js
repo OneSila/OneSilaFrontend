@@ -1,18 +1,22 @@
 import { gql } from 'graphql-tag';
 
 export const inventoriesQuery = gql`
-  query Inventories($first: Int, $last: Int, $after: String, $before: String, $order: InventoryOrder, $filter: InventoryFilter) {
+query Inventories($first: Int, $last: Int, $after: String, $before: String, $order: InventoryOrder, $filter: InventoryFilter) {
     inventories(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id
           product {
             id
-            sku
+            ... on ProductType {
+              sku
+            }
           }
           stocklocation {
             id
-            name
+            ... on InventoryLocationType {
+              name
+            }
           }
           quantity
         }
@@ -26,7 +30,7 @@ export const inventoriesQuery = gql`
         hasPreviousPage
       }
     }
-  }
+    }
 `;
 
 export const getInventoryQuery = gql`
@@ -35,11 +39,15 @@ export const getInventoryQuery = gql`
       id
       product {
         id
-        sku
+        ... on ProductType {
+          sku
+        }
       }
       stocklocation {
         id
-        name
+        ... on InventoryLocationType {
+          name
+        }
       }
       quantity
     }
@@ -55,8 +63,10 @@ export const inventoryLocationsQuery = gql`
           name
           description
           parentLocation {
-            id
-            name
+            ... on InventoryLocationType {
+              id
+              name
+            }
           }
         }
         cursor
@@ -79,8 +89,10 @@ export const getInventoryLocationQuery = gql`
       name
       description
       parentLocation {
-        id
-        name
+        ... on InventoryLocationType {
+          id
+          name
+        }
       }
     }
   }
