@@ -28,7 +28,7 @@ const formConfig = {
     <template v-slot:breadcrumbs>
       <Breadcrumbs
           :links="[{ path: { name: 'settings.taxes.list' }, name: t('settings.taxes.title') },
-                   { path: { name: 'settings.tax.create' }, name: t('settings.tax.create.title') }]" />
+                   { path: { name: 'settings.tax.create' }, name: t('settings.taxes.create.title') }]" />
     </template>
 
    <template v-slot:content>

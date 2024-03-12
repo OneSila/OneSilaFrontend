@@ -26,7 +26,7 @@ const listingConfig = listingConfigConstructor(t);
         <div>
           <Link :path="{ name: 'inventory.inventory.create' }">
           <Button type="button" class="btn btn-primary">
-              {{  t('inventory.inventory.button') }}
+              {{  t('inventory.inventory.create.title') }}
           </Button>
         </Link>
       </div>

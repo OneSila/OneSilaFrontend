@@ -46,7 +46,7 @@ const redirectToList = (response) => {
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'products.products.list' }, name: t('products.products.title') },
+          :links="[{ path: { name: 'products.products.list' }, name: t('products.title') },
                    { path: { name: 'products.products.show', params: {id: id} }, name: t('products.products.show.title') }]" />
     </template>
 
@@ -73,7 +73,7 @@ const redirectToList = (response) => {
                   <p class="text-white-dark">{{ result.product.taxRate.name }}</p>
                 </Flex>
                 <Flex>
-                  <Label semi-bold>{{ t('products.products.labels.type') }}:</Label>
+                  <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
                   <p class="text-white-dark">{{ result.product.type }}</p>
                 </Flex>
                 <Flex class="gap-2">

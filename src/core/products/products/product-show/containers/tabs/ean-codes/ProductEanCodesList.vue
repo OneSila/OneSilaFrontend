@@ -23,7 +23,7 @@ const listingConfig = listingConfigConstructor(t, props.product.id);
     <template v-slot:buttons>
       <Link :path="{ name: 'products.eanCodes.create', query: {productId: product.id} }">
         <Button type="button" class="btn btn-primary">
-          {{ t('products.eanCodes.button') }}
+          {{ t('products.eanCodes.create.title') }}
         </Button>
       </Link>
     </template>

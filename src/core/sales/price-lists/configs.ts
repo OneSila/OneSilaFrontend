@@ -37,7 +37,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
     return {
         type: FieldType.Query,
         name: 'customers',
-        label: t('contacts.people.labels.customers'),
+        label: t('sales.customers.title'),
         labelBy: 'name',
         valueBy: 'id',
         query: customersQuery,
@@ -67,8 +67,8 @@ const getFields = (customerId, t, type): FormField[] => {
     {
       type: FieldType.Text,
       name: 'discount',
-      label: t('sales.orders.labels.discount'),
-      placeholder: t('sales.orders.placeholders.discount'),
+      label: t('sales.prices.labels.discountAmount'),
+      placeholder: t('sales.prices.placeholders.discountAmount'),
       number: true,
     },
     {
@@ -131,7 +131,7 @@ const getUrlQueryParams = (customerId) => {
   return customerId ? { customerId: customerId } : undefined;
 }
 export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.orders.labels.discount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdate')],
+  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdate')],
   fields: [
     {
       name: 'name',
@@ -188,7 +188,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     {
       name: 'discount',
       type: FieldType.Text,
-      label: t('sales.orders.labels.discount'),
+      label: t('sales.prices.labels.discountAmount'),
       showLabel: true
     },
     {
@@ -219,7 +219,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     {
       type: FieldType.Array,
       name: 'customers',
-      label: t('contacts.people.labels.customers'),
+      label: t('sales.customers.title'),
       clickable: true,
       clickUrl: {name: 'sales.customers.show'},
       clickIdentifiers: [{id: ['id']}],

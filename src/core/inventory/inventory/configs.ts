@@ -57,7 +57,7 @@ export const baseFormConfigConstructor = (
     {
         type: FieldType.Query,
         name: 'stocklocation',
-        label:  t('inventory.inventory.labels.location'),
+        label:  t('inventory.inventoryLocations.show.title'),
         labelBy: 'name',
         valueBy: 'id',
         query: inventoryLocationsQuery,
@@ -79,8 +79,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, productId) => {
   return productId
-    ? [t('inventory.inventory.labels.location'), t('shared.labels.quantity')]
-    : [t('products.products.labels.sku'), t('inventory.inventory.labels.location'), t('shared.labels.quantity')];
+    ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')]
+    : [t('products.products.labels.sku'), t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')];
 }
 const getFields = (productId): ListingField[] => {
   const commonFields: ListingField[] = [];

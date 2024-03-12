@@ -19,8 +19,8 @@ const supplierId = ref();
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('purchasing.suppliers.tabs.general.title'), icon: 'circle-info' },
-    { name: 'items', label: t('profile.tabs.tabs.products.title'), icon: 'sitemap' },
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+    { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);

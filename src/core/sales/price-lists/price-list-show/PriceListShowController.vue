@@ -18,7 +18,7 @@ const id = ref(route.params.id);
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('shared.labels.tabs.general'), icon: 'circle-info' },
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
     { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
   ];
 

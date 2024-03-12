@@ -67,7 +67,7 @@ export const navSections: NavSection[] = [
                     },
                     {
                         route: { name: 'inventory.inventoryLocations.list' },
-                        title:  'inventory.inventoryLocation.title',
+                        title:  'inventory.inventoryLocations.title',
                     },
                 ]
             },
@@ -86,7 +86,7 @@ export const navSections: NavSection[] = [
                     },
                     {
                         route: { name: 'sales.priceLists.list' },
-                        title:  'sales.pricesLists.title',
+                        title:  'sales.priceLists.title',
                     },
                 ]
             },

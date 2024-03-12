@@ -41,7 +41,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, orderId: string): ListingConfig => ({
-  headers: [t('shared.labels.product'), t('shared.labels.quantity'),  t('sales.products.labels.price')],
+  headers: [t('shared.labels.product'), t('shared.labels.quantity'),  t('shared.labels.price')],
   fields: [
     {
       name: 'note',

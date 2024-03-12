@@ -37,7 +37,7 @@ const formConfig = ref(baseForm);
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'products.products.list' }, name: t('products.products.title') },
+          :links="[{ path: { name: 'products.products.list' }, name: t('products.title') },
                    { path: { name: 'products.products.create' }, name: t('products.products.create.title') }]" />
     </template>
 

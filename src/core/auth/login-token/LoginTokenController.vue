@@ -3,7 +3,6 @@
 import { ref } from 'vue';
 import Logo from "../../../shared/components/molecules/logo/Logo.vue";
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
-import { LoginTokenForm } from "./containers/login-token-form";
 import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
 import bgGradient from '../../../assets/images/auth/bg-gradient.png';
 import comingSoonObject1 from '../../../assets/images/auth/coming-soon-object1.png';
@@ -77,10 +76,12 @@ executeMutation();
     </template>
 
     <template v-slot:left-section>
-        <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" />
-        <Flex class="mt-24 hidden w-full max-w-[430px] lg:block" center>
-          <Image :source="recoverAccount" alt="Cover Image" class="w-full" />
-        </Flex>
+      <Logo src="/src/assets/images/auth/logo.png" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
+      <Flex class="mt-24 hidden lg:block">
+          <FlexCell class="w-full max-w-[430px] mx-auto">
+            <Image :source="recoverAccount" alt="Cover Image" class="w-full" />
+          </FlexCell>
+      </Flex>
     </template>
 
     <template v-slot:right-section-header>

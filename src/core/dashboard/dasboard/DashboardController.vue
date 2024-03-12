@@ -186,7 +186,7 @@
             stroke: {
                 show: true,
                 width: 25,
-                colors: isDark ? '#0e1726' : '#fff',
+                colors: isDark ? '#182434' : '#fff',
             },
             colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f'] : ['#e2a03f', '#5c1ac3', '#e7515a'],
             legend: {

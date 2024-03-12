@@ -19,9 +19,9 @@ const id = ref(route.params.id);
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('shared.labels.tabs.general'), icon: 'circle-info' },
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
     { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
-    { name: 'notes', label: t('sales.orders.tabs.notes'), icon: 'note-sticky' },
+    { name: 'notes', label: t('shared.labels.notes'), icon: 'note-sticky' },
   ];
 
 const customerId = route.query.customerId ? route.query.customerId.toString() : null;

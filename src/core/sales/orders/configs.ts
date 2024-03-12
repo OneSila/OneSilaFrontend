@@ -207,8 +207,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, customerId) => {
   return customerId
-    ? [t('sales.orders.labels.reference'), t('shared.labels.date'), t('sales.orders.labels.status'), t('sales.orders.labels.reasonForSale')]
-    : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status'), t('sales.orders.labels.reasonForSale')];
+    ? [t('sales.orders.labels.reference'), t('shared.labels.date'), t('sales.orders.labels.status.title'), t('sales.orders.labels.reasonForSale.title')]
+    : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status.title'), t('sales.orders.labels.reasonForSale.title')];
 }
 
 const getFields = (customerId): ListingField[] => {
@@ -298,13 +298,13 @@ export const showConfigConstructor = (t: Function, id, customerId: string|null =
   {
     name: 'status',
     type: FieldType.Text,
-    label: t('shared.labels.status'),
+    label: t('sales.orders.labels.status.title'),
     showLabel: true
   },
   {
     name: 'reasonForSale',
     type: FieldType.Text,
-    label: t('sales.orders.labels.reasonForSale'),
+    label: t('sales.orders.labels.reasonForSale.title'),
     showLabel: true
   },
   {

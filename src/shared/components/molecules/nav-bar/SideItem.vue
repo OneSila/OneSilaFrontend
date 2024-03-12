@@ -8,22 +8,22 @@ defineProps<{ item:  object; activeDropdown?: string|null }>();
 
 <template>
   <li v-if="item.subItemsKey && item.subItems" class="menu nav-item">
-    <button
-        type="button"
-        class="nav-link group w-full"
-        :class="{ active: activeDropdown === item.subItemsKey }"
-        @click="activeDropdown === item.subItemsKey ? (activeDropdown = null) : (activeDropdown = item.subItemsKey)"
-    >
-        <div class="flex items-center">
-            <Icon v-if="item.icon" :name="item.icon"/>
-            <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                {{ $t(item.title) }}
-            </span>
-        </div>
-        <div :class="{ 'rtl:rotate-90 -rotate-90': activeDropdown !== item.subItemsKey }">
-            <Icon name="chevron-down"/>
-        </div>
-    </button>
+  <button
+      type="button"
+      class="nav-link group w-full flex justify-between items-center"
+      :class="{ active: activeDropdown === item.subItemsKey }"
+      @click="activeDropdown === item.subItemsKey ? (activeDropdown = null) : (activeDropdown = item.subItemsKey)"
+  >
+      <div>
+          <Icon v-if="item.icon" :name="item.icon"/>
+          <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+              {{ $t(item.title) }}
+          </span>
+      </div>
+      <div :class="{ 'rtl:rotate-90 -rotate-90': activeDropdown !== item.subItemsKey }">
+          <Icon name="chevron-down"/>
+      </div>
+  </button>
     <vue-collapsible :isOpen="activeDropdown === item.subItemsKey">
         <ul class="sub-menu text-gray-500">
             <li v-for="subItem in item.subItems">

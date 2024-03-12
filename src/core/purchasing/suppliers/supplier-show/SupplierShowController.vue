@@ -19,9 +19,9 @@ const id = ref(route.params.id);
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('purchasing.suppliers.tabs.general.title'), icon: 'circle-info' },
-    { name: 'products', label: t('purchasing.tabs.tabs.products.title'), icon: 'box' },
-    { name: 'orders', label: t('purchasing.tabs.tabs.general.orders'), icon: 'shopping-cart' },
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+    { name: 'products', label: t('products.title'), icon: 'box' },
+    { name: 'orders', label: t('purchasing.orders.title'), icon: 'shopping-cart' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);

@@ -33,7 +33,7 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
 
 
 <template>
-  <div class="rounded-md p-4 mb-5 bg-white dark:bg-[#0e1726]">
+  <div class="rounded-md p-4 mb-5 bg-white dark:bg-[#182434]">
       <h6 class="text-lg font-bold mb-5">{{ t('profile.labels.changePassword') }}</h6>
           <div>
           <TextInputPrepend id="firstName" v-model="form.newPassword" :label="t('profile.labels.newPassword')" type="password"

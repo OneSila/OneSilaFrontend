@@ -39,7 +39,7 @@ export const baseFormConfigConstructor = (
     {
       type: FieldType.ProxyChoice,
       name: 'type',
-      label: t('contacts.companies.labels.type'),
+      label: t('products.products.labels.type.title'),
       valueBy: 'value',
       labelBy: 'name',
       multiple: true,
@@ -168,7 +168,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       type: FieldType.Boolean,
       strict: true,
       name: 'isInfluencer',
-      label: t('contacts.companies.labels.Influencer')
+      label: t('contacts.companies.labels.influencer')
     },
           {
       type: FieldType.Boolean,

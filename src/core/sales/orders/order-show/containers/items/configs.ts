@@ -47,8 +47,8 @@ export const baseFormConfigConstructor = (
     {
       type: FieldType.Text,
       name: 'price',
-      label: t('sales.orders.labels.price'),
-      placeholder: t('sales.orders.placeholders.price'),
+      label: t('shared.labels.price'),
+      placeholder: t('shared.placeholders.price'),
       number: true,
     },
     ],
@@ -62,7 +62,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, orderId: string): ListingConfig => ({
-  headers: [t('shared.labels.product'), t('shared.labels.quantity'),  t('sales.orders.labels.price')],
+  headers: [t('shared.labels.product'), t('shared.labels.quantity'),  t('shared.labels.price')],
   fields: [
     {
       name: 'product',

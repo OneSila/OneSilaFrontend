@@ -68,7 +68,7 @@
 
     /* Panel */
     .panel {
-        @apply relative rounded-md bg-white p-5 shadow dark:bg-[#0e1726];
+        @apply relative rounded-md bg-white p-5 shadow dark:bg-[#182434];
     }
 
     /* Navbar */

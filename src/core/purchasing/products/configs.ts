@@ -105,7 +105,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Text,
       name: 'sku',
       label: t('purchasing.products.labels.sku'),
-      placeholder: t('purchasing.products.placeholders.sku'),
+      placeholder: t('shared.placeholders.sku'),
     },
     {
       type: FieldType.Text,

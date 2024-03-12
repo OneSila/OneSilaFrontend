@@ -83,7 +83,7 @@
 
 .dark .flatpickr-calendar .flatpickr-day.selected {
     background: #009688;
-    color: #0e1726;
+    color: #182434;
     border-color: #009688;
     font-weight: 700;
 }
@@ -93,8 +93,8 @@
 }
 
 .dark .flatpickr-calendar .flatpickr-day.today:hover {
-    border-color: #0e1726;
-    background: #0e1726;
+    border-color: #182434;
+    background: #182434;
     color: #fff;
 }
 
@@ -122,7 +122,7 @@
 
 .dark .flatpickr-calendar .flatpickr-time input:hover,
 .dark .flatpickr-calendar .flatpickr-time .flatpickr-am-pm:hover {
-    background-color: #0e1726;
+    background-color: #182434;
 }
 
 .dark .flatpickr-calendar .flatpickr-time .numInputWrapper span.arrowUp::after {

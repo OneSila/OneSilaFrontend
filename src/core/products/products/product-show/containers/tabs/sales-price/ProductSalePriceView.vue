@@ -67,7 +67,7 @@ const setFormAndMutation = async (newCurrency) => {
 
 const handleCurrencySelection = async (newCurrency) => {
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
-    const confirmChange = confirm(t('sales.price.confirmCurrencyChange'));
+    const confirmChange = confirm(t('sales.prices.confirmCurrencyChange'));
     if (!confirmChange) {
       currentCurrency.value = oldCurrency.value;
       return;

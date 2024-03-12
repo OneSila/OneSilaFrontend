@@ -22,7 +22,7 @@ const listingConfig = listingConfigConstructor(t, props.id);
     <template v-slot:buttons>
           <Link :path="{ name: 'contacts.companies.address.create', params: {companyId: id} }">
           <Button class="btn btn-primary">
-              {{  t('contacts.companies.address.create.button') }}
+              {{  t('contacts.companies.address.create.title') }}
           </Button>
         </Link>
     </template>

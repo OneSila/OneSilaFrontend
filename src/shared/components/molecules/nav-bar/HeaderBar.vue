@@ -48,7 +48,7 @@ const setActiveDropdown = () => {
 <template>
     <header class="z-40 light horizontal">
         <div class="shadow-sm">
-            <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-[#0e1726]">
+            <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-[#182434]">
                 <div class="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                     <a
                         href="javascript:;"

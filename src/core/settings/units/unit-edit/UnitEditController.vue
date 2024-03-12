@@ -50,7 +50,7 @@ const formConfig = {
     <template v-slot:breadcrumbs>
       <Breadcrumbs
           :links="[{ path: { name: 'settings.units.list' }, name: t('settings.units.title') },
-                   { path: { name: 'settings.unit.edit' }, name: t('settings.unit.edit.title') }]" />
+                   { path: { name: 'settings.unit.edit' }, name: t('settings.units.edit.title') }]" />
     </template>
 
    <template v-slot:content>

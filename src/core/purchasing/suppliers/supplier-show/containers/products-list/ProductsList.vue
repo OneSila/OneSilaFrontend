@@ -28,7 +28,7 @@ const listingConfig = listingConfigConstructor(t, props.id);
         <div>
           <Link :path="{ name: 'purchasing.product.create', query: {supplierId: id} }">
           <Button type="button" class="btn btn-primary">
-              {{  t('purchasing.products.button') }}
+              {{  t('purchasing.products.create.title') }}
           </Button>
         </Link>
       </div>

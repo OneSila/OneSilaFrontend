@@ -18,7 +18,7 @@ const getTypeField = (type, t): FormField | null => {
       name: 'type',
       labelBy: 'name',
       valueBy: 'code',
-      label: t('products.products.labels.type'),
+      label: t('products.products.labels.type.title'),
       filterable: false,
       options: getProductTypeOptions(t)
     };
@@ -33,7 +33,7 @@ const getFields = (type, t): FormField[] => {
       type: FieldType.Text,
       name: 'sku',
       label: t('products.products.labels.sku'),
-      placeholder: t('products.products.placeholders.sku'),
+      placeholder: t('shared.placeholders.sku'),
     },
     {
       type: FieldType.Checkbox,
@@ -92,7 +92,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('products.products.labels.type'), t('products.products.labels.sku'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
+  headers: [t('products.products.labels.type.title'), t('products.products.labels.sku'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
   fields: [
     {
       type: FieldType.Text,

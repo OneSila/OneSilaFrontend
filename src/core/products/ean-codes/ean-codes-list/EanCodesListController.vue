@@ -28,7 +28,7 @@ const listingConfig = listingConfigConstructor(t, route.params.productId ? route
         <div>
           <Link :path="{ name: 'products.eanCodes.create' }">
           <Button type="button" class="btn btn-primary">
-              {{  t('products.eanCodes.button') }}
+              {{  t('products.eanCodes.create.title') }}
           </Button>
         </Link>
       </div>

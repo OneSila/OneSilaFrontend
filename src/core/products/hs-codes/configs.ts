@@ -143,7 +143,7 @@ export const showConfigConstructor = (t: Function, id, productId: string | null 
       {
         type: FieldType.Array,
         name: 'product',
-        label: t('products.hsCodes.labels.products'),
+        label: t('products.title'),
         clickable: false,
         keys: ['sku'],
         showLabel: true

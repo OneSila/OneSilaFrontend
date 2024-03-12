@@ -20,7 +20,9 @@
           </div>
 
           <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
-            <slot name="left-section"/>
+            <div class="text-center">
+              <slot name="left-section"/>
+            </div>
           </div>
         </div>
         <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">

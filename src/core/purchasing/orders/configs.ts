@@ -139,8 +139,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, supplierId) => {
   return supplierId
-    ? [t('purchasing.orders.labels.orderReference'),t('shared.labels.status'), t('purchasing.orders.labels.totalValue')]
-    : [t('purchasing.orders.labels.orderReference'),t('shared.labels.status'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
+    ? [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.totalValue')]
+    : [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
 }
 
 const getFields = (supplierId): ListingField[] => {
@@ -207,7 +207,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   {
     name: 'status',
     type: FieldType.Text,
-    label: t('shared.labels.status'),
+    label: t('sales.orders.labels.status.title'),
     showLabel: true
   },
   {

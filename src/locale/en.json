@@ -35,10 +35,60 @@
     "labels": {
       "name": "Name",
       "active": "Active",
-      "actions": "Actions"
+      "actions": "Actions",
+      "shortDescription": "Short description",
+      "quantity": "Quantity",
+      "uploading": "Uploading",
+      "notes": "Notes",
+      "currency": "Currency",
+      "date": "Date",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "description": "Description",
+      "product": "Product",
+      "unit": "Unit",
+      "sku": "SKU",
+      "price": "Price",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "placeholders": {
+      "currency": "Enter currency",
+      "product": "Enter product name",
+      "quantity": "Enter quantity",
+      "name": "Enter name",
+      "notes": "Enter notes",
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "email": "Enter email",
+      "phone": "Enter phone",
+      "language": "Enter language",
+      "sku": "Enter SKU",
+      "price": "Enter price",
+      "description": "Enter description"
     },
     "tabs": {
-      "general": "General"
+      "general": "General",
+      "items": "Items"
+    },
+    "components": {
+      "molecules": {
+        "selector": {
+          "defaultPlaceholder": "Select an option",
+          "typeToSearch": "Type to search"
+        },
+        "dropZone": {
+          "multipleDraggingInstruction": "Drag and drop files here or click to upload (multiple files)",
+          "singleDraggingInstruction": "Drag and drop a file here or click to upload",
+          "multipleInstruction": "You can upload multiple files",
+          "singleInstruction": "You can upload one file"
+        },
+        "selectAllCheckbox": {
+          "label": "Select All"
+        }
+      }
     }
   },
   "auth": {
@@ -61,7 +111,8 @@
       },
       "recover": "Recover account",
       "registerPrompt": "Don't have an account?",
-      "register": "SIGN UP"
+      "register": "SIGN UP",
+      "failed": "Failed to login"
     },
     "register": {
       "header": "Sign up",
@@ -121,7 +172,8 @@
       },
       "placeholders": {
         "email": "Enter Email"
-      }
+      },
+      "tokenFailed": "Failed to recovery your account"
     }
   },
   "profile": {
@@ -156,8 +208,8 @@
       "newPassword": "Enter your new password",
       "confirmNewPassword": "Confirm your new password"
     },
-   "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
-   "changesMade": "Changes were made"
+    "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
+    "changesMade": "Changes were made"
   },
   "companyProfile": {
     "labels": {
@@ -205,30 +257,112 @@
         "supplier": "Supplier",
         "customer": "Customer",
         "influencer": "Influencer",
-        "internalCompany": "Internal Company"
+        "internalCompany": "Internal Company",
+        "relatedCompanies": "Related Companies"
+      },
+      "edit": {
+        "title": "Edit contact"
+      },
+      "address": {
+        "create": {
+          "title": "Create contact"
+        },
+        "labels": {
+          "addressOne": "Address Line 1",
+          "addressTwo": "Address Line 2",
+          "addressThree": "Address Line 3",
+          "city": "City",
+          "postcode": "Postal Code",
+          "addressType": "Address Type",
+          "invoiceAddress": "Invoice Address",
+          "shippingAddress": "Shipping Address",
+          "contact": "Contact",
+          "address": "Address",
+          "isInvoiceAddress": "Is Invoice Address",
+          "isShippingAddress": "Is Shipping Address",
+          "country": "Country"
+        },
+        "placeholders": {
+          "addressOne": "Enter address line 1",
+          "addressTwo": "Enter address line 2 (optional)",
+          "addressThree": "Enter address line 3 (optional)",
+          "city": "Enter city",
+          "postcode": "Enter postal code",
+          "country": "Select country"
+        }
+      },
+      "placeholders": {
+        "eori": "Enter EORI number"
       }
-
     },
     "people": {
-      "title": "People"
+      "title": "People",
+      "create": {
+        "title": "Create person"
+      },
+      "edit": {
+        "title": "Edit person"
+      },
+      "labels": {
+        "customer": "Customer",
+        "company": "Company"
+      }
     }
   },
   "products": {
     "title": "Products",
     "hsCodes": {
-      "title": "Hs Codes"
+      "title": "Hs Codes",
+      "create": {
+        "title": "Create HS Code"
+      },
+      "edit": {
+        "title": "Edit HS Code"
+      },
+      "show": {
+        "title": "HS Code"
+      },
+      "labels": {
+        "hsCode": "HS code"
+      },
+      "placeholders": {
+        "hsCode": "Enter HS code"
+      }
     },
     "eanCodes": {
-      "title": "Ean Codes"
+      "title": "Ean Codes",
+      "create": {
+        "title": "Create Ean Code"
+      },
+      "edit": {
+        "title": "Edit Ean Code"
+      },
+      "labels": {
+        "eanCode": "EAN code"
+      },
+      "placeholders": {
+        "eanCode": "Enter EAN code"
+      }
     },
     "translation": {
-        "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
-        "successfullyUpdated": "The product translation has been successfully updated."
+      "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
+      "successfullyUpdated": "The product translation has been successfully updated.",
+      "placeholders": {
+        "language": "Select a language",
+        "name": "Enter name",
+        "shortDescription": "Enter a short description",
+        "description": "Enter a detailed description",
+        "urlKey": "Enter URL key"
       },
+      "labels": {
+        "description": "Description",
+        "urlKey": "URL Key"
+      }
+    },
     "products": {
       "tabs": {
         "content": "Content",
-         "variations": "Variations",
+        "variations": "Variations",
         "media": "Media",
         "price": "Price",
         "priceLists": "Price Lists",
@@ -245,32 +379,140 @@
         }
       },
       "labels": {
-        "type": "Type",
+        "type": {
+          "title": "Type",
+          "choices": {
+            "umbrella": "Umbrella Product",
+            "bundle": "Bundle Product",
+            "variation": "Variation"
+          }
+        },
         "taxRate": "Tax Rate",
         "alwaysOnStock": "Always on Stock",
         "sku": "SKU"
+      },
+      "create": {
+        "title": "Create product"
+      },
+      "show": {
+        "title": "Product"
       }
     }
   },
   "inventory": {
     "title": "Inventory",
-    "inventoryLocation": {
-      "title": "Inventory Location"
+    "inventoryLocations": {
+      "title": "Inventory Locations",
+      "create": {
+        "title": "Create Inventory Location"
+      },
+      "edit": {
+        "title": "Edit Inventory Location"
+      },
+      "show": {
+        "title": "Inventory Location"
+      },
+      "labels": {
+        "parent": "Parent Location"
+      }
+    },
+    "inventory": {
+      "title": "Inventories",
+      "create": {
+        "title": "Create Inventory"
+      },
+      "edit": {
+        "title": "Edit Inventory"
+      }
     }
   },
   "sales": {
     "title": "Sales",
     "customers": {
-        "title": "Customers"
+      "title": "Customers",
+      "create": {
+        "title": "Create Customer"
       },
+      "edit": {
+        "title": "Edit Customer"
+      },
+      "show": {
+        "title": "Customer"
+      }
+    },
     "orders": {
-        "title": "Orders"
+      "title": "Orders",
+      "labels": {
+        "status": {
+          "title": "Status order",
+          "choices": {
+            "draft": "Draft",
+            "pending": "Pending",
+            "pendingInventory": "Pending Inventory",
+            "toPick": "To Pick",
+            "toShip": "To Ship",
+            "done": "Done",
+            "cancelled": "Cancelled",
+            "hold": "Hold",
+            "exchanged": "Exchanged",
+            "refunded": "Refunded",
+            "lost": "Lost",
+            "merged": "Merged",
+            "damaged": "Damaged",
+            "void": "Void"
+          }
+        },
+        "reasonForSale": {
+          "title": "Reason For Sale",
+          "choices": {
+            "sale": "Sale",
+            "returnGoods": "Return Goods",
+            "documents": "Documents",
+            "sample": "Sample",
+            "gift": "Gift"
+          }
+        },
+        "reference": "Reference",
+        "invoiceAddress": "Invoice Address",
+        "shippingAddress": "Shipping Address",
+        "priceInclVat": "Price Including VAT",
+        "customer": "Customer",
+        "totalValue": "Total Value",
+        "note": "Note"
       },
-    "pricesLists": {
-        "title": "Prices Lists"
+      "create": {
+        "title": "Create Sale Order"
       },
+      "edit": {
+        "title": "Edit Sale Order"
+      },
+      "show": {
+        "title": "Sale Order"
+      },
+      "items": {
+        "create": {
+          "title": "Create Order Item"
+        },
+        "edit": {
+          "title": "Edit Order Item"
+        }
+      },
+      "notes": {
+        "create": {
+          "title": "Create Order Note"
+        },
+        "edit": {
+          "title": "Edit Order Note"
+        }
+      },
+      "placeholders": {
+        "reference": "Enter reference",
+        "priceInclVat": "Enter price including VAT",
+        "note": "Enter note"
+      }
+    },
     "prices": {
-    "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
+      "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"
@@ -279,18 +521,111 @@
         "amount": "Enter amount",
         "discountAmount": "Enter discount amount"
       }
+    },
+    "priceLists": {
+      "title": "Prices Lists",
+      "create": {
+        "title": "Create Price List"
+      },
+      "show": {
+        "title": "View Price List"
+      },
+      "items": {
+        "create": {
+          "title": "Create New Item"
+        },
+        "edit": {
+          "title": "Edit Item"
+        }
+      },
+      "labels": {
+        "vatIncluded": "VAT Included",
+        "autoUpdate": "Auto Update"
+      }
+    },
+    "tabs": {
+      "tabs": {
+        "general": {
+          "orders": "Orders",
+          "priceLists": "Price Lists"
+        }
+      }
     }
   },
   "purchasing": {
     "title": "Purchasing",
     "suppliers": {
-      "title": "Suppliers"
+      "title": "Suppliers",
+      "create": {
+        "title": "Create Supplier"
+      },
+      "edit": {
+        "title": "Edit Supplier"
+      },
+      "show": {
+        "title": "Supplier"
+      }
     },
     "products": {
-      "title": "Products"
+      "title": "Products",
+      "create": {
+        "title": "Create Supplier Product"
+      },
+      "edit": {
+        "title": "Edit Supplier Product"
+      },
+      "labels": {
+        "unitPrice": "Unit Price",
+        "sku": "SKU",
+        "supplier": "Supplier"
+      },
+      "placeholders": {
+        "unitPrice": "Enter unit price"
+      }
     },
     "orders": {
-      "title": "Purchasing Orders"
+      "title": "Purchasing Orders",
+      "create": {
+        "title": "Create Purchase Order"
+      },
+      "show": {
+        "title": "Purchase Order"
+      },
+      "edit": {
+        "title": "Edit Purchase Order"
+      },
+      "items": {
+        "create": {
+          "title": "Create Item"
+        },
+        "edit": {
+          "title": "Edit Item"
+        }
+      },
+      "labels": {
+        "status": {
+          "choices": {
+            "draft": "Draft",
+            "ordered": "Ordered",
+            "confirmed": "Confirmed",
+            "pendingDelivery": "Pending Delivery",
+            "delivered": "Delivered"
+          }
+        },
+        "supplier": "Supplier",
+        "orderReference": "Order Reference",
+        "totalValue": "Total Value"
+      },
+      "placeholders": {
+        "orderReference": "Enter order reference"
+      }
+    },
+    "companies": {
+      "address": {
+        "labels": {
+          "contact": "Contact"
+        }
+      }
     }
   },
   "media": {
@@ -305,13 +640,74 @@
   "settings": {
     "title": "Settings",
     "currencies": {
-        "title": "Currencies"
+      "title": "Currencies",
+      "create": {
+        "title": "Create currency"
       },
-    "taxes": {
-        "title": "Taxes"
+      "labels": {
+        "isoCode": "ISO Code",
+        "symbol": "Symbol",
+        "inheritsFrom": "Inherits From",
+        "exchangeRate": "Exchange Rate",
+        "exchangeRateOfficial": "Official Exchange Rate",
+        "roundPricesUpTo": "Round Prices Up To",
+        "followOfficialRate": "Follow Official Rate",
+        "isDefaultCurrency": "Is Default Currency",
+        "comment": "Comment"
       },
-    "units": {
-        "title": "Units"
+      "placeholders": {
+        "isoCode": "Enter ISO code",
+        "symbol": "Enter symbol",
+        "exchangeRate": "Enter exchange rate",
+        "exchangeRateOfficial": "Enter official exchange rate",
+        "roundPricesUpTo": "Enter round-up value",
+        "comment": "Enter comment"
       }
+    },
+    "taxes": {
+      "title": "Taxes",
+      "create": {
+        "title": "Create Tax"
+      },
+      "edit": {
+        "title": "Edit Tax"
+      },
+      "labels": {
+        "rate": "Rate"
+      },
+      "placeholders": {
+        "rate": "Enter rate"
+      }
+    },
+    "units": {
+      "title": "Units",
+      "create": {
+        "title": "Create Unit"
+      },
+      "edit": {
+        "title": "Edit Unit"
+      },
+      "labels": {
+        "unit": "Unit"
+      },
+      "placeholders": {
+        "unit": "Enter unit"
+      }
+    },
+    "currency": {
+      "create": {
+        "title": "Create Currency"
+      },
+      "edit": {
+        "title": "Edit Currency"
+      }
+    }
+  },
+  "network": {
+    "error": "Network Error",
+    "retryingIn": "Retrying in {seconds} seconds",
+    "retrying": "Retrying",
+    "refresh": "Refresh",
+    "retryConnect": "Retry Connection"
   }
 }
