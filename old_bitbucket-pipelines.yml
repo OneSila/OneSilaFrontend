@@ -2,7 +2,7 @@ image: atlassian/default-image:4
 
 pipelines:
   branches:
-    dev:
+    development:
       - step:
           name: "Build"
           script:
@@ -12,7 +12,6 @@ pipelines:
             - npm install -g npm
             - npm install
             - npm run build
-            - cd dist && zip -r ../dist.zip .
           artifacts:
             - dist.zip
       - step:
