@@ -1,0 +1,23 @@
+name: Deploy to development server.
+
+on:
+  push:
+    branches:
+      - 'development'
+
+jobs:
+  deploy:
+    name: Deploy to DEVELOPMENT server
+    runs-on: ubuntu-latest
+    environment: development
+    # https://github.com/marketplace/actions/ssh-execute-commands
+    steps:
+      - name: Login remotely, pull and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOSTNAME }}
+          username: ${{ secrets.DEVELOPMENT_USERNAME }}
+          key: ${{ secrets.DEVELOPMENT_SECRET_KEY_SSH }}
+          port: 22
+          script: |
+            
