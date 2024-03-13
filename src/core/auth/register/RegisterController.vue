@@ -35,7 +35,7 @@ const router = useRouter();
     </template>
 
     <template v-slot:left-section>
-      <Logo src="/src/assets/images/auth/logo.png" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
+      <Logo src="/assets/images/auth/logo.png" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
       <Flex class="mt-24 hidden lg:block">
           <FlexCell class="w-full max-w-[430px] mx-auto">
             <Image :source="registerImage" alt="Cover Image" class="w-full" />
