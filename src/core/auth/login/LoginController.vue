@@ -11,6 +11,7 @@ import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.p
 import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
 import polygonObject from '../../../assets/images/auth/polygon-object.svg';
 import loginImage from '../../../assets/images/auth/login.svg';
+import logoImage from '../../../assets/images/auth/logo.png';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
 
@@ -32,7 +33,7 @@ console.log('GraphQL URL:', import.meta.env.VITE_APP_API_GRAPHQL_URL);
     </template>
 
     <template v-slot:left-section>
-      <Logo src="/src/assets/images/auth/logo.png" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
+      <Logo :src="logoImage" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
       <Flex class="mt-24 hidden lg:block">
           <FlexCell class="w-full max-w-[430px] mx-auto">
               <Image :source="loginImage" alt="Cover Image" class="w-full mx-auto" />
