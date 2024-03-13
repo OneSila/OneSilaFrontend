@@ -32,7 +32,7 @@ const httpLink = createHttpLink({
 // WebSocket link for subscriptions
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:8080/graphql/', // Your WebSocket endpoint
+    url: import.meta.env.VITE_APP_API_GRAPHQL_WEBSOCKET_URL,
   })
 );
 

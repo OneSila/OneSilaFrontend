@@ -11,11 +11,9 @@ import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.p
 import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
 import polygonObject from '../../../assets/images/auth/polygon-object.svg';
 import loginImage from '../../../assets/images/auth/login.svg';
-import logoImage from '../../../assets/images/auth/logo.png';
+import logoImage from '../../../assets/images/logo/logo.png';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
-
-console.log('GraphQL URL:', import.meta.env.VITE_APP_API_GRAPHQL_URL);
 
 </script>
 
@@ -43,7 +41,7 @@ console.log('GraphQL URL:', import.meta.env.VITE_APP_API_GRAPHQL_URL);
 
 
     <template v-slot:right-section-header>
-      <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
+      <Logo alt="Logo" to="/" class="w-8 block lg:hidden" />
       <LanguageDropdown class="ms-auto w-max"/>
     </template>
 

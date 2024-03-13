@@ -30,7 +30,7 @@ import AuthTemplate from "../AuthTemplate.vue";
     </template>
 
     <template v-slot:left-section>
-      <Logo src="/assets/images/auth/logo.png" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
+      <Logo alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
       <Flex class="mt-24 hidden lg:block">
           <FlexCell class="w-full max-w-[430px] mx-auto">
             <Image :source="recoverAccount" alt="Cover Image" class="w-full" />
@@ -39,7 +39,7 @@ import AuthTemplate from "../AuthTemplate.vue";
     </template>
 
     <template v-slot:right-section-header>
-      <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
+      <Logo alt="Logo" to="/" class="w-8 block lg:hidden" />
       <LanguageDropdown class="ms-auto w-max"/>
     </template>
 
