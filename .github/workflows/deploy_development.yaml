@@ -24,7 +24,5 @@ jobs:
             export VITE_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }} 
             export VITE_APP_SENTRY_ENV=development
             cd /home/${{ secrets.DEVELOPMENT_USERNAME }}/OneSilaFrontend
-            npm install -g npm
             npm install
             npm run build
-            

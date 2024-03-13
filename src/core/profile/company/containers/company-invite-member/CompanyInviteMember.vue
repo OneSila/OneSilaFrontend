@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { ref, defineProps } from 'vue';
 import { Button } from '../../../../../shared/components/atoms/button';
 import { TextInputPrepend } from '../../../../../shared/components/atoms/text-input-prepend';
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { Card } from '../../../../../shared/components/atoms/card';
-import { inviteMemberMutation } from '../../../../../shared/api/mutations/auth';
+import { inviteMemberMutation } from '../../../../../shared/api/mutations/auth.js';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
