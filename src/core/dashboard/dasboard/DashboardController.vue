@@ -722,7 +722,7 @@
                                 <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
                                     <td class="min-w-[150px] text-black dark:text-white">
                                         <div class="flex items-center">
-                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-6.jpeg" alt="avatar" />
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="" alt="avatar" />
                                             <span class="whitespace-nowrap">Luke Ivory</span>
                                         </div>
                                     </td>
