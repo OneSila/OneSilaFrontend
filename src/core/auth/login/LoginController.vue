@@ -14,6 +14,7 @@ import loginImage from '../../../assets/images/auth/login.svg';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
 
+console.log('GraphQL URL:', import.meta.env.VITE_APP_API_GRAPHQL_URL);
 
 </script>
 
