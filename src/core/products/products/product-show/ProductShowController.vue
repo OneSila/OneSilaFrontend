@@ -60,7 +60,7 @@ const redirectToList = (response) => {
           <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
             <div class="p-5 flex items-center flex-col sm:flex-row">
               <div class="mb-5 w-20 h-20 rounded-full overflow-hidden">
-                <img class="w-20 h-20 rounded-md overflow-hidden object-cover" src="/assets/images/profile-12.jpeg" alt="" />
+                <img class="w-20 h-20 rounded-md overflow-hidden object-cover" src="" alt="" />
               </div>
               <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
                 <h5 class="text-[#3b3f5c] text-[15px] font-semibold mb-2 dark:text-white-light">{{ result.product.name }}</h5>
