@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.DEVELOPMENT_SECRET_KEY_SSH }}
           port: 22
           script: |
-            export VITE_APP_API_GRAPHQL_URL=${{ secrets.DEVELOPMENT_API_GRAPHQL_URL }} 
+            export VITE_APP_API_GRAPHQL_URL=${{ secrets.DEVELOPMENT_HOSTNAME }}/graphql/
             export VITE_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }} 
             export VITE_APP_SENTRY_ENV=development
             cd /home/${{ secrets.DEVELOPMENT_USERNAME }}/OneSilaFrontend
