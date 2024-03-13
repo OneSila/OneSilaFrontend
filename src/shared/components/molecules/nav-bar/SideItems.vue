@@ -17,7 +17,7 @@ const { t } = useI18n();
             <span>{{ t(section.title) }}</span>
          </h2>
         <template v-for="item in section.items">
-          <SideItem :item="item" :active-dropdown="activeDropdown.value"/>
+          <SideItem :item="item" :active-dropdown="activeDropdown"/>
         </template>
       </template>
     </ul>

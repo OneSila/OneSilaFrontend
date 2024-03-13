@@ -13,7 +13,7 @@ const { t } = useI18n();
   <Flex class="side-settings-items">
     <ul class="relative font-semibold space-y-0.5 p-4 py-0 w-full">
       <template v-for="item in settingsSection.items">
-        <SideItem :item="item" :active-dropdown="activeDropdown.value"/>
+        <SideItem :item="item" :active-dropdown="activeDropdown"/>
         </template>
     </ul>
   </Flex>
