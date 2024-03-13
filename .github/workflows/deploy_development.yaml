@@ -21,7 +21,7 @@ jobs:
           port: 22
           script: |
             export VITE_APP_API_GRAPHQL_URL=https://${{ secrets.DEVELOPMENT_HOSTNAME }}/graphql/
-            export VITE_APP_API_GRAPHQL_WEBSOCKET_URL=ws://${{ secrets.DEVELOPMENT_HOSTNAME }}/graphql/
+            export VITE_APP_API_GRAPHQL_WEBSOCKET_URL=wss://${{ secrets.DEVELOPMENT_HOSTNAME }}/graphql/
             export VITE_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }} 
             export VITE_APP_SENTRY_ENV=development
             cd /home/${{ secrets.DEVELOPMENT_USERNAME }}/OneSilaFrontend
