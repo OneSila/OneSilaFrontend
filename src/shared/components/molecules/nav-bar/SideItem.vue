@@ -3,7 +3,13 @@ import { Link } from '../../atoms/link';
 import VueCollapsible from 'vue-height-collapsible/vue3';
 import Icon from "../../atoms/icon/Icon.vue";
 
-defineProps<{ item:  object; activeDropdown?: string|null }>();
+const props = defineProps<{ item:  object; activeDropdown?: string|null }>();
+const emit = defineEmits(['update:activeDropdown']);
+
+const handleDropdownClick = () => {
+  const newValue = props.activeDropdown === props.item.subItemsKey ? null : props.item.subItemsKey;
+  emit('update:activeDropdown', newValue);
+};
 </script>
 
 <template>
@@ -12,7 +18,7 @@ defineProps<{ item:  object; activeDropdown?: string|null }>();
       type="button"
       class="nav-link group w-full flex justify-between items-center"
       :class="{ active: activeDropdown === item.subItemsKey }"
-      @click="activeDropdown === item.subItemsKey ? (activeDropdown = null) : (activeDropdown = item.subItemsKey)"
+      @click="handleDropdownClick"
   >
       <div>
           <Icon v-if="item.icon" :name="item.icon"/>
