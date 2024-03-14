@@ -4,6 +4,7 @@ import { Icon } from '../../../../atoms/icon';
 import { Link } from '../../../../atoms/link';
 import { Image } from '../../../../atoms/image';
 import { ImageField } from '../../showConfig';
+import { getSrcImage } from "../../../../../utils";
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -14,6 +15,7 @@ const props = defineProps<{
 const imageUrl = computed(() => {
   return props.field.basePath ? `${props.field.basePath}/${props.modelValue}${props.field.suffix || ''}` : props.modelValue;
 });
+
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const imageUrl = computed(() => {
 
     <Link v-if="field.clickable && field.clickUrl" :path="field.clickUrl">
       <Image
-        :source="imageUrl"
+        :source="getSrcImage(imageUrl)"
         :alt="field.alt"
         :class="field.customCssClass"
         :style="field.customCss"
@@ -34,7 +36,7 @@ const imageUrl = computed(() => {
 
     <Image
       v-else
-      :source="imageUrl"
+      :source="getSrcImage(imageUrl)"
       :alt="field.alt"
       :class="field.customCssClass"
       :style="field.customCss"

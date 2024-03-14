@@ -5,6 +5,7 @@ import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
 import { injectAuth, isAuthenticated, setLanguageToUser, isActive } from '../../../modules/auth';
+import { getFlagImageSrc, getSrcImage } from "../../../utils";
 import { useAppStore } from '../../../plugins/store';
 import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
@@ -44,7 +45,7 @@ watch(() => auth.user.language, (newLang) => {
 }, { immediate: true });
 
 const currentFlag = computed(() => {
-  return `/src/assets/images/flags/${locale.value.toUpperCase()}.svg`;
+  return getSrcImage(getFlagImageSrc(locale.value));
 });
 
 onMounted(() => {
@@ -86,7 +87,7 @@ onMounted(() => {
               >
                 <img
                   class="w-5 h-5 object-cover rounded-full"
-                  :src="`/src/assets/images/flags/${item.code.toUpperCase()}.svg`"
+                  :src="getSrcImage(getFlagImageSrc(item.code))"
                   alt=""
                 />
                 <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>

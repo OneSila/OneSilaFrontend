@@ -118,3 +118,11 @@ export const dataImageToBlob = (image: string) => {
 
   return new Blob([new Uint8Array(array)], { type: mediaType });
 };
+
+export const getFlagImageSrc = (code: string) => {
+  return `/src/assets/images/flags/${code.toUpperCase()}.svg`;
+}
+
+export const getSrcImage = (path: string) => {
+  return new URL(path, import.meta.url).href;
+};
