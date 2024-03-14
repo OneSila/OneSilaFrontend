@@ -122,7 +122,11 @@ export const dataImageToBlob = (image: string) => {
 export const getFlagImageSrc = (code: string) => {
   return `/src/assets/images/flags/${code.toUpperCase()}.svg`;
 }
-
 export const getSrcImage = (path: string) => {
-  return new URL(path, import.meta.url)
+  try {
+    return new URL(path, import.meta.url)
+  } catch (error) {
+    console.error('Error constructing URL:', error);
+    return '';
+  }
 };
