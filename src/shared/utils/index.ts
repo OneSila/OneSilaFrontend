@@ -124,5 +124,5 @@ export const getFlagImageSrc = (code: string) => {
 }
 
 export const getSrcImage = (path: string) => {
-  return new URL(path, import.meta.url).href;
+  return new URL(path, import.meta.url)
 };
