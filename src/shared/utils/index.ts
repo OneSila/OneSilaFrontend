@@ -120,7 +120,7 @@ export const dataImageToBlob = (image: string) => {
 };
 
 export const getFlagImageSrc = (code: string) => {
-  return `/src/assets/images/flags/${code.toUpperCase()}.svg`;
+  return `/images/flags/${code.toUpperCase()}.svg`;
 }
 export const getSrcImage = (path: string) => {
   try {

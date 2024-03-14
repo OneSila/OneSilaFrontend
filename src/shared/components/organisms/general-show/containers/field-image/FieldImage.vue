@@ -4,7 +4,6 @@ import { Icon } from '../../../../atoms/icon';
 import { Link } from '../../../../atoms/link';
 import { Image } from '../../../../atoms/image';
 import { ImageField } from '../../showConfig';
-import { getSrcImage } from "../../../../../utils";
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -25,7 +24,7 @@ const imageUrl = computed(() => {
 
     <Link v-if="field.clickable && field.clickUrl" :path="field.clickUrl">
       <Image
-        :source="getSrcImage(imageUrl)"
+        :source="imageUrl"
         :alt="field.alt"
         :class="field.customCssClass"
         :style="field.customCss"
@@ -36,7 +35,7 @@ const imageUrl = computed(() => {
 
     <Image
       v-else
-      :source="getSrcImage(imageUrl)"
+      :source="imageUrl"
       :alt="field.alt"
       :class="field.customCssClass"
       :style="field.customCss"

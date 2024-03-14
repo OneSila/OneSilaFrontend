@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, watch, reactive, computed } from 'vue';
 import Icon from "../../atoms/icon/Icon.vue";
-import { flags } from "../../../../assets/images/flags/flagIndex"
+
 import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
 import { injectAuth, isAuthenticated, setLanguageToUser, isActive } from '../../../modules/auth';
-import { getFlagImageSrc, getSrcImage } from "../../../utils";
+import { getFlagImageSrc } from "../../../utils";
 import { useAppStore } from '../../../plugins/store';
 import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
@@ -15,7 +15,6 @@ const route = useRoute();
 
 const auth = injectAuth();
 const app = useAppStore();
-const f = flags;
 
 app.fetchLanguages();
 const changeLanguage = async (item: any) => {
@@ -46,7 +45,7 @@ watch(() => auth.user.language, (newLang) => {
 }, { immediate: true });
 
 const currentFlag = computed(() => {
-  return getSrcImage(getFlagImageSrc(locale.value));
+  return getFlagImageSrc(locale.value);
 });
 
 onMounted(() => {
@@ -88,7 +87,7 @@ onMounted(() => {
               >
                 <img
                   class="w-5 h-5 object-cover rounded-full"
-                  :src="getSrcImage(getFlagImageSrc(item.code)).toString()"
+                  :src="getFlagImageSrc(item.code)"
                   alt=""
                 />
                 <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>

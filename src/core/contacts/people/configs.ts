@@ -96,7 +96,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     {
       name: 'language',
       type: FieldType.Image,
-      basePath: '/src/assets/images/flags',
+      basePath: '/images/flags',
       suffix: '.svg'
     }
   ],
