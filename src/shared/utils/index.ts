@@ -124,7 +124,7 @@ export const getFlagImageSrc = (code: string) => {
 }
 export const getSrcImage = (path: string) => {
   try {
-    return new URL(path, import.meta.url)
+    return new URL(path, import.meta.url).href
   } catch (error) {
     console.error('Error constructing URL:', error);
     return '';
