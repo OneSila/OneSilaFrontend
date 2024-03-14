@@ -25,10 +25,11 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.name'),
     },
     {
-      type: FieldType.Text,
+      type: FieldType.Textarea,
       name: 'description',
       label: t('shared.labels.description'),
       placeholder: t('shared.placeholders.description'),
+      scroll: true,
     },
     {
         type: FieldType.Query,

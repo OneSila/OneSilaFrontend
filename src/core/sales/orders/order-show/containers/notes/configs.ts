@@ -25,10 +25,11 @@ export const baseFormConfigConstructor = (
       value: { "id": orderId}
     },
     {
-      type: FieldType.Text,
+      type: FieldType.Textarea,
       name: 'note',
       label: t('sales.orders.labels.note'),
       placeholder: t('sales.orders.placeholders.note'),
+      scroll: true,
     },
     ],
 });

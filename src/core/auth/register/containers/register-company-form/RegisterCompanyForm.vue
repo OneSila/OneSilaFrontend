@@ -12,6 +12,7 @@ import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
 import { registerCompanyMutation } from '../../../../../shared/api/mutations/auth.js'
 import { languagesQuery, countriesQuery } from "../../../../../shared/api/queries/languages";
+import {PhoneNumberInput} from "../../../../../shared/components/atoms/phone-number-input";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -50,9 +51,7 @@ const onCompanyRegistered = ({ data }) => {
       <TextInputPrepend id="companyName" v-model="form.name" :label="t('auth.register.company.labels.companyName')" :placeholder="t('auth.register.company.placeholders.companyName')" type="text" class="mb-2">
         <Icon name="building"/>
       </TextInputPrepend>
-      <TextInputPrepend id="phoneNumber" v-model="form.phoneNumber" :label="t('auth.register.company.labels.phoneNumber')" :placeholder="t('auth.register.company.placeholders.phoneNumber')" type="tel" class="mb-2">
-        <Icon name="phone"/>
-      </TextInputPrepend>
+      <PhoneNumberInput class="mb-2" v-model:model-value="form.phoneNumber" :label="t('companyProfile.labels.phoneNumber')" />
 
     <div class="mb-2">
       <Label>{{ t('auth.register.company.placeholders.country') }}</Label>

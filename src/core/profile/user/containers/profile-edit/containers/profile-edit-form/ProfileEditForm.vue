@@ -12,6 +12,7 @@ import { Label } from "../../../../../../../shared/components/atoms/label";
 import { timezonesQuery } from "../../../../../../../shared/api/queries/languages.js";
 
 import { useI18n } from 'vue-i18n';
+import {PhoneNumberInput} from "../../../../../../../shared/components/atoms/phone-number-input";
 
 const { t } = useI18n();
 const props = defineProps<{ meData: MeData }>();
@@ -80,23 +81,13 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
             </TextInputPrepend>
           </div>
           <div>
-            <TextInputPrepend id="mobileNumber" v-model="form.mobileNumber" :label="t('profile.labels.mobileNumber')"
-                              :placeholder="t('profile.placeholders.mobileNumber')">
-              <Icon name="phone"/>
-            </TextInputPrepend>
+              <PhoneNumberInput v-model:model-value="form.mobileNumber" :label="t('profile.labels.mobileNumber')" />
           </div>
           <div>
-            <TextInputPrepend id="whatsappNumber" v-model="form.whatsappNumber" :label="t('profile.labels.whatsappNumber')"
-                              :placeholder="t('profile.placeholders.whatsappNumber')">
-              <IconWhatsApp/>
-            </TextInputPrepend>
-
+            <PhoneNumberInput v-model:model-value="form.whatsappNumber" :label="t('profile.labels.whatsappNumber')" />
           </div>
           <div>
-            <TextInputPrepend id="telegramNumber" v-model="form.telegramNumber" :label="t('profile.labels.telegramNumber')"
-                              :placeholder="t('profile.placeholders.telegramNumber')">
-              <IconTelegram/>
-            </TextInputPrepend>
+            <PhoneNumberInput v-model:model-value="form.telegramNumber" :label="t('profile.labels.telegramNumber')" />
           </div>
           <div>
             <Label>{{ t('profile.labels.timezone') }}</Label>

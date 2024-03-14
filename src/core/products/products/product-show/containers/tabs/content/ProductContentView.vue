@@ -148,11 +148,11 @@ const onMutationCompleted = () => {
         </FlexCell>
         <FlexCell>
           <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-          <TextInput v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" class="mt-2 mb-2 w-full" />
+          <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-2 h-32 w-full" />
         </FlexCell>
         <FlexCell>
           <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-          <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" class="mt-2 mb-2 h-32 w-full" scroll />
+          <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="mt-2 mb-2 h-32 w-full" />
         </FlexCell>
         <FlexCell>
           <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>

@@ -12,6 +12,7 @@ import {FieldQuery} from '../form-fields/field-query';
 import {FieldSlider} from '../form-fields/field-slider';
 import {FieldValue} from '../form-fields/field-value';
 import {Label} from '../../../../atoms/label';
+import {FieldTextarea} from "../form-fields/field-textarea";
 
 const props = defineProps<{
   config: FormConfig;
@@ -28,6 +29,7 @@ const getFieldComponent = (type) => {
     case FieldType.Query: return FieldQuery;
     case FieldType.Slider: return FieldSlider;
     case FieldType.Text: return FieldValue;
+    case FieldType.Textarea: return FieldTextarea;
     default: return null;
   }
 };

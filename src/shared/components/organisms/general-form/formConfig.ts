@@ -29,6 +29,19 @@ export interface ValueFormField extends BaseFormField {
   minNumber?: number;
 }
 
+export interface TextareaFormField extends BaseFormField {
+  type: FieldType.Textarea;
+  placeholder?: string;
+  transparent?: boolean;
+  autogrow?: boolean;
+  error?: boolean;
+  gutterX?: string;
+  gutterY?: string;
+  gutterless?: boolean;
+  blurOnEnterKeypress?: boolean;
+  scroll?: boolean;
+}
+
 export interface ChoiceFormField extends BaseFormField {
   type: FieldType.Choice;
   options: any[];
@@ -97,7 +110,7 @@ export enum FormType {
   EDIT = 'EDIT',
 }
 
-export type FormField = BooleanFormField | ValueFormField | ChoiceFormField | ProxyChoiceFormField | QueryFormField |
+export type FormField = TextareaFormField | BooleanFormField | ValueFormField | ChoiceFormField | ProxyChoiceFormField | QueryFormField |
     DateFormField | SliderFormField | CheckboxFormField | HiddenFormField;
 
 export interface FormConfig {

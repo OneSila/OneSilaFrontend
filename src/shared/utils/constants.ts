@@ -20,6 +20,7 @@ export enum FieldType {
   Image = "Image",
   NestedText = "NestedText",
   Array = "Array",
+  Textarea = "Textarea",
 }
 
 export const OrderStatus = {

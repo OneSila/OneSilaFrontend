@@ -4,7 +4,6 @@ import Icon from "../../atoms/icon/Icon.vue";
 
 import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
-const { locale } = useI18n();
 import { injectAuth, isAuthenticated, setLanguageToUser, isActive } from '../../../modules/auth';
 import { getFlagImageSrc } from "../../../utils";
 import { useAppStore } from '../../../plugins/store';
@@ -14,6 +13,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 const auth = injectAuth();
+const { locale } = useI18n();
 const app = useAppStore();
 
 app.fetchLanguages();

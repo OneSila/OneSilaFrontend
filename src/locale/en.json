@@ -67,7 +67,18 @@
       "language": "Enter language",
       "sku": "Enter SKU",
       "price": "Enter price",
-      "description": "Enter description"
+      "description": "Enter description",
+      "phoneInput": {
+        "countrySelector": {
+          "placeholder": "Country code",
+          "error": "Choose country",
+          "searchPlaceholder": "Search a country"
+        },
+        "phoneInput": {
+          "placeholder": "Phone number",
+          "example": "Example:"
+        }
+      }
     },
     "tabs": {
       "general": "General",
