@@ -69,7 +69,7 @@ onMounted(() => {
         class="flex items-center gap-2.5 rounded-lg border border-white-dark/30 bg-white px-2 py-1.5 text-white-dark hover:border-primary hover:text-primary dark:bg-black"
       >
         <div>
-          <img :src="currentFlag" alt="image" class="h-5 w-5 rounded-full object-cover" />
+          <img :src="currentFlag.toString()" alt="image" class="h-5 w-5 rounded-full object-cover" />
         </div>
         <span class="shrink-0">
           <Icon name="angle-down" />
@@ -87,7 +87,7 @@ onMounted(() => {
               >
                 <img
                   class="w-5 h-5 object-cover rounded-full"
-                  :src="getSrcImage(getFlagImageSrc(item.code))"
+                  :src="getSrcImage(getFlagImageSrc(item.code)).toString()"
                   alt=""
                 />
                 <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>
