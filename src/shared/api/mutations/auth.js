@@ -2,7 +2,7 @@ import { gql } from 'graphql-tag';
 
 export const registerMutation = gql`
   mutation Register($username: String!, $password: String!, $language: String!) {
-    registerUser(data: {username: $username, password: $password, language: $language}) {
+    registerUser(username: $username, password: $password, language: $language) {
       multiTenantCompany {
         id
       }
