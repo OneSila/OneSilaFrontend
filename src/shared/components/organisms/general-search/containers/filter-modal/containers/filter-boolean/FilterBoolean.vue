@@ -31,7 +31,7 @@ watchEffect(() => {
 });
 
 
-const placeholder = ref(props.filter.placeholder || null);
+const placeholder = ref(props.filter.placeholder || undefined);
 const dropdownPosition = ref(props.filter.dropdownPosition || 'top');
 const disabled = ref(props.filter.disabled === true);
 

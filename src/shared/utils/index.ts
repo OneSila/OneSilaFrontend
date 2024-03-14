@@ -35,6 +35,10 @@ export const booleanify = (
   return value === 'true';
 };
 
+export const getLength = (array) => {
+  return Array.isArray(array) && array !== undefined ? array.length : 0;
+}
+
 export const booleanifyIfNeeded = (value?: any) => {
 
   if (typeof value === 'boolean') {

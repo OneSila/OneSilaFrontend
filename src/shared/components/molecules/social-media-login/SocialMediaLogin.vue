@@ -1,23 +1,10 @@
-<template>
-  <button @click="handleLogin" :class="iconClass" :style="iconStyle">
-    <template v-if="isSVG">
-      <div v-html="iconSVG" class="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-></div>
-    </template>
-    <template v-else>
-      <Icon :name="iconName" />
-    </template>
-  </button>
-</template>
-
 <script setup lang="ts">
 
 import { defineProps, computed } from 'vue';
 import Icon from "../../atoms/icon/Icon.vue";
+import {MeCompanyData} from "../../../../core/profile/company/meCompanyData";
 
-const props = defineProps({
-  platform: String,
-});
+const props = defineProps<{ platform: string }>();
 
 const iconName = computed(() => {
   switch (props.platform) {
@@ -92,3 +79,15 @@ const handleLogin = () => {
   }
 };
 </script>
+
+
+<template>
+  <button @click="handleLogin" :class="iconClass" :style="iconStyle">
+    <template v-if="isSVG">
+      <div v-html="iconSVG" class="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"></div>
+    </template>
+    <template v-else>
+      <Icon :name="iconName" />
+    </template>
+  </button>
+</template>

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
+    "skipLibCheck": true,
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
@@ -10,7 +11,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "dom"]
   },
-  "include": [] // fix that later
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

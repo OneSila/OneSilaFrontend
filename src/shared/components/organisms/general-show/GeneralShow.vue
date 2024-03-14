@@ -61,7 +61,6 @@ const updateData = (newData) => {
         </div>
         <Buttons :config="config" />
       </template>
-      <p v-if="error">{{ error.message }}</p>
     </template>
   </ApolloSubscription>
 

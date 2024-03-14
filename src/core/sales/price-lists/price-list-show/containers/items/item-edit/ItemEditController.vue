@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
 import { Ref, ref} from "vue";
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
@@ -15,7 +15,7 @@ import { updateSalesPriceListItemMutation } from "../../../../../../../shared/ap
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const priceListId = ref(route.params.priceListId);
 
 const formConfig: Ref<any| null> = ref(null);
@@ -60,7 +60,7 @@ formConfig.value = {
 
    <template v-slot:content>
       <Card class="p-2" v-if="formConfig !== null">
-        <GeneralForm :config="formConfig" />
+        <GeneralForm :config="formConfig as FormConfig" />
       </Card>
    </template>
   </GeneralTemplate>

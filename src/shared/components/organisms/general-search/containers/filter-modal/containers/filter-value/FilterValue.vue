@@ -36,7 +36,7 @@ watchEffect(() => {
         :placeholder="filter.placeholder"
         :error="filter.error"
         :transparent="filter.transparent"
-        :disabled="filter.disabled"
+        :disabled="filter.disabled === true"
         :secret="filter.secret"
         :number="filter.number"
         :maxNumber="filter.maxNumber"

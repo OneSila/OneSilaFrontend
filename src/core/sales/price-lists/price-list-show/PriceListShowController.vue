@@ -14,7 +14,7 @@ import ItemsList from "./containers/items/items-list/ItemsList.vue";
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const tabItems = ref();
 
 tabItems.value = [

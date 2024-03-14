@@ -2,6 +2,8 @@
 import {defineProps, defineEmits, onMounted} from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
+import { SweetAlertOptions } from 'sweetalert2';
+import {Product} from "../../../../core/products/products/configs";
 
 interface SwalOptions {
   title?: string;
@@ -16,13 +18,7 @@ interface SwalOptions {
 
 const { t } = useI18n();
 
-const props = defineProps({
-  mutation: Object,
-  mutationVariables: Object,
-  refetchQueries: Function,
-  swalOptions: Object as () => SwalOptions,
-  swalClasses: Object as () => SwalClasses
-});
+const props = defineProps<{ mutation: object | string; mutationVariables?: object; refetchQueries?: Function; swalOptions?: SwalOptions; swalClasses?: SwalClasses  }>();
 
 interface SwalClasses {
   popup?: string;
@@ -53,7 +49,7 @@ const confirmAndMutate = async (mutate) => {
     buttonsStyling: false // Ensure buttonsStyling is always false
   });
 
-  const result = await swalWithBootstrapButtons.fire({ ...defaultSwalOptions, ...props.swalOptions });
+  const result = await swalWithBootstrapButtons.fire({ ...defaultSwalOptions, ...props.swalOptions } as SweetAlertOptions);
 
   if (result.isConfirmed) {
     await mutate();

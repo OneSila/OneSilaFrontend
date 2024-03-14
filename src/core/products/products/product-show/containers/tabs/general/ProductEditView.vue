@@ -3,7 +3,7 @@
 import {reactive, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import {baseFormConfigConstructor, Product} from "../../../../configs";
 import {updateProductMutation} from "../../../../../../../shared/api/mutations/products.js";
@@ -53,11 +53,11 @@ const handleSubmit = (resp) => {
 <template>
   <TabContentTemplate>
     <template v-slot:buttons>
-      <SubmitButtons :form="form" :config="{...formConfig, submitLabel: t('shared.button.save')}" @submit="handleSubmit"/>
+      <SubmitButtons :form="form" :config="{...formConfig, submitLabel: t('shared.button.save')} as FormConfig" @submit="handleSubmit"/>
     </template>
 
     <template v-slot:content>
-      <GeneralForm :config="formConfig"  @form-updated="handleFormUpdate"/>
+      <GeneralForm :config="formConfig as FormConfig"  @form-updated="handleFormUpdate"/>
     </template>
   </TabContentTemplate>
 </template>

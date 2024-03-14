@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
 import { updatePersonMutation } from "../../../../shared/api/mutations/contacts.js";
 import { getPersonQuery } from "../../../../shared/api/queries/contacts.js";
@@ -16,7 +16,7 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 
 const baseForm = baseFormConfigConstructor(
   t,
@@ -54,7 +54,7 @@ const formConfig = {
 
    <template v-slot:content>
       <Card class="p-2 w-1/2">
-        <GeneralForm :config="formConfig" />
+        <GeneralForm :config="formConfig as FormConfig" />
       </Card>
    </template>
   </GeneralTemplate>

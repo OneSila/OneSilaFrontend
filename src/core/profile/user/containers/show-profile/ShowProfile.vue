@@ -15,7 +15,7 @@ defineProps<{ meData: MeData }>();
 <template>
   <div class="mb-5">
     <div class="flex flex-col justify-center items-center">
-      <Image v-if="meData.avatarResizedFullUrl != null" :src="meData.avatarResizedFullUrl" class="w-24 h-24 rounded-full object-cover mb-5"/>
+      <Image v-if="meData.avatarResizedFullUrl != null" :source="meData.avatarResizedFullUrl" class="w-24 h-24 rounded-full object-cover mb-5"/>
       <Icon v-else class="shrink-0 mb-1" size="2xl" name="user"/>
 
       <p class="font-semibold text-primary text-xl">{{ meData.firstName }} {{ meData.lastName }}</p>

@@ -3,7 +3,7 @@
 import  {Ref, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType } from '../../../../shared/components/organisms/general-form/formConfig';
+import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
 import { createOrderMutation } from "../../../../shared/api/mutations/salesOrders.js"
 import {baseFormConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -72,7 +72,7 @@ const handleFormUpdate = (form) => {
 
    <template v-slot:content>
       <Card class="p-2">
-        <GeneralForm :config="formConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+        <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
       </Card>
    </template>
   </GeneralTemplate>

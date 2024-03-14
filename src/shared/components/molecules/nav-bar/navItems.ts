@@ -2,20 +2,22 @@ interface Route {
   name: string;
 }
 
-interface SubItem {
+export interface SubItem {
   route: Route;
   title: string;
 }
 
-interface Item {
+export interface Item {
   title: string;
   icon: string;
   subItemsKey: string;
+  route?: Route;
   subItems: SubItem[];
 }
 
-interface NavSection {
+export interface NavSection {
   items: Item[];
+  title?: string;
 }
 
 export const navSections: NavSection[] = [

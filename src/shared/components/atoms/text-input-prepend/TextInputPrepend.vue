@@ -1,10 +1,17 @@
+<script setup lang="ts">
+import { defineProps } from 'vue';
+import { Label } from '../label'
+
+const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue']);
+</script>
+
 <template>
   <div>
     <Label :for="id" class="mb-2">{{ label }}</Label>
     <div class="relative">
       <input
         :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         :id="id"
         :type="type"
         :placeholder="placeholder"
@@ -16,10 +23,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { defineProps } from 'vue';
-import { Label } from '../label'
-
-const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue']);
-</script>

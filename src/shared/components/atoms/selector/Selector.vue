@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
   defineProps<{
-    options?: any[];
+    options: any[];
     modelValue?: any;
     labelBy?: string;
     valueBy?: string;

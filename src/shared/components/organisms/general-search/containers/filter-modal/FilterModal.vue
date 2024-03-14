@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 
 import { reactive, computed } from 'vue';
 import { Card } from '../../../../../components/atoms/card';
-import { BaseFilter } from "../../searchConfig";
+import {BaseFilter, SearchFilter} from "../../searchConfig";
 import { FieldType } from '../../../../../utils/constants'
 
 import { FilterBoolean } from './containers/filter-boolean';
@@ -16,7 +16,7 @@ import { FilterCheckbox } from './containers/filter-checkbox';
 
 const { t } = useI18n();
 
-const props = defineProps<{ filters: BaseFilter[], cols: number }>();
+const props = defineProps<{ filters: SearchFilter[] | undefined, cols: number }>();
 const emit = defineEmits(['cancel-clicked', 'submit-clicked']);
 const filterValues = reactive({});
 

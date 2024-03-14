@@ -15,9 +15,9 @@ import {deleteUmbrellaVariationMutation, deleteBundleVariationMutation} from "..
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
 const emit = defineEmits(['refetched']);
-const refetchIfNecessary = async (query) => {
+const refetchIfNecessary = (query) => {
   if (props.refetchNeeded) {
-    await query.refetch();
+    query.refetch();
     emit('refetched');
   }
   return true;

@@ -18,7 +18,7 @@ const mandatory = props.field.mandatory !== undefined ? props.field.mandatory : 
 const multiple = props.field.multiple || false;
 const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
-const limit = props.field.limit || null;
+const limit = props.field.limit || undefined;
 
 const cleanedData = (rawData) => {
   if (props.field.isEdge && rawData?.edges) {

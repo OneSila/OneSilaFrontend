@@ -18,7 +18,7 @@ import {updatePurchaseOrderItemMutation} from "../../../../../../shared/api/muta
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const orderId = ref(route.params.orderId);
 const supplierId = ref();
 
@@ -76,7 +76,7 @@ onMounted(async () => {
 
    <template v-slot:content>
       <Card class="p-2" v-if="formConfig !== null">
-        <GeneralForm :config="formConfig" />
+        <GeneralForm :config="formConfig as FormConfig" />
       </Card>
    </template>
   </GeneralTemplate>

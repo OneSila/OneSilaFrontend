@@ -4,6 +4,14 @@ import appSetting from './../../app-setting';
 import { languagesQuery } from '../api/queries/languages.js';
 import { DEFAULT_LANGUAGE } from '../utils/constants'
 
+interface Language {
+  name: string;
+  code: string;
+  bidi: boolean;
+  nameLocal: string;
+  nameTranslated: string;
+}
+
 export const useAppStore = defineStore('app', {
     state: () => ({
         isDarkMode: false,
@@ -16,7 +24,7 @@ export const useAppStore = defineStore('app', {
         locale: localStorage.getItem('i18n_locale') || DEFAULT_LANGUAGE.code,
         sidebar: false,
         expireLanguageList: null ,
-        languageList: [],
+        languageList: [] as Language[],
         rtlClass: 'ltr',
         isShowMainLoader: true,
         semidark: false,
@@ -34,7 +42,7 @@ export const useAppStore = defineStore('app', {
             });
 
             if (data && data.languages) {
-              this.languageList = data.languages;
+              this.languageList = data.languages as Language[];
               localStorage.setItem('languageList', JSON.stringify(data.languages));
 
               const newExpireDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000));
@@ -42,7 +50,7 @@ export const useAppStore = defineStore('app', {
             }
           } else {
             const storedLanguages = localStorage.getItem('languageList');
-            this.languageList = storedLanguages ? JSON.parse(storedLanguages) : [];
+            this.languageList = storedLanguages ? JSON.parse(storedLanguages) as Language[] : [];
           }
         },
     updateRTLClass(bidi: boolean) {

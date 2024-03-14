@@ -8,7 +8,7 @@
       type="checkbox"
       class="form-checkbox"
       :checked="modelValue"
-      @change="$emit('update:modelValue', $event.target.checked)"
+      @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
     />
   </label>
 </template>

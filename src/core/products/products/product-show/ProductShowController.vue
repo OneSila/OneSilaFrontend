@@ -20,7 +20,36 @@ import {ApolloAlertMutation} from "../../../../shared/components/molecules/apoll
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
+
+interface ProductSubscriptionResult {
+  product: {
+    name: string;
+    sku: string;
+    taxRate: {
+      name: string;
+    };
+    type: string;
+    active: boolean;
+    alwaysOnStock: boolean;
+  };
+}
+
+const getResultData = (result, field: string | null = null, taxField: string | null = null) => {
+  const r: ProductSubscriptionResult = result;
+
+  if (taxField !== null){
+    return r.product.taxRate[taxField];
+  }
+
+  if (field === null) {
+    return r.product;
+  }
+
+  return r.product[field]
+}
+
+
 const getProductComponent = (type) => {
   if (type == ProductType.Bundle) {
     return ProductBundle;
@@ -54,70 +83,68 @@ const redirectToList = (response) => {
    <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef">
       <template v-slot:default="{ loading, error, result }">
         <template v-if="!loading && result">
-      <Card class="p-2">
-
-        <div class="grid md:grid-cols-2 xl:grid-cols-2 gap-8 mb-6">
-          <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-            <div class="p-5 flex items-center flex-col sm:flex-row">
-              <div class="mb-5 w-20 h-20 rounded-full overflow-hidden">
-                <img class="w-20 h-20 rounded-md overflow-hidden object-cover" src="" alt="" />
-              </div>
-              <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
-                <h5 class="text-[#3b3f5c] text-[15px] font-semibold mb-2 dark:text-white-light">{{ result.product.name }}</h5>
-                <Flex>
-                  <Label semi-bold>{{ t('products.products.labels.sku') }}:</Label>
-                  <p class="text-white-dark">{{ result.product.sku }}</p>
-                </Flex>
-                <Flex>
-                  <Label semi-bold>{{ t('products.products.labels.taxRate') }}:</Label>
-                  <p class="text-white-dark">{{ result.product.taxRate.name }}</p>
-                </Flex>
-                <Flex>
-                  <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
-                  <p class="text-white-dark">{{ result.product.type }}</p>
-                </Flex>
-                <Flex class="gap-2">
-                  <FlexCell>
-                    <Label semi-bold>{{ t('shared.labels.active') }}:</Label>
-                      <Icon v-if="result.product.active" name="check-circle" class="ml-1 text-green-500" />
-                      <Icon v-else name="times-circle" class="ml-1 text-red-500" />
-                  </FlexCell>
-                  <FlexCell>
+          <Card class="p-2">
+            <div class="grid md:grid-cols-2 xl:grid-cols-2 gap-8 mb-6">
+              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                <div class="p-5 flex items-center flex-col sm:flex-row">
+                  <div class="mb-5 w-20 h-20 rounded-full overflow-hidden">
+                    <img class="w-20 h-20 rounded-md overflow-hidden object-cover" src="" alt="" />
+                  </div>
+                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
+                    <h5 class="text-[#3b3f5c] text-[15px] font-semibold mb-2 dark:text-white-light">{{ getResultData(result, 'name') }}</h5>
                     <Flex>
+                      <Label semi-bold>{{ t('products.products.labels.sku') }}:</Label>
+                      <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
+                    </Flex>
+                    <Flex>
+                      <Label semi-bold>{{ t('products.products.labels.taxRate') }}:</Label>
+                      <p class="text-white-dark">{{ getResultData(result, null, 'name') }}</p>
+                    </Flex>
+                    <Flex>
+                      <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
+                      <p class="text-white-dark">{{ getResultData(result, 'type') }}</p>
+                    </Flex>
+                    <Flex class="gap-2">
                       <FlexCell>
-                        <Label semi-bold>{{ t('products.products.labels.alwaysOnStock') }}: </Label>
+                        <Label semi-bold>{{ t('shared.labels.active') }}:</Label>
+                          <Icon v-if="getResultData(result, 'active')" name="check-circle" class="ml-1 text-green-500" />
+                          <Icon v-else name="times-circle" class="ml-1 text-red-500" />
                       </FlexCell>
                       <FlexCell>
-                        <Icon v-if="result.product.alwaysOnStock" name="check-circle" class="ml-1 text-green-500" />
-                        <Icon v-else name="times-circle" class="ml-1 text-red-500" />
+                        <Flex>
+                          <FlexCell>
+                            <Label semi-bold>{{ t('products.products.labels.alwaysOnStock') }}: </Label>
+                          </FlexCell>
+                          <FlexCell>
+                            <Icon v-if="getResultData(result, 'alwaysOnStock')" name="check-circle" class="ml-1 text-green-500" />
+                            <Icon v-else name="times-circle" class="ml-1 text-red-500" />
+                          </FlexCell>
+                        </Flex>
                       </FlexCell>
                     </Flex>
-                  </FlexCell>
-                </Flex>
-              </div>
-              <div class="self-start">
-                <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
-                  <template v-slot="{ loading, confirmAndMutate }">
-                    <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
-                      {{ t('shared.button.delete') }}
-                    </Button>
-                  </template>
-                </ApolloAlertMutation>
+                  </div>
+                  <div class="self-start">
+                    <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
+                      <template v-slot="{ loading, confirmAndMutate }">
+                        <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
+                          {{ t('shared.button.delete') }}
+                        </Button>
+                      </template>
+                    </ApolloAlertMutation>
+                  </div>
+                </div>
+            </div>
+            <div class="w-full bg-red-400 shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border-2 border-red-500 dark:border-2 dark:bg-secondary-dark-light dark:shadow-none p-5">
+              <Label semi-bold class="text-white">{{ t('products.products.inspector.labels.missingInfo') }}:</Label>
+              <div class="grid l:grid-cols-2 xl:grid-cols-2 text-white gap-2 mt-2">
+                  <p class="font-semibold border-white border-2 p-2 rounded">Product missing images.</p>
+                  <p class="font-semibold border-white border-2 p-2 rounded">Product valid price.</p>
+                  <p class="font-semibold border-white border-2 p-2 rounded">Product valid price.</p>
+                </div>
               </div>
             </div>
-        </div>
-
-        <div class="w-full bg-red-400 shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border-2 border-red-500 dark:border-2 dark:bg-secondary-dark-light dark:shadow-none p-5">
-          <Label semi-bold class="text-white">{{ t('products.products.inspector.labels.missingInfo') }}:</Label>
-          <div class="grid l:grid-cols-2 xl:grid-cols-2 text-white gap-2 mt-2">
-              <p class="font-semibold border-white border-2 p-2 rounded">Product missing images.</p>
-              <p class="font-semibold border-white border-2 p-2 rounded">Product valid price.</p>
-              <p class="font-semibold border-white border-2 p-2 rounded">Product valid price.</p>
-            </div>
-          </div>
-        </div>
-        <component :key="result.product.type" :is="getProductComponent(result.product.type)" :product="result.product"/>
-        </Card>
+            <component :key="getResultData(result, 'type')" :is="getProductComponent(getResultData(result, 'type'))" :product="getResultData(result)"/>
+          </Card>
         </template>
       </template>
      </ApolloSubscription>

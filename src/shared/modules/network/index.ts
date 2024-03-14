@@ -43,7 +43,7 @@ export const useDelayedRequestHandler = () => {
         Toast.warning('Taking longer than usual...', { duration: false });
         ignoreDelayedRequestHandler();
       }
-    }, 1000);
+    }, 1000) as any;
 
     return ignoreDelayedRequestHandler;
   };

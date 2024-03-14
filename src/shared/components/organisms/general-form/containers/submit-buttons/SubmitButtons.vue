@@ -43,7 +43,7 @@ const handleSubmitAndContinueDoneCreate = (response) => {
 
   props.config.afterSubmitCallback?.();
 
-  let redirectUrl = props.config.submitAndContinueUrl;
+  const redirectUrl = props.config.submitAndContinueUrl;
   if (redirectUrl) {
     const routePath = router.getRoutes().find(route => route.name === redirectUrl.name)?.path;
     const urlParamMatches = routePath?.match(/:(\w+)/g) || [];
@@ -117,7 +117,7 @@ const handleDelete = (response) => {
       </FlexCell>
 
       <FlexCell v-if="config.addDelete && config.type === FormType.EDIT" class="mr-2">
-        <ApolloAlertMutation :mutation="config.deleteMutation" :mutation-variables="{ id: config.mutationId }" @done="handleDelete">
+        <ApolloAlertMutation v-if="config.deleteMutation" :mutation="config.deleteMutation" :mutation-variables="{ id: config.mutationId }" @done="handleDelete">
           <template v-slot="{ loading, confirmAndMutate }">
             <Button custom-class="btn btn-danger" :disabled="loading" @click="confirmAndMutate">{{ config.deleteLabel }}</Button>
           </template>

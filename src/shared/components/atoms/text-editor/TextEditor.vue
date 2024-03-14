@@ -21,6 +21,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:modelValue', text: string): void;
   (e: 'blur'): void;
+  (e: 'focus'): void;
 }>();
 
 const editor: Ref<any> = ref(null);

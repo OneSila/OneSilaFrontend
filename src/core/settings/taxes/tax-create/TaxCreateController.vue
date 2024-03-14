@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType } from '../../../../shared/components/organisms/general-form/formConfig';
+import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
 import { createTaxMutation } from "../../../../shared/api/mutations/taxes.js"
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -33,7 +33,7 @@ const formConfig = {
 
    <template v-slot:content>
       <Card class="p-2">
-        <GeneralForm :config="formConfig" />
+        <GeneralForm :config="formConfig as FormConfig" />
       </Card>
    </template>
   </GeneralTemplate>

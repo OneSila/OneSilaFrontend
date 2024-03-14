@@ -42,12 +42,11 @@ const computedStyle = computed(() => props.config.customStyle || '');
     <Flex vertical :class="gridClass">
       <template v-for="field in config.fields" :key="field.name">
         <FlexCell v-if="field.type !== FieldType.Hidden">
-          <Label semi-bold>{{ field.label }}{{ !field.optional && field.type !== FieldType.Hidden && field.label ? '*' : '' }}</Label>
+          <Label semi-bold>{{ field.label }}{{ !field.optional && field.label ? '*' : '' }}</Label>
         </FlexCell>
         <FlexCell v-if="field.type !== FieldType.Hidden">
           <component
             v-model="form[field.name]"
-            :model-value="form[field.name]"
             :is="getFieldComponent(field.type)"
             :field="field"
           />

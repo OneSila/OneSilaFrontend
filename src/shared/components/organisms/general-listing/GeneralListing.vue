@@ -35,6 +35,11 @@ const formatDate = (dateString) => {
 };
 
 const getShowRoute = (item) => {
+
+  if (props.config.identifierKey === undefined) {
+    return undefined;
+  }
+
   const params = {
     ...props.config.identifierVariables,
     [props.config.paramIdentifier || 'id']: item.node[props.config.identifierKey]
@@ -98,14 +103,14 @@ const getShowRoute = (item) => {
                     </Link>
                     <Link v-if="config.addEdit"
                           :path="{ name: config.editUrlName,
-                                   params: { ...config.identifierVariables, id: item.node[config.identifierKey] },
+                                   params: config.identifierKey !== undefined ? { ...config.identifierVariables, id: item.node[config.identifierKey] } : undefined,
                                    query: {...config.urlQueryParams}}">
                       <Button class="btn btn-sm btn-outline-primary">{{ t('shared.button.edit') }}</Button>
                     </Link>
                     <ApolloAlertMutation
-                        v-if="config.addDelete"
+                        v-if="config.addDelete && config.deleteMutation"
                         :mutation="config.deleteMutation"
-                        :mutation-variables="{id: item.node[config.identifierKey]}"
+                        :mutation-variables="config.identifierKey !== undefined ? { id: item.node[config.identifierKey] } : undefined"
                         :refetch-queries="() => [{
                          query: props.query,
                          variables: {

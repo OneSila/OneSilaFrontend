@@ -24,13 +24,13 @@ watchEffect(() => {
 });
 
 
-const placeholder = ref(props.filter.placeholder || null);
+const placeholder = ref(props.filter.placeholder || undefined);
 const dropdownPosition = ref(props.filter.dropdownPosition || 'top');
 const mandatory = ref(props.filter.mandatory !== undefined ? props.filter.mandatory : false);
 const multiple = ref(props.filter.multiple || false);
 const filterable = ref(props.filter.filterable || false);
 const removable = ref(props.filter.removable !== undefined ? props.filter.removable : true);
-const limit = ref(props.filter.limit || null);
+const limit = ref(props.filter.limit || undefined);
 const disabled = ref(props.filter.disabled === true);
 
 </script>
