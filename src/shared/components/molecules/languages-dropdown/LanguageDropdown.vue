@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, watch, reactive, computed } from 'vue';
 import Icon from "../../atoms/icon/Icon.vue";
+import { flags } from "../../../../assets/images/flags/flagIndex"
 import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
@@ -10,11 +11,11 @@ import { useAppStore } from '../../../plugins/store';
 import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
 import { useRoute } from 'vue-router';
-
 const route = useRoute();
 
 const auth = injectAuth();
 const app = useAppStore();
+const f = flags;
 
 app.fetchLanguages();
 const changeLanguage = async (item: any) => {
