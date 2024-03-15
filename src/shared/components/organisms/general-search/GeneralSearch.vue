@@ -1,17 +1,5 @@
-<template>
-  <div class="sm:ltr:mr-auto sm:rtl:ml-auto flex w-80">
-    <SearchInput
-      v-model="search"
-      :disabled="!searchConfig.search"
-      :updateRoute="true"
-      :debounce="1000"
-      routeKey="search"
-    />
-    <GeneralFilter :searchConfig="searchConfig" @filters-reset="clearSearchInput" />
-  </div>
-</template>
-
 <script setup lang="ts">
+
 import { SearchInput } from "../../molecules/search-input";
 import { GeneralFilter } from "./containers/general-filter";
 import { ref, watch } from 'vue';
@@ -48,3 +36,16 @@ watch(() => route.query[routeKey.value], (newQueryValue) => {
 }, { immediate: true });
 
 </script>
+
+<template>
+  <div class="sm:ltr:mr-auto sm:rtl:ml-auto flex w-80">
+    <SearchInput
+      v-model="search"
+      :disabled="!searchConfig.search"
+      :updateRoute="true"
+      :debounce="200"
+      routeKey="search"
+    />
+    <GeneralFilter :searchConfig="searchConfig" @filters-reset="clearSearchInput" />
+  </div>
+</template>

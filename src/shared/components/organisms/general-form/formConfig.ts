@@ -29,6 +29,16 @@ export interface ValueFormField extends BaseFormField {
   minNumber?: number;
 }
 
+export interface EmailFormField extends BaseFormField {
+  type: FieldType.Email;
+  placeholder?: string;
+  icon?: string;
+  modelValue?: any;
+  disabled?: boolean;
+  focused?: boolean;
+  required?: boolean;
+}
+
 export interface TextareaFormField extends BaseFormField {
   type: FieldType.Textarea;
   placeholder?: string;
@@ -96,6 +106,10 @@ export interface SliderFormField extends BaseFormField {
   type: FieldType.Slider;
 }
 
+export interface PhoneFormField extends BaseFormField {
+  type: FieldType.Phone;
+}
+
 export interface CheckboxFormField extends BaseFormField {
   type: FieldType.Checkbox;
   uncheckedValue?: 'null' | 'false';
@@ -110,8 +124,9 @@ export enum FormType {
   EDIT = 'EDIT',
 }
 
-export type FormField = TextareaFormField | BooleanFormField | ValueFormField | ChoiceFormField | ProxyChoiceFormField | QueryFormField |
-    DateFormField | SliderFormField | CheckboxFormField | HiddenFormField;
+export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
+                        ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | SliderFormField |
+                        CheckboxFormField | HiddenFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;

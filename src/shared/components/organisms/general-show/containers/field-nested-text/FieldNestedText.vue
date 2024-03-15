@@ -2,7 +2,7 @@
 import { defineProps, computed } from 'vue';
 import { FieldText } from '../field-text';
 import {NestedTextField, TextField} from '../../showConfig';
-import { accessNestedProperty } from '../../../general-listing/listingConfig';
+import { accessNestedProperty } from '../../../general-show/showConfig';
 import { FieldType } from "../../../../../utils/constants";
 
 const props = defineProps<{
@@ -11,6 +11,11 @@ const props = defineProps<{
 }>();
 
 const nestedValue = computed(() => accessNestedProperty(props.modelValue, props.field.keys));
+
+console.log(props.modelValue)
+console.log(nestedValue)
+console.log(props.field.keys)
+console.log('-----------------')
 
 const modifiedField = computed(() => ({
   ...props.field,

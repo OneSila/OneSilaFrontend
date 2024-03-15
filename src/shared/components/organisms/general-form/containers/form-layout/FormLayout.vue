@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {computed} from 'vue';
-import {FormConfig} from '../../formConfig';
+import {FormConfig, PhoneFormField} from '../../formConfig';
 import {FieldType} from "../../../../../utils/constants";
 
 import {FieldBoolean} from '../form-fields/field-boolean';
@@ -13,6 +13,8 @@ import {FieldSlider} from '../form-fields/field-slider';
 import {FieldValue} from '../form-fields/field-value';
 import {Label} from '../../../../atoms/label';
 import {FieldTextarea} from "../form-fields/field-textarea";
+import {FieldPhone} from "../form-fields/field-phone";
+import {FieldEmail} from "../form-fields/field-email";
 
 const props = defineProps<{
   config: FormConfig;
@@ -30,6 +32,8 @@ const getFieldComponent = (type) => {
     case FieldType.Slider: return FieldSlider;
     case FieldType.Text: return FieldValue;
     case FieldType.Textarea: return FieldTextarea;
+    case FieldType.Phone: return FieldPhone;
+    case FieldType.Email: return FieldEmail;
     default: return null;
   }
 };

@@ -1,13 +1,14 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField, NestedTextField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {supplierProductsQuery} from "../../../shared/api/queries/purchasing.js"
 import {deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
 import {productVariationsQuery} from "../../../shared/api/queries/products.js";
 import {suppliersQuery} from "../../../shared/api/queries/contacts.js";
+import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 
 const getSubmitUrl = (supplierId, productId) => {
   if (supplierId) {
@@ -171,8 +172,8 @@ const getHeaders = (supplierId, productId, t) => {
   return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.quantity'), t('purchasing.products.labels.supplier'), t('shared.labels.product')];
 }
 
-const getFields = (supplierId, productId): ListingField[] => {
-  const commonFields: ListingField[] = [
+const getFields = (supplierId, productId): ShowField[] => {
+  const commonFields: ShowField[] = [
     {
       name: 'name',
       type: FieldType.Text,
@@ -188,11 +189,11 @@ const getFields = (supplierId, productId): ListingField[] => {
   ];
 
   if (!supplierId) {
-    commonFields.push({ name: 'supplierName', type: FieldType.NestedText, keys: ['supplier', 'name'] });
+    commonFields.push({ name: 'supplier', type: FieldType.NestedText, keys: ['name'] });
   }
 
   if (!productId) {
-    commonFields.push({ name: 'productSku', type: FieldType.NestedText, keys: ['product', 'sku'] });
+    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['sku'] });
   }
 
 

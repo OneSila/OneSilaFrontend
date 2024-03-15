@@ -1,12 +1,12 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, OrderStatus} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing.js"
 import {deletePurchaseOrderMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js";
-import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
+import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
 
 export const getStatusOptions = (t) => [
@@ -143,8 +143,8 @@ const getHeaders = (t, supplierId) => {
     : [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
 }
 
-const getFields = (supplierId): ListingField[] => {
-  const commonFields: ListingField[] = [
+const getFields = (supplierId): ShowField[] => {
+  const commonFields: ShowField[] = [
     {
       name: 'orderReference',
       type: FieldType.Text,
@@ -160,7 +160,7 @@ const getFields = (supplierId): ListingField[] => {
   ];
 
   if (!supplierId) {
-    commonFields.splice(2, 0, { name: 'supplierName', type: FieldType.NestedText, keys: ['supplier', 'name'] });
+    commonFields.splice(2, 0, { name: 'supplier', type: FieldType.NestedText, keys: ['name'] });
   }
 
   return commonFields;
@@ -221,8 +221,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     type: FieldType.NestedText,
     label: t('purchasing.orders.labels.supplier'),
     keys: ['name'],
-      // clickable: true,
-      // clickUrl: { name: 'purchasing.suppliers.show'},
     showLabel: true
   },
   {

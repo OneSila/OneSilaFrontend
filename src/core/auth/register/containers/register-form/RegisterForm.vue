@@ -10,9 +10,10 @@ import {useSafeRequest} from '../../../../../shared/modules/network';
 import { loginMutation, registerMutation } from '../../../../../shared/api/mutations/auth.js'
 import Link from "../../../../../shared/components/atoms/link/Link.vue";
 import {Button} from '../../../../../shared/components/atoms/button';
-import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
+import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import apolloClient from "../../../../../../apollo-client";
+import {EmailInput} from "../../../../../shared/components/atoms/input-email";
 
 const {t, locale} = useI18n();
 const router = useRouter();
@@ -72,10 +73,8 @@ const afterRegister = async () => {
       <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.header') }}</h1>
       <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.description') }}</p>
     </div>
-    <TextInputPrepend id="username" v-model="form.username" :label="t('auth.register.labels.email')" :placeholder="t('auth.register.placeholders.email')" type="email">
-      <Icon name="envelope"/>
-    </TextInputPrepend>
-    <TextInputPrepend id="password" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
+    <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.username" :label="t('auth.register.labels.email')" :placeholder="t('auth.register.placeholders.email')" />
+    <TextInputPrepend id="password" class="mb-2" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>
     <TextInputPrepend id="confirmPassword" v-model="form.confirmPassword" :label="t('auth.register.labels.confirmPassword')" :placeholder="t('auth.register.placeholders.confirmPassword')" type="password">

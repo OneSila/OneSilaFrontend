@@ -144,9 +144,11 @@ export const showConfigConstructor = (t: Function, id, productId: string | null 
         type: FieldType.Array,
         name: 'product',
         label: t('products.title'),
-        clickable: false,
+        clickable: true,
         keys: ['sku'],
-        showLabel: true
+        showLabel: true,
+        clickIdentifiers: [{id: ['id']}],
+        clickUrl: {name: 'products.products.show'},
       }
   ]
 

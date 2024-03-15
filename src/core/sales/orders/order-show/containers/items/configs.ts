@@ -67,7 +67,7 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
     {
       name: 'product',
       type: FieldType.NestedText,
-      keys: ['product', 'sku']
+      keys: ['sku']
     },
     {
       name: 'quantity',

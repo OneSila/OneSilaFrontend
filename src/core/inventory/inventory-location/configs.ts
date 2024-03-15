@@ -62,9 +62,9 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       type: FieldType.Text,
     },
     {
-      name: 'parentName',
+      name: 'parentLocation',
       type: FieldType.NestedText,
-      keys: ['parentLocation', 'name']
+      keys: ['name']
     },
   ],
   identifierKey: 'id',

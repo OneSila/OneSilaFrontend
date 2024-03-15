@@ -6,7 +6,7 @@ import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
 import { acceptUserInvitationMutation } from '../../../../../shared/api/mutations/auth.js';
 import apolloClient from '../../../../../../apollo-client';
 import { Button } from '../../../../../shared/components/atoms/button';
-import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
+import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 
 const { t, locale } = useI18n();

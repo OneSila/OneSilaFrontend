@@ -3,15 +3,13 @@
 import { defineProps, ref } from 'vue';
 import { Button } from '././../../atoms/button';
 import { ApolloAlertMutation } from '././../../molecules/apollo-alert-mutation';
-import { ListingConfig, accessNestedProperty } from './listingConfig';
-import { FieldType} from "../../../utils/constants";
+import { ListingConfig } from './listingConfig';
 import { Pagination } from "../../molecules/pagination";
-import { Image } from "../../atoms/image";
 import { Link } from "../../atoms/link";
 import { useI18n } from "vue-i18n";
-import { Icon } from "../../atoms/icon";
 import { SearchConfig } from "../general-search/searchConfig";
 import {FilterManager} from "../../molecules/filter-manager";
+import {getFieldComponent} from "../general-show/showConfig";
 
 const { t } = useI18n();
 
@@ -29,10 +27,6 @@ const props = withDefaults(
     fixedOrderVariables: null
   }
 );
-
-const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-};
 
 const getShowRoute = (item) => {
 
@@ -79,22 +73,7 @@ const getShowRoute = (item) => {
 
               <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                 <td v-for="field in config.fields" :key="field.name">
-                  <template v-if="field.type === FieldType.Text">
-                    {{ item.node[field.name] }}
-                  </template>
-                  <template v-else-if="field.type === FieldType.Image">
-                    <Image :source="`${field.basePath}/${item.node[field.name]}${field.suffix || ''}`" :alt="field.alt" class="w-5 h-5 object-cover rounded-full" />
-                  </template>
-                  <template v-else-if="field.type === FieldType.NestedText">
-                    {{ accessNestedProperty(item.node, field.keys) }}
-                  </template>
-                  <template v-else-if="field.type === FieldType.Date">
-                    {{ formatDate(item.node[field.name]) }}
-                  </template>
-                  <template v-else-if="field.type === FieldType.Boolean">
-                        <Icon v-if="item.node[field.name]" name="check-circle" class="ml-2 text-green-500" />
-                        <Icon v-else name="times-circle" class="ml-2 text-red-500" />
-                  </template>
+                  <component :is="getFieldComponent(field.type)" :field="field" :model-value="item.node[field.name]" />
                 </td>
                 <td v-if="config.addActions">
                   <div class="flex gap-4 items-center justify-end">

@@ -1,7 +1,7 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField, NestedTextField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
 import { customersQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
@@ -144,7 +144,7 @@ export const listingConfigConstructor = (t: Function, customerId: string | null 
     {
       name: 'currency',
       type: FieldType.NestedText,
-      keys: ['currency', 'isoCode'],
+      keys: ['isoCode'],
     },
     {
       name: 'vatIncluded',
@@ -195,7 +195,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       name: 'currency',
       type: FieldType.NestedText,
       label: t('shared.labels.currency'),
-      keys: ['currency', 'isoCode'],
+      keys: ['isoCode'],
       showLabel: true
     },
     {

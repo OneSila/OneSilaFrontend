@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
 import { useEnterKeyboardListener } from '../../../../../shared/modules/keyboard';
 import { Button } from '../../../../../shared/components/atoms/button';
-import { TextInputPrepend } from '../../../../../shared/components/atoms/text-input-prepend';
+import { TextInputPrepend } from '../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../shared/components/atoms/link';
 import apolloClient from '../../../../../../apollo-client';

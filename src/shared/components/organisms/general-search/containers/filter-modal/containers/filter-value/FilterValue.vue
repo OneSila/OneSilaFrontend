@@ -2,7 +2,7 @@
 import { ref, defineProps, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { Label } from '../../../../../../atoms/label';
-import { TextInput } from '../../../../../../atoms/text-input';
+import { TextInput } from '../../../../../../atoms/input-text';
 import { ValueFilter } from '../../../../searchConfig';
 
 const props = defineProps<{ filter: ValueFilter }>();

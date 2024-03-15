@@ -31,16 +31,15 @@ export const baseFormConfigConstructor = (
         placeholder: t('shared.placeholders.lastName')
       },
       {
-        type: FieldType.Text,
+        type: FieldType.Email,
         name: 'email',
         label: t('shared.labels.email'),
         placeholder: t('shared.placeholders.email')
       },
       {
-        type: FieldType.Text,
+        type: FieldType.Phone,
         name: 'phone',
-        label: t('shared.labels.phone'),
-        placeholder: t('shared.placeholders.phone')
+        label: t('shared.labels.phone')
       },
       {
         type: FieldType.Query,
@@ -78,7 +77,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.firstName'), t('shared.labels.email'), t('contacts.people.labels.company'), t('shared.placeholders.language')],
+  headers: [t('shared.labels.firstName'), t('shared.labels.email'), t('shared.labels.phone'), t('contacts.people.labels.company'), t('shared.placeholders.language')],
   fields: [
     {
       name: 'firstName',
@@ -86,12 +85,18 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     },
     {
       name: 'email',
-      type: FieldType.Text,
+      type: FieldType.Email,
+      clickable: true
     },
     {
-      name: 'companyName',
+      name: 'phone',
+      type: FieldType.Phone,
+      clickable: true
+    },
+    {
+      name: 'company',
       type: FieldType.NestedText,
-      keys: ['company', 'name']
+      keys: ['name']
     },
     {
       name: 'language',

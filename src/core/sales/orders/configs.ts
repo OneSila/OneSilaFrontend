@@ -1,7 +1,8 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType, OrderStatus, ReasonForSale } from '../../../shared/utils/constants.js'
 import { OrderType, SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import { ListingConfig, ListingField, NestedTextField } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { ShowField, NestedTextField } from "../../../shared/components/organisms/general-show/showConfig";
 import { ordersQuery } from "../../../shared/api/queries/salesOrders.js"
 import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, customersQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
@@ -211,8 +212,8 @@ const getHeaders = (t, customerId) => {
     : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status.title'), t('sales.orders.labels.reasonForSale.title')];
 }
 
-const getFields = (customerId): ListingField[] => {
-  const commonFields: ListingField[] = [
+const getFields = (customerId): ShowField[] => {
+  const commonFields: ShowField[] = [
     { name: 'reference', type: FieldType.Text },
     { name: 'createdAt', type: FieldType.Date },
     { name: 'status', type: FieldType.Text },
@@ -220,7 +221,7 @@ const getFields = (customerId): ListingField[] => {
   ];
 
   if (!customerId) {
-    commonFields.splice(1, 0, { name: 'customerName', type: FieldType.NestedText, keys: ['customer', 'name'] } as NestedTextField);
+    commonFields.splice(1, 0, { name: 'customer', type: FieldType.NestedText, keys: ['name'] } as NestedTextField);
   }
 
   return commonFields;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import { TextEditor } from '../../../../../atoms/text-editor';
+import { TextEditor } from '../../../../../atoms/input-text-editor';
 import {TextareaFormField} from '../../../formConfig';
 
 const props = defineProps<{

@@ -1,10 +1,11 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { inventoriesQuery, inventoryLocationsQuery } from "../../../shared/api/queries/inventory.js"
-import {productsQuery, productVariationsQuery} from "../../../shared/api/queries/products.js"
+import {productVariationsQuery} from "../../../shared/api/queries/products.js"
 import { deleteInventoryMutation } from "../../../shared/api/mutations/inventory.js";
+import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 
 const getProductField = (variationId, t): FormField => {
   if (variationId) {
@@ -82,21 +83,21 @@ const getHeaders = (t, productId) => {
     ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')]
     : [t('products.products.labels.sku'), t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')];
 }
-const getFields = (productId): ListingField[] => {
-  const commonFields: ListingField[] = [];
+const getFields = (productId): ShowField[] => {
+  const commonFields: ShowField[] = [];
 
   if (!productId) {
     commonFields.push({
-      name: 'productName',
+      name: 'product',
       type: FieldType.NestedText,
-      keys: ['product', 'sku']
+      keys: ['sku']
     });
   }
 
   commonFields.push({
-      name: 'locationName',
+      name: 'stocklocation',
       type: FieldType.NestedText,
-      keys: ['stocklocation', 'name']
+      keys: ['name']
     })
 
   commonFields.push({

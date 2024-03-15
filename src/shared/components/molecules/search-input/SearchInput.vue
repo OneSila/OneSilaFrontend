@@ -3,7 +3,7 @@ import { ref, watch } from "vue"
 import debounce from 'lodash.debounce'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router';
-import { TextInput } from "../../atoms/text-input"
+import { TextInput } from "../../atoms/input-text"
 import { Icon } from "../../atoms/icon"
 
 const props = defineProps({

@@ -8,7 +8,7 @@ import apolloClient from "../../../../../../../../apollo-client";
 import {getSalesPriceByProductAndCurrencyQuery} from "../../../../../../../shared/api/queries/salesPrices.js";
 import {createSalesPriceMutation, updateSalesPriceMutation} from "../../../../../../../shared/api/mutations/salesPrices.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
-import {TextInput} from "../../../../../../../shared/components/atoms/text-input";
+import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
 import {reactive, watch, ref} from "vue";
 import {currenciesQuery} from "../../../../../../../shared/api/queries/currencies.js";
 import {Label} from "../../../../../../../shared/components/atoms/label";

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, defineEmits, defineProps, ref, watch } from 'vue';
 import { updateMeMutation } from "./../../../../../../../shared/api/mutations/me.js";
-import { TextInputPrepend } from '../../../../../../../shared/components/atoms/text-input-prepend';
+import { TextInputPrepend } from '../../../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import IconWhatsApp from '../../../../../../../shared/components/atoms/icons/icon-whatsapp.vue';
 import IconTelegram from '../../../../../../../shared/components/atoms/icons/icon-telegram.vue';
@@ -12,7 +12,7 @@ import { Label } from "../../../../../../../shared/components/atoms/label";
 import { timezonesQuery } from "../../../../../../../shared/api/queries/languages.js";
 
 import { useI18n } from 'vue-i18n';
-import {PhoneNumberInput} from "../../../../../../../shared/components/atoms/phone-number-input";
+import {PhoneNumberInput} from "../../../../../../../shared/components/atoms/input-phone-number";
 
 const { t } = useI18n();
 const props = defineProps<{ meData: MeData }>();

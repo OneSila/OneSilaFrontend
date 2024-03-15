@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { ref, watch, computed, defineProps, defineEmits } from 'vue';
 import { updateMyCompanyMutation } from "./../../../../../shared/api/mutations/me.js";
-import { TextInputPrepend } from '../../../../../shared/components/atoms/text-input-prepend';
+import { TextInputPrepend } from '../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from "../../../../../shared/components/atoms/icon";
 import { Button } from "../../../../../shared/components/atoms/button";
 import { MeCompanyData } from '../../meCompanyData';
 import { useI18n } from 'vue-i18n';
-import {PhoneNumberInput} from "../../../../../shared/components/atoms/phone-number-input";
+import {PhoneNumberInput} from "../../../../../shared/components/atoms/input-phone-number";
+import {EmailInput} from "../../../../../shared/components/atoms/input-email";
+import {WebsiteInput} from "../../../../../shared/components/atoms/input-website";
 
 const { t } = useI18n();
 const props = defineProps<{ companyData: MeCompanyData }>();
@@ -50,10 +52,8 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
     <TextInputPrepend id="name" class="mb-2" v-model="form.name" :label="t('companyProfile.labels.companyName')" :placeholder="t('companyProfile.placeholders.companyName')">
       <Icon name="building"/>
     </TextInputPrepend>
-    <TextInputPrepend id="email" class="mb-2" v-model="form.email" :label="t('companyProfile.labels.email')" :placeholder="t('companyProfile.placeholders.email')">
-      <Icon name="envelope"/>
-    </TextInputPrepend>
-    <PhoneNumberInput v-model:model-value="form.phoneNumber" :label="t('companyProfile.labels.phoneNumber')" />
+    <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.email" :label="t('companyProfile.labels.email')" :placeholder="t('companyProfile.placeholders.email')" />
+    <PhoneNumberInput class="mb-2" v-model:model-value="form.phoneNumber" :label="t('companyProfile.labels.phoneNumber')" />
     <TextInputPrepend id="address1" class="mb-2" v-model="form.address1" :label="t('companyProfile.labels.address1')" :placeholder="t('companyProfile.placeholders.address1')">
       <Icon name="map-location"/>
     </TextInputPrepend>
@@ -69,9 +69,7 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
     <TextInputPrepend id="vatNumber" class="mb-2" v-model="form.vatNumber" :label="t('companyProfile.labels.vatNumber')" :placeholder="t('companyProfile.placeholders.vatNumber')">
       <Icon name="receipt"/>
     </TextInputPrepend>
-    <TextInputPrepend id="website" class="mb-4" v-model="form.website" :label="t('companyProfile.labels.website')" :placeholder="t('companyProfile.placeholders.website')">
-      <Icon name="globe"/>
-    </TextInputPrepend>
+    <WebsiteInput id="website" class="mb-4" icon="globe" v-model:model-value="form.website" :label="t('companyProfile.labels.website')" :placeholder="t('companyProfile.placeholders.website')" />
 
     <ApolloMutation :mutation="updateMyCompanyMutation" :variables="getMutationVariables()" @done="afterUpdate">
       <template v-slot="{ mutate, loading, error }">

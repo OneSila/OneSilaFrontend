@@ -21,6 +21,9 @@ export enum FieldType {
   NestedText = "NestedText",
   Array = "Array",
   Textarea = "Textarea",
+  Phone = "Phone",
+  Email = "Email",
+  Website = "Website",
 }
 
 export const OrderStatus = {

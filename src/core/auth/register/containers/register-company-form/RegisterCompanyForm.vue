@@ -9,10 +9,10 @@ import { Button } from "../../../../../shared/components/atoms/button";
 import { Label } from "../../../../../shared/components/atoms/label";
 import { Selector } from "../../../../../shared/components/atoms/selector";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
-import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
+import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import { registerCompanyMutation } from '../../../../../shared/api/mutations/auth.js'
 import { languagesQuery, countriesQuery } from "../../../../../shared/api/queries/languages";
-import {PhoneNumberInput} from "../../../../../shared/components/atoms/phone-number-input";
+import {PhoneNumberInput} from "../../../../../shared/components/atoms/input-phone-number";
 
 const { t } = useI18n();
 const router = useRouter();

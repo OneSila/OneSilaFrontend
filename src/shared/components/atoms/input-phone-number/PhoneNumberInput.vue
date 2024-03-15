@@ -10,7 +10,6 @@ const { t } = useI18n();
 const app = useAppStore();
 
 const props = defineProps<{
-  placeholder?: string;
   modelValue?: any;
   label?: string;
 }>();

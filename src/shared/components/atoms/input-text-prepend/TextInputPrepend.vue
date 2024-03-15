@@ -15,7 +15,7 @@ const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label',
         :id="id"
         :type="type"
         :placeholder="placeholder"
-        class="form-input ps-10 placeholder:text-white-dark"
+        class="form-input ps-10"
       />
       <span class="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400">
         <slot></slot>
