@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import {  ref } from 'vue';
 import { Card } from '../../../../../../atoms/card';
 import { Button } from '../../../../../../atoms/button';
-import {cleanUpDataForMutation, QueryFormField} from "../../../../formConfig";
+import {cleanUpDataForMutation, FormConfig, QueryFormField} from "../../../../formConfig";
 import {FormCreate} from "../../../form-create";
 import apolloClient from "../../../../../../../../../apollo-client";
 
@@ -62,8 +62,8 @@ const submit = async () => {
 </script>
 
 <template>
-  <Card class="w-1/2">
-    <FormCreate :config="config" :defaults="field.createOnFlyConfig?.defaults" @formUpdated="handleFormUpdate"/>
+  <Card v-if="config" class="w-1/2">
+    <FormCreate :config="config as FormConfig" :defaults="field.createOnFlyConfig?.defaults" @formUpdated="handleFormUpdate"/>
 
     <div class="flex justify-end gap-4 mt-4">
       <Button class="btn btn-outline-dark" @click="cancel">{{ t('shared.button.cancel') }}</Button>

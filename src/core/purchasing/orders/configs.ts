@@ -9,6 +9,7 @@ import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, suppliersQu
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
 import {baseFormConfigConstructor as baseSupplierConfigConstructor } from '../suppliers/configs'
+import {baseFormConfigConstructor as baseAddressConfigConstructor } from '../../contacts/companies/companies-show/containers/configs'
 import {createSupplierMutation} from "../../../shared/api/mutations/contacts.js";
 
 const supplierOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
@@ -18,6 +19,30 @@ const supplierOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
         FormType.CREATE,
         createSupplierMutation,
         'createSupplier'
+    ) as FormConfig
+  }
+})
+
+const invoiceAddressOnTheFlyConfig = (t: Function, supplierId):CreateOnTheFly => ({
+  config: {
+    ...baseAddressConfigConstructor(
+      t,
+        FormType.CREATE,
+        createSupplierMutation,
+        'createSupplier',
+        supplierId
+    ) as FormConfig
+  }
+})
+
+const shippingAddressOnTheFlyConfig = (t: Function, supplierId):CreateOnTheFly => ({
+  config: {
+    ...baseAddressConfigConstructor(
+      t,
+        FormType.CREATE,
+        createSupplierMutation,
+        'createSupplier',
+        supplierId
     ) as FormConfig
   }
 })
@@ -99,6 +124,7 @@ export const baseFormConfigConstructor = (
       filterable: true,
       options: getStatusOptions(t)
     },
+    getSupplierField(supplierId, t),
     {
       type: FieldType.Query,
       name: 'invoiceAddress',
@@ -138,8 +164,7 @@ export const baseFormConfigConstructor = (
         filterable: true,
         removable: false,
         formMapIdentifier: 'id',
-    },
-    getSupplierField(supplierId, t)
+    }
     ],
 });
 
