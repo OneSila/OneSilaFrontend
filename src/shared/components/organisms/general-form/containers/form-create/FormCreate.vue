@@ -10,7 +10,8 @@ import {SubmitButtons} from "../submit-buttons";
 const props = withDefaults(
   defineProps<{
     config: FormConfig;
-    fieldsToClear?: string[] | null
+    fieldsToClear?: string[] | null;
+    defaults?: Record<string, string> // this will be used to populate defaults (took from url or given directly from config)
   }>(),
   { fieldsToClear: null },
 );

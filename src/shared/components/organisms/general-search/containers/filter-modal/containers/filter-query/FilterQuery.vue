@@ -23,6 +23,12 @@ watchEffect(() => {
   emit('update-value', selectedValue.value);
 });
 
+const cleanedData = (rawData) => {
+  if (props.filter.isEdge && rawData?.edges) {
+    return rawData.edges.map(edge => edge.node);
+  }
+  return rawData;
+};
 
 const placeholder = ref(props.filter.placeholder || undefined);
 const dropdownPosition = ref(props.filter.dropdownPosition || 'top');
@@ -43,7 +49,7 @@ const disabled = ref(props.filter.disabled === true);
         <Selector
           v-if="data && data[filter.dataKey]"
           v-model="selectedValue"
-          :options="data[filter.dataKey]"
+          :options="cleanedData(data[filter.dataKey])"
           :label-by="filter.labelBy"
           :value-by="filter.valueBy"
           :placeholder="placeholder"

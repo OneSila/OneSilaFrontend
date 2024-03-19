@@ -14,6 +14,7 @@ const props = defineProps<{
   minNumber?: number;
   maxNumber?: number;
   focused?: boolean;
+  allowAutocomplete?: boolean;
 }>();
 
 const emit = defineEmits({
@@ -71,6 +72,7 @@ const handleInput = (event) => {
     :placeholder="placeholder"
     :value="modelValue"
     :disabled="disabled"
+    :autocomplete="allowAutocomplete ? 'on' : 'off'"
     @input="handleInput"
     @focus="$emit('focus')"
     @keyup.enter="blur"

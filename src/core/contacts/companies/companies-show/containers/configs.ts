@@ -1,10 +1,24 @@
-import { FormConfig, FormType } from '../../../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormType} from '../../../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../../../shared/components/organisms/general-listing/listingConfig";
-import { deleteCompanyAddressMutation} from "../../../../../shared/api/mutations/contacts";
+import {createPersonMutation, deleteCompanyAddressMutation} from "../../../../../shared/api/mutations/contacts";
 import { countriesQuery } from "../../../../../shared/api/queries/languages.js";
-import { companyAddressesQuery, peopleFilterQuery } from "../../../../../shared/api/queries/contacts.js";
+import {companyAddressesQuery, peopleQuery} from "../../../../../shared/api/queries/contacts.js";
+import {baseFormConfigConstructor as basePersonConfigConstructor } from '../../../people/configs'
+
+const personOnTheFlyConfig = (t: Function, companyId: string):CreateOnTheFly => ({
+  config: {
+    ...basePersonConfigConstructor(
+      t,
+      FormType.CREATE,
+      createPersonMutation,
+      'createPerson',
+        companyId
+    ) as FormConfig
+  }
+})
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
@@ -86,7 +100,7 @@ export const baseFormConfigConstructor = (
     {
       type: FieldType.Query,
       name: 'contact',
-      query: peopleFilterQuery,
+      query: peopleQuery,
       queryVariables: {filter: {company: {id: {exact: companyId}}}},
       label: t('contacts.companies.address.labels.contact'),
       labelBy: 'firstName',
@@ -96,6 +110,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: personOnTheFlyConfig(t, companyId),
     }
     ],
 });

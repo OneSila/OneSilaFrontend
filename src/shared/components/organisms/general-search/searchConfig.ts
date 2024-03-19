@@ -12,6 +12,8 @@ export interface BaseFilter {
   label: string;
   default?: any;
   disabled?: boolean | null;
+  addExactLookup?: boolean;
+  exactLookupKeys?: string[];
 }
 
 export interface BooleanFilter extends BaseFilter {
@@ -57,6 +59,7 @@ export interface QueryFilter extends BaseFilter {
   placeholder?: string;
   dropdownPosition?: string;
   mandatory?: boolean;
+  isEdge?: boolean;
   multiple?: boolean;
   filterable?: boolean;
   removable?: boolean;

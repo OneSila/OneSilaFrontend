@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, createHttpLink, split } from '@apollo/client/core';
+import { ApolloClient, InMemoryCache, createHttpLink, split, ApolloCache } from '@apollo/client/core';
 import { ApolloLink } from '@apollo/client/core';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
@@ -49,10 +49,23 @@ const splitLink = split(
   httpLink,
 );
 
-// Apollo Client
-const cache = new InMemoryCache();
-
 const combinedLink = ApolloLink.from([errorLink, splitLink]);
+
+class NoOpCache extends ApolloCache<any> {
+  public read() { return null; }
+  public write() { return undefined; }
+  public diff() { return { complete: false }; }
+  public watch() { return () => {}; }
+  public evict() { return false; }
+  public restore() { return this; }
+  public extract() { return {}; }
+  public reset() { return Promise.resolve(); }
+  public performTransaction() { }
+  public removeOptimistic() {  }
+}
+
+const isDevelopment = import.meta.env.VITE_APP_SENTRY_ENV === 'development';
+const cache = isDevelopment ? new NoOpCache() : new InMemoryCache();
 
 const apolloClient = new ApolloClient({
   link: combinedLink,

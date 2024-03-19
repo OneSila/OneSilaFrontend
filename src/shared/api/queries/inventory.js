@@ -8,15 +8,11 @@ query Inventories($first: Int, $last: Int, $after: String, $before: String, $ord
           id
           product {
             id
-            ... on ProductType {
-              sku
-            }
+            sku
           }
           stocklocation {
             id
-            ... on InventoryLocationType {
-              name
-            }
+            name
           }
           quantity
         }
@@ -39,15 +35,11 @@ export const getInventoryQuery = gql`
       id
       product {
         id
-        ... on ProductType {
-          sku
-        }
+         sku
       }
       stocklocation {
         id
-        ... on InventoryLocationType {
-          name
-        }
+         name
       }
       quantity
     }
@@ -63,10 +55,8 @@ export const inventoryLocationsQuery = gql`
           name
           description
           parentLocation {
-            ... on InventoryLocationType {
               id
               name
-            }
           }
         }
         cursor
@@ -89,10 +79,8 @@ export const getInventoryLocationQuery = gql`
       name
       description
       parentLocation {
-        ... on InventoryLocationType {
           id
           name
-        }
       }
     }
   }

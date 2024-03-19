@@ -36,6 +36,7 @@ const updateValue = (event) => {
       :number="field.number"
       :maxNumber="field.maxNumber"
       :minNumber="field.minNumber"
+      :allow-autocomplete="field.allowAutocomplete"
     />
   </div>
 </template>

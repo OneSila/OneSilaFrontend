@@ -1,12 +1,12 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
-import {FieldType} from '../../../shared/utils/constants.js'
+import {FieldType, ProductType} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {supplierProductsQuery} from "../../../shared/api/queries/purchasing.js"
 import {deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
-import {productVariationsQuery} from "../../../shared/api/queries/products.js";
+import {productsQuery} from "../../../shared/api/queries/products.js";
 import {suppliersQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 
@@ -55,12 +55,12 @@ const getSupplierField = (supplierId, t): FormField => {
   }
 }
 
-const getProductField = (variationId, t): FormField => {
-  if (variationId) {
+const getProductField = (productId, t): FormField => {
+  if (productId) {
     return {
       type: FieldType.Hidden,
       name: 'product',
-      value: { "id": variationId }
+      value: { "id": productId }
     };
   } else {
     return {
@@ -69,8 +69,9 @@ const getProductField = (variationId, t): FormField => {
         label:  t('shared.labels.product'),
         labelBy: 'sku',
         valueBy: 'id',
-        query: productVariationsQuery,
-        dataKey: 'productVariations',
+        query: productsQuery,
+        queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
+        dataKey: 'products',
         isEdge: true,
         multiple: false,
         filterable: true,
@@ -85,8 +86,7 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   supplierId: string | null = null,
-  productId: string | null = null,
-  variationId: string | null = null
+  productId: string | null = null
 ): FormConfig => ({
  cols: 1,
   type: type,
@@ -150,7 +150,7 @@ export const baseFormConfigConstructor = (
       removable: false,
       formMapIdentifier: 'id',
     },
-    getProductField(variationId, t),
+    getProductField(productId, t),
     getSupplierField(supplierId, t)
     ],
 });
@@ -200,24 +200,20 @@ const getFields = (supplierId, productId): ShowField[] => {
   return commonFields;
 }
 
-const getUrlQueryParams = (supplierId: string | null = null, productId: string | null = null, variationId: string | null = null): Record<string, string> | undefined => {
+const getUrlQueryParams = (supplierId: string | null = null, productId: string | null = null): Record<string, string> | undefined => {
   const params: Record<string, string> = {};
 
   if (supplierId) {
     params.supplierId = supplierId;
   }
-  if (productId && variationId) {
+  if (productId) {
     params.productId = productId;
-    params.variationId = variationId;
   }
 
   return Object.keys(params).length > 0 ? params : undefined;
 }
 
-export const listingConfigConstructor = (t: Function,
-                                         supplierId: string | null = null,
-                                         productId: string | null = null,
-                                         variationId: string | null = null
+export const listingConfigConstructor = (t: Function, supplierId: string | null = null, productId: string | null = null
 ): ListingConfig => ({
   headers: getHeaders(supplierId, productId, t),
   fields: getFields(supplierId, productId),
@@ -225,7 +221,7 @@ export const listingConfigConstructor = (t: Function,
   addActions: true,
   addEdit: true,
   editUrlName: 'purchasing.product.edit',
-  urlQueryParams: getUrlQueryParams(supplierId, productId, variationId),
+  urlQueryParams: getUrlQueryParams(supplierId, productId),
   addDelete: true,
   addPagination: true,
   deleteMutation: deleteSupplierProductMutation,

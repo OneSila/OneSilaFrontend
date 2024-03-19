@@ -12,11 +12,6 @@ const props = defineProps<{
 
 const nestedValue = computed(() => accessNestedProperty(props.modelValue, props.field.keys));
 
-console.log(props.modelValue)
-console.log(nestedValue)
-console.log(props.field.keys)
-console.log('-----------------')
-
 const modifiedField = computed(() => ({
   ...props.field,
   type: FieldType.Text

@@ -56,6 +56,10 @@ query companyAddresses($filter: AddressFilter) {
         postcode
         city
         country
+        contact {
+            id
+            firstName
+        }
       }
       cursor
     }
@@ -84,6 +88,10 @@ query invoiceAddresses {
         postcode
         city
         country
+        contact {
+            id
+            firstName
+        }
       }
       cursor
     }
@@ -112,6 +120,10 @@ query companyAddresses {
         postcode
         city
         country
+        contact {
+            id
+            firstName
+        }
       }
       cursor
     }
@@ -138,40 +150,17 @@ query getCompanyAddress ($id: GlobalID!){
     postcode
     city
     country
+    contact {
+        id
+        firstName
+    }
   }
 }
 `;
 
-export const peopleFilterQuery = gql`
+export const peopleQuery = gql`
 query People($first: Int, $last: Int, $after: String, $before: String, $order: PersonOrder, $filter: PersonFilter) {
   people(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
-    edges {
-      node {
-        id
-        firstName
-        lastName
-        company {
-          name
-        }
-        phone
-        email
-        language
-      }
-      cursor
-    }
-    totalCount
-    pageInfo {
-      endCursor
-      startCursor
-      hasNextPage
-      hasPreviousPage
-    }
-  }
-}
-`;
-export const peopleQuery = gql`
-query People($first: Int, $last: Int, $after: String, $before: String, $order: PersonOrder) {
-  people(first: $first, last: $last, after: $after, before: $before, order: $order) {
     edges {
       node {
         id

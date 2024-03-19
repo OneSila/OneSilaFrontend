@@ -27,9 +27,20 @@ export interface ValueFormField extends BaseFormField {
   number?: boolean;
   maxNumber?: number;
   minNumber?: number;
+  allowAutocomplete?: boolean;
 }
 
 export interface EmailFormField extends BaseFormField {
+  type: FieldType.Email;
+  placeholder?: string;
+  icon?: string;
+  modelValue?: any;
+  disabled?: boolean;
+  focused?: boolean;
+  required?: boolean;
+}
+
+export interface WebsiteFormField extends BaseFormField {
   type: FieldType.Email;
   placeholder?: string;
   icon?: string;
@@ -80,6 +91,11 @@ export interface ProxyChoiceFormField extends BaseFormField {
   limit?: number;
 }
 
+export interface CreateOnTheFly {
+  config: FormConfig;
+  defaults?: Record<string, string>; // key will be filed name, value will be the default value
+}
+
 export interface QueryFormField extends BaseFormField {
   type: FieldType.Query;
   labelBy: string;
@@ -96,6 +112,7 @@ export interface QueryFormField extends BaseFormField {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+  createOnFlyConfig?: CreateOnTheFly;
 }
 
 export interface DateFormField extends BaseFormField {
@@ -126,7 +143,7 @@ export enum FormType {
 
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
                         ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | SliderFormField |
-                        CheckboxFormField | HiddenFormField;
+                        CheckboxFormField | HiddenFormField | WebsiteFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;

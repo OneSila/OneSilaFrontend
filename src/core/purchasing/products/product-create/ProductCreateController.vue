@@ -21,8 +21,7 @@ const formConfig = {
     createSupplierProductMutation,
     'createSupplierProduct',
       route.query.supplierId ? route.query.supplierId.toString() : null,
-      route.query.productId ? route.query.productId.toString() : null,
-      route.query.variationId ? route.query.variationId.toString() : null,
+      route.query.productId ? route.query.productId.toString() : null
   ),
 }
 

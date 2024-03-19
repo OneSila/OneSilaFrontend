@@ -14,14 +14,14 @@ const props = defineProps<{ product: Product }>();
 
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, props.product.id, props.product.proxyId);
+const listingConfig = listingConfigConstructor(t, props.product.id);
 
 </script>
 
 <template>
   <TabContentTemplate>
     <template v-slot:buttons>
-      <Link :path="{ name: 'inventory.inventory.create', query: {productId: product.id, variationId: product.proxyId} }">
+      <Link :path="{ name: 'inventory.inventory.create', query: {productId: product.id} }">
         <Button type="button" class="btn btn-primary">
           {{ t('inventory.inventory.create.title') }}
         </Button>

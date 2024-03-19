@@ -53,3 +53,4 @@ const toggleSidebar = () => {
 
   <div id="modals" />
 </template>
+

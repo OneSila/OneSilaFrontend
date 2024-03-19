@@ -276,7 +276,7 @@
       },
       "address": {
         "create": {
-          "title": "Create contact"
+          "title": "Create address"
         },
         "labels": {
           "addressOne": "Address Line 1",

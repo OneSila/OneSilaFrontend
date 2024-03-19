@@ -18,21 +18,6 @@ const router = useRouter();
 
 const tabItems = ref();
 
-// all
-// tabItems.value = [
-//     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
-//     { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
-//     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
-//     { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
-//     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
-//     { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
-//     { name: 'supplierProducts', label: t('products.products.tabs.supplierProducts'), icon: 'truck-ramp-box' },
-//     { name: 'saleOrders', label: t('products.products.tabs.saleOrders'), icon: 'cart-shopping' },
-//     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'circle-info' },
-//     { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
-//     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
-//   ];
-
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },

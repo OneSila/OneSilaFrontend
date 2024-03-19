@@ -1,4 +1,4 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, OrderStatus} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
@@ -8,6 +8,19 @@ import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
+import {baseFormConfigConstructor as baseSupplierConfigConstructor } from '../suppliers/configs'
+import {createSupplierMutation} from "../../../shared/api/mutations/contacts.js";
+
+const supplierOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseSupplierConfigConstructor(
+      t,
+        FormType.CREATE,
+        createSupplierMutation,
+        'createSupplier'
+    ) as FormConfig
+  }
+})
 
 export const getStatusOptions = (t) => [
   { name: t('purchasing.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -21,14 +34,14 @@ const getSubmitUrl = (supplierId) => {
   if (supplierId) {
     return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
   }
-  return { name: 'purchasing.order.list' };
+  return { name: 'purchasing.orders.list' };
 }
 
 const getSubmitAndContinueUrl = (supplierId) => {
   if (supplierId) {
-    return { name: 'purchasing.order.edit', query: { supplierId } };
+    return { name: 'purchasing.orders.edit', query: { supplierId } };
   }
-  return { name: 'purchasing.order.edit' };
+  return { name: 'purchasing.orders.edit' };
 }
 
 const getSupplierField = (supplierId, t): FormField => {
@@ -51,6 +64,7 @@ const getSupplierField = (supplierId, t): FormField => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
+        createOnFlyConfig: supplierOnTheFlyConfig(t),
     };
   }
 }

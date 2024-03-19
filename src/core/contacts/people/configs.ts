@@ -1,15 +1,55 @@
-import { FormConfig, FormType } from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import {companiesQuery, peopleQuery} from "../../../shared/api/queries/contacts.js"
-import { deletePersonMutation } from "../../../shared/api/mutations/contacts.js";
+import {companiesQuery, peopleQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js"
+import {createCompanyMutation, deletePersonMutation} from "../../../shared/api/mutations/contacts.js";
 import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
+import {baseFormConfigConstructor as baseCompanyConfigConstructor } from '../companies/configs'
+
+
+const companyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseCompanyConfigConstructor(
+      t,
+      FormType.CREATE,
+      createCompanyMutation,
+      'createCompany'
+    ) as FormConfig
+  }
+})
+
+const getCompanyField = (companyId, t): FormField => {
+  if (companyId) {
+    return {
+      type: FieldType.Hidden,
+      name: 'company',
+      value: { "id": companyId }
+    };
+  } else {
+    return {
+        type: FieldType.Query,
+        name: 'company',
+        label: t('contacts.people.labels.company'),
+        labelBy: 'name',
+        valueBy: 'id',
+        query: companiesQuery,
+        dataKey: 'companies',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        formMapIdentifier: 'id',
+        createOnFlyConfig: companyOnTheFlyConfig(t),
+      };
+  }
+}
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
   mutation: any,
-  mutationKey: string
+  mutationKey: string,
+  companyId: string | null = null
 ): FormConfig => ({
  cols: 1,
   type: type,
@@ -34,12 +74,14 @@ export const baseFormConfigConstructor = (
         type: FieldType.Email,
         name: 'email',
         label: t('shared.labels.email'),
-        placeholder: t('shared.placeholders.email')
+        placeholder: t('shared.placeholders.email'),
+        optional: true
       },
       {
         type: FieldType.Phone,
         name: 'phone',
-        label: t('shared.labels.phone')
+        label: t('shared.labels.phone'),
+        optional: true
       },
       {
         type: FieldType.Query,
@@ -53,26 +95,28 @@ export const baseFormConfigConstructor = (
         multiple: false,
         filterable: true,
       },
-      {
-        type: FieldType.Query,
-        name: 'company',
-        label: t('contacts.people.labels.company'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: companiesQuery,
-        dataKey: 'companies',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        formMapIdentifier: 'id',
-      }
+      getCompanyField(companyId, t)
     ],
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Query,
+      query: companiesQuery,
+      label: t('contacts.people.labels.company'),
+      name: 'company',
+      labelBy: "name",
+      valueBy: "id",
+      dataKey: "companies",
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+  ],
   orders: []
 });
 

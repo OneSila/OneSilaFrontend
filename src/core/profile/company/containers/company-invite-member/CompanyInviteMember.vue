@@ -14,7 +14,7 @@ const props = defineProps({
   language: String
 });
 
-const emit = defineEmits(['inviteSubmitted']);
+const emit = defineEmits(['inviteSubmitted', 'cancelClicked']);
 
 const form = ref({
   firstName: '',
@@ -42,10 +42,10 @@ const afterInvite = () => {
 
     <ApolloMutation :mutation="inviteMemberMutation" :variables="form" @done="afterInvite">
       <template v-slot="{ mutate, loading, error }">
-        <Button :disabled="loading" @click="mutate()" custom-class="btn btn-primary">
-          {{ t('shared.button.invite') }}
-        </Button>
-        <p v-if="error">{{ error.message }}</p>
+        <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-outline-dark" @click="emit('cancelClicked')">{{ t('shared.button.cancel') }}</Button>
+          <Button class="btn btn-primary" :disabled="loading" @click="mutate()">{{ t('shared.button.submit') }}</Button>
+        </div>
       </template>
     </ApolloMutation>
   </Card>
