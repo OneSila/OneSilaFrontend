@@ -7,7 +7,7 @@ const props = defineProps<{ links: { path?: string | object; name: string }[] }>
 </script>
 
 <template>
-  <nav class="flex" aria-label="Breadcrumb">
+  <nav class="flex ml-1" aria-label="Breadcrumb">
     <ol role="list" class="flex items-center space-x-4">
 
       <li>
