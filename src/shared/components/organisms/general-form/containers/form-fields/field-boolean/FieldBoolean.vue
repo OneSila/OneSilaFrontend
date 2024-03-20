@@ -21,6 +21,7 @@ const disabled = props.field.disabled === true;
   <div class="field-item">
     <Selector
       :model-value="modelValue === true"
+      :options="[]"
       @update:modelValue="updateValue"
       :dropdown-position="dropdownPosition"
       :placeholder="field.placeholder"
