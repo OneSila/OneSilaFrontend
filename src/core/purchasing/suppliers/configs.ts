@@ -1,10 +1,10 @@
-import { FormConfig, FormType } from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import { suppliersQuery } from "../../../shared/api/queries/contacts.js"
-import { deleteSupplierMutation} from "../../../shared/api/mutations/contacts.js";
+import {createSupplierMutation, deleteSupplierMutation} from "../../../shared/api/mutations/contacts.js";
 import {getSupplierSubscription} from "../../../shared/api/subscriptions/contacts.js";
 
 export const baseFormConfigConstructor = (
@@ -45,6 +45,17 @@ export const baseFormConfigConstructor = (
     }
     ],
 });
+
+export const supplierOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseFormConfigConstructor(
+      t,
+        FormType.CREATE,
+        createSupplierMutation,
+        'createSupplier'
+    ) as FormConfig
+  }
+})
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,

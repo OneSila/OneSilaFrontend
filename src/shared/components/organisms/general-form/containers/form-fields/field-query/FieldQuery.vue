@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, Ref, ref} from 'vue';
+import {defineProps, Ref, ref, watch} from 'vue';
 import { Selector } from '../../../../../atoms/selector';
 import { QueryFormField } from '../../../formConfig';
 import {Icon} from "../../../../../atoms/icon";
@@ -17,6 +17,12 @@ const rawDataRef: Ref<any> = ref();
 const cleanedData: Ref<any[]> = ref([]);
 
 const selectedValue = ref(props.modelValue);
+
+watch(() => props.modelValue, (value) => {
+  if (value !== selectedValue.value) {
+    selectedValue.value = value
+  }
+}, { deep: true });
 
 const updateValue = (value) => {
   selectedValue.value = value;
@@ -59,7 +65,15 @@ const handleSubmit = (data) => {
   }
 
   cleanData(rawDataRef.value);
-  updateValue(data[props.field.valueBy]);
+
+  if (props.field.multiple) {
+    const newData = selectedValue.value;
+    newData.push(data[props.field.valueBy]);
+    updateValue(newData);
+
+  } else {
+    updateValue(data[props.field.valueBy]);
+  }
   showCreateOnFlyModal.value = false;
 };
 
@@ -84,27 +98,45 @@ const handleSubmit = (data) => {
       @update:model-value="updateValue"
     />
     <ApolloQuery v-else :query="field.query" :variables="field.queryVariables">
-      <template v-slot="{ result: { data } }">
+      <template v-slot="{ result: { data, loading } }">
         <Flex v-if="data && data[field.dataKey]">
           <FlexCell v-if="cleanData(data[field.dataKey])" grow>
-          <Selector
-            :modelValue="selectedValue"
-            :options="cleanedData"
-            :label-by="field.labelBy"
-            :value-by="field.valueBy"
-            :placeholder="field.placeholder"
-            :dropdown-position="dropdownPosition"
-            :mandatory="mandatory"
-            :multiple="multiple"
-            :filterable="filterable"
-            :removable="removable"
-            :limit="limit"
-            :disabled="field.disabled"
-            @update:model-value="updateValue"
-          />
+            <Selector
+              :modelValue="selectedValue"
+              :options="cleanedData"
+              :label-by="field.labelBy"
+              :value-by="field.valueBy"
+              :placeholder="field.placeholder"
+              :dropdown-position="dropdownPosition"
+              :mandatory="mandatory"
+              :multiple="multiple"
+              :filterable="filterable"
+              :removable="removable"
+              :limit="limit"
+              :disabled="field.disabled"
+              @update:model-value="updateValue"
+            />
           </FlexCell>
           <FlexCell v-if="field.createOnFlyConfig">
             <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" @click="showCreateOnFlyModal = true">
+              <Icon name="plus" />
+            </Button>
+          </FlexCell>
+        </Flex>
+        <Flex v-else>
+        <FlexCell grow>
+          <Selector
+              class="h-9"
+              :modelValue="null"
+              :options="[]"
+              :label-by="field.labelBy"
+              :value-by="field.valueBy"
+              :removable="false"
+              :is-loading="true"
+              disabled />
+          </FlexCell>
+          <FlexCell v-if="field.createOnFlyConfig">
+            <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" disabled>
               <Icon name="plus" />
             </Button>
           </FlexCell>

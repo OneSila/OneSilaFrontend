@@ -23,7 +23,7 @@ watchEffect(() => {
 
 <template>
   <UniversalModal
-    class="modal z-10"
+    class="modal z-50"
     :model-value="isOpen"
     :close="close"
     @update:model-value="(event) => $emit('update:modelValue', event)"

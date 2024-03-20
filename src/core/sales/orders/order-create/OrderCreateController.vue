@@ -3,13 +3,14 @@
 import  {Ref, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
+import {FieldConfigs, FormConfig, FormType, updateFieldConfigs} from '../../../../shared/components/organisms/general-form/formConfig';
 import { createOrderMutation } from "../../../../shared/api/mutations/salesOrders.js"
 import {baseFormConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
+import {invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../../../purchasing/orders/configs";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -30,34 +31,42 @@ const  baseForm = {
 
 const formConfig = ref(baseForm);
 
-// @TODO MAKE THIS WORK
 const handleFormUpdate = (form) => {
+  fieldsToClear.value = []
   if (form.customer !== customerId.value) {
     customerId.value = form.customer;
 
-    const invoiceAddressField = formConfig.value.fields.find(field => field.name === 'invoiceAddress');
-    const shippingAddressField = formConfig.value.fields.find(field => field.name === 'shippingAddress');
-
-    if (invoiceAddressField && shippingAddressField) {
-      if (customerId.value) {
-        invoiceAddressField.disabled = false;
-        shippingAddressField.disabled = false;
-        invoiceAddressField['queryVariables'] = { "filter": { "customer": {"id": {"exact": customerId.value }}}};
-        shippingAddressField['queryVariables'] = { "filter": { "customer": {"id": {"exact": customerId.value }}}};
-      } else {
-        invoiceAddressField.disabled = true;
-        shippingAddressField.disabled = true;
-        delete invoiceAddressField['queryVariables'];
-        delete shippingAddressField['queryVariables'];
+    const fieldConfigs: FieldConfigs = {
+      'invoiceAddress': {
+        enabled: {
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
+          createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, customerId.value)
+        },
+        disabled: {
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null
+        }
+      },
+      'shippingAddress': {
+        enabled: {
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
+          createOnFlyConfig: shippingAddressOnTheFlyConfig(t, customerId.value)
+        },
+        disabled: {
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null
+        }
       }
-    }
+    };
 
-    // This will clear the form values for the following fields so if we change the customer id we will clear the addresses id's
+    updateFieldConfigs(customerId, fieldConfigs, formConfig);
     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
-
   }
 };
-
 
 </script>
 

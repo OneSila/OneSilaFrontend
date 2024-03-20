@@ -38,10 +38,12 @@ watch(form, (newForm) => {
 }, { deep: true });
 
 watch(() => props.fieldsToClear, (fields) => {
-  if (fields && fields.length) {
+  if (fields && fields.length > 0) {
     fields.forEach(field => {
       if (form[field] !== undefined) {
+        console.log(form);
         form[field] = null;
+        console.log(form);
       }
     });
   }

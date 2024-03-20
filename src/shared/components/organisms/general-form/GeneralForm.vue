@@ -15,7 +15,7 @@ const props = withDefaults(
   { fieldsToClear: null },
 );
 
-const emits = defineEmits(['formUpdated']);
+const emits = defineEmits(['formUpdated', 'loaded']);
 const enhancedConfig = ref();
 
 const handleFormUpdate = (updatedForm) => {
@@ -37,7 +37,7 @@ watch(() => props.config, (newConfig) => {
 
 <template>
   <div v-if="enhancedConfig">
-    <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @formUpdated="handleFormUpdate" />
-    <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @formUpdated="handleFormUpdate" />
+    <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+    <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
   </div>
 </template>

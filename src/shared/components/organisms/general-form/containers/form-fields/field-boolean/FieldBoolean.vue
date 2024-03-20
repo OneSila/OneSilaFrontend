@@ -5,7 +5,7 @@ import { BooleanFormField } from '../../../formConfig';
 
 const props = defineProps<{
   field: BooleanFormField;
-  modelValue: boolean;
+  modelValue: boolean | null | undefined;
 }>();
 const emit = defineEmits(['update:modelValue']);
 
@@ -20,7 +20,7 @@ const disabled = props.field.disabled === true;
 <template>
   <div class="field-item">
     <Selector
-      :model-value="modelValue"
+      :model-value="modelValue === true"
       @update:modelValue="updateValue"
       :dropdown-position="dropdownPosition"
       :placeholder="field.placeholder"

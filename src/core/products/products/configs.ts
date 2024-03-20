@@ -1,10 +1,22 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, ProductType, Url} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {productsQuery} from "../../../shared/api/queries/products.js"
-import {taxesQuery} from "../../../shared/api/queries/taxes";
+import {taxesQuery} from "../../../shared/api/queries/taxes.js";
+import {createTaxMutation} from "../../../shared/api/mutations/taxes.js";
+import {baseFormConfigConstructor as baseTaxRateConfigConstructor } from '../../settings/taxes/configs'
 
+const taxRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseTaxRateConfigConstructor(
+      t,
+      FormType.CREATE,
+      createTaxMutation,
+      'createTax'
+    ) as FormConfig
+  }
+})
 export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
@@ -54,6 +66,7 @@ const getFields = (type, t): FormField[] => {
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: taxRateOnTheFlyConfig(t)
     },
     {
       type: FieldType.Checkbox,

@@ -62,7 +62,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <Card v-if="config" class="w-1/2">
+  <Card v-if="config" class="w-1/3">
     <FormCreate :config="config as FormConfig" :defaults="field.createOnFlyConfig?.defaults" @formUpdated="handleFormUpdate"/>
 
     <div class="flex justify-end gap-4 mt-4">

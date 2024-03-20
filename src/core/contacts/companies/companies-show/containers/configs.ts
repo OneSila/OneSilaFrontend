@@ -1,11 +1,12 @@
-import {CreateOnTheFly, FormConfig, FormType} from '../../../../../shared/components/organisms/general-form/formConfig';
-import { FieldType } from '../../../../../shared/utils/constants.js'
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../../../shared/components/organisms/general-form/formConfig';
+import {FieldType, ProductType} from '../../../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../../../shared/components/organisms/general-listing/listingConfig";
 import {createPersonMutation, deleteCompanyAddressMutation} from "../../../../../shared/api/mutations/contacts";
 import { countriesQuery } from "../../../../../shared/api/queries/languages.js";
 import {companyAddressesQuery, peopleQuery} from "../../../../../shared/api/queries/contacts.js";
 import {baseFormConfigConstructor as basePersonConfigConstructor } from '../../../people/configs'
+import {productsQuery} from "../../../../../shared/api/queries/products";
 
 const personOnTheFlyConfig = (t: Function, companyId: string):CreateOnTheFly => ({
   config: {
@@ -19,12 +20,42 @@ const personOnTheFlyConfig = (t: Function, companyId: string):CreateOnTheFly => 
   }
 })
 
+const getAddressTypeField = (addressType, t): FormField => {
+  if (addressType) {
+    return {
+      type: FieldType.Hidden,
+      name: addressType,
+      value: true
+    };
+  } else {
+    return {
+      type: FieldType.ProxyChoice,
+      name: "type",
+      label: t('contacts.companies.address.labels.addressType'),
+      valueBy: 'value',
+      labelBy: 'name',
+      multiple: true,
+      options: [
+        {
+          name: t('contacts.companies.address.labels.invoiceAddress'),
+          value: 'isInvoiceAddress'
+        },
+        {
+          name: t('contacts.companies.address.labels.shippingAddress'),
+          value: 'isShippingAddress'
+        }
+      ]
+    };
+  }
+}
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
   mutation: any,
   mutationKey: string,
-  companyId: string
+  companyId: string,
+  addressType: string | null = null
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -79,39 +110,22 @@ export const baseFormConfigConstructor = (
         multiple: false,
         filterable: true,
       },
-    {
-      type: FieldType.ProxyChoice,
-      name: "type",
-      label: t('contacts.companies.address.labels.addressType'),
-      valueBy: 'value',
-      labelBy: 'name',
-      multiple: true,
-      options: [
-        {
-          name: t('contacts.companies.address.labels.invoiceAddress'),
-          value: 'isInvoiceAddress'
-        },
-        {
-          name: t('contacts.companies.address.labels.shippingAddress'),
-          value: 'isShippingAddress'
-        }
-      ]
-    },
-    {
-      type: FieldType.Query,
-      name: 'contact',
-      query: peopleQuery,
-      queryVariables: {filter: {company: {id: {exact: companyId}}}},
-      label: t('contacts.companies.address.labels.contact'),
-      labelBy: 'firstName',
-      valueBy: 'id',
-      dataKey: 'people',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      createOnFlyConfig: personOnTheFlyConfig(t, companyId),
-    }
+      getAddressTypeField(addressType, t),
+      {
+        type: FieldType.Query,
+        name: 'contact',
+        query: peopleQuery,
+        queryVariables: {filter: {company: {id: {exact: companyId}}}},
+        label: t('contacts.companies.address.labels.contact'),
+        labelBy: 'firstName',
+        valueBy: 'id',
+        dataKey: 'people',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        formMapIdentifier: 'id',
+        createOnFlyConfig: personOnTheFlyConfig(t, companyId),
+      }
     ],
 });
 

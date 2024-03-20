@@ -1,14 +1,16 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, ProductType} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {supplierProductsQuery} from "../../../shared/api/queries/purchasing.js"
-import {deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
+import {createSupplierProductMutation, deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
 import {productsQuery} from "../../../shared/api/queries/products.js";
 import {suppliersQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {supplierOnTheFlyConfig} from "../suppliers/configs";
 
 const getSubmitUrl = (supplierId, productId) => {
   if (supplierId) {
@@ -51,6 +53,7 @@ const getSupplierField = (supplierId, t): FormField => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
+        createOnFlyConfig: supplierOnTheFlyConfig(t),
     };
   }
 }
@@ -115,6 +118,8 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.quantity'),
       number: true,
     },
+      getProductField(productId, t),
+      getSupplierField(supplierId, t),
     {
       type: FieldType.Query,
       name: 'unit',
@@ -149,11 +154,22 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t)
     },
-    getProductField(productId, t),
-    getSupplierField(supplierId, t)
     ],
 });
+
+export const supplierProductOnTheFlyConfig = (t: Function, supplierId: string | null = null):CreateOnTheFly => ({
+  config: {
+    ...baseFormConfigConstructor(
+      t,
+      FormType.CREATE,
+      createSupplierProductMutation,
+      'createSupplierProduct',
+        supplierId
+    ) as FormConfig
+  }
+})
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,

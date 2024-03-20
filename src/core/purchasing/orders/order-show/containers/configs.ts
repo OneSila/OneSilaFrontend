@@ -4,6 +4,7 @@ import { SearchConfig } from "../../../../../shared/components/organisms/general
 import { ListingConfig } from "../../../../../shared/components/organisms/general-listing/listingConfig";
 import { deletePurchaseOrderItemMutation} from "../../../../../shared/api/mutations/purchasing.js";
 import { purchaseOrderItemsQuery, supplierProductsQuery } from "../../../../../shared/api/queries/purchasing.js";
+import {supplierProductOnTheFlyConfig} from "../../../products/configs";
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
@@ -29,7 +30,7 @@ export const baseFormConfigConstructor = (
       name: 'item',
       query: supplierProductsQuery,
       queryVariables: {filter: {supplier: {id: {exact: supplierId}}}},
-      label: t('purchasing.companies.address.labels.contact'),
+      label: t('purchasing.products.show.title'),
       labelBy: 'name',
       valueBy: 'id',
       dataKey: 'supplierProducts',
@@ -37,6 +38,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: supplierProductOnTheFlyConfig(t, supplierId)
     },
     {
       type: FieldType.Text,

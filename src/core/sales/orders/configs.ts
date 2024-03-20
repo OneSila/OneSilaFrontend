@@ -8,6 +8,8 @@ import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, customersQu
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {customerOnTheFlyConfig} from "../customers/configs";
 
 export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -68,6 +70,7 @@ const getCustomerField = (customerId, t): FormField => {
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: customerOnTheFlyConfig(t)
     };
   }
 }
@@ -105,6 +108,7 @@ export const baseFormConfigConstructor = (
         filterable: true,
         removable: false,
         formMapIdentifier: 'id',
+        createOnFlyConfig: currencyOnTheFlyConfig(t)
     },
     getCustomerField(customerId, t),
     {

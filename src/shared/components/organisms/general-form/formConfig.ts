@@ -278,3 +278,37 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
 
   return cleanedData;
 };
+
+export interface FieldConfig {
+  enabled: {
+    [key: string]: any;
+  };
+  disabled: {
+    [key: string]: any;
+  };
+}
+
+export interface FieldConfigs {
+  [fieldName: string]: FieldConfig;
+}
+export const updateFieldConfigs = (
+  targetId: { value: any },
+  fieldConfigs: FieldConfigs,
+  formConfig: any
+  ) => {
+  Object.entries(fieldConfigs).forEach(([fieldName, config]) => {
+    const field = formConfig.value.fields.find(f => f.name === fieldName);
+
+    if (field) {
+      const fieldConfig = targetId.value ? config.enabled : config.disabled;
+
+      Object.entries(fieldConfig).forEach(([key, value]) => {
+        if (value === null) {
+          delete field[key];
+        } else {
+          field[key] = value;
+        }
+      });
+    }
+  });
+};

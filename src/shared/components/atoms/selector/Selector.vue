@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
   defineProps<{
-    options: any[];
+    options?: any[];
     modelValue?: any;
     labelBy?: string;
     valueBy?: string;
@@ -19,6 +19,7 @@ const props = withDefaults(
     filterable?: boolean;
     removable?: boolean;
     limit?: number;
+    isLoading?: boolean;
   }>(),
   { dropdownPosition: 'top', options: [] as any, removable: true },
 );
@@ -134,6 +135,7 @@ const onModelValueUpdated = (value) => {
     :multiple="multiple"
     :filterable="filterable"
     :clearable="removable"
+    :loading="isLoading"
     close-on-select
     append-to-body
     searchable

@@ -585,6 +585,9 @@
       "edit": {
         "title": "Edit Supplier Product"
       },
+      "show": {
+        "title": "Supplier Product"
+      },
       "labels": {
         "unitPrice": "Unit Price",
         "sku": "SKU",

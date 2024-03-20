@@ -3,9 +3,10 @@
 import {reactive, defineProps, watch} from 'vue';
 import { useRouter } from 'vue-router';
 import { FormLayout } from './../form-layout';
-import { FormConfig, HiddenFormField, cleanUpDataForMutation} from '../../formConfig';
+import { FormConfig, HiddenFormField} from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";
 import {SubmitButtons} from "../submit-buttons";
+
 
 const props = withDefaults(
   defineProps<{
@@ -19,7 +20,13 @@ const emits = defineEmits(['formUpdated']);
 const form = reactive({});
 const router = useRouter();
 
-const updateForm = (data: any) => {
+const initialFormUpdate = (data: any) => {
+
+  // we want to updated only the first time then we can freely update it from outside without coming back to the initial values (example using clear fields)
+  if (Object.keys(form).length !== 0) {
+    return true;
+  }
+
   const dataToEdit = props.config.queryDataKey ? data[props.config.queryDataKey] : data;
 
   props.config.fields.forEach(field => {
@@ -35,7 +42,10 @@ const updateForm = (data: any) => {
         form[field.name] = field.options
           .find(option => dataToEdit[option[field.valueBy]] === true)?.[field.valueBy];
       }
-    } else if (dataToEdit.hasOwnProperty(field.name)) {
+    } else if (dataToEdit === null) {
+      form[field.name] = null;
+    }
+    else if (dataToEdit.hasOwnProperty(field.name)) {
       form[field.name] = dataToEdit[field.name];
     } else {
       if (field.default) {
@@ -54,7 +64,7 @@ watch(form, (newForm) => {
 
 
 watch(() => props.fieldsToClear, (fields) => {
-  if (fields && fields.length) {
+  if (fields && fields.length > 0) {
     fields.forEach(field => {
       if (form[field] !== undefined) {
         form[field] = null;
@@ -69,17 +79,18 @@ watch(() => props.fieldsToClear, (fields) => {
 <template>
   <div>
     <template v-if="config.queryData">
-      <div v-if="updateForm(config.queryData)">
+      <div v-if="initialFormUpdate(config.queryData)">
         <FormLayout :config="config" :form="form" />
       </div>
     </template>
     <ApolloQuery v-else :query="config.query" :variables="config.queryVariables">
       <template v-slot="{ result: { loading, error, data } }">
-        <div v-if="data && updateForm(data)">
+        <div v-if="data && !loading && initialFormUpdate(data)">
           <FormLayout :config="config" :form="form" />
         </div>
-        <p v-if="loading">Loading...</p>
-        <p v-if="error">{{ error.message }}</p>
+        <div v-else>
+          <FormLayout :config="config" :form="form" />
+        </div>
       </template>
     </ApolloQuery>
 

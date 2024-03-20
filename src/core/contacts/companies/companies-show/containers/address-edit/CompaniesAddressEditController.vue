@@ -55,7 +55,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2 w-1/2">
+      <Card class="p-2">
         <GeneralForm :config="formConfig as FormConfig" />
       </Card>
    </template>

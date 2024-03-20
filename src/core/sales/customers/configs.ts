@@ -1,9 +1,9 @@
-import {FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { customersQuery } from "../../../shared/api/queries/contacts.js"
-import { deleteCustomerMutation } from "../../../shared/api/mutations/contacts.js";
+import {createCustomerMutation, deleteCustomerMutation} from "../../../shared/api/mutations/contacts.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {getCustomerSubscription} from "../../../shared/api/subscriptions/contacts.js";
 
@@ -45,6 +45,17 @@ export const baseFormConfigConstructor = (
     }
     ],
 });
+
+export const customerOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseFormConfigConstructor(
+      t,
+      FormType.CREATE,
+      createCustomerMutation,
+      'createCustomer'
+    ) as FormConfig
+  }
+})
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,

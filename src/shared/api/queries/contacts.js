@@ -75,8 +75,8 @@ query companyAddresses($filter: AddressFilter) {
 `;
 
 export const companyInvoiceAddressesQuery = gql`
-query invoiceAddresses {
-  invoiceAddresses {
+query invoiceAddresses($filter: InvoiceAddressFilter) {
+  invoiceAddresses(filters: $filter) {
     edges {
       node {
         id
@@ -107,8 +107,8 @@ query invoiceAddresses {
 `;
 
 export const companyShippingAddressesQuery = gql`
-query companyAddresses {
-  shippingAddresses {
+query shippingAddresses($filter: ShippingAddressFilter) {
+  shippingAddresses(filters: $filter) {
     edges {
       node {
         id

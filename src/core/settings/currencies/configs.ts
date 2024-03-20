@@ -1,9 +1,9 @@
-import { FormConfig, FormType } from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js"
-import { deleteCurrencyMutation } from "../../../shared/api/mutations/currencies.js";
+import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -93,6 +93,17 @@ export const baseFormConfigConstructor = (
 
     ],
 });
+
+export const currencyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseFormConfigConstructor(
+       t,
+      FormType.CREATE,
+      createCurrencyMutation,
+      'createCurrency'
+    ) as FormConfig
+  }
+})
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,

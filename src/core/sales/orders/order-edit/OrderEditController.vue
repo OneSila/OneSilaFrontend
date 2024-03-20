@@ -2,9 +2,9 @@
 
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
+import {onMounted, Ref, ref} from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
+import {FieldConfigs, FormConfig, FormType, updateFieldConfigs} from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
 import {baseFormConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -12,36 +12,88 @@ import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {getOrderQuery} from "../../../../shared/api/queries/salesOrders.js";
 import {updateOrderMutation} from "../../../../shared/api/mutations/salesOrders.js";
+import {invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../../../purchasing/orders/configs";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
+const customerId = ref(null);
+const fieldsToClear: Ref<string[] | null> = ref(null);
+const formConfig: Ref<FormConfig | null> = ref(null);
 
-const baseForm = {
-  ...baseFormConfigConstructor(
-    t,
-    FormType.EDIT,
-    updateOrderMutation,
-    'updateOrder',
-    route.query.customerId ? route.query.customerId.toString() : null
-  ),
-};
+onMounted(() => {
 
-const formConfig = {
-  ...baseForm,
-  mutationId: id.value.toString(),
-  query: getOrderQuery,
-  queryVariables: { id: id.value },
-  queryDataKey: 'order',
-  fields: [
-    {
-      type: FieldType.Hidden,
-      name: 'id',
-      value: id.value.toString()
-    },
-    ...baseForm.fields
-  ]
+  const baseForm = {
+    ...baseFormConfigConstructor(
+      t,
+      FormType.EDIT,
+      updateOrderMutation,
+      'updateOrder',
+      route.query.customerId ? route.query.customerId.toString() : null
+    ),
+  };
+
+  formConfig.value = {
+    ...baseForm,
+    mutationId: id.value.toString(),
+    query: getOrderQuery,
+    queryVariables: { id: id.value },
+    queryDataKey: 'order',
+    fields: [
+      {
+        type: FieldType.Hidden,
+        name: 'id',
+        value: id.value.toString()
+      },
+      ...baseForm.fields
+    ]
+  };
+});
+
+const handleFormUpdate = (form) => {
+  fieldsToClear.value = []
+
+  const newCustomerId = typeof form.customer === 'object' && form.customer !== null? form.customer.id : form.customer;
+  if (newCustomerId !== customerId.value) {
+    const initialCustomerId = customerId.value;
+    customerId.value = newCustomerId;
+
+    const fieldConfigs: FieldConfigs = {
+      'invoiceAddress': {
+        enabled: {
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
+          createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, customerId.value)
+        },
+        disabled: {
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null
+        }
+      },
+      'shippingAddress': {
+        enabled: {
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
+          createOnFlyConfig: shippingAddressOnTheFlyConfig(t, customerId.value)
+        },
+        disabled: {
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null
+        }
+      }
+    };
+
+    updateFieldConfigs(customerId, fieldConfigs, formConfig);
+
+    // we don't want to clear the values on render
+    if (initialCustomerId === null) {
+      return;
+    }
+    fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
+  }
 };
 
 </script>
@@ -56,8 +108,8 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2 w-1/2">
-        <GeneralForm :config="formConfig as FormConfig" />
+      <Card class="p-2">
+        <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
       </Card>
    </template>
   </GeneralTemplate>

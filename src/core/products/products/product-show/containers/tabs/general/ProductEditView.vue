@@ -57,7 +57,7 @@ const handleSubmit = (resp) => {
     </template>
 
     <template v-slot:content>
-      <GeneralForm :config="formConfig as FormConfig"  @form-updated="handleFormUpdate"/>
+      <GeneralForm :config="formConfig as FormConfig" @form-updated="handleFormUpdate"/>
     </template>
   </TabContentTemplate>
 </template>

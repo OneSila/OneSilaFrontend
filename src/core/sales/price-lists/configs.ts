@@ -8,6 +8,8 @@ import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
 import {deleteSalesPriceListMutation} from "../../../shared/api/mutations/salesPrices.js";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {customerOnTheFlyConfig} from "../customers/configs";
 
 const getSubmitUrl = (customerId) => {
   if (customerId) {
@@ -46,6 +48,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         multiple: true,
         filterable: true,
         formMapIdentifier: 'id',
+        createOnFlyConfig: customerOnTheFlyConfig(t)
     };
   }
 }
@@ -84,6 +87,7 @@ const getFields = (customerId, t, type): FormField[] => {
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t)
     },
     getCustomerField(customerId, t, type),
     {

@@ -81,7 +81,6 @@ watch(() => route.query, (newQuery) => {
     }
   });
 
-  console.log(filterVariables.value)
   if (Object.keys(updatedVariables).length === 0) {
     filterVariables.value = null;
   } else {
