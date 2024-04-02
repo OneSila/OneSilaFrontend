@@ -12,6 +12,7 @@ import {TextInput} from "../../../../../../../shared/components/atoms/input-text
 import {reactive, watch, ref} from "vue";
 import {currenciesQuery} from "../../../../../../../shared/api/queries/currencies.js";
 import {Label} from "../../../../../../../shared/components/atoms/label";
+import {Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -103,7 +104,7 @@ const getVariables = () => {
 };
 
 const onMutationCompleted = () => {
-  alert("Successfully updated");
+  Toast.success(t('sales.prices.updatedSuccefully'));
   initialForm.value = { ...form };
 };
 

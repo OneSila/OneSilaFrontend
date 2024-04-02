@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { updateMeMutation } from "./../../../../../../../shared/api/mutations/me.js";
 import { TextInputPrepend } from '../../../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
@@ -13,6 +13,7 @@ import { timezonesQuery } from "../../../../../../../shared/api/queries/language
 
 import { useI18n } from 'vue-i18n';
 import {PhoneNumberInput} from "../../../../../../../shared/components/atoms/input-phone-number";
+import {Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ meData: MeData }>();
@@ -40,7 +41,7 @@ const getMutationVariables = () => {
 };
 
 const afterUpdate = () => {
-  alert(t('profile.changesMade'));
+  Toast.success(t('profile.changesMade'));
   emit('updateComplete');
 };
 

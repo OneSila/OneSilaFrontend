@@ -7,7 +7,6 @@ import { FormConfig, FormType } from '../../../../../../../shared/components/org
 import { createOrderNoteMutation } from "../../../../../../../shared/api/mutations/salesOrders.js"
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../../../../shared/components/atoms/card";
 import { ref} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { baseFormConfigConstructor} from "../../notes/configs";
@@ -42,9 +41,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm :config="formConfig as FormConfig" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 </template>

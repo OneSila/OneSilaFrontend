@@ -13,7 +13,9 @@ const emit = defineEmits(['update:modelValue']);
 const phoneNumber = ref(props.modelValue)
 
 const updateValue = (value) => {
-  emit('update:modelValue', value);
+  if (value !== undefined) {
+      emit('update:modelValue', value);
+  }
 };
 
 </script>

@@ -8,6 +8,7 @@ import { Button } from '../../../../../../atoms/button';
 import {cleanUpDataForMutation, FormConfig, QueryFormField} from "../../../../formConfig";
 import {FormCreate} from "../../../form-create";
 import apolloClient from "../../../../../../../../../apollo-client";
+import { Toast } from "../../../../../../../modules/toast";
 
 
 const { t } = useI18n();
@@ -33,7 +34,7 @@ const cancel = () => {
 const submit = async () => {
 
   if (!config.value) {
-    alert('Something went wrong!')
+    Toast.error(t('shared.alert.toast.somethingWentWrong'));
     return;
   }
 
@@ -45,7 +46,7 @@ const submit = async () => {
     });
 
     if (!data || !data[config.value.mutationKey]) {
-      alert("Unexpected response from the server.");
+      Toast.error(t('shared.alert.toast.unexpectedResult'));
       return;
     }
 

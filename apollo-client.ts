@@ -12,12 +12,13 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message }) => {
-      alert(message)
+
       if (message.includes("not authenticated")) {
           const auth = reactive(detectAuth());
           removeAuth(auth);
-          getRouter().replace({ name: 'auth.login' });
+          getRouter().push({ name: 'auth.login' });
       }
+
     });
   }
 

@@ -7,7 +7,6 @@ import { FormConfig, FormType } from '../../../../shared/components/organisms/ge
 import { createProductMutation } from "../../../../shared/api/mutations/products.js"
 import {baseFormConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
 
@@ -42,9 +41,7 @@ const formConfig = ref(baseForm);
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" />
    </template>
   </GeneralTemplate>
 </template>

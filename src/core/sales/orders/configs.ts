@@ -88,12 +88,23 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: getSubmitUrl(customerId),
   submitAndContinueUrl: getSubmitAndContinueUrl(customerId),
+  helpSections: [
+    {
+      header: 'Reference',
+      content: 'This field is used as reference of the order :)'
+    },
+    {
+      header: 'Invoice address',
+      content: 'Invoice adress for the order'
+    }
+  ],
   fields: [
     {
       type: FieldType.Text,
       name: 'reference',
       label: t('sales.orders.labels.reference'),
       placeholder: t('sales.orders.placeholders.reference'),
+      help: 'This should be a refrence to the order.'
     },
     {
         type: FieldType.Query,

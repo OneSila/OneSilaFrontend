@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n';
 import {PhoneNumberInput} from "../../../../../shared/components/atoms/input-phone-number";
 import {EmailInput} from "../../../../../shared/components/atoms/input-email";
 import {WebsiteInput} from "../../../../../shared/components/atoms/input-website";
+import {Toast} from "../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ companyData: MeCompanyData }>();
@@ -32,7 +33,7 @@ const getMutationVariables = () => {
 };
 
 const afterUpdate = () => {
-  alert(t('companyProfile.messages.changesMade'));
+  Toast.success(t('companyProfile.messages.changesMade'));
   emit('updateComplete');
 };
 

@@ -1,18 +1,25 @@
 <script setup lang="ts">
 
 import {useRouter} from 'vue-router';
-import {Button} from './../../../../atoms/button';
 import {Link} from './../../../../atoms/link';
 import {cleanUpDataForMutation, FormConfig, FormType} from '../../formConfig';
 import {ApolloAlertMutation} from "../../../../molecules/apollo-alert-mutation";
+import { CancelButton } from "../../../../atoms/button-cancel";
+import { DangerButton } from "../../../../atoms/button-danger";
+import { SecondaryButton } from "../../../../atoms/button-secondary";
+import { PrimaryButton } from "../../../../atoms/button-primary";
+import { Toast } from '../../../../../modules/toast';
+import { useI18n } from "vue-i18n";
+import { processGraphQLErrors } from "../../../../../utils";
 
 const props = defineProps<{ config: FormConfig; form: any;}>();
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit', 'update-errors']);
 const router = useRouter();
+const { t } = useI18n();
 const handleSubmitDone = (response) => {
 
   if (!response.data || !response.data[props.config.mutationKey]) {
-      alert("Unexpected response from the server.");
+    Toast.error(t('shared.alert.toast.unexpectedResult'));
     return;
   }
 
@@ -21,23 +28,30 @@ const handleSubmitDone = (response) => {
   if (props.config.submitUrl) {
     router.push(props.config.submitUrl);
     emit('submit', response);
+    if (props.config.type === FormType.CREATE) {
+      Toast.success(t('shared.alert.toast.submitSuccessCreate'));
+    } else {
+       Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+    }
   }
+
 };
 
 const handleSubmitAndContinueDoneEdit = (response) => {
 
   if (!response.data || !response.data[props.config.mutationKey]) {
-    alert("Unexpected response from the server.");
+    Toast.error(t('shared.alert.toast.unexpectedResult'));
     return;
   }
 
   props.config.afterSubmitCallback?.();
 
-  alert('Updates made!');
+  Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+
 };
 const handleSubmitAndContinueDoneCreate = (response) => {
   if (!response.data || !response.data[props.config.mutationKey]) {
-    alert("Unexpected response from the server.");
+    Toast.error(t('shared.alert.toast.unexpectedResult'));
     return;
   }
 
@@ -66,8 +80,7 @@ const handleSubmitAndContinueDoneCreate = (response) => {
 
     if (allParamsAvailable) {
       router.push({ name: redirectUrl.name, params: params, query: query });
-    } else {
-      alert('Response does not contain the necessary redirection parameters.');
+      Toast.success(t('shared.alert.toast.submitSuccessCreate'));
     }
   }
 }
@@ -87,49 +100,45 @@ const cleanupAndMutate = async (mutate) => {
 };
 
 const handleDelete = (response) => {
-  alert('Deleted!');
 
   if (props.config.deleteUrl) {
     router.push(props.config.deleteUrl);
   }
 }
 
+const handleError = (errors) => {
+  const validationErrors = processGraphQLErrors(errors, t);
+  emit('update-errors', validationErrors);
+}
+
 </script>
 
 <template>
-    <Flex class="mt-3" gap="2" >
-      <FlexCell class="mr-2">
-        <ApolloMutation :mutation="config.mutation" @done="handleSubmitDone">
-          <template v-slot="{ mutate, loading, error }">
-            <Button custom-class="btn btn-primary" :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitLabel }}</Button>
-            <p v-if="error">{{ error.message }}</p>
-          </template>
-        </ApolloMutation>
-      </FlexCell>
+    <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
 
-      <FlexCell v-if="config.addSubmitAndContinue" class="mr-2">
-        <ApolloMutation :mutation="config.mutation" @done="handleSubmitAndContinueDone">
-          <template v-slot="{ mutate, loading, error }">
-            <Button custom-class="btn btn-secondary" :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitAndContinueLabel }}</Button>
-            <p v-if="error">{{ error.message }}</p>
-          </template>
-        </ApolloMutation>
-      </FlexCell>
+        <Link v-if="config.addCancel" :path="config.cancelUrl">
+          <CancelButton>
+            {{ config.cancelLabel }}
+          </CancelButton>
+        </Link>
 
-      <FlexCell v-if="config.addDelete && config.type === FormType.EDIT" class="mr-2">
-        <ApolloAlertMutation v-if="config.deleteMutation" :mutation="config.deleteMutation" :mutation-variables="{ id: config.mutationId }" @done="handleDelete">
+        <ApolloAlertMutation v-if="config.deleteMutation && config.addDelete && config.type === FormType.EDIT" :mutation="config.deleteMutation" :mutation-variables="{ id: config.mutationId }" @done="handleDelete">
           <template v-slot="{ loading, confirmAndMutate }">
-            <Button custom-class="btn btn-danger" :disabled="loading" @click="confirmAndMutate">{{ config.deleteLabel }}</Button>
+            <DangerButton :disabled="loading" @click="confirmAndMutate">{{ config.deleteLabel }}</DangerButton>
           </template>
         </ApolloAlertMutation>
-      </FlexCell>
 
-      <FlexCell v-if="config.addCancel" class="mr-2">
-        <Link :path="config.cancelUrl">
-          <Button class="btn btn-dark">
-            {{ config.cancelLabel }}
-          </Button>
-        </Link>
-      </FlexCell>
-    </Flex>
+        <ApolloMutation v-if="config.addSubmitAndContinue" :mutation="config.mutation" @done="handleSubmitAndContinueDone" @error="handleError">
+          <template v-slot="{ mutate, loading, error }">
+            <SecondaryButton :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitAndContinueLabel }}</SecondaryButton>
+          </template>
+        </ApolloMutation>
+
+        <ApolloMutation :mutation="config.mutation" @done="handleSubmitDone">
+          <template v-slot="{ mutate, loading, error }">
+            <PrimaryButton :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitLabel }}</PrimaryButton>
+          </template>
+        </ApolloMutation>
+
+    </div>
 </template>

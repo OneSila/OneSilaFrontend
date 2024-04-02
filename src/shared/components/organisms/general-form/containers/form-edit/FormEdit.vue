@@ -1,12 +1,12 @@
 <script setup lang="ts">
 
-import {reactive, defineProps, watch} from 'vue';
+import {reactive, defineProps, watch, Ref, ref} from 'vue';
 import { useRouter } from 'vue-router';
 import { FormLayout } from './../form-layout';
 import { FormConfig, HiddenFormField} from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";
 import {SubmitButtons} from "../submit-buttons";
-
+import { Toast } from "../../../../../modules/toast";
 
 const props = withDefaults(
   defineProps<{
@@ -15,10 +15,12 @@ const props = withDefaults(
   }>(),
   { fieldsToClear: null },
 );
+
 const emits = defineEmits(['formUpdated']);
 
 const form = reactive({});
 const router = useRouter();
+const errors: Ref<Record<string, string> | null> = ref(null);
 
 const initialFormUpdate = (data: any) => {
 
@@ -58,6 +60,14 @@ const initialFormUpdate = (data: any) => {
   return true;
 };
 
+const handleUpdateErrors = (validationErrors) => {
+  errors.value = validationErrors;
+
+  if (validationErrors['__all__']) {
+    Toast.error(validationErrors['__all__']);
+  }
+}
+
 watch(form, (newForm) => {
   emits('formUpdated', newForm);
 }, { deep: true });
@@ -77,23 +87,19 @@ watch(() => props.fieldsToClear, (fields) => {
 
 
 <template>
-  <div>
-    <template v-if="config.queryData">
-      <div v-if="initialFormUpdate(config.queryData)">
-        <FormLayout :config="config" :form="form" />
-      </div>
-    </template>
-    <ApolloQuery v-else :query="config.query" :variables="config.queryVariables">
-      <template v-slot="{ result: { loading, error, data } }">
-        <div v-if="data && !loading && initialFormUpdate(data)">
-          <FormLayout :config="config" :form="form" />
-        </div>
-        <div v-else>
-          <FormLayout :config="config" :form="form" />
+  <div class="px-4 py-6 sm:p-8">
+      <template v-if="config.queryData">
+        <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+          <FormLayout v-if="initialFormUpdate(config.queryData)" :config="config" :form="form" :errors="errors" />
         </div>
       </template>
-    </ApolloQuery>
-
-    <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" />
+      <ApolloQuery v-else :query="config.query" :variables="config.queryVariables" class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+        <template v-slot="{ result: { loading, error, data } }">
+            <FormLayout v-if="data && !loading && initialFormUpdate(data)" :config="config" :form="form" :errors="errors"/>
+            <FormLayout v-else :config="config" :form="form" :errors="errors" />
+        </template>
+      </ApolloQuery>
   </div>
+  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @update-errors="handleUpdateErrors" />
+
 </template>

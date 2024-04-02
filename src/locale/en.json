@@ -7,12 +7,23 @@
     "total": "Total of {num}"
   },
   "shared": {
+    "validationErrors": {
+      "required": "This field is required."
+    },
     "alert": {
       "mutationAlert": {
         "title": "Are you sure?",
         "text": "You won't be able to revert this!",
         "confirmButtonText": "Yes, delete it!",
         "cancelButtonText": "No, cancel!"
+      },
+      "toast": {
+        "submitSuccessCreate": "Your entry has been successfully created!",
+        "submitSuccessUpdate": "Your changes have been saved successfully!",
+        "deleteSuccess": "The item has been successfully deleted.",
+        "unexpectedResult": "An unexpected error occurred. Please try again later.",
+        "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
+        "somethingWentWrong": "Something went wrong!"
       }
     },
     "button": {
@@ -164,6 +175,15 @@
         },
         "button": {
           "createCompany": "Create Company"
+        },
+        "members": {
+          "alert": {
+            "deleteMemberSuccess": "Member was succefully deleted!",
+            "enableMemberSuccess": "Member was succefully added back!"
+          },
+          "labels": {
+            "invitationAccepted": "Invitation Accepted"
+          }
         }
       }
     },
@@ -405,6 +425,9 @@
       "create": {
         "title": "Create product"
       },
+      "edit": {
+        "updateSuccefully": "Product was succefully updated!"
+      },
       "show": {
         "title": "Product"
       }
@@ -524,6 +547,7 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
+      "updatedSuccefully": "The price was succefully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"

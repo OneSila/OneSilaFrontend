@@ -6,6 +6,7 @@ import {computed, defineEmits, ref, watch} from "vue";
 import { useI18n } from 'vue-i18n';
 import { updateMyPasswordMutation } from "../../../../../../../shared/api/mutations/me.js";
 import {Button} from "../../../../../../../shared/components/atoms/button";
+import {Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const emit = defineEmits(['updateComplete', 'unsavedChanges']);
@@ -15,7 +16,7 @@ const form = ref({
   confirmNewPassword:  '',
 });
 const afterUpdate = () => {
-  alert(t('profile.changesMade'));
+  Toast.success(t('profile.changesMade'));
   emit('updateComplete');
 };
 

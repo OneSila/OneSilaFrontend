@@ -55,7 +55,7 @@ if (customerId !== null) {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
           <Tabs :tabs="tabItems">
             <template v-slot:general>
               <GeneralShow :config="showConfig" />

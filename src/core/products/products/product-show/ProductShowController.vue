@@ -83,7 +83,7 @@ const redirectToList = (response) => {
    <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef">
       <template v-slot:default="{ loading, error, result }">
         <template v-if="!loading && result">
-          <Card class="p-2">
+          <Card>
             <div class="grid md:grid-cols-2 xl:grid-cols-2 gap-8 mb-6">
               <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <div class="p-5 flex items-center flex-col sm:flex-row">

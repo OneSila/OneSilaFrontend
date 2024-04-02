@@ -1,21 +1,24 @@
 <script setup lang="ts">
 
-import { reactive, defineProps, watch } from 'vue';
+import {reactive, defineProps, watch, ref, Ref} from 'vue';
 import { useRouter } from 'vue-router';
 import { FormLayout } from './../form-layout';
 import { FormConfig, HiddenFormField, cleanUpDataForMutation } from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";
 import {SubmitButtons} from "../submit-buttons";
+import { Toast } from "../../../../../modules/toast";
 
 const props = withDefaults(
   defineProps<{
     config: FormConfig;
     fieldsToClear?: string[] | null;
-    defaults?: Record<string, string> // this will be used to populate defaults (took from url or given directly from config)
+    defaults?: Record<string, string>
   }>(),
   { fieldsToClear: null },
 );
+
 const emits = defineEmits(['formUpdated']);
+const errors: Ref<Record<string, string> | null> = ref(null);
 
 const form = reactive(props.config.fields.reduce((acc, field) => {
   if (field.type === FieldType.Hidden) {
@@ -32,6 +35,15 @@ const form = reactive(props.config.fields.reduce((acc, field) => {
 }, {}));
 
 const router = useRouter();
+
+const handleUpdateErrors = (validationErrors) => {
+  errors.value = validationErrors;
+
+  console.log(validationErrors)
+  if (validationErrors['__all__']) {
+    Toast.error(validationErrors['__all__']);
+  }
+}
 
 watch(form, (newForm) => {
   emits('formUpdated', newForm);
@@ -52,8 +64,10 @@ watch(() => props.fieldsToClear, (fields) => {
 </script>
 
 <template>
-  <div>
-    <FormLayout :config="config" :form="form" />
-    <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" />
+  <div class="px-4 py-6 sm:p-8">
+    <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+      <FormLayout :config="config" :form="form" :errors="errors" />
+    </div>
   </div>
+  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @update-errors="handleUpdateErrors" />
 </template>

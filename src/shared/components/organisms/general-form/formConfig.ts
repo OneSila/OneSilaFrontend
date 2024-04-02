@@ -7,6 +7,7 @@ export interface BaseFormField {
   label?: string;
   disabled?: boolean;
   default?: any;
+  help?: string;
   customCss?: string; // Custom CSS for individual form fields
   customCssClass?: string; // Custom CSS class for individual form fields
 }
@@ -141,6 +142,11 @@ export enum FormType {
   EDIT = 'EDIT',
 }
 
+export interface HelpSection {
+  header?: string;
+  content: string;
+}
+
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
                         ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | SliderFormField |
                         CheckboxFormField | HiddenFormField | WebsiteFormField;
@@ -171,6 +177,7 @@ export interface FormConfig {
   customStyle?: string;
   afterSubmitCallback?: () => void;
   fields: FormField[];
+  helpSections?: HelpSection[];
 }
 
 export interface FormConfigDefaultTranslations {

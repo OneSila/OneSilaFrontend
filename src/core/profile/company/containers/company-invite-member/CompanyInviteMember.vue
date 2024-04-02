@@ -7,6 +7,7 @@ import { Card } from '../../../../../shared/components/atoms/card';
 import { inviteMemberMutation } from '../../../../../shared/api/mutations/auth.js';
 import { useI18n } from 'vue-i18n';
 import {EmailInput} from "../../../../../shared/components/atoms/input-email";
+import {Toast} from "../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 
@@ -22,6 +23,10 @@ const form = ref({
   username: '',
   language: props.language
 });
+
+const onMemberAddedError = (error) => {
+  Toast.error(error.toString().replace('ApolloError: ', ''));
+};
 
 const afterInvite = () => {
   emit('inviteSubmitted', form.value);
@@ -40,7 +45,7 @@ const afterInvite = () => {
     </TextInputPrepend>
     <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.username" :label="t('companyProfile.labels.email')" :placeholder="t('companyProfile.placeholders.email')" />
 
-    <ApolloMutation :mutation="inviteMemberMutation" :variables="form" @done="afterInvite">
+    <ApolloMutation :mutation="inviteMemberMutation" :variables="form" @done="afterInvite" @error="onMemberAddedError">
       <template v-slot="{ mutate, loading, error }">
         <div class="flex justify-end gap-4 mt-4">
           <Button class="btn btn-outline-dark" @click="emit('cancelClicked')">{{ t('shared.button.cancel') }}</Button>

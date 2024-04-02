@@ -8,7 +8,7 @@ import { FieldType } from "../../../../../../../shared/utils/constants";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
 import { Card } from "../../../../../../../shared/components/atoms/card";
-import { baseFormConfigConstructor } from "../../notes/configs";
+import { baseFormConfigConstructor } from "../configs";
 import { getOrderNoteQuery } from "../../../../../../../shared/api/queries/salesOrders.js";
 import { updateOrderNoteMutation } from "../../../../../../../shared/api/mutations/salesOrders.js";
 

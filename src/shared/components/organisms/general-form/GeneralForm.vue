@@ -1,10 +1,11 @@
-<script setup lang="ts">
+<script setup lang="ts" xmlns="http://www.w3.org/1999/html">
 
 import { ref, watch } from 'vue';
 import { FormCreate } from './containers/form-create';
 import { FormEdit } from './containers/form-edit';
 import { getEnhancedConfig, FormConfig, FormType, FormConfigDefaultTranslations } from './formConfig';
 import { useI18n } from 'vue-i18n';
+import { HelpSection } from "./containers/help-section";
 
 const { t } = useI18n();
 const props = withDefaults(
@@ -36,8 +37,13 @@ watch(() => props.config, (newConfig) => {
 </script>
 
 <template>
-  <div v-if="enhancedConfig">
-    <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-    <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+  <div v-if="enhancedConfig" class="space-y-10 divide-y divide-gray-900/10 mt-4">
+    <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+      <HelpSection :config="enhancedConfig" />
+      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+        <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+        <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+      </div>
+    </div>
   </div>
 </template>

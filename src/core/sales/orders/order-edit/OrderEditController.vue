@@ -8,7 +8,6 @@ import {FieldConfigs, FormConfig, FormType, updateFieldConfigs} from "../../../.
 import { FieldType } from "../../../../shared/utils/constants";
 import {baseFormConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {getOrderQuery} from "../../../../shared/api/queries/salesOrders.js";
 import {updateOrderMutation} from "../../../../shared/api/mutations/salesOrders.js";
@@ -108,9 +107,7 @@ const handleFormUpdate = (form) => {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-      </Card>
+     <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

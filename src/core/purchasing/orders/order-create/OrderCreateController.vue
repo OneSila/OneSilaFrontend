@@ -7,7 +7,6 @@ import { FormConfig, FormType, updateFieldConfigs, FieldConfigs } from '../../..
 import { createPurchaseOrderMutation } from "../../../../shared/api/mutations/purchasing.js"
 import {baseFormConfigConstructor, invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
 
@@ -76,9 +75,7 @@ const handleFormUpdate = (form) => {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

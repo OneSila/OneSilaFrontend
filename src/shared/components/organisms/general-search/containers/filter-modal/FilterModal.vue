@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { reactive, computed } from 'vue';
 import { Card } from '../../../../../components/atoms/card';
 import { Button } from '../../../../../components/atoms/button';
-import {BaseFilter, SearchFilter} from "../../searchConfig";
+import { SearchFilter } from "../../searchConfig";
 import { FieldType } from '../../../../../utils/constants'
 
 import { FilterBoolean } from './containers/filter-boolean';

@@ -9,7 +9,6 @@ import { deleteCompanyMutation, updateCompanyMutation } from "../../../../shared
 import { getCompanyQuery } from "../../../../shared/api/queries/contacts.js";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
 import { baseFormConfigConstructor} from "../configs";
 
 const { t } = useI18n();
@@ -53,9 +52,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm :config="formConfig as FormConfig" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 

@@ -9,6 +9,7 @@ import {baseFormConfigConstructor, Product} from "../../../../configs";
 import {updateProductMutation} from "../../../../../../../shared/api/mutations/products.js";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import {SubmitButtons} from "../../../../../../../shared/components/organisms/general-form/containers/submit-buttons";
+import { Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -45,7 +46,7 @@ const handleFormUpdate = (f) => {
 }
 
 const handleSubmit = (resp) => {
-  alert('Product updated!')
+  Toast.success(t('products.products.edit.updateSuccefully'))
 }
 
 </script>

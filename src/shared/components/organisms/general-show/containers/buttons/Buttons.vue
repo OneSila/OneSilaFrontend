@@ -13,7 +13,6 @@ const router = useRouter();
 const props = defineProps<{ config: ShowConfig;}>();
 
 const handleDelete = (response) => {
-  alert('Deleted!');
 
   if (props.config.deleteUrl) {
       router.push(props.config.deleteUrl);

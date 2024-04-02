@@ -10,7 +10,6 @@ import {updatePurchaseOrderMutation} from "../../../../shared/api/mutations/purc
 import {getPurchaseOrderQuery} from "../../../../shared/api/queries/purchasing.js";
 import {baseFormConfigConstructor, invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../configs";
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
-import {Card} from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 
 
@@ -109,9 +108,7 @@ const handleFormUpdate = (form) => {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-      </Card>
+     <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

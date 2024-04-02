@@ -10,6 +10,7 @@ import Vue3Datatable from "@bhplugin/vue3-datatable";
 import { disableMemberMutation, enableMemberMutation } from "../../../../../shared/api/mutations/members.js";
 import "@bhplugin/vue3-datatable/dist/style.css";
 import { injectAuth, isCompanyOwner } from '../../../../../shared/modules/auth';
+import {Toast} from "../../../../../shared/modules/toast";
 
 const auth = injectAuth();
 const { t } = useI18n();
@@ -25,14 +26,14 @@ const filteredMembers = ref<FilteredMember[]>([]);
 const showInviteModal = ref(false);
 
 const columns = [
-  { title: 'Name', field: 'fullName' },
-  { title: 'Email', field: 'email' },
-  { title: 'Invitation Accepted', field: 'acceptedInvitation' },
-  { title: 'Active', field: 'active' },
+  { title: t('shared.labels.name'), field: 'fullName' },
+  { title: t('shared.labels.email'), field: 'email' },
+  { title: t('auth.register.company.members.labels.invitationAccepted'), field: 'acceptedInvitation' },
+  { title: t('shared.labels.active'), field: 'active' },
 ];
 
 if (isCompanyOwner(auth)) {
-  columns.push({ title: 'Actions', field: 'actions' });
+  columns.push({ title: t('shared.labels.actions'), field: 'actions' });
 }
 
 const updateFilteredMembers = () => {
@@ -58,14 +59,18 @@ const onInviteSubmitted = () => {
   showInviteModal.value = false;
   emit('refreshRequested');
 };
-const onMemberActionCompleted = (response) => {
+const onMemberDeleteCompleted = (response) => {
   emit('refreshRequested');
-  // @TODO: Add Toast success
+  Toast.success(t('auth.register.company.members.alert.deleteMemberSuccess'));
+};
+
+const onMemberEnabledCompleted = (response) => {
+  emit('refreshRequested');
+  Toast.success(t('auth.register.company.members.alert.enableMemberSuccess'));
 };
 
 const onMemberActionError = (error) => {
-  // @TODO: Replace with Toast
-  alert(error);
+  Toast.error(error);
 };
 
 const inviteMember = () => {
@@ -118,7 +123,7 @@ const inviteMember = () => {
               v-if="row.value.isActive"
               :mutation="disableMemberMutation"
               :variables="{ id: row.value.id }"
-              @done="onMemberActionCompleted"
+              @done="onMemberDeleteCompleted"
               @error="onMemberActionError">
               <template #default="{ mutate, loading }">
                 <button type="button" :disabled="loading" @click="mutate">
@@ -130,7 +135,7 @@ const inviteMember = () => {
               v-else
               :mutation="enableMemberMutation"
               :variables="{ id: row.value.id }"
-              @done="onMemberActionCompleted"
+              @done="onMemberEnabledCompleted"
               @error="onMemberActionError">
               <template #default="{ mutate, loading }">
                 <button type="button" :disabled="loading" @click="mutate">

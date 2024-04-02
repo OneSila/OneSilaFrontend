@@ -8,7 +8,6 @@ import { FormConfig, FormType } from "../../../../shared/components/organisms/ge
 import { FieldType } from "../../../../shared/utils/constants";
 import {baseFormConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {getSalesPriceListQuery} from "../../../../shared/api/queries/salesPrices.js";
 import {updateSalesPriceListMutation} from "../../../../shared/api/mutations/salesPrices.js";
@@ -57,9 +56,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
-        <GeneralForm :config="formConfig as FormConfig" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 </template>

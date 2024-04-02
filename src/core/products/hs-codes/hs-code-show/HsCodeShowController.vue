@@ -27,7 +27,7 @@ const showConfig = showConfigConstructor(t, id.value, route.query.productId ? ro
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
         <GeneralShow :config="showConfig" />
       </Card>
    </template>

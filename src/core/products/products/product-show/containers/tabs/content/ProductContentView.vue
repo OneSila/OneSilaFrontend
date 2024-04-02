@@ -12,7 +12,8 @@ import {TextInput} from "../../../../../../../shared/components/atoms/input-text
 import {TextEditor} from "../../../../../../../shared/components/atoms/input-text-editor";
 import {reactive, watch, ref} from "vue";
 import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
-import {Label} from "../../../../../../../shared/components/atoms/label";
+import { Label } from "../../../../../../../shared/components/atoms/label";
+import { Toast } from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -106,7 +107,7 @@ const getVariables = () => {
 };
 
 const onMutationCompleted = () => {
-  alert(t('products.translation.successfullyUpdated'));
+  Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = { ...form };
 };
 

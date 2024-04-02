@@ -28,7 +28,7 @@ const showConfig = showConfigConstructor(t, id.value);
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
         <GeneralShow :config="showConfig" />
         <AddressesList :id="id" />
       </Card>

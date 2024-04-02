@@ -5,8 +5,6 @@ import {onMounted, Ref, ref} from "vue";
 import { GeneralForm } from "../../../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../shared/utils/constants";
-import { deleteCompanyAddressMutation, updateCompanyAddressMutation } from "../../../../../../shared/api/mutations/contacts.js";
-import {getCompanyAddressQuery, getCompanyQuery} from "../../../../../../shared/api/queries/contacts.js";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../shared/components/molecules/breadcrumbs";
 import { Card } from "../../../../../../shared/components/atoms/card";
