@@ -12,7 +12,7 @@ import AddressesList from "./containers/addresses-list/AddressesList.vue";
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 
 const showConfig = showConfigConstructor(t, id.value);
 
@@ -28,7 +28,7 @@ const showConfig = showConfigConstructor(t, id.value);
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
         <GeneralShow :config="showConfig" />
         <AddressesList :id="id" />
       </Card>

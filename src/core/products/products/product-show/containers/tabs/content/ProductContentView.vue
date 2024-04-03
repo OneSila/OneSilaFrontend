@@ -8,11 +8,12 @@ import apolloClient from "../../../../../../../../apollo-client";
 import {getProductTranslationByLanguageQuery} from "../../../../../../../shared/api/queries/products.js";
 import {updateProductTranslationMutation, createProductTranslationMutation} from "../../../../../../../shared/api/mutations/products.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
-import {TextInput} from "../../../../../../../shared/components/atoms/text-input";
-import {TextEditor} from "../../../../../../../shared/components/atoms/text-editor";
+import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
+import {TextEditor} from "../../../../../../../shared/components/atoms/input-text-editor";
 import {reactive, watch, ref} from "vue";
 import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
-import {Label} from "../../../../../../../shared/components/atoms/label";
+import { Label } from "../../../../../../../shared/components/atoms/label";
+import { Toast } from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -106,7 +107,7 @@ const getVariables = () => {
 };
 
 const onMutationCompleted = () => {
-  alert(t('products.translation.successfullyUpdated'));
+  Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = { ...form };
 };
 
@@ -148,11 +149,11 @@ const onMutationCompleted = () => {
         </FlexCell>
         <FlexCell>
           <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-          <TextInput v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" class="mt-2 mb-2 w-full" />
+          <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-2 h-32 w-full" />
         </FlexCell>
         <FlexCell>
           <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-          <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" class="mt-2 mb-2 h-32 w-full" scroll />
+          <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="mt-2 mb-2 h-32 w-full" />
         </FlexCell>
         <FlexCell>
           <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>

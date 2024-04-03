@@ -9,13 +9,12 @@ import { deleteCompanyAddressMutation, updateCompanyAddressMutation } from "../.
 import {getCompanyAddressQuery, getCompanyQuery} from "../../../../../../shared/api/queries/contacts.js";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../../../shared/components/atoms/card";
 import { baseFormConfigConstructor } from "../configs";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const companyId = ref(route.params.companyId);
 
 const baseForm = baseFormConfigConstructor(
@@ -55,9 +54,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2 w-1/2">
-        <GeneralForm :config="formConfig" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 

@@ -7,6 +7,7 @@ export interface BaseFormField {
   label?: string;
   disabled?: boolean;
   default?: any;
+  help?: string;
   customCss?: string; // Custom CSS for individual form fields
   customCssClass?: string; // Custom CSS class for individual form fields
 }
@@ -27,6 +28,40 @@ export interface ValueFormField extends BaseFormField {
   number?: boolean;
   maxNumber?: number;
   minNumber?: number;
+  allowAutocomplete?: boolean;
+}
+
+export interface EmailFormField extends BaseFormField {
+  type: FieldType.Email;
+  placeholder?: string;
+  icon?: string;
+  modelValue?: any;
+  disabled?: boolean;
+  focused?: boolean;
+  required?: boolean;
+}
+
+export interface WebsiteFormField extends BaseFormField {
+  type: FieldType.Email;
+  placeholder?: string;
+  icon?: string;
+  modelValue?: any;
+  disabled?: boolean;
+  focused?: boolean;
+  required?: boolean;
+}
+
+export interface TextareaFormField extends BaseFormField {
+  type: FieldType.Textarea;
+  placeholder?: string;
+  transparent?: boolean;
+  autogrow?: boolean;
+  error?: boolean;
+  gutterX?: string;
+  gutterY?: string;
+  gutterless?: boolean;
+  blurOnEnterKeypress?: boolean;
+  scroll?: boolean;
 }
 
 export interface ChoiceFormField extends BaseFormField {
@@ -57,6 +92,11 @@ export interface ProxyChoiceFormField extends BaseFormField {
   limit?: number;
 }
 
+export interface CreateOnTheFly {
+  config: FormConfig;
+  defaults?: Record<string, string>; // key will be filed name, value will be the default value
+}
+
 export interface QueryFormField extends BaseFormField {
   type: FieldType.Query;
   labelBy: string;
@@ -73,6 +113,7 @@ export interface QueryFormField extends BaseFormField {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+  createOnFlyConfig?: CreateOnTheFly;
 }
 
 export interface DateFormField extends BaseFormField {
@@ -81,6 +122,10 @@ export interface DateFormField extends BaseFormField {
 
 export interface SliderFormField extends BaseFormField {
   type: FieldType.Slider;
+}
+
+export interface PhoneFormField extends BaseFormField {
+  type: FieldType.Phone;
 }
 
 export interface CheckboxFormField extends BaseFormField {
@@ -97,8 +142,14 @@ export enum FormType {
   EDIT = 'EDIT',
 }
 
-export type FormField = BooleanFormField | ValueFormField | ChoiceFormField | ProxyChoiceFormField | QueryFormField |
-    DateFormField | SliderFormField | CheckboxFormField | HiddenFormField;
+export interface HelpSection {
+  header?: string;
+  content: string;
+}
+
+export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
+                        ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | SliderFormField |
+                        CheckboxFormField | HiddenFormField | WebsiteFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;
@@ -126,6 +177,7 @@ export interface FormConfig {
   customStyle?: string;
   afterSubmitCallback?: () => void;
   fields: FormField[];
+  helpSections?: HelpSection[];
 }
 
 export interface FormConfigDefaultTranslations {
@@ -232,4 +284,38 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
   });
 
   return cleanedData;
+};
+
+export interface FieldConfig {
+  enabled: {
+    [key: string]: any;
+  };
+  disabled: {
+    [key: string]: any;
+  };
+}
+
+export interface FieldConfigs {
+  [fieldName: string]: FieldConfig;
+}
+export const updateFieldConfigs = (
+  targetId: { value: any },
+  fieldConfigs: FieldConfigs,
+  formConfig: any
+  ) => {
+  Object.entries(fieldConfigs).forEach(([fieldName, config]) => {
+    const field = formConfig.value.fields.find(f => f.name === fieldName);
+
+    if (field) {
+      const fieldConfig = targetId.value ? config.enabled : config.disabled;
+
+      Object.entries(fieldConfig).forEach(([key, value]) => {
+        if (value === null) {
+          delete field[key];
+        } else {
+          field[key] = value;
+        }
+      });
+    }
+  });
 };

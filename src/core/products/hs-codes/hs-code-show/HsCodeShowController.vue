@@ -11,7 +11,7 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 
 const showConfig = showConfigConstructor(t, id.value, route.query.productId ? route.query.productId.toString() : null);
 
@@ -27,7 +27,7 @@ const showConfig = showConfigConstructor(t, id.value, route.query.productId ? ro
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
         <GeneralShow :config="showConfig" />
       </Card>
    </template>

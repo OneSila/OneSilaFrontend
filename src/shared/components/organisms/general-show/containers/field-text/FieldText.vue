@@ -7,7 +7,7 @@ import { TextField } from '../../showConfig';
 
 const props = defineProps<{
   field: TextField;
-  modelValue: string;
+  modelValue: string | number;
 }>();
 
 </script>

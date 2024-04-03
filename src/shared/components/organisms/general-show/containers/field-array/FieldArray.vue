@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
 import { FieldNestedText } from './../field-nested-text';
-import { ArrayField } from '../../showConfig';
-import { accessNestedProperty } from '../../../general-listing/listingConfig';
+import {ArrayField, NestedTextField} from '../../showConfig';
+import { accessNestedProperty } from '../../../general-show/showConfig';
 import { FieldType} from "../../../../../utils/constants";
 import { Icon } from "../../../../atoms/icon";
 import { Label } from "../../../../atoms/label";
@@ -48,9 +48,9 @@ const buildClickUrl = (item) => {
     <div v-for="(item, index) in modelValue" :key="index">
 
       <FieldNestedText
-        :field="buildNestedField(item)"
-        :model-value="item"
-      />
+        :field="buildNestedField(item) as NestedTextField"
+        :model-value="item" />
+
     </div>
   </div>
 </template>

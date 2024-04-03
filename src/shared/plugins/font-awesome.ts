@@ -110,7 +110,9 @@ import {
   faTruckRampBox,
   faScrewdriverWrench,
   faBarcode,
-  faQrcode
+  faQrcode,
+  faHome,
+  faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -221,6 +223,8 @@ library.add(faTruckRampBox as IconDefinition);
 library.add(faScrewdriverWrench as IconDefinition);
 library.add(faBarcode as IconDefinition);
 library.add(faQrcode as IconDefinition);
+library.add(faHome as IconDefinition);
+library.add(faExclamationCircle as IconDefinition);
 
 export default {
   install(app) {

@@ -1,13 +1,43 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, OrderStatus} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing.js"
 import {deletePurchaseOrderMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js";
-import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
+import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
+import { createCompanyInvoiceAddressMutation, createCompanyShippingAddressMutation} from "../../../shared/api/mutations/contacts.js";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {baseFormConfigConstructor as baseAddressConfigConstructor } from '../../contacts/companies/companies-show/containers/configs'
+import {supplierOnTheFlyConfig} from "../suppliers/configs";
+
+export const invoiceAddressOnTheFlyConfig = (t: Function, supplierId):CreateOnTheFly => ({
+  config: {
+    ...baseAddressConfigConstructor(
+        t,
+        FormType.CREATE,
+        createCompanyInvoiceAddressMutation,
+        'createInvoiceAddress',
+        supplierId,
+        'isInvoiceAddress'
+    ) as FormConfig
+  }
+})
+
+export const shippingAddressOnTheFlyConfig = (t: Function, supplierId):CreateOnTheFly => ({
+  config: {
+    ...baseAddressConfigConstructor(
+      t,
+        FormType.CREATE,
+        createCompanyShippingAddressMutation,
+        'createShippingAddress',
+        supplierId,
+        'isShippingAddress'
+    ) as FormConfig
+  }
+})
 
 export const getStatusOptions = (t) => [
   { name: t('purchasing.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -21,17 +51,17 @@ const getSubmitUrl = (supplierId) => {
   if (supplierId) {
     return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
   }
-  return { name: 'purchasing.order.list' };
+  return { name: 'purchasing.orders.list' };
 }
 
 const getSubmitAndContinueUrl = (supplierId) => {
   if (supplierId) {
-    return { name: 'purchasing.order.edit', query: { supplierId } };
+    return { name: 'purchasing.orders.edit', query: { supplierId } };
   }
-  return { name: 'purchasing.order.edit' };
+  return { name: 'purchasing.orders.edit' };
 }
 
-const getSupplierField = (supplierId, t): FormField => {
+const getSupplierField = (t, supplierId): FormField => {
   if (supplierId) {
     return {
       type: FieldType.Hidden,
@@ -51,6 +81,7 @@ const getSupplierField = (supplierId, t): FormField => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
+        createOnFlyConfig: supplierOnTheFlyConfig(t),
     };
   }
 }
@@ -85,6 +116,7 @@ export const baseFormConfigConstructor = (
       filterable: true,
       options: getStatusOptions(t)
     },
+    getSupplierField(t, supplierId),
     {
       type: FieldType.Query,
       name: 'invoiceAddress',
@@ -112,21 +144,21 @@ export const baseFormConfigConstructor = (
       formMapIdentifier: 'id',
     },
     {
-        type: FieldType.Query,
-        name: 'currency',
-        label: t('shared.labels.currency'),
-        labelBy: 'symbol',
-        valueBy: 'id',
-        query: currenciesQuery,
-        dataKey: 'currencies',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        removable: false,
-        formMapIdentifier: 'id',
-    },
-    getSupplierField(supplierId, t)
-    ],
+      type: FieldType.Query,
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'symbol',
+      valueBy: 'id',
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      removable: false,
+      formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t)
+    }
+  ],
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
@@ -143,8 +175,8 @@ const getHeaders = (t, supplierId) => {
     : [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
 }
 
-const getFields = (supplierId): ListingField[] => {
-  const commonFields: ListingField[] = [
+const getFields = (supplierId): ShowField[] => {
+  const commonFields: ShowField[] = [
     {
       name: 'orderReference',
       type: FieldType.Text,
@@ -160,7 +192,7 @@ const getFields = (supplierId): ListingField[] => {
   ];
 
   if (!supplierId) {
-    commonFields.splice(2, 0, { name: 'supplierName', type: FieldType.NestedText, keys: ['supplier', 'name'] });
+    commonFields.splice(2, 0, { name: 'supplier', type: FieldType.NestedText, keys: ['name'] });
   }
 
   return commonFields;
@@ -221,8 +253,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     type: FieldType.NestedText,
     label: t('purchasing.orders.labels.supplier'),
     keys: ['name'],
-      // clickable: true,
-      // clickUrl: { name: 'purchasing.suppliers.show'},
     showLabel: true
   },
   {

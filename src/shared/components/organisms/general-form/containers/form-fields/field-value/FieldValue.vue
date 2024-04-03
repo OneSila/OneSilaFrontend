@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import { TextInput } from '../../../../../atoms/text-input';
+import { TextInput } from '../../../../../atoms/input-text';
 import { ValueFormField } from '../../../formConfig';
 
 const props = defineProps<{
@@ -36,6 +36,7 @@ const updateValue = (event) => {
       :number="field.number"
       :maxNumber="field.maxNumber"
       :minNumber="field.minNumber"
+      :allow-autocomplete="field.allowAutocomplete"
     />
   </div>
 </template>

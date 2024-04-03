@@ -4,8 +4,9 @@ import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {Button} from '../../../../../shared/components/atoms/button';
 import { requestLoginLinkMutation } from '../../../../../shared/api/mutations/auth.js'
-import TextInputPrepend from "../../../../../shared/components/atoms/text-input-prepend/TextInputPrepend.vue";
+import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
+import {EmailInput} from "../../../../../shared/components/atoms/input-email";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -72,9 +73,7 @@ const onRecoverClicked = async (response) => {
         </h1>
         <p>{{ t('auth.recover.description') }}</p>
     </div>
-    <TextInputPrepend id="email" v-model="form.email" :label="t('auth.recover.labels.email')" :placeholder="t('auth.recover.placeholders.email')" type="email">
-      <Icon name="envelope"/>
-    </TextInputPrepend>
+    <EmailInput id="email" icon="envelope" v-model:model-value="form.email" :label="t('auth.recover.labels.email')" :placeholder="t('auth.recover.placeholders.email')" />
 
     <div>
     <ApolloMutation :mutation="requestLoginLinkMutation" :variables="{ username: form.email }" @done="onRecoverClicked">

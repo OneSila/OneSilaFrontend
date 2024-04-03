@@ -15,7 +15,7 @@ import PriceListsList from "./containers/price-lists-list/PriceListsList.vue";
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const tabItems = ref();
 
 tabItems.value = [
@@ -38,7 +38,7 @@ const showConfig = showConfigConstructor(t, id.value);
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
           <Tabs :tabs="tabItems">
             <template v-slot:general>
               <GeneralShow :config="showConfig" />

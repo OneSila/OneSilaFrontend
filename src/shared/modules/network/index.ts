@@ -30,9 +30,6 @@ export const useDelayedRequestHandler = () => {
       submitTimer = null;
     }
 
-    if (dismissToast) {
-      Toast.dismissAll();
-    }
   };
 
   return () => {
@@ -40,10 +37,10 @@ export const useDelayedRequestHandler = () => {
 
     submitTimer = setInterval(() => {
       if (submitStart && new Date().getTime() - submitStart >= 5000) {
-        Toast.warning('Taking longer than usual...', { duration: false });
+        Toast.warning('Taking longer than usual...');
         ignoreDelayedRequestHandler();
       }
-    }, 1000);
+    }, 1000) as any;
 
     return ignoreDelayedRequestHandler;
   };

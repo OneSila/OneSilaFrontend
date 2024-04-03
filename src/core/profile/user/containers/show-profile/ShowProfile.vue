@@ -15,7 +15,7 @@ defineProps<{ meData: MeData }>();
 <template>
   <div class="mb-5">
     <div class="flex flex-col justify-center items-center">
-      <Image v-if="meData.avatarResizedFullUrl != null" :src="meData.avatarResizedFullUrl" class="w-24 h-24 rounded-full object-cover mb-5"/>
+      <Image v-if="meData.avatarResizedFullUrl != null" :source="meData.avatarResizedFullUrl" class="w-24 h-24 rounded-full object-cover mb-5"/>
       <Icon v-else class="shrink-0 mb-1" size="2xl" name="user"/>
 
       <p class="font-semibold text-primary text-xl">{{ meData.firstName }} {{ meData.lastName }}</p>
@@ -25,17 +25,22 @@ defineProps<{ meData: MeData }>();
         <Icon class="shrink-0" name="calendar"/>
         {{ t('profile.labels.joined') }}: {{ new Date(meData.dateJoined).toLocaleDateString() }}
       </li>
-      <li class="flex items-center gap-2">
-        <Icon class="shrink-0" name="phone"/>
-        {{ t('profile.labels.phone') }}: {{ meData.mobileNumber || '-' }}
-      </li>
+    <li class="flex items-center gap-2">
+      <Icon class="shrink-0" name="phone"/>
+      {{ t('profile.labels.phone') }}:
+      <a v-if="meData.mobileNumber" :href="`tel:${meData.mobileNumber}`">{{ meData.mobileNumber }}</a>
+      <span v-else>-</span>
+    </li>
       <li class="flex items-center gap-2">
         <IconWhatsApp/>
-        {{ t('profile.labels.whatsApp') }}: {{ meData.whatsappNumber || '-' }}
+        {{ t('profile.labels.whatsApp') }}:
+        <a v-if="meData.whatsappNumber" :href="`https://wa.me/${meData.whatsappNumber.replace('+', '')}`">{{ meData.whatsappNumber }}</a>
+        <span v-else>-</span>
       </li>
       <li class="flex items-center gap-2">
         <IconTelegram/>
-        {{ t('profile.labels.telegram') }}: {{ meData.telegramNumber || '-' }}
+        {{ t('profile.labels.telegram') }}:
+        <span>{{ meData.telegramNumber || '-' }}</span>
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="map-pin"/>

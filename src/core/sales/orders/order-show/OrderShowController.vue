@@ -15,7 +15,7 @@ import NotesList from "./containers/notes/notes-list/NotesList.vue";
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const tabItems = ref();
 
 tabItems.value = [
@@ -55,7 +55,7 @@ if (customerId !== null) {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2">
+      <Card>
           <Tabs :tabs="tabItems">
             <template v-slot:general>
               <GeneralShow :config="showConfig" />

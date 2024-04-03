@@ -8,14 +8,35 @@ const props = defineProps({
   data: Object,
 });
 
-const isObject = (item) => {
-  return typeof item === 'object' && item !== null;
-};
-
 const dataRef: Ref<any> = ref(props.data);
 const rearrangedData = ref({});
 const objectData = ref({});
 const nonObjectData = ref({});
+
+const onImageClicked = (url) => {
+  window.open(url, '_blank');
+};
+
+const isArray = (item) => Array.isArray(item);
+const isItemString = (item) =>
+  typeof item === 'string' && item.endsWith('.png');
+
+const isObject = (item) => {
+  return typeof item === 'object' && item !== null;
+};
+
+const isObjectAndCast = (item) => {
+  return typeof item === 'object' && item !== null ? item as Record<string, any> : {};
+}
+
+const camelToCapitalizedWords = (camelCase) => {
+  return camelCase
+    .replace(/([A-Z])/g, ' $1') // Insert space before each capital letter
+    .toLowerCase() // Change everything to lower case
+    .split(' ') // Split by space to get an array of words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(' ');
+};
 
 for (const key in props.data) {
   if (isObject(props.data[key])) {
@@ -30,22 +51,7 @@ for (const key in props.data) {
   }
 }
 rearrangedData.value = { ...nonObjectData.value, ...objectData.value };
-const onImageClicked = (url) => {
-  window.open(url, '_blank');
-};
 
-const isArray = (item) => Array.isArray(item);
-const isItemString = (item) =>
-  typeof item === 'string' && item.endsWith('.png');
-
-const camelToCapitalizedWords = (camelCase) => {
-  return camelCase
-    .replace(/([A-Z])/g, ' $1') // Insert space before each capital letter
-    .toLowerCase() // Change everything to lower case
-    .split(' ') // Split by space to get an array of words
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-    .join(' ');
-};
 </script>
 
 <template>
@@ -69,7 +75,7 @@ const camelToCapitalizedWords = (camelCase) => {
                 <Label class="text-gray-500" size="m">{{ camelToCapitalizedWords(key) }}:</Label>
               </template>
               <template #content>
-                <RecursiveAccordion :data="item" />
+                <RecursiveAccordion :data="isObjectAndCast(item)" />
               </template>
             </Accordion>
           </div>
@@ -88,7 +94,7 @@ const camelToCapitalizedWords = (camelCase) => {
                   v-else
                   class="add-image cursor-pointer border-2"
                   width="64"
-                  :link="item"
+                  :link="String(item)"
                   @click="() => onImageClicked(item)"
                 />
               </FlexCell>

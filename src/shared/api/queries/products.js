@@ -10,7 +10,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           active
           type
           proxyId
-          taxRate {
+          vatRate {
             id
             name
             rate
@@ -210,7 +210,7 @@ export const getProductQuery = gql`
       active
       type
       proxyId
-      taxRate {
+      vatRate {
         id
         rate
         name

@@ -1,48 +1,99 @@
 <script setup lang="ts">
 
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
-import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../shared/components/organisms/general-form/formConfig";
-import { FieldType } from "../../../../shared/utils/constants";
+import {useI18n} from 'vue-i18n';
+import {useRoute, useRouter} from "vue-router";
+import {onMounted, Ref, ref} from "vue";
+import {GeneralForm} from "../../../../shared/components/organisms/general-form";
+import {FieldConfigs, FormConfig, FormType, updateFieldConfigs} from "../../../../shared/components/organisms/general-form/formConfig";
+import {FieldType} from "../../../../shared/utils/constants";
 import {updatePurchaseOrderMutation} from "../../../../shared/api/mutations/purchasing.js";
-import { getPurchaseOrderQuery } from "../../../../shared/api/queries/purchasing.js";
-import {baseFormConfigConstructor} from "../configs";
-import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
+import {getPurchaseOrderQuery} from "../../../../shared/api/queries/purchasing.js";
+import {baseFormConfigConstructor, invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../configs";
+import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
+const supplierId = ref(null);
+const fieldsToClear: Ref<string[] | null> = ref(null);
+const formConfig: Ref<FormConfig | null> = ref(null);
 
-const baseForm = {
-  ...baseFormConfigConstructor(
-    t,
-    FormType.EDIT,
-    updatePurchaseOrderMutation,
-    'updatePurchaseOrder',
-      route.query.supplierId ? route.query.supplierId.toString() : null
-  ),
-};
+onMounted(() => {
+  const baseForm = {
+    ...baseFormConfigConstructor(
+      t,
+      FormType.EDIT,
+      updatePurchaseOrderMutation,
+      'updatePurchaseOrder',
+        route.query.supplierId ? route.query.supplierId.toString() : null
+    ),
+  };
 
-const formConfig = {
-  ...baseForm,
-  mutationId: id.value.toString(),
-  query: getPurchaseOrderQuery,
-  queryVariables: { id: id.value },
-  queryDataKey: 'purchaseOrder',
-  fields: [
-    {
-      type: FieldType.Hidden,
-      name: 'id',
-      value: id.value.toString()
-    },
-    ...baseForm.fields
-  ]
+  formConfig.value = {
+    ...baseForm,
+    mutationId: id.value.toString(),
+    query: getPurchaseOrderQuery,
+    queryVariables: {id: id.value},
+    queryDataKey: 'purchaseOrder',
+    fields: [
+      {
+        type: FieldType.Hidden,
+        name: 'id',
+        value: id.value.toString()
+      },
+      ...baseForm.fields
+    ]
+  } as FormConfig;
+});
+
+
+
+const handleFormUpdate = (form) => {
+  fieldsToClear.value = []
+
+  const newSupplierId = typeof form.supplier === 'object' && form.supplier !== null? form.supplier.id : form.supplier;
+  if (newSupplierId !== supplierId.value) {
+    const initialSupplierId = supplierId.value;
+    supplierId.value = newSupplierId;
+
+    const fieldConfigs: FieldConfigs = {
+      'invoiceAddress': {
+        enabled: {
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": supplierId.value }}}},
+          createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, supplierId.value)
+        },
+        disabled: {
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null
+        }
+      },
+      'shippingAddress': {
+        enabled: {
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": supplierId.value }}}},
+          createOnFlyConfig: shippingAddressOnTheFlyConfig(t, supplierId.value)
+        },
+        disabled: {
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null
+        }
+      }
+    };
+
+    updateFieldConfigs(supplierId, fieldConfigs, formConfig);
+
+    // we don't want to clear the values on render
+    if (initialSupplierId === null) {
+      return;
+    }
+    fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
+  }
 };
 
 </script>
@@ -53,13 +104,11 @@ const formConfig = {
     <template v-slot:breadcrumbs>
       <Breadcrumbs
           :links="[{ path: { name: 'purchasing.orders.list' }, name: t('purchasing.orders.title') },
-                   { path: { name: 'purchasing.order.edit' }, name: t('purchasing.orders.edit.title') }]" />
+                   { path: { name: 'purchasing.orders.edit', params: {id: id} }, name: t('purchasing.orders.edit.title') }]" />
     </template>
 
    <template v-slot:content>
-      <Card class="p-2 w-1/2">
-        <GeneralForm :config="formConfig" />
-      </Card>
+     <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

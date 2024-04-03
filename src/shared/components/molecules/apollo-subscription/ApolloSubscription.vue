@@ -1,15 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import apolloClient from '../../../../../apollo-client';
 import { onBeforeRouteLeave } from 'vue-router';
 
-const props = defineProps({
-  subscription: {
-    type: Object,
-    required: true
-  },
-  variables: Object
-});
+const props = defineProps<{ subscription: any; variables?: Object }>();
 
 const result = ref(null);
 const error = ref(null);

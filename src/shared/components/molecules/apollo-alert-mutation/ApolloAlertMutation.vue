@@ -1,7 +1,10 @@
 <script setup lang="ts">
+
 import {defineProps, defineEmits, onMounted} from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
+import { SweetAlertOptions } from 'sweetalert2';
+import { Toast } from "../../../modules/toast";
 
 interface SwalOptions {
   title?: string;
@@ -16,13 +19,7 @@ interface SwalOptions {
 
 const { t } = useI18n();
 
-const props = defineProps({
-  mutation: Object,
-  mutationVariables: Object,
-  refetchQueries: Function,
-  swalOptions: Object as () => SwalOptions,
-  swalClasses: Object as () => SwalClasses
-});
+const props = defineProps<{ mutation: object | string; mutationVariables?: object; refetchQueries?: Function; swalOptions?: SwalOptions; swalClasses?: SwalClasses  }>();
 
 interface SwalClasses {
   popup?: string;
@@ -50,10 +47,10 @@ const defaultSwalClasses = {
 const confirmAndMutate = async (mutate) => {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: { ...defaultSwalClasses, ...props.swalClasses },
-    buttonsStyling: false // Ensure buttonsStyling is always false
+    buttonsStyling: false
   });
 
-  const result = await swalWithBootstrapButtons.fire({ ...defaultSwalOptions, ...props.swalOptions });
+  const result = await swalWithBootstrapButtons.fire({ ...defaultSwalOptions, ...props.swalOptions } as SweetAlertOptions);
 
   if (result.isConfirmed) {
     await mutate();
@@ -64,6 +61,21 @@ const emit = defineEmits(['done']);
 
 const handleDone = (result) => {
   emit('done', result);
+  Toast.success(t('shared.alert.toast.deleteSuccess'));
+};
+
+const showError = (error) => {
+  if (error) {
+      const message = error.toString();
+      const deletionErrorPattern = /Cannot delete some instances of model '(.+?)' because they are referenced through protected foreign keys: (.+?)\./;
+      const match = message.match(deletionErrorPattern);
+      if (match && match[1]) {
+
+        Toast.error(t('shared.alert.toast.protectedDelete'));
+      } else {
+        Toast.error(message);
+      }
+  }
 };
 
 </script>
@@ -74,10 +86,10 @@ const handleDone = (result) => {
     :variables="mutationVariables"
     :refetch-queries="refetchQueries"
     @done="handleDone"
+    @error="showError"
   >
-    <template v-slot="{ mutate, loading, error }">
+    <template v-slot="{ mutate, loading }">
       <slot :loading="loading" :confirmAndMutate="() => confirmAndMutate(mutate)" />
-      <p v-if="error">An error occurred: {{ error }}</p>
     </template>
   </ApolloMutation>
 </template>

@@ -42,6 +42,47 @@ const handleRefreshRequested = () => {
   }
 };
 
+interface MeCompanySubscriptionResult {
+  myMultiTenantCompany: {
+    name: string;
+    language: string;
+    address1: string;
+    address2: string;
+    postcode: string;
+    city: string;
+    email: string;
+    phoneNumber: string;
+    vatNumber: string;
+    website: string;
+    multitenantuserSet: MultiTenantUser[];
+  };
+}
+
+interface MultiTenantUser {
+  id: string;
+  isActive: boolean;
+  email: string;
+  lastName: string;
+  firstName: string;
+  isMultiTenantCompanyOwner: boolean;
+  invitationAccepted: boolean;
+}
+
+const getCompany = (result) => {
+  const r: MeCompanySubscriptionResult = result;
+  return r.myMultiTenantCompany;
+}
+
+const getLanguage = (result) => {
+  const r: MeCompanySubscriptionResult = result;
+  return r.myMultiTenantCompany.language;
+}
+
+const getUsers = (result) => {
+  const r: MeCompanySubscriptionResult = result;
+  return r.myMultiTenantCompany.multitenantuserSet;
+}
+
 </script>
 
 <template>
@@ -61,19 +102,15 @@ const handleRefreshRequested = () => {
                   </Button>
                 </div>
                   <div v-if="!editView">
-                    <ShowCompanyProfile :company-data="result.myMultiTenantCompany"/>
+                    <ShowCompanyProfile :company-data="getCompany(result)"/>
                   </div>
                   <div v-else>
-                    <CompanyProfileEditForm :company-data="result.myMultiTenantCompany" @unsaved-changes="handleUnsavedChanges"
+                    <CompanyProfileEditForm :company-data="getCompany(result)" @unsaved-changes="handleUnsavedChanges"
                                             @update-complete="handleUpdateComplete"/>
                   </div>
-                  <p v-if="error">{{ error.message }}</p>
-
               </div>
               <div class="panel mt-3">
-                <CompanyMembersList :members="result.myMultiTenantCompany.multitenantuserSet"
-                                    :language="result.myMultiTenantCompany.language"
-                                    @refresh-requested="handleRefreshRequested" />
+                <CompanyMembersList :members="getUsers(result)" :language="getLanguage(result)" @refresh-requested="handleRefreshRequested" />
               </div>
               </template>
             </template>

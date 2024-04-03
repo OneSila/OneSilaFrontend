@@ -8,6 +8,7 @@ import { Modal } from "../.././../../atoms/modal"
 import { FilterModal } from "../filter-modal"
 import { useRouter, useRoute } from 'vue-router';
 import { GeneralOrdering } from "../general-ordering";
+import { getLength } from "../../../../../utils";
 
 const emit = defineEmits(['filtersReset']);
 const props = defineProps<{ searchConfig: SearchConfig }>();
@@ -68,14 +69,14 @@ const resetFilters = () => {
 
 <template>
   <Button
-    v-if="searchConfig.filters?.length > 0"
+    v-if="getLength(searchConfig?.filters) > 0"
     custom-class="flex items-center ml-2 p-2 w-10 h-10 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
     @click="showFilterModal = true"
   >
     <Icon name="filter" class="mx-auto" />
   </Button>
 
-  <GeneralOrdering :search-config="searchConfig" v-if="searchConfig.orders?.length > 0"  />
+  <GeneralOrdering :search-config="searchConfig" v-if="getLength(searchConfig?.orders) > 0"  />
 
     <Button
         v-if="hasFilters"
@@ -86,10 +87,10 @@ const resetFilters = () => {
   </Button>
 
 
-  <Modal v-if="searchConfig.filters?.length > 0" v-model="showFilterModal" @closed="showFilterModal = false">
+  <Modal v-if="getLength(searchConfig?.filters) > 0" v-model="showFilterModal" @closed="showFilterModal = false">
     <FilterModal
       :filters="props.searchConfig.filters"
-      :cols="props.searchConfig.cols"
+      :cols="props.searchConfig.cols !== undefined ? props.searchConfig.cols : 1"
       @cancel-clicked="handleCancel"
       @submit-clicked="handleSubmit"
     />

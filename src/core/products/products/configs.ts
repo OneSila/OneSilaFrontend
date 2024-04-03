@@ -1,10 +1,22 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
-import {FieldType, ProductType, Url} from '../../../shared/utils/constants.js'
-import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
-import {productsQuery} from "../../../shared/api/queries/products.js"
-import {taxesQuery} from "../../../shared/api/queries/taxes";
+import {CreateOnTheFly, FormConfig, FormField, FormType, QueryFormField} from '../../../shared/components/organisms/general-form/formConfig';
+import { FieldType, ProductType, Url } from '../../../shared/utils/constants.js'
+import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
+import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { productsQuery } from "../../../shared/api/queries/products.js"
+import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
+import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
+import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 
+const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseVatRateConfigConstructor(
+      t,
+      FormType.CREATE,
+      createVatRateMutation,
+      'createVatRate'
+    ) as FormConfig
+  }
+})
 export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
@@ -26,6 +38,23 @@ const getTypeField = (type, t): FormField | null => {
   return null;
 }
 
+export const getVatRateField = (t): QueryFormField => {
+    return {
+      type: FieldType.Query,
+      name: 'vatRate',
+      label: t('products.products.labels.vatRate'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: vatRatesQuery,
+      dataKey: 'vatRates',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      placeholder: t('products.products.placeholders.vatRate'),
+      createOnFlyConfig: vatRateOnTheFlyConfig(t)
+    }
+}
 const getFields = (type, t): FormField[] => {
   const fields = [
     getTypeField(type, t),
@@ -44,16 +73,17 @@ const getFields = (type, t): FormField[] => {
     },
     {
       type: FieldType.Query,
-      name: 'taxRate',
-      label: t('products.products.labels.taxRate'),
+      name: 'vatRate',
+      label: t('products.products.labels.vatRate'),
       labelBy: 'name',
       valueBy: 'id',
-      query: taxesQuery,
-      dataKey: 'taxes',
+      query: vatRatesQuery,
+      dataKey: 'vatRates',
       isEdge: true,
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: vatRateOnTheFlyConfig(t)
     },
     {
       type: FieldType.Checkbox,
@@ -122,7 +152,7 @@ export const listingQueryKey = 'products';
 export const listingQuery = productsQuery;
 
 
-export interface TaxRate {
+export interface VatRate {
   id: string;
   name: string;
   rate: number;
@@ -134,6 +164,6 @@ export interface Product {
   sku: string;
   active: boolean;
   type: string;
-  taxRate: TaxRate;
+  vatRate: VatRate;
   alwaysOnStock: boolean;
 }

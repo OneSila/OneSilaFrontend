@@ -13,7 +13,6 @@ const router = useRouter();
 const props = defineProps<{ config: ShowConfig;}>();
 
 const handleDelete = (response) => {
-  alert('Deleted!');
 
   if (props.config.deleteUrl) {
       router.push(props.config.deleteUrl);
@@ -32,7 +31,7 @@ const handleDelete = (response) => {
       </Link>
     </FlexCell>
     <FlexCell class="mr-2">
-      <ApolloAlertMutation v-if="config.addDelete" :mutation="config.deleteMutation" :mutation-variables="config.deleteVariables" @done="handleDelete">
+      <ApolloAlertMutation v-if="config.addDelete && config.deleteMutation" :mutation="config.deleteMutation" :mutation-variables="config.deleteVariables" @done="handleDelete">
         <template v-slot="{ loading, confirmAndMutate }">
           <Button :disabled="loading" custom-class="btn btn-danger" @click="confirmAndMutate">{{ t('shared.button.delete') }}</Button>
         </template>

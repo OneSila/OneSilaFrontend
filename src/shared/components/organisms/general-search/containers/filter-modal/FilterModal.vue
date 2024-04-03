@@ -3,7 +3,8 @@ import { useI18n } from 'vue-i18n';
 
 import { reactive, computed } from 'vue';
 import { Card } from '../../../../../components/atoms/card';
-import { BaseFilter } from "../../searchConfig";
+import { Button } from '../../../../../components/atoms/button';
+import { SearchFilter } from "../../searchConfig";
 import { FieldType } from '../../../../../utils/constants'
 
 import { FilterBoolean } from './containers/filter-boolean';
@@ -16,7 +17,7 @@ import { FilterCheckbox } from './containers/filter-checkbox';
 
 const { t } = useI18n();
 
-const props = defineProps<{ filters: BaseFilter[], cols: number }>();
+const props = defineProps<{ filters: SearchFilter[] | undefined, cols: number }>();
 const emit = defineEmits(['cancel-clicked', 'submit-clicked']);
 const filterValues = reactive({});
 
@@ -62,8 +63,8 @@ const submit = () => {
     </div>
 
     <div class="flex justify-end gap-4 mt-4">
-      <button class="btn btn-primary" @click="submit">{{ t('shared.button.submit') }}</button>
-      <button class="btn btn-danger" @click="cancel">{{ t('shared.button.cancel') }}</button>
+      <Button class="btn btn-outline-dark" @click="cancel">{{ t('shared.button.cancel') }}</Button>
+      <Button class="btn btn-primary" @click="submit">{{ t('shared.button.submit') }}</Button>
     </div>
   </Card>
 </template>

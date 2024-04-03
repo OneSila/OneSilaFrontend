@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import { ref } from 'vue';
+import {Ref, ref} from 'vue';
 import Logo from "../../../shared/components/molecules/logo/Logo.vue";
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
 import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
@@ -24,7 +24,7 @@ const router = useRouter();
 const route = useRoute();
 const token = ref(route.params.token);
 const auth = injectAuth();
-const errors = ref([]);
+const errors: Ref<string[]> = ref([]);
 
 const executeMutation = async () => {
   try {
@@ -54,7 +54,14 @@ const executeMutation = async () => {
     }
   } catch (err) {
     console.error('Token authentication failed:', err);
-    errors.value = err.graphQLErrors.map(x => x.message);
+
+    const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
+
+    if (graphqlError.graphQLErrors) {
+      errors.value = graphqlError.graphQLErrors.map(x => x.message);
+    } else {
+      errors.value = ['An unexpected error occurred'];
+    }
   }
 };
 
@@ -76,7 +83,7 @@ executeMutation();
     </template>
 
     <template v-slot:left-section>
-      <Logo src="/src/assets/images/auth/logo.png" alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
+      <Logo alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
       <Flex class="mt-24 hidden lg:block">
           <FlexCell class="w-full max-w-[430px] mx-auto">
             <Image :source="recoverAccount" alt="Cover Image" class="w-full" />
@@ -85,7 +92,7 @@ executeMutation();
     </template>
 
     <template v-slot:right-section-header>
-      <Logo src="/src/assets/images/auth/logo-white.svg" alt="Logo" to="/" class="w-8 block lg:hidden" />
+      <Logo alt="Logo" to="/" class="w-8 block lg:hidden" />
       <LanguageDropdown class="ms-auto w-max"/>
     </template>
 

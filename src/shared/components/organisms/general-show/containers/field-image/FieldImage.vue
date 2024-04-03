@@ -14,6 +14,7 @@ const props = defineProps<{
 const imageUrl = computed(() => {
   return props.field.basePath ? `${props.field.basePath}/${props.modelValue}${props.field.suffix || ''}` : props.modelValue;
 });
+
 </script>
 
 <template>

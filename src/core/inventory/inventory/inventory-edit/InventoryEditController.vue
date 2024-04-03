@@ -4,28 +4,26 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
 import { updateInventoryMutation } from "../../../../shared/api/mutations/inventory.js";
 import { getInventoryQuery } from "../../../../shared/api/queries/inventory.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../shared/components/atoms/card";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 
 const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
   updateInventoryMutation,
   'updateInventory',
-  route.query.productId ? route.query.productId.toString() : null,
-  route.query.variationId ? route.query.variationId.toString() : null,
+  route.query.productId ? route.query.productId.toString() : null
 );
 
 const formConfig = {
@@ -56,9 +54,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2 w-1/2">
-        <GeneralForm :config="formConfig" />
-      </Card>
+     <GeneralForm :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 </template>

@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import {computed} from 'vue';
-import {FormConfig} from '../../formConfig';
-import {FieldType} from "../../../../../utils/constants";
 
-import {FieldBoolean} from '../form-fields/field-boolean';
-import {FieldDate} from '../form-fields/field-date';
-import {FieldCheckbox} from '../form-fields/field-checkbox';
-import {FieldChoice} from '../form-fields/field-choice';
-import {FieldProxyChoice} from '../form-fields/field-proxy-choice';
-import {FieldQuery} from '../form-fields/field-query';
-import {FieldSlider} from '../form-fields/field-slider';
-import {FieldValue} from '../form-fields/field-value';
-import {Label} from '../../../../atoms/label';
+import { computed } from 'vue';
+import { Icon } from "../../../../atoms/icon";
+import { Label } from '../../../../atoms/label';
+
+import { FormConfig } from '../../formConfig';
+import { FieldType } from "../../../../../utils/constants";
+import { FieldBoolean } from '../form-fields/field-boolean';
+import { FieldDate } from '../form-fields/field-date';
+import { FieldCheckbox } from '../form-fields/field-checkbox';
+import { FieldChoice } from '../form-fields/field-choice';
+import { FieldProxyChoice } from '../form-fields/field-proxy-choice';
+import { FieldQuery } from '../form-fields/field-query';
+import { FieldSlider } from '../form-fields/field-slider';
+import { FieldValue } from '../form-fields/field-value';
+import { FieldTextarea } from "../form-fields/field-textarea";
+import { FieldPhone } from "../form-fields/field-phone";
+import { FieldEmail } from "../form-fields/field-email";
 
 const props = defineProps<{
   config: FormConfig;
   form: Record<string, any>;
+  errors?: Record<string, string> | null
 }>();
 
 const getFieldComponent = (type) => {
@@ -28,31 +34,53 @@ const getFieldComponent = (type) => {
     case FieldType.Query: return FieldQuery;
     case FieldType.Slider: return FieldSlider;
     case FieldType.Text: return FieldValue;
+    case FieldType.Textarea: return FieldTextarea;
+    case FieldType.Phone: return FieldPhone;
+    case FieldType.Email: return FieldEmail;
     default: return null;
   }
 };
 
-const gridClass = computed(() => `grid grid-cols-1 ${props.config.cols === 2 ? 'md:grid-cols-2' : ''} gap-3`);
 const computedStyle = computed(() => props.config.customStyle || '');
 
 </script>
 
 <template>
-  <div :class="computedStyle">
-    <Flex vertical :class="gridClass">
-      <template v-for="field in config.fields" :key="field.name">
-        <FlexCell v-if="field.type !== FieldType.Hidden">
-          <Label semi-bold>{{ field.label }}{{ !field.optional && field.type !== FieldType.Hidden && field.label ? '*' : '' }}</Label>
-        </FlexCell>
-        <FlexCell v-if="field.type !== FieldType.Hidden">
+    <template v-for="field in config.fields" :key="field.name">
+      <div class="col-span-full" :class="computedStyle">
+        <Flex v-if="field.type !== FieldType.Hidden">
+          <FlexCell center>
+            <label class="font-semibold block text-sm leading-6 text-gray-900">{{ field.label }}{{ !field.optional && field.label ? '*' : '' }}</label>
+          </FlexCell>
+          <FlexCell center>
+            <div v-if="errors && errors[field.name]" class="text-danger text-small blink-animation ml-1 mb-1">
+              <Icon size="sm" name="exclamation-circle" />
+              <span class="ml-1">{{ errors[field.name] }}</span>
+            </div>
+          </FlexCell>
+        </Flex>
+        <div class="mt-2" v-if="field.type !== FieldType.Hidden">
           <component
             v-model="form[field.name]"
-            :model-value="form[field.name]"
             :is="getFieldComponent(field.type)"
             :field="field"
           />
-        </FlexCell>
-      </template>
-    </Flex>
-  </div>
+        </div>
+        <p v-if="field.help" class="mt-3 text-sm leading-6 text-gray-600">{{ field.help }}</p>
+      </div>
+    </template>
 </template>
+
+<style scoped>
+
+.blink-animation {
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+</style>

@@ -2,20 +2,22 @@ interface Route {
   name: string;
 }
 
-interface SubItem {
+export interface SubItem {
   route: Route;
   title: string;
 }
 
-interface Item {
+export interface Item {
   title: string;
   icon: string;
   subItemsKey: string;
+  route?: Route;
   subItems: SubItem[];
 }
 
-interface NavSection {
+export interface NavSection {
   items: Item[];
+  title?: string;
 }
 
 export const navSections: NavSection[] = [
@@ -141,8 +143,8 @@ export const settingsSection: NavSection = {
           title: 'settings.currencies.title'
         },
         {
-          route: { name: 'settings.taxes.list' },
-          title: 'settings.taxes.title'
+          route: { name: 'settings.vatRates.list' },
+          title: 'settings.vatRates.title'
         },
         {
           route: { name: 'settings.units.list' },

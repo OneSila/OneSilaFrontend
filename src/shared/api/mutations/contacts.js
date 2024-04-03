@@ -45,6 +45,38 @@ mutation createCompanyAddressMutation($data: AddressInput!) {
 }
 `;
 
+export const createCompanyInvoiceAddressMutation = gql`
+mutation createCompanyInvoiceAddressMutation($data: InvoiceAddressInput!) {
+  createInvoiceAddress(data: $data) {
+        id
+        isInvoiceAddress
+        isShippingAddress
+        address1
+        address2
+        address3
+        postcode
+        city
+        country
+  }
+}
+`;
+
+export const createCompanyShippingAddressMutation = gql`
+mutation createCompanyShippingAddressMutation($data: ShippingAddressInput!) {
+  createShippingAddress(data: $data) {
+        id
+        isInvoiceAddress
+        isShippingAddress
+        address1
+        address2
+        address3
+        postcode
+        city
+        country
+  }
+}
+`;
+
 export const updateCompanyAddressMutation = gql`
 mutation updateCompanyAddressMutation($data: AddressPartialInput!) {
   updateAddress(data: $data) {

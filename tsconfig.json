@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
+    "skipLibCheck": true,
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
@@ -10,10 +11,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "lib": ["esnext", "dom"],
-    "types": [
-      "vite-plugin-vue-gql/client"
-    ]
+    "lib": ["esnext", "dom"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

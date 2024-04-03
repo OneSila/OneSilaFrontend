@@ -3,19 +3,19 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
 import { Ref, ref} from "vue";
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
 import { Card } from "../../../../../../../shared/components/atoms/card";
-import { baseFormConfigConstructor } from "../../notes/configs";
+import { baseFormConfigConstructor } from "../configs";
 import { getOrderNoteQuery } from "../../../../../../../shared/api/queries/salesOrders.js";
 import { updateOrderNoteMutation } from "../../../../../../../shared/api/mutations/salesOrders.js";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
-const id = ref(route.params.id);
+const id = ref(String(route.params.id));
 const orderId = ref(route.params.orderId);
 const supplierId = ref();
 
@@ -61,7 +61,7 @@ const formConfig: Ref<any| null> = ref(null);
 
    <template v-slot:content>
       <Card class="p-2" v-if="formConfig !== null">
-        <GeneralForm :config="formConfig" />
+        <GeneralForm :config="formConfig as FormConfig" />
       </Card>
    </template>
   </GeneralTemplate>

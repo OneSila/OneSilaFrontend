@@ -7,6 +7,11 @@ import SideItem from "./SideItem.vue";
 
 const activeDropdown: any = ref('');
 const { t } = useI18n();
+
+const updateActiveDropdown = (newValue) => {
+  activeDropdown.value = newValue;
+};
+
 </script>
 
 <template>
@@ -17,7 +22,7 @@ const { t } = useI18n();
             <span>{{ t(section.title) }}</span>
          </h2>
         <template v-for="item in section.items">
-          <SideItem :item="item" :active-dropdown="activeDropdown.value"/>
+          <SideItem :item="item" :active-dropdown="activeDropdown" @update:activeDropdown="updateActiveDropdown" />
         </template>
       </template>
     </ul>

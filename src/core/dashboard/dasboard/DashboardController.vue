@@ -722,60 +722,60 @@
                                 <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
                                     <td class="min-w-[150px] text-black dark:text-white">
                                         <div class="flex items-center">
-                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-6.jpeg" alt="avatar" />
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="" alt="avatar" />
                                             <span class="whitespace-nowrap">Luke Ivory</span>
                                         </div>
                                     </td>
                                     <td class="text-primary">Headphone</td>
-                                    <td><router-link to="/apps/invoice/preview">#46894</router-link></td>
+                                    <td>#46894</td>
                                     <td>$56.07</td>
                                     <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
                                 </tr>
                                 <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
                                     <td class="text-black dark:text-white">
                                         <div class="flex items-center">
-                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-7.jpeg" alt="avatar" />
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="" alt="avatar" />
                                             <span class="whitespace-nowrap">Andy King</span>
                                         </div>
                                     </td>
                                     <td class="text-info">Nike Sport</td>
-                                    <td><router-link to="/apps/invoice/preview">#76894</router-link></td>
+                                    <td>#76894</td>
                                     <td>$126.04</td>
                                     <td><span class="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span></td>
                                 </tr>
                                 <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
                                     <td class="text-black dark:text-white">
                                         <div class="flex items-center">
-                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-8.jpeg" alt="avatar" />
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="" alt="avatar" />
                                             <span class="whitespace-nowrap">Laurie Fox</span>
                                         </div>
                                     </td>
                                     <td class="text-warning">Sunglasses</td>
-                                    <td><router-link to="/apps/invoice/preview">#66894</router-link></td>
+                                    <td>#66894</td>
                                     <td>$56.07</td>
                                     <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
                                 </tr>
                                 <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
                                     <td class="text-black dark:text-white">
                                         <div class="flex items-center">
-                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-9.jpeg" alt="avatar" />
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="" alt="avatar" />
                                             <span class="whitespace-nowrap">Ryan Collins</span>
                                         </div>
                                     </td>
                                     <td class="text-danger">Sport</td>
-                                    <td><router-link to="/apps/invoice/preview">#75844</router-link></td>
+                                    <td>#75844</td>
                                     <td>$110.00</td>
                                     <td><span class="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span></td>
                                 </tr>
                                 <tr class="text-white-dark hover:text-black dark:hover:text-white-light/90 group">
                                     <td class="text-black dark:text-white">
                                         <div class="flex items-center">
-                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="/assets/images/profile-10.jpeg" alt="avatar" />
+                                            <img class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover" src="" alt="avatar" />
                                             <span class="whitespace-nowrap">Irene Collins</span>
                                         </div>
                                     </td>
                                     <td class="text-secondary">Speakers</td>
-                                    <td><router-link to="/apps/invoice/preview">#46894</router-link></td>
+                                    <td>#46894</td>
                                     <td>$56.07</td>
                                     <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
                                 </tr>
@@ -805,7 +805,7 @@
                                         <div class="flex">
                                             <img
                                                 class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
-                                                src="/assets/images/product-headphones.jpg"
+                                                src=""
                                                 alt="avatar"
                                             />
                                             <p class="whitespace-nowrap">Headphone <span class="text-primary block text-xs">Digital</span></p>
@@ -827,7 +827,7 @@
                                         <div class="flex">
                                             <img
                                                 class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
-                                                src="/assets/images/product-shoes.jpg"
+                                                src=""
                                                 alt="avatar"
                                             />
                                             <p class="whitespace-nowrap">Shoes <span class="text-warning block text-xs">Faishon</span></p>
@@ -849,7 +849,7 @@
                                         <div class="flex">
                                             <img
                                                 class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
-                                                src="/assets/images/product-watch.jpg"
+                                                src=""
                                                 alt="avatar"
                                             />
                                             <p class="whitespace-nowrap">Watch <span class="text-danger block text-xs">Accessories</span></p>
@@ -871,7 +871,7 @@
                                         <div class="flex">
                                             <img
                                                 class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
-                                                src="/assets/images/product-laptop.jpg"
+                                                src=""
                                                 alt="avatar"
                                             />
                                             <p class="whitespace-nowrap">Laptop <span class="text-primary block text-xs">Digital</span></p>
@@ -892,7 +892,7 @@
                                         <div class="flex">
                                             <img
                                                 class="w-8 h-8 rounded-md ltr:mr-3 rtl:ml-3 object-cover"
-                                                src="/assets/images/product-camera.jpg"
+                                                src=""
                                                 alt="avatar"
                                             />
                                             <p class="whitespace-nowrap">Camera <span class="text-primary block text-xs">Digital</span></p>

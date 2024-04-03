@@ -1,13 +1,15 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField, NestedTextField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
 import { customersQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
 import {deleteSalesPriceListMutation} from "../../../shared/api/mutations/salesPrices.js";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {customerOnTheFlyConfig} from "../customers/configs";
 
 const getSubmitUrl = (customerId) => {
   if (customerId) {
@@ -46,6 +48,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         multiple: true,
         filterable: true,
         formMapIdentifier: 'id',
+        createOnFlyConfig: customerOnTheFlyConfig(t)
     };
   }
 }
@@ -84,6 +87,7 @@ const getFields = (customerId, t, type): FormField[] => {
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t)
     },
     getCustomerField(customerId, t, type),
     {
@@ -144,7 +148,7 @@ export const listingConfigConstructor = (t: Function, customerId: string | null 
     {
       name: 'currency',
       type: FieldType.NestedText,
-      keys: ['currency', 'isoCode'],
+      keys: ['isoCode'],
     },
     {
       name: 'vatIncluded',
@@ -195,7 +199,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       name: 'currency',
       type: FieldType.NestedText,
       label: t('shared.labels.currency'),
-      keys: ['currency', 'isoCode'],
+      keys: ['isoCode'],
       showLabel: true
     },
     {

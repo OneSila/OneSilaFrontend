@@ -1,11 +1,11 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import { eanCodesQuery } from "../../../shared/api/queries/eanCodes.js"
 import { productsQuery } from "../../../shared/api/queries/products.js"
 import { deleteEanCodeMutation } from "../../../shared/api/mutations/eanCodes.js";
-
 const getSubmitUrl = (productId) => {
   if (productId) {
     return { name: 'products.products.show', params: {id: productId}, query: {tab: 'eanCodes'} };
@@ -81,14 +81,14 @@ const getHeaders = (t, productId) => {
     ? [t('products.eanCodes.labels.eanCode')]
     : [t('products.products.labels.sku'), t('products.eanCodes.labels.eanCode')];
 }
-const getFields = (productId): ListingField[] => {
-  const commonFields: ListingField[] = [];
+const getFields = (productId): ShowField[] => {
+  const commonFields: ShowField[] = [];
 
   if (!productId) {
     commonFields.push({
-      name: 'productName',
+      name: 'product',
       type: FieldType.NestedText,
-      keys: ['product', 'sku']
+      keys: ['sku']
     });
   }
 

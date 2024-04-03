@@ -1,12 +1,15 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType, OrderStatus, ReasonForSale } from '../../../shared/utils/constants.js'
 import { OrderType, SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import { ListingConfig, ListingField, NestedTextField } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { ShowField, NestedTextField } from "../../../shared/components/organisms/general-show/showConfig";
 import { ordersQuery } from "../../../shared/api/queries/salesOrders.js"
 import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, customersQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {customerOnTheFlyConfig} from "../customers/configs";
 
 export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -67,6 +70,7 @@ const getCustomerField = (customerId, t): FormField => {
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: customerOnTheFlyConfig(t)
     };
   }
 }
@@ -84,12 +88,23 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: getSubmitUrl(customerId),
   submitAndContinueUrl: getSubmitAndContinueUrl(customerId),
+  helpSections: [
+    {
+      header: 'Reference',
+      content: 'This field is used as reference of the order :)'
+    },
+    {
+      header: 'Invoice address',
+      content: 'Invoice adress for the order'
+    }
+  ],
   fields: [
     {
       type: FieldType.Text,
       name: 'reference',
       label: t('sales.orders.labels.reference'),
       placeholder: t('sales.orders.placeholders.reference'),
+      help: 'This should be a refrence to the order.'
     },
     {
         type: FieldType.Query,
@@ -104,6 +119,7 @@ export const baseFormConfigConstructor = (
         filterable: true,
         removable: false,
         formMapIdentifier: 'id',
+        createOnFlyConfig: currencyOnTheFlyConfig(t)
     },
     getCustomerField(customerId, t),
     {
@@ -211,8 +227,8 @@ const getHeaders = (t, customerId) => {
     : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status.title'), t('sales.orders.labels.reasonForSale.title')];
 }
 
-const getFields = (customerId): ListingField[] => {
-  const commonFields: ListingField[] = [
+const getFields = (customerId): ShowField[] => {
+  const commonFields: ShowField[] = [
     { name: 'reference', type: FieldType.Text },
     { name: 'createdAt', type: FieldType.Date },
     { name: 'status', type: FieldType.Text },
@@ -220,7 +236,7 @@ const getFields = (customerId): ListingField[] => {
   ];
 
   if (!customerId) {
-    commonFields.splice(1, 0, { name: 'customerName', type: FieldType.NestedText, keys: ['customer', 'name'] } as NestedTextField);
+    commonFields.splice(1, 0, { name: 'customer', type: FieldType.NestedText, keys: ['name'] } as NestedTextField);
   }
 
   return commonFields;

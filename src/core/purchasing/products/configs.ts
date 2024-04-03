@@ -1,13 +1,16 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
-import {FieldType} from '../../../shared/utils/constants.js'
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {FieldType, ProductType} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig, ListingField, NestedTextField} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {supplierProductsQuery} from "../../../shared/api/queries/purchasing.js"
-import {deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
+import {createSupplierProductMutation, deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
-import {productVariationsQuery} from "../../../shared/api/queries/products.js";
+import {productsQuery} from "../../../shared/api/queries/products.js";
 import {suppliersQuery} from "../../../shared/api/queries/contacts.js";
+import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
+import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
+import {supplierOnTheFlyConfig} from "../suppliers/configs";
 
 const getSubmitUrl = (supplierId, productId) => {
   if (supplierId) {
@@ -50,16 +53,17 @@ const getSupplierField = (supplierId, t): FormField => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
+        createOnFlyConfig: supplierOnTheFlyConfig(t),
     };
   }
 }
 
-const getProductField = (variationId, t): FormField => {
-  if (variationId) {
+const getProductField = (productId, t): FormField => {
+  if (productId) {
     return {
       type: FieldType.Hidden,
       name: 'product',
-      value: { "id": variationId }
+      value: { "id": productId }
     };
   } else {
     return {
@@ -68,8 +72,9 @@ const getProductField = (variationId, t): FormField => {
         label:  t('shared.labels.product'),
         labelBy: 'sku',
         valueBy: 'id',
-        query: productVariationsQuery,
-        dataKey: 'productVariations',
+        query: productsQuery,
+        queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
+        dataKey: 'products',
         isEdge: true,
         multiple: false,
         filterable: true,
@@ -84,8 +89,7 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   supplierId: string | null = null,
-  productId: string | null = null,
-  variationId: string | null = null
+  productId: string | null = null
 ): FormConfig => ({
  cols: 1,
   type: type,
@@ -114,6 +118,8 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.quantity'),
       number: true,
     },
+      getProductField(productId, t),
+      getSupplierField(supplierId, t),
     {
       type: FieldType.Query,
       name: 'unit',
@@ -148,11 +154,22 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t)
     },
-    getProductField(variationId, t),
-    getSupplierField(supplierId, t)
     ],
 });
+
+export const supplierProductOnTheFlyConfig = (t: Function, supplierId: string | null = null):CreateOnTheFly => ({
+  config: {
+    ...baseFormConfigConstructor(
+      t,
+      FormType.CREATE,
+      createSupplierProductMutation,
+      'createSupplierProduct',
+        supplierId
+    ) as FormConfig
+  }
+})
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
@@ -171,8 +188,8 @@ const getHeaders = (supplierId, productId, t) => {
   return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.quantity'), t('purchasing.products.labels.supplier'), t('shared.labels.product')];
 }
 
-const getFields = (supplierId, productId): ListingField[] => {
-  const commonFields: ListingField[] = [
+const getFields = (supplierId, productId): ShowField[] => {
+  const commonFields: ShowField[] = [
     {
       name: 'name',
       type: FieldType.Text,
@@ -188,35 +205,31 @@ const getFields = (supplierId, productId): ListingField[] => {
   ];
 
   if (!supplierId) {
-    commonFields.push({ name: 'supplierName', type: FieldType.NestedText, keys: ['supplier', 'name'] });
+    commonFields.push({ name: 'supplier', type: FieldType.NestedText, keys: ['name'] });
   }
 
   if (!productId) {
-    commonFields.push({ name: 'productSku', type: FieldType.NestedText, keys: ['product', 'sku'] });
+    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['sku'] });
   }
 
 
   return commonFields;
 }
 
-const getUrlQueryParams = (supplierId: string | null = null, productId: string | null = null, variationId: string | null = null): Record<string, string> | undefined => {
+const getUrlQueryParams = (supplierId: string | null = null, productId: string | null = null): Record<string, string> | undefined => {
   const params: Record<string, string> = {};
 
   if (supplierId) {
     params.supplierId = supplierId;
   }
-  if (productId && variationId) {
+  if (productId) {
     params.productId = productId;
-    params.variationId = variationId;
   }
 
   return Object.keys(params).length > 0 ? params : undefined;
 }
 
-export const listingConfigConstructor = (t: Function,
-                                         supplierId: string | null = null,
-                                         productId: string | null = null,
-                                         variationId: string | null = null
+export const listingConfigConstructor = (t: Function, supplierId: string | null = null, productId: string | null = null
 ): ListingConfig => ({
   headers: getHeaders(supplierId, productId, t),
   fields: getFields(supplierId, productId),
@@ -224,7 +237,7 @@ export const listingConfigConstructor = (t: Function,
   addActions: true,
   addEdit: true,
   editUrlName: 'purchasing.product.edit',
-  urlQueryParams: getUrlQueryParams(supplierId, productId, variationId),
+  urlQueryParams: getUrlQueryParams(supplierId, productId),
   addDelete: true,
   addPagination: true,
   deleteMutation: deleteSupplierProductMutation,

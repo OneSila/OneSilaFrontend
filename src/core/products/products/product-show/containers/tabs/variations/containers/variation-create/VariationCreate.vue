@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {defineEmits, ref} from 'vue';
+import {defineEmits, ref, Ref} from 'vue';
 import {Product} from "../../../../../../configs";
 import {useI18n} from "vue-i18n";
 import {Button} from "../../../../../../../../../shared/components/atoms/button";
@@ -13,8 +13,12 @@ const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
 const emit = defineEmits(['variationAdded']);
 
+export interface VariationForm {
+  variation: string;
+  quantity: string;
+}
 
-const form = ref({
+const form: Ref<VariationForm> = ref({
   variation: '',
   quantity: ''
 });

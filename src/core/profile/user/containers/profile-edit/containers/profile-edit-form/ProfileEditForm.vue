@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { updateMeMutation } from "./../../../../../../../shared/api/mutations/me.js";
-import { TextInputPrepend } from '../../../../../../../shared/components/atoms/text-input-prepend';
+import { TextInputPrepend } from '../../../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import IconWhatsApp from '../../../../../../../shared/components/atoms/icons/icon-whatsapp.vue';
 import IconTelegram from '../../../../../../../shared/components/atoms/icons/icon-telegram.vue';
@@ -12,6 +12,8 @@ import { Label } from "../../../../../../../shared/components/atoms/label";
 import { timezonesQuery } from "../../../../../../../shared/api/queries/languages.js";
 
 import { useI18n } from 'vue-i18n';
+import {PhoneNumberInput} from "../../../../../../../shared/components/atoms/input-phone-number";
+import {Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ meData: MeData }>();
@@ -39,7 +41,7 @@ const getMutationVariables = () => {
 };
 
 const afterUpdate = () => {
-  alert(t('profile.changesMade'));
+  Toast.success(t('profile.changesMade'));
   emit('updateComplete');
 };
 
@@ -65,7 +67,7 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
       <h6 class="text-lg font-bold mb-5">{{ t('profile.labels.generalInformation') }}</h6>
       <div class="flex flex-col sm:flex-row">
         <div class="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
-          <img alt="" class="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" src="/assets//images/profile-34.jpeg"/>
+          <img alt="" class="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" src=""/>
         </div>
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
@@ -80,23 +82,13 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
             </TextInputPrepend>
           </div>
           <div>
-            <TextInputPrepend id="mobileNumber" v-model="form.mobileNumber" :label="t('profile.labels.mobileNumber')"
-                              :placeholder="t('profile.placeholders.mobileNumber')">
-              <Icon name="phone"/>
-            </TextInputPrepend>
+              <PhoneNumberInput v-model:model-value="form.mobileNumber" :label="t('profile.labels.mobileNumber')" />
           </div>
           <div>
-            <TextInputPrepend id="whatsappNumber" v-model="form.whatsappNumber" :label="t('profile.labels.whatsappNumber')"
-                              :placeholder="t('profile.placeholders.whatsappNumber')">
-              <IconWhatsApp/>
-            </TextInputPrepend>
-
+            <PhoneNumberInput v-model:model-value="form.whatsappNumber" :label="t('profile.labels.whatsappNumber')" />
           </div>
           <div>
-            <TextInputPrepend id="telegramNumber" v-model="form.telegramNumber" :label="t('profile.labels.telegramNumber')"
-                              :placeholder="t('profile.placeholders.telegramNumber')">
-              <IconTelegram/>
-            </TextInputPrepend>
+            <PhoneNumberInput v-model:model-value="form.telegramNumber" :label="t('profile.labels.telegramNumber')" />
           </div>
           <div>
             <Label>{{ t('profile.labels.timezone') }}</Label>

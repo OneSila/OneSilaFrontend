@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { onMounted, watch, reactive, computed } from 'vue';
 import Icon from "../../atoms/icon/Icon.vue";
+
 import Popper from 'vue3-popper';
 import { useI18n } from 'vue-i18n';
-const { locale } = useI18n();
 import { injectAuth, isAuthenticated, setLanguageToUser, isActive } from '../../../modules/auth';
-import { useAppStore } from '../../../../shared/plugins/store';
+import { getFlagImageSrc } from "../../../utils";
+import { useAppStore } from '../../../plugins/store';
 import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
 import { useRoute } from 'vue-router';
-
 const route = useRoute();
 
 const auth = injectAuth();
+const { locale } = useI18n();
 const app = useAppStore();
 
 app.fetchLanguages();
@@ -44,7 +45,7 @@ watch(() => auth.user.language, (newLang) => {
 }, { immediate: true });
 
 const currentFlag = computed(() => {
-  return `/src/assets/images/flags/${locale.value.toUpperCase()}.svg`;
+  return getFlagImageSrc(locale.value);
 });
 
 onMounted(() => {
@@ -68,7 +69,7 @@ onMounted(() => {
         class="flex items-center gap-2.5 rounded-lg border border-white-dark/30 bg-white px-2 py-1.5 text-white-dark hover:border-primary hover:text-primary dark:bg-black"
       >
         <div>
-          <img :src="currentFlag" alt="image" class="h-5 w-5 rounded-full object-cover" />
+          <img :src="currentFlag.toString()" alt="image" class="h-5 w-5 rounded-full object-cover" />
         </div>
         <span class="shrink-0">
           <Icon name="angle-down" />
@@ -86,7 +87,7 @@ onMounted(() => {
               >
                 <img
                   class="w-5 h-5 object-cover rounded-full"
-                  :src="`/src/assets/images/flags/${item.code.toUpperCase()}.svg`"
+                  :src="getFlagImageSrc(item.code)"
                   alt=""
                 />
                 <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>

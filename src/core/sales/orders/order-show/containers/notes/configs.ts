@@ -4,7 +4,7 @@ import { SearchConfig } from "../../../../../../shared/components/organisms/gene
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { deleteOrderNoteMutation} from "../../../../../../shared/api/mutations/salesOrders.js";
 import { orderNotesQuery } from "../../../../../../shared/api/queries/salesOrders.js";
-import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
@@ -25,10 +25,11 @@ export const baseFormConfigConstructor = (
       value: { "id": orderId}
     },
     {
-      type: FieldType.Text,
+      type: FieldType.Textarea,
       name: 'note',
       label: t('sales.orders.labels.note'),
       placeholder: t('sales.orders.placeholders.note'),
+      scroll: true,
     },
     ],
 });

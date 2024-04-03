@@ -16,11 +16,15 @@ const props = defineProps<{ companyData: MeCompanyData }>();
     <ul class="mt-5 flex flex-col max-w-[320px] m-auto space-y-4 font-semibold text-white-dark">
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="envelope"/>
-        {{ t('companyProfile.labels.email') }}: {{ props.companyData.email || '-' }}
+        {{ t('companyProfile.labels.email') }}:
+        <a v-if="props.companyData.email" :href="`mailto:${props.companyData.email}`">{{ props.companyData.email }}</a>
+        <span v-else>-</span>
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="phone"/>
-        {{ t('companyProfile.labels.phoneNumber') }}: {{ props.companyData.phoneNumber || '-' }}
+        {{ t('companyProfile.labels.phoneNumber') }}:
+        <a v-if="props.companyData.phoneNumber" :href="`tel:${props.companyData.phoneNumber}`">{{ props.companyData.phoneNumber }}</a>
+        <span v-else>-</span>
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="map-location"/>
@@ -44,7 +48,9 @@ const props = defineProps<{ companyData: MeCompanyData }>();
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="globe"/>
-        {{ t('companyProfile.labels.website') }}: {{ props.companyData.website || '-' }}
+        {{ t('companyProfile.labels.website') }}:
+        <a v-if="props.companyData.website" :href="props.companyData.website" target="_blank">{{ props.companyData.website }}</a>
+        <span v-else>-</span>
       </li>
     </ul>
   </div>

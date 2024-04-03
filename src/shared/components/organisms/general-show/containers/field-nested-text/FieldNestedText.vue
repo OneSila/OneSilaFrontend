@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { defineProps, computed } from 'vue';
 import { FieldText } from '../field-text';
-import { NestedTextField } from '../../showConfig';
-import { accessNestedProperty } from '../../../general-listing/listingConfig';
+import {NestedTextField, TextField} from '../../showConfig';
+import { accessNestedProperty } from '../../../general-show/showConfig';
 import { FieldType } from "../../../../../utils/constants";
 
 const props = defineProps<{
@@ -21,5 +21,5 @@ const modifiedField = computed(() => ({
 
 
 <template>
-  <FieldText v-if="nestedValue !== null" :field="modifiedField" :model-value="nestedValue" />
+  <FieldText v-if="nestedValue !== null" :field="modifiedField as TextField" :model-value="nestedValue" />
 </template>

@@ -4,12 +4,13 @@ import {Product} from "../../../../../../configs";
 import {useI18n} from "vue-i18n";
 import {PRODUCT_BUNDLE} from "../../../../../../../../../shared/utils/constants";
 import {productVariationsQuery} from "../../../../../../../../../shared/api/queries/products.js";
-import {TextInput} from "../../../../../../../../../shared/components/atoms/text-input";
+import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
 import {Selector} from "../../../../../../../../../shared/components/atoms/selector";
+import {VariationForm} from "./VariationCreate.vue";
 
 const { t } = useI18n();
 
-const props = defineProps<{ product: Product, form: Object }>();
+const props = defineProps<{ product: Product, form: VariationForm }>();
 
 const cleanedData = (rawData) => {
   if (rawData?.edges) {

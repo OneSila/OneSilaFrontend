@@ -3,12 +3,13 @@
 import {reactive, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import {baseFormConfigConstructor, Product} from "../../../../configs";
 import {updateProductMutation} from "../../../../../../../shared/api/mutations/products.js";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import {SubmitButtons} from "../../../../../../../shared/components/organisms/general-form/containers/submit-buttons";
+import { Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -45,7 +46,7 @@ const handleFormUpdate = (f) => {
 }
 
 const handleSubmit = (resp) => {
-  alert('Product updated!')
+  Toast.success(t('products.products.edit.updateSuccefully'))
 }
 
 </script>
@@ -53,11 +54,11 @@ const handleSubmit = (resp) => {
 <template>
   <TabContentTemplate>
     <template v-slot:buttons>
-      <SubmitButtons :form="form" :config="{...formConfig, submitLabel: t('shared.button.save')}" @submit="handleSubmit"/>
+      <SubmitButtons :form="form" :config="{...formConfig, submitLabel: t('shared.button.save')} as FormConfig" @submit="handleSubmit"/>
     </template>
 
     <template v-slot:content>
-      <GeneralForm :config="formConfig"  @form-updated="handleFormUpdate"/>
+      <GeneralForm :config="formConfig as FormConfig" @form-updated="handleFormUpdate"/>
     </template>
   </TabContentTemplate>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, defineProps } from 'vue';
-import { useRoute } from 'vue-router';
-import { useAppStore } from '../../../plugins/store';
-import { booleanifyIfNeeded, getSelectedOrderIndex } from '../../../utils'
-import { defaultSearchConfigVals, SearchConfig, BaseFilter, OrderCriteria} from '../../organisms/general-search/searchConfig'
+import {defineProps, ref, watch} from 'vue';
+import {useRoute} from 'vue-router';
+import {useAppStore} from '../../../plugins/store';
+import {booleanifyIfNeeded, getSelectedOrderIndex} from '../../../utils'
+import { defaultSearchConfigVals, SearchConfig, SearchFilter} from '../../organisms/general-search/searchConfig'
 
 const appStore = useAppStore();
 const props = defineProps<{ searchConfig: SearchConfig }>();
@@ -21,6 +21,7 @@ const after = ref<string | null>(null);
 const limit: number = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
 
 const keysToWatch = ref<string[]>([]);
+const filtersWithExactLookup = ref<Record<string, any>>({});
 appStore.setSearchConfig(props.searchConfig);
 
 if (props.searchConfig.search) {
@@ -31,8 +32,11 @@ if (props.searchConfig.orderKey) {
   keysToWatch.value.push(props.searchConfig.orderKey);
 }
 
-props.searchConfig.filters?.forEach((filter: BaseFilter) => {
+props.searchConfig.filters?.forEach((filter: SearchFilter) => {
   keysToWatch.value.push(filter.name);
+  if (filter.addExactLookup) {
+    filtersWithExactLookup.value[filter.name] = filter.exactLookupKeys || [];
+  }
 });
 
 const setPaginationVariables = (
@@ -51,7 +55,26 @@ watch(() => route.query, (newQuery) => {
   const updatedVariables = {};
   keysToWatch.value.forEach(key => {
     if (newQuery[key] !== undefined && key != props.searchConfig.orderKey) {
-      updatedVariables[key] = booleanifyIfNeeded(newQuery[key]);
+      const value = booleanifyIfNeeded(newQuery[key])
+      if (key in filtersWithExactLookup.value) {
+
+        // if we have exact lookus like go into a foreign key with an id we need to have ex: {'company: {'id': {'exact': val}}}
+        if (filtersWithExactLookup.value[key].length > 0) {
+          const nestedObject = {};
+          filtersWithExactLookup.value[key].forEach(nestedKey => {
+          nestedObject[nestedKey] = {'exact': value};
+         });
+        updatedVariables[key] = nestedObject;
+        } else {
+          // else we can have only the exact with the value like: {"type": {"exact": "VARIATION"}}
+          updatedVariables[key] = {'exact': value};
+        }
+
+      } else {
+        // if there is no lockup used we will just add the value
+        updatedVariables[key] = value;
+      }
+
       if (updatedVariables[key] === null) {
         delete updatedVariables[key];
       }

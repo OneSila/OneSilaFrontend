@@ -7,12 +7,23 @@
     "total": "Total of {num}"
   },
   "shared": {
+    "validationErrors": {
+      "required": "This field is required."
+    },
     "alert": {
       "mutationAlert": {
         "title": "Are you sure?",
         "text": "You won't be able to revert this!",
         "confirmButtonText": "Yes, delete it!",
         "cancelButtonText": "No, cancel!"
+      },
+      "toast": {
+        "submitSuccessCreate": "Your entry has been successfully created!",
+        "submitSuccessUpdate": "Your changes have been saved successfully!",
+        "deleteSuccess": "The item has been successfully deleted.",
+        "unexpectedResult": "An unexpected error occurred. Please try again later.",
+        "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
+        "somethingWentWrong": "Something went wrong!"
       }
     },
     "button": {
@@ -24,6 +35,8 @@
       "search": "Search",
       "save": "Save",
       "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
       "cancel": "Cancel",
       "saveAndContinue": "Save & Continue",
       "delete": "Delete",
@@ -33,6 +46,7 @@
       "add": "Add"
     },
     "labels": {
+      "or": "Or",
       "name": "Name",
       "active": "Active",
       "actions": "Actions",
@@ -67,7 +81,18 @@
       "language": "Enter language",
       "sku": "Enter SKU",
       "price": "Enter price",
-      "description": "Enter description"
+      "description": "Enter description",
+      "phoneInput": {
+        "countrySelector": {
+          "placeholder": "Country code",
+          "error": "Choose country",
+          "searchPlaceholder": "Search a country"
+        },
+        "phoneInput": {
+          "placeholder": "Phone number",
+          "example": "Example:"
+        }
+      }
     },
     "tabs": {
       "general": "General",
@@ -153,6 +178,15 @@
         },
         "button": {
           "createCompany": "Create Company"
+        },
+        "members": {
+          "alert": {
+            "deleteMemberSuccess": "Member was succefully deleted!",
+            "enableMemberSuccess": "Member was succefully added back!"
+          },
+          "labels": {
+            "invitationAccepted": "Invitation Accepted"
+          }
         }
       }
     },
@@ -265,7 +299,7 @@
       },
       "address": {
         "create": {
-          "title": "Create contact"
+          "title": "Create address"
         },
         "labels": {
           "addressOne": "Address Line 1",
@@ -387,12 +421,43 @@
             "variation": "Variation"
           }
         },
-        "taxRate": "Tax Rate",
+        "vatRate": "VAT Rate",
         "alwaysOnStock": "Always on Stock",
         "sku": "SKU"
       },
+      "placeholders": {
+        "vatRate": "Add a vat rate"
+      },
       "create": {
-        "title": "Create product"
+        "title": "Create product",
+        "createSuccefully": "Product was succefully created!",
+        "wizard": {
+          "stepOne": {
+            "content": "Select what product are you trying to create?",
+            "variable": {
+              "title": "Something to sell.",
+              "example": "Eg: A black pen"
+            },
+            "bundle": {
+              "title": "A bundle of various existing items.",
+              "example": "Eg: A notebook and pen sold together."
+            },
+            "configurable": {
+              "title": "A configuration of products.",
+              "example": "Eg: Let customers pick between a red or blue pen."
+            }
+          },
+          "stepTwo": {
+            "content": "Add a SKU or just auto generate it.",
+            "generate": "Generate it"
+          },
+          "stepThree": {
+            "content": "Almost here. Please select a VAT rate."
+          }
+        }
+      },
+      "edit": {
+        "updateSuccefully": "Product was succefully updated!"
       },
       "show": {
         "title": "Product"
@@ -513,6 +578,7 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
+      "updatedSuccefully": "The price was succefully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"
@@ -573,6 +639,9 @@
       },
       "edit": {
         "title": "Edit Supplier Product"
+      },
+      "show": {
+        "title": "Supplier Product"
       },
       "labels": {
         "unitPrice": "Unit Price",
@@ -664,13 +733,13 @@
         "comment": "Enter comment"
       }
     },
-    "taxes": {
-      "title": "Taxes",
+    "vatRates": {
+      "title": "Vat Rates",
       "create": {
-        "title": "Create Tax"
+        "title": "Create Vat Rate"
       },
       "edit": {
-        "title": "Edit Tax"
+        "title": "Edit Vat Rate"
       },
       "labels": {
         "rate": "Rate"

@@ -29,14 +29,14 @@ const router = useRouter();
 
 watch(() => route.query.tab, (newTab) => {
   if (newTab && props.tabs.some(tab => tab.name === newTab)) {
-    selectedTab.value = newTab;
+    selectedTab.value = newTab.toString();
   }
 });
 
 onMounted(() => {
   const queryTab = route.query.tab;
   if (queryTab && props.tabs.some(tab => tab.name === queryTab)) {
-    selectedTab.value = queryTab;
+    selectedTab.value = queryTab.toString();
   }
 });
 const isSelected = (tab) => tab === selectedTab.value;

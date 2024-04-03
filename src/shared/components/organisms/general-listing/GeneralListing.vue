@@ -3,15 +3,13 @@
 import { defineProps, ref } from 'vue';
 import { Button } from '././../../atoms/button';
 import { ApolloAlertMutation } from '././../../molecules/apollo-alert-mutation';
-import { ListingConfig, accessNestedProperty } from './listingConfig';
-import { FieldType} from "../../../utils/constants";
+import { ListingConfig } from './listingConfig';
 import { Pagination } from "../../molecules/pagination";
-import { Image } from "../../atoms/image";
 import { Link } from "../../atoms/link";
 import { useI18n } from "vue-i18n";
-import { Icon } from "../../atoms/icon";
 import { SearchConfig } from "../general-search/searchConfig";
 import {FilterManager} from "../../molecules/filter-manager";
+import {getFieldComponent} from "../general-show/showConfig";
 
 const { t } = useI18n();
 
@@ -30,11 +28,12 @@ const props = withDefaults(
   }
 );
 
-const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
 const getShowRoute = (item) => {
+
+  if (props.config.identifierKey === undefined) {
+    return undefined;
+  }
+
   const params = {
     ...props.config.identifierVariables,
     [props.config.paramIdentifier || 'id']: item.node[props.config.identifierKey]
@@ -74,22 +73,7 @@ const getShowRoute = (item) => {
 
               <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                 <td v-for="field in config.fields" :key="field.name">
-                  <template v-if="field.type === FieldType.Text">
-                    {{ item.node[field.name] }}
-                  </template>
-                  <template v-else-if="field.type === FieldType.Image">
-                    <Image :source="`${field.basePath}/${item.node[field.name]}${field.suffix || ''}`" :alt="field.alt" class="w-5 h-5 object-cover rounded-full" />
-                  </template>
-                  <template v-else-if="field.type === FieldType.NestedText">
-                    {{ accessNestedProperty(item.node, field.keys) }}
-                  </template>
-                  <template v-else-if="field.type === FieldType.Date">
-                    {{ formatDate(item.node[field.name]) }}
-                  </template>
-                  <template v-else-if="field.type === FieldType.Boolean">
-                        <Icon v-if="item.node[field.name]" name="check-circle" class="ml-2 text-green-500" />
-                        <Icon v-else name="times-circle" class="ml-2 text-red-500" />
-                  </template>
+                  <component :is="getFieldComponent(field.type)" :field="field" :model-value="item.node[field.name]" />
                 </td>
                 <td v-if="config.addActions">
                   <div class="flex gap-4 items-center justify-end">
@@ -98,14 +82,14 @@ const getShowRoute = (item) => {
                     </Link>
                     <Link v-if="config.addEdit"
                           :path="{ name: config.editUrlName,
-                                   params: { ...config.identifierVariables, id: item.node[config.identifierKey] },
+                                   params: config.identifierKey !== undefined ? { ...config.identifierVariables, id: item.node[config.identifierKey] } : undefined,
                                    query: {...config.urlQueryParams}}">
                       <Button class="btn btn-sm btn-outline-primary">{{ t('shared.button.edit') }}</Button>
                     </Link>
                     <ApolloAlertMutation
-                        v-if="config.addDelete"
+                        v-if="config.addDelete && config.deleteMutation"
                         :mutation="config.deleteMutation"
-                        :mutation-variables="{id: item.node[config.identifierKey]}"
+                        :mutation-variables="config.identifierKey !== undefined ? { id: item.node[config.identifierKey] } : undefined"
                         :refetch-queries="() => [{
                          query: props.query,
                          variables: {
@@ -136,10 +120,6 @@ const getShowRoute = (item) => {
                         :use-icons="config.paginationConfig?.useIcons"/>
           </div>
         </div>
-
-        <div v-if="loading">Loading...</div>
-        <div v-else-if="error">An error occurred</div>
-
       </template>
     </ApolloQuery>
 

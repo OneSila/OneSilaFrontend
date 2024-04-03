@@ -17,6 +17,23 @@ const editView = ref(false);
 const unsavedChanges = ref(false);
 const tabItems = ref();
 
+interface MeSubscriptionResult {
+  me: {
+    username: string;
+    lastName: string;
+    firstName: string;
+    mobileNumber: string;
+    whatsappNumber: string;
+    telegramNumber: string;
+    timezone: string;
+    isMultiTenantCompanyOwner: boolean;
+    isActive: boolean;
+    dateJoined: string; // Assuming dateJoined is a string (e.g., ISO format), adjust if it's a different type
+    avatarResizedFullUrl: string;
+  };
+}
+
+
 const toggleEditView = () => {
   if (unsavedChanges.value && !confirm(t('profile.unsavedChanges'))) {
     return;
@@ -49,6 +66,10 @@ if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
   editView.value = true;
 }
 
+const getMe = (result) => {
+ const r: MeSubscriptionResult = result;
+ return r.me;
+}
 
 </script>
 
@@ -70,13 +91,12 @@ if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
               <template v-slot:default="{ loading, error, result }">
                 <template v-if="!loading && result">
                   <div v-if="!editView">
-                    <ShowProfile :me-data="result.me" />
+                    <ShowProfile :me-data="getMe(result)" />
                   </div>
                   <div v-else>
-                    <ProfileEdit :me-data="result.me" :tabs="tabItems" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
+                    <ProfileEdit :me-data="getMe(result)" :tabs="tabItems" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
                   </div>
                 </template>
-                <p v-if="error">{{ error.message }}</p>
               </template>
             </ApolloSubscription>
           </div>
