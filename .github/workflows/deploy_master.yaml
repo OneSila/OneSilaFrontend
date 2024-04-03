@@ -1,0 +1,31 @@
+name: Deploy to production server.
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  deploy:
+    name: Deploy to PRODUCTION server
+    runs-on: ubuntu-latest
+    environment: production
+    # https://github.com/marketplace/actions/ssh-execute-commands
+    steps:
+      - name: Login remotely, pull and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.MASTER_HOSTNAME }}
+          username: ${{ secrets.MASTER_USERNAME }}
+          key: ${{ secrets.MASTER_SECRET_KEY_SSH }}
+          port: 22
+          script: |
+            export VITE_APP_API_GRAPHQL_URL=https://${{ secrets.MASTER_HOSTNAME }}/graphql/
+            export VITE_APP_API_GRAPHQL_WEBSOCKET_URL=wss://${{ secrets.MASTER_HOSTNAME }}/graphql/
+            export VITE_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }} 
+            export VITE_APP_SENTRY_ENV=production
+            cd /home/${{ secrets.MASTER_USERNAME }}/OneSilaFrontend
+            git config pull.rebase false
+            git pull
+            npm install
+            npm run build
