@@ -35,6 +35,8 @@
       "search": "Search",
       "save": "Save",
       "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
       "cancel": "Cancel",
       "saveAndContinue": "Save & Continue",
       "delete": "Delete",
@@ -44,6 +46,7 @@
       "add": "Add"
     },
     "labels": {
+      "or": "Or",
       "name": "Name",
       "active": "Active",
       "actions": "Actions",
@@ -422,8 +425,36 @@
         "alwaysOnStock": "Always on Stock",
         "sku": "SKU"
       },
+      "placeholders": {
+        "vatRate": "Add a vat rate"
+      },
       "create": {
-        "title": "Create product"
+        "title": "Create product",
+        "createSuccefully": "Product was succefully created!",
+        "wizard": {
+          "stepOne": {
+            "content": "Select what product are you trying to create?",
+            "variable": {
+              "title": "Something to sell.",
+              "example": "Eg: A black pen"
+            },
+            "bundle": {
+              "title": "A bundle of various existing items.",
+              "example": "Eg: A notebook and pen sold together."
+            },
+            "configurable": {
+              "title": "A configuration of products.",
+              "example": "Eg: Let customers pick between a red or blue pen."
+            }
+          },
+          "stepTwo": {
+            "content": "Add a SKU or just auto generate it.",
+            "generate": "Generate it"
+          },
+          "stepThree": {
+            "content": "Almost here. Please select a VAT rate."
+          }
+        }
       },
       "edit": {
         "updateSuccefully": "Product was succefully updated!"

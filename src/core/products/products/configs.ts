@@ -1,4 +1,4 @@
-import { CreateOnTheFly, FormConfig, FormField, FormType } from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType, QueryFormField} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType, ProductType, Url } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
@@ -38,6 +38,23 @@ const getTypeField = (type, t): FormField | null => {
   return null;
 }
 
+export const getVatRateField = (t): QueryFormField => {
+    return {
+      type: FieldType.Query,
+      name: 'vatRate',
+      label: t('products.products.labels.vatRate'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: vatRatesQuery,
+      dataKey: 'vatRates',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      placeholder: t('products.products.placeholders.vatRate'),
+      createOnFlyConfig: vatRateOnTheFlyConfig(t)
+    }
+}
 const getFields = (type, t): FormField[] => {
   const fields = [
     getTypeField(type, t),
