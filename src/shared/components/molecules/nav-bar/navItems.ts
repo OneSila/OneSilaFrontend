@@ -143,8 +143,8 @@ export const settingsSection: NavSection = {
           title: 'settings.currencies.title'
         },
         {
-          route: { name: 'settings.taxes.list' },
-          title: 'settings.taxes.title'
+          route: { name: 'settings.vatRates.list' },
+          title: 'settings.vatRates.title'
         },
         {
           route: { name: 'settings.units.list' },

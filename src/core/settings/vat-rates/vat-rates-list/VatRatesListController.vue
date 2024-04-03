@@ -19,14 +19,14 @@ const listingConfig = listingConfigConstructor(t);
   <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'settings.taxes.list' }, name: t('settings.taxes.title') }]" />
+      <Breadcrumbs :links="[{ path: { name: 'settings.vatRates.list' }, name: t('settings.vatRates.title') }]" />
     </template>
 
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'settings.tax.create' }">
+          <Link :path="{ name: 'settings.vatRate.create' }">
           <Button type="button" class="btn btn-primary">
-              {{  t('settings.taxes.create.title') }}
+              {{  t('settings.vatRates.create.title') }}
           </Button>
         </Link>
       </div>

@@ -6,8 +6,8 @@ import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
-import { updateTaxMutation } from "../../../../shared/api/mutations/taxes.js";
-import { getTaxQuery } from "../../../../shared/api/queries/taxes.js";
+import { updateVatRateMutation } from "../../../../shared/api/mutations/vatRates.js";
+import { getVatRateQuery } from "../../../../shared/api/queries/vatRates.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
@@ -21,16 +21,16 @@ const id = ref(String(route.params.id));
 const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
-  updateTaxMutation,
-  'updateTax'
+  updateVatRateMutation,
+  'updateVatRate'
 );
 
 const formConfig = {
   ...baseForm,
   mutationId: id.value.toString(),
-  query: getTaxQuery,
+  query: getVatRateQuery,
   queryVariables: { id: id.value },
-  queryDataKey: 'tax',
+  queryDataKey: 'vatRate',
   fields: [
     {
       type: FieldType.Hidden,
@@ -48,8 +48,8 @@ const formConfig = {
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'settings.taxes.list' }, name: t('settings.taxes.title') },
-                   { path: { name: 'settings.tax.edit' }, name: t('settings.taxes.edit.title') }]" />
+          :links="[{ path: { name: 'settings.vatRates.list' }, name: t('settings.vatRates.title') },
+                   { path: { name: 'settings.vatRate.edit' }, name: t('settings.vatRates.edit.title') }]" />
     </template>
 
    <template v-slot:content>

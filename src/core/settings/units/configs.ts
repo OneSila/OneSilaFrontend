@@ -15,8 +15,8 @@ export const baseFormConfigConstructor = (
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
+  addDelete: false,
   submitUrl: { name: 'settings.units.list' },
-  deleteMutation: deleteUnitMutation,
   fields: [
     {
       type: FieldType.Text,
@@ -57,7 +57,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addEdit: true,
   editUrlName: 'settings.unit.edit',
   addShow: false,
-  addDelete: true,
+  addDelete: false,
   addPagination: true,
   deleteMutation: deleteUnitMutation,
 });

@@ -418,7 +418,7 @@
             "variation": "Variation"
           }
         },
-        "taxRate": "Tax Rate",
+        "vatRate": "VAT Rate",
         "alwaysOnStock": "Always on Stock",
         "sku": "SKU"
       },
@@ -702,13 +702,13 @@
         "comment": "Enter comment"
       }
     },
-    "taxes": {
-      "title": "Taxes",
+    "vatRates": {
+      "title": "Vat Rates",
       "create": {
-        "title": "Create Tax"
+        "title": "Create Vat Rate"
       },
       "edit": {
-        "title": "Edit Tax"
+        "title": "Edit Vat Rate"
       },
       "labels": {
         "rate": "Rate"

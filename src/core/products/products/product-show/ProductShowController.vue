@@ -26,7 +26,7 @@ interface ProductSubscriptionResult {
   product: {
     name: string;
     sku: string;
-    taxRate: {
+    vatRate: {
       name: string;
     };
     type: string;
@@ -35,11 +35,11 @@ interface ProductSubscriptionResult {
   };
 }
 
-const getResultData = (result, field: string | null = null, taxField: string | null = null) => {
+const getResultData = (result, field: string | null = null, vatRateField: string | null = null) => {
   const r: ProductSubscriptionResult = result;
 
-  if (taxField !== null){
-    return r.product.taxRate[taxField];
+  if (vatRateField !== null){
+    return r.product.vatRate[vatRateField];
   }
 
   if (field === null) {
@@ -97,7 +97,7 @@ const redirectToList = (response) => {
                       <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
                     </Flex>
                     <Flex>
-                      <Label semi-bold>{{ t('products.products.labels.taxRate') }}:</Label>
+                      <Label semi-bold>{{ t('products.products.labels.vatRate') }}:</Label>
                       <p class="text-white-dark">{{ getResultData(result, null, 'name') }}</p>
                     </Flex>
                     <Flex>

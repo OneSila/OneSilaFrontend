@@ -22,17 +22,6 @@ const listingConfig = listingConfigConstructor(t);
       <Breadcrumbs :links="[{ path: { name: 'settings.units.list' }, name: t('settings.units.title') }]" />
     </template>
 
-    <template v-slot:buttons>
-        <div>
-          <Link :path="{ name: 'settings.unit.create' }">
-          <Button type="button" class="btn btn-primary">
-              {{  t('settings.units.create.title') }}
-          </Button>
-        </Link>
-      </div>
-    </template>
-
-
    <template v-slot:content>
      <GeneralListing
          :searchConfig="searchConfig"

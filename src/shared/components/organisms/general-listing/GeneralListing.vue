@@ -120,10 +120,6 @@ const getShowRoute = (item) => {
                         :use-icons="config.paginationConfig?.useIcons"/>
           </div>
         </div>
-
-        <div v-if="loading">Loading...</div>
-        <div v-else-if="error">An error occurred</div>
-
       </template>
     </ApolloQuery>
 

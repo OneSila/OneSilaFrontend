@@ -2,8 +2,8 @@ import { FormConfig, FormType } from '../../../shared/components/organisms/gener
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { taxesQuery } from "../../../shared/api/queries/taxes.js"
-import { deleteTaxMutation } from "../../../shared/api/mutations/taxes.js";
+import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js"
+import { deleteVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -15,14 +15,14 @@ export const baseFormConfigConstructor = (
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: { name: 'settings.taxes.list' },
-  deleteMutation: deleteTaxMutation,
+  submitUrl: { name: 'settings.vatRates.list' },
+  deleteMutation: deleteVatRateMutation,
   fields: [
     {
       type: FieldType.Text,
       name: 'rate',
-      label: t('settings.taxes.labels.rate'),
-      placeholder: t('settings.taxes.placeholders.rate'),
+      label: t('settings.vatRates.labels.rate'),
+      placeholder: t('settings.vatRates.placeholders.rate'),
       number: true,
     },
     ],
@@ -46,13 +46,13 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   identifierKey: 'id',
   addActions: true,
   addEdit: true,
-  editUrlName: 'settings.tax.edit',
+  editUrlName: 'settings.vatRate.edit',
   addShow: false,
   addDelete: true,
   addPagination: true,
-  deleteMutation: deleteTaxMutation,
+  deleteMutation: deleteVatRateMutation,
 });
 
-export const listingQueryKey = 'taxes';
-export const listingQuery = taxesQuery;
+export const listingQueryKey = 'vatRates';
+export const listingQuery = vatRatesQuery;
 

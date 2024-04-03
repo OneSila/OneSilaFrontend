@@ -7,7 +7,7 @@ export const createProductMutation = gql`
       sku
       active
       type
-      taxRate {
+      vatRate {
         id
         rate
       }

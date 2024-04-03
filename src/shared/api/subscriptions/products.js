@@ -9,7 +9,7 @@ export const productSubscription = gql`
       type
       proxyId
       name
-      taxRate {
+      vatRate {
         id
         rate
         name
