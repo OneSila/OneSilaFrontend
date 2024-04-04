@@ -66,6 +66,7 @@ const getFields = (customerId, t, type): FormField[] => {
       name: 'notes',
       label: t('shared.labels.notes'),
       placeholder: t('shared.placeholders.notes'),
+      optional: true
     },
     {
       type: FieldType.Text,

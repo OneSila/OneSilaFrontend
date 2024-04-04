@@ -267,7 +267,14 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
         if (typeof fieldValue === 'object' && fieldValue != null  && field.formMapIdentifier) {
             cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue[field.formMapIdentifier] };
         } else {
-            cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue};
+            if (fieldValue === null) {
+              // if the new value of a foreign key is null we don't need to add null to the id but to the foreign key itself
+              // so if we have null it will be storeLocation: null instead storeLocation: { id: null }
+              cleanedData[field.name] = fieldValue;
+            } else {
+              cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue};
+            }
+
         }
 
         return;

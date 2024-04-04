@@ -153,7 +153,7 @@ const matchComplexError = (message, t) => {
 
   // Match non-nullable foreign key error
   result = matchPattern(
-    "Variable '\\$data' got invalid value \\{.*\\}; Field '(\\w+)' of required type 'NodeInput!' was not provided\\.",
+    "Variable '\\$data' got invalid value \\{.*\\}; Field '(\\w+)' of required type '[^']+' was not provided",
     message,
     'shared.validationErrors.required'
   );
@@ -164,6 +164,14 @@ const matchComplexError = (message, t) => {
     "Variable '\\$data' got invalid value None at 'data\\.(\\w+)\\.[\\w\\d]+'; Expected non-nullable type '[^']+' not to be None\\.",
     message,
     'shared.validationErrors.required'
+  );
+  if (result) return result;
+
+  // manual integrity error thrown from the backend
+  result = matchPattern(
+      "Missing required field '(\\w+)'",
+      message,
+      'shared.validationErrors.required'
   );
   if (result) return result;
 

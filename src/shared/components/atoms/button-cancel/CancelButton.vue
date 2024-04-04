@@ -4,11 +4,7 @@ import { Button} from "../button";
 
 import { defineProps, defineEmits } from 'vue';
 
-const props = defineProps({
-  loading: Boolean,
-  disabled: Boolean
-});
-
+const props = defineProps<{ loading?: boolean; disabled?: boolean  }>();
 const emit = defineEmits(['click']);
 
 const onClicked = (event) => {

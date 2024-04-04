@@ -47,6 +47,12 @@ const previousStep = () => {
   }
 };
 
+const jumpToStep = (index) => {
+  if (index < currentStep.value) {
+    goToStep(index);
+  }
+};
+
 const stepClasses = (index) => ({
   'flex items-center px-6 py-4 text-sm font-semibold': true,
   'text-primary': index === currentStep.value,
@@ -72,7 +78,7 @@ defineExpose({
   <Card>
     <nav aria-label="Progress">
     <ol role="list" class="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0">
-      <li v-for="(step, index) in steps" :key="step.title" class="relative md:flex md:flex-1">
+      <li v-for="(step, index) in steps" :key="step.title" class="relative md:flex md:flex-1" :class="{'cursor-pointer': index < currentStep}" @click="jumpToStep(index)">
         <span :class="stepClasses(index)">
             <span :class="stepIconClasses(index)">
               <Icon v-if="index < currentStep" name="check" class="h-6 w-6 text-white" aria-hidden="true" />

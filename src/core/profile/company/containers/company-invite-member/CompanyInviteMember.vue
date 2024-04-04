@@ -11,9 +11,7 @@ import {Toast} from "../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 
-const props = defineProps({
-  language: String
-});
+const props = defineProps<{ language: string }>();
 
 const emit = defineEmits(['inviteSubmitted', 'cancelClicked']);
 

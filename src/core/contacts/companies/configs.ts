@@ -161,7 +161,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       name: 'isSupplier',
       label: t('contacts.companies.labels.supplier')
     },
-          {
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'isCustomer',
@@ -173,7 +173,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       name: 'isInfluencer',
       label: t('contacts.companies.labels.influencer')
     },
-          {
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'isInternalCompany',

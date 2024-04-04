@@ -30,6 +30,7 @@ export const baseFormConfigConstructor = (
       label: t('shared.labels.description'),
       placeholder: t('shared.placeholders.description'),
       scroll: true,
+      optional: true
     },
     {
         type: FieldType.Query,
@@ -43,6 +44,7 @@ export const baseFormConfigConstructor = (
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
+        optional: true
       }
     ],
 });

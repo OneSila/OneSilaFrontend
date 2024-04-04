@@ -36,7 +36,12 @@ const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
 const limit = props.field.limit || undefined;
 
-const cleanData = (rawData) => {
+const cleanData = (rawData, forceUpdate=false) => {
+
+  if (cleanedData.value.length > 0 && !forceUpdate) {
+    return true;
+  }
+
   rawDataRef.value = rawData;
 
   if (props.field.isEdge && rawDataRef.value?.edges) {
@@ -59,12 +64,17 @@ const handleSubmit = (data) => {
   }
 
   if (props.field.isEdge) {
-    rawDataRef.value['edges'].push({node: data});
+    // Create a new array with existing items plus the new item
+    // we do that to avoid the object is not extensible error
+    rawDataRef.value = {
+        ...rawDataRef.value,
+        'edges': [...(rawDataRef.value['edges'] || []), { node: data }]
+    };
   } else {
     rawDataRef.value.push(data);
   }
 
-  cleanData(rawDataRef.value);
+  cleanData(rawDataRef.value, true);
 
   if (props.field.multiple) {
     const newData = selectedValue.value;

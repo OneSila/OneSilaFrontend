@@ -31,12 +31,14 @@ export const baseFormConfigConstructor = (
       name: 'vatNumber',
       label: t('contacts.companies.labels.vat'),
       placeholder: t('contacts.companies.placeholders.eori'),
+      optional: true
     },
     {
       type: FieldType.Text,
       name: 'eoriNumber',
       label: t('contacts.companies.labels.eori'),
       placeholder: t('contacts.companies.placeholders.eori'),
+      optional: true
     },
     {
       type: FieldType.Hidden,

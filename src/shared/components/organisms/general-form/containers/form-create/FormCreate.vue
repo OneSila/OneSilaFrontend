@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
 import {reactive, defineProps, watch, ref, Ref} from 'vue';
-import { useRouter } from 'vue-router';
 import { FormLayout } from './../form-layout';
 import { FormConfig, HiddenFormField, cleanUpDataForMutation } from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";
@@ -13,9 +12,14 @@ const props = withDefaults(
     config: FormConfig;
     fieldsToClear?: string[] | null;
     defaults?: Record<string, string>
+    outsideErrors?: Record<string, string> | null
   }>(),
   { fieldsToClear: null },
 );
+
+// watch(() => props.outsideErrors, (value) => {
+//   console.log(value);
+// }, { deep: true });
 
 const emits = defineEmits(['formUpdated']);
 const errors: Ref<Record<string, string> | null> = ref(null);
@@ -34,12 +38,9 @@ const form = reactive(props.config.fields.reduce((acc, field) => {
   return acc;
 }, {}));
 
-const router = useRouter();
-
 const handleUpdateErrors = (validationErrors) => {
   errors.value = validationErrors;
 
-  console.log(validationErrors)
   if (validationErrors['__all__']) {
     Toast.error(validationErrors['__all__']);
   }
@@ -53,9 +54,7 @@ watch(() => props.fieldsToClear, (fields) => {
   if (fields && fields.length > 0) {
     fields.forEach(field => {
       if (form[field] !== undefined) {
-        console.log(form);
         form[field] = null;
-        console.log(form);
       }
     });
   }
@@ -66,7 +65,7 @@ watch(() => props.fieldsToClear, (fields) => {
 <template>
   <div class="px-4 py-6 sm:p-8">
     <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-      <FormLayout :config="config" :form="form" :errors="errors" />
+      <FormLayout :config="config" :form="form" :errors="outsideErrors !== null && outsideErrors !== undefined ? outsideErrors : errors" />
     </div>
   </div>
   <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @update-errors="handleUpdateErrors" />

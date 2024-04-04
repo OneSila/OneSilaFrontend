@@ -47,6 +47,7 @@ const disabled = ref(props.filter.disabled === true);
       :dropdown-position="dropdownPosition"
       :placeholder="placeholder"
       :mandatory="!filter.strict"
+      :options="[]"
       label-by="name"
       value-by="id"
       :removable="false"

@@ -6,25 +6,33 @@ import { useRoute, useRouter } from 'vue-router';
 import { TextInput } from "../../atoms/input-text"
 import { Icon } from "../../atoms/icon"
 
-const props = defineProps({
-  modelValue: String,
-  placeholder: String,
-  disabled: Boolean,
-  updateRoute: Boolean,
-  routeKey: {
-    type: String,
-    default: 'search',
-  },
-  debounce: {
-  type: Number,
-  default: 600,
-}
-});
+const props = withDefaults(
+  defineProps<{
+    modelValue: string;
+    placeholder?: string;
+    disabled?: boolean;
+    updateRoute?: boolean;
+    routeKey?: string;
+    debounce?: number;
+  }>(),
+  { routeKey: 'search', debounce: 600 },
+);
 
 const { t } = useI18n();
 const input: any = ref(null)
 const router = useRouter();
 const route = useRoute();
+const inputValue = ref(props.modelValue);
+
+watch(() => props.modelValue, (newValue) => {
+
+  if (newValue === null) {
+    newValue = '';
+  }
+
+  inputValue.value = newValue;
+  updateRoute(newValue);
+});
 
 const updateRoute = debounce((newValue) => {
   if (props.updateRoute) {
@@ -39,10 +47,6 @@ const updateRoute = debounce((newValue) => {
     router.push({ query: updatedQuery });
   }
 }, props.debounce);
-
-watch(() => props.modelValue, (newValue) => {
-  updateRoute(newValue);
-});
 
 const focus = () => {
   input.value?.focus();
@@ -60,14 +64,11 @@ defineExpose({ focus });
     <TextInput
       ref="input"
       class="search-input pl-9 w-full"
+      v-model="inputValue"
       :placeholder="placeholder || t('shared.button.search')"
       :disabled="disabled"
-      :model-value="modelValue"
       @focus="$emit('focus')"
       @update:modelValue="(event) => $emit('update:modelValue', event)"
     />
   </label>
 </template>
-
-<style scoped>
-</style>

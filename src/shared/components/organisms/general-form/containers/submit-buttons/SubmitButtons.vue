@@ -46,6 +46,7 @@ const handleSubmitAndContinueDoneEdit = (response) => {
 
   props.config.afterSubmitCallback?.();
 
+  emit('update-errors', {});
   Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
 
 };
@@ -129,13 +130,13 @@ const handleError = (errors) => {
         </ApolloAlertMutation>
 
         <ApolloMutation v-if="config.addSubmitAndContinue" :mutation="config.mutation" @done="handleSubmitAndContinueDone" @error="handleError">
-          <template v-slot="{ mutate, loading, error }">
+          <template v-slot="{ mutate, loading }">
             <SecondaryButton :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitAndContinueLabel }}</SecondaryButton>
           </template>
         </ApolloMutation>
 
-        <ApolloMutation :mutation="config.mutation" @done="handleSubmitDone">
-          <template v-slot="{ mutate, loading, error }">
+        <ApolloMutation :mutation="config.mutation" @done="handleSubmitDone" @error="handleError">
+          <template v-slot="{ mutate, loading }">
             <PrimaryButton :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitLabel }}</PrimaryButton>
           </template>
         </ApolloMutation>

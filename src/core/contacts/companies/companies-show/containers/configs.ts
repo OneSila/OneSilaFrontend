@@ -78,13 +78,15 @@ export const baseFormConfigConstructor = (
         type: FieldType.Text,
         name: 'address2',
         label: t('contacts.companies.address.labels.addressTwo'),
-        placeholder: t('contacts.companies.address.placeholders.addressTwo')
+        placeholder: t('contacts.companies.address.placeholders.addressTwo'),
+        optional: true
       },
       {
         type: FieldType.Text,
         name: 'address3',
         label: t('contacts.companies.address.labels.addressThree'),
-        placeholder: t('contacts.companies.address.placeholders.addressThree')
+        placeholder: t('contacts.companies.address.placeholders.addressThree'),
+        optional: true
       },
       {
         type: FieldType.Text,
@@ -125,6 +127,7 @@ export const baseFormConfigConstructor = (
         filterable: true,
         formMapIdentifier: 'id',
         createOnFlyConfig: personOnTheFlyConfig(t, companyId),
+        optional: true
       }
     ],
 });

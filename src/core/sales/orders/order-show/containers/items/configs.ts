@@ -50,6 +50,7 @@ export const baseFormConfigConstructor = (
       label: t('shared.labels.price'),
       placeholder: t('shared.placeholders.price'),
       number: true,
+      optional: true
     },
     ],
 });

@@ -48,6 +48,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      optional: true
     },
     {
       type: FieldType.Text,
@@ -75,20 +76,23 @@ export const baseFormConfigConstructor = (
       name: 'followOfficialRate',
       label: t('settings.currencies.labels.followOfficialRate'),
       uncheckedValue: "false",
-      default: false
+      default: false,
+      optional: true
     },
     {
       type: FieldType.Checkbox,
       name: 'isDefaultCurrency',
       label: t('settings.currencies.labels.isDefaultCurrency'),
       uncheckedValue: "false",
-      default: false
+      default: false,
+      optional: true
     },
     {
       type: FieldType.Text,
       name: 'comment',
       label: t('settings.currencies.labels.comment'),
       placeholder: t('settings.currencies.placeholders.comment'),
+      optional: true
     },
 
     ],

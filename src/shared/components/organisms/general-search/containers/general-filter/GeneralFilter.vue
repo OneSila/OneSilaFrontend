@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { defineProps } from 'vue';
 import { SearchConfig, BaseFilter, OrderCriteria } from '../../searchConfig';
 import { Icon } from "../.././../../atoms/icon"
@@ -38,21 +38,22 @@ const handleSubmit = (data) => {
 
 
 const keysToWatch = ref<string[]>([]);
+const hasFilters = ref<boolean>(false);
 
-if (props.searchConfig.search) {
-  keysToWatch.value.push('search');
-}
+watchEffect(() => {
+  if (props.searchConfig.search) {
+    keysToWatch.value.push('search');
+  }
 
-if (props.searchConfig.orderKey) {
-  keysToWatch.value.push(props.searchConfig.orderKey);
-}
+  props.searchConfig.filters?.forEach((filter: BaseFilter) => {
+    keysToWatch.value.push(filter.name);
+  });
 
-props.searchConfig.filters?.forEach((filter: BaseFilter) => {
-  keysToWatch.value.push(filter.name);
-});
+  if (props.searchConfig.orderKey) {
+    keysToWatch.value.push(props.searchConfig.orderKey);
+  }
 
-const hasFilters = computed(() => {
-  return keysToWatch.value.some(key => route.query[key] !== undefined && route.query[key] !== undefined);
+  hasFilters.value = keysToWatch.value.some(key => route.query[key] !== undefined && route.query[key] !== 'all');
 });
 
 const resetFilters = () => {

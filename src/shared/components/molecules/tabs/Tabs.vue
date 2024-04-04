@@ -11,17 +11,16 @@ interface TabItem {
   danger?: boolean;
 }
 
-const props = defineProps({
-  tabs: {
-    type: Array as () => TabItem[],
-    required: true
-  },
-  disabledTabs: {
-    type: Array as () => string[],
-    default: () => []
-  },
-  hideContent: Boolean
-});
+const props = withDefaults(
+  defineProps<{
+    tabs: TabItem[];
+    disabledTabs?: string[];
+    transparent?: boolean;
+  }>(),
+  {
+    disabledTabs: () => ([] as string[]),
+  }
+);
 
 const selectedTab = ref(props.tabs[0]?.name);
 const route = useRoute();
