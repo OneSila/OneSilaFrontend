@@ -4,7 +4,7 @@ import { computed } from 'vue';
 
 const props = defineProps<{
   text: string;
-  color: 'primary' | 'secondary' | 'gray' | 'red' | 'yellow' | 'green' | 'blue' | 'indigo' | 'purple' | 'pink';
+  color: string;
 }>();
 
 
