@@ -23,10 +23,12 @@ export const salesPriceListSubscription = gql`
     salesPriceList(pk: $pk) {
       id
       name
+      notes
       discount
       currency {
         id
         symbol
+        isoCode
       }
       vatIncluded
       autoUpdate

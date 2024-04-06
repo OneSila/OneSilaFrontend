@@ -3,7 +3,7 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
-import { customersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery, customersQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
@@ -63,13 +63,6 @@ const getFields = (customerId, t, type): FormField[] => {
     },
     {
       type: FieldType.Text,
-      name: 'notes',
-      label: t('shared.labels.notes'),
-      placeholder: t('shared.placeholders.notes'),
-      optional: true
-    },
-    {
-      type: FieldType.Text,
       name: 'discount',
       label: t('sales.prices.labels.discountAmount'),
       placeholder: t('sales.prices.placeholders.discountAmount'),
@@ -79,7 +72,7 @@ const getFields = (customerId, t, type): FormField[] => {
       type: FieldType.Query,
       name: 'currency',
       label: t('shared.labels.currency'),
-      labelBy: 'symbol',
+      labelBy: 'isoCode',
       valueBy: 'id',
       query: currenciesQuery,
       dataKey: 'currencies',
@@ -105,6 +98,13 @@ const getFields = (customerId, t, type): FormField[] => {
       default: true,
       uncheckedValue: "false"
     },
+    {
+      type: FieldType.Textarea,
+      name: 'notes',
+      label: t('shared.labels.notes'),
+      placeholder: t('shared.placeholders.notes'),
+      optional: true
+    },
   ].filter(field => field !== null);
   return fields as FormField[];
 }
@@ -127,9 +127,48 @@ export const baseFormConfigConstructor = (
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
-  search: false,
+  search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'vatIncluded',
+      label: t('sales.priceLists.labels.vatIncluded'),
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'autoUpdate',
+      label: t('sales.priceLists.labels.autoUpdate'),
+    },
+    {
+      type: FieldType.Query,
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      name: 'customers',
+      label: t('sales.customers.title'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: customersQuery,
+      dataKey: 'customers',
+      isEdge: true,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    }
+  ],
   orders: []
 });
 const getUrlQueryParams = (customerId) => {

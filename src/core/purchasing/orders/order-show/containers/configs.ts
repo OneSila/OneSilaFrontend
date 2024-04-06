@@ -74,11 +74,11 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
     },
     {
       name: 'quantity',
-      type: FieldType.Boolean,
+      type: FieldType.Text,
     },
     {
-      name: 'unit_price',
-      type: FieldType.Boolean,
+      name: 'unitPrice',
+      type: FieldType.Text,
     },
   ],
   identifierKey: 'id',

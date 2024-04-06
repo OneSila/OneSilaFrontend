@@ -57,7 +57,6 @@ const submit = async () => {
     emit('submit-clicked', data[config.value.mutationKey]);
 
   } catch (err) {
-    console.log(err);
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
     if (graphqlError.graphQLErrors) {
       errors.value = processGraphQLErrors(graphqlError, t);

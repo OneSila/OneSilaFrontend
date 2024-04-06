@@ -4,7 +4,7 @@ import { OrderType, SearchConfig } from "../../../shared/components/organisms/ge
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { ShowField, NestedTextField } from "../../../shared/components/organisms/general-show/showConfig";
 import { ordersQuery } from "../../../shared/api/queries/salesOrders.js"
-import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, customersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery, customersQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
@@ -35,6 +35,32 @@ export const getReasonForSaleOptions = (t) => [
   { name: t('sales.orders.labels.reasonForSale.choices.sample'), code: ReasonForSale.SAMPLE },
   { name: t('sales.orders.labels.reasonForSale.choices.gift'), code: ReasonForSale.GIFT }
 ];
+
+export const getSalesOrderStatusBadgeMap = (t) => ({
+  [OrderStatus.DRAFT]: { text: t('sales.orders.labels.status.choices.draft'), color: 'gray' },
+  [OrderStatus.PENDING]: { text: t('sales.orders.labels.status.choices.pending'), color: 'yellow' },
+  [OrderStatus.PENDING_INVENTORY]: { text: t('sales.orders.labels.status.choices.pendingInventory'), color: 'blue' },
+  [OrderStatus.TO_PICK]: { text: t('sales.orders.labels.status.choices.toPick'), color: 'indigo' },
+  [OrderStatus.TO_SHIP]: { text: t('sales.orders.labels.status.choices.toShip'), color: 'purple' },
+  [OrderStatus.DONE]: { text: t('sales.orders.labels.status.choices.done'), color: 'green' },
+  [OrderStatus.CANCELLED]: { text: t('sales.orders.labels.status.choices.cancelled'), color: 'red' },
+  [OrderStatus.HOLD]: { text: t('sales.orders.labels.status.choices.hold'), color: 'pink' },
+  [OrderStatus.EXCHANGED]: { text: t('sales.orders.labels.status.choices.exchanged'), color: 'primary' },
+  [OrderStatus.REFUNDED]: { text: t('sales.orders.labels.status.choices.refunded'), color: 'indigo' },
+  [OrderStatus.LOST]: { text: t('sales.orders.labels.status.choices.lost'), color: 'red' },
+  [OrderStatus.MERGED]: { text: t('sales.orders.labels.status.choices.merged'), color: 'blue' },
+  [OrderStatus.DAMAGED]: { text: t('sales.orders.labels.status.choices.damaged'), color: 'red' },
+  [OrderStatus.VOID]: { text: t('sales.orders.labels.status.choices.void'), color: 'gray' },
+});
+
+export const getReasonForSaleBadgeMap = (t) => ({
+  [ReasonForSale.SALE]: { text: t('sales.orders.labels.reasonForSale.choices.sale'), color: 'purple' },
+  [ReasonForSale.RETURNGOODS]: { text: t('sales.orders.labels.reasonForSale.choices.returnGoods'), color: 'pink' },
+  [ReasonForSale.DOCUMENTS]: { text: t('sales.orders.labels.reasonForSale.choices.documents'), color: 'red' },
+  [ReasonForSale.SAMPLE]: { text: t('sales.orders.labels.reasonForSale.choices.sample'), color: 'green' },
+  [ReasonForSale.GIFT]: { text: t('sales.orders.labels.reasonForSale.choices.gift'), color: 'blue' },
+});
+
 
 const getSubmitUrl = (customerId) => {
   if (customerId) {
@@ -100,7 +126,7 @@ export const baseFormConfigConstructor = (
         type: FieldType.Query,
         name: 'currency',
         label: t('shared.labels.currency'),
-        labelBy: 'symbol',
+        labelBy: 'isoCode',
         valueBy: 'id',
         query: currenciesQuery,
         dataKey: 'currencies',
@@ -145,7 +171,8 @@ export const baseFormConfigConstructor = (
       valueBy: 'code',
       label: t('sales.orders.labels.status.title'),
       filterable: true,
-      options: getStatusOptions(t)
+      options: getStatusOptions(t),
+      default: type === FormType.CREATE ? OrderStatus.DRAFT : undefined,
     },
     {
       type: FieldType.Choice,
@@ -176,7 +203,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('sales.orders.labels.status.title'),
       labelBy: 'name',
       valueBy: 'code',
-      options: getStatusOptions(t)
+      options: getStatusOptions(t),
+      addExactLookup: true
     },
     {
       type: FieldType.Choice,
@@ -184,8 +212,22 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('sales.orders.labels.reasonForSale.title'),
       labelBy: 'name',
       valueBy: 'code',
-      options: getReasonForSaleOptions(t)
-    }
+      options: getReasonForSaleOptions(t),
+      addExactLookup: true
+    },
+    {
+      type: FieldType.Query,
+      name: 'customer',
+      label: t('contacts.people.labels.customer'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: customersQuery,
+      dataKey: 'customers',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
   ],
   orders: [
     {
@@ -213,16 +255,15 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, customerId) => {
   return customerId
-    ? [t('sales.orders.labels.reference'), t('shared.labels.date'), t('sales.orders.labels.status.title'), t('sales.orders.labels.reasonForSale.title')]
-    : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status.title'), t('sales.orders.labels.reasonForSale.title')];
+    ? [t('sales.orders.labels.reference'), t('shared.labels.date'), t('sales.orders.labels.status.title')]
+    : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status.title')];
 }
 
-const getFields = (customerId): ShowField[] => {
+const getFields = (customerId, t): ShowField[] => {
   const commonFields: ShowField[] = [
     { name: 'reference', type: FieldType.Text },
     { name: 'createdAt', type: FieldType.Date },
-    { name: 'status', type: FieldType.Text },
-    { name: 'reasonForSale', type: FieldType.Text }
+    { name: 'status', type: FieldType.Badge, badgeMap: getSalesOrderStatusBadgeMap(t)},
   ];
 
   if (!customerId) {
@@ -247,7 +288,7 @@ const getUrlQueryParams = (customerId: string | null = null, productId: string |
 
 export const listingConfigConstructor = (t: Function, customerId: string|null = null, productId: string|null = null): ListingConfig => ({
   headers: getHeaders(t, customerId),
-  fields: getFields(customerId),
+  fields: getFields(customerId, t),
   identifierKey: 'id',
   addActions: true,
   addEdit: !productId,
@@ -303,15 +344,17 @@ export const showConfigConstructor = (t: Function, id, customerId: string|null =
   },
   {
     name: 'status',
-    type: FieldType.Text,
+    type: FieldType.Badge,
     label: t('sales.orders.labels.status.title'),
-    showLabel: true
+    showLabel: true,
+    badgeMap: getSalesOrderStatusBadgeMap(t)
   },
   {
     name: 'reasonForSale',
-    type: FieldType.Text,
+    type: FieldType.Badge,
     label: t('sales.orders.labels.reasonForSale.title'),
-    showLabel: true
+    showLabel: true,
+    badgeMap: getReasonForSaleBadgeMap(t)
   },
   {
     name: 'customer',
@@ -324,44 +367,19 @@ export const showConfigConstructor = (t: Function, id, customerId: string|null =
     name: 'invoiceAddress',
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.invoiceAddress'),
-    keys: ['address1'],
+    keys: ['fullAddress'],
     showLabel: true
-  },
-  {
-    name: 'invoiceAddress',
-    type: FieldType.NestedText,
-    keys: ['address2'],
-    showLabel: false
-  },
-  {
-    name: 'invoiceAddress',
-    type: FieldType.NestedText,
-    keys: ['address3'],
-    showLabel: false
   },
   {
     name: 'shippingAddress',
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.shippingAddress'),
-    keys: ['address1'],
+    keys: ['fullAddress'],
     showLabel: true
-  },
-  {
-    name: 'shippingAddress',
-    type: FieldType.NestedText,
-    keys: ['address2'],
-    showLabel: false
-  },
-  {
-    name: 'shippingAddress',
-    type: FieldType.NestedText,
-    keys: ['address3'],
-    showLabel: false
   },
   ]
 
 });
+
 export const listingQueryKey = 'orders';
 export const listingQuery = ordersQuery;
-
-

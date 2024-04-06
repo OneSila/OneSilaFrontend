@@ -52,7 +52,22 @@ export const baseFormConfigConstructor = (
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+  {
+        type: FieldType.Query,
+        name: 'parentLocation',
+        label:  t('inventory.inventoryLocations.labels.parent'),
+        labelBy: 'name',
+        valueBy: 'id',
+        query: inventoryLocationsQuery,
+        dataKey: 'inventoryLocations',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        addExactLookup: true,
+        exactLookupKeys: ['id']
+      }
+  ],
   orders: []
 });
 

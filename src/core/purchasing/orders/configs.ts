@@ -47,6 +47,14 @@ export const getStatusOptions = (t) => [
   { name: t('purchasing.orders.labels.status.choices.delivered'), code: OrderStatus.DELIVERED },
 ];
 
+export const getOrderStatusBadgeMap = (t) => ({
+  [OrderStatus.DRAFT]: { text: t('purchasing.orders.labels.status.choices.draft'), color: 'gray' },
+  [OrderStatus.ORDERED]: { text: t('purchasing.orders.labels.status.choices.ordered'), color: 'yellow' },
+  [OrderStatus.CONFIRMED]: { text: t('purchasing.orders.labels.status.choices.confirmed'), color: 'green' },
+  [OrderStatus.PENDING_DELIVERY]: { text: t('purchasing.orders.labels.status.choices.pendingDelivery'), color: 'blue' },
+  [OrderStatus.DELIVERED]: { text: t('purchasing.orders.labels.status.choices.delivered'), color: 'indigo' },
+});
+
 const getSubmitUrl = (supplierId) => {
   if (supplierId) {
     return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
@@ -107,7 +115,7 @@ export const baseFormConfigConstructor = (
       label: t('purchasing.orders.labels.orderReference'),
       placeholder: t('purchasing.orders.placeholders.orderReference'),
     },
-  {
+    {
       type: FieldType.Choice,
       name: 'status',
       labelBy: 'name',
@@ -115,7 +123,7 @@ export const baseFormConfigConstructor = (
       label: t('sales.orders.labels.status.title'),
       filterable: true,
       options: getStatusOptions(t)
-    },
+     },
     getSupplierField(t, supplierId),
     {
       type: FieldType.Query,
@@ -147,7 +155,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'currency',
       label: t('shared.labels.currency'),
-      labelBy: 'symbol',
+      labelBy: 'isoCode',
       valueBy: 'id',
       query: currenciesQuery,
       dataKey: 'currencies',
@@ -164,7 +172,46 @@ export const baseFormConfigConstructor = (
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Query,
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      name: 'supplier',
+      label: t('purchasing.orders.labels.supplier'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: suppliersQuery,
+      dataKey: 'suppliers',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+      {
+      type: FieldType.Choice,
+      name: 'status',
+      labelBy: 'name',
+      valueBy: 'code',
+      label: t('sales.orders.labels.status.title'),
+      filterable: true,
+      options: getStatusOptions(t),
+      addExactLookup: true,
+      exactLookupKeys: []
+    },
+  ],
   orders: []
 });
 
@@ -175,7 +222,7 @@ const getHeaders = (t, supplierId) => {
     : [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
 }
 
-const getFields = (supplierId): ShowField[] => {
+const getFields = (t, supplierId): ShowField[] => {
   const commonFields: ShowField[] = [
     {
       name: 'orderReference',
@@ -183,7 +230,8 @@ const getFields = (supplierId): ShowField[] => {
     },
     {
       name: 'status',
-      type: FieldType.Text,
+      type: FieldType.Badge,
+      badgeMap: getOrderStatusBadgeMap(t)
     },
     {
       name: 'totalValue',
@@ -204,7 +252,7 @@ const getUrlQueryParams = (supplierId) => {
 
 export const listingConfigConstructor = (t: Function, supplierId: string | null = null): ListingConfig => ({
   headers: getHeaders(t, supplierId),
-  fields: getFields(supplierId),
+  fields: getFields(t, supplierId),
   identifierKey: 'id',
   addActions: true,
   addEdit: true,
@@ -238,9 +286,10 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   },
   {
     name: 'status',
-    type: FieldType.Text,
+    type: FieldType.Badge,
     label: t('sales.orders.labels.status.title'),
-    showLabel: true
+    showLabel: true,
+    badgeMap: getOrderStatusBadgeMap(t)
   },
   {
     name: 'totalValue',
@@ -259,39 +308,15 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     name: 'invoiceAddress',
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.invoiceAddress'),
-    keys: ['address1'],
+    keys: ['fullAddress'],
     showLabel: true
-  },
-  {
-    name: 'invoiceAddress',
-    type: FieldType.NestedText,
-    keys: ['address2'],
-    showLabel: false
-  },
-  {
-    name: 'invoiceAddress',
-    type: FieldType.NestedText,
-    keys: ['address3'],
-    showLabel: false
   },
   {
     name: 'shippingAddress',
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.shippingAddress'),
-    keys: ['address1'],
+    keys: ['fullAddress'],
     showLabel: true
-  },
-  {
-    name: 'shippingAddress',
-    type: FieldType.NestedText,
-    keys: ['address2'],
-    showLabel: false
-  },
-  {
-    name: 'shippingAddress',
-    type: FieldType.NestedText,
-    keys: ['address3'],
-    showLabel: false
   },
   ]
 

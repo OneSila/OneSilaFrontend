@@ -13,9 +13,6 @@ const props = defineProps<{
 
 <template>
   <div :class="field.customCssClass" :style="field.customCss">
-    <Icon v-if="field.icon" :name="field.icon" />
-    <Label v-if="field.label && field.showLabel" semi-bold class="mb-2">{{ field.label }}</Label>
-
     <a v-if="field.clickable && modelValue" :href="modelValue" target="_blank">{{ modelValue }}</a>
     <span v-else>{{ modelValue }}</span>
   </div>

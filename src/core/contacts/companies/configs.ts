@@ -167,7 +167,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       name: 'isCustomer',
       label: t('contacts.companies.labels.customer')
     },
-          {
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'isInfluencer',

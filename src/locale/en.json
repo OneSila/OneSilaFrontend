@@ -297,7 +297,13 @@
       "edit": {
         "title": "Edit contact"
       },
+      "show": {
+        "title": "Show contact"
+      },
       "address": {
+        "list": {
+          "title": "Addresses"
+        },
         "create": {
           "title": "Create address"
         },

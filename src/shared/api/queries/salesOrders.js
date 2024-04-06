@@ -106,6 +106,7 @@ export const getOrderQuery = gql`
         currency {
           id
           symbol
+          isoCode
         }
       priceInclVat
       status

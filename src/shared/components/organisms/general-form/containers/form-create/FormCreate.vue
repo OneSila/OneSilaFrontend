@@ -17,10 +17,6 @@ const props = withDefaults(
   { fieldsToClear: null },
 );
 
-// watch(() => props.outsideErrors, (value) => {
-//   console.log(value);
-// }, { deep: true });
-
 const emits = defineEmits(['formUpdated']);
 const errors: Ref<Record<string, string> | null> = ref(null);
 

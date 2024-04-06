@@ -53,8 +53,8 @@ const getShowRoute = (item) => {
 <FilterManager :searchConfig="searchConfig">
   <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
     <ApolloQuery :query="query"
-                 :variables="{filter: fixedFilterVariables !== null ? fixedFilterVariables : filterVariables,
-                              order: fixedOrderVariables !== null ? fixedOrderVariables : orderVariables,
+                 :variables="{filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
+                              order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                               first: pagination.first,
                               last: pagination.last,
                               before: pagination.before,
@@ -93,8 +93,8 @@ const getShowRoute = (item) => {
                         :refetch-queries="() => [{
                          query: props.query,
                          variables: {
-                           filter: fixedFilterVariables !== null ? fixedFilterVariables : filterVariables,
-                           order: fixedOrderVariables !== null ? fixedOrderVariables : orderVariables,
+                           filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
+                           order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                            first: pagination.first,
                            last: pagination.last,
                            before: pagination.before,

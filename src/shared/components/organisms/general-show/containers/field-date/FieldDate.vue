@@ -1,8 +1,5 @@
 <script setup lang="ts">
 
-import { Label } from '../../../../atoms/label';
-import { Icon } from '../../../../atoms/icon';
-import { Link } from '../../../../atoms/link';
 import { DateField } from '../../showConfig';
 
 const props = defineProps<{
@@ -18,9 +15,6 @@ const formatDate = (dateString) => {
 
 <template>
   <div :class="field.customCssClass" :style="field.customCss">
-    <Icon v-if="field.icon" :name="field.icon" />
-    <Label v-if="field.label && field.showLabel" semi-bold class="mb-2">{{ field.label }}</Label>
-
     <span>{{ formatDate(modelValue) }}</span>
   </div>
 </template>

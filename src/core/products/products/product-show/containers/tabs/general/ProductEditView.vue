@@ -52,13 +52,14 @@ const handleSubmit = (resp) => {
 </script>
 
 <template>
-  <TabContentTemplate>
-    <template v-slot:buttons>
-      <SubmitButtons :form="form" :config="{...formConfig, submitLabel: t('shared.button.save')} as FormConfig" @submit="handleSubmit"/>
-    </template>
-
-    <template v-slot:content>
+  <div class="flex justify-between items-start">
+    <div class="flex-grow">
       <GeneralForm :config="formConfig as FormConfig" @form-updated="handleFormUpdate"/>
-    </template>
-  </TabContentTemplate>
+    </div>
+
+    <div class="flex-initial">
+      <SubmitButtons :form="form" :config="{...formConfig, submitLabel: t('shared.button.save')} as FormConfig" @submit="handleSubmit"/>
+    </div>
+  </div>
+
 </template>

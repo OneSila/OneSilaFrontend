@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { Button } from './../../atoms/button';
@@ -56,6 +57,9 @@ const alignmentClasses = computed(() => {
   }
 });
 
+const showPagination = computed(() => {
+  return props.pageInfo.hasNextPage || props.pageInfo.hasPreviousPage;
+});
 
 const updateQueryParams = (updates) => {
   const newQuery = { ...router.currentRoute.value.query };
@@ -114,7 +118,7 @@ const buttons = computed(() => [
 
 
 <template>
-  <ul :class="`flex items-center space-x-1 rtl:space-x-reverse m-auto ${alignmentClasses}`">
+  <ul v-if="showPagination" :class="`flex items-center space-x-1 rtl:space-x-reverse m-auto ${alignmentClasses}`">
     <li v-for="button in buttons" :key="button.key" >
       <Button :customClass="buttonClasses[buttonClass]" @click="button.action" :disabled="button.disabled">
         <Icon v-if="useIcons && button.icon" :name="button.icon" />

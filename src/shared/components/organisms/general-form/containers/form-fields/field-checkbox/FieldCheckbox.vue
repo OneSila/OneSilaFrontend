@@ -1,11 +1,12 @@
 <script setup lang="ts">
+
 import { defineProps } from 'vue';
 import { Checkbox } from '../../../../../atoms/checkbox';
 import { CheckboxFormField } from '../../../formConfig';
 
 const props = defineProps<{
   field: CheckboxFormField;
-  modelValue: boolean;
+  modelValue?: boolean;
 }>();
 
 const emit = defineEmits(['update:modelValue']);
@@ -19,7 +20,7 @@ const updateValue = (newValue) => {
 <template>
   <div class="field-checkbox">
     <Checkbox
-      :model-value="modelValue"
+      :model-value="modelValue === true"
       @update:modelValue="updateValue"
       :disabled="field.disabled"
     />

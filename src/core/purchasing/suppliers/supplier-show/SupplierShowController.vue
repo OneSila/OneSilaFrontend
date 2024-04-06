@@ -7,13 +7,12 @@ import {GeneralShow} from "../../../../shared/components/organisms/general-show"
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import {Card} from "../../../../shared/components/atoms/card";
 import { showConfigConstructor } from "../configs";
-import { Tabs} from "../../../../shared/components/molecules/tabs";
+import { Tabs } from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ProductsList from "./containers/products-list/ProductsList.vue";
 import OrdersList from "./containers/orders-list/OrdersList.vue";
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const tabItems = ref();
@@ -39,17 +38,17 @@ const showConfig = showConfigConstructor(t, id.value);
 
    <template v-slot:content>
       <Card>
-          <Tabs :tabs="tabItems">
-            <template v-slot:general>
-              <GeneralShow :config="showConfig" />
-            </template>
-            <template v-slot:products>
-              <ProductsList :id="id" />
-            </template>
-             <template v-slot:orders>
-              <OrdersList :id="id" />
-            </template>
-          </Tabs>
+        <Tabs :tabs="tabItems">
+          <template v-slot:general>
+            <GeneralShow :config="showConfig" />
+          </template>
+          <template v-slot:products>
+            <ProductsList :id="id" />
+          </template>
+           <template v-slot:orders>
+            <OrdersList :id="id" />
+          </template>
+        </Tabs>
       </Card>
    </template>
   </GeneralTemplate>

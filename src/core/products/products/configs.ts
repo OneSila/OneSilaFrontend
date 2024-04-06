@@ -6,6 +6,7 @@ import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
 import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
+import {companiesQuery} from "../../../shared/api/queries/contacts";
 
 const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -22,6 +23,12 @@ export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.variation'), code: ProductType.Variation },
 ];
+
+export const getProductTypeBadgeMap = (t) => ({
+  [ProductType.Umbrella]: { text: t('products.products.labels.type.choices.umbrella'), color: 'blue' },
+  [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
+  [ProductType.Variation]: { text: t('products.products.labels.type.choices.variation'), color: 'indigo' },
+});
 
 const getTypeField = (type, t): FormField | null => {
   if (type == FormType.CREATE) {
@@ -117,7 +124,32 @@ export const baseFormConfigConstructor = (
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+     {
+      type: FieldType.Query,
+      name: 'vatRate',
+      query: vatRatesQuery,
+      label: t('products.products.labels.vatRate'),
+      labelBy: "name",
+      valueBy: "id",
+      dataKey: "vatRates",
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      labelBy: 'name',
+      valueBy: 'code',
+      label: t('products.products.labels.type.title'),
+      filterable: false,
+      addExactLookup: true,
+      options: getProductTypeOptions(t)
+    }
+  ],
   orders: []
 });
 

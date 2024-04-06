@@ -133,9 +133,22 @@ export const baseFormConfigConstructor = (
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
-  search: false,
+  search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'isInvoiceAddress',
+      label: t('contacts.companies.address.labels.isInvoiceAddress')
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'isShippingAddress',
+      label: t('contacts.companies.address.labels.isShippingAddress')
+    },
+  ],
   orders: []
 });
 

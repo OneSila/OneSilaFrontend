@@ -43,12 +43,14 @@ export const purchaseOrderSubscription = gql`
         address1
         address2
         address3
+        fullAddress
       }
       shippingAddress {
         id
         address1
         address2
         address3
+        fullAddress
       }
     }
   }

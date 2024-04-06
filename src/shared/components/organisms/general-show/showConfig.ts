@@ -9,6 +9,7 @@ import {FieldPhone} from "./containers/field-phone";
 import {FieldDate} from "./containers/field-date";
 import {FieldEmail} from "./containers/field-email";
 import {FieldWebsite} from "./containers/field-website";
+import {FieldBadge} from "./containers/field-badge";
 
 export interface ShowBaseField {
   name: string;
@@ -65,7 +66,17 @@ export interface ArrayField extends ShowBaseField {
   clickIdentifiers?: ClickIdentifier[];
 }
 
-export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField;
+export interface Badge {
+  text: string;
+  color: string;
+}
+
+export interface BadgeField extends ShowBaseField {
+  type: FieldType.Badge;
+  badgeMap: Record<string, Badge>;
+}
+
+export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField;
 
 export const updateField = (showConfig, fieldName, newConfig) => {
   const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
@@ -85,6 +96,7 @@ export const getFieldComponent = (type) => {
     case FieldType.Date: return FieldDate;
     case FieldType.Email: return FieldEmail;
     case FieldType.Website: return FieldWebsite;
+    case FieldType.Badge: return FieldBadge;
     default: return null;
   }
 };
@@ -109,5 +121,7 @@ export interface ShowConfig {
   deleteVariables?: Record<string, any>;
   deleteUrl?: Url; // url to lend after delete
   customStyle?: string;
+  title?: string;
+  description?: string;
   fields: ShowField[];
 }

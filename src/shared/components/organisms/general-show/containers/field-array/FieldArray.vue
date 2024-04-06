@@ -4,8 +4,6 @@ import { FieldNestedText } from './../field-nested-text';
 import {ArrayField, NestedTextField} from '../../showConfig';
 import { accessNestedProperty } from '../../../general-show/showConfig';
 import { FieldType} from "../../../../../utils/constants";
-import { Icon } from "../../../../atoms/icon";
-import { Label } from "../../../../atoms/label";
 
 const props = defineProps<{
   field: ArrayField;
@@ -42,9 +40,6 @@ const buildClickUrl = (item) => {
 
 <template>
   <div>
-    <Icon v-if="field.icon" :name="field.icon" />
-    <Label v-if="field.label && field.showLabel" semi-bold class="mb-2">{{ field.label }}</Label>
-
     <div v-for="(item, index) in modelValue" :key="index">
 
       <FieldNestedText

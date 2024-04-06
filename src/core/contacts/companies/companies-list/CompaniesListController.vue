@@ -11,7 +11,6 @@ import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, lis
 const { t } = useI18n();
 
 const searchConfig = searchConfigConstructor(t);
-console.log(searchConfig)
 const listingConfig = listingConfigConstructor(t);
 
 </script>

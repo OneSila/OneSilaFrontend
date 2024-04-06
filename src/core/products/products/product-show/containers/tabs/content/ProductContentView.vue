@@ -14,6 +14,7 @@ import {reactive, watch, ref} from "vue";
 import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Toast } from "../../../../../../../shared/modules/toast";
+import {FormConfig} from "../../../../../../../shared/components/organisms/general-form/formConfig";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -114,53 +115,61 @@ const onMutationCompleted = () => {
 </script>
 
 <template>
-  <TabContentTemplate>
-    <template v-slot:buttons>
-      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
-        <template v-slot="{ mutate, loading, error }">
-          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
-            {{ t('shared.button.save') }}
-          </Button>
-          <p v-if="error">{{ error.message }}</p>
-        </template>
-      </ApolloMutation>
-      <ApolloQuery :query="translationLanguagesQuery">
-        <template v-slot="{ result: { data } }">
-          <Selector v-if="data"
-                    v-model="currentLanguage"
-                    :options="cleanedData(data.translationLanguages)"
-                    :removable="false"
-                    :placeholder="t('products.translation.placeholders.language')"
-                    @update:modelValue="handleLanguageSelection"
-                    class="min-w-[100px]"
-                    labelBy="name"
-                    valueBy="code"
-                    mandatory
-                    filterable />
-        </template>
-      </ApolloQuery>
-    </template>
+  <Flex between>
+  <FlexCell class=" w-3/4">
+    <Flex vertical>
+      <FlexCell>
+        <Label semi-bold>{{ t('shared.labels.name') }}</Label>
+        <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="mt-2 mb-2 w-full" />
+      </FlexCell>
+      <FlexCell>
+        <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
+        <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-2 h-32 w-full" />
+      </FlexCell>
+      <FlexCell>
+        <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
+        <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="mt-2 mb-2 h-32 w-full" />
+      </FlexCell>
+      <FlexCell>
+        <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
+        <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full" />
+      </FlexCell>
+    </Flex>
+  </FlexCell>
 
-    <template v-slot:content>
-      <Flex vertical>
-        <FlexCell>
-          <Label semi-bold>{{ t('shared.labels.name') }}</Label>
-          <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="mt-2 mb-2 w-full" />
-        </FlexCell>
-        <FlexCell>
-          <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-          <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-2 h-32 w-full" />
-        </FlexCell>
-        <FlexCell>
-          <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-          <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="mt-2 mb-2 h-32 w-full" />
-        </FlexCell>
-        <FlexCell>
-          <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
-          <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full" />
-        </FlexCell>
-      </Flex>
-    </template>
+  <FlexCell>
+    <Flex>
+      <FlexCell>
+            <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
+      <template v-slot="{ mutate, loading, error }">
+        <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
+          {{ t('shared.button.save') }}
+        </Button>
+        <p v-if="error">{{ error.message }}</p>
+      </template>
+    </ApolloMutation>
+      </FlexCell>
+      <FlexCell>
+            <ApolloQuery :query="translationLanguagesQuery">
+      <template v-slot="{ result: { data } }">
+        <Selector v-if="data"
+                  v-model="currentLanguage"
+                  :options="cleanedData(data.translationLanguages)"
+                  :removable="false"
+                  :placeholder="t('products.translation.placeholders.language')"
+                  @update:modelValue="handleLanguageSelection"
+                  class="min-w-[100px]"
+                  labelBy="name"
+                  valueBy="code"
+                  mandatory
+                  filterable />
+      </template>
+    </ApolloQuery>
+      </FlexCell>
+    </Flex>
 
-  </TabContentTemplate>
+
+  </FlexCell>
+</Flex>
+
 </template>
