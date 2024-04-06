@@ -218,8 +218,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, supplierId) => {
   return supplierId
-    ? [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.totalValue')]
-    : [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
+    ? [t('purchasing.orders.labels.orderReference'),t('purchasing.orders.labels.totalValue'), t('sales.orders.labels.status.title'), ]
+    : [t('purchasing.orders.labels.orderReference'), t('purchasing.orders.labels.totalValue'), t('purchasing.orders.labels.supplier'), t('sales.orders.labels.status.title')];
 }
 
 const getFields = (t, supplierId): ShowField[] => {
@@ -229,13 +229,13 @@ const getFields = (t, supplierId): ShowField[] => {
       type: FieldType.Text,
     },
     {
+      name: 'totalValue',
+      type: FieldType.Text,
+    },
+    {
       name: 'status',
       type: FieldType.Badge,
       badgeMap: getOrderStatusBadgeMap(t)
-    },
-    {
-      name: 'totalValue',
-      type: FieldType.Text,
     },
   ];
 
