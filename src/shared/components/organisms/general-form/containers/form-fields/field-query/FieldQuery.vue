@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['update:modelValue']);
 const showCreateOnFlyModal = ref(false);
-const rawDataRef: Ref<any> = ref();
+const rawDataRef: Ref<any> = ref([]);
 const cleanedData: Ref<any[]> = ref([]);
 
 const selectedValue = ref(props.modelValue);
@@ -38,17 +38,23 @@ const limit = props.field.limit || undefined;
 
 const cleanData = (rawData, forceUpdate=false) => {
 
+  rawDataRef.value = rawData;
+  let toCleanData = []
+  if (props.field.isEdge && rawDataRef.value?.edges) {
+    toCleanData = rawDataRef.value.edges.map(edge => edge.node)
+  } else {
+    toCleanData = rawDataRef.value;
+  }
+
+  if (cleanedData.value.length != toCleanData.length) {
+    forceUpdate = true;
+  }
+
   if (cleanedData.value.length > 0 && !forceUpdate) {
     return true;
   }
 
-  rawDataRef.value = rawData;
-
-  if (props.field.isEdge && rawDataRef.value?.edges) {
-    cleanedData.value = rawDataRef.value.edges.map(edge => edge.node)
-  } else {
-    cleanedData.value = rawDataRef.value;
-  }
+  cleanedData.value = toCleanData;
 
   return true;
 };
