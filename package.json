@@ -59,7 +59,7 @@
     "@tailwindcss/typography": "^0.5.10",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
-    "@vitejs/plugin-vue": "^1.9.3",
+    "@vitejs/plugin-vue": "^1.10.2",
     "@vue/eslint-config-typescript": "^11.0.2",
     "autoprefixer": "^10.4.0",
     "cssnano": "^5.0.12",
