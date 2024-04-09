@@ -211,6 +211,11 @@
     }
   },
   "profile": {
+    "dropdown": {
+      "profile": "Profile",
+      "company": "Company",
+      "signOut": "Sign Out"
+    },
     "tabs": {
       "general": "General",
       "security": "Security"

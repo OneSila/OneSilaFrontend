@@ -16,8 +16,8 @@ export interface ShowBaseField {
   icon?: string;
   label?: string;
   clickable?: boolean;
-  showLabel?: boolean;
   clickUrl?: Url; // url to navigate when clicked
+  showLabel?: boolean;
   customCss?: string; // Custom CSS for individual fields
   customCssClass?: string; // Custom CSS class for individual fields
 }
@@ -55,7 +55,6 @@ export interface ImageField extends ShowBaseField {
 export interface NestedTextField extends ShowBaseField {
   type: FieldType.NestedText;
   keys: string[];
-  clickUrl?: any;
 }
 
 type ClickIdentifier = Record<string, string[]>;

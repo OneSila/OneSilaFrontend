@@ -4,8 +4,8 @@ import { useI18n } from 'vue-i18n';
 import { hasCompany, injectAuth, isActive, isAuthenticated } from './shared/modules/auth';
 import { ref } from "vue";
 import { useAppStore } from './shared/plugins/store';
-import SideBar from './shared/components/molecules/nav-bar/SideBar.vue';
-import HeaderBar from './shared/components/molecules/nav-bar/HeaderBar.vue';
+import SideBar from './shared/components/organisms/nav-bar/SideBar.vue';
+import HeaderBar from './shared/components/organisms/nav-bar/HeaderBar.vue';
 const sidebar: any = ref(false);
 
 const { locale } = useI18n();

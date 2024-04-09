@@ -22,7 +22,6 @@ const props = withDefaults(
 );
 
 
-
 const emit = defineEmits(['onFinish', 'onNextStep', 'onBack', 'updateCurrentStep']);
 
 const currentStep = ref(0);

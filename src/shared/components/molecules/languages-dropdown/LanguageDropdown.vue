@@ -9,8 +9,6 @@ import { getFlagImageSrc } from "../../../utils";
 import { useAppStore } from '../../../plugins/store';
 import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
-import { useRoute } from 'vue-router';
-const route = useRoute();
 
 const auth = injectAuth();
 const { locale } = useI18n();

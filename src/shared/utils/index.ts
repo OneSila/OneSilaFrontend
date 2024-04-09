@@ -1,7 +1,7 @@
 import _slugify from '@sindresorhus/slugify';
 import {useI18n} from 'vue-i18n';
 
-export const isIntegrated = () => window.location !== window.parent.location;
+export const isIframe = () => window.location !== window.parent.location;
 
 export const useStringifyActiveStatus = () => {
   const { t } = useI18n();

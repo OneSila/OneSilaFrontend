@@ -194,7 +194,7 @@ export const baseFormConfigConstructor = (
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
-  search: false,
+  search: true,
   orderKey: "sort",
   filters: [
     {

@@ -6,7 +6,6 @@ import {
   injectAuth,
   refreshUser,
 } from '../../../../../shared/modules/auth';
-import {useSafeRequest} from '../../../../../shared/modules/network';
 import { loginMutation, registerMutation } from '../../../../../shared/api/mutations/auth.js'
 import Link from "../../../../../shared/components/atoms/link/Link.vue";
 import {Button} from '../../../../../shared/components/atoms/button';

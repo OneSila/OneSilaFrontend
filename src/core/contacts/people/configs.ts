@@ -2,10 +2,10 @@ import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/c
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import {companiesQuery, peopleQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js"
-import {createCompanyMutation, deletePersonMutation} from "../../../shared/api/mutations/contacts.js";
+import { companiesQuery, peopleQuery } from "../../../shared/api/queries/contacts.js"
+import { createCompanyMutation, deletePersonMutation } from "../../../shared/api/mutations/contacts.js";
 import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
-import {baseFormConfigConstructor as baseCompanyConfigConstructor } from '../companies/configs'
+import { baseFormConfigConstructor as baseCompanyConfigConstructor } from '../companies/configs'
 
 
 const companyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({

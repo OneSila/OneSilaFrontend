@@ -11,7 +11,6 @@ import apolloClient from "../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../modules/toast";
 import { processGraphQLErrors } from "../../../../../../../utils";
 
-
 const { t } = useI18n();
 
 const props = defineProps<{ field: QueryFormField }>();

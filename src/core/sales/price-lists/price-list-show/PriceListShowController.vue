@@ -5,7 +5,6 @@ import { ref} from "vue";
 import {GeneralShow} from "../../../../shared/components/organisms/general-show";
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import {Card} from "../../../../shared/components/atoms/card";
-import { updateField} from "../../../../shared/components/organisms/general-show/showConfig";
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";

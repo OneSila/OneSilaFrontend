@@ -5,6 +5,9 @@ import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { Link } from "../../atoms/link";
 import { Button } from "../../atoms/button";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const auth = injectAuth();
 const user = ref(auth.user)
@@ -15,7 +18,6 @@ const logout = async () => {
   await removeAuth(auth);
   router.replace({ name: 'auth.login' });
 };
-
 
 </script>
 
@@ -40,20 +42,19 @@ const logout = async () => {
                   <li>
                     <Link :path="{name: 'profile.user'}" class="dark:hover:text-white" @click="close()" block>
                         <Icon name="user" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                        Profile
+                        {{ t('profile.dropdown.profile') }}
                     </Link>
                   </li>
                   <li>
                     <Link :path="{name: 'profile.company'}" class="dark:hover:text-white" @click="close()" block>
                         <Icon name="building" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                        Company
+                        {{ t('profile.dropdown.company') }}
                     </Link>
                   </li>
                   <li class="border-t border-white-light dark:border-white-light/10">
                       <Button class="text-danger !py-3 " @click="logout()">
                           <Icon name="sign-out" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-
-                          Sign Out
+                          {{ t('profile.dropdown.signOut') }}
                       </Button>
                   </li>
               </ul>
