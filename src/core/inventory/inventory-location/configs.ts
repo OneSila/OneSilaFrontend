@@ -18,6 +18,21 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: { name: 'inventory.inventoryLocations.list' },
   deleteMutation: deleteInventoryLocationMutation,
+  helpSections: [
+    {
+      header: t('inventory.inventoryLocation.helpSection.location.header'),
+      content: t('inventory.inventoryLocation.helpSection.location.content')
+    },
+    {
+      header: t('inventory.inventoryLocation.helpSection.name.header'),
+      content: t('inventory.inventoryLocation.helpSection.name.content')
+    },
+    {
+      header: t('inventory.inventoryLocation.helpSection.description.header'),
+      content: t('inventory.inventoryLocation.helpSection.description.content')
+    },
+
+  ],
   fields: [
     {
       type: FieldType.Query,

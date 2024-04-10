@@ -17,6 +17,44 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: { name: 'settings.currencies.list' },
   deleteMutation: deleteCurrencyMutation,
+  helpSections: [
+    {
+      header: t('settings.currencies.helpSection.name.header'),
+      content: t('settings.currencies.helpSection.name.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.isoCode.header'),
+      content: t('settings.currencies.helpSection.isoCode.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.symbol.header'),
+      content: t('settings.currencies.helpSection.symbol.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.isDefaultCurrency.header'),
+      content: t('settings.currencies.helpSection.isDefaultCurrency.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.inheritsFrom.header'),
+      content: t('settings.currencies.helpSection.inheritsFrom.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.followOfficialRate.header'),
+      content: t('settings.currencies.helpSection.followOfficialRate.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.exchangeRate.header'),
+      content: t('settings.currencies.helpSection.exchangeRate.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.roundPricesUpTo.header'),
+      content: t('settings.currencies.helpSection.roundPricesUpTo.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.comment.header'),
+      content: t('settings.currencies.helpSection.comment.content')
+    },
+  ],
   fields: [
     {
       type: FieldType.Text,
@@ -37,6 +75,14 @@ export const baseFormConfigConstructor = (
       placeholder: t('settings.currencies.placeholders.symbol'),
     },
     {
+      type: FieldType.Checkbox,
+      name: 'isDefaultCurrency',
+      label: t('settings.currencies.labels.isDefaultCurrency'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    {
       type: FieldType.Query,
       name: 'inheritsFrom',
       label:  t('settings.currencies.labels.inheritsFrom'),
@@ -51,17 +97,18 @@ export const baseFormConfigConstructor = (
       optional: true
     },
     {
+      type: FieldType.Checkbox,
+      name: 'followOfficialRate',
+      label: t('settings.currencies.labels.followOfficialRate'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    {
       type: FieldType.Text,
       name: 'exchangeRate',
       label: t('settings.currencies.labels.exchangeRate'),
       placeholder: t('settings.currencies.placeholders.exchangeRate'),
-      number: true,
-    },
-    {
-      type: FieldType.Text,
-      name: 'exchangeRateOfficial',
-      label: t('settings.currencies.labels.exchangeRateOfficial'),
-      placeholder: t('settings.currencies.placeholders.exchangeRateOfficial'),
       number: true,
     },
     {
@@ -72,29 +119,12 @@ export const baseFormConfigConstructor = (
       number: true,
     },
     {
-      type: FieldType.Checkbox,
-      name: 'followOfficialRate',
-      label: t('settings.currencies.labels.followOfficialRate'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'isDefaultCurrency',
-      label: t('settings.currencies.labels.isDefaultCurrency'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    {
       type: FieldType.Text,
       name: 'comment',
       label: t('settings.currencies.labels.comment'),
       placeholder: t('settings.currencies.placeholders.comment'),
       optional: true
     },
-
     ],
 });
 
