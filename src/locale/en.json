@@ -489,7 +489,7 @@
         "title": "Inventory Location"
       },
       "labels": {
-        "parent": "Parent Location"
+        "parent": "Location"
       }
     },
     "inventory": {

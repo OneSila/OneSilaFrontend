@@ -54,9 +54,9 @@ export const inventoryLocationsQuery = gql`
           id
           name
           description
-          parentLocation {
+          location {
               id
-              name
+              fullAddress
           }
         }
         cursor
@@ -78,9 +78,9 @@ export const getInventoryLocationQuery = gql`
       id
       name
       description
-      parentLocation {
+      location {
           id
-          name
+          fullAddress
       }
     }
   }

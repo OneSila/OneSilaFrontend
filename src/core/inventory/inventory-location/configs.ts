@@ -3,6 +3,7 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { inventoryLocationsQuery } from "../../../shared/api/queries/inventory.js"
+import { internalShippingAddressesQuery } from "../../../shared/api/queries/contacts.js"
 import { deleteInventoryLocationMutation } from "../../../shared/api/mutations/inventory.js";
 
 export const baseFormConfigConstructor = (
@@ -19,6 +20,20 @@ export const baseFormConfigConstructor = (
   deleteMutation: deleteInventoryLocationMutation,
   fields: [
     {
+      type: FieldType.Query,
+      name: 'location',
+      label:  t('inventory.inventoryLocations.labels.parent'),
+      labelBy: 'fullAddress',
+      valueBy: 'id',
+      query: internalShippingAddressesQuery,
+      dataKey: 'internalShippingAddresses',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      optional: true
+    },
+    {
       type: FieldType.Text,
       name: 'name',
       label: t('shared.labels.name'),
@@ -32,20 +47,6 @@ export const baseFormConfigConstructor = (
       scroll: true,
       optional: true
     },
-    {
-        type: FieldType.Query,
-        name: 'parentLocation',
-        label:  t('inventory.inventoryLocations.labels.parent'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: inventoryLocationsQuery,
-        dataKey: 'inventoryLocations',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        formMapIdentifier: 'id',
-        optional: true
-      }
     ],
 });
 
@@ -53,20 +54,20 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
   filters: [
-  {
-        type: FieldType.Query,
-        name: 'parentLocation',
-        label:  t('inventory.inventoryLocations.labels.parent'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: inventoryLocationsQuery,
-        dataKey: 'inventoryLocations',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        addExactLookup: true,
-        exactLookupKeys: ['id']
-      }
+     {
+      type: FieldType.Query,
+      name: 'location',
+      label:  t('inventory.inventoryLocations.labels.parent'),
+      labelBy: 'fullAddress',
+      valueBy: 'id',
+      query: internalShippingAddressesQuery,
+      dataKey: 'internalShippingAddresses',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    }
   ],
   orders: []
 });
@@ -79,9 +80,9 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       type: FieldType.Text,
     },
     {
-      name: 'parentLocation',
+      name: 'location',
       type: FieldType.NestedText,
-      keys: ['name']
+      keys: ['fullAddress']
     },
   ],
   identifierKey: 'id',

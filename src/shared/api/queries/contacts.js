@@ -138,6 +138,39 @@ query shippingAddresses($filter: ShippingAddressFilter) {
 }
 `;
 
+export const internalShippingAddressesQuery = gql`
+  query internalShippingAddresses($filter: InternalShippingAddressFilter) {
+    internalShippingAddresses(filters: $filter) {
+      edges {
+        node {
+          id
+          isInvoiceAddress
+          isShippingAddress
+          address1
+          address2
+          address3
+          fullAddress
+          postcode
+          city
+          country
+          contact {
+              id
+              firstName
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getCompanyAddressQuery = gql`
 query getCompanyAddress ($id: GlobalID!){
   address (id: $id) {
