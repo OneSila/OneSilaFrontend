@@ -767,9 +767,11 @@
         "title": "Edit Vat Rate"
       },
       "labels": {
-        "rate": "Rate"
+        "name": "Name",
+        "rate": "Rate (%)"
       },
       "placeholders": {
+        "name": "Name",
         "rate": "Enter rate"
       }
     },

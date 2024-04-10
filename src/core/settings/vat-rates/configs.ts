@@ -20,6 +20,13 @@ export const baseFormConfigConstructor = (
   fields: [
     {
       type: FieldType.Text,
+      name: 'name',
+      label: t('settings.vatRates.labels.name'),
+      placeholder: t('settings.vatRates.placeholders.name'),
+      number: false,
+    },
+    {
+      type: FieldType.Text,
       name: 'rate',
       label: t('settings.vatRates.labels.rate'),
       placeholder: t('settings.vatRates.placeholders.rate'),
@@ -36,12 +43,13 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name')],
+  headers: [
+    t('settings.vatRates.labels.name'),
+    t('settings.vatRates.labels.rate')
+  ],
   fields: [
-    {
-      name: 'name',
-      type: FieldType.Text,
-    },
+    {name: 'name', type: FieldType.Text},
+    {name: 'rate', type: FieldType.Text},
   ],
   identifierKey: 'id',
   addActions: true,
