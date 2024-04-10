@@ -6,6 +6,7 @@ import { ShowConfig } from "../../../shared/components/organisms/general-show/sh
 import { companiesQuery } from "../../../shared/api/queries/contacts.js"
 import { deleteCompanyMutation } from "../../../shared/api/mutations/contacts.js";
 import { getCompanySubscription } from "../../../shared/api/subscriptions/contacts.js";
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,

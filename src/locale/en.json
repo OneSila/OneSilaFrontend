@@ -477,6 +477,23 @@
   },
   "inventory": {
     "title": "Inventory",
+    "inventoryLocation": {
+      "helpSection": {
+        "location": {
+          "header": "Location",
+          "content": "This you physical location, where the inventory is located.  More locations can be added via Shipping Address in settings."
+        },
+        "name": {
+          "header": "Name",
+          "content": "The name of your location.  For example:  Rack A, Shelf 3, Location: 12 could make: A-3-12."
+        },
+        "description": {
+          "header": "Description",
+          "content": "Anything that helps you and your team understand this location.  Treat it as a note taking field."
+        }
+
+      }
+    },
     "inventoryLocations": {
       "title": "Inventory Locations",
       "create": {
@@ -491,6 +508,7 @@
       "labels": {
         "parent": "Location"
       }
+
     },
     "inventory": {
       "title": "Inventories",
@@ -742,7 +760,46 @@
         "exchangeRateOfficial": "Enter official exchange rate",
         "roundPricesUpTo": "Enter round-up value",
         "comment": "Enter comment"
+      },
+      "helpSection":{
+        "name":{
+          "header": "Name",
+          "content": "The name of the currency, eg: British Pound."
+        },
+        "isoCode":{
+          "header": "Iso Code",
+          "content": "Offical 3 letter code of the currency, eg: GBP."
+        },
+        "symbol":{
+          "header": "Symbol",
+          "content": "The symbol for the currency, eg: £."
+        },
+        "isDefaultCurrency":{
+          "header": "Default Currency",
+          "content": "The standard currency for your organisation. There can be only 1."
+        },
+        "inheritsFrom":{
+          "header": "Inherits from",
+          "content": "What currency should the prices be converted against? Eg select GBP if you're creating EUR."
+        },
+        "followOfficialRate":{
+          "header": "Follow official Rate",
+          "content": "If you want to follow the official exchange rates, you should select this. If you have your own rates, mark this as False."
+        },
+        "exchangeRate":{
+          "header": "Exchange Rate",
+          "content": "Fill in your own rates in this field if you have them."
+        },
+        "roundPricesUpTo":{
+          "header": "Round Prices Up To",
+          "content": "When prices are calculated for this currency, do you want to round them up to 1, or 10, or .95 etc."
+        },
+        "comment":{
+          "header": "Comment",
+          "content": "No special action here, just a field for note taking."
+        }
       }
+
     },
     "vatRates": {
       "title": "Vat Rates",
