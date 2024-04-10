@@ -7,6 +7,8 @@ import { detectAuth, removeAuth } from './src/shared/modules/auth';
 import { getRouter } from './src/shared/modules/router';
 import { onError } from '@apollo/client/link/error';
 import { reactive } from 'vue';
+import { Toast } from "./src/shared/modules/toast";
+import { i18n } from "./src/shared/plugins/i18n";
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
 
@@ -20,6 +22,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       }
 
     });
+  }
+
+  if (networkError) {
+    if (networkError.message.includes('Failed to fetch')) {
+        // @ts-ignore global is working fine and is documented but we get and error like it's missing
+        const message = i18n.global.t('network.error');
+        Toast.error(message);
+    }
   }
 
 });

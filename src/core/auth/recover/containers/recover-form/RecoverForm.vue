@@ -7,6 +7,9 @@ import { requestLoginLinkMutation } from '../../../../../shared/api/mutations/au
 import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import {EmailInput} from "../../../../../shared/components/atoms/input-email";
+import {Toast} from "../../../../../shared/modules/toast";
+import {displayApolloError} from "../../../../../shared/utils";
+import {useEnterKeyboardListener} from "../../../../../shared/modules/keyboard";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -18,6 +21,7 @@ const form = reactive({
 const requestSent = ref(false);
 const countdown = ref('');
 const countdownInterval = ref();
+const submitButtonRef = ref();
 
 const startCountdown = (createdAt, expiresAt) => {
   const endTime = new Date(expiresAt).getTime();
@@ -50,6 +54,16 @@ const onRecoverClicked = async (response) => {
   startCountdown(response.data.recoveryToken?.createdAt, response.data.recoveryToken?.expiresAt);
 };
 
+const onError = (error) => {
+  displayApolloError(error);
+};
+
+const onSubmit = () => {
+  submitButtonRef.value?.$el.click();
+};
+
+useEnterKeyboardListener(onSubmit);
+
 </script>
 
 <template>
@@ -76,11 +90,10 @@ const onRecoverClicked = async (response) => {
     <EmailInput id="email" icon="envelope" v-model:model-value="form.email" :label="t('auth.recover.labels.email')" :placeholder="t('auth.recover.placeholders.email')" />
 
     <div>
-    <ApolloMutation :mutation="requestLoginLinkMutation" :variables="{ username: form.email }" @done="onRecoverClicked">
+    <ApolloMutation :mutation="requestLoginLinkMutation" :variables="{ username: form.email }" @done="onRecoverClicked" @error="onError">
       <template v-slot="{ mutate, loading, error }">
-        <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" :disabled="loading" @click="mutate()">          {{ t('shared.button.recover') }}
+        <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" :disabled="loading" @click="mutate()">          {{ t('shared.button.recover') }}
         </Button>
-        <p v-if="error">{{ error.message }}</p>
       </template>
     </ApolloMutation>
     </div>

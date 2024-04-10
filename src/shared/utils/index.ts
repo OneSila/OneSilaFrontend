@@ -1,5 +1,6 @@
 import _slugify from '@sindresorhus/slugify';
-import {useI18n} from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
+import { Toast } from "../modules/toast";
 
 export const isIframe = () => window.location !== window.parent.location;
 
@@ -210,3 +211,8 @@ export const processGraphQLErrors = (errorResponse, t) => {
 
   return validationErrors;
 };
+
+export const displayApolloError = (error) => {
+  Toast.error(error.toString().replace('ApolloError: ', ''));
+}
+

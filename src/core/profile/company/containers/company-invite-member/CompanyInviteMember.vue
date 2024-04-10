@@ -8,6 +8,7 @@ import { inviteMemberMutation } from '../../../../../shared/api/mutations/auth.j
 import { useI18n } from 'vue-i18n';
 import {EmailInput} from "../../../../../shared/components/atoms/input-email";
 import {Toast} from "../../../../../shared/modules/toast";
+import {displayApolloError} from "../../../../../shared/utils";
 
 const { t } = useI18n();
 
@@ -23,7 +24,7 @@ const form = ref({
 });
 
 const onMemberAddedError = (error) => {
-  Toast.error(error.toString().replace('ApolloError: ', ''));
+  displayApolloError(error);
 };
 
 const afterInvite = () => {

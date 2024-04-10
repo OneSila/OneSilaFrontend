@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { reactive, computed } from 'vue';
+import {reactive, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ApolloMutation, ApolloQuery } from '@vue/apollo-components';
@@ -11,8 +11,10 @@ import { Selector } from "../../../../../shared/components/atoms/selector";
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import { registerCompanyMutation } from '../../../../../shared/api/mutations/auth.js'
-import { languagesQuery, countriesQuery } from "../../../../../shared/api/queries/languages";
+import { languagesQuery, countriesQuery } from "../../../../../shared/api/queries/languages.js";
 import {PhoneNumberInput} from "../../../../../shared/components/atoms/input-phone-number";
+import {displayApolloError} from "../../../../../shared/utils";
+import {useEnterKeyboardListener} from "../../../../../shared/modules/keyboard";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -24,6 +26,7 @@ const form = reactive({
   language: '',
   phoneNumber: ''
 });
+const submitButtonRef = ref();
 
 const isFormValid = computed(() => {
   return form.name && form.country && form.phoneNumber;
@@ -38,6 +41,17 @@ const onCompanyRegistered = ({ data }) => {
     router.push({ name: 'dashboard' });
   }
 };
+
+const onError = (error) => {
+  displayApolloError(error);
+};
+
+const onSubmit = () => {
+  submitButtonRef.value?.$el.click();
+};
+
+useEnterKeyboardListener(onSubmit);
+
 </script>
 
 <template>
@@ -83,19 +97,17 @@ const onCompanyRegistered = ({ data }) => {
           phoneNumber: form.phoneNumber
         }"
         @done="onCompanyRegistered"
+        @error="onError"
       >
         <template v-slot="{ loading, error, mutate }">
-        <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
+        <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
                 :disabled="loading || !isFormValid"
                 @click="mutate()"
         >
             {{ t('auth.register.company.button.createCompany')}}
           </Button>
-          <p v-if="error">{{ error.message }}</p>
         </template>
       </ApolloMutation>
-
-
     </div>
   </div>
 </template>

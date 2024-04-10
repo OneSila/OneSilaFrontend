@@ -20,7 +20,8 @@ const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
   updatePersonMutation,
-  'updatePerson'
+  'updatePerson',
+  route.query.companyId ? route.query.companyId.toString() : null
 );
 
 const formConfig = {

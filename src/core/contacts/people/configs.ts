@@ -2,11 +2,25 @@ import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/c
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { ShowField } from '../../../shared/components/organisms/general-show/showConfig';
 import { companiesQuery, peopleQuery } from "../../../shared/api/queries/contacts.js"
 import { createCompanyMutation, deletePersonMutation } from "../../../shared/api/mutations/contacts.js";
 import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
 import { baseFormConfigConstructor as baseCompanyConfigConstructor } from '../companies/configs'
 
+const getSubmitUrl = (companyId) => {
+  if (companyId) {
+    return { name: 'contacts.companies.show', params: { id: companyId }, query: { tab: 'people' } };
+  }
+  return { name: 'contacts.companies.list' };
+}
+
+const getSubmitAndContinueUrl = (companyId) => {
+  if (companyId) {
+    return { name: 'contacts.companies.edit', query: { companyId } };
+  }
+  return { name: 'contacts.companies.edit' };
+}
 
 const companyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -55,9 +69,11 @@ export const baseFormConfigConstructor = (
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: { name: 'contacts.people.list' },
+  submitUrl: getSubmitUrl(companyId),
+  submitAndContinueUrl: getSubmitAndContinueUrl(companyId),
   deleteMutation: deletePersonMutation,
   fields: [
+      getCompanyField(companyId, t),
       {
         type: FieldType.Text,
         name: 'firstName',
@@ -94,8 +110,7 @@ export const baseFormConfigConstructor = (
         isEdge: false,
         multiple: false,
         filterable: true,
-      },
-      getCompanyField(companyId, t)
+      }
     ],
 });
 
@@ -120,9 +135,14 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.firstName'), t('shared.labels.email'), t('shared.labels.phone'), t('contacts.people.labels.company'), t('shared.placeholders.language')],
-  fields: [
+const getHeaders = (t, companyId) => {
+  return companyId
+    ? [t('shared.labels.firstName'), t('shared.labels.email'), t('shared.labels.phone'), t('shared.placeholders.language')]
+    : [t('shared.labels.firstName'), t('shared.labels.email'), t('shared.labels.phone'), t('contacts.people.labels.company'), t('shared.placeholders.language')];
+};
+
+const getFields = (companyId): ShowField[] => {
+  const commonFields: ShowField[] = [
     {
       name: 'firstName',
       type: FieldType.Text,
@@ -138,17 +158,27 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       clickable: true
     },
     {
-      name: 'company',
-      type: FieldType.NestedText,
-      keys: ['name']
-    },
-    {
       name: 'language',
       type: FieldType.Image,
       basePath: '/images/flags',
       suffix: '.svg'
     }
-  ],
+  ];
+
+  if (!companyId) {
+    commonFields.splice(3, 0, { name: 'company', type: FieldType.NestedText, keys: ['name'] });
+  }
+
+  return commonFields;
+};
+
+const getUrlQueryParams = (companyId) => {
+  return companyId ? { "companyId": companyId } : undefined;
+};
+
+export const listingConfigConstructor = (t: Function, companyId: string | null = null): ListingConfig => ({
+  headers: getHeaders(t, companyId),
+  fields: getFields(companyId),
   identifierKey: 'id',
   addActions: true,
   addEdit: true,
@@ -157,7 +187,9 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePersonMutation,
+  urlQueryParams: getUrlQueryParams(companyId),
 });
+
 
 export const listingQueryKey = 'people';
 export const listingQuery = peopleQuery;
