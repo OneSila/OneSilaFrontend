@@ -18,6 +18,7 @@
         "cancelButtonText": "No, cancel!"
       },
       "toast": {
+        "generalError": "An error occurred",
         "submitSuccessCreate": "Your entry has been successfully created!",
         "submitSuccessUpdate": "Your changes have been saved successfully!",
         "deleteSuccess": "The item has been successfully deleted.",
@@ -619,6 +620,19 @@
     },
     "priceLists": {
       "title": "Prices Lists",
+      "helpSection": {
+          "discountAmount": {
+            "header": "Discount Amount",
+            "content": "The discount amount section refers to the percentage of the discount."
+          },
+          "autoUpdate": {
+            "header": "Auto Update",
+            "content": "Enable it if you want to auto-update the prices for all the products."
+          },
+          "vatInclusion": {
+            "content": "Make sure the price includes VAT or not."
+          }
+        },
       "create": {
         "title": "Create Price List"
       },
@@ -841,10 +855,6 @@
     }
   },
   "network": {
-    "error": "Network Error",
-    "retryingIn": "Retrying in {seconds} seconds",
-    "retrying": "Retrying",
-    "refresh": "Refresh",
-    "retryConnect": "Retry Connection"
+    "error": "Failed to fetch data from the server. Please check your connection."
   }
 }

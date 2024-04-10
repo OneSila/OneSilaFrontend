@@ -18,6 +18,7 @@ import apolloClient from '../../../../apollo-client';
 
 import { useI18n } from 'vue-i18n';
 import { useRouter, useRoute } from 'vue-router';
+import {displayApolloError} from "../../../shared/utils";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -53,14 +54,15 @@ const executeMutation = async () => {
       throw new Error(t('auth.recover.tokenFailed'));
     }
   } catch (err) {
+
     console.error('Token authentication failed:', err);
 
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
 
     if (graphqlError.graphQLErrors) {
-      errors.value = graphqlError.graphQLErrors.map(x => x.message);
-    } else {
-      errors.value = ['An unexpected error occurred'];
+      graphqlError.graphQLErrors.map(x =>
+          displayApolloError(x.message)
+      )
     }
   }
 };
@@ -101,9 +103,6 @@ executeMutation();
         <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
           {{ t('auth.recover.tokenHeader') }}
         </h1>
-        <div v-if="errors.length">
-          <p v-for="error in errors">{{ error }}</p>
-        </div>
       </div>
 
     </template>

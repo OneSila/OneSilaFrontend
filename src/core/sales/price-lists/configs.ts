@@ -123,6 +123,19 @@ export const baseFormConfigConstructor = (
   submitUrl: getSubmitUrl(customerId),
   submitAndContinueUrl: getSubmitAndContinueUrl(customerId),
   deleteMutation: deleteSalesPriceListMutation,
+  helpSections: [
+    {
+      header: t('sales.priceLists.helpSection.discountAmount.header'),
+      content: t('sales.priceLists.helpSection.discountAmount.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.autoUpdate.header'),
+      content: t('sales.priceLists.helpSection.autoUpdate.content')
+    },
+    {
+      content: t('sales.priceLists.helpSection.vatInclusion.content')
+    }
+  ],
   fields: getFields(customerId, t, type)
 });
 

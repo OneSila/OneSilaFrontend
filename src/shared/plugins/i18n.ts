@@ -3,10 +3,7 @@ import { createI18n } from 'vue-i18n';
 import { DEFAULT_LANGUAGE } from '../utils/constants'
 
 import locale from '../../locale';
-
-export default {
-  install(app) {
-    const i18n = createI18n({
+export const i18n = createI18n({
       locale: import.meta.env.VITE_APP_LOCALE || DEFAULT_LANGUAGE.code,
       fallbackLocale: DEFAULT_LANGUAGE.code,
       legacy: false,
@@ -15,8 +12,9 @@ export default {
       fallbackWarn: false,
       missingWarn: false,
       messages: locale as any,
-    });
-
+});
+export default {
+  install(app) {
     app.use(i18n);
   },
 } as Plugin;

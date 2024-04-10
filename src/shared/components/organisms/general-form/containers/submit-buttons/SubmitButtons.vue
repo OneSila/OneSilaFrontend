@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
-import {useRouter} from 'vue-router';
-import {Link} from './../../../../atoms/link';
-import {cleanUpDataForMutation, FormConfig, FormType} from '../../formConfig';
-import {ApolloAlertMutation} from "../../../../molecules/apollo-alert-mutation";
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { Link } from './../../../../atoms/link';
+import { cleanUpDataForMutation, FormConfig, FormType } from '../../formConfig';
+import { ApolloAlertMutation} from "../../../../molecules/apollo-alert-mutation";
 import { CancelButton } from "../../../../atoms/button-cancel";
 import { DangerButton } from "../../../../atoms/button-danger";
 import { SecondaryButton } from "../../../../atoms/button-secondary";
@@ -11,11 +12,22 @@ import { PrimaryButton } from "../../../../atoms/button-primary";
 import { Toast } from '../../../../../modules/toast';
 import { useI18n } from "vue-i18n";
 import { processGraphQLErrors } from "../../../../../utils";
+import {
+  useEnterKeyboardListener,
+  useShiftBackspaceKeyboardListener,
+  useShiftDeleteKeyboardListener,
+  useShiftEnterKeyboardListener,
+} from "../../../../../modules/keyboard";
 
 const props = defineProps<{ config: FormConfig; form: any;}>();
 const emit = defineEmits(['submit', 'update-errors']);
 const router = useRouter();
 const { t } = useI18n();
+
+const deleteButtonRef = ref();
+const submitContinueButtonRef = ref();
+const submitButtonRef = ref();
+
 const handleSubmitDone = (response) => {
 
   if (!response.data || !response.data[props.config.mutationKey]) {
@@ -112,6 +124,30 @@ const handleError = (errors) => {
   emit('update-errors', validationErrors);
 }
 
+const goBack = () => {
+  if (props.config.addCancel && props.config.cancelUrl !== undefined) {
+    router.push(props.config.cancelUrl);
+  }
+}
+
+const onDeletePressed = () => {
+  deleteButtonRef.value?.$el.click();
+};
+
+const onSubmitAndContinuePressed = () => {
+  submitContinueButtonRef.value?.$el.click();
+};
+
+const onSubmitPressed = () => {
+  submitButtonRef.value?.$el.click();
+};
+
+
+useShiftDeleteKeyboardListener(onDeletePressed);
+useShiftEnterKeyboardListener(onSubmitAndContinuePressed);
+useEnterKeyboardListener(onSubmitPressed);
+useShiftBackspaceKeyboardListener(goBack);
+
 </script>
 
 <template>
@@ -125,19 +161,19 @@ const handleError = (errors) => {
 
         <ApolloAlertMutation v-if="config.deleteMutation && config.addDelete && config.type === FormType.EDIT" :mutation="config.deleteMutation" :mutation-variables="{ id: config.mutationId }" @done="handleDelete">
           <template v-slot="{ loading, confirmAndMutate }">
-            <DangerButton :disabled="loading" @click="confirmAndMutate">{{ config.deleteLabel }}</DangerButton>
+            <DangerButton ref="deleteButtonRef" :disabled="loading" @click="confirmAndMutate">{{ config.deleteLabel }}</DangerButton>
           </template>
         </ApolloAlertMutation>
 
         <ApolloMutation v-if="config.addSubmitAndContinue" :mutation="config.mutation" @done="handleSubmitAndContinueDone" @error="handleError">
           <template v-slot="{ mutate, loading }">
-            <SecondaryButton :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitAndContinueLabel }}</SecondaryButton>
+            <SecondaryButton ref="submitContinueButtonRef" :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitAndContinueLabel }}</SecondaryButton>
           </template>
         </ApolloMutation>
 
         <ApolloMutation :mutation="config.mutation" @done="handleSubmitDone" @error="handleError">
           <template v-slot="{ mutate, loading }">
-            <PrimaryButton :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitLabel }}</PrimaryButton>
+            <PrimaryButton ref="submitButtonRef" :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitLabel }}</PrimaryButton>
           </template>
         </ApolloMutation>
 
