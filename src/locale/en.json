@@ -621,16 +621,29 @@
     "priceLists": {
       "title": "Prices Lists",
       "helpSection": {
+          "name":{
+            "header": "Name",
+            "content": "Name your pice list. Eg Wholesale Europe."
+          },
           "discountAmount": {
             "header": "Discount Amount",
             "content": "The discount amount section refers to the percentage of the discount."
           },
+          "currency": {
+            "header": "Currency",
+            "content": "The currency for the price-list.  For example EUR."
+          },
+          "customers": {
+            "header": "Customers",
+            "content": "Optional field, if you want this price-list to be used for specific customers only."
+          },
+          "vatIncluded": {
+            "header": "VAT Included",
+            "content": "If you're selling including VAT, eg to end consumers mark as True.  For trade customers, mark as False."
+          },
           "autoUpdate": {
             "header": "Auto Update",
-            "content": "Enable it if you want to auto-update the prices for all the products."
-          },
-          "vatInclusion": {
-            "content": "Make sure the price includes VAT or not."
+            "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
           }
         },
       "create": {

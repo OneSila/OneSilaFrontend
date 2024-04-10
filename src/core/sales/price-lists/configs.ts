@@ -125,16 +125,29 @@ export const baseFormConfigConstructor = (
   deleteMutation: deleteSalesPriceListMutation,
   helpSections: [
     {
+      header: t('sales.priceLists.helpSection.name.header'),
+      content: t('sales.priceLists.helpSection.name.content')
+    },
+    {
       header: t('sales.priceLists.helpSection.discountAmount.header'),
       content: t('sales.priceLists.helpSection.discountAmount.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.currency.header'),
+      content: t('sales.priceLists.helpSection.currency.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.customers.header'),
+      content: t('sales.priceLists.helpSection.customers.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.vatIncluded.header'),
+      content: t('sales.priceLists.helpSection.vatIncluded.content')
     },
     {
       header: t('sales.priceLists.helpSection.autoUpdate.header'),
       content: t('sales.priceLists.helpSection.autoUpdate.content')
     },
-    {
-      content: t('sales.priceLists.helpSection.vatInclusion.content')
-    }
   ],
   fields: getFields(customerId, t, type)
 });
