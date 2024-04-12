@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
 import { useI18n} from 'vue-i18n';
-import { useRoute, useRouter} from "vue-router";
+import { useRoute } from "vue-router";
 import { ref} from "vue";
-import {GeneralShow} from "../../../../shared/components/organisms/general-show";
-import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
-import {Card} from "../../../../shared/components/atoms/card";
+import { GeneralShow } from "../../../../shared/components/organisms/general-show";
+import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
+import { Card } from "../../../../shared/components/atoms/card";
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
@@ -13,7 +13,6 @@ import OrdersList from "./containers/orders-list/OrdersList.vue";
 import PriceListsList from "./containers/price-lists-list/PriceListsList.vue";
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const tabItems = ref();

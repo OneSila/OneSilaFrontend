@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, ref, watch} from 'vue';
+import { ref, watch } from 'vue';
 import {useRoute} from 'vue-router';
 import {useAppStore} from '../../../plugins/store';
 import {booleanifyIfNeeded, getSelectedOrderIndex} from '../../../utils'

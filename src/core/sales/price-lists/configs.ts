@@ -3,7 +3,7 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
-import {companiesQuery, customersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
@@ -42,8 +42,8 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         label: t('sales.customers.title'),
         labelBy: 'name',
         valueBy: 'id',
-        query: customersQuery,
-        dataKey: 'customers',
+        query: companiesQuery,
+        dataKey: 'companies',
         isEdge: true,
         multiple: true,
         filterable: true,
@@ -81,7 +81,8 @@ const getFields = (customerId, t, type): FormField[] => {
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t)
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     },
     getCustomerField(customerId, t, type),
     {
@@ -187,8 +188,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('sales.customers.title'),
       labelBy: 'name',
       valueBy: 'id',
-      query: customersQuery,
-      dataKey: 'customers',
+      query: companiesQuery,
+      dataKey: 'companies',
       isEdge: true,
       filterable: true,
       addExactLookup: true,

@@ -62,7 +62,6 @@ const submit = async () => {
       if (errors.value['__all__']) {
         Toast.error(errors.value['__all__']);
       }
-
     }
   }
 

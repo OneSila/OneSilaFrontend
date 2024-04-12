@@ -7,9 +7,10 @@ import { useI18n } from 'vue-i18n';
 import { injectAuth, isAuthenticated, setLanguageToUser, isActive } from '../../../modules/auth';
 import { getFlagImageSrc } from "../../../utils";
 import { useAppStore } from '../../../plugins/store';
-import apolloClient from '../../../../../apollo-client';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
+import apolloClient from '../../../../../apollo-client';
 
+const props = defineProps<{ show?: boolean }>();
 const auth = injectAuth();
 const { locale } = useI18n();
 const app = useAppStore();
@@ -60,7 +61,7 @@ onMounted(() => {
 
 
 <template>
-  <div class="dropdown">
+  <div class="dropdown" v-if="show">
     <Popper :placement="app.rtlClass === 'rtl' ? 'bottom-start' : 'bottom-end'" offsetDistance="8">
       <button
         type="button"

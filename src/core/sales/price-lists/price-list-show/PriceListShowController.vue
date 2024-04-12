@@ -9,19 +9,25 @@ import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ItemsList from "./containers/items/items-list/ItemsList.vue";
+import {updateField} from "../../../../shared/components/organisms/general-show/showConfig";
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
+const addEdit = ref(true);
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
     { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);
+
+const onDataFetched = (data) => {
+  addEdit.value = !data[showConfig.subscriptionKey].autoUpdate;
+};
+
 </script>
 
 <template>
@@ -29,20 +35,20 @@ const showConfig = showConfigConstructor(t, id.value);
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'sales.orders.list' }, name: t('sales.orders.title') },
-                   { path: { name: 'sales.orders.show', params: {id: id} }, name: t('sales.orders.show.title') }]" />
+          :links="[{ path: { name: 'sales.priceLists.list' }, name: t('sales.priceLists.title') },
+                   { path: { name: 'sales.priceLists.show', params: { id: id } }, name: t('sales.priceLists.show.title') }]" />
     </template>
 
    <template v-slot:content>
       <Card>
-          <Tabs :tabs="tabItems">
-            <template v-slot:general>
-              <GeneralShow :config="showConfig" />
-            </template>
-            <template v-slot:items>
-              <ItemsList :id="id" />
-            </template>
-          </Tabs>
+        <Tabs :tabs="tabItems">
+          <template v-slot:general>
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched"  />
+          </template>
+          <template v-slot:items>
+            <ItemsList :id="id" :addEdit="addEdit" />
+          </template>
+        </Tabs>
       </Card>
    </template>
   </GeneralTemplate>

@@ -4,7 +4,7 @@ import { PhoneField } from '../../showConfig';
 
 const props = defineProps<{
   field: PhoneField;
-  modelValue: string;
+  modelValue: string | null;
 }>();
 
 </script>

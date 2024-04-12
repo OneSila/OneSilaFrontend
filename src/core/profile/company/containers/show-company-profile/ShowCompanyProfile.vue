@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+
 import { MeCompanyData } from '../../meCompanyData';
 import { Icon } from "../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';

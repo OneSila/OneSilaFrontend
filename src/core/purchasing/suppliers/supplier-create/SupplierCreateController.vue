@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
-import { createSupplierMutation } from "../../../../shared/api/mutations/contacts.js"
+import { createCompanyMutation } from "../../../../shared/api/mutations/contacts.js"
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
@@ -13,8 +13,8 @@ const formConfig = {
   ...baseFormConfigConstructor(
     t,
     FormType.CREATE,
-    createSupplierMutation,
-    'createSupplier'
+    createCompanyMutation,
+    'createCompany'
   ),
   submitAndContinueUrl: { name: 'purchasing.suppliers.edit' }
 };

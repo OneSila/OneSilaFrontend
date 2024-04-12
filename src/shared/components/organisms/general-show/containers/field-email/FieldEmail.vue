@@ -6,7 +6,7 @@ import { EmailField } from '../../showConfig';
 
 const props = defineProps<{
   field: EmailField;
-  modelValue: string;
+  modelValue: string | null;
 }>();
 
 </script>

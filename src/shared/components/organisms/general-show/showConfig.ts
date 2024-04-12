@@ -55,6 +55,7 @@ export interface ImageField extends ShowBaseField {
 export interface NestedTextField extends ShowBaseField {
   type: FieldType.NestedText;
   keys: string[];
+  clickIdentifiers?: ClickIdentifier[];
 }
 
 type ClickIdentifier = Record<string, string[]>;

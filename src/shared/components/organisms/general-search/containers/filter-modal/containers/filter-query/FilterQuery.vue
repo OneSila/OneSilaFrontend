@@ -1,17 +1,38 @@
 <script setup lang="ts">
-import { ref, defineProps, watch, watchEffect } from 'vue';
+
+import {ref, watch, watchEffect, onMounted, Ref} from 'vue';
 import { useRoute } from 'vue-router';
 import { Selector } from '../../../../../../atoms/selector';
 import { Label } from '../../../../../../atoms/label';
 import { QueryFilter } from '../../../../searchConfig';
+import apolloClient from "../../../../../../../../../apollo-client";
+import {DocumentNode} from "graphql";
 
 const props = defineProps<{ filter: QueryFilter }>();
 const emit = defineEmits(['update-value']);
 const route = useRoute();
-
+const cleanedData: Ref<any[]> = ref([]);
 const selectedValue = ref(
   props.filter.default !== undefined ? props.filter.default : null
 );
+
+const fetchData = async () => {
+  const variables = { ...props.filter.queryVariables }; // Assuming you add this to props
+  try {
+    const { data } = await apolloClient.query({
+      query: props.filter.query as unknown as DocumentNode,
+      variables: variables,
+      fetchPolicy: 'network-only'
+    });
+    if (data && data[props.filter.dataKey]) {
+      cleanedData.value = cleanData(data[props.filter.dataKey]);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+onMounted(fetchData);
 
 watch(() => route.query[props.filter.name], (newValue) => {
   if (newValue !== undefined) {
@@ -23,7 +44,9 @@ watchEffect(() => {
   emit('update-value', selectedValue.value);
 });
 
-const cleanedData = (rawData) => {
+watch(() => props.filter.queryVariables, fetchData, { deep: true });
+
+const cleanData = (rawData) => {
   if (props.filter.isEdge && rawData?.edges) {
     return rawData.edges.map(edge => edge.node);
   }
@@ -44,12 +67,11 @@ const disabled = ref(props.filter.disabled === true);
 <template>
   <div class="filter-item">
     <Label>{{ filter.label }}</Label>
-    <ApolloQuery :query="filter.query">
-      <template v-slot="{ result: { data } }">
         <Selector
-          v-if="data && data[filter.dataKey]"
+          v-if="cleanedData.length > 0"
+          class="h-9"
           v-model="selectedValue"
-          :options="cleanedData(data[filter.dataKey])"
+          :options="cleanedData"
           :label-by="filter.labelBy"
           :value-by="filter.valueBy"
           :placeholder="placeholder"
@@ -59,9 +81,16 @@ const disabled = ref(props.filter.disabled === true);
           :filterable="filterable"
           :removable="removable"
           :limit="limit"
-          :disabled="disabled"
-        />
-      </template>
-    </ApolloQuery>
+          :disabled="disabled" />
+      <Selector
+          v-else
+          class="h-9"
+          :modelValue="null"
+          :options="[]"
+          :label-by="filter.labelBy"
+          :value-by="filter.valueBy"
+          :removable="false"
+          :is-loading="true"
+          disabled />
   </div>
 </template>

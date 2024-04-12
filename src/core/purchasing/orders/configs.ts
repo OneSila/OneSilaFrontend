@@ -5,7 +5,7 @@ import {ListingConfig} from "../../../shared/components/organisms/general-listin
 import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing.js"
 import {deletePurchaseOrderMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
-import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
 import { createCompanyInvoiceAddressMutation, createCompanyShippingAddressMutation} from "../../../shared/api/mutations/contacts.js";
@@ -55,19 +55,25 @@ export const getOrderStatusBadgeMap = (t) => ({
   [OrderStatus.DELIVERED]: { text: t('purchasing.orders.labels.status.choices.delivered'), color: 'indigo' },
 });
 
-const getSubmitUrl = (supplierId) => {
-  if (supplierId) {
+const getSubmitUrl = (supplierId, source) => {
+  if (supplierId && source === 'company') {
+    return { name: 'contacts.companies.show', params: { id: supplierId }, query: { tab: 'purchaseOrders' } };
+  } else if (supplierId) {
     return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
   }
   return { name: 'purchasing.orders.list' };
-}
+};
 
-const getSubmitAndContinueUrl = (supplierId) => {
-  if (supplierId) {
+
+const getSubmitAndContinueUrl = (supplierId, source) => {
+  if (supplierId && source === 'company') {
+    return { name: 'purchasing.orders.edit', query: { supplierId, source: 'company' } };
+  } else if (supplierId) {
     return { name: 'purchasing.orders.edit', query: { supplierId } };
   }
   return { name: 'purchasing.orders.edit' };
-}
+};
+
 
 const getSupplierField = (t, supplierId): FormField => {
   if (supplierId) {
@@ -83,8 +89,8 @@ const getSupplierField = (t, supplierId): FormField => {
         label: t('purchasing.orders.labels.supplier'),
         labelBy: 'name',
         valueBy: 'id',
-        query: suppliersQuery,
-        dataKey: 'suppliers',
+        query: companiesQuery,
+        dataKey: 'companies',
         isEdge: true,
         multiple: false,
         filterable: true,
@@ -99,14 +105,15 @@ export const baseFormConfigConstructor = (
   type: FormType,
   mutation: any,
   mutationKey: string,
-  supplierId: string | null = null
+  supplierId: string | null = null,
+  source: string|null = null
 ): FormConfig => ({
  cols: 1,
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: getSubmitUrl(supplierId),
-  submitAndContinueUrl: getSubmitAndContinueUrl(supplierId),
+  submitUrl: getSubmitUrl(supplierId, source),
+  submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, source),
   deleteMutation: deletePurchaseOrderMutation,
   fields: [
     {
@@ -122,7 +129,8 @@ export const baseFormConfigConstructor = (
       valueBy: 'code',
       label: t('sales.orders.labels.status.title'),
       filterable: true,
-      options: getStatusOptions(t)
+      options: getStatusOptions(t),
+      default: type === FormType.CREATE ? OrderStatus.DRAFT : undefined,
      },
     getSupplierField(t, supplierId),
     {
@@ -136,7 +144,9 @@ export const baseFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      disabled: type === FormType.CREATE,
       formMapIdentifier: 'id',
+      queryVariables: supplierId ? { "filter": { "company": { "id": { "exact": supplierId } } } } : undefined,
     },
     {
       type: FieldType.Query,
@@ -149,7 +159,9 @@ export const baseFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      disabled: type === FormType.CREATE,
       formMapIdentifier: 'id',
+      queryVariables: supplierId ? { "filter": { "company": { "id": { "exact": supplierId } } } } : undefined,
     },
     {
       type: FieldType.Query,
@@ -164,7 +176,8 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t)
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     }
   ],
 });
@@ -192,8 +205,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('purchasing.orders.labels.supplier'),
       labelBy: 'name',
       valueBy: 'id',
-      query: suppliersQuery,
-      dataKey: 'suppliers',
+      query: companiesQuery,
+      dataKey: 'companies',
       isEdge: true,
       multiple: false,
       filterable: true,
@@ -246,11 +259,20 @@ const getFields = (t, supplierId): ShowField[] => {
   return commonFields;
 }
 
-const getUrlQueryParams = (supplierId) => {
-  return supplierId ? { "supplierId": supplierId } : undefined;
+const getUrlQueryParams = (supplierId: string | null = null, source: string|null = null) => {
+  const params: Record<string, string> = {};
+
+  if (supplierId) {
+    params.supplierId = supplierId;
+    if (source) {
+      params.source = source
+    }
+  }
+
+  return Object.keys(params).length > 0 ? params : undefined;
 }
 
-export const listingConfigConstructor = (t: Function, supplierId: string | null = null): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, supplierId: string | null = null, source: string|null = null): ListingConfig => ({
   headers: getHeaders(t, supplierId),
   fields: getFields(t, supplierId),
   identifierKey: 'id',
@@ -259,19 +281,31 @@ export const listingConfigConstructor = (t: Function, supplierId: string | null 
   addShow: true,
   editUrlName: 'purchasing.orders.edit',
   showUrlName: 'purchasing.orders.show',
-  urlQueryParams: getUrlQueryParams(supplierId),
+  urlQueryParams: getUrlQueryParams(supplierId, source),
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePurchaseOrderMutation,
 });
 
-export const showConfigConstructor = (t: Function, id): ShowConfig => ({
+const getBackUrl = (supplierId: string | null = null, source: string|null = null) => {
+  if (supplierId) {
+    if (source === 'company') {
+      return { name: 'contacts.companies.show', params: { id: supplierId }, query: { tab: 'purchaseOrders' } };
+    } else {
+      return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
+    }
+  }
+
+  return { name: 'purchasing.orders.list' };
+};
+
+export const showConfigConstructor = (t: Function, id, supplierId: string|null = null, source: string|null = null): ShowConfig => ({
   cols: 1,
   subscription: purchaseOrderSubscription,
   subscriptionKey: 'purchaseOrder',
   subscriptionVariables: {pk: id},
   addBack: true,
-  backUrl:  {name: 'purchasing.orders.list' },
+  backUrl: getBackUrl(supplierId, source),
   addEdit: true,
   editUrl: {name: 'purchasing.orders.edit', params: {id: id} },
   addDelete: true,
@@ -309,7 +343,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.invoiceAddress'),
     keys: ['fullAddress'],
-    showLabel: true
+    showLabel: true,
   },
   {
     name: 'shippingAddress',

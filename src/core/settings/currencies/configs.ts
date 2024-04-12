@@ -147,7 +147,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'),t('settings.currencies.labels.isoCode'), t('settings.currencies.labels.symbol')],
+  headers: [t('shared.labels.name'),t('settings.currencies.labels.isoCode'), t('settings.currencies.labels.symbol'), t('settings.currencies.labels.isDefaultCurrency')],
   fields: [
     {
       name: 'name',
@@ -160,6 +160,10 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     {
       name: 'symbol',
       type: FieldType.Text,
+    },
+    {
+      name: 'isDefaultCurrency',
+      type: FieldType.Boolean,
     },
   ],
   identifierKey: 'id',

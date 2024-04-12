@@ -5,8 +5,9 @@ mutation createCompany($data: CompanyInput!) {
   createCompany(data: $data){
     id
     name
-    eoriNumber
-    vatNumber
+    phone
+    email
+    language
   }
 }
 `;
@@ -16,8 +17,9 @@ mutation updateCompany($data: CompanyPartialInput!) {
   updateCompany(data: $data) {
     id
     name
-    vatNumber
-    eoriNumber
+    phone
+    email
+    language
   }
 }
 `;
@@ -32,15 +34,17 @@ mutation deleteCompany($id: GlobalID!) {
 export const createCompanyAddressMutation = gql`
 mutation createCompanyAddressMutation($data: AddressInput!) {
   createAddress(data: $data) {
-        id
-        isInvoiceAddress
-        isShippingAddress
-        address1
-        address2
-        address3
-        postcode
-        city
-        country
+    id
+    isInvoiceAddress
+    isShippingAddress
+    address1
+    address2
+    address3
+    vatNumber
+    eoriNumber
+    postcode
+    city
+    country
   }
 }
 `;
@@ -48,15 +52,17 @@ mutation createCompanyAddressMutation($data: AddressInput!) {
 export const createCompanyInvoiceAddressMutation = gql`
 mutation createCompanyInvoiceAddressMutation($data: InvoiceAddressInput!) {
   createInvoiceAddress(data: $data) {
-        id
-        isInvoiceAddress
-        isShippingAddress
-        address1
-        address2
-        address3
-        postcode
-        city
-        country
+    id
+    isInvoiceAddress
+    isShippingAddress
+    address1
+    address2
+    address3
+    vatNumber
+    eoriNumber
+    postcode
+    city
+    country
   }
 }
 `;
@@ -64,15 +70,17 @@ mutation createCompanyInvoiceAddressMutation($data: InvoiceAddressInput!) {
 export const createCompanyShippingAddressMutation = gql`
 mutation createCompanyShippingAddressMutation($data: ShippingAddressInput!) {
   createShippingAddress(data: $data) {
-        id
-        isInvoiceAddress
-        isShippingAddress
-        address1
-        address2
-        address3
-        postcode
-        city
-        country
+    id
+    isInvoiceAddress
+    isShippingAddress
+    address1
+    address2
+    address3
+    vatNumber
+    eoriNumber
+    postcode
+    city
+    country
   }
 }
 `;
@@ -86,6 +94,8 @@ mutation updateCompanyAddressMutation($data: AddressPartialInput!) {
         address1
         address2
         address3
+        vatNumber
+        eoriNumber
         postcode
         city
         country
@@ -102,6 +112,8 @@ mutation deleteCompanyAddressMutation($id: GlobalID!) {
       address1
       address2
       address3
+      vatNumber
+      eoriNumber
       postcode
       city
       country
@@ -116,6 +128,8 @@ export const createPersonMutation = gql`
       id
       firstName
       lastName
+      active
+      role
       company {
         id
         name
@@ -133,6 +147,8 @@ export const createPeopleMutation = gql`
       id
       firstName
       lastName
+      active
+      role
       company {
         id
         name
@@ -150,6 +166,8 @@ export const updatePersonMutation = gql`
       id
       firstName
       lastName
+      active
+      role
       company {
         id
         name
@@ -182,8 +200,9 @@ export const createCustomerMutation = gql`
     createCustomer(data: $data) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
@@ -197,8 +216,9 @@ export const createSupplierMutation = gql`
     createSupplier(data: $data) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
@@ -212,8 +232,9 @@ export const createCustomersMutation = gql`
     createCustomers(data: $data) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
@@ -227,8 +248,9 @@ export const updateCustomerMutation = gql`
     updateCustomer(data: $data) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
@@ -242,8 +264,9 @@ export const updateSupplierMutation = gql`
     updateSupplier(data: $data) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer

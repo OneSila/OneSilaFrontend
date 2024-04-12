@@ -25,7 +25,7 @@ export const useAppStore = defineStore('app', {
         sidebar: false,
         expireLanguageList: null ,
         languageList: [] as Language[],
-        rtlClass: 'ltr',
+        rtlClass: 'rtl',
         isShowMainLoader: true,
         semidark: false,
         searchConfig: null,

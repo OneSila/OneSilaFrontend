@@ -61,7 +61,7 @@ export const baseFormConfigConstructor = (
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: { name: 'contacts.companies.show', params: {id: companyId }},
+  submitUrl: { name: 'contacts.companies.show', params: {id: companyId }, query: {tab: 'addresses'}},
   fields: [
     {
       type: FieldType.Hidden,
@@ -96,6 +96,20 @@ export const baseFormConfigConstructor = (
       },
       {
         type: FieldType.Text,
+        name: 'vatNumber',
+        label: t('contacts.companies.labels.vat'),
+        placeholder: t('contacts.companies.placeholders.eori'),
+        optional: true
+      },
+      {
+        type: FieldType.Text,
+        name: 'eoriNumber',
+        label: t('contacts.companies.labels.eori'),
+        placeholder: t('contacts.companies.placeholders.eori'),
+        optional: true
+      },
+      {
+        type: FieldType.Text,
         name: 'postcode',
         label: t('contacts.companies.address.labels.postcode'),
         placeholder: t('contacts.companies.address.placeholders.postcode')
@@ -115,11 +129,11 @@ export const baseFormConfigConstructor = (
       getAddressTypeField(addressType, t),
       {
         type: FieldType.Query,
-        name: 'contact',
+        name: 'person',
         query: peopleQuery,
         queryVariables: {filter: {company: {id: {exact: companyId}}}},
         label: t('contacts.companies.address.labels.contact'),
-        labelBy: 'firstName',
+        labelBy: 'fullName',
         valueBy: 'id',
         dataKey: 'people',
         isEdge: true,

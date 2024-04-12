@@ -2,7 +2,7 @@
 import { Accordion } from '../../../../shared/components/atoms/accordion';
 import { Label } from '../../../../shared/components/atoms/label';
 import { Thumbnail } from '../../../../shared/components/molecules/thumbnail';
-import {defineProps, Ref, ref} from 'vue';
+import { Ref, ref} from 'vue';
 
 const props = defineProps<{ data: any  }>();
 

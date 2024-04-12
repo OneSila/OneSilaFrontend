@@ -9,4 +9,5 @@ export const routes = [
   { path: '/people', name: 'contacts.people.list', component: () => import('./people/people-list/PeopleListController.vue') },
   { path: '/people/create', name: 'contacts.people.create', component: () => import('./people/person-create/PeopleCreateController.vue') },
   { path: '/people/edit/:id', name: 'contacts.people.edit', component: () => import('./people/person-edit/PeopleEditController.vue') },
+  { path: '/people/show/:id', name: 'contacts.people.show', component: () => import('./people/person-show/PersonShowController.vue') },
 ]

@@ -16,6 +16,7 @@ const route = useRoute();
 
 const customerId = ref(null);
 const fieldsToClear: Ref<string[] | null> = ref(null);
+const queryCustomerId = route.query.customerId ? route.query.customerId.toString() : null;
 
 
 const  baseForm = {
@@ -24,7 +25,8 @@ const  baseForm = {
     FormType.CREATE,
     createOrderMutation,
     'createOrder',
-    route.query.customerId ? route.query.customerId.toString() : null
+    queryCustomerId,
+route.query.source ? route.query.source.toString() : null
   ),
 };
 
@@ -33,6 +35,7 @@ const formConfig = ref(baseForm);
 const handleFormUpdate = (form) => {
   fieldsToClear.value = []
   if (form.customer !== customerId.value) {
+
     customerId.value = form.customer;
 
     const fieldConfigs: FieldConfigs = {
@@ -62,7 +65,7 @@ const handleFormUpdate = (form) => {
       }
     };
 
-    updateFieldConfigs(customerId, fieldConfigs, formConfig);
+    updateFieldConfigs(customerId.value, fieldConfigs, formConfig);
     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
   }
 };
@@ -79,7 +82,8 @@ const handleFormUpdate = (form) => {
     </template>
 
    <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+     <GeneralForm v-if="queryCustomerId == null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+     <GeneralForm v-else :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 </template>

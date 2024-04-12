@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { SearchConfig, OrderCriteria } from '../../searchConfig';
 import { Icon } from "../.././../../atoms/icon"

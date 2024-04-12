@@ -14,6 +14,7 @@ export const ordersQuery = gql`
           priceInclVat
           status
           reasonForSale
+          totalValue
           createdAt
           updatedAt
         }
@@ -108,11 +109,17 @@ export const getOrderQuery = gql`
           symbol
           isoCode
         }
-      priceInclVat
-      status
-      reasonForSale
-      createdAt
-      updatedAt
+        orderitemSet {
+          id
+          product {
+            id
+          }
+        }
+        priceInclVat
+        status
+        reasonForSale
+        createdAt
+        updatedAt
     }
   }
 `;

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 
-import { defineProps, ref } from 'vue';
 import { Button } from '././../../atoms/button';
 import { ApolloAlertMutation } from '././../../molecules/apollo-alert-mutation';
 import { ListingConfig } from './listingConfig';

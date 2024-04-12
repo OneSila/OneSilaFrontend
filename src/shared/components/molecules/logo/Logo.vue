@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { Link } from '../../atoms/link';
 import logoImage from '../../../../assets/images/logo/logo.png';
 

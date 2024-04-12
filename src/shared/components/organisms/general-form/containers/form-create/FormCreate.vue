@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, defineProps, watch, ref, Ref} from 'vue';
+import {reactive, watch, ref, Ref} from 'vue';
 import { FormLayout } from './../form-layout';
 import { FormConfig, HiddenFormField, cleanUpDataForMutation } from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";

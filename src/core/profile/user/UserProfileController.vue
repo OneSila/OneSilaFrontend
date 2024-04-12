@@ -10,6 +10,7 @@ import { meSubscription } from "../../../shared/api/subscriptions/me.js";
 import IconPencilPaper from '../../../shared/components/atoms/icons/icon-pencil-paper.vue';
 import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
 import { useI18n } from 'vue-i18n';
+import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -79,13 +80,24 @@ const getMe = (result) => {
       <div class="pt-5">
         <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-5 mb-5">
           <div class="panel">
-            <div class="flex items-center justify-between mb-5">
-              <h5 class="font-semibold text-lg dark:text-white-light">{{ t('profile.labels.editProfile') }}</h5>
-              <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView">
-                <IconPencilPaper v-if="!editView"/>
-                <IconX v-else/>
-              </Button>
-            </div>
+            <Flex between class="mb-5">
+              <FlexCell>
+                <h5 class="font-semibold text-lg dark:text-white-light">{{ t('profile.labels.editProfile') }}</h5>
+              </FlexCell>
+              <FlexCell>
+                <Flex center>
+                  <FlexCell>
+                    <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView">
+                      <IconPencilPaper v-if="!editView"/>
+                      <IconX v-else/>
+                    </Button>
+                  </FlexCell>
+                  <FlexCell>
+                    <LanguageDropdown :show="true" class="ms-auto mt-0.5 w-max ltr:ml-5 rtl:mr-5"/>
+                  </FlexCell>
+                </Flex>
+              </FlexCell>
+            </Flex>
 
             <ApolloSubscription :subscription="meSubscription">
               <template v-slot:default="{ loading, error, result }">

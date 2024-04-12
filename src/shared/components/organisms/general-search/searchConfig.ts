@@ -56,6 +56,7 @@ export interface QueryFilter extends BaseFilter {
   valueBy: string;
   query: string;
   dataKey: string;
+  queryVariables?: Record<string, any>;
   placeholder?: string;
   dropdownPosition?: string;
   mandatory?: boolean;

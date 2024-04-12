@@ -2,8 +2,6 @@
 
 import { Button} from "../button";
 
-import { defineProps, defineEmits } from 'vue';
-
 const props = defineProps<{ loading?: boolean; disabled?: boolean; customClass?: string;  }>();
 const emit = defineEmits(['click']);
 

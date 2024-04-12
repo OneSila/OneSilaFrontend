@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { Icon } from '../../../../atoms/icon';
 import { BooleanField } from '../../showConfig';
 

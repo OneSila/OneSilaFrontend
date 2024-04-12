@@ -44,6 +44,8 @@ export const purchaseOrderSubscription = gql`
         address2
         address3
         fullAddress
+        vatNumber
+        eoriNumber
       }
       shippingAddress {
         id
@@ -51,6 +53,8 @@ export const purchaseOrderSubscription = gql`
         address2
         address3
         fullAddress
+        vatNumber
+        eoriNumber
       }
     }
   }

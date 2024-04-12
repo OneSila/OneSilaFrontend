@@ -134,6 +134,12 @@ export const getPurchaseOrderQuery = gql`
         id
         address1
       }
+      purchaseorderitemSet {
+        id
+        item {
+          id
+        }
+      } 
     }
   }
 `;

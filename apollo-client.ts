@@ -62,22 +62,7 @@ const splitLink = split(
 
 const combinedLink = ApolloLink.from([errorLink, splitLink]);
 
-class NoOpCache extends ApolloCache<any> {
-  public read() { return null; }
-  public write() { return undefined; }
-  public diff() { return { complete: false }; }
-  public watch() { return () => {}; }
-  public evict() { return false; }
-  public restore() { return this; }
-  public extract() { return {}; }
-  public reset() { return Promise.resolve(); }
-  public performTransaction() { }
-  public removeOptimistic() {  }
-}
-
-const isDevelopment = import.meta.env.VITE_APP_SENTRY_ENV === 'development';
-const cache = isDevelopment ? new NoOpCache() : new InMemoryCache();
-
+const cache =  new InMemoryCache();
 const apolloClient = new ApolloClient({
   link: combinedLink,
   cache,

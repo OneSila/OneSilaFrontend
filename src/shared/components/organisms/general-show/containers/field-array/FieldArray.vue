@@ -14,28 +14,12 @@ const buildNestedField = (item) => {
   return  {
     ...props.field,
     type: FieldType.NestedText,
-    clickUrl: buildClickUrl(item),
+    clickIdentifiers : props.field.clickIdentifiers,
     showLabel: false
   };
 
 };
 
-const buildClickUrl = (item) => {
-  if (!props.field.clickable || !props.field.clickIdentifiers) {
-    return props.field.clickUrl;
-  }
-
-  const params = props.field.clickIdentifiers.reduce((acc, identifier) => {
-    const key = Object.keys(identifier)[0];
-    acc[key] = accessNestedProperty(item, identifier[key]);
-    return acc;
-  }, {});
-
-  return {
-    ...props.field.clickUrl,
-    params
-  };
-};
 </script>
 
 <template>

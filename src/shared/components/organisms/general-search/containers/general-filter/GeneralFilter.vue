@@ -1,6 +1,6 @@
 <script setup lang="ts">
+
 import { ref, watchEffect } from 'vue';
-import { defineProps } from 'vue';
 import { SearchConfig, BaseFilter, OrderCriteria } from '../../searchConfig';
 import { Icon } from "../.././../../atoms/icon"
 import { Button } from "../.././../../atoms/button"

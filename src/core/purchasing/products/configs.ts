@@ -7,7 +7,7 @@ import {createSupplierProductMutation, deleteSupplierProductMutation} from "../.
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
 import {productsQuery} from "../../../shared/api/queries/products.js";
-import {suppliersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import {supplierOnTheFlyConfig} from "../suppliers/configs";
@@ -47,8 +47,8 @@ const getSupplierField = (supplierId, t): FormField => {
         label: t('purchasing.orders.labels.supplier'),
         labelBy: 'name',
         valueBy: 'id',
-        query: suppliersQuery,
-        dataKey: 'suppliers',
+        query: companiesQuery,
+        dataKey: 'companies',
         isEdge: true,
         multiple: false,
         filterable: true,
@@ -154,9 +154,10 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t)
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     },
-    ],
+  ],
 });
 
 export const supplierProductOnTheFlyConfig = (t: Function, supplierId: string | null = null):CreateOnTheFly => ({
@@ -194,8 +195,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('purchasing.orders.labels.supplier'),
       labelBy: 'name',
       valueBy: 'id',
-      query: suppliersQuery,
-      dataKey: 'suppliers',
+      query: companiesQuery,
+      dataKey: 'companies',
       isEdge: true,
       multiple: false,
       filterable: true,

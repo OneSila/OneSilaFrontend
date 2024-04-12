@@ -12,7 +12,6 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ItemsList from "./containers/items-list/ItemsList.vue";
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const supplierId = ref();
@@ -23,7 +22,11 @@ tabItems.value = [
     { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
   ];
 
-const showConfig = showConfigConstructor(t, id.value);
+const showConfig = showConfigConstructor(t,
+    id.value,
+    route.query.supplierId ? route.query.supplierId.toString() : null,
+    route.query.source ? route.query.source.toString() : null,
+);
 
 const onDataFetched = (data) => {
   supplierId.value = data[showConfig.subscriptionKey].supplier.id;
@@ -34,10 +37,9 @@ const onDataFetched = (data) => {
         {
       clickable: true,
       clickUrl: { name: 'purchasing.suppliers.show', params: { id: supplierId.value } },
-    });
-    showConfig.backUrl = { name: 'purchasing.suppliers.show', params: { id: supplierId.value }, query: {tab: 'orders'} }
-  }
+    });}
 };
+
 </script>
 
 <template>
@@ -51,14 +53,14 @@ const onDataFetched = (data) => {
 
    <template v-slot:content>
       <Card>
-          <Tabs :tabs="tabItems">
-            <template v-slot:general>
-              <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
-            </template>
-            <template v-slot:items>
-              <ItemsList :id="id" />
-            </template>
-          </Tabs>
+        <Tabs :tabs="tabItems">
+          <template v-slot:general>
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+          </template>
+          <template v-slot:items>
+            <ItemsList :id="id" />
+          </template>
+        </Tabs>
       </Card>
    </template>
   </GeneralTemplate>

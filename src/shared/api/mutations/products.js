@@ -296,6 +296,9 @@ export const deleteUmbrellaVariationMutation = gql`
   mutation deleteUmbrellaVariation($id: GlobalID!) {
     deleteUmbrellaVariation(data: {id: $id}) {
       id
+      variation {
+        id
+      }
     }
   }
 `;
@@ -363,6 +366,9 @@ export const deleteBundleVariationMutation = gql`
   mutation deleteBundleVariation($id: GlobalID!) {
     deleteBundleVariation(data: {id: $id}) {
       id
+      variation {
+        id
+      }
     }
   }
 `;

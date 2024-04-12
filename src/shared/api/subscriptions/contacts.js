@@ -5,17 +5,14 @@ subscription getCompany ($id: String!) {
   company(pk: $id) {
     id
     name
+    phone
+    email
+    language
     isSupplier
-    vatNumber
-    eoriNumber
     isSupplier
     isCustomer
     isInternalCompany
     isInfluencer
-    relatedCompanies {
-      id
-      name
-    }
   }
 }`;
 
@@ -24,13 +21,10 @@ subscription getSupplier ($id: String!) {
   supplier(pk: $id) {
     id
     name
+    phone
+    email
+    language
     isSupplier
-    vatNumber
-    eoriNumber
-    relatedCompanies {
-      id
-      name
-    }
   }
 }`;
 export const getPersonSubscription = gql`
@@ -39,6 +33,9 @@ export const getPersonSubscription = gql`
       id
       firstName
       lastName
+      fullName
+      active
+      role
       company {
         id
         name
@@ -46,6 +43,10 @@ export const getPersonSubscription = gql`
       phone
       email
       language
+      person {
+        id
+        firstName
+      }
     }
   }
 `;
@@ -55,16 +56,13 @@ export const getCustomerSubscription = gql`
     customer(pk: $pk) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
       isInternalCompany
-      relatedCompanies {
-        id
-        name
-      }
     }
   }
 `;

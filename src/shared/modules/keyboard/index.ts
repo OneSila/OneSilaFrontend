@@ -8,10 +8,10 @@ export const onEnterPressed = (callback: () => void) => {
     }
   };
 
-  window.addEventListener('keyup', modifiedCallback);
+  window.addEventListener('keydown', modifiedCallback);
 
   return () => {
-    window.removeEventListener('keyup', modifiedCallback);
+    window.removeEventListener('keydown', modifiedCallback);
   };
 };
 

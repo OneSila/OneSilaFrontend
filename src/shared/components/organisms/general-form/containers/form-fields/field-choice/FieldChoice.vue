@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { Selector } from '../../../../../atoms/selector';
 import { ChoiceFormField } from '../../../formConfig';
 

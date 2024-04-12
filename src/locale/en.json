@@ -1,4 +1,16 @@
 {
+  "dashboard": {
+    "labels": {
+      "totalOrders": "Total Orders",
+      "recentOrders": "Recent Orders",
+      "sales": "Sales"
+    },
+    "buttons": {
+      "addOrder": "Add Order",
+      "addProduct": "Add Product",
+      "addInventory": "Add Inventory"
+    }
+  },
   "pagination": {
     "first": "First",
     "prev": "Prev",
@@ -47,6 +59,8 @@
       "add": "Add"
     },
     "labels": {
+      "status": "Status",
+      "role": "Role",
       "or": "Or",
       "name": "Name",
       "active": "Active",
@@ -67,7 +81,8 @@
       "sku": "SKU",
       "price": "Price",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "language": "Language"
     },
     "placeholders": {
       "currency": "Enter currency",
@@ -428,9 +443,9 @@
         "type": {
           "title": "Type",
           "choices": {
-            "umbrella": "Umbrella Product",
+            "umbrella": "Configurable Product",
             "bundle": "Bundle Product",
-            "variation": "Variation"
+            "variation": "Simple product"
           }
         },
         "vatRate": "VAT Rate",
@@ -650,7 +665,7 @@
         "title": "Create Price List"
       },
       "show": {
-        "title": "View Price List"
+        "title": "Price List"
       },
       "items": {
         "create": {

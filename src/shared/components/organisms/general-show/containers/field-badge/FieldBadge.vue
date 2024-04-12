@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { Badge } from '../../../../atoms/badge'
 import { BadgeField } from '../../showConfig';
 

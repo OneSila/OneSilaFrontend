@@ -11,6 +11,7 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   orderId: string,
+  productsId: string[] = []
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -31,6 +32,7 @@ export const baseFormConfigConstructor = (
       labelBy: 'sku',
       valueBy: 'id',
       query: productsQuery,
+      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId } }} : undefined,
       dataKey: 'products',
       isEdge: true,
       multiple: false,

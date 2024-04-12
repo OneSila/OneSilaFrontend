@@ -5,7 +5,7 @@ import { ShowConfig } from '../../showConfig';
 import { ApolloAlertMutation } from "../../../../molecules/apollo-alert-mutation";
 import { Link } from "../../../../atoms/link";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { CancelButton } from "../../../../atoms/button-cancel";
 import { DangerButton } from "../../../../atoms/button-danger";
 import { PrimaryButton } from "../../../../atoms/button-primary";
@@ -17,6 +17,7 @@ import {
 
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 
 const props = defineProps<{ config: ShowConfig;}>();
 
@@ -66,7 +67,13 @@ useShiftBackspaceKeyboardListener(goBack);
       </template>
     </ApolloAlertMutation>
 
-    <Link v-if="config.addEdit" :path="config.editUrl">
+    <Link v-if="config.addEdit" :path="{
+        name: config.editUrl?.name,
+        params: config.editUrl?.params,
+        query: {
+          ...route.query,
+          ...config.editUrl?.query
+        }}">
       <PrimaryButton>
         {{ t('shared.button.edit') }}
       </PrimaryButton>

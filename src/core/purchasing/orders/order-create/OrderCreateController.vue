@@ -14,6 +14,8 @@ const route = useRoute();
 const { t } = useI18n();
 const supplierId = ref(null);
 const fieldsToClear: Ref<string[] | null> = ref(null);
+const querySupplierId = route.query.supplierId ? route.query.supplierId.toString() : null;
+
 
 const formConfig = ref({
   ...baseFormConfigConstructor(
@@ -21,7 +23,8 @@ const formConfig = ref({
     FormType.CREATE,
     createPurchaseOrderMutation,
     'createPurchaseOrder',
-      route.query.supplierId ? route.query.supplierId.toString() : null
+      querySupplierId,
+      route.query.source ? route.query.source.toString() : null
   ),
 });
 
@@ -58,7 +61,7 @@ const handleFormUpdate = (form) => {
       }
     };
 
-    updateFieldConfigs(supplierId, fieldConfigs, formConfig);
+    updateFieldConfigs(supplierId.value, fieldConfigs, formConfig);
     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
   }
 };
@@ -75,7 +78,8 @@ const handleFormUpdate = (form) => {
     </template>
 
    <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+     <GeneralForm v-if="querySupplierId === null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+     <GeneralForm v-else :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 </template>

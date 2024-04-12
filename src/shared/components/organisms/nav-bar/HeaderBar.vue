@@ -62,7 +62,7 @@ const setActiveDropdown = () => {
                     class="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
                 >
                   <GeneralSearch />
-                  <LanguageDropdown class="ms-auto w-max"/>
+                  <LanguageDropdown :show="false" class="ms-auto w-max"/>
                   <UserProfileDropdown />
                 </div>
             </div>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import { defineProps } from 'vue';
 import { Checkbox } from '../../../../../atoms/checkbox';
 import { CheckboxFormField } from '../../../formConfig';
 

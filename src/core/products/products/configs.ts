@@ -27,7 +27,7 @@ export const getProductTypeOptions = (t) => [
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Umbrella]: { text: t('products.products.labels.type.choices.umbrella'), color: 'blue' },
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
-  [ProductType.Variation]: { text: t('products.products.labels.type.choices.variation'), color: 'indigo' },
+  [ProductType.Variation]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
 });
 
 const getTypeField = (type, t): FormField | null => {
@@ -154,21 +154,22 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('products.products.labels.type.title'), t('products.products.labels.sku'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
+  headers: [t('products.products.labels.sku'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
   fields: [
     {
       type: FieldType.Text,
-      name: 'type'
-    },
-      {
-      type: FieldType.Text,
       name: 'sku'
     },
-          {
+    {
+      type: FieldType.Badge,
+      name: 'type',
+      badgeMap: getProductTypeBadgeMap(t)
+    },
+    {
       type: FieldType.Boolean,
       name: 'active'
     },
-          {
+    {
       type: FieldType.Boolean,
       name: 'alwaysOnStock'
     },

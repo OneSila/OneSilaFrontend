@@ -6,8 +6,8 @@ import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
-import { updateSupplierMutation } from "../../../../shared/api/mutations/contacts.js";
-import { getSupplierQuery } from "../../../../shared/api/queries/contacts.js";
+import { updateCompanyMutation } from "../../../../shared/api/mutations/contacts.js";
+import {getCompanyQuery} from "../../../../shared/api/queries/contacts.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
@@ -21,16 +21,16 @@ const id = ref(String(route.params.id));
 const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
-  updateSupplierMutation,
-  'updateSupplier'
+  updateCompanyMutation,
+  'updateCompany'
 );
 
 const formConfig = {
   ...baseForm,
   mutationId: id.value.toString(),
-  query: getSupplierQuery,
+  query: getCompanyQuery,
   queryVariables: { id: id.value },
-  queryDataKey: 'supplier',
+  queryDataKey: 'company',
   fields: [
     {
       type: FieldType.Hidden,
