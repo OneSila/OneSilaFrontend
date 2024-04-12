@@ -121,6 +121,7 @@ export const baseFormConfigConstructor = (
       name: 'orderReference',
       label: t('purchasing.orders.labels.orderReference'),
       placeholder: t('purchasing.orders.placeholders.orderReference'),
+      optional: true
     },
     {
       type: FieldType.Choice,
