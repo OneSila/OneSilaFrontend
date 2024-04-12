@@ -10,7 +10,7 @@ import { useAppStore } from '../../../plugins/store';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
 import apolloClient from '../../../../../apollo-client';
 
-const props = defineProps<{ show?: boolean }>();
+defineProps<{ show?: boolean }>();
 const auth = injectAuth();
 const { locale } = useI18n();
 const app = useAppStore();
