@@ -95,7 +95,7 @@ executeMutation();
 
     <template v-slot:right-section-header>
       <Logo alt="Logo" to="/" class="w-8 block lg:hidden" />
-      <LanguageDropdown class="ms-auto w-max"/>
+      <LanguageDropdown :show="true" class="ms-auto w-max"/>
     </template>
 
     <template v-slot:right-section-content>
