@@ -7,6 +7,8 @@ import { detectAuth, removeAuth } from './src/shared/modules/auth';
 import { getRouter } from './src/shared/modules/router';
 import { onError } from '@apollo/client/link/error';
 import { reactive } from 'vue';
+import { Toast } from "./src/shared/modules/toast";
+import { i18n } from "./src/shared/plugins/i18n";
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
 
@@ -20,6 +22,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       }
 
     });
+  }
+
+  if (networkError) {
+    if (networkError.message.includes('Failed to fetch')) {
+        // @ts-ignore global is working fine and is documented but we get and error like it's missing
+        const message = i18n.global.t('network.error');
+        Toast.error(message);
+    }
   }
 
 });
@@ -52,22 +62,7 @@ const splitLink = split(
 
 const combinedLink = ApolloLink.from([errorLink, splitLink]);
 
-class NoOpCache extends ApolloCache<any> {
-  public read() { return null; }
-  public write() { return undefined; }
-  public diff() { return { complete: false }; }
-  public watch() { return () => {}; }
-  public evict() { return false; }
-  public restore() { return this; }
-  public extract() { return {}; }
-  public reset() { return Promise.resolve(); }
-  public performTransaction() { }
-  public removeOptimistic() {  }
-}
-
-const isDevelopment = import.meta.env.VITE_APP_SENTRY_ENV === 'development';
-const cache = isDevelopment ? new NoOpCache() : new InMemoryCache();
-
+const cache =  new InMemoryCache();
 const apolloClient = new ApolloClient({
   link: combinedLink,
   cache,

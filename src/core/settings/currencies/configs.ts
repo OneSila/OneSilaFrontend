@@ -17,6 +17,44 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: { name: 'settings.currencies.list' },
   deleteMutation: deleteCurrencyMutation,
+  helpSections: [
+    {
+      header: t('settings.currencies.helpSection.name.header'),
+      content: t('settings.currencies.helpSection.name.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.isoCode.header'),
+      content: t('settings.currencies.helpSection.isoCode.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.symbol.header'),
+      content: t('settings.currencies.helpSection.symbol.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.isDefaultCurrency.header'),
+      content: t('settings.currencies.helpSection.isDefaultCurrency.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.inheritsFrom.header'),
+      content: t('settings.currencies.helpSection.inheritsFrom.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.followOfficialRate.header'),
+      content: t('settings.currencies.helpSection.followOfficialRate.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.exchangeRate.header'),
+      content: t('settings.currencies.helpSection.exchangeRate.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.roundPricesUpTo.header'),
+      content: t('settings.currencies.helpSection.roundPricesUpTo.content')
+    },
+    {
+      header: t('settings.currencies.helpSection.comment.header'),
+      content: t('settings.currencies.helpSection.comment.content')
+    },
+  ],
   fields: [
     {
       type: FieldType.Text,
@@ -37,6 +75,14 @@ export const baseFormConfigConstructor = (
       placeholder: t('settings.currencies.placeholders.symbol'),
     },
     {
+      type: FieldType.Checkbox,
+      name: 'isDefaultCurrency',
+      label: t('settings.currencies.labels.isDefaultCurrency'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    {
       type: FieldType.Query,
       name: 'inheritsFrom',
       label:  t('settings.currencies.labels.inheritsFrom'),
@@ -48,6 +94,15 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      optional: true
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'followOfficialRate',
+      label: t('settings.currencies.labels.followOfficialRate'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
     },
     {
       type: FieldType.Text,
@@ -58,39 +113,18 @@ export const baseFormConfigConstructor = (
     },
     {
       type: FieldType.Text,
-      name: 'exchangeRateOfficial',
-      label: t('settings.currencies.labels.exchangeRateOfficial'),
-      placeholder: t('settings.currencies.placeholders.exchangeRateOfficial'),
-      number: true,
-    },
-    {
-      type: FieldType.Text,
       name: 'roundPricesUpTo',
       label: t('settings.currencies.labels.roundPricesUpTo'),
       placeholder: t('settings.currencies.placeholders.roundPricesUpTo'),
       number: true,
     },
     {
-      type: FieldType.Checkbox,
-      name: 'followOfficialRate',
-      label: t('settings.currencies.labels.followOfficialRate'),
-      uncheckedValue: "false",
-      default: false
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'isDefaultCurrency',
-      label: t('settings.currencies.labels.isDefaultCurrency'),
-      uncheckedValue: "false",
-      default: false
-    },
-    {
       type: FieldType.Text,
       name: 'comment',
       label: t('settings.currencies.labels.comment'),
       placeholder: t('settings.currencies.placeholders.comment'),
+      optional: true
     },
-
     ],
 });
 
@@ -113,7 +147,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'),t('settings.currencies.labels.isoCode'), t('settings.currencies.labels.symbol')],
+  headers: [t('shared.labels.name'),t('settings.currencies.labels.isoCode'), t('settings.currencies.labels.symbol'), t('settings.currencies.labels.isDefaultCurrency')],
   fields: [
     {
       name: 'name',
@@ -126,6 +160,10 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     {
       name: 'symbol',
       type: FieldType.Text,
+    },
+    {
+      name: 'isDefaultCurrency',
+      type: FieldType.Boolean,
     },
   ],
   identifierKey: 'id',

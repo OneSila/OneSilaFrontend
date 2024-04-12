@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import {ref, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from "../../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../../shared/components/atoms/link";
@@ -7,11 +8,15 @@ import { GeneralListing } from "../../../../../../../shared/components/organisms
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { listingConfigConstructor, searchConfigConstructor, listingQueryKey, listingQuery } from "../configs";
 
-const props = defineProps<{ id: string }>();
+const props = defineProps<{ id: string; addEdit: boolean }>();
 const { t } = useI18n();
 
+const listingConfig = ref(listingConfigConstructor(t, props.id, props.addEdit));
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, props.id);
+
+watch(() => props.addEdit, (newValue) => {
+  listingConfig.value.addEdit = newValue;
+});
 
 </script>
 

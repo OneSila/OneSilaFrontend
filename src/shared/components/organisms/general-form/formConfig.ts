@@ -114,6 +114,8 @@ export interface QueryFormField extends BaseFormField {
   removable?: boolean;
   limit?: number;
   createOnFlyConfig?: CreateOnTheFly;
+  setDefaultKey?: string;
+  defaultExpectedValue?: any; // if we have a default key but we don't give the value the default will be true
 }
 
 export interface DateFormField extends BaseFormField {
@@ -267,7 +269,14 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
         if (typeof fieldValue === 'object' && fieldValue != null  && field.formMapIdentifier) {
             cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue[field.formMapIdentifier] };
         } else {
-            cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue};
+            if (fieldValue === null) {
+              // if the new value of a foreign key is null we don't need to add null to the id but to the foreign key itself
+              // so if we have null it will be storeLocation: null instead storeLocation: { id: null }
+              cleanedData[field.name] = fieldValue;
+            } else {
+              cleanedData[field.name] = { [field.formMapIdentifier]: fieldValue};
+            }
+
         }
 
         return;
@@ -299,7 +308,7 @@ export interface FieldConfigs {
   [fieldName: string]: FieldConfig;
 }
 export const updateFieldConfigs = (
-  targetId: { value: any },
+  targetId,
   fieldConfigs: FieldConfigs,
   formConfig: any
   ) => {
@@ -307,7 +316,7 @@ export const updateFieldConfigs = (
     const field = formConfig.value.fields.find(f => f.name === fieldName);
 
     if (field) {
-      const fieldConfig = targetId.value ? config.enabled : config.disabled;
+      const fieldConfig = targetId ? config.enabled : config.disabled;
 
       Object.entries(fieldConfig).forEach(([key, value]) => {
         if (value === null) {
@@ -319,3 +328,34 @@ export const updateFieldConfigs = (
     }
   });
 };
+
+/**
+ * Extracts IDs from a dataset, allowing for nested keys and optional exclusion based on provided keys and a single value.
+ */
+export function filterAndExtractIds(dataset, toAddKeys, toExcludeKeys: string[] = [] , toExcludeValue: any | null = null) {
+  const needExclusion = toExcludeKeys.length > 0 && toExcludeValue !== null;
+
+  return dataset.reduce((acc, item) => {
+    let currentItem = item;
+    // Navigate through the nested properties to get the target value
+    for (const key of toAddKeys) {
+      currentItem = currentItem[key];
+      if (!currentItem) break; // Stop if the property does not exist
+    }
+
+    if (!currentItem) return acc; // Skip if no valid ID was found
+
+    // Apply exclusion based on the keys and the single exclusion value
+    if (needExclusion) {
+      const exclude = toExcludeKeys.some(key => item[key] && item[key].toString() === toExcludeValue);
+
+      if (!exclude) {
+        acc.push(currentItem);
+      }
+    } else {
+      acc.push(currentItem);
+    }
+
+    return acc;
+  }, []);
+}

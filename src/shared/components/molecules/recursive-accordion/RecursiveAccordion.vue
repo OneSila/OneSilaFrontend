@@ -2,11 +2,9 @@
 import { Accordion } from '../../../../shared/components/atoms/accordion';
 import { Label } from '../../../../shared/components/atoms/label';
 import { Thumbnail } from '../../../../shared/components/molecules/thumbnail';
-import { Ref, ref } from 'vue';
+import { Ref, ref} from 'vue';
 
-const props = defineProps({
-  data: Object,
-});
+const props = defineProps<{ data: any  }>();
 
 const dataRef: Ref<any> = ref(props.data);
 const rearrangedData = ref({});

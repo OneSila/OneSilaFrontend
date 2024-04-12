@@ -3,9 +3,10 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
-import { suppliersQuery } from "../../../shared/api/queries/contacts.js"
-import {createSupplierMutation, deleteSupplierMutation} from "../../../shared/api/mutations/contacts.js";
-import {getSupplierSubscription} from "../../../shared/api/subscriptions/contacts.js";
+import {companiesQuery} from "../../../shared/api/queries/contacts.js"
+import {createCompanyMutation, deleteCompanyMutation} from "../../../shared/api/mutations/contacts.js";
+import {getCompanySubscription} from "../../../shared/api/subscriptions/contacts.js";
+import {customerLanguagesQuery} from "../../../shared/api/queries/languages";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -18,7 +19,7 @@ export const baseFormConfigConstructor = (
   mutation: mutation,
   mutationKey: mutationKey,
   submitUrl: { name: 'purchasing.suppliers.list' },
-  deleteMutation: deleteSupplierMutation,
+  deleteMutation: deleteCompanyMutation,
   fields: [
     {
       type: FieldType.Text,
@@ -27,16 +28,29 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.name'),
     },
     {
-      type: FieldType.Text,
-      name: 'vatNumber',
-      label: t('contacts.companies.labels.vat'),
-      placeholder: t('contacts.companies.placeholders.eori'),
+      type: FieldType.Email,
+      name: 'email',
+      label: t('shared.labels.email'),
+      placeholder: t('shared.placeholders.email'),
+      optional: true
     },
     {
-      type: FieldType.Text,
-      name: 'eoriNumber',
-      label: t('contacts.companies.labels.eori'),
-      placeholder: t('contacts.companies.placeholders.eori'),
+      type: FieldType.Phone,
+      name: 'phone',
+      label: t('shared.labels.phone'),
+      optional: true
+    },
+    {
+      type: FieldType.Query,
+      name: 'language',
+      label: t('shared.placeholders.language'),
+      labelBy: 'name',
+      valueBy: 'code',
+      query: customerLanguagesQuery,
+      dataKey: 'customerLanguages',
+      isEdge: false,
+      multiple: false,
+      filterable: true,
     },
     {
       type: FieldType.Hidden,
@@ -51,8 +65,8 @@ export const supplierOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
     ...baseFormConfigConstructor(
       t,
         FormType.CREATE,
-        createSupplierMutation,
-        'createSupplier'
+        createCompanyMutation,
+        'createCompany'
     ) as FormConfig
   }
 })
@@ -65,19 +79,22 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'),t('contacts.companies.labels.eori'), t('contacts.companies.labels.vat')],
+  headers: [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language')],
   fields: [
     {
       name: 'name',
       type: FieldType.Text,
     },
     {
-      name: 'eoriNumber',
-      type: FieldType.Text,
+      name: 'email',
+      type: FieldType.Email,
+      clickable: true
     },
     {
-      name: 'vatNumber',
-      type: FieldType.Text,
+      name: 'language',
+      type: FieldType.Image,
+      basePath: '/images/flags',
+      suffix: '.svg'
     },
   ],
   identifierKey: 'id',
@@ -88,20 +105,20 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addShow: true,
   addDelete: true,
   addPagination: true,
-  deleteMutation: deleteSupplierMutation,
+  deleteMutation: deleteCompanyMutation,
 });
 
 export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   cols: 1,
-  subscription: getSupplierSubscription,
-  subscriptionKey: 'supplier',
+  subscription: getCompanySubscription,
+  subscriptionKey: 'company',
   subscriptionVariables: {id: id},
   addBack: true,
   backUrl:  {name: 'purchasing.suppliers.list' },
   addEdit: true,
   editUrl: {name: 'purchasing.suppliers.edit', params: {id: id} },
   addDelete: true,
-  deleteMutation: deleteSupplierMutation,
+  deleteMutation: deleteCompanyMutation,
   deleteVariables: {id: id},
   fields: [
  {
@@ -111,31 +128,28 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     showLabel: true
   },
   {
-    name: 'vatNumber',
-    type: FieldType.Text,
-    label: t('contacts.companies.labels.vat'),
-    showLabel: true
+    name: 'email',
+    label: t('shared.labels.email'),
+    type: FieldType.Email,
+    clickable: true
   },
   {
-    name: 'eoriNumber',
-    type: FieldType.Text,
-    label: t('contacts.companies.labels.eori'),
-    showLabel: true
+    name: 'phone',
+    label: t('shared.labels.phone'),
+    type: FieldType.Phone,
+    clickable: true
   },
   {
-    type: FieldType.Array,
-    name: 'relatedCompanies',
-    label: t('contacts.companies.labels.relatedCompanies'),
-    clickable: true,
-    clickUrl: {name: 'contacts.companies.show'},
-    clickIdentifiers: [{id: ['id']}],
-    keys: ['name'],
-    showLabel: true
-  }
+    name: 'language',
+    label: t('shared.placeholders.language'),
+    type: FieldType.Image,
+    basePath: '/images/flags',
+    suffix: '.svg'
+  },
   ]
 
 });
 
-export const listingQueryKey = 'suppliers';
-export const listingQuery = suppliersQuery;
+export const listingQueryKey = 'companies';
+export const listingQuery = companiesQuery;
 

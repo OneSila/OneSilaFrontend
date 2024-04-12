@@ -19,8 +19,6 @@ import { FieldQuery } from "../../../../shared/components/organisms/general-form
 import { createProductMutation } from "../../../../shared/api/mutations/products.js"
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
-import {authenticateTokenMutation} from "../../../../shared/api/mutations/auth";
-import {refreshUser} from "../../../../shared/modules/auth";
 import {processGraphQLErrors} from "../../../../shared/utils";
 
 

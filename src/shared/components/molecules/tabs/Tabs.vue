@@ -9,19 +9,19 @@ interface TabItem {
   label: string;
   icon?: string;
   danger?: boolean;
+  alwaysRender?: boolean;
 }
 
-const props = defineProps({
-  tabs: {
-    type: Array as () => TabItem[],
-    required: true
-  },
-  disabledTabs: {
-    type: Array as () => string[],
-    default: () => []
-  },
-  hideContent: Boolean
-});
+const props = withDefaults(
+  defineProps<{
+    tabs: TabItem[];
+    disabledTabs?: string[];
+    transparent?: boolean;
+  }>(),
+  {
+    disabledTabs: () => ([] as string[]),
+  }
+);
 
 const selectedTab = ref(props.tabs[0]?.name);
 const route = useRoute();
@@ -56,6 +56,11 @@ const defaultTabIndex = () => {
 </script>
 
 <template>
+  <div>
+    <!-- Always render and hide these slots -->
+    <div class="hidden" v-for="tab in props.tabs" :key="tab.name">
+      <slot v-if="tab.alwaysRender" :name="tab.name"></slot>
+    </div>
   <TabGroup :selectedIndex="defaultTabIndex()" :defaultIndex="defaultTabIndex()" @change="changeTab">
     <TabList class="flex font-semibold border-b border-[#ebedf2] dark:border-[#191e3a] mb-5 whitespace-nowrap overflow-y-auto">
       <Tab v-for="tab in props.tabs" :key="tab.name" as="template" :disabled="isDisabled(tab.name)">
@@ -75,4 +80,5 @@ const defaultTabIndex = () => {
       </TabPanel>
     </TabPanels>
   </TabGroup>
+  </div>
 </template>

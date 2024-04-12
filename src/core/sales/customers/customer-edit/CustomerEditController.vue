@@ -6,7 +6,7 @@ import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
-import { updateCustomerMutation } from "../../../../shared/api/mutations/contacts.js";
+import { updateCompanyMutation } from "../../../../shared/api/mutations/contacts.js";
 import { getCustomerQuery } from "../../../../shared/api/queries/contacts.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -21,8 +21,8 @@ const id = ref(String(route.params.id));
 const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
-  updateCustomerMutation,
-  'updateCustomer'
+  updateCompanyMutation,
+  'updateCompany'
 );
 
 const formConfig = {

@@ -10,6 +10,7 @@ import { Icon } from '../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../shared/components/atoms/link';
 import apolloClient from '../../../../../../apollo-client';
 import { loginMutation } from '../../../../../shared/api/mutations/auth.js'
+import { displayApolloError } from "../../../../../shared/utils";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -49,11 +50,12 @@ const onLoginClicked = async () => {
       throw new Error(t('auth.login.failed'));
     }
   } catch (error) {
-    console.error('Login error:', error);
+    displayApolloError(error);
   }
 };
 
 useEnterKeyboardListener(onLoginClicked);
+
 </script>
 
 <template>

@@ -1,22 +1,22 @@
 <script setup lang="ts">
 
-import { computed } from 'vue';
-import { Icon } from "../../../../atoms/icon";
-import { Label } from '../../../../atoms/label';
+import {computed} from 'vue';
+import {Icon} from "../../../../atoms/icon";
+import {Label} from '../../../../atoms/label';
 
-import { FormConfig } from '../../formConfig';
-import { FieldType } from "../../../../../utils/constants";
-import { FieldBoolean } from '../form-fields/field-boolean';
-import { FieldDate } from '../form-fields/field-date';
-import { FieldCheckbox } from '../form-fields/field-checkbox';
-import { FieldChoice } from '../form-fields/field-choice';
-import { FieldProxyChoice } from '../form-fields/field-proxy-choice';
-import { FieldQuery } from '../form-fields/field-query';
-import { FieldSlider } from '../form-fields/field-slider';
-import { FieldValue } from '../form-fields/field-value';
-import { FieldTextarea } from "../form-fields/field-textarea";
-import { FieldPhone } from "../form-fields/field-phone";
-import { FieldEmail } from "../form-fields/field-email";
+import {FormConfig} from '../../formConfig';
+import {FieldType} from "../../../../../utils/constants";
+import {FieldBoolean} from '../form-fields/field-boolean';
+import {FieldDate} from '../form-fields/field-date';
+import {FieldCheckbox} from '../form-fields/field-checkbox';
+import {FieldChoice} from '../form-fields/field-choice';
+import {FieldProxyChoice} from '../form-fields/field-proxy-choice';
+import {FieldQuery} from '../form-fields/field-query';
+import {FieldSlider} from '../form-fields/field-slider';
+import {FieldValue} from '../form-fields/field-value';
+import {FieldTextarea} from "../form-fields/field-textarea";
+import {FieldPhone} from "../form-fields/field-phone";
+import {FieldEmail} from "../form-fields/field-email";
 
 const props = defineProps<{
   config: FormConfig;
@@ -52,6 +52,9 @@ const computedStyle = computed(() => props.config.customStyle || '');
           <FlexCell center>
             <label class="font-semibold block text-sm leading-6 text-gray-900">{{ field.label }}{{ !field.optional && field.label ? '*' : '' }}</label>
           </FlexCell>
+          <FlexCell v-if="field.type === FieldType.Checkbox" class="ml-2" center>
+            <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />
+          </FlexCell>
           <FlexCell center>
             <div v-if="errors && errors[field.name]" class="text-danger text-small blink-animation ml-1 mb-1">
               <Icon size="sm" name="exclamation-circle" />
@@ -59,13 +62,9 @@ const computedStyle = computed(() => props.config.customStyle || '');
             </div>
           </FlexCell>
         </Flex>
-        <div class="mt-2" v-if="field.type !== FieldType.Hidden">
-          <component
-            v-model="form[field.name]"
-            :is="getFieldComponent(field.type)"
-            :field="field"
-          />
-        </div>
+          <div v-if="field.type !== FieldType.Hidden && field.type !== FieldType.Checkbox" class="mt-2" >
+            <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />
+          </div>
         <p v-if="field.help" class="mt-3 text-sm leading-6 text-gray-600">{{ field.help }}</p>
       </div>
     </template>

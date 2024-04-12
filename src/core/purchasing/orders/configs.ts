@@ -5,7 +5,7 @@ import {ListingConfig} from "../../../shared/components/organisms/general-listin
 import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing.js"
 import {deletePurchaseOrderMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
-import {companyInvoiceAddressesQuery, companyShippingAddressesQuery, suppliersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
 import { createCompanyInvoiceAddressMutation, createCompanyShippingAddressMutation} from "../../../shared/api/mutations/contacts.js";
@@ -47,19 +47,33 @@ export const getStatusOptions = (t) => [
   { name: t('purchasing.orders.labels.status.choices.delivered'), code: OrderStatus.DELIVERED },
 ];
 
-const getSubmitUrl = (supplierId) => {
-  if (supplierId) {
+export const getOrderStatusBadgeMap = (t) => ({
+  [OrderStatus.DRAFT]: { text: t('purchasing.orders.labels.status.choices.draft'), color: 'gray' },
+  [OrderStatus.ORDERED]: { text: t('purchasing.orders.labels.status.choices.ordered'), color: 'yellow' },
+  [OrderStatus.CONFIRMED]: { text: t('purchasing.orders.labels.status.choices.confirmed'), color: 'green' },
+  [OrderStatus.PENDING_DELIVERY]: { text: t('purchasing.orders.labels.status.choices.pendingDelivery'), color: 'blue' },
+  [OrderStatus.DELIVERED]: { text: t('purchasing.orders.labels.status.choices.delivered'), color: 'indigo' },
+});
+
+const getSubmitUrl = (supplierId, source) => {
+  if (supplierId && source === 'company') {
+    return { name: 'contacts.companies.show', params: { id: supplierId }, query: { tab: 'purchaseOrders' } };
+  } else if (supplierId) {
     return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
   }
   return { name: 'purchasing.orders.list' };
-}
+};
 
-const getSubmitAndContinueUrl = (supplierId) => {
-  if (supplierId) {
+
+const getSubmitAndContinueUrl = (supplierId, source) => {
+  if (supplierId && source === 'company') {
+    return { name: 'purchasing.orders.edit', query: { supplierId, source: 'company' } };
+  } else if (supplierId) {
     return { name: 'purchasing.orders.edit', query: { supplierId } };
   }
   return { name: 'purchasing.orders.edit' };
-}
+};
+
 
 const getSupplierField = (t, supplierId): FormField => {
   if (supplierId) {
@@ -75,8 +89,8 @@ const getSupplierField = (t, supplierId): FormField => {
         label: t('purchasing.orders.labels.supplier'),
         labelBy: 'name',
         valueBy: 'id',
-        query: suppliersQuery,
-        dataKey: 'suppliers',
+        query: companiesQuery,
+        dataKey: 'companies',
         isEdge: true,
         multiple: false,
         filterable: true,
@@ -91,14 +105,15 @@ export const baseFormConfigConstructor = (
   type: FormType,
   mutation: any,
   mutationKey: string,
-  supplierId: string | null = null
+  supplierId: string | null = null,
+  source: string|null = null
 ): FormConfig => ({
  cols: 1,
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: getSubmitUrl(supplierId),
-  submitAndContinueUrl: getSubmitAndContinueUrl(supplierId),
+  submitUrl: getSubmitUrl(supplierId, source),
+  submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, source),
   deleteMutation: deletePurchaseOrderMutation,
   fields: [
     {
@@ -106,16 +121,18 @@ export const baseFormConfigConstructor = (
       name: 'orderReference',
       label: t('purchasing.orders.labels.orderReference'),
       placeholder: t('purchasing.orders.placeholders.orderReference'),
+      optional: true
     },
-  {
+    {
       type: FieldType.Choice,
       name: 'status',
       labelBy: 'name',
       valueBy: 'code',
       label: t('sales.orders.labels.status.title'),
       filterable: true,
-      options: getStatusOptions(t)
-    },
+      options: getStatusOptions(t),
+      default: type === FormType.CREATE ? OrderStatus.DRAFT : undefined,
+     },
     getSupplierField(t, supplierId),
     {
       type: FieldType.Query,
@@ -128,7 +145,9 @@ export const baseFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      disabled: type === FormType.CREATE,
       formMapIdentifier: 'id',
+      queryVariables: supplierId ? { "filter": { "company": { "id": { "exact": supplierId } } } } : undefined,
     },
     {
       type: FieldType.Query,
@@ -141,13 +160,15 @@ export const baseFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      disabled: type === FormType.CREATE,
       formMapIdentifier: 'id',
+      queryVariables: supplierId ? { "filter": { "company": { "id": { "exact": supplierId } } } } : undefined,
     },
     {
       type: FieldType.Query,
       name: 'currency',
       label: t('shared.labels.currency'),
-      labelBy: 'symbol',
+      labelBy: 'isoCode',
       valueBy: 'id',
       query: currenciesQuery,
       dataKey: 'currencies',
@@ -156,7 +177,8 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t)
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     }
   ],
 });
@@ -164,30 +186,70 @@ export const baseFormConfigConstructor = (
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Query,
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      name: 'supplier',
+      label: t('purchasing.orders.labels.supplier'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: companiesQuery,
+      dataKey: 'companies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+      {
+      type: FieldType.Choice,
+      name: 'status',
+      labelBy: 'name',
+      valueBy: 'code',
+      label: t('sales.orders.labels.status.title'),
+      filterable: true,
+      options: getStatusOptions(t),
+      addExactLookup: true,
+      exactLookupKeys: []
+    },
+  ],
   orders: []
 });
 
 
 const getHeaders = (t, supplierId) => {
   return supplierId
-    ? [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.totalValue')]
-    : [t('purchasing.orders.labels.orderReference'),t('sales.orders.labels.status.title'), t('purchasing.orders.labels.supplier'), t('purchasing.orders.labels.totalValue')];
+    ? [t('purchasing.orders.labels.orderReference'),t('purchasing.orders.labels.totalValue'), t('sales.orders.labels.status.title'), ]
+    : [t('purchasing.orders.labels.orderReference'), t('purchasing.orders.labels.totalValue'), t('purchasing.orders.labels.supplier'), t('sales.orders.labels.status.title')];
 }
 
-const getFields = (supplierId): ShowField[] => {
+const getFields = (t, supplierId): ShowField[] => {
   const commonFields: ShowField[] = [
     {
       name: 'orderReference',
       type: FieldType.Text,
     },
     {
-      name: 'status',
+      name: 'totalValue',
       type: FieldType.Text,
     },
     {
-      name: 'totalValue',
-      type: FieldType.Text,
+      name: 'status',
+      type: FieldType.Badge,
+      badgeMap: getOrderStatusBadgeMap(t)
     },
   ];
 
@@ -198,32 +260,53 @@ const getFields = (supplierId): ShowField[] => {
   return commonFields;
 }
 
-const getUrlQueryParams = (supplierId) => {
-  return supplierId ? { "supplierId": supplierId } : undefined;
+const getUrlQueryParams = (supplierId: string | null = null, source: string|null = null) => {
+  const params: Record<string, string> = {};
+
+  if (supplierId) {
+    params.supplierId = supplierId;
+    if (source) {
+      params.source = source
+    }
+  }
+
+  return Object.keys(params).length > 0 ? params : undefined;
 }
 
-export const listingConfigConstructor = (t: Function, supplierId: string | null = null): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, supplierId: string | null = null, source: string|null = null): ListingConfig => ({
   headers: getHeaders(t, supplierId),
-  fields: getFields(supplierId),
+  fields: getFields(t, supplierId),
   identifierKey: 'id',
   addActions: true,
   addEdit: true,
   addShow: true,
   editUrlName: 'purchasing.orders.edit',
   showUrlName: 'purchasing.orders.show',
-  urlQueryParams: getUrlQueryParams(supplierId),
+  urlQueryParams: getUrlQueryParams(supplierId, source),
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePurchaseOrderMutation,
 });
 
-export const showConfigConstructor = (t: Function, id): ShowConfig => ({
+const getBackUrl = (supplierId: string | null = null, source: string|null = null) => {
+  if (supplierId) {
+    if (source === 'company') {
+      return { name: 'contacts.companies.show', params: { id: supplierId }, query: { tab: 'purchaseOrders' } };
+    } else {
+      return { name: 'purchasing.suppliers.show', params: { id: supplierId }, query: { tab: 'orders' } };
+    }
+  }
+
+  return { name: 'purchasing.orders.list' };
+};
+
+export const showConfigConstructor = (t: Function, id, supplierId: string|null = null, source: string|null = null): ShowConfig => ({
   cols: 1,
   subscription: purchaseOrderSubscription,
   subscriptionKey: 'purchaseOrder',
   subscriptionVariables: {pk: id},
   addBack: true,
-  backUrl:  {name: 'purchasing.orders.list' },
+  backUrl: getBackUrl(supplierId, source),
   addEdit: true,
   editUrl: {name: 'purchasing.orders.edit', params: {id: id} },
   addDelete: true,
@@ -238,9 +321,10 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   },
   {
     name: 'status',
-    type: FieldType.Text,
+    type: FieldType.Badge,
     label: t('sales.orders.labels.status.title'),
-    showLabel: true
+    showLabel: true,
+    badgeMap: getOrderStatusBadgeMap(t)
   },
   {
     name: 'totalValue',
@@ -259,39 +343,15 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     name: 'invoiceAddress',
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.invoiceAddress'),
-    keys: ['address1'],
-    showLabel: true
-  },
-  {
-    name: 'invoiceAddress',
-    type: FieldType.NestedText,
-    keys: ['address2'],
-    showLabel: false
-  },
-  {
-    name: 'invoiceAddress',
-    type: FieldType.NestedText,
-    keys: ['address3'],
-    showLabel: false
+    keys: ['fullAddress'],
+    showLabel: true,
   },
   {
     name: 'shippingAddress',
     type: FieldType.NestedText,
     label: t('contacts.companies.address.labels.shippingAddress'),
-    keys: ['address1'],
+    keys: ['fullAddress'],
     showLabel: true
-  },
-  {
-    name: 'shippingAddress',
-    type: FieldType.NestedText,
-    keys: ['address2'],
-    showLabel: false
-  },
-  {
-    name: 'shippingAddress',
-    type: FieldType.NestedText,
-    keys: ['address3'],
-    showLabel: false
   },
   ]
 

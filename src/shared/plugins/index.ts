@@ -9,7 +9,6 @@ import pooper from './pooper';
 import screen from './screen';
 import universalModal from './universal-modal';
 import vueOutsideClickedDirective from './vue-outside-clicked-directive';
-import toast from './toast';
 
 export default {
   install(app) {
@@ -20,7 +19,6 @@ export default {
     app.use(fontAwesome);
     app.use(screen);
     app.use(universalModal);
-    app.use(toast);
     app.use(vueOutsideClickedDirective);
     app.use(pooper);
   },

@@ -15,16 +15,23 @@ export const orderSubscription = gql`
         address1
         address2
         address3
+        vatNumber
+        eoriNumber
+        fullAddress
       }
       shippingAddress {
         id
         address1
         address2
         address3
+        vatNumber
+        eoriNumber
+        fullAddress
       }
       currency {
         id
         symbol
+        isoCode
       }
       priceInclVat
       status

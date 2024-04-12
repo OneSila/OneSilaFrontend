@@ -6,6 +6,8 @@ import { ShowConfig } from "../../../shared/components/organisms/general-show/sh
 import { companiesQuery } from "../../../shared/api/queries/contacts.js"
 import { deleteCompanyMutation } from "../../../shared/api/mutations/contacts.js";
 import { getCompanySubscription } from "../../../shared/api/subscriptions/contacts.js";
+import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
@@ -23,20 +25,6 @@ export const baseFormConfigConstructor = (
       name: 'name',
       label: t('shared.labels.name'),
       placeholder: t('shared.placeholders.name'),
-    },
-    {
-      type: FieldType.Text,
-      name: 'vatNumber',
-      label: t('contacts.companies.labels.vat'),
-      placeholder: t('contacts.companies.placeholders.eori'),
-      optional: true
-    },
-    {
-      type: FieldType.Text,
-      name: 'eoriNumber',
-      label: t('contacts.companies.labels.eori'),
-      placeholder: t('contacts.companies.placeholders.eori'),
-      optional: true
     },
     {
       type: FieldType.ProxyChoice,
@@ -65,19 +53,30 @@ export const baseFormConfigConstructor = (
       ]
     },
     {
-      type: FieldType.Query,
-      name: 'relatedCompanies',
-      query: companiesQuery,
-      label: t('contacts.companies.labels.relatedCompanies'),
-      labelBy: 'name',
-      valueBy: 'id',
-      dataKey: 'companies',
-      isEdge: true,
-      multiple: true,
-      filterable: true,
-      formMapIdentifier: 'id',
+      type: FieldType.Email,
+      name: 'email',
+      label: t('shared.labels.email'),
+      placeholder: t('shared.placeholders.email'),
       optional: true
-    }
+    },
+    {
+      type: FieldType.Phone,
+      name: 'phone',
+      label: t('shared.labels.phone'),
+      optional: true
+    },
+    {
+      type: FieldType.Query,
+      name: 'language',
+      label: t('shared.placeholders.language'),
+      labelBy: 'name',
+      valueBy: 'code',
+      query: customerLanguagesQuery,
+      dataKey: 'customerLanguages',
+      isEdge: false,
+      multiple: false,
+      filterable: true,
+    },
   ],
 });
 
@@ -86,11 +85,11 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   subscription: getCompanySubscription,
   subscriptionKey: 'company',
   subscriptionVariables: {id: id},
-  addBack: false,
+  addBack: true,
   backUrl:  {name: 'contacts.companies.list' },
-  addEdit: false,
+  addEdit: true,
   editUrl: {name: 'contacts.companies.edit', params: {id: id} },
-  addDelete: false,
+  addDelete: true,
   deleteMutation: deleteCompanyMutation,
   deleteVariables: {id: id},
   fields: [
@@ -98,18 +97,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     name: 'name',
     type: FieldType.Text,
     label:  t('shared.labels.name'),
-    showLabel: true
-  },
-  {
-    name: 'vatNumber',
-    type: FieldType.Text,
-    label: t('contacts.companies.labels.vat'),
-    showLabel: true
-  },
-  {
-    name: 'eoriNumber',
-    type: FieldType.Text,
-    label: t('contacts.companies.labels.eori'),
     showLabel: true
   },
   {
@@ -138,15 +125,24 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     showLabel: true
   },
   {
-    type: FieldType.Array,
-    name: 'relatedCompanies',
-    label: t('contacts.companies.labels.relatedCompanies'),
-    clickable: true,
-    clickUrl: {name: 'contacts.companies.show'},
-    clickIdentifiers: [{id: ['id']}],
-    keys: ['name'],
-    showLabel: true
-  }
+    name: 'email',
+    label: t('shared.labels.email'),
+    type: FieldType.Email,
+    clickable: true
+  },
+  {
+    name: 'phone',
+    label: t('shared.labels.phone'),
+    type: FieldType.Phone,
+    clickable: true
+  },
+  {
+    name: 'language',
+    label: t('shared.placeholders.language'),
+    type: FieldType.Image,
+    basePath: '/images/flags',
+    suffix: '.svg'
+  },
   ]
 
 });
@@ -161,42 +157,58 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       name: 'isSupplier',
       label: t('contacts.companies.labels.supplier')
     },
-          {
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'isCustomer',
       label: t('contacts.companies.labels.customer')
     },
-          {
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'isInfluencer',
       label: t('contacts.companies.labels.influencer')
     },
-          {
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'isInternalCompany',
       label: t('contacts.companies.labels.internalCompany')
+    },
+    {
+      type: FieldType.Query,
+      name: 'language',
+      label: t('shared.placeholders.language'),
+      labelBy: 'name',
+      valueBy: 'code',
+      query: customerLanguagesQuery,
+      dataKey: 'customerLanguages',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: []
     },
   ],
   orders: []
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'),t('contacts.companies.labels.eori'), t('contacts.companies.labels.vat')],
+  headers: [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language')],
   fields: [
     {
       name: 'name',
       type: FieldType.Text,
     },
     {
-      name: 'eoriNumber',
-      type: FieldType.Text,
+      name: 'email',
+      type: FieldType.Email,
+      clickable: true
     },
     {
-      name: 'vatNumber',
-      type: FieldType.Text,
+      name: 'language',
+      type: FieldType.Image,
+      basePath: '/images/flags',
+      suffix: '.svg'
     },
   ],
   identifierKey: 'id',

@@ -1,48 +1,70 @@
 <script setup lang="ts">
+
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from "vue-router";
-import { Ref, ref} from "vue";
+import { useRoute } from "vue-router";
+import { Ref, ref, onMounted } from "vue";
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import {filterAndExtractIds, FormConfig, FormType} from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
-import { Card } from "../../../../../../../shared/components/atoms/card";
 import { baseFormConfigConstructor } from "../configs";
-import { getSalesPriceListItemQuery } from "../../../../../../../shared/api/queries/salesPrices.js";
+import { getSalesPriceListItemQuery, getSalesPriceListQuery } from "../../../../../../../shared/api/queries/salesPrices.js";
 import { updateSalesPriceListItemMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
+import apolloClient from '../../../../../../../../apollo-client';
+
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const priceListId = ref(route.params.priceListId);
-
+const productIds = ref([]);
 const formConfig: Ref<any| null> = ref(null);
 
-const baseForm = baseFormConfigConstructor(
-  t,
-  FormType.EDIT,
-  updateSalesPriceListItemMutation,
-  'updateSalesPriceListItem',
-  priceListId.value.toString()
-);
+onMounted(async () => {
+  const { data } = await apolloClient.query({
+    query: getSalesPriceListQuery,
+    variables: { id: priceListId.value.toString() }
+  });
 
-formConfig.value = {
-  ...baseForm,
-  mutationId: id.value.toString(),
-  query: getSalesPriceListItemQuery,
-  queryVariables: { id: id.value },
-  queryDataKey: 'salesPriceListItem',
-  fields: [
-    {
-      type: FieldType.Hidden,
-      name: 'id',
-      value: id.value.toString()
-    },
-    ...baseForm.fields
-  ]
-};
+  if (data && data.salesPriceList) {
+    const autoUpdatePrice = data.salesPriceList.autoUpdate;
+
+    productIds.value = filterAndExtractIds(
+      data.salesPriceList.salespricelistitemSet,
+      ['product', 'id'],
+      ['id'],
+      id.value.toString()
+    );
+
+
+    const baseForm = baseFormConfigConstructor(
+      t,
+      FormType.EDIT,
+      updateSalesPriceListItemMutation,
+      'updateSalesPriceListItem',
+      priceListId.value.toString(),
+      autoUpdatePrice,
+      productIds.value
+    );
+
+    formConfig.value = {
+      ...baseForm,
+      mutationId: id.value.toString(),
+      query: getSalesPriceListItemQuery,
+      queryVariables: { id: id.value },
+      queryDataKey: 'salesPriceListItem',
+      fields: [
+        {
+          type: FieldType.Hidden,
+          name: 'id',
+          value: id.value.toString()
+        },
+        ...baseForm.fields
+      ]
+    };
+  }
+});
 
 
 
@@ -59,9 +81,9 @@ formConfig.value = {
     </template>
 
    <template v-slot:content>
-      <Card class="p-2" v-if="formConfig !== null">
+      <div class="p-2" v-if="formConfig !== null">
         <GeneralForm :config="formConfig as FormConfig" />
-      </Card>
+      </div>
    </template>
   </GeneralTemplate>
 

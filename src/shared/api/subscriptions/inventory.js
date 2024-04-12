@@ -23,9 +23,9 @@ export const getInventoryLocationSubscription = gql`
       id
       name
       description
-      parentLocation {
+      location {
         id
-        name
+        fullAddress
       }
     }
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { TextInput } from '../../../../../atoms/input-text';
 import { ValueFormField } from '../../../formConfig';
 

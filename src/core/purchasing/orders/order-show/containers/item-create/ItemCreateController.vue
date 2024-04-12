@@ -3,7 +3,7 @@
 import {onMounted, Ref} from 'vue'
 import { useI18n} from 'vue-i18n';
 import { GeneralForm } from "../../../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from '../../../../../../shared/components/organisms/general-form/formConfig';
+import {filterAndExtractIds, FormConfig, FormType} from '../../../../../../shared/components/organisms/general-form/formConfig';
 import { createPurchaseOrderItemMutation } from "../../../../../../shared/api/mutations/purchasing.js"
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../shared/components/molecules/breadcrumbs";
@@ -14,10 +14,10 @@ import { baseFormConfigConstructor} from "../configs";
 import apolloClient from "../../../../../../../apollo-client";
 import { getPurchaseOrderQuery } from "../../../../../../shared/api/queries/purchasing.js";
 
-const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const orderId = ref(route.params.orderId);
+const productIds = ref([]);
 const supplierId = ref();
 
 const formConfig: Ref<any| null> = ref(null);
@@ -30,6 +30,7 @@ onMounted(async () => {
 
   if (data && data.purchaseOrder) {
     supplierId.value = data.purchaseOrder.supplier.id;
+    productIds.value = filterAndExtractIds(data.purchaseOrder.purchaseorderitemSet, ['item', 'id']);
   }
 
   formConfig.value = {
@@ -39,7 +40,8 @@ onMounted(async () => {
       createPurchaseOrderItemMutation,
       'createPurchaseOrderItem',
       orderId.value.toString(),
-      supplierId.value
+      supplierId.value,
+      productIds.value
     ),
     submitAndContinueUrl: { name: 'purchasing.orders.items.edit', params: { orderId: orderId.value } }
   };

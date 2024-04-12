@@ -13,6 +13,7 @@ import VariationCreate from "./containers/variation-create/VariationCreate.vue";
 const { t } = useI18n();
 
 const props = defineProps<{ product: Product }>();
+const ids = ref([]);
 const refetchNeeded = ref(false);
 
 const searchConfig: SearchConfig = {
@@ -30,12 +31,16 @@ const handleRefeched = () => {
   refetchNeeded.value = false;
 };
 
+const getIds = (newIds) => {
+  ids.value = newIds;
+};
+
 </script>
 
 <template>
   <TabContentTemplate>
     <template v-slot:buttons>
-      <VariationCreate :product="product" @variation-added="handleVariationAdded" />
+      <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
     </template>
 
     <template v-slot:content>
@@ -44,7 +49,8 @@ const handleRefeched = () => {
                       :list-query="product.type === PRODUCT_BUNDLE ? bundleVariationsQuery : umbrellaVariationsQuery"
                       :search-config="searchConfig"
                       :refetch-needed="refetchNeeded"
-                      @refetched="handleRefeched"/>
+                      @refetched="handleRefeched"
+                      @update-ids="getIds" />
     </template>
   </TabContentTemplate>
 </template>

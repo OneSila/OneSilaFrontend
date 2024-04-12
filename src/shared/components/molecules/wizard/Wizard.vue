@@ -22,7 +22,6 @@ const props = withDefaults(
 );
 
 
-
 const emit = defineEmits(['onFinish', 'onNextStep', 'onBack', 'updateCurrentStep']);
 
 const currentStep = ref(0);
@@ -44,6 +43,12 @@ const previousStep = () => {
     const stepIndex = currentStep.value - 1;
     goToStep(stepIndex);
     emit('onBack');
+  }
+};
+
+const jumpToStep = (index) => {
+  if (index < currentStep.value) {
+    goToStep(index);
   }
 };
 
@@ -72,7 +77,7 @@ defineExpose({
   <Card>
     <nav aria-label="Progress">
     <ol role="list" class="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0">
-      <li v-for="(step, index) in steps" :key="step.title" class="relative md:flex md:flex-1">
+      <li v-for="(step, index) in steps" :key="step.title" class="relative md:flex md:flex-1" :class="{'cursor-pointer': index < currentStep}" @click="jumpToStep(index)">
         <span :class="stepClasses(index)">
             <span :class="stepIconClasses(index)">
               <Icon v-if="index < currentStep" name="check" class="h-6 w-6 text-white" aria-hidden="true" />

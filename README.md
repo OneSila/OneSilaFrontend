@@ -1,44 +1,58 @@
-# Vue 3 + Typescript + Vite
+# Getting Started with OneSila Frontend
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-## Build for Development
+Welcome to the OneSila Frontend documentation! This guide is designed to help you set up and understand the OneSila Frontend, which works in tandem with the OneSila Headless ERP system. 
 
-We're using Vite (which uses Rollup under the hood) to build for development.
+In addition to basic setup instructions, this guide will provide an overview of the project structure, making it easier for you to navigate and utilize the various components and features of the application. Whether you are looking to contribute to the project or simply want to get it up and running, the following sections will assist you in getting started.
 
-```
-npm i
-npm run dev
-```
+## Prerequisites
 
-## Build for Production
+Before you start, ensure you have the following prerequisites installed on your system:
 
-The same Vite package can help us build for a production deployment.
+- [Node.js and npm](https://nodejs.org/en/download/) (Node.js 14.x or later)
+- [Git](https://git-scm.com/downloads) for cloning the repository
+- OneSila Headless Backend (follow the setup instructions in its [repository](https://github.com/OneSila/OneSilaHeadless))
 
-```
-npm i
-npm run build
-```
+## Setup
 
-We can even preview the built files with a local server, also powered by Vite, but you can only use it after you've built the production files with the above command.
+1. Open a terminal.
+2. Clone the OneSila Frontend repository using Git:
 
-```
-npm run serve
+```bash
+git clone https://github.com/OneSila/OneSilaFrontend.git
 ```
 
-The built files are placed into the `dist` folder, so to deploy the website, just copy the contents to the server such that `index.html` is in the website root.
+3. Navigate to the cloned directory:
 
-We can create a more automated deployment mechanism later with the help of Bitbucket Pipelines.
+```bash
+cd OneSilaFrontend
+```
 
-## Recommended IDE Setup
+4. Install the necessary dependencies:
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+```bash
+npm install
+```
 
-## Type Support For `.vue` Imports in TS
+## Running the Application
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+To run the application locally, you need to start both the frontend and the backend services.
 
+### Starting the Backend
 
-## HTML/CSS-Framework
+1. Ensure you have set up the OneSila Headless Backend. Refer to its [repository](https://github.com/OneSila/OneSilaHeadless) for instructions.
+2. Run the backend service:
 
-The project is build on top of [Tailwind CSS v3](https://tailwindcss.com/docs/installation).
+```bash
+./manage.py runserver localhost:8080
+```
+
+### Starting the Frontend
+
+1. In a new terminal window, navigate to the OneSila Frontend director
+2. Run the following command to start the frontend service:
+
+```bash
+VITE_APP_API_GRAPHQL_URL="http://localhost:8080/graphql/" VITE_APP_API_GRAPHQL_WEBSOCKET_URL="ws://localhost:8080/graphql/" npm run dev
+```
+

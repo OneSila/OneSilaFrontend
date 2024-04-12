@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, watch, watchEffect } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { Selector } from '../../../../../../atoms/selector';
 import { Label } from '../../../../../../atoms/label';

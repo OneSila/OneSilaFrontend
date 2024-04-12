@@ -3,29 +3,45 @@
 import {onMounted, Ref} from 'vue'
 import { useI18n} from 'vue-i18n';
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from '../../../../../../../shared/components/organisms/general-form/formConfig';
+import {filterAndExtractIds, FormConfig, FormType} from '../../../../../../../shared/components/organisms/general-form/formConfig';
 import { createOrderItemMutation } from "../../../../../../../shared/api/mutations/salesOrders.js"
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
 import { ref} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { baseFormConfigConstructor} from "../configs";
+import { getOrderQuery } from "../../../../../../../shared/api/queries/salesOrders.js";
+import apolloClient from "../../../../../../../../apollo-client";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const orderId = ref(route.params.orderId);
+const productIds = ref([]);
+const formConfig: Ref<any| null> = ref(null);
 
-const formConfig = {
-    ...baseFormConfigConstructor(
-      t,
-      FormType.CREATE,
-      createOrderItemMutation,
-      'createOrderItem',
-      orderId.value.toString(),
-    ),
-    submitAndContinueUrl: { name: 'sales.orders.items.edit', params: { orderId: orderId.value } }
-  };
+onMounted(async () => {
+  const { data } = await apolloClient.query({
+    query: getOrderQuery,
+    variables: { id: orderId.value.toString() }
+  });
+
+  if (data && data.order) {
+    productIds.value = filterAndExtractIds(data.order.orderitemSet, ['product', 'id']);
+
+    formConfig.value = {
+      ...baseFormConfigConstructor(
+        t,
+        FormType.CREATE,
+        createOrderItemMutation,
+        'createOrderItem',
+        orderId.value.toString(),
+        productIds.value
+      ),
+      submitAndContinueUrl: { name: 'sales.orders.items.edit', params: { orderId: orderId.value } }
+    };
+  }
+});
 
 
 </script>
@@ -41,7 +57,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" />
+     <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" />
    </template>
   </GeneralTemplate>
 </template>

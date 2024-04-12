@@ -3,7 +3,7 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
-import { customersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
@@ -42,8 +42,8 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         label: t('sales.customers.title'),
         labelBy: 'name',
         valueBy: 'id',
-        query: customersQuery,
-        dataKey: 'customers',
+        query: companiesQuery,
+        dataKey: 'companies',
         isEdge: true,
         multiple: true,
         filterable: true,
@@ -63,12 +63,6 @@ const getFields = (customerId, t, type): FormField[] => {
     },
     {
       type: FieldType.Text,
-      name: 'notes',
-      label: t('shared.labels.notes'),
-      placeholder: t('shared.placeholders.notes'),
-    },
-    {
-      type: FieldType.Text,
       name: 'discount',
       label: t('sales.prices.labels.discountAmount'),
       placeholder: t('sales.prices.placeholders.discountAmount'),
@@ -78,7 +72,7 @@ const getFields = (customerId, t, type): FormField[] => {
       type: FieldType.Query,
       name: 'currency',
       label: t('shared.labels.currency'),
-      labelBy: 'symbol',
+      labelBy: 'isoCode',
       valueBy: 'id',
       query: currenciesQuery,
       dataKey: 'currencies',
@@ -87,7 +81,8 @@ const getFields = (customerId, t, type): FormField[] => {
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t)
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     },
     getCustomerField(customerId, t, type),
     {
@@ -103,6 +98,13 @@ const getFields = (customerId, t, type): FormField[] => {
       label: t('sales.priceLists.labels.autoUpdate'),
       default: true,
       uncheckedValue: "false"
+    },
+    {
+      type: FieldType.Textarea,
+      name: 'notes',
+      label: t('shared.labels.notes'),
+      placeholder: t('shared.placeholders.notes'),
+      optional: true
     },
   ].filter(field => field !== null);
   return fields as FormField[];
@@ -122,13 +124,78 @@ export const baseFormConfigConstructor = (
   submitUrl: getSubmitUrl(customerId),
   submitAndContinueUrl: getSubmitAndContinueUrl(customerId),
   deleteMutation: deleteSalesPriceListMutation,
+  helpSections: [
+    {
+      header: t('sales.priceLists.helpSection.name.header'),
+      content: t('sales.priceLists.helpSection.name.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.discountAmount.header'),
+      content: t('sales.priceLists.helpSection.discountAmount.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.currency.header'),
+      content: t('sales.priceLists.helpSection.currency.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.customers.header'),
+      content: t('sales.priceLists.helpSection.customers.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.vatIncluded.header'),
+      content: t('sales.priceLists.helpSection.vatIncluded.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.autoUpdate.header'),
+      content: t('sales.priceLists.helpSection.autoUpdate.content')
+    },
+  ],
   fields: getFields(customerId, t, type)
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
-  search: false,
+  search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'vatIncluded',
+      label: t('sales.priceLists.labels.vatIncluded'),
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'autoUpdate',
+      label: t('sales.priceLists.labels.autoUpdate'),
+    },
+    {
+      type: FieldType.Query,
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      name: 'customers',
+      label: t('sales.customers.title'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: companiesQuery,
+      dataKey: 'companies',
+      isEdge: true,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    }
+  ],
   orders: []
 });
 const getUrlQueryParams = (customerId) => {

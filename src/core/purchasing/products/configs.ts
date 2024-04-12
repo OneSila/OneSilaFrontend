@@ -7,7 +7,7 @@ import {createSupplierProductMutation, deleteSupplierProductMutation} from "../.
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
 import {productsQuery} from "../../../shared/api/queries/products.js";
-import {suppliersQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import {supplierOnTheFlyConfig} from "../suppliers/configs";
@@ -41,14 +41,14 @@ const getSupplierField = (supplierId, t): FormField => {
       value: { "id": supplierId }
     };
   } else {
-    return     {
+    return {
         type: FieldType.Query,
         name: 'supplier',
         label: t('purchasing.orders.labels.supplier'),
         labelBy: 'name',
         valueBy: 'id',
-        query: suppliersQuery,
-        dataKey: 'suppliers',
+        query: companiesQuery,
+        dataKey: 'companies',
         isEdge: true,
         multiple: false,
         filterable: true,
@@ -145,7 +145,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'currency',
       label: t('shared.labels.currency'),
-      labelBy: 'symbol',
+      labelBy: 'isoCode',
       valueBy: 'id',
       query: currenciesQuery,
       dataKey: 'currencies',
@@ -154,9 +154,10 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t)
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     },
-    ],
+  ],
 });
 
 export const supplierProductOnTheFlyConfig = (t: Function, supplierId: string | null = null):CreateOnTheFly => ({
@@ -174,7 +175,49 @@ export const supplierProductOnTheFlyConfig = (t: Function, supplierId: string | 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Query,
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      filterable: true,
+      isEdge: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      name: 'supplier',
+      label: t('purchasing.orders.labels.supplier'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: companiesQuery,
+      dataKey: 'companies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      name: 'product',
+      label:  t('shared.labels.product'),
+      labelBy: 'sku',
+      valueBy: 'id',
+      query: productsQuery,
+      dataKey: 'products',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      addExactLookup: true,
+      exactLookupKeys: ['id']
+    }
+  ],
   orders: []
 });
 

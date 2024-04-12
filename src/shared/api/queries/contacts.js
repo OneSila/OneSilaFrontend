@@ -7,8 +7,9 @@ query Companies($first: Int, $last: Int, $after: String, $before: String, $order
       node {
         id
         name
-        eoriNumber
-        vatNumber
+        phone
+        email
+        language
       }
       cursor
     }
@@ -28,16 +29,13 @@ query getCompany ($id: GlobalID!) {
   company(id: $id) {
     id
     name
-    eoriNumber
-    vatNumber
+    phone
+    email
+    language
     isCustomer
     isInfluencer
     isSupplier
     isInternalCompany
-    relatedCompanies{
-      id
-      name
-    }
   }
 }
 `;
@@ -53,13 +51,12 @@ query companyAddresses($filter: AddressFilter) {
         address1
         address2
         address3
+        fullAddress
+        vatNumber
+        eoriNumber
         postcode
         city
         country
-        contact {
-            id
-            firstName
-        }
       }
       cursor
     }
@@ -85,13 +82,11 @@ query invoiceAddresses($filter: InvoiceAddressFilter) {
         address1
         address2
         address3
+        vatNumber
+        eoriNumber
         postcode
         city
         country
-        contact {
-            id
-            firstName
-        }
       }
       cursor
     }
@@ -117,13 +112,11 @@ query shippingAddresses($filter: ShippingAddressFilter) {
         address1
         address2
         address3
+        vatNumber
+        eoriNumber
         postcode
         city
         country
-        contact {
-            id
-            firstName
-        }
       }
       cursor
     }
@@ -138,6 +131,37 @@ query shippingAddresses($filter: ShippingAddressFilter) {
 }
 `;
 
+export const internalShippingAddressesQuery = gql`
+  query internalShippingAddresses($filter: InternalShippingAddressFilter) {
+    internalShippingAddresses(filters: $filter) {
+      edges {
+        node {
+          id
+          isInvoiceAddress
+          isShippingAddress
+          address1
+          address2
+          address3
+          vatNumber
+          eoriNumber
+          fullAddress
+          postcode
+          city
+          country
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getCompanyAddressQuery = gql`
 query getCompanyAddress ($id: GlobalID!){
   address (id: $id) {
@@ -147,13 +171,16 @@ query getCompanyAddress ($id: GlobalID!){
     address1
     address2
     address3
+    vatNumber
+    eoriNumber
     postcode
     city
     country
-    contact {
-        id
-        firstName
-    }
+    person {
+      id
+      firstName
+      fullName
+    }   
   }
 }
 `;
@@ -166,7 +193,11 @@ query People($first: Int, $last: Int, $after: String, $before: String, $order: P
         id
         firstName
         lastName
+        active
+        role
+        fullName
         company {
+          id
           name
         }
         phone
@@ -192,6 +223,8 @@ export const getPersonQuery = gql`
       id
       firstName
       lastName
+      active
+      role
       company {
         id
         name
@@ -199,6 +232,10 @@ export const getPersonQuery = gql`
       phone
       email
       language
+      address {
+        id
+        fullAddress
+      }
     }
   }
 `;
@@ -210,16 +247,13 @@ export const customersQuery = gql`
         node {
           id
           name
-          vatNumber
-          eoriNumber
+          phone
+          email
+          language
           isSupplier
           isCustomer
           isInfluencer
           isInternalCompany
-          relatedCompanies {
-            id
-            name
-          }
         }
         cursor
       }
@@ -241,16 +275,13 @@ export const suppliersQuery = gql`
         node {
           id
           name
-          vatNumber
-          eoriNumber
+          phone
+          email
+          language
           isSupplier
           isCustomer
           isInfluencer
           isInternalCompany
-          relatedCompanies {
-            id
-            name
-          }
         }
         cursor
       }
@@ -270,16 +301,13 @@ export const getCustomerQuery = gql`
     customer(id: $id) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
       isInternalCompany
-      relatedCompanies {
-        id
-        name
-      }
     }
   }
 `;
@@ -289,16 +317,13 @@ export const getSupplierQuery = gql`
     supplier(id: $id) {
       id
       name
-      vatNumber
-      eoriNumber
+      phone
+      email
+      language
       isSupplier
       isCustomer
       isInfluencer
       isInternalCompany
-      relatedCompanies {
-        id
-        name
-      }
     }
   }
 `;

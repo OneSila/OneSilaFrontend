@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Label } from '../../../../atoms/label';
-import { Icon } from '../../../../atoms/icon';
+
 import { Link } from '../../../../atoms/link';
 import { Image } from '../../../../atoms/image';
 import { ImageField } from '../../showConfig';
@@ -19,9 +18,6 @@ const imageUrl = computed(() => {
 
 <template>
   <div>
-    <Icon v-if="field.icon" :name="field.icon" />
-    <Label v-if="field.label && field.showLabel" semi-bold class="mb-2">{{ field.label }}</Label>
-
     <Link v-if="field.clickable && field.clickUrl" :path="field.clickUrl">
       <Image
         :source="imageUrl"

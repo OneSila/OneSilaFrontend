@@ -20,10 +20,6 @@ const listingConfig = listingConfigConstructor(t, props.id);
 <template>
   <GeneralTemplate>
 
-    <template v-slot:breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'purchasing.products.list' }, name: t('purchasing.products.title') }]" />
-    </template>
-
     <template v-slot:buttons>
         <div>
           <Link :path="{ name: 'purchasing.product.create', query: {supplierId: id} }">

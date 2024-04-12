@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import Logo from "../logo/Logo.vue";
+import Logo from "../../molecules/logo/Logo.vue";
 import SideItems from "./SideItems.vue";
 import SideSettingsItems from "./SideSettingsItems.vue";
 import IconCaretsDown from '../../atoms/icons/icon-caret-down.vue';

@@ -61,7 +61,7 @@ export const baseFormConfigConstructor = (
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: { name: 'contacts.companies.show', params: {id: companyId }},
+  submitUrl: { name: 'contacts.companies.show', params: {id: companyId }, query: {tab: 'addresses'}},
   fields: [
     {
       type: FieldType.Hidden,
@@ -78,19 +78,35 @@ export const baseFormConfigConstructor = (
         type: FieldType.Text,
         name: 'address2',
         label: t('contacts.companies.address.labels.addressTwo'),
-        placeholder: t('contacts.companies.address.placeholders.addressTwo')
+        placeholder: t('contacts.companies.address.placeholders.addressTwo'),
+        optional: true
       },
       {
         type: FieldType.Text,
         name: 'address3',
         label: t('contacts.companies.address.labels.addressThree'),
-        placeholder: t('contacts.companies.address.placeholders.addressThree')
+        placeholder: t('contacts.companies.address.placeholders.addressThree'),
+        optional: true
       },
       {
         type: FieldType.Text,
         name: 'city',
         label: t('contacts.companies.address.labels.city'),
         placeholder: t('contacts.companies.address.placeholders.city')
+      },
+      {
+        type: FieldType.Text,
+        name: 'vatNumber',
+        label: t('contacts.companies.labels.vat'),
+        placeholder: t('contacts.companies.placeholders.eori'),
+        optional: true
+      },
+      {
+        type: FieldType.Text,
+        name: 'eoriNumber',
+        label: t('contacts.companies.labels.eori'),
+        placeholder: t('contacts.companies.placeholders.eori'),
+        optional: true
       },
       {
         type: FieldType.Text,
@@ -113,11 +129,11 @@ export const baseFormConfigConstructor = (
       getAddressTypeField(addressType, t),
       {
         type: FieldType.Query,
-        name: 'contact',
+        name: 'person',
         query: peopleQuery,
         queryVariables: {filter: {company: {id: {exact: companyId}}}},
         label: t('contacts.companies.address.labels.contact'),
-        labelBy: 'firstName',
+        labelBy: 'fullName',
         valueBy: 'id',
         dataKey: 'people',
         isEdge: true,
@@ -125,14 +141,28 @@ export const baseFormConfigConstructor = (
         filterable: true,
         formMapIdentifier: 'id',
         createOnFlyConfig: personOnTheFlyConfig(t, companyId),
+        optional: true
       }
     ],
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
-  search: false,
+  search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'isInvoiceAddress',
+      label: t('contacts.companies.address.labels.isInvoiceAddress')
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'isShippingAddress',
+      label: t('contacts.companies.address.labels.isShippingAddress')
+    },
+  ],
   orders: []
 });
 

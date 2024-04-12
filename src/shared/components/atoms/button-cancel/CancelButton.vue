@@ -2,13 +2,7 @@
 
 import { Button} from "../button";
 
-import { defineProps, defineEmits } from 'vue';
-
-const props = defineProps({
-  loading: Boolean,
-  disabled: Boolean
-});
-
+const props = defineProps<{ loading?: boolean; disabled?: boolean; customClass?: string;  }>();
 const emit = defineEmits(['click']);
 
 const onClicked = (event) => {
@@ -20,6 +14,7 @@ const onClicked = (event) => {
   <Button
     :loading="props.loading"
     :disabled="props.disabled"
+    :custom-class="customClass"
     class="rounded-md px-3 py-2 text-sm font-semibold text-gray-900"
     @click="onClicked"
   >

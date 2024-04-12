@@ -6,13 +6,12 @@ import { Link } from "../../../../../../shared/components/atoms/link";
 import { GeneralListing } from "../../../../../../shared/components/organisms/general-listing";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { listingConfigConstructor, searchConfigConstructor, listingQueryKey, listingQuery } from "../../../../orders/configs";
-import { Breadcrumbs } from "../../../../../../shared/components/molecules/breadcrumbs";
 
-const props = defineProps<{ id: string }>();
+const props = defineProps<{ id: string, source?: string }>();
 
 const { t } = useI18n();
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, props.id);
+const listingConfig = listingConfigConstructor(t, props.id, null, props.source);
 
 </script>
 
@@ -21,7 +20,7 @@ const listingConfig = listingConfigConstructor(t, props.id);
 
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'sales.orders.create', query: {customerId: id} }">
+          <Link :path="{ name: 'sales.orders.create', query: {customerId: id, source: source} }">
           <Button type="button" class="btn btn-primary">
               {{  t('sales.orders.create.title') }}
           </Button>

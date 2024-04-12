@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, defineProps, watch, Ref, ref} from 'vue';
+import {reactive, watch, Ref, ref} from 'vue';
 import { useRouter } from 'vue-router';
 import { FormLayout } from './../form-layout';
 import { FormConfig, HiddenFormField} from '../../formConfig';

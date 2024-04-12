@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
@@ -13,7 +13,6 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 
@@ -21,7 +20,8 @@ const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
   updatePersonMutation,
-  'updatePerson'
+  'updatePerson',
+  route.query.companyId ? route.query.companyId.toString() : null
 );
 
 const formConfig = {

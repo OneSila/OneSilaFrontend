@@ -11,7 +11,8 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   orderId: string,
-  supplierId: string
+  supplierId: string,
+  productsId: string[] = []
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -29,7 +30,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'item',
       query: supplierProductsQuery,
-      queryVariables: {filter: {supplier: {id: {exact: supplierId}}}},
+      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId }, supplier: {id: {exact: supplierId}} }} : {filter: {supplier: {id: {exact: supplierId}}}},
       label: t('purchasing.products.show.title'),
       labelBy: 'name',
       valueBy: 'id',
@@ -74,11 +75,11 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
     },
     {
       name: 'quantity',
-      type: FieldType.Boolean,
+      type: FieldType.Text,
     },
     {
-      name: 'unit_price',
-      type: FieldType.Boolean,
+      name: 'unitPrice',
+      type: FieldType.Text,
     },
   ],
   identifierKey: 'id',

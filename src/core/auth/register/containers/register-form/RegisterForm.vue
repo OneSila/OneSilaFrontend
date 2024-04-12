@@ -1,19 +1,17 @@
 <script lang="ts" setup>
-import {reactive, computed} from 'vue';
-import {useRouter} from 'vue-router';
-import {useI18n} from 'vue-i18n';
-import {
-  injectAuth,
-  refreshUser,
-} from '../../../../../shared/modules/auth';
-import {useSafeRequest} from '../../../../../shared/modules/network';
+import { reactive, computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
 import { loginMutation, registerMutation } from '../../../../../shared/api/mutations/auth.js'
-import Link from "../../../../../shared/components/atoms/link/Link.vue";
+import { Link } from "../../../../../shared/components/atoms/link";
 import {Button} from '../../../../../shared/components/atoms/button';
-import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
-import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
+import { TextInputPrepend } from "../../../../../shared/components/atoms/input-text-prepend";
+import { Icon } from "../../../../../shared/components/atoms/icon";
 import apolloClient from "../../../../../../apollo-client";
-import {EmailInput} from "../../../../../shared/components/atoms/input-email";
+import { EmailInput } from "../../../../../shared/components/atoms/input-email";
+import { displayApolloError } from "../../../../../shared/utils";
+import { useEnterKeyboardListener } from "../../../../../shared/modules/keyboard";
 
 const {t, locale} = useI18n();
 const router = useRouter();
@@ -24,6 +22,7 @@ const form = reactive({
   password: '',
   confirmPassword: '',
 });
+const submitButtonRef = ref();
 
 
 const isFormValid = computed(() => {
@@ -64,6 +63,15 @@ const afterRegister = async () => {
   }
 };
 
+const onError = (error) => {
+  displayApolloError(error);
+};
+
+const onSubmit = () => {
+  submitButtonRef.value?.$el.click();
+};
+
+useEnterKeyboardListener(onSubmit);
 
 </script>
 
@@ -82,15 +90,14 @@ const afterRegister = async () => {
     </TextInputPrepend>
 
     <div>
-    <ApolloMutation :mutation="registerMutation" :variables="{ username: form.username, password: form.password, language: locale }" @done="afterRegister">
+    <ApolloMutation :mutation="registerMutation" :variables="{ username: form.username, password: form.password, language: locale }" @done="afterRegister" @error="onError">
       <template v-slot="{ mutate, loading, error }">
-        <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
+        <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
                 :disabled="loading || !isFormValid"
                 @click="mutate()"
         >
           {{ t('shared.button.register') }}
         </Button>
-        <p v-if="error">{{ error.message }}</p>
       </template>
     </ApolloMutation>
 

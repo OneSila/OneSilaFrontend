@@ -2,7 +2,7 @@
 
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { TextInputPrepend } from "../../../../../../../shared/components/atoms/input-text-prepend";
-import {computed, defineEmits, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import { useI18n } from 'vue-i18n';
 import { updateMyPasswordMutation } from "../../../../../../../shared/api/mutations/me.js";
 import {Button} from "../../../../../../../shared/components/atoms/button";

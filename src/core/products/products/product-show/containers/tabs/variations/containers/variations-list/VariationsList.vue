@@ -14,8 +14,19 @@ import {deleteUmbrellaVariationMutation, deleteBundleVariationMutation} from "..
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
-const emit = defineEmits(['refetched']);
-const refetchIfNecessary = (query) => {
+const emit = defineEmits(['refetched', 'update-ids']);
+
+const extractVariationIds = (data) => {
+
+  if (!data || !data.edges) {
+    return [];
+  }
+
+  return data.edges.map(edge => edge.node.variation.id);
+};
+
+const refetchIfNecessary = (query, data) => {
+  emit('update-ids', extractVariationIds(data.umbrellaVariations))
   if (props.refetchNeeded) {
     query.refetch();
     emit('refetched');
@@ -35,8 +46,8 @@ const refetchIfNecessary = (query) => {
                                 last: pagination.last,
                                 before: pagination.before,
                                 after: pagination.after }">
-        <template v-slot="{ result: { loading, error, data }, query }">
-          <div v-if="data && refetchIfNecessary(query)" class="mt-5 panel p-0 border-0 overflow-hidden">
+        <template v-slot="{ result: { data }, query }">
+          <div v-if="data && refetchIfNecessary(query, data)" class="mt-5 panel p-0 border-0 overflow-hidden">
             <div class="table-responsive">
               <table class="table-striped table-hover">
                 <thead>
@@ -74,7 +85,8 @@ const refetchIfNecessary = (query) => {
                            before: pagination.before,
                            after: pagination.after
                          }
-                       }]">
+                       }]"
+                      >
                       <template v-slot="{ loading, confirmAndMutate }">
                         <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
                           {{ t('shared.button.delete') }}
@@ -91,9 +103,6 @@ const refetchIfNecessary = (query) => {
               <Pagination :page-info="data[queryKey].pageInfo" />
             </div>
           </div>
-
-          <div v-if="loading">Loading...</div>
-          <div v-else-if="error">An error occurred</div>
 
         </template>
       </ApolloQuery>

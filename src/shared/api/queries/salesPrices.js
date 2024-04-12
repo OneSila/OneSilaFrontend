@@ -155,6 +155,12 @@ export const getSalesPriceListQuery = gql`
         id
         name
       }
+      salespricelistitemSet {
+        id
+        product {
+          id
+        }
+      }
     }
   }
 `;

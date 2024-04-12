@@ -3,9 +3,9 @@ import { ref, onMounted, computed, reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import {Icon} from "../../atoms/icon";
-import LanguageDropdown from "../languages-dropdown/LanguageDropdown.vue";
-import UserProfileDropdown from "../../organisms/user-profile-dropdown/UserProfileDropdown.vue";
-import GeneralSearch from "../../organisms/general-search/GeneralSearch.vue";
+import LanguageDropdown from "../../molecules/languages-dropdown/LanguageDropdown.vue";
+import UserProfileDropdown from "../user-profile-dropdown/UserProfileDropdown.vue";
+import GeneralSearch from "../general-search/GeneralSearch.vue";
 
 const route = useRoute();
 const emit = defineEmits(['show-sidebar']);
@@ -62,7 +62,7 @@ const setActiveDropdown = () => {
                     class="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
                 >
                   <GeneralSearch />
-                  <LanguageDropdown class="ms-auto w-max"/>
+                  <LanguageDropdown :show="false" class="ms-auto w-max"/>
                   <UserProfileDropdown />
                 </div>
             </div>

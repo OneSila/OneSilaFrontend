@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { useI18n} from 'vue-i18n';
 import { useRoute, useRouter} from "vue-router";
 import { ref} from "vue";
@@ -13,7 +14,6 @@ import ItemsList from "./containers/items/items-list/ItemsList.vue";
 import NotesList from "./containers/notes/notes-list/NotesList.vue";
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const tabItems = ref();
@@ -31,17 +31,20 @@ const showConfig = showConfigConstructor(
     id.value,
     customerId,
     route.query.productId ? route.query.productId.toString() : null,
+    route.query.source ? route.query.source.toString() : null,
 );
 
-if (customerId !== null) {
+const onDataFetched = (data) => {
+  const customerDataId = data[showConfig.subscriptionKey].customer.id;
+  if (customerDataId) {
     updateField(
-      showConfig,
-      'customer',
-      {
-    clickable: true,
-    clickUrl: { name: 'sales.customers.show', params: { id: customerId } },
-  });
-}
+        showConfig,
+        'customer',
+        {
+      clickable: true,
+      clickUrl: { name: 'sales.customers.show', params: { id: customerDataId } },
+    });}
+};
 
 </script>
 
@@ -56,17 +59,17 @@ if (customerId !== null) {
 
    <template v-slot:content>
       <Card>
-          <Tabs :tabs="tabItems">
-            <template v-slot:general>
-              <GeneralShow :config="showConfig" />
-            </template>
-            <template v-slot:items>
-              <ItemsList :id="id" />
-            </template>
-            <template v-slot:notes>
-              <NotesList :id="id" />
-            </template>
-          </Tabs>
+        <Tabs :tabs="tabItems">
+          <template v-slot:general>
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+          </template>
+          <template v-slot:items>
+            <ItemsList :id="id" />
+          </template>
+          <template v-slot:notes>
+            <NotesList :id="id" />
+          </template>
+        </Tabs>
       </Card>
    </template>
   </GeneralTemplate>

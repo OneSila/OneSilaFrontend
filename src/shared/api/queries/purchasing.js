@@ -12,6 +12,7 @@ export const supplierProductsQuery = gql`
           currency {
             id
             symbol
+            isoCode
           }
           unit {
             id
@@ -50,6 +51,7 @@ export const getSupplierProductQuery = gql`
       currency {
         id
         symbol
+        isoCode
       }
       unit {
         id
@@ -84,6 +86,7 @@ export const purchaseOrdersQuery = gql`
           currency {
             id
             symbol
+            isoCode
           }
           invoiceAddress {
             id
@@ -121,6 +124,7 @@ export const getPurchaseOrderQuery = gql`
       currency {
         id
         symbol
+        isoCode
       }
       invoiceAddress {
         id
@@ -130,6 +134,12 @@ export const getPurchaseOrderQuery = gql`
         id
         address1
       }
+      purchaseorderitemSet {
+        id
+        item {
+          id
+        }
+      } 
     }
   }
 `;

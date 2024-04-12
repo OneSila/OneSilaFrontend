@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {useI18n} from 'vue-i18n';
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 import {onMounted, Ref, ref} from "vue";
 import {GeneralForm} from "../../../../shared/components/organisms/general-form";
 import {FieldConfigs, FormConfig, FormType, updateFieldConfigs} from "../../../../shared/components/organisms/general-form/formConfig";
@@ -14,12 +14,12 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const supplierId = ref(null);
 const fieldsToClear: Ref<string[] | null> = ref(null);
 const formConfig: Ref<FormConfig | null> = ref(null);
+const querySupplierId = route.query.supplierId ? route.query.supplierId.toString() : null;
 
 onMounted(() => {
   const baseForm = {
@@ -28,7 +28,8 @@ onMounted(() => {
       FormType.EDIT,
       updatePurchaseOrderMutation,
       'updatePurchaseOrder',
-        route.query.supplierId ? route.query.supplierId.toString() : null
+        querySupplierId,
+        route.query.source ? route.query.source.toString() : null
     ),
   };
 
@@ -86,7 +87,7 @@ const handleFormUpdate = (form) => {
       }
     };
 
-    updateFieldConfigs(supplierId, fieldConfigs, formConfig);
+    updateFieldConfigs(supplierId.value, fieldConfigs, formConfig);
 
     // we don't want to clear the values on render
     if (initialSupplierId === null) {
@@ -108,7 +109,10 @@ const handleFormUpdate = (form) => {
     </template>
 
    <template v-slot:content>
-     <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+     <div v-if="formConfig">
+        <GeneralForm v-if="querySupplierId === null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+        <GeneralForm v-else :config="formConfig as FormConfig" />
+     </div>
    </template>
   </GeneralTemplate>
 </template>

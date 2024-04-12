@@ -117,12 +117,19 @@ const onModelValueUpdated = (value) => {
 
   emit('update:modelValue', value);
 };
+
+const handleKeydown = (event) => {
+  event.stopPropagation();
+};
+
+
 </script>
 
 <template>
   <VueSelect
     ref="selectorRef"
     class="selector min-w-38 text-sm bg-white"
+    @keydown.enter="handleKeydown"
     :placeholder="
       placeholder ||
       t('shared.components.molecules.selector.defaultPlaceholder')

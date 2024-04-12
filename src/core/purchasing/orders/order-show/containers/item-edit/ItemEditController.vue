@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
 import {onMounted, Ref, ref} from "vue";
 import { GeneralForm } from "../../../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from "../../../../../../shared/components/organisms/general-form/formConfig";
+import {filterAndExtractIds, FormConfig, FormType} from "../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../shared/utils/constants";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../shared/components/molecules/breadcrumbs";
@@ -19,6 +19,7 @@ const route = useRoute();
 const id = ref(String(route.params.id));
 const orderId = ref(route.params.orderId);
 const supplierId = ref();
+const productIds = ref([]);
 
 const formConfig: Ref<any| null> = ref(null);
 
@@ -30,6 +31,7 @@ onMounted(async () => {
 
   if (data && data.purchaseOrder) {
     supplierId.value = data.purchaseOrder.supplier.id;
+    productIds.value = filterAndExtractIds(data.purchaseOrder.purchaseorderitemSet, ['item', 'id'], ['id'], id.value.toString());
   }
   
   const baseForm = baseFormConfigConstructor(
@@ -38,7 +40,8 @@ onMounted(async () => {
     updatePurchaseOrderItemMutation,
     'updatePurchaseOrderItem',
     orderId.value.toString(),
-    supplierId.value
+    supplierId.value,
+    productIds.value
   );
 
  formConfig.value = {
@@ -57,8 +60,6 @@ onMounted(async () => {
     ]
   };
 });
-
-
 
 </script>
 

@@ -24,6 +24,7 @@ export enum FieldType {
   Phone = "Phone",
   Email = "Email",
   Website = "Website",
+  Badge = "Badge",
 }
 
 export const OrderStatus = {
