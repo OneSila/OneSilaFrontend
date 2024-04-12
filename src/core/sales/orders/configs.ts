@@ -164,6 +164,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      disabled: type === FormType.CREATE,
       queryVariables: customerId ? { "filter": { "company": { "id": { "exact": customerId } } } } : undefined,
     },
     {
@@ -178,6 +179,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      disabled: type === FormType.CREATE,
       queryVariables: customerId ? { "filter": { "company": { "id": { "exact": customerId } } } } : undefined,
     },
     {

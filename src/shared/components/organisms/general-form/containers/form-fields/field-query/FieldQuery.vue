@@ -23,10 +23,12 @@ onMounted(() => {
 
 const emit = defineEmits(['update:modelValue']);
 const showCreateOnFlyModal = ref(false);
+const loading = ref(true);
 const rawDataRef: Ref<any> = ref([]);
 const cleanedData: Ref<any[]> = ref([]);
 const selectedValue = ref(props.modelValue);
 const isLiveUpdate = ref(false); // for data with more than 100 data initially and we need to do a new query every time
+
 
 const dropdownPosition = props.field.dropdownPosition || 'top';
 const mandatory = props.field.mandatory !== undefined ? props.field.mandatory : false;
@@ -52,6 +54,7 @@ const updateValue = (value) => {
 
 async function fetchData(searchValue: string | null | undefined = null) {
   try {
+    loading.value = true;
     // Start with existing query variables or initialize if not set
     const variables = { ...props.field.queryVariables };
 
@@ -74,6 +77,7 @@ async function fetchData(searchValue: string | null | undefined = null) {
     });
 
     processAndCleanData(data[props.field.dataKey]);
+    loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -170,7 +174,7 @@ const handleInput = debounce(async (searchValue: string) => {
       @update:model-value="updateValue"
     />
     <template v-else>
-      <Flex v-if="cleanedData.length > 0">
+      <Flex v-if="!loading">
         <FlexCell grow>
           <Selector
             :modelValue="selectedValue"
