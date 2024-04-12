@@ -12,13 +12,15 @@ const props = defineProps<{ filter: QueryFilter }>();
 const emit = defineEmits(['update-value']);
 const route = useRoute();
 const cleanedData: Ref<any[]> = ref([]);
+const loading = ref(true);
 const selectedValue = ref(
   props.filter.default !== undefined ? props.filter.default : null
 );
 
 const fetchData = async () => {
-  const variables = { ...props.filter.queryVariables }; // Assuming you add this to props
+  const variables = { ...props.filter.queryVariables };
   try {
+    loading.value = true;
     const { data } = await apolloClient.query({
       query: props.filter.query as unknown as DocumentNode,
       variables: variables,
@@ -27,8 +29,10 @@ const fetchData = async () => {
     if (data && data[props.filter.dataKey]) {
       cleanedData.value = cleanData(data[props.filter.dataKey]);
     }
+     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
+    loading.value = false;
   }
 };
 
@@ -68,7 +72,7 @@ const disabled = ref(props.filter.disabled === true);
   <div class="filter-item">
     <Label>{{ filter.label }}</Label>
         <Selector
-          v-if="cleanedData.length > 0"
+          v-if="!loading"
           class="h-9"
           v-model="selectedValue"
           :options="cleanedData"
