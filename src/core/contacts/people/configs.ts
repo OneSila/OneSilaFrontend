@@ -158,7 +158,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 const getHeaders = (t, companyId) => {
   return companyId
     ? [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language'), t('shared.labels.active')]
-    : [t('shared.labels.name'), t('shared.labels.email'), t('contacts.people.labels.company'), t('shared.labels.language'), t('shared.labels.active')];
+    : [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language'), t('contacts.people.labels.company'), t('shared.labels.active')];
 };
 
 const getBackUrl = (companyId: string | null = null) => {
