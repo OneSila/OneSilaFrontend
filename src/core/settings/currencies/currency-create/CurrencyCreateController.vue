@@ -3,23 +3,48 @@
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
-import { createCurrencyMutation } from "../../../../shared/api/mutations/currencies.js"
-import { baseFormConfigConstructor } from "../configs";
+import {createCurrencyMutation, updateCurrencyMutation} from "../../../../shared/api/mutations/currencies.js"
+import {baseFormConfigConstructor, getNonDefaultFields} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import SettingsTemplate from "../../SettingsTemplate.vue";
 import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
 import { getTabsConfig } from "../../tabs";
+import {onMounted, ref, Ref} from "vue";
+import {getCurrencyQuery} from "../../../../shared/api/queries/currencies";
+import {FieldType} from "../../../../shared/utils/constants";
 
 const { t } = useI18n();
 
-const formConfig = {
-  ...baseFormConfigConstructor(
-    t,
-    FormType.CREATE,
-    createCurrencyMutation,
-    'createCurrency'
-  ),
-  submitAndContinueUrl: { name: 'settings.currency.edit' }
+const formConfig: Ref<FormConfig | null> = ref(null);
+
+onMounted(() => {
+  formConfig.value = {
+    ...baseFormConfigConstructor(
+      t,
+      FormType.CREATE,
+      createCurrencyMutation,
+      'createCurrency'
+    ),
+    submitAndContinueUrl: { name: 'settings.currency.edit' }
+  };
+});
+
+
+const handleFormUpdate = (form) => {
+  if (formConfig.value) {
+    if (form.isDefaultCurrency) {
+      formConfig.value.fields = formConfig.value.fields.filter(field =>
+        !['inheritsFrom', 'exchangeRate', 'followOfficialRate', 'roundPricesUpTo'].includes(field.name)
+      );
+    } else {
+      const nonDefaultFields = getNonDefaultFields(t);
+      nonDefaultFields.forEach(nonDefaultField => {
+        if (!formConfig.value!.fields.some(field => field.name === nonDefaultField.name)) {
+          formConfig.value!.fields.push(nonDefaultField);
+        }
+      });
+    }
+  }
 };
 
 </script>
@@ -38,7 +63,7 @@ const formConfig = {
     </template>
 
    <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" />
+     <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" @form-updated="handleFormUpdate" />
    </template>
   </SettingsTemplate>
 </template>

@@ -10,6 +10,7 @@ export const createHsCodeMutation = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }
@@ -26,6 +27,7 @@ export const createHsCodesMutation = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }

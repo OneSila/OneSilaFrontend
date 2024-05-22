@@ -9,6 +9,7 @@ export const hsCodeSubscription = gql`
       product {
         id
         sku
+        name
       }
     }
   }

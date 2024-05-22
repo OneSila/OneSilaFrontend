@@ -509,8 +509,11 @@
         "description": {
           "header": "Description",
           "content": "Anything that helps you and your team understand this location.  Treat it as a note taking field."
+        },
+        "precise": {
+          "header": "Precise Location",
+          "content": "Is this location detailed and specific? For example, a location like 'Rack A, Shelf 3, Location 12' is very precise. On the other hand, a location described as 'Building 1' is not very precise."
         }
-
       }
     },
     "inventoryLocations": {
@@ -525,9 +528,9 @@
         "title": "Inventory Location"
       },
       "labels": {
-        "parent": "Location"
+        "parent": "Location",
+        "precise": "Precise Location"
       }
-
     },
     "inventory": {
       "title": "Inventories",

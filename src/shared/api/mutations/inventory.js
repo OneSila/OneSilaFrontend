@@ -81,6 +81,7 @@ export const createInventoryLocationMutation = gql`
       id
       name
       description
+      precise
     }
   }
 `;
@@ -101,6 +102,7 @@ export const updateInventoryLocationMutation = gql`
       id
       name
       description
+      precise
     }
   }
 `;

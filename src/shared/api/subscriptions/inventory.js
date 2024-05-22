@@ -23,6 +23,7 @@ export const getInventoryLocationSubscription = gql`
       id
       name
       description
+      precise
       location {
         id
         fullAddress

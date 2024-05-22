@@ -56,6 +56,7 @@ export const inventoryLocationsQuery = gql`
           id
           name
           description
+          precise
           location {
               id
               fullAddress
@@ -80,6 +81,7 @@ export const getInventoryLocationQuery = gql`
       id
       name
       description
+      precise
       location {
           id
           fullAddress

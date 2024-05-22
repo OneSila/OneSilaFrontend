@@ -1,10 +1,51 @@
-import {CreateOnTheFly, FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js"
 import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
+import {productsQuery} from "../../../shared/api/queries/products";
 
+export const getNonDefaultFields = (t): FormField[] => {
+  return [
+    {
+      type: FieldType.Query,
+      name: 'inheritsFrom',
+      label:  t('settings.currencies.labels.inheritsFrom'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      optional: true
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'followOfficialRate',
+      label: t('settings.currencies.labels.followOfficialRate'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    {
+      type: FieldType.Text,
+      name: 'exchangeRate',
+      label: t('settings.currencies.labels.exchangeRate'),
+      placeholder: t('settings.currencies.placeholders.exchangeRate'),
+      number: true,
+    },
+    {
+      type: FieldType.Text,
+      name: 'roundPricesUpTo',
+      label: t('settings.currencies.labels.roundPricesUpTo'),
+      placeholder: t('settings.currencies.placeholders.roundPricesUpTo'),
+      number: true,
+    },
+  ];
+}
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -83,42 +124,7 @@ export const baseFormConfigConstructor = (
       default: false,
       optional: true
     },
-    {
-      type: FieldType.Query,
-      name: 'inheritsFrom',
-      label:  t('settings.currencies.labels.inheritsFrom'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: currenciesQuery,
-      dataKey: 'currencies',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      optional: true
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'followOfficialRate',
-      label: t('settings.currencies.labels.followOfficialRate'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    {
-      type: FieldType.Text,
-      name: 'exchangeRate',
-      label: t('settings.currencies.labels.exchangeRate'),
-      placeholder: t('settings.currencies.placeholders.exchangeRate'),
-      number: true,
-    },
-    {
-      type: FieldType.Text,
-      name: 'roundPricesUpTo',
-      label: t('settings.currencies.labels.roundPricesUpTo'),
-      placeholder: t('settings.currencies.placeholders.roundPricesUpTo'),
-      number: true,
-    },
+    ...getNonDefaultFields(t),
     {
       type: FieldType.Text,
       name: 'comment',

@@ -31,6 +31,10 @@ export const baseFormConfigConstructor = (
       header: t('inventory.inventoryLocation.helpSection.description.header'),
       content: t('inventory.inventoryLocation.helpSection.description.content')
     },
+    {
+      header: t('inventory.inventoryLocation.helpSection.precise.header'),
+      content: t('inventory.inventoryLocation.helpSection.precise.content')
+    },
 
   ],
   fields: [
@@ -62,6 +66,13 @@ export const baseFormConfigConstructor = (
       scroll: true,
       optional: true
     },
+    {
+        type: FieldType.Checkbox,
+        name: 'precise',
+        label: t('inventory.inventoryLocations.labels.precise'),
+        default: false,
+        uncheckedValue: "false"
+      },
     ],
 });
 

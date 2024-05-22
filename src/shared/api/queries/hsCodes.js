@@ -32,6 +32,7 @@ export const getHsCodeQuery = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }
