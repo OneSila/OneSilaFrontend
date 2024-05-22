@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import Logo from "../../molecules/logo/Logo.vue";
 import SideItems from "./SideItems.vue";
-import SideSettingsItems from "./SideSettingsItems.vue";
 import IconCaretsDown from '../../atoms/icons/icon-caret-down.vue';
 
 const emit = defineEmits(['hide-sidebar']);
@@ -51,7 +50,6 @@ onMounted(() => {
                     class="h-[calc(100vh-80px)] relative perfect-scrollbar"
                 >
                     <SideItems />
-                    <SideSettingsItems />
                 </perfect-scrollbar>
             </div>
         </nav>

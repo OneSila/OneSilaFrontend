@@ -29,7 +29,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'product',
       label:  t('shared.labels.product'),
-      labelBy: 'sku',
+      labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
       queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId } }} : undefined,
@@ -70,7 +70,7 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
     {
       name: 'product',
       type: FieldType.NestedText,
-      keys: ['sku']
+      keys: ['name']
     },
     {
       name: 'quantity',

@@ -4,9 +4,11 @@ import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
-import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
-import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
+import {searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery} from '../configs'
+import {TabsMenu} from "../../../../shared/components/molecules/tabs-menu";
+import SettingsTemplate from "../../SettingsTemplate.vue";
+import { getTabsConfig } from "../../tabs";
 
 const { t } = useI18n();
 
@@ -16,7 +18,11 @@ const listingConfig = listingConfigConstructor(t);
 </script>
 
 <template>
-  <GeneralTemplate>
+  <SettingsTemplate>
+
+    <template v-slot:tabs>
+      <TabsMenu :tabs="getTabsConfig(t)" :activeName="'currencies'" />
+    </template>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="[{ path: { name: 'settings.currencies.list' }, name: t('settings.currencies.title') }]" />
@@ -41,5 +47,5 @@ const listingConfig = listingConfigConstructor(t);
          :query-key="listingQueryKey"
       />
    </template>
-  </GeneralTemplate>
+  </SettingsTemplate>
 </template>

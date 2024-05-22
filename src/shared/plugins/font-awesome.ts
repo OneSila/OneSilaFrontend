@@ -113,7 +113,11 @@ import {
   faQrcode,
   faHome,
   faExclamationCircle,
-  faUsers
+  faUsers,
+  faArrowsRotate,
+  faPercent,
+  faRuler,
+  faCirclePlus,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -227,6 +231,10 @@ library.add(faQrcode as IconDefinition);
 library.add(faHome as IconDefinition);
 library.add(faExclamationCircle as IconDefinition);
 library.add(faUsers as IconDefinition);
+library.add(faArrowsRotate as IconDefinition);
+library.add(faPercent as IconDefinition);
+library.add(faRuler as IconDefinition);
+library.add(faCirclePlus as IconDefinition);
 
 export default {
   install(app) {

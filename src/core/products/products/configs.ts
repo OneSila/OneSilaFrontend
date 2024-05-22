@@ -6,9 +6,8 @@ import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
 import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
-import {companiesQuery} from "../../../shared/api/queries/contacts";
 
-const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
     ...baseVatRateConfigConstructor(
       t,
@@ -68,7 +67,7 @@ const getFields = (type, t): FormField[] => {
     {
       type: FieldType.Text,
       name: 'sku',
-      label: t('products.products.labels.sku'),
+      label: t('shared.labels.sku'),
       placeholder: t('shared.placeholders.sku'),
     },
     {
@@ -154,11 +153,11 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('products.products.labels.sku'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
+  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
   fields: [
     {
       type: FieldType.Text,
-      name: 'sku'
+      name: 'name'
     },
     {
       type: FieldType.Badge,

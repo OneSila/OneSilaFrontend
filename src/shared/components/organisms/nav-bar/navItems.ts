@@ -130,27 +130,3 @@ export const navSections: NavSection[] = [
     },
 
 ];
-
-export const settingsSection: NavSection = {
-  items: [
-    {
-      title: 'settings.title',
-      icon: 'cog',
-      subItemsKey: 'settings',
-      subItems: [
-        {
-          route: { name: 'settings.currencies.list' },
-          title: 'settings.currencies.title'
-        },
-        {
-          route: { name: 'settings.vatRates.list' },
-          title: 'settings.vatRates.title'
-        },
-        {
-          route: { name: 'settings.units.list' },
-          title: 'settings.units.title'
-        }
-      ]
-    }
-  ]
-};

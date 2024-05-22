@@ -70,7 +70,7 @@ const getProductField = (productId, t): FormField => {
         type: FieldType.Query,
         name: 'product',
         label:  t('shared.labels.product'),
-        labelBy: 'sku',
+        labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
         queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
@@ -207,7 +207,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       type: FieldType.Query,
       name: 'product',
       label:  t('shared.labels.product'),
-      labelBy: 'sku',
+      labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
       dataKey: 'products',
@@ -252,7 +252,7 @@ const getFields = (supplierId, productId): ShowField[] => {
   }
 
   if (!productId) {
-    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['sku'] });
+    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['name'] });
   }
 
 

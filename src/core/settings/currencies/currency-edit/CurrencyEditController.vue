@@ -10,7 +10,9 @@ import { updateCurrencyMutation } from "../../../../shared/api/mutations/currenc
 import { getCurrencyQuery } from "../../../../shared/api/queries/currencies.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
+import SettingsTemplate from "../../SettingsTemplate.vue";
+import {TabsMenu} from "../../../../shared/components/molecules/tabs-menu";
+import {getTabsConfig} from "../../tabs";
 
 
 const { t } = useI18n();
@@ -44,16 +46,19 @@ const formConfig = {
 </script>
 
 <template>
-    <GeneralTemplate>
+    <SettingsTemplate>
+      <template v-slot:tabs>
+        <TabsMenu :tabs="getTabsConfig(t)" :activeName="'currencies'" />
+      </template>
 
-    <template v-slot:breadcrumbs>
-      <Breadcrumbs
-          :links="[{ path: { name: 'settings.currencies.list' }, name: t('settings.currencies.title') },
-                   { path: { name: 'settings.currency.edit' }, name: t('settings.currency.edit.title') }]" />
-    </template>
+      <template v-slot:breadcrumbs>
+        <Breadcrumbs
+            :links="[{ path: { name: 'settings.currencies.list' }, name: t('settings.currencies.title') },
+                     { path: { name: 'settings.currency.edit' }, name: t('settings.currency.edit.title') }]" />
+      </template>
 
-   <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" />
-   </template>
-  </GeneralTemplate>
+     <template v-slot:content>
+       <GeneralForm :config="formConfig as FormConfig" />
+     </template>
+  </SettingsTemplate>
 </template>

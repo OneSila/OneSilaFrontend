@@ -9,6 +9,7 @@ query Inventories($first: Int, $last: Int, $after: String, $before: String, $ord
           product {
             id
             sku
+            name
           }
           stocklocation {
             id
@@ -35,7 +36,8 @@ export const getInventoryQuery = gql`
       id
       product {
         id
-         sku
+        sku
+        name
       }
       stocklocation {
         id

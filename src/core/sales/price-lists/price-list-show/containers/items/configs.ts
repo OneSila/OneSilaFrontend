@@ -25,7 +25,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'product',
       label: t('shared.labels.product'),
-      labelBy: 'sku',
+      labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
       dataKey: 'products',
@@ -72,7 +72,7 @@ export const listingConfigConstructor = (t: Function, salesPriceListId: string, 
     {
       name: 'product',
       type: FieldType.NestedText,
-      keys: ['sku']
+      keys: ['name']
     },
     {
       name: 'salesprice',

@@ -2,10 +2,13 @@
 import { ref, onMounted, computed, reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
-import {Icon} from "../../atoms/icon";
+import { Icon } from "../../atoms/icon";
+import { Dropdown } from "../../molecules/dropdown";
 import LanguageDropdown from "../../molecules/languages-dropdown/LanguageDropdown.vue";
 import UserProfileDropdown from "../user-profile-dropdown/UserProfileDropdown.vue";
 import GeneralSearch from "../general-search/GeneralSearch.vue";
+
+const { t } = useI18n();
 
 const route = useRoute();
 const emit = defineEmits(['show-sidebar']);
@@ -43,6 +46,35 @@ const setActiveDropdown = () => {
     }
 };
 
+const createDropdownItems = [
+  {
+    label: t('products.products.create.title'),
+    icon: 'box',
+    path: { name: 'products.products.create' },
+  },
+  {
+    label: t('contacts.companies.create.title'),
+    icon: 'envelope',
+    path: { name: 'contacts.companies.create' },
+  },
+  {
+    label: t('sales.orders.create.title'),
+    icon: 'cart-shopping',
+    path: { name: 'sales.orders.create' },
+  },
+  {
+    label: t('purchasing.orders.create.title'),
+    icon: 'receipt',
+    path: { name: 'purchasing.orders.create' },
+  },
+  {
+    label: t('inventory.inventory.create.title'),
+    icon: 'warehouse',
+    path: { name: 'inventory.inventory.create' },
+  },
+
+];
+
 </script>
 
 <template>
@@ -63,6 +95,13 @@ const setActiveDropdown = () => {
                 >
                   <GeneralSearch />
                   <LanguageDropdown :show="false" class="ms-auto w-max"/>
+                      <Dropdown :items="createDropdownItems">
+                        <template #trigger>
+                          <button type="button" class="relative group block">
+                            <Icon name="circle-plus" class="w-7 h-7 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />
+                          </button>
+                        </template>
+                      </Dropdown>
                   <UserProfileDropdown />
                 </div>
             </div>

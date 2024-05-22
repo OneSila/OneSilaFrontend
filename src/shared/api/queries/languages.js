@@ -24,8 +24,14 @@ export const customerLanguagesQuery = gql`
 export const translationLanguagesQuery = gql`
   query translationLanguages {
     translationLanguages {
-      code
-      name
+      languages {
+        code
+        name
+      }
+      defaultLanguage {
+        code
+        name
+      }
     }
   }
 `;

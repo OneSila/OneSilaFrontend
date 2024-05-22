@@ -232,10 +232,6 @@ export const getPersonQuery = gql`
       phone
       email
       language
-      address {
-        id
-        fullAddress
-      }
     }
   }
 `;

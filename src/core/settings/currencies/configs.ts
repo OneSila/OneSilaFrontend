@@ -5,6 +5,7 @@ import { ListingConfig } from "../../../shared/components/organisms/general-list
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js"
 import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
 
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,

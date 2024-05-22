@@ -46,10 +46,6 @@ export const baseFormConfigConstructor = (
           name: t('contacts.companies.labels.influencer'),
           value: 'isInfluencer'
         },
-        {
-          name: t('contacts.companies.labels.internalCompany'),
-          value: 'isInternalCompany'
-        }
       ]
     },
     {
@@ -119,12 +115,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     showLabel: true
   },
   {
-    type: FieldType.Boolean,
-    label: t('contacts.companies.labels.internalCompany'),
-    name: 'isInternalCompany',
-    showLabel: true
-  },
-  {
     name: 'email',
     label: t('shared.labels.email'),
     type: FieldType.Email,
@@ -168,12 +158,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       strict: true,
       name: 'isInfluencer',
       label: t('contacts.companies.labels.influencer')
-    },
-    {
-      type: FieldType.Boolean,
-      strict: true,
-      name: 'isInternalCompany',
-      label: t('contacts.companies.labels.internalCompany')
     },
     {
       type: FieldType.Query,

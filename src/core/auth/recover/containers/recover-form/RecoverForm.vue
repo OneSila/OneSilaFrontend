@@ -4,10 +4,7 @@ import {useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {Button} from '../../../../../shared/components/atoms/button';
 import { requestLoginLinkMutation } from '../../../../../shared/api/mutations/auth.js'
-import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
-import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import {EmailInput} from "../../../../../shared/components/atoms/input-email";
-import {Toast} from "../../../../../shared/modules/toast";
 import {displayApolloError} from "../../../../../shared/utils";
 import {useEnterKeyboardListener} from "../../../../../shared/modules/keyboard";
 

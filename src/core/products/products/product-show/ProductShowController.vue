@@ -91,9 +91,9 @@ const redirectToList = (response) => {
                     <img class="w-20 h-20 rounded-md overflow-hidden object-cover" src="" alt="" />
                   </div>
                   <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
-                    <h5 class="text-[#3b3f5c] text-[15px] font-semibold mb-2 dark:text-white-light">{{ getResultData(result, 'name') }}</h5>
+                    <h5 class="text-[#3b3f5c] text-[15px] font-semibold text-xl mb-2 dark:text-white-light">{{ getResultData(result, 'name') }}</h5>
                     <Flex>
-                      <Label semi-bold>{{ t('products.products.labels.sku') }}:</Label>
+                      <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
                       <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
                     </Flex>
                     <Flex>

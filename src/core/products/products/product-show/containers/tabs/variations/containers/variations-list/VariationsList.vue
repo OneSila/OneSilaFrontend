@@ -52,7 +52,7 @@ const refetchIfNecessary = (query, data) => {
               <table class="table-striped table-hover">
                 <thead>
                 <tr>
-                  <th>{{ t('products.products.labels.sku') }}</th>
+                  <th>{{ t('shared.labels.name') }}</th>
                   <th>{{ t('shared.labels.active') }}</th>
                   <th v-if="product.type == PRODUCT_BUNDLE">{{ t('shared.labels.quantity') }}</th>
                   <th class="!text-end">{{ t('shared.labels.actions')}}</th>
@@ -61,7 +61,7 @@ const refetchIfNecessary = (query, data) => {
                 <tbody>
 
                 <tr v-for="item in data[queryKey].edges" :key="item.node.id">
-                  <td>{{ item.node.variation.sku }}</td>
+                  <td>{{ item.node.variation.name }}</td>
                   <td>
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />

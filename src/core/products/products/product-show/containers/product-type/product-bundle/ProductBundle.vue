@@ -21,7 +21,7 @@ const tabItems = ref();
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
-    { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
+    { name: 'variations', label: t('products.products.tabs.bundleItems'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
     { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },

@@ -40,8 +40,8 @@
       }
     },
     "button": {
-      "login": "Sign in",
-      "register": "Sign up",
+      "login": "Log in",
+      "register": "Register",
       "recover": "Recover",
       "update": "Update",
       "invite": "Invite",
@@ -90,14 +90,15 @@
       "quantity": "Enter quantity",
       "name": "Enter name",
       "notes": "Enter notes",
-      "firstName": "Enter first name",
-      "lastName": "Enter last name",
-      "email": "Enter email",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "example@onesila.com",
       "phone": "Enter phone",
       "language": "Enter language",
       "sku": "Enter SKU",
       "price": "Enter price",
       "description": "Enter description",
+      "role": "CEO",
       "phoneInput": {
         "countrySelector": {
           "placeholder": "Country code",
@@ -118,7 +119,8 @@
       "molecules": {
         "selector": {
           "defaultPlaceholder": "Select an option",
-          "typeToSearch": "Type to search"
+          "typeToSearch": "Type to search",
+          "addEntry": "Add new entry"
         },
         "dropZone": {
           "multipleDraggingInstruction": "Drag and drop files here or click to upload (multiple files)",
@@ -140,7 +142,7 @@
       }
     },
     "login": {
-      "header": "Sign in",
+      "header": "Log in",
       "description": "Enter your username and password to login",
       "labels": {
         "email": "Email",
@@ -156,7 +158,7 @@
       "failed": "Failed to login"
     },
     "register": {
-      "header": "Sign up",
+      "header": "Register",
       "description": "Enter your username and password to register",
       "labels": {
         "companyName": "Company Name",
@@ -173,7 +175,7 @@
       "loginPrompt": "Already have an account?",
       "login": "SIGN IN",
       "company": {
-        "header": "Sign up",
+        "header": "Register",
         "description": "Enter your company details",
         "languageDisclaimer": "The company language CANNOT BE CHANGED LATER ON",
         "labels": {
@@ -424,6 +426,7 @@
       "tabs": {
         "content": "Content",
         "variations": "Variations",
+        "bundleItems": "Bundle Items",
         "media": "Media",
         "price": "Price",
         "priceLists": "Price Lists",
@@ -882,6 +885,9 @@
       "edit": {
         "title": "Edit Currency"
       }
+    },
+    "internalCompanies": {
+      "title": "Internal Companies"
     }
   },
   "network": {
