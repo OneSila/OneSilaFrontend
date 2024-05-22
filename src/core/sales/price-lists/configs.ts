@@ -179,8 +179,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       valueBy: 'id',
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Query,
@@ -192,8 +192,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       dataKey: 'companies',
       isEdge: true,
       filterable: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     }
   ],
   orders: []

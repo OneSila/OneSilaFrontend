@@ -135,8 +135,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       filterable: true,
       multiple: false,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Choice,
@@ -145,7 +145,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       valueBy: 'code',
       label: t('products.products.labels.type.title'),
       filterable: false,
-      addExactLookup: true,
+      addLookup: true,
       options: getProductTypeOptions(t)
     }
   ],

@@ -401,7 +401,8 @@
         "title": "Edit Ean Code"
       },
       "labels": {
-        "eanCode": "EAN code"
+        "eanCode": "EAN code",
+        "isAssigned": "Is assigned to product?"
       },
       "placeholders": {
         "eanCode": "Enter EAN code"

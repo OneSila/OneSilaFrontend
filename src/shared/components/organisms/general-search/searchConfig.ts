@@ -12,8 +12,9 @@ export interface BaseFilter {
   label: string;
   default?: any;
   disabled?: boolean | null;
-  addExactLookup?: boolean;
-  exactLookupKeys?: string[];
+  addLookup?: boolean;
+  lookupKeys?: string[];
+  lookupType?: string;
 }
 
 export interface BooleanFilter extends BaseFilter {
@@ -21,6 +22,7 @@ export interface BooleanFilter extends BaseFilter {
   strict: boolean;
   dropdownPosition?: string;
   placeholder?: string;
+  reverse?: boolean;
 }
 
 

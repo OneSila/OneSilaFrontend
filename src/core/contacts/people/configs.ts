@@ -142,8 +142,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       dataKey: "companies",
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Boolean,

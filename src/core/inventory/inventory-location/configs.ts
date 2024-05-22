@@ -91,8 +91,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       isEdge: true,
       multiple: false,
       filterable: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     }
   ],
   orders: []

@@ -72,7 +72,18 @@ export const baseFormConfigConstructor = (
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+   {
+      type: FieldType.Boolean,
+      strict: true,
+      reverse: true,
+      name: 'product',
+      addLookup: true,
+      lookupType: 'isNull',
+      lookupKeys: ['id'],
+      label: t('products.eanCodes.labels.isAssigned')
+    },
+  ],
   orders: []
 });
 

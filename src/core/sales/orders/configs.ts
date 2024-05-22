@@ -221,7 +221,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       labelBy: 'name',
       valueBy: 'code',
       options: getStatusOptions(t),
-      addExactLookup: true
+      addLookup: true
     },
     {
       type: FieldType.Choice,
@@ -230,7 +230,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       labelBy: 'name',
       valueBy: 'code',
       options: getReasonForSaleOptions(t),
-      addExactLookup: true
+      addLookup: true
     },
     {
       type: FieldType.Query,
@@ -242,8 +242,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       dataKey: 'companies',
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
   ],
   orders: [

@@ -169,8 +169,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       dataKey: 'customerLanguages',
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: []
+      addLookup: true,
+      lookupKeys: []
     },
   ],
   orders: []
