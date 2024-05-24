@@ -29,7 +29,7 @@ interface MeSubscriptionResult {
     timezone: string;
     isMultiTenantCompanyOwner: boolean;
     isActive: boolean;
-    dateJoined: string; // Assuming dateJoined is a string (e.g., ISO format), adjust if it's a different type
+    dateJoined: string;
     avatarResizedFullUrl: string;
   };
 }

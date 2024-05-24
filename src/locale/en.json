@@ -56,7 +56,8 @@
       "edit": "Edit",
       "show": "Show",
       "submit": "Submit",
-      "add": "Add"
+      "add": "Add",
+      "uploadNew": "Upload New"
     },
     "labels": {
       "status": "Status",
@@ -115,18 +116,19 @@
       "general": "General",
       "items": "Items"
     },
+    "dropZone": {
+      "multipleDraggingInstruction": "Drag and drop files here or click to upload",
+      "singleDraggingInstruction": "Drag and drop a file here or click to upload",
+      "multipleInstruction": "You can upload multiple files",
+      "singleInstruction": "You can upload one file",
+      "fileRejected": "File rejected"
+    },
     "components": {
       "molecules": {
         "selector": {
           "defaultPlaceholder": "Select an option",
           "typeToSearch": "Type to search",
           "addEntry": "Add new entry"
-        },
-        "dropZone": {
-          "multipleDraggingInstruction": "Drag and drop files here or click to upload (multiple files)",
-          "singleDraggingInstruction": "Drag and drop a file here or click to upload",
-          "multipleInstruction": "You can upload multiple files",
-          "singleInstruction": "You can upload one file"
         },
         "selectAllCheckbox": {
           "label": "Select All"
@@ -778,10 +780,15 @@
   "media": {
     "title": "Media",
     "images": {
-      "title": "Images"
+      "title": "Images",
+      "upload": "Upload New Images"
     },
     "videos": {
-      "title": "Videos"
+      "title": "Videos",
+      "upload": "Upload New Videos"
+    },
+    "documents": {
+      "upload": "Upload New Documents"
     }
   },
   "settings": {

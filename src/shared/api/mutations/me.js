@@ -1,8 +1,8 @@
 import { gql } from 'graphql-tag';
 
 export const updateMeMutation = gql`
-    mutation updateMe($firstName: String!, $lastName: String!, $mobileNumber: String, $whatsappNumber: String, $telegramNumber: String, $timezone: String) {
-      updateMe(data: {firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, telegramNumber: $telegramNumber, timezone: $timezone}) {
+    mutation updateMe($firstName: String, $lastName: String, $mobileNumber: String, $whatsappNumber: String, $telegramNumber: String, $timezone: String, $file: Upload) {
+      updateMe(data: {firstName: $firstName, lastName: $lastName, mobileNumber: $mobileNumber, whatsappNumber: $whatsappNumber, telegramNumber: $telegramNumber, timezone: $timezone, avatar: $file}) {
         username
         lastName
         firstName

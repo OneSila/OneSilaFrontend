@@ -19,7 +19,7 @@ defineProps<{ meData: MeData }>();
         <p class="font-semibold text-primary text-xl">{{ meData.firstName }} {{ meData.lastName }}</p>
       </FlexCell>
       <FlexCell>
-        <Image v-if="meData.avatarResizedFullUrl != null" :source="meData.avatarResizedFullUrl" class="w-24 h-24 rounded-full object-cover mb-5"/>
+        <Image v-if="meData.avatarResizedFullUrl != null" :source="meData.avatarResizedFullUrl" class="w-24 h-24 rounded-full object-cover mb-5 mt-2"/>
       </FlexCell>
     </Flex>
 

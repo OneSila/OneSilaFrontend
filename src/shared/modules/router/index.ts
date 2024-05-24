@@ -8,6 +8,7 @@ import { routes as purchasingRoutes } from '../../../core/purchasing/routes';
 import { routes as inventoryRoutes } from '../../../core/inventory/routes';
 import { routes as productsRoutes } from '../../../core/products/routes';
 import { routes as settingsRoutes } from '../../../core/settings/routes';
+import { routes as mediaRoutes } from '../../../core/media/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
 import { detectAuth, isAuthenticated, hasCompany, isActive, removeAuth } from '../auth';
 import { Toast } from '../toast';
@@ -27,6 +28,7 @@ export function buildRouter() {
       ...inventoryRoutes,
       ...productsRoutes,
       ...settingsRoutes,
+      ...mediaRoutes,
       {
         path: '',
         name: 'dashboard',

@@ -10,9 +10,9 @@ export interface SubItem {
 export interface Item {
   title: string;
   icon: string;
-  subItemsKey: string;
+  subItemsKey?: string;
   route?: Route;
-  subItems: SubItem[];
+  subItems?: SubItem[];
 }
 
 export interface NavSection {
@@ -114,18 +114,8 @@ export const navSections: NavSection[] = [
            {
             title: 'media.title',
             icon: 'photo-film',
-            subItemsKey: 'media',
-                subItems: [
-                    {
-                        route: { name: 'dashboard' },
-                        title:  'media.images.title',
-                    },
-                    {
-                        route: { name: 'dashboard' },
-                        title:  'media.videos.title',
-                    },
-                ]
-            },
+            route: { name: 'media.files' }
+           },
         ]
     },
 
