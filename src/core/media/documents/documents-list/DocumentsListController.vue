@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 
 import { useI18n } from "vue-i18n";
-import GeneralTemplate from "../../../shared/templates/GeneralTemplate.vue";
-import {Breadcrumbs} from "../../../shared/components/molecules/breadcrumbs";
-import FilesSideBar from "./containers/FilesSideBar.vue";
-import FilesList from "./containers/FilesList.vue";
-import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {mediaQuery, imagesCnt, filesCnt, videosCnt} from "../../../shared/api/queries/media.js";
-import MediaCards from "./containers/MediaCards.vue";
+import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
+import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
+import { SearchConfig } from "../../../../shared/components/organisms/general-search/searchConfig";
+import { fileQuery } from "../../../../shared/api/queries/media.js";
+import FilesSideBar from "../../files/containers/FilesSideBar.vue";
+import FilesList from "../../files/containers/FilesList.vue";
+import MediaCards from "../../files/containers/MediaCards.vue";
 
 const { t } = useI18n();
 
@@ -18,8 +18,8 @@ const searchConfig: SearchConfig = {
   orders: []
 };
 
-const activeTab = 'home';
-const queryKey = 'medias';
+const activeTab = 'documents';
+const queryKey = 'files';
 const defaultView = 'table';
 
 </script>
@@ -41,7 +41,7 @@ const defaultView = 'table';
                   <MediaCards />
 
                   <div class="2xl:col-span-4 sm:col-span-2">
-                      <FilesList :search-config="searchConfig" :list-query="mediaQuery" :query-key="queryKey" :default-view-type="defaultView" :label="t('media.media.labels.recentFiles')" />
+                      <FilesList :search-config="searchConfig" :list-query="fileQuery" :query-key="queryKey" :default-view-type="defaultView" :label="t('media.media.labels.recentFiles')" />
                   </div>
               </div>
           </div>

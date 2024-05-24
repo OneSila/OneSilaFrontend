@@ -83,7 +83,8 @@
       "price": "Price",
       "yes": "Yes",
       "no": "No",
-      "language": "Language"
+      "language": "Language",
+      "home": "Home"
     },
     "placeholders": {
       "currency": "Enter currency",
@@ -779,6 +780,16 @@
   },
   "media": {
     "title": "Media",
+    "media": {
+      "labels": {
+        "fileName": "File Name",
+        "lastModified": "Last Modified",
+        "fileSize": "File Size",
+        "owner": "Owner",
+        "files": "Files",
+        "recentFiles": "Recent Files"
+      }
+    },
     "images": {
       "title": "Images",
       "upload": "Upload New Images"
@@ -788,6 +799,7 @@
       "upload": "Upload New Videos"
     },
     "documents": {
+      "title": "Documents",
       "upload": "Upload New Documents"
     }
   },

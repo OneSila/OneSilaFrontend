@@ -12,10 +12,10 @@ const props = defineProps<{ activeTab: string; }>();
 const { t } = useI18n();
 
 const links = [
-    { name: 'home', icon: 'home', label: 'Home' },
-    { name: 'images', icon: 'image', label: 'Images' },
-    { name: 'videos', icon: 'video', label: 'Videos' },
-    { name: 'documents', icon: 'file-text', label: 'Documents' },
+    { name: 'home', icon: 'home', label: t('shared.labels.home'), url: { name: 'media.files' } },
+    { name: 'images', icon: 'image', label: t('media.images.title'), url: { name: 'media.images.list' } },
+    { name: 'videos', icon: 'video', label: t('media.videos.title'), url: { name: 'media.videos.list' } },
+    { name: 'documents', icon: 'file-text', label: t('media.documents.title'), url: { name: 'media.documents.list' } },
 ];
 
 const isActive = (name: string) => props.activeTab === name;
@@ -33,15 +33,15 @@ const isActive = (name: string) => props.activeTab === name;
 
       <div class="space-y-2 mt-4">
         <template v-for="link in links" :key="link.name">
-          <a
-            href="javascript:void(0);"
+           <router-link
+            :to="link.url"
             :class="[
               'flex items-center py-2 px-4 text-sm rounded text-gray-500 dark:text-gray-400',
               isActive(link.name) ? 'bg-slate-100 dark:bg-gray-700' : 'hover:bg-slate-100 dark:hover:bg-gray-700'
             ]">
             <Icon :name="link.icon" class="me-3.5 w-4 h-4" />
             <span v-if="isWiderThan(screen, 1024)">{{ link.label }}</span>
-          </a>
+          </router-link>
         </template>
       </div>
 

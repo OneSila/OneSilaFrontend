@@ -47,7 +47,7 @@ const afterUpdate = () => {
   emit('updateComplete');
 };
 
-const executeMutation = async (variables) => {
+const executeMutation = async (variables: any | null = null) => {
   loading.value = true;
   try {
     const { data } = await apolloClient.mutate({

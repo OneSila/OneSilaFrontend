@@ -6,8 +6,25 @@ export const mediaQuery = gql`
       edges {
         node {
           id
+          proxyId
           type
+          updatedAt
+          image {
+            size
+            name
+            url
+          }
+          file {
+            name
+            size
+            url
+          }
+          owner {
+            firstName
+            lastName
+          }
           imageWebUrl
+          videoUrl
         }
         cursor
       }
@@ -25,9 +42,21 @@ export const mediaQuery = gql`
 export const getMediaQuery = gql`
   query getMedia($id: GlobalID!) {
     media(id: $id) {
-      id
-      type
-      imageWebUrl
+          id
+          proxyId
+          type
+          image {
+            size
+            name
+            url
+          }
+          file {
+            name
+            size
+            url
+          }
+          imageWebUrl
+          videoUrl
     }
   }
 `;
@@ -38,6 +67,17 @@ export const imageQuery = gql`
       edges {
         node {
           id
+          type
+          updatedAt
+          image {
+            size
+            name
+            url
+          }
+          owner {
+            firstName
+            lastName
+          }
           imageWebUrl
         }
         cursor
@@ -56,8 +96,15 @@ export const imageQuery = gql`
 export const getImageQuery = gql`
   query getImage($id: GlobalID!) {
     image(id: $id) {
-      id
-      imageWebUrl
+          id
+          proxyId
+          type
+          image {
+            size
+            name
+            url
+          }
+          imageWebUrl
     }
   }
 `;
@@ -68,7 +115,13 @@ export const videoQuery = gql`
       edges {
         node {
           id
+          type
+          updatedAt
           videoUrl
+          owner {
+            firstName
+            lastName
+          }
         }
         cursor
       }
@@ -87,6 +140,7 @@ export const getVideoQuery = gql`
   query getVideo($id: GlobalID!) {
     video(id: $id) {
       id
+      type
       videoUrl
     }
   }
@@ -98,6 +152,17 @@ export const fileQuery = gql`
       edges {
         node {
           id
+          type
+          updatedAt
+          file {
+            name
+            size
+            url
+          }
+          owner {
+            firstName
+            lastName
+          }
         }
         cursor
       }
@@ -164,3 +229,26 @@ export const getMediaProductThroughQuery = gql`
   }
 `;
 
+export const imagesCnt = gql`
+  query ImagesCnt {
+    medias(filters: {type: {exact: "IMAGE"}}) {
+      totalCount
+    }
+  }
+`;
+
+export const videosCnt = gql`
+  query VideosCnt {
+    medias(filters: {type: {exact: "VIDEO"}}) {
+      totalCount
+    }
+  }
+`;
+
+export const filesCnt = gql`
+  query FilesCnt {
+    medias(filters: {type: {exact: "FILE"}}) {
+      totalCount
+    }
+  }
+`;

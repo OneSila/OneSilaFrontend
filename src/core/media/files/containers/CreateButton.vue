@@ -43,19 +43,19 @@ const openModal = () => {
         <template #content="{ close }">
           <ul class="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90 bg-white">
             <li>
-              <button @click="openModal('uploadImageModal'); close()" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+              <button @click="openModal(); close()" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
                 <Icon name="image" class="w-4.5 h-4.5 mr-2 shrink-0" />
                 {{ t('media.images.upload') }}
               </button>
             </li>
             <li>
-              <button @click="openModal('uploadVideoModal'); close()" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+              <button @click="openModal(); close()" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
                 <Icon name="video" class="w-4.5 h-4.5 mr-2 shrink-0" />
                 {{ t('media.videos.upload') }}
               </button>
             </li>
             <li>
-              <button @click="openModal('uploadDocumentModal'); close()" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+              <button @click="openModal(); close()" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
                 <Icon name="file-text" class="w-4.5 h-4.5 mr-2 shrink-0" />
                 {{ t('media.documents.upload') }}
               </button>
@@ -68,11 +68,11 @@ const openModal = () => {
       <button v-if="isWiderThan(screen, 1024)"
         type="button"
         class="btn inline-flex justify-center items-center bg-primary text-white w-full"
-        @click="openModal(props.activeTab)"
+        @click="openModal()"
       >
         <i class="mgc_add_line text-lg me-2"></i> {{ t('shared.button.uploadNew') }}
       </button>
-      <button v-else type="button" class="btn bg-primary text-white" @click="openModal(props.activeTab)" >
+      <button v-else type="button" class="btn bg-primary text-white" @click="openModal()" >
         <Icon name="circle-plus" />
       </button>
     </template>
