@@ -36,7 +36,9 @@
         "deleteSuccess": "The item has been successfully deleted.",
         "unexpectedResult": "An unexpected error occurred. Please try again later.",
         "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
-        "somethingWentWrong": "Something went wrong!"
+        "somethingWentWrong": "Something went wrong!",
+        "deletionFailed": "Deletion operation failed. Please contact the administrators.",
+        "clipboardSuccess": "Your text was succefully copied to the clipboard"
       }
     },
     "button": {
@@ -57,6 +59,7 @@
       "show": "Show",
       "submit": "Submit",
       "add": "Add",
+      "download": "Download",
       "uploadNew": "Upload New"
     },
     "labels": {
@@ -792,15 +795,56 @@
     },
     "images": {
       "title": "Images",
-      "upload": "Upload New Images"
+      "upload": "Upload New Images",
+      "create": {
+        "successfullyCreated": "Images were succefully uploaded!"
+      },
+      "delete": {
+        "successfullyDeleted": "Image was succefully deleted!"
+      },
+      "show": {
+        "title": "Image",
+        "successfullyUpdated": "Succefully updated the image!",
+        "updateFailed": "Failed to update the image. Please contact the administrators!"
+      },
+      "labels": {
+        "imageUrl": "Image URL",
+        "imageType": "Image Type",
+        "packShot": "Pack Shot",
+        "moodShot": "Mood Shot"
+      },
+      "placeholders": {
+        "imageType": "Image Type"
+      }
     },
     "videos": {
       "title": "Videos",
-      "upload": "Upload New Videos"
+      "upload": "Add New Videos",
+      "show": {
+        "title": "Video",
+        "unsupportedFormatError": "This video format is not supported by your browser!",
+        "successfullyUpdated": "Succefully updated the video!",
+        "updateFailed": "Failed to update the video. Please contact the administrators!"
+      },
+      "create": {
+        "successfullyCreated": "Videos were succefully added!"
+      },
+      "delete": {
+        "successfullyDeleted": "Video was succefully deleted!"
+      },
+      "labels": {
+        "videoUrl": "Video URL"
+      }
     },
     "documents": {
       "title": "Documents",
-      "upload": "Upload New Documents"
+      "upload": "Upload New Documents",
+      "create": {
+        "successfullyCreated": "Documents were succefully uploaded!"
+      },
+      "delete": {
+        "successfullyDeleted": "Document was succefully deleted!"
+      }
     }
   },
   "settings": {

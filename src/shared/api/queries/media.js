@@ -24,6 +24,7 @@ export const mediaQuery = gql`
             lastName
           }
           imageWebUrl
+          fileWebUrl
           videoUrl
         }
         cursor
@@ -56,6 +57,7 @@ export const getMediaQuery = gql`
             url
           }
           imageWebUrl
+          fileWebUrl
           videoUrl
     }
   }
@@ -153,6 +155,7 @@ export const fileQuery = gql`
         node {
           id
           type
+          fileWebUrl
           updatedAt
           file {
             name
@@ -181,6 +184,7 @@ export const getFileQuery = gql`
   query getFile($id: GlobalID!) {
     file(id: $id) {
       id
+      fileWebUrl
     }
   }
 `;
@@ -191,13 +195,37 @@ export const mediaProductThroughQuery = gql`
       edges {
         node {
           id
+          productId
+          active
+          productType
           media {
-            id
-            type
+              id
+              proxyId
+              type
+              updatedAt
+              image {
+                size
+                name
+                url
+              }
+              file {
+                name
+                size
+                url
+              }
+              owner {
+                firstName
+                lastName
+              }
+              imageWebUrl
+              fileWebUrl
+              videoUrl
           }
           product {
             id
             name
+            active
+            type
           }
         }
         cursor

@@ -14,6 +14,7 @@ export const imageSubscription = gql`
   subscription getImageSubscription($pk: String!) {
     image(pk: $pk) {
       id
+      imageType
       imageWebUrl
     }
   }

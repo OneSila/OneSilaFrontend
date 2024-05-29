@@ -203,7 +203,6 @@ export const processGraphQLErrors = (errorResponse, t) => {
       } catch (e) {
         const matchedError = matchComplexError(message, t);
         if (matchedError) {
-          alert('????')
           Object.assign(validationErrors, matchedError);
         } else {
           if (typeof message === 'string') {

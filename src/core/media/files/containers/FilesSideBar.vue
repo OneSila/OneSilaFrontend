@@ -19,6 +19,7 @@ const links = [
 ];
 
 const isActive = (name: string) => props.activeTab === name;
+const emit = defineEmits(['trigger-refetch']);
 
 </script>
 
@@ -28,8 +29,8 @@ const isActive = (name: string) => props.activeTab === name;
     class="transform h-full p-2 me-6 card rounded-none lg:rounded-md transition-all"
     tabindex="-1"
   >
-    <div class="py-5 lg:px-10 md:px-6 sm:px-2">
-      <CreateButton :active-tab="activeTab" />
+    <div class="py-5 lg:px-6 md:px-4 sm:px-2">
+      <CreateButton :active-tab="activeTab" @trigger-refetch="emit('trigger-refetch')" />
 
       <div class="space-y-2 mt-4">
         <template v-for="link in links" :key="link.name">

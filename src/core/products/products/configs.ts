@@ -174,7 +174,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     },
   ],
   identifierKey: 'id',
-  addActions: true,
+  addActions: false,
   showUrlName: 'products.products.show',
   addShow: true,
   addPagination: true,

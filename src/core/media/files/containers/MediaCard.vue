@@ -5,9 +5,17 @@ import { Link } from '../../../../shared/components/atoms/link';
 import {useI18n} from "vue-i18n";
 import { Url } from "../../../../shared/utils/constants";
 
-const props = defineProps<{ label: string; cntQuery: any; url: Url  }>();
-
+const props = defineProps<{ label: string; cntQuery: any; url: Url;  refetchNeeded?: boolean  }>();
+const emit = defineEmits(['refetched']);
 const { t } = useI18n();
+
+const refetchIfNecessary = (query, data) => {
+  if (props.refetchNeeded) {
+    query.refetch();
+    emit('refetched');
+  }
+  return true;
+}
 
 </script>
 
@@ -30,11 +38,11 @@ const { t } = useI18n();
         </div>
         <div class="flex items-center gap-2">
           <span class="p-0.5 bg-gray-600 rounded-full"></span>
-                <ApolloQuery :query="cntQuery">
-                  <template v-slot="{ result: { data } }">
-                    <p v-if="data" class="text-sm">{{ data.medias.totalCount }} {{ t('media.media.labels.files') }}</p>
-                  </template>
-                </ApolloQuery>
+            <ApolloQuery :query="cntQuery">
+              <template v-slot="{ result: { data }, query }">
+                <p v-if="data && refetchIfNecessary(query, data)" class="text-sm">{{ data.medias.totalCount }} {{ t('media.media.labels.files') }}</p>
+              </template>
+            </ApolloQuery>
         </div>
       </div>
     </div>
