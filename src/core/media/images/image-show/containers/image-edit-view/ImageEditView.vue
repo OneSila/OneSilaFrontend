@@ -1,20 +1,23 @@
 <script lang="ts" setup>
+
 import { ref, defineProps } from "vue";
 import { useI18n } from "vue-i18n";
 import { Selector } from "../../../../../../shared/components/atoms/selector";
+import { Image } from "../../../../../../shared/components/atoms/image";
 import { PrimaryButton } from "../../../../../../shared/components/atoms/button-primary";
 import apolloClient from "../../../../../../../apollo-client";
 import { updateImageMutation } from "../../../../../../shared/api/mutations/media.js";
 import { Toast } from "../../../../../../shared/modules/toast";
+import {IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK} from "../../../../files/media";
 
 const { t } = useI18n();
-const props = defineProps<{ image: { imageUrl: string, type: string } }>();
+const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string } }>();
 const emit = defineEmits(['show-view']);
 const localType = ref(props.image.imageType);
 
 const imageTypeOptions = [
-  { label: t('media.images.labels.packShot'), value: 'PACK' },
-  { label: t('media.images.labels.moodShot'), value: 'MOOD' }
+  { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD }
 ];
 
 const saveChanges = async () => {
@@ -43,7 +46,7 @@ const handleUpdate = (newVal) => {
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
-      <img :src="image.imageWebUrl" alt="Editable Image Preview" class="w-full" />
+      <Image :source="image.imageWebUrl" alt="Editable Image Preview" class="w-full max-w-[35rem] rounded-md" />
     </div>
     <div class="mt-1">
       <Flex vertical>

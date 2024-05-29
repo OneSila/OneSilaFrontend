@@ -790,7 +790,8 @@
         "fileSize": "File Size",
         "owner": "Owner",
         "files": "Files",
-        "recentFiles": "Recent Files"
+        "recentFiles": "Recent Files",
+        "addExistingFiles": "Add from existing media"
       }
     },
     "images": {
@@ -811,7 +812,8 @@
         "imageUrl": "Image URL",
         "imageType": "Image Type",
         "packShot": "Pack Shot",
-        "moodShot": "Mood Shot"
+        "moodShot": "Mood Shot",
+        "addImages": "Add new images"
       },
       "placeholders": {
         "imageType": "Image Type"
@@ -839,6 +841,9 @@
     "documents": {
       "title": "Documents",
       "upload": "Upload New Documents",
+      "labels": {
+        "addDocuments": "Add New Documents"
+      },
       "create": {
         "successfullyCreated": "Documents were succefully uploaded!"
       },

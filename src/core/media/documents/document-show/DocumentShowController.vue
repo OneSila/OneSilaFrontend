@@ -9,14 +9,15 @@ import MediaCards from "../../files/containers/MediaCards.vue";
 import IconPencilPaper from "../../../../shared/components/atoms/icons/icon-pencil-paper.vue";
 import IconX from "../../../../shared/components/atoms/icons/icon-x.vue";
 import { useRoute } from "vue-router";
-import {Card} from "../../../../shared/components/atoms/card";
-import {Button} from "../../../../shared/components/atoms/button";
+import { Card } from "../../../../shared/components/atoms/card";
+import { Button } from "../../../../shared/components/atoms/button";
+import { TYPE_DOCUMENT } from "../../files/media";
 
 const route = useRoute();
 const { t } = useI18n();
 
 const editView = ref(route.query.editView === '1')
-const activeTab = 'documents';
+const activeTab = TYPE_DOCUMENT;
 
 const toggleEditView = () => {
   editView.value = !editView.value;

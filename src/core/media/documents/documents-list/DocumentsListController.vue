@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import { useI18n } from "vue-i18n";
+import { ref } from "vue";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { SearchConfig } from "../../../../shared/components/organisms/general-search/searchConfig";
@@ -8,7 +9,7 @@ import { fileQuery } from "../../../../shared/api/queries/media.js";
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
-import {ref} from "vue";
+import { TYPE_DOCUMENT } from "../../files/media";
 
 const { t } = useI18n();
 const refetchNeeded = ref(false);
@@ -20,7 +21,7 @@ const searchConfig: SearchConfig = {
   orders: []
 };
 
-const activeTab = 'documents';
+const activeTab = TYPE_DOCUMENT;
 const queryKey = 'files';
 const defaultView = 'table';
 

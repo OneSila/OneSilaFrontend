@@ -1,6 +1,8 @@
 export const TYPE_IMAGE = 'IMAGE'
 export const TYPE_VIDEO = 'VIDEO'
 export const TYPE_DOCUMENT = 'FILE'
+export const IMAGE_TYPE_PACK = 'PACK'
+export const IMAGE_TYPE_MOOD = 'MOOD'
 
 
 export const getId = (media: any) => {
@@ -24,9 +26,9 @@ export const getRouteName = (type: string) => {
 };
 
 export const getFileName = (media: any) => {
-  if (media.type === TYPE_IMAGE) return media.image.name;
-  if (media.type === TYPE_DOCUMENT) return media.file.name;
-  if (media.type === TYPE_VIDEO) return truncateUrl(media.videoUrl);
+  if (media.type === TYPE_IMAGE) return truncateText(media.image.name, 50);
+  if (media.type === TYPE_DOCUMENT) return truncateText(media.file.name, 50);
+  if (media.type === TYPE_VIDEO) return truncateText(media.videoUrl);
   return '-';
 };
 
@@ -36,8 +38,8 @@ export const getFileSize = (media: any) => {
   return '-';
 };
 
-export const truncateUrl = (url: string) => {
-  return url.length > 20 ? url.substring(0, 20) + '...' : url;
+export const truncateText = (text: string, max: number = 30) => {
+  return text.length > max ? text.substring(0, max) + '...' : text;
 };
 
 export const formatDate = (dateString) => {

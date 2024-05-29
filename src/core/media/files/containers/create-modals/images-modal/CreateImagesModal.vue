@@ -9,21 +9,35 @@ import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../apollo-client";
-import { createImagesMutation } from "../../../../../../shared/api/mutations/media.js"
+import {createImagesMutation, createMediaProductThroughMutation} from "../../../../../../shared/api/mutations/media.js"
 import {Toast} from "../../../../../../shared/modules/toast";
+import {IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK} from "../../../media";
 
-const props = defineProps<{ modelValue: boolean; }>();
+const props = defineProps<{ modelValue: boolean; productId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const localShowModal = ref(props.modelValue);
 
 const { t } = useI18n();
 
-const images = ref([]);
+type UploadedImage = File;
+
+type ShowImage = {
+    file: any;
+    url?: any;
+    type: string;
+};
+
+type Image = {
+    image: File;
+    imageType: string
+};
+
+const images: Ref<ShowImage[]> = ref([])
 const dropZone: Ref<any> = ref(null)
 
 const imageTypeOptions = [
-  { label: t('media.images.labels.packShot'), value: 'PACK' },
-  { label: t('media.images.labels.moodShot'), value: 'MOOD' }
+  { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD }
 ];
 
 watch(() => props.modelValue, (newVal) => {
@@ -36,11 +50,11 @@ const closeModal = () => {
   emit('update:modelValue', false);
 };
 
-const onUploaded = (files) => {
+const onUploaded = (files: UploadedImage[]) => {
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      images.value.push({ url: e.target.result, type: 'PACK', file });
+      images.value.push({ url: e?.target?.result, type: IMAGE_TYPE_PACK, file });
     };
     reader.readAsDataURL(file);
   });
@@ -57,7 +71,7 @@ const updateImageType = (index, type) => {
 
 const submitImages = async () => {
 
-  let variables = [];
+  let variables: Image[] = [];
   images.value.forEach(image => {
     variables.push({image: image.file, imageType: image.type});
   });
@@ -69,6 +83,24 @@ const submitImages = async () => {
   });
 
   if (data && data.createImages) {
+      if (props.productId) {
+        for (const image of data.createImages) {
+          const variables = {
+            product: {id: props.productId},
+            media: {id: image.id},
+          };
+          try {
+            const { data } = await apolloClient.mutate({
+              mutation: createMediaProductThroughMutation,
+              variables: { data: variables }
+            });
+            console.log('Linking success:', data);
+          } catch (error) {
+            console.error('Failed to link video and product:', error);
+          }
+        }
+    }
+
     emit('entries-created');
     Toast.success(t('media.images.create.successfullyCreated'));
     closeModal();

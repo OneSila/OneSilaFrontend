@@ -19,7 +19,7 @@ const searchConfig: SearchConfig = {
   orders: []
 };
 
-const activeTab = 'home';
+const activeTab = 'HOME';
 const queryKey = 'medias';
 const defaultView = 'table';
 

@@ -5,6 +5,7 @@ import { Icon} from "../../../../shared/components/atoms/icon";
 import {useI18n} from "vue-i18n";
 import { isWiderThan, injectScreen } from "../../../../shared/modules/screen";
 import CreateButton from "./CreateButton.vue";
+import { TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO } from "../media";
 
 const screen = injectScreen();
 const props = defineProps<{ activeTab: string; }>();
@@ -13,9 +14,9 @@ const { t } = useI18n();
 
 const links = [
     { name: 'home', icon: 'home', label: t('shared.labels.home'), url: { name: 'media.files' } },
-    { name: 'images', icon: 'image', label: t('media.images.title'), url: { name: 'media.images.list' } },
-    { name: 'videos', icon: 'video', label: t('media.videos.title'), url: { name: 'media.videos.list' } },
-    { name: 'documents', icon: 'file-text', label: t('media.documents.title'), url: { name: 'media.documents.list' } },
+    { name: TYPE_IMAGE, icon: 'image', label: t('media.images.title'), url: { name: 'media.images.list' } },
+    { name: TYPE_VIDEO, icon: 'video', label: t('media.videos.title'), url: { name: 'media.videos.list' } },
+    { name: TYPE_DOCUMENT, icon: 'file-text', label: t('media.documents.title'), url: { name: 'media.documents.list' } },
 ];
 
 const isActive = (name: string) => props.activeTab === name;
@@ -45,21 +46,6 @@ const emit = defineEmits(['trigger-refetch']);
           </router-link>
         </template>
       </div>
-
-<!--      <div v-if="isWiderThan(screen, 1024)" class="mt-6">-->
-<!--        <h6 class="text-uppercase mt-3">Storage</h6>-->
-<!--        <div class="flex w-full h-1.5 bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700 mt-4">-->
-<!--          <div-->
-<!--            class="flex flex-col justify-center overflow-hidden bg-primary"-->
-<!--            role="progressbar"-->
-<!--            :style="{width: storageCount + '%'}"-->
-<!--            aria-valuenow="storageCount"-->
-<!--            aria-valuemin="0"-->
-<!--            aria-valuemax="100"-->
-<!--          ></div>-->
-<!--        </div>-->
-<!--        <p class="text-gray-500 mt-4 text-xs">{{ storageCount }}% of 15 GB used</p>-->
-<!--      </div>-->
     </div>
   </Card>
 </template>

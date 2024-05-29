@@ -4,8 +4,8 @@ import { ref } from 'vue';
 import { Product } from "../../../../configs";
 import { useI18n } from "vue-i18n";
 import TabContentTemplate from "../TabContentTemplate.vue";
-import MediaCreate from "./containers/variation-create/MediaCreate.vue";
-import MediaList from "./containers/variations-list/MediaList.vue";
+import { MediaCreate } from "./containers/media-create";
+import { MediaList } from "./containers/media-list";
 
 const { t } = useI18n();
 
@@ -29,12 +29,14 @@ const getIds = (newIds) => {
 
 <template>
   <TabContentTemplate>
-
     <template v-slot:content>
+      <Flex class="mb-2">
+        <FlexCell grow></FlexCell>
+        <FlexCell>
+          <MediaCreate :product="product" :media-ids="ids" @media-added="handleVariationAdded" />
+        </FlexCell>
+      </Flex>
       <MediaList :product="product" :refetch-needed="refetchNeeded" @refetched="handleRefeched" @update-ids="getIds" />
-      <div class="mt-2">
-        <MediaCreate :product="product" :media-ids="ids" @variation-added="handleVariationAdded" />
-      </div>
     </template>
   </TabContentTemplate>
 </template>

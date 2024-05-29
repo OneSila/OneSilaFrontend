@@ -9,6 +9,7 @@ import { imageQuery } from "../../../../shared/api/queries/media.js";
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
+import { TYPE_IMAGE } from "../../files/media";
 
 const { t } = useI18n();
 const refetchNeeded = ref(false);
@@ -20,7 +21,7 @@ const searchConfig: SearchConfig = {
   orders: []
 };
 
-const activeTab = 'images';
+const activeTab = TYPE_IMAGE;
 const queryKey = 'images';
 const defaultView = 'images';
 

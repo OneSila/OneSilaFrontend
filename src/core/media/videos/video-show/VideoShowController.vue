@@ -19,13 +19,23 @@ import { ApolloSubscription } from "../../../../shared/components/molecules/apol
 import { deleteVideoMutation } from "../../../../shared/api/mutations/media.js";
 import { ApolloAlertMutation } from "../../../../shared/components/molecules/apollo-alert-mutation";
 import IconTrash from "../../../../shared/components/atoms/icons/icon-trash.vue";
+import { TYPE_VIDEO } from "../../files/media";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 
+type Video = {
+  id: string;
+  videoUrl: string;
+};
+
+type VideoSubscriptionResult = {
+  video: Video
+}
+
 const editView = ref(route.query.editView === '1')
-const activeTab = 'videos';
+const activeTab = TYPE_VIDEO;
 const id = route.params.id;
 const toggleEditView = () => {
   editView.value = !editView.value;
@@ -39,6 +49,9 @@ const handleDeleteSuccess = () => {
   router.push({name: 'media.videos.list',});
 };
 
+const getVideo = (result: VideoSubscriptionResult) => {
+  return result.video;
+};
 
 </script>
 
@@ -92,8 +105,8 @@ const handleDeleteSuccess = () => {
                         <ApolloSubscription :subscription="videoSubscription" :variables="{pk: id}" >
                           <template v-slot:default="{ loading, error, result }">
                               <div v-if="result">
-                                <VideoEditView v-if="editView" :video="result.video" @show-view="handleShowView" />
-                                <VideoShowView v-else :video="result.video" />
+                                <VideoEditView v-if="editView" :video="getVideo(result)" @show-view="handleShowView" />
+                                <VideoShowView v-else :video="getVideo(result)" />
                               </div>
                               <div v-else>
                                 <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>

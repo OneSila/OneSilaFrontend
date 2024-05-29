@@ -19,6 +19,7 @@ import {ApolloSubscription} from "../../../../shared/components/molecules/apollo
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
 import { Tabs } from "../../../../shared/components/molecules/tabs";
 import {ProductsTabView} from "./containers/products-tab-view";
+import { TYPE_IMAGE } from "../../files/media";
 
 const router = useRouter();
 const route = useRoute();
@@ -26,9 +27,24 @@ const { t } = useI18n();
 const editView = ref(route.query.editView === '1');
 const tabItems = ref();
 const selectedTab = ref('general');
+const id = ref(String(route.params.id));
 
-const activeTab = 'images';
-const id = route.params.id;
+const activeTab = TYPE_IMAGE;
+
+type Image = {
+    image: {
+      size: string;
+      name: string;
+    }
+    id: string;
+    imageType: string;
+    imageWebUrl: string;
+};
+
+type ImageSubscriptionResult = {
+  image: Image
+}
+
 
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
@@ -36,6 +52,10 @@ tabItems.value = [
   ];
 const toggleEditView = () => {
   editView.value = !editView.value;
+};
+
+const getImage = (result: ImageSubscriptionResult) => {
+  return result.image;
 };
 
 const handleShowView = () => {
@@ -99,8 +119,8 @@ const onTabChanged = (newValue) => {
                       <ApolloSubscription :subscription="imageSubscription" :variables="{ pk: id }">
                         <template v-slot:default="{ result }">
                           <div v-if="result">
-                            <ImageEditView v-if="editView" :image="result.image" @show-view="handleShowView" />
-                            <ImageShowView v-else :image="result.image" />
+                            <ImageEditView v-if="editView" :image="getImage(result)" @show-view="handleShowView" />
+                            <ImageShowView v-else :image="getImage(result)" />
                           </div>
                           <div v-else>
                             <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
@@ -112,7 +132,6 @@ const onTabChanged = (newValue) => {
                       <ProductsTabView :id="id" />
                     </template>
                   </Tabs>
-
                 </Card>
               </div>
             </div>

@@ -9,7 +9,7 @@ import apolloClient from "../../../../../../../apollo-client";
 import { PrimaryButton } from "../../../../../../shared/components/atoms/button-primary";
 
 const { t } = useI18n();
-const props = defineProps<{ video: { videoUrl: string } }>();
+const props = defineProps<{ video: { videoUrl: string, id: string } }>();
 const localVideoUrl = ref(props.video.videoUrl);
 const emit = defineEmits(['show-view']);
 

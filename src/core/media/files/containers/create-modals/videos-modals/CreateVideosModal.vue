@@ -7,12 +7,13 @@ import { useI18n } from "vue-i18n";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
 import { Label } from "../../../../../../shared/components/atoms/label";
 import { Button } from "../../../../../../shared/components/atoms/button";
-import { createVideosMutation } from "../../../../../../shared/api/mutations/media.js"
+import { createVideosMutation, createMediaProductThroughMutation } from "../../../../../../shared/api/mutations/media.js"
 import { processGraphQLErrors } from "../../../../../../shared/utils";
 import { Toast } from "../../../../../../shared/modules/toast";
 import {VideoPreview} from "../../../../videos/video-show/containers/video-preview";
+import apolloClient from "../../../../../../../apollo-client";
 
-const props = defineProps<{ modelValue: boolean; }>();
+const props = defineProps<{ modelValue: boolean; productId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const websites = ref(['']);
 
@@ -52,7 +53,26 @@ const onError = (error) => {
     }
 }};
 
-const onVideosCreated = (data) => {
+const onVideosCreated = async (d) => {
+
+  if (props.productId) {
+    for (const video of d.data.createVideos) {
+      const variables = {
+        product: {id: props.productId},
+        media: {id: video.id},
+      };
+      try {
+        const { data } = await apolloClient.mutate({
+          mutation: createMediaProductThroughMutation,
+          variables: { data: variables }
+        });
+        console.log('Linking success:', data);
+      } catch (error) {
+        console.error('Failed to link video and product:', error);
+      }
+    }
+  }
+
   emit('entries-created');
   Toast.success(t('media.videos.create.successfullyCreated'));
   closeModal();

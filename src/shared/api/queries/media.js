@@ -198,6 +198,7 @@ export const mediaProductThroughQuery = gql`
           productId
           active
           productType
+          sortOrder
           media {
               id
               proxyId

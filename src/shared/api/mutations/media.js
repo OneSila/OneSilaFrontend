@@ -173,8 +173,8 @@ export const deleteVideosMutation = gql`
 `;
 
 export const createMediaProductThroughMutation = gql`
-  mutation createMediaProductThrough($data: MediaProductThroughInput!) {
-    createMediaProductThrough(data: $data) {
+  mutation createMediaproducthrough($data: MediaProductThroughInput!) {
+    createMediaproducthrough(data: $data) {
       id
       media {
         id
@@ -201,8 +201,8 @@ export const createMediaProductThroughsMutation = gql`
 `;
 
 export const updateMediaProductThroughMutation = gql`
-  mutation updateMediaProductThrough($data: MediaProductThroughPartialInput!) {
-    updateMediaProductThrough(data: $data) {
+  mutation updateMediaproducthrough($data: MediaProductThroughPartialInput!) {
+    updateMediaproducthrough(data: $data) {
       id
       media {
         id
@@ -215,16 +215,16 @@ export const updateMediaProductThroughMutation = gql`
 `;
 
 export const deleteMediaProductThroughMutation = gql`
-  mutation deleteMediaProductThrough($id: GlobalID!) {
-    deleteMediaProductThrough(data: {id: $id}) {
+  mutation deleteMediaproducthrough($id: GlobalID!) {
+    deleteMediaproducthrough(data: {id: $id}) {
       id
     }
   }
 `;
 
 export const deleteMediaProductThroughsMutation = gql`
-  mutation deleteMediaProductThroughs($ids: [GlobalID!]!) {
-    deleteMediaProductThroughs(data: {ids: $ids}) {
+  mutation deleteMediaproducthroughs($ids: [GlobalID!]!) {
+    deleteMediaproducthroughs(data: {ids: $ids}) {
       id
     }
   }

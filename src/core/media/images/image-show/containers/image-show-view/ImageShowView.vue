@@ -1,12 +1,15 @@
 <script lang="ts" setup>
+
 import { defineProps } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
+import { Image } from "../../../../../../shared/components/atoms/image";
 import { Toast } from "../../../../../../shared/modules/toast";
+import {getFileName, getFileSize, truncateText} from "../../../../files/media";
 
 const { t } = useI18n();
-const props = defineProps<{ image: { imageUrl: string } }>();
+const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string, image: {size: string, name: string} } }>();
 
 const imageTypeOptions = {
       PACK: t('media.images.labels.packShot'),
@@ -21,28 +24,37 @@ const copyUrlToClipboard = async () => {
     Toast.error(t('shared.alert.toast.clipboardFail'));
   }
 };
+
 </script>
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
-      <img :src="props.image.imageWebUrl" alt="Image Preview" class="w-full" />
+      <Image :source="image.imageWebUrl" alt="Editable Image Preview" class="w-full max-w-[35rem] rounded-md" />
     </div>
     <Flex vertical>
       <FlexCell>
         <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.imageUrl') }}</label>
-        <div class="mt-1 flex items-center">
-          <span class="flex-grow text-gray-900">{{ props.image.imageWebUrl }}</span>
+        <div class="flex items-center">
+          <span class="flex-grow text-gray-900">{{ truncateText(props.image.imageWebUrl, 50) }}</span>
           <Button @click="copyUrlToClipboard" class="ml-4">
             <Icon name="clipboard" class="h-5 w-5 text-gray-500" aria-hidden="true" />
           </Button>
         </div>
       </FlexCell>
       <FlexCell>
+        <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</label>
+        <span class="flex-grow text-gray-900">{{ getFileName(image) }}</span>
+      </FlexCell>
+      <FlexCell>
+        <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('media.media.labels.fileSize') }}</label>
+        <span class="flex-grow text-gray-900">{{ getFileSize(image) }}</span>
+      </FlexCell>
+      <FlexCell>
           <div class="mt-2">
           <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.imageType') }}</label>
-          <div class="mt-1 flex items-center">
-            <span class="flex-grow text-gray-900">{{ imageTypeOptions[props.image.imageType] }}</span>
+          <div class="flex items-center">
+            <span class="flex-grow text-gray-900">{{ imageTypeOptions[image.imageType] }}</span>
           </div>
         </div>
       </FlexCell>

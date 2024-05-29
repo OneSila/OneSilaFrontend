@@ -37,6 +37,7 @@ const listingConfig: ListingConfig = {
     },
   ],
   identifierKey: 'productId',
+  urlQueryParams: {tab: 'media'},
   addActions: false,
   showUrlName: 'products.products.show',
   addShow: true,

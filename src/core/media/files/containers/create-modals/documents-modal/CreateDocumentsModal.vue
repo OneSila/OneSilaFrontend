@@ -7,16 +7,21 @@ import { DropZone } from "../../../../../../shared/components/molecules/drop-zon
 import { useI18n } from "vue-i18n";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../apollo-client";
-import { createFilesMutation } from "../../../../../../shared/api/mutations/media.js"
+import {createFilesMutation, createMediaProductThroughMutation} from "../../../../../../shared/api/mutations/media.js"
 import {Toast} from "../../../../../../shared/modules/toast";
 
-const props = defineProps<{ modelValue: boolean; }>();
+const props = defineProps<{ modelValue: boolean; productId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const localShowModal = ref(props.modelValue);
 
 const { t } = useI18n();
 
-const documents = ref([]);
+type Document = {
+    file: File;
+    type?: string
+};
+
+const documents: Ref<Document[]> = ref([])
 const dropZone: Ref<any> = ref(null)
 
 watch(() => props.modelValue, (newVal) => {
@@ -29,11 +34,11 @@ const closeModal = () => {
   emit('update:modelValue', false);
 };
 
-const onUploaded = (files) => {
+const onUploaded = (files: File[]) => {
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      documents.value.push({file });
+      documents.value.push({file: file});
     };
     reader.readAsDataURL(file);
   });
@@ -50,7 +55,7 @@ const updateImageType = (index, type) => {
 
 const submitImages = async () => {
 
-  let variables = [];
+  const variables: Document[] = [];
   documents.value.forEach(document => {
     variables.push({file: document.file});
   });
@@ -62,6 +67,25 @@ const submitImages = async () => {
   });
 
   if (data && data.createFiles) {
+
+    if (props.productId) {
+      for (const file of data.createFiles) {
+        const variables = {
+          product: {id: props.productId},
+          media: {id: file.id},
+        };
+        try {
+          const {data} = await apolloClient.mutate({
+            mutation: createMediaProductThroughMutation,
+            variables: { data: variables }
+          });
+          console.log('Linking success:', data);
+        } catch (error) {
+          console.error('Failed to link video and product:', error);
+        }
+      }
+    }
+
     emit('entries-created');
     Toast.success(t('media.documents.create.successfullyCreated'));
     closeModal();
@@ -93,7 +117,9 @@ const submitImages = async () => {
                      <div></div>
                   </FlexCell>
                   <FlexCell center >
-                      <Icon name="trash" @click="removeImage(index)" />
+                      <Button>
+                        <Icon name="trash" @click="removeImage(index)" />
+                      </Button>
                   </FlexCell>
                 </Flex>
 

@@ -16,6 +16,11 @@ export const imageSubscription = gql`
       id
       imageType
       imageWebUrl
+      type
+      image {
+        size
+        name
+      }
     }
   }
 `;
