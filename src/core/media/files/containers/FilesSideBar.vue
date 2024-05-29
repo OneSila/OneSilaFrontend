@@ -13,7 +13,7 @@ const props = defineProps<{ activeTab: string; }>();
 const { t } = useI18n();
 
 const links = [
-    { name: 'home', icon: 'home', label: t('shared.labels.home'), url: { name: 'media.files' } },
+    { name: 'HOME', icon: 'home', label: t('shared.labels.home'), url: { name: 'media.files' } },
     { name: TYPE_IMAGE, icon: 'image', label: t('media.images.title'), url: { name: 'media.images.list' } },
     { name: TYPE_VIDEO, icon: 'video', label: t('media.videos.title'), url: { name: 'media.videos.list' } },
     { name: TYPE_DOCUMENT, icon: 'file-text', label: t('media.documents.title'), url: { name: 'media.documents.list' } },
