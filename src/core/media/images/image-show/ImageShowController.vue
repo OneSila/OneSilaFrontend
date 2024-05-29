@@ -39,6 +39,7 @@ type Image = {
     id: string;
     imageType: string;
     imageWebUrl: string;
+    imageUrl: string;
 };
 
 type ImageSubscriptionResult = {

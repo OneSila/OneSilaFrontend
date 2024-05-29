@@ -16,6 +16,7 @@ export const imageSubscription = gql`
       id
       imageType
       imageWebUrl
+      imageUrl
       type
       image {
         size

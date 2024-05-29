@@ -24,7 +24,7 @@ export const mediaQuery = gql`
             lastName
           }
           imageWebUrl
-          fileWebUrl
+          fileUrl
           videoUrl
         }
         cursor
@@ -57,7 +57,7 @@ export const getMediaQuery = gql`
             url
           }
           imageWebUrl
-          fileWebUrl
+          fileUrl
           videoUrl
     }
   }
@@ -155,7 +155,7 @@ export const fileQuery = gql`
         node {
           id
           type
-          fileWebUrl
+          fileUrl
           updatedAt
           file {
             name
@@ -184,7 +184,7 @@ export const getFileQuery = gql`
   query getFile($id: GlobalID!) {
     file(id: $id) {
       id
-      fileWebUrl
+      fileUrl
     }
   }
 `;
@@ -219,7 +219,7 @@ export const mediaProductThroughQuery = gql`
                 lastName
               }
               imageWebUrl
-              fileWebUrl
+              fileUrl
               videoUrl
           }
           product {

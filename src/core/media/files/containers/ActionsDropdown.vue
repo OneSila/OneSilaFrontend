@@ -118,8 +118,8 @@ const getDownloadLink = () => {
 
   if (props.type === TYPE_IMAGE && props.item.imageWebUrl) {
     return props.item.imageWebUrl;
-  } else if (props.type === TYPE_DOCUMENT && props.item.fileWebUrl) {
-    return props.item.fileWebUrl;
+  } else if (props.type === TYPE_DOCUMENT && props.item.fileUrl) {
+    return props.item.fileUrl;
   }
   return '#';
 };
@@ -128,7 +128,7 @@ const getName = () => {
   if (props.type === TYPE_IMAGE && props.item.image) {
     return props.item.imageWebUrl.image.name;
   } else if (props.type === TYPE_DOCUMENT && props.item.file) {
-    return props.item.fileWebUrl.file.name;
+    return props.item.fileUrl.file.name;
   }
   return '#';
 };

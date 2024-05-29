@@ -9,7 +9,7 @@ import { Toast } from "../../../../../../shared/modules/toast";
 import {getFileName, getFileSize, truncateText} from "../../../../files/media";
 
 const { t } = useI18n();
-const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string, image: {size: string, name: string} } }>();
+const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string, image: {size: string, name: string}; imageUrl: string } }>();
 
 const imageTypeOptions = {
       PACK: t('media.images.labels.packShot'),
@@ -36,7 +36,7 @@ const copyUrlToClipboard = async () => {
       <FlexCell>
         <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.imageUrl') }}</label>
         <div class="flex items-center">
-          <span class="flex-grow text-gray-900">{{ truncateText(props.image.imageWebUrl, 50) }}</span>
+          <span class="flex-grow text-gray-900">{{ truncateText(props.image.imageUrl, 50) }}</span>
           <Button @click="copyUrlToClipboard" class="ml-4">
             <Icon name="clipboard" class="h-5 w-5 text-gray-500" aria-hidden="true" />
           </Button>
