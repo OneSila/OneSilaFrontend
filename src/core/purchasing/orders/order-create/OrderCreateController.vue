@@ -31,8 +31,11 @@ const formConfig = ref({
 
 const handleFormUpdate = (form) => {
   fieldsToClear.value = []
+
+  const newSupplierId = typeof form.supplier === 'object' && form.supplier !== null? form.supplier.id : form.supplier;
   if (form.supplier !== supplierId.value) {
-    supplierId.value = form.supplier;
+    const initialSupplierId = supplierId.value;
+    supplierId.value = newSupplierId;
 
     const fieldConfigs: FieldConfigs = {
       'invoiceAddress': {
@@ -62,6 +65,10 @@ const handleFormUpdate = (form) => {
     };
 
     updateFieldConfigs(supplierId.value, fieldConfigs, formConfig);
+
+    if (initialSupplierId === null) {
+      return;
+    }
     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
   }
 };
@@ -79,7 +86,7 @@ const handleFormUpdate = (form) => {
 
    <template v-slot:content>
      <GeneralForm v-if="querySupplierId === null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-     <GeneralForm v-else :config="formConfig as FormConfig" />
+     <GeneralForm v-else :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

@@ -33,13 +33,13 @@ const listingConfig = listingConfigConstructor(t);
     </template>
 
 
-   <template v-slot:content>
+    <template v-slot:content>
      <GeneralListing
          :searchConfig="searchConfig"
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
       />
-   </template>
+    </template>
   </GeneralTemplate>
 </template>

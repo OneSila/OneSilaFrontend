@@ -70,7 +70,7 @@ const getProductField = (productId, t): FormField => {
         type: FieldType.Query,
         name: 'product',
         label:  t('shared.labels.product'),
-        labelBy: 'sku',
+        labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
         queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
@@ -186,8 +186,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       valueBy: 'id',
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Query,
@@ -200,22 +200,22 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       isEdge: true,
       multiple: false,
       filterable: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Query,
       name: 'product',
       label:  t('shared.labels.product'),
-      labelBy: 'sku',
+      labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
       dataKey: 'products',
       isEdge: true,
       multiple: false,
       filterable: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     }
   ],
   orders: []
@@ -252,7 +252,7 @@ const getFields = (supplierId, productId): ShowField[] => {
   }
 
   if (!productId) {
-    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['sku'] });
+    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['name'] });
   }
 
 

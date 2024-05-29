@@ -204,11 +204,14 @@ export const processGraphQLErrors = (errorResponse, t) => {
         const matchedError = matchComplexError(message, t);
         if (matchedError) {
           Object.assign(validationErrors, matchedError);
+        } else {
+          if (typeof message === 'string') {
+            validationErrors['__all__'] = message;
+          }
         }
       }
     });
   }
-
   return validationErrors;
 };
 

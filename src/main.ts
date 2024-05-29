@@ -20,7 +20,6 @@ const app = createApp({
   render: () => h(App),
 })
 
-app.use(plugins);
 app.use(apolloProvider)
 app.use(VueApolloComponents)
 
@@ -32,6 +31,7 @@ app.use(PerfectScrollbar);
 const pinia = createPinia();
 app.use(pinia);
 
+app.use(plugins);
 appSetting.init();
 
 app.mount('#app');

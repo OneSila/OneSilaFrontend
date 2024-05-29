@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref, watch, onMounted } from 'vue';
+import { Ref, ref, watch, onMounted, computed } from 'vue';
 import { Selector } from '../../../../../atoms/selector';
 import { QueryFormField } from '../../../formConfig';
 import { Icon } from "../../../../../atoms/icon";
@@ -8,7 +8,7 @@ import { Modal } from "../../../../../atoms/modal";
 import apolloClient from "../../../../../../../../apollo-client";
 import CreateOnFlyModal from "./containers/CreateOnFlyModal.vue";
 import debounce from 'lodash.debounce';
-import {DocumentNode} from "graphql";
+import { DocumentNode } from "graphql";
 
 const props = defineProps<{
   field: QueryFormField;
@@ -153,6 +153,8 @@ const handleInput = debounce(async (searchValue: string) => {
   }
 }, 500);
 
+const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
+
 </script>
 
 <template>
@@ -189,8 +191,10 @@ const handleInput = debounce(async (searchValue: string) => {
             :removable="removable"
             :limit="limit"
             :disabled="field.disabled"
+            :show-add-entry="showAddEntry"
             @update:model-value="updateValue"
             @searched="handleInput"
+            @add-clicked="showCreateOnFlyModal = true"
           />
         </FlexCell>
         <FlexCell v-if="field.createOnFlyConfig">

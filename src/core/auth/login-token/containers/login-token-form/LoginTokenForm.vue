@@ -28,7 +28,7 @@ const onAcceptInvitationCompleted = async (response) => {
   if (response.data.acceptUserInvitation) {
     router.push({ name: 'dashboard' });
   } else {
-   Toast.error(t('shared.toast.generalError'));
+   Toast.error(t('shared.alert.toast.generalError'));
   }
 };
 

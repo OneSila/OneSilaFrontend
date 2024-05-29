@@ -95,7 +95,7 @@ const onError = (error) => {
         </template>
       </ApolloMutation>
 
-      <Button v-else type="button" class="btn btn-primary ml-2" @click="handleAddClick">
+      <Button v-else type="button" class="btn btn-primary" @click="handleAddClick">
         {{ t('shared.button.add') }}
       </Button>
     </FlexCell>

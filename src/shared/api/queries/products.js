@@ -7,6 +7,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
         node {
           id
           sku
+          name
           active
           type
           proxyId
@@ -83,6 +84,7 @@ export const productVariationsQuery = gql`
           id
           sku
           active
+          name
         }
         cursor
       }
@@ -152,10 +154,12 @@ export const umbrellaVariationsQuery = gql`
           umbrella {
             id
             sku
+            name
           }
           variation {
             id
             sku
+            name
             active
           }
         }
@@ -181,11 +185,13 @@ export const bundleVariationsQuery = gql`
           umbrella {
             id
             sku
+            name
           }
           variation {
             id
             sku
             active
+            name
           }
           quantity
         }

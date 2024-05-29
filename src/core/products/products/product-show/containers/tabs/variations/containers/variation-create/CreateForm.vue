@@ -45,7 +45,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
       <Selector v-if="variations.length > 0"
                 v-model="form.variation"
                 :options="variations"
-                label-by="sku"
+                label-by="name"
                 value-by="id"
                 mandatory
                 :removable="false"

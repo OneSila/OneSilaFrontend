@@ -22,6 +22,7 @@ const props = withDefaults(
     disabledTabs: () => ([] as string[]),
   }
 );
+const emit = defineEmits(['tab-changed']);
 
 const selectedTab = ref(props.tabs[0]?.name);
 const route = useRoute();
@@ -47,6 +48,7 @@ const changeTab = (index) => {
   const newTab = props.tabs[index].name;
   selectedTab.value = newTab;
   router.push({ query: { tab: newTab } });
+  emit('tab-changed', newTab);
 };
 
 const defaultTabIndex = () => {

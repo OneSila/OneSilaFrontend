@@ -91,14 +91,14 @@ export const baseFormConfigConstructor = (
         type: FieldType.Text,
         name: 'role',
         label: t('shared.labels.role'),
-        placeholder: t('shared.placeholders.role')
+        placeholder: t('shared.placeholders.role'),
+        optional: true
       },
       {
         type: FieldType.Email,
         name: 'email',
         label: t('shared.labels.email'),
         placeholder: t('shared.placeholders.email'),
-        optional: true
       },
       {
         type: FieldType.Phone,
@@ -122,7 +122,7 @@ export const baseFormConfigConstructor = (
         type: FieldType.Checkbox,
         name: 'active',
         label: t('shared.labels.active'),
-        default: false,
+        default: true,
         uncheckedValue: "false"
       },
   ],
@@ -142,8 +142,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       dataKey: "companies",
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Boolean,

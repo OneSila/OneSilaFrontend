@@ -32,7 +32,7 @@ const getProductField = (productId, t): FormField => {
         type: FieldType.Query,
         name: 'product',
         label:  t('shared.labels.product'),
-        labelBy: 'sku',
+        labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
         dataKey: 'products',
@@ -72,14 +72,25 @@ export const baseFormConfigConstructor = (
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+   {
+      type: FieldType.Boolean,
+      strict: true,
+      reverse: true,
+      name: 'product',
+      addLookup: true,
+      lookupType: 'isNull',
+      lookupKeys: ['id'],
+      label: t('products.eanCodes.labels.isAssigned')
+    },
+  ],
   orders: []
 });
 
 const getHeaders = (t, productId) => {
   return productId
     ? [t('products.eanCodes.labels.eanCode')]
-    : [t('products.products.labels.sku'), t('products.eanCodes.labels.eanCode')];
+    : [t('shared.labels.name'), t('products.eanCodes.labels.eanCode')];
 }
 const getFields = (productId): ShowField[] => {
   const commonFields: ShowField[] = [];
@@ -88,7 +99,7 @@ const getFields = (productId): ShowField[] => {
     commonFields.push({
       name: 'product',
       type: FieldType.NestedText,
-      keys: ['sku']
+      keys: ['name']
     });
   }
 

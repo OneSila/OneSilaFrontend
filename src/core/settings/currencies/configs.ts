@@ -1,9 +1,90 @@
-import {CreateOnTheFly, FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js"
 import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
+import {productsQuery} from "../../../shared/api/queries/products";
+
+export const getCurrencyFields = (t): FormField[] => {
+  return [
+    {
+      type: FieldType.Text,
+      name: 'name',
+      label: t('shared.labels.name'),
+      placeholder: t('shared.placeholders.name'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'isoCode',
+      label: t('settings.currencies.labels.isoCode'),
+      placeholder: t('settings.currencies.placeholders.isoCode'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'symbol',
+      label: t('settings.currencies.labels.symbol'),
+      placeholder: t('settings.currencies.placeholders.symbol'),
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'isDefaultCurrency',
+      label: t('settings.currencies.labels.isDefaultCurrency'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    ...getNonDefaultFields(t),
+    {
+      type: FieldType.Text,
+      name: 'comment',
+      label: t('settings.currencies.labels.comment'),
+      placeholder: t('settings.currencies.placeholders.comment'),
+      optional: true
+    },
+  ]
+}
+
+export const getNonDefaultFields = (t): FormField[] => {
+  return [
+    {
+      type: FieldType.Query,
+      name: 'inheritsFrom',
+      label:  t('settings.currencies.labels.inheritsFrom'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      optional: true
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'followOfficialRate',
+      label: t('settings.currencies.labels.followOfficialRate'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    {
+      type: FieldType.Text,
+      name: 'exchangeRate',
+      label: t('settings.currencies.labels.exchangeRate'),
+      placeholder: t('settings.currencies.placeholders.exchangeRate'),
+      number: true,
+    },
+    {
+      type: FieldType.Text,
+      name: 'roundPricesUpTo',
+      label: t('settings.currencies.labels.roundPricesUpTo'),
+      placeholder: t('settings.currencies.placeholders.roundPricesUpTo'),
+      number: true,
+    },
+  ];
+}
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -55,77 +136,7 @@ export const baseFormConfigConstructor = (
       content: t('settings.currencies.helpSection.comment.content')
     },
   ],
-  fields: [
-    {
-      type: FieldType.Text,
-      name: 'name',
-      label: t('shared.labels.name'),
-      placeholder: t('shared.placeholders.name'),
-    },
-    {
-      type: FieldType.Text,
-      name: 'isoCode',
-      label: t('settings.currencies.labels.isoCode'),
-      placeholder: t('settings.currencies.placeholders.isoCode'),
-    },
-    {
-      type: FieldType.Text,
-      name: 'symbol',
-      label: t('settings.currencies.labels.symbol'),
-      placeholder: t('settings.currencies.placeholders.symbol'),
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'isDefaultCurrency',
-      label: t('settings.currencies.labels.isDefaultCurrency'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    {
-      type: FieldType.Query,
-      name: 'inheritsFrom',
-      label:  t('settings.currencies.labels.inheritsFrom'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: currenciesQuery,
-      dataKey: 'currencies',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      optional: true
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'followOfficialRate',
-      label: t('settings.currencies.labels.followOfficialRate'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    {
-      type: FieldType.Text,
-      name: 'exchangeRate',
-      label: t('settings.currencies.labels.exchangeRate'),
-      placeholder: t('settings.currencies.placeholders.exchangeRate'),
-      number: true,
-    },
-    {
-      type: FieldType.Text,
-      name: 'roundPricesUpTo',
-      label: t('settings.currencies.labels.roundPricesUpTo'),
-      placeholder: t('settings.currencies.placeholders.roundPricesUpTo'),
-      number: true,
-    },
-    {
-      type: FieldType.Text,
-      name: 'comment',
-      label: t('settings.currencies.labels.comment'),
-      placeholder: t('settings.currencies.placeholders.comment'),
-      optional: true
-    },
-    ],
+  fields: getCurrencyFields(t),
 });
 
 export const currencyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({

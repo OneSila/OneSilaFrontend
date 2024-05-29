@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { ref, watchEffect, watch } from 'vue';
 import { Selector } from '../../../../../../atoms/selector';
 import { Label } from '../../../../../../atoms/label';
@@ -51,6 +52,7 @@ const disabled = ref(props.filter.disabled === true);
       label-by="name"
       value-by="id"
       :removable="false"
+      :reverse="filter.reverse == true"
       boolean
       :disabled="disabled"
     />

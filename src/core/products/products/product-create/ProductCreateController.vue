@@ -32,6 +32,7 @@ const step = ref(0);
 const form = reactive({
   type: '',
   sku: '',
+  name: '',
   active: true,
   vatRate: {
     id: ''
@@ -42,6 +43,7 @@ const form = reactive({
 const wizardSteps = [
   { title: t('products.products.labels.type.title'), name: 'typeStep' },
   { title: t('shared.labels.sku'), name: 'skuStep' },
+  { title: t('shared.labels.name'), name: 'nameStep' },
   { title: t('settings.vatRates.title'), name: 'vatStep' }
 ];
 
@@ -93,7 +95,7 @@ const allowNextStep = computed(() => {
     return false;
   }
 
-  if (step.value === 2 && (form.vatRate.id === '' || form.vatRate.id == null)) {
+  if (step.value === 3 && (form.vatRate.id === '' || form.vatRate.id == null)) {
     return false;
   }
 
@@ -161,6 +163,18 @@ const allowNextStep = computed(() => {
                 <PrimaryButton class="mt-3" @click="triggerNextStep">
                   {{ t('products.products.create.wizard.stepTwo.generate') }}
                 </PrimaryButton>
+              </FlexCell>
+            </Flex>
+          </div>
+        </template>
+
+        <template #nameStep>
+          <div>
+            <h1 class="text-2xl text-center mb-2">{{ t('products.products.create.wizard.stepTwo.content') }}</h1>
+            <hr>
+            <Flex center vertical>
+              <FlexCell>
+                <TextInput v-model="form.name" class="mt-5" :placeholder="'Product'" />
               </FlexCell>
             </Flex>
           </div>

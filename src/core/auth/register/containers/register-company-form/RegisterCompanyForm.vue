@@ -3,7 +3,6 @@
 import {reactive, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { ApolloMutation, ApolloQuery } from '@vue/apollo-components';
 import { setCompanyToUser, injectAuth, removeAuth } from '../../../../../shared/modules/auth';
 import { Button } from "../../../../../shared/components/atoms/button";
 import { Label } from "../../../../../shared/components/atoms/label";
@@ -60,7 +59,6 @@ useEnterKeyboardListener(onSubmit);
     <div class="mb-10">
       <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.company.header') }}</h1>
       <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.company.description') }}</p>
-      <p class="text-base font-bold leading-normal text-danger">{{ t('auth.register.company.languageDisclaimer') }}</p>
     </div>
       <TextInputPrepend id="companyName" v-model="form.name" :label="t('auth.register.company.labels.companyName')" :placeholder="t('auth.register.company.placeholders.companyName')" type="text" class="mb-2">
         <Icon name="building"/>
@@ -77,7 +75,7 @@ useEnterKeyboardListener(onSubmit);
     </div>
 
     <div>
-      <Label>{{ t('auth.register.company.placeholders.language') }}</Label>
+    <Label>{{ t('auth.register.company.placeholders.language') }}</Label>
     <ApolloQuery :query="languagesQuery">
       <template v-slot="{ result: { data } }">
           <Selector v-if="data" v-model="form.language" :options="data.languages" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.language')" filterable />

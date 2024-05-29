@@ -128,6 +128,7 @@ export const createPersonMutation = gql`
       id
       firstName
       lastName
+      fullName
       active
       role
       company {

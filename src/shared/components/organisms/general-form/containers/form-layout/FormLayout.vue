@@ -3,7 +3,6 @@
 import {computed} from 'vue';
 import {Icon} from "../../../../atoms/icon";
 import {Label} from '../../../../atoms/label';
-
 import {FormConfig} from '../../formConfig';
 import {FieldType} from "../../../../../utils/constants";
 import {FieldBoolean} from '../form-fields/field-boolean';

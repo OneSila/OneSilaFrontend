@@ -11,6 +11,7 @@ export const eanCodesQuery = gql`
             id
             ... on ProductType {
               sku
+              name
             }
           }
         }
@@ -36,6 +37,7 @@ export const getEanCodeQuery = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }

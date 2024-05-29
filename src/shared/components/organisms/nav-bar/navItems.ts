@@ -10,9 +10,9 @@ export interface SubItem {
 export interface Item {
   title: string;
   icon: string;
-  subItemsKey: string;
+  subItemsKey?: string;
   route?: Route;
-  subItems: SubItem[];
+  subItems?: SubItem[];
 }
 
 export interface NavSection {
@@ -114,43 +114,9 @@ export const navSections: NavSection[] = [
            {
             title: 'media.title',
             icon: 'photo-film',
-            subItemsKey: 'media',
-                subItems: [
-                    {
-                        route: { name: 'dashboard' },
-                        title:  'media.images.title',
-                    },
-                    {
-                        route: { name: 'dashboard' },
-                        title:  'media.videos.title',
-                    },
-                ]
-            },
+            route: { name: 'media.files' }
+           },
         ]
     },
 
 ];
-
-export const settingsSection: NavSection = {
-  items: [
-    {
-      title: 'settings.title',
-      icon: 'cog',
-      subItemsKey: 'settings',
-      subItems: [
-        {
-          route: { name: 'settings.currencies.list' },
-          title: 'settings.currencies.title'
-        },
-        {
-          route: { name: 'settings.vatRates.list' },
-          title: 'settings.vatRates.title'
-        },
-        {
-          route: { name: 'settings.units.list' },
-          title: 'settings.units.title'
-        }
-      ]
-    }
-  ]
-};

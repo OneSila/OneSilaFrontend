@@ -197,8 +197,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       valueBy: 'id',
       filterable: true,
       isEdge: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
     {
       type: FieldType.Query,
@@ -211,8 +211,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       isEdge: true,
       multiple: false,
       filterable: true,
-      addExactLookup: true,
-      exactLookupKeys: ['id']
+      addLookup: true,
+      lookupKeys: ['id']
     },
       {
       type: FieldType.Choice,
@@ -222,8 +222,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('sales.orders.labels.status.title'),
       filterable: true,
       options: getStatusOptions(t),
-      addExactLookup: true,
-      exactLookupKeys: []
+      addLookup: true,
+      lookupKeys: []
     },
   ],
   orders: []

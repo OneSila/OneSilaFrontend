@@ -25,7 +25,7 @@ const logout = async () => {
   <div class="dropdown shrink-0">
       <Popper :placement="'bottom-start'" offsetDistance="8" class="!block">
           <button type="button" class="relative group block">
-            <Icon name="user" class="w-9 h-9 rounded-full object-cover saturate-50 group-hover:saturate-100" />
+            <Icon name="user" class="w-7 h-7 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />
           </button>
           <template #content="{ close }">
               <ul class="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">
@@ -49,6 +49,12 @@ const logout = async () => {
                     <Link :path="{name: 'profile.company'}" class="dark:hover:text-white" @click="close()" block>
                         <Icon name="building" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
                         {{ t('profile.dropdown.company') }}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link :path="{name: 'settings.currencies.list'}" class="dark:hover:text-white" @click="close()" block>
+                        <Icon name="cog" class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                        {{ t('settings.title') }}
                     </Link>
                   </li>
                   <li class="border-t border-white-light dark:border-white-light/10">

@@ -45,6 +45,16 @@ const getShowRoute = (item) => {
   };
 };
 
+const getUpdatedField = (field, item, index) => {
+      if (index === 0 && props.config.addShow) {
+        return {
+          ...field,
+          clickable: true,
+          clickUrl: getShowRoute(item),
+        };
+      }
+      return field;
+}
 </script>
 
 <template>
@@ -71,14 +81,15 @@ const getShowRoute = (item) => {
               <tbody>
 
               <tr v-for="item in data[queryKey].edges" :key="item.node.id">
-                <td v-for="field in config.fields" :key="field.name">
-                  <component :is="getFieldComponent(field.type)" :field="field" :model-value="item.node[field.name]" />
+                <td v-for="(field, index) in config.fields" :key="field.name">
+                    <component
+                      :is="getFieldComponent(field.type)"
+                      :field="getUpdatedField(field, item, index)"
+                      :model-value="item.node[field.name]"
+                    />
                 </td>
                 <td v-if="config.addActions">
                   <div class="flex gap-4 items-center justify-end">
-                    <Link v-if="config.addShow" :path="getShowRoute(item)">
-                      <Button class="btn btn-sm btn-outline-secondary">{{ t('shared.button.show') }}</Button>
-                    </Link>
                     <Link v-if="config.addEdit"
                           :path="{ name: config.editUrlName,
                                    params: config.identifierKey !== undefined ? { ...config.identifierVariables, id: item.node[config.identifierKey] } : undefined,

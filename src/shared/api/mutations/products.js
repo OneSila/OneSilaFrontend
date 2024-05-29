@@ -33,7 +33,12 @@ export const updateProductMutation = gql`
       id
       sku
       active
+      alwaysOnStock
       type
+      vatRate {
+        id
+        rate
+      }
     }
   }
 `;

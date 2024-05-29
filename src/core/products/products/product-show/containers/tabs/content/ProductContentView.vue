@@ -32,12 +32,12 @@ const mutation = ref(null);
 const translationId = ref(null);
 const oldLang = ref(currentLanguage.value);
 const cleanedData = (rawData) => {
-  if (rawData && rawData.length > 0) {
+  if (rawData && rawData.languages.length > 0) {
 
     if (currentLanguage.value === null) {
-      currentLanguage.value = rawData[0].code;
+      currentLanguage.value = rawData.defaultLanguage.code;
     }
-    return rawData;
+    return rawData.languages;
   }
   return [];
 };
@@ -116,19 +116,19 @@ const onMutationCompleted = () => {
 
 <template>
   <Flex between>
-  <FlexCell class=" w-3/4">
+  <FlexCell class="w-3/4">
     <Flex vertical>
       <FlexCell>
         <Label semi-bold>{{ t('shared.labels.name') }}</Label>
-        <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="mt-2 mb-2 w-full" />
+        <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="my-2 w-full" />
       </FlexCell>
       <FlexCell>
         <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-        <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-2 h-32 w-full" />
+        <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="my-2 h-32 w-full" />
       </FlexCell>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-        <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="mt-2 mb-2 h-32 w-full" />
+        <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="my-2 h-32 w-full" />
       </FlexCell>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
@@ -140,35 +140,33 @@ const onMutationCompleted = () => {
   <FlexCell>
     <Flex>
       <FlexCell>
-            <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
-      <template v-slot="{ mutate, loading, error }">
-        <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
-          {{ t('shared.button.save') }}
-        </Button>
-        <p v-if="error">{{ error.message }}</p>
-      </template>
-    </ApolloMutation>
+      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
+        <template v-slot="{ mutate, loading, error }">
+          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
+            {{ t('shared.button.save') }}
+          </Button>
+          <p v-if="error">{{ error.message }}</p>
+        </template>
+      </ApolloMutation>
       </FlexCell>
       <FlexCell>
-            <ApolloQuery :query="translationLanguagesQuery">
-      <template v-slot="{ result: { data } }">
-        <Selector v-if="data"
-                  v-model="currentLanguage"
-                  :options="cleanedData(data.translationLanguages)"
-                  :removable="false"
-                  :placeholder="t('products.translation.placeholders.language')"
-                  @update:modelValue="handleLanguageSelection"
-                  class="min-w-[100px]"
-                  labelBy="name"
-                  valueBy="code"
-                  mandatory
-                  filterable />
-      </template>
-    </ApolloQuery>
+      <ApolloQuery :query="translationLanguagesQuery">
+        <template v-slot="{ result: { data } }">
+          <Selector v-if="data"
+                    v-model="currentLanguage"
+                    :options="cleanedData(data.translationLanguages)"
+                    :removable="false"
+                    :placeholder="t('products.translation.placeholders.language')"
+                    @update:modelValue="handleLanguageSelection"
+                    class="w-32"
+                    labelBy="name"
+                    valueBy="code"
+                    mandatory
+                    filterable />
+        </template>
+      </ApolloQuery>
       </FlexCell>
     </Flex>
-
-
   </FlexCell>
 </Flex>
 

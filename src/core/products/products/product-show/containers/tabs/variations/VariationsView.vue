@@ -39,9 +39,6 @@ const getIds = (newIds) => {
 
 <template>
   <TabContentTemplate>
-    <template v-slot:buttons>
-      <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
-    </template>
 
     <template v-slot:content>
       <VariationsList :product="product"
@@ -51,6 +48,10 @@ const getIds = (newIds) => {
                       :refetch-needed="refetchNeeded"
                       @refetched="handleRefeched"
                       @update-ids="getIds" />
+
+      <div class="mt-2">
+        <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
+      </div>
     </template>
   </TabContentTemplate>
 </template>

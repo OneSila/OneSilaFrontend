@@ -2,7 +2,7 @@ import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../../../sh
 import {FieldType, ProductType} from '../../../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../../../shared/components/organisms/general-listing/listingConfig";
-import {createPersonMutation, deleteCompanyAddressMutation} from "../../../../../shared/api/mutations/contacts";
+import {createPersonMutation, deleteCompanyAddressMutation} from "../../../../../shared/api/mutations/contacts.js";
 import { countriesQuery } from "../../../../../shared/api/queries/languages.js";
 import {companyAddressesQuery, peopleQuery} from "../../../../../shared/api/queries/contacts.js";
 import {baseFormConfigConstructor as basePersonConfigConstructor } from '../../../people/configs'
@@ -95,6 +95,25 @@ export const baseFormConfigConstructor = (
         placeholder: t('contacts.companies.address.placeholders.city')
       },
       {
+        type: FieldType.Query,
+        name: 'country',
+        label: t('contacts.companies.address.placeholders.country'),
+        labelBy: 'name',
+        valueBy: 'code',
+        query: countriesQuery,
+        dataKey: 'countries',
+        isEdge: false,
+        multiple: false,
+        filterable: true,
+      },
+      {
+        type: FieldType.Text,
+        name: 'postcode',
+        label: t('contacts.companies.address.labels.postcode'),
+        placeholder: t('contacts.companies.address.placeholders.postcode')
+      },
+      getAddressTypeField(addressType, t),
+      {
         type: FieldType.Text,
         name: 'vatNumber',
         label: t('contacts.companies.labels.vat'),
@@ -108,25 +127,6 @@ export const baseFormConfigConstructor = (
         placeholder: t('contacts.companies.placeholders.eori'),
         optional: true
       },
-      {
-        type: FieldType.Text,
-        name: 'postcode',
-        label: t('contacts.companies.address.labels.postcode'),
-        placeholder: t('contacts.companies.address.placeholders.postcode')
-      },
-      {
-        type: FieldType.Query,
-        name: 'country',
-        label: t('contacts.companies.address.placeholders.country'),
-        labelBy: 'name',
-        valueBy: 'code',
-        query: countriesQuery,
-        dataKey: 'countries',
-        isEdge: false,
-        multiple: false,
-        filterable: true,
-      },
-      getAddressTypeField(addressType, t),
       {
         type: FieldType.Query,
         name: 'person',
@@ -167,10 +167,18 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, id: string): ListingConfig => ({
-  headers: [t('contacts.companies.address.labels.address'), t('contacts.companies.address.labels.isInvoiceAddress'),  t('contacts.companies.address.labels.isShippingAddress'), t('contacts.companies.address.labels.country')],
+  headers: [t('contacts.companies.address.labels.address'), t('contacts.companies.address.labels.city'), t('contacts.companies.address.labels.country'),t('contacts.companies.address.labels.isInvoiceAddress'),  t('contacts.companies.address.labels.isShippingAddress')],
   fields: [
     {
       name: 'address1',
+      type: FieldType.Text,
+    },
+    {
+      name: 'city',
+      type: FieldType.Text,
+    },
+    {
+      name: 'country',
       type: FieldType.Text,
     },
     {
@@ -180,10 +188,6 @@ export const listingConfigConstructor = (t: Function, id: string): ListingConfig
     {
       name: 'isShippingAddress',
       type: FieldType.Boolean,
-    },
-    {
-      name: 'country',
-      type: FieldType.Text,
     },
   ],
   identifierKey: 'id',

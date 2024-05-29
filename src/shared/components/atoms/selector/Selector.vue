@@ -20,8 +20,10 @@ const props = withDefaults(
     removable?: boolean;
     limit?: number;
     isLoading?: boolean;
+    showAddEntry?: boolean;
+    reverse?: boolean;
   }>(),
-  { dropdownPosition: 'top', options: [] as any, removable: true },
+  { dropdownPosition: 'top', options: [] as any, removable: true, showAddEntry: false },
 );
 
 const emit = defineEmits<{
@@ -65,14 +67,24 @@ const calculatePosition = (dropdownList, component, { width }) => {
 
 watchEffect(() => {
   dropdownOptions.value = props.options;
+  if (props.showAddEntry && props.valueBy && props.labelBy) {
+    dropdownOptions.value.unshift({ [props.valueBy]: 'add-entry', [props.labelBy]: t('shared.components.molecules.selector.addEntry') });
+  }
 });
 
 watchEffect(() => {
   if (props.boolean) {
-    dropdownOptions.value = [
-      { id: true, name: 'Yes' },
-      { id: false, name: 'No' },
-    ];
+    if (props.reverse) {
+      dropdownOptions.value = [
+        { id: false, name: t('shared.labels.yes') },
+        { id: true, name: t('shared.labels.no') },
+      ];
+    } else {
+      dropdownOptions.value = [
+        { id: true, name: t('shared.labels.yes') },
+        { id: false, name: t('shared.labels.no')},
+      ];
+    }
 
     if (!props.mandatory) {
       dropdownOptions.value.unshift({ id: 'all', name: 'All' });
@@ -111,6 +123,11 @@ watchEffect(() => {
 });
 
 const onModelValueUpdated = (value) => {
+   if (value === 'add-entry') {
+    emit('add-clicked');
+    return;
+  }
+
   if (!value) {
     emit('deselected', value);
   }

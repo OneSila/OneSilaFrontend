@@ -22,6 +22,7 @@ export const supplierProductsQuery = gql`
           product {
             id
             sku
+            name
           }
           supplier {
             id
@@ -61,6 +62,7 @@ export const getSupplierProductQuery = gql`
       product {
         id
         sku
+        name
       }
       supplier {
         id

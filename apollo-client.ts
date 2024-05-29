@@ -1,4 +1,5 @@
-import { ApolloClient, InMemoryCache, createHttpLink, split, ApolloCache } from '@apollo/client/core';
+import { ApolloClient, InMemoryCache, split } from '@apollo/client/core';
+import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
 import { ApolloLink } from '@apollo/client/core';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
@@ -35,7 +36,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 // HTTP link for queries and mutations
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: import.meta.env.VITE_APP_API_GRAPHQL_URL,
   credentials: 'include',
 });

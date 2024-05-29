@@ -31,12 +31,14 @@ route.query.source ? route.query.source.toString() : null
 };
 
 const formConfig = ref(baseForm);
-
 const handleFormUpdate = (form) => {
   fieldsToClear.value = []
-  if (form.customer !== customerId.value) {
 
-    customerId.value = form.customer;
+  const newCustomerId = typeof form.customer === 'object' && form.customer !== null? form.customer.id : form.customer;
+  if (newCustomerId !== customerId.value) {
+
+    const initialCustomerId = customerId.value;
+    customerId.value = newCustomerId;
 
     const fieldConfigs: FieldConfigs = {
       'invoiceAddress': {
@@ -66,6 +68,10 @@ const handleFormUpdate = (form) => {
     };
 
     updateFieldConfigs(customerId.value, fieldConfigs, formConfig);
+
+    if (initialCustomerId === null) {
+      return;
+    }
     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
   }
 };
@@ -83,7 +89,7 @@ const handleFormUpdate = (form) => {
 
    <template v-slot:content>
      <GeneralForm v-if="queryCustomerId == null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-     <GeneralForm v-else :config="formConfig as FormConfig" />
+     <GeneralForm v-else :config="formConfig as FormConfig" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

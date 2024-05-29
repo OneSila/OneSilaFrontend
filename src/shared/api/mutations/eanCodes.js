@@ -9,6 +9,7 @@ export const createEanCodeMutation = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }
@@ -24,6 +25,7 @@ export const createEanCodesMutation = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }
@@ -39,6 +41,7 @@ export const updateEanCodeMutation = gql`
         id
         ... on ProductType {
           sku
+          name
         }
       }
     }
