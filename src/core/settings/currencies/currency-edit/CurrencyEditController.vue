@@ -8,7 +8,7 @@ import { FormConfig, FormType } from "../../../../shared/components/organisms/ge
 import { FieldType } from "../../../../shared/utils/constants";
 import { updateCurrencyMutation } from "../../../../shared/api/mutations/currencies.js";
 import { getCurrencyQuery } from "../../../../shared/api/queries/currencies.js";
-import { baseFormConfigConstructor, getNonDefaultFields } from "../configs";
+import {baseFormConfigConstructor, getCurrencyFields, getNonDefaultFields} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import SettingsTemplate from "../../SettingsTemplate.vue";
 import {TabsMenu} from "../../../../shared/components/molecules/tabs-menu";
@@ -46,21 +46,24 @@ onMounted(() => {
 });
 
 
-const handleFormUpdate = (form) => {
-  if (formConfig.value) {
+const handleFormUpdate = async (form) => {
+
+  if (!formConfig.value) return;
+
+    formConfig.value.fields = getCurrencyFields(t);
+
+    let removeFields: string[] = [];
+
     if (form.isDefaultCurrency) {
-      formConfig.value.fields = formConfig.value.fields.filter(field =>
-        !['inheritsFrom', 'exchangeRate', 'followOfficialRate', 'roundPricesUpTo'].includes(field.name)
-      );
-    } else {
-      const nonDefaultFields = getNonDefaultFields(t);
-      nonDefaultFields.forEach(nonDefaultField => {
-        if (!formConfig.value!.fields.some(field => field.name === nonDefaultField.name)) {
-          formConfig.value!.fields.push(nonDefaultField);
-        }
-      });
+      removeFields = ['inheritsFrom', 'exchangeRate', 'followOfficialRate', 'roundPricesUpTo'];
+    } else if (form.followOfficialRate) {
+      removeFields.push('exchangeRate');
     }
-  }
+
+    formConfig.value.fields = formConfig.value.fields.filter(field =>
+      !removeFields.includes(field.name)
+    );
+
 };
 
 </script>

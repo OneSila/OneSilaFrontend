@@ -6,6 +6,45 @@ import { currenciesQuery } from "../../../shared/api/queries/currencies.js"
 import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
 import {productsQuery} from "../../../shared/api/queries/products";
 
+export const getCurrencyFields = (t): FormField[] => {
+  return [
+    {
+      type: FieldType.Text,
+      name: 'name',
+      label: t('shared.labels.name'),
+      placeholder: t('shared.placeholders.name'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'isoCode',
+      label: t('settings.currencies.labels.isoCode'),
+      placeholder: t('settings.currencies.placeholders.isoCode'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'symbol',
+      label: t('settings.currencies.labels.symbol'),
+      placeholder: t('settings.currencies.placeholders.symbol'),
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'isDefaultCurrency',
+      label: t('settings.currencies.labels.isDefaultCurrency'),
+      uncheckedValue: "false",
+      default: false,
+      optional: true
+    },
+    ...getNonDefaultFields(t),
+    {
+      type: FieldType.Text,
+      name: 'comment',
+      label: t('settings.currencies.labels.comment'),
+      placeholder: t('settings.currencies.placeholders.comment'),
+      optional: true
+    },
+  ]
+}
+
 export const getNonDefaultFields = (t): FormField[] => {
   return [
     {
@@ -97,42 +136,7 @@ export const baseFormConfigConstructor = (
       content: t('settings.currencies.helpSection.comment.content')
     },
   ],
-  fields: [
-    {
-      type: FieldType.Text,
-      name: 'name',
-      label: t('shared.labels.name'),
-      placeholder: t('shared.placeholders.name'),
-    },
-    {
-      type: FieldType.Text,
-      name: 'isoCode',
-      label: t('settings.currencies.labels.isoCode'),
-      placeholder: t('settings.currencies.placeholders.isoCode'),
-    },
-    {
-      type: FieldType.Text,
-      name: 'symbol',
-      label: t('settings.currencies.labels.symbol'),
-      placeholder: t('settings.currencies.placeholders.symbol'),
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'isDefaultCurrency',
-      label: t('settings.currencies.labels.isDefaultCurrency'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    ...getNonDefaultFields(t),
-    {
-      type: FieldType.Text,
-      name: 'comment',
-      label: t('settings.currencies.labels.comment'),
-      placeholder: t('settings.currencies.placeholders.comment'),
-      optional: true
-    },
-    ],
+  fields: getCurrencyFields(t),
 });
 
 export const currencyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
