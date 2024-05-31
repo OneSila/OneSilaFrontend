@@ -484,7 +484,7 @@
               "example": "Eg: Let customers pick between a red or blue pen."
             },
             "manufacturable": {
-              "title": "A product that requires manufacturing.",
+              "title": "A product that you make.",
               "example": "Eg: A mug and sticker bought separately, assembled and sold together."
             },
             "dropship": {
