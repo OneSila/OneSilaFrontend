@@ -33,7 +33,7 @@ const getProductField = (productId, t): FormField => {
         labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
-        queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
+        queryVariables: {"filter": {"type": {"exact": ProductType.Simple}}},
         dataKey: 'products',
         isEdge: true,
         multiple: false,

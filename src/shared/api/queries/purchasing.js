@@ -9,11 +9,6 @@ export const supplierProductsQuery = gql`
           sku
           name
           unitPrice
-          currency {
-            id
-            symbol
-            isoCode
-          }
           unit {
             id
             name
@@ -49,11 +44,6 @@ export const getSupplierProductQuery = gql`
       sku
       name
       unitPrice
-      currency {
-        id
-        symbol
-        isoCode
-      }
       unit {
         id
         name

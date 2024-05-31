@@ -472,7 +472,7 @@
           "stepOne": {
             "content": "Select what product are you trying to create?",
             "variable": {
-              "title": "Something to sell.",
+              "title": "Something to sell and/or to buy",
               "example": "Eg: A black pen"
             },
             "bundle": {
@@ -482,14 +482,47 @@
             "configurable": {
               "title": "A configuration of products.",
               "example": "Eg: Let customers pick between a red or blue pen."
+            },
+            "manufacturable": {
+              "title": "A product that requires manufacturing.",
+              "example": "Eg: A mug and sticker bought separately, assembled and sold together."
+            },
+            "dropship": {
+              "title": "A product fulfilled directly by the supplier.",
+              "example": "Eg: Furniture shipped directly from the manufacturer to the customer."
             }
           },
           "stepTwo": {
-            "content": "Add a SKU or just auto generate it.",
+            "title": "General Info",
+            "content": "What is the product?",
             "generate": "Generate it"
           },
           "stepThree": {
-            "content": "Almost here. Please select a VAT rate."
+            "title": "Pricing",
+            "content": "How much do you sell it for?",
+            "simple": {
+              "title": "Sale status",
+              "content": "Is it for sale or is it a bill of material?",
+              "forSale": "For Sale"
+            }
+          },
+          "stepFour": {
+            "configurable": {
+              "title": "Variations",
+              "selectVariations": "Please select the variations:"
+            },
+            "simple": {
+              "title": "Buying",
+              "selectVariations": "Where do you buy it?"
+            },
+            "bundle": {
+              "title": "Items",
+              "selectVariations": "Please select the bundle items:"
+            },
+            "manufacturable": {
+              "title": "Bills Of Materials",
+              "selectVariations": "Please add the used bills of materilas for the product"
+            }
           }
         }
       },

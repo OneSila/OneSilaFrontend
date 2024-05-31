@@ -20,13 +20,13 @@ export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
 export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
-  { name: t('products.products.labels.type.choices.variation'), code: ProductType.Variation },
+  { name: t('products.products.labels.type.choices.variation'), code: ProductType.Simple },
 ];
 
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Umbrella]: { text: t('products.products.labels.type.choices.umbrella'), color: 'blue' },
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
-  [ProductType.Variation]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
+  [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
 });
 
 const getTypeField = (type, t): FormField | null => {

@@ -2,24 +2,22 @@
 
 import {reactive, computed, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getVatRateField } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
-import { OptionSelector } from "../../../../shared/components/molecules/option-selector";
 import { ProductType } from "../../../../shared/utils/constants";
-import variableType from "../../../../assets/images/product-types/simple.png";
-import bundleType from "../../../../assets/images/product-types/bundle.png";
-import configurableType from "../../../../assets/images/product-types/configurable.png";
-import Image from "../../../../shared/components/atoms/image/Image.vue";
 import { TextInput } from "../../../../shared/components/atoms/input-text";
-import { PrimaryButton } from "../../../../shared/components/atoms/button-primary";
 import { FieldQuery } from "../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { createProductMutation } from "../../../../shared/api/mutations/products.js"
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
 import {processGraphQLErrors} from "../../../../shared/utils";
+import {TypeStep} from "./containers/type-step";
+import { GeneralInfoStep } from "./containers/general-info-step";
+import { ForSaleStep } from "./containers/for-sale-step";
+import { PriceStep } from "./containers/price-step";
+import {AdditonalFormFields, FormType} from "./containers/product";
 
 
 const { t } = useI18n();
@@ -29,29 +27,76 @@ const router = useRouter();
 const wizardRef = ref();
 const step = ref(0);
 
-const form = reactive({
+const form: FormType = reactive({
   type: '',
   sku: '',
   name: '',
+  productionTime: '',
   active: true,
+  forSale: true,
   vatRate: {
     id: ''
   },
-  alwaysOnStock: false
+  alwaysOnStock: false,
 });
 
-const wizardSteps = [
-  { title: t('products.products.labels.type.title'), name: 'typeStep' },
-  { title: t('shared.labels.sku'), name: 'skuStep' },
-  { title: t('shared.labels.name'), name: 'nameStep' },
-  { title: t('settings.vatRates.title'), name: 'vatStep' }
-];
+const additionalFieldsForm: AdditonalFormFields = reactive({
+    relatedProducts: [],
+    supplierProduct: {
+      sku: '',
+      name: '',
+      quantity: '',
+      unit_price: '',
+      supplier: {
+        id: '',
+      },
+      unit: {
+        id: ''
+      }
 
-const typeChoice = [
-  { name: ProductType.Variation },
-  { name: ProductType.Bundle },
-  { name: ProductType.Umbrella }
-];
+    },
+    price: {
+      amount: '',
+      discountAmount: '',
+      currency: {
+        id: ''
+      }
+    }
+});
+
+const wizardSteps = computed(() => {
+  let steps = [
+    { title: t('products.products.labels.type.title'), name: 'typeStep' },
+    { title: t('products.products.create.wizard.stepTwo.title'), name: 'generalInfoStep' },
+  ];
+
+  switch (form.type) {
+    case ProductType.Simple:
+      steps.push({ title: t('products.products.create.wizard.stepThree.simple.title'), name: 'forSaleStep' });
+      if (form.forSale) {
+        steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
+      }
+      steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
+      break;
+    case ProductType.Dropship:
+      steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
+      steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
+      break;
+    case ProductType.Bundle:
+      steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
+      steps.push({ title: t('products.products.create.wizard.stepFour.bundle.title'), name: 'selectVariationsStep' });
+      break;
+    case ProductType.Manufacturable:
+      steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
+      steps.push({ title: t('products.products.create.wizard.stepFour.manufacturable.title'), name: 'selectVariationsStep' });
+      break;
+    case ProductType.Umbrella:
+      steps.push({ title: t('products.products.create.wizard.stepFour.configurable.title'), name: 'selectVariationsStep' });
+      break;
+  }
+
+  return steps;
+});
 
 const handleFinish = async () => {
 
@@ -90,8 +135,20 @@ const triggerNextStep = () => {
   wizardRef.value.nextStep();
 };
 
+const handleForSaleChanged = (newVal) => {
+  form.forSale = newVal;
+};
+
+const setDefaultCurrency = (id) => {
+  additionalFieldsForm.price.currency.id = id;
+};
+
 const allowNextStep = computed(() => {
   if (step.value === 0 && form.type === '') {
+    return false;
+  }
+
+  if (step.value === 1 && form.name === '') {
     return false;
   }
 
@@ -117,79 +174,27 @@ const allowNextStep = computed(() => {
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
-          <div>
-            <h1 class="text-2xl text-center mb-2">{{ t('products.products.create.wizard.stepOne.content') }}</h1>
-            <hr>
-            <OptionSelector v-model="form.type" :choices="typeChoice" >
-
-              <template #VARIATION>
-                <div>
-                  <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.variable.title') }}</h3>
-                  <p>{{ t('products.products.create.wizard.stepOne.variable.example') }}</p>
-                  <Image :source="variableType" alt="Variable" class="w-full" />
-                </div>
-              </template>
-
-              <template #BUNDLE>
-                <div>
-                  <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>
-                  <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>
-                  <Image :source="bundleType" alt="Bundle" class="w-full" />
-                </div>
-              </template>
-
-              <template #UMBRELLA>
-                <div>
-                  <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.configurable.title') }}</h3>
-                  <p>{{ t('products.products.create.wizard.stepOne.configurable.example') }}</p>
-                  <Image :source="configurableType" alt="Configurable" class="w-full" />
-                </div>
-              </template>
-
-            </OptionSelector>
-          </div>
+          <TypeStep :form="form" @for-sale-changed="handleForSaleChanged" />
         </template>
 
-        <template #skuStep>
-          <div>
-            <h1 class="text-2xl text-center mb-2">{{ t('products.products.create.wizard.stepTwo.content') }}</h1>
-            <hr>
-            <Flex center vertical>
-              <FlexCell>
-                <TextInput v-model="form.sku" class="mt-5" :placeholder="'SKU-123'" />
-              </FlexCell>
-              <FlexCell><h1 class="text-lg font-bold uppercase mt-3">{{ t('shared.labels.or') }}</h1></FlexCell>
-              <FlexCell>
-                <PrimaryButton class="mt-3" @click="triggerNextStep">
-                  {{ t('products.products.create.wizard.stepTwo.generate') }}
-                </PrimaryButton>
-              </FlexCell>
-            </Flex>
-          </div>
+        <template #generalInfoStep>
+          <GeneralInfoStep :form="form" @trigger-next-step="triggerNextStep" />
         </template>
 
-        <template #nameStep>
-          <div>
-            <h1 class="text-2xl text-center mb-2">{{ t('products.products.create.wizard.stepTwo.content') }}</h1>
-            <hr>
-            <Flex center vertical>
-              <FlexCell>
-                <TextInput v-model="form.name" class="mt-5" :placeholder="'Product'" />
-              </FlexCell>
-            </Flex>
-          </div>
+        <template #forSaleStep>
+          <ForSaleStep :form="form" @for-sale-changed="handleForSaleChanged"/>
         </template>
 
-        <template #vatStep>
-          <div vertical center>
-            <h1 class="text-2xl text-center mb-2">{{ t('products.products.create.wizard.stepThree.content') }}</h1>
-            <hr>
-            <Flex vertical center>
-              <FlexCell class="w-1/3">
-                <FieldQuery class="mt-5" v-model="form.vatRate.id" :field="getVatRateField(t)" />
-              </FlexCell>
-            </Flex>
-          </div>
+        <template #priceStep>
+          <PriceStep :form="form" :additional-fields-form="additionalFieldsForm" @set-default-currency="setDefaultCurrency" />
+        </template>
+
+        <template #supplierStep>
+          CREATE SUPPLIER
+        </template>
+
+        <template #selectVariationsStep>
+          ADD VARIATIONS
         </template>
       </Wizard>
    </template>

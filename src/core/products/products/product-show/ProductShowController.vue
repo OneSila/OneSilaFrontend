@@ -57,7 +57,7 @@ const getProductComponent = (type) => {
   if (type == ProductType.Umbrella) {
     return ProductUmbrella;
   }
-  if (type == ProductType.Variation) {
+  if (type == ProductType.Simple) {
     return ProductVariation;
   }
 }
