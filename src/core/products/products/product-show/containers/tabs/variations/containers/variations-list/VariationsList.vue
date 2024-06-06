@@ -5,12 +5,16 @@ import { Button } from "../../../../../../../../../shared/components/atoms/butto
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import {useI18n} from "vue-i18n";
 import {SearchConfig} from "../../../../../../../../../shared/components/organisms/general-search/searchConfig";
-import {PRODUCT_BUNDLE} from "../../../../../../../../../shared/utils/constants";
+import {PRODUCT_BUNDLE, ProductType} from "../../../../../../../../../shared/utils/constants";
 import {Pagination} from "../../../../../../../../../shared/components/molecules/pagination";
 import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
 import {FilterManager} from "../../../../../../../../../shared/components/molecules/filter-manager";
 import {ApolloAlertMutation} from "../../../../../../../../../shared/components/molecules/apollo-alert-mutation";
-import {deleteUmbrellaVariationMutation, deleteBundleVariationMutation} from "../../../../../../../../../shared/api/mutations/products.js";
+import {
+  deleteUmbrellaVariationMutation,
+  deleteBundleVariationMutation,
+  deleteBillOfMaterialMutation
+} from "../../../../../../../../../shared/api/mutations/products.js";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
@@ -34,6 +38,18 @@ const refetchIfNecessary = (query, data) => {
   return true;
 }
 
+const getDeleteMutation = () => {
+  switch(props.product.type) {
+    case ProductType.Bundle:
+      return deleteBundleVariationMutation;
+    case ProductType.Umbrella:
+      return deleteUmbrellaVariationMutation;
+    case ProductType.Manufacturable:
+      return deleteBillOfMaterialMutation;
+    default:
+      return null;
+  }
+};
 </script>
 
 <template>
@@ -54,26 +70,27 @@ const refetchIfNecessary = (query, data) => {
                 <tr>
                   <th>{{ t('shared.labels.name') }}</th>
                   <th>{{ t('shared.labels.active') }}</th>
-                  <th v-if="product.type == PRODUCT_BUNDLE">{{ t('shared.labels.quantity') }}</th>
+                  <th v-if="product.type != ProductType.Umbrella">{{ t('shared.labels.quantity') }}</th>
                   <th class="!text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
                 <tbody>
 
                 <tr v-for="item in data[queryKey].edges" :key="item.node.id">
-                  <td>{{ item.node.variation.name }}</td>
+                  <td>
+                    <Link :path="{name: 'products.products.show', params: {id: item.node.variation.id}}">
+                      {{ item.node.variation.name }}
+                    </Link>
+                  </td>
                   <td>
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
-                  <td v-if="product.type == PRODUCT_BUNDLE">{{ item.node.quantity }}</td>
+                  <td v-if="product.type != ProductType.Umbrella">{{ item.node.quantity }}</td>
                   <td>
                     <div class="flex gap-4 items-center justify-end">
-                      <Link :path="{name: 'products.products.show', params: {id: item.node.variation.id}}">
-                        <Button class="btn btn-sm btn-outline-secondary">{{ t('shared.button.show') }}</Button>
-                      </Link>
                       <ApolloAlertMutation
-                        :mutation="product.type === PRODUCT_BUNDLE ? deleteBundleVariationMutation : deleteUmbrellaVariationMutation"
+                        :mutation="getDeleteMutation()"
                         :mutation-variables="{id: item.node.id}"
                         :refetch-queries="() => [{
                          query: listQuery,

@@ -12,6 +12,7 @@ import ProductContentView from "../../tabs/content/ProductContentView.vue";
 import SalesPricelistList from "../../tabs/sales-price-lists/SalesPricelistList.vue";
 import VariationsView from "../../tabs/variations/VariationsView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
+import ProductSalePriceView from "../../tabs/sales-price/ProductSalePriceView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -24,6 +25,7 @@ tabItems.value = [
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
     { name: 'variations', label: t('products.products.tabs.bundleItems'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
+    { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
     { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
@@ -45,6 +47,9 @@ tabItems.value = [
       </template>
       <template v-slot:media>
         <MediaView :product="product" />
+      </template>
+      <template v-slot:price>
+        <ProductSalePriceView :product="product" />
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList :product="product" />

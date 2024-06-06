@@ -4,12 +4,10 @@ import {SearchConfig} from "../../../shared/components/organisms/general-search/
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {supplierProductsQuery} from "../../../shared/api/queries/purchasing.js"
 import {createSupplierProductMutation, deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
-import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
 import {productsQuery} from "../../../shared/api/queries/products.js";
 import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
-import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import {supplierOnTheFlyConfig} from "../suppliers/configs";
 
 const getSubmitUrl = (supplierId, productId) => {
@@ -25,12 +23,12 @@ const getSubmitUrl = (supplierId, productId) => {
 
 const getSubmitAndContinueUrl = (supplierId, productId) => {
   if (supplierId) {
-    return { name: 'purchasing.product.edit', query: { supplierId } };
+    return { name: 'purchasing.suppliers.show', params: {id: supplierId}, query: {tab: 'products'} };
   }
   if (productId) {
-    return { name: 'purchasing.product.edit', query: { productId } };
+    return { name: 'products.products.show', params: {id: productId}, query: { tab: 'supplierProducts'} };
   }
-  return { name: 'purchasing.product.edit' };
+  return { name: 'products.products.show' };
 }
 
 const getSupplierField = (supplierId, t): FormField => {
@@ -58,22 +56,22 @@ const getSupplierField = (supplierId, t): FormField => {
   }
 }
 
-const getProductField = (productId, t): FormField => {
+export const getProductField = (productId, t): FormField => {
   if (productId) {
     return {
       type: FieldType.Hidden,
-      name: 'product',
+      name: 'baseProduct',
       value: { "id": productId }
     };
   } else {
     return {
         type: FieldType.Query,
-        name: 'product',
+        name: 'baseProduct',
         label:  t('shared.labels.product'),
         labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
-        queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
+        queryVariables: {"filter": {"type": {"inList": [ProductType.Simple, ProductType.Dropship]}}},
         dataKey: 'products',
         isEdge: true,
         multiple: false,
@@ -96,6 +94,7 @@ export const baseFormConfigConstructor = (
   mutation: mutation,
   mutationKey: mutationKey,
   submitUrl: getSubmitUrl(supplierId, productId),
+  redirectIdentifiers: [{id: 'proxyId'}],
   submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, productId),
   deleteMutation: deleteSupplierProductMutation,
   fields: [
@@ -142,21 +141,17 @@ export const baseFormConfigConstructor = (
       number: true,
     },
     {
-      type: FieldType.Query,
-      name: 'currency',
-      label: t('shared.labels.currency'),
-      labelBy: 'isoCode',
-      valueBy: 'id',
-      query: currenciesQuery,
-      dataKey: 'currencies',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      removable: false,
-      formMapIdentifier: 'id',
-      createOnFlyConfig: currencyOnTheFlyConfig(t),
-      setDefaultKey: 'isDefaultCurrency'
+      type: FieldType.Checkbox,
+      name: 'active',
+      label: t('shared.labels.active'),
+      default: true,
+      uncheckedValue: "false"
     },
+    {
+      type: FieldType.Hidden,
+      name: 'type',
+      value: ProductType.Supplier
+    }
   ],
 });
 
@@ -178,19 +173,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
     {
       type: FieldType.Query,
-      query: currenciesQuery,
-      dataKey: 'currencies',
-      name: 'currency',
-      label: t('shared.labels.currency'),
-      labelBy: 'isoCode',
-      valueBy: 'id',
-      filterable: true,
-      isEdge: true,
-      addLookup: true,
-      lookupKeys: ['id']
-    },
-    {
-      type: FieldType.Query,
       name: 'supplier',
       label: t('purchasing.orders.labels.supplier'),
       labelBy: 'name',
@@ -205,7 +187,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     },
     {
       type: FieldType.Query,
-      name: 'product',
+      name: 'baseProduct',
       label:  t('shared.labels.product'),
       labelBy: 'name',
       valueBy: 'id',
@@ -223,12 +205,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (supplierId, productId, t) => {
   if (supplierId) {
-    return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.quantity'), t('shared.labels.product')];
+    return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.product')];
   }
   if (productId) {
-    return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.quantity'), t('purchasing.products.labels.supplier')];
+    return [t('shared.labels.name'),t('shared.labels.sku'), t('purchasing.products.labels.supplier')];
   }
-  return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.quantity'), t('purchasing.products.labels.supplier'), t('shared.labels.product')];
+  return [t('shared.labels.name'),t('shared.labels.sku'), t('purchasing.products.labels.supplier'), t('shared.labels.product')];
 }
 
 const getFields = (supplierId, productId): ShowField[] => {
@@ -240,11 +222,7 @@ const getFields = (supplierId, productId): ShowField[] => {
     {
       name: 'sku',
       type: FieldType.Text,
-    },
-    {
-      name: 'quantity',
-      type: FieldType.Text,
-    },
+    }
   ];
 
   if (!supplierId) {
@@ -252,9 +230,8 @@ const getFields = (supplierId, productId): ShowField[] => {
   }
 
   if (!productId) {
-    commonFields.push({ name: 'product', type: FieldType.NestedText, keys: ['name'] });
+    commonFields.push({ name: 'baseProduct', clickable: true, clickUrl: {name: 'products.products.show'}, type: FieldType.NestedText, keys: ['name'], clickIdentifiers: [{id: ['id']}] });
   }
-
 
   return commonFields;
 }
@@ -276,10 +253,10 @@ export const listingConfigConstructor = (t: Function, supplierId: string | null 
 ): ListingConfig => ({
   headers: getHeaders(supplierId, productId, t),
   fields: getFields(supplierId, productId),
-  identifierKey: 'id',
   addActions: true,
-  addEdit: true,
-  editUrlName: 'purchasing.product.edit',
+  addShow: true,
+  showUrlName: 'products.products.show',
+  identifierKey: 'proxyId',
   urlQueryParams: getUrlQueryParams(supplierId, productId),
   addDelete: true,
   addPagination: true,

@@ -26,6 +26,7 @@ const showConfig = showConfigConstructor(t,
     id.value,
     route.query.supplierId ? route.query.supplierId.toString() : null,
     route.query.source ? route.query.source.toString() : null,
+    route.query.productId ? route.query.productId.toString() : null,
 );
 
 const onDataFetched = (data) => {

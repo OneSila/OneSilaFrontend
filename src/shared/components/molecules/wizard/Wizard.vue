@@ -98,7 +98,7 @@ defineExpose({
   <div class="tab-content mt-4">
     <slot :name="steps[currentStep].name"></slot>
   </div>
-  <div class="flex justify-end mt-4">
+  <div class="flex justify-end mt-8">
     <CancelButton
       v-if="currentStep > 0"
       @click="previousStep"

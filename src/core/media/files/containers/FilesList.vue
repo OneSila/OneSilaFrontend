@@ -20,6 +20,7 @@ const props = defineProps<{
   searchConfig: any;
   defaultViewType?: string;
   refetchNeeded?: boolean;
+  assignImages?: boolean;
   ids?: any[] }>();
 
 const emit = defineEmits(['refetched', 'assign-media']);
@@ -41,7 +42,7 @@ const assignMedia = (media) => {
 </script>
 
 <template>
-    <Card :class="['card', 'overflow-auto', { 'max-h-[50rem]': props.ids }]">
+    <Card :class="['card', 'overflow-auto', { 'max-h-[50rem]': assignImages }]">
       <div class="card-header flex justify-between items-center py-2">
           <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-300">{{ props.label }}</h4>
           <div class="bg-gray-100 px-2 py-1 rounded-lg">
@@ -86,7 +87,7 @@ const assignMedia = (media) => {
                                       <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                           <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                                             <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
-                                              <template v-if="ids && ids.length > 0">
+                                              <template v-if="assignImages">
                                                 <Button @click="assignMedia(item.node)">
                                                   {{ getFileName(item.node) }}
                                                 </Button>
@@ -116,7 +117,7 @@ const assignMedia = (media) => {
                           <div v-for="item in data[queryKey].edges" :key="item.node.id" class="file-entry relative">
 
                                 <template v-if="item.node.type === TYPE_IMAGE">
-                                  <Button v-if="ids && ids.length > 0" @click="assignMedia(item.node)">
+                                  <Button v-if="assignImages" @click="assignMedia(item.node)">
                                     <Image :source="item.node.imageWebUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
                                   </Button>
                                   <Link v-else :path="getPath(item.node)">
@@ -124,7 +125,7 @@ const assignMedia = (media) => {
                                   </Link>
                                 </template>
                                 <template v-else-if="item.node.type === TYPE_VIDEO">
-                                  <Button v-if="ids && ids.length > 0" @click="assignMedia(item.node)">
+                                  <Button v-if="assignImages" @click="assignMedia(item.node)">
                                     <div class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
                                         <Icon name="play" size="2xl" class="text-gray-600"/>
                                     </div>
@@ -136,7 +137,7 @@ const assignMedia = (media) => {
                                   </Link>
                                 </template>
                                 <template v-else-if="item.node.type === TYPE_DOCUMENT">
-                                  <Button v-if="ids && ids.length > 0" @click="assignMedia(item.node)">
+                                  <Button v-if="assignImages" @click="assignMedia(item.node)">
                                     <div class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
                                         <Icon name="file-text" size="2xl" class="text-gray-600"/>
                                     </div>

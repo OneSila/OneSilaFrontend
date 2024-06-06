@@ -33,7 +33,7 @@ const getProductField = (productId, t): FormField => {
         labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
-        queryVariables: {"filter": {"type": {"exact": ProductType.Variation}}},
+        queryVariables: {"filter": {"type": {"exact": ProductType.Supplier}}},
         dataKey: 'products',
         isEdge: true,
         multiple: false,
@@ -90,19 +90,23 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-const getHeaders = (t, productId) => {
-  return productId
+const getHeaders = (t, productId, isSupplierProduct) => {
+  const nameLabel = isSupplierProduct ? t('shared.labels.name') : t('purchasing.products.show.title');
+  return productId && isSupplierProduct
     ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')]
-    : [t('shared.labels.name'), t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')];
+    : [nameLabel, t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')];
 }
-const getFields = (productId): ShowField[] => {
+const getFields = (productId, isSupplierProduct): ShowField[] => {
   const commonFields: ShowField[] = [];
 
-  if (!productId) {
+  if (!productId || !isSupplierProduct) {
     commonFields.push({
       name: 'product',
       type: FieldType.NestedText,
-      keys: ['name']
+      keys: ['name'],
+      clickable: true,
+      clickIdentifiers: [{id: ['id']}],
+      clickUrl: { name: 'products.products.show', query: {tab: 'inventory'}},
     });
   }
 
@@ -119,14 +123,14 @@ const getFields = (productId): ShowField[] => {
 
   return commonFields;
 }
-export const listingConfigConstructor = (t: Function, productId: string | null = null): ListingConfig => ({
-  headers: getHeaders(t, productId),
-  fields: getFields(productId),
+export const listingConfigConstructor = (t: Function, productId: string | null = null, isSupplierProduct: boolean = true): ListingConfig => ({
+  headers: getHeaders(t, productId, isSupplierProduct),
+  fields: getFields(productId, isSupplierProduct),
   identifierKey: 'id',
   addActions: true,
-  addEdit: true,
+  addEdit: isSupplierProduct,
   editUrlName: 'inventory.inventory.edit',
-  urlQueryParams: productId ? { "productId": productId } : undefined,
+  urlQueryParams: productId && isSupplierProduct ? { "productId": productId } : undefined,
   addShow: false,
   addDelete: true,
   addPagination: true,

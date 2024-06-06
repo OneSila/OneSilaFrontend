@@ -113,31 +113,30 @@ const onMutationCompleted = () => {
 <template>
   <TabContentTemplate>
     <template v-slot:buttons>
-    <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
-      <template v-slot="{ mutate, loading, error }">
-        <Button :customClass="'btn btn-primary mr-2'"
-                :disabled="loading"
-                @click="mutate">
-          {{ t('shared.button.save') }}
-        </Button>
-        <p v-if="error">{{ error.message }}</p>
-      </template>
-    </ApolloMutation>
-    <ApolloQuery :query="currenciesQuery">
-      <template v-slot="{ result: { data } }">
-          <Selector v-if="data"
-                    @update:modelValue="handleCurrencySelection"
-                    v-model="currentCurrency"
-                    :options="cleanedData(data.currencies)"
-                    labelBy="isoCode"
-                    valueBy="id"
-                    mandatory
-                    :removable="false"
-                    :placeholder="t('shared.placeholders.currency')"
-                    filterable
-                    class="min-w-[100px]" />
-      </template>
-      </ApolloQuery>
+      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
+        <template v-slot="{ mutate, loading, error }">
+          <Button :customClass="'btn btn-primary mr-2'"
+                  :disabled="loading"
+                  @click="mutate">
+            {{ t('shared.button.save') }}
+          </Button>
+        </template>
+      </ApolloMutation>
+      <ApolloQuery :query="currenciesQuery">
+        <template v-slot="{ result: { data } }">
+            <Selector v-if="data"
+                      @update:modelValue="handleCurrencySelection"
+                      v-model="currentCurrency"
+                      :options="cleanedData(data.currencies)"
+                      labelBy="isoCode"
+                      valueBy="id"
+                      mandatory
+                      :removable="false"
+                      :placeholder="t('shared.placeholders.currency')"
+                      filterable
+                      class="min-w-[100px]" />
+        </template>
+        </ApolloQuery>
     </template>
 
     <template v-slot:content>

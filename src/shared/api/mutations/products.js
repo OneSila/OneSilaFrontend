@@ -39,6 +39,10 @@ export const updateProductMutation = gql`
         id
         rate
       }
+      baseProduct {
+        id
+        name
+      }
     }
   }
 `;
@@ -381,6 +385,138 @@ export const deleteBundleVariationMutation = gql`
 export const deleteBundleVariationsMutation = gql`
   mutation deleteBundleVariations($ids: [GlobalID!]!) {
     deleteBundleVariations(data: {ids: $ids}) {
+      id
+    }
+  }
+`;
+
+export const createManufacturableProductMutation = gql`
+  mutation createManufacturableProduct($data: ManufacturableProductInput!) {
+    createManufacturableProduct(data: $data) {
+      id
+      name
+      description
+    }
+  }
+`;
+
+export const createManufacturableProductsMutation = gql`
+  mutation createManufacturableProducts($data: [ManufacturableProductInput!]!) {
+    createManufacturableProducts(data: $data) {
+      id
+      name
+      description
+    }
+  }
+`;
+
+export const updateManufacturableProductMutation = gql`
+  mutation updateManufacturableProduct($data: ManufacturableProductPartialInput!) {
+    updateManufacturableProduct(data: $data) {
+      id
+      name
+      description
+    }
+  }
+`;
+
+export const deleteManufacturableProductMutation = gql`
+  mutation deleteManufacturableProduct($id: GlobalID!) {
+    deleteManufacturableProduct(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteManufacturableProductsMutation = gql`
+  mutation deleteManufacturableProducts($ids:  [GlobalID!]!) {
+    deleteManufacturableProducts(data: {ids: $ids}) {
+      id
+    }
+  }
+`;
+
+export const createDropshipProductMutation = gql`
+  mutation createDropshipProduct($data: DropshipProductInput!) {
+    createDropshipProduct(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
+export const createDropshipProductsMutation = gql`
+  mutation createDropshipProducts($data: [DropshipProductInput!]!) {
+    createDropshipProducts(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
+export const updateDropshipProductMutation = gql`
+  mutation updateDropshipProduct($data: DropshipProductPartialInput!) {
+    updateDropshipProduct(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
+export const deleteDropshipProductMutation = gql`
+  mutation deleteDropshipProduct($id: GlobalID!) {
+    deleteDropshipProduct(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteDropshipProductsMutation = gql`
+  mutation deleteDropshipProducts($ids:  [GlobalID!]!) {
+    deleteDropshipProducts(data: {ids: $ids}) {
+      id
+    }
+  }
+`;
+
+export const createBillOfMaterialMutation = gql`
+  mutation createBillOfMaterial($data: BillOfMaterialInput!) {
+    createBillOfMaterial(data: $data) {
+      id
+      quantity
+    }
+  }
+`;
+
+export const createBillsOfMaterialMutation = gql`
+  mutation createBillsOfMaterial($data: [BillOfMaterialInput!]!) {
+    createBillsOfMaterial(data: $data) {
+      id
+      quantity
+    }
+  }
+`;
+
+export const updateBillOfMaterialMutation = gql`
+  mutation updateBillOfMaterial($data: BillOfMaterialPartialInput!) {
+    updateBillOfMaterial(data: $data) {
+      id
+      quantity
+    }
+  }
+`;
+
+export const deleteBillOfMaterialMutation = gql`
+  mutation deleteBillOfMaterial($id: GlobalID!) {
+    deleteBillOfMaterial(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteBillsOfMaterialMutation = gql`
+  mutation deleteBillsOfMaterial($ids:  [GlobalID!]!) {
+    deleteBillsOfMaterial(data: {ids: $ids}) {
       id
     }
   }

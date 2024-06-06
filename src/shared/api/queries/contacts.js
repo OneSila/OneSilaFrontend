@@ -10,6 +10,10 @@ query Companies($first: Int, $last: Int, $after: String, $before: String, $order
         phone
         email
         language
+        currency {
+          id
+          isoCode
+        }
       }
       cursor
     }
@@ -36,6 +40,10 @@ query getCompany ($id: GlobalID!) {
     isInfluencer
     isSupplier
     isInternalCompany
+    currency {
+      id
+      isoCode
+    }
   }
 }
 `;

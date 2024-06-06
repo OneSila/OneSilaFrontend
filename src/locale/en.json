@@ -72,6 +72,7 @@
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",
+      "loading": "Loading",
       "notes": "Notes",
       "currency": "Currency",
       "date": "Date",
@@ -87,7 +88,11 @@
       "yes": "Yes",
       "no": "No",
       "language": "Language",
+      "seconds": "seconds",
       "home": "Home"
+    },
+    "validations": {
+      "quantity": "Please enter a valid quantity"
     },
     "placeholders": {
       "currency": "Enter currency",
@@ -430,16 +435,23 @@
       }
     },
     "products": {
+      "addVariations": {
+        "dragAndDrop": "Use drag and drop or ➕ button to add new products",
+        "noVariationsLeft": "No products to add left"
+      },
       "tabs": {
         "content": "Content",
         "variations": "Variations",
         "bundleItems": "Bundle Items",
+        "bom": "Bill of Materials",
         "media": "Media",
         "price": "Price",
+        "prices": "Prices",
         "priceLists": "Price Lists",
         "inventory": "Inventory",
         "supplierProducts": "Supplier Products",
         "saleOrders": "Sale Orders",
+        "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
@@ -455,15 +467,21 @@
           "choices": {
             "umbrella": "Configurable Product",
             "bundle": "Bundle Product",
-            "variation": "Simple product"
+            "variation": "Simple Product",
+            "dropship": "Dropship Product",
+            "manufacturable": "Manufacturable Product",
+            "supplier": "Supplier Product"
           }
         },
         "vatRate": "VAT Rate",
         "alwaysOnStock": "Always on Stock",
-        "sku": "SKU"
+        "sku": "SKU",
+        "productionTime": "Production Time",
+        "forSale": "For Sale"
       },
       "placeholders": {
-        "vatRate": "Add a vat rate"
+        "vatRate": "Add a vat rate",
+        "productionTime": "Enter time in seconds"
       },
       "create": {
         "title": "Create product",
@@ -472,7 +490,7 @@
           "stepOne": {
             "content": "Select what product are you trying to create?",
             "variable": {
-              "title": "Something to sell.",
+              "title": "Something to sell and/or to buy",
               "example": "Eg: A black pen"
             },
             "bundle": {
@@ -482,14 +500,48 @@
             "configurable": {
               "title": "A configuration of products.",
               "example": "Eg: Let customers pick between a red or blue pen."
+            },
+            "manufacturable": {
+              "title": "A product that you make.",
+              "example": "Eg: A mug and sticker bought separately, assembled and sold together."
+            },
+            "dropship": {
+              "title": "A product fulfilled directly by the supplier.",
+              "example": "Eg: Furniture shipped directly from the manufacturer to the customer."
             }
           },
           "stepTwo": {
-            "content": "Add a SKU or just auto generate it.",
+            "title": "General Info",
+            "content": "What is the product?",
             "generate": "Generate it"
           },
           "stepThree": {
-            "content": "Almost here. Please select a VAT rate."
+            "title": "Pricing",
+            "content": "How much do you sell it for?",
+            "simple": {
+              "title": "Sale status",
+              "content": "Is this item for Sale, or for internal use?"
+            }
+          },
+          "stepFour": {
+            "configurable": {
+              "title": "Variations",
+              "selectVariations": "Please select the variations:"
+            },
+            "simple": {
+              "title": "Buying",
+              "whereBuy": "Where do you buy it?",
+              "add": "You bought this product before? Just add it.",
+              "create": "Please fill the form about the product you bought and intend to sell."
+            },
+            "bundle": {
+              "title": "Items",
+              "selectVariations": "Please select the bundle items:"
+            },
+            "manufacturable": {
+              "title": "Bills Of Materials",
+              "selectVariations": "Please add the used bills of materials for the product"
+            }
           }
         }
       },
@@ -717,7 +769,7 @@
       }
     },
     "products": {
-      "title": "Products",
+      "title": "Supplier Products",
       "create": {
         "title": "Create Supplier Product"
       },

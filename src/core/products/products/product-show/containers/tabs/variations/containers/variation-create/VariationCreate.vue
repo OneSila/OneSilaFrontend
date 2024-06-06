@@ -5,8 +5,12 @@ import {Product} from "../../../../../../configs";
 import {useI18n} from "vue-i18n";
 import {Button} from "../../../../../../../../../shared/components/atoms/button";
 import CreateForm from "./CreateForm.vue";
-import {PRODUCT_BUNDLE} from "../../../../../../../../../shared/utils/constants";
-import {createBundleVariationMutation, createUmbrellaVariationMutation,} from "../../../../../../../../../shared/api/mutations/products.js";
+import {PRODUCT_BUNDLE, ProductType} from "../../../../../../../../../shared/utils/constants";
+import {
+  createBillOfMaterialMutation,
+  createBundleVariationMutation,
+  createUmbrellaVariationMutation
+} from "../../../../../../../../../shared/api/mutations/products.js";
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
 
@@ -44,7 +48,16 @@ const handleAddClick = () => {
 };
 
 const getMutation = () => {
-  return props.product.type === PRODUCT_BUNDLE ? createBundleVariationMutation : createUmbrellaVariationMutation;
+  switch(props.product.type) {
+    case ProductType.Bundle:
+      return createBundleVariationMutation;
+    case ProductType.Umbrella:
+      return createUmbrellaVariationMutation;
+    case ProductType.Manufacturable:
+      return createBillOfMaterialMutation;
+    default:
+      return null;
+  }
 }
 
 const getVariables = () => {
@@ -53,7 +66,7 @@ const getVariables = () => {
     variation: { id: form.value.variation }
   }
 
- if (props.product.type === PRODUCT_BUNDLE) {
+ if (props.product.type !== PRODUCT_BUNDLE) {
    variables['quantity'] = form.value.quantity;
  }
 

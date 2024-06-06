@@ -6,16 +6,12 @@ export const supplierProductSubscription = gql`
       id
       sku
       name
-      currency {
-        id
-        name
-      }
       unit {
         id
         name
       }
       quantity
-      product {
+      baseProduct {
         id
         name
       }

@@ -149,7 +149,6 @@ export const baseFormConfigConstructor = (
         formMapIdentifier: 'id',
         createOnFlyConfig: currencyOnTheFlyConfig(t),
         setDefaultKey: 'isDefaultCurrency'
-
     },
     getCustomerField(customerId, t),
     {

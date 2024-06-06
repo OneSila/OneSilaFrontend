@@ -3,8 +3,8 @@
 import { ref, onMounted, watch } from 'vue';
 import { Product } from "../../../../../../configs";
 import { useI18n } from "vue-i18n";
-import { PRODUCT_BUNDLE } from "../../../../../../../../../shared/utils/constants";
-import { productVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
+import { ProductType, variationTypes, billOfMaterialsTypes } from "../../../../../../../../../shared/utils/constants";
+import { productsQuery } from "../../../../../../../../../shared/api/queries/products.js";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import { VariationForm } from "./VariationCreate.vue";
@@ -21,14 +21,29 @@ const cleanedData = (rawData) => {
 
 const fetchData = async () => {
 
+    let typeFilter;
+
+  switch (props.product.type) {
+    case ProductType.Umbrella:
+    case ProductType.Bundle:
+      typeFilter = variationTypes;
+      break;
+    case ProductType.Manufacturable:
+      typeFilter = billOfMaterialsTypes;
+      break;
+    default:
+      typeFilter = variationTypes;
+  }
+
+
   const { data } = await apolloClient.query({
-    query: productVariationsQuery,
-    variables: { filter: { id: { "nInList": props.variationIds } } },
+    query: productsQuery,
+    variables: { filter: { id: { "nInList": props.variationIds },  type: { "inList": typeFilter } } },
     fetchPolicy: 'network-only'
   });
 
   if (data) {
-    variations.value = cleanedData(data.productVariations);
+    variations.value = cleanedData(data.products);
   }
 
 };
@@ -53,7 +68,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
                 filterable
                 class="min-w-[200px] mr-2" />
     </FlexCell>
-    <FlexCell v-if="product.type === PRODUCT_BUNDLE">
+    <FlexCell v-if="product.type !== ProductType.Umbrella" >
       <TextInput v-model="form.quantity" number :placeholder="t('shared.placeholders.quantity')" class="w-20" />
     </FlexCell>
   </Flex>
