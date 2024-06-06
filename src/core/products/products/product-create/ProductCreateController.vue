@@ -193,7 +193,6 @@ const processAdditionalFields = async (productId) => {
   if (isSupplierProductFilled() &&
       (form.type === ProductType.Simple || form.type === ProductType.Dropship)) {
     await handleSupplierProduct(productId);
-    alert('SUPPLIER PRODUCT CREATED!')
   }
 
   // Create related products for Umbrella, Bundle, or Manufacturable types

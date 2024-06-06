@@ -48,8 +48,13 @@ interface ProductSubscriptionResult {
 
 const getResultData = (result, field: string | null = null, vatRateField: string | null = null) => {
   const r: ProductSubscriptionResult = result;
+
   if (vatRateField !== null){
-    return r.product.vatRate[vatRateField];
+    if (r.product.vatRate) {
+      return r.product.vatRate[vatRateField];
+    } else {
+      return null
+    }
   }
 
   if (field === null) {
