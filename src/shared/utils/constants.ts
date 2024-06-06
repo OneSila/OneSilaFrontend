@@ -79,3 +79,6 @@ export const ProductType = {
   Dropship: PRODUCT_DROPSHIP,
   Supplier: PRODUCT_SUPPLIER,
 };
+
+export const variationTypes = [PRODUCT_SIMPLE, PRODUCT_BUNDLE, PRODUCT_MANUFACTURABLE, PRODUCT_DROPSHIP]
+export const billOfMaterialsTypes = [PRODUCT_SIMPLE, PRODUCT_MANUFACTURABLE]

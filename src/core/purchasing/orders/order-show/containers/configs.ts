@@ -71,7 +71,10 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
     {
       name: 'item',
       type: FieldType.NestedText,
-      keys: ['name']
+      keys: ['name'],
+      clickable: true,
+      clickIdentifiers: [{id: ['proxyId']}],
+      clickUrl: {name: 'products.products.show'},
     },
     {
       name: 'quantity',

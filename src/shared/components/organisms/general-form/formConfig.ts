@@ -149,6 +149,9 @@ export interface HelpSection {
   content: string;
 }
 
+type RedirectIdentifier = Record<string, string>;
+
+
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
                         ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | SliderFormField |
                         CheckboxFormField | HiddenFormField | WebsiteFormField;
@@ -161,6 +164,7 @@ export interface FormConfig {
   mutationId?: string; // optional, for EDIT only
   query?: string; // Optional, used only for Edit forms
   queryVariables?: Record<string, any>; // Variables for the query
+  redirectIdentifiers?: RedirectIdentifier[]; // We can map the the redirect param from the mutation respose to another field. Ex. Treat proxyId as Id
   queryDataKey?: string; // Key to extract data from query response
   queryData?: any; // if we already have the data and we don't want get it again we can pass this and we will avoid another query
   submitUrl: Url; // URL for form submission

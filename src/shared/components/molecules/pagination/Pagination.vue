@@ -17,14 +17,17 @@ const props = withDefaults(
     alignment?: 'start' | 'center' | 'end';
     buttonClass?: 'default' | 'solid' | 'rounded';
     useIcons?: boolean;
+    changeQueryParams?: boolean;
   }>(),
   {
     alignment: 'center',
     buttonClass: 'default',
-    useIcons: false
+    useIcons: false,
+    changeQueryParams: true,
   }
 );
 
+const emit = defineEmits(['query-changed']);
 const { t } = useI18n();
 const router = useRouter();
 
@@ -74,7 +77,12 @@ const updateQueryParams = (updates) => {
     }
   }
 
-  router.push({ query: newQuery });
+  const nQ = { query: newQuery };
+  if (props.changeQueryParams) {
+    router.push(nQ);
+  }
+
+  emit('query-changed', nQ)
 };
 
 // Pagination control methods
@@ -115,7 +123,6 @@ const buttons = computed(() => [
 ]);
 
 </script>
-
 
 <template>
   <ul v-if="showPagination" :class="`flex items-center space-x-1 rtl:space-x-reverse m-auto ${alignmentClasses}`">

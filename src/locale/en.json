@@ -72,6 +72,7 @@
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",
+      "loading": "Loading",
       "notes": "Notes",
       "currency": "Currency",
       "date": "Date",
@@ -87,7 +88,11 @@
       "yes": "Yes",
       "no": "No",
       "language": "Language",
+      "seconds": "seconds",
       "home": "Home"
+    },
+    "validations": {
+      "quantity": "Please enter a valid quantity"
     },
     "placeholders": {
       "currency": "Enter currency",
@@ -430,16 +435,23 @@
       }
     },
     "products": {
+      "addVariations": {
+        "dragAndDrop": "Use drag and drop or ➕ button to add new products",
+        "noVariationsLeft": "No products to add left"
+      },
       "tabs": {
         "content": "Content",
         "variations": "Variations",
         "bundleItems": "Bundle Items",
+        "bom": "Bill of Materials",
         "media": "Media",
         "price": "Price",
+        "prices": "Prices",
         "priceLists": "Price Lists",
         "inventory": "Inventory",
         "supplierProducts": "Supplier Products",
         "saleOrders": "Sale Orders",
+        "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
@@ -455,15 +467,21 @@
           "choices": {
             "umbrella": "Configurable Product",
             "bundle": "Bundle Product",
-            "variation": "Simple product"
+            "variation": "Simple Product",
+            "dropship": "Dropship Product",
+            "manufacturable": "Manufacturable Product",
+            "supplier": "Supplier Product"
           }
         },
         "vatRate": "VAT Rate",
         "alwaysOnStock": "Always on Stock",
-        "sku": "SKU"
+        "sku": "SKU",
+        "productionTime": "Production Time",
+        "forSale": "For Sale"
       },
       "placeholders": {
-        "vatRate": "Add a vat rate"
+        "vatRate": "Add a vat rate",
+        "productionTime": "Enter time in seconds"
       },
       "create": {
         "title": "Create product",
@@ -502,8 +520,7 @@
             "content": "How much do you sell it for?",
             "simple": {
               "title": "Sale status",
-              "content": "Is it for sale or is it a bill of material?",
-              "forSale": "For Sale"
+              "content": "Is this item for Sale, or for internal use?"
             }
           },
           "stepFour": {
@@ -513,7 +530,9 @@
             },
             "simple": {
               "title": "Buying",
-              "selectVariations": "Where do you buy it?"
+              "whereBuy": "Where do you buy it?",
+              "add": "You bought this product before? Just add it.",
+              "create": "Please fill the form about the product you bought and intend to sell."
             },
             "bundle": {
               "title": "Items",
@@ -521,7 +540,7 @@
             },
             "manufacturable": {
               "title": "Bills Of Materials",
-              "selectVariations": "Please add the used bills of materilas for the product"
+              "selectVariations": "Please add the used bills of materials for the product"
             }
           }
         }
@@ -750,7 +769,7 @@
       }
     },
     "products": {
-      "title": "Products",
+      "title": "Supplier Products",
       "create": {
         "title": "Create Supplier Product"
       },

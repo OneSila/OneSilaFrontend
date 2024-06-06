@@ -7,6 +7,8 @@ import { companiesQuery } from "../../../shared/api/queries/contacts.js"
 import { deleteCompanyMutation } from "../../../shared/api/mutations/contacts.js";
 import { getCompanySubscription } from "../../../shared/api/subscriptions/contacts.js";
 import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
+import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
+import { currencyOnTheFlyConfig } from "../../settings/currencies/configs";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -73,6 +75,22 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
     },
+    {
+      type: FieldType.Query,
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      removable: true,
+      optional: true,
+      formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t)
+    },
   ],
 });
 
@@ -100,7 +118,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     label: t('contacts.companies.labels.supplier'),
     name: 'isSupplier',
     showLabel: true
-
   },
   {
     type: FieldType.Boolean,
@@ -133,6 +150,13 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     basePath: '/images/flags',
     suffix: '.svg'
   },
+  {
+    name: 'currency',
+    type: FieldType.NestedText,
+    label: t('shared.labels.currency'),
+    keys: ['isoCode'],
+    showLabel: true
+    },
   ]
 
 });

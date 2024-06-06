@@ -9,9 +9,16 @@ export const productSubscription = gql`
       type
       proxyId
       name
+      productionTime
+      forSale
+      thumbnailUrl
       vatRate {
         id
         rate
+        name
+      }
+      baseProduct {
+        id
         name
       }
       alwaysOnStock

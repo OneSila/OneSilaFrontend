@@ -8,13 +8,8 @@ export const supplierProductsQuery = gql`
           id
           sku
           name
-          unitPrice
-          unit {
-            id
-            name
-          }
-          quantity
-          product {
+          proxyId
+          baseProduct {
             id
             sku
             name
@@ -49,7 +44,7 @@ export const getSupplierProductQuery = gql`
         name
       }
       quantity
-      product {
+      baseProduct {
         id
         sku
         name
@@ -75,11 +70,6 @@ export const purchaseOrdersQuery = gql`
             name
           }
           orderReference
-          currency {
-            id
-            symbol
-            isoCode
-          }
           invoiceAddress {
             id
             address1
@@ -113,11 +103,6 @@ export const getPurchaseOrderQuery = gql`
         name
       }
       orderReference
-      currency {
-        id
-        symbol
-        isoCode
-      }
       invoiceAddress {
         id
         address1
@@ -148,6 +133,7 @@ export const purchaseOrderItemsQuery = gql`
           }
           item {
             id
+            proxyId
             name
           }
           quantity
@@ -184,4 +170,52 @@ export const getPurchaseOrderItemQuery = gql`
   }
 `;
 
+export const getSupplierPriceQuery = gql`
+  query getSupplierPrice($id: GlobalID!) {
+    supplierPrice(id: $id) {
+      id
+      unitPrice
+      quantity
+      supplierProduct {
+        id
+        sku
+        name
+      }
+      unit {
+        id
+        name
+      }
+    }
+  }
+`;
 
+export const supplierPricesQuery = gql`
+  query SupplierPrices($first: Int, $last: Int, $after: String, $before: String, $order: SupplierPricesOrder, $filter: SupplierPricesFilter) {
+    supplierPrices(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          unitPrice
+          quantity
+          supplierProduct {
+            id
+            sku
+            name
+          }
+          unit {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;

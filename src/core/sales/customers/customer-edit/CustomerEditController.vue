@@ -7,7 +7,7 @@ import { GeneralForm } from "../../../../shared/components/organisms/general-for
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../shared/utils/constants";
 import { updateCompanyMutation } from "../../../../shared/api/mutations/contacts.js";
-import { getCustomerQuery } from "../../../../shared/api/queries/contacts.js";
+import { getCompanyQuery } from "../../../../shared/api/queries/contacts.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
@@ -28,9 +28,9 @@ const baseForm = baseFormConfigConstructor(
 const formConfig = {
   ...baseForm,
   mutationId: id.value.toString(),
-  query: getCustomerQuery,
+  query: getCompanyQuery,
   queryVariables: { id: id.value },
-  queryDataKey: 'customer',
+  queryDataKey: 'company',
   fields: [
     {
       type: FieldType.Hidden,

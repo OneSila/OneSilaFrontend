@@ -303,3 +303,114 @@ export const getBundleVariationQuery = gql`
     }
   }
 `;
+
+export const manufacturableProductsQuery = gql`
+  query ManufacturableProducts($first: Int, $last: Int, $after: String, $before: String, $order: ManufacturableProductOrder, $filter: ManufacturableProductFilter) {
+    manufacturableProducts(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          productionTime
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getManufacturableProductQuery = gql`
+  query GetManufacturableProduct($id: GlobalID!) {
+    manufacturableProduct(id: $id) {
+      id
+      name
+      productionTime
+    }
+  }
+`;
+
+export const dropshipProductsQuery = gql`
+  query DropshipProducts($first: Int, $last: Int, $after: String, $before: String, $order: DropshipProductOrder, $filter: DropshipProductFilter) {
+    dropshipProducts(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          active
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getDropshipProductQuery = gql`
+  query GetDropshipProduct($id: GlobalID!) {
+    dropshipProduct(id: $id) {
+      id
+      name
+      active
+    }
+  }
+`;
+
+export const billOfMaterialsQuery = gql`
+  query BillOfMaterials($first: Int, $last: Int, $after: String, $before: String, $order: BillOfMaterialOrder, $filter: BillOfMaterialFilter) {
+    billOfMaterials(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            name
+          }
+          quantity
+          umbrella {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getBillOfMaterialQuery = gql`
+  query GetBillOfMaterial($id: GlobalID!) {
+    billOfMaterial(id: $id) {
+      id
+      variation {
+        id
+        name
+      }
+      quantity
+      umbrella {
+        id
+        name
+      }
+    }
+  }
+`;
+

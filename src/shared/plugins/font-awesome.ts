@@ -125,6 +125,7 @@ import {
   faEllipsisVertical,
   faDownload,
   faClipboard,
+  faQuestion,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -249,6 +250,7 @@ library.add(faPlay as IconDefinition);
 library.add(faEllipsisVertical as IconDefinition);
 library.add(faDownload as IconDefinition);
 library.add(faClipboard as IconDefinition);
+library.add(faQuestion as IconDefinition);
 
 export default {
   install(app) {

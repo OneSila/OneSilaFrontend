@@ -78,12 +78,36 @@ const handleSubmitAndContinueDoneCreate = (response) => {
     let query = redirectUrl.query || {};
     let params = redirectUrl.params || {};
     let allParamsAvailable = true;
+
+    const hasMapping = Boolean(props.config.redirectIdentifiers && Object.keys(props.config.redirectIdentifiers).length);
+    let mappingLookup = {};
+
+    if (hasMapping) {
+      if (props.config.redirectIdentifiers) {
+        props.config.redirectIdentifiers.forEach(identifier => {
+        const key = Object.keys(identifier)[0];
+        mappingLookup[key] = identifier[key];
+      });
+    }
+    }
+
+
     for (let param of urlParamMatches) {
       const paramName = param.substring(1);
 
         if (params[paramName] === undefined) {
             if (response.data[props.config.mutationKey][paramName] !== undefined) {
+
+              if (hasMapping) {
+                  const mappedParamName = mappingLookup[paramName] || paramName;
+                  if (response.data[props.config.mutationKey][mappedParamName] !== undefined) {
+                    params[paramName] = response.data[props.config.mutationKey][mappedParamName];
+                  }
+              } else {
                 params[paramName] = response.data[props.config.mutationKey][paramName];
+              }
+
+
             } else {
                 allParamsAvailable = false;
                 break;

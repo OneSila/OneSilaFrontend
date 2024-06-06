@@ -260,7 +260,7 @@ const getFields = (t, supplierId): ShowField[] => {
   return commonFields;
 }
 
-const getUrlQueryParams = (supplierId: string | null = null, source: string|null = null) => {
+const getUrlQueryParams = (supplierId: string | null = null, productId: string | null = null, source: string|null = null) => {
   const params: Record<string, string> = {};
 
   if (supplierId) {
@@ -270,10 +270,15 @@ const getUrlQueryParams = (supplierId: string | null = null, source: string|null
     }
   }
 
+  if (productId) {
+    params.productId = productId;
+    params.tab = 'items';
+  }
+
   return Object.keys(params).length > 0 ? params : undefined;
 }
 
-export const listingConfigConstructor = (t: Function, supplierId: string | null = null, source: string|null = null): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, supplierId: string | null = null, source: string|null = null, productId: string|null = null): ListingConfig => ({
   headers: getHeaders(t, supplierId),
   fields: getFields(t, supplierId),
   identifierKey: 'id',
@@ -282,13 +287,13 @@ export const listingConfigConstructor = (t: Function, supplierId: string | null 
   addShow: true,
   editUrlName: 'purchasing.orders.edit',
   showUrlName: 'purchasing.orders.show',
-  urlQueryParams: getUrlQueryParams(supplierId, source),
+  urlQueryParams: getUrlQueryParams(supplierId, productId, source),
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePurchaseOrderMutation,
 });
 
-const getBackUrl = (supplierId: string | null = null, source: string|null = null) => {
+const getBackUrl = (supplierId: string | null = null,  productId: string | null = null, source: string|null = null) => {
   if (supplierId) {
     if (source === 'company') {
       return { name: 'contacts.companies.show', params: { id: supplierId }, query: { tab: 'purchaseOrders' } };
@@ -297,16 +302,20 @@ const getBackUrl = (supplierId: string | null = null, source: string|null = null
     }
   }
 
+  if (productId) {
+    return { name: 'products.products.show', params: { id: productId }, query: {tab: 'purchaseOrders'} }
+  }
+
   return { name: 'purchasing.orders.list' };
 };
 
-export const showConfigConstructor = (t: Function, id, supplierId: string|null = null, source: string|null = null): ShowConfig => ({
+export const showConfigConstructor = (t: Function, id, supplierId: string|null = null, source: string|null = null, productId: string|null = null): ShowConfig => ({
   cols: 1,
   subscription: purchaseOrderSubscription,
   subscriptionKey: 'purchaseOrder',
   subscriptionVariables: {pk: id},
   addBack: true,
-  backUrl: getBackUrl(supplierId, source),
+  backUrl: getBackUrl(supplierId, productId, source),
   addEdit: true,
   editUrl: {name: 'purchasing.orders.edit', params: {id: id} },
   addDelete: true,

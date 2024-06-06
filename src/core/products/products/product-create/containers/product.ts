@@ -3,38 +3,43 @@ export interface FormType {
   sku: string;
   name: string;
   forSale: boolean;
-  productionTime: string;
+  productionTime: number | null;
   vatRate: {
-    id: string;
+    id: string | null;
   }
 }
 
-export interface RelatedProducts {
+export interface RelatedProduct {
   id: string;
+  name: string;
+  type: string;
+  active: boolean;
+  quantity?: string;
 }
 
 export interface SupplierProduct {
+  id?: string;
   sku: string;
   name: string;
-  quantity: string;
-  unit_price: string;
+  quantity: number | null;
+  unitPrice: number | null;
   supplier: {
-    id: string;
+    id: string | null;
   },
   unit: {
-    id: string;
+    id: string | null;
   },
 }
 
 export interface Price {
-  amount: string;
-  discountAmount: string;
+  amount: number | null;
+  discountAmount: number | null;
   currency: {
-    id: string;
+    id: string | null;
   },
 }
 export interface AdditonalFormFields {
   price: Price;
-  relatedProducts: RelatedProducts[];
+  relatedProducts: RelatedProduct[];
   supplierProduct: SupplierProduct;
 }

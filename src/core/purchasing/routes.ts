@@ -6,7 +6,6 @@ export const routes = [
 
   { path: '/purchasing/products', name: 'purchasing.products.list', component: () => import('./products/products-list/ProductsListController.vue') },
   { path: '/purchasing/products/create', name: 'purchasing.product.create', component: () => import('./products/product-create/ProductCreateController.vue') },
-  { path: '/purchasing/products/edit/:id', name: 'purchasing.product.edit', component: () => import('./products/product-edit/ProductEditController.vue') },
 
   { path: '/purchasing/orders', name: 'purchasing.orders.list', component: () => import('./orders/orders-list/OrdersListController.vue') },
   { path: '/purchasing/orders/create', name: 'purchasing.orders.create', component: () => import('./orders/order-create/OrderCreateController.vue') },

@@ -34,7 +34,7 @@ const listingConfig = listingConfigConstructor(t, null, props.product.id);
         :config="listingConfig"
         :query="listingQuery"
         :query-key="listingQueryKey"
-        :fixed-filter-variables="{'product': {'id': {'exact': product.id}}}"
+        :fixed-filter-variables="{'baseProduct': {'id': {'exact': product.id}}}"
       />
     </template>
   </TabContentTemplate>

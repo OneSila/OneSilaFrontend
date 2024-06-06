@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, ref} from 'vue';
+import {reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField,
@@ -22,6 +22,8 @@ import {SecondaryButton} from "../../../../../../../shared/components/atoms/butt
 import apolloClient from "../../../../../../../../apollo-client";
 import {updateProductMutation} from "../../../../../../../shared/api/mutations/products.js";
 import {useRouter} from "vue-router";
+import { ProductType } from "../../../../../../../shared/utils/constants";
+import { getProductField } from "../../../../../../purchasing/products/configs";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -30,8 +32,13 @@ const form = reactive({
   id: props.product.id,
   sku: props.product.sku,
   active: props.product.active,
+  forSale: props.product.forSale,
+  productionTime: props.product.productionTime,
   vatRate: {
-    id: props.product.vatRate.id
+    id: props.product.vatRate?.id
+  },
+  baseProduct: {
+    id: props.product.baseProduct?.id
   },
   alwaysOnStock: props.product.alwaysOnStock,
 });
@@ -39,50 +46,76 @@ const form = reactive({
 const router = useRouter();
 
 const fields = {
-    'sku':   {
-      type: FieldType.Text,
-      name: 'sku',
-      label: t('shared.labels.sku'),
-      placeholder: t('shared.placeholders.sku'),
-    },
-    'active': {
-      type: FieldType.Checkbox,
-      name: 'active',
-      label: t('shared.labels.active'),
-      default: false,
-      uncheckedValue: "false"
-    },
-    'vatRate': {
-      type: FieldType.Query,
-      name: 'vatRate',
-      label: t('products.products.labels.vatRate'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: vatRatesQuery,
-      dataKey: 'vatRates',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      createOnFlyConfig: vatRateOnTheFlyConfig(t)
-    },
-    'alwaysOnStock': {
-      type: FieldType.Checkbox,
-      name: 'alwaysOnStock',
-      label: t('products.products.labels.alwaysOnStock'),
-      default: false,
-      uncheckedValue: "false"
-    }
-}
+  baseProduct:  props.product.type === ProductType.Supplier ? getProductField(null, t) : null,
+  sku: {
+    type: FieldType.Text,
+    name: 'sku',
+    label: t('shared.labels.sku'),
+    placeholder: t('shared.placeholders.sku'),
+  },
+  active: {
+    type: FieldType.Checkbox,
+    name: 'active',
+    label: t('shared.labels.active'),
+    default: form.active,
+    uncheckedValue: "false"
+  },
+  vatRate: props.product.type !== ProductType.Umbrella ? {
+    type: FieldType.Query,
+    name: 'vatRate',
+    label: t('products.products.labels.vatRate'),
+    labelBy: 'name',
+    valueBy: 'id',
+    query: vatRatesQuery,
+    dataKey: 'vatRates',
+    isEdge: true,
+    multiple: false,
+    filterable: true,
+    formMapIdentifier: 'id',
+    createOnFlyConfig: vatRateOnTheFlyConfig(t)
+  } : null,
+  alwaysOnStock: props.product.type === ProductType.Simple ? {
+    type: FieldType.Checkbox,
+    name: 'alwaysOnStock',
+    label: t('products.products.labels.alwaysOnStock'),
+    default: false,
+    uncheckedValue: "false"
+  } : null,
+  forSale: [ProductType.Simple, ProductType.Dropship, ProductType.Bundle, ProductType.Manufacturable].includes(props.product.type) ? {
+    type: FieldType.Checkbox,
+    name: 'forSale',
+    label: t('products.products.labels.forSale'),
+    default: false,
+    uncheckedValue: "false"
+  } : null,
+  productionTime: props.product.type === ProductType.Manufacturable ? {
+    type: FieldType.Text,
+    name: 'productionTime',
+    label: t('products.products.labels.productionTime'),
+    placeholder: t('shared.placeholders.productionTime'),
+    number: true
+  } : null,
+};
 
 const getCleanData = (data) => {
-  return {
+  let cleanedData =  {
     id: data.id,
     sku: data.sku,
     active: data.active,
-    vatRate: data.vatRate,
     alwaysOnStock: data.alwaysOnStock,
+    productionTime: data.productionTime,
+    forSale: data.forSale,
   };
+
+  if (data.vatRate?.id) {
+    cleanedData['vatRate'] = data.vatRate;
+  }
+
+  if (data.baseProduct?.id) {
+    cleanedData['baseProduct'] = data.baseProduct;
+  }
+
+  return cleanedData;
 };
 
 const handleSubmit = async (overrideData = {}) => {
@@ -99,8 +132,16 @@ const handleSubmit = async (overrideData = {}) => {
     if (data && data.updateProduct) {
       form.sku = data.updateProduct.sku
       form.active = data.updateProduct.active
-      form.vatRate.id = data.updateProduct.vatRate.id
       form.alwaysOnStock = data.updateProduct.alwaysOnStock
+
+      if (data.updateProduct.vatRate && data.updateProduct.vatRate.id) {
+        form.vatRate.id = data.updateProduct.vatRate.id
+      }
+
+      if (data.updateProduct.baseProduct && data.updateProduct.baseProduct.id) {
+        form.baseProduct.id = data.updateProduct.baseProduct.id
+      }
+
       Toast.success(t('products.products.edit.updateSuccefully'));
     }
   } catch (error) {
@@ -113,6 +154,12 @@ const handleSubmitAndRedirect = async () => {
   router.push({ name: 'products.products.list' });
 };
 
+const clickOnBaseProduct = async () => {
+  if (form.baseProduct.id) {
+    router.push({ name: 'products.products.show', params: {id: form.baseProduct.id} });
+  }
+};
+
 const refreshSku = async () => {
   await handleSubmit({ sku: '' });
 };
@@ -122,6 +169,21 @@ const refreshSku = async () => {
 <template>
   <div class="py-2">
     <div class="max-w-4xl">
+
+      <div class="col-span-full mt-3" v-if="product.type === ProductType.Supplier">
+        <label v-if="fields.baseProduct" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['baseProduct'].label }}</label>
+        <Flex>
+          <FlexCell grow>
+            <FieldQuery :field="fields['baseProduct'] as QueryFormField" :model-value="form.baseProduct.id" @update:modelValue="form.baseProduct.id = $event"/>
+          </FlexCell>
+          <FlexCell>
+            <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" @click="clickOnBaseProduct">
+              <Icon name="eye" />
+            </Button>
+          </FlexCell>
+        </Flex>
+      </div>
+
       <div class="col-span-full">
         <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['sku'].label }}</label>
         <Flex>
@@ -135,10 +197,20 @@ const refreshSku = async () => {
           </FlexCell>
         </Flex>
       </div>
-      <div class="col-span-full mt-3">
-        <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['vatRate'].label }}</label>
+
+
+      <!-- Production Time (Only for Manufacture) -->
+      <div class="col-span-full mt-3" v-if="product.type === ProductType.Manufacturable">
+        <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ t('products.products.labels.productionTime') }}</label>
+        <FieldValue :field="fields['productionTime'] as ValueFormField" :model-value="form.productionTime" @update:modelValue="form.productionTime = $event" />
+      </div>
+
+      <!-- Conditionally Rendered VAT Rate Field -->
+      <div class="col-span-full mt-3" v-if="product.type !== ProductType.Umbrella && product.type !== ProductType.Supplier">
+        <label v-if="fields.vatRate" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['vatRate'].label }}</label>
         <FieldQuery :field="fields['vatRate'] as QueryFormField" :model-value="form.vatRate.id" @update:modelValue="form.vatRate.id = $event"/>
       </div>
+
       <div class="col-span-full mt-3">
         <Flex>
           <FlexCell>
@@ -151,10 +223,24 @@ const refreshSku = async () => {
           </FlexCell>
         </Flex>
       </div>
-      <div class="col-span-full mt-3">
+
+      <!-- For Sale Checkbox (For certain types) -->
+      <div class="col-span-full mt-3" v-if="[ProductType.Simple, ProductType.Dropship, ProductType.Bundle, ProductType.Manufacturable].includes(product.type)">
         <Flex>
           <FlexCell>
-            <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['alwaysOnStock'].label }}</label>
+            <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ t('products.products.labels.forSale') }}</label>
+          </FlexCell>
+          <FlexCell class="ml-2">
+            <FieldCheckbox :field="fields['forSale'] as CheckboxFormField" :model-value="form.forSale" @update:modelValue="form.forSale = $event"/>
+          </FlexCell>
+        </Flex>
+      </div>
+
+      <!-- Always On Stock (Only for Simple) -->
+      <div class="col-span-full mt-3" v-if="product.type === ProductType.Simple">
+        <Flex>
+          <FlexCell>
+            <label v-if="fields.alwaysOnStock" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['alwaysOnStock'].label }}</label>
           </FlexCell>
           <FlexCell>
             <div class="ml-2">
@@ -163,6 +249,7 @@ const refreshSku = async () => {
           </FlexCell>
         </Flex>
       </div>
+
     </div>
     <div class="mt-4">
       <PrimaryButton @click="handleSubmitAndRedirect">

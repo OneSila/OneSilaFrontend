@@ -4,19 +4,16 @@ export const createSupplierProductMutation = gql`
   mutation createSupplierProduct($data: SupplierProductInput!) {
     createSupplierProduct(data: $data) {
       id
+      proxyId
       sku
       name
       unitPrice
-      currency {
-        id
-        symbol
-      }
       unit {
         id
         name
       }
       quantity
-      product {
+      baseProduct {
         id
         sku
       }
@@ -34,16 +31,12 @@ export const createSupplierProductsMutation = gql`
       id
       sku
       name
-      currency {
-        id
-        symbol
-      }
       unit {
         id
         name
       }
       quantity
-      product {
+      baseProduct {
         id
         sku
       }
@@ -59,19 +52,16 @@ export const updateSupplierProductMutation = gql`
   mutation updateSupplierProduct($data: SupplierProductPartialInput!) {
     updateSupplierProduct(data: $data) {
       id
+      proxyId
       sku
       name
       unitPrice
-      currency {
-        id
-        name
-      }
       unit {
         id
         name
       }
       quantity
-      product {
+      baseProduct {
         id
         sku
       }
@@ -111,10 +101,6 @@ export const createPurchaseOrderMutation = gql`
         name
       }
       orderReference
-      currency {
-        id
-        symbol
-      }
       invoiceAddress {
         id
         address1
@@ -138,10 +124,6 @@ export const createPurchaseOrdersMutation = gql`
         name
       }
       orderReference
-      currency {
-        id
-        symbol
-      }
       invoiceAddress {
         id
         address1
@@ -165,10 +147,6 @@ export const updatePurchaseOrderMutation = gql`
         name
       }
       orderReference
-      currency {
-        id
-        symbol
-      }
       invoiceAddress {
         id
         address1
@@ -262,6 +240,70 @@ export const deletePurchaseOrderItemMutation = gql`
 export const deletePurchaseOrderItemsMutation = gql`
   mutation deletePurchaseOrderItems($ids: [GlobalID!]!) {
     deletePurchaseOrderItems(data: {ids: $ids}) {
+      id
+    }
+  }
+`;
+
+export const createSupplierPriceMutation = gql`
+  mutation createSupplierPrice($data: SupplierPricesInput!) {
+    createSupplierPrice(data: $data) {
+      id
+      unitPrice
+      quantity
+      supplierProduct {
+        id
+        sku
+        name
+        baseProduct {
+          id
+          sku
+          name
+        }
+        supplier {
+          id
+          name
+        }
+      }
+      unit {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const updateSupplierPriceMutation = gql`
+  mutation updateSupplierPrice($data: SupplierPricesPartialInput!) {
+    updateSupplierPrice(data: $data) {
+      id
+      unitPrice
+      quantity
+      supplierProduct {
+        id
+        sku
+        name
+        baseProduct {
+          id
+          sku
+          name
+        }
+        supplier {
+          id
+          name
+        }
+      }
+      unit {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const deleteSupplierPriceMutation = gql`
+  mutation deleteSupplierPrice($id: GlobalID!) {
+    deleteSupplierPrice(data: {id: $id}) {
       id
     }
   }

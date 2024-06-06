@@ -5,10 +5,15 @@ import {Product} from "../../../../configs";
 import {useI18n} from "vue-i18n";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import {SearchConfig} from "../../../../../../../shared/components/organisms/general-search/searchConfig";
-import {bundleVariationsQuery, umbrellaVariationsQuery} from "../../../../../../../shared/api/queries/products.js";
-import {PRODUCT_BUNDLE} from "../../../../../../../shared/utils/constants";
+import {billOfMaterialsQuery, bundleVariationsQuery, umbrellaVariationsQuery} from "../../../../../../../shared/api/queries/products.js";
+import {PRODUCT_BUNDLE, ProductType} from "../../../../../../../shared/utils/constants";
 import VariationsList from "./containers/variations-list/VariationsList.vue";
 import VariationCreate from "./containers/variation-create/VariationCreate.vue";
+import {
+  createBillsOfMaterialMutation,
+  createBundleVariationsMutation,
+  createUmbrellaVariationsMutation
+} from "../../../../../../../shared/api/mutations/products";
 
 const { t } = useI18n();
 
@@ -35,6 +40,32 @@ const getIds = (newIds) => {
   ids.value = newIds;
 };
 
+const getQuery = () => {
+  switch(props.product.type) {
+    case ProductType.Bundle:
+      return bundleVariationsQuery;
+    case ProductType.Umbrella:
+      return umbrellaVariationsQuery;
+    case ProductType.Manufacturable:
+      return billOfMaterialsQuery;
+    default:
+      return null;
+  }
+};
+
+const getQueryKey = () => {
+  switch(props.product.type) {
+    case ProductType.Bundle:
+      return 'bundleVariations';
+    case ProductType.Umbrella:
+      return 'umbrellaVariations';
+    case ProductType.Manufacturable:
+      return 'billOfMaterials';
+    default:
+      return null;
+  }
+};
+
 </script>
 
 <template>
@@ -42,8 +73,8 @@ const getIds = (newIds) => {
 
     <template v-slot:content>
       <VariationsList :product="product"
-                      :query-key="product.type === PRODUCT_BUNDLE ? 'bundleVariations' : 'umbrellaVariations'"
-                      :list-query="product.type === PRODUCT_BUNDLE ? bundleVariationsQuery : umbrellaVariationsQuery"
+                      :query-key="getQueryKey()"
+                      :list-query="getQuery()"
                       :search-config="searchConfig"
                       :refetch-needed="refetchNeeded"
                       @refetched="handleRefeched"

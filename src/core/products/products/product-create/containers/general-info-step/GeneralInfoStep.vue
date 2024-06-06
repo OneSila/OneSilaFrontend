@@ -7,10 +7,6 @@ import {PrimaryButton} from "../../../../../../shared/components/atoms/button-pr
 import {ProductType} from "../../../../../../shared/utils/constants";
 import {Label} from "../../../../../../shared/components/atoms/label";
 
-interface Props {
-  form: FormType;
-}
-
 const props = defineProps<{form: FormType}>();
 const emit = defineEmits(['trigger-next-step']);
 const { t } = useI18n();
@@ -51,7 +47,19 @@ const { t } = useI18n();
           </FlexCell>
         </Flex>
       </FlexCell>
-
+      <FlexCell v-if="form.type === ProductType.Manufacturable" class="py-8 px-96"><hr></FlexCell>
+      <FlexCell v-if="form.type === ProductType.Manufacturable">
+        <Flex center class="mt-4 gap-4">
+          <FlexCell center>
+            <Label class="font-semibold block text-sm leading-6 text-gray-900">
+              {{ t('products.products.labels.productionTime') }} ({{ t('shared.labels.seconds') }})
+            </Label>
+          </FlexCell>
+          <FlexCell center>
+            <TextInput v-model="form.productionTime" :placeholder="t('products.products.placeholders.productionTime')" />
+          </FlexCell>
+        </Flex>
+      </FlexCell>
     </Flex>
   </div>
 </template>

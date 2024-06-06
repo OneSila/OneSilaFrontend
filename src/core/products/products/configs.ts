@@ -21,12 +21,18 @@ export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.variation'), code: ProductType.Simple },
+  { name: t('products.products.labels.type.choices.dropship'), code: ProductType.Dropship },
+  { name: t('products.products.labels.type.choices.manufacturable'), code: ProductType.Manufacturable },
+  { name: t('products.products.labels.type.choices.supplier'), code: ProductType.Supplier },
 ];
 
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Umbrella]: { text: t('products.products.labels.type.choices.umbrella'), color: 'blue' },
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
+  [ProductType.Dropship]: { text: t('products.products.labels.type.choices.dropship'), color: 'primary' },
+  [ProductType.Manufacturable]: { text: t('products.products.labels.type.choices.manufacturable'), color: 'indigo' },
+  [ProductType.Supplier]: { text: t('products.products.labels.type.choices.supplier'), color: 'purple' },
 });
 
 const getTypeField = (type, t): FormField | null => {
@@ -74,7 +80,7 @@ const getFields = (type, t): FormField[] => {
       type: FieldType.Checkbox,
       name: 'active',
       label: t('shared.labels.active'),
-      default: false,
+      default: true,
       uncheckedValue: "false"
     },
     {
@@ -147,7 +153,14 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       filterable: false,
       addLookup: true,
       options: getProductTypeOptions(t)
-    }
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'forSale',
+      default: true,
+      label: t('products.products.labels.forSale')
+    },
   ],
   orders: []
 });
@@ -195,7 +208,13 @@ export interface Product {
   proxyId?: string;
   sku: string;
   active: boolean;
+  forSale: boolean;
   type: string;
-  vatRate: VatRate;
+  vatRate?: VatRate;
   alwaysOnStock: boolean;
+  productionTime?: number;
+  baseProduct?: {
+    id: string;
+    name: string;
+  }
 }

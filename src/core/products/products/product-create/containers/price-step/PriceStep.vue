@@ -20,7 +20,6 @@ const getDefaultCurrency = async () => {
     variables: {filter: {isDefaultCurrency: true}},
   });
 
-  console.log(data.currencies.edges[0])
   currency.value = data.currencies.edges[0].node.symbol
   emit('set-default-currency', data.currencies.edges[0].node.id)
 }

@@ -7,6 +7,7 @@ import { Link } from "../../../../../../../shared/components/atoms/link";
 import { GeneralListing } from "../../../../../../../shared/components/organisms/general-listing";
 import {useI18n} from "vue-i18n";
 import TabContentTemplate from "../TabContentTemplate.vue";
+import { ProductType } from "../../../../../../../shared/utils/constants";
 
 const { t } = useI18n();
 
@@ -14,13 +15,17 @@ const props = defineProps<{ product: Product }>();
 
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, props.product.id);
+const listingConfig = listingConfigConstructor(t, props.product.id, props.product.type === ProductType.Supplier);
+
+const filters = props.product.type === ProductType.Supplier ?
+    {'product': {'id': {'exact': props.product.id}}} :
+    {'product': { 'baseProduct': {'id': {'exact': props.product.id}} }};
 
 </script>
 
 <template>
   <TabContentTemplate>
-    <template v-slot:buttons>
+    <template v-slot:buttons v-if="props.product.type === ProductType.Supplier">
       <Link :path="{ name: 'inventory.inventory.create', query: {productId: product.id} }">
         <Button type="button" class="btn btn-primary">
           {{ t('inventory.inventory.create.title') }}
@@ -34,7 +39,7 @@ const listingConfig = listingConfigConstructor(t, props.product.id);
         :config="listingConfig"
         :query="listingQuery"
         :query-key="listingQueryKey"
-        :fixed-filter-variables="{'product': {'id': {'exact': product.id}}}"
+        :fixed-filter-variables="filters"
       />
     </template>
   </TabContentTemplate>

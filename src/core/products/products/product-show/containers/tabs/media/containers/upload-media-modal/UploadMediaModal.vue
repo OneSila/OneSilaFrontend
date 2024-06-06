@@ -55,7 +55,6 @@ const handleMediaAssign = async (media) => {
   closeModal();
 };
 
-
 </script>
 
 <template>
@@ -68,6 +67,7 @@ const handleMediaAssign = async (media) => {
            :default-view-type="defaultView"
            :label="t('media.media.labels.files')"
            :ids="ids"
+           :assign-images="true"
            @assign-media="handleMediaAssign"
           />
       </div>

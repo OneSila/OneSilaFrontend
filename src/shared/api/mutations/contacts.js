@@ -8,6 +8,10 @@ mutation createCompany($data: CompanyInput!) {
     phone
     email
     language
+    currency {
+      id
+      isoCode
+    }
   }
 }
 `;
@@ -20,6 +24,10 @@ mutation updateCompany($data: CompanyPartialInput!) {
     phone
     email
     language
+    currency {
+      id
+      isoCode
+    }
   }
 }
 `;

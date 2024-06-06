@@ -13,6 +13,10 @@ subscription getCompany ($id: String!) {
     isCustomer
     isInternalCompany
     isInfluencer
+    currency {
+      id
+      isoCode
+    }
   }
 }`;
 

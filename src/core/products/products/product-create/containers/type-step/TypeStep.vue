@@ -12,7 +12,7 @@ import {ProductType} from "../../../../../../shared/utils/constants";
 import {FormType} from "../product";
 
 const props = defineProps<{form: FormType}>();
-const emit = defineEmits(['for-sale-changed']);
+const emit = defineEmits(['for-sale-changed', 'empty-variations']);
 
 const typeChoice = [
   { name: ProductType.Simple },
@@ -23,7 +23,8 @@ const typeChoice = [
 ];
 
 // when we select the type we always make for sale true in case we go back
-emit('for-sale-changed', true);
+emit('for-sale-changed', true, false);
+emit('empty-variations');
 
 const { t } = useI18n();
 
