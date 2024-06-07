@@ -593,6 +593,9 @@
     },
     "inventory": {
       "title": "Inventories",
+      "labels": {
+        "movements": "Inventory Movements"
+      },
       "create": {
         "title": "Create Inventory"
       },
@@ -688,7 +691,8 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
-      "updatedSuccefully": "The price was succefully updated!",
+      "updatedError": "Price for currency {currency} is empty. Please adjust it!",
+      "updatedSuccefully": "The price for currency {currency} was succefully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"

@@ -30,4 +30,9 @@ export const routes = [
     name: 'inventory.inventory.edit',
     component: () => import('./inventory/inventory-edit/InventoryEditController.vue')
   },
+  {
+    path: '/inventory/inventory/show/:id',
+    name: 'inventory.inventory.show',
+    component: () => import('./inventory/inventory-show/InventoryShowController.vue')
+  },
 ];
