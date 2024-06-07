@@ -230,7 +230,6 @@ onMounted(fetchData);
           <tr>
             <th>{{ t('shared.labels.name') }}</th>
             <th>{{ t('shared.labels.active') }}</th>
-            <th>{{ t('shared.labels.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -241,15 +240,19 @@ onMounted(fetchData);
               @dragstart="dragStart(variation.id)"
               @dragend="dragEnd"
           >
-            <td>{{ variation.name }}</td>
+            <td>
+              <Flex>
+                <FlexCell center>
+                    <Icon name="plus" class="text-primary cursor-pointer mb-1"  @click="handleAddVariation(variation)" :disabled="loading" />
+                </FlexCell>
+                <FlexCell center>
+                  <label class="text-md ml-2">{{ variation.name }}</label>
+                </FlexCell>
+              </Flex>
+            </td>
             <td>
               <Icon v-if="variation.active" name="check-circle" class="ml-2 text-green-500" />
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
-            </td>
-            <td>
-              <Button class="btn btn-sm btn-primary" @click="handleAddVariation(variation)" :disabled="loading">
-                <Icon name="plus" />
-              </Button>
             </td>
           </tr>
         </tbody>
@@ -266,7 +269,6 @@ onMounted(fetchData);
           <th>{{ t('shared.labels.name') }}</th>
           <th>{{ t('shared.labels.active') }}</th>
           <th v-if="hasQty()">{{ t('shared.labels.quantity') }}</th>
-          <th class="!text-end">{{ t('shared.labels.actions')}}</th>
           </tr>
         </thead>
         <tbody>
@@ -277,21 +279,21 @@ onMounted(fetchData);
               @dragstart="dragStart(item.id)"
               @dragend="dragEnd"
           >
-            <td>{{ item.name }}</td>
+            <td>
+              <Flex>
+                <FlexCell center>
+                    <Icon name="trash" class="text-danger cursor-pointer mb-1" @click="handleRemoveVariation(item.id)" :disabled="loading" />
+                </FlexCell>
+                <FlexCell center>
+                  <label class="text-md ml-2">{{ item.name }}</label>
+                </FlexCell>
+              </Flex>
+            </td>
             <td>
               <Icon v-if="item.active" name="check-circle" class="ml-2 text-green-500" />
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td v-if="hasQty()">{{ item.quantity }}</td>
-            <td>
-              <Flex end>
-                <FlexCell>
-                  <Button class="btn btn-sm btn-outline-danger" @click="handleRemoveVariation(item.id)" :disabled="loading">
-                    <Icon name="trash" />
-                  </Button>
-                </FlexCell>
-              </Flex>
-            </td>
           </tr>
         </tbody>
       </table>

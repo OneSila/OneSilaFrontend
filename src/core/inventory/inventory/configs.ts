@@ -93,8 +93,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 const getHeaders = (t, productId, isSupplierProduct) => {
   const nameLabel = isSupplierProduct ? t('shared.labels.name') : t('purchasing.products.show.title');
   return productId && isSupplierProduct
-    ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')]
-    : [nameLabel, t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')];
+    ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity'), t('purchasing.orders.labels.supplier')]
+    : [nameLabel, t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity'), t('purchasing.orders.labels.supplier')];
 }
 const getFields = (productId, isSupplierProduct): ShowField[] => {
   const commonFields: ShowField[] = [];
@@ -121,18 +121,27 @@ const getFields = (productId, isSupplierProduct): ShowField[] => {
       type: FieldType.Text,
     })
 
+   commonFields.push({
+      name: 'product',
+      type: FieldType.NestedText,
+      keys: ['supplier', 'name'],
+      clickable: true,
+      clickIdentifiers: [{id: ['supplier', 'id']}],
+      clickUrl: { name: 'purchasing.suppliers.show', query: {tab: 'inventory'}},
+    });
+
   return commonFields;
 }
 export const listingConfigConstructor = (t: Function, productId: string | null = null, isSupplierProduct: boolean = true): ListingConfig => ({
   headers: getHeaders(t, productId, isSupplierProduct),
   fields: getFields(productId, isSupplierProduct),
   identifierKey: 'id',
-  addActions: true,
+  addActions: isSupplierProduct,
   addEdit: isSupplierProduct,
   editUrlName: 'inventory.inventory.edit',
   urlQueryParams: productId && isSupplierProduct ? { "productId": productId } : undefined,
   addShow: false,
-  addDelete: true,
+  addDelete: isSupplierProduct,
   addPagination: true,
   deleteMutation: deleteInventoryMutation,
 });

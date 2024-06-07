@@ -190,11 +190,6 @@ const refreshSku = async () => {
           <FlexCell grow>
             <FieldValue :field="fields['sku'] as ValueFormField" :model-value="form.sku" @update:modelValue="form.sku = $event" />
           </FlexCell>
-          <FlexCell>
-            <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" @click="refreshSku">
-              <Icon name="arrows-rotate" />
-            </Button>
-          </FlexCell>
         </Flex>
       </div>
 

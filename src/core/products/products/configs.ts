@@ -18,11 +18,11 @@ export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   }
 })
 export const getProductTypeOptions = (t) => [
-  { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
-  { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.variation'), code: ProductType.Simple },
+  { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.dropship'), code: ProductType.Dropship },
   { name: t('products.products.labels.type.choices.manufacturable'), code: ProductType.Manufacturable },
+  { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
   { name: t('products.products.labels.type.choices.supplier'), code: ProductType.Supplier },
 ];
 
@@ -31,7 +31,7 @@ export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
   [ProductType.Dropship]: { text: t('products.products.labels.type.choices.dropship'), color: 'primary' },
-  [ProductType.Manufacturable]: { text: t('products.products.labels.type.choices.manufacturable'), color: 'indigo' },
+  [ProductType.Manufacturable]: { text: t('products.products.labels.type.choices.manufacturable'), color: 'red' },
   [ProductType.Supplier]: { text: t('products.products.labels.type.choices.supplier'), color: 'purple' },
 });
 
@@ -158,7 +158,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       type: FieldType.Boolean,
       strict: true,
       name: 'forSale',
-      default: true,
       label: t('products.products.labels.forSale')
     },
   ],

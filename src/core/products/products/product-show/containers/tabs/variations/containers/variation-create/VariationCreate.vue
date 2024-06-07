@@ -66,7 +66,7 @@ const getVariables = () => {
     variation: { id: form.value.variation }
   }
 
- if (props.product.type !== PRODUCT_BUNDLE) {
+ if (props.product.type !== ProductType.Umbrella) {
    variables['quantity'] = form.value.quantity;
  }
 
