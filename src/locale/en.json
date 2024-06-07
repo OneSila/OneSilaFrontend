@@ -490,23 +490,23 @@
           "stepOne": {
             "content": "Select what product are you trying to create?",
             "variable": {
-              "title": "Something to sell and/or to buy",
-              "example": "Eg: A black pen"
+              "title": "Simple",
+              "example": "Eg: A black pen that you buy and or sell."
             },
             "bundle": {
-              "title": "A bundle of various existing items.",
+              "title": "Bundle",
               "example": "Eg: A notebook and pen sold together."
             },
             "configurable": {
-              "title": "A configuration of products.",
+              "title": "Configurable",
               "example": "Eg: Let customers pick between a red or blue pen."
             },
             "manufacturable": {
-              "title": "A product that you make.",
+              "title": "Manufacturable",
               "example": "Eg: A mug and sticker bought separately, assembled and sold together."
             },
             "dropship": {
-              "title": "A product fulfilled directly by the supplier.",
+              "title": "Dropshipping",
               "example": "Eg: Furniture shipped directly from the manufacturer to the customer."
             }
           },
