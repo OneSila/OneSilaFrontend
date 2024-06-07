@@ -63,6 +63,8 @@
       "uploadNew": "Upload New"
     },
     "labels": {
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
       "status": "Status",
       "role": "Role",
       "or": "Or",

@@ -247,6 +247,16 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   ],
   orders: [
     {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.DESC
+    },
+    {
       name: 'status',
       label: t('sales.orders.labels.status.title'),
       type: OrderType.ASC
@@ -265,7 +275,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       name: 'reference',
       label: t('sales.orders.labels.reference'),
       type: OrderType.DESC
-    }
+    },
   ]
 });
 
