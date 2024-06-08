@@ -57,13 +57,11 @@ function isValidPrice(price) {
 
   // Check if price is 0 or less
   if (amount <= 0) {
-    alert('2')
     return false;
   }
 
   // Check if discount amount is 0
   if (discountAmount <= 0) {
-    alert('3')
     return false;
   }
 
