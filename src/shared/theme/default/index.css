@@ -370,7 +370,14 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     .form-textarea,
     .form-select,
     .form-multiselect {
-        @apply w-full rounded-md border border-[#e0e6ed] bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
+        @apply w-full rounded-md border border-[--vs-border-color] bg-white px-4 py-2 text-sm text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder,
+    .form-select::placeholder,
+    .form-multiselect::placeholder {
+        @apply font-normal text-gray-400;
     }
 
     .form-input-lg,
@@ -754,3 +761,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     white-space: nowrap;
     overflow: hidden;
 }
+
+/*.swal2-container {*/
+/*  top: 3rem !important;*/
+/*}*/

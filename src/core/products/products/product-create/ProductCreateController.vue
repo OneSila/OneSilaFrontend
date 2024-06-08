@@ -292,6 +292,10 @@ const allowNextStep = computed(() => {
     return false;
   }
 
+    if (step.value === 1 && form.productionTime === null && form.type === ProductType.Manufacturable) {
+    return false;
+  }
+
   if (form.type === ProductType.Simple) {
     if (form.forSale) {
       return !(step.value === 3 && hasMissingVat());

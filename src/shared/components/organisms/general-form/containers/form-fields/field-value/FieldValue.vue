@@ -16,6 +16,9 @@ const updateValue = (event) => {
     const parsedValue = parseInt(newValue, 10);
     newValue = isNaN(parsedValue) ? parseFloat(newValue) : parsedValue;
   }
+  if (props.field.float) {
+    newValue = parseFloat(newValue);
+  }
 
   emit('update:modelValue', newValue);
 };
@@ -34,6 +37,7 @@ const updateValue = (event) => {
       :disabled="field.disabled"
       :secret="field.secret"
       :number="field.number"
+      :float="field.float"
       :maxNumber="field.maxNumber"
       :minNumber="field.minNumber"
       :allow-autocomplete="field.allowAutocomplete"

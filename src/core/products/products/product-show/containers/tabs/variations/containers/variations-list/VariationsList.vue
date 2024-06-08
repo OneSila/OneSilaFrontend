@@ -71,6 +71,7 @@ const getDeleteMutation = () => {
                   <th>{{ t('shared.labels.name') }}</th>
                   <th>{{ t('shared.labels.active') }}</th>
                   <th v-if="product.type != ProductType.Umbrella">{{ t('shared.labels.quantity') }}</th>
+                  <th v-if="product.type == ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
                   <th class="!text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
@@ -87,6 +88,12 @@ const getDeleteMutation = () => {
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
                   <td v-if="product.type != ProductType.Umbrella">{{ item.node.quantity }}</td>
+                  <td v-if="product.type == ProductType.Manufacturable">
+                    <span v-if="item.node.variation.productionTime">
+                      {{ item.node.variation.productionTime }}
+                    </span>
+                    <span v-else>-</span>
+                  </td>
                   <td>
                     <div class="flex gap-4 items-center justify-end">
                       <ApolloAlertMutation

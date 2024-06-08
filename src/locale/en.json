@@ -91,6 +91,7 @@
       "no": "No",
       "language": "Language",
       "seconds": "seconds",
+      "minutes": "minutes",
       "home": "Home"
     },
     "validations": {
@@ -486,7 +487,7 @@
         "productionTime": "Enter time in seconds"
       },
       "create": {
-        "title": "Create product",
+        "title": "Create Product",
         "createSuccefully": "Product was succefully created!",
         "wizard": {
           "stepOne": {
@@ -534,7 +535,7 @@
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
               "add": "You bought this product before? Just add it.",
-              "create": "Please fill the form about the product you bought and intend to sell."
+              "create": "Please fill the form about the product you bought and intend to sell. You can leave it empty and add leter."
             },
             "bundle": {
               "title": "Items",
@@ -792,6 +793,11 @@
       },
       "placeholders": {
         "unitPrice": "Enter unit price"
+      },
+      "alert": {
+        "prices": {
+          "succefullyUpdated": "Succefully updated the prices!"
+        }
       }
     },
     "orders": {
@@ -983,6 +989,9 @@
       },
       "edit": {
         "title": "Edit Vat Rate"
+      },
+      "show": {
+        "title": "Vat Rate"
       },
       "labels": {
         "name": "Name",

@@ -8,6 +8,7 @@ const props = defineProps<{
   gutter?: string;
   verticalGutter?: string;
   horizontalGutter?: string;
+  target?: string;
   selectable?: boolean;
 }>();
 
@@ -61,6 +62,7 @@ const onClicked = (event, navigationCallback) => {
     >
       <a
         :href="href"
+        :target="target"
         class="hover:text-gray-600"
         :draggable="!selectable"
         @click.stop="(event) => onClicked(event, navigate)"
