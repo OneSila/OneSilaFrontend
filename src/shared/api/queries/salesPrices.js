@@ -14,6 +14,8 @@ export const salesPricesQuery = gql`
             id
             symbol
             isoCode
+            isDefaultCurrency
+            followOfficialRate
           }
           amount
           discountAmount

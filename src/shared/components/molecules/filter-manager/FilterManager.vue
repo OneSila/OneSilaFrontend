@@ -124,6 +124,10 @@ watch(() => route.query, (newQuery) => {
     }
   }
 
+  if (props.searchConfig.orders && props.searchConfig.orders.length > 0 && props.searchConfig.orderKey && !newQuery[props.searchConfig.orderKey]) {
+    orderVariables.value = {};
+  }
+
   // now let's deal with pagination
   const beforeValue = typeof newQuery.before === 'string' ? newQuery.before : null;
   const afterValue = typeof newQuery.after === 'string' ? newQuery.after : null;

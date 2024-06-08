@@ -98,6 +98,8 @@ export const baseFormConfigConstructor = (
   submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, productId),
   deleteMutation: deleteSupplierProductMutation,
   fields: [
+      getSupplierField(supplierId, t),
+      getProductField(productId, t),
     {
       type: FieldType.Text,
       name: 'name',
@@ -117,8 +119,13 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.quantity'),
       number: true,
     },
-      getProductField(productId, t),
-      getSupplierField(supplierId, t),
+    {
+      type: FieldType.Text,
+      name: 'unitPrice',
+      label: t('purchasing.products.labels.unitPrice'),
+      placeholder: t('purchasing.products.placeholders.unitPrice'),
+      float: true,
+    },
     {
       type: FieldType.Query,
       name: 'unit',
@@ -132,13 +139,6 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-    },
-    {
-      type: FieldType.Text,
-      name: 'unitPrice',
-      label: t('purchasing.products.labels.unitPrice'),
-      placeholder: t('purchasing.products.placeholders.unitPrice'),
-      number: true,
     },
     {
       type: FieldType.Checkbox,

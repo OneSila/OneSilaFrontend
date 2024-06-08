@@ -123,7 +123,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     showLabel: true
     },
   ]
-
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({

@@ -63,6 +63,8 @@
       "uploadNew": "Upload New"
     },
     "labels": {
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
       "status": "Status",
       "role": "Role",
       "or": "Or",
@@ -89,6 +91,7 @@
       "no": "No",
       "language": "Language",
       "seconds": "seconds",
+      "minutes": "minutes",
       "home": "Home"
     },
     "validations": {
@@ -484,7 +487,7 @@
         "productionTime": "Enter time in seconds"
       },
       "create": {
-        "title": "Create product",
+        "title": "Create Product",
         "createSuccefully": "Product was succefully created!",
         "wizard": {
           "stepOne": {
@@ -532,7 +535,7 @@
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
               "add": "You bought this product before? Just add it.",
-              "create": "Please fill the form about the product you bought and intend to sell."
+              "create": "Please fill the form about the product you bought and intend to sell. You can leave it empty and add leter."
             },
             "bundle": {
               "title": "Items",
@@ -593,6 +596,9 @@
     },
     "inventory": {
       "title": "Inventories",
+      "labels": {
+        "movements": "Inventory Movements"
+      },
       "create": {
         "title": "Create Inventory"
       },
@@ -688,7 +694,8 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
-      "updatedSuccefully": "The price was succefully updated!",
+      "updatedError": "Price for currency {currency} is empty. Please adjust it!",
+      "updatedSuccefully": "The price for currency {currency} was succefully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"
@@ -786,6 +793,11 @@
       },
       "placeholders": {
         "unitPrice": "Enter unit price"
+      },
+      "alert": {
+        "prices": {
+          "succefullyUpdated": "Succefully updated the prices!"
+        }
       }
     },
     "orders": {
@@ -977,6 +989,9 @@
       },
       "edit": {
         "title": "Edit Vat Rate"
+      },
+      "show": {
+        "title": "Vat Rate"
       },
       "labels": {
         "name": "Name",

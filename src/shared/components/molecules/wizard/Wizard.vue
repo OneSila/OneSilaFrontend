@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { CancelButton } from "../../atoms/button-cancel";
 import { PrimaryButton } from "../../atoms/button-primary";
 import { Card } from "../../atoms/card";
+import { useEnterKeyboardListener } from "../../../modules/keyboard";
 
 interface Step {
   title: string;
@@ -33,6 +34,9 @@ const goToStep = (stepIndex) => {
   }
 };
 const nextStep = () => {
+  if (!props.allowNextStep) {
+    return;
+  }
   const stepIndex = currentStep.value + 1;
   goToStep(stepIndex);
   emit(stepIndex === props.steps.length ? 'onFinish' : 'onNextStep');
@@ -70,6 +74,8 @@ defineExpose({
   nextStep,
   goToStep
 });
+
+useEnterKeyboardListener(nextStep);
 
 </script>
 

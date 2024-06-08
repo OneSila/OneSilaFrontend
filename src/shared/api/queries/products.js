@@ -11,6 +11,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           active
           type
           proxyId
+          productionTime
           vatRate {
             id
             name
@@ -377,6 +378,7 @@ export const billOfMaterialsQuery = gql`
           variation {
             id
             name
+            productionTime
           }
           quantity
           umbrella {

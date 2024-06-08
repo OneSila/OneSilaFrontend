@@ -48,6 +48,11 @@ const handleInput = (event) => {
   if (props.number) {
     value = props.float ? parseFloat(value) : parseInt(value, 10);
   }
+
+  if (props.float) {
+    value = parseFloat(value);
+  }
+
   emit('update:modelValue', value);
 };
 
@@ -58,7 +63,7 @@ const handleInput = (event) => {
   <input
     ref="input"
     class="text-input focus:outline-none focus:border-sky-500 focus:ring-sky-500 block rounded-md px-3 py-2 text-sm placeholder:italic focus:ring-1"
-    :type="secret ? 'password' : (number || float) ? 'text' : 'text'"
+    :type="secret ? 'password' : (number || float) ? 'number' : 'text'"
     :step="float ? 'any' : (number ? '1' : undefined)"
     :min="number && minNumber ? minNumber : undefined"
     :max="number && maxNumber ? maxNumber : undefined"

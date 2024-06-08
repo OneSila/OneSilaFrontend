@@ -15,6 +15,7 @@ export interface RelatedProduct {
   type: string;
   active: boolean;
   quantity?: string;
+  productionTime?: number | null;
 }
 
 export interface SupplierProduct {

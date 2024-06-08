@@ -1,156 +1,148 @@
 <script setup lang="ts">
 
+import {onMounted, ref, Ref} from "vue";
 import { useI18n } from 'vue-i18n';
 import {Product} from "../../../../configs";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import apolloClient from "../../../../../../../../apollo-client";
-import {getSalesPriceByProductAndCurrencyQuery} from "../../../../../../../shared/api/queries/salesPrices.js";
-import {createSalesPriceMutation, updateSalesPriceMutation} from "../../../../../../../shared/api/mutations/salesPrices.js";
-import {Selector} from "../../../../../../../shared/components/atoms/selector";
+import { salesPricesQuery } from "../../../../../../../shared/api/queries/salesPrices.js";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
-import {reactive, watch, ref} from "vue";
-import {currenciesQuery} from "../../../../../../../shared/api/queries/currencies.js";
-import {Label} from "../../../../../../../shared/components/atoms/label";
+import { updateSalesPriceMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
 import {Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
+const loading = ref(false);
+interface Price {
+  id: string;
+  amount: string | number | null;
+  discountAmount: string | number | null;
+  currency: string;
+  readonly: boolean;
+}
+const prices: Ref<Price[]> = ref([]);
+const initialPrices: Ref<Price[]> = ref([]);
 
-const initialForm = ref({
-  amount: null,
-  discountAmount: null,
-});
+const loadPrices = async () => {
+  loading.value = true;
 
-const form = reactive({ ...initialForm.value });
-const currentCurrency = ref(null);
-const oldCurrency = ref(null);
-const mutation = ref(null);
-const salesPriceId = ref(null);
-
-const cleanedData = (rawData) => {
-  if (rawData?.edges) {
-    const data = rawData.edges.map(edge => edge.node);
-    data.forEach(currency => {
-      if (currency.isDefaultCurrency) {
-        if (currentCurrency.value === null) {
-          currentCurrency.value = currency.id;
-        }
-      }
-    });
-    return data;
-  }
-  return rawData;
-};
-
-const setFormAndMutation = async (newCurrency) => {
-
-  const {data} = await apolloClient.query({
-    query: getSalesPriceByProductAndCurrencyQuery,
-    variables: {currencyId: newCurrency, productId: props.product.id},
+  const { data } = await apolloClient.query({
+    query: salesPricesQuery,
+    variables: { filter: { product: {id: {exact: props.product.id }} }},
     fetchPolicy: 'network-only'
   });
 
-  if (data.salesPrices.edges.length === 1) {
-    const salesPrice = data.salesPrices.edges[0].node;
-    form.amount = salesPrice.amount;
-    form.discountAmount = salesPrice.discountAmount;
-    salesPriceId.value = salesPrice.id;
-    mutation.value = updateSalesPriceMutation;
-  } else {
-    form.amount = null;
-    form.discountAmount = null;
-    salesPriceId.value = null;
-    mutation.value = createSalesPriceMutation;
-  }
-  initialForm.value = {...form};
-};
+  console.log(data.salesPrices)
+  prices.value = data.salesPrices.edges.map(edge => ({
+    id: edge.node.id,
+    amount: edge.node.amount,
+    discountAmount: edge.node.discountAmount,
+    currency: edge.node.currency.isoCode,
+    readonly: !edge.node.currency.isDefaultCurrency && !edge.node.currency.followOfficialRate,
+  }));
+  initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
-const handleCurrencySelection = async (newCurrency) => {
-  if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
-    const confirmChange = confirm(t('sales.prices.confirmCurrencyChange'));
-    if (!confirmChange) {
-      currentCurrency.value = oldCurrency.value;
-      return;
+  loading.value = false;
+}
+
+function isValidPrice(price) {
+  const amount = parseFloat(price.amount);
+  const discountAmount = parseFloat(price.discountAmount);
+
+
+  if (isNaN(amount)) {
+    return false;
+  }
+
+  // Check if price is 0 or less
+  if (amount <= 0) {
+    return false;
+  }
+
+  // Check if discount amount is 0
+  if (discountAmount <= 0) {
+    return false;
+  }
+
+  // Check if the discount is greater than or equal to the price
+  if (discountAmount >= amount) {
+    return false;
+  }
+
+  // If all checks pass, the price is valid
+  return true;
+}
+
+const savePrices = async () => {
+  loading.value = true;
+
+  try {
+    for (const price of prices.value) {
+
+      if (!isValidPrice(price)) {
+        Toast.error(t('sales.prices.updatedError', {currency: price.currency}));
+        continue
+      }
+
+      const originalPrice = initialPrices.value.find(p => p.id === price.id);
+      if (JSON.stringify(price) !== JSON.stringify(originalPrice)) {
+        const priceData = {
+            id: price.id,
+            amount: price.amount,
+            discountAmount: price.discountAmount == '' ? null : price.discountAmount
+        }
+        const { data } = await apolloClient.mutate({
+          mutation: updateSalesPriceMutation,
+          variables: { data: priceData }
+        });
+
+        console.log(data)
+        if (data) {
+            Toast.success(t('sales.prices.updatedSuccefully', {currency: price.currency}));
+        }
+      }
     }
+
+  } finally {
+    await loadPrices();
+    loading.value = false;
   }
+}
 
-  oldCurrency.value = newCurrency;
-  await setFormAndMutation(newCurrency);
-};
-
-
-
-watch(currentCurrency, async (newCurrency, oldCurrencyValue) => {
-  if (oldCurrencyValue === null) {
-    await setFormAndMutation(newCurrency);
-    oldCurrency.value = newCurrency;
-  }
-});
-
-
-const getVariables = () => {
-  const variables = {
-    ...form,
-    product: { id: props.product.id },
-    currency: { id: currentCurrency.value }
-  };
-
-  if (salesPriceId.value) {
-    variables['id'] = salesPriceId.value;
-  }
-
-  return {data: variables};
-};
-
-const onMutationCompleted = () => {
-  Toast.success(t('sales.prices.updatedSuccefully'));
-  initialForm.value = { ...form };
-};
+onMounted(loadPrices);
 
 </script>
 
 <template>
   <TabContentTemplate>
     <template v-slot:buttons>
-      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
-        <template v-slot="{ mutate, loading, error }">
-          <Button :customClass="'btn btn-primary mr-2'"
-                  :disabled="loading"
-                  @click="mutate">
-            {{ t('shared.button.save') }}
-          </Button>
-        </template>
-      </ApolloMutation>
-      <ApolloQuery :query="currenciesQuery">
-        <template v-slot="{ result: { data } }">
-            <Selector v-if="data"
-                      @update:modelValue="handleCurrencySelection"
-                      v-model="currentCurrency"
-                      :options="cleanedData(data.currencies)"
-                      labelBy="isoCode"
-                      valueBy="id"
-                      mandatory
-                      :removable="false"
-                      :placeholder="t('shared.placeholders.currency')"
-                      filterable
-                      class="min-w-[100px]" />
-        </template>
-        </ApolloQuery>
+      <Button :customClass="'btn btn-primary mr-2'" @click="savePrices">
+        {{ t('shared.button.save') }}
+      </Button>
     </template>
 
     <template v-slot:content>
-      <Flex vertical>
-        <FlexCell>
-          <Label semi-bold>{{ t('sales.prices.labels.amount') }}</Label>
-          <TextInput v-model="form.amount" float :placeholder="t('sales.prices.placeholders.amount')" class="mt-2 mb-2 w-1/6" />
-        </FlexCell>
-        <FlexCell>
-          <Label semi-bold>{{ t('sales.prices.labels.discountAmount') }}</Label>
-          <TextInput v-model="form.discountAmount" float :placeholder="t('sales.prices.placeholders.discountAmount')" class="mt-2  w-1/6" />
-        </FlexCell>
-
-      </Flex>
+    <table class="table-striped table-hover">
+      <thead>
+        <tr>
+          <th>{{ t('sales.prices.labels.discountAmount') }}</th>
+          <th>{{ t('sales.prices.labels.discountAmount') }}</th>
+          <th>{{ t('shared.labels.currency') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(price, index) in prices" :key="index">
+          <td>
+            <TextInput v-model="price.amount" float :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
+          </td>
+          <td>
+            <TextInput v-model="price.discountAmount" float :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
+          </td>
+          <td>{{ price.currency }}</td>
+        </tr>
+      </tbody>
+    </table>
     </template>
   </TabContentTemplate>
 </template>

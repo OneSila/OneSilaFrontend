@@ -145,7 +145,6 @@ const onMutationCompleted = () => {
           <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
             {{ t('shared.button.save') }}
           </Button>
-          <p v-if="error">{{ error.message }}</p>
         </template>
       </ApolloMutation>
       </FlexCell>

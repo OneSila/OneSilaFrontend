@@ -14,6 +14,7 @@ import {FieldType} from "../../../../../../../shared/utils/constants";
 import {unitsQuery} from "../../../../../../../shared/api/queries/units.js";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
+import {Toast} from "../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -106,6 +107,7 @@ const savePrices = async () => {
         });
       }
     });
+    Toast.success(t('purchasing.products.alert.prices.succefullyUpdated'))
   } finally {
     await loadPrices();
     saving.value = false;
@@ -156,7 +158,7 @@ onMounted(loadPrices);
             <TextInput v-model="price.quantity" number :placeholder="t('shared.placeholders.quantity')" :disabled="saving" />
           </td>
           <td>
-            <TextInput v-model="price.unitPrice" number :placeholder="t('purchasing.products.placeholders.unitPrice')" :disabled="saving" />
+            <TextInput v-model="price.unitPrice" float :placeholder="t('purchasing.products.placeholders.unitPrice')" :disabled="saving" />
           </td>
           <td>
             <FieldQuery class="w-96" v-model="price.unit.id" :field="unitField as QueryFormField"  />
