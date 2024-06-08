@@ -16,8 +16,8 @@ const props = defineProps<{ product: Product }>();
 const loading = ref(false);
 interface Price {
   id: string;
-  amount: number | null;
-  discountAmount: number | null;
+  amount: string | number | null;
+  discountAmount: string | number | null;
   currency: string;
   readonly: boolean;
 }
@@ -47,7 +47,33 @@ const loadPrices = async () => {
 }
 
 function isValidPrice(price) {
-  return price.amount > 0;
+  const amount = parseFloat(price.amount);
+  const discountAmount = parseFloat(price.discountAmount);
+
+
+  if (isNaN(amount)) {
+    return false;
+  }
+
+  // Check if price is 0 or less
+  if (amount <= 0) {
+    alert('2')
+    return false;
+  }
+
+  // Check if discount amount is 0
+  if (discountAmount <= 0) {
+    alert('3')
+    return false;
+  }
+
+  // Check if the discount is greater than or equal to the price
+  if (discountAmount >= amount) {
+    return false;
+  }
+
+  // If all checks pass, the price is valid
+  return true;
 }
 
 const savePrices = async () => {
@@ -57,7 +83,7 @@ const savePrices = async () => {
     for (const price of prices.value) {
 
       if (!isValidPrice(price)) {
-        Toast.success(t('sales.prices.updatedError', {currency: price.currency}));
+        Toast.error(t('sales.prices.updatedError', {currency: price.currency}));
         continue
       }
 
@@ -66,13 +92,14 @@ const savePrices = async () => {
         const priceData = {
             id: price.id,
             amount: price.amount,
-            discountAmount: price.discountAmount
+            discountAmount: price.discountAmount == '' ? null : price.discountAmount
         }
         const { data } = await apolloClient.mutate({
           mutation: updateSalesPriceMutation,
           variables: { data: priceData }
         });
 
+        console.log(data)
         if (data) {
             Toast.success(t('sales.prices.updatedSuccefully', {currency: price.currency}));
         }
@@ -109,10 +136,10 @@ onMounted(loadPrices);
       <tbody>
         <tr v-for="(price, index) in prices" :key="index">
           <td>
-            <TextInput v-model="price.amount" number :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
+            <TextInput v-model="price.amount" float :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
           </td>
           <td>
-            <TextInput v-model="price.discountAmount" number :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
+            <TextInput v-model="price.discountAmount" float :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
           </td>
           <td>{{ price.currency }}</td>
         </tr>
