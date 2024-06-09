@@ -25,27 +25,20 @@ export const updateOrderMutation = gql`
       reference
       customer {
           id
-          ... on CustomerType {
-            name
-          }
+          name
+
         }
         invoiceAddress {
-          ... on InvoiceAddressType {
             id
             address1
-          }
         }
         shippingAddress {
-          ... on ShippingAddressType {
             id
             address1
-          }
         }
         currency {
           id
-          ... on CurrencyType {
-            symbol
-          }
+          symbol
         }
       priceInclVat
       status
@@ -102,6 +95,7 @@ export const updateOrderItemMutation = gql`
       product {
         id
         sku
+        name
       }
       quantity
       price
