@@ -136,6 +136,7 @@ export const getOrderItemQuery = gql`
       product {
         id
         sku
+        name
       }
       quantity
       price
