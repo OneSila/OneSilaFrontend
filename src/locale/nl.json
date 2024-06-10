@@ -1,12 +1,160 @@
 {
+  "dashboard": {
+    "labels": {
+      "totalOrders": "Totaal aantal Verkopen",
+      "recentOrders": "Recente Bestellingen",
+      "sales": "Verkopen"
+    },
+    "buttons": {
+      "addOrder": "Bestelling Toevoegen",
+      "addProduct": "Product Toevoegen",
+      "addInventory": "Stock Toevoegen"
+    }
+  },
+  "pagination": {
+    "first": "Eerste",
+    "prev": "Vorige",
+    "next": "Volgende",
+    "last": "Laatste",
+    "total": "Totaal van {num}"
+  },
   "shared": {
+    "validationErrors": {
+      "required": "Dit veld is verplicht."
+    },
+    "alert": {
+      "mutationAlert": {
+        "title": "Bent u zeker?",
+        "text": "Dit kan niet teruggedraaid worden!",
+        "confirmButtonText": "Ja, verwijderen!",
+        "cancelButtonText": "Neen, Annuleren!"
+      },
+      "toast": {
+        "generalError": "Er is een fout voorgekomen",
+        "submitSuccessCreate": "Succesvol toegevoegd!",
+        "submitSuccessUpdate": "Veranderingen succesvol opgeslagen!",
+        "deleteSuccess": "Succesvol verwijderd.",
+        "unexpectedResult": "Er kwam een fout voor. Probeer straks opnieuw.",
+        "protectedDelete": "Je kan dit item niet verwijderen omdat het ergens anders wordt gebruikt.",
+        "somethingWentWrong": "Er ging iets mis!",
+        "deletionFailed": "Verwijderen mislukt.  Neem contact op met Support.",
+        "clipboardSuccess": "Text succesvol gekopieerd"
+      }
+    },
     "button": {
       "login": "Inloggen",
       "register": "Registreren",
-      "recover": "Herstellen"
+      "recover": "Herstellen",
+      "update": "Update",
+      "invite": "Uitnodigen",
+      "search": "Zoeken",
+      "save": "Opslaan",
+      "back": "Terug",
+      "next": "Volgende",
+      "finish": "Afwerken",
+      "cancel": "Annulleren",
+      "saveAndContinue": "Opslaan & Verder werken",
+      "delete": "Delete",
+      "edit": "Bewerken",
+      "show": "Tonen",
+      "submit": "Verzenden",
+      "add": "Toevoegen",
+      "download": "Downloaden",
+      "uploadNew": "Nieuw Uploaden"
+    },
+    "labels": {
+      "createdAt": "Gecreëerd op",
+      "updatedAt": "Gewijzigd op",
+      "status": "Status",
+      "role": "Role",
+      "or": "Of",
+      "name": "Naam",
+      "active": "Actief",
+      "actions": "Acties",
+      "shortDescription": "Korte Omschrijving",
+      "quantity": "Hoeveelheid",
+      "uploading": "Uploading",
+      "loading": "Laden",
+      "notes": "Notities",
+      "currency": "Valuta's",
+      "date": "Datum",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "phone": "Telefoonnummer",
+      "description": "Beschrijving",
+      "product": "Product",
+      "unit": "Eenheid",
+      "sku": "SKU",
+      "price": "Prijs",
+      "yes": "Ja",
+      "no": "Neen",
+      "language": "Taal",
+      "seconds": "seconden",
+      "minutes": "minuten",
+      "home": "Home"
+    },
+    "validations": {
+      "quantity": "Voer een geldige hoeveelheid in"
+    },
+    "placeholders": {
+      "currency": "Kies Valuta",
+      "product": "Voer een product-naam in",
+      "quantity": "Voer een hoeveelheid in",
+      "name": "Voer een naam in",
+      "notes": "Voer notities in",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "Voer e-mail in",
+      "phone": "Voer telefoonnummer in",
+      "language": "Voer taal in",
+      "sku": "Voer sku in",
+      "price": "Voer prijs in",
+      "description": "Voer beschrijving in",
+      "role": "CEO",
+      "phoneInput": {
+        "countrySelector": {
+          "placeholder": "Landcode",
+          "error": "Kies het land",
+          "searchPlaceholder": "Zoek het land"
+        },
+        "phoneInput": {
+          "placeholder": "Telefoonnummer",
+          "example": "Voorbeeld:"
+        }
+      }
+    },
+    "tabs": {
+      "general": "Algemeen",
+      "items": "Artikelen"
+    },
+    "dropZone": {
+      "multipleDraggingInstruction": "Sleep de bestanden hierheen, of klik uploaden",
+      "singleDraggingInstruction": "Sleep het bestand hierheen, of klik uploaden",
+      "multipleInstruction": "U kan hier meerdere files uploaden",
+      "singleInstruction": "U kan één file uploaden",
+      "fileRejected": "Bestand geweigerd"
+    },
+    "components": {
+      "molecules": {
+        "selector": {
+          "defaultPlaceholder": "Selecteer een optie",
+          "typeToSearch": "Type om te zoeken",
+          "addEntry": "Nieuw item toevoegen"
+        },
+        "selectAllCheckbox": {
+          "label": "Selecteer alles"
+        }
+      }
     }
   },
   "auth": {
+    "acceptInvitation": {
+      "description": "Nog één stap.  Kies een wachtwoord en dan kunnen we starten!",
+      "button": {
+        "setPassword": "Kies een wachtwoord"
+      }
+    },
     "login": {
       "header": "Inloggen",
       "description": "Voer uw gebruikersnaam en wachtwoord in om in te loggen",
@@ -20,7 +168,8 @@
       },
       "recover": "Account herstellen",
       "registerPrompt": "Heb je geen account?",
-      "register": "REGISTREREN"
+      "register": "REGISTREREN",
+      "failed": "Login mislukt"
     },
     "register": {
       "header": "Registreren",
@@ -28,26 +177,858 @@
       "labels": {
         "companyName": "Bedrijfsnaam",
         "email": "E-mail",
-        "password": "Wachtwoord"
+        "password": "Wachtwoord",
+        "confirmPassword": "Bevestig Wachtwoord"
       },
       "placeholders": {
         "companyName": "Voer bedrijfsnaam in",
         "email": "Voer e-mail in",
-        "password": "Voer wachtwoord in"
+        "password": "Voer wachtwoord in",
+        "confirmPassword": "Voer uw wachtwoord opnieuw in"
       },
       "loginPrompt": "Heb je al een account?",
-      "login": "INLOGGEN"
+      "login": "INLOGGEN",
+      "company": {
+        "header": "Registreer",
+        "description": "Voer uw bedrijfsdetails in",
+        "languageDisclaimer": "De bedrijfstaal kan niet meer gewijzigd worden",
+        "labels": {
+          "companyName": "Bedrijfsnaam",
+          "phoneNumber": "Telefoonnummer",
+          "country": "Land",
+          "language": "Taal"
+        },
+        "placeholders": {
+          "companyName": "Voer bedrijfsnaam in",
+          "phoneNumber": "Voer telefoonnummer in",
+          "country": "Land",
+          "language": "Taal",
+          "selector": {
+            "country": "Selecteer land",
+            "language": "Selecteer taal"
+          }
+        },
+        "button": {
+          "createCompany": "Bedrijf aanmaken"
+        },
+        "members": {
+          "alert": {
+            "deleteMemberSuccess": "Gebruiker was succesvol verwijderd!",
+            "enableMemberSuccess": "Gebruiker succesvol opnieuw toegevoegd!"
+          },
+          "labels": {
+            "invitationAccepted": "Uitnodiging geaccepteerd"
+          }
+        }
+      }
     },
     "recover": {
       "header": "Account herstellen",
       "descriptionSent": "Een e-mail is verzonden naar het opgegeven e-mailadres. Controleer de e-mail voor verdere instructies.",
+      "descriptionCountdown": "De herstel-link zal verlopen in:",
       "description": "Voer uw e-mail in om uw account te herstellen",
+      "tokenHeader": "Account herstellen",
+      "tokenDescription": "Nog één stap te gaan.  Bevestig uw account herstelling.",
+      "tokenLoginFailed": "Authenticatie mislukt.",
+      "button": {
+        "recover": "Herstellen"
+      },
       "labels": {
         "email": "E-mail"
       },
       "placeholders": {
         "email": "Voer e-mail in"
+      },
+      "tokenFailed": "Account herstellen mislukt"
+    }
+  },
+  "profile": {
+    "dropdown": {
+      "profile": "Profiel",
+      "company": "Bedrijf",
+      "signOut": "Uitloggen"
+    },
+    "tabs": {
+      "general": "Algemeen",
+      "security": "Veiligheid"
+    },
+    "labels": {
+      "joined": "Aangesloten",
+      "phone": "Telefoonnummer",
+      "whatsApp": "WhatsApp",
+      "telegram": "Telegram",
+      "timezone": "Tijdzone",
+      "updateButton": "Update",
+      "editProfile": "Profiel bewerken",
+      "mobileNumber": "Mobiel nummer",
+      "whatsappNumber": "WhatsApp Number",
+      "telegramNumber": "Telegram Number",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "generalInformation": "Algemene Informatie",
+      "changePassword": "Wachtwoord wijzigen",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmNewPassword": "Nieuw wachtwoord bevestigen"
+    },
+    "placeholders": {
+      "mobileNumber": "Mobiel nummer invoegen",
+      "whatsappNumber": "Voer uw WhatsApp nummer in",
+      "telegramNumber": "Voer uw Telegram nummer in",
+      "firstName": "Voer uw voornaam in",
+      "lastName": "Voor uw achternaam in",
+      "newPassword": "Voer uw nieuw wachtwoord in",
+      "confirmNewPassword": "Bevestig uw nieuw wachtwoord"
+    },
+    "unsavedChanges": "U heeft niet opgeslagen wijzigingen.  Zeker dat u verder wilt gaan?",
+    "changesMade": "Er zijn veranderingen"
+  },
+  "companyProfile": {
+    "labels": {
+      "companyName": "Bedrijfsnaam",
+      "email": "E-mail",
+      "phoneNumber": "Telefoonnummer",
+      "address1": "Adreslijn 1",
+      "address2": "Adreslijn 2",
+      "postcode": "Postcode",
+      "city": "Stad",
+      "vatNumber": "BTW Nummer",
+      "website": "Website",
+      "updateButton": "Update bedrijf",
+      "editProfile": "Profiel bewerken",
+      "members": "Gebruikers"
+    },
+    "placeholders": {
+      "companyName": "Voer bedrijfsnaam in",
+      "email": "Voer e-mail in",
+      "phoneNumber": "Voer telefoonnummer in",
+      "address1": "Voer adreslijn 1 in",
+      "address2": "Voer adreslijn 2 in",
+      "postcode": "Voer postcode in",
+      "city": "Voer stad in",
+      "vatNumber": "Voer BTW Nummer in",
+      "website": "Voer website URL in"
+    },
+    "messages": {
+      "unsavedChanges": "U heeft niet opgeslagen wijzigingen.  Zeker dat u verder wilt gaan?",
+      "changesMade": "Er zijn veranderingen",
+      "joined": "Aangesloten"
+    }
+  },
+  "contacts": {
+    "title": "Contacten",
+    "companies": {
+      "title": "Bedrijven",
+      "create": {
+        "button": "Bedrijf toevoegen",
+        "title": "Bedrijf aanmaken"
+      },
+      "labels": {
+        "eori": "EORI Nummer",
+        "vat": "BTW Nummer",
+        "supplier": "Leverancier",
+        "customer": "Klant",
+        "influencer": "Influencer",
+        "internalCompany": "Intern bedrijf",
+        "relatedCompanies": "Gerelateerde bedrijven"
+      },
+      "edit": {
+        "title": "Contact bewerken"
+      },
+      "show": {
+        "title": "Contact tonen"
+      },
+      "address": {
+        "list": {
+          "title": "Adressen"
+        },
+        "create": {
+          "title": "Adres aanmaken"
+        },
+        "labels": {
+          "addressOne": "Adreslijn 1",
+          "addressTwo": "Adreslijn 2",
+          "addressThree": "Adreslijn 3",
+          "city": "Stad",
+          "postcode": "Postcode",
+          "addressType": "Adres type",
+          "invoiceAddress": "Factuuradres",
+          "shippingAddress": "Leveradres",
+          "contact": "Contact",
+          "address": "Adres",
+          "isInvoiceAddress": "Is Factuuradres",
+          "isShippingAddress": "Is Leveradres",
+          "country": "Land"
+        },
+        "placeholders": {
+          "addressOne": "Voer Adreslijn 1 in",
+          "addressTwo": "Voer Adreslijn 2 in (Optioneel)",
+          "addressThree": "Voer Adreslijn 3 in (Optioneel)",
+          "city": "Voer stad in",
+          "postcode": "Voer postcode in",
+          "country": "Selecteer land"
+        }
+      },
+      "placeholders": {
+        "eori": "Voer EORI Nummer in"
+      }
+    },
+    "people": {
+      "title": "Contacten",
+      "create": {
+        "title": "Contact aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk contact"
+      },
+      "labels": {
+        "customer": "Klant",
+        "company": "Bedrijf"
       }
     }
+  },
+  "products": {
+    "title": "Producten",
+    "hsCodes": {
+      "title": "HS Codes",
+      "create": {
+        "title": "HS Code aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk HS Code"
+      },
+      "show": {
+        "title": "HS Code"
+      },
+      "labels": {
+        "hsCode": "HS Code"
+      },
+      "placeholders": {
+        "hsCode": "Voer HS Code in"
+      }
+    },
+    "eanCodes": {
+      "title": "EAN Codes",
+      "create": {
+        "title": "EAN Code aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk EAN Code"
+      },
+      "labels": {
+        "eanCode": "EAN Code",
+        "isAssigned": "Toegewezen aan product?"
+      },
+      "placeholders": {
+        "eanCode": "Voer EAN Code in"
+      }
+    },
+    "translation": {
+      "confirmLanguageChange": "U heeft niet opgeslagen wijzigingen. Zeker dat u de taal wenst te wijzigen?  Niet opgeslagen wijzigingen zullen niet opgeslagen worden.",
+      "successfullyUpdated": "De product vertalingen zijn succesvol opgeslagen.",
+      "placeholders": {
+        "language": "Selecteer taal",
+        "name": "Voer een naam in",
+        "shortDescription": "Voer een Korte Omschrijving in",
+        "description": "Voer beschrijving in",
+        "urlKey": "Voer URL sleutel in"
+      },
+      "labels": {
+        "description": "Beschrijving",
+        "urlKey": "URL Sleutel"
+      }
+    },
+    "products": {
+      "addVariations": {
+        "dragAndDrop": "Versleep de items, of klik op ➕ om items toe te voegen",
+        "noVariationsLeft": "Er zijn geen producten meer om toe te voegen"
+      },
+      "tabs": {
+        "content": "Inhoud",
+        "variations": "Variaties",
+        "bundleItems": "Bundel items",
+        "bom": "Stuklijst",
+        "media": "Media",
+        "price": "Prijs",
+        "prices": "Prijzen",
+        "priceLists": "Prijslijsten",
+        "inventory": "Stock",
+        "supplierProducts": "Producten Leveranciers",
+        "saleOrders": "Verkopen",
+        "purchasingOrders": "Aankopen",
+        "properties": "Eigenschappen",
+        "hsCodes": "HS Codes",
+        "eanCodes": "EAN Codes"
+      },
+      "inspector": {
+        "labels": {
+          "missingInfo": "Ontbrekende Informatie"
+        }
+      },
+      "labels": {
+        "type": {
+          "title": "Type",
+          "choices": {
+            "umbrella": "Configureerbaar Product",
+            "bundle": "Bundel Product",
+            "variation": "Simpel Product",
+            "dropship": "Dropship Product",
+            "manufacturable": "Produceerbaar Product",
+            "supplier": "Leverancier Product"
+          }
+        },
+        "vatRate": "BTW Tarief",
+        "alwaysOnStock": "Altijd op stock",
+        "sku": "SKU",
+        "productionTime": "Productie tijd",
+        "forSale": "Verkoopbaar"
+      },
+      "placeholders": {
+        "vatRate": "Voeg BTW Tarief toe",
+        "productionTime": "Tijd in seconden"
+      },
+      "create": {
+        "title": "Product aanmaken",
+        "createSuccefully": "Product is succesvol aangemaakt!",
+        "wizard": {
+          "stepOne": {
+            "content": "Selecteer het product-type die u wenst aan te maken",
+            "variable": {
+              "title": "Simpel",
+              "example": "Bv. Een zwarte pen die u koopt en/of verkoopt."
+            },
+            "bundle": {
+              "title": "Bundel",
+              "example": "Bv. Een notitieboek en pen die samen verkocht worden."
+            },
+            "configurable": {
+              "title": "Configureerbaar",
+              "example": "Bv. Laat klanten kiezen tussen een rode of zwarte pen."
+            },
+            "manufacturable": {
+              "title": "Produceerbaar",
+              "example": "Bv. Een koffiekop en sticker die u apart koopt en assembleert."
+            },
+            "dropship": {
+              "title": "Dropshipping",
+              "example": "Bv.  Meubels die rechtstreek van de producent naar de klant verzonden worden."
+            }
+          },
+          "stepTwo": {
+            "title": "Algemene Info",
+            "content": "Wat is het product?",
+            "generate": "Genereren"
+          },
+          "stepThree": {
+            "title": "Prijzen",
+            "content": "Wat is de verkoop prijs?",
+            "simple": {
+              "title": "Verkoop status",
+              "content": "Is dit item te koop, of enkel voor intern gebruik?"
+            }
+          },
+          "stepFour": {
+            "configurable": {
+              "title": "Variaties",
+              "selectVariations": "Selecteer de variaties:"
+            },
+            "simple": {
+              "title": "Kopen",
+              "whereBuy": "Waar koopt u dit item?",
+              "add": "Dit product reeds gekocht?  Voeg het gewoon toe.",
+              "create": "Vul het formulier over het gekochte product in. Je kan het ook overslaan."
+            },
+            "bundle": {
+              "title": "Items",
+              "selectVariations": "Selecteer de bundel items:"
+            },
+            "manufacturable": {
+              "title": "Stuklijst",
+              "selectVariations": "Vul de stuklijst voor dit product aan"
+            }
+          }
+        }
+      },
+      "edit": {
+        "updateSuccefully": "Wijzigingen voor het product zijn opgeslagen"
+      },
+      "show": {
+        "title": "Product"
+      }
+    }
+  },
+  "inventory": {
+    "title": "Inventaris",
+    "inventoryLocation": {
+      "helpSection": {
+        "location": {
+          "header": "Locatie",
+          "content": "Dit is de fysieke locatie waar de stock ligt. Meer locaties kunt u toevoegen via de verzend-adressen in instellingen."
+        },
+        "name": {
+          "header": "Naam",
+          "content": "De naam van je locatie. Bijvoorbeeld: Rek A, Schap 3, Locatie: 12 zou u als A-3-12 kunnen gebruiken."
+        },
+        "description": {
+          "header": "Beschrijving",
+          "content": "Notities die u en uw team helpen begrijpen wat deze locatie betekend."
+        },
+        "precise": {
+          "header": "Precieze locatie",
+          "content": "Wil je geen stock mixen per locatie?  Enkel van 1 product?  Duid deze locatie aan als \"Precieze locatie\""
+        }
+      }
+    },
+    "inventoryLocations": {
+      "title": "Stock Locaties",
+      "create": {
+        "title": "Stock locatie aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk stock locatie"
+      },
+      "show": {
+        "title": "Stock Locatie"
+      },
+      "labels": {
+        "parent": "Locatie",
+        "precise": "Precieze locatie"
+      }
+    },
+    "inventory": {
+      "title": "Stock",
+      "labels": {
+        "movements": "Stock bewegingen"
+      },
+      "create": {
+        "title": "Stock aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk stock"
+      }
+    }
+  },
+  "sales": {
+    "title": "Verkopen",
+    "customers": {
+      "title": "Klanten",
+      "create": {
+        "title": "Klant aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk klant"
+      },
+      "show": {
+        "title": "Klant"
+      }
+    },
+    "orders": {
+      "title": "Verkopen",
+      "labels": {
+        "status": {
+          "title": "Status Verkoop",
+          "choices": {
+            "draft": "Concept",
+            "pending": "Wachtende",
+            "pendingInventory": "Wachtend Stock",
+            "toPick": "Te Picken",
+            "toShip": "Te Verzenden",
+            "done": "Afgewerkt",
+            "cancelled": "Geannuleerd",
+            "hold": "Vastgehouden",
+            "exchanged": "Omgewisseld",
+            "refunded": "Terugbetaald",
+            "lost": "Verloren",
+            "merged": "Samengevoegd",
+            "damaged": "Beschadigd",
+            "void": "Nietig verklaard"
+          }
+        },
+        "reasonForSale": {
+          "title": "Reden van verkoop",
+          "choices": {
+            "sale": "Verkoop",
+            "returnGoods": "Retour goederen",
+            "documents": "Documenten",
+            "sample": "Stalen",
+            "gift": "Cadeau"
+          }
+        },
+        "reference": "Referentie",
+        "invoiceAddress": "Factuuradres",
+        "shippingAddress": "Leveradres",
+        "priceInclVat": "Prijs incl BTW",
+        "customer": "Klant",
+        "totalValue": "Totale waarde",
+        "note": "Notities"
+      },
+      "create": {
+        "title": "Verkoop aanmaken"
+      },
+      "edit": {
+        "title": "Bewerk verkoop"
+      },
+      "show": {
+        "title": "Verkoop"
+      },
+      "items": {
+        "create": {
+          "title": "Creëer verkoopsitem"
+        },
+        "edit": {
+          "title": "Bewerk verkoopsitem"
+        }
+      },
+      "notes": {
+        "create": {
+          "title": "Notitie aanmaken"
+        },
+        "edit": {
+          "title": "Bewerk notitie"
+        }
+      },
+      "placeholders": {
+        "reference": "Voeg referentie in",
+        "priceInclVat": "Voer prijs incl BTW in",
+        "note": "Voeg notitie in"
+      }
+    },
+    "prices": {
+      "confirmCurrencyChange": "De veranderingen zullen verloren gaan. Zeker dat us de valuta op wilt slagen?",
+      "updatedError": "Prijs voor valuta {currency} is leeg.  Pas deze aan.",
+      "updatedSuccefully": "De prijs voor valuta {currency} was opgeslagen.",
+      "labels": {
+        "amount": "Prijs",
+        "discountAmount": "Kortingsprijs"
+      },
+      "placeholders": {
+        "amount": "Voeg prijs in",
+        "discountAmount": "Voeg kortingsprijs in"
+      }
+    },
+    "priceLists": {
+      "title": "Prijslijsten",
+      "helpSection": {
+        "name": {
+          "header": "Naam",
+          "content": "Naam voor prijslijst. Bv Groothandel Europa"
+        },
+        "discountAmount": {
+          "header": "Kortingspercentage",
+          "content": "Het percentage korting die u wilt toepassen op de prijslijst"
+        },
+        "currency": {
+          "header": "Valuta",
+          "content": "De valuta voor de prijslijst. Bv EUR"
+        },
+        "customers": {
+          "header": "Klanten",
+          "content": "Optioneel veld, als deze prijslijst voor specifieke klanten moet dienen"
+        },
+        "vatIncluded": {
+          "header": "Inclusief BTW",
+          "content": "Verkoopt us Incl BTW?  Dan wilt uw deze optie aanzetten.  Voor B2B klanten wilt u deze waarschijnlijk niet aanzetten."
+        },
+        "autoUpdate": {
+          "header": "Automatisch prijzen updaten",
+          "content": "Zet deze optie aan indien prijzen automatisch up-to-date moeten blijven met de valuta-wijzigingen."
+        }
+      },
+      "create": {
+        "title": "Creëer prijslijst"
+      },
+      "show": {
+        "title": "Prijslijst"
+      },
+      "items": {
+        "create": {
+          "title": "Nieuw item aanmaken"
+        },
+        "edit": {
+          "title": "Item bewerken"
+        }
+      },
+      "labels": {
+        "vatIncluded": "Inclusief BTW",
+        "autoUpdate": "Auto Update"
+      }
+    },
+    "tabs": {
+      "tabs": {
+        "general": {
+          "orders": "Verkopen",
+          "priceLists": "Prijslijsten"
+        }
+      }
+    }
+  },
+  "purchasing": {
+    "title": "Aankopen",
+    "suppliers": {
+      "title": "Leveranciers",
+      "create": {
+        "title": "Leverancier aanmaken"
+      },
+      "edit": {
+        "title": "Leverancier bewerken"
+      },
+      "show": {
+        "title": "Leverancier"
+      }
+    },
+    "products": {
+      "title": "Producten Leveranciers",
+      "create": {
+        "title": "Leveranciersproduct aanmaken"
+      },
+      "edit": {
+        "title": "Leveranciersproduct bewerken"
+      },
+      "show": {
+        "title": "Leveranciersproduct"
+      },
+      "labels": {
+        "unitPrice": "Eenheidsprijs",
+        "sku": "SKU",
+        "supplier": "Leverancier"
+      },
+      "placeholders": {
+        "unitPrice": "Voer eenheidsprijs in"
+      },
+      "alert": {
+        "prices": {
+          "succefullyUpdated": "Prijzen opgeslagen!"
+        }
+      }
+    },
+    "orders": {
+      "title": "Aankopen",
+      "create": {
+        "title": "Aankoop aanmaken"
+      },
+      "show": {
+        "title": "Aankoop"
+      },
+      "edit": {
+        "title": "Aankoop bewerken"
+      },
+      "items": {
+        "create": {
+          "title": "Item aanmaken"
+        },
+        "edit": {
+          "title": "Item bewerken"
+        }
+      },
+      "labels": {
+        "status": {
+          "choices": {
+            "draft": "Concept",
+            "ordered": "Besteld",
+            "confirmed": "Bevestigd",
+            "pendingDelivery": "Wachtende levering",
+            "delivered": "Geleverd"
+          }
+        },
+        "supplier": "Leverancier",
+        "orderReference": "Referentie",
+        "totalValue": "Totale waarde"
+      },
+      "placeholders": {
+        "orderReference": "Voer referentie in"
+      }
+    },
+    "companies": {
+      "address": {
+        "labels": {
+          "contact": "Contact"
+        }
+      }
+    }
+  },
+  "media": {
+    "title": "Media",
+    "media": {
+      "labels": {
+        "fileName": "Bestandsnaam",
+        "lastModified": "Laatst bewerkt",
+        "fileSize": "Bestandsgrootte",
+        "owner": "Eigenaar",
+        "files": "Bestanden",
+        "recentFiles": "Recente Bestanden",
+        "addExistingFiles": "Toevoegen van bestaande media"
+      }
+    },
+    "images": {
+      "title": "Afbeeldingen",
+      "upload": "Upload nieuwe afbeeldingen",
+      "create": {
+        "successfullyCreated": "Afbeeldingen opgeslagen!"
+      },
+      "delete": {
+        "successfullyDeleted": "Afbeelding verwijderd"
+      },
+      "show": {
+        "title": "Afbeelding",
+        "successfullyUpdated": "Afbeelding opgeslagen",
+        "updateFailed": "Afbeelding opslaan mislukt. Contacteer support."
+      },
+      "labels": {
+        "imageUrl": "URL Afbeelding",
+        "imageType": "Afbeeldingstype",
+        "packShot": "Packshot",
+        "moodShot": "Mood Shot",
+        "addImages": "Afbeeldingen toevoegen"
+      },
+      "placeholders": {
+        "imageType": "Afbeeldingstype"
+      }
+    },
+    "videos": {
+      "title": "Videos",
+      "upload": "Nieuwe Video",
+      "show": {
+        "title": "Video",
+        "unsupportedFormatError": "Dit video formaat is niet door uw browser ondersteund.",
+        "successfullyUpdated": "Video opgeslagen",
+        "updateFailed": "Video opslaan mislukt. Contacteer support."
+      },
+      "create": {
+        "successfullyCreated": "Video opgeslagen"
+      },
+      "delete": {
+        "successfullyDeleted": "Video verwijderd"
+      },
+      "labels": {
+        "videoUrl": "Video URL"
+      }
+    },
+    "documents": {
+      "title": "Documenten",
+      "upload": "Documenten uploaden",
+      "labels": {
+        "addDocuments": "Documenten toevoegen"
+      },
+      "create": {
+        "successfullyCreated": "Documenten opgeslagen"
+      },
+      "delete": {
+        "successfullyDeleted": "Documenten verwijderd"
+      }
+    }
+  },
+  "settings": {
+    "title": "Instellingen",
+    "currencies": {
+      "title": "Valuta's",
+      "create": {
+        "title": "Valuta aanmaken"
+      },
+      "labels": {
+        "isoCode": "ISO Code",
+        "symbol": "Symbool",
+        "inheritsFrom": "Erft van",
+        "exchangeRate": "Wisselkoers",
+        "exchangeRateOfficial": "Officiële wisselkoers",
+        "roundPricesUpTo": "Prijzen afronden naar",
+        "followOfficialRate": "Volg officiële wisselkoers",
+        "isDefaultCurrency": "Standaard Valuta",
+        "comment": "Commentaar"
+      },
+      "placeholders": {
+        "isoCode": "Voer ISO Code in",
+        "symbol": "Voer symbool in",
+        "exchangeRate": "Voer wisselkoers in",
+        "exchangeRateOfficial": "Voer officiële wisselkoers in",
+        "roundPricesUpTo": "Voer afrondingswaarde in",
+        "comment": "Voer notitie in"
+      },
+      "helpSection": {
+        "name": {
+          "header": "Naam",
+          "content": "Valuta naam, bv: Euro"
+        },
+        "isoCode": {
+          "header": "ISO Code",
+          "content": "Officiele 3-letter code van de value. Bv: EUR"
+        },
+        "symbol": {
+          "header": "Symbool",
+          "content": "Symbool voor de valuta. Bv: €"
+        },
+        "isDefaultCurrency": {
+          "header": "Standaard valuta",
+          "content": "De standaard valuta voor uw organisatie. Er kan hier maar één van bestaan."
+        },
+        "inheritsFrom": {
+          "header": "Erft van",
+          "content": "Welke valuta moeten de prijzen tegen omgezet worden? Bv selecteer EUR als u een GBP wilt aan maken."
+        },
+        "followOfficialRate": {
+          "header": "Volg officiële koers",
+          "content": "Indien u officiële wisselkoersen wenst te volgen, selecteer dit. Heeft u eigen koersen? Zet dit uit."
+        },
+        "exchangeRate": {
+          "header": "Wisselkoers",
+          "content": "Vul uw eigen wisselkoers in, indien van toepassing."
+        },
+        "roundPricesUpTo": {
+          "header": "Prijzen afronden naar",
+          "content": "Wanneer we prijzen berekenen van deze koers, wilt u ze dan afronden naar 1, 10, of 0.95, etc.?"
+        },
+        "comment": {
+          "header": "Commentaar",
+          "content": "Geen special acties. Gebruik dit veld om notities te maken."
+        }
+      }
+    },
+    "vatRates": {
+      "title": "BTW Tarieven",
+      "create": {
+        "title": "BTW Tarief aanmaken"
+      },
+      "edit": {
+        "title": "BTW Tarief bewerken"
+      },
+      "show": {
+        "title": "BTW Tarief"
+      },
+      "labels": {
+        "name": "Naam",
+        "rate": "Tarief (%)"
+      },
+      "placeholders": {
+        "name": "Naam",
+        "rate": "Tarief invoegen"
+      }
+    },
+    "units": {
+      "title": "Eenheden",
+      "create": {
+        "title": "Eenheid aanmaken"
+      },
+      "edit": {
+        "title": "Eenheid bewerken"
+      },
+      "labels": {
+        "unit": "Eenheid"
+      },
+      "placeholders": {
+        "unit": "Eenheid invoeren"
+      }
+    },
+    "currency": {
+      "create": {
+        "title": "Valuta aanmaken"
+      },
+      "edit": {
+        "title": "Valuta bewerken"
+      }
+    },
+    "internalCompanies": {
+      "title": "Interne Organisaties"
+    }
+  },
+  "network": {
+    "error": "Kon geen verbinding met de server maken. Controleer uw internet-verbinding."
   }
 }
