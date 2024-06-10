@@ -151,7 +151,7 @@ const onFinish = () => {
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
       <OnboardingCard v-for="card in cards" :id="card.key" :key="card.key"  :card="card" @update-status="updateStatus(card.key, $event)" />
     </div>
-    <Modal v-if="isCompleted" v-model="showCreateCompleteModal" @closed="showCreateCompleteModal = false">
+    <Modal v-if="isCompleted && status == OnboardingStatus.COMPLETE_DASHBOARD_CARDS" v-model="showCreateCompleteModal" @closed="showCreateCompleteModal = false">
         <CompleteOnboardingModal @continue-clicked="onFinish" />
     </Modal>
   </Card>
