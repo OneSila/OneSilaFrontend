@@ -8,7 +8,7 @@
     "buttons": {
       "addOrder": "Bestelling Toevoegen",
       "addProduct": "Product Toevoegen",
-      "addInventory": "Stock Toevoegen"
+      "addInventory": "Voorraad Toevoegen"
     }
   },
   "pagination": {
@@ -451,7 +451,7 @@
         "price": "Prijs",
         "prices": "Prijzen",
         "priceLists": "Prijslijsten",
-        "inventory": "Stock",
+        "inventory": "Voorraad",
         "supplierProducts": "Producten Leveranciers",
         "saleOrders": "Verkopen",
         "purchasingOrders": "Aankopen",
@@ -477,7 +477,7 @@
           }
         },
         "vatRate": "BTW Tarief",
-        "alwaysOnStock": "Altijd op stock",
+        "alwaysOnStock": "Altijd op Voorraad",
         "sku": "SKU",
         "productionTime": "Productie tijd",
         "forSale": "Verkoopbaar"
@@ -557,12 +557,12 @@
     }
   },
   "inventory": {
-    "title": "Stock voorraad",
+    "title": "Voorraad",
     "inventoryLocation": {
       "helpSection": {
         "location": {
           "header": "Locatie",
-          "content": "Dit is de fysieke locatie waar de stock ligt. Meer locaties kunt u toevoegen via de verzend-adressen in instellingen."
+          "content": "Dit is de fysieke locatie waar de voorraad ligt. Meer locaties kunt u toevoegen via de verzend-adressen in instellingen."
         },
         "name": {
           "header": "Naam",
@@ -574,20 +574,20 @@
         },
         "precise": {
           "header": "Precieze locatie",
-          "content": "Wil je geen stock mixen per locatie?  Enkel van 1 product?  Duid deze locatie aan als \"Precieze locatie\""
+          "content": "Wil je geen voorraad mixen per locatie?  Enkel van 1 product?  Duid deze locatie aan als \"Precieze locatie\""
         }
       }
     },
     "inventoryLocations": {
-      "title": "Stock Locaties",
+      "title": "Voorraad Locaties",
       "create": {
-        "title": "Stock locatie aanmaken"
+        "title": "Voorraad locatie aanmaken"
       },
       "edit": {
-        "title": "Bewerk stock locatie"
+        "title": "Bewerk voorraad locatie"
       },
       "show": {
-        "title": "Stock Locatie"
+        "title": "Voorraad Locatie"
       },
       "labels": {
         "parent": "Locatie",
@@ -595,15 +595,15 @@
       }
     },
     "inventory": {
-      "title": "Stock",
+      "title": "Voorraad",
       "labels": {
-        "movements": "Stock bewegingen"
+        "movements": "Voorraad bewegingen"
       },
       "create": {
-        "title": "Stock aanmaken"
+        "title": "Voorraad aanmaken"
       },
       "edit": {
-        "title": "Bewerk stock"
+        "title": "Bewerk Voorraad"
       }
     }
   },
@@ -629,7 +629,7 @@
           "choices": {
             "draft": "Concept",
             "pending": "Wachtende",
-            "pendingInventory": "Wachtend Stock",
+            "pendingInventory": "Wachtende op Voorraad",
             "toPick": "Te Picken",
             "toShip": "Te Verzenden",
             "done": "Afgewerkt",
