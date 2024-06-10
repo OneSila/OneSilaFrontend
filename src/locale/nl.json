@@ -60,7 +60,7 @@
       "submit": "Verzenden",
       "add": "Toevoegen",
       "download": "Downloaden",
-      "uploadNew": "Nieuw Uploaden"
+      "uploadNew": "Uploaden"
     },
     "labels": {
       "createdAt": "Gecreëerd op",
@@ -427,9 +427,9 @@
       "successfullyUpdated": "De product vertalingen zijn succesvol opgeslagen.",
       "placeholders": {
         "language": "Selecteer taal",
-        "name": "Voer een naam in",
-        "shortDescription": "Voer een Korte Omschrijving in",
-        "description": "Voer beschrijving in",
+        "name": "Product Naam",
+        "shortDescription": "Korte beschrijving van het product voor de snelle lezer.",
+        "description": "Schrijf hier de lange product beschrijving die tot in detail gaat. Voor de geïnformeerde klant.",
         "urlKey": "Voer URL sleutel in"
       },
       "labels": {
@@ -557,7 +557,7 @@
     }
   },
   "inventory": {
-    "title": "Inventaris",
+    "title": "Stock voorraad",
     "inventoryLocation": {
       "helpSection": {
         "location": {
@@ -852,7 +852,7 @@
         "fileName": "Bestandsnaam",
         "lastModified": "Laatst bewerkt",
         "fileSize": "Bestandsgrootte",
-        "owner": "Eigenaar",
+        "owner": "Geüpload door",
         "files": "Bestanden",
         "recentFiles": "Recente Bestanden",
         "addExistingFiles": "Toevoegen van bestaande media"
