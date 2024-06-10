@@ -17,7 +17,7 @@ const props = withDefaults(
   { fieldsToClear: null },
 );
 
-const emits = defineEmits(['formUpdated']);
+const emit = defineEmits(['formUpdated', 'submit']);
 const errors: Ref<Record<string, string> | null> = ref(null);
 
 const form = reactive(props.config.fields.reduce((acc, field) => {
@@ -43,7 +43,7 @@ const handleUpdateErrors = (validationErrors) => {
 }
 
 watch(form, (newForm) => {
-  emits('formUpdated', newForm);
+  emit('formUpdated', newForm);
 }, { deep: true });
 
 watch(() => props.fieldsToClear, (fields) => {
@@ -64,5 +64,5 @@ watch(() => props.fieldsToClear, (fields) => {
       <FormLayout :config="config" :form="form" :errors="outsideErrors !== null && outsideErrors !== undefined ? outsideErrors : errors" />
     </div>
   </div>
-  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @update-errors="handleUpdateErrors" />
+  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" />
 </template>

@@ -12,6 +12,7 @@ const props = defineProps<{
   disabled?: boolean;
   focused?: boolean;
   required?: boolean;
+  mandatory?: boolean;
 }>();
 
 
@@ -57,9 +58,8 @@ const error: Ref<boolean> = ref(validateEmail(props.modelValue));
 
 <template>
   <div>
-    <Label v-if="label" class="mb-2">{{ label }}</Label>
-
-    <div v-if="icon" class="relative border rounded-md" :class="{
+    <Label v-if="label" class="font-semibold text-md">{{ label }}<span v-if="mandatory">*</span></Label>
+    <div v-if="icon" class="relative border rounded-md mt-2" :class="{
           'm-input-wrapper maz-border-success': !error,
           'm-input-wrapper maz-border-danger': error && modelValue !== '' &&  modelValue !== null,
           'border border-gray-300': !(error && modelValue !== '' && modelValue !== null) && !(modelValue !== '' && modelValue !== null)
@@ -82,7 +82,7 @@ const error: Ref<boolean> = ref(validateEmail(props.modelValue));
         <Icon :name="icon" />
       </span>
     </div>
-    <div v-else class="border rounded-md" :class="{
+    <div v-else class="border rounded-md mt-2" :class="{
           'm-input-wrapper maz-border-success': !error,
           'm-input-wrapper maz-border-danger': error && modelValue !== '' &&  modelValue !== null,
           'border border-gray-300': !(error && modelValue !== '' && modelValue !== null) && !(modelValue !== '' && modelValue !== null)

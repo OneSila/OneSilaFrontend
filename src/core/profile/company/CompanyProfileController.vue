@@ -10,6 +10,7 @@ import { meCompanySubscription } from "./../../../shared/api/subscriptions/me.js
 import IconPencilPaper from '../../../shared/components/atoms/icons/icon-pencil-paper.vue';
 import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
 import { useI18n } from 'vue-i18n';
+import {MeCompanySubscriptionResult} from "./meCompanyData";
 
 const { t } = useI18n();
 const editView = ref(false);
@@ -41,32 +42,6 @@ const handleRefreshRequested = () => {
     apolloSubRef.value.refresh();
   }
 };
-
-interface MeCompanySubscriptionResult {
-  myMultiTenantCompany: {
-    name: string;
-    language: string;
-    address1: string;
-    address2: string;
-    postcode: string;
-    city: string;
-    email: string;
-    phoneNumber: string;
-    vatNumber: string;
-    website: string;
-    multitenantuserSet: MultiTenantUser[];
-  };
-}
-
-interface MultiTenantUser {
-  id: string;
-  isActive: boolean;
-  email: string;
-  lastName: string;
-  firstName: string;
-  isMultiTenantCompanyOwner: boolean;
-  invitationAccepted: boolean;
-}
 
 const getCompany = (result) => {
   const r: MeCompanySubscriptionResult = result;

@@ -28,3 +28,29 @@ export interface MeCompanyData {
   website?: string;
   multitenantuserSet: CompanyUser[];
 }
+
+export interface MeCompanySubscriptionResult {
+  myMultiTenantCompany: {
+    name: string;
+    language: string;
+    address1: string;
+    address2: string;
+    postcode: string;
+    city: string;
+    email: string;
+    phoneNumber: string;
+    vatNumber: string;
+    website: string;
+    multitenantuserSet: MultiTenantUser[];
+  };
+}
+
+export interface MultiTenantUser {
+  id: string;
+  isActive: boolean;
+  email: string;
+  lastName: string;
+  firstName: string;
+  isMultiTenantCompanyOwner: boolean;
+  invitationAccepted: boolean;
+}
