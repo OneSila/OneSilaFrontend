@@ -2,12 +2,12 @@
 
 import { Label } from '../label'
 
-const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue']);
+const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue', 'mandatory']);
 </script>
 
 <template>
   <div>
-    <Label v-if="label" :for="id" class="font-semibold text-md">{{ label }}</Label>
+    <Label v-if="label" :for="id" class="font-semibold text-md">{{ label }}<span v-if="mandatory">*</span></Label>
     <div class="relative mt-2">
       <input
         :value="modelValue"

@@ -765,3 +765,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 /*.swal2-container {*/
 /*  top: 3rem !important;*/
 /*}*/
+
+:root {
+  --v-onboarding-overlay-z: 50;
+  --v-onboarding-step-z: 70;
+}

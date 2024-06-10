@@ -57,9 +57,9 @@ const error: Ref<boolean> = ref(validateEmail(props.modelValue));
 
 <template>
   <div>
-    <Label v-if="label" class="mb-2">{{ label }}</Label>
+    <Label v-if="label" class="font-semibold text-md">{{ label }}</Label>
 
-    <div v-if="icon" class="relative border rounded-md" :class="{
+    <div v-if="icon" class="relative border rounded-md mt-2" :class="{
           'm-input-wrapper maz-border-success': !error && modelValue !== '' &&  modelValue !== null,
           'm-input-wrapper maz-border-danger': error && modelValue !== '' &&  modelValue !== null,
           'border border-gray-300': !(error && modelValue !== '' && modelValue !== null) && !(modelValue !== '' && modelValue !== null)
