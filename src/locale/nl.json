@@ -595,12 +595,12 @@
       }
     },
     "inventory": {
-      "title": "Voorraad",
+      "title": "Product Voorraad",
       "labels": {
         "movements": "Voorraad bewegingen"
       },
       "create": {
-        "title": "Voorraad aanmaken"
+        "title": "Voorraad toevoegen"
       },
       "edit": {
         "title": "Bewerk Voorraad"
