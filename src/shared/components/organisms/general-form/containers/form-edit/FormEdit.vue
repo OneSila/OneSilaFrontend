@@ -16,7 +16,7 @@ const props = withDefaults(
   { fieldsToClear: null },
 );
 
-const emits = defineEmits(['formUpdated']);
+const emit = defineEmits(['formUpdated', 'submit']);
 
 const form = reactive({});
 const router = useRouter();
@@ -69,7 +69,7 @@ const handleUpdateErrors = (validationErrors) => {
 }
 
 watch(form, (newForm) => {
-  emits('formUpdated', newForm);
+  emit('formUpdated', newForm);
 }, { deep: true });
 
 
@@ -100,6 +100,6 @@ watch(() => props.fieldsToClear, (fields) => {
         </template>
       </ApolloQuery>
   </div>
-  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @update-errors="handleUpdateErrors" />
+  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" />
 
 </template>

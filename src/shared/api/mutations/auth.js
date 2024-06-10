@@ -10,6 +10,7 @@ export const registerMutation = gql`
       language
       firstName
       lastName
+      onboardingStatus
     }
   }
 `;
@@ -23,6 +24,23 @@ mutation Login($username: String!, $password: String!) {
     language
     isMultiTenantCompanyOwner
     isActive
+    onboardingStatus
+    multiTenantCompany {
+      id
+    }
+  }
+}`;
+
+export const goToStepMutation = gql`
+mutation GoToStep($onboardingStatus: String!) {
+  goToStep(data: {onboardingStatus: $onboardingStatus}) {
+    username
+    firstName
+    lastName
+    language
+    isMultiTenantCompanyOwner
+    isActive
+    onboardingStatus
     multiTenantCompany {
       id
     }
@@ -93,6 +111,24 @@ export const requestLoginLinkMutation = gql`
         id
         createdAt
         expiresAt
+    }
+  }
+`;
+
+export const createDemoData = gql`
+  mutation CreateDemoData {
+    createDemoData {
+      id
+      name
+    }
+  }
+`;
+
+export const deleteDemoData = gql`
+  mutation DeleteDemoData {
+    deleteDemoData {
+      id
+      name
     }
   }
 `;

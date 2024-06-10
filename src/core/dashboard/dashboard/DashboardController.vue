@@ -12,6 +12,9 @@ import { Card } from '../../../shared/components/atoms/card';
 import { useI18n } from "vue-i18n";
 import { Badge} from "../../../shared/components/atoms/badge";
 import { getBadgeForSaleOrderStatus } from "../../sales/orders/configs";
+import {OnboardingCards} from "./containers/onboarding-cards";
+import {getOnboardingStatus, injectAuth} from "../../../shared/modules/auth";
+import {OnboardingStatus} from "../../../shared/utils/constants";
 
 interface Customer {
   id: string;
@@ -160,35 +163,21 @@ async function fetchAllOrdersCount() {
   }
 }
 
+const auth = injectAuth();
+const status = ref(getOnboardingStatus(auth));
+
+const onUpdateStatus = () => {
+  status.value = OnboardingStatus.DONE;
+}
+
 </script>
 
 <template>
     <div>
         <Card class="pt-5">
 
-            <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-              <Link :path="{name: 'sales.orders.create'}">
-              <div class="panel h-full sm:col-span-2 xl:col-span-1 flex flex-col justify-center border-2 border-gray-300 p-4 text-center cursor-pointer hover:bg-gray-100 hover:border-gray-400 transition duration-300">
-                  <Title bold level="1" class="mb-2 text-center">{{ t('dashboard.buttons.addOrder') }}</Title>
-                  <Icon size="5x" name="shopping-cart" />
-                </div>
-              </Link>
-
-
-              <Link :path="{name: 'products.products.create'}">
-                <div class="panel h-full sm:col-span-2 xl:col-span-1 flex flex-col justify-center border-2 border-gray-300 p-4 text-center cursor-pointer hover:bg-gray-100 hover:border-gray-400 transition duration-300">
-                  <Title bold level="1" class="mb-2 text-center">{{ t('dashboard.buttons.addProduct') }}</Title>
-                  <Icon size="5x" name="box" />
-                </div>
-              </Link>
-
-              <Link :path="{name: 'inventory.inventory.create'}">
-                <div class="panel h-full sm:col-span-2 xl:col-span-1 flex flex-col justify-center border-2 border-gray-300 p-4 text-center cursor-pointer hover:bg-gray-100 hover:border-gray-400 transition duration-300">
-                  <Title bold level="1" class="mb-2 text-center">{{ t('dashboard.buttons.addInventory') }}</Title>
-                  <Icon size="5x" name="warehouse" />
-                </div>
-              </Link>
-            </div>
+            <OnboardingCards v-if="status === OnboardingStatus.COMPLETE_DASHBOARD_CARDS || status === OnboardingStatus.DASHBOARD_CARDS_PRESENTATION"
+                             :status="status" class="my-4" @update-status="onUpdateStatus" />
 
             <div class="grid sm:grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
 

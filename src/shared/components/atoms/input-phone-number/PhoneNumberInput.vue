@@ -12,6 +12,7 @@ const app = useAppStore();
 const props = defineProps<{
   modelValue?: any;
   label?: string;
+  mandatory?: boolean;
 }>();
 
 const countryCode = ref(locale.value.toUpperCase())
@@ -32,7 +33,7 @@ const onUpdated = (results) => {
 
 <template>
   <div>
-    <Label v-if="label" class="mb-2">{{ label }}</Label>
+    <Label v-if="label" class="font-semibold text-md">{{ label }}<span v-if="mandatory">*</span></Label>
     <MazPhoneNumberInput
       v-model="phoneNumber"
       v-model:country-code="countryCode"

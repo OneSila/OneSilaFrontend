@@ -6,6 +6,7 @@ import { FormEdit } from './containers/form-edit';
 import { getEnhancedConfig, FormConfig, FormType, FormConfigDefaultTranslations } from './formConfig';
 import { useI18n } from 'vue-i18n';
 import { HelpSection } from "./containers/help-section";
+import {SubmitButtons} from "./containers/submit-buttons";
 
 const { t } = useI18n();
 const props = withDefaults(
@@ -16,11 +17,11 @@ const props = withDefaults(
   { fieldsToClear: null },
 );
 
-const emits = defineEmits(['formUpdated', 'loaded']);
+const emit = defineEmits(['formUpdated', 'loaded','submit']);
 const enhancedConfig = ref();
 
 const handleFormUpdate = (updatedForm) => {
-  emits('formUpdated', updatedForm);
+  emit('formUpdated', updatedForm);
 };
 
 watch(() => props.config, (newConfig) => {
@@ -41,8 +42,8 @@ watch(() => props.config, (newConfig) => {
     <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
       <HelpSection :config="enhancedConfig" />
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-        <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-        <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+        <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear"  @submit="emit('submit')" @form-updated="handleFormUpdate" />
+        <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @submit="emit('submit')"  @form-updated="handleFormUpdate" />
       </div>
     </div>
   </div>

@@ -38,6 +38,7 @@ const onLoginClicked = async () => {
         language: user.language,
         firstName: user.firstName,
         lastName: user.lastName,
+        onboardingStatus: user.onboardingStatus,
         company: user.multiTenantCompany,
         companyOwner: user.isMultiTenantCompanyOwner,
         active: user.isActive

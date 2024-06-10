@@ -18,6 +18,8 @@ const props = withDefaults(
   defineProps<{
     steps: Step[]
     allowNextStep?: boolean
+    addSkip?: boolean
+    showButtons?: boolean
   }>(),
   { allowNextStep: true },
 );
@@ -104,7 +106,13 @@ useEnterKeyboardListener(nextStep);
   <div class="tab-content mt-4">
     <slot :name="steps[currentStep].name"></slot>
   </div>
-  <div class="flex justify-end mt-8">
+  <div v-if="showButtons" class="flex justify-end mt-8">
+    <CancelButton
+      v-if="addSkip"
+      @click="goToStep(steps.length - 1)"
+    >
+      {{ t('shared.button.skip') }}
+    </CancelButton>
     <CancelButton
       v-if="currentStep > 0"
       @click="previousStep"

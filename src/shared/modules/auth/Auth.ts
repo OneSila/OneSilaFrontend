@@ -1,6 +1,7 @@
 import { inject, InjectionKey, reactive } from 'vue';
 import apolloClient from '../../../../apollo-client';
 import gql from 'graphql-tag';
+import {OnboardingStatus} from "../../utils/constants";
 export const AuthKey: InjectionKey<Auth> = Symbol('Auth');
 
 
@@ -9,6 +10,7 @@ export type User = {
   language: string;
   firstName: string;
   lastName: string;
+  onboardingStatus: string;
   company: object | null;
   companyOwner: boolean;
   active: boolean;
@@ -21,7 +23,8 @@ export interface Auth {
 
 export const detectAuth = (): Auth => {
   const storedUser = localStorage.getItem('auth_user');
-  const user = storedUser ? JSON.parse(storedUser) : { username: '', language: null, firstName: '', lastName: '', company: null, companyOwner: false, active: false  };
+  const user = storedUser ? JSON.parse(storedUser) : { username: '', language: null, firstName: '', lastName: '',
+    company: null, onboardingStatus: null, companyOwner: false, active: false  };
 
   const isAuthenticated = !!storedUser;
 
@@ -83,6 +86,7 @@ export const removeAuth = async (auth) => {
       language: null,
       firstName: '',
       lastName: '',
+      onboardingStatus: null,
       company: null,
       companyOwner: false,
       active: false,
@@ -98,6 +102,14 @@ export const isAuthenticated = (auth: Auth): boolean => auth.isAuthenticated;
 export const hasCompany = (auth) => auth.user && auth.user.company != null;
 export const isCompanyOwner = (auth: Auth): boolean => auth.user.companyOwner;
 export const isActive = (auth: Auth): boolean => auth.user.active;
+
+export const isFinishedOnboarding = (auth: Auth): boolean => {
+  const status = auth.user.onboardingStatus;
+  return status === OnboardingStatus.DONE || status === OnboardingStatus.COMPLETE_DASHBOARD_CARDS || status === OnboardingStatus.DASHBOARD_CARDS_PRESENTATION;
+};
+
+export const getOnboardingStatus = (auth: Auth): string => auth.user.onboardingStatus;
+
 
 export const injectAuth = (): Auth => {
   const auth = inject(AuthKey);
