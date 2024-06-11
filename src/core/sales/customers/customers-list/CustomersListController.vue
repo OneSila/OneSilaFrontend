@@ -39,6 +39,7 @@ const listingConfig = listingConfigConstructor(t);
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
+         :fixed-filter-variables="{'isCustomer': true}"
       />
    </template>
   </GeneralTemplate>

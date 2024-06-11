@@ -49,7 +49,7 @@ const formConfig = {
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'inventory.inventory.list' }, name: t('inventory.inventory.title') },
+          :links="[{ path: { name: 'inventory.inventory.list' }, name: t('inventory.title') },
                    { path: { name: 'inventory.inventory.edit' }, name: t('inventory.inventory.edit.title') }]" />
     </template>
 

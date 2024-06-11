@@ -16,7 +16,6 @@ const handleChanged = async (newVal: boolean) => {
     })
 
     if (data && data.createDemoData) {
-      alert('?')
       emit('demo-data-step-done', newVal);
     }
 

@@ -8,3 +8,11 @@ export const membersQuery = gql`
     }
   }
 `;
+
+export const hasDemoDataQuery = gql`
+  query HasDemoDatas {
+    hasDemoData {
+      hasDemoData
+    }
+  }
+`;

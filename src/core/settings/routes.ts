@@ -16,4 +16,6 @@ export const routes = [
   { path: '/settings/internal-company/show/:id', name: 'settings.internalCompany.show', component: () => import('./internal-companies/companies-show/CompaniesShowController.vue') },
   { path: '/settings/internal-company/:companyId/address/create', name: 'settings.companies.address.create', component: () => import('./internal-companies/companies-show/containers/address-create/CompaniesAddressCreateController.vue') },
   { path: '/settings/internal-company/:companyId/address/edit/:id', name: 'settings.companies.address.edit', component: () => import('./internal-companies/companies-show/containers/address-edit/CompaniesAddressEditController.vue') },
+
+  { path: '/settings/demo-data', name: 'settings.demoData.show', component: () => import('./demo-data/demo-data-show/DemoDataController.vue') },
 ]

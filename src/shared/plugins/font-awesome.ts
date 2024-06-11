@@ -126,7 +126,8 @@ import {
   faDownload,
   faClipboard,
   faQuestion,
-  faHistory
+  faHistory,
+  faDatabase
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -253,6 +254,7 @@ library.add(faDownload as IconDefinition);
 library.add(faClipboard as IconDefinition);
 library.add(faQuestion as IconDefinition);
 library.add(faHistory as IconDefinition);
+library.add(faDatabase as IconDefinition);
 
 export default {
   install(app) {

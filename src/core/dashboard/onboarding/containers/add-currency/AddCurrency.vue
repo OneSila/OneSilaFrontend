@@ -62,7 +62,6 @@ const setCurrency = async () => {
     form.isoCode = currency.isoCode;
     form.symbol = currency.symbol;
     form.isDefaultCurrency = currency.isDefaultCurrency;
-    form.comment = currency.comment;
   }
 }
 

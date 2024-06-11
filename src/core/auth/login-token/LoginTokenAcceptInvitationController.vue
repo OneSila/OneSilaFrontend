@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import {Ref, ref} from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 import Logo from "../../../shared/components/molecules/logo/Logo.vue";
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
 import { LoginTokenForm } from "./containers/login-token-form";
@@ -26,8 +26,17 @@ const route = useRoute();
 const token = ref(route.params.token);
 const auth = injectAuth();
 const errors: Ref<string[]> = ref([]);
+const passwordSet = ref(false);
+
+const handlePasswordSet = () => {
+  passwordSet.value = true;
+}
 
 const executeMutation = async () => {
+  if (auth.user.active) {
+    return
+  }
+
   try {
     const { data } = await apolloClient.mutate({
       mutation: authenticateTokenMutation,
@@ -35,6 +44,7 @@ const executeMutation = async () => {
     });
 
     if (data && data.authenticateToken) {
+
       const user = data.authenticateToken;
       refreshUser(auth, {
         username: user.username,
@@ -44,7 +54,7 @@ const executeMutation = async () => {
         onboardingStatus: user.onboardingStatus,
         company: user.multiTenantCompany,
         companyOwner: user.isMultiTenantCompanyOwner,
-        active: user.isActive
+        active: passwordSet.value
       });
 
     } else {
@@ -63,7 +73,7 @@ const executeMutation = async () => {
   }
 };
 
-executeMutation();
+onMounted(executeMutation);
 
 </script>
 
@@ -97,14 +107,14 @@ executeMutation();
     <template v-slot:right-section-content>
       <div class="mb-7">
         <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
-          {{ t('auth.recover.tokenHeader') }}
+          {{ t('auth.acceptInvitation.header') }}
         </h1>
         <div v-if="errors.length">
           <p v-for="error in errors">{{ error }}</p>
         </div>
         <div v-else >
           <p class="mb-2">{{ t('auth.acceptInvitation.description') }}</p>
-          <LoginTokenForm />
+          <LoginTokenForm @password-set="handlePasswordSet" />
         </div>
 
       </div>

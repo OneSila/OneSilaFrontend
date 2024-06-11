@@ -28,14 +28,22 @@ const emit = defineEmits(['update-status']);
 const isCompleted = ref(false);
 const showCreateCompleteModal = ref(false);
 
+const excludeDemoDataFilter =  { filter: { excludeDemoData: true } }
 const cards: OnboardingCardObject[] = [
-  { key: 'member', title: t('dashboard.onboarding.cards.inviteAnotherMember.title'), query: membersQuery, path: 'profile.company' },
-  { key: 'supplier', title: t('dashboard.onboarding.cards.createSupplier.title'), query: suppliersQuery, path: 'purchasing.suppliers.create' },
-  { key: 'product', title: t('dashboard.onboarding.cards.createFirstProduct.title'), query: productsQuery, path: 'products.products.create'},
-  { key: 'purchaseOrder', title: t('dashboard.onboarding.cards.addFirstPurchaseOrder.title'), query: purchaseOrdersQuery, path: 'purchasing.orders.create'},
-  { key: 'inventory', title: t('dashboard.onboarding.cards.addFirstInventory.title'), query: inventoriesQuery, path: 'inventory.inventory.create' },
-  { key: 'customer', title: t('dashboard.onboarding.cards.createCustomer.title'), query: customersQuery, path: 'sales.customers.create' },
-  { key: 'salesOrder', title: t('dashboard.onboarding.cards.addFirstSalesOrder.title'), query: ordersQuery, path: 'sales.orders.create' },
+  { key: 'member', title: t('dashboard.onboarding.cards.inviteAnotherMember.title'),
+    query: membersQuery, path: 'profile.company' },
+  { key: 'supplier', title: t('dashboard.onboarding.cards.createSupplier.title'),
+    query: suppliersQuery, path: 'purchasing.suppliers.create', variables: excludeDemoDataFilter },
+  { key: 'product', title: t('dashboard.onboarding.cards.createFirstProduct.title'),
+    query: productsQuery, path: 'products.products.create',  variables: excludeDemoDataFilter},
+  { key: 'purchaseOrder', title: t('dashboard.onboarding.cards.addFirstPurchaseOrder.title'),
+    query: purchaseOrdersQuery, path: 'purchasing.orders.create',  variables: excludeDemoDataFilter},
+  { key: 'inventory', title: t('dashboard.onboarding.cards.addFirstInventory.title'),
+    query: inventoriesQuery, path: 'inventory.inventory.create',  variables: excludeDemoDataFilter },
+  { key: 'customer', title: t('dashboard.onboarding.cards.createCustomer.title'),
+    query: customersQuery, path: 'sales.customers.create',  variables: excludeDemoDataFilter },
+  { key: 'salesOrder', title: t('dashboard.onboarding.cards.addFirstSalesOrder.title'),
+    query: ordersQuery, path: 'sales.orders.create',  variables: excludeDemoDataFilter },
   // { key: 'supplierProduct', title: t('dashboard.onboarding.cards.createSupplierProduct.title'), query: supplierProductsQuery, path: 'purchasing.product.create' },
 ];
 
@@ -90,7 +98,7 @@ const updateStatus = (key: string, status: boolean) => {
 const calculateProgress = () => {
   const total = Object.keys(completedStatus.value).length;
   const completed = Object.values(completedStatus.value).filter(status => status).length;
-  progressPercentage.value = (completed / total) * 100;
+  progressPercentage.value = Math.floor((completed / total) * 100);
 };
 
 const progressPercentage = ref(0);
