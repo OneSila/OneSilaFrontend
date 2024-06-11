@@ -8,11 +8,11 @@
         "button": "Let's do it",
         "header": "Learn to use",
         "createSupplier": {
-          "title": "Create and add a new supplier",
+          "title": "Create a new supplier",
           "details": "A supplier is a company you buy from. You will later be able to make purchase orders from this company."
         },
         "createCustomer": {
-          "title": "Create and add a new customer",
+          "title": "Create a new customer",
           "details": "A customer is a company you sell to. You will later be able to make sales orders to this company."
         },
         "createSupplierProduct": {
@@ -130,6 +130,7 @@
       "show": "Show",
       "submit": "Submit",
       "add": "Add",
+      "create": "Create",
       "skip": "Skip",
       "download": "Download",
       "uploadNew": "Upload New"
@@ -223,6 +224,7 @@
   "auth": {
     "acceptInvitation": {
       "description": "You are one step away. Please set you password and let's get it started!",
+      "header": "Welcome",
       "button": {
         "setPassword": "Set password"
       }
@@ -230,14 +232,6 @@
     "login": {
       "header": "Log in",
       "description": "Enter your username and password to login",
-      "labels": {
-        "email": "Email",
-        "password": "Password"
-      },
-      "placeholders": {
-        "email": "Enter Email",
-        "password": "Enter Password"
-      },
       "recover": "Recover account",
       "registerPrompt": "Don't have an account?",
       "register": "SIGN UP",
@@ -248,7 +242,6 @@
       "description": "Enter your username and password to register",
       "labels": {
         "companyName": "Company Name",
-        "email": "Email",
         "password": "Password",
         "confirmPassword": "Confirm password"
       },
@@ -357,7 +350,7 @@
   "companyProfile": {
     "labels": {
       "companyName": "Company Name",
-      "email": "Email",
+      "email": "Company Email",
       "phoneNumber": "Phone Number",
       "address1": "Address Line 1",
       "address2": "Address Line 2",
@@ -595,7 +588,7 @@
             "content": "How much do you sell it for?",
             "simple": {
               "title": "Sale status",
-              "content": "Is this item for Sale, or for internal use?"
+              "content": "Are you going to sell this item?"
             }
           },
           "stepFour": {
@@ -990,6 +983,29 @@
   },
   "settings": {
     "title": "Settings",
+    "demoData": {
+      "title": "Demo Data",
+      "create": {
+        "title": "Create Demo Data",
+        "content": "You can create demo data to explore the features of our application.",
+        "alert": {
+          "title": "Are you sure?",
+          "text": "This will create demo data in your account. Do you want to proceed?",
+          "confirmButtonText": "Create Demo Data"
+        },
+        "succefullyCreated": "Demo data created successfully."
+      },
+      "delete": {
+        "title": "Delete Demo Data",
+        "content": "You can delete the demo data from your account.",
+        "alert": {
+          "title": "Are you sure?",
+          "text": "This will delete all demo data from your account. Do you want to proceed?",
+          "confirmButtonText": "Delete Demo Data"
+        },
+        "succefullyDelete": "Demo data deleted successfully."
+      }
+    },
     "currencies": {
       "title": "Currencies",
       "create": {

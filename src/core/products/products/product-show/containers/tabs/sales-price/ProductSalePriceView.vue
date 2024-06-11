@@ -33,7 +33,6 @@ const loadPrices = async () => {
     fetchPolicy: 'network-only'
   });
 
-  console.log(data.salesPrices)
   prices.value = data.salesPrices.edges.map(edge => ({
     id: edge.node.id,
     amount: edge.node.amount,
@@ -97,7 +96,6 @@ const savePrices = async () => {
           variables: { data: priceData }
         });
 
-        console.log(data)
         if (data) {
             Toast.success(t('sales.prices.updatedSuccefully', {currency: price.currency}));
         }

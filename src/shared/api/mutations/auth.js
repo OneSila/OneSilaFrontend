@@ -56,6 +56,7 @@ mutation authenticateToken($token: String!) {
     language
     isMultiTenantCompanyOwner
     isActive
+    onboardingStatus
     multiTenantCompany {
       id
     }
@@ -71,6 +72,7 @@ mutation acceptUserInvitation($language: String!, $password: String!) {
     language
     isMultiTenantCompanyOwner
     isActive
+    onboardingStatus
     multiTenantCompany {
       id
     }

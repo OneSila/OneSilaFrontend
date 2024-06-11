@@ -40,6 +40,7 @@ const getSupplier = (): QueryFormField => {
         labelBy: 'name',
         valueBy: 'id',
         query: companiesQuery,
+        queryVariables: { filter: { 'isInternalCompany': false }},
         dataKey: 'companies',
         isEdge: true,
         multiple: false,

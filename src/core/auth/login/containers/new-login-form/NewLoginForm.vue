@@ -65,10 +65,10 @@ useEnterKeyboardListener(onLoginClicked);
       <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.login.header') }}</h1>
       <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.login.description') }}</p>
     </div>
-    <TextInputPrepend id="username" v-model="form.username" :label="t('auth.login.labels.email')" :placeholder="t('auth.login.placeholders.email')" type="username">
+    <TextInputPrepend id="username" v-model="form.username" :label="t('shared.labels.email')" :placeholder="t('auth.register.placeholders.email')" type="username">
       <Icon name="envelope"/>
     </TextInputPrepend>
-    <TextInputPrepend id="password" v-model="form.password" :label="t('auth.login.labels.password')" :placeholder="t('auth.login.placeholders.password')" type="password">
+    <TextInputPrepend id="password" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>
 

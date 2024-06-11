@@ -66,7 +66,7 @@ const goToEditPage = async () => {
 const deleteEntry = async (close) => {
 
     close();
-    const swalWithBootstrapButtons = Swal.mixin({
+  const swalWithBootstrapButtons = Swal.mixin({
     customClass: defaultSwalClasses,
     buttonsStyling: false
   });

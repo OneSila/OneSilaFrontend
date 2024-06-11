@@ -10,6 +10,8 @@ import apolloClient from "../../../../../../apollo-client";
 import { currenciesQuery } from "../../../../../shared/api/queries/currencies.js";
 import { PrimaryButton } from "../../../../../shared/components/atoms/button-primary";
 import { createCurrencyMutation, updateCurrencyMutation } from "../../../../../shared/api/mutations/currencies.js";
+import {processGraphQLErrors} from "../../../../../shared/utils";
+import {Toast} from "../../../../../shared/modules/toast";
 
 
 const { t } = useI18n();
@@ -23,7 +25,6 @@ const form = reactive({
   isoCode: null,
   symbol: null,
   isDefaultCurrency: true,
-  comment: null,
 });
 
 const fields = {
@@ -45,21 +46,6 @@ const fields = {
     label: t('settings.currencies.labels.symbol'),
     placeholder: t('settings.currencies.placeholders.symbol'),
   },
-  isDefaultCurrency: {
-    type: FieldType.Checkbox,
-    name: 'isDefaultCurrency',
-    label: t('settings.currencies.labels.isDefaultCurrency'),
-    uncheckedValue: "false",
-    default: true,
-    optional: true
-  },
-  comment: {
-    type: FieldType.Text,
-    name: 'comment',
-    label: t('settings.currencies.labels.comment'),
-    placeholder: t('settings.currencies.placeholders.comment'),
-    optional: true
-  },
 }
 
 const setCurrency = async () => {
@@ -76,7 +62,6 @@ const setCurrency = async () => {
     form.isoCode = currency.isoCode;
     form.symbol = currency.symbol;
     form.isDefaultCurrency = currency.isDefaultCurrency;
-    form.comment = currency.comment;
   }
 }
 
@@ -88,7 +73,6 @@ const getMutationVariables = () => {
     isoCode: form.isoCode,
     symbol: form.symbol,
     isDefaultCurrency: form.isDefaultCurrency,
-    comment: form.comment,
   }
 
   if (form.id) {
@@ -105,6 +89,14 @@ const afterUpdate = () => {
 const disableButton = () => {
   return !form.name || !form.isoCode || !form.symbol;
 };
+
+const onError = (error) => {
+  const validationErrors = processGraphQLErrors(error, t);
+  for (const key in validationErrors) {
+    if (validationErrors.hasOwnProperty(key)) {
+      Toast.error(validationErrors[key]);
+    }
+}};
 
 </script>
 
@@ -126,25 +118,9 @@ const disableButton = () => {
         <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['symbol'].label }}</label>
         <FieldValue :field="fields['symbol'] as ValueFormField" :model-value="form.symbol" @update:modelValue="form.symbol = $event" />
       </div>
-      <div class="col-span-full mt-3">
-        <Flex>
-          <FlexCell>
-            <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['isDefaultCurrency'].label }}</label>
-          </FlexCell>
-          <FlexCell>
-            <div class="ml-2">
-              <FieldCheckbox :field="fields['isDefaultCurrency'] as CheckboxFormField" :model-value="form.isDefaultCurrency" @update:modelValue="form.isDefaultCurrency = $event"/>
-            </div>
-          </FlexCell>
-        </Flex>
-      </div>
-      <div class="col-span-full mt-3">
-        <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['comment'].label }}</label>
-        <FieldValue :field="fields['comment'] as ValueFormField" :model-value="form.comment" @update:modelValue="form.comment = $event" />
-      </div>
     </div>
     <div class="col-span-full mt-3">
-    <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate">
+    <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate" @error="onError">
       <template v-slot="{ mutate, loading, error }">
         <PrimaryButton  :disabled="loading || disableButton()" @click="mutate()">
           {{ t('shared.button.save') }}

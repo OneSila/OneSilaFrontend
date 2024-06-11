@@ -35,6 +35,7 @@ const onUpdated = (results) => {
   <div>
     <Label v-if="label" class="font-semibold text-md">{{ label }}<span v-if="mandatory">*</span></Label>
     <MazPhoneNumberInput
+      class="mt-2"
       v-model="phoneNumber"
       v-model:country-code="countryCode"
       show-code-on-list

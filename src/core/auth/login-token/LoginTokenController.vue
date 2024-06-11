@@ -35,6 +35,7 @@ const executeMutation = async () => {
     });
 
     if (data && data.authenticateToken) {
+
       const user = data.authenticateToken;
       refreshUser(auth, {
         username: user.username,
@@ -61,8 +62,10 @@ const executeMutation = async () => {
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
 
     if (graphqlError.graphQLErrors) {
-      graphqlError.graphQLErrors.map(x =>
-          displayApolloError(x.message)
+      graphqlError.graphQLErrors.map(x => {
+          displayApolloError(x.message);
+          errors.value.push(x.message);
+        }
       )
     }
   }
@@ -73,7 +76,7 @@ executeMutation();
 </script>
 
 <template>
-  <AuthTemplate>
+  <AuthTemplate v-if="errors.length > 0">
     <template v-slot:background-image>
       <BackgroundImage :src="bgGradient" alt="image" />
     </template>
@@ -109,4 +112,15 @@ executeMutation();
     </template>
 
   </AuthTemplate>
+  <template v-else>
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div class="text-center">
+        <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-xl font-semibold text-white mt-2">{{ t('shared.labels.loading') }}</p>
+      </div>
+    </div>
+  </template>
 </template>

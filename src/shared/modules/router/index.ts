@@ -38,7 +38,6 @@ router.beforeEach((to, from, next) => {
   const auth = detectAuth();
   const routeName = (to.name as string) || '';
 
-
   // Authenticated but does not have a company
   if (isAuthenticated(auth) && !hasCompany(auth)) {
     if (routeName === 'auth.register.company') {

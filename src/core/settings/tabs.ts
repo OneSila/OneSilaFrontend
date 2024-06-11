@@ -29,4 +29,10 @@ export const getTabsConfig = (t: Function): TabItem[] => [
     icon: 'building',
     url: 'settings.internalCompanies.list',
   },
+  {
+    name: 'demoData',
+    label: t('settings.demoData.title'),
+    icon: 'database',
+    url: 'settings.demoData.show',
+  },
 ];
