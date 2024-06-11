@@ -520,7 +520,7 @@
             "content": "How much do you sell it for?",
             "simple": {
               "title": "Sale status",
-              "content": "Is this item for Sale, or for internal use?"
+              "content": "Are you going to sell this item?"
             }
           },
           "stepFour": {
