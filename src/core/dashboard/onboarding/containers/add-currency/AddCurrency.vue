@@ -67,7 +67,6 @@ const setCurrency = async () => {
     query: currenciesQuery,
   });
 
-  console.log(data.currencies)
   if (data && data.currencies && data.currencies.edges && data.currencies.edges.length > 0) {
     isEdit.value = true;
     mutation.value = updateCurrencyMutation;

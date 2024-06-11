@@ -42,7 +42,6 @@ const setVatRate = async () => {
     query: vatRatesQuery,
   });
 
-  console.log(data.vatRates)
   if (data && data.vatRates && data.vatRates.edges && data.vatRates.edges.length > 0) {
     isEdit.value = true;
     mutation.value = updateVatRateMutation;

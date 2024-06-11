@@ -12,6 +12,8 @@ import { PrimaryButton } from "../../../../../shared/components/atoms/button-pri
 import { internalShippingAddressesQuery } from "../../../../../shared/api/queries/contacts.js";
 import { createInventoryLocationMutation, updateInventoryLocationMutation } from "../../../../../shared/api/mutations/inventory.js";
 import { inventoryLocationsQuery } from "../../../../../shared/api/queries/inventory.js";
+import {displayApolloError, processGraphQLErrors} from "../../../../../shared/utils";
+import {Toast} from "../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const emit = defineEmits(['inventory-location-added']);
@@ -40,7 +42,7 @@ const fields = {
     multiple: false,
     filterable: true,
     formMapIdentifier: 'id',
-    optional: true
+    optional: false
   },
   name: {
     type: FieldType.Text,
@@ -63,7 +65,6 @@ const setInventoryLocation = async () => {
     query: inventoryLocationsQuery,
   });
 
-  console.log(data.inventoryLocations)
   if (data && data.inventoryLocations && data.inventoryLocations.edges && data.inventoryLocations.edges.length > 0) {
     isEdit.value = true;
     mutation.value = updateInventoryLocationMutation;
@@ -79,7 +80,9 @@ onMounted(setInventoryLocation);
 
 const getMutationVariables = () => {
   let variables = {
-    location: form.location.id,
+    location: {
+      id: form.location.id
+    },
     name: form.name,
     description: form.description,
   }
@@ -103,6 +106,18 @@ const skip = () => {
   emit('inventory-location-added');
 };
 
+const setLocationField = (value) => {
+  form.location.id = value;
+}
+
+const onError = (error) => {
+  const validationErrors = processGraphQLErrors(error, t);
+  for (const key in validationErrors) {
+    if (validationErrors.hasOwnProperty(key)) {
+      Toast.error(validationErrors[key]);
+    }
+}};
+
 </script>
 
 <template>
@@ -113,7 +128,7 @@ const skip = () => {
     <div class="w-full lg:w-1/2">
       <div class="col-span-full mt-3">
         <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['location'].label }}</label>
-        <FieldQuery :field="fields['location'] as QueryFormField" :model-value="form.location.id" @update:modelValue="form.location = $event" />
+        <FieldQuery :field="fields['location'] as QueryFormField" :model-value="form.location.id" @update:modelValue="setLocationField" />
       </div>
       <div class="col-span-full mt-3">
         <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['name'].label }}</label>
@@ -125,7 +140,7 @@ const skip = () => {
       </div>
     </div>
     <div class="col-span-full mt-3">
-      <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate">
+      <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate" @error="onError">
         <template v-slot="{ mutate, loading, error }">
           <PrimaryButton :disabled="loading || disableButton()" @click="mutate()">
             {{ t('shared.button.save') }}
