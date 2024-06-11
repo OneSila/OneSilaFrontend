@@ -29,26 +29,26 @@ const isCompleted = ref(false);
 const showCreateCompleteModal = ref(false);
 
 const cards: OnboardingCardObject[] = [
+  { key: 'member', title: t('dashboard.onboarding.cards.inviteAnotherMember.title'), query: membersQuery, path: 'profile.company' },
   { key: 'supplier', title: t('dashboard.onboarding.cards.createSupplier.title'), query: suppliersQuery, path: 'purchasing.suppliers.create' },
-  { key: 'supplierProduct', title: t('dashboard.onboarding.cards.createSupplierProduct.title'), query: supplierProductsQuery, path: 'purchasing.product.create' },
+  { key: 'product', title: t('dashboard.onboarding.cards.createFirstProduct.title'), query: productsQuery, path: 'products.products.create'},
   { key: 'purchaseOrder', title: t('dashboard.onboarding.cards.addFirstPurchaseOrder.title'), query: purchaseOrdersQuery, path: 'purchasing.orders.create'},
   { key: 'inventory', title: t('dashboard.onboarding.cards.addFirstInventory.title'), query: inventoriesQuery, path: 'inventory.inventory.create' },
   { key: 'customer', title: t('dashboard.onboarding.cards.createCustomer.title'), query: customersQuery, path: 'sales.customers.create' },
-  { key: 'product', title: t('dashboard.onboarding.cards.createFirstProduct.title'), query: productsQuery, path: 'products.products.create'},
   { key: 'salesOrder', title: t('dashboard.onboarding.cards.addFirstSalesOrder.title'), query: ordersQuery, path: 'sales.orders.create' },
-  { key: 'member', title: t('dashboard.onboarding.cards.inviteAnotherMember.title'), query: membersQuery, path: 'profile.company' }
+  // { key: 'supplierProduct', title: t('dashboard.onboarding.cards.createSupplierProduct.title'), query: supplierProductsQuery, path: 'purchasing.product.create' },
 ];
 
 const steps: StepEntity[]  = [
+  { attachTo: { element: '#member' }, content: { title: '', description: t('dashboard.onboarding.cards.inviteAnotherMember.details') } },
   { attachTo: { element: '#supplier' }, content: { title: '', description: t('dashboard.onboarding.cards.createSupplier.details') } },
-  { attachTo: { element: '#supplierProduct' }, content: { title: '', description: t('dashboard.onboarding.cards.createSupplierProduct.details') } },
+  { attachTo: { element: '#product' }, content: { title: '', description: t('dashboard.onboarding.cards.createFirstProduct.details') } },
   { attachTo: { element: '#purchaseOrder' }, content: { title: '', description: t('dashboard.onboarding.cards.addFirstPurchaseOrder.details') } },
   { attachTo: { element: '#inventory' }, content: { title: '', description: t('dashboard.onboarding.cards.addFirstInventory.details') } },
   { attachTo: { element: '#customer' }, content: { title: '', description: t('dashboard.onboarding.cards.createCustomer.details') } },
-  { attachTo: { element: '#product' }, content: { title: '', description: t('dashboard.onboarding.cards.createFirstProduct.details') } },
   { attachTo: { element: '#salesOrder' }, content: { title: '', description: t('dashboard.onboarding.cards.addFirstSalesOrder.details') } },
-  { attachTo: { element: '#member' }, content: { title: '', description: t('dashboard.onboarding.cards.inviteAnotherMember.details') } },
   { attachTo: { element: '#progressBar' }, content: { title: '', description: t('dashboard.onboarding.cards.progress.details') } }
+  // { attachTo: { element: '#supplierProduct' }, content: { title: '', description: t('dashboard.onboarding.cards.createSupplierProduct.details') } },
 ];
 
 const options = {
@@ -65,7 +65,7 @@ const options = {
 const completedStatus = ref({
   supplier: false,
   customer: false,
-  supplierProduct: false,
+  // supplierProduct: false,
   product: false,
   salesOrder: false,
   purchaseOrder: false,

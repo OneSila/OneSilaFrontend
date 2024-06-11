@@ -27,6 +27,7 @@ export const meCompanySubscription = gql`
       address2
       postcode
       city
+      country
       email
       phoneNumber
       vatNumber

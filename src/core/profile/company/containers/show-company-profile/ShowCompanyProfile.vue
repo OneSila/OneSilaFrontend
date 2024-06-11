@@ -15,18 +15,6 @@ const props = defineProps<{ companyData: MeCompanyData }>();
     </div>
     <ul class="mt-5 flex flex-col max-w-[320px] m-auto space-y-4 font-semibold text-white-dark">
       <li class="flex items-center gap-2">
-        <Icon class="shrink-0" name="envelope"/>
-        {{ t('companyProfile.labels.email') }}:
-        <a v-if="props.companyData.email" :href="`mailto:${props.companyData.email}`">{{ props.companyData.email }}</a>
-        <span v-else>-</span>
-      </li>
-      <li class="flex items-center gap-2">
-        <Icon class="shrink-0" name="phone"/>
-        {{ t('companyProfile.labels.phoneNumber') }}:
-        <a v-if="props.companyData.phoneNumber" :href="`tel:${props.companyData.phoneNumber}`">{{ props.companyData.phoneNumber }}</a>
-        <span v-else>-</span>
-      </li>
-      <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="map-location"/>
         {{ t('companyProfile.labels.address1') }}: {{ props.companyData.address1 || '-' }}
       </li>
@@ -39,8 +27,24 @@ const props = defineProps<{ companyData: MeCompanyData }>();
         {{ t('companyProfile.labels.city') }}: {{ props.companyData.city || '-' }}
       </li>
       <li class="flex items-center gap-2">
+        <Icon class="shrink-0" name="city"/>
+        {{ t('companyProfile.labels.country') }}: {{ props.companyData.country || '-' }}
+      </li>
+      <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="signs-post"/>
         {{ t('companyProfile.labels.postcode') }}: {{ props.companyData.postcode || '-' }}
+      </li>
+      <li class="flex items-center gap-2">
+        <Icon class="shrink-0" name="envelope"/>
+        {{ t('companyProfile.labels.email') }}:
+        <a v-if="props.companyData.email" :href="`mailto:${props.companyData.email}`">{{ props.companyData.email }}</a>
+        <span v-else>-</span>
+      </li>
+      <li class="flex items-center gap-2">
+        <Icon class="shrink-0" name="phone"/>
+        {{ t('companyProfile.labels.phoneNumber') }}:
+        <a v-if="props.companyData.phoneNumber" :href="`tel:${props.companyData.phoneNumber}`">{{ props.companyData.phoneNumber }}</a>
+        <span v-else>-</span>
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="receipt"/>

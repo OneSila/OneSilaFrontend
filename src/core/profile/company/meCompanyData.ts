@@ -22,6 +22,7 @@ export interface MeCompanyData {
   address2?: string;
   postcode?: string;
   city?: string;
+  country?: string;
   email: string;
   phoneNumber?: string;
   vatNumber?: string;
