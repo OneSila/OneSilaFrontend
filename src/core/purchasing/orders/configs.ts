@@ -1,6 +1,6 @@
 import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, OrderStatus} from '../../../shared/utils/constants.js'
-import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
+import {OrderType, SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing.js"
 import {deletePurchaseOrderMutation} from "../../../shared/api/mutations/purchasing.js";
@@ -226,7 +226,18 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       lookupKeys: []
     },
   ],
-  orders: []
+  orders: [
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.DESC
+    },
+  ]
 });
 
 

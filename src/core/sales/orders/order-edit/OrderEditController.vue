@@ -110,7 +110,7 @@ const handleFormUpdate = (form) => {
    <template v-slot:content>
      <div v-if="formConfig">
        <GeneralForm v-if="queryCustomerId == null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
-       <GeneralForm :config="formConfig as FormConfig" />
+       <GeneralForm v-else :config="formConfig as FormConfig" />
      </div>
    </template>
   </GeneralTemplate>

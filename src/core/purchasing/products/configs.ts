@@ -3,12 +3,13 @@ import {FieldType, ProductType} from '../../../shared/utils/constants.js'
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {supplierProductsQuery} from "../../../shared/api/queries/purchasing.js"
-import {createSupplierProductMutation, deleteSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
+import {createSupplierProductMutation} from "../../../shared/api/mutations/purchasing.js";
 import {unitsQuery} from "../../../shared/api/queries/units.js";
 import {productsQuery} from "../../../shared/api/queries/products.js";
 import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {supplierOnTheFlyConfig} from "../suppliers/configs";
+import { deleteProductMutation } from "../../../shared/api/mutations/products.js";
 
 const getSubmitUrl = (supplierId, productId) => {
   if (supplierId) {
@@ -96,8 +97,10 @@ export const baseFormConfigConstructor = (
   submitUrl: getSubmitUrl(supplierId, productId),
   redirectIdentifiers: [{id: 'proxyId'}],
   submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, productId),
-  deleteMutation: deleteSupplierProductMutation,
+  deleteMutation: deleteProductMutation,
   fields: [
+      getSupplierField(supplierId, t),
+      getProductField(productId, t),
     {
       type: FieldType.Text,
       name: 'name',
@@ -117,8 +120,13 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.quantity'),
       number: true,
     },
-      getProductField(productId, t),
-      getSupplierField(supplierId, t),
+    {
+      type: FieldType.Text,
+      name: 'unitPrice',
+      label: t('purchasing.products.labels.unitPrice'),
+      placeholder: t('purchasing.products.placeholders.unitPrice'),
+      float: true,
+    },
     {
       type: FieldType.Query,
       name: 'unit',
@@ -132,13 +140,6 @@ export const baseFormConfigConstructor = (
       filterable: true,
       removable: false,
       formMapIdentifier: 'id',
-    },
-    {
-      type: FieldType.Text,
-      name: 'unitPrice',
-      label: t('purchasing.products.labels.unitPrice'),
-      placeholder: t('purchasing.products.placeholders.unitPrice'),
-      number: true,
     },
     {
       type: FieldType.Checkbox,
@@ -260,7 +261,7 @@ export const listingConfigConstructor = (t: Function, supplierId: string | null 
   urlQueryParams: getUrlQueryParams(supplierId, productId),
   addDelete: true,
   addPagination: true,
-  deleteMutation: deleteSupplierProductMutation,
+  deleteMutation: deleteProductMutation,
 });
 
 export const listingQueryKey = 'supplierProducts';

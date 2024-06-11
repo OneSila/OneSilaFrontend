@@ -71,7 +71,7 @@ export const baseFormConfigConstructor = (
         name: 'precise',
         label: t('inventory.inventoryLocations.labels.precise'),
         default: false,
-        uncheckedValue: "false"
+        uncheckedValue: "false",
       },
     ],
 });

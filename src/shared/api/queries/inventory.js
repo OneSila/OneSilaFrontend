@@ -10,6 +10,10 @@ query Inventories($first: Int, $last: Int, $after: String, $before: String, $ord
             id
             sku
             name
+            supplier {
+               id
+               name
+            }
           }
           stocklocation {
             id

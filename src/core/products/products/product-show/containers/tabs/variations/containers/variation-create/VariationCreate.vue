@@ -13,21 +13,25 @@ import {
 } from "../../../../../../../../../shared/api/mutations/products.js";
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
+import {useEnterKeyboardListener} from "../../../../../../../../../shared/modules/keyboard";
+import {PrimaryButton} from "../../../../../../../../../shared/components/atoms/button-primary";
 
 const { t } = useI18n();
-
-const props = defineProps<{ product: Product; variationIds: string[] }>();
-const emit = defineEmits(['variationAdded']);
-const variationIdsRef = ref(props.variationIds);
-
-watch(() => props.variationIds, (newIds) => {
-  variationIdsRef.value = newIds;
-}, { deep: true });
 
 export interface VariationForm {
   variation: string;
   quantity: string;
 }
+
+const props = defineProps<{ product: Product; variationIds: string[] }>();
+const emit = defineEmits(['variationAdded']);
+const variationIdsRef = ref(props.variationIds);
+const submitButtonRef = ref();
+
+watch(() => props.variationIds, (newIds) => {
+  variationIdsRef.value = newIds;
+}, { deep: true });
+
 
 const form: Ref<VariationForm> = ref({
   variation: '',
@@ -66,7 +70,7 @@ const getVariables = () => {
     variation: { id: form.value.variation }
   }
 
- if (props.product.type !== PRODUCT_BUNDLE) {
+ if (props.product.type !== ProductType.Umbrella) {
    variables['quantity'] = form.value.quantity;
  }
 
@@ -85,6 +89,11 @@ const onError = (error) => {
     }
 };
 
+const onSubmitPressed = () => {
+  submitButtonRef.value?.$el.click();
+};
+
+useEnterKeyboardListener(onSubmitPressed);
 </script>
 
 <template>
@@ -102,15 +111,15 @@ const onError = (error) => {
       <FlexCell>
       <ApolloMutation v-if="isFormVisible" :mutation="getMutation()" :variables="getVariables()" @done="afterCreate" @error="onError">
         <template v-slot="{ mutate, loading, error }">
-            <Button :disabled="loading" class="btn btn-primary ml-2" @click="mutate">
+            <PrimaryButton :disabled="loading" ref="submitButtonRef" class="ml-2" @click="mutate">
             {{ t('shared.button.submit') }}
-          </Button>
+          </PrimaryButton>
         </template>
       </ApolloMutation>
 
-      <Button v-else type="button" class="btn btn-primary" @click="handleAddClick">
+      <PrimaryButton v-else type="button" class="btn btn-primary" @click="handleAddClick">
         {{ t('shared.button.add') }}
-      </Button>
+      </PrimaryButton>
     </FlexCell>
   </Flex>
 </template>

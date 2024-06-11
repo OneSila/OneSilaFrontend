@@ -26,6 +26,7 @@ export interface ValueFormField extends BaseFormField {
   transparent?: boolean;
   secret?: boolean;
   number?: boolean;
+  float?: boolean;
   maxNumber?: number;
   minNumber?: number;
   allowAutocomplete?: boolean;

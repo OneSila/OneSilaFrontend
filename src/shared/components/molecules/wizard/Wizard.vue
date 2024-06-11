@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { CancelButton } from "../../atoms/button-cancel";
 import { PrimaryButton } from "../../atoms/button-primary";
 import { Card } from "../../atoms/card";
+import { useEnterKeyboardListener } from "../../../modules/keyboard";
 
 interface Step {
   title: string;
@@ -17,6 +18,8 @@ const props = withDefaults(
   defineProps<{
     steps: Step[]
     allowNextStep?: boolean
+    addSkip?: boolean
+    showButtons?: boolean
   }>(),
   { allowNextStep: true },
 );
@@ -33,6 +36,9 @@ const goToStep = (stepIndex) => {
   }
 };
 const nextStep = () => {
+  if (!props.allowNextStep) {
+    return;
+  }
   const stepIndex = currentStep.value + 1;
   goToStep(stepIndex);
   emit(stepIndex === props.steps.length ? 'onFinish' : 'onNextStep');
@@ -71,6 +77,8 @@ defineExpose({
   goToStep
 });
 
+useEnterKeyboardListener(nextStep);
+
 </script>
 
 <template>
@@ -98,7 +106,13 @@ defineExpose({
   <div class="tab-content mt-4">
     <slot :name="steps[currentStep].name"></slot>
   </div>
-  <div class="flex justify-end mt-8">
+  <div v-if="showButtons" class="flex justify-end mt-8">
+    <CancelButton
+      v-if="addSkip"
+      @click="goToStep(steps.length - 1)"
+    >
+      {{ t('shared.button.skip') }}
+    </CancelButton>
     <CancelButton
       v-if="currentStep > 0"
       @click="previousStep"

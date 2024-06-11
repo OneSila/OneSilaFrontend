@@ -292,6 +292,10 @@ const allowNextStep = computed(() => {
     return false;
   }
 
+    if (step.value === 1 && form.productionTime === null && form.type === ProductType.Manufacturable) {
+    return false;
+  }
+
   if (form.type === ProductType.Simple) {
     if (form.forSale) {
       return !(step.value === 3 && hasMissingVat());
@@ -327,7 +331,7 @@ const allowNextStep = computed(() => {
           <p class="text-xl font-semibold text-white mt-2">{{ t('shared.labels.loading') }}</p>
         </div>
       </div>
-      <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" @on-finish="handleFinish" @update-current-step="updateStep">
+      <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
           <TypeStep :form="form" @for-sale-changed="handleForSaleChanged" @empty-variations="handleEmptyVariations" />

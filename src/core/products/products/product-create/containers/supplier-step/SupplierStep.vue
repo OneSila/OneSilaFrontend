@@ -82,73 +82,82 @@ emit('set-product-supplier-name')
           </FlexCell>
 
           <FlexCell center>
-            <Flex class="gap-4">
-              <FlexCell center>
-                <Label>{{ t('purchasing.products.labels.supplier') }}</Label>
+            <Flex vertical class="gap-2">
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('purchasing.products.labels.supplier') }}
+                </Label>
               </FlexCell>
-              <FlexCell center>
+              <FlexCell>
                 <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.supplier.id" :field="getSupplier()" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
               </FlexCell>
             </Flex>
           </FlexCell>
 
           <FlexCell center>
-            <Flex class="gap-4">
-              <FlexCell center>
-                <Label>{{ t('shared.labels.name') }}</Label>
+            <Flex vertical class="gap-2">
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('shared.labels.name') }}
+                </Label>
               </FlexCell>
-              <FlexCell center>
+              <FlexCell>
                 <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.name" :placeholder="t('shared.placeholders.name')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
               </FlexCell>
             </Flex>
           </FlexCell>
           <FlexCell center>
-            <Flex class="gap-4">
-              <FlexCell center>
-                <Label>{{ t('shared.labels.sku') }}</Label>
-              </FlexCell>
-              <FlexCell center>
+            <Flex vertical class="gap-2">
+               <FlexCell>
+                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                   {{ t('shared.labels.sku') }}
+                 </Label>
+               </FlexCell>
+               <FlexCell>
                 <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.sku" :placeholder="t('shared.placeholders.sku')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
-              </FlexCell>
+               </FlexCell>
             </Flex>
           </FlexCell>
 
         <FlexCell center>
-            <Flex class="gap-4">
-              <FlexCell center>
-                <Label>{{ t('shared.labels.quantity') }}</Label>
-              </FlexCell>
-              <FlexCell center>
+          <Flex vertical class="gap-2">
+             <FlexCell>
+               <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                 {{ t('shared.labels.quantity') }}
+               </Label>
+             </FlexCell>
+             <FlexCell>
                 <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.quantity" number :placeholder="t('shared.placeholders.quantity')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
-              </FlexCell>
-            </Flex>
+             </FlexCell>
+          </Flex>
         </FlexCell>
         <FlexCell center>
-            <Flex class="gap-4">
-              <FlexCell center>
-                <Label>{{ t('purchasing.products.labels.unitPrice') }}</Label>
-              </FlexCell>
-              <FlexCell center>
+          <Flex vertical class="gap-2">
+             <FlexCell>
+               <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                 {{ t('purchasing.products.labels.unitPrice') }}
+               </Label>
+             </FlexCell>
+             <FlexCell>
                 <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.unitPrice" number :placeholder="t('purchasing.products.placeholders.unitPrice')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
-              </FlexCell>
-            </Flex>
+             </FlexCell>
+          </Flex>
         </FlexCell>
 
         <FlexCell center>
-          <Flex class="gap-4">
-              <FlexCell center>
-                <Label>{{ t('shared.labels.unit') }}</Label>
-              </FlexCell>
-              <FlexCell center>
-                 <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.unit.id" :field="getUnit()" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
-              </FlexCell>
-            </Flex>
-          </FlexCell>
-
-
+          <Flex vertical class="gap-2">
+             <FlexCell>
+               <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                 {{ t('shared.labels.unit') }}
+               </Label>
+             </FlexCell>
+             <FlexCell>
+               <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.unit.id" :field="getUnit()" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+             </FlexCell>
+          </Flex>
+        </FlexCell>
         </Flex>
       </FlexCell>
-
     </Flex>
   </div>
 </template>

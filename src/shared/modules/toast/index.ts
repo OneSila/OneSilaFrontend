@@ -4,7 +4,7 @@ const showAlert = async (type, title) => {
   var toastMixin = Swal.mixin({
     toast: true,
     animation: true,
-    position: 'top-right',
+    position: 'bottom-end',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,

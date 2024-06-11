@@ -47,6 +47,7 @@ const afterRegister = async () => {
         language: user.language,
         firstName: user.firstName,
         lastName: user.lastName,
+        onboardingStatus: user.onboardingStatus,
         company: user.multiTenantCompany,
         companyOwner: user.isMultiTenantCompanyOwner,
         active: user.isActive
@@ -81,7 +82,7 @@ useEnterKeyboardListener(onSubmit);
       <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.header') }}</h1>
       <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.description') }}</p>
     </div>
-    <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.username" :label="t('auth.register.labels.email')" :placeholder="t('auth.register.placeholders.email')" />
+    <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.username" :label="t('shared.labels.email')" :placeholder="t('auth.register.placeholders.email')" />
     <TextInputPrepend id="password" class="mb-2" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>

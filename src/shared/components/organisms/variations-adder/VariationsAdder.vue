@@ -11,6 +11,7 @@ import { TextInput } from "../../atoms/input-text";
 import debounce from 'lodash.debounce';
 import Swal from 'sweetalert2';
 import {Pagination} from "../../molecules/pagination";
+import {Link} from "../../atoms/link";
 
 const { t } = useI18n();
 
@@ -80,18 +81,19 @@ const handleAddVariation = async (variation: RelatedProduct) => {
   if (hasQty()) {
     const { value: quantity } = await Swal.fire({
       title: t('shared.placeholders.quantity'),
-      input: 'number',
+      input: 'text',
       inputValue: '1',
       inputAttributes: {
         autocapitalize: 'off',
-        min: '1'
+        inputmode: 'decimal',
       },
       showCancelButton: true,
       confirmButtonText: t('shared.button.submit'),
       cancelButtonText: t('shared.button.cancel'),
       showLoaderOnConfirm: true,
       preConfirm: (quantity) => {
-        if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) {
+        const parsedQuantity = parseFloat(quantity);
+        if (!quantity || isNaN(parsedQuantity) || parsedQuantity <= 0) {
           Swal.showValidationMessage(t('shared.validations.quantity'));
           return false;
         }
@@ -101,7 +103,7 @@ const handleAddVariation = async (variation: RelatedProduct) => {
     });
 
     if (quantity) {
-      const newVariation = { ...variation, quantity: parseInt(quantity) };
+      const newVariation = { ...variation, quantity: parseFloat(quantity) };
       await emit('add', newVariation);
       await fetchData();
     }
@@ -208,19 +210,33 @@ onMounted(fetchData);
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
     <div>
-      <label class="search-input relative block">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-          <Icon class="text-gray-300" name="search" size="lg" />
-        </span>
+      <Flex class="gap-2">
+        <FlexCell grow>
+          <label class="search-input relative block">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+              <Icon class="text-gray-300" name="search" size="lg" />
+            </span>
 
-        <TextInput
-          ref="input"
-          class="search-input pl-9 w-full"
-          v-model="search"
-          :placeholder="t('shared.button.search')"
-          :disabled="loading"
-        />
-      </label>
+            <TextInput
+              ref="input"
+              class="search-input pl-9 w-full"
+              v-model="search"
+              :placeholder="t('shared.button.search')"
+              :disabled="loading"
+            />
+          </label>
+        </FlexCell>
+        <FlexCell center>
+          <Link class="btn-primary p-2.5 rounded-full" :path="{name: 'products.products.create'}" target="_blank">
+            <Icon name="plus" />
+          </Link>
+        </FlexCell>
+        <FlexCell center>
+          <Button :customClass="'btn btn-primary p-2 rounded-full'" @click="fetchData">
+            <Icon name="arrows-rotate" />
+          </Button>
+        </FlexCell>
+      </Flex>
 
       <div v-if="availableVariations.length === 0">
         <p class="text-xl text-center mt-5 font-medium">{{ t('products.products.addVariations.noVariationsLeft') }}</p>
@@ -230,7 +246,6 @@ onMounted(fetchData);
           <tr>
             <th>{{ t('shared.labels.name') }}</th>
             <th>{{ t('shared.labels.active') }}</th>
-            <th>{{ t('shared.labels.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -241,15 +256,19 @@ onMounted(fetchData);
               @dragstart="dragStart(variation.id)"
               @dragend="dragEnd"
           >
-            <td>{{ variation.name }}</td>
+            <td>
+              <Flex>
+                <FlexCell center>
+                    <Icon name="plus" class="text-primary cursor-pointer mb-1"  @click="handleAddVariation(variation)" :disabled="loading" />
+                </FlexCell>
+                <FlexCell center>
+                  <label class="text-md ml-2">{{ variation.name }}</label>
+                </FlexCell>
+              </Flex>
+            </td>
             <td>
               <Icon v-if="variation.active" name="check-circle" class="ml-2 text-green-500" />
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
-            </td>
-            <td>
-              <Button class="btn btn-sm btn-primary" @click="handleAddVariation(variation)" :disabled="loading">
-                <Icon name="plus" />
-              </Button>
             </td>
           </tr>
         </tbody>
@@ -266,7 +285,7 @@ onMounted(fetchData);
           <th>{{ t('shared.labels.name') }}</th>
           <th>{{ t('shared.labels.active') }}</th>
           <th v-if="hasQty()">{{ t('shared.labels.quantity') }}</th>
-          <th class="!text-end">{{ t('shared.labels.actions')}}</th>
+          <th v-if="type === ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -277,20 +296,26 @@ onMounted(fetchData);
               @dragstart="dragStart(item.id)"
               @dragend="dragEnd"
           >
-            <td>{{ item.name }}</td>
+            <td>
+              <Flex>
+                <FlexCell center>
+                    <Icon name="trash" class="text-danger cursor-pointer mb-1" @click="handleRemoveVariation(item.id)" :disabled="loading" />
+                </FlexCell>
+                <FlexCell center>
+                  <label class="text-md ml-2">{{ item.name }}</label>
+                </FlexCell>
+              </Flex>
+            </td>
             <td>
               <Icon v-if="item.active" name="check-circle" class="ml-2 text-green-500" />
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td v-if="hasQty()">{{ item.quantity }}</td>
-            <td>
-              <Flex end>
-                <FlexCell>
-                  <Button class="btn btn-sm btn-outline-danger" @click="handleRemoveVariation(item.id)" :disabled="loading">
-                    <Icon name="trash" />
-                  </Button>
-                </FlexCell>
-              </Flex>
+            <td v-if="type == ProductType.Manufacturable">
+              <span v-if="item.productionTime">
+                {{ item.productionTime }}
+              </span>
+              <span v-else>-</span>
             </td>
           </tr>
         </tbody>

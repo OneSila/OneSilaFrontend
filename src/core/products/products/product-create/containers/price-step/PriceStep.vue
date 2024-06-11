@@ -8,6 +8,8 @@ import { getVatRateField } from "../../../configs";
 import { FieldQuery } from "../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import apolloClient from "../../../../../../../apollo-client";
 import { currenciesQuery } from "../../../../../../shared/api/queries/currencies.js";
+import {Icon} from "../../../../../../shared/components/atoms/icon";
+import {TextInputPrepend} from "../../../../../../shared/components/atoms/input-text-prepend";
 
 const props = defineProps<{form: FormType, additionalFieldsForm: AdditonalFormFields}>();
 const emit = defineEmits(['set-default-currency']);
@@ -36,18 +38,18 @@ getDefaultCurrency();
       <FlexCell>
         <Flex center class="mt-4 gap-4">
           <FlexCell center>
-            <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('sales.prices.labels.amount') }}</label>
-          </FlexCell>
-          <FlexCell center>
-            <TextInput v-model="additionalFieldsForm.price.amount" float :placeholder="'100 ' + currency" />
+            <TextInputPrepend id="amount" class="w-96" v-model="additionalFieldsForm.price.amount" :label="t('sales.prices.labels.amount')" type="number"
+                              :placeholder="'100'">
+            {{ currency }}
+          </TextInputPrepend>
           </FlexCell>
         </Flex>
         <Flex center class="gap-4 mt-4">
           <FlexCell center>
-            <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('sales.prices.labels.discountAmount') }}</label>
-          </FlexCell>
-          <FlexCell center>
-            <TextInput v-model="additionalFieldsForm.price.discountAmount" float :placeholder="'90.99 ' + currency" />
+            <TextInputPrepend id="discountAmount" class="w-96" v-model="additionalFieldsForm.price.discountAmount" :label="t('sales.prices.labels.discountAmount')" type="number"
+                              :placeholder="'90.99'">
+            {{ currency }}
+          </TextInputPrepend>
           </FlexCell>
         </Flex>
       </FlexCell>
@@ -57,10 +59,14 @@ getDefaultCurrency();
       <FlexCell>
         <Flex class="mt-4 gap-4" center>
           <FlexCell center>
-            <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</label>
-          </FlexCell>
-          <FlexCell center>
-              <FieldQuery class="w-96" v-model="form.vatRate.id" :field="getVatRateField(t)" />
+            <Flex vertical>
+              <FlexCell>
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('settings.vatRates.show.title') }}*</label>
+              </FlexCell>
+              <FlexCell>
+                <FieldQuery class="w-96" v-model="form.vatRate.id" :field="getVatRateField(t)" />
+              </FlexCell>
+            </Flex>
           </FlexCell>
         </Flex>
       </FlexCell>

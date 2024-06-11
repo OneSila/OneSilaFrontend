@@ -1,5 +1,76 @@
 {
   "dashboard": {
+    "onboarding": {
+      "completedHeader": "You completed all the steps!",
+      "completedMessage": "Congratulations! You have successfully completed all the onboarding steps. You are now ready to fully utilize the platform and take advantage of all its features. Start exploring and make the most of OneSila to drive innovation and success for your business.",
+      "startInnovatingButton": "Start Innovating",
+      "cards": {
+        "button": "Let's do it",
+        "header": "Learn to use",
+        "createSupplier": {
+          "title": "Create and add a new supplier",
+          "details": "A supplier is a company you buy from. You will later be able to make purchase orders from this company."
+        },
+        "createCustomer": {
+          "title": "Create and add a new customer",
+          "details": "A customer is a company you sell to. You will later be able to make sales orders to this company."
+        },
+        "createSupplierProduct": {
+          "title": "Add a new product for your supplier",
+          "details": "A supplier product represents the product or bill of material you buy. It will keep your stock and you can create products from it."
+        },
+        "createFirstProduct": {
+          "title": "Create your first product",
+          "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped. Each product sold individually will contain a supplier product and can contain multiple supplier products if sold by different suppliers."
+        },
+        "addFirstSalesOrder": {
+          "title": "Add your first sales order",
+          "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
+        },
+        "addFirstPurchaseOrder": {
+          "title": "Add your first purchase order",
+          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
+        },
+        "addFirstInventory": {
+          "title": "Add your first inventory entry",
+          "details": "Add inventory entries to keep track of the stock levels of your products. This helps in managing and forecasting inventory needs."
+        },
+        "inviteAnotherMember": {
+          "title": "Invite another member to join your team",
+          "details": "Invite team members to collaborate and work together on managing your business operations."
+        },
+        "progress": {
+          "details": "Complete all the steps to become a master of OneSila and make the most of its features."
+        }
+      },
+      "generateDemoData": {
+        "title": "Demo Data",
+        "subTitle": "Welcome to OneSila",
+        "content": "Do you want to create Demo Data?",
+        "demoDataExplanation": "Demo data is a set of fake data that helps you try the platform. It includes various sample entries to showcase the functionalities of OneSila.",
+        "demoDataDeletionInfo": "All and only the demo data can be deleted from your profile with a single click button."
+      },
+      "addCompany": {
+        "title": "Company",
+        "subTitle": "Let us know your company better",
+        "content": "Please fill the mandatory fields in the form below"
+      },
+      "addCurrency": {
+        "title": "Currency",
+        "subTitle": "Let's set up your company's default currency",
+        "content": "Please fill the fields in the form below"
+      },
+      "confirmVatRate": {
+        "title": "VAT Rate",
+          "subTitle": "Set your company's VAT rate",
+          "content": "Please fill the fields in the form below"
+      },
+      "createInventoryLocation": {
+        "title": "Inventory Location",
+        "subTitle": "Set up your company's inventory location",
+        "content": "Please fill the fields in the form below or skip if you want to do it later."
+      }
+    },
     "labels": {
       "totalOrders": "Total Orders",
       "recentOrders": "Recent Orders",
@@ -59,10 +130,13 @@
       "show": "Show",
       "submit": "Submit",
       "add": "Add",
+      "skip": "Skip",
       "download": "Download",
       "uploadNew": "Upload New"
     },
     "labels": {
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
       "status": "Status",
       "role": "Role",
       "or": "Or",
@@ -89,6 +163,7 @@
       "no": "No",
       "language": "Language",
       "seconds": "seconds",
+      "minutes": "minutes",
       "home": "Home"
     },
     "validations": {
@@ -155,14 +230,6 @@
     "login": {
       "header": "Log in",
       "description": "Enter your username and password to login",
-      "labels": {
-        "email": "Email",
-        "password": "Password"
-      },
-      "placeholders": {
-        "email": "Enter Email",
-        "password": "Enter Password"
-      },
       "recover": "Recover account",
       "registerPrompt": "Don't have an account?",
       "register": "SIGN UP",
@@ -173,7 +240,6 @@
       "description": "Enter your username and password to register",
       "labels": {
         "companyName": "Company Name",
-        "email": "Email",
         "password": "Password",
         "confirmPassword": "Confirm password"
       },
@@ -282,7 +348,7 @@
   "companyProfile": {
     "labels": {
       "companyName": "Company Name",
-      "email": "Email",
+      "email": "Company Email",
       "phoneNumber": "Phone Number",
       "address1": "Address Line 1",
       "address2": "Address Line 2",
@@ -484,7 +550,7 @@
         "productionTime": "Enter time in seconds"
       },
       "create": {
-        "title": "Create product",
+        "title": "Create Product",
         "createSuccefully": "Product was succefully created!",
         "wizard": {
           "stepOne": {
@@ -532,7 +598,7 @@
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
               "add": "You bought this product before? Just add it.",
-              "create": "Please fill the form about the product you bought and intend to sell."
+              "create": "Please fill the form about the product you bought and intend to sell. You can leave it empty and add leter."
             },
             "bundle": {
               "title": "Items",
@@ -593,6 +659,9 @@
     },
     "inventory": {
       "title": "Inventories",
+      "labels": {
+        "movements": "Inventory Movements"
+      },
       "create": {
         "title": "Create Inventory"
       },
@@ -688,7 +757,8 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
-      "updatedSuccefully": "The price was succefully updated!",
+      "updatedError": "Price for currency {currency} is empty. Please adjust it!",
+      "updatedSuccefully": "The price for currency {currency} was succefully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"
@@ -786,6 +856,11 @@
       },
       "placeholders": {
         "unitPrice": "Enter unit price"
+      },
+      "alert": {
+        "prices": {
+          "succefullyUpdated": "Succefully updated the prices!"
+        }
       }
     },
     "orders": {
@@ -977,6 +1052,9 @@
       },
       "edit": {
         "title": "Edit Vat Rate"
+      },
+      "show": {
+        "title": "Vat Rate"
       },
       "labels": {
         "name": "Name",

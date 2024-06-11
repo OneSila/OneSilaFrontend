@@ -5,8 +5,9 @@ import {ListingConfig} from "../../../shared/components/organisms/general-listin
 import { inventoriesQuery, inventoryLocationsQuery } from "../../../shared/api/queries/inventory.js"
 import {productsQuery} from "../../../shared/api/queries/products.js"
 import {createInventoryLocationMutation, deleteInventoryMutation} from "../../../shared/api/mutations/inventory.js";
-import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
+import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {baseFormConfigConstructor as baseStocklocationConfigConstructor } from '../inventory-location/configs'
+import { getInventorySubscription } from '../../../shared/api/subscriptions/inventory.js';
 
 const stocklocationOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -93,8 +94,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 const getHeaders = (t, productId, isSupplierProduct) => {
   const nameLabel = isSupplierProduct ? t('shared.labels.name') : t('purchasing.products.show.title');
   return productId && isSupplierProduct
-    ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')]
-    : [nameLabel, t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity')];
+    ? [t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity'), t('purchasing.orders.labels.supplier')]
+    : [nameLabel, t('inventory.inventoryLocations.show.title'), t('shared.labels.quantity'), t('purchasing.orders.labels.supplier')];
 }
 const getFields = (productId, isSupplierProduct): ShowField[] => {
   const commonFields: ShowField[] = [];
@@ -104,9 +105,6 @@ const getFields = (productId, isSupplierProduct): ShowField[] => {
       name: 'product',
       type: FieldType.NestedText,
       keys: ['name'],
-      clickable: true,
-      clickIdentifiers: [{id: ['id']}],
-      clickUrl: { name: 'products.products.show', query: {tab: 'inventory'}},
     });
   }
 
@@ -121,20 +119,78 @@ const getFields = (productId, isSupplierProduct): ShowField[] => {
       type: FieldType.Text,
     })
 
+   commonFields.push({
+      name: 'product',
+      type: FieldType.NestedText,
+      keys: ['supplier', 'name'],
+      clickable: true,
+      clickIdentifiers: [{id: ['supplier', 'id']}],
+      clickUrl: { name: 'purchasing.suppliers.show', query: {tab: 'inventory'}},
+    });
+
   return commonFields;
 }
 export const listingConfigConstructor = (t: Function, productId: string | null = null, isSupplierProduct: boolean = true): ListingConfig => ({
   headers: getHeaders(t, productId, isSupplierProduct),
   fields: getFields(productId, isSupplierProduct),
   identifierKey: 'id',
-  addActions: true,
+  addActions: isSupplierProduct,
   addEdit: isSupplierProduct,
   editUrlName: 'inventory.inventory.edit',
+  showUrlName: 'inventory.inventory.show',
   urlQueryParams: productId && isSupplierProduct ? { "productId": productId } : undefined,
-  addShow: false,
-  addDelete: true,
+  addShow: true,
+  addDelete: isSupplierProduct,
   addPagination: true,
   deleteMutation: deleteInventoryMutation,
+});
+
+export const showConfigConstructor = (t: Function, id): ShowConfig => ({
+  cols: 1,
+  subscription: getInventorySubscription,
+  subscriptionKey: 'inventory',
+  subscriptionVariables: {pk: id},
+  backUrl:  {name: 'inventory.inventory.list' },
+  editUrl: {name: 'inventory.inventory.edit', params: { id: id } },
+  deleteMutation: deleteInventoryMutation,
+  deleteVariables: { id: id },
+  addBack: true,
+  addEdit: true,
+  addDelete: true,
+  fields: [
+  {
+    label: t('shared.labels.quantity'),
+    name: 'quantity',
+    type: FieldType.Text,
+  },
+  {
+    label: t('products.products.show.title'),
+    name: 'product',
+    type: FieldType.NestedText,
+    keys: ['name'],
+    clickable: true,
+    clickIdentifiers: [{id: ['id']}],
+    clickUrl: { name: 'products.products.show', query: {tab: 'inventory'}},
+  },
+  {
+    label: t('inventory.inventoryLocations.show.title'),
+    name: 'stocklocation',
+    type: FieldType.NestedText,
+    keys: ['name'],
+    clickable: true,
+    clickIdentifiers: [{id: ['id']}],
+    clickUrl: { name: 'inventory.inventoryLocations.edit'},
+  },
+  {
+    label: t('purchasing.suppliers.show.title'),
+    name: 'product',
+    type: FieldType.NestedText,
+    keys: ['supplier', 'name'],
+    clickable: true,
+    clickIdentifiers: [{id: ['supplier', 'id']}],
+    clickUrl: { name: 'purchasing.suppliers.show'},
+   }
+  ]
 });
 
 export const listingQueryKey = 'inventories';
