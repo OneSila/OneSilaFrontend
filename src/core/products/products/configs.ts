@@ -169,7 +169,9 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   fields: [
     {
       type: FieldType.Text,
-      name: 'name'
+      name: 'name',
+      addImage: true,
+      imageField: 'thumbnailUrl'
     },
     {
       type: FieldType.Badge,

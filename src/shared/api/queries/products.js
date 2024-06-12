@@ -12,6 +12,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           type
           proxyId
           productionTime
+          thumbnailUrl
           vatRate {
             id
             name

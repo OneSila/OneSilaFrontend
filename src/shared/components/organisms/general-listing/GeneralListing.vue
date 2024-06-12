@@ -9,6 +9,7 @@ import { useI18n } from "vue-i18n";
 import { SearchConfig } from "../general-search/searchConfig";
 import {FilterManager} from "../../molecules/filter-manager";
 import {getFieldComponent} from "../general-show/showConfig";
+import {FieldType} from "../../../utils/constants";
 
 const { t } = useI18n();
 
@@ -82,7 +83,13 @@ const getUpdatedField = (field, item, index) => {
 
               <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                 <td v-for="(field, index) in config.fields" :key="field.name">
-                    <component
+                    <component v-if="field.type === FieldType.Text && field.addImage && field.imageField"
+                      :is="getFieldComponent(field.type)"
+                      :field="getUpdatedField(field, item, index)"
+                      :model-value="item.node[field.name]"
+                      :image-value="item.node[field.imageField]"
+                    />
+                    <component v-else
                       :is="getFieldComponent(field.type)"
                       :field="getUpdatedField(field, item, index)"
                       :model-value="item.node[field.name]"
