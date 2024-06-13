@@ -40,7 +40,10 @@ const handleAddClick = () => {
 
 const getVariables = () => {
   let ids = props.baseProducts.map(baseProduct => ({ id: baseProduct.id }));
-  ids.push({id: form.value.product})
+
+  if (form.value.product) {
+      ids.push({id: form.value.product})
+  }
 
   return { data: { id: props.product.id, baseProducts: ids } };
 };

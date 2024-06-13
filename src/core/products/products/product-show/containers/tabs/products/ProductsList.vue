@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import {onMounted, ref} from "vue";
-import {getProductTypeBadgeMap, Product} from "../../../../configs";
+import {onMounted, Ref, ref} from "vue";
+import {BaseProduct, getProductTypeBadgeMap, Product} from "../../../../configs";
 import { Button } from "../../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../../shared/components/atoms/link";
 import {useI18n} from "vue-i18n";
@@ -18,8 +18,7 @@ import {PrimaryButton} from "../../../../../../../shared/components/atoms/button
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
-
-const baseProducts = ref([]);
+const baseProducts: Ref<BaseProduct[]> = ref([]);
 
 onMounted(() => {
   baseProducts.value = props.product.baseProducts || [];
