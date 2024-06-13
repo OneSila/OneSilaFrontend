@@ -15,6 +15,7 @@ import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
 import {useEnterKeyboardListener} from "../../../../../../../../../shared/modules/keyboard";
 import {PrimaryButton} from "../../../../../../../../../shared/components/atoms/button-primary";
+import {DangerButton} from "../../../../../../../../../shared/components/atoms/button-danger";
 
 const { t } = useI18n();
 
@@ -103,9 +104,9 @@ useEnterKeyboardListener(onSubmitPressed);
         <CreateForm :product="product" :form="form" :variation-ids="variationIdsRef" />
       </FlexCell>
       <FlexCell>
-        <Button type="button" class="btn btn-danger ml-2" @click="resetForm">
+        <DangerButton type="button" class="btn btn-danger ml-2" @click="resetForm">
           {{ t('shared.button.cancel') }}
-        </Button>
+        </DangerButton>
       </FlexCell>
     </template>
       <FlexCell>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
+import {computed, defineProps} from 'vue';
 import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
@@ -11,16 +12,27 @@ import dropshipType from "../../../../../../assets/images/product-types/dropship
 import {ProductType} from "../../../../../../shared/utils/constants";
 import {FormType} from "../product";
 
-const props = defineProps<{form: FormType}>();
+const props = defineProps<{form: FormType, hasSupplierProduct: boolean}>();
 const emit = defineEmits(['for-sale-changed', 'empty-variations']);
 
-const typeChoice = [
+const baseTypeChoice = [
   { name: ProductType.Simple },
-  { name: ProductType.Bundle },
-  { name: ProductType.Umbrella },
-  { name: ProductType.Manufacturable },
   { name: ProductType.Dropship }
 ];
+
+const additionalTypeChoice = [
+  { name: ProductType.Bundle },
+  { name: ProductType.Umbrella },
+  { name: ProductType.Manufacturable }
+];
+
+const typeChoice = computed(() => {
+  if (props.hasSupplierProduct) {
+    return baseTypeChoice;
+  } else {
+    return [...baseTypeChoice, ...additionalTypeChoice];
+  }
+});
 
 // when we select the type we always make for sale true in case we go back
 emit('for-sale-changed', true, false);
@@ -40,7 +52,7 @@ const { t } = useI18n();
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.variable.title') }}</h3>
           <p>{{ t('products.products.create.wizard.stepOne.variable.example') }}</p>
-          <Image :source="variableType" alt="Variable" class="w-full" />
+          <Image :source="variableType" alt="Variable" class="w-full max-h-[35rem]" />
         </div>
       </template>
 
@@ -48,7 +60,7 @@ const { t } = useI18n();
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>
           <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>
-          <Image :source="bundleType" alt="Bundle" class="w-full" />
+          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />
         </div>
       </template>
 
@@ -56,7 +68,7 @@ const { t } = useI18n();
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.configurable.title') }}</h3>
           <p>{{ t('products.products.create.wizard.stepOne.configurable.example') }}</p>
-          <Image :source="configurableType" alt="Configurable" class="w-full" />
+          <Image :source="configurableType" alt="Configurable" class="w-full max-h-[35rem]" />
         </div>
       </template>
 
@@ -64,7 +76,7 @@ const { t } = useI18n();
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.manufacturable.title') }}</h3>
           <p>{{ t('products.products.create.wizard.stepOne.manufacturable.example') }}</p>
-          <Image :source="manufacturableType" alt="Configurable" class="w-full" />
+          <Image :source="manufacturableType" alt="Configurable" class="w-full max-h-[35rem]" />
         </div>
       </template>
 
@@ -72,7 +84,7 @@ const { t } = useI18n();
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.dropship.title') }}</h3>
           <p>{{ t('products.products.create.wizard.stepOne.dropship.example') }}</p>
-          <Image :source="dropshipType" alt="Configurable" class="w-full" />
+          <Image :source="dropshipType" alt="Configurable" class="w-full max-h-[35rem]" />
         </div>
       </template>
 

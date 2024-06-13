@@ -17,9 +17,12 @@ export const productSubscription = gql`
         rate
         name
       }
-      baseProduct {
+      baseProducts {
         id
         name
+        type
+        active
+        thumbnailUrl
       }
       alwaysOnStock
     }

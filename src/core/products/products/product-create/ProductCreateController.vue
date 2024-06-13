@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, computed, ref} from 'vue';
+import {reactive, computed, ref, onMounted} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";
@@ -11,7 +11,7 @@ import {
   createBillsOfMaterialMutation,
   createBundleVariationsMutation,
   createProductMutation,
-  createUmbrellaVariationsMutation
+  createUmbrellaVariationsMutation, updateProductMutation
 } from "../../../../shared/api/mutations/products.js"
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
@@ -25,6 +25,7 @@ import { AdditonalFormFields, FormType } from "./containers/product";
 import {SupplierStep} from "./containers/supplier-step";
 import {createSalesPriceMutation} from "../../../../shared/api/mutations/salesPrices.js";
 import {createSupplierProductMutation} from "../../../../shared/api/mutations/purchasing.js";
+import {getProductQuery} from "../../../../shared/api/queries/products.js";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -33,6 +34,8 @@ const router = useRouter();
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
+const hasSupplierProduct = ref(false);
+const productFetched = ref(false);
 
 const form: FormType = reactive({
   type: '',
@@ -50,7 +53,7 @@ const form: FormType = reactive({
 const additionalFieldsForm: AdditonalFormFields = reactive({
     relatedProducts: [],
     supplierProduct: {
-      id: '',
+      id: null,
       sku: '',
       name: '',
       quantity: null,
@@ -60,8 +63,8 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
       },
       unit: {
         id: null
-      }
-
+      },
+      baseProducts: []
     },
     price: {
       amount: null,
@@ -71,6 +74,30 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
       }
     }
 });
+
+const fetchSupplierProduct = async (id: string | null = null) => {
+  const supplierProductId = id || (route.query.productId ? route.query.productId.toString() : null);
+
+  if (supplierProductId) {
+    const {data} = await apolloClient.query({
+      query: getProductQuery,
+      variables: { id: supplierProductId }
+    })
+
+    if (data && data.product) {
+      additionalFieldsForm.supplierProduct.id = data.product.id;
+      additionalFieldsForm.supplierProduct.baseProducts = data.product.baseProducts.map(baseProduct => ({ id: baseProduct.id }));
+      if (!id) {
+        hasSupplierProduct.value = true;
+      }
+    }
+  }
+  if (!id) {
+    productFetched.value = true;
+  }
+}
+
+onMounted(fetchSupplierProduct);
 
 const wizardSteps = computed(() => {
   let steps = [
@@ -84,11 +111,15 @@ const wizardSteps = computed(() => {
       if (form.forSale) {
         steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
       }
-      steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
+      if (!hasSupplierProduct.value) {
+        steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
+      }
       break;
     case ProductType.Dropship:
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
-      steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
+      if (!hasSupplierProduct.value) {
+        steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
+      }
       break;
     case ProductType.Bundle:
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
@@ -161,15 +192,31 @@ const createRelatedProducts = async (productId) => {
 };
 
 const handleSupplierProduct = async (productId) => {
-    const { id, ...supplierProductWithoutId } = additionalFieldsForm.supplierProduct;
+  const { id, ...supplierProductWithoutId } = additionalFieldsForm.supplierProduct;
 
   if (additionalFieldsForm.supplierProduct.id) {
+    try {
+      if (!hasSupplierProduct.value) {
+        await fetchSupplierProduct(additionalFieldsForm.supplierProduct.id);
+      }
+
+      let ids = additionalFieldsForm.supplierProduct.baseProducts;
+      ids.push({id: productId})
+      await apolloClient.mutate({
+        mutation: updateProductMutation,
+        variables: {
+          data: {id: additionalFieldsForm.supplierProduct.id, baseProducts: ids}
+        },
+      });
+    } catch (error) {
+      console.error("Supplier product creation error:", error);
+    }
   } else {
     try {
       await apolloClient.mutate({
         mutation: createSupplierProductMutation,
         variables: {
-          data: {...supplierProductWithoutId, baseProduct: { id: productId }, type: ProductType.Supplier}
+          data: {...supplierProductWithoutId, baseProducts: [{ id: productId }], type: ProductType.Supplier}
         },
       });
     } catch (error) {
@@ -192,8 +239,8 @@ const processAdditionalFields = async (productId) => {
   // Handle supplier product for Simple and Dropship product types
   if (isSupplierProductFilled() &&
       (form.type === ProductType.Simple || form.type === ProductType.Dropship)) {
-    await handleSupplierProduct(productId);
-  }
+      await handleSupplierProduct(productId);
+    }
 
   // Create related products for Umbrella, Bundle, or Manufacturable types
   if (additionalFieldsForm.relatedProducts.length > 0 &&
@@ -234,7 +281,14 @@ const handleFinish = async () => {
 
       Toast.success(t('products.products.create.createSuccefully'));
       loading.value = false;
-      router.push({name: 'products.products.show', params: {id: data.createProduct.id}})
+      const supplierProductId = route.query.productId ? route.query.productId.toString() : null;
+
+      if (supplierProductId && additionalFieldsForm.supplierProduct.id && productFetched.value) {
+        router.push({name: 'products.products.show', params: { id: supplierProductId }, query: {tab: 'products'}})
+      } else {
+        router.push({name: 'products.products.show', params: { id: data.createProduct.id }})
+      }
+
     }
   } catch (err) {
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
@@ -260,8 +314,13 @@ const triggerNextStep = () => {
 };
 
 const handleForSaleChanged = (newVal, goNext) => {
+
   form.forSale = newVal;
   if (goNext) {
+    if (!newVal && hasSupplierProduct.value) {
+      handleFinish();
+      return;
+    }
     triggerNextStep();
   }
 };
@@ -292,7 +351,7 @@ const allowNextStep = computed(() => {
     return false;
   }
 
-    if (step.value === 1 && form.productionTime === null && form.type === ProductType.Manufacturable) {
+  if (step.value === 1 && (form.productionTime === null || isNaN(form.productionTime)) && form.type === ProductType.Manufacturable) {
     return false;
   }
 
@@ -334,7 +393,7 @@ const allowNextStep = computed(() => {
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
-          <TypeStep :form="form" @for-sale-changed="handleForSaleChanged" @empty-variations="handleEmptyVariations" />
+          <TypeStep v-if="productFetched" :form="form" :has-supplier-product="hasSupplierProduct" @for-sale-changed="handleForSaleChanged" @empty-variations="handleEmptyVariations" />
         </template>
 
         <template #generalInfoStep>

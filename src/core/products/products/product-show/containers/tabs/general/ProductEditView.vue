@@ -37,16 +37,12 @@ const form = reactive({
   vatRate: {
     id: props.product.vatRate?.id
   },
-  baseProduct: {
-    id: props.product.baseProduct?.id
-  },
   alwaysOnStock: props.product.alwaysOnStock,
 });
 
 const router = useRouter();
 
 const fields = {
-  baseProduct:  props.product.type === ProductType.Supplier ? getProductField(null, t) : null,
   sku: {
     type: FieldType.Text,
     name: 'sku',
@@ -111,10 +107,6 @@ const getCleanData = (data) => {
     cleanedData['vatRate'] = data.vatRate;
   }
 
-  if (data.baseProduct?.id) {
-    cleanedData['baseProduct'] = data.baseProduct;
-  }
-
   return cleanedData;
 };
 
@@ -138,10 +130,6 @@ const handleSubmit = async (overrideData = {}) => {
         form.vatRate.id = data.updateProduct.vatRate.id
       }
 
-      if (data.updateProduct.baseProduct && data.updateProduct.baseProduct.id) {
-        form.baseProduct.id = data.updateProduct.baseProduct.id
-      }
-
       Toast.success(t('products.products.edit.updateSuccefully'));
     }
   } catch (error) {
@@ -154,12 +142,6 @@ const handleSubmitAndRedirect = async () => {
   router.push({ name: 'products.products.list' });
 };
 
-const clickOnBaseProduct = async () => {
-  if (form.baseProduct.id) {
-    router.push({ name: 'products.products.show', params: {id: form.baseProduct.id} });
-  }
-};
-
 const refreshSku = async () => {
   await handleSubmit({ sku: '' });
 };
@@ -169,20 +151,6 @@ const refreshSku = async () => {
 <template>
   <div class="py-2">
     <div class="max-w-4xl">
-
-      <div class="col-span-full mt-3" v-if="product.type === ProductType.Supplier">
-        <label v-if="fields.baseProduct" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['baseProduct'].label }}</label>
-        <Flex>
-          <FlexCell grow>
-            <FieldQuery :field="fields['baseProduct'] as QueryFormField" :model-value="form.baseProduct.id" @update:modelValue="form.baseProduct.id = $event"/>
-          </FlexCell>
-          <FlexCell>
-            <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" @click="clickOnBaseProduct">
-              <Icon name="eye" />
-            </Button>
-          </FlexCell>
-        </Flex>
-      </div>
 
       <div class="col-span-full">
         <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['sku'].label }}</label>

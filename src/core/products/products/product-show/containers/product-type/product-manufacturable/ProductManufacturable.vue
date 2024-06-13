@@ -2,7 +2,7 @@
 
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {Tabs} from "../../../../../../../shared/components/molecules/tabs";
 import {Product} from "../../../../configs"
 import ProductEditView from "../../tabs/general/ProductEditView.vue";
@@ -18,18 +18,28 @@ const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const router = useRouter();
 
-const tabItems = ref();
-
-tabItems.value = [
+const tabItems = computed(() => {
+  const items = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
     { name: 'variations', label: t('products.products.tabs.bom'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
+  ];
+
+  if (props.product.forSale) {
+    items.push(
     { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
+    );
+  }
+
+  items.push(
     { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
-  ];
+  );
+
+  return items;
+});
 
 </script>
 
@@ -49,10 +59,10 @@ tabItems.value = [
         <MediaView :product="product" />
       </template>
       <template v-slot:price>
-        <ProductSalePriceView :product="product" />
+        <ProductSalePriceView v-if="product.forSale" :product="product" />
       </template>
       <template v-slot:priceLists>
-        <SalesPricelistList :product="product" />
+        <SalesPricelistList v-if="product.forSale" :product="product" />
       </template>
       <template v-slot:hsCodes>
         <ProductHsCodesList :product="product" />

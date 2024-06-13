@@ -9,7 +9,7 @@ export const supplierProductsQuery = gql`
           sku
           name
           proxyId
-          baseProduct {
+          baseProducts {
             id
             sku
             name
@@ -44,7 +44,7 @@ export const getSupplierProductQuery = gql`
         name
       }
       quantity
-      baseProduct {
+      baseProducts {
         id
         sku
         name

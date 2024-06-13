@@ -6,38 +6,42 @@
       "startInnovatingButton": "Start Innovating",
       "cards": {
         "button": "Let's do it",
-        "header": "Learn to use",
-        "createSupplier": {
-          "title": "Create a new supplier",
-          "details": "A supplier is a company you buy from. You will later be able to make purchase orders from this company."
+        "header": "Learn how to use OneSila",
+        "supplier": {
+          "title": "Create a first supplier",
+          "details": "Add your first supplier to assign products and create purchase orders."
         },
-        "createCustomer": {
+        "customer": {
           "title": "Create a new customer",
-          "details": "A customer is a company you sell to. You will later be able to make sales orders to this company."
+          "details": "A customer is a company or consumer you sell to. You will later be able to make sales orders to this company."
         },
-        "createSupplierProduct": {
+        "supplierProduct": {
           "title": "Add a new product for your supplier",
           "details": "A supplier product represents the product or bill of material you buy. It will keep your stock and you can create products from it."
         },
-        "createFirstProduct": {
-          "title": "Create your first product",
-          "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped. Each product sold individually will contain a supplier product and can contain multiple supplier products if sold by different suppliers."
+        "product": {
+          "title": "Create a first product",
+          "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped."
         },
-        "addFirstSalesOrder": {
+        "salesOrder": {
           "title": "Add your first sales order",
           "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
         },
-        "addFirstPurchaseOrder": {
-          "title": "Add your first purchase order",
+        "purchaseOrder": {
+          "title": "Purchase some goods",
           "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
         },
-        "addFirstInventory": {
-          "title": "Add your first inventory entry",
+        "inventoryLocation": {
+          "title": "Add your inventory Location",
+          "details": "Define your inventory locations to organize and manage where your products are stored. This helps in tracking stock levels across different locations and improves inventory accuracy."
+        },
+        "inventory": {
+          "title": "Add your inventory",
           "details": "Add inventory entries to keep track of the stock levels of your products. This helps in managing and forecasting inventory needs."
         },
-        "inviteAnotherMember": {
-          "title": "Invite another member to join your team",
-          "details": "Invite team members to collaborate and work together on managing your business operations."
+        "member": {
+          "title": "Invite other team-members",
+          "details": "Collaborate with your team to manage the business operations or data."
         },
         "progress": {
           "details": "Complete all the steps to become a master of OneSila and make the most of its features."
@@ -52,23 +56,23 @@
       },
       "addCompany": {
         "title": "Company",
-        "subTitle": "Let us know your company better",
-        "content": "Please fill the mandatory fields in the form below"
+        "subTitle": "Tell us a little about your company.",
+        "content": "We will use this information to show on all kinds of picking lists, order confirmations and more."
       },
       "addCurrency": {
         "title": "Currency",
-        "subTitle": "Let's set up your company's default currency",
-        "content": "Please fill the fields in the form below"
+        "subTitle": "Set up the currency you use by default.",
+        "content": "This will help us track prices.  You can add more currencies later."
       },
       "confirmVatRate": {
         "title": "VAT Rate",
           "subTitle": "Set your company's VAT rate",
-          "content": "Please fill the fields in the form below"
+          "content": "We'll use this rate to raise invoices and caluclate prices. More rates can be added later."
       },
       "createInventoryLocation": {
         "title": "Inventory Location",
-        "subTitle": "Set up your company's inventory location",
-        "content": "Please fill the fields in the form below or skip if you want to do it later."
+        "subTitle": "Create a first inventory location.",
+        "content": "You can create a first location here. Eg Shelf 1 or Storage Unit. More can be added later - or you can skip this entirely."
       }
     },
     "labels": {
@@ -549,7 +553,7 @@
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
-        "productionTime": "Enter time in seconds"
+        "productionTime": "Enter time in minutes"
       },
       "create": {
         "title": "Create Product",
@@ -855,6 +859,11 @@
         "unitPrice": "Unit Price",
         "sku": "SKU",
         "supplier": "Supplier"
+      },
+      "help": {
+        "product": {
+          "addLater": "This can be empty. You can add the products later."
+        }
       },
       "placeholders": {
         "unitPrice": "Enter unit price"

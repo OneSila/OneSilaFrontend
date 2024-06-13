@@ -62,23 +62,25 @@ export const getProductField = (productId, t): FormField => {
   if (productId) {
     return {
       type: FieldType.Hidden,
-      name: 'baseProduct',
-      value: { "id": productId }
+      name: 'baseProducts',
+      value: [{ "id": productId }]
     };
   } else {
     return {
         type: FieldType.Query,
-        name: 'baseProduct',
-        label:  t('shared.labels.product'),
+        name: 'baseProducts',
+        label:  t('products.title'),
         labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
         queryVariables: {"filter": {"type": {"inList": [ProductType.Simple, ProductType.Dropship]}}},
         dataKey: 'products',
         isEdge: true,
-        multiple: false,
+        multiple: true,
         filterable: true,
         formMapIdentifier: 'id',
+        optional: true,
+        help: t('purchasing.products.help.product.addLater')
     };
   }
 }
@@ -100,8 +102,7 @@ export const baseFormConfigConstructor = (
   submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, productId),
   deleteMutation: deleteProductMutation,
   fields: [
-      getSupplierField(supplierId, t),
-      getProductField(productId, t),
+    getSupplierField(supplierId, t),
     {
       type: FieldType.Text,
       name: 'name',
@@ -149,6 +150,7 @@ export const baseFormConfigConstructor = (
       default: true,
       uncheckedValue: "false"
     },
+    getProductField(productId, t),
     {
       type: FieldType.Hidden,
       name: 'type',
@@ -190,8 +192,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     },
     {
       type: FieldType.Query,
-      name: 'baseProduct',
-      label:  t('shared.labels.product'),
+      name: 'baseProducts',
+      label:  t('products.title'),
       labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
@@ -200,7 +202,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       multiple: false,
       filterable: true,
       addLookup: true,
-      lookupKeys: ['id']
+      lookupKeys: ['id'],
     }
   ],
   orders: []
@@ -208,12 +210,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (supplierId, productId, t) => {
   if (supplierId) {
-    return [t('shared.labels.name'),t('shared.labels.sku'), t('shared.labels.product')];
+    return [t('shared.labels.name'),t('shared.labels.sku')];
   }
   if (productId) {
     return [t('shared.labels.name'),t('shared.labels.sku'), t('purchasing.products.labels.supplier')];
   }
-  return [t('shared.labels.name'),t('shared.labels.sku'), t('purchasing.products.labels.supplier'), t('shared.labels.product')];
+  return [t('shared.labels.name'),t('shared.labels.sku'), t('purchasing.products.labels.supplier')];
 }
 
 const getFields = (supplierId, productId): ShowField[] => {
@@ -230,10 +232,6 @@ const getFields = (supplierId, productId): ShowField[] => {
 
   if (!supplierId) {
     commonFields.push({ name: 'supplier', type: FieldType.NestedText, keys: ['name'] });
-  }
-
-  if (!productId) {
-    commonFields.push({ name: 'baseProduct', clickable: true, clickUrl: {name: 'products.products.show'}, type: FieldType.NestedText, keys: ['name'], clickIdentifiers: [{id: ['id']}] });
   }
 
   return commonFields;

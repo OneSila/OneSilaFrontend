@@ -24,16 +24,14 @@ const indexStepMapping = {
   0: OnboardingStatus.ADD_COMPANY,
   1: OnboardingStatus.ADD_CURRENCY,
   2: OnboardingStatus.CONFIRM_VAT_RATE,
-  3: OnboardingStatus.CREATE_INVENTORY_LOCATION,
-  4: OnboardingStatus.GENERATE_DEMO_DATA,
-  5: OnboardingStatus.DASHBOARD_CARDS_PRESENTATION,
+  3: OnboardingStatus.GENERATE_DEMO_DATA,
+  4: OnboardingStatus.DASHBOARD_CARDS_PRESENTATION,
 }
 
 const wizardSteps = [
   { title: t('dashboard.onboarding.addCompany.title'), name: OnboardingStatus.ADD_COMPANY },
   { title: t('dashboard.onboarding.addCurrency.title'), name: OnboardingStatus.ADD_CURRENCY },
   { title: t('dashboard.onboarding.confirmVatRate.title'), name: OnboardingStatus.CONFIRM_VAT_RATE },
-  { title: t('dashboard.onboarding.createInventoryLocation.title'), name: OnboardingStatus.CREATE_INVENTORY_LOCATION },
   { title: t('dashboard.onboarding.generateDemoData.title'), name: OnboardingStatus.GENERATE_DEMO_DATA },
 ];
 
@@ -80,7 +78,7 @@ const handleGoToNextStep = () => {
 
 
 const onFinish = async () => {
-  await updateStep(5);
+  await updateStep(4);
   router.push({ name: 'dashboard' });
 }
 
@@ -99,9 +97,6 @@ onMounted(setStep);
       </template>
       <template v-slot:CONFIRM_VAT_RATE>
         <AddVatRate @vat-rate-added="handleGoToNextStep" />
-      </template>
-      <template v-slot:CREATE_INVENTORY_LOCATION>
-        <AddInvetoryLocation @inventory-location-added="handleGoToNextStep" />
       </template>
       <template v-slot:GENERATE_DEMO_DATA>
         <GenerateDemoData @demo-data-step-done="onFinish" />

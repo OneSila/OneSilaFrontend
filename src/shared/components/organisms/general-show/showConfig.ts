@@ -20,10 +20,12 @@ export interface ShowBaseField {
   showLabel?: boolean;
   customCss?: string; // Custom CSS for individual fields
   customCssClass?: string; // Custom CSS class for individual fields
+  addImage?: boolean;
 }
 
 export interface TextField extends ShowBaseField {
   type: FieldType.Text;
+  imageField?: string;
 }
 
 export interface PhoneField extends ShowBaseField {

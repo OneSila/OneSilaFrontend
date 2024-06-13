@@ -9,6 +9,77 @@
       "addOrder": "Bestelling Toevoegen",
       "addProduct": "Product Toevoegen",
       "addInventory": "Voorraad Toevoegen"
+    },
+    "onboarding": {
+      "completedHeader": "Alle stappen zijn afgewerkt!",
+      "completedMessage": "Proficiat!  Alle stappen om van start te kunnen gaan zijn nu klaar en uw bedrijf te beheren via OneSila.  We wensen u veel success, en weet dat we voor uw klaar staan om u te helpen.",
+      "startInnovatingButton": "Start met OneSila",
+      "cards": {
+        "button": "Toevoegen",
+        "header": "Leer hoe OneSila te gebruiken",
+        "createSupplier": {
+          "title": "Eerste leverancier toevoegen",
+          "details": "Voeg een leverancier toe om aankopen en producten te beheren."
+        },
+        "createCustomer": {
+          "title": "Klant aanmaken",
+          "details": "Een klant is een bedrijf of consument waar u iets aan verkocht heeft.  U kan hier verkopen aan toevoegen."
+        },
+        "createSupplierProduct": {
+          "title": "Nieuw leveranciersproduct",
+          "details": "Een leveranciersproduct is een product die wordt aangekocht.  We wijzen hieraan stock toe en wordt ook gebruikt om product te maken."
+        },
+        "createFirstProduct": {
+          "title": "Eerste Product aanmaken",
+          "details": "Producten kunnen 1 van de 5 types zijn: configureerbaar, simpel, bundels, produceerbaar en dropshipping zijn."
+        },
+        "addFirstSalesOrder": {
+          "title": "Eerste verkoop",
+          "details": "Creëer een verkoop waar u de producten aan toevoegt om uw verzendingen te regelen."
+        },
+        "addFirstPurchaseOrder": {
+          "title": "Goederen aankopen",
+          "details": "Creëer een aankoop order van uw leverancier om inventaris aan te leggen."
+        },
+        "addFirstInventory": {
+          "title": "Voorraad toevoegen",
+          "details": "Voeg voorraad toe voor uw product om ze verkoopbaar te maken en analyses te maken."
+        },
+        "inviteAnotherMember": {
+          "title": "Collega's uitnodigen",
+          "details": "Werk samen met uw team om de dagelijkse taken van het bedrijf te organiseren."
+        },
+        "progress": {
+          "details": "Werk alle stappen af en wordt een meester in OneSila"
+        }
+      },
+      "generateDemoData": {
+        "title": "Demo Data",
+        "subTitle": "Welkom bij OneSila",
+        "content": "Wenst u Demo Data aan te maken?",
+        "demoDataExplanation": "Demo data zijn voorbeeldgegevens die u aantonen hoe het platform te gebruiken.  U kan deze later weer verwijderen via instellingen.",
+        "demoDataDeletionInfo": "De Demo Data kan verwijderd worden via uw profiel met een druk op de knop. Niets anders zal verwijderd worden."
+      },
+      "addCompany": {
+        "title": "Bedrijf",
+        "subTitle": "Vertel ons over uw Bedrijf",
+        "content": "Deze info wordt gebruikt om documenten op te maken voor bv verzending en order confirmaties."
+      },
+      "addCurrency": {
+        "title": "Valuta",
+        "subTitle": "Stel uw standaard valuta in",
+        "content": "We gebruiken deze valuta om prijzen bij te houden.  U kan via instellingen nog valuta's toevoegen."
+      },
+      "confirmVatRate": {
+        "title": "BTW Tarief",
+        "subTitle": "Stel uw meest gebruikte BTW Tarief in",
+        "content": "Dit wordt gebruikt om facturen op te maken en prijzen te beheren.  Laten kunt u nog andere tarieven toevoegen."
+      },
+      "createInventoryLocation": {
+        "title": "Voorraad locatie",
+        "subTitle": "Voorraad locatie aanmaken",
+        "content": "Creëer een eerste voorraad locatie. Bv Rek A, of Magazijn B.  Je kan dit ook overslaan en straks meer toevoegen."
+      }
     }
   },
   "pagination": {
@@ -60,7 +131,9 @@
       "submit": "Verzenden",
       "add": "Toevoegen",
       "download": "Downloaden",
-      "uploadNew": "Uploaden"
+      "uploadNew": "Uploaden",
+      "create": "Aanmaken",
+      "skip": "Overslaan"
     },
     "labels": {
       "createdAt": "Gecreëerd op",
@@ -153,7 +226,8 @@
       "description": "Nog één stap.  Kies een wachtwoord en dan kunnen we starten!",
       "button": {
         "setPassword": "Kies een wachtwoord"
-      }
+      },
+      "header": "Welkom"
     },
     "login": {
       "header": "Inloggen",
@@ -1026,6 +1100,29 @@
     },
     "internalCompanies": {
       "title": "Interne Organisaties"
+    },
+    "demoData": {
+      "title": "Demo Data",
+      "create": {
+        "title": "Demo Data aanmaken",
+        "content": "U kan de Demo Data aanmaken om de OneSila applicatie te verkennen",
+        "alert": {
+          "title": "Bent u zeker?",
+          "text": "Dit zal de demo-data aanmaken.  Verdergaan?",
+          "confirmButtonText": "Aanmaken Demo Data"
+        },
+        "succefullyCreated": "Demo Data is aangemaakt."
+      },
+      "delete": {
+        "title": "Demo Data verwijderen",
+        "content": "U kunt de Demo Data verwijderen uit de account.",
+        "alert": {
+          "title": "Zeker?",
+          "text": "Dit zal alle Demo Data van uw account verwijderen.  Verdergaan?",
+          "confirmButtonText": "Verwijderen Demo Data"
+        },
+        "succefullyDelete": "Demo Data is verwijderd"
+      }
     }
   },
   "network": {

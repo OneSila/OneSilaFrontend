@@ -21,7 +21,7 @@ const setActive = (optionName) => {
 <template>
   <div>
     <slot name="content"></slot>
-    <div class="option-selector flex flex-col xl:flex-row gap-2 md:gap-4 w-full mt-4">
+    <div class="option-selector flex flex-col xl:flex-row gap-2 md:gap-4 w-full mt-4 max-h-[40rem]">
     <div
       v-for="choice in choices"
       :key="choice.name"

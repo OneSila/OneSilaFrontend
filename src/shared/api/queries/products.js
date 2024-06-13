@@ -12,6 +12,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           type
           proxyId
           productionTime
+          thumbnailUrl
           vatRate {
             id
             name
@@ -162,6 +163,7 @@ export const umbrellaVariationsQuery = gql`
             sku
             name
             active
+            thumbnailUrl
           }
         }
         cursor
@@ -193,6 +195,7 @@ export const bundleVariationsQuery = gql`
             sku
             active
             name
+            thumbnailUrl
           }
           quantity
         }
@@ -217,10 +220,21 @@ export const getProductQuery = gql`
       active
       type
       proxyId
+      name
+      productionTime
+      forSale
+      thumbnailUrl
       vatRate {
         id
         rate
         name
+      }
+      baseProducts {
+        id
+        name
+        type
+        active
+        thumbnailUrl
       }
       alwaysOnStock
     }
@@ -379,6 +393,7 @@ export const billOfMaterialsQuery = gql`
             id
             name
             productionTime
+            thumbnailUrl
           }
           quantity
           umbrella {
