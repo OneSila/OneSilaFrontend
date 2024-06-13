@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref } from 'vue';
+import {computed, defineProps, ref} from 'vue';
 import { useI18n } from "vue-i18n";
 import { AdditonalFormFields, FormType } from "../product";
 import { FieldQuery } from "../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
@@ -32,40 +32,39 @@ const getSupplierProduct = (): QueryFormField => {
     }
 }
 
-const getSupplier = (): QueryFormField => {
-    return {
-        type: FieldType.Query,
-        name: 'supplier',
-        label: t('purchasing.orders.labels.supplier'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: companiesQuery,
-        queryVariables: { filter: { 'isInternalCompany': false }},
-        dataKey: 'companies',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        formMapIdentifier: 'id',
-        createOnFlyConfig: supplierOnTheFlyConfig(t),
-    }
-}
+const getSupplier = computed<QueryFormField>(() => ({
+  type: 'Query',
+  name: 'supplier',
+  label: t('purchasing.orders.labels.supplier'),
+  labelBy: 'name',
+  valueBy: 'id',
+  query: companiesQuery,
+  queryVariables: { filter: { 'isInternalCompany': false } },
+  dataKey: 'companies',
+  isEdge: true,
+  multiple: false,
+  filterable: true,
+  disabled: props.additionalFieldsForm.supplierProduct.id !== null,
+  formMapIdentifier: 'id',
+  createOnFlyConfig: supplierOnTheFlyConfig(t),
+} as QueryFormField));
 
-const getUnit = (): QueryFormField => {
-    return {
-      type: FieldType.Query,
-      name: 'unit',
-      label: t('shared.labels.unit'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: unitsQuery,
-      dataKey: 'units',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      removable: false,
-      formMapIdentifier: 'id',
-    }
-}
+const getUnit = computed<QueryFormField>(() => ({
+  type: 'Query',
+  name: 'unit',
+  label: t('shared.labels.unit'),
+  labelBy: 'name',
+  valueBy: 'id',
+  query: unitsQuery,
+  dataKey: 'units',
+  isEdge: true,
+  multiple: false,
+  filterable: true,
+  disabled: props.additionalFieldsForm.supplierProduct.id !== null,
+  removable: false,
+  formMapIdentifier: 'id',
+} as QueryFormField));
+
 emit('set-product-supplier-name')
 
 </script>
@@ -75,6 +74,40 @@ emit('set-product-supplier-name')
     <h1 class="text-2xl text-center mb-2">{{ t('products.products.create.wizard.stepFour.simple.whereBuy') }}</h1>
     <hr>
     <Flex vertical>
+      <FlexCell>
+        <Flex class="mt-4 gap-4" center vertical>
+          <FlexCell>
+            <p class="text-lg">{{ t('products.products.create.wizard.stepFour.simple.add') }}</p>
+          </FlexCell>
+
+          <FlexCell center>
+            <Flex vertical class="gap-2">
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('purchasing.products.show.title') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.id" :field="getSupplierProduct()" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
+              </FlexCell>
+            </Flex>
+          </FlexCell>
+        </Flex>
+      </FlexCell>
+
+      <FlexCell>
+        <Flex class="my-8 px-96">
+          <FlexCell center grow>
+            <hr class="flex-grow border-t border-gray-500">
+          </FlexCell>
+          <FlexCell center>
+            <span class="mx-2 text-black uppercase">{{ t('shared.labels.or')}}</span>
+          </FlexCell>
+          <FlexCell center grow>
+            <hr class="flex-grow border-t border-gray-500">
+          </FlexCell>
+        </Flex>
+      </FlexCell>
 
       <FlexCell>
         <Flex class="mt-4 gap-4" center vertical>
@@ -90,7 +123,7 @@ emit('set-product-supplier-name')
                 </Label>
               </FlexCell>
               <FlexCell>
-                <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.supplier.id" :field="getSupplier()" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+                <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.supplier.id" :field="getSupplier" />
               </FlexCell>
             </Flex>
           </FlexCell>
@@ -103,7 +136,7 @@ emit('set-product-supplier-name')
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.name" :placeholder="t('shared.placeholders.name')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.name" :placeholder="t('shared.placeholders.name')" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
               </FlexCell>
             </Flex>
           </FlexCell>
@@ -115,7 +148,7 @@ emit('set-product-supplier-name')
                  </Label>
                </FlexCell>
                <FlexCell>
-                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.sku" :placeholder="t('shared.placeholders.sku')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.sku" :placeholder="t('shared.placeholders.sku')" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
                </FlexCell>
             </Flex>
           </FlexCell>
@@ -128,7 +161,7 @@ emit('set-product-supplier-name')
                </Label>
              </FlexCell>
              <FlexCell>
-                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.quantity" number :placeholder="t('shared.placeholders.quantity')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.quantity" number :placeholder="t('shared.placeholders.quantity')" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
              </FlexCell>
           </Flex>
         </FlexCell>
@@ -140,7 +173,7 @@ emit('set-product-supplier-name')
                </Label>
              </FlexCell>
              <FlexCell>
-                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.unitPrice" number :placeholder="t('purchasing.products.placeholders.unitPrice')" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+                <TextInput class="w-96" v-model="additionalFieldsForm.supplierProduct.unitPrice" number :placeholder="t('purchasing.products.placeholders.unitPrice')" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
              </FlexCell>
           </Flex>
         </FlexCell>
@@ -153,7 +186,7 @@ emit('set-product-supplier-name')
                </Label>
              </FlexCell>
              <FlexCell>
-               <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.unit.id" :field="getUnit()" :disabled="additionalFieldsForm.supplierProduct.id !== ''" />
+               <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.unit.id" :field="getUnit" />
              </FlexCell>
           </Flex>
         </FlexCell>

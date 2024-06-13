@@ -82,6 +82,7 @@ export const ProductType = {
 
 export const variationTypes = [PRODUCT_SIMPLE, PRODUCT_BUNDLE, PRODUCT_MANUFACTURABLE, PRODUCT_DROPSHIP]
 export const billOfMaterialsTypes = [PRODUCT_SIMPLE, PRODUCT_MANUFACTURABLE]
+export const baseProductTypes = [PRODUCT_SIMPLE, PRODUCT_DROPSHIP]
 
 export const OnboardingStatus = {
   ADD_COMPANY: 'ADD_COMPANY',

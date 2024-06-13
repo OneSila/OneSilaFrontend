@@ -11,7 +11,7 @@ export const supplierProductSubscription = gql`
         name
       }
       quantity
-      baseProduct {
+      baseProducts {
         id
         name
       }

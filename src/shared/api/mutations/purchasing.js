@@ -13,7 +13,7 @@ export const createSupplierProductMutation = gql`
         name
       }
       quantity
-      baseProduct {
+      baseProducts {
         id
         sku
       }
@@ -36,7 +36,7 @@ export const createSupplierProductsMutation = gql`
         name
       }
       quantity
-      baseProduct {
+      baseProducts {
         id
         sku
       }
@@ -61,7 +61,7 @@ export const updateSupplierProductMutation = gql`
         name
       }
       quantity
-      baseProduct {
+      baseProducts {
         id
         sku
       }
@@ -255,7 +255,7 @@ export const createSupplierPriceMutation = gql`
         id
         sku
         name
-        baseProduct {
+        baseProducts {
           id
           sku
           name
@@ -283,7 +283,7 @@ export const updateSupplierPriceMutation = gql`
         id
         sku
         name
-        baseProduct {
+        baseProducts {
           id
           sku
           name

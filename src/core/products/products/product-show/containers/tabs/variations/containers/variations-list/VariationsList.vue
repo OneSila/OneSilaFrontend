@@ -15,6 +15,7 @@ import {
   deleteBundleVariationMutation,
   deleteBillOfMaterialMutation
 } from "../../../../../../../../../shared/api/mutations/products.js";
+import {Image} from "../../../../../../../../../shared/components/atoms/image";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
@@ -80,7 +81,16 @@ const getDeleteMutation = () => {
                 <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                   <td>
                     <Link :path="{name: 'products.products.show', params: {id: item.node.variation.id}}">
-                      {{ item.node.variation.name }}
+                      <Flex class="gap-4">
+                        <FlexCell center>
+                          <div v-if="item.node.variation.thumbnailUrl" class="w-8 h-8 overflow-hidden">
+                            <Image class="w-8 h-8 rounded-md overflow-hidden object-cover" :source="item.node.variation.thumbnailUrl" :alt="item.node.variation.name" />
+                          </div>
+                            <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
+                          </div>
+                        </FlexCell>
+                        <FlexCell center>{{ item.node.variation.name }}</FlexCell>
+                      </Flex>
                     </Link>
                   </td>
                   <td>

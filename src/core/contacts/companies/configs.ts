@@ -29,28 +29,6 @@ export const baseFormConfigConstructor = (
       placeholder: t('shared.placeholders.name'),
     },
     {
-      type: FieldType.ProxyChoice,
-      name: 'type',
-      label: t('products.products.labels.type.title'),
-      valueBy: 'value',
-      labelBy: 'name',
-      multiple: true,
-      options: [
-        {
-          name: t('contacts.companies.labels.supplier'),
-          value: 'isSupplier'
-        },
-        {
-          name: t('contacts.companies.labels.customer'),
-          value: 'isCustomer'
-        },
-        {
-          name: t('contacts.companies.labels.influencer'),
-          value: 'isInfluencer'
-        },
-      ]
-    },
-    {
       type: FieldType.Email,
       name: 'email',
       label: t('shared.labels.email'),

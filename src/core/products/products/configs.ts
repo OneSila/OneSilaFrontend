@@ -204,6 +204,14 @@ export interface VatRate {
   rate: number;
 }
 
+export interface BaseProduct {
+  id: string;
+  name: string;
+  active: boolean;
+  type: string;
+  thumbnailUrl: string;
+}
+
 export interface Product {
   id: string;
   proxyId?: string;
@@ -214,8 +222,5 @@ export interface Product {
   vatRate?: VatRate;
   alwaysOnStock: boolean;
   productionTime?: number;
-  baseProduct?: {
-    id: string;
-    name: string;
-  }
+  baseProducts?: BaseProduct[]
 }

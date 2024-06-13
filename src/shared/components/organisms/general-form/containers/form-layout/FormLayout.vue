@@ -46,8 +46,8 @@ const computedStyle = computed(() => props.config.customStyle || '');
 
 <template>
     <template v-for="field in config.fields" :key="field.name">
-      <div class="col-span-full" :class="computedStyle">
-        <Flex v-if="field.type !== FieldType.Hidden">
+      <div v-if="field.type !== FieldType.Hidden" class="col-span-full" :class="computedStyle">
+        <Flex>
           <FlexCell center>
             <label class="font-semibold block text-sm leading-6 text-gray-900">{{ field.label }}{{ !field.optional && field.label ? '*' : '' }}</label>
           </FlexCell>
@@ -61,10 +61,10 @@ const computedStyle = computed(() => props.config.customStyle || '');
             </div>
           </FlexCell>
         </Flex>
-          <div v-if="field.type !== FieldType.Hidden && field.type !== FieldType.Checkbox" class="mt-2" >
+          <div v-if="field.type !== FieldType.Checkbox" class="mt-2" >
             <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />
           </div>
-        <p v-if="field.help" class="mt-3 text-sm leading-6 text-gray-600">{{ field.help }}</p>
+          <p v-if="field.help" class="mt-1 text-sm leading-6 text-gray-400">{{ field.help }}</p>
       </div>
     </template>
 </template>

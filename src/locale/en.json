@@ -7,35 +7,39 @@
       "cards": {
         "button": "Let's do it",
         "header": "Learn how to use OneSila",
-        "createSupplier": {
+        "supplier": {
           "title": "Create a first supplier",
           "details": "Add your first supplier to assign products and create purchase orders."
         },
-        "createCustomer": {
+        "customer": {
           "title": "Create a new customer",
           "details": "A customer is a company or consumer you sell to. You will later be able to make sales orders to this company."
         },
-        "createSupplierProduct": {
+        "supplierProduct": {
           "title": "Add a new product for your supplier",
           "details": "A supplier product represents the product or bill of material you buy. It will keep your stock and you can create products from it."
         },
-        "createFirstProduct": {
+        "product": {
           "title": "Create a first product",
           "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped."
         },
-        "addFirstSalesOrder": {
+        "salesOrder": {
           "title": "Add your first sales order",
           "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
         },
-        "addFirstPurchaseOrder": {
+        "purchaseOrder": {
           "title": "Purchase some goods",
           "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
         },
-        "addFirstInventory": {
+        "inventoryLocation": {
+          "title": "Add your inventory Location",
+          "details": "Define your inventory locations to organize and manage where your products are stored. This helps in tracking stock levels across different locations and improves inventory accuracy."
+        },
+        "inventory": {
           "title": "Add your inventory",
           "details": "Add inventory entries to keep track of the stock levels of your products. This helps in managing and forecasting inventory needs."
         },
-        "inviteAnotherMember": {
+        "member": {
           "title": "Invite other team-members",
           "details": "Collaborate with your team to manage the business operations or data."
         },
@@ -549,7 +553,7 @@
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
-        "productionTime": "Enter time in seconds"
+        "productionTime": "Enter time in minutes"
       },
       "create": {
         "title": "Create Product",
@@ -855,6 +859,11 @@
         "unitPrice": "Unit Price",
         "sku": "SKU",
         "supplier": "Supplier"
+      },
+      "help": {
+        "product": {
+          "addLater": "This can be empty. You can add the products later."
+        }
       },
       "placeholders": {
         "unitPrice": "Enter unit price"

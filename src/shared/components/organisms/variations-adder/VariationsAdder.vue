@@ -12,6 +12,7 @@ import debounce from 'lodash.debounce';
 import Swal from 'sweetalert2';
 import {Pagination} from "../../molecules/pagination";
 import {Link} from "../../atoms/link";
+import {Image} from "../../atoms/image";
 
 const { t } = useI18n();
 
@@ -259,10 +260,19 @@ onMounted(fetchData);
             <td>
               <Flex>
                 <FlexCell center>
-                    <Icon name="plus" class="text-primary cursor-pointer mb-1"  @click="handleAddVariation(variation)" :disabled="loading" />
+                    <Icon name="plus" size="xl" class="text-primary cursor-pointer mr-3"  @click="handleAddVariation(variation)" :disabled="loading" />
                 </FlexCell>
                 <FlexCell center>
-                  <label class="text-md ml-2">{{ variation.name }}</label>
+                  <Flex class="gap-4">
+                    <FlexCell center>
+                      <div v-if="variation.thumbnailUrl" class="w-8 h-8 overflow-hidden">
+                        <Image class="w-8 h-8 rounded-md overflow-hidden object-cover" :source="variation.thumbnailUrl" :alt="variation.name" />
+                      </div>
+                        <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
+                      </div>
+                    </FlexCell>
+                    <FlexCell center>{{ variation.name }}</FlexCell>
+                  </Flex>
                 </FlexCell>
               </Flex>
             </td>
@@ -299,10 +309,19 @@ onMounted(fetchData);
             <td>
               <Flex>
                 <FlexCell center>
-                    <Icon name="trash" class="text-danger cursor-pointer mb-1" @click="handleRemoveVariation(item.id)" :disabled="loading" />
+                    <Icon name="trash" size="xl" class="text-danger cursor-pointer mr-3" @click="handleRemoveVariation(item.id)" :disabled="loading" />
                 </FlexCell>
                 <FlexCell center>
-                  <label class="text-md ml-2">{{ item.name }}</label>
+                  <Flex class="gap-4">
+                    <FlexCell center>
+                      <div v-if="item.thumbnailUrl" class="w-8 h-8 overflow-hidden">
+                        <Image class="w-8 h-8 rounded-md overflow-hidden object-cover" :source="item.thumbnailUrl" :alt="item.name" />
+                      </div>
+                        <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
+                      </div>
+                    </FlexCell>
+                    <FlexCell center>{{ item.name }}</FlexCell>
+                  </Flex>
                 </FlexCell>
               </Flex>
             </td>

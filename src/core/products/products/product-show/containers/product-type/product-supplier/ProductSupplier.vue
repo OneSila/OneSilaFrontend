@@ -11,6 +11,7 @@ import ProductContentView from "../../tabs/content/ProductContentView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
 import SupplierProductPurchasePriceView from "../../tabs/supplier-prices/SupplierProductPurchasePriceView.vue";
 import PurchasingOrderList from "../../tabs/purchasing-orders/PurchasingOrderList.vue";
+import ProductsList from "../../tabs/products/ProductsList.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -22,6 +23,7 @@ const tabItems = ref();
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
+    { name: 'products', label: t('products.title'), icon: 'box' },
     { name: 'price', label: t('products.products.tabs.prices'), icon: 'tag' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
@@ -39,6 +41,9 @@ tabItems.value = [
       </template>
       <template v-slot:productContent>
         <ProductContentView :product="product" />
+      </template>
+      <template v-slot:products>
+        <ProductsList :product="product" />
       </template>
       <template v-slot:media>
         <MediaView :product="product" />

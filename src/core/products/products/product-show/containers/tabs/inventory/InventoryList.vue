@@ -19,7 +19,7 @@ const listingConfig = listingConfigConstructor(t, props.product.id, props.produc
 
 const filters = props.product.type === ProductType.Supplier ?
     {'product': {'id': {'exact': props.product.id}}} :
-    {'product': { 'baseProduct': {'id': {'exact': props.product.id}} }};
+    {'product': { 'baseProducts': {'id': {'exact': props.product.id}} }};
 
 </script>
 

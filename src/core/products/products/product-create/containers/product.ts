@@ -13,13 +13,18 @@ export interface RelatedProduct {
   id: string;
   name: string;
   type: string;
+  thumbnailUrl: string;
   active: boolean;
   quantity?: string;
   productionTime?: number | null;
 }
 
-export interface SupplierProduct {
+export interface BaseProduct {
   id?: string;
+}
+
+export interface SupplierProduct {
+  id?:  string | null;
   sku: string;
   name: string;
   quantity: number | null;
@@ -30,6 +35,7 @@ export interface SupplierProduct {
   unit: {
     id: string | null;
   },
+  baseProducts: BaseProduct[]
 }
 
 export interface Price {
