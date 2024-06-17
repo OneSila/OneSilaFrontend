@@ -48,6 +48,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         isEdge: true,
         multiple: true,
         filterable: true,
+        optional: true,
         formMapIdentifier: 'id',
         createOnFlyConfig: customerOnTheFlyConfig(t)
     };

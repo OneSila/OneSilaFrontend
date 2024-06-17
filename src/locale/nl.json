@@ -51,6 +51,42 @@
         },
         "progress": {
           "details": "Werk alle stappen af en wordt een meester in OneSila"
+        },
+        "supplier": {
+          "title": "Leverancier aanmaken",
+          "details": "Maak uw eerste leverancier aan om te starten met aankopen van goederen"
+        },
+        "customer": {
+          "title": "Maak een klant aan",
+          "details": "Een klant is een bedrijf of consument waar u aan verkoopt.  U kan deze later gebruiken om orders aan te maken."
+        },
+        "supplierProduct": {
+          "title": "Maak een nieuw product aan voor uw leverancier",
+          "details": "Een leveranciersproduct dient om uw producten and voorraad transparant bij te houden."
+        },
+        "product": {
+          "title": "Maak eerste product aan",
+          "details": "Product kan elke van onze types zijn.  Configureerbaar, simpel, bundel, produceerbaar of gedropshipped."
+        },
+        "salesOrder": {
+          "title": "Voeg uw eerste verkoopsarder toe",
+          "details": "Maak een verkooporder aan.  "
+        },
+        "purchaseOrder": {
+          "title": "Koop goederen aan",
+          "details": "Maak een aankoop aan, en beheer je leveranciers, aan kopen en voorraad automatisch."
+        },
+        "inventoryLocation": {
+          "title": "Voeg een voorraad locatie toe",
+          "details": "Definieer uw voorraad locaties om mooi georganiseerd te werk te kunnen gaan en uw voorraad te communiceren naar alle verkoopkanalen."
+        },
+        "inventory": {
+          "title": "Vul uw voorraad aan",
+          "details": "Vul uw voorraad aan, dit zorgt ervoor dat u nooit goederen verkoopt die niet op stock zijn, of beter te begrijpen wat aan te kopen."
+        },
+        "member": {
+          "title": "Nodig collega's uit",
+          "details": "Werk samen met uw team in OneSila om alles samen efficient te beheren."
         }
       },
       "generateDemoData": {
@@ -562,7 +598,7 @@
       },
       "create": {
         "title": "Product aanmaken",
-        "createSuccefully": "Product is succesvol aangemaakt!",
+        "createSuccessfully": "Product is succesvol aangemaakt!",
         "wizard": {
           "stepOne": {
             "content": "Selecteer het product-type die u wenst aan te maken",
@@ -623,7 +659,7 @@
         }
       },
       "edit": {
-        "updateSuccefully": "Wijzigingen voor het product zijn opgeslagen"
+        "updateSuccessfully": "Wijzigingen voor het product zijn opgeslagen"
       },
       "show": {
         "title": "Product"
@@ -769,7 +805,7 @@
     "prices": {
       "confirmCurrencyChange": "De veranderingen zullen verloren gaan. Zeker dat us de valuta op wilt slagen?",
       "updatedError": "Prijs voor valuta {currency} is leeg.  Pas deze aan.",
-      "updatedSuccefully": "De prijs voor valuta {currency} was opgeslagen.",
+      "updatedSuccessfully": "De prijs voor valuta {currency} was opgeslagen.",
       "labels": {
         "amount": "Prijs",
         "discountAmount": "Kortingsprijs"
@@ -870,7 +906,12 @@
       },
       "alert": {
         "prices": {
-          "succefullyUpdated": "Prijzen opgeslagen!"
+          "successfullyUpdated": "Prijzen opgeslagen!"
+        }
+      },
+      "help": {
+        "product": {
+          "addLater": "Dit kan leeg zijn, u kan de producten later toevoegen."
         }
       }
     },
@@ -1111,7 +1152,7 @@
           "text": "Dit zal de demo-data aanmaken.  Verdergaan?",
           "confirmButtonText": "Aanmaken Demo Data"
         },
-        "succefullyCreated": "Demo Data is aangemaakt."
+        "successfullyCreated": "Demo Data is aangemaakt."
       },
       "delete": {
         "title": "Demo Data verwijderen",

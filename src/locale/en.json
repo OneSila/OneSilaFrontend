@@ -1,5 +1,15 @@
 {
   "dashboard": {
+    "labels": {
+      "totalOrders": "Total Orders",
+      "recentOrders": "Recent Orders",
+      "sales": "Sales"
+    },
+    "buttons": {
+      "addOrder": "Add Order",
+      "addProduct": "Add Product",
+      "addInventory": "Add Inventory"
+    },
     "onboarding": {
       "completedHeader": "You completed all the steps!",
       "completedMessage": "Congratulations! You have successfully completed all the onboarding steps. You are now ready to fully utilize the platform and take advantage of all its features. Start exploring and make the most of OneSila to drive innovation and success for your business.",
@@ -7,6 +17,41 @@
       "cards": {
         "button": "Let's do it",
         "header": "Learn how to use OneSila",
+        "createSupplier": {
+          "title": "Create a first supplier",
+          "details": "Add your first supplier to assign products and create purchase orders."
+        },
+        "createCustomer": {
+          "title": "Create a new customer",
+          "details": "A customer is a company or consumer you sell to. You will later be able to make sales orders to this company."
+        },
+        "createSupplierProduct": {
+          "title": "Add a new product for your supplier",
+          "details": "A supplier product represents the product or bill of material you buy. It will keep your stock and you can create products from it."
+        },
+        "createFirstProduct": {
+          "title": "Create a first product",
+          "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped."
+        },
+        "addFirstSalesOrder": {
+          "title": "Add your first sales order",
+          "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
+        },
+        "addFirstPurchaseOrder": {
+          "title": "Purchase some goods",
+          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
+        },
+        "addFirstInventory": {
+          "title": "Add your inventory",
+          "details": "Add inventory entries to keep track of the stock levels of your products. This helps in managing and forecasting inventory needs."
+        },
+        "inviteAnotherMember": {
+          "title": "Invite other team-members",
+          "details": "Collaborate with your team to manage the business operations or data."
+        },
+        "progress": {
+          "details": "Complete all the steps to become a master of OneSila and make the most of its features."
+        },
         "supplier": {
           "title": "Create a first supplier",
           "details": "Add your first supplier to assign products and create purchase orders."
@@ -42,9 +87,6 @@
         "member": {
           "title": "Invite other team-members",
           "details": "Collaborate with your team to manage the business operations or data."
-        },
-        "progress": {
-          "details": "Complete all the steps to become a master of OneSila and make the most of its features."
         }
       },
       "generateDemoData": {
@@ -66,24 +108,14 @@
       },
       "confirmVatRate": {
         "title": "VAT Rate",
-          "subTitle": "Set your company's VAT rate",
-          "content": "We'll use this rate to raise invoices and caluclate prices. More rates can be added later."
+        "subTitle": "Set your company's VAT rate",
+        "content": "We'll use this rate to raise invoices and caluclate prices. More rates can be added later."
       },
       "createInventoryLocation": {
         "title": "Inventory Location",
         "subTitle": "Create a first inventory location.",
         "content": "You can create a first location here. Eg Shelf 1 or Storage Unit. More can be added later - or you can skip this entirely."
       }
-    },
-    "labels": {
-      "totalOrders": "Total Orders",
-      "recentOrders": "Recent Orders",
-      "sales": "Sales"
-    },
-    "buttons": {
-      "addOrder": "Add Order",
-      "addProduct": "Add Product",
-      "addInventory": "Add Inventory"
     }
   },
   "pagination": {
@@ -113,7 +145,7 @@
         "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
         "somethingWentWrong": "Something went wrong!",
         "deletionFailed": "Deletion operation failed. Please contact the administrators.",
-        "clipboardSuccess": "Your text was succefully copied to the clipboard"
+        "clipboardSuccess": "Your text was successfully copied to the clipboard"
       }
     },
     "button": {
@@ -134,10 +166,10 @@
       "show": "Show",
       "submit": "Submit",
       "add": "Add",
-      "create": "Create",
-      "skip": "Skip",
       "download": "Download",
-      "uploadNew": "Upload New"
+      "uploadNew": "Upload New",
+      "create": "Create",
+      "skip": "Skip"
     },
     "labels": {
       "createdAt": "Created At",
@@ -228,14 +260,22 @@
   "auth": {
     "acceptInvitation": {
       "description": "You are one step away. Please set you password and let's get it started!",
-      "header": "Welcome",
       "button": {
         "setPassword": "Set password"
-      }
+      },
+      "header": "Welcome"
     },
     "login": {
       "header": "Log in",
       "description": "Enter your username and password to login",
+      "labels": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "placeholders": {
+        "email": "Enter Email",
+        "password": "Enter Password"
+      },
       "recover": "Recover account",
       "registerPrompt": "Don't have an account?",
       "register": "SIGN UP",
@@ -246,6 +286,7 @@
       "description": "Enter your username and password to register",
       "labels": {
         "companyName": "Company Name",
+        "email": "Email",
         "password": "Password",
         "confirmPassword": "Confirm password"
       },
@@ -282,8 +323,8 @@
         },
         "members": {
           "alert": {
-            "deleteMemberSuccess": "Member was succefully deleted!",
-            "enableMemberSuccess": "Member was succefully added back!"
+            "deleteMemberSuccess": "Member was successfully deleted!",
+            "enableMemberSuccess": "Member was successfully added back!"
           },
           "labels": {
             "invitationAccepted": "Invitation Accepted"
@@ -354,7 +395,7 @@
   "companyProfile": {
     "labels": {
       "companyName": "Company Name",
-      "email": "Company Email",
+      "email": "Email",
       "phoneNumber": "Phone Number",
       "address1": "Address Line 1",
       "address2": "Address Line 2",
@@ -448,6 +489,9 @@
       },
       "edit": {
         "title": "Edit person"
+      },
+      "show": {
+        "title": "Person"
       },
       "labels": {
         "customer": "Customer",
@@ -553,11 +597,11 @@
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
-        "productionTime": "Enter time in minutes"
+        "productionTime": "Enter time in seconds"
       },
       "create": {
         "title": "Create Product",
-        "createSuccefully": "Product was succefully created!",
+        "createSuccessfully": "Product was successfully created!",
         "wizard": {
           "stepOne": {
             "content": "Select what product are you trying to create?",
@@ -592,7 +636,7 @@
             "content": "How much do you sell it for?",
             "simple": {
               "title": "Sale status",
-              "content": "Are you going to sell this item?"
+              "content": "Is this item for Sale, or for internal use?"
             }
           },
           "stepFour": {
@@ -618,7 +662,7 @@
         }
       },
       "edit": {
-        "updateSuccefully": "Product was succefully updated!"
+        "updateSuccessfully": "Product was successfully updated!"
       },
       "show": {
         "title": "Product"
@@ -764,7 +808,7 @@
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is empty. Please adjust it!",
-      "updatedSuccefully": "The price for currency {currency} was succefully updated!",
+      "updatedSuccessfully": "The price for currency {currency} was successfully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"
@@ -777,31 +821,31 @@
     "priceLists": {
       "title": "Prices Lists",
       "helpSection": {
-          "name":{
-            "header": "Name",
-            "content": "Name your pice list. Eg Wholesale Europe."
-          },
-          "discountAmount": {
-            "header": "Discount Amount",
-            "content": "The discount amount section refers to the percentage of the discount."
-          },
-          "currency": {
-            "header": "Currency",
-            "content": "The currency for the price-list.  For example EUR."
-          },
-          "customers": {
-            "header": "Customers",
-            "content": "Optional field, if you want this price-list to be used for specific customers only."
-          },
-          "vatIncluded": {
-            "header": "VAT Included",
-            "content": "If you're selling including VAT, eg to end consumers mark as True.  For trade customers, mark as False."
-          },
-          "autoUpdate": {
-            "header": "Auto Update",
-            "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
-          }
+        "name": {
+          "header": "Name",
+          "content": "Name your pice list. Eg Wholesale Europe."
         },
+        "discountAmount": {
+          "header": "Discount Amount",
+          "content": "The discount amount section refers to the percentage of the discount."
+        },
+        "currency": {
+          "header": "Currency",
+          "content": "The currency for the price-list.  For example EUR."
+        },
+        "customers": {
+          "header": "Customers",
+          "content": "Optional field, if you want this price-list to be used for specific customers only."
+        },
+        "vatIncluded": {
+          "header": "VAT Included",
+          "content": "If you're selling including VAT, eg to end consumers mark as True.  For trade customers, mark as False."
+        },
+        "autoUpdate": {
+          "header": "Auto Update",
+          "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
+        }
+      },
       "create": {
         "title": "Create Price List"
       },
@@ -860,17 +904,17 @@
         "sku": "SKU",
         "supplier": "Supplier"
       },
-      "help": {
-        "product": {
-          "addLater": "This can be empty. You can add the products later."
-        }
-      },
       "placeholders": {
         "unitPrice": "Enter unit price"
       },
       "alert": {
         "prices": {
-          "succefullyUpdated": "Succefully updated the prices!"
+          "successfullyUpdated": "successfully updated the prices!"
+        }
+      },
+      "help": {
+        "product": {
+          "addLater": "This can be empty. You can add the products later."
         }
       }
     },
@@ -936,14 +980,14 @@
       "title": "Images",
       "upload": "Upload New Images",
       "create": {
-        "successfullyCreated": "Images were succefully uploaded!"
+        "successfullyCreated": "Images were successfully uploaded!"
       },
       "delete": {
-        "successfullyDeleted": "Image was succefully deleted!"
+        "successfullyDeleted": "Image was successfully deleted!"
       },
       "show": {
         "title": "Image",
-        "successfullyUpdated": "Succefully updated the image!",
+        "successfullyUpdated": "successfully updated the image!",
         "updateFailed": "Failed to update the image. Please contact the administrators!"
       },
       "labels": {
@@ -963,14 +1007,14 @@
       "show": {
         "title": "Video",
         "unsupportedFormatError": "This video format is not supported by your browser!",
-        "successfullyUpdated": "Succefully updated the video!",
+        "successfullyUpdated": "successfully updated the video!",
         "updateFailed": "Failed to update the video. Please contact the administrators!"
       },
       "create": {
-        "successfullyCreated": "Videos were succefully added!"
+        "successfullyCreated": "Videos were successfully added!"
       },
       "delete": {
-        "successfullyDeleted": "Video was succefully deleted!"
+        "successfullyDeleted": "Video was successfully deleted!"
       },
       "labels": {
         "videoUrl": "Video URL"
@@ -983,38 +1027,15 @@
         "addDocuments": "Add New Documents"
       },
       "create": {
-        "successfullyCreated": "Documents were succefully uploaded!"
+        "successfullyCreated": "Documents were successfully uploaded!"
       },
       "delete": {
-        "successfullyDeleted": "Document was succefully deleted!"
+        "successfullyDeleted": "Document was successfully deleted!"
       }
     }
   },
   "settings": {
     "title": "Settings",
-    "demoData": {
-      "title": "Demo Data",
-      "create": {
-        "title": "Create Demo Data",
-        "content": "You can create demo data to explore the features of our application.",
-        "alert": {
-          "title": "Are you sure?",
-          "text": "This will create demo data in your account. Do you want to proceed?",
-          "confirmButtonText": "Create Demo Data"
-        },
-        "succefullyCreated": "Demo data created successfully."
-      },
-      "delete": {
-        "title": "Delete Demo Data",
-        "content": "You can delete the demo data from your account.",
-        "alert": {
-          "title": "Are you sure?",
-          "text": "This will delete all demo data from your account. Do you want to proceed?",
-          "confirmButtonText": "Delete Demo Data"
-        },
-        "succefullyDelete": "Demo data deleted successfully."
-      }
-    },
     "currencies": {
       "title": "Currencies",
       "create": {
@@ -1039,45 +1060,44 @@
         "roundPricesUpTo": "Enter round-up value",
         "comment": "Enter comment"
       },
-      "helpSection":{
-        "name":{
+      "helpSection": {
+        "name": {
           "header": "Name",
           "content": "The name of the currency, eg: British Pound."
         },
-        "isoCode":{
+        "isoCode": {
           "header": "Iso Code",
           "content": "Offical 3 letter code of the currency, eg: GBP."
         },
-        "symbol":{
+        "symbol": {
           "header": "Symbol",
           "content": "The symbol for the currency, eg: £."
         },
-        "isDefaultCurrency":{
+        "isDefaultCurrency": {
           "header": "Default Currency",
           "content": "The standard currency for your organisation. There can be only 1."
         },
-        "inheritsFrom":{
+        "inheritsFrom": {
           "header": "Inherits from",
           "content": "What currency should the prices be converted against? Eg select GBP if you're creating EUR."
         },
-        "followOfficialRate":{
+        "followOfficialRate": {
           "header": "Follow official Rate",
           "content": "If you want to follow the official exchange rates, you should select this. If you have your own rates, mark this as False."
         },
-        "exchangeRate":{
+        "exchangeRate": {
           "header": "Exchange Rate",
           "content": "Fill in your own rates in this field if you have them."
         },
-        "roundPricesUpTo":{
+        "roundPricesUpTo": {
           "header": "Round Prices Up To",
           "content": "When prices are calculated for this currency, do you want to round them up to 1, or 10, or .95 etc."
         },
-        "comment":{
+        "comment": {
           "header": "Comment",
           "content": "No special action here, just a field for note taking."
         }
       }
-
     },
     "vatRates": {
       "title": "Vat Rates",
@@ -1124,6 +1144,29 @@
     },
     "internalCompanies": {
       "title": "Internal Companies"
+    },
+    "demoData": {
+      "title": "Demo Data",
+      "create": {
+        "title": "Create Demo Data",
+        "content": "You can create demo data to explore the features of our application.",
+        "alert": {
+          "title": "Are you sure?",
+          "text": "This will create demo data in your account. Do you want to proceed?",
+          "confirmButtonText": "Create Demo Data"
+        },
+        "successfullyCreated": "Demo data created successfully."
+      },
+      "delete": {
+        "title": "Delete Demo Data",
+        "content": "You can delete the demo data from your account.",
+        "alert": {
+          "title": "Are you sure?",
+          "text": "This will delete all demo data from your account. Do you want to proceed?",
+          "confirmButtonText": "Delete Demo Data"
+        },
+        "successfullyDelete": "Demo data deleted successfully."
+      }
     }
   },
   "network": {

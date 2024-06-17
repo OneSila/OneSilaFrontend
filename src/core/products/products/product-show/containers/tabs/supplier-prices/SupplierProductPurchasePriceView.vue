@@ -107,7 +107,7 @@ const savePrices = async () => {
         });
       }
     });
-    Toast.success(t('purchasing.products.alert.prices.succefullyUpdated'))
+    Toast.success(t('purchasing.products.alert.prices.successfullyUpdated'))
   } finally {
     await loadPrices();
     saving.value = false;

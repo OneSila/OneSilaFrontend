@@ -35,6 +35,7 @@ const getAddressTypeField = (addressType, t): FormField => {
       valueBy: 'value',
       labelBy: 'name',
       multiple: true,
+      optional: true,
       options: [
         {
           name: t('contacts.companies.address.labels.invoiceAddress'),

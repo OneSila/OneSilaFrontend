@@ -1,20 +1,41 @@
 <script setup lang="ts">
 
-import { DateField } from '../../showConfig';
+import {accessNestedProperty, DateField, TextField} from '../../showConfig';
+import {computed} from "vue";
+import {FieldType} from "../../../../../utils/constants";
+import {FieldText} from "../field-text";
 
 const props = defineProps<{
   field: DateField;
   modelValue: string;
 }>();
 
+const dateValue = computed(() => formatDate(props.modelValue));
+
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    const date = new Date(dateString);
+
+    return new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    }).format(date);
 };
+
+
+
+const modifiedField = computed(() => ({
+  ...props.field,
+  type: FieldType.Text,
+}));
 
 </script>
 
 <template>
   <div :class="field.customCssClass" :style="field.customCss">
-    <span>{{ formatDate(modelValue) }}</span>
+    <FieldText v-if="dateValue !== null" :field="modifiedField as TextField" :model-value="dateValue" />
   </div>
 </template>

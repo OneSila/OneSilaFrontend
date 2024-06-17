@@ -130,7 +130,7 @@ const handleSubmit = async (overrideData = {}) => {
         form.vatRate.id = data.updateProduct.vatRate.id
       }
 
-      Toast.success(t('products.products.edit.updateSuccefully'));
+      Toast.success(t('products.products.edit.updateSuccessfully'));
     }
   } catch (error) {
     console.error(error);

@@ -128,6 +128,7 @@ export const baseFormConfigConstructor = (
   submitUrl: getSubmitUrl(customerId, source),
   submitAndContinueUrl: getSubmitAndContinueUrl(customerId, source),
   fields: [
+    getCustomerField(customerId, t),
     {
       type: FieldType.Text,
       name: 'reference',
@@ -151,7 +152,6 @@ export const baseFormConfigConstructor = (
         createOnFlyConfig: currencyOnTheFlyConfig(t),
         setDefaultKey: 'isDefaultCurrency'
     },
-    getCustomerField(customerId, t),
     {
       type: FieldType.Query,
       name: 'invoiceAddress',
@@ -205,7 +205,8 @@ export const baseFormConfigConstructor = (
       type: FieldType.Checkbox,
       name: 'priceInclVat',
       label: t('sales.orders.labels.priceInclVat'),
-      default: true
+      default: true,
+      uncheckedValue: "false",
     },
     ],
 });
@@ -283,19 +284,25 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, customerId) => {
   return customerId
-    ? [t('sales.orders.labels.reference'), t('shared.labels.date'), t('sales.orders.labels.status.title')]
-    : [t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('shared.labels.date'), t('sales.orders.labels.status.title')];
+    ? [t('shared.labels.date'), t('sales.orders.labels.reference'), t('sales.orders.labels.status.title')]
+    : [t('shared.labels.date'), t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('sales.orders.labels.status.title')];
 }
 
 const getFields = (customerId, t): ShowField[] => {
   const commonFields: ShowField[] = [
-    { name: 'reference', type: FieldType.Text },
     { name: 'createdAt', type: FieldType.Date },
+    { name: 'reference', type: FieldType.Text },
     { name: 'status', type: FieldType.Badge, badgeMap: getSalesOrderStatusBadgeMap(t)},
   ];
 
   if (!customerId) {
-    commonFields.splice(1, 0, { name: 'customer', type: FieldType.NestedText, keys: ['name'] } as NestedTextField);
+    commonFields.splice(2, 0, {
+      name: 'customer',
+      type: FieldType.NestedText,
+      keys: ['name'],
+      clickable: true,
+      clickIdentifiers: [{id: ['id']}],
+      clickUrl: {name: 'contacts.companies.show'}} as NestedTextField);
   }
 
   return commonFields;
@@ -412,7 +419,13 @@ export const showConfigConstructor = (t: Function, id, customerId: string|null =
     keys: ['fullAddress'],
     showLabel: true
   },
-  ]
+  {
+    name: 'createdAt',
+    type: FieldType.Date,
+    label: t('shared.labels.date'),
+    showLabel: true
+  }
+]
 
 });
 

@@ -97,7 +97,7 @@ const savePrices = async () => {
         });
 
         if (data) {
-            Toast.success(t('sales.prices.updatedSuccefully', {currency: price.currency}));
+            Toast.success(t('sales.prices.updatedSuccessfully', {currency: price.currency}));
         }
       }
     }
