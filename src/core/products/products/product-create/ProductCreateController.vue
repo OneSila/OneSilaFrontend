@@ -279,7 +279,7 @@ const handleFinish = async () => {
       const productId  = data.createProduct.id;
       await processAdditionalFields(productId);
 
-      Toast.success(t('products.products.create.createSuccefully'));
+      Toast.success(t('products.products.create.createSuccessfully'));
       loading.value = false;
       const supplierProductId = route.query.productId ? route.query.productId.toString() : null;
 

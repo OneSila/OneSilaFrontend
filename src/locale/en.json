@@ -490,6 +490,9 @@
       "edit": {
         "title": "Edit person"
       },
+      "show": {
+        "title": "Person"
+      },
       "labels": {
         "customer": "Customer",
         "company": "Company"
@@ -598,7 +601,7 @@
       },
       "create": {
         "title": "Create Product",
-        "createsuccessfully": "Product was successfully created!",
+        "createSuccessfully": "Product was successfully created!",
         "wizard": {
           "stepOne": {
             "content": "Select what product are you trying to create?",
@@ -659,7 +662,7 @@
         }
       },
       "edit": {
-        "updatesuccessfully": "Product was successfully updated!"
+        "updateSuccessfully": "Product was successfully updated!"
       },
       "show": {
         "title": "Product"
@@ -805,7 +808,7 @@
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is empty. Please adjust it!",
-      "updatedsuccessfully": "The price for currency {currency} was successfully updated!",
+      "updatedSuccessfully": "The price for currency {currency} was successfully updated!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount"

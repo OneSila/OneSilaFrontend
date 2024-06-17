@@ -99,6 +99,7 @@ export const baseFormConfigConstructor = (
         name: 'email',
         label: t('shared.labels.email'),
         placeholder: t('shared.placeholders.email'),
+        optional: true
       },
       {
         type: FieldType.Phone,
@@ -252,7 +253,8 @@ const getFields = (companyId): ShowField[] => {
   ];
 
   if (!companyId) {
-    commonFields.splice(3, 0, { name: 'company', type: FieldType.NestedText, keys: ['name'] });
+    commonFields.splice(3, 0, { name: 'company', type: FieldType.NestedText, keys: ['name'],
+      clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: {name: 'contacts.companies.show'} });
   }
 
   return commonFields;

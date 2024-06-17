@@ -598,7 +598,7 @@
       },
       "create": {
         "title": "Product aanmaken",
-        "createSuccefully": "Product is succesvol aangemaakt!",
+        "createSuccessfully": "Product is succesvol aangemaakt!",
         "wizard": {
           "stepOne": {
             "content": "Selecteer het product-type die u wenst aan te maken",
@@ -659,7 +659,7 @@
         }
       },
       "edit": {
-        "updateSuccefully": "Wijzigingen voor het product zijn opgeslagen"
+        "updateSuccessfully": "Wijzigingen voor het product zijn opgeslagen"
       },
       "show": {
         "title": "Product"
@@ -805,7 +805,7 @@
     "prices": {
       "confirmCurrencyChange": "De veranderingen zullen verloren gaan. Zeker dat us de valuta op wilt slagen?",
       "updatedError": "Prijs voor valuta {currency} is leeg.  Pas deze aan.",
-      "updatedSuccefully": "De prijs voor valuta {currency} was opgeslagen.",
+      "updatedSuccessfully": "De prijs voor valuta {currency} was opgeslagen.",
       "labels": {
         "amount": "Prijs",
         "discountAmount": "Kortingsprijs"
@@ -906,7 +906,7 @@
       },
       "alert": {
         "prices": {
-          "succefullyUpdated": "Prijzen opgeslagen!"
+          "successfullyUpdated": "Prijzen opgeslagen!"
         }
       },
       "help": {
@@ -1152,7 +1152,7 @@
           "text": "Dit zal de demo-data aanmaken.  Verdergaan?",
           "confirmButtonText": "Aanmaken Demo Data"
         },
-        "succefullyCreated": "Demo Data is aangemaakt."
+        "successfullyCreated": "Demo Data is aangemaakt."
       },
       "delete": {
         "title": "Demo Data verwijderen",

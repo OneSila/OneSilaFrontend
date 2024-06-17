@@ -66,7 +66,7 @@ const defaultSwalClasses = {
     })
 
     if (data && data.createDemoData) {
-      Toast.success(t('settings.demoData.create.succefullyCreated'))
+      Toast.success(t('settings.demoData.create.successfullyCreated'))
     }
 
   } else {
