@@ -493,6 +493,9 @@
       "labels": {
         "customer": "Klant",
         "company": "Bedrijf"
+      },
+      "show": {
+        "title": "Contact"
       }
     }
   },
@@ -598,7 +601,7 @@
       },
       "create": {
         "title": "Product aanmaken",
-        "createSuccessfully": "Product is succesvol aangemaakt!",
+        "createSuccefully": "Product is succesvol aangemaakt!",
         "wizard": {
           "stepOne": {
             "content": "Selecteer het product-type die u wenst aan te maken",
@@ -656,10 +659,12 @@
               "selectVariations": "Vul de stuklijst voor dit product aan"
             }
           }
-        }
+        },
+        "createSuccessfully": "Product is aangemaakt!"
       },
       "edit": {
-        "updateSuccessfully": "Wijzigingen voor het product zijn opgeslagen"
+        "updateSuccefully": "Wijzigingen voor het product zijn opgeslagen",
+        "updateSuccessfully": "Product is upgedate!"
       },
       "show": {
         "title": "Product"
@@ -805,7 +810,7 @@
     "prices": {
       "confirmCurrencyChange": "De veranderingen zullen verloren gaan. Zeker dat us de valuta op wilt slagen?",
       "updatedError": "Prijs voor valuta {currency} is leeg.  Pas deze aan.",
-      "updatedSuccessfully": "De prijs voor valuta {currency} was opgeslagen.",
+      "updatedSuccefully": "De prijs voor valuta {currency} was opgeslagen.",
       "labels": {
         "amount": "Prijs",
         "discountAmount": "Kortingsprijs"
@@ -813,7 +818,8 @@
       "placeholders": {
         "amount": "Voeg prijs in",
         "discountAmount": "Voeg kortingsprijs in"
-      }
+      },
+      "updatedSuccessfully": "Prijs in {currency} is upgedate"
     },
     "priceLists": {
       "title": "Prijslijsten",
@@ -906,7 +912,8 @@
       },
       "alert": {
         "prices": {
-          "successfullyUpdated": "Prijzen opgeslagen!"
+          "succefullyUpdated": "Prijzen opgeslagen!",
+          "successfullyUpdated": "prijzen zijn upgedate"
         }
       },
       "help": {
@@ -1152,7 +1159,8 @@
           "text": "Dit zal de demo-data aanmaken.  Verdergaan?",
           "confirmButtonText": "Aanmaken Demo Data"
         },
-        "successfullyCreated": "Demo Data is aangemaakt."
+        "succefullyCreated": "Demo Data wordt aangemaakt.",
+        "successfullyCreated": "Demo data is aangemaakt."
       },
       "delete": {
         "title": "Demo Data verwijderen",
@@ -1162,7 +1170,8 @@
           "text": "Dit zal alle Demo Data van uw account verwijderen.  Verdergaan?",
           "confirmButtonText": "Verwijderen Demo Data"
         },
-        "succefullyDelete": "Demo Data is verwijderd"
+        "succefullyDelete": "Demo Data wordt verwijderd.",
+        "successfullyDelete": "Demo data is verwijderd."
       }
     }
   },
