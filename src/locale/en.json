@@ -1159,8 +1159,8 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "succefullyCreated": "Demo data created successfully.",
-        "successfullyCreated": "Demo data created successfully."
+        "succefullyCreated": "Demo data is being added.",
+        "successfullyCreated": "Demo data is being added."
       },
       "delete": {
         "title": "Delete Demo Data",
@@ -1170,8 +1170,8 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "succefullyDelete": "Demo data deleted successfully.",
-        "successfullyDelete": "Demo data deleted successfully."
+        "succefullyDelete": "Demo data is being removed.",
+        "successfullyDelete": "Demo data is being removed."
       }
     }
   },
