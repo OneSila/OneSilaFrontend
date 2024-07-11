@@ -27,7 +27,7 @@ const loading = ref(true);
 const rawDataRef: Ref<any> = ref([]);
 const cleanedData: Ref<any[]> = ref([]);
 const selectedValue = ref(props.modelValue);
-const isLiveUpdate = ref(false); // for data with more than 100 data initially and we need to do a new query every time
+const isLiveUpdate = ref(true); // in order to be live updates this always have to be true
 
 
 const dropdownPosition = props.field.dropdownPosition || 'top';
@@ -72,8 +72,7 @@ async function fetchData(searchValue: string | null | undefined = null) {
 
     const { data } = await apolloClient.query({
       query: props.field.query as unknown as DocumentNode,
-      variables: variables,
-      fetchPolicy: 'network-only'
+      variables: variables
     });
 
     processAndCleanData(data[props.field.dataKey]);
@@ -176,7 +175,7 @@ const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
       @update:model-value="updateValue"
     />
     <template v-else>
-      <Flex v-if="!loading">
+      <Flex>
         <FlexCell grow>
           <Selector
             :modelValue="selectedValue"
@@ -192,31 +191,14 @@ const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
             :limit="limit"
             :disabled="field.disabled"
             :show-add-entry="showAddEntry"
+            :is-loading="loading"
             @update:model-value="updateValue"
             @searched="handleInput"
             @add-clicked="showCreateOnFlyModal = true"
           />
         </FlexCell>
         <FlexCell v-if="field.createOnFlyConfig">
-          <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" @click="showCreateOnFlyModal = true">
-            <Icon name="plus" />
-          </Button>
-        </FlexCell>
-      </Flex>
-      <Flex v-else>
-        <FlexCell grow>
-          <Selector
-              class="h-9"
-              :modelValue="null"
-              :options="[]"
-              :label-by="field.labelBy"
-              :value-by="field.valueBy"
-              :removable="false"
-              :is-loading="true"
-              disabled />
-        </FlexCell>
-        <FlexCell v-if="field.createOnFlyConfig">
-          <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" disabled>
+          <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'" @click="showCreateOnFlyModal = true" :disabled="loading">
             <Icon name="plus" />
           </Button>
         </FlexCell>

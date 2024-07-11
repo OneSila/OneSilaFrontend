@@ -124,7 +124,7 @@ onMounted(loadPrices);
     <table class="table-striped table-hover">
       <thead>
         <tr>
-          <th>{{ t('sales.prices.labels.discountAmount') }}</th>
+          <th>{{ t('sales.prices.labels.amount') }}</th>
           <th>{{ t('sales.prices.labels.discountAmount') }}</th>
           <th>{{ t('shared.labels.currency') }}</th>
         </tr>

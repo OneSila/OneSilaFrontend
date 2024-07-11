@@ -34,7 +34,7 @@ const tabItems = computed(() => {
   }
 
   items.push(
-    { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
+    // { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   );
 
@@ -64,9 +64,9 @@ const tabItems = computed(() => {
       <template v-slot:priceLists>
         <SalesPricelistList v-if="product.forSale" :product="product" />
       </template>
-      <template v-slot:hsCodes>
-        <ProductHsCodesList :product="product" />
-      </template>
+<!--      <template v-slot:hsCodes>-->
+<!--        <ProductHsCodesList :product="product" />-->
+<!--      </template>-->
       <template v-slot:eanCodes>
         <ProductEanCodesList :product="product" />
       </template>

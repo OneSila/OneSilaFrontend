@@ -12,7 +12,8 @@ const { t } = useI18n();
 
 const route = useRoute();
 const emit = defineEmits(['show-sidebar']);
-
+const showProfileDropdown = ref(false);
+const createDropdownItems = ref([]);
 const showSidebar = () => {
   emit('show-sidebar');
 };
@@ -46,7 +47,9 @@ const setActiveDropdown = () => {
     }
 };
 
-const createDropdownItems = [
+const allowCreateDropdown = () => {
+  showProfileDropdown.value = true;
+  createDropdownItems.value = [
   {
     label: t('products.products.create.title'),
     icon: 'box',
@@ -72,8 +75,10 @@ const createDropdownItems = [
     icon: 'warehouse',
     path: { name: 'inventory.inventory.create' },
   },
-
 ];
+}
+
+
 
 </script>
 
@@ -94,8 +99,8 @@ const createDropdownItems = [
                     class="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
                 >
                   <GeneralSearch />
-                  <LanguageDropdown :show="false" class="ms-auto w-max"/>
-                      <Dropdown :items="createDropdownItems">
+                  <LanguageDropdown :show="false" class="ms-auto w-max" @language-set="allowCreateDropdown()"/>
+                      <Dropdown v-if="showProfileDropdown" :items="createDropdownItems">
                         <template #trigger>
                           <button type="button" class="relative group block">
                             <Icon name="circle-plus" class="w-7 h-7 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />

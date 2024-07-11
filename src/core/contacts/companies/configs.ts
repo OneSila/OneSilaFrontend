@@ -179,7 +179,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language')],
+  headers: [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language'), t('contacts.companies.address.labels.country')],
   fields: [
     {
       name: 'name',
@@ -195,6 +195,10 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       type: FieldType.Image,
       basePath: '/images/flags',
       suffix: '.svg'
+    },
+    {
+      name: 'country',
+      type: FieldType.Text,
     },
   ],
   identifierKey: 'id',

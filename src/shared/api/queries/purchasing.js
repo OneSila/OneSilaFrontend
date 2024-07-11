@@ -65,6 +65,7 @@ export const purchaseOrdersQuery = gql`
           id
           status
           totalValue
+          country
           supplier {
             id
             name

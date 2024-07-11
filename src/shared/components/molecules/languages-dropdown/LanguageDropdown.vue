@@ -10,6 +10,7 @@ import { useAppStore } from '../../../plugins/store';
 import { changeLanguageMutation } from '../../../api/mutations/languages.js'
 import apolloClient from '../../../../../apollo-client';
 
+const emit = defineEmits(['language-set']);
 defineProps<{ show?: boolean }>();
 const auth = injectAuth();
 const { locale } = useI18n();
@@ -51,6 +52,7 @@ onMounted(() => {
   if (isAuthenticated(auth)) {
     locale.value = auth.user.language;
     app.toggleLocale(auth.user.language);
+    emit('language-set');
   } else {
     locale.value = app.locale;
     app.toggleLocale(app.locale);

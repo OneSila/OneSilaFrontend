@@ -48,10 +48,10 @@ export const navSections: NavSection[] = [
                         route: { name: 'products.products.list' },
                         title: 'products.title'
                     },
-                    {
-                        route: { name: 'products.hsCodes.list' },
-                        title:  'products.hsCodes.title',
-                    },
+                    // {
+                    //     route: { name: 'products.hsCodes.list' },
+                    //     title:  'products.hsCodes.title',
+                    // },
                     {
                         route: { name: 'products.eanCodes.list' },
                         title:  'products.eanCodes.title',

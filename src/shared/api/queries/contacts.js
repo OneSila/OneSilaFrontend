@@ -10,6 +10,7 @@ query Companies($first: Int, $last: Int, $after: String, $before: String, $order
         phone
         email
         language
+        country
         currency {
           id
           isoCode

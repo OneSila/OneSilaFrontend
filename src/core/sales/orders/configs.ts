@@ -284,8 +284,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, customerId) => {
   return customerId
-    ? [t('shared.labels.date'), t('sales.orders.labels.reference'), t('sales.orders.labels.status.title')]
-    : [t('shared.labels.date'), t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('sales.orders.labels.status.title')];
+    ? [t('shared.labels.date'), t('sales.orders.labels.reference'), t('sales.orders.labels.status.title'), t('contacts.companies.address.labels.country')]
+    : [t('shared.labels.date'), t('sales.orders.labels.reference'), t('sales.orders.labels.customer'), t('sales.orders.labels.status.title'), t('contacts.companies.address.labels.country')];
 }
 
 const getFields = (customerId, t): ShowField[] => {
@@ -293,6 +293,7 @@ const getFields = (customerId, t): ShowField[] => {
     { name: 'createdAt', type: FieldType.Date },
     { name: 'reference', type: FieldType.Text },
     { name: 'status', type: FieldType.Badge, badgeMap: getSalesOrderStatusBadgeMap(t)},
+    { name: 'country', type: FieldType.NestedText, keys: [] },
   ];
 
   if (!customerId) {

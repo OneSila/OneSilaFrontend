@@ -340,6 +340,7 @@
       "tokenHeader": "Recover Account",
       "tokenDescription": "You are one step away. Please confirm your account recovery.",
       "tokenLoginFailed": "Failed to authenticate token.",
+      "loginPrompt": "Wanna go back?",
       "button": {
         "recover": "Recover"
       },

@@ -51,7 +51,7 @@ export const baseFormConfigConstructor = (
   mutationKey: string,
   productId: string | null = null
 ): FormConfig => ({
- cols: 1,
+  cols: 1,
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
