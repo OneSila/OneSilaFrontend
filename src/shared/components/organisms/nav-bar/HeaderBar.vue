@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed, reactive, watch } from 'vue';
+import {ref, onMounted, computed, reactive, watch, Ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { Icon } from "../../atoms/icon";
@@ -7,13 +7,15 @@ import { Dropdown } from "../../molecules/dropdown";
 import LanguageDropdown from "../../molecules/languages-dropdown/LanguageDropdown.vue";
 import UserProfileDropdown from "../user-profile-dropdown/UserProfileDropdown.vue";
 import GeneralSearch from "../general-search/GeneralSearch.vue";
+import { DropdownItem } from "../../molecules/dropdown/Dropdown.vue";
 
 const { t } = useI18n();
 
 const route = useRoute();
 const emit = defineEmits(['show-sidebar']);
 const showProfileDropdown = ref(false);
-const createDropdownItems = ref([]);
+const createDropdownItems: Ref<DropdownItem[]> = ref([]);
+
 const showSidebar = () => {
   emit('show-sidebar');
 };
@@ -50,32 +52,32 @@ const setActiveDropdown = () => {
 const allowCreateDropdown = () => {
   showProfileDropdown.value = true;
   createDropdownItems.value = [
-  {
-    label: t('products.products.create.title'),
-    icon: 'box',
-    path: { name: 'products.products.create' },
-  },
-  {
-    label: t('contacts.companies.create.title'),
-    icon: 'envelope',
-    path: { name: 'contacts.companies.create' },
-  },
-  {
-    label: t('sales.orders.create.title'),
-    icon: 'cart-shopping',
-    path: { name: 'sales.orders.create' },
-  },
-  {
-    label: t('purchasing.orders.create.title'),
-    icon: 'receipt',
-    path: { name: 'purchasing.orders.create' },
-  },
-  {
-    label: t('inventory.inventory.create.title'),
-    icon: 'warehouse',
-    path: { name: 'inventory.inventory.create' },
-  },
-];
+    {
+      label: t('products.products.create.title'),
+      icon: 'box',
+      path: { name: 'products.products.create' },
+    },
+    {
+      label: t('contacts.companies.create.title'),
+      icon: 'envelope',
+      path: { name: 'contacts.companies.create' },
+    },
+    {
+      label: t('sales.orders.create.title'),
+      icon: 'cart-shopping',
+      path: { name: 'sales.orders.create' },
+    },
+    {
+      label: t('purchasing.orders.create.title'),
+      icon: 'receipt',
+      path: { name: 'purchasing.orders.create' },
+    },
+    {
+      label: t('inventory.inventory.create.title'),
+      icon: 'warehouse',
+      path: { name: 'inventory.inventory.create' },
+    },
+  ];
 }
 
 
