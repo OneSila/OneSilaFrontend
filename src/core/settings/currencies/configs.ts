@@ -2,48 +2,71 @@ import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/c
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { currenciesQuery } from "../../../shared/api/queries/currencies.js"
+import {currenciesQuery, publicCurrenciesQuery} from "../../../shared/api/queries/currencies.js"
 import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
-import {productsQuery} from "../../../shared/api/queries/products";
 
-export const getCurrencyFields = (t): FormField[] => {
-  return [
-    {
+export const getCurrencyFields = (t, isEdit: boolean = false): FormField[] => {
+  const fields: FormField[] = [];
+
+  if (isEdit) {
+    fields.push({
       type: FieldType.Text,
       name: 'name',
       label: t('shared.labels.name'),
       placeholder: t('shared.placeholders.name'),
-    },
-    {
+      disabled: isEdit,
+    });
+    fields.push({
       type: FieldType.Text,
       name: 'isoCode',
       label: t('settings.currencies.labels.isoCode'),
       placeholder: t('settings.currencies.placeholders.isoCode'),
-    },
-    {
+      disabled: isEdit,
+    });
+    fields.push({
       type: FieldType.Text,
       name: 'symbol',
       label: t('settings.currencies.labels.symbol'),
       placeholder: t('settings.currencies.placeholders.symbol'),
-    },
-    {
-      type: FieldType.Checkbox,
-      name: 'isDefaultCurrency',
-      label: t('settings.currencies.labels.isDefaultCurrency'),
-      uncheckedValue: "false",
-      default: false,
-      optional: true
-    },
-    ...getNonDefaultFields(t),
-    {
-      type: FieldType.Text,
-      name: 'comment',
-      label: t('settings.currencies.labels.comment'),
-      placeholder: t('settings.currencies.placeholders.comment'),
-      optional: true
-    },
-  ]
-}
+      disabled: isEdit,
+    });
+  } else {
+    fields.push({
+      type: FieldType.Query,
+      name: 'publicCurrency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      query: publicCurrenciesQuery,
+      dataKey: 'publicCurrencies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      removable: false,
+      formMapIdentifier: 'id'
+    });
+  }
+
+  // Adding common fields
+  fields.push({
+    type: FieldType.Checkbox,
+    name: 'isDefaultCurrency',
+    label: t('settings.currencies.labels.isDefaultCurrency'),
+    uncheckedValue: "false",
+    default: false,
+    optional: true
+  });
+  fields.push(...getNonDefaultFields(t));
+  fields.push({
+    type: FieldType.Text,
+    name: 'comment',
+    label: t('settings.currencies.labels.comment'),
+    placeholder: t('settings.currencies.placeholders.comment'),
+    optional: true
+  });
+
+  return fields;
+};
 
 export const getNonDefaultFields = (t): FormField[] => {
   return [
@@ -136,7 +159,7 @@ export const baseFormConfigConstructor = (
       content: t('settings.currencies.helpSection.comment.content')
     },
   ],
-  fields: getCurrencyFields(t),
+  fields: getCurrencyFields(t, type == FormType.EDIT),
 });
 
 export const currencyOnTheFlyConfig = (t: Function):CreateOnTheFly => ({

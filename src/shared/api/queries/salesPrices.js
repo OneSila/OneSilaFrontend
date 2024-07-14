@@ -154,6 +154,8 @@ export const getSalesPriceListQuery = gql`
       }
       vatIncluded
       autoUpdate
+      startDate
+      endDate
       customers {
         id
         name

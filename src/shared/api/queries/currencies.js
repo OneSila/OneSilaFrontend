@@ -53,3 +53,20 @@ export const getCurrencyQuery = gql`
     }
   }
 `;
+
+
+
+export const publicCurrenciesQuery = gql`
+query PublicCurrency {
+    publicCurrencies {
+      edges {
+        node {
+          id
+          name
+          isoCode
+          symbol
+        }
+      }
+    }
+  }
+`;

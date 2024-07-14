@@ -8,7 +8,7 @@ import { FormConfig, FormType } from "../../../../shared/components/organisms/ge
 import { FieldType } from "../../../../shared/utils/constants";
 import { updateCurrencyMutation } from "../../../../shared/api/mutations/currencies.js";
 import { getCurrencyQuery } from "../../../../shared/api/queries/currencies.js";
-import {baseFormConfigConstructor, getCurrencyFields, getNonDefaultFields} from "../configs";
+import {baseFormConfigConstructor, getCurrencyFields } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import SettingsTemplate from "../../SettingsTemplate.vue";
 import {TabsMenu} from "../../../../shared/components/molecules/tabs-menu";
@@ -50,7 +50,7 @@ const handleFormUpdate = async (form) => {
 
   if (!formConfig.value) return;
 
-    formConfig.value.fields = getCurrencyFields(t);
+    formConfig.value.fields = getCurrencyFields(t, true);
 
     let removeFields: string[] = [];
 
@@ -77,7 +77,7 @@ const handleFormUpdate = async (form) => {
       <template v-slot:breadcrumbs>
         <Breadcrumbs
             :links="[{ path: { name: 'settings.currencies.list' }, name: t('settings.currencies.title') },
-                     { path: { name: 'settings.currency.edit' }, name: t('settings.currency.edit.title') }]" />
+                     { path: { name: 'settings.currency.edit' }, name: t('settings.currencies.edit.title') }]" />
       </template>
 
      <template v-slot:content>

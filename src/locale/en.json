@@ -175,6 +175,7 @@
       "createdAt": "Created At",
       "updatedAt": "Updated At",
       "status": "Status",
+      "dateRange": "Date Range",
       "role": "Role",
       "or": "Or",
       "name": "Name",
@@ -810,15 +811,18 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
-      "updatedError": "Price for currency {currency} is empty. Please adjust it!",
+      "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
       "updatedSuccefully": "The price for currency {currency} was succefully updated!",
+      "createSuccefully": "The price for currency {currency} was succefully created!",
       "labels": {
         "amount": "Amount",
-        "discountAmount": "Discount Amount"
+        "discountAmount": "Discount Amount",
+        "discountPercentage": "Discount Percentage"
       },
       "placeholders": {
         "amount": "Enter amount",
-        "discountAmount": "Enter discount amount"
+        "discountAmount": "Enter discount amount",
+        "discountPercentage": "Enter discount percentage"
       },
       "updatedSuccessfully": "The price for currency {currency} was successfully updated!"
     },
@@ -829,13 +833,13 @@
           "header": "Name",
           "content": "Name your pice list. Eg Wholesale Europe."
         },
-        "discountAmount": {
-          "header": "Discount Amount",
-          "content": "The discount amount section refers to the percentage of the discount."
+        "discountPercentage": {
+          "header": "Discount Percentage",
+          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
         },
         "currency": {
           "header": "Currency",
-          "content": "The currency for the price-list.  For example EUR."
+          "content": "The currency for the price-list. For example EUR."
         },
         "customers": {
           "header": "Customers",
@@ -843,15 +847,22 @@
         },
         "vatIncluded": {
           "header": "VAT Included",
-          "content": "If you're selling including VAT, eg to end consumers mark as True.  For trade customers, mark as False."
+          "content": "If you're selling including VAT, eg to end consumers mark as True. For trade customers, mark as False."
         },
         "autoUpdate": {
           "header": "Auto Update",
           "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
+        },
+        "dateRange": {
+          "header": "Date Range",
+          "content": "Specify the start and end dates for the price list to be active. Leave these fields empty for a permanent promotion. This is useful for setting up temporary promotions."
         }
       },
       "create": {
         "title": "Create Price List"
+      },
+      "edit": {
+        "title": "Edit Price List"
       },
       "show": {
         "title": "Price List"
@@ -1044,7 +1055,10 @@
     "currencies": {
       "title": "Currencies",
       "create": {
-        "title": "Create currency"
+        "title": "Add Currency"
+      },
+      "edit": {
+        "title": "Edit Currency"
       },
       "labels": {
         "isoCode": "ISO Code",
@@ -1137,14 +1151,6 @@
       },
       "placeholders": {
         "unit": "Enter unit"
-      }
-    },
-    "currency": {
-      "create": {
-        "title": "Create Currency"
-      },
-      "edit": {
-        "title": "Edit Currency"
       }
     },
     "internalCompanies": {
