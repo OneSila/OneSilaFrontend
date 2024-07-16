@@ -28,7 +28,7 @@ const props = defineProps<{ companyData: MeCompanyData }>();
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="city"/>
-        {{ t('companyProfile.labels.country') }}: {{ props.companyData.country || '-' }}
+        {{ t('auth.register.company.labels.country') }}: {{ props.companyData.country || '-' }}
       </li>
       <li class="flex items-center gap-2">
         <Icon class="shrink-0" name="signs-post"/>

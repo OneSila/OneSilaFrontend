@@ -83,6 +83,8 @@ export const createSalesPriceListMutation = gql`
       }
       vatIncluded
       autoUpdate
+      startDate
+      endDate
     }
   }
 `;
@@ -116,6 +118,8 @@ export const updateSalesPriceListMutation = gql`
       }
       vatIncluded
       autoUpdate
+      startDate
+      endDate
     }
   }
 `;

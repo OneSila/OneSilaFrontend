@@ -61,7 +61,7 @@ const handleFormUpdate = async (form) => {
     <template v-slot:breadcrumbs>
       <Breadcrumbs
           :links="[{ path: { name: 'settings.currencies.list' }, name: t('settings.currencies.title') },
-                   { path: { name: 'settings.currency.create' }, name: t('settings.currency.create.title') }]" />
+                   { path: { name: 'settings.currency.create' }, name: t('settings.currencies.create.title') }]" />
     </template>
 
    <template v-slot:content>

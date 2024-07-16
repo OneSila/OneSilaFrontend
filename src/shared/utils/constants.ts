@@ -13,6 +13,7 @@ export enum FieldType {
   Choice = "Choice",
   Query = "Query",
   Date = "Date",
+  RangeDate = "RangeDate",
   Slider = "Slider",
   Checkbox = "Checkbox",
   Hidden = "Hidden",

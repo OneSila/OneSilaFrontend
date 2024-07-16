@@ -123,6 +123,13 @@ export interface DateFormField extends BaseFormField {
   type: FieldType.Date;
 }
 
+export interface DateRangeFormField extends BaseFormField {
+  type: FieldType.RangeDate;
+  startName: string;
+  endName: string;
+  format?: any;
+}
+
 export interface SliderFormField extends BaseFormField {
   type: FieldType.Slider;
 }
@@ -154,7 +161,7 @@ type RedirectIdentifier = Record<string, string>;
 
 
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
-                        ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | SliderFormField |
+                        ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | DateRangeFormField | SliderFormField |
                         CheckboxFormField | HiddenFormField | WebsiteFormField;
 
 export interface FormConfig {
@@ -222,7 +229,14 @@ export function getEnhancedConfig(config: Partial<FormConfig>, defaultTranslatio
   return enhancedConfig;
 }
 
-
+const formatDateForBackend = (date) => {
+  if (!date) return null;
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export const cleanUpDataForMutation = (formData, fields, formType) => {
   let cleanedData = { ...formData };
@@ -294,6 +308,11 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
         newValue = { [field.formMapIdentifier]: fieldValue };
       }
       cleanedData[field.name] = newValue;
+    } else if (field.type === FieldType.RangeDate) {
+      const cleanValues = fieldValue === null;
+      cleanedData[field.startName] = formatDateForBackend(cleanValues ? null : fieldValue[0]);
+      cleanedData[field.endName] = formatDateForBackend(cleanValues ? null : fieldValue[1]);
+      delete cleanedData[field.name];
     }
   });
 

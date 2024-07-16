@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
 import {useI18n} from "vue-i18n";
-import {useRouter} from "vue-router";
 import {ref} from "vue";
 import {Tabs} from "../../../../../../../shared/components/molecules/tabs";
 import {Product} from "../../../../configs"
@@ -12,11 +11,10 @@ import MediaView from "../../tabs/media/MediaView.vue";
 import SupplierProductPurchasePriceView from "../../tabs/supplier-prices/SupplierProductPurchasePriceView.vue";
 import PurchasingOrderList from "../../tabs/purchasing-orders/PurchasingOrderList.vue";
 import ProductsList from "../../tabs/products/ProductsList.vue";
+import ProductEanCodesSupplier from "../../tabs/ean-codes/ProductEanCodesSupplier.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
-const router = useRouter();
-
 const tabItems = ref();
 
 
@@ -29,6 +27,7 @@ tabItems.value = [
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
     { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
     { name: 'purchasingOrders', label: t('products.products.tabs.purchasingOrders'), icon: 'cart-shopping' },
+    { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   ];
 
 </script>
@@ -59,6 +58,9 @@ tabItems.value = [
       </template>
       <template v-slot:purchasingOrders>
         <PurchasingOrderList :product="product" />
+      </template>
+      <template v-slot:eanCodes>
+        <ProductEanCodesSupplier :product="product" />
       </template>
     </Tabs>
   </div>

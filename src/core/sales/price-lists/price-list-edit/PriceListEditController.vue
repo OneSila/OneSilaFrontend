@@ -44,6 +44,8 @@ const formConfig = {
   ]
 };
 
+const date = ref([]);
+
 </script>
 
 <template>
@@ -51,8 +53,8 @@ const formConfig = {
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'sales.orders.list' }, name: t('sales.orders.title') },
-                   { path: { name: 'sales.orders.edit' }, name: t('sales.orders.edit.title') }]" />
+          :links="[{ path: { name: 'sales.priceLists.list' }, name: t('sales.priceLists.title') },
+                   { path: { name: 'sales.priceLists.edit' }, name: t('sales.priceLists.edit.title') }]" />
     </template>
 
    <template v-slot:content>

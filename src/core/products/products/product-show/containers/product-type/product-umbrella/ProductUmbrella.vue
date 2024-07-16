@@ -25,8 +25,6 @@ tabItems.value = [
     { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
-    { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
-    { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   ];
 
 </script>
@@ -48,12 +46,6 @@ tabItems.value = [
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList :product="product" />
-      </template>
-      <template v-slot:hsCodes>
-        <ProductHsCodesList :product="product" />
-      </template>
-      <template v-slot:eanCodes>
-        <ProductEanCodesList :product="product" />
       </template>
     </Tabs>
   </div>

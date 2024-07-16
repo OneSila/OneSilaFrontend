@@ -49,7 +49,12 @@ const initialFormUpdate = (data: any) => {
     }
     else if (dataToEdit.hasOwnProperty(field.name)) {
       form[field.name] = dataToEdit[field.name];
-    } else {
+    } else if (field.type === FieldType.RangeDate) {
+      const dateFrom = dataToEdit[field.startName]
+      const dateTo = dataToEdit[field.endName]
+      form[field.name] = dateFrom == null && dateTo == null ? null : [dateFrom, dateTo];
+    }
+    else {
       if (field.default) {
         form[field.name] = field.default;
      }
@@ -95,8 +100,12 @@ watch(() => props.fieldsToClear, (fields) => {
       </template>
       <ApolloQuery v-else :query="config.query" :variables="config.queryVariables" class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
         <template v-slot="{ result: { loading, error, data } }">
-            <FormLayout v-if="data && !loading && initialFormUpdate(data)" :config="config" :form="form" :errors="errors"/>
-            <FormLayout v-else :config="config" :form="form" :errors="errors" />
+          <template v-if="data && !loading && initialFormUpdate(data)">
+            <FormLayout :config="config" :form="form" :errors="errors"/>
+          </template>
+          <template>
+            <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
+          </template>
         </template>
       </ApolloQuery>
   </div>

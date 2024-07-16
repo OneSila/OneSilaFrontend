@@ -3,7 +3,7 @@
 import { Icon } from "../../atoms/icon";
 import { Link } from "../../atoms/link";
 
-interface DropdownItem {
+export interface DropdownItem {
   label: string;
   icon?: string;
   path: { name: string };

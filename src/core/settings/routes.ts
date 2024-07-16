@@ -9,6 +9,7 @@ export const routes = [
 
   { path: '/settings/units', name: 'settings.units.list', component: () => import('./units/units-list/UnitListController.vue') },
   { path: '/settings/unit/edit/:id', name: 'settings.unit.edit', component: () => import('./units/unit-edit/UnitEditController.vue') },
+  { path: '/settings/unit/create', name: 'settings.unit.create', component: () => import('./units/unit-create/UnitCreateController.vue') },
 
   { path: '/settings/internal-companies', name: 'settings.internalCompanies.list', component: () => import('./internal-companies/companies-list/CompaniesListController.vue') },
   { path: '/settings/internal-company/create', name: 'settings.internalCompany.create', component: () => import('./internal-companies/companies-create/CompaniesCreateController.vue') },

@@ -57,7 +57,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addEdit: true,
   editUrlName: 'settings.unit.edit',
   addShow: false,
-  addDelete: false,
+  addDelete: true,
   addPagination: true,
   deleteMutation: deleteUnitMutation,
 });

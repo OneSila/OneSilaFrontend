@@ -15,6 +15,7 @@ const imageTypeOptions = {
       PACK: t('media.images.labels.packShot'),
       MOOD: t('media.images.labels.moodShot')
     };
+
 const copyUrlToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(props.image.imageWebUrl);

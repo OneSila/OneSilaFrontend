@@ -14,6 +14,7 @@ import { languagesQuery, countriesQuery } from "../../../../../shared/api/querie
 import {PhoneNumberInput} from "../../../../../shared/components/atoms/input-phone-number";
 import {displayApolloError} from "../../../../../shared/utils";
 import {useEnterKeyboardListener} from "../../../../../shared/modules/keyboard";
+import {Link} from "../../../../../shared/components/atoms/link";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -47,6 +48,11 @@ const onError = (error) => {
 
 const onSubmit = () => {
   submitButtonRef.value?.$el.click();
+};
+
+const goToLogin = async () => {
+  await removeAuth(auth);
+  router.replace({name: 'auth.login'});
 };
 
 useEnterKeyboardListener(onSubmit);
@@ -85,7 +91,6 @@ useEnterKeyboardListener(onSubmit);
 
 
     <div>
-
       <ApolloMutation
         :mutation="registerCompanyMutation"
         :variables="{
@@ -107,5 +112,11 @@ useEnterKeyboardListener(onSubmit);
         </template>
       </ApolloMutation>
     </div>
+    <div class="text-center dark:text-white mt-9">
+          {{ t('auth.recover.loginPrompt') }}
+          <Button class="uppercase text-primary underline transition hover:text-black dark:hover:text-white" @click="goToLogin()">
+            {{ t('auth.register.login') }}
+          </Button>
+      </div>
   </div>
 </template>

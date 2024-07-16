@@ -39,7 +39,7 @@ const tabItems = computed(() => {
   items.push(
     { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
     { name: 'supplierProducts', label: t('products.products.tabs.supplierProducts'), icon: 'truck-ramp-box' },
-    { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
+    // { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   );
 
@@ -79,9 +79,9 @@ const tabItems = computed(() => {
       <template v-slot:supplierProducts>
         <SupplierProductsList :product="product" />
       </template>
-      <template v-slot:hsCodes>
-        <ProductHsCodesList :product="product" />
-      </template>
+<!--      <template v-slot:hsCodes>-->
+<!--        <ProductHsCodesList :product="product" />-->
+<!--      </template>-->
       <template v-slot:eanCodes>
         <ProductEanCodesList :product="product" />
       </template>

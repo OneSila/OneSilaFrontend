@@ -11,6 +11,7 @@ export const ordersQuery = gql`
             id
             name
           }
+          country
           priceInclVat
           status
           reasonForSale

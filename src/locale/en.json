@@ -145,7 +145,7 @@
         "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
         "somethingWentWrong": "Something went wrong!",
         "deletionFailed": "Deletion operation failed. Please contact the administrators.",
-        "clipboardSuccess": "Your text was successfully copied to the clipboard"
+        "clipboardSuccess": "Your text was succefully copied to the clipboard"
       }
     },
     "button": {
@@ -169,12 +169,14 @@
       "download": "Download",
       "uploadNew": "Upload New",
       "create": "Create",
-      "skip": "Skip"
+      "skip": "Skip",
+      "generate": "Generate"
     },
     "labels": {
       "createdAt": "Created At",
       "updatedAt": "Updated At",
       "status": "Status",
+      "dateRange": "Date Range",
       "role": "Role",
       "or": "Or",
       "name": "Name",
@@ -278,7 +280,7 @@
       },
       "recover": "Recover account",
       "registerPrompt": "Don't have an account?",
-      "register": "SIGN UP",
+      "register": "REGISTER",
       "failed": "Failed to login"
     },
     "register": {
@@ -311,8 +313,8 @@
         "placeholders": {
           "companyName": "Enter company name",
           "phoneNumber": "Enter phone number",
-          "country": "Country",
-          "language": "Language",
+          "country": "Enter country",
+          "language": "Enter language",
           "selector": {
             "country": "Select country",
             "language": "Select language"
@@ -323,8 +325,8 @@
         },
         "members": {
           "alert": {
-            "deleteMemberSuccess": "Member was successfully deleted!",
-            "enableMemberSuccess": "Member was successfully added back!"
+            "deleteMemberSuccess": "Member was succefully deleted!",
+            "enableMemberSuccess": "Member was succefully added back!"
           },
           "labels": {
             "invitationAccepted": "Invitation Accepted"
@@ -340,6 +342,7 @@
       "tokenHeader": "Recover Account",
       "tokenDescription": "You are one step away. Please confirm your account recovery.",
       "tokenLoginFailed": "Failed to authenticate token.",
+      "loginPrompt": "Wanna go back?",
       "button": {
         "recover": "Recover"
       },
@@ -490,12 +493,12 @@
       "edit": {
         "title": "Edit person"
       },
-      "show": {
-        "title": "Person"
-      },
       "labels": {
         "customer": "Customer",
         "company": "Company"
+      },
+      "show": {
+        "title": "Person"
       }
     }
   },
@@ -521,18 +524,41 @@
     },
     "eanCodes": {
       "title": "Ean Codes",
+      "updatedSuccessfully": "Ean Code was successfully updated!",
+      "createdSuccessfully": "Ean Code was successfully created!",
+      "releaseSuccessfully": "Ean Code was successfully released!",
+      "assignSuccessfully": "Ean Code was successfully assigned!",
       "create": {
-        "title": "Create Ean Code"
+        "title": "Generate Ean Codes"
       },
       "edit": {
         "title": "Edit Ean Code"
       },
+      "assign": {
+        "disclaimer": "Wanna use a ean code from a supplier product? Just select one.",
+        "assign": "Wanna use an already existent ean code. Assign one very quick.",
+        "release": "You don't want to use the curren EAN Code anymore? Release it but keep in mind it will be marked as already used.",
+        "error": "You don't have any ean code to use neither external ean codes from the supplier products.",
+        "errorSolution": "Click here to generate new ean codes",
+        "button": {
+          "assign": "Assign",
+          "release": "Release"
+        }
+      },
       "labels": {
         "eanCode": "EAN code",
+        "productName": "Product Name",
+        "internal": "Internal",
+        "alreadyUsed": "Already Used",
+        "prefix": "Prefix",
+        "currentEanCode": "Current EAN Code",
+        "externalEanCode": "External EAN code",
         "isAssigned": "Is assigned to product?"
       },
       "placeholders": {
-        "eanCode": "Enter EAN code"
+        "eanCode": "Enter EAN code",
+        "externalEanCode": "Fill with the EAN code you have from the supplier",
+        "prefix": "Enter the bought prefix"
       }
     },
     "translation": {
@@ -601,7 +627,7 @@
       },
       "create": {
         "title": "Create Product",
-        "createSuccessfully": "Product was successfully created!",
+        "createSuccefully": "Product was succefully created!",
         "wizard": {
           "stepOne": {
             "content": "Select what product are you trying to create?",
@@ -659,9 +685,11 @@
               "selectVariations": "Please add the used bills of materials for the product"
             }
           }
-        }
+        },
+        "createSuccessfully": "Product was successfully created!"
       },
       "edit": {
+        "updateSuccefully": "Product was succefully updated!",
         "updateSuccessfully": "Product was successfully updated!"
       },
       "show": {
@@ -807,16 +835,20 @@
     },
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
-      "updatedError": "Price for currency {currency} is empty. Please adjust it!",
-      "updatedSuccessfully": "The price for currency {currency} was successfully updated!",
+      "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
+      "updatedSuccefully": "The price for currency {currency} was succefully updated!",
+      "createSuccefully": "The price for currency {currency} was succefully created!",
       "labels": {
         "amount": "Amount",
-        "discountAmount": "Discount Amount"
+        "discountAmount": "Discount Amount",
+        "discountPercentage": "Discount Percentage"
       },
       "placeholders": {
         "amount": "Enter amount",
-        "discountAmount": "Enter discount amount"
-      }
+        "discountAmount": "Enter discount amount",
+        "discountPercentage": "Enter discount percentage"
+      },
+      "updatedSuccessfully": "The price for currency {currency} was successfully updated!"
     },
     "priceLists": {
       "title": "Prices Lists",
@@ -825,13 +857,13 @@
           "header": "Name",
           "content": "Name your pice list. Eg Wholesale Europe."
         },
-        "discountAmount": {
-          "header": "Discount Amount",
-          "content": "The discount amount section refers to the percentage of the discount."
+        "discountPercentage": {
+          "header": "Discount Percentage",
+          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
         },
         "currency": {
           "header": "Currency",
-          "content": "The currency for the price-list.  For example EUR."
+          "content": "The currency for the price-list. For example EUR."
         },
         "customers": {
           "header": "Customers",
@@ -839,15 +871,22 @@
         },
         "vatIncluded": {
           "header": "VAT Included",
-          "content": "If you're selling including VAT, eg to end consumers mark as True.  For trade customers, mark as False."
+          "content": "If you're selling including VAT, eg to end consumers mark as True. For trade customers, mark as False."
         },
         "autoUpdate": {
           "header": "Auto Update",
           "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
+        },
+        "dateRange": {
+          "header": "Date Range",
+          "content": "Specify the start and end dates for the price list to be active. Leave these fields empty for a permanent promotion. This is useful for setting up temporary promotions."
         }
       },
       "create": {
         "title": "Create Price List"
+      },
+      "edit": {
+        "title": "Edit Price List"
       },
       "show": {
         "title": "Price List"
@@ -909,6 +948,7 @@
       },
       "alert": {
         "prices": {
+          "succefullyUpdated": "Succefully updated the prices!",
           "successfullyUpdated": "successfully updated the prices!"
         }
       },
@@ -980,14 +1020,14 @@
       "title": "Images",
       "upload": "Upload New Images",
       "create": {
-        "successfullyCreated": "Images were successfully uploaded!"
+        "successfullyCreated": "Images were succefully uploaded!"
       },
       "delete": {
-        "successfullyDeleted": "Image was successfully deleted!"
+        "successfullyDeleted": "Image was succefully deleted!"
       },
       "show": {
         "title": "Image",
-        "successfullyUpdated": "successfully updated the image!",
+        "successfullyUpdated": "Succefully updated the image!",
         "updateFailed": "Failed to update the image. Please contact the administrators!"
       },
       "labels": {
@@ -1007,14 +1047,14 @@
       "show": {
         "title": "Video",
         "unsupportedFormatError": "This video format is not supported by your browser!",
-        "successfullyUpdated": "successfully updated the video!",
+        "successfullyUpdated": "Succefully updated the video!",
         "updateFailed": "Failed to update the video. Please contact the administrators!"
       },
       "create": {
-        "successfullyCreated": "Videos were successfully added!"
+        "successfullyCreated": "Videos were succefully added!"
       },
       "delete": {
-        "successfullyDeleted": "Video was successfully deleted!"
+        "successfullyDeleted": "Video was succefully deleted!"
       },
       "labels": {
         "videoUrl": "Video URL"
@@ -1027,10 +1067,10 @@
         "addDocuments": "Add New Documents"
       },
       "create": {
-        "successfullyCreated": "Documents were successfully uploaded!"
+        "successfullyCreated": "Documents were succefully uploaded!"
       },
       "delete": {
-        "successfullyDeleted": "Document was successfully deleted!"
+        "successfullyDeleted": "Document was succefully deleted!"
       }
     }
   },
@@ -1039,7 +1079,10 @@
     "currencies": {
       "title": "Currencies",
       "create": {
-        "title": "Create currency"
+        "title": "Add Currency"
+      },
+      "edit": {
+        "title": "Edit Currency"
       },
       "labels": {
         "isoCode": "ISO Code",
@@ -1134,14 +1177,6 @@
         "unit": "Enter unit"
       }
     },
-    "currency": {
-      "create": {
-        "title": "Create Currency"
-      },
-      "edit": {
-        "title": "Edit Currency"
-      }
-    },
     "internalCompanies": {
       "title": "Internal Companies"
     },
@@ -1155,7 +1190,8 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "successfullyCreated": "Demo data created successfully."
+        "succefullyCreated": "Demo data will be added momentarily.",
+        "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
         "title": "Delete Demo Data",
@@ -1165,7 +1201,8 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "successfullyDelete": "Demo data deleted successfully."
+        "succefullyDelete": "Demo data will be removed momentarily.",
+        "successfullyDelete": "Demo data will be removed momentarily."
       }
     }
   },

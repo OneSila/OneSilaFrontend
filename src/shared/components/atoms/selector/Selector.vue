@@ -147,10 +147,7 @@ const handleKeydown = (event) => {
     ref="selectorRef"
     class="selector min-w-38 text-sm bg-white"
     @keydown.enter="handleKeydown"
-    :placeholder="
-      placeholder ||
-      t('shared.components.molecules.selector.defaultPlaceholder')
-    "
+    :placeholder="placeholder || t('shared.components.molecules.selector.defaultPlaceholder')"
     :model-value="modelValue"
     :options="dropdownOptions"
     :label="labelBy"
@@ -227,6 +224,12 @@ const handleKeydown = (event) => {
   border-radius: 0 0 4px 4px;
   /* border-top-color: transparent; */
   border-bottom-color: rgba(60, 60, 60, 0.26);
+}
+
+
+.selector .vs__spinner {
+  height: 3.5em;
+  width: 3.5em;
 }
 
 [data-popper-placement='top'] {

@@ -16,21 +16,21 @@ const props = defineProps<{form: FormType, additionalFieldsForm: AdditonalFormFi
 const emit = defineEmits(['set-product-supplier-name']);
 
 const { t } = useI18n();
-const getSupplierProduct = (): QueryFormField => {
-    return {
-      type: FieldType.Query,
-      name: 'supplierProduct',
-      label: t('purchasing.products.show.title'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: supplierProductsQuery,
-      dataKey: 'supplierProducts',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-    }
-}
+
+const getSupplierProduct = computed<QueryFormField>(() => ({
+    type: FieldType.Query,
+    name: 'supplierProduct',
+    label: t('purchasing.products.show.title'),
+    labelBy: 'name',
+    valueBy: 'id',
+    query: supplierProductsQuery,
+    dataKey: 'supplierProducts',
+    isEdge: true,
+    multiple: false,
+    filterable: true,
+    optional: true,
+    formMapIdentifier: 'id',
+} as QueryFormField));
 
 const getSupplier = computed<QueryFormField>(() => ({
   type: 'Query',
@@ -88,7 +88,7 @@ emit('set-product-supplier-name')
                 </Label>
               </FlexCell>
               <FlexCell>
-                <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.id" :field="getSupplierProduct()" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
+                <FieldQuery class="w-96" v-model="additionalFieldsForm.supplierProduct.id" :field="getSupplierProduct" :disabled="additionalFieldsForm.supplierProduct.id !== null" />
               </FlexCell>
             </Flex>
           </FlexCell>

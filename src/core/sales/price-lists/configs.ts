@@ -66,9 +66,10 @@ const getFields = (customerId, t, type): FormField[] => {
     {
       type: FieldType.Text,
       name: 'discount',
-      label: t('sales.prices.labels.discountAmount'),
-      placeholder: t('sales.prices.placeholders.discountAmount'),
+      label: t('sales.prices.labels.discountPercentage'),
+      placeholder: t('sales.prices.placeholders.discountPercentage'),
       number: true,
+      optional: true,
     },
     {
       type: FieldType.Query,
@@ -86,7 +87,16 @@ const getFields = (customerId, t, type): FormField[] => {
       createOnFlyConfig: currencyOnTheFlyConfig(t),
       setDefaultKey: 'isDefaultCurrency'
     },
-    getCustomerField(customerId, t, type),
+    {
+      name: 'dateRange',
+      type: FieldType.RangeDate,
+      label: t('shared.labels.dateRange'),
+      keys: ['isoCode'],
+      showLabel: true,
+      startName: 'startDate',
+      endName: 'endDate',
+      optional: true
+    },
     {
       type: FieldType.Checkbox,
       name: 'vatIncluded',
@@ -101,6 +111,7 @@ const getFields = (customerId, t, type): FormField[] => {
       default: true,
       uncheckedValue: "false"
     },
+    getCustomerField(customerId, t, type),
     {
       type: FieldType.Textarea,
       name: 'notes',
@@ -132,16 +143,16 @@ export const baseFormConfigConstructor = (
       content: t('sales.priceLists.helpSection.name.content')
     },
     {
-      header: t('sales.priceLists.helpSection.discountAmount.header'),
-      content: t('sales.priceLists.helpSection.discountAmount.content')
+      header: t('sales.priceLists.helpSection.discountPercentage.header'),
+      content: t('sales.priceLists.helpSection.discountPercentage.content')
     },
     {
       header: t('sales.priceLists.helpSection.currency.header'),
       content: t('sales.priceLists.helpSection.currency.content')
     },
     {
-      header: t('sales.priceLists.helpSection.customers.header'),
-      content: t('sales.priceLists.helpSection.customers.content')
+      header: t('sales.priceLists.helpSection.dateRange.header'),
+      content: t('sales.priceLists.helpSection.dateRange.content')
     },
     {
       header: t('sales.priceLists.helpSection.vatIncluded.header'),
@@ -151,6 +162,11 @@ export const baseFormConfigConstructor = (
       header: t('sales.priceLists.helpSection.autoUpdate.header'),
       content: t('sales.priceLists.helpSection.autoUpdate.content')
     },
+    {
+      header: t('sales.priceLists.helpSection.customers.header'),
+      content: t('sales.priceLists.helpSection.customers.content')
+    },
+
   ],
   fields: getFields(customerId, t, type)
 });

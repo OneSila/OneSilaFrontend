@@ -104,6 +104,7 @@ export const salesPriceListItemsQuery = gql`
           product {
             id
             sku
+            name
           }
           salesprice
         }
@@ -153,6 +154,8 @@ export const getSalesPriceListQuery = gql`
       }
       vatIncluded
       autoUpdate
+      startDate
+      endDate
       customers {
         id
         name
@@ -178,6 +181,7 @@ export const getSalesPriceListItemQuery = gql`
       product {
         id
         sku
+        name
       }
       salesprice
     }

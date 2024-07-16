@@ -16,6 +16,7 @@ import {FieldValue} from '../form-fields/field-value';
 import {FieldTextarea} from "../form-fields/field-textarea";
 import {FieldPhone} from "../form-fields/field-phone";
 import {FieldEmail} from "../form-fields/field-email";
+import {FieldDateRange} from "../form-fields/field-date-range";
 
 const props = defineProps<{
   config: FormConfig;
@@ -36,6 +37,7 @@ const getFieldComponent = (type) => {
     case FieldType.Textarea: return FieldTextarea;
     case FieldType.Phone: return FieldPhone;
     case FieldType.Email: return FieldEmail;
+    case FieldType.RangeDate: return FieldDateRange;
     default: return null;
   }
 };
