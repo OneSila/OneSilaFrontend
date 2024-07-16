@@ -73,7 +73,7 @@ const tabItems = computed(() => {
         <InventoryList :product="product" />
       </template>
       <template v-slot:supplierProducts>
-        <SupplierProductsList v-if="product.forSale" :product="product" />
+        <SupplierProductsList :product="product" />
       </template>
       <template v-slot:saleOrders>
         <SalesOrderList :product="product" />

@@ -22,8 +22,7 @@ const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
   updateEanCodeMutation,
-  'updateEanCode',
-    route.query.productId ? route.query.productId.toString() : null
+  'updateEanCode'
 );
 
 const formConfig = {

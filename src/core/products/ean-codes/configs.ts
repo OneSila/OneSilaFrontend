@@ -5,30 +5,50 @@ import {ListingConfig} from "../../../shared/components/organisms/general-listin
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import { eanCodesQuery } from "../../../shared/api/queries/eanCodes.js"
 import { productsQuery } from "../../../shared/api/queries/products.js"
-import { deleteEanCodeMutation } from "../../../shared/api/mutations/eanCodes.js";
-const getSubmitUrl = (productId) => {
-  if (productId) {
-    return { name: 'products.products.show', params: {id: productId}, query: {tab: 'eanCodes'} };
-  }
-  return { name: 'products.eanCodes.list' };
-}
+import {deleteEanCodeMutation, generateEanCodes} from "../../../shared/api/mutations/eanCodes.js";
 
-const getSubmitAndContinueUrl = (productId) => {
-  if (productId) {
-    return { name: 'products.eanCodes.edit', query: { productId } };
-  }
-  return  { name: 'products.eanCodes.edit' };
-}
+export const baseFormGenerateConfigConstructor = (
+  t: Function,
+): FormConfig => ({
+  cols: 1,
+  type: FormType.CREATE,
+  mutation: generateEanCodes,
+  mutationKey: 'generateEanCodes',
+  submitUrl: { name: 'products.eanCodes.list' },
+  addSubmitAndContinue: false,
+  submitLabel: t('shared.button.generate'),
+  addDelete: false,
+  fields: [
+    {
+      type: FieldType.Text,
+      name: 'prefix',
+      label: t('products.eanCodes.labels.prefix'),
+      placeholder: t('products.eanCodes.placeholders.prefix'),
+    },
+    ],
+});
 
-const getProductField = (productId, t): FormField => {
-  if (productId) {
-    return {
-      type: FieldType.Hidden,
-      name: 'product',
-      value: { "id": productId }
-    };
-  } else {
-    return {
+export const baseFormConfigConstructor = (
+  t: Function,
+  type: FormType,
+  mutation: any,
+  mutationKey: string
+): FormConfig => ({
+  cols: 1,
+  type: type,
+  mutation: mutation,
+  mutationKey: mutationKey,
+  submitUrl: { name: 'products.eanCodes.list' },
+  submitAndContinueUrl: { name: 'products.eanCodes.edit' },
+  deleteMutation: deleteEanCodeMutation,
+  fields: [
+    {
+      type: FieldType.Text,
+      name: 'eanCode',
+      label: t('products.eanCodes.labels.eanCode'),
+      placeholder: t('products.eanCodes.placeholders.eanCode'),
+    },
+    {
         type: FieldType.Query,
         name: 'product',
         label:  t('shared.labels.product'),
@@ -40,33 +60,19 @@ const getProductField = (productId, t): FormField => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
-    };
-  }
-}
-
-export const baseFormConfigConstructor = (
-  t: Function,
-  type: FormType,
-  mutation: any,
-  mutationKey: string,
-  productId: string | null = null
-): FormConfig => ({
-  cols: 1,
-  type: type,
-  mutation: mutation,
-  mutationKey: mutationKey,
-  submitUrl: getSubmitUrl(productId),
-  submitAndContinueUrl: getSubmitAndContinueUrl(productId),
-  deleteMutation: deleteEanCodeMutation,
-  fields: [
-    {
-      type: FieldType.Text,
-      name: 'eanCode',
-      label: t('products.eanCodes.labels.eanCode'),
-      placeholder: t('products.eanCodes.placeholders.eanCode'),
+        disabled: true,
+        optional: true,
+        removable: false
     },
-    getProductField(productId, t)
-    ],
+    {
+        type: FieldType.Checkbox,
+        name: 'alreadyUsed',
+        label: t('products.eanCodes.labels.alreadyUsed'),
+        default: true,
+        uncheckedValue: "false",
+        optional: true,
+    },
+  ],
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
@@ -87,33 +93,18 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-const getHeaders = (t, productId) => {
-  return productId
-    ? [t('products.eanCodes.labels.eanCode')]
-    : [t('shared.labels.name'), t('products.eanCodes.labels.eanCode')];
-}
-const getFields = (productId): ShowField[] => {
-  const commonFields: ShowField[] = [];
-
-  if (!productId) {
-    commonFields.push({
-      name: 'product',
-      type: FieldType.NestedText,
-      keys: ['name']
-    });
-  }
-
-  commonFields.push({name: 'eanCode', type: FieldType.Text})
-
-  return commonFields;
-}
 
 const getAddPagination = (productId) => {
   return !productId;
 }
 export const listingConfigConstructor = (t: Function, productId: string | null = null): ListingConfig => ({
-  headers: getHeaders(t, productId),
-  fields: getFields(productId),
+  headers: [t('products.eanCodes.labels.eanCode'), t('products.eanCodes.labels.productName'), t('products.eanCodes.labels.internal'), t('products.eanCodes.labels.alreadyUsed')],
+  fields: [
+      { name: 'eanCode', type: FieldType.Text},
+      { name: 'productName', type: FieldType.Text },
+      { name: 'internal', type: FieldType.Boolean},
+      { name: 'alreadyUsed', type: FieldType.Boolean},
+  ],
   identifierKey: 'id',
   addActions: true,
   addEdit: true,

@@ -169,7 +169,8 @@
       "download": "Download",
       "uploadNew": "Upload New",
       "create": "Create",
-      "skip": "Skip"
+      "skip": "Skip",
+      "generate": "Generate"
     },
     "labels": {
       "createdAt": "Created At",
@@ -312,8 +313,8 @@
         "placeholders": {
           "companyName": "Enter company name",
           "phoneNumber": "Enter phone number",
-          "country": "Country",
-          "language": "Language",
+          "country": "Enter country",
+          "language": "Enter language",
           "selector": {
             "country": "Select country",
             "language": "Select language"
@@ -523,18 +524,41 @@
     },
     "eanCodes": {
       "title": "Ean Codes",
+      "updatedSuccessfully": "Ean Code was successfully updated!",
+      "createdSuccessfully": "Ean Code was successfully created!",
+      "releaseSuccessfully": "Ean Code was successfully released!",
+      "assignSuccessfully": "Ean Code was successfully assigned!",
       "create": {
-        "title": "Create Ean Code"
+        "title": "Generate Ean Codes"
       },
       "edit": {
         "title": "Edit Ean Code"
       },
+      "assign": {
+        "disclaimer": "Wanna use a ean code from a supplier product? Just select one.",
+        "assign": "Wanna use an already existent ean code. Assign one very quick.",
+        "release": "You don't want to use the curren EAN Code anymore? Release it but keep in mind it will be marked as already used.",
+        "error": "You don't have any ean code to use neither external ean codes from the supplier products.",
+        "errorSolution": "Click here to generate new ean codes",
+        "button": {
+          "assign": "Assign",
+          "release": "Release"
+        }
+      },
       "labels": {
         "eanCode": "EAN code",
+        "productName": "Product Name",
+        "internal": "Internal",
+        "alreadyUsed": "Already Used",
+        "prefix": "Prefix",
+        "currentEanCode": "Current EAN Code",
+        "externalEanCode": "External EAN code",
         "isAssigned": "Is assigned to product?"
       },
       "placeholders": {
-        "eanCode": "Enter EAN code"
+        "eanCode": "Enter EAN code",
+        "externalEanCode": "Fill with the EAN code you have from the supplier",
+        "prefix": "Enter the bought prefix"
       }
     },
     "translation": {

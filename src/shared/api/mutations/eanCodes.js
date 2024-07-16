@@ -7,11 +7,20 @@ export const createEanCodeMutation = gql`
       eanCode
       product {
         id
-        ... on ProductType {
-          sku
-          name
-        }
+        sku
+        name
       }
+    }
+  }
+`;
+
+export const generateEanCodes = gql`
+  mutation generateEanCodes($data: GenerateEancodesInput!) {
+    generateEanCodes(data: $data) {
+      id
+      eanCode
+      internal
+      alreadyUsed
     }
   }
 `;
@@ -39,10 +48,36 @@ export const updateEanCodeMutation = gql`
       eanCode
       product {
         id
-        ... on ProductType {
-          sku
-          name
-        }
+        sku
+        name
+      }
+    }
+  }
+`;
+
+export const releaseEanCodeMutation = gql`
+  mutation releaseEanCode($data: EanCodePartialInput!) {
+    releaseEanCode(data: $data) {
+      id
+      eanCode
+      product {
+        id
+        sku
+        name
+      }
+    }
+  }
+`;
+
+export const assignEanCodeMutation = gql`
+  mutation assignEanCode($data: AssignEancodeInput!) {
+    assignEanCode(data: $data) {
+      id
+      eanCode
+      product {
+        id
+        sku
+        name
       }
     }
   }

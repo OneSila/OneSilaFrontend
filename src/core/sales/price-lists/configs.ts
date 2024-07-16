@@ -94,7 +94,8 @@ const getFields = (customerId, t, type): FormField[] => {
       keys: ['isoCode'],
       showLabel: true,
       startName: 'startDate',
-      endName: 'endDate'
+      endName: 'endDate',
+      optional: true
     },
     {
       type: FieldType.Checkbox,

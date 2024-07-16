@@ -7,12 +7,14 @@ export const eanCodesQuery = gql`
         node {
           id
           eanCode
+          internal
+          alreadyUsed
+          productName
           product {
             id
-            ... on ProductType {
-              sku
-              name
-            }
+            proxyId
+            sku
+            name
           }
         }
         cursor
@@ -33,12 +35,13 @@ export const getEanCodeQuery = gql`
     eanCode(id: $id) {
       id
       eanCode
+      internal
+      alreadyUsed
       product {
         id
-        ... on ProductType {
-          sku
-          name
-        }
+        proxyId
+        sku
+        name
       }
     }
   }

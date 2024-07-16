@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
 import { createEanCodeMutation } from "../../../../shared/api/mutations/eanCodes.js"
-import { baseFormConfigConstructor } from "../configs";
+import {baseFormConfigConstructor, baseFormGenerateConfigConstructor} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
@@ -11,15 +11,7 @@ import {useRoute} from "vue-router";
 const route = useRoute();
 const { t } = useI18n();
 
-const formConfig = {
-  ...baseFormConfigConstructor(
-    t,
-    FormType.CREATE,
-    createEanCodeMutation,
-    'createEanCode',
-      route.query.productId ? route.query.productId.toString() : null
-  ),
-};
+const formConfig = baseFormGenerateConfigConstructor(t);
 
 </script>
 
