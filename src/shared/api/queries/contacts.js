@@ -41,6 +41,7 @@ query getCompany ($id: GlobalID!) {
     isInfluencer
     isSupplier
     isInternalCompany
+    currencySymbol
     currency {
       id
       isoCode

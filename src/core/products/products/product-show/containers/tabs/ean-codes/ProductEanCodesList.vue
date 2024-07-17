@@ -85,6 +85,7 @@ const fetchSupplierProducts = async () => {
 
   return [];
 }
+
 const fetchSupplierProductEanCode = async () => {
 
   if (eanCode.value.id) {

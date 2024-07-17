@@ -41,7 +41,8 @@ onMounted(async () => {
     'updatePurchaseOrderItem',
     orderId.value.toString(),
     supplierId.value,
-    productIds.value
+    productIds.value,
+    data.purchaseOrder.currency.symbol
   );
 
  formConfig.value = {

@@ -30,6 +30,8 @@ export interface ValueFormField extends BaseFormField {
   maxNumber?: number;
   minNumber?: number;
   allowAutocomplete?: boolean;
+  prepend?: string;
+  prependNestedKeys?: string[];
 }
 
 export interface EmailFormField extends BaseFormField {

@@ -942,6 +942,7 @@
       "labels": {
         "unitPrice": "Unit Price",
         "sku": "SKU",
+        "supplierCurrency": "In supplier currency {currency}",
         "supplier": "Supplier"
       },
       "placeholders": {
