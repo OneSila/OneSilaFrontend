@@ -190,6 +190,9 @@ export interface FormConfig {
   deleteUrl?: Url // url to lend after delete
   customStyle?: string;
   afterSubmitCallback?: () => void;
+  allowNull?: boolean; // allow null response (some mutations can return null on purpose)
+  submitSuccessCreate?: string; // toast message after create
+  submitSuccessUpdate?: string; // toast message after update
   fields: FormField[];
   helpSections?: HelpSection[];
 }

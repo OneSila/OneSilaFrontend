@@ -30,10 +30,10 @@ const submitButtonRef = ref();
 
 const handleSubmitDone = (response) => {
 
-  if (!response.data || !response.data[props.config.mutationKey]) {
-    Toast.error(t('shared.alert.toast.unexpectedResult'));
-    return;
-  }
+    if (!response.data || (!props.config.allowNull && !response.data[props.config.mutationKey])) {
+      Toast.error(t('shared.alert.toast.unexpectedResult'));
+      return;
+    }
 
   props.config.afterSubmitCallback?.();
 
@@ -41,9 +41,11 @@ const handleSubmitDone = (response) => {
     router.push(props.config.submitUrl);
     emit('submit', response);
     if (props.config.type === FormType.CREATE) {
-      Toast.success(t('shared.alert.toast.submitSuccessCreate'));
+      const message = props.config.submitSuccessCreate || t('shared.alert.toast.submitSuccessCreate');
+      Toast.success(message);
     } else {
-       Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+      const message = props.config.submitSuccessUpdate || t('shared.alert.toast.submitSuccessUpdate');
+      Toast.success(message);
     }
   }
 
