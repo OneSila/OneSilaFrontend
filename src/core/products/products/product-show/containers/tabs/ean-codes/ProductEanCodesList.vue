@@ -111,7 +111,6 @@ const fetchSupplierProductEanCode = async () => {
         id: edge.node.id,
         name: `${edge.node.productName} - ${edge.node.eanCode}`
       }));
-      console.log(supplierProductEanCodes.value)
     }
 }
 

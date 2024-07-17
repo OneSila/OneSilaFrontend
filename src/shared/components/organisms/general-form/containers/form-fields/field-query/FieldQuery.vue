@@ -50,6 +50,10 @@ watch(() => props.field.queryVariables, () => {
 const updateValue = (value) => {
   selectedValue.value = value;
   emit('update:modelValue', value);
+
+  if (value == null) {
+    fetchData();
+  }
 };
 
 async function fetchData(searchValue: string | null | undefined = null) {
