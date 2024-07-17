@@ -16,10 +16,20 @@ import {
   deleteBillOfMaterialMutation
 } from "../../../../../../../../../shared/api/mutations/products.js";
 import {Image} from "../../../../../../../../../shared/components/atoms/image";
+import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
+import {ref} from "vue";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
 const emit = defineEmits(['refetched', 'update-ids']);
+const localQuantities = ref<{ [key: string]: number }>({});
+
+const initializeLocalQuantities = (data) => {
+  data[props.queryKey].edges.forEach((edge) => {
+    localQuantities.value[edge.node.id] = edge.node.quantity;
+    console.log(localQuantities.value)
+  });
+};
 
 const extractVariationIds = (data) => {
 
@@ -32,6 +42,7 @@ const extractVariationIds = (data) => {
 
 const refetchIfNecessary = (query, data) => {
   emit('update-ids', extractVariationIds(data.umbrellaVariations))
+  initializeLocalQuantities(data);
   if (props.refetchNeeded) {
     query.refetch();
     emit('refetched');
@@ -51,6 +62,12 @@ const getDeleteMutation = () => {
       return null;
   }
 };
+
+const handleQuantityChanged = (id) => {
+  alert(id)
+};
+
+
 </script>
 
 <template>
@@ -97,7 +114,9 @@ const getDeleteMutation = () => {
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
-                  <td v-if="product.type != ProductType.Umbrella">{{ item.node.quantity }}</td>
+                  <td v-if="product.type != ProductType.Umbrella">
+                    <TextInput v-model="item.node.quantity" @update:model-value="handleQuantityChanged(item.node.id)" />
+                  </td>
                   <td v-if="product.type == ProductType.Manufacturable">
                     <span v-if="item.node.variation.productionTime">
                       {{ item.node.variation.productionTime }}
