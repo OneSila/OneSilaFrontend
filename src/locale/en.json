@@ -528,6 +528,7 @@
       "createdSuccessfully": "Ean Code was successfully created!",
       "releaseSuccessfully": "Ean Code was successfully released!",
       "assignSuccessfully": "Ean Code was successfully assigned!",
+      "generateSuccessfully": "Ean code generation process started succefully! Come back in a few seconds to see your new ean codes.",
       "create": {
         "title": "Generate Ean Codes"
       },
