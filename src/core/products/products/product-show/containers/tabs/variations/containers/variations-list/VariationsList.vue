@@ -13,13 +13,31 @@ import {ApolloAlertMutation} from "../../../../../../../../../shared/components/
 import {
   deleteUmbrellaVariationMutation,
   deleteBundleVariationMutation,
-  deleteBillOfMaterialMutation
+  deleteBillOfMaterialMutation,
+  updateUmbrellaVariationMutation,
+  updateBundleVariationMutation,
+  updateBillOfMaterialMutation
 } from "../../../../../../../../../shared/api/mutations/products.js";
 import {Image} from "../../../../../../../../../shared/components/atoms/image";
+import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
+import {ref} from "vue";
+import debounce from 'lodash.debounce'
+import apolloClient from "../../../../../../../../../../apollo-client";
+import {Toast} from "../../../../../../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
 const emit = defineEmits(['refetched', 'update-ids']);
+const localQuantities = ref<{ [key: string]: number }>({});
+
+const initializeLocalQuantities = (data) => {
+
+  if (data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length && props.product.type != ProductType.Umbrella) {
+    data[props.queryKey].edges.forEach((edge) => {
+      localQuantities.value[edge.node.id] = edge.node.quantity;
+    });
+  }
+};
 
 const extractVariationIds = (data) => {
 
@@ -32,6 +50,7 @@ const extractVariationIds = (data) => {
 
 const refetchIfNecessary = (query, data) => {
   emit('update-ids', extractVariationIds(data.umbrellaVariations))
+  initializeLocalQuantities(data);
   if (props.refetchNeeded) {
     query.refetch();
     emit('refetched');
@@ -51,6 +70,44 @@ const getDeleteMutation = () => {
       return null;
   }
 };
+
+const getUpdateMutation = () => {
+  switch(props.product.type) {
+    case ProductType.Bundle:
+      return updateBundleVariationMutation;
+    case ProductType.Umbrella:
+      return updateUmbrellaVariationMutation;
+    case ProductType.Manufacturable:
+      return updateBillOfMaterialMutation;
+    default:
+      return null;
+  }
+};
+
+const handleQuantityChanged = debounce(async (event, id) => {
+
+  if (event == '' || event == null || isNaN(event)) {
+    return
+  }
+
+  const inputData = {
+    id: id,
+    quantity: event
+  };
+
+  const {data} = await apolloClient.mutate({
+    mutation: getUpdateMutation(),
+    variables: {data: inputData}
+  });
+
+  if (data) {
+    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+  }
+}, 500);
+
+
+
+
 </script>
 
 <template>
@@ -97,7 +154,9 @@ const getDeleteMutation = () => {
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
-                  <td v-if="product.type != ProductType.Umbrella">{{ item.node.quantity }}</td>
+                  <td v-if="product.type != ProductType.Umbrella">
+                    <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />
+                  </td>
                   <td v-if="product.type == ProductType.Manufacturable">
                     <span v-if="item.node.variation.productionTime">
                       {{ item.node.variation.productionTime }}
