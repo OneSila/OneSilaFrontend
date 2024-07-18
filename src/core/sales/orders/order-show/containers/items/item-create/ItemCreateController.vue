@@ -36,7 +36,8 @@ onMounted(async () => {
         createOrderItemMutation,
         'createOrderItem',
         orderId.value.toString(),
-        productIds.value
+        productIds.value,
+        data.order.currency.symbol
       ),
       submitAndContinueUrl: { name: 'sales.orders.items.edit', params: { orderId: orderId.value } }
     };

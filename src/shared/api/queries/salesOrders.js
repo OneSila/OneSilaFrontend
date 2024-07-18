@@ -49,6 +49,7 @@ export const orderItemsQuery = gql`
           }
           quantity
           price
+          priceWithCurrency
         }
         cursor
       }

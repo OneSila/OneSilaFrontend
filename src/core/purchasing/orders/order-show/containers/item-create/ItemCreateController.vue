@@ -41,7 +41,8 @@ onMounted(async () => {
       'createPurchaseOrderItem',
       orderId.value.toString(),
       supplierId.value,
-      productIds.value
+      productIds.value,
+      data.purchaseOrder.currency.symbol
     ),
     submitAndContinueUrl: { name: 'purchasing.orders.items.edit', params: { orderId: orderId.value } }
   };

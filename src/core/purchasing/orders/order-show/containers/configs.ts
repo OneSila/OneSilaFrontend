@@ -12,7 +12,8 @@ export const baseFormConfigConstructor = (
   mutationKey: string,
   orderId: string,
   supplierId: string,
-  productsId: string[] = []
+  productsId: string[] = [],
+  symbol: string | undefined = undefined
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -53,7 +54,8 @@ export const baseFormConfigConstructor = (
       name: 'unitPrice',
       label: t('purchasing.products.labels.unitPrice'),
       placeholder: t('purchasing.products.placeholders.unitPrice'),
-      number: true,
+      float: true,
+      prepend: symbol
     },
     ],
 });
@@ -81,7 +83,7 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
       type: FieldType.Text,
     },
     {
-      name: 'unitPrice',
+      name: 'priceWithCurrency',
       type: FieldType.Text,
     },
   ],

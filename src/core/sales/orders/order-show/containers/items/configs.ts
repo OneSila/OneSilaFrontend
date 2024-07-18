@@ -11,7 +11,8 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   orderId: string,
-  productsId: string[] = []
+  productsId: string[] = [],
+  symbol: string | undefined = undefined
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -51,8 +52,9 @@ export const baseFormConfigConstructor = (
       name: 'price',
       label: t('shared.labels.price'),
       placeholder: t('shared.placeholders.price'),
-      number: true,
-      optional: true
+      float: true,
+      optional: true,
+      prepend: symbol
     },
     ],
 });
@@ -77,7 +79,7 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
       type: FieldType.Text,
     },
     {
-      name: 'price',
+      name: 'priceWithCurrency',
       type: FieldType.Text,
     },
   ],

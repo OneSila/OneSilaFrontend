@@ -32,7 +32,7 @@ const formConfig = ref({
 const handleFormUpdate = (form) => {
   fieldsToClear.value = []
 
-  const newSupplierId = typeof form.supplier === 'object' && form.supplier !== null? form.supplier.id : form.supplier;
+  const newSupplierId = typeof form.supplier === 'object' && form.supplier !== null ? form.supplier.id : form.supplier;
   if (form.supplier !== supplierId.value) {
     const initialSupplierId = supplierId.value;
     supplierId.value = newSupplierId;

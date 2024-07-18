@@ -9,6 +9,7 @@ export const supplierProductsQuery = gql`
           sku
           name
           proxyId
+          active
           baseProducts {
             id
             sku
@@ -99,6 +100,9 @@ export const getPurchaseOrderQuery = gql`
       id
       status
       totalValue
+      currency  {
+        symbol
+      }
       supplier {
         id
         name
@@ -139,6 +143,7 @@ export const purchaseOrderItemsQuery = gql`
           }
           quantity
           unitPrice
+          priceWithCurrency
         }
         cursor
       }
@@ -202,6 +207,9 @@ export const supplierPricesQuery = gql`
             id
             sku
             name
+            supplier {
+              currencySymbol
+            }
           }
           unit {
             id

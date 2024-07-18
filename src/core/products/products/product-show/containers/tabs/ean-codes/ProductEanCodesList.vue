@@ -85,6 +85,7 @@ const fetchSupplierProducts = async () => {
 
   return [];
 }
+
 const fetchSupplierProductEanCode = async () => {
 
   if (eanCode.value.id) {
@@ -110,7 +111,6 @@ const fetchSupplierProductEanCode = async () => {
         id: edge.node.id,
         name: `${edge.node.productName} - ${edge.node.eanCode}`
       }));
-      console.log(supplierProductEanCodes.value)
     }
 }
 
