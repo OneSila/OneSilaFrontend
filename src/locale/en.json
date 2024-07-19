@@ -176,7 +176,6 @@
       "createdAt": "Created At",
       "updatedAt": "Updated At",
       "status": "Status",
-      "dateRange": "Date Range",
       "role": "Role",
       "or": "Or",
       "name": "Name",
@@ -203,7 +202,8 @@
       "language": "Language",
       "seconds": "seconds",
       "minutes": "minutes",
-      "home": "Home"
+      "home": "Home",
+      "dateRange": "Date Range"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -342,7 +342,6 @@
       "tokenHeader": "Recover Account",
       "tokenDescription": "You are one step away. Please confirm your account recovery.",
       "tokenLoginFailed": "Failed to authenticate token.",
-      "loginPrompt": "Wanna go back?",
       "button": {
         "recover": "Recover"
       },
@@ -352,7 +351,8 @@
       "placeholders": {
         "email": "Enter Email"
       },
-      "tokenFailed": "Failed to recovery your account"
+      "tokenFailed": "Failed to recovery your account",
+      "loginPrompt": "Wanna go back?"
     }
   },
   "profile": {
@@ -524,17 +524,32 @@
     },
     "eanCodes": {
       "title": "Ean Codes",
-      "updatedSuccessfully": "Ean Code was successfully updated!",
-      "createdSuccessfully": "Ean Code was successfully created!",
-      "releaseSuccessfully": "Ean Code was successfully released!",
-      "assignSuccessfully": "Ean Code was successfully assigned!",
-      "generateSuccessfully": "Ean code generation process started succefully! Come back in a few seconds to see your new ean codes.",
       "create": {
         "title": "Generate Ean Codes"
       },
       "edit": {
         "title": "Edit Ean Code"
       },
+      "labels": {
+        "eanCode": "EAN code",
+        "isAssigned": "Is assigned to product?",
+        "productName": "Product Name",
+        "internal": "Internal",
+        "alreadyUsed": "Already Used",
+        "prefix": "Prefix",
+        "currentEanCode": "Current EAN Code",
+        "externalEanCode": "External EAN code"
+      },
+      "placeholders": {
+        "eanCode": "Enter EAN code",
+        "externalEanCode": "Fill with the EAN code you have from the supplier",
+        "prefix": "Enter the bought prefix"
+      },
+      "updatedSuccessfully": "Ean Code was successfully updated!",
+      "createdSuccessfully": "Ean Code was successfully created!",
+      "releaseSuccessfully": "Ean Code was successfully released!",
+      "assignSuccessfully": "Ean Code was successfully assigned!",
+      "generateSuccessfully": "Ean code generation process started succefully! Come back in a few seconds to see your new ean codes.",
       "assign": {
         "disclaimer": "Wanna use a ean code from a supplier product? Just select one.",
         "assign": "Wanna use an already existent ean code. Assign one very quick.",
@@ -545,21 +560,6 @@
           "assign": "Assign",
           "release": "Release"
         }
-      },
-      "labels": {
-        "eanCode": "EAN code",
-        "productName": "Product Name",
-        "internal": "Internal",
-        "alreadyUsed": "Already Used",
-        "prefix": "Prefix",
-        "currentEanCode": "Current EAN Code",
-        "externalEanCode": "External EAN code",
-        "isAssigned": "Is assigned to product?"
-      },
-      "placeholders": {
-        "eanCode": "Enter EAN code",
-        "externalEanCode": "Fill with the EAN code you have from the supplier",
-        "prefix": "Enter the bought prefix"
       }
     },
     "translation": {
@@ -838,7 +838,6 @@
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
       "updatedSuccefully": "The price for currency {currency} was succefully updated!",
-      "createSuccefully": "The price for currency {currency} was succefully created!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
@@ -849,7 +848,8 @@
         "discountAmount": "Enter discount amount",
         "discountPercentage": "Enter discount percentage"
       },
-      "updatedSuccessfully": "The price for currency {currency} was successfully updated!"
+      "updatedSuccessfully": "The price for currency {currency} was successfully updated!",
+      "createSuccefully": "The price for currency {currency} was succefully created!"
     },
     "priceLists": {
       "title": "Prices Lists",
@@ -858,9 +858,9 @@
           "header": "Name",
           "content": "Name your pice list. Eg Wholesale Europe."
         },
-        "discountPercentage": {
-          "header": "Discount Percentage",
-          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
+        "discountAmount": {
+          "header": "Discount Amount",
+          "content": "The discount amount section refers to the percentage of the discount."
         },
         "currency": {
           "header": "Currency",
@@ -878,6 +878,10 @@
           "header": "Auto Update",
           "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
         },
+        "discountPercentage": {
+          "header": "Discount Percentage",
+          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
+        },
         "dateRange": {
           "header": "Date Range",
           "content": "Specify the start and end dates for the price list to be active. Leave these fields empty for a permanent promotion. This is useful for setting up temporary promotions."
@@ -885,9 +889,6 @@
       },
       "create": {
         "title": "Create Price List"
-      },
-      "edit": {
-        "title": "Edit Price List"
       },
       "show": {
         "title": "Price List"
@@ -903,6 +904,9 @@
       "labels": {
         "vatIncluded": "VAT Included",
         "autoUpdate": "Auto Update"
+      },
+      "edit": {
+        "title": "Edit Price List"
       }
     },
     "tabs": {
@@ -942,8 +946,8 @@
       "labels": {
         "unitPrice": "Unit Price",
         "sku": "SKU",
-        "supplierCurrency": "In supplier currency {currency}",
-        "supplier": "Supplier"
+        "supplier": "Supplier",
+        "supplierCurrency": "In supplier currency {currency}"
       },
       "placeholders": {
         "unitPrice": "Enter unit price"
@@ -1083,9 +1087,6 @@
       "create": {
         "title": "Add Currency"
       },
-      "edit": {
-        "title": "Edit Currency"
-      },
       "labels": {
         "isoCode": "ISO Code",
         "symbol": "Symbol",
@@ -1142,6 +1143,9 @@
           "header": "Comment",
           "content": "No special action here, just a field for note taking."
         }
+      },
+      "edit": {
+        "title": "Edit Currency"
       }
     },
     "vatRates": {
@@ -1177,6 +1181,14 @@
       },
       "placeholders": {
         "unit": "Enter unit"
+      }
+    },
+    "currency": {
+      "create": {
+        "title": "Create Currency"
+      },
+      "edit": {
+        "title": "Edit Currency"
       }
     },
     "internalCompanies": {
