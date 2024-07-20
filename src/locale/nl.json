@@ -169,7 +169,8 @@
       "download": "Downloaden",
       "uploadNew": "Uploaden",
       "create": "Aanmaken",
-      "skip": "Overslaan"
+      "skip": "Overslaan",
+      "generate": "Genereren"
     },
     "labels": {
       "createdAt": "Gecreëerd op",
@@ -201,7 +202,8 @@
       "language": "Taal",
       "seconds": "seconden",
       "minutes": "minuten",
-      "home": "Home"
+      "home": "Home",
+      "dateRange": "Periode"
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"
@@ -349,7 +351,8 @@
       "placeholders": {
         "email": "Voer e-mail in"
       },
-      "tokenFailed": "Account herstellen mislukt"
+      "tokenFailed": "Account herstellen mislukt",
+      "loginPrompt": "Teruggaan?"
     }
   },
   "profile": {
@@ -529,10 +532,34 @@
       },
       "labels": {
         "eanCode": "EAN Code",
-        "isAssigned": "Toegewezen aan product?"
+        "isAssigned": "Toegewezen aan product?",
+        "productName": "Product Naam",
+        "internal": "Intern",
+        "alreadyUsed": "Reeds Gebruikt",
+        "prefix": "Prefix",
+        "currentEanCode": "Huidige EAN Code",
+        "externalEanCode": "Externe EAN Code"
       },
       "placeholders": {
-        "eanCode": "Voer EAN Code in"
+        "eanCode": "Voer EAN Code in",
+        "externalEanCode": "Vul de EAN Code van uw leverancier in",
+        "prefix": "Vul uw aangekochte prefix in"
+      },
+      "updatedSuccessfully": "EAN Code opgeslagen.",
+      "createdSuccessfully": "EAN code aangemaakt",
+      "releaseSuccessfully": "EAN Code vrijgelaten",
+      "assignSuccessfully": "EAN Code Toegewezen",
+      "generateSuccessfully": "EAN Codes worden aangemaakt.  Kom straks terug.",
+      "assign": {
+        "disclaimer": "EAN Code van de leverancier gebruiken?  Selecteer ze uit deze lijst:",
+        "assign": "Bestaande EAN Code gebruiken? Wijs een toe.",
+        "release": "EAN Code niet meer gebruiken?  Je kan ze loslaten, maar let op! Ze kan niet opnieuw gebruikt worden.",
+        "error": "",
+        "errorSolution": "Nieuwe EAN Codes genereren",
+        "button": {
+          "assign": "Toewijzen",
+          "release": "Loslaten"
+        }
       }
     },
     "translation": {
@@ -561,7 +588,7 @@
         "bundleItems": "Bundel items",
         "bom": "Stuklijst",
         "media": "Media",
-        "price": "Prijs",
+        "price": "Prijzen",
         "prices": "Prijzen",
         "priceLists": "Prijslijsten",
         "inventory": "Voorraad",
@@ -813,13 +840,16 @@
       "updatedSuccefully": "De prijs voor valuta {currency} was opgeslagen.",
       "labels": {
         "amount": "Prijs",
-        "discountAmount": "Kortingsprijs"
+        "discountAmount": "Kortingsprijs",
+        "discountPercentage": "Kortingspercentage"
       },
       "placeholders": {
         "amount": "Voeg prijs in",
-        "discountAmount": "Voeg kortingsprijs in"
+        "discountAmount": "Voeg kortingsprijs in",
+        "discountPercentage": "Voer kortingspercentage in"
       },
-      "updatedSuccessfully": "Prijs in {currency} is upgedate"
+      "updatedSuccessfully": "Prijs in {currency} is upgedate",
+      "createSuccefully": "Prijs voor {currency} is aangemaakt."
     },
     "priceLists": {
       "title": "Prijslijsten",
@@ -847,6 +877,14 @@
         "autoUpdate": {
           "header": "Automatisch prijzen updaten",
           "content": "Zet deze optie aan indien prijzen automatisch up-to-date moeten blijven met de valuta-wijzigingen."
+        },
+        "discountPercentage": {
+          "header": "Kortingspercentage",
+          "content": ""
+        },
+        "dateRange": {
+          "header": "Periode",
+          "content": ""
         }
       },
       "create": {
@@ -866,6 +904,9 @@
       "labels": {
         "vatIncluded": "Inclusief BTW",
         "autoUpdate": "Auto Update"
+      },
+      "edit": {
+        "title": "Prijslijst bewerken"
       }
     },
     "tabs": {
@@ -905,7 +946,8 @@
       "labels": {
         "unitPrice": "Eenheidsprijs",
         "sku": "SKU",
-        "supplier": "Leverancier"
+        "supplier": "Leverancier",
+        "supplierCurrency": ""
       },
       "placeholders": {
         "unitPrice": "Voer eenheidsprijs in"
@@ -1101,6 +1143,9 @@
           "header": "Commentaar",
           "content": "Geen special acties. Gebruik dit veld om notities te maken."
         }
+      },
+      "edit": {
+        "title": "Valute bewerken"
       }
     },
     "vatRates": {
