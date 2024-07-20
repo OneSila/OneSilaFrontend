@@ -95,3 +95,15 @@ export const OnboardingStatus = {
   COMPLETE_DASHBOARD_CARDS: 'COMPLETE_DASHBOARD_CARDS',
   DONE: 'DONE',
 };
+
+export const PropertyTypes = {
+  INT: 'INT',
+  FLOAT: 'FLOAT',
+  TEXT: 'TEXT',
+  DESCRIPTION: 'DESCRIPTION',
+  BOOLEAN: 'BOOLEAN',
+  DATE: 'DATE',
+  DATETIME: 'DATETIME',
+  SELECT: 'SELECT',
+  MULTISELECT: 'MULTISELECT',
+};

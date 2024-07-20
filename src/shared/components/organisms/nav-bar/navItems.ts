@@ -111,6 +111,21 @@ export const navSections: NavSection[] = [
                     },
                 ]
             },
+        {
+            title: 'properties.title',
+            icon: 'screwdriver-wrench',
+            subItemsKey: 'properties',
+                subItems: [
+                    {
+                        route: { name: 'properties.properties.list' },
+                        title:  'properties.title',
+                    },
+                    {
+                        route: { name: 'properties.values.list' },
+                        title:  'properties.values.title',
+                    },
+                ]
+            },
            {
             title: 'media.title',
             icon: 'photo-film',

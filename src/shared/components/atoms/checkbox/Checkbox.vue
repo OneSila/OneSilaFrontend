@@ -22,7 +22,6 @@ watch(innerValue, (newValue) => {
   <Switch
     v-model="innerValue"
     :class="[innerValue ? 'bg-primary' : 'bg-gray-200', 'relative inline-flex h-6 w-11 items-center flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2']">
-    <span class="sr-only">Use setting</span>
     <span :class="[innerValue ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none inline-block h-5 w-5 transform bg-white rounded-full shadow ring-0 transition duration-200 ease-in-out']">
       <span :class="[innerValue ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in', 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity']" aria-hidden="true">
         <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">

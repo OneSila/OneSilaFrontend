@@ -10,6 +10,7 @@ import { routes as inventoryRoutes } from '../../../core/inventory/routes';
 import { routes as productsRoutes } from '../../../core/products/routes';
 import { routes as settingsRoutes } from '../../../core/settings/routes';
 import { routes as mediaRoutes } from '../../../core/media/routes';
+import { routes as propertiesRoutes } from '../../../core/properties/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
 import {detectAuth, isAuthenticated, hasCompany, isActive, removeAuth, isFinishedOnboarding, getOnboardingStatus} from '../auth';
 import { Toast } from '../toast';
@@ -30,6 +31,7 @@ export function buildRouter() {
       ...productsRoutes,
       ...settingsRoutes,
       ...mediaRoutes,
+      ...propertiesRoutes,
       ...dashboardRoutes,
     ],
   });

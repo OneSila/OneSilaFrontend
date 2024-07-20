@@ -138,6 +138,7 @@
       },
       "toast": {
         "generalError": "An error occurred",
+        "tooLongError": "The {fieldName} is too long. It allows maximum {max} characters!",
         "submitSuccessCreate": "Your entry has been successfully created!",
         "submitSuccessUpdate": "Your changes have been saved successfully!",
         "deleteSuccess": "The item has been successfully deleted.",
@@ -203,7 +204,8 @@
       "language": "Language",
       "seconds": "seconds",
       "minutes": "minutes",
-      "home": "Home"
+      "home": "Home",
+      "preview": "Preview"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -226,7 +228,7 @@
       "phoneInput": {
         "countrySelector": {
           "placeholder": "Country code",
-          "error": "Choose country",
+          "error": "Non existent country code",
           "searchPlaceholder": "Search a country"
         },
         "phoneInput": {
@@ -237,7 +239,9 @@
     },
     "tabs": {
       "general": "General",
-      "items": "Items"
+      "items": "Items",
+      "translations": "Translations",
+      "advanced": "Advanced"
     },
     "dropZone": {
       "multipleDraggingInstruction": "Drag and drop files here or click to upload",
@@ -1210,5 +1214,101 @@
   },
   "network": {
     "error": "Failed to fetch data from the server. Please check your connection."
+  },
+  "properties": {
+    "title": "Properties",
+    "properties": {
+      "title": "Properties",
+      "error": {
+        "duplicate": "Property with that name already exists."
+      },
+      "create": {
+        "title": "Create Property",
+        "wizard": {
+          "stepOne": {
+            "title": "General",
+            "content": "Please add a name and the configuration of the property"
+          },
+          "stepTwo": {
+            "title": "Type",
+            "content": "Select the type based on the purpose of the property",
+            "example": {
+                "int": "Validate whole numbers. Eg: 123",
+                "float": "Validate decimal numbers. Eg: 2.5",
+                "text": "Allow to add text. Eg: 'Bestseller 5'",
+                "description": "Used for texts longer that 255 characters",
+                "boolean": "Used for decision properties",
+                "date": "Used to only show the date",
+                "datetime": "Used to only date and time",
+                "select": "Choose a single option from predefined values. Ideal for size or color selection.",
+                "multiselect": "Select multiple options from predefined values. Useful for attributes like washing instructions.",
+                "preview": {
+                  "select": "Size",
+                  "multiselect": {
+                    "title": "Materials",
+                    "cotton": "Cotton",
+                    "wool": "Wool",
+                    "silk": "Silk"
+                  }
+                }
+            }
+          }
+        }
+      },
+      "edit": {
+        "title": "Edit Property"
+      },
+      "show": {
+        "title": "Property"
+      },
+      "labels": {
+        "isPublicInformation": "Public Information",
+        "addToFilters": "Add on filters",
+        "isProductType": "Product Type",
+        "internalName": "Internal Name",
+        "valueValidator": "Value Validator"
+      },
+      "placeholders": {
+        "internalName": "Enter internal name",
+        "size": "Size",
+        "valueValidator": "Enter value validator"
+      },
+      "help": {
+        "type": "This cannot be changed later!",
+        "isPublicInformation": "They will be added in the integrations.",
+        "addToFilters": "They will be used in integrations as filters.",
+        "internalName": "Name used in integrations",
+        "valueValidator": "Advanced regex value validator."
+      },
+      "types": {
+        "int": "Whole Number",
+        "float": "Decimal Number",
+        "text": "Short Text",
+        "description": "Description",
+        "boolean": "Yes/No Choice",
+        "date": "Date",
+        "datetime": "Date and Time",
+        "select": "Single Select",
+        "multiselect": "Multiselect"
+      }
+    },
+    "values": {
+      "title": "Select Values",
+      "create": {
+        "title": "Create Value"
+      },
+      "edit": {
+        "title": "Edit Value"
+      },
+      "show": {
+        "title": "Value"
+      },
+      "labels": {
+        "value": "Value"
+      },
+      "placeholders": {
+        "value": "Enter value"
+      }
+    }
   }
 }

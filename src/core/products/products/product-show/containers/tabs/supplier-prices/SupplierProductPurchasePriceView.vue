@@ -28,6 +28,7 @@ interface Price {
     id: string | null;
   };
 }
+
 const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
 const saving = ref(false);

@@ -127,7 +127,7 @@ import {
   faClipboard,
   faQuestion,
   faHistory,
-  faDatabase
+  faDatabase,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
