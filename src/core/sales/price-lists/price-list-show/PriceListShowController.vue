@@ -25,7 +25,7 @@ tabItems.value = [
 const showConfig = showConfigConstructor(t, id.value);
 
 const onDataFetched = (data) => {
-  addEdit.value = !data[showConfig.subscriptionKey].autoUpdate;
+  addEdit.value = !data[showConfig.subscriptionKey].autoUpdatePrices;
 };
 
 </script>

@@ -65,7 +65,7 @@ const getFields = (customerId, t, type): FormField[] => {
     },
     {
       type: FieldType.Text,
-      name: 'discount',
+      name: 'discountPcnt',
       label: t('sales.prices.labels.discountPercentage'),
       placeholder: t('sales.prices.placeholders.discountPercentage'),
       number: true,
@@ -106,8 +106,8 @@ const getFields = (customerId, t, type): FormField[] => {
     },
     {
       type: FieldType.Checkbox,
-      name: 'autoUpdate',
-      label: t('sales.priceLists.labels.autoUpdate'),
+      name: 'autoUpdatePrices',
+      label: t('sales.priceLists.labels.autoUpdatePrices'),
       default: true,
       uncheckedValue: "false"
     },
@@ -159,8 +159,8 @@ export const baseFormConfigConstructor = (
       content: t('sales.priceLists.helpSection.vatIncluded.content')
     },
     {
-      header: t('sales.priceLists.helpSection.autoUpdate.header'),
-      content: t('sales.priceLists.helpSection.autoUpdate.content')
+      header: t('sales.priceLists.helpSection.autoUpdatePrices.header'),
+      content: t('sales.priceLists.helpSection.autoUpdatePrices.content')
     },
     {
       header: t('sales.priceLists.helpSection.customers.header'),
@@ -184,8 +184,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     {
       type: FieldType.Boolean,
       strict: true,
-      name: 'autoUpdate',
-      label: t('sales.priceLists.labels.autoUpdate'),
+      name: 'autoUpdatePrices',
+      label: t('sales.priceLists.labels.autoUpdatePrices'),
     },
     {
       type: FieldType.Query,
@@ -221,14 +221,14 @@ const getUrlQueryParams = (customerId) => {
   return customerId ? { customerId: customerId } : undefined;
 }
 export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdate')],
+  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
       name: 'name',
       type: FieldType.Text,
     },
     {
-      name: 'discount',
+      name: 'discountPcnt',
       type: FieldType.Text,
     },
     {
@@ -241,7 +241,7 @@ export const listingConfigConstructor = (t: Function, customerId: string | null 
       type: FieldType.Boolean,
     },
     {
-      name: 'autoUpdate',
+      name: 'autoUpdatePrices',
       type: FieldType.Boolean,
     }
   ],
@@ -276,7 +276,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       showLabel: true
     },
     {
-      name: 'discount',
+      name: 'discountPcnt',
       type: FieldType.Text,
       label: t('sales.prices.labels.discountAmount'),
       showLabel: true
@@ -301,9 +301,9 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       showLabel: true
     },
     {
-      name: 'autoUpdate',
+      name: 'autoUpdatePrices',
       type: FieldType.Boolean,
-      label: t('sales.priceLists.labels.autoUpdate'),
+      label: t('sales.priceLists.labels.autoUpdatePrices'),
       showLabel: true,
     },
     {
