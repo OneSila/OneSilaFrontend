@@ -149,6 +149,11 @@ export interface HiddenFormField extends BaseFormField {
   type: FieldType.Hidden;
   value: any;
 }
+
+export interface ImageFormField extends BaseFormField {
+  type: FieldType.Image;
+}
+
 export enum FormType {
   CREATE = 'CREATE',
   EDIT = 'EDIT',
@@ -164,7 +169,7 @@ type RedirectIdentifier = Record<string, string>;
 
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
                         ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | DateRangeFormField | SliderFormField |
-                        CheckboxFormField | HiddenFormField | WebsiteFormField;
+                        CheckboxFormField | HiddenFormField | WebsiteFormField | ImageFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;

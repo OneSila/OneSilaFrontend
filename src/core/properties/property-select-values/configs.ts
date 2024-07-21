@@ -2,7 +2,7 @@ import { CreateOnTheFly, FormConfig, FormField, FormType } from '../../../shared
 import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { propertiesQuery, propertySelectValuesQuery } from "../../../shared/api/queries/properties.js";
+import {getPropertySelectValueQuery, propertiesQuery, propertySelectValuesQuery} from "../../../shared/api/queries/properties.js";
 import {deletePropertyMutation, deletePropertySelectValueMutation, updatePropertySelectValueMutation} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getPropertySubscription } from '../../../shared/api/subscriptions/properties.js';
@@ -29,6 +29,57 @@ export const baseFormConfigConstructor = (
       label: t('properties.values.show.title'),
       placeholder: t('properties.values.placeholders.value')
     },
+    {
+      type: FieldType.Image,
+      name: 'image',
+      label: t('shared.labels.image'),
+      optional: true,
+    }
+  ],
+});
+
+export const editFormConfigConstructor = (
+  t: Function,
+  id: string,
+): FormConfig => ({
+  cols: 1,
+  type: FormType.EDIT,
+  mutation: updatePropertySelectValueMutation,
+  mutationKey: 'updatePropertySelectValue',
+  submitUrl: { name: 'properties.values.list' },
+  submitAndContinueUrl: { name: 'properties.values.edit' },
+  deleteMutation: deletePropertyMutation,
+  mutationId: id,
+  query: getPropertySelectValueQuery,
+  queryVariables: { id: id },
+  queryDataKey: 'propertySelectValue',
+  fields: [
+        {
+        type: FieldType.Hidden,
+        name: 'id',
+        value: id
+      },
+      {
+        type: FieldType.Query,
+        name: 'property',
+        label: t('properties.properties.show.title'),
+        labelBy: 'name',
+        valueBy: 'id',
+        query: propertiesQuery,
+        queryVariables: { filter: { 'type': {'exact': PropertyTypes.SELECT}}},
+        dataKey: 'properties',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        formMapIdentifier: 'id',
+        disabled: true
+    },
+    {
+      type: FieldType.Image,
+      name: 'image',
+      label: t('shared.labels.image'),
+      optional: true,
+    }
   ],
 });
 

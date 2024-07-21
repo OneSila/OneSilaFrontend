@@ -16,7 +16,7 @@ import {
 } from "../../../../shared/api/mutations/properties.js";
 
 import {Tabs} from "../../../../shared/components/molecules/tabs";
-import {baseFormConfigConstructor} from "../configs";
+import {baseFormConfigConstructor, editFormConfigConstructor} from "../configs";
 import {FieldType} from "../../../../shared/utils/constants";
 
 
@@ -27,32 +27,11 @@ const id = ref(String(route.params.id));
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+    { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
   ];
 
-const baseForm = baseFormConfigConstructor(
-  t,
-  FormType.EDIT,
-  updatePropertySelectValueMutation,
-  'updatePropertySelectValue',
-);
-
-const formConfig = {
-  ...baseForm,
-  mutationId: id.value.toString(),
-  query: getPropertySelectValueQuery,
-  queryVariables: { id: id.value },
-  queryDataKey: 'propertySelectValue',
-  fields: [
-    {
-      type: FieldType.Hidden,
-      name: 'id',
-      value: id.value.toString()
-    },
-    ...baseForm.fields
-  ]
-};
+const formConfig = editFormConfigConstructor(t, id.value.toString());
 
 </script>
 

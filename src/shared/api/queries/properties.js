@@ -111,6 +111,10 @@ export const getPropertySelectValueQuery = gql`
         id
         name
       }
+      image {
+       id
+       imageWebUrl
+     }
     }
   }
 `;
