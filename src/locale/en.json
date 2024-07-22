@@ -167,6 +167,7 @@
       "show": "Show",
       "submit": "Submit",
       "add": "Add",
+      "change": "Change",
       "download": "Download",
       "uploadNew": "Upload New",
       "create": "Create",
@@ -205,6 +206,7 @@
       "seconds": "seconds",
       "minutes": "minutes",
       "home": "Home",
+      "image": "Image",
       "preview": "Preview"
     },
     "validations": {
@@ -251,6 +253,14 @@
       "fileRejected": "File rejected"
     },
     "components": {
+      "organisms": {
+        "imageAssigner": {
+          "addButton": {
+            "uploadNew": "Upload new image",
+            "addExisting": "Existing images"
+          }
+        }
+      },
       "molecules": {
         "selector": {
           "defaultPlaceholder": "Select an option",

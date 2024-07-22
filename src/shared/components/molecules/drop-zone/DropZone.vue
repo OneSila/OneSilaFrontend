@@ -6,8 +6,14 @@ import { Icon } from '../../atoms/icon'
 import { BullettedList } from '../bulletted-list'
 import { Toast } from '../../../modules/toast';
 
-const props = defineProps<{ loading?: boolean; multiple?: boolean; addFromOutside?: boolean; formats?: string[]; }>()
-
+const props = withDefaults(
+  defineProps<{
+    loading?: boolean;
+    multiple?: boolean;
+    addFromOutside?: boolean;
+    formats?: string[]; }>(),
+  { multiple: true },
+);
 const emit = defineEmits<{
   (e: 'uploaded', files: any[]): void,
 }>()
@@ -40,6 +46,7 @@ const getUploadedFileLabels = () => selectedFiles.value.map((file: File) => file
 const { getRootProps, getInputProps, isDragActive }: any = useDropzone({
   onDrop: onDropped,
   accept: props.formats,
+  multiple: props.multiple
 })
 </script>
 
