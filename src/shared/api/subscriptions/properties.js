@@ -98,3 +98,20 @@ export const getPropertySelectValueTranslationSubscription = gql`
     }
   }
 `;
+
+// Product Property Rule
+export const getProductPropertiesRuleSubscription = gql`
+  subscription getProductPropertiesRuleSubscription($pk: String!) {
+    productPropertiesRule(pk: $pk) {
+      id
+      product {
+        id
+        name
+      }
+      property {
+        id
+        name
+      }
+    }
+  }
+`;

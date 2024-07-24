@@ -302,3 +302,136 @@ export const deletePropertySelectValueTranslationsMutation = gql`
     }
   }
 `;
+
+// Product Properties Rule Mutations
+export const createProductPropertiesRuleMutation = gql`
+  mutation createProductPropertiesRule($data: ProductPropertiesRuleInput!) {
+    createProductPropertiesRule(data: $data) {
+      id
+      productType {
+        id
+        value
+      }
+    }
+  }
+`;
+
+export const createProductPropertiesRulesMutation = gql`
+  mutation createProductPropertiesRules($data: [ProductPropertiesRuleInput!]!) {
+    createProductPropertiesRules(data: $data) {
+      id
+      productType {
+        id
+        value
+      }
+    }
+  }
+`;
+
+export const updateProductPropertiesRuleMutation = gql`
+  mutation updateProductPropertiesRule($data: ProductPropertiesRulePartialInput!) {
+    updateProductPropertiesRule(data: $data) {
+      id
+      productType {
+        id
+        value
+      }
+    }
+  }
+`;
+
+export const deleteProductPropertiesRuleMutation = gql`
+  mutation deleteProductPropertiesRule($id: GlobalID!) {
+    deleteProductPropertiesRule(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteProductPropertiesRulesMutation = gql`
+  mutation deleteProductPropertiesRules($ids: [GlobalID!]!) {
+    deleteProductPropertiesRules(data: {ids: $ids}) {
+      id
+    }
+  }
+`;
+
+// Product Properties Rule Item Mutations
+export const createProductPropertiesRuleItemMutation = gql`
+  mutation createProductPropertiesRuleItem($data: ProductPropertiesRuleItemInput!) {
+    createProductPropertiesRuleItem(data: $data) {
+      id
+      rule {
+        id
+        productType {
+          id
+          value
+        }
+      }
+      property {
+        id
+        name
+      }
+      type
+      sortOrder
+    }
+  }
+`;
+
+export const createProductPropertiesRuleItemsMutation = gql`
+  mutation createProductPropertiesRuleItems($data: [ProductPropertiesRuleItemInput!]!) {
+    createProductPropertiesRuleItems(data: $data) {
+      id
+      rule {
+        id
+        productType {
+          id
+          value
+        }
+      }
+      property {
+        id
+        name
+      }
+      type
+      sortOrder
+    }
+  }
+`;
+
+export const updateProductPropertiesRuleItemMutation = gql`
+  mutation updateProductPropertiesRuleItem($data: ProductPropertiesRuleItemPartialInput!) {
+    updateProductPropertiesRuleItem(data: $data) {
+      id
+      rule {
+        id
+        productType {
+          id
+          value
+        }
+      }
+      property {
+        id
+        name
+      }
+      type
+      sortOrder
+    }
+  }
+`;
+
+export const deleteProductPropertiesRuleItemMutation = gql`
+  mutation deleteProductPropertiesRuleItem($id: GlobalID!) {
+    deleteProductPropertiesRuleItem(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteProductPropertiesRuleItemsMutation = gql`
+  mutation deleteProductPropertiesRuleItems($ids: [GlobalID!]!) {
+    deleteProductPropertiesRuleItems(data: {ids: $ids}) {
+      id
+    }
+  }
+`;

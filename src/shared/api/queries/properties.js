@@ -267,3 +267,106 @@ export const getPropertySelectValueTranslationQuery = gql`
     }
   }
 `;
+
+export const productPropertiesRulesQuery = gql`
+query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleOrder, $filter: ProductPropertiesRuleFilter) {
+    productPropertiesRules(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          productType {
+            id
+            value
+            property {
+              id
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getProductPropertiesRuleQuery = gql`
+  query getProductPropertiesRule($id: GlobalID!) {
+    productPropertiesRule(id: $id) {
+      id
+      productType {
+        value
+        id
+      }
+      items {
+        id
+        type
+        sortOrder
+        property {
+          id
+          name
+          type
+        }
+      }
+    }
+  }
+`;
+
+export const productPropertiesRuleItemsQuery = gql`
+query ProductPropertiesRuleItems($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleItemOrder, $filter: ProductPropertiesRuleItemFilter) {
+    productPropertiesRuleItems(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          rule {
+            id
+            productType {
+              id
+              value
+            }
+          }
+          property {
+            id
+            name
+          }
+          type
+          sortOrder
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getProductPropertiesRuleItemQuery = gql`
+  query getProductPropertiesRuleItem($id: GlobalID!) {
+    productPropertiesRuleItem(id: $id) {
+      id
+      rule {
+        id
+        productType {
+          id
+          value
+        }
+      }
+      property {
+        id
+        name
+      }
+      type
+      sortOrder
+    }
+  }
+`;

@@ -124,6 +124,10 @@ export const navSections: NavSection[] = [
                         route: { name: 'properties.values.list' },
                         title:  'properties.values.title',
                     },
+                    {
+                        route: { name: 'properties.rule.list' },
+                        title:  'properties.rule.title',
+                    },
                 ]
             },
            {

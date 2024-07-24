@@ -28,6 +28,13 @@ export enum FieldType {
   Badge = "Badge",
 }
 
+export enum ConfigTpes {
+  REQUIRED_IN_CONFIGURATOR = 'REQUIRED_IN_CONFIGURATOR',
+  OPTIONAL_IN_CONFIGURATOR = 'OPTIONAL_IN_CONFIGURATOR',
+  REQUIRED = 'REQUIRED',
+  OPTIONAL = 'OPTIONAL'
+}
+
 export const OrderStatus = {
   DRAFT: 'DRAFT',
   PENDING: 'PENDING',
