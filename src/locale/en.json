@@ -1319,6 +1319,76 @@
       "placeholders": {
         "value": "Enter value"
       }
+    },
+    "rule": {
+      "title": "Product Properties Rules",
+      "create": {
+        "title": "Create Product Properties Rule"
+      },
+      "edit": {
+        "title": "Edit Product Properties Rule"
+      },
+      "show": {
+        "title": "Product Properties Rule"
+      },
+      "labels": {
+        "type": "Rule Type",
+        "propertyType": "Property Type"
+      },
+      "placeholders": {
+        "type": "Select rule type"
+      },
+      "help": {
+        "type": "Select how this property should be handled for the product."
+      },
+      "preview": {
+      "previewTitle": "Preview of Selected Configurations",
+      "productText": "All products in the {name} category will have:",
+      "productTextDisclaimer": "If your products in the {name} category are sold as individual items without options, ignore the 'In Configurator' choices.",
+      "requiredInConfiguratorText": "{name} is needed when choosing product options and must be picked by the user.",
+      "optionalInConfiguratorText": "{name} is needed for the product but will only show when options vary.",
+      "requiredText": "{name} is needed for the product and must be included.",
+      "optionalText": "{name} can be included for the product, but it is not required.",
+        "productView": {
+          "addToCart": "Add to cart",
+          "optionalInConfiguratorTextMoreValues": "If it has more than one value it will show like this",
+          "optionalInConfiguratorTextOneValue": "If it has one value it will show like this",
+          "optional": "If you add the value",
+          "givenValue": "Given value"
+        }
+      },
+      "error": {
+        "noPropertiesLeft": "No properties available",
+        "dragAndDrop": "Drag and drop properties here",
+        "noProductType": "Please add a product type!",
+        "noRequiredInConfigurator": "In order to have an optional one we need to have a required in configurator first. So the configurator will have at least one value!",
+        "optionalWithoutRequired": "Cannot have optional in configurator without having at least one required in configurator item.",
+        "noAddedProperties": "You need to add some properties for the rule!"
+      },
+      "alert": {
+        "updateSuccess": "The rule was succefully updated!",
+        "createSuccess": "The rule was succefully created!"
+      },
+      "configTypes": {
+        "requiredInConfigurator": {
+          "title": "Required in Configurator",
+          "example": "This property must be selected by the user when choosing product options such as size or color."
+        },
+        "optionalInConfigurator": {
+          "title": "Optional in Configurator",
+          "example": "This property can be optionally selected by the user when choosing product options such as size or color. For umbrella products, if all variations have the same property, it will not be shown."
+        },
+        "required": {
+          "title": "Required",
+          "example": "This property must be provided for the product but will not be displayed when choosing product options but is important for having good data.."
+        },
+        "optional": {
+          "title": "Optional",
+          "example": "This property can be provided for the product but is not mandatory."
+        },
+        "helpText": "The Required in Configurator and Optional in Configurator are relevant only for Umbrella products, for the rest it will simply act as a required property",
+        "title": "What role this property want to have?"
+      }
     }
   }
 }

@@ -59,6 +59,7 @@ import {
   faStarHalf,
   faEye,
   faArrowUp,
+  faArrowDown,
   faArrowRightArrowLeft,
   faHourglassStart,
   faBullseye,
@@ -255,6 +256,7 @@ library.add(faClipboard as IconDefinition);
 library.add(faQuestion as IconDefinition);
 library.add(faHistory as IconDefinition);
 library.add(faDatabase as IconDefinition);
+library.add(faArrowDown as IconDefinition);
 
 export default {
   install(app) {

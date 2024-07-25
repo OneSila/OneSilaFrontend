@@ -222,16 +222,16 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
           </div>
         </div>
         <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-    <CancelButton @click="() => router.push(props.backUrl)">
-      {{ t('shared.button.cancel') }}
-    </CancelButton>
-    <SecondaryButton @click="handleSaveAndContinue">
-      {{ t('shared.button.saveAndContinue') }}
-    </SecondaryButton>
-    <PrimaryButton @click="handleSave">
-      {{ t('shared.button.save') }}
-    </PrimaryButton>
-  </div>
+          <CancelButton @click="() => router.push(props.backUrl)">
+            {{ t('shared.button.cancel') }}
+          </CancelButton>
+          <SecondaryButton @click="handleSaveAndContinue">
+            {{ t('shared.button.saveAndContinue') }}
+          </SecondaryButton>
+          <PrimaryButton @click="handleSave">
+            {{ t('shared.button.save') }}
+          </PrimaryButton>
+        </div>
       </div>
     </div>
   </div>

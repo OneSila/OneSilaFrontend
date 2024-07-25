@@ -19,7 +19,7 @@ const getTypeOptions = (t) => [
   { name: t('properties.properties.types.multiselect'), code: PropertyTypes.MULTISELECT }
 ];
 
-const getPropertyTypeBadgeMap = (t) => ({
+export const getPropertyTypeBadgeMap = (t) => ({
   [PropertyTypes.INT]: { text: t('properties.properties.types.int'), color: 'blue' },
   [PropertyTypes.FLOAT]: { text: t('properties.properties.types.float'), color: 'yellow' },
   [PropertyTypes.TEXT]: { text: t('properties.properties.types.text'), color: 'green' },

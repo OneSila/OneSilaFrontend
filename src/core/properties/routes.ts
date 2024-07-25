@@ -1,21 +1,5 @@
 export const routes = [
   {
-    path: '/properties/property-select-values',
-    name: 'properties.values.list',
-    component: () => import('./property-select-values/property-select-values-list/PropertySelectValuesListController.vue')
-  },
-  {
-    path: '/properties/property-select-values/create',
-    name: 'properties.values.create',
-    component: () => import('./property-select-values/property-select-values-create/PropertySelectValuesCreateController.vue')
-  },
-  {
-    path: '/properties/property-select-values/edit/:id',
-    name: 'properties.values.edit',
-    component: () => import('./property-select-values/property-select-values-edit/PropertySelectValuesEditController.vue')
-  },
-
-  {
     path: '/properties/properties',
     name: 'properties.properties.list',
     component: () => import('./properties/properties-list/PropertiesListController.vue')
@@ -35,4 +19,34 @@ export const routes = [
   //   name: 'inventory.inventory.show',
   //   component: () => import('./inventory/inventory-show/InventoryShowController.vue')
   // },
+  {
+    path: '/properties/property-select-values',
+    name: 'properties.values.list',
+    component: () => import('./property-select-values/property-select-values-list/PropertySelectValuesListController.vue')
+  },
+  {
+    path: '/properties/property-select-values/create',
+    name: 'properties.values.create',
+    component: () => import('./property-select-values/property-select-values-create/PropertySelectValuesCreateController.vue')
+  },
+  {
+    path: '/properties/property-select-values/edit/:id',
+    name: 'properties.values.edit',
+    component: () => import('./property-select-values/property-select-values-edit/PropertySelectValuesEditController.vue')
+  },
+  {
+    path: '/properties/product-properties-rule',
+    name: 'properties.rule.list',
+    component: () => import('./product-properties-rule/product-properties-rule-list/ProductPropertiesRuleListController.vue')
+  },
+  {
+    path: '/properties/product-properties-rule/create',
+    name: 'properties.rule.create',
+    component: () => import('./product-properties-rule/product-properties-rule-create/ProductPropertiesRuleCreateController.vue')
+  },
+  {
+    path: '/properties/product-properties-rule/edit/:id',
+    name: 'properties.rule.edit',
+    component: () => import('./product-properties-rule/product-properties-rule-edit/ProductPropertiesRuleEditController.vue')
+  },
 ];
