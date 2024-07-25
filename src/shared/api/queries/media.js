@@ -24,6 +24,7 @@ export const mediaQuery = gql`
             lastName
           }
           imageWebUrl
+          onesilaThumbnailUrl
           fileUrl
           videoUrl
         }
@@ -81,6 +82,7 @@ export const imageQuery = gql`
             lastName
           }
           imageWebUrl
+          onesilaThumbnailUrl
         }
         cursor
       }
