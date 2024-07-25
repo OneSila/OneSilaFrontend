@@ -118,10 +118,10 @@ const assignMedia = (media) => {
 
                                 <template v-if="item.node.type === TYPE_IMAGE">
                                   <Button v-if="assignImages" @click="assignMedia(item.node)">
-                                    <Image :source="item.node.imageWebUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
+                                    <Image :source="item.node.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
                                   </Button>
                                   <Link v-else :path="getPath(item.node)">
-                                    <Image :source="item.node.imageWebUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
+                                    <Image :source="item.node.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
                                   </Link>
                                 </template>
                                 <template v-else-if="item.node.type === TYPE_VIDEO">
