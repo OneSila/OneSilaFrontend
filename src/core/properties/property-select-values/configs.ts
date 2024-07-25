@@ -5,7 +5,7 @@ import { ListingConfig } from "../../../shared/components/organisms/general-list
 import {getPropertySelectValueQuery, propertiesQuery, propertySelectValuesQuery} from "../../../shared/api/queries/properties.js";
 import {deletePropertyMutation, deletePropertySelectValueMutation, updatePropertySelectValueMutation} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
-import { getPropertySubscription } from '../../../shared/api/subscriptions/properties.js';
+import { getPropertySelectValueSubscription } from '../../../shared/api/subscriptions/properties.js';
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -18,7 +18,7 @@ export const baseFormConfigConstructor = (
   type: type,
   mutation: mutation,
   mutationKey: mutationKey,
-  submitUrl: { name: 'properties.values.list' },
+  submitUrl: propertyId !== null  ? { name: 'properties.properties.show', params: {id: propertyId}, query: {tab: 'values'} } : { name: 'properties.values.list' },
   submitAndContinueUrl: { name: 'properties.values.edit' },
   deleteMutation: deletePropertyMutation,
   fields: [
@@ -99,7 +99,7 @@ const getPropertyField = (t, propertyId, type): FormField => {
         labelBy: 'name',
         valueBy: 'id',
         query: propertiesQuery,
-        queryVariables: { filter: { 'type': {'exact': PropertyTypes.SELECT}}},
+        queryVariables: { filter: { 'type': {'inList': [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]}}},
         dataKey: 'properties',
         isEdge: true,
         multiple: false,
@@ -114,11 +114,25 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: "sort",
     filters: [
+    {
+      type: FieldType.Query,
+      name: 'property',
+      label: t('properties.properties.show.title'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: propertiesQuery,
+      queryVariables: { filter: { 'type': {'inList': [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]}}},
+      dataKey: 'properties',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id']
+    },
     ],
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, addActions: boolean = true): ListingConfig => ({
   headers: [t('properties.values.show.title') , t('properties.properties.show.title')],
   fields: [
     { name: 'value', type: FieldType.Text },
@@ -127,14 +141,14 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       keys: ['name'],
       clickable: true,
       clickIdentifiers: [{id: ['id']}],
-      clickUrl: {name: 'properties.properties.edit'}}, // @TODO: Change to show
+      clickUrl: {name: 'properties.properties.show'}},
   ],
   identifierKey: 'id',
-  addActions: true,
+  addActions: addActions,
   addEdit: true,
   editUrlName: 'properties.values.edit',
   showUrlName: 'properties.values.show',
-  addShow: false,
+  addShow: true,
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePropertySelectValueMutation,
@@ -142,8 +156,8 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
 
 export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   cols: 1,
-  subscription: getPropertySubscription,
-  subscriptionKey: 'property',
+  subscription: getPropertySelectValueSubscription,
+  subscriptionKey: 'propertySelectValue',
   subscriptionVariables: { pk: id },
   backUrl: { name: 'properties.values.list' },
   editUrl: { name: 'properties.values.edit', params: { id: id } },
@@ -154,14 +168,15 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   addDelete: true,
   fields: [
     {
-      label: t('shared.labels.name'),
-      name: 'name',
-      type: FieldType.Text,
+      label: t('properties.properties.show.title'),
+      name: 'property',
+      type: FieldType.NestedText,
+      keys: ['name'],
     },
     {
-      label: t('properties.values.labels.isPublicInformation'),
-      name: 'isPublicInformation',
-      type: FieldType.Boolean
+      label: t('properties.values.show.title'),
+      name: 'value',
+      type: FieldType.Text
     }
   ]
 });

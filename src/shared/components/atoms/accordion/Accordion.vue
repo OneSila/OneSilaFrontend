@@ -26,7 +26,7 @@ const isActive = (index: number) => activeIndex.value === index;
   <div id="accordion" data-accordion="collapse">
     <div v-for="(item, index) in props.items" :key="item.name">
       <div :id="'accordion-heading-' + index">
-        <Flex class="cursor-pointer w-full p-5 font-medium text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+        <Flex class="cursor-pointer w-full p-5 font-medium text-gray-500 border border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
                 :aria-expanded="isActive(index)"
                 :aria-controls="'accordion-body-' + index"
                 @click="toggleAccordion(index)"

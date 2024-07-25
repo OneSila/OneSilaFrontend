@@ -16,6 +16,9 @@ import {ConfigTpes, PropertyTypes} from "../../../utils/constants";
 import {ProductTypeField} from "./containers/product-type-field";
 import {Selector} from "../../atoms/selector";
 import {PreviewView} from "./containers/preview-view";
+import {Accordion} from "../../atoms/accordion";
+import {Checkbox} from "../../atoms/checkbox";
+import {Label} from "../../atoms/label";
 
 const { t } = useI18n();
 
@@ -48,10 +51,10 @@ const draggingOverItemId = ref(null);
 const limit = ref(10);
 const fetchPaginationData = ref({});
 
-
 fetchPaginationData.value['first'] = limit.value;
 
 const fetchData = async () => {
+
   const excludedIds = addedPropertiesRef.value.map(property => property.id);
 
   loading.value = true;
@@ -261,20 +264,19 @@ const handleProductTypeUpdated = async (newVal) => {
   if (newVal === null) {
     localProductType.value = null;
   } else {
-   const {data} = await apolloClient.query({
-    query: getPropertySelectValueQuery,
-    variables: {id: newVal},
-    fetchPolicy: 'network-only'
-  })
+     const {data} = await apolloClient.query({
+      query: getPropertySelectValueQuery,
+      variables: { id: newVal },
+      fetchPolicy: 'network-only'
+    })
 
-  if (data && data.propertySelectValue) {
-    localProductType.value = {
-      id: data.propertySelectValue.id,
-      value: data.propertySelectValue.value
-    }
+    if (data && data.propertySelectValue) {
+      localProductType.value = {
+        id: data.propertySelectValue.id,
+        value: data.propertySelectValue.value
+      }
     }
   }
-
 
   emit('update:productType', newVal)
 }
@@ -285,6 +287,9 @@ const onConfigTypeUpdated = () => {
   emit('update:addedProperties', addedPropertiesRef.value);
 }
 
+const accordionItems = [
+  { name: 'preview', label: t('properties.rule.preview.previewTitle'), icon: 'eye' }
+];
 
 onMounted(fetchData);
 
@@ -294,9 +299,7 @@ onMounted(fetchData);
   <div>
     <ProductTypeField :product-type="productType" @product-type-updated="handleProductTypeUpdated" />
     <hr>
-    <div class="my-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
-    <div>
-      <Flex class="gap-2">
+    <Flex class="gap-2 mt-4">
         <FlexCell grow>
           <label class="search-input relative block">
             <span class="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -323,6 +326,8 @@ onMounted(fetchData);
         </FlexCell>
       </Flex>
 
+    <div class="my-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <div>
       <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop" @drop="handleDropAvailable">
         <div v-if="availableProperties.length === 0">
           <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.noPropertiesLeft') }}</p>
@@ -360,10 +365,10 @@ onMounted(fetchData);
           </tbody>
         </table>
       </div>
-      <Pagination v-if="pageInfo" :page-info="pageInfo" :change-query-params="false" @query-changed="handleQueryChanged" />
+      <Pagination v-if="pageInfo" class="mt-2" :page-info="pageInfo" :change-query-params="false" @query-changed="handleQueryChanged" />
     </div>
 
-    <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop" @drop="handleDrop">
+    <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300 mb-12" @dragover.prevent="allowDrop" @drop="handleDrop">
       <div v-if="addedPropertiesRef.length === 0">
         <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.dragAndDrop') }}</p>
       </div>
@@ -420,7 +425,11 @@ onMounted(fetchData);
       </table>
     </div>
   </div>
-  <PreviewView :added-properties="addedPropertiesRef" :product-type="localProductType" />
   <AddPropertyModal v-model="showPropertyModal" :property="toAddProperty" :allow-optional="configTypes.includes(ConfigTpes.REQUIRED_IN_CONFIGURATOR)" @property-added="handlePropertyAdded" />
+  <Accordion class="my-4" :items="accordionItems">
+    <template #preview>
+        <PreviewView :added-properties="addedPropertiesRef" :product-type="localProductType" />
+    </template>
+  </Accordion>
   </div>
 </template>

@@ -16,7 +16,7 @@ import {
 } from "../../../../shared/api/mutations/properties.js";
 
 import {Tabs} from "../../../../shared/components/molecules/tabs";
-import {baseFormConfigConstructor, editFormConfigConstructor} from "../configs";
+import { editFormConfigConstructor } from "../configs";
 import {FieldType} from "../../../../shared/utils/constants";
 
 

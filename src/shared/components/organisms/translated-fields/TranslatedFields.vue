@@ -10,6 +10,7 @@ import {PrimaryButton} from "../../atoms/button-primary";
 import {useRouter} from "vue-router";
 import {useI18n} from "vue-i18n";
 import { processGraphQLErrors } from "../../../utils";
+import { flagMapping } from "../../../utils/constants";
 
 import {
   useEnterKeyboardListener,
@@ -51,10 +52,6 @@ const props = defineProps<{
 }>();
 const translatableFields: Ref<TranslatableField[]> = ref([]);
 
-const flagMapping: { [key: string]: string } = {
-  'en': '🇬🇧',
-  'nl': '🇳🇱'
-};
 
 const createFields = (languages, fieldNames, labels, placeholders) => {
   const fields: TranslatableField[] = [];

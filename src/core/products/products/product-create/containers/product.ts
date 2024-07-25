@@ -6,7 +6,7 @@ export interface FormType {
   productionTime: number | null;
   vatRate: {
     id: string | null;
-  }
+  },
 }
 
 export interface RelatedProduct {
@@ -45,8 +45,15 @@ export interface Price {
     id: string | null;
   },
 }
+
+export interface ProductType {
+  id: string | null;
+  propertyId: string | null;
+}
+
 export interface AdditonalFormFields {
   price: Price;
   relatedProducts: RelatedProduct[];
   supplierProduct: SupplierProduct;
+  productType: ProductType;
 }

@@ -1367,7 +1367,10 @@
       },
       "alert": {
         "updateSuccess": "The rule was succefully updated!",
-        "createSuccess": "The rule was succefully created!"
+        "createSuccess": "The rule was succefully created!",
+        "createProductProperty": "Product property was succefully created",
+        "updateProductProperty": "Product property was succefully updated",
+        "deleteProductProperty": "Product property was succefully deleted"
       },
       "configTypes": {
         "requiredInConfigurator": {

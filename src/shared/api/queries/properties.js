@@ -133,7 +133,21 @@ query ProductProperties($first: Int, $last: Int, $after: String, $before: String
           property {
             id
             name
+            type
           }
+          valueSelect {
+            id
+            value
+          }
+          valueMultiSelect {
+             id
+             value
+          }
+          valueBoolean
+          valueInt
+          valueFloat
+          valueDate
+          valueDatetime
         }
         cursor
       }
@@ -274,6 +288,16 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
       edges {
         node {
           id
+          items {
+            id
+            type
+            sortOrder
+            property {
+              id
+              name
+              type
+            }
+          }
           productType {
             id
             value

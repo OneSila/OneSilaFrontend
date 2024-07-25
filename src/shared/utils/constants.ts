@@ -114,3 +114,8 @@ export const PropertyTypes = {
   SELECT: 'SELECT',
   MULTISELECT: 'MULTISELECT',
 };
+
+export const flagMapping: { [key: string]: string } = {
+  'en': '🇬🇧',
+  'nl': '🇳🇱'
+};

@@ -15,6 +15,7 @@ import SalesPricelistList from "../../tabs/sales-price-lists/SalesPricelistList.
 import ProductSalePriceView from "../../tabs/sales-price/ProductSalePriceView.vue";
 import ProductContentView from "../../tabs/content/ProductContentView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
+import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -62,7 +63,7 @@ const tabItems = computed(() => {
         <MediaView :product="product" />
       </template>
       <template v-slot:properties>
-        properties
+        <PropertiesView :product="product" />
       </template>
       <template v-slot:price>
         <ProductSalePriceView v-if="product.forSale" :product="product" />

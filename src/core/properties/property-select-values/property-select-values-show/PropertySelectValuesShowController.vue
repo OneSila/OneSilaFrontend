@@ -10,18 +10,49 @@ import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ItemsList from "./containers/items-list/ItemsList.vue";
+import {PropertyTypes} from "../../../../shared/utils/constants";
+import ProductList from "./containers/products-list/ProductsList.vue"
+import ValuesList from "./containers/values-list/ValuesList.vue"
+import {Loader} from "../../../../shared/components/atoms/loader";
+import RulesList from "./containers/rules-list/RulesList.vue";
 
 const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const tabItems = ref();
+const isProductType = ref(false);
+const loading = ref(true);
 
 tabItems.value = [
-    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-    { name: 'history', label: t('inventory.inventory.labels.movements'), icon: 'history' },
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
+    { name: 'products', label: t('products.title'), icon: 'box' },
+    { name: 'configurators', label: t('properties.rule.title'), icon: 'cog' },
   ];
 
-const showConfig = showConfigConstructor(t, id.value,);
+const showConfig = showConfigConstructor(t, id.value);
+
+const onDataFetched = (data) => {
+  const propertyId = data[showConfig.subscriptionKey].property.id;
+  isProductType.value = data[showConfig.subscriptionKey].property.isProductType;
+
+  if (!isProductType.value) {
+    const configuratorsTabIndex = tabItems.value.findIndex(tab => tab.name === 'configurators');
+    if (configuratorsTabIndex !== -1) {
+      tabItems.value.splice(configuratorsTabIndex, 1);
+    }
+  }
+
+  if (propertyId) {
+    updateField(
+        showConfig,
+        'property',
+        {
+          clickable: true,
+          clickUrl: { name: 'properties.properties.show', params: { id: propertyId } },
+    });
+  }
+  loading.value = false;
+};
 
 </script>
 
@@ -30,18 +61,22 @@ const showConfig = showConfigConstructor(t, id.value,);
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'inventory.inventory.list' }, name: t('inventory.title') },
-                   { path: { name: 'inventory.inventory.show', params: { id: id } }, name: t('inventory.title') }]" />
+          :links="[{ path: { name: 'properties.values.list' }, name: t('properties.values.title') },
+                   { path: { name: 'properties.values.show', params: { id: id } }, name: t('properties.values.show.title') }]" />
     </template>
 
    <template v-slot:content>
       <Card>
+        <Loader :loading="loading" />
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralShow :config="showConfig" />
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
           </template>
-          <template v-slot:history>
-            TO BE IMPLEMENTED
+          <template v-slot:products>
+             <ProductList :id="id" />
+          </template>
+          <template v-slot:configurators>
+            <RulesList v-if="isProductType" :id="id" />
           </template>
         </Tabs>
       </Card>

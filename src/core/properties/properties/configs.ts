@@ -207,7 +207,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addEdit: true,
   editUrlName: 'properties.properties.edit',
   showUrlName: 'properties.properties.show',
-  addShow: false,
+  addShow: true,
   addDelete: true,
   addPagination: true,
   deleteMutation: deletePropertyMutation,
@@ -240,6 +240,11 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     {
       label: t('properties.properties.labels.isPublicInformation'),
       name: 'isPublicInformation',
+      type: FieldType.Boolean
+    },
+    {
+      label: t('properties.properties.labels.addToFilters'),
+      name: 'addToFilters',
       type: FieldType.Boolean
     }
   ]
