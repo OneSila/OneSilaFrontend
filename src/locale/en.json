@@ -888,9 +888,9 @@
           "header": "VAT Included",
           "content": "If you're selling including VAT, eg to end consumers mark as True. For trade customers, mark as False."
         },
-        "autoUpdate": {
-          "header": "Auto Update",
-          "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
+        "autoUpdatePrices": {
+          "header": "Auto Update Prices",
+          "content": "Enable it if you want to keep prices updated based on currency changes."
         },
         "discountPercentage": {
           "header": "Discount Percentage",
@@ -917,7 +917,7 @@
       },
       "labels": {
         "vatIncluded": "VAT Included",
-        "autoUpdate": "Auto Update"
+        "autoUpdatePrices": "Auto Update Prices",
       },
       "edit": {
         "title": "Edit Price List"

@@ -25,7 +25,7 @@ onMounted(async () => {
   });
 
   if (data && data.salesPriceList) {
-    const autoUpdatePrice = data.salesPriceList.autoUpdate;
+    const autoUpdatePrices = data.salesPriceList.autoUpdatePrices;
     productIds.value = filterAndExtractIds(data.salesPriceList.salespricelistitemSet, ['product', 'id']);
 
     formConfig.value = {
@@ -35,7 +35,7 @@ onMounted(async () => {
         createSalesPriceListItemMutation,
         'createSalesPriceListItem',
         priceListId.value.toString(),
-        autoUpdatePrice,
+        autoUpdatePrices,
         productIds.value
       ),
       submitAndContinueUrl: { name: 'sales.priceLists.items.edit', params: { priceListId: priceListId.value } }

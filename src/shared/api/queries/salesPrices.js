@@ -64,7 +64,7 @@ export const salesPriceListsQuery = gql`
         node {
           id
           name
-          discount
+          discountPcnt
           notes
           currency {
             id
@@ -72,7 +72,7 @@ export const salesPriceListsQuery = gql`
             isoCode
           }
           vatIncluded
-          autoUpdate
+          autoUpdatePrices
           customers {
             id
             name
@@ -145,7 +145,7 @@ export const getSalesPriceListQuery = gql`
     salesPriceList(id: $id) {
       id
       name
-      discount
+      discountPcnt
       notes
       currency {
         id
@@ -153,7 +153,7 @@ export const getSalesPriceListQuery = gql`
         isoCode
       }
       vatIncluded
-      autoUpdate
+      autoUpdatePrices
       startDate
       endDate
       customers {

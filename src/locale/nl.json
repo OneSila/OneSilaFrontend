@@ -888,7 +888,7 @@
           "header": "Inclusief BTW",
           "content": "Verkoopt u Incl BTW of aan Particulieren?  Dan wilt uw deze optie aanzetten.  Voor B2B klanten wilt u deze waarschijnlijk niet aanzetten."
         },
-        "autoUpdate": {
+        "autoUpdatePrices": {
           "header": "Automatisch prijzen updaten",
           "content": "Zet deze optie aan indien prijzen automatisch up-to-date moeten blijven met de valuta-wijzigingen."
         },
@@ -917,7 +917,7 @@
       },
       "labels": {
         "vatIncluded": "Inclusief BTW",
-        "autoUpdate": "Auto Update"
+        "autoUpdatePrices": "Prijzen automatisch up to date houden"
       },
       "edit": {
         "title": "Prijslijst bewerken"
