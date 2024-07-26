@@ -11,6 +11,7 @@ import { propertiesQuery, propertySelectValuesQuery } from "../../../../../../sh
 import apolloClient from "../../../../../../../apollo-client";
 import {Selector} from "../../../../../../shared/components/atoms/selector";
 import {QueryFormField} from "../../../../../../shared/components/organisms/general-form/formConfig";
+import {selectValueOnTheFlyConfig} from "../../../../../properties/property-select-values/configs";
 
 const props = defineProps<{form: FormType, additionalFieldsForm: AdditonalFormFields}>();
 const productTypeId = ref(null);
@@ -51,6 +52,7 @@ const fetchProductType = async () => {
           multiple: false,
           filterable: true,
           formMapIdentifier: 'id',
+          createOnFlyConfig: selectValueOnTheFlyConfig(t, productTypeId.value)
       }
     }
 }

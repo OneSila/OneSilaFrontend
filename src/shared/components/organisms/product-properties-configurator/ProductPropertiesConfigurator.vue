@@ -19,8 +19,10 @@ import {PreviewView} from "./containers/preview-view";
 import {Accordion} from "../../atoms/accordion";
 import {Checkbox} from "../../atoms/checkbox";
 import {Label} from "../../atoms/label";
+import {useRouter} from "vue-router";
 
 const { t } = useI18n();
+const router = useRouter();
 
 export interface Property {
   id: string;
@@ -291,6 +293,13 @@ const accordionItems = [
   { name: 'preview', label: t('properties.rule.preview.previewTitle'), icon: 'eye' }
 ];
 
+const openInNewTab = (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  const url = router.resolve({ name: 'properties.properties.create' }).href;
+  window.open(url, '_blank');
+}
+
 onMounted(fetchData);
 
 </script>
@@ -315,9 +324,9 @@ onMounted(fetchData);
           </label>
         </FlexCell>
         <FlexCell center>
-          <Link class="btn-primary p-2.5 rounded-full" :path="{ name: 'properties.values.create' }" target="_blank">
+          <Button class="btn-primary p-2.5 rounded-full" @click="openInNewTab">
             <Icon name="plus" />
-          </Link>
+          </Button>
         </FlexCell>
         <FlexCell center>
           <Button :customClass="'btn btn-primary p-2 rounded-full'" @click="fetchData">

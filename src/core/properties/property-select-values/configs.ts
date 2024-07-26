@@ -3,9 +3,15 @@ import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import {getPropertySelectValueQuery, propertiesQuery, propertySelectValuesQuery} from "../../../shared/api/queries/properties.js";
-import {deletePropertyMutation, deletePropertySelectValueMutation, updatePropertySelectValueMutation} from "../../../shared/api/mutations/properties.js";
+import {
+  createPropertySelectValueMutation,
+  deletePropertyMutation,
+  deletePropertySelectValueMutation,
+  updatePropertySelectValueMutation
+} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getPropertySelectValueSubscription } from '../../../shared/api/subscriptions/properties.js';
+import {createCompanyInvoiceAddressMutation} from "../../../shared/api/mutations/contacts";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -37,6 +43,27 @@ export const baseFormConfigConstructor = (
     }
   ],
 });
+
+export const selectValueOnTheFlyConfig = (t: Function, propertyId):CreateOnTheFly => ({
+  config: {
+    cols: 1,
+    type: FormType.CREATE,
+    mutation: createPropertySelectValueMutation,
+    mutationKey: 'createPropertySelectValue',
+    submitUrl: propertyId !== null  ? { name: 'properties.properties.show', params: {id: propertyId}, query: {tab: 'values'} } : { name: 'properties.values.list' },
+    submitAndContinueUrl: { name: 'properties.values.edit' },
+    deleteMutation: deletePropertyMutation,
+    fields: [
+        getPropertyField(t, propertyId, FormType.CREATE),
+      {
+        type: FieldType.Text,
+        name: 'value',
+        label: t('properties.values.show.title'),
+        placeholder: t('properties.values.placeholders.value')
+      },
+    ],
+  }
+})
 
 export const editFormConfigConstructor = (
   t: Function,
