@@ -1204,7 +1204,6 @@
           "text": "Dit zal de demo-data aanmaken.  Verdergaan?",
           "confirmButtonText": "Aanmaken Demo Data"
         },
-        "succefullyCreated": "Demo Data wordt aangemaakt.",
         "successfullyCreated": "Demo data is aangemaakt."
       },
       "delete": {
@@ -1215,7 +1214,6 @@
           "text": "Dit zal alle Demo Data van uw account verwijderen.  Verdergaan?",
           "confirmButtonText": "Verwijderen Demo Data"
         },
-        "succefullyDelete": "Demo Data wordt verwijderd.",
         "successfullyDelete": "Demo data is verwijderd."
       }
     }

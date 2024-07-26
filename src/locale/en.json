@@ -1206,7 +1206,6 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "succefullyCreated": "Demo data will be added momentarily.",
         "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
@@ -1217,7 +1216,6 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "succefullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
     }
