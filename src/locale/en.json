@@ -1373,8 +1373,8 @@
         "noPropertiesLeft": "No properties available",
         "dragAndDrop": "Drag and drop properties here",
         "noProductType": "Add a product-type",
-        "noRequiredInConfigurator": "To use \"Optional in Configurator\" ensure you have at least one \"Required in Configurator\" setting present.",
-        "optionalWithoutRequired": "Ensure there is at least one \"Required in Configurator\" options selected before adding \"Optional in Configurator\" settings.",
+        "noRequiredInConfigurator": "To use Optional in Configurator ensure you have at least one Required in Configurator setting present.",
+        "optionalWithoutRequired": "Ensure there is at least one Required in Configurator options selected before adding Optional in Configurator settings.",
         "noAddedProperties": "You need to add some properties for the rule!"
       },
       "alert": {
