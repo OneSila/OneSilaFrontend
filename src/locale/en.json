@@ -138,7 +138,6 @@
       },
       "toast": {
         "generalError": "An error occurred",
-        "tooLongError": "The {fieldName} is too long. It allows maximum {max} characters!",
         "submitSuccessCreate": "Your entry has been successfully created!",
         "submitSuccessUpdate": "Your changes have been saved successfully!",
         "deleteSuccess": "The item has been successfully deleted.",
@@ -146,7 +145,8 @@
         "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
         "somethingWentWrong": "Something went wrong!",
         "deletionFailed": "Deletion operation failed. Please contact the administrators.",
-        "clipboardSuccess": "Your text was succefully copied to the clipboard"
+        "clipboardSuccess": "Your text was succefully copied to the clipboard",
+        "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!"
       }
     },
     "button": {
@@ -167,18 +167,17 @@
       "show": "Show",
       "submit": "Submit",
       "add": "Add",
-      "change": "Change",
       "download": "Download",
       "uploadNew": "Upload New",
       "create": "Create",
       "skip": "Skip",
-      "generate": "Generate"
+      "generate": "Generate",
+      "change": "Change"
     },
     "labels": {
       "createdAt": "Created At",
       "updatedAt": "Updated At",
       "status": "Status",
-      "dateRange": "Date Range",
       "role": "Role",
       "or": "Or",
       "name": "Name",
@@ -206,6 +205,7 @@
       "seconds": "seconds",
       "minutes": "minutes",
       "home": "Home",
+      "dateRange": "Date Range",
       "image": "Image",
       "preview": "Preview"
     },
@@ -230,7 +230,7 @@
       "phoneInput": {
         "countrySelector": {
           "placeholder": "Country code",
-          "error": "Non existent country code",
+          "error": "Country code doesn't exist",
           "searchPlaceholder": "Search a country"
         },
         "phoneInput": {
@@ -253,14 +253,6 @@
       "fileRejected": "File rejected"
     },
     "components": {
-      "organisms": {
-        "imageAssigner": {
-          "addButton": {
-            "uploadNew": "Upload new image",
-            "addExisting": "Existing images"
-          }
-        }
-      },
       "molecules": {
         "selector": {
           "defaultPlaceholder": "Select an option",
@@ -269,6 +261,14 @@
         },
         "selectAllCheckbox": {
           "label": "Select All"
+        }
+      },
+      "organisms": {
+        "imageAssigner": {
+          "addButton": {
+            "uploadNew": "Upload new image",
+            "addExisting": "Existing images"
+          }
         }
       }
     }
@@ -356,7 +356,6 @@
       "tokenHeader": "Recover Account",
       "tokenDescription": "You are one step away. Please confirm your account recovery.",
       "tokenLoginFailed": "Failed to authenticate token.",
-      "loginPrompt": "Wanna go back?",
       "button": {
         "recover": "Recover"
       },
@@ -366,7 +365,8 @@
       "placeholders": {
         "email": "Enter Email"
       },
-      "tokenFailed": "Failed to recovery your account"
+      "tokenFailed": "Failed to recovery your account",
+      "loginPrompt": "Go back?"
     }
   },
   "profile": {
@@ -538,42 +538,42 @@
     },
     "eanCodes": {
       "title": "Ean Codes",
-      "updatedSuccessfully": "Ean Code was successfully updated!",
-      "createdSuccessfully": "Ean Code was successfully created!",
-      "releaseSuccessfully": "Ean Code was successfully released!",
-      "assignSuccessfully": "Ean Code was successfully assigned!",
-      "generateSuccessfully": "Ean code generation process started succefully! Come back in a few seconds to see your new ean codes.",
       "create": {
         "title": "Generate Ean Codes"
       },
       "edit": {
         "title": "Edit Ean Code"
       },
-      "assign": {
-        "disclaimer": "Wanna use a ean code from a supplier product? Just select one.",
-        "assign": "Wanna use an already existent ean code. Assign one very quick.",
-        "release": "You don't want to use the curren EAN Code anymore? Release it but keep in mind it will be marked as already used.",
-        "error": "You don't have any ean code to use neither external ean codes from the supplier products.",
-        "errorSolution": "Click here to generate new ean codes",
-        "button": {
-          "assign": "Assign",
-          "release": "Release"
-        }
-      },
       "labels": {
         "eanCode": "EAN code",
+        "isAssigned": "Is assigned to product?",
         "productName": "Product Name",
         "internal": "Internal",
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
-        "currentEanCode": "Current EAN Code",
-        "externalEanCode": "External EAN code",
-        "isAssigned": "Is assigned to product?"
+        "currentEanCode": "Current EanCode",
+        "externalEanCode": "External EanCode"
       },
       "placeholders": {
         "eanCode": "Enter EAN code",
-        "externalEanCode": "Fill with the EAN code you have from the supplier",
-        "prefix": "Enter the bought prefix"
+        "externalEanCode": "Supplier EanCode.  Ex: 0799439112766",
+        "prefix": "Enter your company prefix"
+      },
+      "updatedSuccessfully": "EanCode updated",
+      "createdSuccessfully": "EanCode created",
+      "releaseSuccessfully": "EanCode released",
+      "assignSuccessfully": "EanCode assigned",
+      "generateSuccessfully": "EanCode generation process started.  Come back later to see the result.",
+      "assign": {
+        "disclaimer": "Select one of the available supplier EanCodes",
+        "assign": "Assign an available internal EanCode",
+        "release": "Release EanCode? NOTE: keep in mind that it will no longer be available for other products.",
+        "error": "No EanCodes available.  Assign codes to the supplier products, or purchase some codes from GS1",
+        "errorSolution": "Generate EanCodes",
+        "button": {
+          "assign": "Assign",
+          "release": "Release"
+        }
       }
     },
     "translation": {
@@ -701,11 +701,11 @@
             }
           }
         },
-        "createSuccessfully": "Product was successfully created!"
+        "createSuccessfully": "Product Created"
       },
       "edit": {
         "updateSuccefully": "Product was succefully updated!",
-        "updateSuccessfully": "Product was successfully updated!"
+        "updateSuccessfully": "Product Updated"
       },
       "show": {
         "title": "Product"
@@ -852,7 +852,6 @@
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
       "updatedSuccefully": "The price for currency {currency} was succefully updated!",
-      "createSuccefully": "The price for currency {currency} was succefully created!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
@@ -863,7 +862,8 @@
         "discountAmount": "Enter discount amount",
         "discountPercentage": "Enter discount percentage"
       },
-      "updatedSuccessfully": "The price for currency {currency} was successfully updated!"
+      "updatedSuccessfully": "Price for currency {currency} Updated",
+      "createSuccefully": "Price for currency {currency} was created"
     },
     "priceLists": {
       "title": "Prices Lists",
@@ -872,9 +872,9 @@
           "header": "Name",
           "content": "Name your pice list. Eg Wholesale Europe."
         },
-        "discountPercentage": {
-          "header": "Discount Percentage",
-          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
+        "discountAmount": {
+          "header": "Discount Amount",
+          "content": "The discount amount section refers to the percentage of the discount."
         },
         "currency": {
           "header": "Currency",
@@ -892,16 +892,17 @@
           "header": "Auto Update",
           "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
         },
+        "discountPercentage": {
+          "header": "Discount Percentage",
+          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
+        },
         "dateRange": {
           "header": "Date Range",
-          "content": "Specify the start and end dates for the price list to be active. Leave these fields empty for a permanent promotion. This is useful for setting up temporary promotions."
+          "content": "Specify the start and end dates for the price list to be active. You can also leave these empty for a permanent price list. "
         }
       },
       "create": {
         "title": "Create Price List"
-      },
-      "edit": {
-        "title": "Edit Price List"
       },
       "show": {
         "title": "Price List"
@@ -917,6 +918,9 @@
       "labels": {
         "vatIncluded": "VAT Included",
         "autoUpdate": "Auto Update"
+      },
+      "edit": {
+        "title": "Edit Price List"
       }
     },
     "tabs": {
@@ -956,8 +960,8 @@
       "labels": {
         "unitPrice": "Unit Price",
         "sku": "SKU",
-        "supplierCurrency": "In supplier currency {currency}",
-        "supplier": "Supplier"
+        "supplier": "Supplier",
+        "supplierCurrency": "In supplier currency {currency}"
       },
       "placeholders": {
         "unitPrice": "Enter unit price"
@@ -965,7 +969,7 @@
       "alert": {
         "prices": {
           "succefullyUpdated": "Succefully updated the prices!",
-          "successfullyUpdated": "successfully updated the prices!"
+          "successfullyUpdated": "Prices Updated"
         }
       },
       "help": {
@@ -1097,9 +1101,6 @@
       "create": {
         "title": "Add Currency"
       },
-      "edit": {
-        "title": "Edit Currency"
-      },
       "labels": {
         "isoCode": "ISO Code",
         "symbol": "Symbol",
@@ -1156,6 +1157,9 @@
           "header": "Comment",
           "content": "No special action here, just a field for note taking."
         }
+      },
+      "edit": {
+        "title": "Edit Currency"
       }
     },
     "vatRates": {
@@ -1193,6 +1197,14 @@
         "unit": "Enter unit"
       }
     },
+    "currency": {
+      "create": {
+        "title": "Create Currency"
+      },
+      "edit": {
+        "title": "Edit Currency"
+      }
+    },
     "internalCompanies": {
       "title": "Internal Companies"
     },
@@ -1206,6 +1218,7 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
+        "succefullyCreated": "Demo data will be added momentarily.",
         "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
@@ -1216,6 +1229,7 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
+        "succefullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
     }
@@ -1235,30 +1249,30 @@
         "wizard": {
           "stepOne": {
             "title": "General",
-            "content": "Please add a name and the configuration of the property"
+            "content": "Choose a name for your property"
           },
           "stepTwo": {
             "title": "Type",
-            "content": "Select the type based on the purpose of the property",
+            "content": "Select the right type for your property",
             "example": {
-                "int": "Validate whole numbers. Eg: 123",
-                "float": "Validate decimal numbers. Eg: 2.5",
-                "text": "Allow to add text. Eg: 'Bestseller 5'",
-                "description": "Used for texts longer that 255 characters",
-                "boolean": "Used for decision properties",
-                "date": "Used to only show the date",
-                "datetime": "Used to only date and time",
-                "select": "Choose a single option from predefined values. Ideal for size or color selection.",
-                "multiselect": "Select multiple options from predefined values. Useful for attributes like washing instructions.",
-                "preview": {
-                  "select": "Size",
-                  "multiselect": {
-                    "title": "Materials",
-                    "cotton": "Cotton",
-                    "wool": "Wool",
-                    "silk": "Silk"
-                  }
+              "int": "Adjustable for every product. Eg: 123.",
+              "float": "Adjustable for every product. Eg: 2.5",
+              "text": "Adjustable for every product.  Eg: Made in the workshop of Philip Webb during his early period. (Max 255 characters)",
+              "description": "Identical to short description, but store more than 255 characters",
+              "boolean": "True or False values",
+              "date": "Usable to set a date",
+              "datetime": "Usable to set a date and time",
+              "select": "Choose a single option from predefined values. Eg size or color selection.  Usable for product-filtering on websites.",
+              "multiselect": "Choose multiple options from predefined values. Useful for attributes like washing instructions. Usable for product-filtering on websites where supported.",
+              "preview": {
+                "select": "Size",
+                "multiselect": {
+                  "title": "Materials",
+                  "cotton": "Cotton",
+                  "wool": "Wool",
+                  "silk": "Silk"
                 }
+              }
             }
           }
         }
@@ -1271,7 +1285,7 @@
       },
       "labels": {
         "isPublicInformation": "Public Information",
-        "addToFilters": "Add on filters",
+        "addToFilters": "Add to filters",
         "isProductType": "Product Type",
         "internalName": "Internal Name",
         "valueValidator": "Value Validator"
@@ -1282,11 +1296,11 @@
         "valueValidator": "Enter value validator"
       },
       "help": {
-        "type": "This cannot be changed later!",
-        "isPublicInformation": "They will be added in the integrations.",
-        "addToFilters": "They will be used in integrations as filters.",
+        "type": "Cannot be changed.",
+        "isPublicInformation": "Public information will sync to various integrations and websites.",
+        "addToFilters": "Can be used for product filtering in website integrations.",
         "internalName": "Name used in integrations",
-        "valueValidator": "Advanced regex value validator."
+        "valueValidator": "Advanced Regular Expression validator."
       },
       "types": {
         "int": "Whole Number",
@@ -1340,55 +1354,55 @@
         "type": "Select how this property should be handled for the product."
       },
       "preview": {
-      "previewTitle": "Preview of Selected Configurations",
-      "productText": "All products in the {name} category will have:",
-      "productTextDisclaimer": "If your products in the {name} category are sold as individual items without options, ignore the 'In Configurator' choices.",
-      "requiredInConfiguratorText": "{name} is needed when choosing product options and must be picked by the user.",
-      "optionalInConfiguratorText": "{name} is needed for the product but will only show when options vary.",
-      "requiredText": "{name} is needed for the product and must be included.",
-      "optionalText": "{name} can be included for the product, but it is not required.",
+        "previewTitle": "Preview of Configuration",
+        "productText": "Configuration of {name} products will look like:",
+        "productTextDisclaimer": "If {name} products are offered as Configurable products, the configurator properties will be used.  Otherwise they will be treated as required properties",
+        "requiredInConfiguratorText": "{name} will be show to the user as a choice.",
+        "optionalInConfiguratorText": "{name} will be shown as a choice only if there are other variations available.",
+        "requiredText": "{name} is required to complete the product information",
+        "optionalText": "{name} is optional and not required to complete the product information",
         "productView": {
           "addToCart": "Add to cart",
-          "optionalInConfiguratorTextMoreValues": "If it has more than one value it will show like this",
-          "optionalInConfiguratorTextOneValue": "If it has one value it will show like this",
-          "optional": "If you add the value",
+          "optionalInConfiguratorTextMoreValues": "If there are multiple options available it will show like this",
+          "optionalInConfiguratorTextOneValue": "If there is only one value available, this is what it will look like",
+          "optional": "Only when value is present",
           "givenValue": "Given value"
         }
       },
       "error": {
         "noPropertiesLeft": "No properties available",
         "dragAndDrop": "Drag and drop properties here",
-        "noProductType": "Please add a product type!",
-        "noRequiredInConfigurator": "In order to have an optional one we need to have a required in configurator first. So the configurator will have at least one value!",
-        "optionalWithoutRequired": "Cannot have optional in configurator without having at least one required in configurator item.",
+        "noProductType": "Add a product-type",
+        "noRequiredInConfigurator": "To use \"Optional in Configurator\" ensure you have at least one \"Required in Configurator\" setting present.",
+        "optionalWithoutRequired": "Ensure there is at least one \"Required in Configurator\" options selected before adding \"Optional in Configurator\" settings.",
         "noAddedProperties": "You need to add some properties for the rule!"
       },
       "alert": {
-        "updateSuccess": "The rule was succefully updated!",
-        "createSuccess": "The rule was succefully created!",
-        "createProductProperty": "Product property was succefully created",
-        "updateProductProperty": "Product property was succefully updated",
-        "deleteProductProperty": "Product property was succefully deleted"
+        "updateSuccess": "Rule Updated",
+        "createSuccess": "Rule Created",
+        "createProductProperty": "Product Property Created",
+        "updateProductProperty": "Product Property Updated",
+        "deleteProductProperty": "Product Property Deleted"
       },
       "configTypes": {
         "requiredInConfigurator": {
           "title": "Required in Configurator",
-          "example": "This property must be selected by the user when choosing product options such as size or color."
+          "example": "Select if you wish to allow customers to make a selection through Configurable products. Will be treated as required property."
         },
         "optionalInConfigurator": {
           "title": "Optional in Configurator",
-          "example": "This property can be optionally selected by the user when choosing product options such as size or color. For umbrella products, if all variations have the same property, it will not be shown."
+          "example": "Similar to Required in Configurator,  but only if there are different choices available."
         },
         "required": {
           "title": "Required",
-          "example": "This property must be provided for the product but will not be displayed when choosing product options but is important for having good data.."
+          "example": "This property will be enforced as required on products with the selected product-type."
         },
         "optional": {
           "title": "Optional",
-          "example": "This property can be provided for the product but is not mandatory."
+          "example": "This property will be added on the product pages, but not enforced as required."
         },
-        "helpText": "The Required in Configurator and Optional in Configurator are relevant only for Umbrella products, for the rest it will simply act as a required property",
-        "title": "What role this property want to have?"
+        "helpText": "The Required in Configurator and Optional in Configurator are relevant only for Configurable products only.  On other product-types they will simply act as a required properties.",
+        "title": "How should the property behave for this product-type?"
       }
     }
   }
