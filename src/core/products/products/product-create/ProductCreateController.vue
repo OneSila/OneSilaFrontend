@@ -26,6 +26,7 @@ import {SupplierStep} from "./containers/supplier-step";
 import {createSalesPriceMutation} from "../../../../shared/api/mutations/salesPrices.js";
 import {createSupplierProductMutation} from "../../../../shared/api/mutations/purchasing.js";
 import {getProductQuery} from "../../../../shared/api/queries/products.js";
+import {createProductPropertyMutation} from "../../../../shared/api/mutations/properties.js";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -51,6 +52,10 @@ const form: FormType = reactive({
 });
 
 const additionalFieldsForm: AdditonalFormFields = reactive({
+    productType: {
+      id: null,
+      propertyId: null
+    },
     relatedProducts: [],
     supplierProduct: {
       id: null,
@@ -178,6 +183,23 @@ const createSalesPrice = async (productId) => {
   }
 };
 
+const createProductType = async (productId) => {
+  try {
+    await apolloClient.mutate({
+      mutation: createProductPropertyMutation,
+      variables: {
+        data: {
+          product: { id: productId },
+          property: { id: additionalFieldsForm.productType.propertyId },
+          valueSelect: { id: additionalFieldsForm.productType.id }
+        }
+      },
+    });
+  } catch (error) {
+    console.error("Product type creation error:", error);
+  }
+};
+
 const createRelatedProducts = async (productId) => {
     const mutation = getRelatedProductsMutation(form.type);
     const variables = getRelatedProductsVariables(productId);
@@ -234,6 +256,11 @@ const processAdditionalFields = async (productId) => {
   // Create sales price if the product is for sale and it's not an Umbrella type
   if (form.forSale && additionalFieldsForm.price.amount && form.type !== ProductType.Umbrella) {
     await createSalesPrice(productId);
+  }
+
+  // Create product type
+  if (additionalFieldsForm.productType.id !== null) {
+    await createProductType(productId);
   }
 
   // Handle supplier product for Simple and Dropship product types
@@ -329,6 +356,11 @@ const handleEmptyVariations = () => {
   additionalFieldsForm.relatedProducts = [];
 };
 
+const handleProductTypePropertyId = (id) => {
+  additionalFieldsForm.productType.propertyId = id;
+};
+
+
 const handleProductSupplierName = () => {
   if (additionalFieldsForm.supplierProduct.name === '') {
     additionalFieldsForm.supplierProduct.name = form.name;
@@ -397,7 +429,7 @@ const allowNextStep = computed(() => {
         </template>
 
         <template #generalInfoStep>
-          <GeneralInfoStep :form="form" @trigger-next-step="triggerNextStep" />
+          <GeneralInfoStep :form="form" :additional-fields-form="additionalFieldsForm" @trigger-next-step="triggerNextStep" @set-product-type-property-id="handleProductTypePropertyId" />
         </template>
 
         <template #forSaleStep>

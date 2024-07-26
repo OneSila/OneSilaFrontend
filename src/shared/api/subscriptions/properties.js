@@ -36,6 +36,7 @@ export const getPropertySelectValueSubscription = gql`
       property {
         id
         name
+        isProductType
       }
     }
   }
@@ -104,13 +105,9 @@ export const getProductPropertiesRuleSubscription = gql`
   subscription getProductPropertiesRuleSubscription($pk: String!) {
     productPropertiesRule(pk: $pk) {
       id
-      product {
+      productType {
         id
-        name
-      }
-      property {
-        id
-        name
+        value
       }
     }
   }

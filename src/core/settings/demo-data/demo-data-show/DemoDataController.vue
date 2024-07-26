@@ -75,7 +75,7 @@ const defaultSwalClasses = {
     })
 
     if (data && data.deleteDemoData) {
-      Toast.success(t('settings.demoData.delete.succefullyDelete'))
+      Toast.success(t('settings.demoData.delete.successfullyDelete'))
     }
   }
 

@@ -21,6 +21,7 @@ const formConfig = {
     FormType.CREATE,
     createPropertySelectValueMutation,
     'createPropertySelectValue',
+      route.query.propertyId ? route.query.propertyId.toString() : null
   ),
 };
 

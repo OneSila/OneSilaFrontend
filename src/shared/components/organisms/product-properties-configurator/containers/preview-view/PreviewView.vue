@@ -19,9 +19,6 @@ const emit = defineEmits(['imaged-added']);
 
 <template>
   <div v-if="productType !== null && addedProperties.length > 0">
-    <div class="mb-4">
-      <h3 class="text-xl font-semibold">{{ t('properties.rule.preview.previewTitle') }}</h3>
-    </div>
     <div class="my-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
     <div>
     <p class="text-md mb-2">{{ t('properties.rule.preview.productText', {name: productType.value}) }}:</p>
@@ -87,10 +84,6 @@ const emit = defineEmits(['imaged-added']);
                       </div>
                   </fieldset>
                     <fieldset v-if="property.configType == ConfigTpes.OPTIONAL_IN_CONFIGURATOR" class="mt-2 opacity-50">
-                      <div class="text-danger text-small blink-animation mt-1">
-                        <Icon size="sm" name="exclamation-circle" />
-                        <span class="ml-1">{{ t('properties.rule.preview.productView.optionalInConfiguratorTextMoreValues')  }}</span>
-                      </div>
                       <label>{{ property.name }}</label>
                       <div class="grid grid-cols-3 gap-3 sm:grid-cols-6">
 
@@ -103,6 +96,10 @@ const emit = defineEmits(['imaged-added']);
                           <input type="radio" name="size-choice" value="XS" class="sr-only">
                           <span>2</span>
                         </label>
+                      </div>
+                      <div class="text-danger text-small blink-animation mt-1">
+                        <Icon size="sm" name="exclamation-circle" />
+                        <span class="ml-1">{{ t('properties.rule.preview.productView.optionalInConfiguratorTextMoreValues')  }}</span>
                       </div>
                   </fieldset>
                   </div>

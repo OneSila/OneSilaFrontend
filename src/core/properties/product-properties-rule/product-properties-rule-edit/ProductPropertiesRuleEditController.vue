@@ -23,6 +23,7 @@ import {DangerButton} from "../../../../shared/components/atoms/button-danger";
 import {FormType} from "../../../../shared/components/organisms/general-form/formConfig";
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
 import {Property} from "../../../../shared/components/organisms/product-properties-configurator/ProductPropertiesConfigurator.vue";
+import {Loader} from "../../../../shared/components/atoms/loader";
 
 interface Item {
   id: string;
@@ -39,6 +40,7 @@ const initialProductType = ref(null);
 const initialItems: Ref<Property[]> = ref([]);
 const updatedAddedProperties: Ref<Property[]> = ref([]);
 const propertiesItemsMap: Ref<Record<string, Item>> = ref({})
+const loading = ref(false);
 
 const updateOrCreateItems = async () => {
   try {
@@ -106,6 +108,7 @@ const updateOrCreateItems = async () => {
   }
 };
 const fetchData = async () => {
+  loading.value = true;
   propertiesItemsMap.value = {}
   initialItems.value = []
 
@@ -137,6 +140,8 @@ const fetchData = async () => {
 
       updatedAddedProperties.value = initialItems.value;
     }
+
+  loading.value = false;
 }
 
 const handleSave = () => saveMutations(false);
@@ -201,6 +206,7 @@ onMounted(fetchData);
 
     <template v-slot:content>
       <Card class="mt-2 p-4">
+        <Loader :loading="loading" />
         <ProductPropertiesConfigurator
             v-if="initialProductType"
             :added-properties="initialItems"

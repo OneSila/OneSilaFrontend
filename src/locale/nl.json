@@ -61,7 +61,7 @@
           "details": "Een klant is een bedrijf of consument waar u aan verkoopt.  U kan deze later gebruiken om orders aan te maken."
         },
         "supplierProduct": {
-          "title": "Maak een nieuw product aan voor uw leverancier",
+          "title": "Maak een nieuw leveranciersproduct aan",
           "details": "Een leveranciersproduct dient om uw producten and voorraad transparant bij te houden."
         },
         "product": {
@@ -145,7 +145,8 @@
         "protectedDelete": "Je kan dit item niet verwijderen omdat het ergens anders wordt gebruikt.",
         "somethingWentWrong": "Er ging iets mis!",
         "deletionFailed": "Verwijderen mislukt.  Neem contact op met Support.",
-        "clipboardSuccess": "Text succesvol gekopieerd"
+        "clipboardSuccess": "Text succesvol gekopieerd",
+        "tooLongError": "{fieldName} is te lang.  Reduceer naar maximum {max} tekens."
       }
     },
     "button": {
@@ -170,7 +171,8 @@
       "uploadNew": "Uploaden",
       "create": "Aanmaken",
       "skip": "Overslaan",
-      "generate": "Genereren"
+      "generate": "Genereren",
+      "change": "Wijzig"
     },
     "labels": {
       "createdAt": "Gecreëerd op",
@@ -203,7 +205,9 @@
       "seconds": "seconden",
       "minutes": "minuten",
       "home": "Home",
-      "dateRange": "Periode"
+      "dateRange": "Periode",
+      "image": "Afbeelding",
+      "preview": "Preview"
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"
@@ -226,7 +230,7 @@
       "phoneInput": {
         "countrySelector": {
           "placeholder": "Landcode",
-          "error": "Kies het land",
+          "error": "Landcode bestaat niet",
           "searchPlaceholder": "Zoek het land"
         },
         "phoneInput": {
@@ -237,7 +241,9 @@
     },
     "tabs": {
       "general": "Algemeen",
-      "items": "Artikelen"
+      "items": "Artikelen",
+      "translations": "Vertalingen",
+      "advanced": "Geavanceerd"
     },
     "dropZone": {
       "multipleDraggingInstruction": "Sleep de bestanden hierheen, of klik uploaden",
@@ -255,6 +261,14 @@
         },
         "selectAllCheckbox": {
           "label": "Selecteer alles"
+        }
+      },
+      "organisms": {
+        "imageAssigner": {
+          "addButton": {
+            "uploadNew": "Upload nieuwe afbeelding",
+            "addExisting": "Bestaande afbeeldingen"
+          }
         }
       }
     }
@@ -352,7 +366,7 @@
         "email": "Voer e-mail in"
       },
       "tokenFailed": "Account herstellen mislukt",
-      "loginPrompt": "Teruggaan?"
+      "loginPrompt": "Terug?"
     }
   },
   "profile": {
@@ -525,7 +539,7 @@
     "eanCodes": {
       "title": "EAN Codes",
       "create": {
-        "title": "EAN Code aanmaken"
+        "title": "EAN Codes genereren"
       },
       "edit": {
         "title": "Bewerk EAN Code"
@@ -542,20 +556,20 @@
       },
       "placeholders": {
         "eanCode": "Voer EAN Code in",
-        "externalEanCode": "Vul de EAN Code van uw leverancier in",
-        "prefix": "Vul uw aangekochte prefix in"
+        "externalEanCode": "EanCode Leverancier.  bv: 0799439112766",
+        "prefix": "Vul uw de bedrijfsprefix in"
       },
       "updatedSuccessfully": "EAN Code opgeslagen.",
       "createdSuccessfully": "EAN code aangemaakt",
-      "releaseSuccessfully": "EAN Code vrijgelaten",
+      "releaseSuccessfully": "EAN Code losgelaten",
       "assignSuccessfully": "EAN Code Toegewezen",
       "generateSuccessfully": "EAN Codes worden aangemaakt.  Kom straks terug.",
       "assign": {
-        "disclaimer": "EAN Code van de leverancier gebruiken?  Selecteer ze uit deze lijst:",
-        "assign": "Bestaande EAN Code gebruiken? Wijs een toe.",
-        "release": "EAN Code niet meer gebruiken?  Je kan ze loslaten, maar let op! Ze kan niet opnieuw gebruikt worden.",
-        "error": "",
-        "errorSolution": "Nieuwe EAN Codes genereren",
+        "disclaimer": "Selecteer een EAN Code van uw leverancier",
+        "assign": "Wijs een bestaande EAN Code toe",
+        "release": "EAN Code loslaten?  LET OP! Ze kan niet opnieuw gebruikt worden.",
+        "error": "Geen EAN Code beschikbaar.  Wijs codes toe aan uw leveranciersproducten of schaf codes aan via GS1",
+        "errorSolution": "Genereer EAN Codes",
         "button": {
           "assign": "Toewijzen",
           "release": "Loslaten"
@@ -687,11 +701,11 @@
             }
           }
         },
-        "createSuccessfully": "Product is aangemaakt!"
+        "createSuccessfully": "Product aangemaakt"
       },
       "edit": {
         "updateSuccefully": "Wijzigingen voor het product zijn opgeslagen",
-        "updateSuccessfully": "Product is upgedate!"
+        "updateSuccessfully": "Product upgedate"
       },
       "show": {
         "title": "Product"
@@ -848,7 +862,7 @@
         "discountAmount": "Voeg kortingsprijs in",
         "discountPercentage": "Voer kortingspercentage in"
       },
-      "updatedSuccessfully": "Prijs in {currency} is upgedate",
+      "updatedSuccessfully": "Prijs in {currency} upgedate",
       "createSuccefully": "Prijs voor {currency} is aangemaakt."
     },
     "priceLists": {
@@ -864,7 +878,7 @@
         },
         "currency": {
           "header": "Valuta",
-          "content": "De valuta voor de prijslijst. Bv EUR"
+          "content": "Valuta voor de prijslijst. Bv EUR"
         },
         "customers": {
           "header": "Klanten",
@@ -872,7 +886,7 @@
         },
         "vatIncluded": {
           "header": "Inclusief BTW",
-          "content": "Verkoopt us Incl BTW?  Dan wilt uw deze optie aanzetten.  Voor B2B klanten wilt u deze waarschijnlijk niet aanzetten."
+          "content": "Verkoopt u Incl BTW of aan Particulieren?  Dan wilt uw deze optie aanzetten.  Voor B2B klanten wilt u deze waarschijnlijk niet aanzetten."
         },
         "autoUpdate": {
           "header": "Automatisch prijzen updaten",
@@ -880,11 +894,11 @@
         },
         "discountPercentage": {
           "header": "Kortingspercentage",
-          "content": ""
+          "content": "Het percentage korting die van die toegepast wordt."
         },
         "dateRange": {
           "header": "Periode",
-          "content": ""
+          "content": "Specificeer de start en eind-datum wanneer de lijst actief moet zijn.  Of laat de periode leeg indien ze permanent is."
         }
       },
       "create": {
@@ -947,7 +961,7 @@
         "unitPrice": "Eenheidsprijs",
         "sku": "SKU",
         "supplier": "Leverancier",
-        "supplierCurrency": ""
+        "supplierCurrency": "Leveranciersvalua {currency}"
       },
       "placeholders": {
         "unitPrice": "Voer eenheidsprijs in"
@@ -955,7 +969,7 @@
       "alert": {
         "prices": {
           "succefullyUpdated": "Prijzen opgeslagen!",
-          "successfullyUpdated": "prijzen zijn upgedate"
+          "successfullyUpdated": "Prijzen upgedate"
         }
       },
       "help": {
@@ -1085,7 +1099,7 @@
     "currencies": {
       "title": "Valuta's",
       "create": {
-        "title": "Valuta aanmaken"
+        "title": "Valuta toevoegen"
       },
       "labels": {
         "isoCode": "ISO Code",
@@ -1205,7 +1219,7 @@
           "confirmButtonText": "Aanmaken Demo Data"
         },
         "succefullyCreated": "Demo Data wordt aangemaakt.",
-        "successfullyCreated": "Demo data is aangemaakt."
+        "successfullyCreated": "Demo data wordt aangemaakt."
       },
       "delete": {
         "title": "Demo Data verwijderen",
@@ -1216,11 +1230,180 @@
           "confirmButtonText": "Verwijderen Demo Data"
         },
         "succefullyDelete": "Demo Data wordt verwijderd.",
-        "successfullyDelete": "Demo data is verwijderd."
+        "successfullyDelete": "Demo data wordt verwijderd."
       }
     }
   },
   "network": {
     "error": "Kon geen verbinding met de server maken. Controleer uw internet-verbinding."
+  },
+  "properties": {
+    "title": "Eigenschappen",
+    "properties": {
+      "title": "Eigenschappen",
+      "error": {
+        "duplicate": "Naam van deze eigenschap is reeds in gebruik"
+      },
+      "create": {
+        "title": "Eigenschap aanmaken",
+        "wizard": {
+          "stepOne": {
+            "title": "Algemeen",
+            "content": "Kies een naam voor de eigenschap"
+          },
+          "stepTwo": {
+            "title": "Type",
+            "content": "Selecteer het type van de eigenschap",
+            "example": {
+              "int": "Aanpasbaar voor elk product.  Bv: 123",
+              "float": "Aanpasbaar voor elk product.  Bv: 2,5",
+              "text": "Aanpasbaar voor elk product.  Bv: Geschilderd door Peter-Paul Rubens tijdens zijn vroege periode.",
+              "description": "Ideaal voor een korte omschrijving, maar niet meer dan 255 tekens",
+              "boolean": "Ja / Neen Keuze",
+              "date": "Bruikbaar om een datum toe te voegen op een product",
+              "datetime": "Bruikbaar om datum en tijd toe te voegen op een product",
+              "select": "Selecteer een enkele waarde uit een lijst.  Bv selectie van kleur.  Ook bruikbaar bij product-filtering op websites.",
+              "multiselect": "Selecteer meerdere waardes uit een lijst.  Bv selectie van wasinstructies.  Ook bruikbaar bij product-filtering op websites.",
+              "preview": {
+                "select": "Maat",
+                "multiselect": {
+                  "title": "Materialen",
+                  "cotton": "Katoen",
+                  "wool": "Wol",
+                  "silk": "Zijde"
+                }
+              }
+            }
+          }
+        }
+      },
+      "edit": {
+        "title": "Bewerk Eigenschap"
+      },
+      "show": {
+        "title": "Eigenschap"
+      },
+      "labels": {
+        "isPublicInformation": "Publieke Informatie",
+        "addToFilters": "Toevoegen aan filters",
+        "isProductType": "Product Type",
+        "internalName": "Interne Naam",
+        "valueValidator": "Waarde Validator"
+      },
+      "placeholders": {
+        "internalName": "Vul Interne naam in",
+        "size": "Maat",
+        "valueValidator": "Vul waarde validator in"
+      },
+      "help": {
+        "type": "Kan niet aangepast worden.",
+        "isPublicInformation": "Publieke information zal gesynchroniseerd worden naar integraties en websites.",
+        "addToFilters": "Kan gebruikt worden het filteren van product-info in website integraties",
+        "internalName": "Naam gebruikt in integraties",
+        "valueValidator": "Geavanceerde Reguliere Expressies validator"
+      },
+      "types": {
+        "int": "Geheel Getal",
+        "float": "Decimaal Getal",
+        "text": "Korte Tekst",
+        "description": "Tekst",
+        "boolean": "Ja / Neen Keuze",
+        "date": "Datum",
+        "datetime": "Datum en Tijd",
+        "select": "Enkele Keuze Selectie",
+        "multiselect": "Multiple Choice Selectie"
+      }
+    },
+    "values": {
+      "title": "Selectie Waardes",
+      "create": {
+        "title": "Creëer Waarde "
+      },
+      "edit": {
+        "title": "Bewerk Waarde"
+      },
+      "show": {
+        "title": "Waarde"
+      },
+      "labels": {
+        "value": "Waarde"
+      },
+      "placeholders": {
+        "value": "Voeg Waarde toe"
+      }
+    },
+    "rule": {
+      "title": "Product Eigenschap Regels",
+      "create": {
+        "title": "Creëer Product Eigenschap Regel"
+      },
+      "edit": {
+        "title": "Bewerk Product Eigenschap Regel"
+      },
+      "show": {
+        "title": "Product Eigenschap Regel"
+      },
+      "labels": {
+        "type": "Regel Type",
+        "propertyType": "Type Eigenschap"
+      },
+      "placeholders": {
+        "type": "Selecteer Type Regel"
+      },
+      "help": {
+        "type": "Selecteer het gedrag voor deze eigenschap"
+      },
+      "preview": {
+        "previewTitle": "Preview van de Configuratie",
+        "productText": "Configuratie van {name} ziet er zo uit:",
+        "productTextDisclaimer": "Als {name} producten als Configureerbare producten aangeboden worden de configurator instellen gebruikt.  Anders als gewone verplichte eigenschappen",
+        "requiredInConfiguratorText": "{name} zal als keuze getoond worden op de websites",
+        "optionalInConfiguratorText": "{name} zal enkel als keuze getoond worden indien er verschillende waardes relevant zijn",
+        "requiredText": "{name} is verplicht om de product-informatie af te werken",
+        "optionalText": "{name} is niet verplicht om de product-informatie af te werken",
+        "productView": {
+          "addToCart": "In Winkelmandje",
+          "optionalInConfiguratorTextMoreValues": "Bij meerdere beschikbare opties ziet het er zo uit:",
+          "optionalInConfiguratorTextOneValue": "Indien er maar één waarde beschikbaar is, zal het er zo uit zien",
+          "optional": "Enkel indien waarde ingevuld",
+          "givenValue": "Gegeven Waarde"
+        }
+      },
+      "error": {
+        "noPropertiesLeft": "Geen eigenschappen beschikbaar",
+        "dragAndDrop": "Versleep de items, of klik op ➕ om items toe te voegen",
+        "noProductType": "Voeg Product-Type toe",
+        "noRequiredInConfigurator": "Om \"Optioneel in Configurator\" te gebruiken dient er op zijn minst één \"Verplicht in Configurator\" instelling te zijn.",
+        "optionalWithoutRequired": "Zorg ervoor dat er op zijn minst één \"Verplicht in Configurator\" optie geselecteerd is vooraleer u \"Optioneel in Configurator\" kan gebruiken.",
+        "noAddedProperties": "U dient eigenschappen aan deze regel toe te voegen"
+      },
+      "alert": {
+        "updateSuccess": "Regel upgedate",
+        "createSuccess": "Regel aangemaakt",
+        "createProductProperty": "Product eigenschap aangemaakt",
+        "updateProductProperty": "Product eigenschap upgedate",
+        "deleteProductProperty": "Product eigenschap verwijderd"
+      },
+      "configTypes": {
+        "requiredInConfigurator": {
+          "title": "Verplicht in Configurator",
+          "example": "Gebruik indien klanten een selectie kunnen maken via Configureerbare producten.  Wordt beschouwd als verplichte eigenschap"
+        },
+        "optionalInConfigurator": {
+          "title": "Optioneel in Configurator",
+          "example": "Gelijkaardig met Verplicht in Configurator, maar alleen als er verschillende opties beschikbaar zijn."
+        },
+        "required": {
+          "title": "Verplicht",
+          "example": "Deze eigenschap gezien worden als verplicht op product met het geselecteerde product-type."
+        },
+        "optional": {
+          "title": "Optioneel",
+          "example": "Deze eigenschap zal optioneel toegevoegd worden de product-pagina."
+        },
+        "helpText": "De Verplicht- en Optioneel in Configurator zijn enkel relevant voor Configureerbare Producten.  Op andere product-types worden ze gezien als verplicht.",
+        "title": "Hoe moet de eigenschap zich gedragen op het product-type?"
+      }
+    }
   }
 }

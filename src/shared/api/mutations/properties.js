@@ -154,6 +154,19 @@ export const createProductPropertyMutation = gql`
         id
         name
       }
+      valueSelect {
+        id
+        value
+      }
+      valueMultiSelect {
+         id
+         value
+      }
+      valueBoolean
+      valueInt
+      valueFloat
+      valueDate
+      valueDatetime
     }
   }
 `;

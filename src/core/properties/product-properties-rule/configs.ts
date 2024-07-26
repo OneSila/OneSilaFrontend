@@ -25,7 +25,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addEdit: true,
   editUrlName: 'properties.rule.edit',
   showUrlName: 'properties.rule.show',
-  addShow: false,
+  addShow: true,
   addDelete: true,
   addPagination: true,
   deleteMutation: deleteProductPropertiesRuleMutation,
@@ -44,6 +44,12 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   addEdit: true,
   addDelete: true,
   fields: [
+    {
+      label: t('shared.labels.name'),
+      name: 'productType',
+      type: FieldType.NestedText,
+      keys: ['value']
+    },
   ]
 });
 

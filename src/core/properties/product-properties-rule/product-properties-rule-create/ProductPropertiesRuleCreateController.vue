@@ -4,7 +4,7 @@ import {useI18n} from 'vue-i18n';
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
-import {Ref, ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {ProductPropertiesConfigurator} from "../../../../shared/components/organisms/product-properties-configurator";
 import {Card} from "../../../../shared/components/atoms/card";
 import {CancelButton} from "../../../../shared/components/atoms/button-cancel";
@@ -20,13 +20,19 @@ import {
   createProductPropertiesRuleMutation
 } from "../../../../shared/api/mutations/properties.js";
 import {RuleItem} from "../configs";
-import { productPropertiesRulesQuery } from "../../../../shared/api/queries/properties.js";
+import {getPropertySelectValueQuery, productPropertiesRulesQuery} from "../../../../shared/api/queries/properties.js";
 import {ConfigTpes} from "../../../../shared/utils/constants";
+import {Loader} from "../../../../shared/components/atoms/loader";
 
 const router = useRouter();
+const route = useRoute();
 const { t } = useI18n();
 const updatedProductType = ref(null);
+const initialProductType: Ref<{ id: string, value: string } | null> = ref(null);
+
 const updatedAddedProperties: Ref<Property[]> = ref([]);
+const initialProductId = ref(route.query.productTypeId ? route.query.productTypeId.toString() : null);
+const loading = ref(true);
 
 const handleSave = () => saveMutations(false);
 const handleSaveAndContinue = () => saveMutations(true);
@@ -72,7 +78,11 @@ const saveMutations = async (continueEditing = false) => {
     return
   }
 
-  router.push({name: 'properties.rule.list'});
+  if (initialProductId.value == null ) {
+    router.push({name: 'properties.rule.list'});
+  } else {
+    router.push({name: 'properties.values.show', params: {id: initialProductId.value }, query: {tab: 'configurators'}});
+  }
 
 };
 
@@ -156,6 +166,33 @@ const handlePropertyType = (propertyType) => {
   updatedProductType.value = propertyType;
 }
 
+
+const fetchProductType = async () => {
+
+  if (initialProductId.value == null) {
+    loading.value = false;
+    return
+  }
+
+   const {data} = await apolloClient.query({
+      query: getPropertySelectValueQuery,
+      variables: { id: initialProductId.value },
+      fetchPolicy: 'network-only'
+    })
+
+    if (data && data.propertySelectValue) {
+      initialProductType.value = {
+        id: data.propertySelectValue.id,
+        value: data.propertySelectValue.value
+      }
+      updatedProductType.value = data.propertySelectValue.id
+    }
+    loading.value = false;
+}
+
+
+onMounted(fetchProductType)
+
 </script>
 
 <template>
@@ -169,9 +206,11 @@ const handlePropertyType = (propertyType) => {
 
    <template v-slot:content>
     <Card class="mt-2 p-4">
+      <Loader :loading="loading" />
       <ProductPropertiesConfigurator
+          v-if="!loading"
           :added-properties="[]"
-          :product-type="null"
+          :product-type="initialProductType"
           @update:added-properties="handleAddedProperties"
           @update:product-type="handlePropertyType" />
 

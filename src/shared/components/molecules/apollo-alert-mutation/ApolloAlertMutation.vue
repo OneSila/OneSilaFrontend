@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
 import { Toast } from "../../../modules/toast";
+import {displayApolloError} from "../../../utils";
 
 interface SwalOptions {
   title?: string;
@@ -69,10 +70,9 @@ const showError = (error) => {
       const deletionErrorPattern = /Cannot delete some instances of model '(.+?)' because they are referenced through protected foreign keys: (.+?)\./;
       const match = message.match(deletionErrorPattern);
       if (match && match[1]) {
-
         Toast.error(t('shared.alert.toast.protectedDelete'));
       } else {
-        Toast.error(message);
+        displayApolloError(error);
       }
   }
 };
