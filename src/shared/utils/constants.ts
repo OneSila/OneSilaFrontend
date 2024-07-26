@@ -28,6 +28,13 @@ export enum FieldType {
   Badge = "Badge",
 }
 
+export enum ConfigTpes {
+  REQUIRED_IN_CONFIGURATOR = 'REQUIRED_IN_CONFIGURATOR',
+  OPTIONAL_IN_CONFIGURATOR = 'OPTIONAL_IN_CONFIGURATOR',
+  REQUIRED = 'REQUIRED',
+  OPTIONAL = 'OPTIONAL'
+}
+
 export const OrderStatus = {
   DRAFT: 'DRAFT',
   PENDING: 'PENDING',
@@ -94,4 +101,21 @@ export const OnboardingStatus = {
   DASHBOARD_CARDS_PRESENTATION: 'DASHBOARD_CARDS_PRESENTATION',
   COMPLETE_DASHBOARD_CARDS: 'COMPLETE_DASHBOARD_CARDS',
   DONE: 'DONE',
+};
+
+export const PropertyTypes = {
+  INT: 'INT',
+  FLOAT: 'FLOAT',
+  TEXT: 'TEXT',
+  DESCRIPTION: 'DESCRIPTION',
+  BOOLEAN: 'BOOLEAN',
+  DATE: 'DATE',
+  DATETIME: 'DATETIME',
+  SELECT: 'SELECT',
+  MULTISELECT: 'MULTISELECT',
+};
+
+export const flagMapping: { [key: string]: string } = {
+  'en': '🇬🇧',
+  'nl': '🇳🇱'
 };

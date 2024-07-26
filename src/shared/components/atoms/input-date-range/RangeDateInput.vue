@@ -24,6 +24,6 @@ const onUpdated = (value) => {
 <template>
   <div>
     <Label v-if="label" class="font-semibold text-md">{{ label }}<span v-if="mandatory">*</span></Label>
-    <VueDatePicker v-model="date" :format="'MM/dd/yyyy'" range  @update:model-value="onUpdated" />
+    <VueDatePicker v-model="date" :format="'MM/dd/yyyy'" range  @update:model-value="onUpdated" :enable-time-picker="false" />
   </div>
 </template>

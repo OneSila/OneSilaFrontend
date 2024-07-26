@@ -59,6 +59,7 @@ import {
   faStarHalf,
   faEye,
   faArrowUp,
+  faArrowDown,
   faArrowRightArrowLeft,
   faHourglassStart,
   faBullseye,
@@ -127,7 +128,8 @@ import {
   faClipboard,
   faQuestion,
   faHistory,
-  faDatabase
+  faDatabase,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -255,6 +257,8 @@ library.add(faClipboard as IconDefinition);
 library.add(faQuestion as IconDefinition);
 library.add(faHistory as IconDefinition);
 library.add(faDatabase as IconDefinition);
+library.add(faArrowDown as IconDefinition);
+library.add(faEdit as IconDefinition);
 
 export default {
   install(app) {

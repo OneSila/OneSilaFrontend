@@ -38,7 +38,6 @@ const assignMedia = (media) => {
  emit('assign-media', media)
 }
 
-
 </script>
 
 <template>

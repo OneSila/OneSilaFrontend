@@ -117,7 +117,7 @@ const submitImages = async () => {
         <div class="mb-4">
           <h3 class="text-xl font-semibold leading-7 text-gray-900">{{ t('media.images.upload') }}</h3>
         </div>
-        <DropZone ref="dropZone" class="mt-2" :formats="['.jpg', '.png', '.jpeg']" @uploaded="onUploaded" :multiple="false" />
+        <DropZone ref="dropZone" class="mt-2" :formats="['.jpg', '.png', '.jpeg']" @uploaded="onUploaded" />
         <div class="gallery mt-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 p-4">
           <div v-for="(image, index) in images" :key="index" class="file-entry relative w-full h-full border border-gray-300 p-2 rounded-lg">
             <Flex vertical class="w-full">

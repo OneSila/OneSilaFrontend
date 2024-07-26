@@ -26,9 +26,11 @@ export const getRouteName = (type: string) => {
 };
 
 export const getFileName = (media: any) => {
-  if (media.type === TYPE_IMAGE) return truncateText(media.image.name, 50);
-  if (media.type === TYPE_DOCUMENT) return truncateText(media.file.name, 50);
-  if (media.type === TYPE_VIDEO) return truncateText(media.videoUrl);
+  const cleanFileName = (name) => name.replace(/^images\//, '');
+
+  if (media.type === TYPE_IMAGE) return truncateText(cleanFileName(media.image.name), 25);
+  if (media.type === TYPE_DOCUMENT) return truncateText(cleanFileName(media.file.name), 25);
+  if (media.type === TYPE_VIDEO) return truncateText(media.videoUrl, 25);
   return '-';
 };
 

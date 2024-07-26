@@ -224,3 +224,28 @@ export interface Product {
   productionTime?: number;
   baseProducts?: BaseProduct[]
 }
+
+export interface Select {
+  id: string | null;
+  value?: string;
+}
+
+export interface  ProductPropertyTranslation {
+  id?: string;
+  valueText?: string;
+  valueDescription?: string;
+  language: string | null;
+}
+
+export interface ProductPropertyValue {
+  id?: string;
+  property: { id: string, name: string, type: string; isProductType: boolean },
+  valueBoolean?: boolean | null;
+  valueInt?: number | null;
+  valueFloat?: number | null;
+  valueDate?: string | null;
+  valueDateTime?: string | null;
+  valueSelect?: Select | null;
+  valueMultiSelect?: Select[] | null
+  translation: ProductPropertyTranslation
+}

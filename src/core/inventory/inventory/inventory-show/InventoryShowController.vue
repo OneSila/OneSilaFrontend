@@ -31,7 +31,7 @@ const showConfig = showConfigConstructor(t, id.value,);
     <template v-slot:breadcrumbs>
       <Breadcrumbs
           :links="[{ path: { name: 'inventory.inventory.list' }, name: t('inventory.title') },
-                   { path: { name: 'inventory.inventory.show', params: { id: id } }, name: t('inventory.inventory.show.title') }]" />
+                   { path: { name: 'inventory.inventory.show', params: { id: id } }, name: t('inventory.title') }]" />
     </template>
 
    <template v-slot:content>

@@ -13,6 +13,7 @@ import SalesPricelistList from "../../tabs/sales-price-lists/SalesPricelistList.
 import VariationsView from "../../tabs/variations/VariationsView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
 import ProductSalePriceView from "../../tabs/sales-price/ProductSalePriceView.vue";
+import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -24,6 +25,7 @@ const tabItems = computed(() => {
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
     { name: 'variations', label: t('products.products.tabs.bundleItems'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
+    { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
   ];
 
   if (props.product.forSale) {
@@ -57,6 +59,9 @@ const tabItems = computed(() => {
       </template>
       <template v-slot:media>
         <MediaView :product="product" />
+      </template>
+      <template v-slot:properties>
+        <PropertiesView :product="product" />
       </template>
       <template v-if="product.forSale" v-slot:price>
         <ProductSalePriceView :product="product" />
