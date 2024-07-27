@@ -917,7 +917,7 @@
       },
       "labels": {
         "vatIncluded": "VAT Included",
-        "autoUpdatePrices": "Auto Update Prices",
+        "autoUpdatePrices": "Auto Update Prices"
       },
       "edit": {
         "title": "Edit Price List"
