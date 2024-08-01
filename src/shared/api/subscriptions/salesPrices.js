@@ -31,7 +31,7 @@ export const salesPriceListSubscription = gql`
         isoCode
       }
       vatIncluded
-      autoUpdate
+      autoUpdatePrices
       customers {
         id
         name
