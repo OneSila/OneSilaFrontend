@@ -76,7 +76,8 @@ async function fetchData(searchValue: string | null | undefined = null) {
 
     const { data } = await apolloClient.query({
       query: props.field.query as unknown as DocumentNode,
-      variables: variables
+      variables: variables,
+      fetchPolicy: 'network-only'
     });
 
     processAndCleanData(data[props.field.dataKey]);

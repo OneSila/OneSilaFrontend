@@ -109,6 +109,16 @@ export const getProductPropertiesRuleSubscription = gql`
         id
         value
       }
+      items {
+        id
+        type
+        sortOrder
+        property {
+          id
+          name
+          type
+        }
+      }
     }
   }
 `;

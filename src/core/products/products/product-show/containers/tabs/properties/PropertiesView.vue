@@ -303,7 +303,12 @@ onMounted(fetchRequiredAttributesValues);
           <tr>
             <th class="font-semibold left-align">{{ val.property.name }}</th>
             <td>
-              <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)" :product-id="product.id" :value="val" @refetch="fetchRequiredAttributesValues" @update-id="handleUpdatedId" @remove="handleRemove" />
+              <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+                          :product-id="product.id"
+                          :value="val"
+                          @refetch="fetchRequiredAttributesValues"
+                          @update-id="handleUpdatedId"
+                          @remove="handleRemove" />
             </td>
           </tr>
         </template>
@@ -323,10 +328,10 @@ onMounted(fetchRequiredAttributesValues);
 }
 
 .custom-table th {
-  width: 30%;
+  width: 20%;
 }
 
 .custom-table td {
-  width: 70%;
+  width: 80%;
 }
 </style>
