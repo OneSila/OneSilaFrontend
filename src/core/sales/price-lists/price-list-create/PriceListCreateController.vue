@@ -1,29 +1,43 @@
 <script setup lang="ts">
 
-import  { ref } from 'vue';
+import {onMounted, Ref, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
 import { createSalesPriceListMutation } from "../../../../shared/api/mutations/salesPrices.js"
-import {baseFormConfigConstructor} from "../configs";
+import {baseFormConfigConstructor, getFields} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
 
+const formConfig: Ref<FormConfig | null> = ref(null);
 const { t } = useI18n();
 const route = useRoute();
 
-const baseForm = {
+onMounted(() => {
+  formConfig.value = {
       ...baseFormConfigConstructor(
       t,
       FormType.CREATE,
       createSalesPriceListMutation,
       'createSalesPriceList',
-      route.query.customerId ? route.query.customerId.toString() : null
-    ),
-  }
+      route.query.customerId ? route.query.customerId.toString() : null)
+  };
+});
 
-const formConfig = ref(baseForm);
+
+const handleFormUpdate = async (form) => {
+
+  if (!formConfig.value) return;
+
+  formConfig.value.fields = getFields(
+      route.query.customerId ? route.query.customerId.toString() : null,
+      t,
+      FormType.CREATE,
+      form.autoUpdatePrices);
+
+
+};
 
 </script>
 
@@ -37,7 +51,7 @@ const formConfig = ref(baseForm);
     </template>
 
    <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" />
+     <GeneralForm v-if="formConfig"  :config="formConfig as FormConfig" @form-updated="handleFormUpdate" />
    </template>
   </GeneralTemplate>
 </template>

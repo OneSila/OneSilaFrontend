@@ -22,7 +22,13 @@ watchEffect(() => {
 
 const preventClickOutside = (event) => {
   const modalContent = document.querySelector('.vue-universal-modal-content');
-  if (modalContent && !modalContent.contains(event.target)) {
+  const targetElement = event.target as HTMLElement;
+
+  if (
+    modalContent &&
+    !modalContent.contains(targetElement) &&
+    !targetElement.classList.contains('vs__dropdown-option')
+  ) {
     event.stopPropagation();
     event.preventDefault();
   }

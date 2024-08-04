@@ -152,7 +152,10 @@ export const createSalesPriceListItemMutation = gql`
         id
         sku
       }
-      salesprice
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;
@@ -169,7 +172,10 @@ export const createSalesPriceListItemsMutation = gql`
         id
         sku
       }
-      salesprice
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;
@@ -186,7 +192,10 @@ export const updateSalesPriceListItemMutation = gql`
         id
         sku
       }
-      salesprice
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;

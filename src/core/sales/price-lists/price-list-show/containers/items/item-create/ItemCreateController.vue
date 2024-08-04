@@ -36,7 +36,8 @@ onMounted(async () => {
         'createSalesPriceListItem',
         priceListId.value.toString(),
         autoUpdatePrices,
-        productIds.value
+        productIds.value,
+        data.salesPriceList.currency.symbol
       ),
       submitAndContinueUrl: { name: 'sales.priceLists.items.edit', params: { priceListId: priceListId.value } }
     };

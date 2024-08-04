@@ -106,7 +106,12 @@ export const salesPriceListItemsQuery = gql`
             sku
             name
           }
-          salesprice
+          price
+          discount
+          priceAuto
+          discountAuto
+          priceOverride
+          discountOverride
         }
         cursor
       }
@@ -145,7 +150,9 @@ export const getSalesPriceListQuery = gql`
     salesPriceList(id: $id) {
       id
       name
+      priceChangePcnt
       discountPcnt
+      autoAddProducts
       notes
       currency {
         id
@@ -183,7 +190,12 @@ export const getSalesPriceListItemQuery = gql`
         sku
         name
       }
-      salesprice
+      price
+      discount
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;

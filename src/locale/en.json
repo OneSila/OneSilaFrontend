@@ -199,6 +199,7 @@
       "unit": "Unit",
       "sku": "SKU",
       "price": "Price",
+      "discount": "Discount",
       "yes": "Yes",
       "no": "No",
       "language": "Language",
@@ -892,6 +893,10 @@
           "header": "Auto Update Prices",
           "content": "Enable it if you want to keep prices updated based on currency changes."
         },
+        "priceChangePcnt": {
+          "header": "Price Change Percentage",
+          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the full price."
+        },
         "discountPercentage": {
           "header": "Discount Percentage",
           "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
@@ -913,11 +918,50 @@
         },
         "edit": {
           "title": "Edit Item"
+        },
+        "labels": {
+          "priceOverride": "Price Override",
+          "discountOverride": "Discount Override",
+          "priceAuto": "Price Auto",
+          "discountAuto": "Discount Auto"
+        },
+        "placeholders": {
+          "priceOverride": "Enter price override",
+          "discountOverride": "Enter discount override",
+          "priceAuto": "Price auto calculated",
+          "discountAuto": "Discount auto calculated"
+        },
+        "helpSection": {
+          "product": {
+            "header": "Product",
+            "content": "Select the product you want to include in the price list."
+          },
+          "priceOverride": {
+            "header": "Price Override",
+            "content": "Set a manual price for this item. If 'Auto Update Prices' is enabled in the price list, this overrides the automatically calculated price. If 'Auto Update Prices' is not enabled, this will be the actual price."
+          },
+          "discountOverride": {
+            "header": "Discount Override",
+            "content": "Set a manual discount for this item. If 'Auto Update Prices' is enabled in the price list, this overrides the automatically calculated discount. If 'Auto Update Prices' is not enabled, this will be the actual discount."
+          },
+          "priceAuto": {
+            "header": "Price Auto",
+            "content": "This price is automatically calculated based on the base product price and the price change percentage. This option is only available if 'Auto Update Prices' is enabled in the price list."
+          },
+          "discountAuto": {
+            "header": "Discount Auto",
+            "content": "This discount is automatically calculated based on the base product price and the discount percentage. This option is only available if 'Auto Update Prices' is enabled in the price list."
+          }
         }
       },
       "labels": {
         "vatIncluded": "VAT Included",
-        "autoUpdatePrices": "Auto Update Prices"
+        "autoUpdatePrices": "Auto Update Prices",
+        "autoAddProducts": "Auto Add Products",
+        "priceChangePcnt": "Price Change Percentage"
+      },
+      "placeholders": {
+        "priceChangePcnt": "Enter price change percentage"
       },
       "edit": {
         "title": "Edit Price List"

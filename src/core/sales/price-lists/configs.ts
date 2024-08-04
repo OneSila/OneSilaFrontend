@@ -55,7 +55,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
   }
 }
 
-const getFields = (customerId, t, type): FormField[] => {
+export const getFields = (customerId, t, type, showPcnt: boolean = true): FormField[] => {
   const fields = [
     {
       type: FieldType.Text,
@@ -64,12 +64,14 @@ const getFields = (customerId, t, type): FormField[] => {
       placeholder: t('shared.placeholders.name'),
     },
     {
-      type: FieldType.Text,
-      name: 'discountPcnt',
-      label: t('sales.prices.labels.discountPercentage'),
-      placeholder: t('sales.prices.placeholders.discountPercentage'),
-      number: true,
-      optional: true,
+      name: 'dateRange',
+      type: FieldType.RangeDate,
+      label: t('shared.labels.dateRange'),
+      keys: ['isoCode'],
+      showLabel: true,
+      startName: 'startDate',
+      endName: 'endDate',
+      optional: true
     },
     {
       type: FieldType.Query,
@@ -88,19 +90,16 @@ const getFields = (customerId, t, type): FormField[] => {
       setDefaultKey: 'isDefaultCurrency'
     },
     {
-      name: 'dateRange',
-      type: FieldType.RangeDate,
-      label: t('shared.labels.dateRange'),
-      keys: ['isoCode'],
-      showLabel: true,
-      startName: 'startDate',
-      endName: 'endDate',
-      optional: true
-    },
-    {
       type: FieldType.Checkbox,
       name: 'vatIncluded',
       label: t('sales.priceLists.labels.vatIncluded'),
+      default: false,
+      uncheckedValue: "false"
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'autoAddProducts',
+      label: t('sales.priceLists.labels.autoAddProducts'),
       default: false,
       uncheckedValue: "false"
     },
@@ -111,6 +110,22 @@ const getFields = (customerId, t, type): FormField[] => {
       default: true,
       uncheckedValue: "false"
     },
+    showPcnt ? {
+      type: FieldType.Text,
+      name: 'priceChangePcnt',
+      label: t('sales.priceLists.labels.priceChangePcnt'),
+      placeholder: t('sales.priceLists.placeholders.priceChangePcnt'),
+      number: true,
+      optional: true,
+    } : null,
+    showPcnt ? {
+      type: FieldType.Text,
+      name: 'discountPcnt',
+      label: t('sales.prices.labels.discountPercentage'),
+      placeholder: t('sales.prices.placeholders.discountPercentage'),
+      number: true,
+      optional: true,
+    } : null,
     getCustomerField(customerId, t, type),
     {
       type: FieldType.Textarea,
@@ -143,16 +158,12 @@ export const baseFormConfigConstructor = (
       content: t('sales.priceLists.helpSection.name.content')
     },
     {
-      header: t('sales.priceLists.helpSection.discountPercentage.header'),
-      content: t('sales.priceLists.helpSection.discountPercentage.content')
+      header: t('sales.priceLists.helpSection.dateRange.header'),
+      content: t('sales.priceLists.helpSection.dateRange.content')
     },
     {
       header: t('sales.priceLists.helpSection.currency.header'),
       content: t('sales.priceLists.helpSection.currency.content')
-    },
-    {
-      header: t('sales.priceLists.helpSection.dateRange.header'),
-      content: t('sales.priceLists.helpSection.dateRange.content')
     },
     {
       header: t('sales.priceLists.helpSection.vatIncluded.header'),
@@ -161,6 +172,14 @@ export const baseFormConfigConstructor = (
     {
       header: t('sales.priceLists.helpSection.autoUpdatePrices.header'),
       content: t('sales.priceLists.helpSection.autoUpdatePrices.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.priceChangePcnt.header'),
+      content: t('sales.priceLists.helpSection.priceChangePcnt.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.discountPercentage.header'),
+      content: t('sales.priceLists.helpSection.discountPercentage.content')
     },
     {
       header: t('sales.priceLists.helpSection.customers.header'),
