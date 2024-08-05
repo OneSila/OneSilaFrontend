@@ -72,8 +72,8 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
       baseProducts: []
     },
     price: {
-      amount: null,
-      discountAmount: null,
+      rrp: null,
+      price: null,
       currency: {
         id: null
       }
