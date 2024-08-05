@@ -199,7 +199,6 @@
       "unit": "Unit",
       "sku": "SKU",
       "price": "Price",
-      "discount": "Discount",
       "yes": "Yes",
       "no": "No",
       "language": "Language",
@@ -208,7 +207,8 @@
       "home": "Home",
       "dateRange": "Date Range",
       "image": "Image",
-      "preview": "Preview"
+      "preview": "Preview",
+      "discount": "Discount"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -893,21 +893,25 @@
           "header": "VAT Included",
           "content": "If you're selling including VAT, eg to end consumers mark as True. For trade customers, mark as False."
         },
+        "autoUpdate": {
+          "header": "Auto Update",
+          "content": "Enable it if you want to auto-update the prices for all the products based on currency changes."
+        },
+        "discountPercentage": {
+          "header": "Discount Percentage",
+          "content": "What percentage discount would you like to apply to the products assigned to this list?  For a 20% discount, write 20."
+        },
+        "dateRange": {
+          "header": "Date Range",
+          "content": "Specify the start and end dates for the price list to be active. You can also leave these empty for a permanent price list. "
+        },
         "autoUpdatePrices": {
           "header": "Auto Update Prices",
           "content": "Enable it if you want to keep prices updated based on currency changes."
         },
         "priceChangePcnt": {
           "header": "Price Change Percentage",
-          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the full price."
-        },
-        "discountPercentage": {
-          "header": "Discount Percentage",
-          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
-        },
-        "dateRange": {
-          "header": "Date Range",
-          "content": "Specify the start and end dates for the price list to be active. You can also leave these empty for a permanent price list. "
+          "content": "How would you like to influence the maximum price?  Write 20 to increase it with 20%.  Or -20 to decrease with 20%"
         }
       },
       "create": {
@@ -960,15 +964,16 @@
       },
       "labels": {
         "vatIncluded": "VAT Included",
+        "autoUpdate": "Auto Update",
         "autoUpdatePrices": "Auto Update Prices",
         "autoAddProducts": "Auto Add Products",
         "priceChangePcnt": "Price Change Percentage"
       },
-      "placeholders": {
-        "priceChangePcnt": "Enter price change percentage"
-      },
       "edit": {
         "title": "Edit Price List"
+      },
+      "placeholders": {
+        "priceChangePcnt": "Enter price change percentage"
       }
     },
     "tabs": {
