@@ -207,7 +207,8 @@
       "home": "Home",
       "dateRange": "Periode",
       "image": "Afbeelding",
-      "preview": "Preview"
+      "preview": "Preview",
+      "discount": "Korting"
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"
@@ -888,17 +889,25 @@
           "header": "Inclusief BTW",
           "content": "Verkoopt u Incl BTW of aan Particulieren?  Dan wilt uw deze optie aanzetten.  Voor B2B klanten wilt u deze waarschijnlijk niet aanzetten."
         },
-        "autoUpdatePrices": {
+        "autoUpdate": {
           "header": "Automatisch prijzen updaten",
           "content": "Zet deze optie aan indien prijzen automatisch up-to-date moeten blijven met de valuta-wijzigingen."
         },
         "discountPercentage": {
           "header": "Kortingspercentage",
-          "content": "Het percentage korting die van die toegepast wordt."
+          "content": "Welk kortingspercentage wilt u toepassen op deze prijslijst?  Voor 20% korting, vul 20 in."
         },
         "dateRange": {
           "header": "Periode",
           "content": "Specificeer de start en eind-datum wanneer de lijst actief moet zijn.  Of laat de periode leeg indien ze permanent is."
+        },
+        "autoUpdatePrices": {
+          "header": "Automatische prijs updates",
+          "content": "Selecteer indien prijzen up-to-date dienen te blijven met de valuta fluctuaties."
+        },
+        "priceChangePcnt": {
+          "header": "Percentage prijsverandering",
+          "content": "Hoe wilt u de maximum prijs beïnvloeden?  Om ze omhoog te doen met 20%, vul 20 in.  Omlaag met 20%, vul -20 in."
         }
       },
       "create": {
@@ -913,14 +922,54 @@
         },
         "edit": {
           "title": "Item bewerken"
+        },
+        "labels": {
+          "priceOverride": "Prijs overschrijving",
+          "discountOverride": "Kortingsoverschrijving",
+          "priceAuto": "Prijs Automatisch",
+          "discountAuto": "Kortingsprijs automatisch"
+        },
+        "placeholders": {
+          "priceOverride": "Vul de overschrijdingsprijs in",
+          "discountOverride": "Vul de kortingsoverschrijving in",
+          "priceAuto": "Berekende prijs",
+          "discountAuto": "Berekende kortingsprijs"
+        },
+        "helpSection": {
+          "product": {
+            "header": "Product",
+            "content": "Selecteer het product die u aan de prijslijst wilt toevoegen"
+          },
+          "priceOverride": {
+            "header": "Prijsoverschrijving",
+            "content": "Stel een manuele prijs in voor dit product.  Dit zal ook automatische prijzen overschrijven indien de prijslijst zo ingesteld is."
+          },
+          "discountOverride": {
+            "header": "Kortingsoverchrijving",
+            "content": "Stel een manuele kortingsprijs in voor dit product.  Dit zal ook automatische kortingprijs overschrijven indien de prijslijst zo ingesteld is."
+          },
+          "priceAuto": {
+            "header": "Automatische prijs",
+            "content": "De automatische prijs wordt ingesteld aan de hand de RRP en veranderingspercentage op de prijslijst.  Deze optie is enkel beschikbaar indien de prijslijst ingesteld is om automatisch prijzen up to date te houden."
+          },
+          "discountAuto": {
+            "header": "Automatisch Korting",
+            "content": "De automatische kortingsprijs wordt ingesteld aan de hand het kortingspercentage van de prijslijst.  Deze optie is enkel beschikbaar indien de prijslijst ingesteld is om automatisch prijzen up to date te houden."
+          }
         }
       },
       "labels": {
         "vatIncluded": "Inclusief BTW",
-        "autoUpdatePrices": "Prijzen automatisch up to date houden"
+        "autoUpdate": "Auto Update",
+        "autoUpdatePrices": "Automatische prijs updates",
+        "autoAddProducts": "Automatisch producten toevoegen",
+        "priceChangePcnt": "Percentage prijsverandering"
       },
       "edit": {
         "title": "Prijslijst bewerken"
+      },
+      "placeholders": {
+        "priceChangePcnt": "Vul percentage van de prijsverandering in"
       }
     },
     "tabs": {
@@ -1373,8 +1422,8 @@
         "noPropertiesLeft": "Geen eigenschappen beschikbaar",
         "dragAndDrop": "Versleep de items, of klik op ➕ om items toe te voegen",
         "noProductType": "Voeg Product-Type toe",
-        "noRequiredInConfigurator": "Om \"Optioneel in Configurator\" te gebruiken dient er op zijn minst één \"Verplicht in Configurator\" instelling te zijn.",
-        "optionalWithoutRequired": "Zorg ervoor dat er op zijn minst één \"Verplicht in Configurator\" optie geselecteerd is vooraleer u \"Optioneel in Configurator\" kan gebruiken.",
+        "noRequiredInConfigurator": "Om Optioneel in Configurator te gebruiken dient er op zijn minst één Verplicht in Configurator instelling te zijn.",
+        "optionalWithoutRequired": "Zorg ervoor dat er op zijn minst één Verplicht in Configurator optie geselecteerd is vooraleer u Optioneel in Configurator kan gebruiken.",
         "noAddedProperties": "U dient eigenschappen aan deze regel toe te voegen"
       },
       "alert": {
