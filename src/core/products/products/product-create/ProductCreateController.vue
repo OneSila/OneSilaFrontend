@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, computed, ref, onMounted} from 'vue';
+import {reactive, computed, ref, onMounted, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";
@@ -370,35 +370,66 @@ const handleProductSupplierName = () => {
 function hasMissingVat() {
   return form.vatRate.id === '' || form.vatRate.id == null;
 }
+
+function hasMissingSupplier() {
+
+  if (additionalFieldsForm.supplierProduct.id !== null) {
+    return false; // It has a supplier, so no missing supplier
+  }
+
+  return (
+      !additionalFieldsForm.supplierProduct.sku ||
+      !additionalFieldsForm.supplierProduct.name ||
+      additionalFieldsForm.supplierProduct.quantity === null || isNaN(additionalFieldsForm.supplierProduct.quantity) ||
+      additionalFieldsForm.supplierProduct.unitPrice === null || isNaN(additionalFieldsForm.supplierProduct.unitPrice) ||
+      additionalFieldsForm.supplierProduct.supplier.id === null ||
+      additionalFieldsForm.supplierProduct.unit.id === null
+  );
+}
+
 const setDefaultCurrency = (id) => {
   additionalFieldsForm.price.currency.id = id;
 };
 
 const allowNextStep = computed(() => {
-  if (step.value === 0 && form.type === '') {
+
+  const stepName = wizardSteps.value[step.value].name;
+
+  if (stepName === 'typeStep' && form.type === '') {
     return false;
   }
 
-  if (step.value === 1 && form.name === '') {
+  if (stepName === 'generalInfoStep' && form.name === '') {
     return false;
   }
 
-  if (step.value === 1 && (form.productionTime === null || isNaN(form.productionTime)) && form.type === ProductType.Manufacturable) {
+  if (stepName === 'generalInfoStep' && (form.productionTime === null || isNaN(form.productionTime)) && form.type === ProductType.Manufacturable) {
     return false;
   }
 
-  if (form.type === ProductType.Simple) {
-    if (form.forSale) {
-      return !(step.value === 3 && hasMissingVat());
-    }
-  } else {
-    if (form.type !== ProductType.Umbrella) {
-      return !(step.value === 2 && hasMissingVat());
-    }
+  if (stepName === 'priceStep') {
+    return !hasMissingVat();
+  }
+
+  if (stepName === 'supplierStep') {
+    return !hasMissingSupplier();
   }
 
   return true;
 });
+
+
+const clearSupplierProduct = () => {
+  if (additionalFieldsForm.supplierProduct.id !== null) {
+      additionalFieldsForm.supplierProduct.sku = '';
+      additionalFieldsForm.supplierProduct.name = '';
+      additionalFieldsForm.supplierProduct.quantity = null;
+      additionalFieldsForm.supplierProduct.unitPrice = null;
+      additionalFieldsForm.supplierProduct.supplier.id = null;
+  }
+}
+
+watch(additionalFieldsForm.supplierProduct, clearSupplierProduct)
 
 </script>
 
