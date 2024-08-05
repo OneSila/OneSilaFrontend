@@ -17,8 +17,8 @@ export const salesPricesQuery = gql`
             isDefaultCurrency
             followOfficialRate
           }
-          amount
-          discountAmount
+          price
+          rrp
         }
         cursor
       }
@@ -48,8 +48,8 @@ export const getSalesPriceByProductAndCurrencyQuery = gql`
             symbol
             isoCode
           }
-          amount
-          discountAmount
+          price
+          rrp
         }
       }
     }
@@ -139,8 +139,8 @@ export const getSalesPriceQuery = gql`
         symbol
         isoCode
       }
-      amount
-      discountAmount
+      price
+      rrp
     }
   }
 `;

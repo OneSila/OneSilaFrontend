@@ -171,8 +171,8 @@ const createSalesPrice = async (productId) => {
       mutation: createSalesPriceMutation,
       variables: {
         data: {
-          amount: additionalFieldsForm.price.amount,
-          discountAmount: additionalFieldsForm.price.discountAmount,
+          rrp: additionalFieldsForm.price.rrp,
+          price: additionalFieldsForm.price.price,
           product: { id: productId },
           currency: { id: additionalFieldsForm.price.currency.id }
         }
@@ -254,7 +254,7 @@ const isSupplierProductFilled = () => {
 
 const processAdditionalFields = async (productId) => {
   // Create sales price if the product is for sale and it's not an Umbrella type
-  if (form.forSale && additionalFieldsForm.price.amount && form.type !== ProductType.Umbrella) {
+  if (form.forSale && additionalFieldsForm.price.price && form.type !== ProductType.Umbrella) {
     await createSalesPrice(productId);
   }
 

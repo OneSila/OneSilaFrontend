@@ -36,18 +36,18 @@ getDefaultCurrency();
     <hr>
     <Flex vertical>
       <FlexCell>
-        <Flex center class="mt-4 gap-4">
+        <Flex center class="gap-4 mt-4">
           <FlexCell center>
-            <TextInputPrepend id="amount" class="w-96" v-model="additionalFieldsForm.price.amount" :label="t('sales.prices.labels.amount')" type="number"
-                              :placeholder="'100'">
+            <TextInputPrepend id="discountAmount" class="w-96" v-model="additionalFieldsForm.price.price" :label="t('sales.prices.labels.price')" type="number"
+                              :placeholder="'90.99'">
             {{ currency }}
           </TextInputPrepend>
           </FlexCell>
         </Flex>
-        <Flex center class="gap-4 mt-4">
+        <Flex center class="mt-4 gap-4">
           <FlexCell center>
-            <TextInputPrepend id="discountAmount" class="w-96" v-model="additionalFieldsForm.price.discountAmount" :label="t('sales.prices.labels.discountAmount')" type="number"
-                              :placeholder="'90.99'">
+            <TextInputPrepend id="amount" class="w-96" v-model="additionalFieldsForm.price.rrp" :label="t('sales.prices.labels.rrp')" type="number"
+                              :placeholder="'100'">
             {{ currency }}
           </TextInputPrepend>
           </FlexCell>

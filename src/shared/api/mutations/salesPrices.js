@@ -12,8 +12,8 @@ export const createSalesPriceMutation = gql`
         id
         symbol
       }
-      amount
-      discountAmount
+      rrp
+      price
     }
   }
 `;
@@ -30,8 +30,8 @@ export const createSalesPricesMutation = gql`
         id
         symbol
       }
-      amount
-      discountAmount
+      rrp
+      price
     }
   }
 `;
@@ -48,8 +48,8 @@ export const updateSalesPriceMutation = gql`
         id
         symbol
       }
-      amount
-      discountAmount
+      rrp
+      price
     }
   }
 `;

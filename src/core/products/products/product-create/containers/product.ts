@@ -39,8 +39,8 @@ export interface SupplierProduct {
 }
 
 export interface Price {
-  amount: number | null;
-  discountAmount: number | null;
+  rrp: number | null;
+  price: number | null;
   currency: {
     id: string | null;
   },

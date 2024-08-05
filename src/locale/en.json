@@ -856,11 +856,15 @@
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
+        "price": "Price",
+        "rrp": "Recommended Retail Price",
         "discountPercentage": "Discount Percentage"
       },
       "placeholders": {
         "amount": "Enter amount",
         "discountAmount": "Enter discount amount",
+        "price": "Enter price",
+        "rrp": "Enter rrp",
         "discountPercentage": "Enter discount percentage"
       },
       "updatedSuccessfully": "Price for currency {currency} Updated",
@@ -914,10 +918,10 @@
       },
       "items": {
         "create": {
-          "title": "Create New Item"
+          "title": "Assign Price"
         },
         "edit": {
-          "title": "Edit Item"
+          "title": "Edit Price"
         },
         "labels": {
           "priceOverride": "Price Override",
