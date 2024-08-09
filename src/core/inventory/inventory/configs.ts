@@ -9,7 +9,7 @@ import {ShowConfig, ShowField} from "../../../shared/components/organisms/genera
 import {baseFormConfigConstructor as baseStocklocationConfigConstructor } from '../inventory-location/configs'
 import { getInventorySubscription } from '../../../shared/api/subscriptions/inventory.js';
 
-const stocklocationOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+const inventorylocationOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
     ...baseStocklocationConfigConstructor(
       t,
@@ -69,7 +69,7 @@ export const baseFormConfigConstructor = (
     getProductField(productId, t),
     {
         type: FieldType.Query,
-        name: 'stocklocation',
+        name: 'inventorylocation',
         label:  t('inventory.inventoryLocations.show.title'),
         labelBy: 'name',
         valueBy: 'id',
@@ -79,7 +79,7 @@ export const baseFormConfigConstructor = (
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
-        createOnFlyConfig: stocklocationOnTheFlyConfig(t),
+        createOnFlyConfig: inventorylocationOnTheFlyConfig(t),
       }
     ],
 });
@@ -109,7 +109,7 @@ const getFields = (productId, isSupplierProduct): ShowField[] => {
   }
 
   commonFields.push({
-      name: 'stocklocation',
+      name: 'inventorylocation',
       type: FieldType.NestedText,
       keys: ['name']
     })
@@ -174,7 +174,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   },
   {
     label: t('inventory.inventoryLocations.show.title'),
-    name: 'stocklocation',
+    name: 'inventorylocation',
     type: FieldType.NestedText,
     keys: ['name'],
     clickable: true,

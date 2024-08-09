@@ -48,7 +48,7 @@ const form: FormType = reactive({
   vatRate: {
     id: null
   },
-  alwaysOnStock: false,
+  allowBackorder: false,
 });
 
 const additionalFieldsForm: AdditonalFormFields = reactive({

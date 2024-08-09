@@ -632,7 +632,7 @@
           }
         },
         "vatRate": "BTW Tarief",
-        "alwaysOnStock": "Altijd op Voorraad",
+        "allowBackorder": "Nalevering toestaan",
         "sku": "SKU",
         "productionTime": "Productie tijd",
         "forSale": "Verkoopbaar"

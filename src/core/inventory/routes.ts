@@ -14,7 +14,6 @@ export const routes = [
     name: 'inventory.inventoryLocations.edit',
     component: () => import('./inventory-location/inventory-location-edit/InventoryLocationEditController.vue')
   },
-
   {
     path: '/inventory/inventory',
     name: 'inventory.inventory.list',
@@ -34,5 +33,20 @@ export const routes = [
     path: '/inventory/inventory/show/:id',
     name: 'inventory.inventory.show',
     component: () => import('./inventory/inventory-show/InventoryShowController.vue')
+  },
+  {
+    path: '/inventory/lead-time-settings',
+    name: 'inventory.leadTimeSettings.list',
+    component: () => import('./leadtimes-settings/leadtime-settings-list/LeadTimeSettingsLocationsListController.vue')
+  },
+  {
+    path: '/inventory/lead-time-settings/create',
+    name: 'inventory.leadTimeSettings.create',
+    component: () => import('./leadtimes-settings/leadtime-settings-create/LeadTimeSettingsCreateController.vue')
+  },
+  {
+    path: '/inventory/lead-time-settings/edit/:id',
+    name: 'inventory.leadTimeSettings.edit',
+    component: () => import('./leadtimes-settings/leadtime-settings-edit/LeadTimeSettingsLocationEditController.vue')
   },
 ];

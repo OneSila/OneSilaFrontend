@@ -13,7 +13,7 @@ export const getInventorySubscription = gql`
           name
         }
       }
-      stocklocation {
+      inventorylocation {
         id
         name
       }
@@ -29,7 +29,7 @@ export const getInventoryLocationSubscription = gql`
       name
       description
       precise
-      location {
+      shippingaddress {
         id
         fullAddress
       }

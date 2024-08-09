@@ -18,7 +18,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
             name
             rate
           }
-          alwaysOnStock
+          allowBackorder
         
         }
         cursor
@@ -236,7 +236,7 @@ export const getProductQuery = gql`
         active
         thumbnailUrl
       }
-      alwaysOnStock
+      allowBackorder
     }
   }
 `;

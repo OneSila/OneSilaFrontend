@@ -9,7 +9,7 @@ import { FieldCheckbox } from "../../../../../shared/components/organisms/genera
 import { FieldQuery } from "../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import apolloClient from "../../../../../../apollo-client";
 import { PrimaryButton } from "../../../../../shared/components/atoms/button-primary";
-import { internalShippingAddressesQuery } from "../../../../../shared/api/queries/contacts.js";
+import { inventoryShippingAddressesQuery } from "../../../../../shared/api/queries/contacts.js";
 import { createInventoryLocationMutation, updateInventoryLocationMutation } from "../../../../../shared/api/mutations/inventory.js";
 import { inventoryLocationsQuery } from "../../../../../shared/api/queries/inventory.js";
 import {displayApolloError, processGraphQLErrors} from "../../../../../shared/utils";
@@ -22,7 +22,7 @@ const mutation = ref(createInventoryLocationMutation);
 
 const form = reactive({
   id: null,
-  location: {
+  shippingaddress: {
     id: null
   },
   name: null,
@@ -30,14 +30,14 @@ const form = reactive({
 });
 
 const fields = {
-  location: {
+  shippingaddress: {
     type: FieldType.Query,
-    name: 'location',
+    name: 'shippingaddress',
     label: t('inventory.inventoryLocations.labels.parent'),
     labelBy: 'fullAddress',
     valueBy: 'id',
-    query: internalShippingAddressesQuery,
-    dataKey: 'internalShippingAddresses',
+    query: inventoryShippingAddressesQuery,
+    dataKey: 'inventoryShippingAddresses',
     isEdge: true,
     multiple: false,
     filterable: true,
@@ -70,7 +70,7 @@ const setInventoryLocation = async () => {
     mutation.value = updateInventoryLocationMutation;
     const location = data.inventoryLocations.edges[0].node;
     form.id = location.id;
-    form.location.id = location.location.id;
+    form.shippingaddress.id = location.shippingaddress.id;
     form.name = location.name;
     form.description = location.description;
   }
@@ -81,7 +81,7 @@ onMounted(setInventoryLocation);
 const getMutationVariables = () => {
   let variables = {
     location: {
-      id: form.location.id
+      id: form.shippingaddress.id
     },
     name: form.name,
     description: form.description,
@@ -99,7 +99,7 @@ const afterUpdate = () => {
 }
 
 const disableButton = () => {
-  return !form.name || !form.location.id;
+  return !form.name || !form.shippingaddress.id;
 };
 
 const skip = () => {
@@ -107,7 +107,7 @@ const skip = () => {
 };
 
 const setLocationField = (value) => {
-  form.location.id = value;
+  form.shippingaddress.id = value;
 }
 
 const onError = (error) => {
@@ -127,8 +127,8 @@ const onError = (error) => {
     <h1 class="text-2xl my-4">{{ t('dashboard.onboarding.createInventoryLocation.content') }}</h1>
     <div class="w-full lg:w-1/2">
       <div class="col-span-full mt-3">
-        <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['location'].label }}</label>
-        <FieldQuery :field="fields['location'] as QueryFormField" :model-value="form.location.id" @update:modelValue="setLocationField" />
+        <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['shippingaddress'].label }}</label>
+        <FieldQuery :field="fields['shippingaddress'] as QueryFormField" :model-value="form.shippingaddress.id" @update:modelValue="setLocationField" />
       </div>
       <div class="col-span-full mt-3">
         <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['name'].label }}</label>

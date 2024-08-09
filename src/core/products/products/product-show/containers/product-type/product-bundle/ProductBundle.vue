@@ -14,6 +14,7 @@ import VariationsView from "../../tabs/variations/VariationsView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
 import ProductSalePriceView from "../../tabs/sales-price/ProductSalePriceView.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
+import InventoryList from "../../tabs/inventory/InventoryList.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -26,6 +27,7 @@ const tabItems = computed(() => {
     { name: 'variations', label: t('products.products.tabs.bundleItems'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+    { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
   ];
 
   if (props.product.forSale) {
@@ -62,6 +64,9 @@ const tabItems = computed(() => {
       </template>
       <template v-slot:properties>
         <PropertiesView :product="product" />
+      </template>
+      <template v-slot:inventory>
+        <InventoryList :product="product" />
       </template>
       <template v-if="product.forSale" v-slot:price>
         <ProductSalePriceView :product="product" />

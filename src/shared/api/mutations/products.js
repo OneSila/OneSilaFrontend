@@ -11,7 +11,7 @@ export const createProductMutation = gql`
         id
         rate
       }
-      alwaysOnStock
+      allowBackorder
     }
   }
 `;
@@ -33,7 +33,7 @@ export const updateProductMutation = gql`
       id
       sku
       active
-      alwaysOnStock
+      allowBackorder
       type
       vatRate {
         id

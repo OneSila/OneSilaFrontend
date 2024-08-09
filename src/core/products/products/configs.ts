@@ -99,8 +99,8 @@ const getFields = (type, t): FormField[] => {
     },
     {
       type: FieldType.Checkbox,
-      name: 'alwaysOnStock',
-      label: t('products.products.labels.alwaysOnStock'),
+      name: 'allowBackorder',
+      label: t('products.products.labels.allowBackorder'),
       default: false,
       uncheckedValue: "false"
     },
@@ -165,7 +165,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
+  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder')],
   fields: [
     {
       type: FieldType.Text,
@@ -184,7 +184,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     },
     {
       type: FieldType.Boolean,
-      name: 'alwaysOnStock'
+      name: 'allowBackorder'
     },
   ],
   identifierKey: 'id',
@@ -220,8 +220,11 @@ export interface Product {
   forSale: boolean;
   type: string;
   vatRate?: VatRate;
-  alwaysOnStock: boolean;
+  allowBackorder: boolean;
   productionTime?: number;
+  inventoryPhysical?: number;
+  inventorySalable?: number;
+  inventoryReserved?: number;
   baseProducts?: BaseProduct[]
 }
 

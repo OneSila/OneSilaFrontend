@@ -632,7 +632,7 @@
           }
         },
         "vatRate": "VAT Rate",
-        "alwaysOnStock": "Always on Stock",
+        "allowBackorder": "Allow Backorder",
         "sku": "SKU",
         "productionTime": "Production Time",
         "forSale": "For Sale"
@@ -714,7 +714,7 @@
     }
   },
   "inventory": {
-    "title": "Inventory",
+    "title": "Warehouse",
     "inventoryLocation": {
       "helpSection": {
         "location": {
@@ -754,13 +754,33 @@
     "inventory": {
       "title": "Inventories",
       "labels": {
-        "movements": "Inventory Movements"
+        "movements": "Inventory Movements",
+        "salable": "Salable Inventory",
+        "physical": "Physical Inventory",
+        "reserved": "Reserved Inventory"
+      },
+      "help": {
+        "salable": "Items that are available for sale",
+        "physical": "Physically on stock, could be reserved, could be salable.",
+        "reserved": "Items that have been sold but not shipped"
       },
       "create": {
         "title": "Create Inventory"
       },
       "edit": {
         "title": "Edit Inventory"
+      }
+    },
+    "leadTimeSettings": {
+      "title": "Lead Time Setting",
+      "create": {
+        "title": "Create Setting"
+      },
+      "edit": {
+        "title": "Edit Setting"
+      },
+      "show": {
+        "title": "Lead Time Settings"
       }
     }
   },
@@ -1149,6 +1169,34 @@
   },
   "settings": {
     "title": "Settings",
+    "leadtimes": {
+      "title": "Lead Times",
+      "create": {
+        "title": "Create Lead Time"
+      },
+      "edit": {
+        "title": "Edit Lead Time"
+      },
+      "show": {
+        "title": "Lead Time"
+      },
+      "labels": {
+        "minTime": "Minimum Time",
+        "maxTime": "Maximum Time",
+        "unit": "Unit"
+      },
+      "placeholders": {
+        "minTime": "Enter minimum time",
+        "maxTime": "Enter maximum time",
+        "unit": "Enter unit"
+      },
+      "unit": {
+        "hour": "Hour",
+        "day": "Day",
+        "week": "Week",
+        "month": "Month"
+      }
+    },
     "currencies": {
       "title": "Currencies",
       "create": {

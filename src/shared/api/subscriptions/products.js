@@ -12,6 +12,9 @@ export const productSubscription = gql`
       productionTime
       forSale
       thumbnailUrl
+      inventoryPhysical
+      inventorySalable
+      inventoryReserved
       vatRate {
         id
         rate
@@ -24,7 +27,7 @@ export const productSubscription = gql`
         active
         thumbnailUrl
       }
-      alwaysOnStock
+      allowBackorder
     }
   }
 `;

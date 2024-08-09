@@ -27,6 +27,7 @@ const tabItems = computed(() => {
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+    { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
   ];
 
   if (props.product.forSale) {
@@ -38,7 +39,6 @@ const tabItems = computed(() => {
   }
 
   items.push(
-    { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
     { name: 'supplierProducts', label: t('products.products.tabs.supplierProducts'), icon: 'truck-ramp-box' },
     // { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },

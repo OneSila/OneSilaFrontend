@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive } from 'vue';
+import {onMounted, reactive, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField,
@@ -16,17 +16,20 @@ import {vatRatesQuery} from "../../../../../../../shared/api/queries/vatRates.js
 import {FieldQuery} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {FieldCheckbox} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-checkbox";
 import {Label} from "../../../../../../../shared/components/atoms/label";
-import {Icon} from "../../../../../../../shared/components/atoms/icon";
-import {Button} from "../../../../../../../shared/components/atoms/button";
 import {SecondaryButton} from "../../../../../../../shared/components/atoms/button-secondary";
 import apolloClient from "../../../../../../../../apollo-client";
 import {updateProductMutation} from "../../../../../../../shared/api/mutations/products.js";
 import {useRouter} from "vue-router";
 import { ProductType } from "../../../../../../../shared/utils/constants";
-import { getProductField } from "../../../../../../purchasing/products/configs";
+import { leadTimesQuery, leadTimeProductsOutOfStockQuery } from "../../../../../../../shared/api/queries/leadtimes.js";
+import { createLeadTimeProductOutOfStockMutation, updateLeadTimeProductOutOfStockMutation, deleteLeadTimeProductOutOfStockMutation } from "../../../../../../../shared/api/mutations/leadtimes.js";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
+
+const leadtimeVal = ref(null);
+const leadtimeOutOfStockId = ref(null);
+const leadtimeInitialVal = ref(null);
 
 const form = reactive({
   id: props.product.id,
@@ -37,7 +40,7 @@ const form = reactive({
   vatRate: {
     id: props.product.vatRate?.id
   },
-  alwaysOnStock: props.product.alwaysOnStock,
+  allowBackorder: props.product.allowBackorder,
 });
 
 const router = useRouter();
@@ -70,10 +73,10 @@ const fields = {
     formMapIdentifier: 'id',
     createOnFlyConfig: vatRateOnTheFlyConfig(t)
   } : null,
-  alwaysOnStock: props.product.type === ProductType.Simple ? {
+  allowBackorder: props.product.type === ProductType.Simple || props.product.type === ProductType.Dropship ? {
     type: FieldType.Checkbox,
-    name: 'alwaysOnStock',
-    label: t('products.products.labels.alwaysOnStock'),
+    name: 'allowBackorder',
+    label: t('products.products.labels.allowBackorder'),
     default: false,
     uncheckedValue: "false"
   } : null,
@@ -93,12 +96,26 @@ const fields = {
   } : null,
 };
 
+const leadtimeField = {
+      type: FieldType.Query,
+      name: 'leadtime',
+      label:  t('settings.leadtimes.labels.outOfStock'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: leadTimesQuery,
+      dataKey: 'leadTimes',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+    }
+
 const getCleanData = (data) => {
   let cleanedData =  {
     id: data.id,
     sku: data.sku,
     active: data.active,
-    alwaysOnStock: data.alwaysOnStock,
+    allowBackorder: data.allowBackorder,
     productionTime: data.productionTime,
     forSale: data.forSale,
   };
@@ -124,11 +141,13 @@ const handleSubmit = async (overrideData = {}) => {
     if (data && data.updateProduct) {
       form.sku = data.updateProduct.sku
       form.active = data.updateProduct.active
-      form.alwaysOnStock = data.updateProduct.alwaysOnStock
+      form.allowBackorder = data.updateProduct.allowBackorder
 
       if (data.updateProduct.vatRate && data.updateProduct.vatRate.id) {
         form.vatRate.id = data.updateProduct.vatRate.id
       }
+
+      await handleLeadTimeOutOfStockSave();
 
       Toast.success(t('products.products.edit.updateSuccessfully'));
     }
@@ -142,9 +161,99 @@ const handleSubmitAndRedirect = async () => {
   router.push({ name: 'products.products.list' });
 };
 
-const refreshSku = async () => {
-  await handleSubmit({ sku: '' });
-};
+const setLeadTimeOutOfStock = async () => {
+  if (![ProductType.Manufacturable, ProductType.Supplier].includes(props.product.type)) {
+    return
+  }
+
+  const {data} = await apolloClient.query({
+    query: leadTimeProductsOutOfStockQuery,
+    variables: { filter: { product: { id: {exact: props.product.id }}}}
+  })
+
+  if (data && data.leadTimeProductsOutOfStock && data.leadTimeProductsOutOfStock.edges && data.leadTimeProductsOutOfStock.edges.length == 1) {
+    leadtimeOutOfStockId.value = data.leadTimeProductsOutOfStock.edges[0].node.id;
+    leadtimeVal.value = data.leadTimeProductsOutOfStock.edges[0].node.leadtimeOutofstock.id;
+    leadtimeInitialVal.value = leadtimeVal.value;
+  }
+
+}
+
+const createLeadTimeOutOfStock = async () => {
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: createLeadTimeProductOutOfStockMutation,
+      variables: {
+        data: {
+          product: { id: props.product.id },
+          leadtimeOutofstock: { id: leadtimeVal.value }
+        }
+      },
+    });
+
+    leadtimeOutOfStockId.value = data.createLeadTimeProductOutOfStock.id;
+
+  } catch (error) {
+    console.error("Leadtime out of stock creation error:", error);
+  }
+}
+
+const editLeadTimeOutOfStock = async () => {
+  try {
+    const outOfStockData = {
+      id: leadtimeOutOfStockId.value,
+      leadtimeOutofstock: { id: leadtimeVal.value }
+    };
+    
+    const { data } = await apolloClient.mutate({
+      mutation: updateLeadTimeProductOutOfStockMutation,
+      variables: { data: outOfStockData }
+    });
+    
+  } catch (error) {
+    console.error("Leadtime out of stock edit error:", error);
+  }
+}
+
+const deleteLeadTimeOutOfStock = async () => {
+  try {
+
+    const { data } = await apolloClient.mutate({
+      mutation: deleteLeadTimeProductOutOfStockMutation,
+      variables: { id: leadtimeOutOfStockId.value }
+    });
+
+    leadtimeOutOfStockId.value = null;
+    leadtimeVal.value = null;
+    leadtimeInitialVal.value = null;
+
+  } catch (error) {
+    console.error("Leadtime out of stock delete error:", error);
+  }
+}
+
+const handleLeadTimeOutOfStockSave = async () => {
+
+  if (![ProductType.Manufacturable, ProductType.Supplier].includes(props.product.type)) {
+    return;
+  }
+
+  if (leadtimeOutOfStockId.value == null) {
+    await createLeadTimeOutOfStock();
+  } else {
+    if (leadtimeVal.value == null) {
+      await deleteLeadTimeOutOfStock();
+      return;
+    }
+
+    if (leadtimeVal.value !== leadtimeInitialVal.value) {
+      await editLeadTimeOutOfStock();
+    }
+  }
+
+}
+
+onMounted(setLeadTimeOutOfStock);
 
 </script>
 
@@ -174,6 +283,11 @@ const refreshSku = async () => {
         <FieldQuery :field="fields['vatRate'] as QueryFormField" :model-value="form.vatRate.id" @update:modelValue="form.vatRate.id = $event"/>
       </div>
 
+      <div class="col-span-full mt-3" v-if="product.type == ProductType.Supplier || product.type == ProductType.Manufacturable">
+        <label v-if="fields.vatRate" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ leadtimeField.label }}</label>
+        <FieldQuery :field="leadtimeField as QueryFormField" :model-value="leadtimeVal" @update:modelValue="leadtimeVal = $event"/>
+      </div>
+
       <div class="col-span-full mt-3">
         <Flex>
           <FlexCell>
@@ -199,15 +313,15 @@ const refreshSku = async () => {
         </Flex>
       </div>
 
-      <!-- Always On Stock (Only for Simple) -->
-      <div class="col-span-full mt-3" v-if="product.type === ProductType.Simple">
+      <!-- Always On Stock (Only for Simple & Dropship) -->
+      <div class="col-span-full mt-3" v-if="product.type === ProductType.Simple || product.type === ProductType.Dropship">
         <Flex>
           <FlexCell>
-            <label v-if="fields.alwaysOnStock" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['alwaysOnStock'].label }}</label>
+            <label v-if="fields.allowBackorder" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['allowBackorder'].label }}</label>
           </FlexCell>
           <FlexCell>
             <div class="ml-2">
-              <FieldCheckbox :field="fields['alwaysOnStock'] as CheckboxFormField" :model-value="form.alwaysOnStock" @update:modelValue="form.alwaysOnStock = $event"/>
+              <FieldCheckbox :field="fields['allowBackorder'] as CheckboxFormField" :model-value="form.allowBackorder" @update:modelValue="form.allowBackorder = $event"/>
             </div>
           </FlexCell>
         </Flex>

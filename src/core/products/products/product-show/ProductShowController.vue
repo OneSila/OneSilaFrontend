@@ -41,7 +41,7 @@ interface ProductSubscriptionResult {
     };
     type: string;
     active: boolean;
-    alwaysOnStock: boolean;
+    allowBackorder: boolean;
     forSale: boolean;
   };
 }
@@ -142,10 +142,10 @@ const redirectToList = (response) => {
                       <FlexCell v-if="getResultData(result, 'type') == ProductType.Simple">
                         <Flex>
                           <FlexCell>
-                            <Label semi-bold>{{ t('products.products.labels.alwaysOnStock') }}: </Label>
+                            <Label semi-bold>{{ t('products.products.labels.allowBackorder') }}: </Label>
                           </FlexCell>
                           <FlexCell>
-                            <Icon v-if="getResultData(result, 'alwaysOnStock')" name="check-circle" class="ml-1 text-green-500" />
+                            <Icon v-if="getResultData(result, 'allowBackorder')" name="check-circle" class="ml-1 text-green-500" />
                             <Icon v-else name="times-circle" class="ml-1 text-red-500" />
                           </FlexCell>
                         </Flex>

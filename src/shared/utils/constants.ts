@@ -119,3 +119,10 @@ export const flagMapping: { [key: string]: string } = {
   'en': '🇬🇧',
   'nl': '🇳🇱'
 };
+
+export const LeadTimeUnit = {
+  HOUR: 1,
+  DAY: 2,
+  WEEK: 3,
+  MONTH: 4
+};
