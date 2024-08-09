@@ -7,6 +7,7 @@ export const createLeadTimeMutation = gql`
       minTime
       maxTime
       unit
+      name
     }
   }
 `;

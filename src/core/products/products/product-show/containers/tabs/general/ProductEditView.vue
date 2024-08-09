@@ -23,6 +23,7 @@ import {useRouter} from "vue-router";
 import { ProductType } from "../../../../../../../shared/utils/constants";
 import { leadTimesQuery, leadTimeProductsOutOfStockQuery } from "../../../../../../../shared/api/queries/leadtimes.js";
 import { createLeadTimeProductOutOfStockMutation, updateLeadTimeProductOutOfStockMutation, deleteLeadTimeProductOutOfStockMutation } from "../../../../../../../shared/api/mutations/leadtimes.js";
+import {leadTimeOnTheFlyConfig} from "../../../../../../settings/leadtimes/configs";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -108,6 +109,7 @@ const leadtimeField = {
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: leadTimeOnTheFlyConfig(t),
     }
 
 const getCleanData = (data) => {

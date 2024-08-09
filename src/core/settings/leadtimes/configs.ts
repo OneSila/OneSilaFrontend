@@ -1,9 +1,9 @@
-import { FormConfig, FormType } from '../../../shared/components/organisms/general-form/formConfig';
+import {CreateOnTheFly, FormConfig, FormType} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, LeadTimeUnit, ReasonForSale} from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { leadTimesQuery } from "../../../shared/api/queries/leadtimes.js"
-import { deleteLeadTimeMutation } from "../../../shared/api/mutations/leadtimes.js";
+import { deleteLeadTimeMutation, createLeadTimeMutation } from "../../../shared/api/mutations/leadtimes.js";
 
 export const unitOptions = (t) => [
   { name: t('settings.leadtimes.unit.hour'), code: LeadTimeUnit.HOUR },
@@ -58,6 +58,17 @@ export const baseFormConfigConstructor = (
     },
   ],
 });
+
+export const leadTimeOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
+  config: {
+    ...baseFormConfigConstructor(
+       t,
+      FormType.CREATE,
+      createLeadTimeMutation,
+      'createLeadTime'
+    ) as FormConfig
+  }
+})
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: false,

@@ -5,6 +5,7 @@ import { ListingConfig } from "../../../shared/components/organisms/general-list
 import { leadTimesForShippingAddressesQuery, leadTimesQuery } from "../../../shared/api/queries/leadtimes.js"
 import { companyShippingAddressesQuery } from "../../../shared/api/queries/contacts.js"
 import { deleteLeadTimeForShippingAddressMutation } from "../../../shared/api/mutations/leadtimes.js";
+import {leadTimeOnTheFlyConfig} from "../../settings/leadtimes/configs";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -50,6 +51,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      createOnFlyConfig: leadTimeOnTheFlyConfig(t),
     },
   ],
 });
