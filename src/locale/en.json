@@ -1183,7 +1183,8 @@
       "labels": {
         "minTime": "Minimum Time",
         "maxTime": "Maximum Time",
-        "unit": "Unit"
+        "unit": "Unit",
+        "outOfStock": "Lead time when out of stock"
       },
       "placeholders": {
         "minTime": "Enter minimum time",
