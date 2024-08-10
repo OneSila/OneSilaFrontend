@@ -632,10 +632,11 @@
           }
         },
         "vatRate": "BTW Tarief",
-        "allowBackorder": "Nalevering toestaan",
+        "alwaysOnStock": "Altijd op Voorraad",
         "sku": "SKU",
         "productionTime": "Productie tijd",
-        "forSale": "Verkoopbaar"
+        "forSale": "Verkoopbaar",
+        "allowBackorder": "Backorder toestaan"
       },
       "placeholders": {
         "vatRate": "Voeg BTW Tarief toe",
@@ -714,7 +715,7 @@
     }
   },
   "inventory": {
-    "title": "Voorraad",
+    "title": "Magazijn",
     "inventoryLocation": {
       "helpSection": {
         "location": {
@@ -754,13 +755,33 @@
     "inventory": {
       "title": "Product Voorraad",
       "labels": {
-        "movements": "Voorraad bewegingen"
+        "movements": "Voorraad bewegingen",
+        "salable": "Verkoopbare Stock",
+        "physical": "Fysieke Stock",
+        "reserved": "Gereserveerde Stock"
       },
       "create": {
         "title": "Voorraad toevoegen"
       },
       "edit": {
         "title": "Bewerk Voorraad"
+      },
+      "help": {
+        "salable": "Items te koop",
+        "physical": "Fysiek op stock.  Zowel verkoopbaar als gereserveerd.",
+        "reserved": "Verkochte, maar niet verzonden items."
+      }
+    },
+    "leadTimeSettings": {
+      "title": "Lead time Instellingen",
+      "create": {
+        "title": "Instelling creëren"
+      },
+      "edit": {
+        "title": "Instelling bewerken"
+      },
+      "show": {
+        "title": "Lead time instellingen"
       }
     }
   },
@@ -856,12 +877,16 @@
       "labels": {
         "amount": "Prijs",
         "discountAmount": "Kortingsprijs",
-        "discountPercentage": "Kortingspercentage"
+        "discountPercentage": "Kortingspercentage",
+        "price": "Prijs",
+        "rrp": "Aanbevolen verkoopprijs"
       },
       "placeholders": {
         "amount": "Voeg prijs in",
         "discountAmount": "Voeg kortingsprijs in",
-        "discountPercentage": "Voer kortingspercentage in"
+        "discountPercentage": "Voer kortingspercentage in",
+        "price": "Voer prijs in",
+        "rrp": "Voer RRP in"
       },
       "updatedSuccessfully": "Prijs in {currency} upgedate",
       "createSuccefully": "Prijs voor {currency} is aangemaakt."
@@ -918,10 +943,10 @@
       },
       "items": {
         "create": {
-          "title": "Nieuw item aanmaken"
+          "title": "Prijs toewijzen"
         },
         "edit": {
-          "title": "Item bewerken"
+          "title": "Prijs bewerken"
         },
         "labels": {
           "priceOverride": "Prijs overschrijving",
@@ -1281,6 +1306,35 @@
         "succefullyDelete": "Demo Data wordt verwijderd.",
         "successfullyDelete": "Demo data wordt verwijderd."
       }
+    },
+    "leadtimes": {
+      "title": "Lead Times",
+      "create": {
+        "title": "Lead time toevoegen"
+      },
+      "edit": {
+        "title": "Lead time bewerken"
+      },
+      "show": {
+        "title": "Lead time"
+      },
+      "labels": {
+        "minTime": "Maximum tijd",
+        "maxTime": "Maximum tijd",
+        "unit": "Eenheid",
+        "outOfStock": "Lead time wanneer zonder stock"
+      },
+      "placeholders": {
+        "minTime": "Voer minimum tijd in",
+        "maxTime": "Voer maximum tijd in",
+        "unit": "Eenheid invoeren"
+      },
+      "unit": {
+        "hour": "Uur",
+        "day": "Dag",
+        "week": "Week",
+        "month": "Maand"
+      }
     }
   },
   "network": {
@@ -1451,7 +1505,7 @@
           "example": "Deze eigenschap zal optioneel toegevoegd worden de product-pagina."
         },
         "helpText": "De Verplicht- en Optioneel in Configurator zijn enkel relevant voor Configureerbare Producten.  Op andere product-types worden ze gezien als verplicht.",
-        "title": "Hoe moet de eigenschap zich gedragen op het product-type?"
+        "title": "Hoe moet deze eigenschap zich gedragen op het product-type?"
       }
     }
   }
