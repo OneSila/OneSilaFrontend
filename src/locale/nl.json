@@ -2,7 +2,7 @@
   "dashboard": {
     "labels": {
       "totalOrders": "Totaal aantal Verkopen",
-      "recentOrders": "Recente Bestellingen",
+      "recentOrders": "Recente Verkopen",
       "sales": "Verkopen"
     },
     "buttons": {
