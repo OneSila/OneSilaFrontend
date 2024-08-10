@@ -632,10 +632,11 @@
           }
         },
         "vatRate": "VAT Rate",
-        "allowBackorder": "Allow Backorder",
+        "alwaysOnStock": "Always on Stock",
         "sku": "SKU",
         "productionTime": "Production Time",
-        "forSale": "For Sale"
+        "forSale": "For Sale",
+        "allowBackorder": "Allow Backorder"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
@@ -759,20 +760,20 @@
         "physical": "Physical Inventory",
         "reserved": "Reserved Inventory"
       },
-      "help": {
-        "salable": "Items that are available for sale",
-        "physical": "Physically on stock, could be reserved, could be salable.",
-        "reserved": "Items that have been sold but not shipped"
-      },
       "create": {
         "title": "Create Inventory"
       },
       "edit": {
         "title": "Edit Inventory"
+      },
+      "help": {
+        "salable": "Items that are available for sale",
+        "physical": "Physically on stock, could be reserved, could be salable.",
+        "reserved": "Items that have been sold but not shipped"
       }
     },
     "leadTimeSettings": {
-      "title": "Lead Time Setting",
+      "title": "Lead Time Settings",
       "create": {
         "title": "Create Setting"
       },
@@ -876,16 +877,16 @@
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
+        "discountPercentage": "Discount Percentage",
         "price": "Price",
-        "rrp": "Recommended Retail Price",
-        "discountPercentage": "Discount Percentage"
+        "rrp": "Recommended Retail Price"
       },
       "placeholders": {
         "amount": "Enter amount",
         "discountAmount": "Enter discount amount",
+        "discountPercentage": "Enter discount percentage",
         "price": "Enter price",
-        "rrp": "Enter rrp",
-        "discountPercentage": "Enter discount percentage"
+        "rrp": "Enter rrp"
       },
       "updatedSuccessfully": "Price for currency {currency} Updated",
       "createSuccefully": "Price for currency {currency} was created"
@@ -1169,35 +1170,6 @@
   },
   "settings": {
     "title": "Settings",
-    "leadtimes": {
-      "title": "Lead Times",
-      "create": {
-        "title": "Create Lead Time"
-      },
-      "edit": {
-        "title": "Edit Lead Time"
-      },
-      "show": {
-        "title": "Lead Time"
-      },
-      "labels": {
-        "minTime": "Minimum Time",
-        "maxTime": "Maximum Time",
-        "unit": "Unit",
-        "outOfStock": "Lead time when out of stock"
-      },
-      "placeholders": {
-        "minTime": "Enter minimum time",
-        "maxTime": "Enter maximum time",
-        "unit": "Enter unit"
-      },
-      "unit": {
-        "hour": "Hour",
-        "day": "Day",
-        "week": "Week",
-        "month": "Month"
-      }
-    },
     "currencies": {
       "title": "Currencies",
       "create": {
@@ -1333,6 +1305,35 @@
         },
         "succefullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
+      }
+    },
+    "leadtimes": {
+      "title": "Lead Times",
+      "create": {
+        "title": "Create Lead Time"
+      },
+      "edit": {
+        "title": "Edit Lead Time"
+      },
+      "show": {
+        "title": "Lead Time"
+      },
+      "labels": {
+        "minTime": "Minimum Time",
+        "maxTime": "Maximum Time",
+        "unit": "Unit",
+        "outOfStock": "Lead time when out of stock"
+      },
+      "placeholders": {
+        "minTime": "Enter minimum time",
+        "maxTime": "Enter maximum time",
+        "unit": "Enter unit"
+      },
+      "unit": {
+        "hour": "Hour",
+        "day": "Day",
+        "week": "Week",
+        "month": "Month"
       }
     }
   },
