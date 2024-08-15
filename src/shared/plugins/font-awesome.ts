@@ -129,7 +129,11 @@ import {
   faQuestion,
   faHistory,
   faDatabase,
-  faEdit
+  faEdit,
+  faClock,
+  faStore,
+  faExclamation,
+  faCircleDot
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -259,6 +263,10 @@ library.add(faHistory as IconDefinition);
 library.add(faDatabase as IconDefinition);
 library.add(faArrowDown as IconDefinition);
 library.add(faEdit as IconDefinition);
+library.add(faClock as IconDefinition);
+library.add(faStore as IconDefinition);
+library.add(faExclamation as IconDefinition);
+library.add(faCircleDot as IconDefinition);
 
 export default {
   install(app) {

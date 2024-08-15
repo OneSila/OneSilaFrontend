@@ -16,7 +16,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name')],
+  headers: [t('properties.properties.labels.isProductType')],
   fields: [
     { name: 'productType', type: FieldType.NestedText, keys: ['value'] }
   ],
@@ -45,11 +45,21 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   addDelete: true,
   fields: [
     {
-      label: t('shared.labels.name'),
+      label: t('properties.properties.labels.isProductType'),
       name: 'productType',
       type: FieldType.NestedText,
       keys: ['value']
     },
+    {
+      type: FieldType.Array,
+      name: 'items',
+      label: t('properties.title'),
+      clickable: true,
+      clickUrl: {name: 'properties.properties.show'},
+      clickIdentifiers: [{id: ['property', 'id']}],
+      keys: ['property', 'name'],
+      showLabel: true
+    }
   ]
 });
 

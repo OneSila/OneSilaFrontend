@@ -3,9 +3,13 @@ export const routes = [
   { path: '/settings/currency/create', name: 'settings.currency.create', component: () => import('./currencies/currency-create/CurrencyCreateController.vue') },
   { path: '/settings/currency/edit/:id', name: 'settings.currency.edit', component: () => import('./currencies/currency-edit/CurrencyEditController.vue') },
     
-  { path: '/settings/vatRates', name: 'settings.vatRates.list', component: () => import('./vat-rates/vat-rates-list/VatRatesListController.vue') },
-  { path: '/settings/vatRate/create', name: 'settings.vatRate.create', component: () => import('./vat-rates/vat-rate-create/VatRateCreateController.vue') },
-  { path: '/settings/vatRate/edit/:id', name: 'settings.vatRate.edit', component: () => import('./vat-rates/vat-rate-edit/VatRateEditController.vue') },
+  { path: '/settings/vat-rates', name: 'settings.vatRates.list', component: () => import('./vat-rates/vat-rates-list/VatRatesListController.vue') },
+  { path: '/settings/vat-rate/create', name: 'settings.vatRate.create', component: () => import('./vat-rates/vat-rate-create/VatRateCreateController.vue') },
+  { path: '/settings/vat-rate/edit/:id', name: 'settings.vatRate.edit', component: () => import('./vat-rates/vat-rate-edit/VatRateEditController.vue') },
+
+  { path: '/settings/leadtimes', name: 'settings.leadtimes.list', component: () => import('./leadtimes/leadtimes-list/LeadTimesListController.vue') },
+  { path: '/settings/leadtime/create', name: 'settings.leadtimes.create', component: () => import('./leadtimes/leadtime-create/LeadTimeCreateController.vue') },
+  { path: '/settings/leadtime/edit/:id', name: 'settings.leadtimes.edit', component: () => import('./leadtimes/leadtime-edit/LeadTimeEditController.vue') },
 
   { path: '/settings/units', name: 'settings.units.list', component: () => import('./units/units-list/UnitListController.vue') },
   { path: '/settings/unit/edit/:id', name: 'settings.unit.edit', component: () => import('./units/unit-edit/UnitEditController.vue') },

@@ -157,6 +157,7 @@
       "invite": "Invite",
       "search": "Search",
       "save": "Save",
+      "fix": "Fix",
       "back": "Back",
       "next": "Next",
       "finish": "Finish",
@@ -207,7 +208,8 @@
       "home": "Home",
       "dateRange": "Date Range",
       "image": "Image",
-      "preview": "Preview"
+      "preview": "Preview",
+      "discount": "Discount"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -614,15 +616,73 @@
         "eanCodes": "EAN Codes"
       },
       "inspector": {
+        "errors": {
+          "101": "Product has missing images",
+          "102": "Product is missing default price",
+          "103": "Product has inactive bills of materials",
+          "104": "Bundle product has inactive items",
+          "105": "Product is missing required variations",
+          "106": "Bundle product is missing items",
+          "107": "Manufacturable product is missing bill of materials",
+          "108": "Product is missing supplier products",
+          "109": "Product is missing an EAN code",
+          "110": "Product is missing a required product type property",
+          "111": "Product is missing required properties",
+          "112": "Product is missing optional properties",
+          "113": "Supplier product is missing required prices",
+          "114": "Product is missing stock",
+          "115": "Product is missing lead time when out of stock",
+          "116": "Manual price list price should have at least override price",
+          "117": "Variations do not have the same product type",
+          "118": "Items do not have the same product type",
+          "119": "Bill of materials do not have the same product type",
+          "120": "Items have inspectors missing mandatory information",
+          "121": "Variations have inspectors missing mandatory information",
+          "122": "Bill of materials have inspectors missing mandatory information",
+          "123": "Configurable product has duplicate variations",
+          "124": "Configurable product has no applicable configurator rules"
+        },
+        "help": {
+          "101": "Please add at least one image to the product",
+          "102": "Please ensure that the product has a valid default price",
+          "103": "Please ensure all bills of materials of the manufacturable product are active",
+          "104": "Please ensure all items in the bundle product are active",
+          "105": "Please add at least one variation to the configurable product",
+          "106": "Please add items to the bundle product",
+          "107": "Please add bill of materials to the manufacturable product",
+          "108": "Please add supplier products to the product",
+          "109": "Please provide an EAN code for the product",
+          "110": "Please add the product type to the product",
+          "111": "Please ensure all required properties are assigned to the product",
+          "112": "Please ensure all optional properties are assigned to the product",
+          "113": "Please add at least one price to the supplier product",
+          "114": "Please ensure the product has stock or allows backorder",
+          "115": "Please specify the lead time for the product when out of stock",
+          "116": "Please ensure manual price list prices have an override price if auto-update is disabled",
+          "117": "Please ensure all variations have the same product type",
+          "118": "Please ensure all items have the same product type",
+          "119": "Please ensure all bill of materials have the same product type",
+          "120": "Please resolve missing mandatory information in the items' inspectors",
+          "121": "Please resolve missing mandatory information in the variations' inspectors",
+          "122": "Please resolve missing mandatory information in the bills of materials' inspectors",
+          "123": "Please ensure that all variations have different required properties",
+          "124": "Please define at least one configurator required item for the configurable rule of the product."
+        },
         "labels": {
-          "missingInfo": "Missing informations"
+          "missingInfo": "Missing informations",
+          "perfect": "Perfect!",
+          "missingOptionalInfo": "Missing optional informations",
+          "noMissingInfo": "Product has no missing informations!"
+        },
+        "alert": {
+          "refreshSuccess": "Inspector succefully refreshed!"
         }
       },
       "labels": {
         "type": {
           "title": "Type",
           "choices": {
-            "umbrella": "Configurable Product",
+            "configurable": "Configurable Product",
             "bundle": "Bundle Product",
             "variation": "Simple Product",
             "dropship": "Dropship Product",
@@ -634,7 +694,8 @@
         "alwaysOnStock": "Always on Stock",
         "sku": "SKU",
         "productionTime": "Production Time",
-        "forSale": "For Sale"
+        "forSale": "For Sale",
+        "allowBackorder": "Allow Backorder"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
@@ -713,7 +774,7 @@
     }
   },
   "inventory": {
-    "title": "Inventory",
+    "title": "Warehouse",
     "inventoryLocation": {
       "helpSection": {
         "location": {
@@ -753,13 +814,33 @@
     "inventory": {
       "title": "Inventories",
       "labels": {
-        "movements": "Inventory Movements"
+        "movements": "Inventory Movements",
+        "salable": "Salable Inventory",
+        "physical": "Physical Inventory",
+        "reserved": "Reserved Inventory"
       },
       "create": {
         "title": "Create Inventory"
       },
       "edit": {
         "title": "Edit Inventory"
+      },
+      "help": {
+        "salable": "Items that are available for sale",
+        "physical": "Physically on stock, could be reserved, could be salable.",
+        "reserved": "Items that have been sold but not shipped"
+      }
+    },
+    "leadTimeSettings": {
+      "title": "Lead Time Settings",
+      "create": {
+        "title": "Create Setting"
+      },
+      "edit": {
+        "title": "Edit Setting"
+      },
+      "show": {
+        "title": "Lead Time Settings"
       }
     }
   },
@@ -852,15 +933,20 @@
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
       "updatedSuccefully": "The price for currency {currency} was succefully updated!",
+      "createdSuccessfully": "The price for currency {currency} was succefully created!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
-        "discountPercentage": "Discount Percentage"
+        "discountPercentage": "Discount Percentage",
+        "price": "Price",
+        "rrp": "Recommended Retail Price"
       },
       "placeholders": {
         "amount": "Enter amount",
         "discountAmount": "Enter discount amount",
-        "discountPercentage": "Enter discount percentage"
+        "discountPercentage": "Enter discount percentage",
+        "price": "Enter price",
+        "rrp": "Enter rrp"
       },
       "updatedSuccessfully": "Price for currency {currency} Updated",
       "createSuccefully": "Price for currency {currency} was created"
@@ -894,11 +980,19 @@
         },
         "discountPercentage": {
           "header": "Discount Percentage",
-          "content": "This section indicates the percentage that will be deducted from the pricelist price, reflecting the discount applied."
+          "content": "What percentage discount would you like to apply to the products assigned to this list?  For a 20% discount, write 20."
         },
         "dateRange": {
           "header": "Date Range",
           "content": "Specify the start and end dates for the price list to be active. You can also leave these empty for a permanent price list. "
+        },
+        "autoUpdatePrices": {
+          "header": "Auto Update Prices",
+          "content": "Enable it if you want to keep prices updated based on currency changes."
+        },
+        "priceChangePcnt": {
+          "header": "Price Change Percentage",
+          "content": "How would you like to influence the maximum price?  Write 20 to increase it with 20%.  Or -20 to decrease with 20%"
         }
       },
       "create": {
@@ -909,18 +1003,58 @@
       },
       "items": {
         "create": {
-          "title": "Create New Item"
+          "title": "Assign Price"
         },
         "edit": {
-          "title": "Edit Item"
+          "title": "Edit Price"
+        },
+        "labels": {
+          "priceOverride": "Price Override",
+          "discountOverride": "Discount Override",
+          "priceAuto": "Price Auto",
+          "discountAuto": "Discount Auto"
+        },
+        "placeholders": {
+          "priceOverride": "Enter price override",
+          "discountOverride": "Enter discount override",
+          "priceAuto": "Price auto calculated",
+          "discountAuto": "Discount auto calculated"
+        },
+        "helpSection": {
+          "product": {
+            "header": "Product",
+            "content": "Select the product you want to include in the price list."
+          },
+          "priceOverride": {
+            "header": "Price Override",
+            "content": "Set a manual price for this item. If 'Auto Update Prices' is enabled in the price list, this overrides the automatically calculated price. If 'Auto Update Prices' is not enabled, this will be the actual price."
+          },
+          "discountOverride": {
+            "header": "Discount Override",
+            "content": "Set a manual discount for this item. If 'Auto Update Prices' is enabled in the price list, this overrides the automatically calculated discount. If 'Auto Update Prices' is not enabled, this will be the actual discount."
+          },
+          "priceAuto": {
+            "header": "Price Auto",
+            "content": "This price is automatically calculated based on the base product price and the price change percentage. This option is only available if 'Auto Update Prices' is enabled in the price list."
+          },
+          "discountAuto": {
+            "header": "Discount Auto",
+            "content": "This discount is automatically calculated based on the base product price and the discount percentage. This option is only available if 'Auto Update Prices' is enabled in the price list."
+          }
         }
       },
       "labels": {
         "vatIncluded": "VAT Included",
-        "autoUpdate": "Auto Update"
+        "autoUpdate": "Auto Update",
+        "autoUpdatePrices": "Auto Update Prices",
+        "autoAddProducts": "Auto Add Products",
+        "priceChangePcnt": "Price Change Percentage"
       },
       "edit": {
         "title": "Edit Price List"
+      },
+      "placeholders": {
+        "priceChangePcnt": "Enter price change percentage"
       }
     },
     "tabs": {
@@ -1232,6 +1366,35 @@
         "succefullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
+    },
+    "leadtimes": {
+      "title": "Lead Times",
+      "create": {
+        "title": "Create Lead Time"
+      },
+      "edit": {
+        "title": "Edit Lead Time"
+      },
+      "show": {
+        "title": "Lead Time"
+      },
+      "labels": {
+        "minTime": "Minimum Time",
+        "maxTime": "Maximum Time",
+        "unit": "Unit",
+        "outOfStock": "Lead time when out of stock"
+      },
+      "placeholders": {
+        "minTime": "Enter minimum time",
+        "maxTime": "Enter maximum time",
+        "unit": "Enter unit"
+      },
+      "unit": {
+        "hour": "Hour",
+        "day": "Day",
+        "week": "Week",
+        "month": "Month"
+      }
     }
   },
   "network": {
@@ -1391,7 +1554,7 @@
         },
         "optionalInConfigurator": {
           "title": "Optional in Configurator",
-          "example": "Similar to Required in Configurator,  but only if there are different choices available."
+          "example": "Similar to Required in Configurator, but only if there are different choices available."
         },
         "required": {
           "title": "Required",

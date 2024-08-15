@@ -10,7 +10,7 @@ export const createInventoryMutation = gql`
           sku
         }
       }
-      stocklocation {
+      inventorylocation {
         id
         ... on InventoryLocationType {
           name
@@ -29,7 +29,7 @@ export const createInventoriesMutation = gql`
         id
         sku
       }
-      stocklocation {
+      inventorylocation {
         id
         name
       }
@@ -48,11 +48,9 @@ export const updateInventoryMutation = gql`
           sku
         }
       }
-      stocklocation {
+      inventorylocation {
         id
-        ... on InventoryLocationType {
-          name
-        }
+        name
       }
       quantity
     }

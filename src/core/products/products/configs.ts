@@ -22,12 +22,12 @@ export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.dropship'), code: ProductType.Dropship },
   { name: t('products.products.labels.type.choices.manufacturable'), code: ProductType.Manufacturable },
-  { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
+  { name: t('products.products.labels.type.choices.configurable'), code: ProductType.Configurable },
   { name: t('products.products.labels.type.choices.supplier'), code: ProductType.Supplier },
 ];
 
 export const getProductTypeBadgeMap = (t) => ({
-  [ProductType.Umbrella]: { text: t('products.products.labels.type.choices.umbrella'), color: 'blue' },
+  [ProductType.Configurable]: { text: t('products.products.labels.type.choices.configurable'), color: 'blue' },
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
   [ProductType.Dropship]: { text: t('products.products.labels.type.choices.dropship'), color: 'primary' },
@@ -99,8 +99,8 @@ const getFields = (type, t): FormField[] => {
     },
     {
       type: FieldType.Checkbox,
-      name: 'alwaysOnStock',
-      label: t('products.products.labels.alwaysOnStock'),
+      name: 'allowBackorder',
+      label: t('products.products.labels.allowBackorder'),
       default: false,
       uncheckedValue: "false"
     },
@@ -165,7 +165,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.alwaysOnStock')],
+  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder')],
   fields: [
     {
       type: FieldType.Text,
@@ -184,7 +184,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     },
     {
       type: FieldType.Boolean,
-      name: 'alwaysOnStock'
+      name: 'allowBackorder'
     },
   ],
   identifierKey: 'id',
@@ -212,6 +212,10 @@ export interface BaseProduct {
   thumbnailUrl: string;
 }
 
+export interface Inspector {
+  id: string;
+}
+
 export interface Product {
   id: string;
   proxyId?: string;
@@ -219,9 +223,13 @@ export interface Product {
   active: boolean;
   forSale: boolean;
   type: string;
+  inspector: Inspector;
   vatRate?: VatRate;
-  alwaysOnStock: boolean;
+  allowBackorder: boolean;
   productionTime?: number;
+  inventoryPhysical?: number;
+  inventorySalable?: number;
+  inventoryReserved?: number;
   baseProducts?: BaseProduct[]
 }
 
@@ -239,7 +247,7 @@ export interface  ProductPropertyTranslation {
 
 export interface ProductPropertyValue {
   id?: string;
-  property: { id: string, name: string, type: string; isProductType: boolean },
+  property: { id: string, name: string, type: string; isProductType: boolean; requireType?: string },
   valueBoolean?: boolean | null;
   valueInt?: number | null;
   valueFloat?: number | null;

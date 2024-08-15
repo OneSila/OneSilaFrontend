@@ -17,14 +17,13 @@ const props = defineProps<{ product: Product }>();
 const loading = ref(false);
 interface Price {
   id: string;
-  amount: string | number | null;
-  discountAmount: string | number | null;
+  price: string | number | null;
+  rrp: string | number | null;
   currency: string;
   readonly: boolean;
 }
 const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
-const isCreate = ref(false);
 const defaultCurrency = ref({ id: '', isoCode: '' });
 
 const getDefaultCurrency = async () => {
@@ -40,6 +39,9 @@ const getDefaultCurrency = async () => {
 const loadPrices = async () => {
   loading.value = true;
 
+  // Fetch the default currency first
+  await getDefaultCurrency();
+
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
     variables: { filter: { product: {id: {exact: props.product.id }} }},
@@ -48,49 +50,51 @@ const loadPrices = async () => {
 
   prices.value = data.salesPrices.edges.map(edge => ({
     id: edge.node.id,
-    amount: edge.node.amount,
-    discountAmount: edge.node.discountAmount,
+    price: edge.node.price,
+    rrp: edge.node.rrp,
     currency: edge.node.currency.isoCode,
-    readonly: !edge.node.currency.isDefaultCurrency && !edge.node.currency.followOfficialRate,
+    readonly: !edge.node.currency.isDefaultCurrency && !!edge.node.currency.inheritsFrom,
   }));
+
   initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
-    if (data.salesPrices.edges.length === 0) {
-    await getDefaultCurrency();
-    isCreate.value = true;
-    prices.value.push({
+  const defaultCurrencyPrice = prices.value.find(price => price.currency === defaultCurrency.value.isoCode);
+
+  if (!defaultCurrencyPrice) {
+
+    prices.value.unshift({
       id: '',
-      amount: null,
-      discountAmount: null,
+      price: null,
+      rrp: null,
       currency: defaultCurrency.value.isoCode,
       readonly: false,
     });
   }
 
   loading.value = false;
-}
+};
 
-function isValidPrice(price) {
-  const amount = parseFloat(price.amount);
-  const discountAmount = parseFloat(price.discountAmount);
+function isValidPrice(unformatedPrice) {
+  const price = parseFloat(unformatedPrice.price);
+  const rrp = parseFloat(unformatedPrice.rrp);
 
 
-  if (isNaN(amount)) {
+  if (isNaN(price)) {
     return false;
   }
 
   // Check if price is 0 or less
-  if (amount <= 0) {
+  if (price <= 0) {
     return false;
   }
 
-  // Check if discount amount is 0
-  if (discountAmount <= 0) {
+  // Check if discount price is 0
+  if (rrp <= 0) {
     return false;
   }
 
-  // Check if the discount is greater than or equal to the price
-  if (discountAmount >= amount) {
+  // Check if the rrp is smaller than or equal to the price
+  if (rrp <= price) {
     return false;
   }
 
@@ -104,8 +108,8 @@ const createPrice = async (price) => {
       mutation: createSalesPriceMutation,
       variables: {
         data: {
-          amount: price.amount,
-          discountAmount: price.discountAmount,
+          price: price.price,
+          rrp: price.rrp,
           product: { id: props.product.id },
           currency: { id: defaultCurrency.value.id }
         }
@@ -122,8 +126,8 @@ const editPrice = async (price) => {
   if (JSON.stringify(price) !== JSON.stringify(originalPrice)) {
     const priceData = {
       id: price.id,
-      amount: price.amount,
-      discountAmount: price.discountAmount == '' ? null : price.discountAmount
+      price: price.price,
+      rrp: price.rrp == '' ? null : price.rrp
     };
     const { data } = await apolloClient.mutate({
       mutation: updateSalesPriceMutation,
@@ -146,7 +150,7 @@ const savePrices = async () => {
         continue;
       }
 
-      if (isCreate.value && !price.id) {
+      if (!price.id) {
         await createPrice(price);
       } else {
         await editPrice(price);
@@ -175,18 +179,18 @@ onMounted(loadPrices);
     <table class="table-striped table-hover">
       <thead>
         <tr>
-          <th>{{ t('sales.prices.labels.amount') }}</th>
-          <th>{{ t('sales.prices.labels.discountAmount') }}</th>
+          <th>{{ t('sales.prices.labels.price') }}</th>
+          <th>{{ t('sales.prices.labels.rrp') }}</th>
           <th>{{ t('shared.labels.currency') }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(price, index) in prices" :key="index">
           <td>
-            <TextInput v-model="price.amount" float :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
+            <TextInput v-model="price.price" float :placeholder="t('sales.prices.placeholders.price')" :disabled="loading || price.readonly" />
           </td>
           <td>
-            <TextInput v-model="price.discountAmount" float :placeholder="t('sales.prices.placeholders.discountAmount')" :disabled="loading || price.readonly" />
+            <TextInput v-model="price.rrp" float :placeholder="t('sales.prices.placeholders.rrp')" :disabled="loading || price.readonly" />
           </td>
           <td>{{ price.currency }}</td>
         </tr>

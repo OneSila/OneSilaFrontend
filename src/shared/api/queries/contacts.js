@@ -127,6 +127,7 @@ query shippingAddresses($filter: ShippingAddressFilter) {
         postcode
         city
         country
+        fullAddress
       }
       cursor
     }
@@ -141,9 +142,9 @@ query shippingAddresses($filter: ShippingAddressFilter) {
 }
 `;
 
-export const internalShippingAddressesQuery = gql`
-  query internalShippingAddresses($filter: InternalShippingAddressFilter) {
-    internalShippingAddresses(filters: $filter) {
+export const inventoryShippingAddressesQuery = gql`
+  query inventoryShippingAddresses($filter: InventoryShippingAddressFilter) {
+    inventoryShippingAddresses(filters: $filter) {
       edges {
         node {
           id

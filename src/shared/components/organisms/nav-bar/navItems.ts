@@ -65,11 +65,15 @@ export const navSections: NavSection[] = [
                 subItems: [
                     {
                         route: { name: 'inventory.inventory.list' },
-                        title:  'inventory.title',
+                        title:  'inventory.inventory.title',
                     },
                     {
                         route: { name: 'inventory.inventoryLocations.list' },
                         title:  'inventory.inventoryLocations.title',
+                    },
+                    {
+                        route: { name: 'inventory.leadTimeSettings.list' },
+                        title:  'inventory.leadTimeSettings.title',
                     },
                 ]
             },

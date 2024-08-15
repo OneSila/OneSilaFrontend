@@ -45,7 +45,8 @@ onMounted(async () => {
       'updateSalesPriceListItem',
       priceListId.value.toString(),
       autoUpdatePrice,
-      productIds.value
+      productIds.value,
+      data.salesPriceList.currency.symbol
     );
 
     formConfig.value = {

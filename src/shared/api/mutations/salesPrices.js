@@ -12,8 +12,8 @@ export const createSalesPriceMutation = gql`
         id
         symbol
       }
-      amount
-      discountAmount
+      rrp
+      price
     }
   }
 `;
@@ -30,8 +30,8 @@ export const createSalesPricesMutation = gql`
         id
         symbol
       }
-      amount
-      discountAmount
+      rrp
+      price
     }
   }
 `;
@@ -48,8 +48,8 @@ export const updateSalesPriceMutation = gql`
         id
         symbol
       }
-      amount
-      discountAmount
+      rrp
+      price
     }
   }
 `;
@@ -75,14 +75,14 @@ export const createSalesPriceListMutation = gql`
     createSalesPriceList(data: $data) {
       id
       name
-      discount
+      discountPcnt
       notes
       currency {
         id
         symbol
       }
       vatIncluded
-      autoUpdate
+      autoUpdatePrices
       startDate
       endDate
     }
@@ -94,13 +94,13 @@ export const createSalesPriceListsMutation = gql`
     createSalesPriceLists(data: $data) {
       id
       name
-      discount
+      discountPcnt
       currency {
         id
         symbol
       }
       vatIncluded
-      autoUpdate
+      autoUpdatePrices
     }
   }
 `;
@@ -110,14 +110,14 @@ export const updateSalesPriceListMutation = gql`
     updateSalesPriceList(data: $data) {
       id
       name
-      discount
+      discountPcnt
       notes
       currency {
         id
         symbol
       }
       vatIncluded
-      autoUpdate
+      autoUpdatePrices
       startDate
       endDate
     }
@@ -152,7 +152,10 @@ export const createSalesPriceListItemMutation = gql`
         id
         sku
       }
-      salesprice
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;
@@ -169,7 +172,10 @@ export const createSalesPriceListItemsMutation = gql`
         id
         sku
       }
-      salesprice
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;
@@ -186,7 +192,10 @@ export const updateSalesPriceListItemMutation = gql`
         id
         sku
       }
-      salesprice
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;

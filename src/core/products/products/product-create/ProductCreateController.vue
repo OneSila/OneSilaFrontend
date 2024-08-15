@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, computed, ref, onMounted} from 'vue';
+import {reactive, computed, ref, onMounted, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";
@@ -11,7 +11,7 @@ import {
   createBillsOfMaterialMutation,
   createBundleVariationsMutation,
   createProductMutation,
-  createUmbrellaVariationsMutation, updateProductMutation
+  createConfigurableVariationsMutation, updateProductMutation
 } from "../../../../shared/api/mutations/products.js"
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
@@ -48,7 +48,7 @@ const form: FormType = reactive({
   vatRate: {
     id: null
   },
-  alwaysOnStock: false,
+  allowBackorder: false,
 });
 
 const additionalFieldsForm: AdditonalFormFields = reactive({
@@ -72,8 +72,8 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
       baseProducts: []
     },
     price: {
-      amount: null,
-      discountAmount: null,
+      rrp: null,
+      price: null,
       currency: {
         id: null
       }
@@ -134,7 +134,7 @@ const wizardSteps = computed(() => {
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
       steps.push({ title: t('products.products.create.wizard.stepFour.manufacturable.title'), name: 'selectVariationsStep' });
       break;
-    case ProductType.Umbrella:
+    case ProductType.Configurable:
       steps.push({ title: t('products.products.create.wizard.stepFour.configurable.title'), name: 'selectVariationsStep' });
       break;
   }
@@ -146,8 +146,8 @@ const getRelatedProductsMutation = (productType) => {
   switch(productType) {
     case ProductType.Bundle:
       return createBundleVariationsMutation;
-    case ProductType.Umbrella:
-      return createUmbrellaVariationsMutation;
+    case ProductType.Configurable:
+      return createConfigurableVariationsMutation;
     case ProductType.Manufacturable:
       return createBillsOfMaterialMutation;
     default:
@@ -158,7 +158,7 @@ const getRelatedProductsMutation = (productType) => {
 const getRelatedProductsVariables = (productId) => {
   return {
     data: additionalFieldsForm.relatedProducts.map(rp => ({
-      umbrella: { id: productId },
+      parent: { id: productId },
       variation: { id: rp.id },
       quantity: rp.quantity
     }))
@@ -171,8 +171,8 @@ const createSalesPrice = async (productId) => {
       mutation: createSalesPriceMutation,
       variables: {
         data: {
-          amount: additionalFieldsForm.price.amount,
-          discountAmount: additionalFieldsForm.price.discountAmount,
+          rrp: additionalFieldsForm.price.rrp,
+          price: additionalFieldsForm.price.price,
           product: { id: productId },
           currency: { id: additionalFieldsForm.price.currency.id }
         }
@@ -253,8 +253,8 @@ const isSupplierProductFilled = () => {
 };
 
 const processAdditionalFields = async (productId) => {
-  // Create sales price if the product is for sale and it's not an Umbrella type
-  if (form.forSale && additionalFieldsForm.price.amount && form.type !== ProductType.Umbrella) {
+  // Create sales price if the product is for sale and it's not an Configurable type
+  if (form.forSale && additionalFieldsForm.price.price && form.type !== ProductType.Configurable) {
     await createSalesPrice(productId);
   }
 
@@ -269,9 +269,9 @@ const processAdditionalFields = async (productId) => {
       await handleSupplierProduct(productId);
     }
 
-  // Create related products for Umbrella, Bundle, or Manufacturable types
+  // Create related products for Configurable, Bundle, or Manufacturable types
   if (additionalFieldsForm.relatedProducts.length > 0 &&
-      (form.type === ProductType.Umbrella || form.type === ProductType.Bundle || form.type === ProductType.Manufacturable)) {
+      (form.type === ProductType.Configurable || form.type === ProductType.Bundle || form.type === ProductType.Manufacturable)) {
     await createRelatedProducts(productId);
   }
 };
@@ -370,35 +370,66 @@ const handleProductSupplierName = () => {
 function hasMissingVat() {
   return form.vatRate.id === '' || form.vatRate.id == null;
 }
+
+function hasMissingSupplier() {
+
+  if (additionalFieldsForm.supplierProduct.id !== null) {
+    return false; // It has a supplier, so no missing supplier
+  }
+
+  return (
+      !additionalFieldsForm.supplierProduct.sku ||
+      !additionalFieldsForm.supplierProduct.name ||
+      additionalFieldsForm.supplierProduct.quantity === null || isNaN(additionalFieldsForm.supplierProduct.quantity) ||
+      additionalFieldsForm.supplierProduct.unitPrice === null || isNaN(additionalFieldsForm.supplierProduct.unitPrice) ||
+      additionalFieldsForm.supplierProduct.supplier.id === null ||
+      additionalFieldsForm.supplierProduct.unit.id === null
+  );
+}
+
 const setDefaultCurrency = (id) => {
   additionalFieldsForm.price.currency.id = id;
 };
 
 const allowNextStep = computed(() => {
-  if (step.value === 0 && form.type === '') {
+
+  const stepName = wizardSteps.value[step.value].name;
+
+  if (stepName === 'typeStep' && form.type === '') {
     return false;
   }
 
-  if (step.value === 1 && form.name === '') {
+  if (stepName === 'generalInfoStep' && form.name === '') {
     return false;
   }
 
-  if (step.value === 1 && (form.productionTime === null || isNaN(form.productionTime)) && form.type === ProductType.Manufacturable) {
+  if (stepName === 'generalInfoStep' && (form.productionTime === null || isNaN(form.productionTime)) && form.type === ProductType.Manufacturable) {
     return false;
   }
 
-  if (form.type === ProductType.Simple) {
-    if (form.forSale) {
-      return !(step.value === 3 && hasMissingVat());
-    }
-  } else {
-    if (form.type !== ProductType.Umbrella) {
-      return !(step.value === 2 && hasMissingVat());
-    }
+  if (stepName === 'priceStep') {
+    return !hasMissingVat();
+  }
+
+  if (stepName === 'supplierStep') {
+    return !hasMissingSupplier();
   }
 
   return true;
 });
+
+
+const clearSupplierProduct = () => {
+  if (additionalFieldsForm.supplierProduct.id !== null) {
+      additionalFieldsForm.supplierProduct.sku = '';
+      additionalFieldsForm.supplierProduct.name = '';
+      additionalFieldsForm.supplierProduct.quantity = null;
+      additionalFieldsForm.supplierProduct.unitPrice = null;
+      additionalFieldsForm.supplierProduct.supplier.id = null;
+  }
+}
+
+watch(additionalFieldsForm.supplierProduct, clearSupplierProduct)
 
 </script>
 

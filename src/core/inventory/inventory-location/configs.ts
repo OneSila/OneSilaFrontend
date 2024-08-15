@@ -3,7 +3,7 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { inventoryLocationsQuery } from "../../../shared/api/queries/inventory.js"
-import { internalShippingAddressesQuery } from "../../../shared/api/queries/contacts.js"
+import { inventoryShippingAddressesQuery } from "../../../shared/api/queries/contacts.js"
 import { deleteInventoryLocationMutation } from "../../../shared/api/mutations/inventory.js";
 
 export const baseFormConfigConstructor = (
@@ -40,17 +40,16 @@ export const baseFormConfigConstructor = (
   fields: [
     {
       type: FieldType.Query,
-      name: 'location',
+      name: 'shippingaddress',
       label:  t('inventory.inventoryLocations.labels.parent'),
       labelBy: 'fullAddress',
       valueBy: 'id',
-      query: internalShippingAddressesQuery,
-      dataKey: 'internalShippingAddresses',
+      query: inventoryShippingAddressesQuery,
+      dataKey: 'inventoryShippingAddresses',
       isEdge: true,
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
-      optional: true
     },
     {
       type: FieldType.Text,
@@ -82,12 +81,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
      {
       type: FieldType.Query,
-      name: 'location',
+      name: 'shippingaddress',
       label:  t('inventory.inventoryLocations.labels.parent'),
       labelBy: 'fullAddress',
       valueBy: 'id',
-      query: internalShippingAddressesQuery,
-      dataKey: 'internalShippingAddresses',
+      query: inventoryShippingAddressesQuery,
+      dataKey: 'inventoryShippingAddresses',
       isEdge: true,
       multiple: false,
       filterable: true,
@@ -106,7 +105,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       type: FieldType.Text,
     },
     {
-      name: 'location',
+      name: 'shippingaddress',
       type: FieldType.NestedText,
       keys: ['fullAddress']
     },

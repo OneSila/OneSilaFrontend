@@ -28,6 +28,7 @@ const props = withDefaults(
 const emit = defineEmits(['onFinish', 'onNextStep', 'onBack', 'updateCurrentStep']);
 
 const currentStep = ref(0);
+const nextButtonRef = ref();
 
 const goToStep = (stepIndex) => {
   if (stepIndex >= 0 && stepIndex < props.steps.length) {
@@ -77,7 +78,11 @@ defineExpose({
   goToStep
 });
 
-useEnterKeyboardListener(nextStep);
+const onNextPressed = () => {
+  nextButtonRef.value?.$el.click();
+};
+
+useEnterKeyboardListener(onNextPressed);
 
 </script>
 
@@ -120,6 +125,7 @@ useEnterKeyboardListener(nextStep);
       {{ t('shared.button.back') }}
     </CancelButton>
     <PrimaryButton
+      ref="nextButtonRef"
       :disabled="!allowNextStep"
       @click="nextStep"
     >

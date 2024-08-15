@@ -24,6 +24,12 @@ export const getTabsConfig = (t: Function): TabItem[] => [
     url: 'settings.units.list',
   },
   {
+    name: 'leadtimes',
+    label: t('settings.leadtimes.title'),
+    icon: 'clock',
+    url: 'settings.leadtimes.list',
+  },
+  {
     name: 'companies',
     label: t('settings.internalCompanies.title'),
     icon: 'building',

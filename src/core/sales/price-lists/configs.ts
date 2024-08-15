@@ -55,7 +55,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
   }
 }
 
-const getFields = (customerId, t, type): FormField[] => {
+export const getFields = (customerId, t, type, showPcnt: boolean = true): FormField[] => {
   const fields = [
     {
       type: FieldType.Text,
@@ -64,12 +64,14 @@ const getFields = (customerId, t, type): FormField[] => {
       placeholder: t('shared.placeholders.name'),
     },
     {
-      type: FieldType.Text,
-      name: 'discount',
-      label: t('sales.prices.labels.discountPercentage'),
-      placeholder: t('sales.prices.placeholders.discountPercentage'),
-      number: true,
-      optional: true,
+      name: 'dateRange',
+      type: FieldType.RangeDate,
+      label: t('shared.labels.dateRange'),
+      keys: ['isoCode'],
+      showLabel: true,
+      startName: 'startDate',
+      endName: 'endDate',
+      optional: true
     },
     {
       type: FieldType.Query,
@@ -88,16 +90,6 @@ const getFields = (customerId, t, type): FormField[] => {
       setDefaultKey: 'isDefaultCurrency'
     },
     {
-      name: 'dateRange',
-      type: FieldType.RangeDate,
-      label: t('shared.labels.dateRange'),
-      keys: ['isoCode'],
-      showLabel: true,
-      startName: 'startDate',
-      endName: 'endDate',
-      optional: true
-    },
-    {
       type: FieldType.Checkbox,
       name: 'vatIncluded',
       label: t('sales.priceLists.labels.vatIncluded'),
@@ -106,11 +98,34 @@ const getFields = (customerId, t, type): FormField[] => {
     },
     {
       type: FieldType.Checkbox,
-      name: 'autoUpdate',
-      label: t('sales.priceLists.labels.autoUpdate'),
+      name: 'autoAddProducts',
+      label: t('sales.priceLists.labels.autoAddProducts'),
+      default: false,
+      uncheckedValue: "false"
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'autoUpdatePrices',
+      label: t('sales.priceLists.labels.autoUpdatePrices'),
       default: true,
       uncheckedValue: "false"
     },
+    showPcnt ? {
+      type: FieldType.Text,
+      name: 'priceChangePcnt',
+      label: t('sales.priceLists.labels.priceChangePcnt'),
+      placeholder: t('sales.priceLists.placeholders.priceChangePcnt'),
+      number: true,
+      optional: true,
+    } : null,
+    showPcnt ? {
+      type: FieldType.Text,
+      name: 'discountPcnt',
+      label: t('sales.prices.labels.discountPercentage'),
+      placeholder: t('sales.prices.placeholders.discountPercentage'),
+      number: true,
+      optional: true,
+    } : null,
     getCustomerField(customerId, t, type),
     {
       type: FieldType.Textarea,
@@ -143,24 +158,28 @@ export const baseFormConfigConstructor = (
       content: t('sales.priceLists.helpSection.name.content')
     },
     {
-      header: t('sales.priceLists.helpSection.discountPercentage.header'),
-      content: t('sales.priceLists.helpSection.discountPercentage.content')
+      header: t('sales.priceLists.helpSection.dateRange.header'),
+      content: t('sales.priceLists.helpSection.dateRange.content')
     },
     {
       header: t('sales.priceLists.helpSection.currency.header'),
       content: t('sales.priceLists.helpSection.currency.content')
     },
     {
-      header: t('sales.priceLists.helpSection.dateRange.header'),
-      content: t('sales.priceLists.helpSection.dateRange.content')
-    },
-    {
       header: t('sales.priceLists.helpSection.vatIncluded.header'),
       content: t('sales.priceLists.helpSection.vatIncluded.content')
     },
     {
-      header: t('sales.priceLists.helpSection.autoUpdate.header'),
-      content: t('sales.priceLists.helpSection.autoUpdate.content')
+      header: t('sales.priceLists.helpSection.autoUpdatePrices.header'),
+      content: t('sales.priceLists.helpSection.autoUpdatePrices.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.priceChangePcnt.header'),
+      content: t('sales.priceLists.helpSection.priceChangePcnt.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.discountPercentage.header'),
+      content: t('sales.priceLists.helpSection.discountPercentage.content')
     },
     {
       header: t('sales.priceLists.helpSection.customers.header'),
@@ -184,8 +203,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     {
       type: FieldType.Boolean,
       strict: true,
-      name: 'autoUpdate',
-      label: t('sales.priceLists.labels.autoUpdate'),
+      name: 'autoUpdatePrices',
+      label: t('sales.priceLists.labels.autoUpdatePrices'),
     },
     {
       type: FieldType.Query,
@@ -221,14 +240,14 @@ const getUrlQueryParams = (customerId) => {
   return customerId ? { customerId: customerId } : undefined;
 }
 export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdate')],
+  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
       name: 'name',
       type: FieldType.Text,
     },
     {
-      name: 'discount',
+      name: 'discountPcnt',
       type: FieldType.Text,
     },
     {
@@ -241,7 +260,7 @@ export const listingConfigConstructor = (t: Function, customerId: string | null 
       type: FieldType.Boolean,
     },
     {
-      name: 'autoUpdate',
+      name: 'autoUpdatePrices',
       type: FieldType.Boolean,
     }
   ],
@@ -276,7 +295,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       showLabel: true
     },
     {
-      name: 'discount',
+      name: 'discountPcnt',
       type: FieldType.Text,
       label: t('sales.prices.labels.discountAmount'),
       showLabel: true
@@ -301,9 +320,9 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       showLabel: true
     },
     {
-      name: 'autoUpdate',
+      name: 'autoUpdatePrices',
       type: FieldType.Boolean,
-      label: t('sales.priceLists.labels.autoUpdate'),
+      label: t('sales.priceLists.labels.autoUpdatePrices'),
       showLabel: true,
     },
     {

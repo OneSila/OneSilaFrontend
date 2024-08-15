@@ -2,7 +2,7 @@
 
 import {ref, onMounted, watch, Ref} from 'vue';
 import {BaseProduct, Product, ProductPropertyValue} from "../../../../../configs";
-import {baseProductTypes, FieldType, PropertyTypes} from "../../../../../../../../shared/utils/constants";
+import {baseProductTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {propertySelectValuesQuery} from "../../../../../../../../shared/api/queries/properties.js";
 import {TextInput} from "../../../../../../../../shared/components/atoms/input-text";
@@ -23,6 +23,7 @@ import { format } from 'date-fns'
 import {Toast} from "../../../../../../../../shared/modules/toast";
 import {Icon} from "../../../../../../../../shared/components/atoms/icon";
 import {Button} from "../../../../../../../../shared/components/atoms/button";
+import {selectValueOnTheFlyConfig} from "../../../../../../../properties/property-select-values/configs";
 
 const { t } = useI18n();
 
@@ -279,6 +280,10 @@ onMounted(async () => {
     };
   }
 
+  if (field.value && props.value.property.type == PropertyTypes.SELECT) {
+    field.value['createOnFlyConfig'] = selectValueOnTheFlyConfig(t, props.value.property.id)
+  }
+
   setValues();
 
 });
@@ -310,52 +315,76 @@ watch(props.value.translation, setTranslatedValues)
 </script>
 
 <template>
-  <Flex between>
-    <FlexCell center grow>
-        <FieldQuery
-          v-if="value.property.type === PropertyTypes.SELECT && field !== null"
-          :field="field"
-          v-model="val"
-        />
-        <FieldQuery
-          v-if="value.property.type === PropertyTypes.MULTISELECT && field !== null"
-          :field="field"
-          v-model="val"
-          multiple
-        />
-        <TextInput
-          v-if="value.property.type === PropertyTypes.INT"
-          class="w-full"
-          v-model="val"
-          number
-        />
-        <TextInput
-          v-if="value.property.type === PropertyTypes.FLOAT"
-          class="w-full"
-          v-model="val"
-          float
-        />
-        <TextInput
-          v-if="value.property.type === PropertyTypes.TEXT"
-          class="w-full"
-          v-model="val"
-        />
-        <TextEditor
-          v-if="value.property.type === PropertyTypes.DESCRIPTION"
-          v-model="val"
-          class="h-32"
-        />
-        <Checkbox v-if="value.property.type === PropertyTypes.BOOLEAN" v-model="val" />
-        <DateInput v-if="value.property.type === PropertyTypes.DATE" v-model="val" />
-        <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
-    </FlexCell>
-    <FlexCell center v-if="val !== lastSavedVal">
-      <PrimaryButton @click="saveChanges" class="ml-2">{{ t('shared.button.save') }}</PrimaryButton>
-    </FlexCell>
-    <FlexCell v-if="![PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)" center>
-       <Button class="btn btn-sm btn-outline-danger ml-2" @click="removePropertyValue()">
+  <div>
+    <div class="grid grid-cols-12 gap-4 items-center my-2 md:hidden">
+      <div class="col-span-8">
+      </div>
+      <div class="col-span-2 text-end">
+        <Button v-if="val !== lastSavedVal" @click="saveChanges" class="rounded-md px-2 py-1 text-sm text-white shadow-sm btn-primary">
+          {{ t('shared.button.save') }}
+        </Button>
+      </div>
+      <div class="col-span-2 text-end">
+        <Button v-if="![PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)" class="btn btn-sm btn-outline-danger text-end" @click="removePropertyValue()">
           <Icon name="trash" />
         </Button>
-    </FlexCell>
-  </Flex>
+      </div>
+    </div>
+    <div class="grid grid-cols-12 gap-4 items-center">
+    <div class="col-span-1 text-end hidden md:block">
+      <template v-if="[PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type) && value.translation.language && flagMapping.hasOwnProperty(value.translation.language) && val == lastSavedVal">
+        <span>{{ flagMapping[value.translation.language] }}</span>
+      </template>
+      <template v-else-if="val !== lastSavedVal">
+        <Button @click="saveChanges" class="rounded-md px-2 py-1 text-sm text-white shadow-sm btn-primary">{{ t('shared.button.save') }}</Button>
+      </template>
+      <template v-else>
+        <span></span>
+      </template>
+    </div>
+    <div class="col-span-12 md:col-span-10">
+      <FieldQuery
+        v-if="value.property.type === PropertyTypes.SELECT && field !== null"
+        :field="field"
+        v-model="val"
+      />
+      <FieldQuery
+        v-if="value.property.type === PropertyTypes.MULTISELECT && field !== null"
+        :field="field"
+        v-model="val"
+        multiple
+      />
+      <TextInput
+        v-if="value.property.type === PropertyTypes.INT"
+        class="w-full"
+        v-model="val"
+        number
+      />
+      <TextInput
+        v-if="value.property.type === PropertyTypes.FLOAT"
+        class="w-full"
+        v-model="val"
+        float
+      />
+      <TextInput
+        v-if="value.property.type === PropertyTypes.TEXT"
+        class="w-full"
+        v-model="val"
+      />
+      <TextEditor
+        v-if="value.property.type === PropertyTypes.DESCRIPTION"
+        v-model="val"
+        class="h-32"
+      />
+      <Checkbox v-if="value.property.type === PropertyTypes.BOOLEAN" v-model="val" />
+      <DateInput v-if="value.property.type === PropertyTypes.DATE" v-model="val" />
+      <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
+    </div>
+    <div class="col-span-1 hidden md:block">
+      <Button class="btn btn-sm btn-outline-danger" @click="removePropertyValue()">
+        <Icon name="trash" />
+      </Button>
+    </div>
+  </div>
+  </div>
 </template>

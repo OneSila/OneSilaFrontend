@@ -19,6 +19,29 @@ const close = () => {
 watchEffect(() => {
   isOpen.value = props.modelValue;
 });
+
+const preventClickOutside = (event) => {
+  const modalContent = document.querySelector('.vue-universal-modal-content');
+  const targetElement = event.target as HTMLElement;
+
+  if (
+    modalContent &&
+    !modalContent.contains(targetElement) &&
+    !targetElement.classList.contains('vs__dropdown-option')
+  ) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+};
+
+const beforeEnter = () => {
+  document.addEventListener('click', preventClickOutside, true);
+};
+
+const beforeLeave = () => {
+  document.removeEventListener('click', preventClickOutside, true);
+};
+
 </script>
 
 <template>
@@ -27,6 +50,8 @@ watchEffect(() => {
     :model-value="isOpen"
     :close="close"
     @update:model-value="(event) => $emit('update:modelValue', event)"
+    @before-enter="beforeEnter"
+    @before-leave="beforeLeave"
   >
     <slot />
   </UniversalModal>

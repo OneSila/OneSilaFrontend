@@ -24,11 +24,16 @@ watch(() => props.addEdit, (newValue) => {
   <GeneralTemplate>
 
     <template v-slot:buttons>
+      <Flex between>
+        <FlexCell grow></FlexCell>
+        <FlexCell>
           <Link :path="{ name: 'sales.priceLists.items.create', params: {priceListId: id} }">
-          <Button class="btn btn-primary">
-              {{  t('sales.priceLists.items.create.title') }}
-          </Button>
-        </Link>
+            <Button class="btn btn-primary">
+                {{  t('sales.priceLists.items.create.title') }}
+            </Button>
+          </Link>
+        </FlexCell>
+      </Flex>
     </template>
 
    <template v-slot:content>

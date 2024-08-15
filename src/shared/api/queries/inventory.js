@@ -15,7 +15,7 @@ query Inventories($first: Int, $last: Int, $after: String, $before: String, $ord
                name
             }
           }
-          stocklocation {
+          inventorylocation {
             id
             name
           }
@@ -43,7 +43,7 @@ export const getInventoryQuery = gql`
         sku
         name
       }
-      stocklocation {
+      inventorylocation {
         id
          name
       }
@@ -61,7 +61,7 @@ export const inventoryLocationsQuery = gql`
           name
           description
           precise
-          location {
+          shippingaddress {
               id
               fullAddress
           }
@@ -86,7 +86,7 @@ export const getInventoryLocationQuery = gql`
       name
       description
       precise
-      location {
+      shippingaddress {
           id
           fullAddress
       }

@@ -13,7 +13,8 @@ export const baseFormConfigConstructor = (
   mutationKey: string,
   salesPriceListId: string,
   autoUpdatePrice: boolean = false,
-  productsId: string[] = []
+  productsId: string[] = [],
+  currency: string | undefined = undefined
 ): FormConfig => {
   let fields: FormField[] = [
     {
@@ -34,16 +35,44 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      disabled: type == FormType.EDIT
+    },
+    {
+      type: FieldType.Text,
+      name: 'priceOverride',
+      label: t('sales.priceLists.items.labels.priceOverride'),
+      placeholder: t('sales.priceLists.items.placeholders.priceOverride'),
+      float: true,
+      prepend: currency
+    },
+    {
+      type: FieldType.Text,
+      name: 'discountOverride',
+      label: t('sales.priceLists.items.labels.discountOverride'),
+      placeholder: t('sales.priceLists.items.placeholders.discountOverride'),
+      float: true,
+      prepend: currency
     }
   ];
 
   if (!autoUpdatePrice) {
     fields.push({
       type: FieldType.Text,
-      name: 'salesprice',
-      label: t('shared.labels.price'),
-      placeholder: t('shared.placeholders.price'),
-      number: true,
+      name: 'priceAuto',
+      label: t('sales.priceLists.items.labels.priceAuto'),
+      placeholder: t('sales.priceLists.items.placeholders.priceAuto'),
+      float: true,
+      prepend: currency,
+      disabled: true
+    });
+    fields.push({
+      type: FieldType.Text,
+      name: 'discountAuto',
+      label: t('sales.priceLists.items.labels.discountAuto'),
+      placeholder: t('sales.priceLists.items.placeholders.discountAuto'),
+      float: true,
+      prepend: currency,
+      disabled: true
     });
   }
 
@@ -54,7 +83,29 @@ export const baseFormConfigConstructor = (
     mutationKey: mutationKey,
     deleteMutation: deleteSalesPriceListItemMutation,
     submitUrl: { name: 'sales.priceLists.show', params: { id: salesPriceListId }, query: { tab: 'items' } },
-    fields: fields
+    fields: fields,
+    helpSections: [
+      {
+        header: t('sales.priceLists.items.helpSection.product.header'),
+        content: t('sales.priceLists.items.helpSection.product.content')
+      },
+      {
+        header: t('sales.priceLists.items.helpSection.priceOverride.header'),
+        content: t('sales.priceLists.items.helpSection.priceOverride.content')
+      },
+      {
+        header: t('sales.priceLists.items.helpSection.discountOverride.header'),
+        content: t('sales.priceLists.items.helpSection.discountOverride.content')
+      },
+      {
+        header: t('sales.priceLists.items.helpSection.priceAuto.header'),
+        content: t('sales.priceLists.items.helpSection.priceAuto.content')
+      },
+      {
+        header: t('sales.priceLists.items.helpSection.discountAuto.header'),
+        content: t('sales.priceLists.items.helpSection.discountAuto.content')
+      }
+    ]
   };
 };
 
@@ -67,7 +118,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, salesPriceListId: string, addEdit: boolean = true): ListingConfig => ({
-  headers: [t('shared.labels.product'), t('shared.labels.price')],
+  headers: [t('shared.labels.product'), t('shared.labels.price'), t('shared.labels.discount')],
   fields: [
     {
       name: 'product',
@@ -75,7 +126,11 @@ export const listingConfigConstructor = (t: Function, salesPriceListId: string, 
       keys: ['name']
     },
     {
-      name: 'salesprice',
+      name: 'price',
+      type: FieldType.Text,
+    },
+    {
+      name: 'discount',
       type: FieldType.Text,
     },
   ],

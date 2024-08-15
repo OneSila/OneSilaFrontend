@@ -15,11 +15,7 @@ const props = defineProps<{
   modelValue: any;
 }>();
 
-onMounted(() => {
-  if (props.field.disabled !== true) {
-    fetchData();
-  }
-});
+onMounted(fetchData);
 
 const emit = defineEmits(['update:modelValue']);
 const showCreateOnFlyModal = ref(false);
@@ -73,10 +69,10 @@ async function fetchData(searchValue: string | null | undefined = null) {
         variables.filter.search = searchValue;
       }
     }
-
     const { data } = await apolloClient.query({
       query: props.field.query as unknown as DocumentNode,
-      variables: variables
+      variables: variables,
+      fetchPolicy: 'network-only'
     });
 
     processAndCleanData(data[props.field.dataKey]);
@@ -162,23 +158,6 @@ const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
 
 <template>
   <div class="field-item">
-    <Selector
-      v-if="field.disabled"
-      :modelValue="selectedValue"
-      :options="[]"
-      :label-by="field.labelBy"
-      :value-by="field.valueBy"
-      :placeholder="field.placeholder"
-      :dropdown-position="dropdownPosition"
-      :mandatory="mandatory"
-      :multiple="multiple"
-      :filterable="filterable"
-      :removable="removable"
-      :limit="limit"
-      :disabled="true"
-      @update:model-value="updateValue"
-    />
-    <template v-else>
       <Flex>
         <FlexCell grow>
           <Selector
@@ -207,7 +186,6 @@ const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
           </Button>
         </FlexCell>
       </Flex>
-    </template>
     <Modal v-if="field.createOnFlyConfig" v-model="showCreateOnFlyModal" @closed="showCreateOnFlyModal = false">
         <CreateOnFlyModal :field="field" @cancel-clicked="handleCancel" @submit-clicked="handleSubmit" />
     </Modal>

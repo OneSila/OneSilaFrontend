@@ -329,6 +329,27 @@ export const createProductPropertiesRuleMutation = gql`
   }
 `;
 
+export const completeCreateProductPropertiesRuleMutation = gql`
+  mutation completeCreateProductPropertiesRule($data: ProductPropertiesRuleInput!) {
+    completeCreateProductPropertiesRule(data: $data) {
+      id
+      productType {
+        id
+        value
+      }
+      items {
+        id
+        property {
+          id
+          name
+        }
+        type
+        sortOrder
+      }
+    }
+  }
+`;
+
 export const createProductPropertiesRulesMutation = gql`
   mutation createProductPropertiesRules($data: [ProductPropertiesRuleInput!]!) {
     createProductPropertiesRules(data: $data) {
@@ -348,6 +369,27 @@ export const updateProductPropertiesRuleMutation = gql`
       productType {
         id
         value
+      }
+    }
+  }
+`;
+
+export const completeUpdateProductPropertiesRuleMutation = gql`
+  mutation completeUpdateProductPropertiesRule($data: ProductPropertiesRulePartialInput!) {
+    completeUpdateProductPropertiesRule(data: $data) {
+      id
+      productType {
+        id
+        value
+      }
+      items {
+        id
+        property {
+          id
+          name
+        }
+        type
+        sortOrder
       }
     }
   }

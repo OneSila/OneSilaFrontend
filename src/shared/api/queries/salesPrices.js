@@ -16,9 +16,12 @@ export const salesPricesQuery = gql`
             isoCode
             isDefaultCurrency
             followOfficialRate
+            inheritsFrom {
+              id
+            }
           }
-          amount
-          discountAmount
+          price
+          rrp
         }
         cursor
       }
@@ -48,8 +51,8 @@ export const getSalesPriceByProductAndCurrencyQuery = gql`
             symbol
             isoCode
           }
-          amount
-          discountAmount
+          price
+          rrp
         }
       }
     }
@@ -64,7 +67,7 @@ export const salesPriceListsQuery = gql`
         node {
           id
           name
-          discount
+          discountPcnt
           notes
           currency {
             id
@@ -72,7 +75,7 @@ export const salesPriceListsQuery = gql`
             isoCode
           }
           vatIncluded
-          autoUpdate
+          autoUpdatePrices
           customers {
             id
             name
@@ -106,7 +109,12 @@ export const salesPriceListItemsQuery = gql`
             sku
             name
           }
-          salesprice
+          price
+          discount
+          priceAuto
+          discountAuto
+          priceOverride
+          discountOverride
         }
         cursor
       }
@@ -134,8 +142,8 @@ export const getSalesPriceQuery = gql`
         symbol
         isoCode
       }
-      amount
-      discountAmount
+      price
+      rrp
     }
   }
 `;
@@ -145,7 +153,9 @@ export const getSalesPriceListQuery = gql`
     salesPriceList(id: $id) {
       id
       name
-      discount
+      priceChangePcnt
+      discountPcnt
+      autoAddProducts
       notes
       currency {
         id
@@ -153,7 +163,7 @@ export const getSalesPriceListQuery = gql`
         isoCode
       }
       vatIncluded
-      autoUpdate
+      autoUpdatePrices
       startDate
       endDate
       customers {
@@ -183,7 +193,12 @@ export const getSalesPriceListItemQuery = gql`
         sku
         name
       }
-      salesprice
+      price
+      discount
+      priceAuto
+      discountAuto
+      priceOverride
+      discountOverride
     }
   }
 `;

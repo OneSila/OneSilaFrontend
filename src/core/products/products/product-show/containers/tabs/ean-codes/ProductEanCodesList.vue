@@ -307,11 +307,6 @@ const handleRealease = async () => {
                     {{ t('products.eanCodes.assign.error') }}
                   </Label>
                 </FlexCell>
-               <FlexCell>
-                  <Link :path="{ name: 'products.eanCodes.create' }">
-                    {{ t('products.eanCodes.assign.errorSolution') }}
-                  </Link>
-               </FlexCell>
              </Flex>
           </div>
         </FlexCell>

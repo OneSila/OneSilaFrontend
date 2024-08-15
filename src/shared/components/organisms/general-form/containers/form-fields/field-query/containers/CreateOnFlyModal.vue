@@ -10,6 +10,7 @@ import {FormCreate} from "../../../form-create";
 import apolloClient from "../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../modules/toast";
 import { processGraphQLErrors } from "../../../../../../../utils";
+import { useEnterKeyboardListener } from "../../../../../../../modules/keyboard";
 
 const { t } = useI18n();
 
@@ -19,6 +20,7 @@ const errors: Ref<Record<string, string> | null> = ref(null);
 
 const form = ref({});
 const config = ref(props.field.createOnFlyConfig?.config);
+const submitButtonRef = ref();
 
 if (config.value) {
   config.value['hideButtons'] = true;
@@ -67,6 +69,11 @@ const submit = async () => {
 
 };
 
+const onSubmitPressed = () => {
+  submitButtonRef.value?.$el.click();
+};
+useEnterKeyboardListener(onSubmitPressed);
+
 </script>
 
 <template>
@@ -75,7 +82,7 @@ const submit = async () => {
 
     <div class="flex justify-end gap-4 mt-4">
       <Button class="btn btn-outline-dark" @click="cancel">{{ t('shared.button.cancel') }}</Button>
-      <Button class="btn btn-primary" @click="submit">{{ t('shared.button.submit') }}</Button>
+      <Button ref="submitButtonRef"  class="btn btn-primary" @click="submit">{{ t('shared.button.submit') }}</Button>
     </div>
   </Card>
 </template>

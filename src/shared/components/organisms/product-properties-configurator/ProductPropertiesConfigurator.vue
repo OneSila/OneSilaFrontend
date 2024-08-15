@@ -12,7 +12,7 @@ import {getPropertySelectValueQuery, propertiesQuery} from '../../../api/queries
 import {AddPropertyModal} from "./containers/add-property-modal";
 import {Badge} from "../../atoms/badge";
 import {getPropertyTypeBadgeMap} from "../../../../core/properties/properties/configs";
-import {ConfigTpes, PropertyTypes} from "../../../utils/constants";
+import {ConfigTypes, PropertyTypes} from "../../../utils/constants";
 import {ProductTypeField} from "./containers/product-type-field";
 import {Selector} from "../../atoms/selector";
 import {PreviewView} from "./containers/preview-view";
@@ -255,10 +255,10 @@ const debouncedFetchData = debounce(fetchData, 500);
 watch(search, debouncedFetchData);
 
 const configTypeChoices = [
-  { id: ConfigTpes.REQUIRED_IN_CONFIGURATOR, text: t('properties.rule.configTypes.requiredInConfigurator.title') },
-  { id: ConfigTpes.OPTIONAL_IN_CONFIGURATOR, text: t('properties.rule.configTypes.optionalInConfigurator.title') },
-  { id: ConfigTpes.REQUIRED, text: t('properties.rule.configTypes.required.title') },
-  { id: ConfigTpes.OPTIONAL, text: t('properties.rule.configTypes.optional.title') }
+  { id: ConfigTypes.REQUIRED_IN_CONFIGURATOR, text: t('properties.rule.configTypes.requiredInConfigurator.title') },
+  { id: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, text: t('properties.rule.configTypes.optionalInConfigurator.title') },
+  { id: ConfigTypes.REQUIRED, text: t('properties.rule.configTypes.required.title') },
+  { id: ConfigTypes.OPTIONAL, text: t('properties.rule.configTypes.optional.title') }
 ]
 
 const handleProductTypeUpdated = async (newVal) => {
@@ -434,7 +434,7 @@ onMounted(fetchData);
       </table>
     </div>
   </div>
-  <AddPropertyModal v-model="showPropertyModal" :property="toAddProperty" :allow-optional="configTypes.includes(ConfigTpes.REQUIRED_IN_CONFIGURATOR)" @property-added="handlePropertyAdded" />
+  <AddPropertyModal v-model="showPropertyModal" :property="toAddProperty" :allow-optional="configTypes.includes(ConfigTypes.REQUIRED_IN_CONFIGURATOR)" @property-added="handlePropertyAdded" />
   <Accordion class="my-4" :items="accordionItems">
     <template #preview>
         <PreviewView :added-properties="addedPropertiesRef" :product-type="localProductType" />
