@@ -118,8 +118,8 @@ onMounted(fetchProductType)
         </Flex>
       </FlexCell>
 
-      <FlexCell v-if="form.type !== ProductType.Umbrella" class="py-8 px-96"><hr></FlexCell>
-      <FlexCell v-if="form.type !== ProductType.Umbrella">
+      <FlexCell v-if="form.type !== ProductType.Configurable" class="py-8 px-96"><hr></FlexCell>
+      <FlexCell v-if="form.type !== ProductType.Configurable">
         <Flex center class="gap-4">
           <FlexCell center>
             <Flex vertical class="gap-2">

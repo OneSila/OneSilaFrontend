@@ -11,10 +11,10 @@ import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
 import {FilterManager} from "../../../../../../../../../shared/components/molecules/filter-manager";
 import {ApolloAlertMutation} from "../../../../../../../../../shared/components/molecules/apollo-alert-mutation";
 import {
-  deleteUmbrellaVariationMutation,
+  deleteConfigurableVariationMutation,
   deleteBundleVariationMutation,
   deleteBillOfMaterialMutation,
-  updateUmbrellaVariationMutation,
+  updateConfigurableVariationMutation,
   updateBundleVariationMutation,
   updateBillOfMaterialMutation
 } from "../../../../../../../../../shared/api/mutations/products.js";
@@ -32,7 +32,7 @@ const localQuantities = ref<{ [key: string]: number }>({});
 
 const initializeLocalQuantities = (data) => {
 
-  if (data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length && props.product.type != ProductType.Umbrella) {
+  if (data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length && props.product.type != ProductType.Configurable) {
     data[props.queryKey].edges.forEach((edge) => {
       localQuantities.value[edge.node.id] = edge.node.quantity;
     });
@@ -49,7 +49,7 @@ const extractVariationIds = (data) => {
 };
 
 const refetchIfNecessary = (query, data) => {
-  emit('update-ids', extractVariationIds(data.umbrellaVariations))
+  emit('update-ids', extractVariationIds(data.configurableVariations))
   initializeLocalQuantities(data);
   if (props.refetchNeeded) {
     query.refetch();
@@ -62,8 +62,8 @@ const getDeleteMutation = () => {
   switch(props.product.type) {
     case ProductType.Bundle:
       return deleteBundleVariationMutation;
-    case ProductType.Umbrella:
-      return deleteUmbrellaVariationMutation;
+    case ProductType.Configurable:
+      return deleteConfigurableVariationMutation;
     case ProductType.Manufacturable:
       return deleteBillOfMaterialMutation;
     default:
@@ -75,8 +75,8 @@ const getUpdateMutation = () => {
   switch(props.product.type) {
     case ProductType.Bundle:
       return updateBundleVariationMutation;
-    case ProductType.Umbrella:
-      return updateUmbrellaVariationMutation;
+    case ProductType.Configurable:
+      return updateConfigurableVariationMutation;
     case ProductType.Manufacturable:
       return updateBillOfMaterialMutation;
     default:
@@ -114,7 +114,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
   <FilterManager :searchConfig="searchConfig">
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
       <ApolloQuery :query="listQuery"
-                   :variables="{filter: {...filterVariables, 'umbrella': {'id': {'exact': product.id}}},
+                   :variables="{filter: {...filterVariables, 'parent': {'id': {'exact': product.id}}},
                                 order:orderVariables,
                                 first: pagination.first,
                                 last: pagination.last,
@@ -128,7 +128,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                 <tr>
                   <th>{{ t('shared.labels.name') }}</th>
                   <th>{{ t('shared.labels.active') }}</th>
-                  <th v-if="product.type != ProductType.Umbrella">{{ t('shared.labels.quantity') }}</th>
+                  <th v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
                   <th v-if="product.type == ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
                   <th class="!text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
@@ -154,7 +154,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
-                  <td v-if="product.type != ProductType.Umbrella">
+                  <td v-if="product.type != ProductType.Configurable">
                     <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />
                   </td>
                   <td v-if="product.type == ProductType.Manufacturable">
@@ -171,7 +171,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                         :refetch-queries="() => [{
                          query: listQuery,
                          variables: {
-                           filter: {...filterVariables, 'umbrella': {'id': {'exact': product.id}}},
+                           filter: {...filterVariables, 'parent': {'id': {'exact': product.id}}},
                            order: orderVariables,
                            first: pagination.first,
                            last: pagination.last,

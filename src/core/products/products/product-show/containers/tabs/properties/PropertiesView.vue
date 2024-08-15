@@ -187,7 +187,7 @@ const fetchRequiredAttributes = async (productTypePropertyId) => {
 
   const productTypeValueId = await fetchProductTypeValue(productTypePropertyId);
 
-  if (props.product.type == ProductType.Umbrella) {
+  if (props.product.type == ProductType.Configurable) {
     lastSavedValues.value = values.value;
     return
   }

@@ -5,7 +5,7 @@ import {Product} from "../../../../configs";
 import {useI18n} from "vue-i18n";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import {SearchConfig} from "../../../../../../../shared/components/organisms/general-search/searchConfig";
-import { billOfMaterialsQuery, bundleVariationsQuery, umbrellaVariationsQuery } from "../../../../../../../shared/api/queries/products.js";
+import { billOfMaterialsQuery, bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../shared/api/queries/products.js";
 import { ProductType } from "../../../../../../../shared/utils/constants";
 import VariationsList from "./containers/variations-list/VariationsList.vue";
 import VariationCreate from "./containers/variation-create/VariationCreate.vue";
@@ -39,8 +39,8 @@ const getQuery = () => {
   switch(props.product.type) {
     case ProductType.Bundle:
       return bundleVariationsQuery;
-    case ProductType.Umbrella:
-      return umbrellaVariationsQuery;
+    case ProductType.Configurable:
+      return configurableVariationsQuery;
     case ProductType.Manufacturable:
       return billOfMaterialsQuery;
     default:
@@ -52,8 +52,8 @@ const getQueryKey = () => {
   switch(props.product.type) {
     case ProductType.Bundle:
       return 'bundleVariations';
-    case ProductType.Umbrella:
-      return 'umbrellaVariations';
+    case ProductType.Configurable:
+      return 'configurableVariations';
     case ProductType.Manufacturable:
       return 'billOfMaterials';
     default:

@@ -22,12 +22,12 @@ export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.dropship'), code: ProductType.Dropship },
   { name: t('products.products.labels.type.choices.manufacturable'), code: ProductType.Manufacturable },
-  { name: t('products.products.labels.type.choices.umbrella'), code: ProductType.Umbrella },
+  { name: t('products.products.labels.type.choices.configurable'), code: ProductType.Configurable },
   { name: t('products.products.labels.type.choices.supplier'), code: ProductType.Supplier },
 ];
 
 export const getProductTypeBadgeMap = (t) => ({
-  [ProductType.Umbrella]: { text: t('products.products.labels.type.choices.umbrella'), color: 'blue' },
+  [ProductType.Configurable]: { text: t('products.products.labels.type.choices.configurable'), color: 'blue' },
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
   [ProductType.Dropship]: { text: t('products.products.labels.type.choices.dropship'), color: 'primary' },
