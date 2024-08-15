@@ -104,7 +104,7 @@ useEnterKeyboardListener(onSubmitPressed);
         <CreateForm :product="product" :form="form" :variation-ids="variationIdsRef" />
       </FlexCell>
       <FlexCell>
-        <DangerButton type="button" class="btn btn-danger ml-2" @click="resetForm">
+        <DangerButton type="button" class="ml-2" @click="resetForm">
           {{ t('shared.button.cancel') }}
         </DangerButton>
       </FlexCell>

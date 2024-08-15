@@ -157,6 +157,7 @@
       "invite": "Invite",
       "search": "Search",
       "save": "Save",
+      "fix": "Fix",
       "back": "Back",
       "next": "Next",
       "finish": "Finish",
@@ -615,8 +616,66 @@
         "eanCodes": "EAN Codes"
       },
       "inspector": {
+        "errors": {
+          "101": "Product has missing images",
+          "102": "Product is missing default price",
+          "103": "Product has inactive bills of materials",
+          "104": "Bundle product has inactive items",
+          "105": "Product is missing required variations",
+          "106": "Bundle product is missing items",
+          "107": "Manufacturable product is missing bill of materials",
+          "108": "Product is missing supplier products",
+          "109": "Product is missing an EAN code",
+          "110": "Product is missing a required product type property",
+          "111": "Product is missing required properties",
+          "112": "Product is missing optional properties",
+          "113": "Supplier product is missing required prices",
+          "114": "Product is missing stock",
+          "115": "Product is missing lead time when out of stock",
+          "116": "Manual price list price should have at least override price",
+          "117": "Variations do not have the same product type",
+          "118": "Items do not have the same product type",
+          "119": "Bill of materials do not have the same product type",
+          "120": "Items have inspectors missing mandatory information",
+          "121": "Variations have inspectors missing mandatory information",
+          "122": "Bill of materials have inspectors missing mandatory information",
+          "123": "Configurable product has duplicate variations",
+          "124": "Configurable product has no applicable configurator rules"
+        },
+        "help": {
+          "101": "Please add at least one image to the product",
+          "102": "Please ensure that the product has a valid default price",
+          "103": "Please ensure all bills of materials of the manufacturable product are active",
+          "104": "Please ensure all items in the bundle product are active",
+          "105": "Please add at least one variation to the configurable product",
+          "106": "Please add items to the bundle product",
+          "107": "Please add bill of materials to the manufacturable product",
+          "108": "Please add supplier products to the product",
+          "109": "Please provide an EAN code for the product",
+          "110": "Please add the product type to the product",
+          "111": "Please ensure all required properties are assigned to the product",
+          "112": "Please ensure all optional properties are assigned to the product",
+          "113": "Please add at least one price to the supplier product",
+          "114": "Please ensure the product has stock or allows backorder",
+          "115": "Please specify the lead time for the product when out of stock",
+          "116": "Please ensure manual price list prices have an override price if auto-update is disabled",
+          "117": "Please ensure all variations have the same product type",
+          "118": "Please ensure all items have the same product type",
+          "119": "Please ensure all bill of materials have the same product type",
+          "120": "Please resolve missing mandatory information in the items' inspectors",
+          "121": "Please resolve missing mandatory information in the variations' inspectors",
+          "122": "Please resolve missing mandatory information in the bills of materials' inspectors",
+          "123": "Please ensure that all variations have different required properties",
+          "124": "Please define at least one configurator required item for the configurable rule of the product."
+        },
         "labels": {
-          "missingInfo": "Missing informations"
+          "missingInfo": "Missing informations",
+          "perfect": "Perfect!",
+          "missingOptionalInfo": "Missing optional informations",
+          "noMissingInfo": "Product has no missing informations!"
+        },
+        "alert": {
+          "refreshSuccess": "Inspector succefully refreshed!"
         }
       },
       "labels": {
@@ -874,6 +933,7 @@
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
       "updatedSuccefully": "The price for currency {currency} was succefully updated!",
+      "createdSuccessfully": "The price for currency {currency} was succefully created!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
@@ -1494,7 +1554,7 @@
         },
         "optionalInConfigurator": {
           "title": "Optional in Configurator",
-          "example": "Similar to Required in Configurator,  but only if there are different choices available."
+          "example": "Similar to Required in Configurator, but only if there are different choices available."
         },
         "required": {
           "title": "Required",

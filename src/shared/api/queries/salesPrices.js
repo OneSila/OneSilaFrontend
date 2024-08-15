@@ -16,6 +16,9 @@ export const salesPricesQuery = gql`
             isoCode
             isDefaultCurrency
             followOfficialRate
+            inheritsFrom {
+              id
+            }
           }
           price
           rrp

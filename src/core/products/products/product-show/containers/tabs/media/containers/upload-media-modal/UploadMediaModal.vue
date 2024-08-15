@@ -24,7 +24,7 @@ const searchConfig: SearchConfig = {
 };
 
 const queryKey = 'medias';
-const defaultView = 'table'
+const defaultView = 'gallery'
 
 watch(() => props.modelValue, (newVal) => {
   localShowModal.value = newVal;

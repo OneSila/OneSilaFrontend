@@ -35,6 +35,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      disabled: type == FormType.EDIT
     },
     {
       type: FieldType.Text,

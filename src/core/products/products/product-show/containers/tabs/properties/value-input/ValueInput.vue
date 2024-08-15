@@ -381,7 +381,7 @@ watch(props.value.translation, setTranslatedValues)
       <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
     </div>
     <div class="col-span-1 hidden md:block">
-      <Button v-if="![PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)" class="btn btn-sm btn-outline-danger" @click="removePropertyValue()">
+      <Button class="btn btn-sm btn-outline-danger" @click="removePropertyValue()">
         <Icon name="trash" />
       </Button>
     </div>

@@ -394,6 +394,7 @@ export const billOfMaterialsQuery = gql`
             name
             productionTime
             thumbnailUrl
+            active
           }
           quantity
           umbrella {

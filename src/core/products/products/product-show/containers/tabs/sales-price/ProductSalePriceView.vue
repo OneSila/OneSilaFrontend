@@ -24,7 +24,6 @@ interface Price {
 }
 const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
-const isCreate = ref(false);
 const defaultCurrency = ref({ id: '', isoCode: '' });
 
 const getDefaultCurrency = async () => {
@@ -40,6 +39,9 @@ const getDefaultCurrency = async () => {
 const loadPrices = async () => {
   loading.value = true;
 
+  // Fetch the default currency first
+  await getDefaultCurrency();
+
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
     variables: { filter: { product: {id: {exact: props.product.id }} }},
@@ -51,14 +53,16 @@ const loadPrices = async () => {
     price: edge.node.price,
     rrp: edge.node.rrp,
     currency: edge.node.currency.isoCode,
-    readonly: !edge.node.currency.isDefaultCurrency && !edge.node.currency.followOfficialRate,
+    readonly: !edge.node.currency.isDefaultCurrency && !!edge.node.currency.inheritsFrom,
   }));
+
   initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
-    if (data.salesPrices.edges.length === 0) {
-    await getDefaultCurrency();
-    isCreate.value = true;
-    prices.value.push({
+  const defaultCurrencyPrice = prices.value.find(price => price.currency === defaultCurrency.value.isoCode);
+
+  if (!defaultCurrencyPrice) {
+
+    prices.value.unshift({
       id: '',
       price: null,
       rrp: null,
@@ -68,7 +72,7 @@ const loadPrices = async () => {
   }
 
   loading.value = false;
-}
+};
 
 function isValidPrice(unformatedPrice) {
   const price = parseFloat(unformatedPrice.price);
@@ -146,7 +150,7 @@ const savePrices = async () => {
         continue;
       }
 
-      if (isCreate.value && !price.id) {
+      if (!price.id) {
         await createPrice(price);
       } else {
         await editPrice(price);

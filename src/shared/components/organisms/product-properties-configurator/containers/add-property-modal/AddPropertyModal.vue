@@ -5,14 +5,14 @@ import { Card } from '../../../../../../shared/components/atoms/card';
 import { useI18n } from "vue-i18n";
 import { Property} from "../../ProductPropertiesConfigurator.vue";
 import { OptionSelector } from "../../../../molecules/option-selector";
-import {ConfigTpes, PropertyTypes} from "../../../../../utils/constants";
+import {ConfigTypes, PropertyTypes} from "../../../../../utils/constants";
 import {Icon} from "../../../../atoms/icon";
 
 const props = defineProps<{ modelValue: boolean; property: Property | null, allowOptional?: boolean }>();
 const emit = defineEmits(['update:modelValue', 'property-added']);
 const localShowModal = ref(props.modelValue);
 const configType = ref('');
-const types: Ref<{name: ConfigTpes; disable?: boolean}[]> = ref([]);
+const types: Ref<{name: ConfigTypes; disable?: boolean}[]> = ref([]);
 
 const { t } = useI18n();
 
@@ -22,14 +22,14 @@ watch(() => props.modelValue, (newVal) => {
 
 
 watchEffect(() => {
-    let newTypes: {name: ConfigTpes; disable?: boolean}[] = [
-    { name: ConfigTpes.REQUIRED },
-    { name: ConfigTpes.OPTIONAL },
+    let newTypes: {name: ConfigTypes; disable?: boolean}[] = [
+    { name: ConfigTypes.REQUIRED },
+    { name: ConfigTypes.OPTIONAL },
   ];
 
   if (props.property?.type == PropertyTypes.SELECT) {
-    newTypes.push({ name: ConfigTpes.REQUIRED_IN_CONFIGURATOR })
-    newTypes.push({ name: ConfigTpes.OPTIONAL_IN_CONFIGURATOR, disable: !props.allowOptional })
+    newTypes.push({ name: ConfigTypes.REQUIRED_IN_CONFIGURATOR })
+    newTypes.push({ name: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, disable: !props.allowOptional })
   }
 
   types.value = newTypes;

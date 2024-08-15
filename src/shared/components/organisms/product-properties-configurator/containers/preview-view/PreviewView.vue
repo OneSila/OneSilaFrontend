@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import {defineProps, ref} from 'vue';
 import {Property} from "../../ProductPropertiesConfigurator.vue";
 import {Icon} from "../../../../atoms/icon";
-import {ConfigTpes} from "../../../../../utils/constants";
+import {ConfigTypes} from "../../../../../utils/constants";
 
 
 const { t } = useI18n();
@@ -58,7 +58,7 @@ const emit = defineEmits(['imaged-added']);
 
                 <div class="mt-4">
                   <div v-for="property in addedProperties">
-                    <fieldset v-if="property.configType == ConfigTpes.REQUIRED_IN_CONFIGURATOR" class="mt-2">
+                    <fieldset v-if="property.configType == ConfigTypes.REQUIRED_IN_CONFIGURATOR" class="mt-2">
                       <label>{{ property.name }}</label>
                       <div class="grid grid-cols-3 gap-3 sm:grid-cols-6">
 
@@ -83,7 +83,7 @@ const emit = defineEmits(['imaged-added']);
                         </label>
                       </div>
                   </fieldset>
-                    <fieldset v-if="property.configType == ConfigTpes.OPTIONAL_IN_CONFIGURATOR" class="mt-2 opacity-50">
+                    <fieldset v-if="property.configType == ConfigTypes.OPTIONAL_IN_CONFIGURATOR" class="mt-2 opacity-50">
                       <label>{{ property.name }}</label>
                       <div class="grid grid-cols-3 gap-3 sm:grid-cols-6">
 
@@ -117,14 +117,14 @@ const emit = defineEmits(['imaged-added']);
                     </thead>
                     <tbody>
                       <template v-for="property in addedProperties">
-                        <template v-if="property.configType !== ConfigTpes.REQUIRED_IN_CONFIGURATOR">
-                          <tr v-if="property.configType == ConfigTpes.REQUIRED">
+                        <template v-if="property.configType !== ConfigTypes.REQUIRED_IN_CONFIGURATOR">
+                          <tr v-if="property.configType == ConfigTypes.REQUIRED">
                             <th class="font-semibold">
                               {{ property.name }}
                             </th>
                             <td>{{ t('properties.rule.preview.productView.givenValue') }}</td>
                           </tr>
-                          <tr v-if="property.configType == ConfigTpes.OPTIONAL">
+                          <tr v-if="property.configType == ConfigTypes.OPTIONAL">
                             <th class="font-semibold">
                               {{ property.name }}
                             </th>
@@ -142,7 +142,7 @@ const emit = defineEmits(['imaged-added']);
                                 </Flex>
                             </td>
                           </tr>
-                          <tr v-if="property.configType == ConfigTpes.OPTIONAL_IN_CONFIGURATOR">
+                          <tr v-if="property.configType == ConfigTypes.OPTIONAL_IN_CONFIGURATOR">
                             <th class="font-semibold">
                               {{ property.name }}
                             </th>
