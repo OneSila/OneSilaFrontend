@@ -74,7 +74,7 @@ export const HELD_ORDER = [OrderStatus.HOLD, OrderStatus.PENDING_INVENTORY];
 
 export const PRODUCT_SIMPLE = 'SIMPLE'
 export const PRODUCT_BUNDLE = 'BUNDLE'
-export const PRODUCT_UMBRELLA = 'UMBRELLA'
+export const PRODUCT_CONFIGURABLE = 'CONFIGURABLE'
 export const PRODUCT_MANUFACTURABLE = 'MANUFACTURABLE'
 export const PRODUCT_DROPSHIP = 'DROPSHIP'
 export const PRODUCT_SUPPLIER = 'SUPPLIER'
@@ -82,7 +82,7 @@ export const PRODUCT_SUPPLIER = 'SUPPLIER'
 export const ProductType = {
   Simple: PRODUCT_SIMPLE,
   Bundle: PRODUCT_BUNDLE,
-  Umbrella: PRODUCT_UMBRELLA,
+  Configurable: PRODUCT_CONFIGURABLE,
   Manufacturable: PRODUCT_MANUFACTURABLE,
   Dropship: PRODUCT_DROPSHIP,
   Supplier: PRODUCT_SUPPLIER,

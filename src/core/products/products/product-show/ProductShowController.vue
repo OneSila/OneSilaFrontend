@@ -17,7 +17,7 @@ import { ApolloAlertMutation } from "../../../../shared/components/molecules/apo
 import { Badge } from "../../../../shared/components/atoms/badge";
 import { Image } from "../../../../shared/components/atoms/image";
 import ProductBundle from "./containers/product-type/product-bundle/ProductBundle.vue";
-import ProductUmbrella from "./containers/product-type/product-umbrella/ProductUmbrella.vue";
+import ProductConfigurable from "./containers/product-type/product-configurable/ProductConfigurable.vue";
 import ProductVariation from "./containers/product-type/product-variation/ProductVariation.vue";
 import ProductManufacturable from "./containers/product-type/product-manufacturable/ProductManufacturable.vue";
 import ProductDropship from "./containers/product-type/product-dropship/ProductDropship.vue";
@@ -70,8 +70,8 @@ const getProductComponent = (type) => {
   if (type == ProductType.Bundle) {
     return ProductBundle;
   }
-  if (type == ProductType.Umbrella) {
-    return ProductUmbrella;
+  if (type == ProductType.Configurable) {
+    return ProductConfigurable;
   }
   if (type == ProductType.Simple) {
     return ProductVariation;

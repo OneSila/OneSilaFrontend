@@ -3,7 +3,7 @@
 import {defineProps, Ref, ref} from 'vue';
 import { useI18n } from "vue-i18n";
 import {AdditonalFormFields, FormType, RelatedProduct} from "../product";
-import { PRODUCT_BUNDLE, PRODUCT_UMBRELLA, PRODUCT_MANUFACTURABLE } from "../../../../../../shared/utils/constants";
+import { PRODUCT_BUNDLE, PRODUCT_CONFIGURABLE, PRODUCT_MANUFACTURABLE } from "../../../../../../shared/utils/constants";
 import { VariationsAdder } from "../../../../../../shared/components/organisms/variations-adder";
 
 const props = defineProps<{form: FormType, additionalFieldsForm: AdditonalFormFields}>();
@@ -13,7 +13,7 @@ const { t } = useI18n();
 const variations: Ref<RelatedProduct[]> = ref(props.additionalFieldsForm.relatedProducts);
 const productDescriptionMap = {
   [PRODUCT_BUNDLE]:  t('products.products.create.wizard.stepFour.bundle.selectVariations') ,
-  [PRODUCT_UMBRELLA]:  t('products.products.create.wizard.stepFour.configurable.selectVariations') ,
+  [PRODUCT_CONFIGURABLE]:  t('products.products.create.wizard.stepFour.configurable.selectVariations') ,
   [PRODUCT_MANUFACTURABLE]:  t('products.products.create.wizard.stepFour.manufacturable.selectVariations') ,
 };
 

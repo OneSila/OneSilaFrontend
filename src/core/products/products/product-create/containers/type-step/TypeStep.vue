@@ -22,7 +22,7 @@ const baseTypeChoice = [
 
 const additionalTypeChoice = [
   { name: ProductType.Bundle },
-  { name: ProductType.Umbrella },
+  { name: ProductType.Configurable },
   { name: ProductType.Manufacturable }
 ];
 
@@ -64,7 +64,7 @@ const { t } = useI18n();
         </div>
       </template>
 
-      <template #UMBRELLA>
+      <template #CONFIGURABLE>
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.configurable.title') }}</h3>
           <p>{{ t('products.products.create.wizard.stepOne.configurable.example') }}</p>

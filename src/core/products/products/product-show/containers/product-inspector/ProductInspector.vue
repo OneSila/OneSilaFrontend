@@ -49,8 +49,6 @@ const refetchData = (result) => {
   color.value = getColor(r.inspector.hasMissingInformation, r.inspector.hasMissingOptionalInformation)
   errors.value = r.inspector['errors'];
 
-  console.log(r)
-
   return true;
 }
 function bgColorClass(color) {
@@ -153,9 +151,6 @@ const refreshInspector = async () => {
 
     errors.value = data.refreshInepsctor.errors;
     color.value = getColor(data.refreshInepsctor.hasMissingInformation, data.refreshInepsctor.hasMissingOptionalInformation)
-
-    console.log(errors.value)
-    console.log(color.value)
 
     Toast.success(t('products.products.inspector.alert.refreshSuccess'))
   }

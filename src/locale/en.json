@@ -682,7 +682,7 @@
         "type": {
           "title": "Type",
           "choices": {
-            "umbrella": "Configurable Product",
+            "configurable": "Configurable Product",
             "bundle": "Bundle Product",
             "variation": "Simple Product",
             "dropship": "Dropship Product",

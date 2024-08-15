@@ -25,7 +25,7 @@ const fetchData = async () => {
   let typeFilter;
 
   switch (props.product.type) {
-    case ProductType.Umbrella:
+    case ProductType.Configurable:
     case ProductType.Bundle:
       typeFilter = variationTypes;
       break;
@@ -77,7 +77,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
                 filterable
                 class="min-w-[200px] mr-2" />
     </FlexCell>
-    <FlexCell v-if="product.type !== ProductType.Umbrella" >
+    <FlexCell v-if="product.type !== ProductType.Configurable" >
       <TextInput v-model="form.quantity" float :placeholder="t('shared.placeholders.quantity')" class="w-32" />
     </FlexCell>
   </Flex>

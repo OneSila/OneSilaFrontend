@@ -11,7 +11,7 @@ import {
   createBillsOfMaterialMutation,
   createBundleVariationsMutation,
   createProductMutation,
-  createUmbrellaVariationsMutation, updateProductMutation
+  createConfigurableVariationsMutation, updateProductMutation
 } from "../../../../shared/api/mutations/products.js"
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
@@ -134,7 +134,7 @@ const wizardSteps = computed(() => {
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
       steps.push({ title: t('products.products.create.wizard.stepFour.manufacturable.title'), name: 'selectVariationsStep' });
       break;
-    case ProductType.Umbrella:
+    case ProductType.Configurable:
       steps.push({ title: t('products.products.create.wizard.stepFour.configurable.title'), name: 'selectVariationsStep' });
       break;
   }
@@ -146,8 +146,8 @@ const getRelatedProductsMutation = (productType) => {
   switch(productType) {
     case ProductType.Bundle:
       return createBundleVariationsMutation;
-    case ProductType.Umbrella:
-      return createUmbrellaVariationsMutation;
+    case ProductType.Configurable:
+      return createConfigurableVariationsMutation;
     case ProductType.Manufacturable:
       return createBillsOfMaterialMutation;
     default:
@@ -158,7 +158,7 @@ const getRelatedProductsMutation = (productType) => {
 const getRelatedProductsVariables = (productId) => {
   return {
     data: additionalFieldsForm.relatedProducts.map(rp => ({
-      umbrella: { id: productId },
+      parent: { id: productId },
       variation: { id: rp.id },
       quantity: rp.quantity
     }))
@@ -253,8 +253,8 @@ const isSupplierProductFilled = () => {
 };
 
 const processAdditionalFields = async (productId) => {
-  // Create sales price if the product is for sale and it's not an Umbrella type
-  if (form.forSale && additionalFieldsForm.price.price && form.type !== ProductType.Umbrella) {
+  // Create sales price if the product is for sale and it's not an Configurable type
+  if (form.forSale && additionalFieldsForm.price.price && form.type !== ProductType.Configurable) {
     await createSalesPrice(productId);
   }
 
@@ -269,9 +269,9 @@ const processAdditionalFields = async (productId) => {
       await handleSupplierProduct(productId);
     }
 
-  // Create related products for Umbrella, Bundle, or Manufacturable types
+  // Create related products for Configurable, Bundle, or Manufacturable types
   if (additionalFieldsForm.relatedProducts.length > 0 &&
-      (form.type === ProductType.Umbrella || form.type === ProductType.Bundle || form.type === ProductType.Manufacturable)) {
+      (form.type === ProductType.Configurable || form.type === ProductType.Bundle || form.type === ProductType.Manufacturable)) {
     await createRelatedProducts(productId);
   }
 };

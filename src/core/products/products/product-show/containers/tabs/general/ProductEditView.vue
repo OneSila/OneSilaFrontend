@@ -60,7 +60,7 @@ const fields = {
     default: form.active,
     uncheckedValue: "false"
   },
-  vatRate: props.product.type !== ProductType.Umbrella ? {
+  vatRate: props.product.type !== ProductType.Configurable ? {
     type: FieldType.Query,
     name: 'vatRate',
     label: t('products.products.labels.vatRate'),
@@ -280,7 +280,7 @@ onMounted(setLeadTimeOutOfStock);
       </div>
 
       <!-- Conditionally Rendered VAT Rate Field -->
-      <div class="col-span-full mt-3" v-if="product.type !== ProductType.Umbrella && product.type !== ProductType.Supplier">
+      <div class="col-span-full mt-3" v-if="product.type !== ProductType.Configurable && product.type !== ProductType.Supplier">
         <label v-if="fields.vatRate" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['vatRate'].label }}</label>
         <FieldQuery :field="fields['vatRate'] as QueryFormField" :model-value="form.vatRate.id" @update:modelValue="form.vatRate.id = $event"/>
       </div>

@@ -56,9 +56,9 @@ export const bundleProductsQuery = gql`
   }
 `;
 
-export const umbrellaProductsQuery = gql`
-  query UmbrellaProducts($first: Int, $last: Int, $after: String, $before: String, $order: UmbrellaProductOrder, $filter: UmbrellaProductFilter) {
-    umbrellaProducts(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+export const configurableProductsQuery = gql`
+  query ConfigurableProducts($first: Int, $last: Int, $after: String, $before: String, $order: ConfigurableProductOrder, $filter: ConfigurableProductFilter) {
+    configurableProducts(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id
@@ -147,13 +147,13 @@ export const getProductTranslationByLanguageQuery = gql`
   }
 `;
 
-export const umbrellaVariationsQuery = gql`
-  query UmbrellaVariations($first: Int, $last: Int, $after: String, $before: String, $order: UmbrellaVariationOrder, $filter: UmbrellaVariationFilter) {
-    umbrellaVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+export const configurableVariationsQuery = gql`
+  query ConfigurableVariations($first: Int, $last: Int, $after: String, $before: String, $order: ConfigurableVariationOrder, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id
-          umbrella {
+          parent {
             id
             sku
             name
@@ -185,7 +185,7 @@ export const bundleVariationsQuery = gql`
       edges {
         node {
           id
-          umbrella {
+          parent {
             id
             sku
             name
@@ -251,9 +251,9 @@ export const getBundleProductQuery = gql`
   }
 `;
 
-export const getUmbrellaProductQuery = gql`
-  query getUmbrellaProduct($id: GlobalID!) {
-    umbrellaProduct(id: $id) {
+export const getConfigurableProductQuery = gql`
+  query getConfigurableProduct($id: GlobalID!) {
+    configurableProduct(id: $id) {
       id
       sku
       active
@@ -286,11 +286,11 @@ export const getProductTranslationQuery = gql`
   }
 `;
 
-export const getUmbrellaVariationQuery = gql`
-  query getUmbrellaVariation($id: GlobalID!) {
-    umbrellaVariation(id: $id) {
+export const getConfigurableVariationQuery = gql`
+  query getConfigurableVariation($id: GlobalID!) {
+    configurableVariation(id: $id) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -306,7 +306,7 @@ export const getBundleVariationQuery = gql`
   query getBundleVariation($id: GlobalID!) {
     bundleVariation(id: $id) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -397,7 +397,7 @@ export const billOfMaterialsQuery = gql`
             active
           }
           quantity
-          umbrella {
+          parent {
             id
             name
           }
@@ -424,7 +424,7 @@ export const getBillOfMaterialQuery = gql`
         name
       }
       quantity
-      umbrella {
+      parent {
         id
         name
       }

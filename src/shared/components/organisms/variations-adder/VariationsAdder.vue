@@ -4,7 +4,7 @@ import { RelatedProduct } from "../../../../core/products/products/product-creat
 import { Button } from "../../atoms/button";
 import { Icon } from "../../atoms/icon";
 import {useI18n} from "vue-i18n";
-import {billOfMaterialsTypes, PRODUCT_UMBRELLA, ProductType, variationTypes} from "../../../utils/constants";
+import {billOfMaterialsTypes, ProductType, variationTypes} from "../../../utils/constants";
 import apolloClient from "../../../../../apollo-client";
 import { productsQuery } from "../../../api/queries/products.js";
 import { TextInput } from "../../atoms/input-text";
@@ -36,7 +36,7 @@ const fetchData = async () => {
   let typeFilter;
 
   switch (props.type) {
-    case ProductType.Umbrella:
+    case ProductType.Configurable:
     case ProductType.Bundle:
       typeFilter = variationTypes;
       break;

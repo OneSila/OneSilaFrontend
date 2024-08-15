@@ -56,9 +56,9 @@ export const bundleProductSubscription = gql`
   }
 `;
 
-export const umbrellaProductSubscription = gql`
-  subscription getUmbrellaProductSubscription($pk: String!) {
-    umbrellaProduct(pk: $pk) {
+export const configurableProductSubscription = gql`
+  subscription getConfigurableProductSubscription($pk: String!) {
+    configurableProduct(pk: $pk) {
       id
       sku
       active
@@ -91,11 +91,11 @@ export const productTranslationSubscription = gql`
   }
 `;
 
-export const umbrellaVariationSubscription = gql`
-  subscription getUmbrellaVariationSubscription($pk: String!) {
-    umbrellaVariation(pk: $pk) {
+export const configurableVariationSubscription = gql`
+  subscription getConfigurableVariationSubscription($pk: String!) {
+    configurableVariation(pk: $pk) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -111,7 +111,7 @@ export const bundleVariationSubscription = gql`
   subscription getBundleVariationSubscription($pk: String!) {
     bundleVariation(pk: $pk) {
       id
-      umbrella {
+      parent {
         id
         sku
       }

@@ -112,9 +112,9 @@ export const deleteBundleProductsMutation = gql`
   }
 `;
 
-export const createUmbrellaProductMutation = gql`
-  mutation createUmbrellaProduct($data: UmbrellaProductInput!) {
-    createUmbrellaProduct(data: $data) {
+export const createConfigurableProductMutation = gql`
+  mutation createConfigurableProduct($data: ConfigurableProductInput!) {
+    createConfigurableProduct(data: $data) {
       id
       sku
       active
@@ -122,9 +122,9 @@ export const createUmbrellaProductMutation = gql`
   }
 `;
 
-export const createUmbrellaProductsMutation = gql`
-  mutation createUmbrellaProducts($data: [UmbrellaProductInput!]!) {
-    createUmbrellaProducts(data: $data) {
+export const createConfigurableProductsMutation = gql`
+  mutation createConfigurableProducts($data: [ConfigurableProductInput!]!) {
+    createConfigurableProducts(data: $data) {
       id
       sku
       active
@@ -132,9 +132,9 @@ export const createUmbrellaProductsMutation = gql`
   }
 `;
 
-export const updateUmbrellaProductMutation = gql`
-  mutation updateUmbrellaProduct($data: UmbrellaProductPartialInput!) {
-    updateUmbrellaProduct(data: $data) {
+export const updateConfigurableProductMutation = gql`
+  mutation updateConfigurableProduct($data: ConfigurableProductPartialInput!) {
+    updateConfigurableProduct(data: $data) {
       id
       sku
       active
@@ -142,17 +142,17 @@ export const updateUmbrellaProductMutation = gql`
   }
 `;
 
-export const deleteUmbrellaProductMutation = gql`
-  mutation deleteUmbrellaProduct($id: GlobalID!) {
-    deleteUmbrellaProduct(data: {id: $id}) {
+export const deleteConfigurableProductMutation = gql`
+  mutation deleteConfigurableProduct($id: GlobalID!) {
+    deleteConfigurableProduct(data: {id: $id}) {
       id
     }
   }
 `;
 
-export const deleteUmbrellaProductsMutation = gql`
-  mutation deleteUmbrellaProducts($ids: [GlobalID!]!) {
-    deleteUmbrellaProducts(data: {ids: $ids}) {
+export const deleteConfigurableProductsMutation = gql`
+  mutation deleteConfigurableProducts($ids: [GlobalID!]!) {
+    deleteConfigurableProducts(data: {ids: $ids}) {
       id
     }
   }
@@ -256,11 +256,11 @@ export const deleteProductTranslationsMutation = gql`
   }
 `;
 
-export const createUmbrellaVariationMutation = gql`
-  mutation createUmbrellaVariation($data: UmbrellaVariationInput!) {
-    createUmbrellaVariation(data: $data) {
+export const createConfigurableVariationMutation = gql`
+  mutation createConfigurableVariation($data: ConfigurableVariationInput!) {
+    createConfigurableVariation(data: $data) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -272,11 +272,11 @@ export const createUmbrellaVariationMutation = gql`
   }
 `;
 
-export const createUmbrellaVariationsMutation = gql`
-  mutation createUmbrellaVariations($data: [UmbrellaVariationInput!]!) {
-    createUmbrellaVariations(data: $data) {
+export const createConfigurableVariationsMutation = gql`
+  mutation createConfigurableVariations($data: [ConfigurableVariationInput!]!) {
+    createConfigurableVariations(data: $data) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -288,11 +288,11 @@ export const createUmbrellaVariationsMutation = gql`
   }
 `;
 
-export const updateUmbrellaVariationMutation = gql`
-  mutation updateUmbrellaVariation($data: UmbrellaVariationPartialInput!) {
-    updateUmbrellaVariation(data: $data) {
+export const updateConfigurableVariationMutation = gql`
+  mutation updateConfigurableVariation($data: ConfigurableVariationPartialInput!) {
+    updateConfigurableVariation(data: $data) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -304,9 +304,9 @@ export const updateUmbrellaVariationMutation = gql`
   }
 `;
 
-export const deleteUmbrellaVariationMutation = gql`
-  mutation deleteUmbrellaVariation($id: GlobalID!) {
-    deleteUmbrellaVariation(data: {id: $id}) {
+export const deleteConfigurableVariationMutation = gql`
+  mutation deleteConfigurableVariation($id: GlobalID!) {
+    deleteConfigurableVariation(data: {id: $id}) {
       id
       variation {
         id
@@ -315,9 +315,9 @@ export const deleteUmbrellaVariationMutation = gql`
   }
 `;
 
-export const deleteUmbrellaVariationsMutation = gql`
-  mutation deleteUmbrellaVariations($ids: [GlobalID!]!) {
-    deleteUmbrellaVariations(data: {ids: $ids}) {
+export const deleteConfigurableVariationsMutation = gql`
+  mutation deleteConfigurableVariations($ids: [GlobalID!]!) {
+    deleteConfigurableVariations(data: {ids: $ids}) {
       id
     }
   }
@@ -327,7 +327,7 @@ export const createBundleVariationMutation = gql`
   mutation createBundleVariation($data: BundleVariationInput!) {
     createBundleVariation(data: $data) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -344,7 +344,7 @@ export const createBundleVariationsMutation = gql`
   mutation createBundleVariations($data: [BundleVariationInput!]!) {
     createBundleVariations(data: $data) {
       id
-      umbrella {
+      parent {
         id
         sku
       }
@@ -361,7 +361,7 @@ export const updateBundleVariationMutation = gql`
   mutation updateBundleVariation($data: BundleVariationPartialInput!) {
     updateBundleVariation(data: $data) {
       id
-      umbrella {
+      parent {
         id
         sku
       }

@@ -9,7 +9,7 @@ import {PRODUCT_BUNDLE, ProductType} from "../../../../../../../../../shared/uti
 import {
   createBillOfMaterialMutation,
   createBundleVariationMutation,
-  createUmbrellaVariationMutation
+  createConfigurableVariationMutation
 } from "../../../../../../../../../shared/api/mutations/products.js";
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
@@ -56,8 +56,8 @@ const getMutation = () => {
   switch(props.product.type) {
     case ProductType.Bundle:
       return createBundleVariationMutation;
-    case ProductType.Umbrella:
-      return createUmbrellaVariationMutation;
+    case ProductType.Configurable:
+      return createConfigurableVariationMutation;
     case ProductType.Manufacturable:
       return createBillOfMaterialMutation;
     default:
@@ -67,11 +67,11 @@ const getMutation = () => {
 
 const getVariables = () => {
   let variables = {
-    umbrella: { id: props.product.id },
+    parent: { id: props.product.id },
     variation: { id: form.value.variation }
   }
 
- if (props.product.type !== ProductType.Umbrella) {
+ if (props.product.type !== ProductType.Configurable) {
    variables['quantity'] = form.value.quantity;
  }
 

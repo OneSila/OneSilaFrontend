@@ -623,7 +623,7 @@
         "type": {
           "title": "Type",
           "choices": {
-            "umbrella": "Configureerbaar Product",
+            "configurable": "Configureerbaar Product",
             "bundle": "Bundel Product",
             "variation": "Simpel Product",
             "dropship": "Dropship Product",
