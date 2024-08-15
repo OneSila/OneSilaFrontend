@@ -333,7 +333,7 @@ const requireTypes = [
 
 <template>
   <div>
-    <Flex between v-if="language" class="mb-2">
+    <Flex between class="mb-2">
       <FlexCell grow center>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 ml-2 mb-4">
           <div v-for="(type, index) in requireTypes" :key="index" class="flex items-center space-x-2" :title="getExtendedTooltip(type.value)">
@@ -342,7 +342,7 @@ const requireTypes = [
           </div>
         </div>
       </FlexCell>
-      <FlexCell>
+      <FlexCell v-if="language" >
         <ApolloQuery :query="translationLanguagesQuery">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
