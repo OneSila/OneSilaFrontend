@@ -212,6 +212,10 @@ export interface BaseProduct {
   thumbnailUrl: string;
 }
 
+export interface Inspector {
+  id: string;
+}
+
 export interface Product {
   id: string;
   proxyId?: string;
@@ -219,6 +223,7 @@ export interface Product {
   active: boolean;
   forSale: boolean;
   type: string;
+  inspector: Inspector;
   vatRate?: VatRate;
   allowBackorder: boolean;
   productionTime?: number;
@@ -242,7 +247,7 @@ export interface  ProductPropertyTranslation {
 
 export interface ProductPropertyValue {
   id?: string;
-  property: { id: string, name: string, type: string; isProductType: boolean },
+  property: { id: string, name: string, type: string; isProductType: boolean; requireType?: string },
   valueBoolean?: boolean | null;
   valueInt?: number | null;
   valueFloat?: number | null;

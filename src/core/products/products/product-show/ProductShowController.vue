@@ -24,6 +24,7 @@ import ProductDropship from "./containers/product-type/product-dropship/ProductD
 import ProductSupplier from "./containers/product-type/product-supplier/ProductSupplier.vue";
 
 import { getProductTypeBadgeMap } from "../configs";
+import {ProductInspector} from "./containers/product-inspector";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -108,8 +109,8 @@ const redirectToList = (response) => {
       <template v-slot:default="{ loading, error, result }">
         <template v-if="!loading && result">
           <Card>
-            <div class="grid md:grid-cols-2 xl:grid-cols-2 gap-8 mb-6">
-              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+            <div class="grid xl:grid-cols-2 gap-8 mb-6">
+              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none sm:max-h-48 max-h-72">
                 <div class="p-5 flex items-center flex-col sm:flex-row">
                   <div v-if="getResultData(result, 'thumbnailUrl')" class="mb-5 w-20 h-20 overflow-hidden">
                     <Image class="w-20 h-20 rounded-md overflow-hidden object-cover" :source="getResultData(result, 'thumbnailUrl')" />
@@ -173,15 +174,8 @@ const redirectToList = (response) => {
                     </ApolloAlertMutation>
                   </div>
                 </div>
-            </div>
-            <div class="w-full bg-red-400 shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border-2 border-red-500 dark:border-2 dark:bg-secondary-dark-light dark:shadow-none p-5">
-              <Label semi-bold class="text-white">{{ t('products.products.inspector.labels.missingInfo') }}:</Label>
-              <div class="grid l:grid-cols-2 xl:grid-cols-2 text-white gap-2 mt-2">
-                  <p class="font-semibold border-white border-2 p-2 rounded">Product missing images.</p>
-                  <p class="font-semibold border-white border-2 p-2 rounded">Product valid price.</p>
-                  <p class="font-semibold border-white border-2 p-2 rounded">Product valid price.</p>
-                </div>
               </div>
+              <ProductInspector :product="getResultData(result)" />
             </div>
             <component :key="getResultData(result, 'type')" :is="getProductComponent(getResultData(result, 'type'))" :product="getResultData(result)"/>
           </Card>

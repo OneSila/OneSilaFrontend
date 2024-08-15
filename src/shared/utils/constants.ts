@@ -28,7 +28,7 @@ export enum FieldType {
   Badge = "Badge",
 }
 
-export enum ConfigTpes {
+export enum ConfigTypes {
   REQUIRED_IN_CONFIGURATOR = 'REQUIRED_IN_CONFIGURATOR',
   OPTIONAL_IN_CONFIGURATOR = 'OPTIONAL_IN_CONFIGURATOR',
   REQUIRED = 'REQUIRED',

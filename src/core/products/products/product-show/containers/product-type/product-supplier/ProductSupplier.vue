@@ -12,6 +12,7 @@ import SupplierProductPurchasePriceView from "../../tabs/supplier-prices/Supplie
 import PurchasingOrderList from "../../tabs/purchasing-orders/PurchasingOrderList.vue";
 import ProductsList from "../../tabs/products/ProductsList.vue";
 import ProductEanCodesSupplier from "../../tabs/ean-codes/ProductEanCodesSupplier.vue";
+import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -48,7 +49,7 @@ tabItems.value = [
         <MediaView :product="product" />
       </template>
       <template v-slot:properties>
-        properties
+        <PropertiesView :product="product" />
       </template>
       <template v-slot:price>
         <SupplierProductPurchasePriceView :product="product" />

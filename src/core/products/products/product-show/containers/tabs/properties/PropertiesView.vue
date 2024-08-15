@@ -10,11 +10,12 @@ import {
   productPropertiesRulesQuery, productPropertyTextTranslationsQuery,
   propertiesQuery
 } from "../../../../../../../shared/api/queries/properties.js";
-import {ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
+import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
 import { ValueInput } from "./value-input";
 import { Loader } from "../../../../../../../shared/components/atoms/loader";
-import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
-import {Selector} from "../../../../../../../shared/components/atoms/selector";
+import { translationLanguagesQuery } from "../../../../../../../shared/api/queries/languages.js";
+import { Selector } from "../../../../../../../shared/components/atoms/selector";
+import { Icon } from "../../../../../../../shared/components/atoms/icon";
 
 
 const { t } = useI18n();
@@ -40,6 +41,7 @@ const fetchRequiredProductType = async () => {
           name: productType.name,
           type: productType.type,
           isProductType: true,
+          requireType: ConfigTypes.REQUIRED
         },
         translation: {
            language: null
@@ -73,7 +75,7 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
           id: value.property.id,
           name: value.property.name,
           type: value.property.type,
-          isProductType: true
+          isProductType: true,
         },
         valueSelect: {
           id: value.valueSelect.id
@@ -124,7 +126,8 @@ const fetchPropertiesIds = async (productTypeValueId) => {
             id: item.property.id,
             name: item.property.name,
             type: item.property.type,
-            isProductType: false
+            isProductType: false,
+            requireType: item.type
           },
           valueBoolean: undefined,
           valueInt: null,
@@ -273,11 +276,72 @@ const populateTranslatableFields = async () => {
 watch(language, populateTranslatableFields)
 onMounted(fetchRequiredAttributesValues);
 
+const getIconColor = (requireType) => {
+  switch (requireType) {
+    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
+      return 'text-red-500'; // Red
+    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
+      return 'text-orange-500'; // Orange
+    case ConfigTypes.OPTIONAL:
+      return 'text-yellow-500'; // Yellow
+    case ConfigTypes.REQUIRED:
+      return 'text-green-500'; // Green
+    default:
+      return 'text-gray-500'; // Default color if type is unknown
+  }
+}
+
+const getTooltip = (requireType) => {
+  switch (requireType) {
+    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
+      return t('properties.rule.configTypes.requiredInConfigurator.title');
+    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
+      return t('properties.rule.configTypes.optionalInConfigurator.title');
+    case ConfigTypes.OPTIONAL:
+      return t('properties.rule.configTypes.optional.title');
+    case ConfigTypes.REQUIRED:
+      return t('properties.rule.configTypes.required.title');
+    default:
+      return '';
+  }
+}
+
+const getExtendedTooltip = (requireType) => {
+  switch (requireType) {
+    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
+      return t('properties.rule.configTypes.requiredInConfigurator.example');
+    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
+      return t('properties.rule.configTypes.optionalInConfigurator.example');
+    case ConfigTypes.OPTIONAL:
+      return t('properties.rule.configTypes.optional.example.');
+    case ConfigTypes.REQUIRED:
+      return t('properties.rule.configTypes.required.example');
+    default:
+      return '';
+  }
+}
+
+const requireTypes = [
+  { value: ConfigTypes.REQUIRED, label: t('properties.rule.configTypes.required.title') },
+  { value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title') },
+  { value: ConfigTypes.REQUIRED_IN_CONFIGURATOR, label: t('properties.rule.configTypes.requiredInConfigurator.title') },
+  { value: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, label: t('properties.rule.configTypes.optionalInConfigurator.title') },
+
+];
+
 </script>
 
 <template>
   <div>
-    <Flex end v-if="language" class="mb-2">
+    <Flex between v-if="language" class="mb-2">
+      <FlexCell grow center>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 ml-2 mb-4">
+          <div v-for="(type, index) in requireTypes" :key="index" class="flex items-center space-x-2" :title="getExtendedTooltip(type.value)">
+            <Icon name="circle-dot" :class="getIconColor(type.value)" />
+            <span>{{ type.label }}</span>
+          </div>
+        </div>
+      </FlexCell>
       <FlexCell>
         <ApolloQuery :query="translationLanguagesQuery">
           <template v-slot="{ result: { data } }">
@@ -295,13 +359,17 @@ onMounted(fetchRequiredAttributesValues);
         </ApolloQuery>
       </FlexCell>
     </Flex>
+    <hr>
     <Loader :loading="loading" />
-    <table class="table-striped table-hover custom-table">
+    <table class="table-striped table-hover custom-table mt-4">
       <thead></thead>
       <tbody>
         <template v-for="(val, index) in values">
           <tr>
-            <th class="font-semibold left-align">{{ val.property.name }}</th>
+            <th class="font-semibold left-align">
+              <Icon name="circle-dot" :class="getIconColor(val.property.requireType)" :title="getTooltip(val.property.requireType)" />
+              {{ val.property.name }}
+            </th>
             <td>
               <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
                           :product-id="product.id"

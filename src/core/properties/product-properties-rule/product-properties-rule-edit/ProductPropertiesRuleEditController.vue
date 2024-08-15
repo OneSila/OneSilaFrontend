@@ -11,14 +11,10 @@ import {CancelButton} from "../../../../shared/components/atoms/button-cancel";
 import {PrimaryButton} from "../../../../shared/components/atoms/button-primary";
 import {SecondaryButton} from "../../../../shared/components/atoms/button-secondary";
 import {Toast} from "../../../../shared/modules/toast";
-import {ConfigTpes} from "../../../../shared/utils/constants";
+import {ConfigTypes} from "../../../../shared/utils/constants";
 import apolloClient from "../../../../../apollo-client";
 import { getProductPropertiesRuleQuery } from "../../../../shared/api/queries/properties.js";
-import {
-  createProductPropertiesRuleItemsMutation,
-  deleteProductPropertiesRuleItemMutation, deleteProductPropertiesRuleMutation,
-  updateProductPropertiesRuleItemMutation
-} from "../../../../shared/api/mutations/properties.js";
+import { completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
 import {FormType} from "../../../../shared/components/organisms/general-form/formConfig";
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
@@ -44,69 +40,34 @@ const loading = ref(false);
 
 const updateOrCreateItems = async () => {
   try {
-    const updates: any = [];
-    const creations: any = [];
-    const deletions: any = [];
+    // Prepare the input data for the mutation
+    const inputData = {
+      id: id.value.toString(),
+      items: updatedAddedProperties.value.map(property => ({
+        id: propertiesItemsMap.value[property.id]?.id || null,
+        property: { id: property.id },
+        type: property.configType,
+        sortOrder: property.sortOrder
+      }))
+    };
 
-    const updatedPropertyIds = new Set(updatedAddedProperties.value.map(property => property.id));
-
-    for (const propertyId in propertiesItemsMap.value) {
-      if (!updatedPropertyIds.has(propertyId)) {
-        deletions.push(propertiesItemsMap.value[propertyId].id);
-      }
-    }
-
-    updatedAddedProperties.value.forEach(property => {
-    const existingItem = propertiesItemsMap.value[property.id];
-
-      if (existingItem) {
-        if (existingItem.type !== property.configType || existingItem.sortOrder != property.sortOrder) {
-
-          updates.push({
-            id: existingItem.id,
-            type: property.configType,
-            sortOrder: property.sortOrder
-          });
-        }
-      } else {
-        creations.push({
-          rule: { id: id.value.toString() },
-          property: { id: property.id },
-          type: property.configType,
-          sortOrder: property.sortOrder
-        });
-      }
+    // Call the mutation
+    const { data } = await apolloClient.mutate({
+      mutation: completeUpdateProductPropertiesRuleMutation,
+      variables: { data: inputData }
     });
 
-    if (updates.length > 0) {
-      const updatePromises = updates.map(update => apolloClient.mutate({
-        mutation: updateProductPropertiesRuleItemMutation,
-        variables: { data: update }
-      }));
-      await Promise.all(updatePromises);
-    }
+    const responseData = data.completeUpdateProductPropertiesRule;
 
-    if (creations.length > 0) {
-      await apolloClient.mutate({
-        mutation: createProductPropertiesRuleItemsMutation,
-        variables: { data: creations }
-      });
-    }
+    // Handle the response
+    return !(!responseData || !responseData.id);
 
-    if (deletions.length > 0) {
-      const deletePromises = deletions.map(deleteId => apolloClient.mutate({
-        mutation: deleteProductPropertiesRuleItemMutation,
-        variables: { id: deleteId }
-      }));
-      await Promise.all(deletePromises);
-    }
-
-    return true;
   } catch (err) {
     console.log(err);
     return false;
   }
 };
+
 const fetchData = async () => {
   loading.value = true;
   propertiesItemsMap.value = {}
@@ -158,8 +119,8 @@ const saveMutations = async (continueEditing = false) => {
     return
   }
 
-  const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTpes.OPTIONAL_IN_CONFIGURATOR);
-  const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTpes.REQUIRED_IN_CONFIGURATOR);
+  const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.OPTIONAL_IN_CONFIGURATOR);
+  const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
 
   if (hasOptionalInConfigurator && !hasRequiredInConfigurator) {
     Toast.error(t('properties.rule.error.optionalWithoutRequired'));

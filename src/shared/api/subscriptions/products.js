@@ -15,6 +15,9 @@ export const productSubscription = gql`
       inventoryPhysical
       inventorySalable
       inventoryReserved
+      inspector {
+        id
+      }
       vatRate {
         id
         rate
@@ -28,6 +31,17 @@ export const productSubscription = gql`
         thumbnailUrl
       }
       allowBackorder
+    }
+  }
+`;
+
+export const inspectorSubscription = gql`
+  subscription getInspectorSubscription($pk: String!) {
+    inspector(pk: $pk) {
+      id
+      hasMissingInformation
+      hasMissingOptionalInformation
+      errors
     }
   }
 `;
