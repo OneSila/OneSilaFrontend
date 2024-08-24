@@ -27,6 +27,7 @@ type Media = {
 
 type Item = {
   id: string;
+  isMainImage: boolean;
   media: Media
 }
 

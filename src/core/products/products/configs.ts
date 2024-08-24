@@ -230,6 +230,7 @@ export interface Product {
   inventoryPhysical?: number;
   inventorySalable?: number;
   inventoryReserved?: number;
+  inventoryAwaitInventory?: number;
   baseProducts?: BaseProduct[]
 }
 

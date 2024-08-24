@@ -198,6 +198,7 @@ export const mediaProductThroughQuery = gql`
         node {
           id
           productId
+          isMainImage
           active
           productType
           sortOrder

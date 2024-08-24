@@ -817,7 +817,8 @@
         "movements": "Inventory Movements",
         "salable": "Salable Inventory",
         "physical": "Physical Inventory",
-        "reserved": "Reserved Inventory"
+        "reserved": "Reserved Inventory",
+        "awaitInventory": "Await Inventory"
       },
       "create": {
         "title": "Create Inventory"
@@ -828,7 +829,8 @@
       "help": {
         "salable": "Items that are available for sale",
         "physical": "Physically on stock, could be reserved, could be salable.",
-        "reserved": "Items that have been sold but not shipped"
+        "reserved": "Items that have been sold but not shipped",
+        "awaitInventory": "Items that has been ordered but didn't arrived yet."
       }
     },
     "leadTimeSettings": {
