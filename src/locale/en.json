@@ -808,7 +808,8 @@
       },
       "labels": {
         "parent": "Location",
-        "precise": "Precise Location"
+        "precise": "Precise Location",
+        "isInternalLocation": "Internal Location"
       }
     },
     "inventory": {
@@ -1145,6 +1146,7 @@
         },
         "supplier": "Supplier",
         "orderReference": "Order Reference",
+        "internalContact": "Internal Contact",
         "totalValue": "Total Value"
       },
       "placeholders": {

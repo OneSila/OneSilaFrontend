@@ -142,6 +142,10 @@ export const updatePurchaseOrderMutation = gql`
       id
       status
       totalValue
+      internalContact {
+       id
+       fullName
+      }
       supplier {
         id
         name
@@ -183,7 +187,7 @@ export const createPurchaseOrderItemMutation = gql`
         id
         orderReference
       }
-      item {
+      product {
         id
         name
       }
@@ -201,7 +205,7 @@ export const createPurchaseOrderItemsMutation = gql`
         id
         orderReference
       }
-      item {
+      product {
         id
         name
       }
@@ -219,7 +223,7 @@ export const updatePurchaseOrderItemMutation = gql`
         id
         orderReference
       }
-      item {
+      product {
         id
         name
       }

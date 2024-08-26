@@ -527,7 +527,7 @@ export const deleteBillsOfMaterialMutation = gql`
 
 export const refreshInspectorMutation = gql`
   mutation refreshInspectorMutation($data: InspectorPartialInput!) {
-    refreshInepsctor(data: $data) {
+    refreshInspector(data: $data) {
       id
       hasMissingInformation
       hasMissingOptionalInformation

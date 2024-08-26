@@ -12,6 +12,7 @@ import { createCompanyInvoiceAddressMutation, createCompanyShippingAddressMutati
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import {baseFormConfigConstructor as baseAddressConfigConstructor } from '../../contacts/companies/companies-show/containers/configs'
 import {supplierOnTheFlyConfig} from "../suppliers/configs";
+import { membersQuery } from "../../../shared/api/queries/me.js";
 
 export const invoiceAddressOnTheFlyConfig = (t: Function, supplierId):CreateOnTheFly => ({
   config: {
@@ -180,6 +181,21 @@ export const baseFormConfigConstructor = (
       formMapIdentifier: 'id',
       createOnFlyConfig: currencyOnTheFlyConfig(t),
       setDefaultKey: 'isDefaultCurrency'
+    },
+    {
+      type: FieldType.Query,
+      name: 'internalContact',
+      label: t('purchasing.orders.labels.internalContact'),
+      labelBy: 'fullName',
+      valueBy: 'id',
+      query: membersQuery,
+      queryVariables: {filter: {isActive: true}},
+      dataKey: 'users',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      removable: false,
+      formMapIdentifier: 'id',
     }
   ],
 });

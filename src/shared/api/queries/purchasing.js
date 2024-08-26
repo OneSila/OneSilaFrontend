@@ -67,11 +67,15 @@ export const purchaseOrdersQuery = gql`
           status
           totalValue
           country
+          orderReference
+          internalContact {
+            id
+            fullName
+          }
           supplier {
             id
             name
           }
-          orderReference
           invoiceAddress {
             id
             address1
@@ -99,9 +103,14 @@ export const getPurchaseOrderQuery = gql`
     purchaseOrder(id: $id) {
       id
       status
-      totalValue
+      internalContact {
+       id
+       fullName
+      }
       currency  {
+        id
         symbol
+        isoCode
       }
       supplier {
         id
@@ -118,7 +127,7 @@ export const getPurchaseOrderQuery = gql`
       }
       purchaseorderitemSet {
         id
-        item {
+        product {
           id
         }
       } 
@@ -136,7 +145,7 @@ export const purchaseOrderItemsQuery = gql`
             id
             orderReference
           }
-          item {
+          product {
             id
             proxyId
             name
@@ -166,7 +175,7 @@ export const getPurchaseOrderItemQuery = gql`
         id
         orderReference
       }
-      item {
+      product {
         id
         name
       }

@@ -61,6 +61,7 @@ export const inventoryLocationsQuery = gql`
           name
           description
           precise
+          isInternalLocation
           shippingaddress {
               id
               fullAddress

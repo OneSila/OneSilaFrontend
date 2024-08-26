@@ -38,40 +38,40 @@ export const baseFormConfigConstructor = (
 
   ],
   fields: [
-    {
-      type: FieldType.Query,
-      name: 'shippingaddress',
-      label:  t('inventory.inventoryLocations.labels.parent'),
-      labelBy: 'fullAddress',
-      valueBy: 'id',
-      query: inventoryShippingAddressesQuery,
-      dataKey: 'inventoryShippingAddresses',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-    },
-    {
-      type: FieldType.Text,
-      name: 'name',
-      label: t('shared.labels.name'),
-      placeholder: t('shared.placeholders.name'),
-    },
-    {
-      type: FieldType.Textarea,
-      name: 'description',
-      label: t('shared.labels.description'),
-      placeholder: t('shared.placeholders.description'),
-      scroll: true,
-      optional: true
-    },
-    {
-        type: FieldType.Checkbox,
-        name: 'precise',
-        label: t('inventory.inventoryLocations.labels.precise'),
-        default: false,
-        uncheckedValue: "false",
-      },
+        {
+          type: FieldType.Query,
+          name: 'shippingaddress',
+          label:  t('inventory.inventoryLocations.labels.parent'),
+          labelBy: 'fullAddress',
+          valueBy: 'id',
+          query: inventoryShippingAddressesQuery,
+          dataKey: 'inventoryShippingAddresses',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          formMapIdentifier: 'id',
+        },
+        {
+          type: FieldType.Text,
+          name: 'name',
+          label: t('shared.labels.name'),
+          placeholder: t('shared.placeholders.name'),
+        },
+        {
+          type: FieldType.Textarea,
+          name: 'description',
+          label: t('shared.labels.description'),
+          placeholder: t('shared.placeholders.description'),
+          scroll: true,
+          optional: true
+        },
+        {
+            type: FieldType.Checkbox,
+            name: 'precise',
+            label: t('inventory.inventoryLocations.labels.precise'),
+            default: false,
+            uncheckedValue: "false",
+        },
     ],
 });
 
@@ -98,7 +98,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('inventory.inventoryLocations.labels.parent')],
+  headers: [t('shared.labels.name'), t('inventory.inventoryLocations.labels.parent'), t('inventory.inventoryLocations.labels.isInternalLocation')],
   fields: [
     {
       name: 'name',
@@ -108,6 +108,10 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       name: 'shippingaddress',
       type: FieldType.NestedText,
       keys: ['fullAddress']
+    },
+  {
+      name: 'isInternalLocation',
+      type: FieldType.Boolean,
     },
   ],
   identifierKey: 'id',

@@ -147,10 +147,10 @@ const refreshInspector = async () => {
 
   });
 
-  if (data && data.refreshInepsctor) {
+  if (data && data.refreshInspector) {
 
-    errors.value = data.refreshInepsctor.errors;
-    color.value = getColor(data.refreshInepsctor.hasMissingInformation, data.refreshInepsctor.hasMissingOptionalInformation)
+    errors.value = data.refreshInspector.errors;
+    color.value = getColor(data.refreshInspector.hasMissingInformation, data.refreshInspector.hasMissingOptionalInformation)
 
     Toast.success(t('products.products.inspector.alert.refreshSuccess'))
   }
