@@ -14,7 +14,7 @@ const formConfig = {
     t,
     FormType.CREATE,
     createInventoryLocationMutation,
-    'createInventoryLocationType'
+    'createInventoryLocation'
   ),
   submitAndContinueUrl: { name: 'inventory.inventoryLocations.edit' }
 };

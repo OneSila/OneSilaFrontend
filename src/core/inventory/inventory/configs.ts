@@ -15,7 +15,7 @@ const inventorylocationOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
       t,
         FormType.CREATE,
         createInventoryLocationMutation,
-        'createInventoryLocationType'
+        'createInventoryLocation'
     ) as FormConfig
   }
 })
