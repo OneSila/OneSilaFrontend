@@ -75,7 +75,7 @@ export const deleteInventoriesMutation = gql`
 
 export const createInventoryLocationMutation = gql`
   mutation createInventoryLocation($data: InventoryLocationInput!) {
-    createInventoryLocationType(data: $data) {
+    createInventoryLocation(data: $data) {
       id
       name
       description
@@ -86,7 +86,7 @@ export const createInventoryLocationMutation = gql`
 
 export const createInventoryLocationsMutation = gql`
   mutation createInventoryLocations($data: [InventoryLocationInput!]!) {
-    createInventoryLocationTypes(data: $data) {
+    createInventoryLocations(data: $data) {
       id
       name
       description
@@ -96,7 +96,7 @@ export const createInventoryLocationsMutation = gql`
 
 export const updateInventoryLocationMutation = gql`
   mutation updateInventoryLocation($data: InventoryLocationPartialInput!) {
-    updateInventoryLocationType(data: $data) {
+    updateInventoryLocation(data: $data) {
       id
       name
       description
@@ -107,7 +107,7 @@ export const updateInventoryLocationMutation = gql`
 
 export const deleteInventoryLocationMutation = gql`
   mutation deleteInventoryLocation($id: GlobalID!) {
-    deleteInventoryLocationType(data: {id: $id}) {
+    deleteInventoryLocation(data: {id: $id}) {
       id
     }
   }
@@ -115,7 +115,7 @@ export const deleteInventoryLocationMutation = gql`
 
 export const deleteInventoryLocationsMutation = gql`
   mutation deleteInventoryLocations($ids: [GlobalID!]!) {
-    deleteInventoryLocationTypes(data: {ids: $ids}) {
+    deleteInventoryLocations(data: {ids: $ids}) {
       id
     }
   }

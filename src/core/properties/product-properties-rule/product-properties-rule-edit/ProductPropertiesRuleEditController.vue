@@ -114,11 +114,6 @@ const saveMutations = async (continueEditing = false) => {
     return
   }
 
-  if (updatedAddedProperties.value.length == 0) {
-    Toast.error(t('properties.rule.error.noAddedProperties'));
-    return
-  }
-
   const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.OPTIONAL_IN_CONFIGURATOR);
   const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
 

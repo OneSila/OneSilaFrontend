@@ -608,6 +608,7 @@
         "prices": "Prices",
         "priceLists": "Price Lists",
         "inventory": "Inventory",
+        "websites": "Websites",
         "supplierProducts": "Supplier Products",
         "saleOrders": "Sale Orders",
         "purchasingOrders": "Purchase Orders",
@@ -699,7 +700,8 @@
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
-        "productionTime": "Enter time in seconds"
+        "productionTime": "Enter time in seconds",
+        "salesChannelView": "Add Store"
       },
       "create": {
         "title": "Create Product",

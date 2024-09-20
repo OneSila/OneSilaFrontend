@@ -13,6 +13,7 @@ import SalesPricelistList from "../../tabs/sales-price-lists/SalesPricelistList.
 import VariationsView from "../../tabs/variations/VariationsView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
+import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -25,6 +26,7 @@ tabItems.value = [
     { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
     { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
+    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
   ];
@@ -48,6 +50,9 @@ tabItems.value = [
       </template>
       <template v-slot:properties>
         <PropertiesView :product="product" />
+      </template>
+      <template v-slot:websites>
+        <WebsitesView :product="product" />
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList :product="product" />

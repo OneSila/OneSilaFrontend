@@ -5,13 +5,11 @@ import { ListingConfig } from "../../../shared/components/organisms/general-list
 import {getPropertySelectValueQuery, propertiesQuery, propertySelectValuesQuery} from "../../../shared/api/queries/properties.js";
 import {
   createPropertySelectValueMutation,
-  deletePropertyMutation,
   deletePropertySelectValueMutation,
   updatePropertySelectValueMutation
 } from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getPropertySelectValueSubscription } from '../../../shared/api/subscriptions/properties.js';
-import {createCompanyInvoiceAddressMutation} from "../../../shared/api/mutations/contacts";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -26,7 +24,7 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: propertyId !== null  ? { name: 'properties.properties.show', params: {id: propertyId}, query: {tab: 'values'} } : { name: 'properties.values.list' },
   submitAndContinueUrl: { name: 'properties.values.edit' },
-  deleteMutation: deletePropertyMutation,
+  deleteMutation: deletePropertySelectValueMutation,
   fields: [
       getPropertyField(t, propertyId, type),
     {
@@ -52,7 +50,7 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId):CreateOnTheFl
     mutationKey: 'createPropertySelectValue',
     submitUrl: propertyId !== null  ? { name: 'properties.properties.show', params: {id: propertyId}, query: {tab: 'values'} } : { name: 'properties.values.list' },
     submitAndContinueUrl: { name: 'properties.values.edit' },
-    deleteMutation: deletePropertyMutation,
+    deleteMutation: deletePropertySelectValueMutation,
     fields: [
         getPropertyField(t, propertyId, FormType.CREATE),
       {
@@ -75,7 +73,7 @@ export const editFormConfigConstructor = (
   mutationKey: 'updatePropertySelectValue',
   submitUrl: { name: 'properties.values.list' },
   submitAndContinueUrl: { name: 'properties.values.edit' },
-  deleteMutation: deletePropertyMutation,
+  deleteMutation: deletePropertySelectValueMutation,
   mutationId: id,
   query: getPropertySelectValueQuery,
   queryVariables: { id: id },

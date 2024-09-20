@@ -61,7 +61,7 @@ const fetchData = async () => {
 
   loading.value = true;
   let filters = {
-        id: { "nInList": excludedIds },
+        // id: { "nInList": excludedIds }, @TODO; GO BACK ON THAT
         isProductType: false
     }
 

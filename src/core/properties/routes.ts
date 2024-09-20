@@ -49,11 +49,11 @@ export const routes = [
     name: 'properties.rule.list',
     component: () => import('./product-properties-rule/product-properties-rule-list/ProductPropertiesRuleListController.vue')
   },
-  {
-    path: '/properties/product-properties-rule/create',
-    name: 'properties.rule.create',
-    component: () => import('./product-properties-rule/product-properties-rule-create/ProductPropertiesRuleCreateController.vue')
-  },
+  // {
+  //   path: '/properties/product-properties-rule/create',
+  //   name: 'properties.rule.create',
+  //   component: () => import('./product-properties-rule/product-properties-rule-create/ProductPropertiesRuleCreateController.vue')
+  // },
   {
     path: '/properties/product-properties-rule/edit/:id',
     name: 'properties.rule.edit',

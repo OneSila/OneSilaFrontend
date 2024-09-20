@@ -16,6 +16,7 @@ import ProductSalePriceView from "../../tabs/sales-price/ProductSalePriceView.vu
 import ProductContentView from "../../tabs/content/ProductContentView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
+import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -34,6 +35,7 @@ const tabItems = computed(() => {
     items.push(
     { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
+    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
     { name: 'saleOrders', label: t('products.products.tabs.saleOrders'), icon: 'cart-shopping' },
     );
   }
@@ -70,6 +72,9 @@ const tabItems = computed(() => {
       </template>
       <template v-slot:price>
         <ProductSalePriceView v-if="product.forSale" :product="product" />
+      </template>
+      <template v-if="product.forSale" v-slot:websites>
+        <WebsitesView :product="product" />
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList v-if="product.forSale" :product="product" />
