@@ -11,10 +11,21 @@ import {PrimaryButton} from "../../../../../../../../../shared/components/atoms/
 
 const { t } = useI18n();
 
+interface SalesChannelView {
+  id: string;
+  name: string;
+  active: boolean;
+  salesChannel: {
+    id: string;
+  };
+}
+
+
 const props = defineProps<{ product: Product; viewsIds: string[] }>();
 const emit = defineEmits(['assign-added']);
 const selectedView = ref<string | null>(null);
-const views = ref([]);
+const views: Ref<SalesChannelView[]> = ref([]);
+
 const loading = ref(false);
 
 const fetchViews = async () => {
@@ -37,7 +48,7 @@ const resetForm = () => {
 
 const handleCreateAssign = async () => {
   try {
-    const selectedSalesChannelView = views.value.find(view => view.id === selectedView.value);
+    const selectedSalesChannelView = views.value.find(view => view.id === selectedView.value) as SalesChannelView;
 
     const input = {
       product: { id: props.product.id },
@@ -70,7 +81,6 @@ onMounted(fetchViews);
                   :options="views"
                   label-by="name"
                   value-by="id"
-                  :removable="false"
                   :placeholder="t('products.products.placeholders.salesChannelView')"
                   filterable
                   removable
