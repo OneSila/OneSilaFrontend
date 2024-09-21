@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
 import { FilterManager } from "../../../../../../../../../shared/components/molecules/filter-manager";
@@ -61,6 +62,9 @@ const extractVIewsIds = (data) => {
                   </td>
                   <td>
                     <div class="flex gap-4 items-center justify-end">
+                      <Link :path="item.node.remoteUrl" external>
+                        <Icon class="text-gray-500" size="xl" name="eye" />
+                      </Link>
                       <ApolloAlertMutation
                         :mutation="deleteSalesChannelViewAssignMutation"
                         :mutation-variables="{id: item.node.id}"

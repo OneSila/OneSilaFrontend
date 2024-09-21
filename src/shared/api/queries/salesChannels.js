@@ -89,6 +89,7 @@ export const salesChannelViewAssignsQuery = gql`
       edges {
         node {
           id
+          remoteUrl
           product {
             id
             name
