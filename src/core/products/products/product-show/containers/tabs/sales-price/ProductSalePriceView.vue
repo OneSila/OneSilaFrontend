@@ -79,7 +79,7 @@ function isValidPrice(unformatedPrice) {
   const rrp = parseFloat(unformatedPrice.rrp);
 
 
-  if (isNaN(price)) {
+  if (isNaN(price) && isNaN(rrp)) {
     return false;
   }
 
