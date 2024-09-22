@@ -160,6 +160,15 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       name: 'forSale',
       label: t('products.products.labels.forSale')
     },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'inspector',
+      lookupKeys: ['hasMissingInformation'],
+      label: t('products.products.inspector.labels.missingInfo'),
+      addLookup: true,
+      lookupType: 'none'
+    },
   ],
   orders: []
 });

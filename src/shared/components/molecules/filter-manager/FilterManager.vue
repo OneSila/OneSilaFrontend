@@ -38,8 +38,13 @@ props.searchConfig.filters?.forEach((filter: SearchFilter) => {
     // filtersWithLookup.value[filter.name] = filter.lookupKeys || [];
     let l = 'exact';
     if (filter.lookupType) {
-      l = filter.lookupType;
+      if (filter.lookupType == 'none') {
+        l = null;
+      } else {
+        l = filter.lookupType;
+      }
     }
+
     filtersWithLookup.value[filter.name] = {
       keys: filter.lookupKeys || [],
       lookup: l
@@ -72,19 +77,28 @@ watch(() => route.query, (newQuery) => {
 
       if (key in filtersWithLookup.value) {
         const lookup = filtersWithLookup.value[key]['lookup'];
-        // if we have exact lookus like go into a foreign key with an id we need to have ex: {'company: {'id': {'exact': val}}}
-        if (filtersWithLookup.value[key]['keys'].length > 0) {
 
+        // if we have exact lookups like go into a foreign key with an id we need to have ex: {'company: {'id': {'exact': val}}}
+        if (filtersWithLookup.value[key]['keys'].length > 0) {
           const nestedObject = {};
           filtersWithLookup.value[key]['keys'].forEach(nestedKey => {
-          nestedObject[nestedKey] = {[lookup]: value};
-         });
-        updatedVariables[key] = nestedObject;
+            if (lookup) {
+              nestedObject[nestedKey] = { [lookup]: value };
+            } else {
+              // if lookup is null, directly assign the value like: {'company': {'id': value}}
+              nestedObject[nestedKey] = value;
+            }
+          });
+          updatedVariables[key] = nestedObject;
         } else {
           // else we can have only the exact with the value like: {"type": {"exact": "VARIATION"}}
-          updatedVariables[key] = {[lookup]: value};
+          if (lookup) {
+            updatedVariables[key] = { [lookup]: value };
+          } else {
+            // if lookup is null, directly assign the value like: {"type": "VARIATION"}
+            updatedVariables[key] = value;
+          }
         }
-
       } else {
         // if there is no lockup used we will just add the value
         updatedVariables[key] = value;
