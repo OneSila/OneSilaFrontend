@@ -36,7 +36,7 @@ props.searchConfig.filters?.forEach((filter: SearchFilter) => {
   keysToWatch.value.push(filter.name);
   if (filter.addLookup) {
     // filtersWithLookup.value[filter.name] = filter.lookupKeys || [];
-    let l = 'exact';
+    let l: string | null = 'exact';
     if (filter.lookupType) {
       if (filter.lookupType == 'none') {
         l = null;
