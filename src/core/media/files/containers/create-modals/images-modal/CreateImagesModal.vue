@@ -122,7 +122,9 @@ const submitImages = async () => {
           <div v-for="(image, index) in images" :key="index" class="file-entry relative w-full h-full border border-gray-300 p-2 rounded-lg">
             <Flex vertical class="w-full">
               <FlexCell>
-                <Image :source="image.url" alt="File thumbnail" class="w-full h-48" />
+                <div class="w-full h-48 overflow-hidden flex justify-center items-center">
+                  <Image :source="image.url" alt="File thumbnail" class="h-full object-contain rounded-md" />
+                </div>
               </FlexCell>
               <FlexCell>
                 <Flex between class="mt-2">

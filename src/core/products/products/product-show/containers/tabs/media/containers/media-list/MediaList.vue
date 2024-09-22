@@ -18,7 +18,7 @@ import {Checkbox} from "../../../../../../../../../shared/components/atoms/check
 type Media = {
   id: string;
   type: string;
-  imageWebUrl: string;
+  onesilaThumbnailUrl: string;
   updatedAt: Date;
   owner: {
     firstName: string;
@@ -203,7 +203,7 @@ const handleMainImageChange = async (changedItem: Item) => {
             <div v-for="item in items" :key="item.media.id" class="file-entry relative">
                 <template v-if="item.media.type === TYPE_IMAGE">
                   <Link :path="getPath(item.media)">
-                    <Image :source="item.media.imageWebUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
+                    <Image :source="item.media.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
                   </Link>
                 </template>
                 <template v-else-if="item.media.type === TYPE_VIDEO">

@@ -222,6 +222,7 @@ export const mediaProductThroughQuery = gql`
                 lastName
               }
               imageWebUrl
+              onesilaThumbnailUrl
               fileUrl
               videoUrl
           }
