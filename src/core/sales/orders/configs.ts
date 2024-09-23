@@ -20,12 +20,12 @@ export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.done'), code: OrderStatus.DONE },
   { name: t('sales.orders.labels.status.choices.cancelled'), code: OrderStatus.CANCELLED },
   { name: t('sales.orders.labels.status.choices.hold'), code: OrderStatus.HOLD },
-  { name: t('sales.orders.labels.status.choices.exchanged'), code: OrderStatus.EXCHANGED },
-  { name: t('sales.orders.labels.status.choices.refunded'), code: OrderStatus.REFUNDED },
-  { name: t('sales.orders.labels.status.choices.lost'), code: OrderStatus.LOST },
-  { name: t('sales.orders.labels.status.choices.merged'), code: OrderStatus.MERGED },
-  { name: t('sales.orders.labels.status.choices.damaged'), code: OrderStatus.DAMAGED },
-  { name: t('sales.orders.labels.status.choices.void'), code: OrderStatus.VOID }
+  // { name: t('sales.orders.labels.status.choices.exchanged'), code: OrderStatus.EXCHANGED },
+  // { name: t('sales.orders.labels.status.choices.refunded'), code: OrderStatus.REFUNDED },
+  // { name: t('sales.orders.labels.status.choices.lost'), code: OrderStatus.LOST },
+  // { name: t('sales.orders.labels.status.choices.merged'), code: OrderStatus.MERGED },
+  // { name: t('sales.orders.labels.status.choices.damaged'), code: OrderStatus.DAMAGED },
+  // { name: t('sales.orders.labels.status.choices.void'), code: OrderStatus.VOID }
 ];
 
 export const getReasonForSaleOptions = (t) => [
