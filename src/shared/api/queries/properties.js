@@ -282,6 +282,33 @@ export const getPropertySelectValueTranslationQuery = gql`
   }
 `;
 
+export const productPropertiesRulesListingQuery = gql`
+query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleOrder, $filter: ProductPropertiesRuleFilter) {
+    productPropertiesRules(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          productType {
+            id
+            value
+            property {
+              id
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const productPropertiesRulesQuery = gql`
 query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleOrder, $filter: ProductPropertiesRuleFilter) {
     productPropertiesRules(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {

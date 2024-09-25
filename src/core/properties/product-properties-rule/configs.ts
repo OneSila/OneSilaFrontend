@@ -2,7 +2,7 @@ import { CreateOnTheFly, FormConfig, FormField, FormType } from '../../../shared
 import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { productPropertiesRulesQuery } from "../../../shared/api/queries/properties.js";
+import { productPropertiesRulesListingQuery } from "../../../shared/api/queries/properties.js";
 import {deleteProductPropertiesRuleMutation, deletePropertyMutation, updatePropertyMutation} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getProductPropertiesRuleSubscription } from '../../../shared/api/subscriptions/properties.js';
@@ -64,7 +64,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
 });
 
 export const listingQueryKey = 'productPropertiesRules';
-export const listingQuery = productPropertiesRulesQuery;
+export const listingQuery = productPropertiesRulesListingQuery;
 
 export interface RuleItem {
    rule: {id: string},
