@@ -36,15 +36,13 @@ const addPackage = () => {
     config: formConfig,
   };
 
-  emit('add-package', packageForm); // Emit event to add package
+  emit('add-package', packageForm);
 };
 
-// Remove package by index and emit event
 const removePackage = (index) => {
-  emit('remove-package', index); // Emit event to remove package
+  emit('remove-package', index);
 };
 
-// Toggle package collapse
 const togglePackage = (pkg) => {
   pkg.isOpen = !pkg.isOpen;
 };

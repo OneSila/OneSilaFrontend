@@ -14,12 +14,10 @@ const draggingItemId = ref(null);
 const handleAddToPackage = async (item, targetPackage = null) => {
   const packageCount = props.packages.length;
 
-  // Helper method: Add item to the specified package with the specified quantity
   const addItemStep = async (pkg, quantity) => {
     emit('add-item-to-package', item, pkg.id, quantity);
   };
 
-  // Method 1: Add quantity to the given package
   const addQuantityToPackage = async (pkg) => {
     const { value: quantity } = await Swal.fire({
       title: t('shared.placeholders.quantity'),
@@ -50,7 +48,6 @@ const handleAddToPackage = async (item, targetPackage = null) => {
     }
   };
 
-  // Method 2: Select a package without specifying a quantity
   const selectPackage = async (quantity) => {
     const { value: selectedPackageId } = await Swal.fire({
       title: t('inventory.packages.create.manual.assignItemsStep.modal.package'),
@@ -70,7 +67,6 @@ const handleAddToPackage = async (item, targetPackage = null) => {
     }
   };
 
-  // Method 3: Select both quantity and package
   const selectQuantityAndPackage = async () => {
     const { value: selection } = await Swal.fire({
       title: t('inventory.packages.create.manual.assignItemsStep.modal.title'),
@@ -98,7 +94,6 @@ const handleAddToPackage = async (item, targetPackage = null) => {
     }
   };
 
-  // Determine which case to handle based on the number of packages and quantity
   if (targetPackage) {
     // Direct drop into a package, handle quantity
     if (item.quantity > 1) {

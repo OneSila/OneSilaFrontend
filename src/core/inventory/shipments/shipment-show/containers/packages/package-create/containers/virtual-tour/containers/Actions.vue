@@ -17,7 +17,6 @@ const availableQuantity = computed(() => props.step.availableLocation?.quantity 
 
 const showQuantityInput = computed(() => availableQuantity.value > 1);
 
-// Emit function
 const emit = defineEmits(['start', 'arrived', 'add-all', 'add-quantity', 'package-full', 'finish']);
 
 const handleAddQuantity = () => {

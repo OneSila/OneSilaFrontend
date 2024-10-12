@@ -26,10 +26,8 @@ const { t } = useI18n();
 const router = useRouter();
 
 
-// Props for shipment ID and items to ship
 const props = defineProps<{ shipmentId: string, items: Item[] }>();
 
-// Step and data management
 const step = ref(0);
 const currentItem: Ref<Item | null> = ref(null);
 
@@ -46,11 +44,6 @@ const currentStep = computed(() => steps.value[step.value]);
 
 const packages: Ref<Package[]> = ref([]);
 const toShipItems: Ref<Item[]> = ref(props.items);
-
-// Fetch shipment items if necessary (depending on your flow)
-onMounted(async () => {
-  // You can add logic to fetch any necessary data
-});
 
 // Computed properties for progress and steps
 const progressPercentage = computed(() => {
@@ -95,7 +88,6 @@ const selectPackageType = async () => {
   return selectedType;
 };
 
-// Create a new package and add it to the frontend
 const createNewPackage = async (selectedType) => {
   let formData = {
     shipment: { id: props.shipmentId },
@@ -135,7 +127,6 @@ const updatePackageStatus = async (lastPackageId) => {
     status: PackageStatus.PACKED,
   };
 
-  // Update package status in the backend
   const isUpdated = await apolloClient.mutate({
     mutation: updatePackageMutation,
     variables: { data: formData },
@@ -214,14 +205,14 @@ const generateItemNextSteps = async () => {
       steps.value.push({
         item: currentItem.value,
         availableLocation: location,
-        type: 'move',  // The first step is moving to the location
+        type: 'move',
       });
 
       // Collect step after arriving at the location
       steps.value.push({
         item: currentItem.value,
         availableLocation: location,
-        type: 'collect',  // The second step is collecting the item
+        type: 'collect',
       });
     });
   }
@@ -231,7 +222,6 @@ const generateItemNextSteps = async () => {
 
 
 const handleArrived = () => {
-  // Handler logic for marking "Arrived" (move)
   step.value += 1;
 };
 
@@ -299,7 +289,6 @@ const handleAddAll = async () => {
 
   const quantityToMove = toShipItem.quantity;
 
-  // Create inventory movement for the full quantity
   const isMovementCreated = await createInventoryMovement(apolloClient, {
     product: item.product,
     quantity: quantityToMove,
@@ -314,7 +303,6 @@ const handleAddAll = async () => {
   addItemToPackage(lastPackage, item, availableLocation, quantityToMove);
   toShipItem.quantity = 0;
 
-  // Proceed to the next step or item
   goToNextStep();
 };
 
@@ -327,13 +315,11 @@ const handleAddQuantity = async (quantityToMove) => {
     return;
   }
 
-  // Validate that the input quantity does not exceed the item's available quantity
   if (quantityToMove > item.quantity) {
     Toast.error(t('inventory.packages.create.virtual.error.quantityExceedsAvailable', { available: item.quantity }));
     return;
   }
 
-  // Create inventory movement for the specified quantity
   const isMovementCreated = await createInventoryMovement(apolloClient, {
     product: item.product,
     quantity: quantityToMove,
@@ -384,7 +370,6 @@ const handlePackageFull = async () => {
   // Step 2: Select the new package type
   const selectedType = await selectPackageType();
 
-  // If user cancels or doesn't select a type, return early
   if (!selectedType) {
     loading.value = false;
     return;
@@ -414,13 +399,11 @@ const handleFinish = async () => {
 
 const handleSavePackage = async (pkg) => {
   try {
-    // Unpack the form and add the package ID
     const updatedData = {
       id: pkg.id,
-      ...pkg.form, // Spread the form data (type, trackingCode, trackingLink, etc.)
+      ...pkg.form,
     };
 
-    // Perform the mutation to save the package details
     const { data } = await apolloClient.mutate({
       mutation: updatePackageMutation,
       variables: { data: updatedData },

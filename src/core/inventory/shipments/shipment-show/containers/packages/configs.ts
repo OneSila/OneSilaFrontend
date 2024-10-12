@@ -269,7 +269,6 @@ export const showConfigConstructor = (t, id, shipmentId): ShowConfig => ({
 export const listingQueryKey = 'packages';
 export const listingQuery = packagesQuery;
 
-// Method to create an inventory movement
 export const createInventoryMovement = async (apolloClient, item: any, packageId: string) => {
   try {
     const submitData = {
@@ -292,7 +291,6 @@ export const createInventoryMovement = async (apolloClient, item: any, packageId
   }
 };
 
-// Method to create a package
 export const createPackage = async (apolloClient, form: any) => {
   try {
     const { data } = await apolloClient.mutate({
@@ -319,7 +317,6 @@ export const getItemPickingLocations = async (apolloClient, currentItemId) => {
     },
   });
 
-  // Return the list of picking locations from the response
   return data && data.pickingLocations ? data.pickingLocations : [];
 
 };

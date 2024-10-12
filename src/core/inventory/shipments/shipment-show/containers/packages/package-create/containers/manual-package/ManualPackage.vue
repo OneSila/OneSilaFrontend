@@ -106,10 +106,8 @@ const handleAddItemToPackage = (item, pkgId, quantity) => {
     }
   }
 
-  // Make sure to create a mutable copy of toShipItems
   const toShipItem = toShipItems.value.find(shipItem => shipItem.id === item.id);
 
-  // Check if the toShipItem exists and update its quantity
   if (toShipItem) {
     toShipItems.value = toShipItems.value.map(shipItem =>
       shipItem.id === item.id

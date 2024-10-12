@@ -35,7 +35,6 @@ const instructionContent = computed(() => {
         }),
       };
     case 'collect':
-      // Use the remaining quantity instead of availableLocation.quantity
       const remainingQuantity = getRemainingQuantity();
       return {
         title: t('inventory.packages.create.virtual.instructions.collect.title'),

@@ -22,7 +22,6 @@ const getPackageName = (index) => {
   return t('inventory.packages.create.virtual.virtualTour.packageName', { index: index + 1 });
 };
 
-// Handle dragging
 const dragStart = (index) => {
   draggingIndex.value = index;
 };
@@ -30,14 +29,12 @@ const dragStart = (index) => {
 const dragEnter = (index) => {
   if (draggingIndex.value === null || draggingIndex.value === index) return;
 
-  // Swap the items when dragging over another one
   const newItems = [...props.toShipItems];
   const [draggedItem] = newItems.splice(draggingIndex.value, 1);
   newItems.splice(index, 0, draggedItem);
 
   draggingIndex.value = index;
 
-  // Emit to parent for update
   emit('update-items', newItems);
 };
 
@@ -45,11 +42,9 @@ const dragEnd = () => {
   draggingIndex.value = null;
 };
 
-// Function to handle sorting of items
 const handleSortOrderChange = (index, direction) => {
-  const newItems = [...props.toShipItems]; // Create a new array from the existing items
+  const newItems = [...props.toShipItems];
 
-  // Handle moving the item up or down
   if (direction === 'up' && index > 0) {
     const temp = newItems[index];
     newItems[index] = newItems[index - 1];
@@ -60,7 +55,6 @@ const handleSortOrderChange = (index, direction) => {
     newItems[index + 1] = temp;
   }
 
-  // Emit the updated items array to the parent component
   emit('update-items', newItems);
 };
 
