@@ -1,5 +1,5 @@
 import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
-import {FieldType, ProductType} from '../../../shared/utils/constants.js'
+import {FieldType, INVENTORY_MOVEMENTS_MODEL_CODES, ProductType} from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { inventoriesQuery, inventoryLocationsQuery } from "../../../shared/api/queries/inventory.js"
@@ -8,6 +8,18 @@ import {createInventoryLocationMutation, deleteInventoryMutation} from "../../..
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {baseFormConfigConstructor as baseStocklocationConfigConstructor } from '../inventory-location/configs'
 import { getInventorySubscription } from '../../../shared/api/subscriptions/inventory.js';
+import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing";
+
+export const MOVEMENT_FROM_MODELS = (t) => [
+  { code: INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER, name: t('purchasing.orders.title') },
+  { code: INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION, name: t('inventory.inventoryLocations.title') },
+  // { code: MODEL_CODES.ORDER_RETURN, name: t('sales.orderReturn.title') }, // Not yet implemented
+];
+
+export const MOVEMENT_TO_MODELS = (t) => [
+  { code: INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION, name: t('inventory.inventoryLocations.title') },
+  // { code: MODEL_CODES.PACKAGE, name: t('inventory.packages.title') }, // Not yet implemented
+];
 
 const inventorylocationOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -19,15 +31,26 @@ const inventorylocationOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
     ) as FormConfig
   }
 })
-const getProductField = (productId, t): FormField => {
+
+export const getProductField = (productId, t): FormField => {
   if (productId) {
     return {
-      type: FieldType.Hidden,
-      name: 'product',
-      value: { "id": productId }
+        type: FieldType.Query,
+        name: 'product',
+        label:  t('shared.labels.product'),
+        labelBy: 'name',
+        valueBy: 'id',
+        query: productsQuery,
+        queryVariables: {"filter": {"id": {"exact": productId}}},
+        dataKey: 'products',
+        isEdge: true,
+        multiple: false,
+        mandatory: true,
+        formMapIdentifier: 'id',
+        disabled: true
     };
   } else {
-    return     {
+    return {
         type: FieldType.Query,
         name: 'product',
         label:  t('shared.labels.product'),
@@ -38,51 +61,100 @@ const getProductField = (productId, t): FormField => {
         dataKey: 'products',
         isEdge: true,
         multiple: false,
-        filterable: true,
+        mandatory: true,
         formMapIdentifier: 'id',
     };
   }
 }
 
 export const baseFormConfigConstructor = (
-  t: Function,
-  type: FormType,
-  mutation: any,
-  mutationKey: string,
-  productId: string | null = null
-): FormConfig => ({
- cols: 1,
-  type: type,
-  mutation: mutation,
-  mutationKey: mutationKey,
-  submitUrl:  productId ? { name: 'products.products.show', params: {id: productId}, query: { tab: 'inventory'} } : { name: 'inventory.inventory.list' },
-  submitAndContinueUrl:  productId ? { name: 'inventory.inventory.edit', query: { productId } } : { name: 'inventory.inventory.edit' },
-  deleteMutation: deleteInventoryMutation,
-  fields: [
+  t,
+  type,
+  mutation,
+  mutationKey,
+  movementFromModelFromUrl: string | null = null,
+  movementFromIdFromUrl: string | null = null,
+  productIdFromUrl: string | null = null
+) => {
+  const fields = [
+    getProductField(productIdFromUrl ,t),
     {
       type: FieldType.Text,
       name: 'quantity',
-      label: t('shared.labels.quantity'),
-      placeholder: t('shared.placeholders.quantity'),
       number: true,
+      label: t('inventory.movements.labels.quantity'),
     },
-    getProductField(productId, t),
     {
-        type: FieldType.Query,
-        name: 'inventorylocation',
-        label:  t('inventory.inventoryLocations.show.title'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: inventoryLocationsQuery,
-        dataKey: 'inventoryLocations',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        formMapIdentifier: 'id',
-        createOnFlyConfig: inventorylocationOnTheFlyConfig(t),
-      }
-    ],
-});
+      type: FieldType.Textarea,
+      name: t('inventory.movements.labels.notes'),
+      label: t('inventory.movements.labels.notes'),
+      optional: true,
+    },
+    movementFromModelFromUrl
+      ? {
+          type: FieldType.Text,
+          name: 'movementFromModel',
+          label: t('inventory.movements.labels.movementFromModel'),
+          default: movementFromModelFromUrl,
+          disabled: true,
+        }
+      : {
+          type: FieldType.Choice,
+          name: 'movementFromModel',
+          label: t('inventory.movements.labels.movementFromModel'),
+          options: MOVEMENT_FROM_MODELS(t),
+          labelBy: 'name',
+          valueBy: 'code',
+        },
+    {
+      type: FieldType.Query,
+      name: 'movementFromId',
+      label: t('inventory.movements.labels.movementFrom'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: purchaseOrdersQuery,
+      dataKey: null,
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      disabled: movementFromModelFromUrl == null,
+      default: movementFromIdFromUrl || null,
+    },
+    {
+      type: FieldType.Choice,
+      name: 'movementToModel',
+      label: t('inventory.movements.labels.movementToModel'),
+      options: MOVEMENT_TO_MODELS(t),
+      labelBy: 'name',
+      valueBy: 'code',
+    },
+    {
+      type: FieldType.Query,
+      name: 'movementToId',
+      label: t('inventory.movements.labels.movementTo'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: inventoryLocationsQuery,
+      dataKey: null,
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      disabled: true,
+    },
+  ];
+
+  return {
+    cols: 1,
+    type: type,
+    mutation: mutation,
+    mutationKey: mutationKey,
+    submitUrl:  productIdFromUrl ? { name: 'products.products.show', params: {id: productIdFromUrl}, query: { tab: 'inventory'} } : { name: 'inventory.inventory.list' },
+    submitAndContinueUrl: { name: 'inventory.inventory.show' },
+    fields: fields,
+  };
+};
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
@@ -134,8 +206,8 @@ export const listingConfigConstructor = (t: Function, productId: string | null =
   headers: getHeaders(t, productId, isSupplierProduct),
   fields: getFields(productId, isSupplierProduct),
   identifierKey: 'id',
-  addActions: isSupplierProduct,
-  addEdit: isSupplierProduct,
+  addActions: false,
+  addEdit: false,
   editUrlName: 'inventory.inventory.edit',
   showUrlName: 'inventory.inventory.show',
   urlQueryParams: productId && isSupplierProduct ? { "productId": productId } : undefined,
@@ -155,8 +227,8 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   deleteMutation: deleteInventoryMutation,
   deleteVariables: { id: id },
   addBack: true,
-  addEdit: true,
-  addDelete: true,
+  addEdit: false,
+  addDelete: false,
   fields: [
   {
     label: t('shared.labels.quantity'),

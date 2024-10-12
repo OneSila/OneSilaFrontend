@@ -19,7 +19,6 @@ const multiple = props.field.multiple || false;
 const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
 const limit = props.field.limit || undefined;
-const disabled = props.field.disabled === true;
 
 </script>
 
@@ -38,7 +37,7 @@ const disabled = props.field.disabled === true;
       :filterable="filterable"
       :removable="removable"
       :limit="limit"
-      :disabled="disabled"
+      :disabled="props.field.disabled"
     />
   </div>
 </template>

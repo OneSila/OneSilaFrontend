@@ -16,7 +16,7 @@ const props = withDefaults(
   { fieldsToClear: null },
 );
 
-const emit = defineEmits(['formUpdated', 'submit']);
+const emit = defineEmits(['formUpdated', 'setData', 'submit']);
 
 const form = reactive({});
 const router = useRouter();
@@ -62,6 +62,7 @@ const initialFormUpdate = (data: any) => {
 
   });
 
+  emit('formUpdated', form);
   return true;
 };
 

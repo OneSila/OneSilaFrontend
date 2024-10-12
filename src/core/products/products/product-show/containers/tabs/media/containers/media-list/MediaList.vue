@@ -13,7 +13,7 @@ import { ApolloAlertMutation } from "../../../../../../../../../shared/component
 import {deleteMediaProductThroughMutation, updateMediaProductThroughMutation} from "../../../../../../../../../shared/api/mutations/media.js";
 import { VueDraggableNext } from 'vue-draggable-next';
 import apolloClient from "../../../../../../../../../../apollo-client";
-import {Checkbox} from "../../../../../../../../../shared/components/atoms/checkbox";
+import {Toggle} from "../../../../../../../../../shared/components/atoms/toggle";
 
 type Media = {
   id: string;
@@ -179,7 +179,7 @@ const handleMainImageChange = async (changedItem: Item) => {
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
                                 <Flex>
                                   <FlexCell v-if="item.media.type === TYPE_IMAGE" class="mr-2">
-                                    <Checkbox v-model="isMainImageMap[item.id]" @@update:model-value="handleMainImageChange(item)" />
+                                    <Toggle v-model="isMainImageMap[item.id]" @@update:model-value="handleMainImageChange(item)" />
                                   </FlexCell>
                                   <FlexCell>
                                     <ApolloAlertMutation :mutation="deleteMediaProductThroughMutation" :mutation-variables="{id: item.id}" @done="handleDeleteSuccess">
@@ -225,7 +225,7 @@ const handleMainImageChange = async (changedItem: Item) => {
                       {{ getFileName(item.media) }} {{ getFileSize(item.media) }}
                     </FlexCell>
                     <FlexCell v-if="item.media.type === TYPE_IMAGE" center class="mr-2">
-                      <Checkbox v-model="isMainImageMap[item.id]" @update:model-value="handleMainImageChange(item)" />
+                      <Toggle v-model="isMainImageMap[item.id]" @update:model-value="handleMainImageChange(item)" />
                     </FlexCell>
                     <FlexCell center>
                       <ApolloAlertMutation :mutation="deleteMediaProductThroughMutation" :mutation-variables="{id: item.id}" @done="handleDeleteSuccess">

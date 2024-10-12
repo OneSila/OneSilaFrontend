@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-import {Product} from "../../../../../../configs";
+import {getInspectorStatusBadgeMap, Product} from "../../../../../../configs";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import {useI18n} from "vue-i18n";
 import {SearchConfig} from "../../../../../../../../../shared/components/organisms/general-search/searchConfig";
-import {PRODUCT_BUNDLE, ProductType} from "../../../../../../../../../shared/utils/constants";
+import {ProductType} from "../../../../../../../../../shared/utils/constants";
 import {Pagination} from "../../../../../../../../../shared/components/molecules/pagination";
 import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
 import {FilterManager} from "../../../../../../../../../shared/components/molecules/filter-manager";
@@ -128,6 +128,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                 <tr>
                   <th>{{ t('shared.labels.name') }}</th>
                   <th>{{ t('shared.labels.active') }}</th>
+                  <th>{{ t('products.products.labels.inspectorStatus') }}</th>
                   <th v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
                   <th v-if="product.type == ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
                   <th class="!text-end">{{ t('shared.labels.actions')}}</th>
@@ -153,6 +154,9 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   <td>
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
+                  </td>
+                  <td>
+                    {{ getInspectorStatusBadgeMap()[item.node.variation.inspectorStatus].text }}
                   </td>
                   <td v-if="product.type != ProductType.Configurable">
                     <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { Checkbox } from '../../../../../atoms/checkbox';
+import { Toggle } from '../../../../../atoms/toggle';
 import { CheckboxFormField } from '../../../formConfig';
 
 const props = defineProps<{
@@ -18,7 +18,7 @@ const updateValue = (newValue) => {
 
 <template>
   <div class="field-checkbox">
-    <Checkbox
+    <Toggle
       :model-value="modelValue === true"
       @update:modelValue="updateValue"
       :disabled="field.disabled"

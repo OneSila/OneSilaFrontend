@@ -103,6 +103,7 @@ export const salesPriceListItemsQuery = gql`
           salespricelist {
             id
             name
+            discountPcnt
           }
           product {
             id

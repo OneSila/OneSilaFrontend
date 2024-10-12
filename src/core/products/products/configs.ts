@@ -1,11 +1,12 @@
 import {CreateOnTheFly, FormConfig, FormField, FormType, QueryFormField} from '../../../shared/components/organisms/general-form/formConfig';
-import { FieldType, ProductType, Url } from '../../../shared/utils/constants.js'
+import {FieldType, InspectorStatus, InspectorStatusType, ProductType, Url} from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
 import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
+import {Badge} from "../../../shared/components/organisms/general-show/showConfig";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -34,6 +35,28 @@ export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Manufacturable]: { text: t('products.products.labels.type.choices.manufacturable'), color: 'red' },
   [ProductType.Supplier]: { text: t('products.products.labels.type.choices.supplier'), color: 'purple' },
 });
+
+export const getInspectorStatusOptions = (t) => [
+  { name: '🟢', code: InspectorStatus.GREEN },
+  { name: '🟠', code: InspectorStatus.ORANGE },
+  { name: '🔴', code: InspectorStatus.RED },
+];
+
+export const getInspectorStatusBadgeMap = (): Record<string, Badge> => {
+  const defaultBadge: Badge = { text: '🔴', color: 'none' };
+
+  const badgeMap: Record<InspectorStatusType, Badge> = {
+    [InspectorStatus.GREEN]: { text: '🟢', color: 'none' },
+    [InspectorStatus.ORANGE]: { text: '🟠', color: 'none' },
+    [InspectorStatus.RED]: defaultBadge,
+  };
+
+  return {
+    ...badgeMap,
+    default: defaultBadge,
+  };
+};
+
 
 const getTypeField = (type, t): FormField | null => {
   if (type == FormType.CREATE) {
@@ -174,7 +197,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder')],
+  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder'), t('products.products.labels.inspectorStatus')],
   fields: [
     {
       type: FieldType.Text,
@@ -194,6 +217,11 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     {
       type: FieldType.Boolean,
       name: 'allowBackorder'
+    },
+    {
+      name: 'inspectorStatus',
+      type: FieldType.Badge,
+      badgeMap: getInspectorStatusBadgeMap(),
     },
   ],
   identifierKey: 'id',

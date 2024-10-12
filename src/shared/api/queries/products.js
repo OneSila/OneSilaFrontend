@@ -13,6 +13,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           proxyId
           productionTime
           thumbnailUrl
+          inspectorStatus
           vatRate {
             id
             name
@@ -164,6 +165,7 @@ export const configurableVariationsQuery = gql`
             name
             active
             thumbnailUrl
+            inspectorStatus
           }
         }
         cursor
@@ -196,6 +198,7 @@ export const bundleVariationsQuery = gql`
             active
             name
             thumbnailUrl
+            inspectorStatus
           }
           quantity
         }
@@ -394,6 +397,7 @@ export const billOfMaterialsQuery = gql`
             name
             productionTime
             thumbnailUrl
+            inspectorStatus
             active
           }
           quantity

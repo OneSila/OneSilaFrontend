@@ -26,6 +26,7 @@ export enum FieldType {
   Email = "Email",
   Website = "Website",
   Badge = "Badge",
+  IndividualFile = "IndividualFile", // not from the media app but adding individually
 }
 
 export enum ConfigTypes {
@@ -34,6 +35,14 @@ export enum ConfigTypes {
   REQUIRED = 'REQUIRED',
   OPTIONAL = 'OPTIONAL'
 }
+
+export const InspectorStatus = {
+  GREEN: 1,
+  ORANGE: 2,
+  RED: 3,
+};
+
+export type InspectorStatusType = typeof InspectorStatus[keyof typeof InspectorStatus];
 
 export const OrderStatus = {
   DRAFT: 'DRAFT',
@@ -56,6 +65,12 @@ export const OrderStatus = {
   PENDING_DELIVERY: 'PENDING_DELIVERY',
   DELIVERED: 'DELIVERED',
 };
+
+export const PurchaseOrderOpenStatuses = [
+  OrderStatus.ORDERED,
+  OrderStatus.CONFIRMED,
+  OrderStatus.PENDING_DELIVERY,
+];
 
 export const ReasonForSale = {
   SALE: 'SALE',
@@ -127,3 +142,27 @@ export const LeadTimeUnit = {
   WEEK: 3,
   MONTH: 4
 };
+
+export const INVENTORY_MOVEMENTS_MODEL_CODES = {
+  PURCHASE_ORDER: 'purchase',
+  INVENTORY_LOCATION: 'location',
+  ORDER_RETURN: 'return',
+  PACKAGE: 'package',
+};
+
+export const PackageType = {
+  BOX: 'BOX',
+  PALLET: 'PALLET',
+};
+
+export const PackageStatus = {
+  NEW: 'NEW',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PACKED: 'PACKED',
+  DISPATCHED: 'DISPATCHED',
+};
+
+export enum PackagingMode {
+  MANUAL = 'manual',
+  VIRTUAL = 'virtual',
+}

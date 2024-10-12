@@ -2,9 +2,6 @@
 import { defineProps } from 'vue';
 import { useI18n } from "vue-i18n";
 import {FormType} from "../product";
-import {Label} from "../../../../../../shared/components/atoms/label";
-import {Checkbox} from "../../../../../../shared/components/atoms/checkbox";
-import {Button} from "../../../../../../shared/components/atoms/button";
 import {PrimaryButton} from "../../../../../../shared/components/atoms/button-primary";
 
 const props = defineProps<{form: FormType}>();

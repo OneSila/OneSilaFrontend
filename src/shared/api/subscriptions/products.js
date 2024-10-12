@@ -19,6 +19,10 @@ export const productSubscription = gql`
       inspector {
         id
       }
+      supplier {
+        id
+        name
+      }
       vatRate {
         id
         rate

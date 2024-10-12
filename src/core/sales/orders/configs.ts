@@ -1,12 +1,11 @@
 import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
-import { FieldType, OrderStatus, ReasonForSale } from '../../../shared/utils/constants.js'
-import { OrderType, SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { ShowField, NestedTextField } from "../../../shared/components/organisms/general-show/showConfig";
-import { ordersQuery } from "../../../shared/api/queries/salesOrders.js"
+import {FieldType, OrderStatus, ReasonForSale} from '../../../shared/utils/constants.js'
+import {OrderType, SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {NestedTextField, ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
+import {ordersQuery} from "../../../shared/api/queries/salesOrders.js"
 import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
-import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
-import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
+import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import {customerOnTheFlyConfig} from "../customers/configs";
@@ -15,7 +14,7 @@ export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
   { name: t('sales.orders.labels.status.choices.pending'), code: OrderStatus.PENDING },
   { name: t('sales.orders.labels.status.choices.pendingInventory'), code: OrderStatus.PENDING_INVENTORY },
-  { name: t('sales.orders.labels.status.choices.toPick'), code: OrderStatus.TO_PICK },
+  { name: t('sales.orders.labels.status.choices.pendingShippingApproval'), code: OrderStatus.PENDING_SHIPPING_APPROVAL },
   { name: t('sales.orders.labels.status.choices.toShip'), code: OrderStatus.TO_SHIP },
   { name: t('sales.orders.labels.status.choices.done'), code: OrderStatus.DONE },
   { name: t('sales.orders.labels.status.choices.cancelled'), code: OrderStatus.CANCELLED },
@@ -36,10 +35,19 @@ export const getReasonForSaleOptions = (t) => [
   { name: t('sales.orders.labels.reasonForSale.choices.gift'), code: ReasonForSale.GIFT }
 ];
 
+export const getReasonForSaleBadgeMap = (t) => ({
+  [ReasonForSale.SALE]: { text: t('sales.orders.labels.reasonForSale.choices.sale'), color: 'purple' },
+  [ReasonForSale.RETURNGOODS]: { text: t('sales.orders.labels.reasonForSale.choices.returnGoods'), color: 'pink' },
+  [ReasonForSale.DOCUMENTS]: { text: t('sales.orders.labels.reasonForSale.choices.documents'), color: 'red' },
+  [ReasonForSale.SAMPLE]: { text: t('sales.orders.labels.reasonForSale.choices.sample'), color: 'green' },
+  [ReasonForSale.GIFT]: { text: t('sales.orders.labels.reasonForSale.choices.gift'), color: 'blue' },
+});
+
 export const getSalesOrderStatusBadgeMap = (t) => ({
   [OrderStatus.DRAFT]: { text: t('sales.orders.labels.status.choices.draft'), color: 'gray' },
   [OrderStatus.PENDING]: { text: t('sales.orders.labels.status.choices.pending'), color: 'yellow' },
   [OrderStatus.PENDING_INVENTORY]: { text: t('sales.orders.labels.status.choices.pendingInventory'), color: 'blue' },
+  [OrderStatus.PENDING_SHIPPING_APPROVAL]: { text: t('sales.orders.labels.status.choices.pendingShippingApproval'), color: 'orange' },
   [OrderStatus.TO_PICK]: { text: t('sales.orders.labels.status.choices.toPick'), color: 'indigo' },
   [OrderStatus.TO_SHIP]: { text: t('sales.orders.labels.status.choices.toShip'), color: 'purple' },
   [OrderStatus.DONE]: { text: t('sales.orders.labels.status.choices.done'), color: 'green' },
@@ -58,13 +66,33 @@ export const getBadgeForSaleOrderStatus = (t, key) => {
   return map[key] || map[OrderStatus.VOID];
 };
 
-export const getReasonForSaleBadgeMap = (t) => ({
-  [ReasonForSale.SALE]: { text: t('sales.orders.labels.reasonForSale.choices.sale'), color: 'purple' },
-  [ReasonForSale.RETURNGOODS]: { text: t('sales.orders.labels.reasonForSale.choices.returnGoods'), color: 'pink' },
-  [ReasonForSale.DOCUMENTS]: { text: t('sales.orders.labels.reasonForSale.choices.documents'), color: 'red' },
-  [ReasonForSale.SAMPLE]: { text: t('sales.orders.labels.reasonForSale.choices.sample'), color: 'green' },
-  [ReasonForSale.GIFT]: { text: t('sales.orders.labels.reasonForSale.choices.gift'), color: 'blue' },
-});
+
+
+export const allowedStatusTransitions = {
+  [OrderStatus.DRAFT]: [OrderStatus.DRAFT, OrderStatus.PENDING, OrderStatus.CANCELLED, OrderStatus.HOLD],
+  // automatically assign to the next status (so it's short term status)
+  [OrderStatus.PENDING]: [OrderStatus.PENDING],
+  [OrderStatus.PENDING_SHIPPING_APPROVAL]: [OrderStatus.PENDING_SHIPPING_APPROVAL, OrderStatus.TO_SHIP],
+  [OrderStatus.TO_SHIP]: [OrderStatus.TO_SHIP],
+  [OrderStatus.PENDING_INVENTORY]: [OrderStatus.PENDING_INVENTORY],
+  [OrderStatus.HOLD]: [OrderStatus.HOLD, OrderStatus.PENDING],
+  [OrderStatus.DONE]: [OrderStatus.DONE],
+  [OrderStatus.CANCELLED]: [OrderStatus.CANCELLED],
+};
+
+export const getCurrentStatusOptions = (t, currentStatus): Array<{ code: string; name: string }> => {
+  const statusChoices = getStatusOptions(t);
+
+  if (!currentStatus) {
+    return statusChoices;
+  }
+
+  const allowedStatuses = allowedStatusTransitions[currentStatus] || [];
+
+  return statusChoices.filter(choice => {
+    return choice.code === currentStatus || allowedStatuses.includes(choice.code);
+  });
+};
 
 
 const getSubmitUrl = (customerId, source) => {
@@ -120,14 +148,8 @@ export const baseFormConfigConstructor = (
   mutationKey: string,
   customerId: string | null = null,
   source: string | null = null
-): FormConfig => ({
- cols: 1,
-  type: type,
-  mutation: mutation,
-  mutationKey: mutationKey,
-  submitUrl: getSubmitUrl(customerId, source),
-  submitAndContinueUrl: getSubmitAndContinueUrl(customerId, source),
-  fields: [
+): FormConfig => {
+  let baseFields: FormField[] = [
     getCustomerField(customerId, t),
     {
       type: FieldType.Text,
@@ -137,26 +159,26 @@ export const baseFormConfigConstructor = (
       optional: true
     },
     {
-        type: FieldType.Query,
-        name: 'currency',
-        label: t('shared.labels.currency'),
-        labelBy: 'isoCode',
-        valueBy: 'id',
-        query: currenciesQuery,
-        dataKey: 'currencies',
-        isEdge: true,
-        multiple: false,
-        filterable: true,
-        removable: false,
-        formMapIdentifier: 'id',
-        createOnFlyConfig: currencyOnTheFlyConfig(t),
-        setDefaultKey: 'isDefaultCurrency'
+      type: FieldType.Query,
+      name: 'currency',
+      label: t('shared.labels.currency'),
+      labelBy: 'isoCode',
+      valueBy: 'id',
+      query: currenciesQuery,
+      dataKey: 'currencies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      removable: false,
+      formMapIdentifier: 'id',
+      createOnFlyConfig: currencyOnTheFlyConfig(t),
+      setDefaultKey: 'isDefaultCurrency'
     },
     {
       type: FieldType.Query,
       name: 'invoiceAddress',
       label: t('sales.orders.labels.invoiceAddress'),
-      labelBy: 'address1',
+      labelBy: 'fullAddress',
       valueBy: 'id',
       query: companyInvoiceAddressesQuery,
       dataKey: 'invoiceAddresses',
@@ -171,7 +193,7 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'shippingAddress',
       label: t('sales.orders.labels.shippingAddress'),
-      labelBy: 'address1',
+      labelBy: 'fullAddress',
       valueBy: 'id',
       query: companyShippingAddressesQuery,
       dataKey: 'shippingAddresses',
@@ -181,8 +203,11 @@ export const baseFormConfigConstructor = (
       formMapIdentifier: 'id',
       disabled: type === FormType.CREATE,
       queryVariables: customerId ? { "filter": { "company": { "id": { "exact": customerId } } } } : undefined,
-    },
-    {
+    }
+  ];
+
+  if (type !== FormType.CREATE) {
+    const statusField: FormField = {
       type: FieldType.Choice,
       name: 'status',
       labelBy: 'name',
@@ -190,8 +215,13 @@ export const baseFormConfigConstructor = (
       label: t('sales.orders.labels.status.title'),
       filterable: true,
       options: getStatusOptions(t),
-      default: type === FormType.CREATE ? OrderStatus.DRAFT : undefined,
-    },
+    };
+
+    baseFields.push(statusField)
+  }
+
+  baseFields = [
+    ...baseFields,
     {
       type: FieldType.Choice,
       name: 'reasonForSale',
@@ -208,8 +238,19 @@ export const baseFormConfigConstructor = (
       default: true,
       uncheckedValue: "false",
     },
-    ],
-});
+  ];
+
+  return {
+    cols: 1,
+    type: type,
+    mutation: mutation,
+    mutationKey: mutationKey,
+    submitUrl: getSubmitUrl(customerId, source),
+    submitAndContinueUrl: getSubmitAndContinueUrl(customerId, source),
+    fields: baseFields,
+  };
+};
+
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
@@ -363,6 +404,7 @@ export const showConfigConstructor = (t: Function, id, customerId: string|null =
   subscriptionVariables: {pk: id},
   addBack: true,
   backUrl: getBackUrl(customerId, productId, source),
+  addCustomButtons: true,
   addEdit: true,
   editUrl: {name: 'sales.orders.edit', params: {id: id} },
   addDelete: false,

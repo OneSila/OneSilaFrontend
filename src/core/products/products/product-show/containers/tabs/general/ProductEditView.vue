@@ -108,9 +108,10 @@ const leadtimeField = {
       isEdge: true,
       multiple: false,
       filterable: true,
+      optional: true,
       formMapIdentifier: 'id',
       createOnFlyConfig: leadTimeOnTheFlyConfig(t),
-    }
+}
 
 const getCleanData = (data) => {
   let cleanedData =  {

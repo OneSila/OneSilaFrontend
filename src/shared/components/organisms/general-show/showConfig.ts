@@ -10,6 +10,7 @@ import {FieldDate} from "./containers/field-date";
 import {FieldEmail} from "./containers/field-email";
 import {FieldWebsite} from "./containers/field-website";
 import {FieldBadge} from "./containers/field-badge";
+import {FieldIndividualFile} from "./containers/field-individual-file";
 
 export interface ShowBaseField {
   name: string;
@@ -45,6 +46,10 @@ export interface DateField extends ShowBaseField {
 export interface BooleanField extends ShowBaseField {
   type: FieldType.Boolean;
 }
+export interface IndividualFileField extends ShowBaseField {
+  type: FieldType.IndividualFile;
+}
+
 export interface ImageField extends ShowBaseField {
   type: FieldType.Image;
   basePath?: string;
@@ -78,7 +83,7 @@ export interface BadgeField extends ShowBaseField {
   badgeMap: Record<string, Badge>;
 }
 
-export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField;
+export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IndividualFileField;
 
 export const updateField = (showConfig, fieldName, newConfig) => {
   const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
@@ -99,6 +104,7 @@ export const getFieldComponent = (type) => {
     case FieldType.Email: return FieldEmail;
     case FieldType.Website: return FieldWebsite;
     case FieldType.Badge: return FieldBadge;
+    case FieldType.IndividualFile: return FieldIndividualFile;
     default: return null;
   }
 };
@@ -117,6 +123,7 @@ export interface ShowConfig {
   addBack?: boolean;  // if we add the back / back button
   backUrl?: Url; // url to land after back
   addEdit?: boolean;  // if we add the edit
+  addCustomButtons?: boolean;  // if there are any custom buttons added
   editUrl?: Url; // url to land after edit clicked
   addDelete?: boolean; // Relevant only for Edit forms
   deleteMutation?: string; // New addition for delete operation

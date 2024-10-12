@@ -6,7 +6,7 @@ import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing.js"
 import {deletePurchaseOrderMutation} from "../../../shared/api/mutations/purchasing.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
-import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
+import {NestedTextField, ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {purchaseOrderSubscription} from "../../../shared/api/subscriptions/purchasing.js";
 import { createCompanyInvoiceAddressMutation, createCompanyShippingAddressMutation} from "../../../shared/api/mutations/contacts.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
@@ -66,13 +66,19 @@ const getSubmitUrl = (supplierId, source) => {
 };
 
 
-const getSubmitAndContinueUrl = (supplierId, source) => {
-  if (supplierId && source === 'company') {
-    return { name: 'purchasing.orders.edit', query: { supplierId, source: 'company' } };
-  } else if (supplierId) {
-    return { name: 'purchasing.orders.edit', query: { supplierId } };
+const getSubmitAndContinueUrl = (supplierId, source, type) => {
+
+  if (type == FormType.CREATE) {
+    return { name: 'purchasing.orders.show' };
+  } else {
+    if (supplierId && source === 'company') {
+      return { name: 'purchasing.orders.edit', query: { supplierId, source: 'company' } };
+    } else if (supplierId) {
+      return { name: 'purchasing.orders.edit', query: { supplierId } };
+    }
+    return { name: 'purchasing.orders.edit' };
   }
-  return { name: 'purchasing.orders.edit' };
+
 };
 
 
@@ -108,16 +114,9 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   supplierId: string | null = null,
-  source: string|null = null
-): FormConfig => ({
- cols: 1,
-  type: type,
-  mutation: mutation,
-  mutationKey: mutationKey,
-  submitUrl: getSubmitUrl(supplierId, source),
-  submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, source),
-  deleteMutation: deletePurchaseOrderMutation,
-  fields: [
+  source: string | null = null
+): FormConfig => {
+  const fields: FormField[] = [
     {
       type: FieldType.Text,
       name: 'orderReference',
@@ -125,16 +124,6 @@ export const baseFormConfigConstructor = (
       placeholder: t('purchasing.orders.placeholders.orderReference'),
       optional: true
     },
-    {
-      type: FieldType.Choice,
-      name: 'status',
-      labelBy: 'name',
-      valueBy: 'code',
-      label: t('sales.orders.labels.status.title'),
-      filterable: true,
-      options: getStatusOptions(t),
-      default: type === FormType.CREATE ? OrderStatus.DRAFT : undefined,
-     },
     getSupplierField(t, supplierId),
     {
       type: FieldType.Query,
@@ -147,9 +136,8 @@ export const baseFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
-      disabled: type === FormType.CREATE,
       formMapIdentifier: 'id',
-      queryVariables: supplierId ? { "filter": { "company": { "id": { "exact": supplierId } } } } : undefined,
+      queryVariables: { filter: { company: { isInternalCompany: true } } },
     },
     {
       type: FieldType.Query,
@@ -162,9 +150,8 @@ export const baseFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
-      disabled: type === FormType.CREATE,
       formMapIdentifier: 'id',
-      queryVariables: supplierId ? { "filter": { "company": { "id": { "exact": supplierId } } } } : undefined,
+      queryVariables: { filter: { company: { isInternalCompany: true } } },
     },
     {
       type: FieldType.Query,
@@ -189,7 +176,7 @@ export const baseFormConfigConstructor = (
       labelBy: 'fullName',
       valueBy: 'id',
       query: membersQuery,
-      queryVariables: {filter: {isActive: true}},
+      queryVariables: { filter: { isActive: true, invitationAccepted: true } },
       dataKey: 'users',
       isEdge: true,
       multiple: false,
@@ -197,8 +184,33 @@ export const baseFormConfigConstructor = (
       removable: false,
       formMapIdentifier: 'id',
     }
-  ],
-});
+  ];
+
+  // Add the status field only when the form is not in CREATE mode
+  if (type !== FormType.CREATE) {
+    fields.splice(1, 0, {
+      type: FieldType.Choice,
+      name: 'status',
+      labelBy: 'name',
+      valueBy: 'code',
+      label: t('sales.orders.labels.status.title'),
+      filterable: true,
+      options: getStatusOptions(t),
+    });
+  }
+
+  return {
+    cols: 1,
+    type: type,
+    mutation: mutation,
+    mutationKey: mutationKey,
+    submitUrl: getSubmitUrl(supplierId, source),
+    submitAndContinueUrl: getSubmitAndContinueUrl(supplierId, source, type),
+    deleteMutation: deletePurchaseOrderMutation,
+    fields: fields,
+  };
+};
+
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
@@ -261,12 +273,15 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 const getHeaders = (t, supplierId) => {
   return supplierId
-    ? [t('purchasing.orders.labels.orderReference'),t('purchasing.orders.labels.totalValue'), t('sales.orders.labels.status.title'), t('contacts.companies.address.labels.country')]
-    : [t('purchasing.orders.labels.orderReference'), t('purchasing.orders.labels.totalValue'), t('purchasing.orders.labels.supplier'), t('sales.orders.labels.status.title'), t('contacts.companies.address.labels.country')];
+    ? [t('shared.labels.date'), t('purchasing.orders.labels.orderReference'),t('purchasing.orders.labels.totalValue'), t('sales.orders.labels.status.title'), t('contacts.companies.address.labels.country')]
+    : [t('shared.labels.date'), t('purchasing.orders.labels.orderReference'), t('purchasing.orders.labels.totalValue'), t('purchasing.orders.labels.supplier'), t('sales.orders.labels.status.title'), t('contacts.companies.address.labels.country')];
 }
 
 const getFields = (t, supplierId): ShowField[] => {
   const commonFields: ShowField[] = [
+    { name: 'createdAt',
+      type: FieldType.Date
+    },
     {
       name: 'orderReference',
       type: FieldType.Text,
@@ -287,7 +302,13 @@ const getFields = (t, supplierId): ShowField[] => {
   ];
 
   if (!supplierId) {
-    commonFields.splice(2, 0, { name: 'supplier', type: FieldType.NestedText, keys: ['name'] });
+    commonFields.splice(2, 0, {
+      name: 'supplier',
+      type: FieldType.NestedText,
+      keys: ['name'],
+      clickable: true,
+      clickIdentifiers: [{id: ['id']}],
+      clickUrl: {name: 'contacts.companies.show'}} as NestedTextField);
   }
 
   return commonFields;
@@ -396,8 +417,8 @@ export const showConfigConstructor = (t: Function, id, supplierId: string|null =
     showLabel: true
   },
   ]
-
 });
+
 export const listingQueryKey = 'purchaseOrders';
 export const listingQuery = purchaseOrdersQuery;
 

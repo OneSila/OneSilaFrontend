@@ -17,7 +17,6 @@ const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const supplierId = ref(null);
-const fieldsToClear: Ref<string[] | null> = ref(null);
 const formConfig: Ref<FormConfig | null> = ref(null);
 const querySupplierId = route.query.supplierId ? route.query.supplierId.toString() : null;
 
@@ -50,53 +49,6 @@ onMounted(() => {
   } as FormConfig;
 });
 
-
-
-const handleFormUpdate = (form) => {
-  fieldsToClear.value = []
-
-  const newSupplierId = typeof form.supplier === 'object' && form.supplier !== null? form.supplier.id : form.supplier;
-  if (newSupplierId !== supplierId.value) {
-    const initialSupplierId = supplierId.value;
-    supplierId.value = newSupplierId;
-
-    const fieldConfigs: FieldConfigs = {
-      'invoiceAddress': {
-        enabled: {
-          disabled: false,
-          queryVariables: { "filter": { "company": {"id": {"exact": supplierId.value }}}},
-          createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, supplierId.value)
-        },
-        disabled: {
-          disabled: true,
-          queryVariables: null,
-          createOnFlyConfig: null
-        }
-      },
-      'shippingAddress': {
-        enabled: {
-          disabled: false,
-          queryVariables: { "filter": { "company": {"id": {"exact": supplierId.value }}}},
-          createOnFlyConfig: shippingAddressOnTheFlyConfig(t, supplierId.value)
-        },
-        disabled: {
-          disabled: true,
-          queryVariables: null,
-          createOnFlyConfig: null
-        }
-      }
-    };
-
-    updateFieldConfigs(supplierId.value, fieldConfigs, formConfig);
-
-    // we don't want to clear the values on render
-    if (initialSupplierId === null) {
-      return;
-    }
-    fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
-  }
-};
-
 </script>
 
 <template>
@@ -110,7 +62,7 @@ const handleFormUpdate = (form) => {
 
    <template v-slot:content>
      <div v-if="formConfig">
-        <GeneralForm v-if="querySupplierId === null" :config="formConfig as FormConfig" :fields-to-clear="fieldsToClear" @form-updated="handleFormUpdate" />
+        <GeneralForm v-if="querySupplierId === null" :config="formConfig as FormConfig" />
         <GeneralForm v-else :config="formConfig as FormConfig" />
      </div>
    </template>

@@ -146,7 +146,9 @@
         "somethingWentWrong": "Something went wrong!",
         "deletionFailed": "Deletion operation failed. Please contact the administrators.",
         "clipboardSuccess": "Your text was succefully copied to the clipboard",
-        "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!"
+        "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
+        "clipboardFail": "Failed to copy to clipboard.",
+        "errorOccurred": "An error occurred."
       }
     },
     "button": {
@@ -169,6 +171,7 @@
       "submit": "Submit",
       "add": "Add",
       "download": "Download",
+      "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
       "create": "Create",
       "skip": "Skip",
@@ -209,7 +212,8 @@
       "dateRange": "Date Range",
       "image": "Image",
       "preview": "Preview",
-      "discount": "Discount"
+      "discount": "Discount",
+      "discountPrice": "Discount Price"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -229,6 +233,7 @@
       "price": "Enter price",
       "description": "Enter description",
       "role": "CEO",
+      "productionTime": "Enter Production Time",
       "phoneInput": {
         "countrySelector": {
           "placeholder": "Country code",
@@ -244,6 +249,7 @@
     "tabs": {
       "general": "General",
       "items": "Items",
+      "shippings": "Shippings",
       "translations": "Translations",
       "advanced": "Advanced"
     },
@@ -302,6 +308,8 @@
     "register": {
       "header": "Register",
       "description": "Enter your username and password to register",
+      "agreeTerms": "I agree to the",
+      "termsAndConditions": "Terms & Conditions",
       "labels": {
         "companyName": "Company Name",
         "email": "Email",
@@ -608,6 +616,7 @@
         "prices": "Prices",
         "priceLists": "Price Lists",
         "inventory": "Inventory",
+        "inventoryMovements": "Inventory Movements",
         "websites": "Websites",
         "supplierProducts": "Supplier Products",
         "saleOrders": "Sale Orders",
@@ -696,7 +705,8 @@
         "sku": "SKU",
         "productionTime": "Production Time",
         "forSale": "For Sale",
-        "allowBackorder": "Allow Backorder"
+        "allowBackorder": "Allow Backorder",
+        "inspectorStatus": "Inspector Status"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
@@ -777,6 +787,202 @@
   },
   "inventory": {
     "title": "Warehouse",
+     "packages": {
+       "title": "Packages",
+        "create": {
+          "title": "Create Packages",
+          "virtual": {
+            "title": "Guided Virtual Tour Packaging",
+            "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
+            "selectPackageType": "Please select the package type you gonna use",
+            "actions": {
+              "start": "Let's Start",
+              "arrived": "I Arrived",
+              "addAll": "Add All",
+              "quantityInputPlaceholder": "Enter quantity to add",
+              "addQuantity": "Add Quantity",
+              "packageFull": "Package Full",
+              "finish": "Finish"
+            },
+            "instructions": {
+              "prepare": {
+                "title": "Prepare Your Way",
+                "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
+              },
+              "move": {
+                "title": "Go to {location}",
+                "description": "Navigate to the designated location {location}."
+              },
+              "collect": {
+                "title": "Add to Package",
+                "description": "Place {quantity} of {item} into {package}.",
+                "general": {
+                  "addAll": "If all the products fit in the package, press Add.",
+                  "packageFull": "If the package is full and you cannot add anymore, press Package Full."
+                },
+                "extra": {
+                  "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
+                }
+              },
+              "confirm": {
+                "title": "Confirm the Shipment",
+                "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
+              }
+            },
+            "virtualTour": {
+              "itemsToShip": "Items to Ship",
+              "packages": "Packages",
+              "noPackagesYet": "No packages created yet.",
+              "prepare": "Prepare your way",
+              "collect": "Collect the products",
+              "confirm": "Confirm the shipment",
+              "packageName": "Package {index}"
+            },
+            "error": {
+              "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
+              "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
+              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
+              "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
+            },
+            "packageType": {
+              "error": "Please select a valid package type."
+            },
+            "packageFull": {
+              "error": "The package is full. You cannot add more items."
+            },
+            "packageSave": {
+              "success": "The package has been saved successfully.",
+              "error": "Failed to save the package. Please try again."
+            },
+          "confirmationSuccess": "The package has been confirmed successfully."
+          },
+          "manual": {
+            "button": {
+              "add": "Add package",
+              "remove": "Remove package"
+            },
+            "title": "Manual Packaging Entry",
+            "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
+              "createStep": {
+                "title": "Create Your Packages",
+                "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+              },
+            "assignItemsStep": {
+              "title": "Assign Items to Packages",
+              "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
+              "noItemsToShip": "No items left to assign.",
+              "emptyPackage": "This package is currently empty.",
+              "packageName": "Package {index}",
+              "success": "Items have been successfully assigned to the package.",
+              "error": {
+                "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
+                "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
+                "packageCreationFailed": "Failed to create the package. Please try again.",
+                "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
+              },
+              "modal": {
+                "title": "Assign Item to Package",
+                "quantity": "Quantity",
+                "package": "Package"
+              }
+            }
+          }
+        },
+        "edit": {
+          "title": "Edit Package"
+        },
+        "show": {
+          "title": "Package Details"
+        },
+       "type": {
+          "box": "Box",
+          "pallet": "Pallet"
+       },
+       "status": {
+          "new": "New",
+          "inProgress": "In Progress",
+          "packed": "Packed",
+          "dispatched": "Dispatched"
+       },
+       "placeholders": {
+          "trackingCode": "Enter tracking code",
+          "trackingLink": "Enter tracking link URL"
+       },
+       "labels": {
+          "trackingCode": "Tracking Code",
+          "trackingLink": "Tracking Link",
+          "type": "Package Type",
+          "status": "Package Status",
+          "shippingLabel": "Shipping Label",
+          "customsDocument": "Customs Document"
+       }
+     },
+    "shipments": {
+      "title": "Shipments",
+      "button": {
+        "downloadPickingList": "Picking List",
+        "printPickingList": "Print Picking List"
+      },
+      "create": {
+        "title": "Create Shipment"
+      },
+      "edit": {
+        "title": "Edit Shipment"
+      },
+      "show": {
+        "title": "Shipment Details"
+      },
+      "labels": {
+        "status": "Status",
+        "fromAddress": "From Address",
+        "toAddress": "To Address",
+        "order": "Order"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "todo": "Todo",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "tabs": {
+        "general": "General",
+        "items": "Items",
+        "packages": "Packages"
+      }
+    },
+    "movements": {
+      "create": {
+        "title": "Create Inventory Movement"
+      },
+      "errors": {
+        "productRequired": "Product is required.",
+        "quantityRequired": "Quantity is required.",
+        "movementFromModelRequired": "Movement From Model is required.",
+        "movementFromIdRequired": "Movement From is required.",
+        "movementToModelRequired": "Movement To Model is required.",
+        "movementToIdRequired": "Movement To is required."
+      },
+      "messages": {
+        "createSuccess": "Inventory movement created successfully.",
+        "createError": "An error occurred while creating the inventory movement."
+      },
+      "button": {
+        "addFromPurchase": "Add from Purchase",
+        "move": "Move",
+        "getReturn": "Get Return",
+        "createMovement": "Create Movement"
+      },
+      "labels": {
+        "product": "Product",
+        "quantity": "Quantity",
+        "notes": "Notes",
+        "movementFromModel": "Movement From Model",
+        "movementFrom": "Movement From",
+        "movementToModel": "Movement To Model",
+        "movementTo": "Movement To"
+      }
+    },
     "inventoryLocation": {
       "helpSection": {
         "location": {
@@ -851,6 +1057,9 @@
   },
   "sales": {
     "title": "Sales",
+    "orderReturn": {
+      "title": "Order Return"
+    },
     "customers": {
       "title": "Customers",
       "create": {
@@ -870,8 +1079,9 @@
           "title": "Status order",
           "choices": {
             "draft": "Draft",
-            "pending": "Pending",
+            "pending": "Pending Processing",
             "pendingInventory": "Pending Inventory",
+            "pendingShippingApproval": "Pending Shipping Approval",
             "toPick": "To Pick",
             "toShip": "To Ship",
             "done": "Done",
@@ -942,7 +1152,7 @@
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
-        "discountPercentage": "Discount Percentage",
+        "discountPercentage": "Discount Percentage (%)",
         "price": "Price",
         "rrp": "Recommended Retail Price"
       },
@@ -1173,7 +1383,8 @@
         "owner": "Owner",
         "files": "Files",
         "recentFiles": "Recent Files",
-        "addExistingFiles": "Add from existing media"
+        "addExistingFiles": "Add from existing media",
+        "images": "Images"
       }
     },
     "images": {
@@ -1223,6 +1434,7 @@
     "documents": {
       "title": "Documents",
       "upload": "Upload New Documents",
+      "uploadDocument": "Upload New Document",
       "labels": {
         "addDocuments": "Add New Documents"
       },
@@ -1231,6 +1443,9 @@
       },
       "delete": {
         "successfullyDeleted": "Document was succefully deleted!"
+      },
+      "show": {
+        "title": "Document"
       }
     }
   },

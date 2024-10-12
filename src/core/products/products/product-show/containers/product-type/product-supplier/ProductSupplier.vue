@@ -13,6 +13,7 @@ import PurchasingOrderList from "../../tabs/purchasing-orders/PurchasingOrderLis
 import ProductsList from "../../tabs/products/ProductsList.vue";
 import ProductEanCodesSupplier from "../../tabs/ean-codes/ProductEanCodesSupplier.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
+import InventoryMovementsList from "../../tabs/inventory-movements/InventoryMovementsList.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -27,6 +28,7 @@ tabItems.value = [
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
     { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
+    { name: 'movements', label: t('products.products.tabs.inventoryMovements'), icon: 'history' },
     { name: 'purchasingOrders', label: t('products.products.tabs.purchasingOrders'), icon: 'cart-shopping' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   ];
@@ -56,6 +58,9 @@ tabItems.value = [
       </template>
       <template v-slot:inventory>
         <InventoryList :product="product" />
+      </template>
+      <template v-slot:movements>
+        <InventoryMovementsList :product="product" />
       </template>
       <template v-slot:purchasingOrders>
         <PurchasingOrderList :product="product" />

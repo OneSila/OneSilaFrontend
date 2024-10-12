@@ -179,18 +179,18 @@ onMounted(loadPrices);
     <table class="table-striped table-hover">
       <thead>
         <tr>
-          <th>{{ t('sales.prices.labels.price') }}</th>
           <th>{{ t('sales.prices.labels.rrp') }}</th>
+          <th>{{ t('sales.prices.labels.price') }}</th>
           <th>{{ t('shared.labels.currency') }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(price, index) in prices" :key="index">
           <td>
-            <TextInput v-model="price.price" float :placeholder="t('sales.prices.placeholders.price')" :disabled="loading || price.readonly" />
+            <TextInput v-model="price.rrp" float :placeholder="t('sales.prices.placeholders.rrp')" :disabled="loading || price.readonly" />
           </td>
           <td>
-            <TextInput v-model="price.rrp" float :placeholder="t('sales.prices.placeholders.rrp')" :disabled="loading || price.readonly" />
+            <TextInput v-model="price.price" float :placeholder="t('sales.prices.placeholders.price')" :disabled="loading || price.readonly" />
           </td>
           <td>{{ price.currency }}</td>
         </tr>

@@ -1,5 +1,5 @@
 import { FormConfig, FormType } from '../../../../../../shared/components/organisms/general-form/formConfig';
-import { FieldType } from '../../../../../../shared/utils/constants'
+import {FieldType, ProductType} from '../../../../../../shared/utils/constants'
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { deleteOrderItemMutation} from "../../../../../../shared/api/mutations/salesOrders.js";
@@ -33,7 +33,7 @@ export const baseFormConfigConstructor = (
       labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
-      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId } }} : undefined,
+      queryVariables: productsId.length > 0 ? { filter: { id: { "nInList": productsId }, type: {"nInList": [ProductType.Supplier]} }} : undefined,
       dataKey: 'products',
       isEdge: true,
       multiple: false,

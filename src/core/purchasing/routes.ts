@@ -7,12 +7,12 @@ export const routes = [
   { path: '/purchasing/products', name: 'purchasing.products.list', component: () => import('./products/products-list/ProductsListController.vue') },
   { path: '/purchasing/products/create', name: 'purchasing.product.create', component: () => import('./products/product-create/ProductCreateController.vue') },
 
-  { path: '/purchasing/orders', name: 'purchasing.orders.list', component: () => import('./orders/orders-list/OrdersListController.vue') },
-  { path: '/purchasing/orders/create', name: 'purchasing.orders.create', component: () => import('./orders/order-create/OrderCreateController.vue') },
-  { path: '/purchasing/orders/edit/:id', name: 'purchasing.orders.edit', component: () => import('./orders/order-edit/OrderEditController.vue') },
-  { path: '/purchasing/orders/show/:id', name: 'purchasing.orders.show', component: () => import('./orders/order-show/OrderShowController.vue') },
+  { path: '/purchasing/purchase-orders', name: 'purchasing.orders.list', component: () => import('./orders/orders-list/OrdersListController.vue') },
+  { path: '/purchasing/purchase-orders/create', name: 'purchasing.orders.create', component: () => import('./orders/order-create/OrderCreateController.vue') },
+  { path: '/purchasing/purchase-orders/edit/:id', name: 'purchasing.orders.edit', component: () => import('./orders/order-edit/OrderEditController.vue') },
+  { path: '/purchasing/purchase-orders/show/:id', name: 'purchasing.orders.show', component: () => import('./orders/order-show/OrderShowController.vue') },
 
-  { path: '/purchasing/orders/:orderId/item/create', name: 'purchasing.orders.items.create', component: () => import('./orders/order-show/containers/item-create/ItemCreateController.vue') },
-  { path: '/purchasing/orders/:orderId/item/edit/:id', name: 'purchasing.orders.items.edit', component: () => import('./orders/order-show/containers/item-edit/ItemEditController.vue') },
+  { path: '/purchasing/purchase-orders/:orderId/item/create', name: 'purchasing.orders.items.create', component: () => import('./orders/order-show/containers/item-create/ItemCreateController.vue') },
+  { path: '/purchasing/purchase-orders/:orderId/item/edit/:id', name: 'purchasing.orders.items.edit', component: () => import('./orders/order-show/containers/item-edit/ItemEditController.vue') },
 
 ]

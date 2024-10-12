@@ -18,6 +18,8 @@ import {FieldPhone} from "../form-fields/field-phone";
 import {FieldEmail} from "../form-fields/field-email";
 import {FieldDateRange} from "../form-fields/field-date-range";
 import {FieldImage} from "../form-fields/field-image";
+import {FieldWebsite} from "../form-fields/field-website";
+import {FieldIndividualFile} from "../form-fields/field-individual-file";
 
 const props = defineProps<{
   config: FormConfig;
@@ -40,6 +42,8 @@ const getFieldComponent = (type) => {
     case FieldType.Email: return FieldEmail;
     case FieldType.RangeDate: return FieldDateRange;
     case FieldType.Image: return FieldImage;
+    case FieldType.Website: return FieldWebsite;
+    case FieldType.IndividualFile: return FieldIndividualFile;
     default: return null;
   }
 };

@@ -97,6 +97,7 @@ query invoiceAddresses($filter: InvoiceAddressFilter) {
         postcode
         city
         country
+        fullAddress
       }
       cursor
     }

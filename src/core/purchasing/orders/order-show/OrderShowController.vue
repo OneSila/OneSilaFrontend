@@ -10,6 +10,8 @@ import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ItemsList from "./containers/items-list/ItemsList.vue";
+import {CancelButton} from "../../../../shared/components/atoms/button-cancel";
+import {BackendLink} from "../../../../shared/components/atoms/backend-link";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -56,7 +58,15 @@ const onDataFetched = (data) => {
       <Card>
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" >
+              <template v-slot:buttons>
+                <BackendLink :path="`/purchasing/purchase-orders/${id}/confirmation/`" target="_blank">
+                  <CancelButton>
+                    {{ t('shared.button.downloadConfirmation') }}
+                  </CancelButton>
+                </BackendLink>
+              </template>
+            </GeneralShow>
           </template>
           <template v-slot:items>
             <ItemsList :id="id" />

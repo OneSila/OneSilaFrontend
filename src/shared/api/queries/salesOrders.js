@@ -101,11 +101,11 @@ export const getOrderQuery = gql`
         }
         invoiceAddress {
             id
-            address1
+            fullAddress
         }
         shippingAddress {
             id
-            address1
+            fullAddress
         }
         currency {
           id

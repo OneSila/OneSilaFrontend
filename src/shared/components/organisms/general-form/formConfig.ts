@@ -45,7 +45,7 @@ export interface EmailFormField extends BaseFormField {
 }
 
 export interface WebsiteFormField extends BaseFormField {
-  type: FieldType.Email;
+  type: FieldType.Website;
   placeholder?: string;
   icon?: string;
   modelValue?: any;
@@ -93,6 +93,10 @@ export interface ProxyChoiceFormField extends BaseFormField {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+}
+
+export interface IndividualFileFormField extends BaseFormField {
+  type: FieldType.IndividualFile;
 }
 
 export interface CreateOnTheFly {
@@ -169,7 +173,7 @@ type RedirectIdentifier = Record<string, string>;
 
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
                         ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | DateRangeFormField | SliderFormField |
-                        CheckboxFormField | HiddenFormField | WebsiteFormField | ImageFormField;
+                        CheckboxFormField | HiddenFormField | WebsiteFormField | ImageFormField | IndividualFileFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;
@@ -324,6 +328,13 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
       cleanedData[field.endName] = formatDateForBackend(cleanValues ? null : fieldValue[1]);
       delete cleanedData[field.name];
     }
+
+    if (field.type === FieldType.IndividualFile) {
+      if (fieldValue?.notUpdated) {
+        delete cleanedData[field.name];
+      }
+    }
+
   });
 
   return cleanedData;

@@ -68,6 +68,7 @@ export const purchaseOrdersQuery = gql`
           totalValue
           country
           orderReference
+          createdAt
           internalContact {
             id
             fullName

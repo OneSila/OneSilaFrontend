@@ -11,7 +11,7 @@ import { listingConfigConstructor, searchConfigConstructor, listingQueryKey, lis
 const props = defineProps<{ id: string; addEdit: boolean }>();
 const { t } = useI18n();
 
-const listingConfig = ref(listingConfigConstructor(t, props.id, props.addEdit));
+const listingConfig = ref(listingConfigConstructor(t, props.id));
 const searchConfig = searchConfigConstructor(t);
 
 watch(() => props.addEdit, (newValue) => {

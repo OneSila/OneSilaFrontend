@@ -18,11 +18,16 @@ const getSubmitUrl = (customerId) => {
   return { name: 'sales.priceLists.list' };
 }
 
-const getSubmitAndContinueUrl = (customerId) => {
-  if (customerId) {
-    return { name: 'sales.priceLists.edit', query: { customerId } };
+const getSubmitAndContinueUrl = (customerId, type) => {
+
+  if (type == FormType.CREATE) {
+    return { name: 'sales.priceLists.show' };
+  } else {
+    if (customerId) {
+      return { name: 'sales.priceLists.edit', query: { customerId } };
+    }
+    return { name: 'sales.priceLists.edit' };
   }
-  return { name: 'sales.priceLists.edit' };
 }
 
 const getCustomerField = (customerId, t, type): FormField | null => {
@@ -150,7 +155,7 @@ export const baseFormConfigConstructor = (
   mutation: mutation,
   mutationKey: mutationKey,
   submitUrl: getSubmitUrl(customerId),
-  submitAndContinueUrl: getSubmitAndContinueUrl(customerId),
+  submitAndContinueUrl: getSubmitAndContinueUrl(customerId, type),
   deleteMutation: deleteSalesPriceListMutation,
   helpSections: [
     {
@@ -240,7 +245,7 @@ const getUrlQueryParams = (customerId) => {
   return customerId ? { customerId: customerId } : undefined;
 }
 export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
+  headers: [t('shared.labels.name'), t('sales.prices.labels.discountPercentage'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
       name: 'name',
@@ -297,7 +302,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     {
       name: 'discountPcnt',
       type: FieldType.Text,
-      label: t('sales.prices.labels.discountAmount'),
+      label: t('sales.prices.labels.discountPercentage'),
       showLabel: true
     },
     {

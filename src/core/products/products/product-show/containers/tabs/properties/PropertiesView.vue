@@ -313,7 +313,7 @@ const getExtendedTooltip = (requireType) => {
     case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
       return t('properties.rule.configTypes.optionalInConfigurator.example');
     case ConfigTypes.OPTIONAL:
-      return t('properties.rule.configTypes.optional.example.');
+      return t('properties.rule.configTypes.optional.example');
     case ConfigTypes.REQUIRED:
       return t('properties.rule.configTypes.required.example');
     default:
