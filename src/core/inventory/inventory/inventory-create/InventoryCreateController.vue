@@ -57,10 +57,22 @@ onMounted(() => {
 const movementFromModel: Ref<string> = ref('');
 const movementToModel: Ref<string> = ref(INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION);
 const errors: Ref<Record<string, string>> = ref({});
+
+const getLabelForModel = (modelCode) => {
+  switch (modelCode) {
+    case INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER:
+      return t('purchasing.orders.show.title');
+    case INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION:
+      return t('inventory.inventoryLocations.show.title');
+    default:
+      return t('inventory.movements.labels.movementFrom');
+  }
+};
+
 const movementFromIdField: Ref<ChoiceFormField | QueryFormField | null> = ref({
     type: FieldType.Choice,
     name: 'movementFromId',
-    label: t('inventory.movements.labels.movementFrom'),
+    label: getLabelForModel(movementFromModel.value),
     options: [],
     labelBy: 'name',
     valueBy: 'id',
@@ -89,7 +101,7 @@ const quantityField: FormField = {
 const movementFromField: FormField = {
           type: FieldType.Choice,
           name: 'movementFromModel',
-          label: t('inventory.movements.labels.movementFromModel'),
+          label: getLabelForModel(movementFromModel.value),
           options: MOVEMENT_FROM_MODELS(t),
           labelBy: 'name',
           valueBy: 'code',
@@ -132,17 +144,6 @@ const getDataKeyForModel = (modelCode) => {
       return 'inventoryLocations';
     default:
       return 'inventoryLocations';
-  }
-};
-
-const getLabelForModel = (modelCode) => {
-  switch (modelCode) {
-    case INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER:
-      return t('purchasing.orders.show.title');
-    case INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION:
-      return t('inventory.inventoryLocations.show.title');
-    default:
-      return t('inventory.inventoryLocations.show.title');
   }
 };
 
@@ -236,7 +237,7 @@ watch(movementFromModel, (newValue) => {
     movementFromIdField.value = {
       type: FieldType.Choice,
       name: 'movementFromId',
-      label: t('inventory.movements.labels.movementFrom'),
+      label: getLabelForModel(movementFromModel.value),
       options: [],
       labelBy: 'name',
       valueBy: 'id',
@@ -253,7 +254,7 @@ watch(
       movementFromIdField.value = {
         type: FieldType.Query,
         name: 'movementFromId',
-        label: t('inventory.movements.labels.movementFrom'),
+        label: getLabelForModel(movementFromModel.value),
         labelBy: getLabelByForModel(movementFromModel.value),
         valueBy: 'id',
         query: getQueryForModel(movementFromModel.value),
@@ -269,7 +270,7 @@ watch(
       movementFromIdField.value = {
         type: FieldType.Choice,
         name: 'movementFromId',
-        label: t('inventory.movements.labels.movementFrom'),
+        label: getLabelForModel(movementFromModel.value),
         options: [],
         labelBy: 'name',
         valueBy: 'id',

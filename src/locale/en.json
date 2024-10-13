@@ -787,7 +787,7 @@
   },
   "inventory": {
     "title": "Warehouse",
-     "packages": {
+    "packages": {
        "title": "Packages",
         "create": {
           "title": "Create Packages",
@@ -1034,6 +1034,9 @@
       },
       "edit": {
         "title": "Edit Inventory"
+      },
+      "show": {
+        "title": "Show Inventory"
       },
       "help": {
         "salable": "Items that are available for sale",
