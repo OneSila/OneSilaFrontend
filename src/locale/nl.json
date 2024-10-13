@@ -1695,8 +1695,8 @@
         "boolean": "Ja / Neen Keuze",
         "date": "Datum",
         "datetime": "Datum en Tijd",
-        "select": "Enkele Keuze Selectie",
-        "multiselect": "Multiple Choice Selectie"
+        "select": "Enkele keuze",
+        "multiselect": "Meerdere keuzes"
       }
     },
     "values": {
