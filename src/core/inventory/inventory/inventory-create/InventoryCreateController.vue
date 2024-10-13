@@ -55,7 +55,7 @@ onMounted(() => {
 });
 
 const movementFromModel: Ref<string> = ref('');
-const movementToModel: Ref<string> = ref('');
+const movementToModel: Ref<string> = ref(INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION);
 const errors: Ref<Record<string, string>> = ref({});
 const movementFromIdField: Ref<ChoiceFormField | QueryFormField | null> = ref({
     type: FieldType.Choice,
@@ -135,6 +135,17 @@ const getDataKeyForModel = (modelCode) => {
   }
 };
 
+const getLabelForModel = (modelCode) => {
+  switch (modelCode) {
+    case INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER:
+      return t('purchasing.orders.show.title');
+    case INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION:
+      return t('inventory.inventoryLocations.show.title');
+    default:
+      return t('inventory.inventoryLocations.show.title');
+  }
+};
+
 const getLabelByForModel = (modelCode) => {
   switch (modelCode) {
     case INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER:
@@ -209,7 +220,7 @@ watch(movementFromModel, (newValue) => {
     movementFromIdField.value = {
       type: FieldType.Query,
       name: 'movementFromId',
-      label: t('inventory.movements.labels.movementFrom'),
+      label: getLabelForModel(newValue),
       labelBy: getLabelByForModel(newValue),
       valueBy: 'id',
       query: getQueryForModel(newValue),
@@ -388,18 +399,6 @@ const handleUpdateErrors = (newErrors: Record<string, string>) => {
               <div v-if="errors && errors['movementFromId']" class="text-danger text-small blink-animation ml-1 mb-1">
                 <Icon size="sm" name="exclamation-circle" />
                 <span class="ml-1">{{ errors['movementFromId'] }}</span>
-              </div>
-            </div>
-
-            <!-- Movement To Model Field -->
-            <div class="col-span-full">
-              <label v-if="movementToField" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ movementToField.label }}*</label>
-              <div class="mt-2">
-                <FieldChoice v-if="movementToField" :field="movementToField" :model-value="movementToModel" @update:modelValue="movementToModel = $event"/>
-              </div>
-              <div v-if="errors && errors['movementToModel']" class="text-danger text-small blink-animation ml-1 mb-1">
-                <Icon size="sm" name="exclamation-circle" />
-                <span class="ml-1">{{ errors['movementToModel'] }}</span>
               </div>
             </div>
 

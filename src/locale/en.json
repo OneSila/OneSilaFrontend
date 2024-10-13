@@ -968,7 +968,7 @@
         "createError": "An error occurred while creating the inventory movement."
       },
       "button": {
-        "addFromPurchase": "Add from Purchase",
+        "addFromPurchase": "Receive Goods",
         "move": "Move",
         "getReturn": "Get Return",
         "createMovement": "Create Movement"
@@ -977,10 +977,10 @@
         "product": "Product",
         "quantity": "Quantity",
         "notes": "Notes",
-        "movementFromModel": "Movement From Model",
+        "movementFromModel": "Move source",
         "movementFrom": "Movement From",
         "movementToModel": "Movement To Model",
-        "movementTo": "Movement To"
+        "movementTo": "Move to location"
       }
     },
     "inventoryLocation": {
