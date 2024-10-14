@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { Card } from "../../../../../shared/components/atoms/card";
 import apolloClient from '../../../../../../apollo-client';
 import { useI18n } from 'vue-i18n';
-import {injectAuth, refreshUser} from "../../../../../shared/modules/auth";
+import {injectAuth, refreshUser, setAuthChangingState} from "../../../../../shared/modules/auth";
 import ConfettiExplosion from "vue-confetti-explosion";
 import { PrimaryButton } from "../../../../../shared/components/atoms/button-primary";
 import { goToStepMutation } from "../../../../../shared/api/mutations/auth.js";
@@ -34,6 +34,7 @@ const finishOnboarding = async () => {
       companyOwner: user.isMultiTenantCompanyOwner,
       active: user.isActive
     });
+    setAuthChangingState(auth, false);
   }
 
 }

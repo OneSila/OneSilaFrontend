@@ -1,4 +1,4 @@
-import {FormConfig, FormField, FormType} from '../../../shared/components/organisms/general-form/formConfig';
+import {ChoiceFormField, FormConfig, FormField, FormType, QueryFormField} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, OrderStatus, ReasonForSale} from '../../../shared/utils/constants.js'
 import {OrderType, SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
@@ -149,6 +149,56 @@ export const baseFormConfigConstructor = (
   customerId: string | null = null,
   source: string | null = null
 ): FormConfig => {
+
+  const invoiceAddressField: QueryFormField | ChoiceFormField = customerId ? {
+  type: FieldType.Query,
+  name: 'invoiceAddress',
+  label: t('sales.orders.labels.invoiceAddress'),
+  labelBy: 'fullAddress',
+  valueBy: 'id',
+  query: companyInvoiceAddressesQuery,
+  dataKey: 'invoiceAddresses',
+  isEdge: true,
+  multiple: false,
+  filterable: true,
+  formMapIdentifier: 'id',
+  disabled: type === FormType.CREATE,
+  queryVariables: { filter: { company: { id: { exact: customerId } } } },
+} : {
+  type: FieldType.Choice,
+  name: 'invoiceAddress',
+  label: t('sales.orders.labels.invoiceAddress'),
+  labelBy: 'code',
+  valueBy: 'id',
+  options: [],
+  disabled: true,
+};
+
+  // Define shippingAddress field conditionally based on customerId
+  const shippingAddressField: QueryFormField | ChoiceFormField = customerId ? {
+    type: FieldType.Query,
+    name: 'shippingAddress',
+    label: t('sales.orders.labels.shippingAddress'),
+    labelBy: 'fullAddress',
+    valueBy: 'id',
+    query: companyShippingAddressesQuery,
+    dataKey: 'shippingAddresses',
+    isEdge: true,
+    multiple: false,
+    filterable: true,
+    formMapIdentifier: 'id',
+    disabled: type === FormType.CREATE,
+    queryVariables: { filter: { company: { id: { exact: customerId } } } },
+  } : {
+    type: FieldType.Choice,
+    name: 'shippingAddress',
+    label: t('sales.orders.labels.shippingAddress'),
+    labelBy: 'code',
+    valueBy: 'id',
+    options: [],
+    disabled: true,
+  };
+
   let baseFields: FormField[] = [
     getCustomerField(customerId, t),
     {
@@ -174,36 +224,8 @@ export const baseFormConfigConstructor = (
       createOnFlyConfig: currencyOnTheFlyConfig(t),
       setDefaultKey: 'isDefaultCurrency'
     },
-    {
-      type: FieldType.Query,
-      name: 'invoiceAddress',
-      label: t('sales.orders.labels.invoiceAddress'),
-      labelBy: 'fullAddress',
-      valueBy: 'id',
-      query: companyInvoiceAddressesQuery,
-      dataKey: 'invoiceAddresses',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      disabled: type === FormType.CREATE,
-      queryVariables: customerId ? { "filter": { "company": { "id": { "exact": customerId } } } } : undefined,
-    },
-    {
-      type: FieldType.Query,
-      name: 'shippingAddress',
-      label: t('sales.orders.labels.shippingAddress'),
-      labelBy: 'fullAddress',
-      valueBy: 'id',
-      query: companyShippingAddressesQuery,
-      dataKey: 'shippingAddresses',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      disabled: type === FormType.CREATE,
-      queryVariables: customerId ? { "filter": { "company": { "id": { "exact": customerId } } } } : undefined,
-    }
+    invoiceAddressField,
+    shippingAddressField
   ];
 
   if (type !== FormType.CREATE) {

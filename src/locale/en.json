@@ -73,8 +73,8 @@
           "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
         },
         "purchaseOrder": {
-          "title": "Purchase some goods",
-          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
+          "title": "Purchase that product & confirm the purchase",
+          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships. Add the product you created earlier to the order and then change the status to confirm it."
         },
         "inventoryLocation": {
           "title": "Add your inventory Location",
