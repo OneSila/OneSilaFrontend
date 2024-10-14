@@ -1356,6 +1356,7 @@
             "ordered": "Ordered",
             "confirmed": "Confirmed",
             "pendingDelivery": "Pending Delivery",
+            "toOrder": "To Order",
             "delivered": "Delivered"
           }
         },
