@@ -32,9 +32,9 @@ const onAcceptInvitationCompleted = async (response) => {
 
   loading.value = true;
   if (response.data.acceptUserInvitation) {
-      const user = response.data.acceptUserInvitation;
+    const user = response.data.acceptUserInvitation;
 
-    refreshUser(auth, {
+    await refreshUser(auth, {
         username: user.username,
         language: user.language,
         firstName: user.firstName,
@@ -46,7 +46,7 @@ const onAcceptInvitationCompleted = async (response) => {
       });
 
     loading.value = false
-    emit('password-set');
+    await emit('password-set');
     router.push({ name: 'dashboard' });
   } else {
    loading.value = false

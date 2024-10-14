@@ -61,7 +61,7 @@ const togglePackage = (pkg) => {
             <div class="rounded-lg border border-gray-300 bg-white dark:bg-gray-800 shadow-md">
               <!-- Header with collapsible icon -->
               <div class="rounded-t-lg bg-gray-800 text-white p-4 flex justify-between items-center cursor-pointer" @click="togglePackage(pkg)">
-                <h4 class="text-lg font-semibold">{{ `Package ${index + 1}` }}</h4>
+                <h4 class="text-lg font-semibold">{{ t('inventory.packages.create.manual.assignItemsStep.packageName', { index: index + 1 }) }}</h4>
                 <Icon :name="pkg.isOpen ? 'chevron-up' : 'chevron-down'" size="lg" class="text-white" />
               </div>
 

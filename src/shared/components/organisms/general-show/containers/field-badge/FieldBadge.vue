@@ -5,10 +5,10 @@ import { BadgeField } from '../../showConfig';
 
 const props = defineProps<{
   field: BadgeField;
-  modelValue: string;
+  modelValue: string | number;
 }>();
 
-function getBadgeData(key: string) {
+function getBadgeData(key: string | number) {
   return props.field.badgeMap[key];
 }
 </script>

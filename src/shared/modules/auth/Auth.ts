@@ -4,33 +4,58 @@ import gql from 'graphql-tag';
 import {OnboardingStatus} from "../../utils/constants";
 export const AuthKey: InjectionKey<Auth> = Symbol('Auth');
 
+export type UserPreferences = {
+  sidebarToggle: boolean;
+  pageLoader: boolean;
+};
 
 export type User = {
   username: string;
   language: string;
   firstName: string;
   lastName: string;
-  onboardingStatus: string;
+  onboardingStatus: string | null;
   company: object | null;
   companyOwner: boolean;
   active: boolean;
+  preferences?: UserPreferences;
 };
 
 export interface Auth {
   user: User;
   isAuthenticated: boolean;
+  changingState: boolean;
 }
+
+export const defaultUserPreferences: UserPreferences = {
+  sidebarToggle: false,
+  pageLoader: false,
+};
+
+export const defaultUser: User = {
+  username: '',
+  language: '',
+  firstName: '',
+  lastName: '',
+  onboardingStatus: null,
+  company: null,
+  companyOwner: false,
+  active: false,
+  preferences: { ...defaultUserPreferences },
+};
+
 
 export const detectAuth = (): Auth => {
   const storedUser = localStorage.getItem('auth_user');
-  const user = storedUser ? JSON.parse(storedUser) : { username: '', language: null, firstName: '', lastName: '',
-    company: null, onboardingStatus: null, companyOwner: false, active: false  };
+  const user = storedUser ? JSON.parse(storedUser) : null;
+
 
   const isAuthenticated = !!storedUser;
 
   return {
-    user: user,
+    user: user ? user : { ...defaultUser },
     isAuthenticated: isAuthenticated,
+    changingState: false,
   };
 };
 
@@ -39,10 +64,43 @@ export const createAuth = (): Auth => {
 };
 
 export const refreshUser = (auth: Auth, user: User): void => {
-  localStorage.setItem('auth_user', JSON.stringify(user));
-  auth.user = { ...user };
+  auth.changingState = true;
+
+  const updatedUser: User = {
+    ...user,
+    preferences: {
+      ...defaultUserPreferences,
+    },
+  };
+
+  localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+
+  auth.user = { ...updatedUser };
   auth.isAuthenticated = true;
 };
+
+export const setAuthChangingState = (auth: Auth, state: boolean): void => {
+  auth.changingState = state;
+};
+
+export const resetLoadingStates = (auth: Auth): void => {
+  auth.changingState = false;
+  if (auth.user && auth.user.preferences) {
+    auth.user.preferences.pageLoader = false;
+  }
+};
+
+export const isUserPageLoading = (auth: Auth): boolean => {
+  return auth.user?.preferences?.pageLoader ?? false;
+};
+
+export const setPageLoader = (auth: Auth, state: boolean): void => {
+  if (auth.user && auth.user.preferences) {
+    auth.user.preferences.pageLoader = state;
+    localStorage.setItem('auth_user', JSON.stringify(auth.user));
+  }
+};
+
 
 export const setCompanyToUser = (auth: Auth, company: { id: string; name: string }): void => {
   const updatedUser = {
@@ -69,6 +127,7 @@ export const replaceAuth = (auth: Auth, newUser: User): void => {
 };
 
 export const removeAuth = async (auth) => {
+  auth.changingState = true;
   const LOGOUT_MUTATION = gql`
     mutation Logout {
       logout
@@ -81,23 +140,17 @@ export const removeAuth = async (auth) => {
     });
     await apolloClient.clearStore();
     localStorage.removeItem('auth_user');
-    auth.user = {
-      username: '',
-      language: null,
-      firstName: '',
-      lastName: '',
-      onboardingStatus: null,
-      company: null,
-      companyOwner: false,
-      active: false,
-    };
+    auth.user = { ...defaultUser };
     auth.isAuthenticated = false;
   } catch (error) {
     console.error('Error during logout:', error);
   }
 };
 
-export const isAuthenticated = (auth: Auth): boolean => auth.isAuthenticated;
+export const  isAuthenticated = (auth: Auth): boolean => auth.isAuthenticated;
+
+export const  isChangingAuthState = (auth: Auth): boolean => auth.changingState;
+
 
 export const hasCompany = (auth) => auth.user && auth.user.company != null;
 export const isCompanyOwner = (auth: Auth): boolean => auth.user.companyOwner;
@@ -108,8 +161,7 @@ export const isFinishedOnboarding = (auth: Auth): boolean => {
   return status === OnboardingStatus.DONE || status === OnboardingStatus.COMPLETE_DASHBOARD_CARDS || status === OnboardingStatus.DASHBOARD_CARDS_PRESENTATION;
 };
 
-export const getOnboardingStatus = (auth: Auth): string => auth.user.onboardingStatus;
-
+export const getOnboardingStatus = (auth: Auth): string | null => auth.user.onboardingStatus;
 
 export const injectAuth = (): Auth => {
   const auth = inject(AuthKey);

@@ -198,7 +198,7 @@ const noItemsToShip = computed(() => {
           <!-- Header -->
           <Flex vertical class="rounded-t-lg bg-gray-800 text-white p-4">
             <FlexCell>
-              <h4 class="text-lg font-semibold">{{ `Package ${index + 1}` }}</h4>
+              <h4 class="text-lg font-semibold">{{ t('inventory.packages.create.manual.assignItemsStep.packageName', { index: index + 1 }) }}</h4>
             </FlexCell>
             <FlexCell>
               <p>{{ pkg.form.trackingCode }}</p>

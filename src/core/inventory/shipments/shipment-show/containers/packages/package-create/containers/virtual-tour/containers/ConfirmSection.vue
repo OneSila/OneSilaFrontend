@@ -25,7 +25,7 @@ const savePackage = (pkg) => {
         <div class="rounded-lg border border-gray-300 bg-white dark:bg-gray-800 shadow-md">
           <!-- Package Header -->
           <div class="rounded-t-lg bg-gray-800 text-white p-4">
-            <h4 class="text-lg font-semibold">{{ `Package ${index + 1}` }}</h4>
+            <h4 class="text-lg font-semibold">{{ t('inventory.packages.create.manual.assignItemsStep.packageName', { index: index + 1 }) }}</h4>
           </div>
 
           <!-- Package Form -->

@@ -12,7 +12,7 @@ import polygonObject from '../../../assets/images/auth/polygon-object.svg';
 import recoverAccount from '../../../assets/images/auth/recover-account.svg';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
-import { injectAuth, refreshUser } from '../../../shared/modules/auth';
+import {injectAuth, refreshUser, setAuthChangingState} from '../../../shared/modules/auth';
 import { authenticateTokenMutation } from '../../../shared/api/mutations/auth.js';
 import apolloClient from '../../../../apollo-client';
 

@@ -51,7 +51,7 @@ export const getStatusOptions = (t) => [
 export const getOrderStatusBadgeMap = (t) => ({
   [OrderStatus.DRAFT]: { text: t('purchasing.orders.labels.status.choices.draft'), color: 'gray' },
   [OrderStatus.ORDERED]: { text: t('purchasing.orders.labels.status.choices.ordered'), color: 'yellow' },
-  [OrderStatus.TO_ORDER]: { text: t('purchasing.orders.labels.status.choices.toOrder'), color: 'orange' },
+  [OrderStatus.TO_ORDER]: { text: t('purchasing.orders.labels.status.choices.toOrder'), color: 'red' },
   [OrderStatus.CONFIRMED]: { text: t('purchasing.orders.labels.status.choices.confirmed'), color: 'green' },
   [OrderStatus.PENDING_DELIVERY]: { text: t('purchasing.orders.labels.status.choices.pendingDelivery'), color: 'blue' },
   [OrderStatus.DELIVERED]: { text: t('purchasing.orders.labels.status.choices.delivered'), color: 'indigo' },

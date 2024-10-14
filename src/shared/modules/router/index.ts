@@ -12,7 +12,7 @@ import { routes as settingsRoutes } from '../../../core/settings/routes';
 import { routes as mediaRoutes } from '../../../core/media/routes';
 import { routes as propertiesRoutes } from '../../../core/properties/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
-import {detectAuth, isAuthenticated, hasCompany, isActive, removeAuth, isFinishedOnboarding, getOnboardingStatus} from '../auth';
+import {detectAuth, isAuthenticated, hasCompany, isActive, removeAuth, isFinishedOnboarding, getOnboardingStatus, setPageLoader} from '../auth';
 import { Toast } from '../toast';
 import { useAppStore } from '../../plugins/store';
 
@@ -39,6 +39,11 @@ export function buildRouter() {
 router.beforeEach((to, from, next) => {
   const auth = detectAuth();
   const routeName = (to.name as string) || '';
+
+  // Set page loader to true if navigating to an authenticated route
+  if (isAuthenticated(auth) && hasCompany(auth) && isActive(auth)) {
+    setPageLoader(auth, true);
+  }
 
   // Authenticated but does not have a company
   if (isAuthenticated(auth) && !hasCompany(auth)) {

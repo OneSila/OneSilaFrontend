@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { hasCompany, injectAuth, isActive, isAuthenticated } from './shared/modules/auth';
-import { ref } from "vue";
+import {
+  hasCompany,
+  injectAuth,
+  isActive,
+  isAuthenticated,
+  isChangingAuthState,
+  isUserPageLoading,
+  resetLoadingStates
+} from './shared/modules/auth';
+import {onMounted, onUpdated, ref, watch} from "vue";
 import { useAppStore } from './shared/plugins/store';
 import SideBar from './shared/components/organisms/nav-bar/SideBar.vue';
 import HeaderBar from './shared/components/organisms/nav-bar/HeaderBar.vue';
-const sidebar: any = ref(false);
+import {Loader} from "./shared/components/atoms/loader";
+import {DiscreteLoader} from "./shared/components/atoms/discrete-loader";
 
 const { locale } = useI18n();
 const route = useRoute();
@@ -17,16 +26,48 @@ if (import.meta.env.MODE === 'development') {
   document.title = `DEV ${document.title}`;
 }
 
+const sidebar = ref(
+  auth.user?.preferences?.sidebarToggle ?? false
+);
+
+watch(
+  () => auth.user?.preferences?.sidebarToggle,
+  (newVal) => {
+    if (newVal !== undefined) {
+      sidebar.value = newVal;
+    }
+  }
+);
+
 const toggleSidebar = () => {
-  sidebar.value = !sidebar.value;
+  const newState = !sidebar.value;
+  sidebar.value = newState;
+  if (auth.user && auth.user.preferences) {
+    auth.user.preferences.sidebarToggle = newState;
+    localStorage.setItem('auth_user', JSON.stringify(auth.user));
+  }
 };
+
+watch(
+  () => route.name,
+  () => {
+    resetLoadingStates(auth);
+  }
+);
 
 </script>
 
 <template>
     <div class="app">
 
-      <div v-if="isAuthenticated(auth) && hasCompany(auth) && isActive(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical"
+    <div v-if="isChangingAuthState(auth)">
+      <Loader loading />
+      <div class="hidden">
+        <router-view :key="route.path" />
+      </div>
+    </div>
+      <template v-else>
+        <div v-if="isAuthenticated(auth) && hasCompany(auth) && isActive(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical"
                 :class="[sidebar ? 'toggle-sidebar' : '', app.rtlClass]">
 
         <div class="relative">
@@ -40,15 +81,17 @@ const toggleSidebar = () => {
                     <HeaderBar :sidebar="sidebar" @show-sidebar="toggleSidebar()" />
 
                    <div class="p-6 animation">
+                        <DiscreteLoader :loading="isUserPageLoading(auth)" />
                         <router-view :key="route.path" />
                     </div>
                 </div>
             </div>
         </div>
       </div>
-      <FlexCell v-else grow>
-        <router-view :key="route.path" />
-      </FlexCell>
+        <FlexCell v-else grow>
+          <router-view :key="route.path" />
+        </FlexCell>
+      </template>
     </div>
 
   <div id="modals" />
