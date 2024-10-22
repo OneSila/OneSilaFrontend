@@ -46,7 +46,7 @@ const showConfig = showConfigConstructor(t, id.value);
           <template v-slot:general>
             <GeneralShow :config="showConfig">
               <template v-slot:buttons>
-                <BackendLink :path="`/warehouse/shipments/${id}/pickinglist/`" target="_blank">
+                <BackendLink :path="`/warehouse/shipments/${id}/pickinglist/filedownload`" target="_blank">
                   <CancelButton>
                     {{ t('inventory.shipments.button.downloadPickingList') }}
                   </CancelButton>

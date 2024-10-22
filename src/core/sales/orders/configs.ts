@@ -115,8 +115,8 @@ const getSubmitAndContinueUrl = (customerId, source) => {
 };
 
 
-const getCustomerField = (customerId, t): FormField => {
-  if (customerId) {
+const getCustomerField = (customerId, source, t): FormField => {
+  if (customerId && source != null ) {
     return {
       type: FieldType.Hidden,
       name: 'customer',
@@ -147,32 +147,32 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   customerId: string | null = null,
-  source: string | null = null
+  source: string | null = null,
 ): FormConfig => {
 
   const invoiceAddressField: QueryFormField | ChoiceFormField = customerId ? {
-  type: FieldType.Query,
-  name: 'invoiceAddress',
-  label: t('sales.orders.labels.invoiceAddress'),
-  labelBy: 'fullAddress',
-  valueBy: 'id',
-  query: companyInvoiceAddressesQuery,
-  dataKey: 'invoiceAddresses',
-  isEdge: true,
-  multiple: false,
-  filterable: true,
-  formMapIdentifier: 'id',
-  disabled: type === FormType.CREATE,
-  queryVariables: { filter: { company: { id: { exact: customerId } } } },
-} : {
-  type: FieldType.Choice,
-  name: 'invoiceAddress',
-  label: t('sales.orders.labels.invoiceAddress'),
-  labelBy: 'code',
-  valueBy: 'id',
-  options: [],
-  disabled: true,
-};
+    type: FieldType.Query,
+    name: 'invoiceAddress',
+    label: t('sales.orders.labels.invoiceAddress'),
+    labelBy: 'fullAddress',
+    valueBy: 'id',
+    query: companyInvoiceAddressesQuery,
+    dataKey: 'invoiceAddresses',
+    isEdge: true,
+    multiple: false,
+    filterable: true,
+    formMapIdentifier: 'id',
+    disabled: type === FormType.CREATE,
+    queryVariables: { filter: { company: { id: { exact: customerId } } } },
+  } : {
+    type: FieldType.Choice,
+    name: 'invoiceAddress',
+    label: t('sales.orders.labels.invoiceAddress'),
+    labelBy: 'fullAddress',
+    valueBy: 'id',
+    options: [],
+    disabled: true,
+  };
 
   // Define shippingAddress field conditionally based on customerId
   const shippingAddressField: QueryFormField | ChoiceFormField = customerId ? {
@@ -193,14 +193,28 @@ export const baseFormConfigConstructor = (
     type: FieldType.Choice,
     name: 'shippingAddress',
     label: t('sales.orders.labels.shippingAddress'),
-    labelBy: 'code',
+    labelBy: 'fullAddress',
     valueBy: 'id',
     options: [],
     disabled: true,
   };
 
   let baseFields: FormField[] = [
-    getCustomerField(customerId, t),
+    getCustomerField(customerId, source, t),
+    {
+      type: FieldType.Query,
+      name: 'internalCompany',
+      label: t('contacts.companies.labels.internalCompany'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: companiesQuery,
+      queryVariables: { filter: { 'isInternalCompany': true }},
+      dataKey: 'companies',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+    },
     {
       type: FieldType.Text,
       name: 'reference',

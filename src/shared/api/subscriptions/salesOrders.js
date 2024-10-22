@@ -10,6 +10,10 @@ export const orderSubscription = gql`
         id
         name
       }
+      internalCompany {
+        id
+        name
+      }
       invoiceAddress {
         id
         address1
