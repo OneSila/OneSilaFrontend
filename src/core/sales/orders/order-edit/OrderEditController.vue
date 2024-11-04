@@ -12,6 +12,7 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {getOrderQuery} from "../../../../shared/api/queries/salesOrders.js";
 import {updateOrderMutation} from "../../../../shared/api/mutations/salesOrders.js";
 import {invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../../../purchasing/orders/configs";
+import apolloClient from "../../../../../apollo-client";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -22,34 +23,42 @@ const fieldsToClear: Ref<string[] | null> = ref(null);
 const formConfig: Ref<FormConfig | null> = ref(null);
 const queryCustomerId = route.query.customerId ? route.query.customerId.toString() : null;
 
-onMounted(() => {
+onMounted(async () => {
 
-  const baseForm = {
-    ...baseFormConfigConstructor(
-      t,
-      FormType.EDIT,
-      updateOrderMutation,
-      'updateOrder',
-      queryCustomerId,
-route.query.source ? route.query.source.toString() : null
-    ),
-  };
-
-  formConfig.value = {
-    ...baseForm,
-    mutationId: id.value.toString(),
+  const { data } = await apolloClient.query({
     query: getOrderQuery,
-    queryVariables: { id: id.value },
-    queryDataKey: 'order',
-    fields: [
-      {
-        type: FieldType.Hidden,
-        name: 'id',
-        value: id.value.toString()
-      },
-      ...baseForm.fields
-    ]
-  };
+    variables: { id: id.value },
+  });
+
+  console.log()
+  const baseForm = {
+  ...baseFormConfigConstructor(
+    t,
+    FormType.EDIT,
+    updateOrderMutation,
+    'updateOrder',
+    data['order'].customer.id,
+route.query.source ? route.query.source.toString() : null
+  ),
+};
+
+formConfig.value = {
+  ...baseForm,
+  mutationId: id.value.toString(),
+  query: getOrderQuery,
+  queryVariables: { id: id.value },
+  queryData: data,
+  queryDataKey: 'order',
+  fields: [
+    {
+      type: FieldType.Hidden,
+      name: 'id',
+      value: id.value.toString()
+    },
+    ...baseForm.fields
+  ]
+};
+
 });
 
 const handleFormUpdate = (form) => {

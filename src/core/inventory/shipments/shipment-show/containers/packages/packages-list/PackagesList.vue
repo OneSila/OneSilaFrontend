@@ -47,7 +47,7 @@ function printTrigger() {
         </PrimaryButton>
       </Link>
 
-      <BackendLink :path="`/warehouse/shipments/${shipment.id}/pickinglist/`" target="_blank">
+      <BackendLink :path="`/warehouse/shipments/${shipment.id}/pickinglist/filedownload`" target="_blank">
         <SecondaryButton>
             {{ t('inventory.shipments.button.downloadPickingList') }}
           </SecondaryButton>
@@ -67,7 +67,7 @@ function printTrigger() {
         :query-key="listingQueryKey"
         :fixed-filter-variables="{ 'shipment': { 'id': { 'exact': shipment.id } } }"
       />
-      <iframe id="iFramePdf" style="display:none;" :src="`${backendBaseUrl}/warehouse/shipments/${props.shipment.id}/pickinglist`"></iframe>
+      <iframe id="iFramePdf" style="display:none;" :src="`${backendBaseUrl}/warehouse/shipments/${props.shipment.id}/pickinglist/filedownload`"></iframe>
     </template>
   </GeneralTemplate>
 </template>

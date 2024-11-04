@@ -11,6 +11,10 @@ export const ordersQuery = gql`
             id
             name
           }
+          internalCompany {
+            id
+            name
+          }
           country
           priceInclVat
           status
@@ -96,6 +100,10 @@ export const getOrderQuery = gql`
       id
       reference
       customer {
+          id
+          name
+        }
+        internalCompany {
           id
           name
         }

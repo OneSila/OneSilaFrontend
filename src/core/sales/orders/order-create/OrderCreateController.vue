@@ -10,6 +10,8 @@ import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
 import {invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../../../purchasing/orders/configs";
+import {FieldType} from "../../../../shared/utils/constants";
+import {companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../../shared/api/queries/contacts.js";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -43,25 +45,47 @@ const handleFormUpdate = (form) => {
     const fieldConfigs: FieldConfigs = {
       'invoiceAddress': {
         enabled: {
+          type: FieldType.Query,
           disabled: false,
+          labelBy: 'fullAddress',
+          valueBy: 'id',
+          query: companyInvoiceAddressesQuery,
+          dataKey: 'invoiceAddresses',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          formMapIdentifier: 'id',
           queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
           createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, customerId.value)
         },
         disabled: {
+          type: FieldType.Choice,
           disabled: true,
           queryVariables: null,
-          createOnFlyConfig: null
+          createOnFlyConfig: null,
+          options: []
         }
       },
       'shippingAddress': {
         enabled: {
+          type: FieldType.Query,
+          labelBy: 'fullAddress',
+          valueBy: 'id',
+          query: companyShippingAddressesQuery,
+          dataKey: 'shippingAddresses',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          formMapIdentifier: 'id',
           disabled: false,
           queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
           createOnFlyConfig: shippingAddressOnTheFlyConfig(t, customerId.value)
         },
         disabled: {
+          type: FieldType.Choice,
           disabled: true,
           queryVariables: null,
+          options: [],
           createOnFlyConfig: null
         }
       }

@@ -67,7 +67,7 @@ const onDataFetched = (data) => {
           <template v-slot:general>
             <GeneralShow :config="showConfig" @data-fetched="onDataFetched" >
               <template v-slot:buttons>
-                <BackendLink :path="`/sales/orders/${id}/confirmation/`" target="_blank">
+                <BackendLink :path="`/sales/orders/${id}/confirmation/filedownload`" target="_blank">
                   <CancelButton>
                     {{ t('shared.button.downloadConfirmation') }}
                   </CancelButton>
