@@ -5,6 +5,7 @@ import { ListingConfig } from "../../../../../../shared/components/organisms/gen
 import { deleteOrderItemMutation} from "../../../../../../shared/api/mutations/salesOrders.js";
 import { orderItemsQuery } from "../../../../../../shared/api/queries/salesOrders.js";
 import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
@@ -33,7 +34,16 @@ export const baseFormConfigConstructor = (
       labelBy: 'name',
       valueBy: 'id',
       query: productsQuery,
-      queryVariables: productsId.length > 0 ? { filter: { id: { "nInList": productsId }, type: {"nInList": [ProductType.Supplier]} }} : undefined,
+      queryVariables: productsId.length > 0
+      ? {
+          filter: {
+            AND: [
+              { NOT: { id: { inList: productsId } } },
+              { NOT: { type: { inList: [ProductType.Supplier] } } },
+            ],
+          },
+        }
+      : undefined,
       dataKey: 'products',
       isEdge: true,
       multiple: false,

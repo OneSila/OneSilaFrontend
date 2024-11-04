@@ -31,7 +31,18 @@ export const baseFormConfigConstructor = (
       type: FieldType.Query,
       name: 'product',
       query: supplierProductsQuery,
-      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId }, supplier: {id: {exact: supplierId}} }} : {filter: {supplier: {id: {exact: supplierId}}}},
+      queryVariables: productsId.length > 0
+        ? {
+            filter: {
+              supplier: { id: { exact: supplierId } },
+              NOT: { id: { inList: productsId } },
+            },
+          }
+        : {
+            filter: {
+              supplier: { id: { exact: supplierId } },
+            },
+          },
       label: t('purchasing.products.show.title'),
       labelBy: 'name',
       valueBy: 'id',

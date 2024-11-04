@@ -26,7 +26,12 @@ const fetchData = async () => {
 
   const { data } = await apolloClient.query({
     query: productsQuery,
-    variables: { filter: { id: { "nInList": ids }, type: { "exact": ProductType.Supplier } } },
+    variables: {
+      filter: {
+        NOT: { id: { inList: ids } },
+        type: { exact: ProductType.Supplier },
+      },
+    },
     fetchPolicy: 'network-only'
   });
 

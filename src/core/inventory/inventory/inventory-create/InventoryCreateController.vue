@@ -203,8 +203,8 @@ const getFiltersForMovementToModel = () => {
         movementFromModel.value === INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION &&
         form.movementFromId
       ) {
-        filter.id = {
-          nExact: form.movementFromId,
+        filter.NOT = {
+          id: { exact: form.movementFromId },
         };
       }
       return {

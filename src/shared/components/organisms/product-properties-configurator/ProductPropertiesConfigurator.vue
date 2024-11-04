@@ -59,9 +59,9 @@ const fetchData = async () => {
 
   loading.value = true;
   let filters = {
-        id: { "nInList": excludedIds },
-        isProductType: false
-    }
+    NOT: { id: { inList: excludedIds } },
+    isProductType: false,
+  };
 
   if (search.value.length > 0) {
     filters['search'] = search.value;

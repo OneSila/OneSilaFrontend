@@ -50,7 +50,7 @@ const fetchData = async () => {
 
   loading.value = true;
   let filters = {
-        id: { "nInList": excludedIds },
+        id: { "notInList": excludedIds },
         type: { "inList": typeFilter }
     }
 

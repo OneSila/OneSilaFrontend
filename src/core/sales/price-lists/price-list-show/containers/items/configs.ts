@@ -30,7 +30,10 @@ export const baseFormConfigConstructor = (
       valueBy: 'id',
       query: productsQuery,
       dataKey: 'products',
-      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId } }} : undefined,
+      queryVariables:
+        productsId.length > 0
+          ? { filter: { NOT: { id: { inList: productsId } } } }
+          : undefined,
       isEdge: true,
       multiple: false,
       filterable: true,

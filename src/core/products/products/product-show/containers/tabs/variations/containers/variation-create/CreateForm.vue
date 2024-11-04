@@ -39,9 +39,15 @@ const fetchData = async () => {
 
   const { data } = await apolloClient.query({
     query: productsQuery,
-    variables: { filter: { id: { "nInList": props.variationIds },  type: { "inList": typeFilter } } },
-    fetchPolicy: 'network-only'
+    variables: {
+      filter: {
+        NOT: { id: { inList: props.variationIds } },
+        type: { inList: typeFilter },
+      },
+    },
+    fetchPolicy: 'network-only',
   });
+
 
   if (data) {
     variations.value = cleanedData(data.products);
