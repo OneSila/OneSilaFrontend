@@ -39,7 +39,7 @@ const getSupplier = computed<QueryFormField>(() => ({
   labelBy: 'name',
   valueBy: 'id',
   query: companiesQuery,
-  queryVariables: { filter: { 'isInternalCompany': false } },
+  queryVariables: { filter: { 'isInternalCompany': { exact: false } } },
   dataKey: 'companies',
   isEdge: true,
   multiple: false,
