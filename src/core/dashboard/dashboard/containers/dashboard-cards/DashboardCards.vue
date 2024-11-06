@@ -8,7 +8,6 @@ import { DashboardSectionOrders } from "./containers/dashboard-section-orders";
 
 <template>
   <div>
-
     <div class="cards grid grid-cols-1 lg:grid-cols-2">
       <DashboardSectionGeneral />
       <DashboardSectionOrders />

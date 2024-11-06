@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { Url } from "../../../../../../../shared/utils/constants";
 
 const props = defineProps<{
-  color: 'red' | 'orange' | 'yellow'; // 'green' is reserved for completion
+  color: string;
   counter: number | string;
   title: string;
   description: string;
