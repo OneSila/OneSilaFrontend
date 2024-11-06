@@ -12,9 +12,10 @@ import { Card } from '../../../shared/components/atoms/card';
 import { useI18n } from "vue-i18n";
 import { Badge} from "../../../shared/components/atoms/badge";
 import { getBadgeForSaleOrderStatus } from "../../sales/orders/configs";
-import {OnboardingCards} from "./containers/onboarding-cards";
-import {getOnboardingStatus, injectAuth} from "../../../shared/modules/auth";
-import {OnboardingStatus} from "../../../shared/utils/constants";
+import { OnboardingCards } from "./containers/onboarding-cards";
+import { getOnboardingStatus, injectAuth } from "../../../shared/modules/auth";
+import { OnboardingStatus } from "../../../shared/utils/constants";
+import { DashboardCards } from "./containers/dashboard-cards";
 
 interface Customer {
   id: string;
@@ -174,12 +175,12 @@ const onUpdateStatus = () => {
 
 <template>
     <div>
-        <Card class="pt-5">
-
+<!--        <Card class="pt-5">-->
             <OnboardingCards v-if="status === OnboardingStatus.COMPLETE_DASHBOARD_CARDS || status === OnboardingStatus.DASHBOARD_CARDS_PRESENTATION"
                              :status="status" class="my-4" @update-status="onUpdateStatus" />
 
-            <div class="grid sm:grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+            <DashboardCards />
+            <div class="grid sm:grid-cols-1 xl:grid-cols-2 gap-6 mb-6 mt-6">
 
                 <div class="panel h-full w-full">
                     <div class="flex items-center justify-between mb-5">
@@ -236,7 +237,6 @@ const onUpdateStatus = () => {
                     </apexchart>
                 </div>
             </div>
-
-        </Card>
+<!--        </Card>-->
     </div>
 </template>

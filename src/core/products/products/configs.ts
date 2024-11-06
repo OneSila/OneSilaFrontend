@@ -27,6 +27,34 @@ export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.supplier'), code: ProductType.Supplier },
 ];
 
+export const getInspectorErrors = (t) => [
+  { code: "101", name: t(`dashboard.cards.products.inspector.101.title`) },
+  { code: "102", name: t(`dashboard.cards.products.inspector.102.title`) },
+  { code: "103", name: t(`dashboard.cards.products.inspector.103.title`) },
+  { code: "104", name: t(`dashboard.cards.products.inspector.104.title`) },
+  { code: "105", name: t(`dashboard.cards.products.inspector.105.title`) },
+  { code: "106", name: t(`dashboard.cards.products.inspector.106.title`) },
+  { code: "107", name: t(`dashboard.cards.products.inspector.107.title`) },
+  { code: "108", name: t(`dashboard.cards.products.inspector.108.title`) },
+  { code: "109", name: t(`dashboard.cards.products.inspector.109.title`) },
+  { code: "110", name: t(`dashboard.cards.products.inspector.110.title`) },
+  { code: "111", name: t(`dashboard.cards.products.inspector.111.title`) },
+  { code: "112", name: t(`dashboard.cards.products.inspector.112.title`) },
+  { code: "113", name: t(`dashboard.cards.products.inspector.113.title`) },
+  { code: "114", name: t(`dashboard.cards.products.inspector.114.title`) },
+  { code: "115", name: t(`dashboard.cards.products.inspector.115.title`) },
+  { code: "116", name: t(`dashboard.cards.products.inspector.116.title`) },
+  { code: "117", name: t(`dashboard.cards.products.inspector.117.title`) },
+  { code: "118", name: t(`dashboard.cards.products.inspector.118.title`) },
+  { code: "119", name: t(`dashboard.cards.products.inspector.119.title`) },
+  { code: "120", name: t(`dashboard.cards.products.inspector.120.title`) },
+  { code: "121", name: t(`dashboard.cards.products.inspector.121.title`) },
+  { code: "122", name: t(`dashboard.cards.products.inspector.122.title`) },
+  { code: "123", name: t(`dashboard.cards.products.inspector.123.title`) },
+  { code: "124", name: t(`dashboard.cards.products.inspector.124.title`) },
+];
+
+
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Configurable]: { text: t('products.products.labels.type.choices.configurable'), color: 'blue' },
   [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
@@ -178,10 +206,26 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       options: getProductTypeOptions(t)
     },
     {
+      type: FieldType.Choice,
+      name: 'inspectorNotSuccefullyCodeError',
+      labelBy: 'name',
+      valueBy: 'code',
+      label: t('products.products.labels.inspectorErrors'),
+      filterable: true,
+      addLookup: false,
+      options: getInspectorErrors(t)
+    },
+    {
       type: FieldType.Boolean,
       strict: true,
       name: 'forSale',
       label: t('products.products.labels.forSale')
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'active',
+      label: t('shared.labels.active')
     },
     {
       type: FieldType.Boolean,

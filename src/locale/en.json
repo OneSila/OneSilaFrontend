@@ -10,6 +10,142 @@
       "addProduct": "Add Product",
       "addInventory": "Add Inventory"
     },
+    "cards": {
+      "help": {
+        "showCompletedItems": "Show completed cards"
+      },
+      "products": {
+        "title": "Products cards",
+        "description": "Ensure all product information is accurate and up-to-date to maintain inventory integrity and optimize sales performance.",
+        "inspector": {
+          "101": {
+            "title": "Products Missing Images",
+            "description": "Add at least one image to these products."
+          },
+          "102": {
+            "title": "Products Missing Default Prices",
+            "description": "Ensure these products have valid default prices."
+          },
+          "103": {
+            "title": "Products with Inactive Bills of Materials",
+            "description": "Activate all bills of materials for these manufacturable products."
+          },
+          "104": {
+            "title": "Bundle Products with Inactive Items",
+            "description": "Activate all items in these bundle products."
+          },
+          "105": {
+            "title": "Products Missing Required Variations",
+            "description": "Add required variations to these configurable products."
+          },
+          "106": {
+            "title": "Bundle Products Missing Items",
+            "description": "Add items to these bundle products."
+          },
+          "107": {
+            "title": "Manufacturable Products Missing Bills of Materials",
+            "description": "Add bills of materials to these manufacturable products."
+          },
+          "108": {
+            "title": "Products Missing Supplier Products",
+            "description": "Add supplier products to these products."
+          },
+          "109": {
+            "title": "Products Missing EAN Codes",
+            "description": "Provide EAN codes for these products."
+          },
+          "110": {
+            "title": "Products Missing Required Product Type Properties",
+            "description": "Assign required product type properties to these products."
+          },
+          "111": {
+            "title": "Products Missing Required Properties",
+            "description": "Assign all required properties to these products."
+          },
+          "112": {
+            "title": "Products Missing Optional Properties",
+            "description": "Assign optional properties to these products as needed."
+          },
+          "113": {
+            "title": "Supplier Products Missing Required Prices",
+            "description": "Add required prices to these supplier products."
+          },
+          "114": {
+            "title": "Products Missing Stock",
+            "description": "Ensure these products have stock or allow backorder."
+          },
+          "115": {
+            "title": "Products Missing Lead Time When Out of Stock",
+            "description": "Specify lead times for these products when out of stock."
+          },
+          "116": {
+            "title": "Manual Price List Prices Missing Override Prices",
+            "description": "Add override prices to manual price list prices where auto-update is disabled."
+          },
+          "117": {
+            "title": "Variations with Different Product Types",
+            "description": "Ensure all variations have the same product type."
+          },
+          "118": {
+            "title": "Items with Different Product Types",
+            "description": "Ensure all items have the same product type."
+          },
+          "119": {
+            "title": "Bills of Materials with Different Product Types",
+            "description": "Ensure all bills of materials have the same product type."
+          },
+          "120": {
+            "title": "Items with Missing Mandatory Information",
+            "description": "Resolve missing mandatory information in these items' inspectors."
+          },
+          "121": {
+            "title": "Variations with Missing Mandatory Information",
+            "description": "Resolve missing mandatory information in these variations' inspectors."
+          },
+          "122": {
+            "title": "Bills of Materials with Missing Mandatory Information",
+            "description": "Resolve missing mandatory information in these bills of materials' inspectors."
+          },
+          "123": {
+            "title": "Configurable Products with Duplicate Variations",
+            "description": "Ensure variations in these configurable products have unique required properties."
+          },
+          "124": {
+            "title": "Configurable Products with No Applicable Configurator Rules",
+            "description": "Define at least one configurator required item for these configurable products."
+          }
+
+        }
+      },
+      "orders": {
+        "title": "Orders cards",
+        "description": "Stay on top of your orders by monitoring pending, processed, and shipped orders to ensure timely deliveries and customer satisfaction.",
+        "pendingOrders": {
+          "title": "Pending Orders",
+          "description": "Orders that are pending processing or awaiting inventory."
+        },
+        "ongoingShipments": {
+          "title": "Ongoing Shipments",
+          "description": "Shipments that need to be prepared."
+        },
+        "pendingReturns": {
+          "title": "Pending Returns",
+          "description": "Returns that are pending inspection."
+        }
+      },
+      "general": {
+        "title": "General cards",
+        "description": "Immediate attention required! Incorrect settings in this section may lead to system failures. Please review and update configurations to ensure stable and secure operations.",
+        "missingLeadTime": {
+          "title": "Addresses Missing Lead Time",
+          "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
+        },
+        "priceListCurrencyMismatch": {
+          "title": "Price List Currency Mismatch",
+          "description": "Detected price lists with currencies that differ from assigned customers. This may cause billing inaccuracies. Please ensure all price lists match the currency of their respective customers."
+        }
+      }
+    },
     "onboarding": {
       "completedHeader": "You completed all the steps!",
       "completedMessage": "Congratulations! You have successfully completed all the onboarding steps. You are now ready to fully utilize the platform and take advantage of all its features. Start exploring and make the most of OneSila to drive innovation and success for your business.",
@@ -159,6 +295,7 @@
       "invite": "Invite",
       "search": "Search",
       "save": "Save",
+      "details": "Details",
       "fix": "Fix",
       "back": "Back",
       "next": "Next",
@@ -705,6 +842,7 @@
         "sku": "SKU",
         "productionTime": "Production Time",
         "forSale": "For Sale",
+        "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
         "inspectorStatus": "Inspector Status"
       },

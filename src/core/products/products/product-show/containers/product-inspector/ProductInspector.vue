@@ -223,27 +223,28 @@ const refreshInspector = async () => {
 </template>
 
 <style scoped>
-/* Custom scrollbar styling */
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 10px; /* Adjust the width of the scrollbar */
+  width: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent; /* Make the track invisible or apply a custom color */
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #ffffff; /* Color of the scrollbar thumb */
-  border-radius: 10px; /* Rounded corners */
-  border: 2px solid transparent; /* Adds space around thumb for a floating effect */
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 2px solid transparent;
   background-clip: padding-box;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #c0c0c0; /* Darker color on hover */
+  background-color: #c0c0c0;
 }
 
 .custom-scrollbar {
-  padding-right: 15px; /* Add padding to move content away from the scrollbar */
+  padding-right: 15px;
 }
+
 </style>

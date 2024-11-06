@@ -32,7 +32,7 @@ const excludeDemoDataFilter =  { filter: { excludeDemoData: true } }
 const purchaseOrderFilter = { filter: {
   excludeDemoData: true,
     status: { inList: PurchaseOrderOpenStatuses },
-    purchaseorderitem: {quantity: {gte: 0}}
+    purchaseorderitem: { quantity: {gte: 0} }
 
 } }
 
