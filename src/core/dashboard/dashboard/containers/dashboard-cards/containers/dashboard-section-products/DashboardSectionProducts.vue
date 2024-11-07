@@ -14,6 +14,7 @@ const { t } = useI18n();
 
 const showCompletedProductsCards = ref(false);
 const hideProductsSection = ref(true);
+const finshFetch = ref(false);
 
 const productErrors = ref([
   // High importance errors
@@ -73,8 +74,9 @@ async function fetchErrorCounts() {
   }
 }
 
-onMounted(() => {
-  fetchErrorCounts();
+onMounted(async () =>  {
+  await fetchErrorCounts();
+  finshFetch.value = true;
 });
 
 </script>
@@ -131,9 +133,12 @@ onMounted(() => {
           />
       </div>
     </Card>
-    <Card v-else class="py-8 mt-4">
-      <div class="flex justify-center items-center h-64">
-        <LocalLoader loading />
-      </div>
-    </Card>
+    <template v-else>
+      <Card v-if="!finshFetch">
+        <div class="flex justify-center items-center h-64">
+          <LocalLoader loading />
+        </div>
+     </Card>
+    </template>
+
 </template>

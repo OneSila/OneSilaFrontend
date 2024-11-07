@@ -14,6 +14,7 @@ const { t } = useI18n();
 
 const showCompletedGeneralCards = ref(false);
 const hideGeneralSection = ref(true);
+const finshFetch = ref(false);
 
 const generalCards = ref([
   {
@@ -71,9 +72,9 @@ async function fetchGeneralCounts() {
 }
 
 
-onMounted(() => {
-  fetchGeneralCounts();
-
+onMounted(async () =>  {
+  await fetchGeneralCounts();
+  finshFetch.value = true;
 });
 
 </script>
@@ -130,9 +131,12 @@ onMounted(() => {
         />
       </div>
     </Card>
-    <Card v-else>
-      <div class="flex justify-center items-center h-64">
-        <LocalLoader loading />
-      </div>
-    </Card>
+    <template v-else>
+      <Card v-if="!finshFetch">
+        <div class="flex justify-center items-center h-64">
+          <LocalLoader loading />
+        </div>
+     </Card>
+    </template>
+
 </template>
