@@ -69,8 +69,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       query: companyShippingAddressesQuery,
       queryVariables: {
           filter: {
-            company: { isSupplier: {exact: true} },
-            OR: { company: { isInternalCompany: {exact: true} }
+            company: { isSupplier: { exact: true } },
+            OR: { company: { isInternalCompany: { exact: true } }
           }}
       },
       dataKey: 'shippingAddresses',

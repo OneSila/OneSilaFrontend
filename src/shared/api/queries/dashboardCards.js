@@ -34,7 +34,7 @@ export const dashboardOngoingReturns = gql`
 
 export const IncompleteShippingAddress = gql`
     query IncompleteShippingAddress {
-      shippingAddresses(filters: { leadtimeforshippingaddress: { id: { isNull: true } } }) {
+      shippingAddresses(filters: {company: { isSupplier: { exact: true }}, OR: {company: {isInternalCompany: {exact: true }}}, leadtimeforshippingaddress: { id: { isNull: true } } }) {
         totalCount
       }
     }
