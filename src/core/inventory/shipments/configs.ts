@@ -107,7 +107,7 @@ export const getFields = (t, type: FormType, orderId: string | null): FormField[
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
-      queryVariables: { "filter": { "company": {'isInternalCompany': true} } },
+      queryVariables: { "filter": { "company": {'isInternalCompany': { exact: true} } } },
     },
     {
       type: FieldType.Query,

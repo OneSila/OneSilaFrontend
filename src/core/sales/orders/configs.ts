@@ -208,7 +208,7 @@ export const baseFormConfigConstructor = (
       labelBy: 'name',
       valueBy: 'id',
       query: companiesQuery,
-      queryVariables: { filter: { 'isInternalCompany': true }},
+      queryVariables: { filter: { 'isInternalCompany': { exact: true} }},
       dataKey: 'companies',
       isEdge: true,
       multiple: false,

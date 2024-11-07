@@ -45,7 +45,7 @@ const listingConfig = listingConfigConstructor(t);
           :config="listingConfig"
           :query="listingQuery"
           :query-key="listingQueryKey"
-          :fixed-filter-variables="{'isInternalCompany': true}"
+          :fixed-filter-variables="{'isInternalCompany': { exact: true}}"
       />
    </template>
   </SettingsTemplate>
