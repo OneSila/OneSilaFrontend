@@ -7,6 +7,7 @@ import { Card } from "../../../../../../../shared/components/atoms/card";
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
 import { dashboardIncompleteShippingAddress, dashboardNotMatchingSalesPricesList } from "../../../../../../../shared/api/queries/dashboardCards.js"
+import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
@@ -78,7 +79,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Card>
+  <Card v-if="!hideGeneralSection">
      <Flex vertical class="pb-6 gap-2">
       <FlexCell>
         <Flex between>
@@ -127,6 +128,11 @@ onMounted(() => {
           :color="card.color"
           :icon="card.icon"
         />
+      </div>
+    </Card>
+    <Card v-else>
+      <div class="flex justify-center items-center h-64">
+        <LocalLoader loading />
       </div>
     </Card>
 </template>

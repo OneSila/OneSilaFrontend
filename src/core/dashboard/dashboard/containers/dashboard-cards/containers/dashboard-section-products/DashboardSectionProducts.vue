@@ -7,6 +7,7 @@ import {Card} from "../../../../../../../shared/components/atoms/card";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
 import { productsDashboardCardsQuery } from "../../../../../../../shared/api/queries/dashboardCards.js"
+import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
@@ -76,8 +77,6 @@ onMounted(() => {
   fetchErrorCounts();
 });
 
-
-
 </script>
 
 <template>
@@ -130,6 +129,11 @@ onMounted(() => {
             :color="err.color"
             :icon="err.icon"
           />
+      </div>
+    </Card>
+    <Card v-else class="py-8 mt-4">
+      <div class="flex justify-center items-center h-64">
+        <LocalLoader loading />
       </div>
     </Card>
 </template>
