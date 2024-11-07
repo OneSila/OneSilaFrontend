@@ -57,6 +57,7 @@ async function fetchOrderCounts() {
         query: card.query,
         fetchPolicy: 'network-only',
       });
+
       if (data[card.key]) {
         card.counter = data[card.key].totalCount;
       } else {

@@ -212,6 +212,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('sales.priceLists.labels.autoUpdatePrices'),
     },
     {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'currencyMatchWithCustomers',
+      label: t('sales.priceLists.labels.currencyMatchWithCustomers'),
+    },
+    {
       type: FieldType.Query,
       query: currenciesQuery,
       dataKey: 'currencies',

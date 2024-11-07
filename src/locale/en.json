@@ -140,9 +140,9 @@
           "title": "Addresses Missing Lead Time",
           "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
         },
-        "priceListCurrencyMismatch": {
-          "title": "Price List Currency Mismatch",
-          "description": "Detected price lists with currencies that differ from assigned customers. This may cause billing inaccuracies. Please ensure all price lists match the currency of their respective customers."
+        "currencyMismatchPriceLists": {
+          "title": "Price Lists with Currency Mismatched Customers",
+          "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
         }
       }
     },
@@ -1403,6 +1403,7 @@
         "vatIncluded": "VAT Included",
         "autoUpdate": "Auto Update",
         "autoUpdatePrices": "Auto Update Prices",
+        "currencyMatchWithCustomers": "Currency Match with Customers",
         "autoAddProducts": "Auto Add Products",
         "priceChangePcnt": "Price Change Percentage"
       },

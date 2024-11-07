@@ -18,7 +18,9 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const isCompleted = computed(() => Number(props.counter) === 0);
+const isCompleted = computed(() => {
+  return !props.loading && Number(props.counter) === 0;
+});
 
 const showCard = computed(() => {
   return !(props.hideOnComplete && isCompleted.value);
@@ -31,7 +33,7 @@ const cardColorClass = computed(() => {
   return {
     red: 'bg-red-300 border-2 border-red-500',
     orange: 'bg-orange-300 border-2 border-orange-500',
-    yellow: 'bg-yellow-300 border-2 border-yellow-500',
+    yellow: 'bg-yellow-200 border-2 border-yellow-500',
   }[props.color] || 'bg-gray-300 border-2 border-gray-500';
 });
 
@@ -87,11 +89,10 @@ watchEffect(() => {
   }
 });
 
-// Detect mobile device
 const isMobile = ref(false);
 
 const checkIsMobile = () => {
-  isMobile.value = window.innerWidth <= 768; // Adjust breakpoint as needed
+  isMobile.value = window.innerWidth <= 768;
 };
 
 onMounted(() => {

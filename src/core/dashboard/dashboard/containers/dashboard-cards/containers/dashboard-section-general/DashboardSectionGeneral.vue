@@ -6,7 +6,7 @@ import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { Card } from "../../../../../../../shared/components/atoms/card";
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
-import { IncompleteShippingAddress } from "../../../../../../../shared/api/queries/dashboardCards.js"
+import { dashboardIncompleteShippingAddress, dashboardNotMatchingSalesPricesList } from "../../../../../../../shared/api/queries/dashboardCards.js"
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
@@ -16,8 +16,8 @@ const hideGeneralSection = ref(true);
 
 const generalCards = ref([
   {
-    key: 'missingLeadTime',
-    query: IncompleteShippingAddress,
+    key: 'shippingAddresses',
+    query: dashboardIncompleteShippingAddress,
     title: t('dashboard.cards.general.missingLeadTime.title'),
     description: t('dashboard.cards.general.missingLeadTime.description'),
     icon: 'clock',
@@ -25,6 +25,17 @@ const generalCards = ref([
     counter: 0,
     loading: true,
     url: { name: 'inventory.leadTimeSettings.list' },
+  },
+  {
+    key: 'salesPriceLists',
+    query: dashboardNotMatchingSalesPricesList,
+    title: t('dashboard.cards.general.currencyMismatchPriceLists.title'),
+    description: t('dashboard.cards.general.currencyMismatchPriceLists.description'),
+    icon: 'exchange-alt',
+    color: 'red',
+    counter: 0,
+    loading: true,
+    url: { name: 'sales.priceLists.list', query: { currencyMatchWithCustomers: false } },
   },
 ]);
 
@@ -36,8 +47,9 @@ async function fetchGeneralCounts() {
         query: card.query,
         fetchPolicy: 'network-only',
       });
-      if (data && data.shippingAddresses) {
-        card.counter = data.shippingAddresses.totalCount;
+
+      if (data[card.key]) {
+        card.counter = data[card.key].totalCount;
       } else {
         card.counter = 0;
       }
