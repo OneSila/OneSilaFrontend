@@ -36,7 +36,7 @@ onMounted(() => {
     ...baseForm,
     mutationId: id.value.toString(),
     query: getPurchaseOrderQuery,
-    queryVariables: {id: id.value},
+    queryVariables: { id: id.value },
     queryDataKey: 'purchaseOrder',
     fields: [
       {

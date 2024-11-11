@@ -152,12 +152,14 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'isInvoiceAddress',
       label: t('contacts.companies.address.labels.isInvoiceAddress')
     },
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'isShippingAddress',
       label: t('contacts.companies.address.labels.isShippingAddress')

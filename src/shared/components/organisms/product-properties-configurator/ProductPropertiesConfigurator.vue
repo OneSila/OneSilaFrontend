@@ -60,7 +60,7 @@ const fetchData = async () => {
   loading.value = true;
   let filters = {
     NOT: { id: { inList: excludedIds } },
-    isProductType: false,
+    isProductType: { exact: false },
   };
 
   if (search.value.length > 0) {

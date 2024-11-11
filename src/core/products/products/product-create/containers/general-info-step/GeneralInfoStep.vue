@@ -31,7 +31,7 @@ const fetchProductType = async () => {
 
     const {data} = await apolloClient.query({
       query: propertiesQuery,
-      variables: {filter: {isProductType: true}}
+      variables: {filter: {isProductType: { exact: true } }}
     })
 
     if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
@@ -46,7 +46,7 @@ const fetchProductType = async () => {
           labelBy: 'value',
           valueBy: 'id',
           query: propertySelectValuesQuery,
-          queryVariables: { filter: { property: { isProductType: true } }},
+          queryVariables: { filter: { property: { isProductType: { exact: true } } }},
           dataKey: 'propertySelectValues',
           isEdge: true,
           multiple: false,

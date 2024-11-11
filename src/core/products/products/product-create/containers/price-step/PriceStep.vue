@@ -19,7 +19,7 @@ const currency = ref('');
 const getDefaultCurrency = async () => {
   const {data} = await apolloClient.query({
     query: currenciesQuery,
-    variables: {filter: {isDefaultCurrency: true}},
+    variables: {filter: {isDefaultCurrency: { exact: true }}},
   });
 
   currency.value = data.currencies.edges[0].node.symbol

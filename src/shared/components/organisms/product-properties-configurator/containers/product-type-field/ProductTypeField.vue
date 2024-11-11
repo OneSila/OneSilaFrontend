@@ -53,7 +53,7 @@ const setField = async () => {
     query: propertySelectValuesQuery,
     queryVariables: {
       filter: {
-        property: { isProductType: true },
+        property: { isProductType: { exact: true } },
         NOT: { id: { inList: ids } },
       },
     },

@@ -138,7 +138,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
-      queryVariables: { filter: { company: { isInternalCompany: {exact: true} } } },
+      queryVariables: { filter: { company: { isInternalCompany: { exact: true } } } },
     },
     {
       type: FieldType.Query,
@@ -152,7 +152,7 @@ export const baseFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
-      queryVariables: { filter: { company: { isInternalCompany: {exact: true} } } },
+      queryVariables: { filter: { company: { isInternalCompany: { exact: true } } } },
     },
     {
       type: FieldType.Query,
@@ -177,7 +177,7 @@ export const baseFormConfigConstructor = (
       labelBy: 'fullName',
       valueBy: 'id',
       query: membersQuery,
-      queryVariables: { filter: { isActive: true, invitationAccepted: true } },
+      queryVariables: { filter: { isActive: { exact: true }, invitationAccepted: { exact: true } } },
       dataKey: 'users',
       isEdge: true,
       multiple: false,

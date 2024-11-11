@@ -201,12 +201,14 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'vatIncluded',
       label: t('sales.priceLists.labels.vatIncluded'),
     },
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'autoUpdatePrices',
       label: t('sales.priceLists.labels.autoUpdatePrices'),

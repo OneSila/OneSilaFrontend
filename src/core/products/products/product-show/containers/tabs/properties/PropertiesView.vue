@@ -29,7 +29,7 @@ const fetchRequiredProductType = async () => {
 
     const {data} = await apolloClient.query({
       query: propertiesQuery,
-      variables: { filter: { isProductType: true }},
+      variables: { filter: { isProductType: { exact: true } }},
       fetchPolicy: 'network-only'
     })
 

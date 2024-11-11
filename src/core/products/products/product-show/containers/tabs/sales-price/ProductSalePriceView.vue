@@ -29,7 +29,7 @@ const defaultCurrency = ref({ id: '', isoCode: '' });
 const getDefaultCurrency = async () => {
   const { data } = await apolloClient.query({
     query: currenciesQuery,
-    variables: { filter: { isDefaultCurrency: true } },
+    variables: { filter: { isDefaultCurrency: { exact: true } } },
   });
 
   defaultCurrency.value = data.currencies.edges[0].node;
@@ -44,7 +44,7 @@ const loadPrices = async () => {
 
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
-    variables: { filter: { product: {id: {exact: props.product.id }} }},
+    variables: { filter: { product: {id: { exact: props.product.id }} }},
     fetchPolicy: 'network-only'
   });
 

@@ -178,6 +178,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     filters: [
       {
         type: FieldType.Boolean,
+        addLookup: true,
         strict: true,
         name: 'isPublicInformation',
         label: t('properties.properties.labels.isPublicInformation')
