@@ -250,7 +250,7 @@ export const deletePurchaseOrderItemsMutation = gql`
 `;
 
 export const createSupplierPriceMutation = gql`
-  mutation createSupplierPrice($data: SupplierPricesInput!) {
+  mutation createSupplierPrice($data: SupplierPriceInput!) {
     createSupplierPrice(data: $data) {
       id
       unitPrice
@@ -278,7 +278,7 @@ export const createSupplierPriceMutation = gql`
 `;
 
 export const updateSupplierPriceMutation = gql`
-  mutation updateSupplierPrice($data: SupplierPricesPartialInput!) {
+  mutation updateSupplierPrice($data: SupplierPricePartialInput!) {
     updateSupplierPrice(data: $data) {
       id
       unitPrice

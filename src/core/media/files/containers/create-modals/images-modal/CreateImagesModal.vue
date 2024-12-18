@@ -76,9 +76,12 @@ const submitImages = async () => {
     variables.push({image: image.file, imageType: image.type});
   });
 
+
+  console.log(variables);
+
   const {data} = await apolloClient.mutate({
     mutation: createImagesMutation,
-    variables: {data: variables}
+    variables: { data: variables }
 
   });
 

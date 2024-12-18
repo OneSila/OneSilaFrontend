@@ -26,6 +26,7 @@ export enum FieldType {
   Email = "Email",
   Website = "Website",
   Badge = "Badge",
+  InlineItems = "InlineItems",
   IndividualFile = "IndividualFile", // not from the media app but adding individually
 }
 

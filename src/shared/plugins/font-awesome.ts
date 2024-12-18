@@ -141,7 +141,8 @@ import {
   faPersonWalking,
   faCaretRight,
   faCircleArrowRight,
-  faExchangeAlt
+  faExchangeAlt,
+  faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -283,6 +284,7 @@ library.add(faPersonWalking as IconDefinition);
 library.add(faCaretRight as IconDefinition);
 library.add(faCircleArrowRight as IconDefinition);
 library.add(faExchangeAlt as IconDefinition);
+library.add(faFloppyDisk as IconDefinition);
 
 export default {
   install(app) {

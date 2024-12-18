@@ -1,4 +1,20 @@
 import { Url, FieldType } from '../../../../shared/utils/constants.js'
+import {FieldBoolean} from "../general-show/containers/field-boolean";
+import {FieldDate} from "../general-show/containers/field-date";
+import {FieldCheckbox} from "./containers/form-fields/field-checkbox";
+import {FieldChoice} from "./containers/form-fields/field-choice";
+import {FieldProxyChoice} from "./containers/form-fields/field-proxy-choice";
+import {FieldQuery} from "./containers/form-fields/field-query";
+import {FieldSlider} from "./containers/form-fields/field-slider";
+import {FieldValue} from "./containers/form-fields/field-value";
+import {FieldTextarea} from "./containers/form-fields/field-textarea";
+import {FieldPhone} from "../general-show/containers/field-phone";
+import {FieldEmail} from "../general-show/containers/field-email";
+import {FieldDateRange} from "./containers/form-fields/field-date-range";
+import {FieldImage} from "../general-show/containers/field-image";
+import {FieldWebsite} from "../general-show/containers/field-website";
+import {FieldIndividualFile} from "../general-show/containers/field-individual-file";
+import {FieldInlineItems} from "./containers/form-fields/field-inline-items";
 
 export interface BaseFormField {
   type: FieldType;
@@ -104,6 +120,35 @@ export interface CreateOnTheFly {
   defaults?: Record<string, string>; // key will be filed name, value will be the default value
 }
 
+export interface InlineItemsFormField extends BaseFormField {
+  type: FieldType.InlineItems;
+  fields: FormField[]; // Fields for each row
+  valueKey: string; // Unique identifier for each row (e.g., ID)
+  allowAdd?: boolean; // Allow adding new rows dynamically
+  allowDelete?: boolean; // Allow deleting rows dynamically
+
+  // For "create" mode
+  createMutation: any;
+  createMutationKey: string;
+
+  // For "edit" mode
+  editMutation: any;
+  editMutationKey: string;
+
+  // For "delete" operation
+  deleteMutation: any;
+  deleteMutationKey: string;
+
+  query: any; // Query to fetch existing data
+  queryVariables?: Record<string, any>;
+  dataKey: string;
+  isEdge?: boolean;
+
+  mode: FormType.CREATE | FormType.EDIT; // Determines if inline items are editable or just added
+}
+
+
+
 export interface QueryFormField extends BaseFormField {
   type: FieldType.Query;
   labelBy: string;
@@ -173,7 +218,7 @@ type RedirectIdentifier = Record<string, string>;
 
 export type FormField = EmailFormField | PhoneFormField | TextareaFormField | BooleanFormField | ValueFormField |
                         ChoiceFormField | ProxyChoiceFormField | QueryFormField | DateFormField | DateRangeFormField | SliderFormField |
-                        CheckboxFormField | HiddenFormField | WebsiteFormField | ImageFormField | IndividualFileFormField;
+                        CheckboxFormField | HiddenFormField | WebsiteFormField | ImageFormField | IndividualFileFormField | InlineItemsFormField;
 
 export interface FormConfig {
   cols?: 1 | 2;
@@ -327,6 +372,8 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
       cleanedData[field.startName] = formatDateForBackend(cleanValues ? null : fieldValue[0]);
       cleanedData[field.endName] = formatDateForBackend(cleanValues ? null : fieldValue[1]);
       delete cleanedData[field.name];
+    } else if (field.type === FieldType.InlineItems) {
+      delete cleanedData[field.name]; // this will be processed elsewhere
     }
 
     if (field.type === FieldType.IndividualFile) {
@@ -404,3 +451,25 @@ export function filterAndExtractIds(dataset, toAddKeys, toExcludeKeys: string[] 
     return acc;
   }, []);
 }
+
+export const getFieldComponent = (type) => {
+  switch (type) {
+    case FieldType.Boolean: return FieldBoolean;
+    case FieldType.Date: return FieldDate;
+    case FieldType.Checkbox: return FieldCheckbox;
+    case FieldType.Choice: return FieldChoice;
+    case FieldType.ProxyChoice: return FieldProxyChoice;
+    case FieldType.Query: return FieldQuery;
+    case FieldType.Slider: return FieldSlider;
+    case FieldType.Text: return FieldValue;
+    case FieldType.Textarea: return FieldTextarea;
+    case FieldType.Phone: return FieldPhone;
+    case FieldType.Email: return FieldEmail;
+    case FieldType.RangeDate: return FieldDateRange;
+    case FieldType.Image: return FieldImage;
+    case FieldType.Website: return FieldWebsite;
+    case FieldType.IndividualFile: return FieldIndividualFile;
+    case FieldType.InlineItems: return FieldInlineItems;
+    default: return null;
+  }
+};

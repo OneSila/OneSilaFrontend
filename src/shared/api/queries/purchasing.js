@@ -206,7 +206,7 @@ export const getSupplierPriceQuery = gql`
 `;
 
 export const supplierPricesQuery = gql`
-  query SupplierPrices($first: Int, $last: Int, $after: String, $before: String, $order: SupplierPricesOrder, $filter: SupplierPricesFilter) {
+  query SupplierPrices($first: Int, $last: Int, $after: String, $before: String, $order: SupplierPriceOrder, $filter: SupplierPriceFilter) {
     supplierPrices(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {

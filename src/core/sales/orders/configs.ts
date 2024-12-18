@@ -1,14 +1,16 @@
 import {ChoiceFormField, FormConfig, FormField, FormType, QueryFormField} from '../../../shared/components/organisms/general-form/formConfig';
-import {FieldType, OrderStatus, ReasonForSale} from '../../../shared/utils/constants.js'
+import {FieldType, OrderStatus, ReasonForSale, ProductType} from '../../../shared/utils/constants.js'
 import {OrderType, SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {NestedTextField, ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
-import {ordersQuery} from "../../../shared/api/queries/salesOrders.js"
+import {orderItemsQuery, ordersQuery} from "../../../shared/api/queries/salesOrders.js"
 import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import {customerOnTheFlyConfig} from "../customers/configs";
+import { createOrderItemsMutation, updateOrderItemMutation, deleteOrderItemsMutation } from "../../../shared/api/mutations/salesOrders.js";
+import { productsQuery } from "../../../shared/api/queries/products.js";
 
 export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -274,6 +276,61 @@ export const baseFormConfigConstructor = (
       default: true,
       uncheckedValue: "false",
     },
+    {
+      type: FieldType.InlineItems,
+      name: 'orderItems',
+      label: t('shared.tabs.items'),
+      valueKey: 'order',
+      allowAdd: true,
+      allowDelete: true,
+      query: orderItemsQuery,
+      dataKey: 'orderItems',
+      isEdge: true,
+      createMutation: createOrderItemsMutation,
+      createMutationKey: 'createOrderItem',
+      editMutation: updateOrderItemMutation,
+      editMutationKey: 'updateOrderItem',
+      deleteMutation: deleteOrderItemsMutation,
+      deleteMutationKey: 'deleteOrderItem',
+      mode: type, // Use form type (CREATE or EDIT)
+      fields: [
+        {
+          type: FieldType.Query,
+          name: 'product',
+          label: t('shared.labels.product'),
+          labelBy: 'name',
+          valueBy: 'id',
+          query: productsQuery,
+          queryVariables:
+          {
+              filter: {
+                 NOT: { type: { inList: [ProductType.Supplier] } } ,
+              },
+            },
+          dataKey: 'products',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          formMapIdentifier: 'id',
+        },
+        {
+          type: FieldType.Text,
+          name: 'quantity',
+          label: t('shared.labels.quantity'),
+          placeholder: t('shared.placeholders.quantity'),
+          number: true,
+        },
+        {
+          type: FieldType.Text,
+          name: 'price',
+          label: t('shared.labels.price'),
+          placeholder: t('shared.placeholders.price'),
+          float: true,
+          optional: true,
+          // prepend: symbol,
+        },
+    ],
+  }
   ];
 
   return {
