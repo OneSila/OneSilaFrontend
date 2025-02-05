@@ -81,7 +81,7 @@ export const getEditFields = (t: Function, id: string) => [
     uncheckedValue: 'false',
     help: t('properties.properties.help.addToFilters'),
     optional: true
-  }
+  },
 ] as FormField[];
 
 export const editFormConfigConstructor = (t: Function, id: string): FormConfig => ({
@@ -167,6 +167,15 @@ export const baseFormConfigConstructor = (
       default: false,
       uncheckedValue: "false",
       help: t('properties.properties.help.addToFilters'),
+      optional: true
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'hasImage',
+      label: t('properties.properties.labels.hasImage'),
+      default: false,
+      uncheckedValue: "false",
+      help: t('properties.properties.help.hasImage'),
       optional: true
     }
   ],

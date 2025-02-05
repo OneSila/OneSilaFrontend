@@ -2,7 +2,7 @@
 
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -18,12 +18,13 @@ import {
 import {Tabs} from "../../../../shared/components/molecules/tabs";
 import { editFormConfigConstructor } from "../configs";
 import {FieldType} from "../../../../shared/utils/constants";
+import apolloClient from "../../../../../apollo-client";
 
 
 const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
-
+const formConfig = ref<FormConfig | null>(null)
 const tabItems = ref();
 
 tabItems.value = [
@@ -31,7 +32,24 @@ tabItems.value = [
     { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
   ];
 
-const formConfig = editFormConfigConstructor(t, id.value.toString());
+;
+
+onMounted(async () => {
+  // Query the current property select value.
+  const { data } = await apolloClient.query({
+    query: getPropertySelectValueQuery,
+    variables: { id: id.value }
+  });
+
+  // The query returns the property select value with a nested property.
+  const propertySelectValue = data.propertySelectValue;
+  const addImage = propertySelectValue && propertySelectValue.property
+                  ? Boolean(propertySelectValue.property.hasImage)
+                  : false;
+
+  // Build the form configuration using the addImage parameter.
+  formConfig.value = editFormConfigConstructor(t, id.value, data, addImage);
+});
 
 </script>
 
@@ -48,7 +66,7 @@ const formConfig = editFormConfigConstructor(t, id.value.toString());
        <div>
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralForm :config="formConfig as FormConfig" />
+            <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" />
           </template>
           <template v-slot:translations>
             <TranslatedFields

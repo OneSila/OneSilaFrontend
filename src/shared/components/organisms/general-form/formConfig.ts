@@ -1,19 +1,20 @@
 import { Url, FieldType } from '../../../../shared/utils/constants.js'
-import {FieldBoolean} from "../general-show/containers/field-boolean";
-import {FieldDate} from "../general-show/containers/field-date";
-import {FieldCheckbox} from "./containers/form-fields/field-checkbox";
-import {FieldChoice} from "./containers/form-fields/field-choice";
-import {FieldProxyChoice} from "./containers/form-fields/field-proxy-choice";
-import {FieldQuery} from "./containers/form-fields/field-query";
-import {FieldSlider} from "./containers/form-fields/field-slider";
-import {FieldValue} from "./containers/form-fields/field-value";
+import {FieldBoolean} from './containers/form-fields/field-boolean';
+import {FieldDate} from './containers/form-fields/field-date';
+import {FieldCheckbox} from './containers/form-fields/field-checkbox';
+import {FieldChoice} from './containers/form-fields/field-choice';
+import {FieldProxyChoice} from './containers/form-fields/field-proxy-choice';
+import {FieldQuery} from './containers/form-fields/field-query';
+import {FieldSlider} from './containers/form-fields/field-slider';
+import {FieldValue} from './containers/form-fields/field-value';
 import {FieldTextarea} from "./containers/form-fields/field-textarea";
-import {FieldPhone} from "../general-show/containers/field-phone";
-import {FieldEmail} from "../general-show/containers/field-email";
+import {FieldPhone} from "./containers/form-fields/field-phone";
+import {FieldEmail} from "./containers/form-fields/field-email";
 import {FieldDateRange} from "./containers/form-fields/field-date-range";
-import {FieldImage} from "../general-show/containers/field-image";
-import {FieldWebsite} from "../general-show/containers/field-website";
-import {FieldIndividualFile} from "../general-show/containers/field-individual-file";
+import {FieldImage} from "./containers/form-fields/field-image";
+import {FieldWebsite} from "./containers/form-fields/field-website";
+import {FieldIndividualFile} from "./containers/form-fields/field-individual-file";
+
 import {FieldInlineItems} from "./containers/form-fields/field-inline-items";
 
 export interface BaseFormField {

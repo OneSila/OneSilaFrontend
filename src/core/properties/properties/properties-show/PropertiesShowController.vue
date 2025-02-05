@@ -5,16 +5,15 @@ import { ref} from "vue";
 import {GeneralShow} from "../../../../shared/components/organisms/general-show";
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import {Card} from "../../../../shared/components/atoms/card";
-import { updateField} from "../../../../shared/components/organisms/general-show/showConfig";
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
-import ItemsList from "./containers/items-list/ItemsList.vue";
-import {PropertyTypes} from "../../../../shared/utils/constants";
+import {FieldType, PropertyTypes} from "../../../../shared/utils/constants";
 import ProductList from "./containers/products-list/ProductsList.vue"
 import ValuesList from "./containers/values-list/ValuesList.vue"
 import {Loader} from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
+import {ShowField} from "../../../../shared/components/organisms/general-show/showConfig";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -37,6 +36,16 @@ const onDataFetched = (data) => {
 
   showValues.value = data[showConfig.subscriptionKey].type === PropertyTypes.SELECT || data[showConfig.subscriptionKey].type === PropertyTypes.MULTISELECT;
   isProductType.value = data[showConfig.subscriptionKey].isProductType;
+
+  if ([PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(data[showConfig.subscriptionKey].type)) {
+    const hasImageField =  {
+      label: t('properties.properties.labels.hasImage'),
+      name: 'hasImage',
+      type: FieldType.Boolean
+    } as ShowField;
+
+    showConfig.fields.push(hasImageField);
+  }
 
   if (!showValues.value) {
     const valuesTabIndex = tabItems.value.findIndex(tab => tab.name === 'values');

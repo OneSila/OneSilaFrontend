@@ -30,7 +30,6 @@ onMounted(async () => {
     variables: { id: id.value },
   });
 
-  console.log()
   const baseForm = {
   ...baseFormConfigConstructor(
     t,
@@ -125,7 +124,6 @@ const handleFormUpdate = (form) => {
     }
 
   }
-
 };
 
 </script>

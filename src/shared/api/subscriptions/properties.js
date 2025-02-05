@@ -9,6 +9,7 @@ export const getPropertySubscription = gql`
       type
       isPublicInformation
       addToFilters
+      hasImage
       isProductType
       internalName
       valueValidator

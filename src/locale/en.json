@@ -1813,6 +1813,7 @@
       "labels": {
         "isPublicInformation": "Public Information",
         "addToFilters": "Add to filters",
+        "hasImage": "Has image",
         "isProductType": "Product Type",
         "internalName": "Internal Name",
         "valueValidator": "Value Validator"
@@ -1826,6 +1827,7 @@
         "type": "Cannot be changed.",
         "isPublicInformation": "Public information will sync to various integrations and websites.",
         "addToFilters": "Can be used for product filtering in website integrations.",
+        "hasImage": "Enable if the property require images. It applies only to select and multi select type..",
         "internalName": "Name used in integrations",
         "valueValidator": "Advanced Regular Expression validator."
       },

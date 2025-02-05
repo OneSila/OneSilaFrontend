@@ -27,6 +27,7 @@ export const updatePropertyMutation = gql`
       type
       isPublicInformation
       addToFilters
+      hasImage
       isProductType
       internalName
       valueValidator

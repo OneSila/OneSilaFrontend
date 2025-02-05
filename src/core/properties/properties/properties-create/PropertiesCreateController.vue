@@ -34,6 +34,7 @@ interface PropertyForm {
   type: string,
   isPublicInformation: boolean,
   addToFilters: boolean,
+  hasImage: boolean,
 
 }
 
@@ -54,6 +55,7 @@ const form: PropertyForm = reactive({
   type: '',
   isPublicInformation: true,
   addToFilters: false,
+  hasImage: false,
 });
 
 const wizardSteps = computed(() => {
@@ -219,6 +221,21 @@ const multiSelectorPreviewExamples = [
                               </FlexCell>
                             </Flex>
                             <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('properties.properties.help.addToFilters') }}</p>
+                          </div>
+                        </FlexCell>
+                        <FlexCell>
+                          <div class="col-span-full">
+                            <Flex>
+                              <FlexCell center>
+                                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.properties.labels.hasImage') }}</label>
+                              </FlexCell>
+                              <FlexCell class="ml-2" center>
+                                <div class="field-checkbox">
+                                  <Toggle v-model="form.hasImage" />
+                                </div>
+                              </FlexCell>
+                            </Flex>
+                            <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('properties.properties.help.hasImage') }}</p>
                           </div>
                         </FlexCell>
                       </Flex>

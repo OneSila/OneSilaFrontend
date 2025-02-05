@@ -11,6 +11,7 @@ query Properties($first: Int, $last: Int, $after: String, $before: String, $orde
           type
           isPublicInformation
           addToFilters
+          hasImage
           isProductType
           internalName
           valueValidator
@@ -36,6 +37,7 @@ export const getPropertyQuery = gql`
       type
       isPublicInformation
       addToFilters
+      hasImage
       isProductType
       internalName
       valueValidator
@@ -110,6 +112,7 @@ export const getPropertySelectValueQuery = gql`
       property {
         id
         name
+        hasImage
       }
       image {
        id

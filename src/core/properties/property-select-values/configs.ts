@@ -16,7 +16,8 @@ export const baseFormConfigConstructor = (
   type: FormType,
   mutation: any,
   mutationKey: string,
-  propertyId: string | null = null
+  propertyId: string | null = null,
+  addImage: boolean = true
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -26,19 +27,19 @@ export const baseFormConfigConstructor = (
   submitAndContinueUrl: { name: 'properties.values.edit' },
   deleteMutation: deletePropertySelectValueMutation,
   fields: [
-      getPropertyField(t, propertyId, type),
+    getPropertyField(t, propertyId, type),
     {
       type: FieldType.Text,
       name: 'value',
       label: t('properties.values.show.title'),
       placeholder: t('properties.values.placeholders.value')
     },
-    {
+    ...(addImage ? [{
       type: FieldType.Image,
       name: 'image',
       label: t('shared.labels.image'),
       optional: true,
-    }
+    } as FormField] : [])
   ],
 });
 
@@ -66,6 +67,8 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId):CreateOnTheFl
 export const editFormConfigConstructor = (
   t: Function,
   id: string,
+  data: any,
+  addImage: boolean = true
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -76,7 +79,8 @@ export const editFormConfigConstructor = (
   deleteMutation: deletePropertySelectValueMutation,
   mutationId: id,
   query: getPropertySelectValueQuery,
-  queryVariables: { id: id },
+  queryVariables: {},
+  queryData: data,
   queryDataKey: 'propertySelectValue',
   fields: [
         {
@@ -99,12 +103,12 @@ export const editFormConfigConstructor = (
         formMapIdentifier: 'id',
         disabled: true
     },
-    {
+    ...(addImage ? [{
       type: FieldType.Image,
       name: 'image',
       label: t('shared.labels.image'),
       optional: true,
-    }
+    } as FormField] : [])
   ],
 });
 
