@@ -58,8 +58,7 @@ const isRowDirty = (rowIndex: number) => {
   const current = rows.value[rowIndex];
   const original = originalRows.value[rowIndex];
 
-  console.log(current)
-  console.log(original)
+  if (current._saveError) return true;
 
   for (const fieldItem of props.field.fields) {
     const currentVal = current[fieldItem.name];
@@ -222,7 +221,8 @@ const bulkDelete = async (index: null | number = null) => {
 // Handle row save (create or edit)
 const saveRow = async (rowIndex: number) => {
   const row = rows.value[rowIndex];
-  const field = props.field; // InlineItemsFormField
+  delete rows.value[rowIndex]._saveError;
+  const field = props.field;
   const formData = cleanUpDataForMutation(row, field.fields, row.id ? FormType.EDIT : FormType.CREATE);
 
   // If it's a new row (no id) - use create mutation
@@ -248,6 +248,8 @@ const saveRow = async (rowIndex: number) => {
     } catch (error) {
       console.error("Error creating row:", error);
       handleError(error);
+      row._saveError = true;
+      return;
     }
   }
   // If the row exists (has an id) - use edit mutation
@@ -265,10 +267,13 @@ const saveRow = async (rowIndex: number) => {
     } catch (error) {
       console.error("Error updating row:", error);
       handleError(error);
+      row._saveError = true;
+      return;
     }
   }
 
   originalRows.value[rowIndex] = JSON.parse(JSON.stringify(rows.value[rowIndex]));
+  delete rows.value[rowIndex]._saveError;
 };
 
 const handleError = (errors) => {
@@ -299,75 +304,76 @@ onMounted(() => {
       </FlexCell>
     </Flex>
 
-    <table class="table-striped table-hover">
-      <thead>
-        <tr>
-          <th v-if="field.allowDelete">
-            <Checkbox
-              :modelValue="selectedRows.every(Boolean) && rows.length > 0"
-              @update:modelValue="(value) => selectedRows.fill(value)"
+<table class="table-striped table-hover">
+  <thead>
+    <tr>
+      <th v-if="field.allowDelete">
+        <Checkbox
+          :modelValue="selectedRows.every(Boolean) && rows.length > 0"
+          @update:modelValue="(value) => selectedRows.fill(value)"
+        />
+      </th>
+      <th v-for="f in field.fields" :key="f.name" :class="{'shrink-col': f.isNumeric}">
+        {{ f.label }}
+      </th>
+      <th class="action-col" v-if="field.allowDelete || true"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+      <!-- Bulk Delete Checkbox -->
+      <td v-if="field.allowDelete">
+        <Checkbox v-model="selectedRows[rowIndex]" />
+      </td>
+
+      <!-- Dynamic Fields Rendering -->
+      <td class="td-max-width" v-for="fieldItem in field.fields" :key="fieldItem.name">
+        <div v-if="fieldItem.type !== FieldType.Hidden" class="col-span-full td-scrollable">
+          <Flex>
+            <!-- Checkbox Field -->
+            <FlexCell v-if="fieldItem.type === FieldType.Checkbox" class="ml-2" center>
+              <component
+                v-model="row[fieldItem.name]"
+                :is="getFieldComponent(fieldItem.type)"
+                :field="fieldItem"
+              />
+            </FlexCell>
+          </Flex>
+
+          <!-- Other Fields -->
+          <div v-if="fieldItem.type !== FieldType.Checkbox" class="mt-2">
+            <component
+              v-model="row[fieldItem.name]"
+              :is="getFieldComponent(fieldItem.type)"
+              :field="fieldItem"
             />
-          </th>
-          <th v-for="f in field.fields" :key="field.name">{{ f.label }}</th>
-          <th v-if="field.allowDelete || true"></th>
-        </tr>
-      </thead>
+          </div>
+        </div>
+      </td>
 
-      <tbody>
-        <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
-          <!-- Bulk Delete Checkbox -->
-          <td v-if="field.allowDelete">
-            <Checkbox v-model="selectedRows[rowIndex]" />
-          </td>
-
-          <!-- Dynamic Fields Rendering -->
-          <td class="td-max-width" v-for="fieldItem in field.fields" :key="fieldItem.name">
-            <div v-if="fieldItem.type !== FieldType.Hidden" class="col-span-full td-scrollable">
-              <Flex>
-                <!-- Checkbox Field -->
-                <FlexCell v-if="fieldItem.type === FieldType.Checkbox" class="ml-2" center>
-                  <component
-                    v-model="row[fieldItem.name]"
-                    :is="getFieldComponent(fieldItem.type)"
-                    :field="fieldItem"
-                  />
-                </FlexCell>
-              </Flex>
-
-              <!-- Other Fields -->
-              <div v-if="fieldItem.type !== FieldType.Checkbox" class="mt-2">
-                <component
-                  v-model="row[fieldItem.name]"
-                  :is="getFieldComponent(fieldItem.type)"
-                  :field="fieldItem"
-                />
-              </div>
-            </div>
-          </td>
-
-          <!-- Action Buttons -->
-          <td>
-            <Flex end gap="2">
-              <FlexCell>
-                <!-- Show save button only if row is dirty -->
-                <Button
-                  v-if="isRowDirty(rowIndex)"
-                  class="btn btn-sm btn-outline-primary"
-                  @click="saveRow(rowIndex)"
-                >
-                  <Icon name="floppy-disk" />
-                </Button>
-              </FlexCell>
-              <FlexCell  v-if="field.allowDelete">
-                <Button class="btn btn-sm btn-outline-danger" @click="bulkDelete(rowIndex)">
-                  <Icon name="trash" />
-                </Button>
-              </FlexCell>
-            </Flex>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <!-- Action Buttons Column -->
+      <td class="action-col">
+        <Flex end gap="2">
+          <FlexCell>
+            <!-- Show save button only if row is dirty -->
+            <Button
+              v-if="isRowDirty(rowIndex)"
+              class="btn btn-sm btn-outline-primary"
+              @click="saveRow(rowIndex)"
+            >
+              <Icon name="floppy-disk" />
+            </Button>
+          </FlexCell>
+          <FlexCell v-if="field.allowDelete">
+            <Button class="btn btn-sm btn-outline-danger" @click="bulkDelete(rowIndex)">
+              <Icon name="trash" />
+            </Button>
+          </FlexCell>
+        </Flex>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     <!-- Add Row Button -->
     <div v-if="field.allowAdd" class="mt-2">
@@ -385,6 +391,15 @@ onMounted(() => {
   text-align: left;
 }
 
+/* For columns with variable short content */
+.shrink-col {
+  max-width: 80px;  /* Adjust as needed */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Limit normal columns */
 .td-max-width {
   max-width: 200px;
   white-space: nowrap;
@@ -392,32 +407,40 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
+/* Scrollable container for content that overflows */
 .td-scrollable {
   max-width: 200px;
   overflow-x: auto;
   white-space: nowrap;
-
-  /* This ensures the scrollbar is visible even if content is short */
   scrollbar-width: thin;
   scrollbar-color: #888 #f1f1f1;
 }
 
-/* For browsers supporting WebKit scrollbar styling */
 .td-scrollable::-webkit-scrollbar {
-  height: 6px; /* Adjust scrollbar thickness */
+  height: 6px;
 }
 
 .td-scrollable::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Track background */
+  background: #f1f1f1;
 }
 
 .td-scrollable::-webkit-scrollbar-thumb {
-  background: #888; /* Scrollbar handle color */
-  border-radius: 4px; /* Round corners */
+  background: #888;
+  border-radius: 4px;
 }
 
 .td-scrollable::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Darken on hover */
+  background: #555;
+}
+
+/* Narrow action column */
+.action-col {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  white-space: nowrap;
+  text-align: center;
+  padding: 4px;
 }
 
 </style>

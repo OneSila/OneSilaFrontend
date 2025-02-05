@@ -287,7 +287,7 @@ export const baseFormConfigConstructor = (
       dataKey: 'orderItems',
       isEdge: true,
       createMutation: createOrderItemsMutation,
-      createMutationKey: 'createOrderItem',
+      createMutationKey: 'createOrderItems',
       editMutation: updateOrderItemMutation,
       editMutationKey: 'updateOrderItem',
       deleteMutation: deleteOrderItemsMutation,
