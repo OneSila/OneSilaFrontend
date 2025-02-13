@@ -313,9 +313,9 @@ onMounted(() => {
           @update:modelValue="(value) => selectedRows.fill(value)"
         />
       </th>
-      <th v-for="f in field.fields" :key="f.name" :class="{'shrink-col': f.isNumeric}">
-        {{ f.label }}
-      </th>
+        <th v-for="f in field.fields" :key="f.name">
+          {{ f.label }}
+        </th>
       <th class="action-col" v-if="field.allowDelete || true"></th>
     </tr>
   </thead>

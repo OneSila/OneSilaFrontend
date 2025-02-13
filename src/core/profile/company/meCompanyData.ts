@@ -18,7 +18,12 @@ export interface CompanyUser {
 export interface MeCompanyData {
   name: string;
   language: string;
-  fullAddress: string;
+  address1?: string;
+  address2?: string;
+  postcode?: string;
+  city?: string;
+  country?: string;
+  fullAddress?: string;
   email: string;
   phoneNumber?: string;
   vatNumber?: string;

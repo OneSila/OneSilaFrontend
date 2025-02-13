@@ -33,72 +33,72 @@ route.query.source ? route.query.source.toString() : null
 };
 
 const formConfig = ref(baseForm);
-// const handleFormUpdate = (form) => {
-//   fieldsToClear.value = []
-//
-//   const newCustomerId = typeof form.customer === 'object' && form.customer !== null? form.customer.id : form.customer;
-//   if (newCustomerId !== customerId.value) {
-//
-//     const initialCustomerId = customerId.value;
-//     customerId.value = newCustomerId;
-//
-//     const fieldConfigs: FieldConfigs = {
-//       'invoiceAddress': {
-//         enabled: {
-//           type: FieldType.Query,
-//           disabled: false,
-//           labelBy: 'fullAddress',
-//           valueBy: 'id',
-//           query: companyInvoiceAddressesQuery,
-//           dataKey: 'invoiceAddresses',
-//           isEdge: true,
-//           multiple: false,
-//           filterable: true,
-//           formMapIdentifier: 'id',
-//           queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
-//           createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, customerId.value)
-//         },
-//         disabled: {
-//           type: FieldType.Choice,
-//           disabled: true,
-//           queryVariables: null,
-//           createOnFlyConfig: null,
-//           options: []
-//         }
-//       },
-//       'shippingAddress': {
-//         enabled: {
-//           type: FieldType.Query,
-//           labelBy: 'fullAddress',
-//           valueBy: 'id',
-//           query: companyShippingAddressesQuery,
-//           dataKey: 'shippingAddresses',
-//           isEdge: true,
-//           multiple: false,
-//           filterable: true,
-//           formMapIdentifier: 'id',
-//           disabled: false,
-//           queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
-//           createOnFlyConfig: shippingAddressOnTheFlyConfig(t, customerId.value)
-//         },
-//         disabled: {
-//           type: FieldType.Choice,
-//           disabled: true,
-//           queryVariables: null,
-//           options: [],
-//           createOnFlyConfig: null
-//         }
-//       }
-//     };
-//
-//     updateFieldConfigs(customerId.value, fieldConfigs, formConfig);
-//
-//     if (initialCustomerId === null) {
-//       return;
-//     }
-//     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
-//   }
-// };
+const handleFormUpdate = (form) => {
+  fieldsToClear.value = []
+
+  const newCustomerId = typeof form.customer === 'object' && form.customer !== null? form.customer.id : form.customer;
+  if (newCustomerId !== customerId.value) {
+
+    const initialCustomerId = customerId.value;
+    customerId.value = newCustomerId;
+
+    const fieldConfigs: FieldConfigs = {
+      'invoiceAddress': {
+        enabled: {
+          type: FieldType.Query,
+          disabled: false,
+          labelBy: 'fullAddress',
+          valueBy: 'id',
+          query: companyInvoiceAddressesQuery,
+          dataKey: 'invoiceAddresses',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          formMapIdentifier: 'id',
+          queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
+          createOnFlyConfig: invoiceAddressOnTheFlyConfig(t, customerId.value)
+        },
+        disabled: {
+          type: FieldType.Choice,
+          disabled: true,
+          queryVariables: null,
+          createOnFlyConfig: null,
+          options: []
+        }
+      },
+      'shippingAddress': {
+        enabled: {
+          type: FieldType.Query,
+          labelBy: 'fullAddress',
+          valueBy: 'id',
+          query: companyShippingAddressesQuery,
+          dataKey: 'shippingAddresses',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          formMapIdentifier: 'id',
+          disabled: false,
+          queryVariables: { "filter": { "company": {"id": {"exact": customerId.value }}}},
+          createOnFlyConfig: shippingAddressOnTheFlyConfig(t, customerId.value)
+        },
+        disabled: {
+          type: FieldType.Choice,
+          disabled: true,
+          queryVariables: null,
+          options: [],
+          createOnFlyConfig: null
+        }
+      }
+    };
+
+    updateFieldConfigs(customerId.value, fieldConfigs, formConfig);
+
+    if (initialCustomerId === null) {
+      return;
+    }
+    fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
+  }
+};
 
 </script>
 

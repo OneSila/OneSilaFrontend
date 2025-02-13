@@ -86,7 +86,7 @@ onMounted(async () => {
        <div>
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralForm v-if="editConfig" :config="editConfig as FormConfig" @form-updated="handleFormUpdate" />
+            <GeneralForm v-if="editConfig" :config="editConfig as FormConfig" />
           </template>
           <template v-slot:translations>
             <TranslatedFields
