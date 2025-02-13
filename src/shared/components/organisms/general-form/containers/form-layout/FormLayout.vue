@@ -1,9 +1,8 @@
 <script setup lang="ts">
 
-import {computed} from 'vue';
-import {Icon} from "../../../../atoms/icon";
-import {FormConfig} from '../../formConfig';
-import {FieldType} from "../../../../../utils/constants";
+import { computed } from 'vue';
+import { FormConfig } from '../../formConfig';
+import { FieldType } from "../../../../../utils/constants";
 import { getFieldComponent } from "../../../general-form/formConfig";
 
 const props = defineProps<{

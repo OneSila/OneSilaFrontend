@@ -68,6 +68,7 @@ export const salesPriceListsQuery = gql`
           id
           name
           discountPcnt
+          priceChangePcnt
           notes
           currency {
             id

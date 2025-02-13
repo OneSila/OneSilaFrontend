@@ -106,6 +106,7 @@ export const getProductPropertiesRuleSubscription = gql`
   subscription getProductPropertiesRuleSubscription($pk: String!) {
     productPropertiesRule(pk: $pk) {
       id
+      requireEanCode
       productType {
         id
         value

@@ -253,10 +253,14 @@ const getUrlQueryParams = (customerId) => {
   return customerId ? { customerId: customerId } : undefined;
 }
 export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.prices.labels.discountPercentage'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
+  headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.prices.labels.discountPercentage'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
       name: 'name',
+      type: FieldType.Text,
+    },
+    {
+      name: 'priceChangePcnt',
       type: FieldType.Text,
     },
     {
@@ -305,6 +309,12 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       name: 'name',
       type: FieldType.Text,
       label: t('shared.labels.name'),
+      showLabel: true
+    },
+    {
+      name: 'priceChangePcnt',
+      type: FieldType.Text,
+      label: t('sales.priceLists.labels.priceChangePcnt'),
       showLabel: true
     },
     {

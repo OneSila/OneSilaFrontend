@@ -20,12 +20,18 @@ import {ApolloAlertMutation} from "../../../../shared/components/molecules/apoll
 import { Tabs } from "../../../../shared/components/molecules/tabs";
 import {ProductsTabView} from "./containers/products-tab-view";
 import { TYPE_IMAGE } from "../../files/media";
+import {SelectValuesTabView} from "./containers/select-values-tab-view";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const editView = ref(route.query.editView === '1');
-const tabItems = ref();
+const tabItems = ref([
+  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+  { name: 'products', label: t('products.title'), icon: 'box' },
+  { name: 'values', label: t('properties.values.title'), icon: 'list' }
+]);
+
 const selectedTab = ref('general');
 const id = ref(String(route.params.id));
 
@@ -46,11 +52,6 @@ type ImageSubscriptionResult = {
   image: Image
 }
 
-
-tabItems.value = [
-    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-    { name: 'products', label: t('products.title'), icon: 'box' },
-  ];
 const toggleEditView = () => {
   editView.value = !editView.value;
 };
@@ -131,6 +132,9 @@ const onTabChanged = (newValue) => {
                     </template>
                     <template v-slot:products>
                       <ProductsTabView :id="id" />
+                    </template>
+                    <template v-slot:values>
+                      <SelectValuesTabView :id="id" />
                     </template>
                   </Tabs>
                 </Card>

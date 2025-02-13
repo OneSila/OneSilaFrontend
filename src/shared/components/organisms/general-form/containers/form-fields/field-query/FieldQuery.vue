@@ -69,6 +69,7 @@ async function fetchData(searchValue: string | null | undefined = null) {
         variables.filter.search = searchValue;
       }
     }
+
     const { data } = await apolloClient.query({
       query: props.field.query as unknown as DocumentNode,
       variables: variables,
@@ -147,9 +148,20 @@ const handleSubmit = (data) => {
 };
 
 const handleInput = debounce(async (searchValue: string) => {
-  if (isLiveUpdate.value && (selectedValue.value === null || selectedValue.value === undefined)) {
+
+  // we will do a research if we have isLiveUpdate enabled and
+  // either we don't have anything selected then we want to search on every change
+  // or if we have only one in the results because that is autoselected and if we don't refetch then the
+  // component will get stuck
+  if (isLiveUpdate.value &&
+    (
+      (selectedValue.value === null || selectedValue.value === undefined) ||
+      cleanedData.value.filter(item => item.id !== 'add-entry').length === 1
+    )
+  ) {
     fetchData(searchValue);
   }
+
 }, 500);
 
 const showAddEntry = computed(() => !!props.field.createOnFlyConfig);

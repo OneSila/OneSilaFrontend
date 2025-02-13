@@ -83,14 +83,21 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
    {
       type: FieldType.Boolean,
+      name: 'product',
       strict: true,
       reverse: true,
-      name: 'product',
       addLookup: true,
       lookupType: 'isNull',
       lookupKeys: ['id'],
       label: t('products.eanCodes.labels.isAssigned')
-    },
+   },
+   {
+      type: FieldType.Boolean,
+      name: 'internal',
+      addLookup: true,
+      strict: true,
+      label: t('products.eanCodes.labels.internal')
+   },
   ],
   orders: []
 });

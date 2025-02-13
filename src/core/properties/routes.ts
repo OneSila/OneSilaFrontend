@@ -19,11 +19,6 @@ export const routes = [
     name: 'properties.properties.show',
     component: () => import('./properties/properties-show/PropertiesShowController.vue')
   },
-  // {
-  //   path: '/inventory/inventory/show/:id',
-  //   name: 'inventory.inventory.show',
-  //   component: () => import('./inventory/inventory-show/InventoryShowController.vue')
-  // },
   {
     path: '/properties/property-select-values',
     name: 'properties.values.list',

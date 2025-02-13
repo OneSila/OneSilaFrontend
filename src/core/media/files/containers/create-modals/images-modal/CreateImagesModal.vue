@@ -9,9 +9,10 @@ import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../apollo-client";
-import {createImagesMutation, createMediaProductThroughMutation} from "../../../../../../shared/api/mutations/media.js"
-import {Toast} from "../../../../../../shared/modules/toast";
-import {IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK} from "../../../media";
+import { createImagesMutation, createMediaProductThroughMutation } from "../../../../../../shared/api/mutations/media.js"
+import { Toast } from "../../../../../../shared/modules/toast";
+import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../media";
+import { processGraphQLErrors } from "../../../../../../shared/utils";
 
 const props = defineProps<{ modelValue: boolean; productId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
@@ -76,9 +77,6 @@ const submitImages = async () => {
     variables.push({image: image.file, imageType: image.type});
   });
 
-
-  console.log(variables);
-
   const {data} = await apolloClient.mutate({
     mutation: createImagesMutation,
     variables: { data: variables }
@@ -97,15 +95,18 @@ const submitImages = async () => {
               mutation: createMediaProductThroughMutation,
               variables: { data: variables }
             });
-            console.log('Linking success:', data);
+            Toast.success(t('media.images.create.successfullyCreated'));
           } catch (error) {
+            const validationErrors = processGraphQLErrors(error, t);
+            if (validationErrors['__all__']) {
+              Toast.error(validationErrors['__all__']);
+            }
             console.error('Failed to link video and product:', error);
           }
         }
     }
 
     emit('entries-created');
-    Toast.success(t('media.images.create.successfullyCreated'));
     closeModal();
   }
 

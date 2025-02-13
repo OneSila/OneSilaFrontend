@@ -1405,7 +1405,7 @@
         "autoUpdatePrices": "Auto Update Prices",
         "currencyMatchWithCustomers": "Currency Match with Customers",
         "autoAddProducts": "Auto Add Products",
-        "priceChangePcnt": "Price Change Percentage"
+        "priceChangePcnt": "Price Change Percentage (%)"
       },
       "edit": {
         "title": "Edit Price List"
@@ -1815,6 +1815,7 @@
         "addToFilters": "Add to filters",
         "hasImage": "Has image",
         "isProductType": "Product Type",
+        "requireEanCode": "Require Ean Code",
         "internalName": "Internal Name",
         "valueValidator": "Value Validator"
       },

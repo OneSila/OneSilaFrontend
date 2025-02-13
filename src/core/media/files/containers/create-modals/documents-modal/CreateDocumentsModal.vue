@@ -7,8 +7,9 @@ import { DropZone } from "../../../../../../shared/components/molecules/drop-zon
 import { useI18n } from "vue-i18n";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../apollo-client";
-import {createFilesMutation, createMediaProductThroughMutation} from "../../../../../../shared/api/mutations/media.js"
-import {Toast} from "../../../../../../shared/modules/toast";
+import { createFilesMutation, createMediaProductThroughMutation } from "../../../../../../shared/api/mutations/media.js"
+import { Toast } from "../../../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../../../shared/utils";
 
 const props = defineProps<{ modelValue: boolean; productId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
@@ -81,6 +82,10 @@ const submitImages = async () => {
           });
           console.log('Linking success:', data);
         } catch (error) {
+          const validationErrors = processGraphQLErrors(error, t);
+          if (validationErrors['__all__']) {
+            Toast.error(validationErrors['__all__']);
+          }
           console.error('Failed to link video and product:', error);
         }
       }

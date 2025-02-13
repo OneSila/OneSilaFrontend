@@ -16,9 +16,10 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('properties.properties.labels.isProductType')],
+  headers: [t('properties.properties.labels.isProductType'), t('properties.properties.labels.requireEanCode')],
   fields: [
-    { name: 'productType', type: FieldType.NestedText, keys: ['value'] }
+    { name: 'productType', type: FieldType.NestedText, keys: ['value'] },
+    {name: 'requireEanCode', type: FieldType.Boolean },
   ],
   identifierKey: 'id',
   addActions: true,
@@ -49,6 +50,12 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       name: 'productType',
       type: FieldType.NestedText,
       keys: ['value']
+    },
+    {
+      name: 'requireEanCode',
+      type: FieldType.Boolean,
+      label: t('properties.properties.labels.requireEanCode'),
+      showLabel: true
     },
     {
       type: FieldType.Array,
