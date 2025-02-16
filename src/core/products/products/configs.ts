@@ -243,7 +243,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder'), t('products.products.labels.inspectorStatus')],
+  headers: [t('shared.labels.name'), t('products.products.labels.inspectorStatus'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder')],
   fields: [
     {
       type: FieldType.Text,
