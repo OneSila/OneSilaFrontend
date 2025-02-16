@@ -252,14 +252,14 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       imageField: 'thumbnailUrl'
     },
     {
-      type: FieldType.Badge,
-      name: 'type',
-      badgeMap: getProductTypeBadgeMap(t)
-    },
-    {
       name: 'inspectorStatus',
       type: FieldType.Badge,
       badgeMap: getInspectorStatusBadgeMap(),
+    },
+    {
+      type: FieldType.Badge,
+      name: 'type',
+      badgeMap: getProductTypeBadgeMap(t)
     },
     {
       type: FieldType.Boolean,
