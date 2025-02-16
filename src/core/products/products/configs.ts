@@ -257,17 +257,17 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       badgeMap: getProductTypeBadgeMap(t)
     },
     {
+      name: 'inspectorStatus',
+      type: FieldType.Badge,
+      badgeMap: getInspectorStatusBadgeMap(),
+    },
+    {
       type: FieldType.Boolean,
       name: 'active'
     },
     {
       type: FieldType.Boolean,
       name: 'allowBackorder'
-    },
-    {
-      name: 'inspectorStatus',
-      type: FieldType.Badge,
-      badgeMap: getInspectorStatusBadgeMap(),
     },
   ],
   identifierKey: 'id',
