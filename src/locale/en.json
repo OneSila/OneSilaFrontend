@@ -844,7 +844,7 @@
         "forSale": "For Sale",
         "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
-        "inspectorStatus": "Inspector Status"
+        "inspectorStatus": "Product Readiness"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
