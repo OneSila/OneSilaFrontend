@@ -61,6 +61,7 @@ export const createCompanyInvoiceAddressMutation = gql`
 mutation createCompanyInvoiceAddressMutation($data: InvoiceAddressInput!) {
   createInvoiceAddress(data: $data) {
     id
+    fullAddress
     isInvoiceAddress
     isShippingAddress
     address1

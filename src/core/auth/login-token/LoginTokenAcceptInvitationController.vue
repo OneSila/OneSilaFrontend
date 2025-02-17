@@ -13,12 +13,13 @@ import polygonObject from '../../../assets/images/auth/polygon-object.svg';
 import recoverAccount from '../../../assets/images/auth/recover-account.svg';
 import Image from "../../../shared/components/atoms/image/Image.vue";
 import AuthTemplate from "../AuthTemplate.vue";
-import { injectAuth, refreshUser } from '../../../shared/modules/auth';
+import {injectAuth, refreshUser, setAuthChangingState} from '../../../shared/modules/auth';
 import { authenticateTokenMutation } from '../../../shared/api/mutations/auth.js';
 import apolloClient from '../../../../apollo-client';
 
 import { useI18n } from 'vue-i18n';
 import { useRouter, useRoute } from 'vue-router';
+import {OnboardingStatus} from "../../../shared/utils/constants";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -28,14 +29,12 @@ const auth = injectAuth();
 const errors: Ref<string[]> = ref([]);
 const passwordSet = ref(false);
 
-const handlePasswordSet = () => {
+const handlePasswordSet = async () => {
   passwordSet.value = true;
+  await authentificateUserByToken(false);
 }
 
-const executeMutation = async () => {
-  if (auth.user.active) {
-    return
-  }
+const authentificateUserByToken = async (refreshFrontendUser: boolean = true) => {
 
   try {
     const { data } = await apolloClient.mutate({
@@ -45,17 +44,20 @@ const executeMutation = async () => {
 
     if (data && data.authenticateToken) {
 
-      const user = data.authenticateToken;
-      refreshUser(auth, {
-        username: user.username,
-        language: user.language,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        onboardingStatus: user.onboardingStatus,
-        company: user.multiTenantCompany,
-        companyOwner: user.isMultiTenantCompanyOwner,
-        active: passwordSet.value
-      });
+      if (refreshFrontendUser && !auth.user.active) {
+        const user = data.authenticateToken;
+        refreshUser(auth, {
+          username: user.username,
+          language: user.language,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          onboardingStatus: user.onboardingStatus,
+          company: user.multiTenantCompany,
+          companyOwner: user.isMultiTenantCompanyOwner,
+          active: passwordSet.value
+        });
+        setAuthChangingState(auth, false);
+      }
 
     } else {
       throw new Error(t('auth.recover.tokenFailed'));
@@ -73,7 +75,10 @@ const executeMutation = async () => {
   }
 };
 
-onMounted(executeMutation);
+onMounted(() => {
+  authentificateUserByToken();
+});
+
 
 </script>
 

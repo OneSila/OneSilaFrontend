@@ -67,11 +67,16 @@ export const purchaseOrdersQuery = gql`
           status
           totalValue
           country
+          orderReference
+          createdAt
+          internalContact {
+            id
+            fullName
+          }
           supplier {
             id
             name
           }
-          orderReference
           invoiceAddress {
             id
             address1
@@ -99,9 +104,14 @@ export const getPurchaseOrderQuery = gql`
     purchaseOrder(id: $id) {
       id
       status
-      totalValue
+      internalContact {
+       id
+       fullName
+      }
       currency  {
+        id
         symbol
+        isoCode
       }
       supplier {
         id
@@ -118,7 +128,7 @@ export const getPurchaseOrderQuery = gql`
       }
       purchaseorderitemSet {
         id
-        item {
+        product {
           id
         }
       } 
@@ -136,7 +146,7 @@ export const purchaseOrderItemsQuery = gql`
             id
             orderReference
           }
-          item {
+          product {
             id
             proxyId
             name
@@ -166,7 +176,7 @@ export const getPurchaseOrderItemQuery = gql`
         id
         orderReference
       }
-      item {
+      product {
         id
         name
       }
@@ -196,7 +206,7 @@ export const getSupplierPriceQuery = gql`
 `;
 
 export const supplierPricesQuery = gql`
-  query SupplierPrices($first: Int, $last: Int, $after: String, $before: String, $order: SupplierPricesOrder, $filter: SupplierPricesFilter) {
+  query SupplierPrices($first: Int, $last: Int, $after: String, $before: String, $order: SupplierPriceOrder, $filter: SupplierPriceFilter) {
     supplierPrices(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {

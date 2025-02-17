@@ -11,6 +11,7 @@ query Properties($first: Int, $last: Int, $after: String, $before: String, $orde
           type
           isPublicInformation
           addToFilters
+          hasImage
           isProductType
           internalName
           valueValidator
@@ -36,6 +37,7 @@ export const getPropertyQuery = gql`
       type
       isPublicInformation
       addToFilters
+      hasImage
       isProductType
       internalName
       valueValidator
@@ -88,6 +90,10 @@ query PropertySelectValues($first: Int, $last: Int, $after: String, $before: Str
             id
             name
           }
+        image {
+           id
+           imageWebUrl
+         }
         }
         cursor
       }
@@ -110,6 +116,7 @@ export const getPropertySelectValueQuery = gql`
       property {
         id
         name
+        hasImage
       }
       image {
        id
@@ -282,6 +289,34 @@ export const getPropertySelectValueTranslationQuery = gql`
   }
 `;
 
+export const productPropertiesRulesListingQuery = gql`
+query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleOrder, $filter: ProductPropertiesRuleFilter) {
+    productPropertiesRules(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          requireEanCode
+          productType {
+            id
+            value
+            property {
+              id
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const productPropertiesRulesQuery = gql`
 query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleOrder, $filter: ProductPropertiesRuleFilter) {
     productPropertiesRules(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
@@ -298,6 +333,7 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
               type
             }
           }
+          requireEanCode
           productType {
             id
             value
@@ -323,6 +359,7 @@ export const getProductPropertiesRuleQuery = gql`
   query getProductPropertiesRule($id: GlobalID!) {
     productPropertiesRule(id: $id) {
       id
+      requireEanCode
       productType {
         value
         id

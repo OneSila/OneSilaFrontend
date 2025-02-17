@@ -1,17 +1,16 @@
 <script setup lang="ts">
 
 import {ref, onMounted, watch, Ref} from 'vue';
-import {BaseProduct, Product, ProductPropertyValue} from "../../../../../configs";
-import {baseProductTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
+import {ProductPropertyValue} from "../../../../../configs";
+import { FieldType, flagMapping, PropertyTypes } from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {propertySelectValuesQuery} from "../../../../../../../../shared/api/queries/properties.js";
 import {TextInput} from "../../../../../../../../shared/components/atoms/input-text";
 import {TextEditor} from "../../../../../../../../shared/components/atoms/input-text-editor";
-import {Checkbox} from "../../../../../../../../shared/components/atoms/checkbox";
+import {Toggle} from "../../../../../../../../shared/components/atoms/toggle";
 import {DateInput} from "../../../../../../../../shared/components/atoms/input-date";
 import DateTimeInput from "../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
 import {QueryFormField} from "../../../../../../../../shared/components/organisms/general-form/formConfig";
-import {PrimaryButton} from "../../../../../../../../shared/components/atoms/button-primary";
 import {useI18n} from "vue-i18n";
 import apolloClient from "../../../../../../../../../apollo-client";
 import {
@@ -376,7 +375,7 @@ watch(props.value.translation, setTranslatedValues)
         v-model="val"
         class="h-32"
       />
-      <Checkbox v-if="value.property.type === PropertyTypes.BOOLEAN" v-model="val" />
+      <Toggle v-if="value.property.type === PropertyTypes.BOOLEAN" v-model="val" />
       <DateInput v-if="value.property.type === PropertyTypes.DATE" v-model="val" />
       <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
     </div>

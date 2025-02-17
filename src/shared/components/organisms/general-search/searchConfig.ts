@@ -14,7 +14,7 @@ export interface BaseFilter {
   disabled?: boolean | null;
   addLookup?: boolean;
   lookupKeys?: string[];
-  lookupType?: string;
+  lookupType?: string | null;
 }
 
 export interface BooleanFilter extends BaseFilter {

@@ -13,11 +13,12 @@ import { ApolloAlertMutation } from "../../../../../../../../../shared/component
 import {deleteMediaProductThroughMutation, updateMediaProductThroughMutation} from "../../../../../../../../../shared/api/mutations/media.js";
 import { VueDraggableNext } from 'vue-draggable-next';
 import apolloClient from "../../../../../../../../../../apollo-client";
+import {Toggle} from "../../../../../../../../../shared/components/atoms/toggle";
 
 type Media = {
   id: string;
   type: string;
-  imageWebUrl: string;
+  onesilaThumbnailUrl: string;
   updatedAt: Date;
   owner: {
     firstName: string;
@@ -27,6 +28,7 @@ type Media = {
 
 type Item = {
   id: string;
+  isMainImage: boolean;
   media: Media
 }
 
@@ -35,6 +37,7 @@ const props = defineProps<{ product: Product, refetchNeeded: boolean}>();
 const emit = defineEmits(['refetched', 'update-ids']);
 const viewType = ref('gallery');
 const items: Ref<Item[]> = ref([]);
+const isMainImageMap = ref({});
 
 
 onMounted(() => {
@@ -70,6 +73,14 @@ const fetchData = async () => {
 
   if (data) {
     items.value = extractNodes(data.mediaProductThroughs);
+
+    // Reset isMainImageMap
+    isMainImageMap.value = {};
+
+    items.value.forEach(item => {
+      isMainImageMap.value[item.id] = item.isMainImage;
+    });
+
     emit('update-ids', extractVariationIds(data.mediaProductThroughs))
   }
 
@@ -103,6 +114,23 @@ const handleEnd = async (event) => {
     const results = await Promise.allSettled(updatePromises);
     fetchData();
 };
+
+const handleMainImageChange = async (changedItem: Item) => {
+
+  const { data } = await apolloClient.mutate({
+    mutation: updateMediaProductThroughMutation,
+    variables: {
+      data: {
+        id: changedItem.id,
+        isMainImage: isMainImageMap.value[changedItem.id]
+      }
+    }
+  });
+
+  fetchData();
+};
+
+
 
 </script>
 
@@ -149,13 +177,20 @@ const handleEnd = async (event) => {
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ getFileSize(item.media) }}</td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ item.media.owner.firstName }} {{ item.media.owner.lastName }}</td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
-                                <ApolloAlertMutation :mutation="deleteMediaProductThroughMutation" :mutation-variables="{id: item.id}" @done="handleDeleteSuccess">
-                                  <template v-slot="{ loading, confirmAndMutate }">
-                                    <Button @click="confirmAndMutate">
-                                      <Icon name="trash" />
-                                    </Button>
-                                  </template>
-                                </ApolloAlertMutation>
+                                <Flex>
+                                  <FlexCell v-if="item.media.type === TYPE_IMAGE" class="mr-2">
+                                    <Toggle v-model="isMainImageMap[item.id]" @@update:model-value="handleMainImageChange(item)" />
+                                  </FlexCell>
+                                  <FlexCell>
+                                    <ApolloAlertMutation :mutation="deleteMediaProductThroughMutation" :mutation-variables="{id: item.id}" @done="handleDeleteSuccess">
+                                      <template v-slot="{ loading, confirmAndMutate }">
+                                        <Button @click="confirmAndMutate">
+                                          <Icon name="trash" />
+                                        </Button>
+                                      </template>
+                                    </ApolloAlertMutation>
+                                  </FlexCell>
+                                </Flex>
                               </td>
                             </tr>
                         </VueDraggableNext>
@@ -168,7 +203,7 @@ const handleEnd = async (event) => {
             <div v-for="item in items" :key="item.media.id" class="file-entry relative">
                 <template v-if="item.media.type === TYPE_IMAGE">
                   <Link :path="getPath(item.media)">
-                    <Image :source="item.media.imageWebUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
+                    <Image :source="item.media.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
                   </Link>
                 </template>
                 <template v-else-if="item.media.type === TYPE_VIDEO">
@@ -189,11 +224,14 @@ const handleEnd = async (event) => {
                     <FlexCell grow center>
                       {{ getFileName(item.media) }} {{ getFileSize(item.media) }}
                     </FlexCell>
+                    <FlexCell v-if="item.media.type === TYPE_IMAGE" center class="mr-2">
+                      <Toggle v-model="isMainImageMap[item.id]" @update:model-value="handleMainImageChange(item)" />
+                    </FlexCell>
                     <FlexCell center>
                       <ApolloAlertMutation :mutation="deleteMediaProductThroughMutation" :mutation-variables="{id: item.id}" @done="handleDeleteSuccess">
                         <template v-slot="{ loading, confirmAndMutate }">
                           <Button @click="confirmAndMutate">
-                            <Icon name="trash" />
+                            <Icon size="xl" name="trash" />
                           </Button>
                         </template>
                       </ApolloAlertMutation>

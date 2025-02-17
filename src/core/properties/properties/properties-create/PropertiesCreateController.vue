@@ -11,7 +11,7 @@ import {Wizard} from "../../../../shared/components/molecules/wizard";
 import {Label} from "../../../../shared/components/atoms/label";
 import {TextInput} from "../../../../shared/components/atoms/input-text";
 import {Accordion} from "../../../../shared/components/atoms/accordion";
-import {Checkbox} from "../../../../shared/components/atoms/checkbox";
+import {Toggle} from "../../../../shared/components/atoms/toggle";
 import {OptionSelector} from "../../../../shared/components/molecules/option-selector";
 import {Selector} from "../../../../shared/components/atoms/selector";
 import {TextEditor} from "../../../../shared/components/atoms/input-text-editor";
@@ -34,6 +34,7 @@ interface PropertyForm {
   type: string,
   isPublicInformation: boolean,
   addToFilters: boolean,
+  hasImage: boolean,
 
 }
 
@@ -54,6 +55,7 @@ const form: PropertyForm = reactive({
   type: '',
   isPublicInformation: true,
   addToFilters: false,
+  hasImage: false,
 });
 
 const wizardSteps = computed(() => {
@@ -199,7 +201,7 @@ const multiSelectorPreviewExamples = [
                               </FlexCell>
                               <FlexCell class="ml-2" center>
                                 <div class="field-checkbox">
-                                  <Checkbox v-model="form.isPublicInformation" />
+                                  <Toggle v-model="form.isPublicInformation" />
                                 </div>
                               </FlexCell>
                             </Flex>
@@ -214,11 +216,26 @@ const multiSelectorPreviewExamples = [
                               </FlexCell>
                               <FlexCell class="ml-2" center>
                                 <div class="field-checkbox">
-                                  <Checkbox v-model="form.addToFilters" />
+                                  <Toggle v-model="form.addToFilters" />
                                 </div>
                               </FlexCell>
                             </Flex>
                             <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('properties.properties.help.addToFilters') }}</p>
+                          </div>
+                        </FlexCell>
+                        <FlexCell>
+                          <div class="col-span-full">
+                            <Flex>
+                              <FlexCell center>
+                                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.properties.labels.hasImage') }}</label>
+                              </FlexCell>
+                              <FlexCell class="ml-2" center>
+                                <div class="field-checkbox">
+                                  <Toggle v-model="form.hasImage" />
+                                </div>
+                              </FlexCell>
+                            </Flex>
+                            <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('properties.properties.help.hasImage') }}</p>
                           </div>
                         </FlexCell>
                       </Flex>
@@ -257,7 +274,7 @@ const multiSelectorPreviewExamples = [
                   <TextEditor v-model="preview.description" class="h-32"/>
                 </div>
                 <div v-if="form.type == PropertyTypes.BOOLEAN">
-                  <Checkbox v-model="preview.boolean" />
+                  <Toggle v-model="preview.boolean" />
                 </div>
                 <div v-if="form.type == PropertyTypes.DATE">
                   <DateInput v-model="preview.date" />

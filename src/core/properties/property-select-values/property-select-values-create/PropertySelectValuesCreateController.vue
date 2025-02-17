@@ -1,43 +1,58 @@
 <script setup lang="ts">
-
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
-import { createPropertySelectValueMutation } from "../../../../shared/api/mutations/properties.js"
+import { FormType, FormConfig } from '../../../../shared/components/organisms/general-form/formConfig';
+import { createPropertySelectValueMutation } from "../../../../shared/api/mutations/properties.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
-import {useRoute} from "vue-router";
-import {ref} from "vue";
+import apolloClient from "../../../../../apollo-client";
+import { getPropertyQuery } from "../../../../shared/api/queries/properties.js";
 
 const { t } = useI18n();
 const route = useRoute();
+const formConfig = ref<FormConfig | null>(null);
 
-const tabItems = ref();
+onMounted(async () => {
+  let addImage = false;
+  const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
 
-const formConfig = {
-  ...baseFormConfigConstructor(
+  // If we have a propertyId, query the property to check if it "hasImage".
+  if (propertyId) {
+    const { data } = await apolloClient.query({
+      query: getPropertyQuery,
+      variables: { id: propertyId }
+    });
+
+    const property = data.property;
+    addImage = Boolean(property && property.hasImage);
+  }
+
+  formConfig.value = baseFormConfigConstructor(
     t,
     FormType.CREATE,
     createPropertySelectValueMutation,
     'createPropertySelectValue',
-      route.query.propertyId ? route.query.propertyId.toString() : null
-  ),
-};
-
+    propertyId,
+    addImage
+  );
+});
 </script>
 
 <template>
   <GeneralTemplate>
-
     <template v-slot:breadcrumbs>
       <Breadcrumbs
-          :links="[{ path: { name: 'properties.values.list' }, name: t('properties.values.title') },
-                   { path: { name: 'properties.values.create' }, name: t('properties.values.create.title') }]" />
+        :links="[
+          { path: { name: 'properties.values.list' }, name: t('properties.values.title') },
+          { path: { name: 'properties.values.create' }, name: t('properties.values.create.title') }
+        ]"
+      />
     </template>
-
-   <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" />
-   </template>
+    <template v-slot:content>
+      <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" />
+    </template>
   </GeneralTemplate>
 </template>

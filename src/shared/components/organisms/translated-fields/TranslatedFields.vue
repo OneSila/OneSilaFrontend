@@ -88,8 +88,6 @@ const setValues = async () => {
     const placeholders = Array.isArray(props.placeholder) ? props.placeholder : [props.placeholder];
 
     translatableFields.value = createFields(languages, fieldNames, labels, placeholders);
-
-
   }
 
    // Fetch translations

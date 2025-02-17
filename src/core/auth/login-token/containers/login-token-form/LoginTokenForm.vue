@@ -9,6 +9,8 @@ import TextInputPrepend from "../../../../../shared/components/atoms/input-text-
 import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import { Toast } from "../../../../../shared/modules/toast";
 import {displayApolloError} from "../../../../../shared/utils";
+import {Checkbox} from "../../../../../shared/components/atoms/checkbox";
+import {Link} from "../../../../../shared/components/atoms/link";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -18,20 +20,21 @@ const emit = defineEmits(['password-set']);
 const loading = ref(false);
 const form = reactive({
   password: '',
-  confirmPassword: ''
+  confirmPassword: '',
+  agreedTerms: false,
 });
 
 const isFormValid = computed(() => {
-  return form.password && form.password === form.confirmPassword;
+  return form.password && form.password === form.confirmPassword && form.agreedTerms;
 });
 
 const onAcceptInvitationCompleted = async (response) => {
 
   loading.value = true;
   if (response.data.acceptUserInvitation) {
-      const user = response.data.acceptUserInvitation;
+    const user = response.data.acceptUserInvitation;
 
-    refreshUser(auth, {
+    await refreshUser(auth, {
         username: user.username,
         language: user.language,
         firstName: user.firstName,
@@ -43,7 +46,7 @@ const onAcceptInvitationCompleted = async (response) => {
       });
 
     loading.value = false
-    emit('password-set');
+    await emit('password-set');
     router.push({ name: 'dashboard' });
   } else {
    loading.value = false
@@ -59,12 +62,23 @@ const onError = (error) => {
 
 <template>
   <div v-if="!loading">
-    <TextInputPrepend id="password" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
+    <TextInputPrepend id="password" class="mb-2" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>
-    <TextInputPrepend id="confirmPassword" v-model="form.confirmPassword" :label="t('auth.register.labels.confirmPassword')" :placeholder="t('auth.register.placeholders.confirmPassword')" type="password">
+    <TextInputPrepend id="confirmPassword" class="mb-2" v-model="form.confirmPassword" :label="t('auth.register.labels.confirmPassword')" :placeholder="t('auth.register.placeholders.confirmPassword')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>
+    <Checkbox v-model="form.agreedTerms">
+      {{ t('auth.register.agreeTerms') }}
+      <Link
+        class="text-primary underline hover:text-black dark:hover:text-white"
+        :path="'https://www.onesila.com/terms-conditions-onesila/'"
+        target="_blank"
+        external
+      >
+        {{ t('auth.register.termsAndConditions') }}
+      </Link>
+    </Checkbox>
 
     <ApolloMutation :mutation="acceptUserInvitationMutation" :variables="{ password: form.password, language: locale }" @done="onAcceptInvitationCompleted" @error="onError">
       <template v-slot="{ mutate, loading, error }">

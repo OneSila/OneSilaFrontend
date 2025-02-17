@@ -27,6 +27,7 @@ export const updatePropertyMutation = gql`
       type
       isPublicInformation
       addToFilters
+      hasImage
       isProductType
       internalName
       valueValidator
@@ -321,6 +322,7 @@ export const createProductPropertiesRuleMutation = gql`
   mutation createProductPropertiesRule($data: ProductPropertiesRuleInput!) {
     createProductPropertiesRule(data: $data) {
       id
+      requireEanCode
       productType {
         id
         value
@@ -333,6 +335,7 @@ export const completeCreateProductPropertiesRuleMutation = gql`
   mutation completeCreateProductPropertiesRule($data: ProductPropertiesRuleInput!) {
     completeCreateProductPropertiesRule(data: $data) {
       id
+      requireEanCode
       productType {
         id
         value
@@ -354,6 +357,7 @@ export const createProductPropertiesRulesMutation = gql`
   mutation createProductPropertiesRules($data: [ProductPropertiesRuleInput!]!) {
     createProductPropertiesRules(data: $data) {
       id
+      requireEanCode
       productType {
         id
         value
@@ -366,6 +370,7 @@ export const updateProductPropertiesRuleMutation = gql`
   mutation updateProductPropertiesRule($data: ProductPropertiesRulePartialInput!) {
     updateProductPropertiesRule(data: $data) {
       id
+      requireEanCode
       productType {
         id
         value
@@ -378,6 +383,7 @@ export const completeUpdateProductPropertiesRuleMutation = gql`
   mutation completeUpdateProductPropertiesRule($data: ProductPropertiesRulePartialInput!) {
     completeUpdateProductPropertiesRule(data: $data) {
       id
+      requireEanCode
       productType {
         id
         value

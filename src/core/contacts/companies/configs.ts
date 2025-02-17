@@ -145,18 +145,21 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'isSupplier',
       label: t('contacts.companies.labels.supplier')
     },
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'isCustomer',
       label: t('contacts.companies.labels.customer')
     },
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'isInfluencer',
       label: t('contacts.companies.labels.influencer')

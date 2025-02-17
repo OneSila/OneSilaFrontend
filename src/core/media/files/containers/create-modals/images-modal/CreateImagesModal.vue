@@ -9,9 +9,10 @@ import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../apollo-client";
-import {createImagesMutation, createMediaProductThroughMutation} from "../../../../../../shared/api/mutations/media.js"
-import {Toast} from "../../../../../../shared/modules/toast";
-import {IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK} from "../../../media";
+import { createImagesMutation, createMediaProductThroughMutation } from "../../../../../../shared/api/mutations/media.js"
+import { Toast } from "../../../../../../shared/modules/toast";
+import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../media";
+import { processGraphQLErrors } from "../../../../../../shared/utils";
 
 const props = defineProps<{ modelValue: boolean; productId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
@@ -78,7 +79,7 @@ const submitImages = async () => {
 
   const {data} = await apolloClient.mutate({
     mutation: createImagesMutation,
-    variables: {data: variables}
+    variables: { data: variables }
 
   });
 
@@ -94,15 +95,18 @@ const submitImages = async () => {
               mutation: createMediaProductThroughMutation,
               variables: { data: variables }
             });
-            console.log('Linking success:', data);
+            Toast.success(t('media.images.create.successfullyCreated'));
           } catch (error) {
+            const validationErrors = processGraphQLErrors(error, t);
+            if (validationErrors['__all__']) {
+              Toast.error(validationErrors['__all__']);
+            }
             console.error('Failed to link video and product:', error);
           }
         }
     }
 
     emit('entries-created');
-    Toast.success(t('media.images.create.successfullyCreated'));
     closeModal();
   }
 
@@ -122,7 +126,9 @@ const submitImages = async () => {
           <div v-for="(image, index) in images" :key="index" class="file-entry relative w-full h-full border border-gray-300 p-2 rounded-lg">
             <Flex vertical class="w-full">
               <FlexCell>
-                <Image :source="image.url" alt="File thumbnail" class="w-full h-48" />
+                <div class="w-full h-48 overflow-hidden flex justify-center items-center">
+                  <Image :source="image.url" alt="File thumbnail" class="h-full object-contain rounded-md" />
+                </div>
               </FlexCell>
               <FlexCell>
                 <Flex between class="mt-2">

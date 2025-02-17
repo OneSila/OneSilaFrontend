@@ -34,6 +34,10 @@ export const purchaseOrderSubscription = gql`
         name
       }
       orderReference
+      internalContact {
+       id
+       fullName
+      }
       invoiceAddress {
         id
         address1
@@ -64,7 +68,7 @@ export const purchaseOrderItemSubscription = gql`
         id
         orderReference
       }
-      item {
+      product {
         id
         name
       }

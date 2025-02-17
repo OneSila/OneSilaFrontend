@@ -146,7 +146,9 @@
         "somethingWentWrong": "Er ging iets mis!",
         "deletionFailed": "Verwijderen mislukt.  Neem contact op met Support.",
         "clipboardSuccess": "Text succesvol gekopieerd",
-        "tooLongError": "{fieldName} is te lang.  Reduceer naar maximum {max} tekens."
+        "tooLongError": "{fieldName} is te lang.  Reduceer naar maximum {max} tekens.",
+        "clipboardFail": "",
+        "errorOccurred": ""
       }
     },
     "button": {
@@ -172,7 +174,9 @@
       "create": "Aanmaken",
       "skip": "Overslaan",
       "generate": "Genereren",
-      "change": "Wijzig"
+      "change": "Wijzig",
+      "fix": "Fixen",
+      "downloadConfirmation": ""
     },
     "labels": {
       "createdAt": "Gecreëerd op",
@@ -208,7 +212,8 @@
       "dateRange": "Periode",
       "image": "Afbeelding",
       "preview": "Preview",
-      "discount": "Korting"
+      "discount": "Korting",
+      "discountPrice": ""
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"
@@ -238,13 +243,15 @@
           "placeholder": "Telefoonnummer",
           "example": "Voorbeeld:"
         }
-      }
+      },
+      "productionTime": ""
     },
     "tabs": {
       "general": "Algemeen",
       "items": "Artikelen",
       "translations": "Vertalingen",
-      "advanced": "Geavanceerd"
+      "advanced": "Geavanceerd",
+      "shippings": ""
     },
     "dropZone": {
       "multipleDraggingInstruction": "Sleep de bestanden hierheen, of klik uploaden",
@@ -347,7 +354,9 @@
             "invitationAccepted": "Uitnodiging geaccepteerd"
           }
         }
-      }
+      },
+      "agreeTerms": "",
+      "termsAndConditions": ""
     },
     "recover": {
       "header": "Account herstellen",
@@ -612,23 +621,84 @@
         "purchasingOrders": "Aankopen",
         "properties": "Eigenschappen",
         "hsCodes": "HS Codes",
-        "eanCodes": "EAN Codes"
+        "eanCodes": "EAN Codes",
+        "websites": "Verkoopskanalen",
+        "inventoryMovements": ""
       },
       "inspector": {
         "labels": {
-          "missingInfo": "Ontbrekende Informatie"
+          "missingInfo": "Ontbrekende Informatie",
+          "perfect": "Perfect",
+          "missingOptionalInfo": "Ontbrekende optionele informatie",
+          "noMissingInfo": "Alle info is aanwezig"
+        },
+        "errors": {
+          "101": "afbeeldingen ontbreken",
+          "102": "Standaard prijs ontbreekt",
+          "103": "Er zijn materialen inactief",
+          "104": "Er zijn onderdelen inactief",
+          "105": "Verplichte variaties ontbreken",
+          "106": "Bundle items ontbreken",
+          "107": "Geen materialen toegewezen",
+          "108": "Leveranciersproduct ontbreekt",
+          "109": "EAN Code ontbreekt",
+          "110": "Product type niet toegewezen",
+          "111": "Verplichte eigenschappen niet toegewezen",
+          "112": "Optionele eigenschappen niet toegewezen",
+          "113": "Leveranciersproduct ontbreekt prijzen",
+          "114": "Geen stock toegewezen",
+          "115": "Geen lead-time bekend indien zonder voorraad",
+          "116": "Product is toegewezen aan een prijslijst zonder prijs",
+          "117": "Niet alle variaties hebben hetzelfde product type",
+          "118": "Sommige items hebben niet hetzelfde product type",
+          "119": "Niet alle materialen hebben hetzelfde product type",
+          "120": "Niet alle bundle items hebben alle details ingevuld staan",
+          "121": "Niet alle variaties hebben alle verplichte informatie ingevuld staan",
+          "122": "Niet alle materialen hebben alle verplichte info ingevuld staan",
+          "123": "Configureerbaar product heeft duplicate variaties",
+          "124": "Configureerbaar product kon geen product eigenschap regel vinden"
+        },
+        "help": {
+          "101": "Voeg op minimaal één afbeelding toe",
+          "102": "Zorg ervoor dat het product een geldige standaard prijs heeft in de basis munt.",
+          "103": "Zorg ervoor dat alle materialen voor het produceerbare product actief zijn.",
+          "104": "Zorg ervoor dat alle items in het bundle product actief zijn",
+          "105": "Voeg ten minste één variatie toe aan het configureerbare product",
+          "106": "Voeg items toe aan het bundel product",
+          "107": "Voeg materialen toe aan het produceerbare product",
+          "108": "Voeg leveranciersproducten toe aan het product",
+          "109": "Voeg een EAN Code toe",
+          "110": "Voeg een product type toe",
+          "111": "Zorg ervoor dat alle verplichte eigenschappen zijn toegewezen",
+          "112": "Zorg ervoor dat alle optionele eigenschappen zijn toegewezen",
+          "113": "Voer een prijs in voor het leveranciersproduct",
+          "114": "Wijs ofwel stock toe, of markeer het product als backorder toegestaan",
+          "115": "",
+          "116": "",
+          "117": "Zorg ervoor dat alle variaties hetzelfde product type hebben.",
+          "118": "Zorg ervoor dat alle items hetzelfde product type hebben",
+          "119": "",
+          "120": "Zorg ervoor dat alle variaties de verplichtte info ingevuld zijn",
+          "121": "",
+          "122": "",
+          "123": "",
+          "124": ""
+        },
+        "alert": {
+          "refreshSuccess": "Inspector is ververst"
         }
       },
       "labels": {
         "type": {
           "title": "Type",
           "choices": {
-            "configurable": "Configureerbaar Product",
+            "umbrella": "Configureerbaar Product",
             "bundle": "Bundel Product",
             "variation": "Simpel Product",
             "dropship": "Dropship Product",
             "manufacturable": "Produceerbaar Product",
-            "supplier": "Leverancier Product"
+            "supplier": "Leverancier Product",
+            "configurable": "Configureerbaar Product"
           }
         },
         "vatRate": "BTW Tarief",
@@ -636,11 +706,13 @@
         "sku": "SKU",
         "productionTime": "Productie tijd",
         "forSale": "Verkoopbaar",
-        "allowBackorder": "Backorder toestaan"
+        "allowBackorder": "Backorder toestaan",
+        "inspectorStatus": ""
       },
       "placeholders": {
         "vatRate": "Voeg BTW Tarief toe",
-        "productionTime": "Tijd in seconden"
+        "productionTime": "Tijd in seconden",
+        "salesChannelView": "Verkoopskanaal toevoegen"
       },
       "create": {
         "title": "Product aanmaken",
@@ -749,7 +821,8 @@
       },
       "labels": {
         "parent": "Locatie",
-        "precise": "Precieze locatie"
+        "precise": "Precieze locatie",
+        "isInternalLocation": "Interne locatie"
       }
     },
     "inventory": {
@@ -758,7 +831,8 @@
         "movements": "Voorraad bewegingen",
         "salable": "Verkoopbare Stock",
         "physical": "Fysieke Stock",
-        "reserved": "Gereserveerde Stock"
+        "reserved": "Gereserveerde Stock",
+        "awaitInventory": "Wachtende op stock"
       },
       "create": {
         "title": "Voorraad toevoegen"
@@ -769,7 +843,8 @@
       "help": {
         "salable": "Items te koop",
         "physical": "Fysiek op stock.  Zowel verkoopbaar als gereserveerd.",
-        "reserved": "Verkochte, maar niet verzonden items."
+        "reserved": "Verkochte, maar niet verzonden items.",
+        "awaitInventory": "Item is in bestelling"
       }
     },
     "leadTimeSettings": {
@@ -782,6 +857,202 @@
       },
       "show": {
         "title": "Lead time instellingen"
+      }
+    },
+    "packages": {
+      "title": "",
+      "create": {
+        "title": "",
+        "virtual": {
+          "title": "",
+          "description": "",
+          "selectPackageType": "",
+          "actions": {
+            "start": "",
+            "arrived": "",
+            "addAll": "",
+            "quantityInputPlaceholder": "",
+            "addQuantity": "",
+            "packageFull": "",
+            "finish": ""
+          },
+          "instructions": {
+            "prepare": {
+              "title": "",
+              "description": ""
+            },
+            "move": {
+              "title": "",
+              "description": ""
+            },
+            "collect": {
+              "title": "",
+              "description": "",
+              "general": {
+                "addAll": "",
+                "packageFull": ""
+              },
+              "extra": {
+                "partialAdd": ""
+              }
+            },
+            "confirm": {
+              "title": "",
+              "description": ""
+            }
+          },
+          "virtualTour": {
+            "itemsToShip": "",
+            "packages": "",
+            "noPackagesYet": "",
+            "prepare": "",
+            "collect": "",
+            "confirm": "",
+            "packageName": ""
+          },
+          "error": {
+            "cannotRemoveWithItems": "",
+            "noStockForProduct": "",
+            "inventoryMovementFailed": "",
+            "quantityExceedsAvailable": ""
+          },
+          "packageType": {
+            "error": ""
+          },
+          "packageFull": {
+            "error": ""
+          },
+          "packageSave": {
+            "success": "",
+            "error": ""
+          },
+          "confirmationSuccess": ""
+        },
+        "manual": {
+          "button": {
+            "add": "",
+            "remove": ""
+          },
+          "title": "",
+          "description": "",
+          "createStep": {
+            "title": "",
+            "description": ""
+          },
+          "assignItemsStep": {
+            "title": "",
+            "description": "",
+            "noItemsToShip": "",
+            "emptyPackage": "",
+            "packageName": "",
+            "success": "",
+            "error": {
+              "noItemsInPackage": "",
+              "cannotRemoveWithItems": "",
+              "packageCreationFailed": "",
+              "inventoryMovementFailed": ""
+            },
+            "modal": {
+              "title": "",
+              "quantity": "",
+              "package": ""
+            }
+          }
+        }
+      },
+      "edit": {
+        "title": ""
+      },
+      "show": {
+        "title": ""
+      },
+      "type": {
+        "box": "",
+        "pallet": ""
+      },
+      "status": {
+        "new": "",
+        "inProgress": "",
+        "packed": "",
+        "dispatched": ""
+      },
+      "placeholders": {
+        "trackingCode": "",
+        "trackingLink": ""
+      },
+      "labels": {
+        "trackingCode": "",
+        "trackingLink": "",
+        "type": "",
+        "status": "",
+        "shippingLabel": "",
+        "customsDocument": ""
+      }
+    },
+    "shipments": {
+      "title": "",
+      "button": {
+        "downloadPickingList": "",
+        "printPickingList": ""
+      },
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "show": {
+        "title": ""
+      },
+      "labels": {
+        "status": "",
+        "fromAddress": "",
+        "toAddress": "",
+        "order": ""
+      },
+      "statuses": {
+        "draft": "",
+        "todo": "",
+        "inProgress": "",
+        "done": "",
+        "cancelled": ""
+      },
+      "tabs": {
+        "general": "",
+        "items": "",
+        "packages": ""
+      }
+    },
+    "movements": {
+      "create": {
+        "title": ""
+      },
+      "errors": {
+        "productRequired": "",
+        "quantityRequired": "",
+        "movementFromModelRequired": "",
+        "movementFromIdRequired": "",
+        "movementToModelRequired": "",
+        "movementToIdRequired": ""
+      },
+      "messages": {
+        "createSuccess": "",
+        "createError": ""
+      },
+      "button": {
+        "addFromPurchase": "",
+        "move": "",
+        "getReturn": "",
+        "createMovement": ""
+      },
+      "labels": {
+        "product": "",
+        "quantity": "",
+        "notes": "",
+        "movementFromModel": "",
+        "movementFrom": "",
+        "movementToModel": "",
+        "movementTo": ""
       }
     }
   },
@@ -818,7 +1089,8 @@
             "lost": "Verloren",
             "merged": "Samengevoegd",
             "damaged": "Beschadigd",
-            "void": "Nietig verklaard"
+            "void": "Nietig verklaard",
+            "pendingShippingApproval": ""
           }
         },
         "reasonForSale": {
@@ -889,7 +1161,8 @@
         "rrp": "Voer RRP in"
       },
       "updatedSuccessfully": "Prijs in {currency} upgedate",
-      "createSuccefully": "Prijs voor {currency} is aangemaakt."
+      "createSuccefully": "Prijs voor {currency} is aangemaakt.",
+      "createdSuccessfully": "De prijs is {currency} is aangemaakt"
     },
     "priceLists": {
       "title": "Prijslijsten",
@@ -1004,6 +1277,9 @@
           "priceLists": "Prijslijsten"
         }
       }
+    },
+    "orderReturn": {
+      "title": ""
     }
   },
   "purchasing": {
@@ -1083,7 +1359,8 @@
         },
         "supplier": "Leverancier",
         "orderReference": "Referentie",
-        "totalValue": "Totale waarde"
+        "totalValue": "Totale waarde",
+        "internalContact": "Intern contact"
       },
       "placeholders": {
         "orderReference": "Voer referentie in"
@@ -1107,7 +1384,8 @@
         "owner": "Geüpload door",
         "files": "Bestanden",
         "recentFiles": "Recente Bestanden",
-        "addExistingFiles": "Toevoegen van bestaande media"
+        "addExistingFiles": "Toevoegen van bestaande media",
+        "images": ""
       }
     },
     "images": {
@@ -1165,6 +1443,10 @@
       },
       "delete": {
         "successfullyDeleted": "Documenten verwijderd"
+      },
+      "uploadDocument": "",
+      "show": {
+        "title": ""
       }
     }
   },
@@ -1413,8 +1695,8 @@
         "boolean": "Ja / Neen Keuze",
         "date": "Datum",
         "datetime": "Datum en Tijd",
-        "select": "Enkele Keuze Selectie",
-        "multiselect": "Multiple Choice Selectie"
+        "select": "Enkele keuze",
+        "multiselect": "Meerdere keuzes"
       }
     },
     "values": {

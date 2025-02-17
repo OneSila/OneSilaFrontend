@@ -18,11 +18,16 @@ const getSubmitUrl = (customerId) => {
   return { name: 'sales.priceLists.list' };
 }
 
-const getSubmitAndContinueUrl = (customerId) => {
-  if (customerId) {
-    return { name: 'sales.priceLists.edit', query: { customerId } };
+const getSubmitAndContinueUrl = (customerId, type) => {
+
+  if (type == FormType.CREATE) {
+    return { name: 'sales.priceLists.show' };
+  } else {
+    if (customerId) {
+      return { name: 'sales.priceLists.edit', query: { customerId } };
+    }
+    return { name: 'sales.priceLists.edit' };
   }
-  return { name: 'sales.priceLists.edit' };
 }
 
 const getCustomerField = (customerId, t, type): FormField | null => {
@@ -43,7 +48,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         labelBy: 'name',
         valueBy: 'id',
         query: companiesQuery,
-        queryVariables: { filter: { 'isInternalCompany': false }},
+        queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
         dataKey: 'companies',
         isEdge: true,
         multiple: true,
@@ -150,7 +155,7 @@ export const baseFormConfigConstructor = (
   mutation: mutation,
   mutationKey: mutationKey,
   submitUrl: getSubmitUrl(customerId),
-  submitAndContinueUrl: getSubmitAndContinueUrl(customerId),
+  submitAndContinueUrl: getSubmitAndContinueUrl(customerId, type),
   deleteMutation: deleteSalesPriceListMutation,
   helpSections: [
     {
@@ -196,15 +201,23 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'vatIncluded',
       label: t('sales.priceLists.labels.vatIncluded'),
     },
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'autoUpdatePrices',
       label: t('sales.priceLists.labels.autoUpdatePrices'),
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'currencyMatchWithCustomers',
+      label: t('sales.priceLists.labels.currencyMatchWithCustomers'),
     },
     {
       type: FieldType.Query,
@@ -226,7 +239,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       labelBy: 'name',
       valueBy: 'id',
       query: companiesQuery,
-      queryVariables: { filter: { 'isInternalCompany': false }},
+      queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
       dataKey: 'companies',
       isEdge: true,
       filterable: true,
@@ -240,10 +253,14 @@ const getUrlQueryParams = (customerId) => {
   return customerId ? { customerId: customerId } : undefined;
 }
 export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.prices.labels.discountAmount'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
+  headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.prices.labels.discountPercentage'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
       name: 'name',
+      type: FieldType.Text,
+    },
+    {
+      name: 'priceChangePcnt',
       type: FieldType.Text,
     },
     {
@@ -295,9 +312,15 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       showLabel: true
     },
     {
+      name: 'priceChangePcnt',
+      type: FieldType.Text,
+      label: t('sales.priceLists.labels.priceChangePcnt'),
+      showLabel: true
+    },
+    {
       name: 'discountPcnt',
       type: FieldType.Text,
-      label: t('sales.prices.labels.discountAmount'),
+      label: t('sales.prices.labels.discountPercentage'),
       showLabel: true
     },
     {

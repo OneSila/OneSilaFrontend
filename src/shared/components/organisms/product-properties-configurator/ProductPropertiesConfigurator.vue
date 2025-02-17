@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {ref, computed, onMounted, watch, defineProps, defineEmits, Ref, watchEffect} from 'vue';
-import { useI18n } from 'vue-i18n';
-import { Button } from '../../atoms/button';
-import { Icon } from '../../atoms/icon';
-import { TextInput } from '../../atoms/input-text';
-import { Pagination } from '../../molecules/pagination';
-import { Link } from '../../atoms/link';
+import {useI18n} from 'vue-i18n';
+import {Button} from '../../atoms/button';
+import {Icon} from '../../atoms/icon';
+import {TextInput} from '../../atoms/input-text';
+import {Pagination} from '../../molecules/pagination';
 import debounce from 'lodash.debounce';
 import apolloClient from '../../../../../apollo-client';
 import {getPropertySelectValueQuery, propertiesQuery} from '../../../api/queries/properties.js';
@@ -17,11 +16,11 @@ import {ProductTypeField} from "./containers/product-type-field";
 import {Selector} from "../../atoms/selector";
 import {PreviewView} from "./containers/preview-view";
 import {Accordion} from "../../atoms/accordion";
-import {Checkbox} from "../../atoms/checkbox";
 import {Label} from "../../atoms/label";
 import {useRouter} from "vue-router";
+import {Toggle} from "../../atoms/toggle";
 
-const { t } = useI18n();
+const {t} = useI18n();
 const router = useRouter();
 
 export interface Property {
@@ -34,11 +33,12 @@ export interface Property {
 
 const props = defineProps<{
   productType: { id: string, value: string } | null,
+  requireEanCode: boolean,
   addedProperties: Property[]
 }>();
 
-const emit = defineEmits(['update:addedProperties', 'update:productType']);
-const toAddProperty: Ref<Property| null> = ref(null);
+const emit = defineEmits(['update:addedProperties', 'update:productType', 'update:requireEanCode']);
+const toAddProperty: Ref<Property | null> = ref(null);
 const availableProperties: Ref<Property[]> = ref([]);
 const addedPropertiesRef: Ref<Property[]> = ref(props.addedProperties);
 const localProductType: Ref<{ id: string, value: string } | null> = ref(props.productType);
@@ -52,6 +52,7 @@ const draggingItemId = ref(null);
 const draggingOverItemId = ref(null);
 const limit = ref(10);
 const fetchPaginationData = ref({});
+const rawRequireEanCode = ref(props.requireEanCode);
 
 fetchPaginationData.value['first'] = limit.value;
 
@@ -61,9 +62,9 @@ const fetchData = async () => {
 
   loading.value = true;
   let filters = {
-        id: { "nInList": excludedIds },
-        isProductType: false
-    }
+    NOT: {id: {inList: excludedIds}},
+    isProductType: {exact: false},
+  };
 
   if (search.value.length > 0) {
     filters['search'] = search.value;
@@ -74,7 +75,7 @@ const fetchData = async () => {
     ...fetchPaginationData.value
   };
 
-  const { data } = await apolloClient.query({
+  const {data} = await apolloClient.query({
     query: propertiesQuery,
     variables: variables,
     fetchPolicy: 'network-only'
@@ -139,7 +140,7 @@ const handleAddProperty = async (property) => {
 
 const handlePropertyAdded = async (configType) => {
 
-  if (toAddProperty.value !== null ) {
+  if (toAddProperty.value !== null) {
     const toAdd: Property = {
       id: toAddProperty.value.id,
       name: toAddProperty.value.name,
@@ -217,10 +218,10 @@ const handleQueryChanged = (queryData) => {
 };
 
 const setPaginationVariables = (
-  firstVal: number | null = null,
-  lastVal: number | null = null,
-  beforeVal: string | null = null,
-  afterVal: string | null = null
+    firstVal: number | null = null,
+    lastVal: number | null = null,
+    beforeVal: string | null = null,
+    afterVal: string | null = null
 ) => {
   let fetchNewPaginationData = {}
 
@@ -255,10 +256,10 @@ const debouncedFetchData = debounce(fetchData, 500);
 watch(search, debouncedFetchData);
 
 const configTypeChoices = [
-  { id: ConfigTypes.REQUIRED_IN_CONFIGURATOR, text: t('properties.rule.configTypes.requiredInConfigurator.title') },
-  { id: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, text: t('properties.rule.configTypes.optionalInConfigurator.title') },
-  { id: ConfigTypes.REQUIRED, text: t('properties.rule.configTypes.required.title') },
-  { id: ConfigTypes.OPTIONAL, text: t('properties.rule.configTypes.optional.title') }
+  {id: ConfigTypes.REQUIRED_IN_CONFIGURATOR, text: t('properties.rule.configTypes.requiredInConfigurator.title')},
+  {id: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, text: t('properties.rule.configTypes.optionalInConfigurator.title')},
+  {id: ConfigTypes.REQUIRED, text: t('properties.rule.configTypes.required.title')},
+  {id: ConfigTypes.OPTIONAL, text: t('properties.rule.configTypes.optional.title')}
 ]
 
 const handleProductTypeUpdated = async (newVal) => {
@@ -266,9 +267,9 @@ const handleProductTypeUpdated = async (newVal) => {
   if (newVal === null) {
     localProductType.value = null;
   } else {
-     const {data} = await apolloClient.query({
+    const {data} = await apolloClient.query({
       query: getPropertySelectValueQuery,
-      variables: { id: newVal },
+      variables: {id: newVal},
       fetchPolicy: 'network-only'
     })
 
@@ -290,13 +291,13 @@ const onConfigTypeUpdated = () => {
 }
 
 const accordionItems = [
-  { name: 'preview', label: t('properties.rule.preview.previewTitle'), icon: 'eye' }
+  {name: 'preview', label: t('properties.rule.preview.previewTitle'), icon: 'eye'}
 ];
 
 const openInNewTab = (event) => {
   event.preventDefault();
   event.stopPropagation();
-  const url = router.resolve({ name: 'properties.properties.create' }).href;
+  const url = router.resolve({name: 'properties.properties.create'}).href;
   window.open(url, '_blank');
 }
 
@@ -306,49 +307,62 @@ onMounted(fetchData);
 
 <template>
   <div>
-    <ProductTypeField :product-type="productType" @product-type-updated="handleProductTypeUpdated" />
+    <div class="pb-4">
+      <ProductTypeField :product-type="productType" @product-type-updated="handleProductTypeUpdated"/>
+      <FlexCell center>
+        <Flex>
+          <FlexCell center>
+            <span class="mr-2 font-semibold">{{ t('properties.properties.labels.requireEanCode') }}</span>
+          </FlexCell>
+          <FlexCell center>
+            <Toggle v-model="rawRequireEanCode" @update:model-value="emit('update:requireEanCode', rawRequireEanCode)"/>
+          </FlexCell>
+        </Flex>
+      </FlexCell>
+    </div>
     <hr>
     <Flex class="gap-2 mt-4">
-        <FlexCell grow>
-          <label class="search-input relative block">
+      <FlexCell grow>
+        <label class="search-input relative block">
             <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-              <Icon class="text-gray-300" name="search" size="lg" />
+              <Icon class="text-gray-300" name="search" size="lg"/>
             </span>
-            <TextInput
+          <TextInput
               ref="input"
               class="search-input pl-9 w-full"
               v-model="search"
               :placeholder="t('shared.button.search')"
               :disabled="loading"
-            />
-          </label>
-        </FlexCell>
-        <FlexCell center>
-          <Button class="btn-primary p-2.5 rounded-full" @click="openInNewTab">
-            <Icon name="plus" />
-          </Button>
-        </FlexCell>
-        <FlexCell center>
-          <Button :customClass="'btn btn-primary p-2 rounded-full'" @click="fetchData">
-            <Icon name="arrows-rotate" />
-          </Button>
-        </FlexCell>
-      </Flex>
+          />
+        </label>
+      </FlexCell>
+      <FlexCell center>
+        <Button class="btn-primary p-2.5 rounded-full" @click="openInNewTab">
+          <Icon name="plus"/>
+        </Button>
+      </FlexCell>
+      <FlexCell center>
+        <Button :customClass="'btn btn-primary p-2 rounded-full'" @click="fetchData">
+          <Icon name="arrows-rotate"/>
+        </Button>
+      </FlexCell>
+    </Flex>
 
     <div class="my-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
-    <div>
-      <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop" @drop="handleDropAvailable">
-        <div v-if="availableProperties.length === 0">
-          <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.noPropertiesLeft') }}</p>
-        </div>
-        <table v-else class="table-auto w-full mt-2">
-          <thead>
+      <div>
+        <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop"
+             @drop="handleDropAvailable">
+          <div v-if="availableProperties.length === 0">
+            <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.noPropertiesLeft') }}</p>
+          </div>
+          <table v-else class="table-auto w-full mt-2">
+            <thead>
             <tr>
               <th>{{ t('shared.labels.name') }}</th>
               <th>{{ t('properties.rule.labels.propertyType') }}</th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             <tr v-for="property in availableProperties"
                 :key="property.id"
                 class="cursor-grab"
@@ -358,7 +372,8 @@ onMounted(fetchData);
               <td>
                 <Flex>
                   <FlexCell center>
-                      <Icon name="plus" size="xl" class="text-primary cursor-pointer mr-3"  @click="handleAddProperty(property)" :disabled="loading" />
+                    <Icon name="plus" size="xl" class="text-primary cursor-pointer mr-3"
+                          @click="handleAddProperty(property)" :disabled="loading"/>
                   </FlexCell>
                   <FlexCell center>
                     <Flex class="gap-4">
@@ -368,29 +383,32 @@ onMounted(fetchData);
                 </Flex>
               </td>
               <td>
-                <Badge :color="getPropertyTypeBadgeMap(t)[property.type].color" :text="getPropertyTypeBadgeMap(t)[property.type].text" />
+                <Badge :color="getPropertyTypeBadgeMap(t)[property.type].color"
+                       :text="getPropertyTypeBadgeMap(t)[property.type].text"/>
               </td>
             </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
+        <Pagination v-if="pageInfo" class="mt-2" :page-info="pageInfo" :change-query-params="false"
+                    @query-changed="handleQueryChanged"/>
       </div>
-      <Pagination v-if="pageInfo" class="mt-2" :page-info="pageInfo" :change-query-params="false" @query-changed="handleQueryChanged" />
-    </div>
 
-    <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300 mb-12" @dragover.prevent="allowDrop" @drop="handleDrop">
-      <div v-if="addedPropertiesRef.length === 0">
-        <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.dragAndDrop') }}</p>
-      </div>
-      <table v-else class="table-auto w-full">
-        <thead>
+      <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300 mb-12"
+           @dragover.prevent="allowDrop" @drop="handleDrop">
+        <div v-if="addedPropertiesRef.length === 0">
+          <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.dragAndDrop') }}</p>
+        </div>
+        <table v-else class="table-auto w-full">
+          <thead>
           <tr>
             <th>{{ t('shared.labels.name') }}</th>
             <th>{{ t('properties.rule.labels.propertyType') }}</th>
             <th>{{ t('properties.rule.labels.type') }}</th>
             <th>{{ t('shared.labels.actions') }}</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr v-for="(item, index) in addedPropertiesRef"
               :key="item.id"
               class="cursor-grab"
@@ -402,7 +420,8 @@ onMounted(fetchData);
             <td>
               <Flex>
                 <FlexCell center>
-                    <Icon name="trash" size="xl" class="text-danger cursor-pointer mr-3" @click="handleRemoveProperty(item.id)" />
+                  <Icon name="trash" size="xl" class="text-danger cursor-pointer mr-3"
+                        @click="handleRemoveProperty(item.id)"/>
                 </FlexCell>
                 <FlexCell>
                   {{ item.name }}
@@ -410,7 +429,8 @@ onMounted(fetchData);
               </Flex>
             </td>
             <td>
-              <Badge :color="getPropertyTypeBadgeMap(t)[item.type].color" :text="getPropertyTypeBadgeMap(t)[item.type].text" />
+              <Badge :color="getPropertyTypeBadgeMap(t)[item.type].color"
+                     :text="getPropertyTypeBadgeMap(t)[item.type].text"/>
             </td>
             <td class="w-60">
               <Selector class="w-full"
@@ -419,26 +439,30 @@ onMounted(fetchData);
                         value-by="id"
                         label-by="text"
                         :removable="false"
-                        @update:model-value="onConfigTypeUpdated" />
+                        @update:model-value="onConfigTypeUpdated"/>
             </td>
             <td>
               <Flex>
                 <FlexCell center>
-                    <Icon v-if="index !== 0" name="arrow-up" size="xl" class="text-primary cursor-pointer mr-3" @click="handleSortOrderChange(item.id, 'up')" />
-                    <Icon v-if="index != addedPropertiesRef.length - 1" name="arrow-down" size="xl" class="text-primary cursor-pointer mr-3" @click="handleSortOrderChange(item.id, 'down')" />
+                  <Icon v-if="index !== 0" name="arrow-up" size="xl" class="text-primary cursor-pointer mr-3"
+                        @click="handleSortOrderChange(item.id, 'up')"/>
+                  <Icon v-if="index != addedPropertiesRef.length - 1" name="arrow-down" size="xl"
+                        class="text-primary cursor-pointer mr-3" @click="handleSortOrderChange(item.id, 'down')"/>
                 </FlexCell>
               </Flex>
             </td>
           </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-  <AddPropertyModal v-model="showPropertyModal" :property="toAddProperty" :allow-optional="configTypes.includes(ConfigTypes.REQUIRED_IN_CONFIGURATOR)" @property-added="handlePropertyAdded" />
-  <Accordion class="my-4" :items="accordionItems">
-    <template #preview>
-        <PreviewView :added-properties="addedPropertiesRef" :product-type="localProductType" />
-    </template>
-  </Accordion>
+    <AddPropertyModal v-model="showPropertyModal" :property="toAddProperty"
+                      :allow-optional="configTypes.includes(ConfigTypes.REQUIRED_IN_CONFIGURATOR)"
+                      @property-added="handlePropertyAdded"/>
+    <Accordion class="my-4" :items="accordionItems">
+      <template #preview>
+        <PreviewView :added-properties="addedPropertiesRef" :product-type="localProductType"/>
+      </template>
+    </Accordion>
   </div>
 </template>

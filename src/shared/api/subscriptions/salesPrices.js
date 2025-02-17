@@ -24,7 +24,8 @@ export const salesPriceListSubscription = gql`
       id
       name
       notes
-      discount
+      discountPcnt
+      priceChangePcnt
       currency {
         id
         symbol

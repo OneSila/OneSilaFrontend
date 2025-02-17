@@ -25,10 +25,10 @@ const listingConfig = listingConfigConstructor(t);
     <template v-slot:buttons>
         <div>
           <Link :path="{ name: 'sales.orders.create' }">
-          <Button type="button" class="btn btn-primary">
-              {{  t('sales.orders.create.title') }}
-          </Button>
-        </Link>
+            <Button type="button" class="btn btn-primary">
+                {{  t('sales.orders.create.title') }}
+            </Button>
+          </Link>
       </div>
     </template>
 

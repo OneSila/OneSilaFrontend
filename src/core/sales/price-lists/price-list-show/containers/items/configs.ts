@@ -30,7 +30,10 @@ export const baseFormConfigConstructor = (
       valueBy: 'id',
       query: productsQuery,
       dataKey: 'products',
-      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId } }} : undefined,
+      queryVariables:
+        productsId.length > 0
+          ? { filter: { NOT: { id: { inList: productsId } } } }
+          : undefined,
       isEdge: true,
       multiple: false,
       filterable: true,
@@ -117,8 +120,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function, salesPriceListId: string, addEdit: boolean = true): ListingConfig => ({
-  headers: [t('shared.labels.product'), t('shared.labels.price'), t('shared.labels.discount')],
+export const listingConfigConstructor = (t: Function, salesPriceListId: string): ListingConfig => ({
+  headers: [t('shared.labels.product'), t('shared.labels.price'), t('shared.labels.discountPrice'), t('sales.prices.labels.discountPercentage')],
   fields: [
     {
       name: 'product',
@@ -133,12 +136,17 @@ export const listingConfigConstructor = (t: Function, salesPriceListId: string, 
       name: 'discount',
       type: FieldType.Text,
     },
+    {
+      name: 'salespricelist',
+      type: FieldType.NestedText,
+      keys: ['discountPcnt'],
+    },
   ],
   identifierKey: 'id',
   editUrlName: 'sales.priceLists.items.edit',
-  identifierVariables: {priceListId: salesPriceListId},
+  identifierVariables: { priceListId: salesPriceListId },
   addActions: true,
-  addEdit: addEdit,
+  addEdit: true,
   addShow: false,
   addDelete: true,
   addPagination: true,

@@ -53,7 +53,6 @@ useShiftBackspaceKeyboardListener(goBack);
 </script>
 
 <template>
-  <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8"  v-if="config.addEdit || config.addDelete || config.addBack">
 
     <Link v-if="config.addBack" :path="config.backUrl">
       <CancelButton>
@@ -79,5 +78,4 @@ useShiftBackspaceKeyboardListener(goBack);
       </PrimaryButton>
     </Link>
 
-  </div>
 </template>

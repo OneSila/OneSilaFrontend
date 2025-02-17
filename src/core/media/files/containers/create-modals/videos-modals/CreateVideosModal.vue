@@ -5,12 +5,11 @@ import { Card } from '../../../../../../shared/components/atoms/card';
 import { WebsiteInput } from "../../../../../../shared/components/atoms/input-website";
 import { useI18n } from "vue-i18n";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
-import { Label } from "../../../../../../shared/components/atoms/label";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { createVideosMutation, createMediaProductThroughMutation } from "../../../../../../shared/api/mutations/media.js"
 import { processGraphQLErrors } from "../../../../../../shared/utils";
 import { Toast } from "../../../../../../shared/modules/toast";
-import {VideoPreview} from "../../../../videos/video-show/containers/video-preview";
+import { VideoPreview } from "../../../../videos/video-show/containers/video-preview";
 import apolloClient from "../../../../../../../apollo-client";
 
 const props = defineProps<{ modelValue: boolean; productId?: string }>();
@@ -68,6 +67,10 @@ const onVideosCreated = async (d) => {
         });
         console.log('Linking success:', data);
       } catch (error) {
+        const validationErrors = processGraphQLErrors(error, t);
+        if (validationErrors['__all__']) {
+          Toast.error(validationErrors['__all__']);
+        }
         console.error('Failed to link video and product:', error);
       }
     }

@@ -9,7 +9,7 @@ import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { Wizard } from "../../../shared/components/molecules/wizard";
 import { OnboardingStatus } from "../../../shared/utils/constants";
-import { getOnboardingStatus, injectAuth, refreshUser } from "../../../shared/modules/auth";
+import {getOnboardingStatus, injectAuth, refreshUser, setAuthChangingState} from "../../../shared/modules/auth";
 import apolloClient from "../../../../apollo-client";
 import { goToStepMutation } from "../../../shared/api/mutations/auth.js";
 import { useRouter } from "vue-router";
@@ -57,6 +57,7 @@ const updateStep = async (val) => {
       companyOwner: user.isMultiTenantCompanyOwner,
       active: user.isActive
     });
+    setAuthChangingState(auth, false);
   }
 }
 

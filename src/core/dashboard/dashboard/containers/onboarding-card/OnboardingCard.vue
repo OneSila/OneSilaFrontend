@@ -12,6 +12,7 @@ export interface OnboardingCardObject {
   query: any;
   variables?: Record<string, any>;
   path: string;
+  queryParams?: Record<string, string>;
 }
 
 const { t } = useI18n();
@@ -33,7 +34,7 @@ const checkStatus = async () => {
   const isMembersKey = dataKey === 'users';
 
   if (isMembersKey) {
-    if (data[dataKey].length > 1) {
+    if (data[dataKey].edges.length > 1) {
       isCompleted.value = true;
       emit('update-status', true);
     } else {
@@ -54,7 +55,7 @@ onMounted(() => {
 });
 
 const handleButtonClick = () => {
-  router.push({name: props.card.path});
+  router.push({name: props.card.path, query: props.card.queryParams});
 };
 
 watch(() => isCompleted.value, (newVal) => {

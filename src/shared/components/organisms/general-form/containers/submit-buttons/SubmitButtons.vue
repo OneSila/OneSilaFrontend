@@ -1,23 +1,25 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Link } from './../../../../atoms/link';
-import { cleanUpDataForMutation, FormConfig, FormType } from '../../formConfig';
-import { ApolloAlertMutation} from "../../../../molecules/apollo-alert-mutation";
-import { CancelButton } from "../../../../atoms/button-cancel";
-import { DangerButton } from "../../../../atoms/button-danger";
-import { SecondaryButton } from "../../../../atoms/button-secondary";
-import { PrimaryButton } from "../../../../atoms/button-primary";
-import { Toast } from '../../../../../modules/toast';
-import { useI18n } from "vue-i18n";
-import { processGraphQLErrors } from "../../../../../utils";
+import {ref} from 'vue';
+import {useRouter} from 'vue-router';
+import {Link} from './../../../../atoms/link';
+import {cleanUpDataForMutation, FormConfig, FormType} from '../../formConfig';
+import {ApolloAlertMutation} from "../../../../molecules/apollo-alert-mutation";
+import {CancelButton} from "../../../../atoms/button-cancel";
+import {DangerButton} from "../../../../atoms/button-danger";
+import {SecondaryButton} from "../../../../atoms/button-secondary";
+import {PrimaryButton} from "../../../../atoms/button-primary";
+import {Toast} from '../../../../../modules/toast';
+import {useI18n} from "vue-i18n";
+import {processGraphQLErrors} from "../../../../../utils";
 import {
   useEnterKeyboardListener,
   useShiftBackspaceKeyboardListener,
   useShiftDeleteKeyboardListener,
   useShiftEnterKeyboardListener,
 } from "../../../../../modules/keyboard";
+import {FieldType} from "../../../../../utils/constants";
+import apolloClient from "../../../../../../../apollo-client";
 
 const props = defineProps<{ config: FormConfig; form: any;}>();
 const emit = defineEmits(['submit', 'update-errors']);
@@ -30,10 +32,14 @@ const submitButtonRef = ref();
 
 const handleSubmitDone = (response) => {
 
-    if (!response.data || (!props.config.allowNull && !response.data[props.config.mutationKey])) {
-      Toast.error(t('shared.alert.toast.unexpectedResult'));
-      return;
-    }
+  if (!response.data || (!props.config.allowNull && !response.data[props.config.mutationKey])) {
+    Toast.error(t('shared.alert.toast.unexpectedResult'));
+    return;
+  }
+
+  if (props.config.type == FormType.CREATE) {
+      handleInlineFieldsCreate(response);
+  }
 
   props.config.afterSubmitCallback?.();
 
@@ -64,11 +70,8 @@ const handleSubmitAndContinueDoneEdit = (response) => {
   Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
 
 };
+
 const handleSubmitAndContinueDoneCreate = (response) => {
-  if (!response.data || !response.data[props.config.mutationKey]) {
-    Toast.error(t('shared.alert.toast.unexpectedResult'));
-    return;
-  }
 
   props.config.afterSubmitCallback?.();
 
@@ -126,6 +129,13 @@ const handleSubmitAndContinueDoneCreate = (response) => {
 
 const handleSubmitAndContinueDone = (response) => {
   if (props.config.type === FormType.CREATE) {
+
+    if (!response.data || !response.data[props.config.mutationKey]) {
+      Toast.error(t('shared.alert.toast.unexpectedResult'));
+      return;
+    }
+
+    handleInlineFieldsCreate(response);
     handleSubmitAndContinueDoneCreate(response);
   } else {
      handleSubmitAndContinueDoneEdit(response);
@@ -133,9 +143,33 @@ const handleSubmitAndContinueDone = (response) => {
   emit('submit', response);
 };
 
+const handleInlineFieldsCreate = async (response) => {
+  if (props.config.type == FormType.CREATE) {
+    for (const field of props.config.fields) {
+      if (field.type == FieldType.InlineItems) {
+        let finalData: any[] = [];
+        props.form[field.name].forEach(row => {
+          const d = cleanUpDataForMutation(row, field.fields, FormType.CREATE)
+          d[field.valueKey] = {'id': response.data[props.config.mutationKey]["id"]}
+          finalData.push(d);
+        });
+
+        try {
+          const { data } = await apolloClient.mutate({
+            mutation: field.createMutation,
+            variables: {data: finalData},
+          });
+        } catch (errors) {
+          handleError(errors);
+        }
+      }
+    }
+  }
+}
+
 const cleanupAndMutate = async (mutate) => {
   const cleanedData = cleanUpDataForMutation(props.form, props.config.fields, props.config.type);
-  await mutate({ variables: { data: cleanedData } });
+  const result = await mutate({ variables: { data: cleanedData } });
 };
 
 const handleDelete = (response) => {

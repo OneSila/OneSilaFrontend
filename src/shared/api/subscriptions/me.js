@@ -32,6 +32,7 @@ export const meCompanySubscription = gql`
       phoneNumber
       vatNumber
       website
+      fullAddress
       multitenantuserSet {
           id
           isActive

@@ -9,6 +9,7 @@ export const getPropertySubscription = gql`
       type
       isPublicInformation
       addToFilters
+      hasImage
       isProductType
       internalName
       valueValidator
@@ -105,6 +106,7 @@ export const getProductPropertiesRuleSubscription = gql`
   subscription getProductPropertiesRuleSubscription($pk: String!) {
     productPropertiesRule(pk: $pk) {
       id
+      requireEanCode
       productType {
         id
         value

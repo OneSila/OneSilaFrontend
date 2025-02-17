@@ -38,7 +38,7 @@ const loadPrices = async () => {
 
   const { data } = await apolloClient.query({
     query: supplierPricesQuery,
-    variables: { filter: { supplierProduct: {id: {exact: props.product.proxyId }} }},
+    variables: { filter: { supplierProduct: {id: { exact: props.product.proxyId }} }},
     fetchPolicy: 'network-only'
   });
 

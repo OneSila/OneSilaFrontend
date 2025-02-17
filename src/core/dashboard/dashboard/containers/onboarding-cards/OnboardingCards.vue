@@ -12,10 +12,10 @@ import { OnboardingCardObject } from "../onboarding-card/OnboardingCard.vue";
 import { Card } from "../../../../../shared/components/atoms/card";
 import {VOnboardingWrapper, useVOnboarding, StepEntity} from 'v-onboarding';
 import 'v-onboarding/dist/style.css';
-import {OnboardingStatus} from "../../../../../shared/utils/constants";
+import {OnboardingStatus, PurchaseOrderOpenStatuses} from "../../../../../shared/utils/constants";
 import apolloClient from "../../../../../../apollo-client";
 import {goToStepMutation} from "../../../../../shared/api/mutations/auth.js";
-import {injectAuth, refreshUser} from "../../../../../shared/modules/auth";
+import {injectAuth, refreshUser, setAuthChangingState} from "../../../../../shared/modules/auth";
 import {Modal } from "../../../../../shared/components/atoms/modal";
 import {CompleteOnboardingModal } from "../complete-onboarding-modal";
 
@@ -29,6 +29,13 @@ const isCompleted = ref(false);
 const showCreateCompleteModal = ref(false);
 
 const excludeDemoDataFilter =  { filter: { excludeDemoData: true } }
+const purchaseOrderFilter = { filter: {
+  excludeDemoData: true,
+    status: { inList: PurchaseOrderOpenStatuses },
+    purchaseorderitem: { quantity: {gte: 0} }
+
+} }
+
 const cards: OnboardingCardObject[] = [
   { key: 'member', title: t('dashboard.onboarding.cards.member.title'),
     query: membersQuery, path: 'profile.company' },
@@ -37,11 +44,11 @@ const cards: OnboardingCardObject[] = [
   { key: 'product', title: t('dashboard.onboarding.cards.product.title'),
     query: productsQuery, path: 'products.products.create',  variables: excludeDemoDataFilter},
   { key: 'purchaseOrder', title: t('dashboard.onboarding.cards.purchaseOrder.title'),
-    query: purchaseOrdersQuery, path: 'purchasing.orders.create',  variables: excludeDemoDataFilter},
+    query: purchaseOrdersQuery, path: 'purchasing.orders.create',  variables: purchaseOrderFilter},
   { key: 'inventoryLocation', title: t('dashboard.onboarding.cards.inventoryLocation.title'),
     query: inventoryLocationsQuery, path: 'inventory.inventoryLocations.create',  variables: excludeDemoDataFilter },
   { key: 'inventory', title: t('dashboard.onboarding.cards.inventory.title'),
-    query: inventoriesQuery, path: 'inventory.inventory.create',  variables: excludeDemoDataFilter },
+    query: inventoriesQuery, path: 'inventory.inventory.create', queryParams: { from: 'purchase' },  variables: excludeDemoDataFilter },
   { key: 'customer', title: t('dashboard.onboarding.cards.customer.title'),
     query: customersQuery, path: 'sales.customers.create',  variables: excludeDemoDataFilter },
   { key: 'salesOrder', title: t('dashboard.onboarding.cards.salesOrder.title'),
@@ -131,6 +138,7 @@ const onPresenationFinish = async () => {
       companyOwner: user.isMultiTenantCompanyOwner,
       active: user.isActive
     });
+    setAuthChangingState(auth, false);
   }
 }
 

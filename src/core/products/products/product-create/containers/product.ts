@@ -17,6 +17,7 @@ export interface RelatedProduct {
   active: boolean;
   quantity?: string;
   productionTime?: number | null;
+  inspectorStatus: number;
 }
 
 export interface BaseProduct {

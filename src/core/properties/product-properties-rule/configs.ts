@@ -2,7 +2,7 @@ import { CreateOnTheFly, FormConfig, FormField, FormType } from '../../../shared
 import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { productPropertiesRulesQuery } from "../../../shared/api/queries/properties.js";
+import { productPropertiesRulesListingQuery } from "../../../shared/api/queries/properties.js";
 import {deleteProductPropertiesRuleMutation, deletePropertyMutation, updatePropertyMutation} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getProductPropertiesRuleSubscription } from '../../../shared/api/subscriptions/properties.js';
@@ -16,9 +16,10 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('properties.properties.labels.isProductType')],
+  headers: [t('properties.properties.labels.isProductType'), t('properties.properties.labels.requireEanCode')],
   fields: [
-    { name: 'productType', type: FieldType.NestedText, keys: ['value'] }
+    { name: 'productType', type: FieldType.NestedText, keys: ['value'] },
+    {name: 'requireEanCode', type: FieldType.Boolean },
   ],
   identifierKey: 'id',
   addActions: true,
@@ -51,6 +52,12 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       keys: ['value']
     },
     {
+      name: 'requireEanCode',
+      type: FieldType.Boolean,
+      label: t('properties.properties.labels.requireEanCode'),
+      showLabel: true
+    },
+    {
       type: FieldType.Array,
       name: 'items',
       label: t('properties.title'),
@@ -64,7 +71,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
 });
 
 export const listingQueryKey = 'productPropertiesRules';
-export const listingQuery = productPropertiesRulesQuery;
+export const listingQuery = productPropertiesRulesListingQuery;
 
 export interface RuleItem {
    rule: {id: string},

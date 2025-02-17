@@ -10,6 +10,142 @@
       "addProduct": "Add Product",
       "addInventory": "Add Inventory"
     },
+    "cards": {
+      "help": {
+        "showCompletedItems": "Show completed cards"
+      },
+      "products": {
+        "title": "Products cards",
+        "description": "Ensure all product information is accurate and up-to-date to maintain inventory integrity and optimize sales performance.",
+        "inspector": {
+          "101": {
+            "title": "Products Missing Images",
+            "description": "Add at least one image to these products."
+          },
+          "102": {
+            "title": "Products Missing Default Prices",
+            "description": "Ensure these products have valid default prices."
+          },
+          "103": {
+            "title": "Products with Inactive Bills of Materials",
+            "description": "Activate all bills of materials for these manufacturable products."
+          },
+          "104": {
+            "title": "Bundle Products with Inactive Items",
+            "description": "Activate all items in these bundle products."
+          },
+          "105": {
+            "title": "Products Missing Required Variations",
+            "description": "Add required variations to these configurable products."
+          },
+          "106": {
+            "title": "Bundle Products Missing Items",
+            "description": "Add items to these bundle products."
+          },
+          "107": {
+            "title": "Manufacturable Products Missing Bills of Materials",
+            "description": "Add bills of materials to these manufacturable products."
+          },
+          "108": {
+            "title": "Products Missing Supplier Products",
+            "description": "Add supplier products to these products."
+          },
+          "109": {
+            "title": "Products Missing EAN Codes",
+            "description": "Provide EAN codes for these products."
+          },
+          "110": {
+            "title": "Products Missing Required Product Type Properties",
+            "description": "Assign required product type properties to these products."
+          },
+          "111": {
+            "title": "Products Missing Required Properties",
+            "description": "Assign all required properties to these products."
+          },
+          "112": {
+            "title": "Products Missing Optional Properties",
+            "description": "Assign optional properties to these products as needed."
+          },
+          "113": {
+            "title": "Supplier Products Missing Required Prices",
+            "description": "Add required prices to these supplier products."
+          },
+          "114": {
+            "title": "Products Missing Stock",
+            "description": "Ensure these products have stock or allow backorder."
+          },
+          "115": {
+            "title": "Products Missing Lead Time When Out of Stock",
+            "description": "Specify lead times for these products when out of stock."
+          },
+          "116": {
+            "title": "Manual Price List Prices Missing Override Prices",
+            "description": "Add override prices to manual price list prices where auto-update is disabled."
+          },
+          "117": {
+            "title": "Variations with Different Product Types",
+            "description": "Ensure all variations have the same product type."
+          },
+          "118": {
+            "title": "Items with Different Product Types",
+            "description": "Ensure all items have the same product type."
+          },
+          "119": {
+            "title": "Bills of Materials with Different Product Types",
+            "description": "Ensure all bills of materials have the same product type."
+          },
+          "120": {
+            "title": "Items with Missing Mandatory Information",
+            "description": "Resolve missing mandatory information in these items' inspectors."
+          },
+          "121": {
+            "title": "Variations with Missing Mandatory Information",
+            "description": "Resolve missing mandatory information in these variations' inspectors."
+          },
+          "122": {
+            "title": "Bills of Materials with Missing Mandatory Information",
+            "description": "Resolve missing mandatory information in these bills of materials' inspectors."
+          },
+          "123": {
+            "title": "Configurable Products with Duplicate Variations",
+            "description": "Ensure variations in these configurable products have unique required properties."
+          },
+          "124": {
+            "title": "Configurable Products with No Applicable Configurator Rules",
+            "description": "Define at least one configurator required item for these configurable products."
+          }
+
+        }
+      },
+      "orders": {
+        "title": "Orders cards",
+        "description": "Stay on top of your orders by monitoring pending, processed, and shipped orders to ensure timely deliveries and customer satisfaction.",
+        "pendingOrders": {
+          "title": "Pending Orders",
+          "description": "Orders that are pending processing or awaiting inventory."
+        },
+        "ongoingShipments": {
+          "title": "Ongoing Shipments",
+          "description": "Shipments that need to be prepared."
+        },
+        "pendingReturns": {
+          "title": "Pending Returns",
+          "description": "Returns that are pending inspection."
+        }
+      },
+      "general": {
+        "title": "General cards",
+        "description": "Immediate attention required! Incorrect settings in this section may lead to system failures. Please review and update configurations to ensure stable and secure operations.",
+        "missingLeadTime": {
+          "title": "Addresses Missing Lead Time",
+          "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
+        },
+        "currencyMismatchPriceLists": {
+          "title": "Price Lists with Currency Mismatched Customers",
+          "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
+        }
+      }
+    },
     "onboarding": {
       "completedHeader": "You completed all the steps!",
       "completedMessage": "Congratulations! You have successfully completed all the onboarding steps. You are now ready to fully utilize the platform and take advantage of all its features. Start exploring and make the most of OneSila to drive innovation and success for your business.",
@@ -73,8 +209,8 @@
           "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
         },
         "purchaseOrder": {
-          "title": "Purchase some goods",
-          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
+          "title": "Purchase that product & confirm the purchase",
+          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships. Add the product you created earlier to the order and then change the status to confirm it."
         },
         "inventoryLocation": {
           "title": "Add your inventory Location",
@@ -146,7 +282,9 @@
         "somethingWentWrong": "Something went wrong!",
         "deletionFailed": "Deletion operation failed. Please contact the administrators.",
         "clipboardSuccess": "Your text was succefully copied to the clipboard",
-        "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!"
+        "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
+        "clipboardFail": "Failed to copy to clipboard.",
+        "errorOccurred": "An error occurred."
       }
     },
     "button": {
@@ -157,6 +295,7 @@
       "invite": "Invite",
       "search": "Search",
       "save": "Save",
+      "details": "Details",
       "fix": "Fix",
       "back": "Back",
       "next": "Next",
@@ -169,6 +308,7 @@
       "submit": "Submit",
       "add": "Add",
       "download": "Download",
+      "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
       "create": "Create",
       "skip": "Skip",
@@ -209,7 +349,8 @@
       "dateRange": "Date Range",
       "image": "Image",
       "preview": "Preview",
-      "discount": "Discount"
+      "discount": "Discount",
+      "discountPrice": "Discount Price"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -229,6 +370,7 @@
       "price": "Enter price",
       "description": "Enter description",
       "role": "CEO",
+      "productionTime": "Enter Production Time",
       "phoneInput": {
         "countrySelector": {
           "placeholder": "Country code",
@@ -244,6 +386,7 @@
     "tabs": {
       "general": "General",
       "items": "Items",
+      "shippings": "Shipments",
       "translations": "Translations",
       "advanced": "Advanced"
     },
@@ -302,6 +445,8 @@
     "register": {
       "header": "Register",
       "description": "Enter your username and password to register",
+      "agreeTerms": "I agree to the",
+      "termsAndConditions": "Terms & Conditions",
       "labels": {
         "companyName": "Company Name",
         "email": "Email",
@@ -608,6 +753,8 @@
         "prices": "Prices",
         "priceLists": "Price Lists",
         "inventory": "Inventory",
+        "inventoryMovements": "Inventory Movements",
+        "websites": "Websites",
         "supplierProducts": "Supplier Products",
         "saleOrders": "Sale Orders",
         "purchasingOrders": "Purchase Orders",
@@ -695,11 +842,14 @@
         "sku": "SKU",
         "productionTime": "Production Time",
         "forSale": "For Sale",
-        "allowBackorder": "Allow Backorder"
+        "inspectorErrors": "Product Inspector Error",
+        "allowBackorder": "Allow Backorder",
+        "inspectorStatus": "Content Quality"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
-        "productionTime": "Enter time in seconds"
+        "productionTime": "Enter time in seconds",
+        "salesChannelView": "Add Store"
       },
       "create": {
         "title": "Create Product",
@@ -775,6 +925,202 @@
   },
   "inventory": {
     "title": "Warehouse",
+    "packages": {
+       "title": "Packages",
+        "create": {
+          "title": "Create Packages",
+          "virtual": {
+            "title": "Guided Virtual Tour Packaging",
+            "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
+            "selectPackageType": "Please select the package type you gonna use",
+            "actions": {
+              "start": "Let's Start",
+              "arrived": "I Arrived",
+              "addAll": "Add All",
+              "quantityInputPlaceholder": "Enter quantity to add",
+              "addQuantity": "Add Quantity",
+              "packageFull": "Package Full",
+              "finish": "Finish"
+            },
+            "instructions": {
+              "prepare": {
+                "title": "Prepare Your Way",
+                "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
+              },
+              "move": {
+                "title": "Go to {location}",
+                "description": "Navigate to the designated location {location}."
+              },
+              "collect": {
+                "title": "Add to Package",
+                "description": "Place {quantity} of {item} into {package}.",
+                "general": {
+                  "addAll": "If all the products fit in the package, press Add.",
+                  "packageFull": "If the package is full and you cannot add anymore, press Package Full."
+                },
+                "extra": {
+                  "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
+                }
+              },
+              "confirm": {
+                "title": "Confirm the Shipment",
+                "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
+              }
+            },
+            "virtualTour": {
+              "itemsToShip": "Items to Ship",
+              "packages": "Packages",
+              "noPackagesYet": "No packages created yet.",
+              "prepare": "Prepare your way",
+              "collect": "Collect the products",
+              "confirm": "Confirm the shipment",
+              "packageName": "Package {index}"
+            },
+            "error": {
+              "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
+              "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
+              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
+              "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
+            },
+            "packageType": {
+              "error": "Please select a valid package type."
+            },
+            "packageFull": {
+              "error": "The package is full. You cannot add more items."
+            },
+            "packageSave": {
+              "success": "The package has been saved successfully.",
+              "error": "Failed to save the package. Please try again."
+            },
+          "confirmationSuccess": "The package has been confirmed successfully."
+          },
+          "manual": {
+            "button": {
+              "add": "Add package",
+              "remove": "Remove package"
+            },
+            "title": "Manual Packaging Entry",
+            "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
+              "createStep": {
+                "title": "Create Your Packages",
+                "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+              },
+            "assignItemsStep": {
+              "title": "Assign Items to Packages",
+              "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
+              "noItemsToShip": "No items left to assign.",
+              "emptyPackage": "This package is currently empty.",
+              "packageName": "Package {index}",
+              "success": "Items have been successfully assigned to the package.",
+              "error": {
+                "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
+                "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
+                "packageCreationFailed": "Failed to create the package. Please try again.",
+                "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
+              },
+              "modal": {
+                "title": "Assign Item to Package",
+                "quantity": "Quantity",
+                "package": "Package"
+              }
+            }
+          }
+        },
+        "edit": {
+          "title": "Edit Package"
+        },
+        "show": {
+          "title": "Package Details"
+        },
+       "type": {
+          "box": "Box",
+          "pallet": "Pallet"
+       },
+       "status": {
+          "new": "New",
+          "inProgress": "In Progress",
+          "packed": "Packed",
+          "dispatched": "Dispatched"
+       },
+       "placeholders": {
+          "trackingCode": "Enter tracking code",
+          "trackingLink": "Enter tracking link URL"
+       },
+       "labels": {
+          "trackingCode": "Tracking Code",
+          "trackingLink": "Tracking Link",
+          "type": "Package Type",
+          "status": "Package Status",
+          "shippingLabel": "Shipping Label",
+          "customsDocument": "Customs Document"
+       }
+     },
+    "shipments": {
+      "title": "Shipments",
+      "button": {
+        "downloadPickingList": "Picking List",
+        "printPickingList": "Print Picking List"
+      },
+      "create": {
+        "title": "Create Shipment"
+      },
+      "edit": {
+        "title": "Edit Shipment"
+      },
+      "show": {
+        "title": "Shipment Details"
+      },
+      "labels": {
+        "status": "Status",
+        "fromAddress": "From Address",
+        "toAddress": "To Address",
+        "order": "Order"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "todo": "Todo",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "tabs": {
+        "general": "General",
+        "items": "Items",
+        "packages": "Packages"
+      }
+    },
+    "movements": {
+      "create": {
+        "title": "Create Inventory Movement"
+      },
+      "errors": {
+        "productRequired": "Product is required.",
+        "quantityRequired": "Quantity is required.",
+        "movementFromModelRequired": "Movement From Model is required.",
+        "movementFromIdRequired": "Movement From is required.",
+        "movementToModelRequired": "Movement To Model is required.",
+        "movementToIdRequired": "Movement To is required."
+      },
+      "messages": {
+        "createSuccess": "Inventory movement created successfully.",
+        "createError": "An error occurred while creating the inventory movement."
+      },
+      "button": {
+        "addFromPurchase": "Receive Goods",
+        "move": "Move",
+        "getReturn": "Get Return",
+        "createMovement": "Create Movement"
+      },
+      "labels": {
+        "product": "Product",
+        "quantity": "Quantity",
+        "notes": "Notes",
+        "movementFromModel": "Move source",
+        "movementFrom": "Movement From",
+        "movementToModel": "Movement To Model",
+        "movementTo": "Move to location"
+      }
+    },
     "inventoryLocation": {
       "helpSection": {
         "location": {
@@ -808,7 +1154,8 @@
       },
       "labels": {
         "parent": "Location",
-        "precise": "Precise Location"
+        "precise": "Precise Location",
+        "isInternalLocation": "Internal Location"
       }
     },
     "inventory": {
@@ -817,7 +1164,8 @@
         "movements": "Inventory Movements",
         "salable": "Salable Inventory",
         "physical": "Physical Inventory",
-        "reserved": "Reserved Inventory"
+        "reserved": "Reserved Inventory",
+        "awaitInventory": "Await Inventory"
       },
       "create": {
         "title": "Create Inventory"
@@ -825,10 +1173,14 @@
       "edit": {
         "title": "Edit Inventory"
       },
+      "show": {
+        "title": "Show Inventory"
+      },
       "help": {
         "salable": "Items that are available for sale",
         "physical": "Physically on stock, could be reserved, could be salable.",
-        "reserved": "Items that have been sold but not shipped"
+        "reserved": "Items that have been sold but not shipped",
+        "awaitInventory": "Items that has been ordered but didn't arrived yet."
       }
     },
     "leadTimeSettings": {
@@ -846,6 +1198,9 @@
   },
   "sales": {
     "title": "Sales",
+    "orderReturn": {
+      "title": "Order Return"
+    },
     "customers": {
       "title": "Customers",
       "create": {
@@ -865,8 +1220,9 @@
           "title": "Status order",
           "choices": {
             "draft": "Draft",
-            "pending": "Pending",
+            "pending": "Pending Processing",
             "pendingInventory": "Pending Inventory",
+            "pendingShippingApproval": "Pending Shipping Approval",
             "toPick": "To Pick",
             "toShip": "To Ship",
             "done": "Done",
@@ -937,7 +1293,7 @@
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
-        "discountPercentage": "Discount Percentage",
+        "discountPercentage": "Discount Percentage (%)",
         "price": "Price",
         "rrp": "Recommended Retail Price"
       },
@@ -1047,8 +1403,9 @@
         "vatIncluded": "VAT Included",
         "autoUpdate": "Auto Update",
         "autoUpdatePrices": "Auto Update Prices",
+        "currencyMatchWithCustomers": "Currency Match with Customers",
         "autoAddProducts": "Auto Add Products",
-        "priceChangePcnt": "Price Change Percentage"
+        "priceChangePcnt": "Price Change Percentage (%)"
       },
       "edit": {
         "title": "Edit Price List"
@@ -1138,11 +1495,13 @@
             "ordered": "Ordered",
             "confirmed": "Confirmed",
             "pendingDelivery": "Pending Delivery",
+            "toOrder": "To Order",
             "delivered": "Delivered"
           }
         },
         "supplier": "Supplier",
         "orderReference": "Order Reference",
+        "internalContact": "Internal Contact",
         "totalValue": "Total Value"
       },
       "placeholders": {
@@ -1167,7 +1526,8 @@
         "owner": "Owner",
         "files": "Files",
         "recentFiles": "Recent Files",
-        "addExistingFiles": "Add from existing media"
+        "addExistingFiles": "Add from existing media",
+        "images": "Images"
       }
     },
     "images": {
@@ -1217,6 +1577,7 @@
     "documents": {
       "title": "Documents",
       "upload": "Upload New Documents",
+      "uploadDocument": "Upload New Document",
       "labels": {
         "addDocuments": "Add New Documents"
       },
@@ -1225,6 +1586,9 @@
       },
       "delete": {
         "successfullyDeleted": "Document was succefully deleted!"
+      },
+      "show": {
+        "title": "Document"
       }
     }
   },
@@ -1449,7 +1813,9 @@
       "labels": {
         "isPublicInformation": "Public Information",
         "addToFilters": "Add to filters",
+        "hasImage": "Has image",
         "isProductType": "Product Type",
+        "requireEanCode": "Require Ean Code",
         "internalName": "Internal Name",
         "valueValidator": "Value Validator"
       },
@@ -1462,6 +1828,7 @@
         "type": "Cannot be changed.",
         "isPublicInformation": "Public information will sync to various integrations and websites.",
         "addToFilters": "Can be used for product filtering in website integrations.",
+        "hasImage": "Enable if the property require images. It applies only to select and multi select type..",
         "internalName": "Name used in integrations",
         "valueValidator": "Advanced Regular Expression validator."
       },

@@ -22,7 +22,7 @@ const baseForm = baseFormConfigConstructor(
   t,
   FormType.EDIT,
   updateInventoryLocationMutation,
-  'updateInventoryLocationType'
+  'updateInventoryLocation'
 );
 
 const formConfig = {

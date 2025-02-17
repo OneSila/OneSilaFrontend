@@ -25,6 +25,7 @@ import ProductSupplier from "./containers/product-type/product-supplier/ProductS
 
 import { getProductTypeBadgeMap } from "../configs";
 import {ProductInspector} from "./containers/product-inspector";
+import {Link} from "../../../../shared/components/atoms/link";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -40,6 +41,10 @@ interface ProductSubscriptionResult {
     vatRate: {
       name: string;
     };
+    supplier: {
+      id: string;
+      name: string;
+    };
     type: string;
     active: boolean;
     allowBackorder: boolean;
@@ -47,12 +52,20 @@ interface ProductSubscriptionResult {
   };
 }
 
-const getResultData = (result, field: string | null = null, vatRateField: string | null = null) => {
+const getResultData = (result, field: string | null = null, vatRateField: string | null = null, supplierField: string | null = null) => {
   const r: ProductSubscriptionResult = result;
 
   if (vatRateField !== null){
     if (r.product.vatRate) {
       return r.product.vatRate[vatRateField];
+    } else {
+      return null
+    }
+  }
+
+    if (supplierField !== null){
+    if (r.product.supplier) {
+      return r.product.supplier[supplierField];
     } else {
       return null
     }
@@ -133,6 +146,14 @@ const redirectToList = (response) => {
                       <Badge
                         :text="getProductTypeBadgeMap(t)[getResultData(result, 'type')].text"
                         :color="getProductTypeBadgeMap(t)[getResultData(result, 'type')].color" />
+                    </Flex>
+                    <Flex v-if="getResultData(result, 'type') === ProductType.Supplier">
+                      <Label semi-bold>{{ t('contacts.companies.labels.supplier') }}:</Label>
+                      <Link :path="{name: 'purchasing.suppliers.show', params: {id: getResultData(result, null, null, 'id')}}">
+                        <Flex class="gap-4">
+                          <FlexCell>{{ getResultData(result, null, null, 'name') }}</FlexCell>
+                        </Flex>
+                      </Link>
                     </Flex>
                     <Flex class="gap-2">
                       <FlexCell>

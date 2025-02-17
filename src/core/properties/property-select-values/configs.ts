@@ -5,20 +5,19 @@ import { ListingConfig } from "../../../shared/components/organisms/general-list
 import {getPropertySelectValueQuery, propertiesQuery, propertySelectValuesQuery} from "../../../shared/api/queries/properties.js";
 import {
   createPropertySelectValueMutation,
-  deletePropertyMutation,
   deletePropertySelectValueMutation,
   updatePropertySelectValueMutation
 } from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getPropertySelectValueSubscription } from '../../../shared/api/subscriptions/properties.js';
-import {createCompanyInvoiceAddressMutation} from "../../../shared/api/mutations/contacts";
 
 export const baseFormConfigConstructor = (
   t: Function,
   type: FormType,
   mutation: any,
   mutationKey: string,
-  propertyId: string | null = null
+  propertyId: string | null = null,
+  addImage: boolean = true
 ): FormConfig => ({
   cols: 1,
   type: type,
@@ -26,21 +25,21 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: propertyId !== null  ? { name: 'properties.properties.show', params: {id: propertyId}, query: {tab: 'values'} } : { name: 'properties.values.list' },
   submitAndContinueUrl: { name: 'properties.values.edit' },
-  deleteMutation: deletePropertyMutation,
+  deleteMutation: deletePropertySelectValueMutation,
   fields: [
-      getPropertyField(t, propertyId, type),
+    getPropertyField(t, propertyId, type),
     {
       type: FieldType.Text,
       name: 'value',
       label: t('properties.values.show.title'),
       placeholder: t('properties.values.placeholders.value')
     },
-    {
+    ...(addImage ? [{
       type: FieldType.Image,
       name: 'image',
       label: t('shared.labels.image'),
       optional: true,
-    }
+    } as FormField] : [])
   ],
 });
 
@@ -52,7 +51,7 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId):CreateOnTheFl
     mutationKey: 'createPropertySelectValue',
     submitUrl: propertyId !== null  ? { name: 'properties.properties.show', params: {id: propertyId}, query: {tab: 'values'} } : { name: 'properties.values.list' },
     submitAndContinueUrl: { name: 'properties.values.edit' },
-    deleteMutation: deletePropertyMutation,
+    deleteMutation: deletePropertySelectValueMutation,
     fields: [
         getPropertyField(t, propertyId, FormType.CREATE),
       {
@@ -68,6 +67,8 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId):CreateOnTheFl
 export const editFormConfigConstructor = (
   t: Function,
   id: string,
+  data: any,
+  addImage: boolean = true
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -75,10 +76,11 @@ export const editFormConfigConstructor = (
   mutationKey: 'updatePropertySelectValue',
   submitUrl: { name: 'properties.values.list' },
   submitAndContinueUrl: { name: 'properties.values.edit' },
-  deleteMutation: deletePropertyMutation,
+  deleteMutation: deletePropertySelectValueMutation,
   mutationId: id,
   query: getPropertySelectValueQuery,
-  queryVariables: { id: id },
+  queryVariables: {},
+  queryData: data,
   queryDataKey: 'propertySelectValue',
   fields: [
         {
@@ -101,12 +103,12 @@ export const editFormConfigConstructor = (
         formMapIdentifier: 'id',
         disabled: true
     },
-    {
+    ...(addImage ? [{
       type: FieldType.Image,
       name: 'image',
       label: t('shared.labels.image'),
       optional: true,
-    }
+    } as FormField] : [])
   ],
 });
 

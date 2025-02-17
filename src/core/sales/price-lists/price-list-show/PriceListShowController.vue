@@ -24,10 +24,6 @@ tabItems.value = [
 
 const showConfig = showConfigConstructor(t, id.value);
 
-const onDataFetched = (data) => {
-  addEdit.value = !data[showConfig.subscriptionKey].autoUpdatePrices;
-};
-
 </script>
 
 <template>
@@ -43,10 +39,10 @@ const onDataFetched = (data) => {
       <Card>
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralShow :config="showConfig" @data-fetched="onDataFetched"  />
+            <GeneralShow :config="showConfig"  />
           </template>
           <template v-slot:items>
-            <ItemsList :id="id" :addEdit="addEdit" />
+            <ItemsList :id="id" :add-edit="addEdit" />
           </template>
         </Tabs>
       </Card>

@@ -19,11 +19,6 @@ export const routes = [
     name: 'properties.properties.show',
     component: () => import('./properties/properties-show/PropertiesShowController.vue')
   },
-  // {
-  //   path: '/inventory/inventory/show/:id',
-  //   name: 'inventory.inventory.show',
-  //   component: () => import('./inventory/inventory-show/InventoryShowController.vue')
-  // },
   {
     path: '/properties/property-select-values',
     name: 'properties.values.list',
@@ -49,11 +44,11 @@ export const routes = [
     name: 'properties.rule.list',
     component: () => import('./product-properties-rule/product-properties-rule-list/ProductPropertiesRuleListController.vue')
   },
-  {
-    path: '/properties/product-properties-rule/create',
-    name: 'properties.rule.create',
-    component: () => import('./product-properties-rule/product-properties-rule-create/ProductPropertiesRuleCreateController.vue')
-  },
+  // {
+  //   path: '/properties/product-properties-rule/create',
+  //   name: 'properties.rule.create',
+  //   component: () => import('./product-properties-rule/product-properties-rule-create/ProductPropertiesRuleCreateController.vue')
+  // },
   {
     path: '/properties/product-properties-rule/edit/:id',
     name: 'properties.rule.edit',

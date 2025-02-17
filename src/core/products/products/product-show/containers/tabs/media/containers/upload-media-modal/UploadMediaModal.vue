@@ -2,13 +2,15 @@
 
 import { ref, watch} from 'vue';
 import { Modal } from '../../../../../../../../../shared/components/atoms/modal';
-import { Card } from '../../../../../../../../../shared/components/atoms/card';
 import { mediaQuery } from "../../../../../../../../../shared/api/queries/media.js";
 import FilesList from "../../../../../../../../media/files/containers/FilesList.vue";
-import {SearchConfig} from "../../../../../../../../../shared/components/organisms/general-search/searchConfig";
-import {useI18n} from "vue-i18n";
+import { SearchConfig } from "../../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import { useI18n } from "vue-i18n";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import {createMediaProductThroughMutation} from "../../../../../../../../../shared/api/mutations/media";
+import { createMediaProductThroughMutation } from "../../../../../../../../../shared/api/mutations/media.js";
+import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
+import { Toast } from "../../../../../../../../../shared/modules/toast";
+
 
 const props = defineProps<{ modelValue: boolean; productId: string; ids: any[] }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
@@ -49,6 +51,10 @@ const handleMediaAssign = async (media) => {
     emit('entries-created')
     console.log('Linking success:', data);
   } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
     console.error('Failed to link video and product:', error);
   }
 

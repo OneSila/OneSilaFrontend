@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, defineProps } from 'vue';
 import { useRoute } from 'vue-router';
-import Checkbox from '../../../../../../atoms/checkbox/Checkbox.vue';
+import { Toggle } from '../../../../../../atoms/toggle';
 import Label from '../../../../../../atoms/label/Label.vue';
 import { CheckboxFilter } from '../../../../searchConfig';
 
@@ -11,7 +11,7 @@ const route = useRoute();
 
 const checked = ref(false);
 
-// Watch for changes in the route query and adjust the checkbox state
+// Watch for changes in the route query and adjust the toggle state
 watch(() => route.query[props.filter.name], (newValue) => {
   checked.value = newValue === 'true';
 }, { immediate: true });
@@ -27,7 +27,7 @@ watch(checked, (newValue) => {
       <Label class="mr-2">{{ filter.label }}</Label>
     </FlexCell>
     <FlexCell>
-      <Checkbox v-model="checked" :disabled="filter.disabled"/>
+      <Toggle v-model="checked" :disabled="filter.disabled"/>
     </FlexCell>
 
   </Flex>

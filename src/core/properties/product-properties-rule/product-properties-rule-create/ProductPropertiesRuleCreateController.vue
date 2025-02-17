@@ -37,11 +37,6 @@ const saveMutations = async (continueEditing = false) => {
     return
   }
 
-  if (updatedAddedProperties.value.length == 0) {
-    Toast.error(t('properties.rule.error.noAddedProperties'));
-    return
-  }
-
   const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.OPTIONAL_IN_CONFIGURATOR);
   const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
 
@@ -139,12 +134,12 @@ onMounted(fetchProductType)
    <template v-slot:content>
     <Card class="mt-2 p-4">
       <Loader :loading="loading" />
-      <ProductPropertiesConfigurator
-          v-if="!loading"
-          :added-properties="[]"
-          :product-type="initialProductType"
-          @update:added-properties="handleAddedProperties"
-          @update:product-type="handlePropertyType" />
+<!--      <ProductPropertiesConfigurator-->
+<!--          v-if="!loading"-->
+<!--          :added-properties="[]"-->
+<!--          :product-type="initialProductType"-->
+<!--          @update:added-properties="handleAddedProperties"-->
+<!--          @update:product-type="handlePropertyType" />-->
 
       <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
         <CancelButton @click="() => router.push({name: 'properties.rule.list'})">

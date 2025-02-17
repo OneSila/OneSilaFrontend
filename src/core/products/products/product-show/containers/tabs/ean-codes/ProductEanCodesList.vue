@@ -62,7 +62,7 @@ const fetchAvailableEanCode = async () => {
 
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
-    variables: { filter: { internal: true, alreadyUsed: false }},
+    variables: { filter: { internal: { exact: true }, alreadyUsed: { exact: false } }},
     fetchPolicy: 'network-only'
   });
 
@@ -75,7 +75,7 @@ const fetchSupplierProducts = async () => {
 
   const {data} = await apolloClient.query({
     query: supplierProductsQuery,
-    variables: { filter: {baseProducts: {id: {exact: props.product.id}}} },
+    variables: { filter: {baseProducts: {id: { exact: props.product.id }}} },
     fetchPolicy: 'network-only'
   });
 
@@ -102,7 +102,7 @@ const fetchSupplierProductEanCode = async () => {
 
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
-    variables: { filter: { inheritTo: {id: {inList: supplierProductIds}}, internal: false } },
+    variables: { filter: { inheritTo: {id: {inList: supplierProductIds}}, internal: { exact: false } } },
     fetchPolicy: 'network-only'
   });
 

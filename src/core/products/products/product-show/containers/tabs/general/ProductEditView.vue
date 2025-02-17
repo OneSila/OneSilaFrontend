@@ -3,7 +3,7 @@
 import {onMounted, reactive, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
-  CheckboxFormField,
+  CheckboxFormField, FormType,
   QueryFormField,
   ValueFormField
 } from "../../../../../../../shared/components/organisms/general-form/formConfig";
@@ -108,9 +108,10 @@ const leadtimeField = {
       isEdge: true,
       multiple: false,
       filterable: true,
+      optional: true,
       formMapIdentifier: 'id',
       createOnFlyConfig: leadTimeOnTheFlyConfig(t),
-    }
+}
 
 const getCleanData = (data) => {
   let cleanedData =  {
@@ -331,12 +332,15 @@ onMounted(setLeadTimeOutOfStock);
 
     </div>
     <div class="mt-4">
-      <PrimaryButton @click="handleSubmitAndRedirect">
-        {{ t('shared.button.save') }}
-      </PrimaryButton>
-      <SecondaryButton @click="handleSubmit" class="ml-2">
-        {{ t('shared.button.saveAndContinue') }}
-      </SecondaryButton>
+      <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+        <SecondaryButton @click="handleSubmit" class="ml-2">
+          {{ t('shared.button.saveAndContinue') }}
+        </SecondaryButton>
+
+        <PrimaryButton @click="handleSubmitAndRedirect">
+          {{ t('shared.button.save') }}
+        </PrimaryButton>
+      </div>
     </div>
   </div>
 </template>

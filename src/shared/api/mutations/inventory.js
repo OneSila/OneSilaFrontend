@@ -21,6 +21,35 @@ export const createInventoryMutation = gql`
   }
 `;
 
+export const createInventoryMovementMutation = gql`
+    mutation createInventoryMovement($data: InventoryMovementInput!){
+      createInventoryMovement(data: $data){
+        quantity
+        notes
+        product {
+          id
+        }
+        movementFrom {
+            ... on InventoryLocationType {
+                id
+            }
+            ... on PurchaseOrderType {
+                id
+            }
+        }
+        movementTo {
+            ... on InventoryLocationType {
+                id
+            }
+            ... on PackageType {
+                id
+          }
+        }
+      }
+    }
+`;
+
+
 export const createInventoriesMutation = gql`
   mutation createInventories($data: [InventoryInput!]!) {
     createInventories(data: $data) {
@@ -75,7 +104,7 @@ export const deleteInventoriesMutation = gql`
 
 export const createInventoryLocationMutation = gql`
   mutation createInventoryLocation($data: InventoryLocationInput!) {
-    createInventoryLocationType(data: $data) {
+    createInventoryLocation(data: $data) {
       id
       name
       description
@@ -86,7 +115,7 @@ export const createInventoryLocationMutation = gql`
 
 export const createInventoryLocationsMutation = gql`
   mutation createInventoryLocations($data: [InventoryLocationInput!]!) {
-    createInventoryLocationTypes(data: $data) {
+    createInventoryLocations(data: $data) {
       id
       name
       description
@@ -96,7 +125,7 @@ export const createInventoryLocationsMutation = gql`
 
 export const updateInventoryLocationMutation = gql`
   mutation updateInventoryLocation($data: InventoryLocationPartialInput!) {
-    updateInventoryLocationType(data: $data) {
+    updateInventoryLocation(data: $data) {
       id
       name
       description
@@ -107,7 +136,7 @@ export const updateInventoryLocationMutation = gql`
 
 export const deleteInventoryLocationMutation = gql`
   mutation deleteInventoryLocation($id: GlobalID!) {
-    deleteInventoryLocationType(data: {id: $id}) {
+    deleteInventoryLocation(data: {id: $id}) {
       id
     }
   }
@@ -115,8 +144,115 @@ export const deleteInventoryLocationMutation = gql`
 
 export const deleteInventoryLocationsMutation = gql`
   mutation deleteInventoryLocations($ids: [GlobalID!]!) {
-    deleteInventoryLocationTypes(data: {ids: $ids}) {
+    deleteInventoryLocations(data: {ids: $ids}) {
       id
     }
   }
 `;
+
+export const createShipmentMutation = gql`
+  mutation createShipment($data: ShipmentInput!) {
+    createShipment(data: $data) {
+      id
+      status
+      fromAddress {
+        id
+        fullAddress
+      }
+      toAddress {
+        id
+        fullAddress
+      }
+      order {
+        id
+        reference
+      }
+    }
+  }
+`;
+
+export const updateShipmentMutation = gql`
+  mutation updateShipment($data: ShipmentPartialInput!) {
+    updateShipment(data: $data) {
+      id
+      status
+      fromAddress {
+        id
+        fullAddress
+      }
+      toAddress {
+        id
+        fullAddress
+      }
+      order {
+        id
+        reference
+      }
+    }
+  }
+`;
+
+export const deleteShipmentMutation = gql`
+  mutation deleteShipment($id: GlobalID!) {
+    deleteShipment(data: { id: $id }) {
+      id
+    }
+  }
+`;
+
+export const deleteShipmentsMutation = gql`
+  mutation deleteShipments($ids: [GlobalID!]!) {
+    deleteShipments(data: { ids: $ids }) {
+      id
+    }
+  }
+`;
+
+export const createPackageMutation = gql`
+  mutation createPackage($data: PackageInput!) {
+    createPackage(data: $data) {
+      id
+      type
+      status
+      trackingCode
+      trackingLink
+      shipment {
+        id
+        status
+      }
+    }
+  }
+`;
+
+export const updatePackageMutation = gql`
+  mutation updatePackage($data: PackagePartialInput!) {
+    updatePackage(data: $data) {
+      id
+      type
+      status
+      trackingCode
+      trackingLink
+      shipment {
+        id
+        status
+      }
+    }
+  }
+`;
+
+export const deletePackageMutation = gql`
+  mutation deletePackage($id: GlobalID!) {
+    deletePackage(data: { id: $id }) {
+      id
+    }
+  }
+`;
+
+export const deletePackagesMutation = gql`
+  mutation deletePackages($ids: [GlobalID!]!) {
+    deletePackages(data: { ids: $ids }) {
+      id
+    }
+  }
+`;
+

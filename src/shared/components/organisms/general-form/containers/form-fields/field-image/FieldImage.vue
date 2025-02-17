@@ -12,13 +12,10 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue']);
 
 const updateValue = (event) => {
-  // let only the id or null
-  console.log(event)
   let image = event;
   if (image !== null) {
     image = { id: image.id }
   }
-  console.log(image)
 
   emit('update:modelValue', image);
 };

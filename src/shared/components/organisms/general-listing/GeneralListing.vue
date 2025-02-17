@@ -47,15 +47,16 @@ const getShowRoute = (item) => {
 };
 
 const getUpdatedField = (field, item, index) => {
-      if (index === 0 && props.config.addShow) {
-        return {
-          ...field,
-          clickable: true,
-          clickUrl: getShowRoute(item),
-        };
-      }
-      return field;
+  if (index === 0 && props.config.addShow) {
+    return {
+      ...field,
+      clickable: true,
+      clickUrl: getShowRoute(item),
+    };
+  }
+  return field;
 }
+
 </script>
 
 <template>
@@ -131,10 +132,8 @@ const getUpdatedField = (field, item, index) => {
             </table>
           </div>
           <div v-if="config.addPagination" class="py-2 px-2">
-            <Pagination :alignment="config.paginationConfig?.alignment"
-                        :button-class="config.paginationConfig?.buttonClass"
-                        :page-info="data[queryKey].pageInfo"
-                        :use-icons="config.paginationConfig?.useIcons"/>
+            <Pagination :alignment="config.paginationConfig?.alignment" :button-class="config.paginationConfig?.buttonClass"
+                        :page-info="data[queryKey].pageInfo" :use-icons="config.paginationConfig?.useIcons" />
           </div>
         </div>
       </template>

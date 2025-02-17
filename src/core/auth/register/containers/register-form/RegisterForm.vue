@@ -12,6 +12,7 @@ import apolloClient from "../../../../../../apollo-client";
 import { EmailInput } from "../../../../../shared/components/atoms/input-email";
 import { displayApolloError } from "../../../../../shared/utils";
 import { useEnterKeyboardListener } from "../../../../../shared/modules/keyboard";
+import { Checkbox } from '../../../../../shared/components/atoms/checkbox';
 
 const {t, locale} = useI18n();
 const router = useRouter();
@@ -21,13 +22,20 @@ const form = reactive({
   username: '',
   password: '',
   confirmPassword: '',
+  agreedTerms: false,
 });
 const submitButtonRef = ref();
 
 
 const isFormValid = computed(() => {
-  return form.username && form.password && form.password === form.confirmPassword;
+  return (
+    form.username &&
+    form.password &&
+    form.password === form.confirmPassword &&
+    form.agreedTerms
+  );
 });
+
 
 const afterRegister = async () => {
   try {
@@ -86,21 +94,32 @@ useEnterKeyboardListener(onSubmit);
     <TextInputPrepend id="password" class="mb-2" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>
-    <TextInputPrepend id="confirmPassword" v-model="form.confirmPassword" :label="t('auth.register.labels.confirmPassword')" :placeholder="t('auth.register.placeholders.confirmPassword')" type="password">
+    <TextInputPrepend id="confirmPassword" class="mb-2" v-model="form.confirmPassword" :label="t('auth.register.labels.confirmPassword')" :placeholder="t('auth.register.placeholders.confirmPassword')" type="password">
       <Icon name="lock"/>
     </TextInputPrepend>
 
+    <Checkbox v-model="form.agreedTerms">
+      {{ t('auth.register.agreeTerms') }}
+      <Link
+        class="text-primary underline hover:text-black dark:hover:text-white"
+        :path="'https://www.onesila.com/terms-conditions-onesila/'"
+        target="_blank"
+        external
+      >
+        {{ t('auth.register.termsAndConditions') }}
+      </Link>
+    </Checkbox>
+
     <div>
-    <ApolloMutation :mutation="registerMutation" :variables="{ username: form.username, password: form.password, language: locale }" @done="afterRegister" @error="onError">
-      <template v-slot="{ mutate, loading, error }">
-        <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
-                :disabled="loading || !isFormValid"
-                @click="mutate()"
-        >
-          {{ t('shared.button.register') }}
-        </Button>
-      </template>
-    </ApolloMutation>
+      <ApolloMutation :mutation="registerMutation" :variables="{ username: form.username, password: form.password, language: locale }" @done="afterRegister" @error="onError">
+        <template v-slot="{ mutate, loading, error }">
+          <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
+                  :disabled="loading || !isFormValid"
+                  @click="mutate()">
+            {{ t('shared.button.register') }}
+          </Button>
+        </template>
+      </ApolloMutation>
 
       <div class="text-center dark:text-white mt-9">
         {{ t('auth.register.loginPrompt') }}

@@ -15,8 +15,13 @@ export const productSubscription = gql`
       inventoryPhysical
       inventorySalable
       inventoryReserved
+      inventoryAwaitInventory
       inspector {
         id
+      }
+      supplier {
+        id
+        name
       }
       vatRate {
         id

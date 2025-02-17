@@ -112,12 +112,13 @@ export const deleteOrderItemMutation = gql`
 `;
 
 export const deleteOrderItemsMutation = gql`
-  mutation deleteOrderItems($ids: [GlobalID!]!) {
-    deleteOrderItems(data: {ids: $ids}) {
+  mutation deleteOrderItems($data: [NodeInput!]!) {
+    deleteOrderItems(data: $data) {
       id
     }
   }
 `;
+
 
 export const createOrderNoteMutation = gql`
   mutation createOrderNote($data: OrderNoteInput!) {

@@ -11,6 +11,10 @@ export const ordersQuery = gql`
             id
             name
           }
+          internalCompany {
+            id
+            name
+          }
           country
           priceInclVat
           status
@@ -99,13 +103,17 @@ export const getOrderQuery = gql`
           id
           name
         }
+        internalCompany {
+          id
+          name
+        }
         invoiceAddress {
             id
-            address1
+            fullAddress
         }
         shippingAddress {
             id
-            address1
+            fullAddress
         }
         currency {
           id

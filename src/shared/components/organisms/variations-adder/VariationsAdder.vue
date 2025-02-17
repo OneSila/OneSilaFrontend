@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import {Pagination} from "../../molecules/pagination";
 import {Link} from "../../atoms/link";
 import {Image} from "../../atoms/image";
+import {getInspectorStatusBadgeMap} from "../../../../core/products/products/configs";
 
 const { t } = useI18n();
 
@@ -49,7 +50,7 @@ const fetchData = async () => {
 
   loading.value = true;
   let filters = {
-        id: { "nInList": excludedIds },
+        id: { "notInList": excludedIds },
         type: { "inList": typeFilter }
     }
 
@@ -247,6 +248,7 @@ onMounted(fetchData);
           <tr>
             <th>{{ t('shared.labels.name') }}</th>
             <th>{{ t('shared.labels.active') }}</th>
+            <th>{{ t('products.products.labels.inspectorStatus') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -280,6 +282,9 @@ onMounted(fetchData);
               <Icon v-if="variation.active" name="check-circle" class="ml-2 text-green-500" />
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
+            <td>
+              {{ getInspectorStatusBadgeMap()[variation.inspectorStatus].text }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -294,6 +299,7 @@ onMounted(fetchData);
           <tr>
           <th>{{ t('shared.labels.name') }}</th>
           <th>{{ t('shared.labels.active') }}</th>
+          <th>{{ t('products.products.labels.inspectorStatus') }}</th>
           <th v-if="hasQty()">{{ t('shared.labels.quantity') }}</th>
           <th v-if="type === ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
           </tr>
@@ -328,6 +334,9 @@ onMounted(fetchData);
             <td>
               <Icon v-if="item.active" name="check-circle" class="ml-2 text-green-500" />
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
+            </td>
+            <td>
+              {{ getInspectorStatusBadgeMap()[item.inspectorStatus].text }}
             </td>
             <td v-if="hasQty()">{{ item.quantity }}</td>
             <td v-if="type == ProductType.Manufacturable">

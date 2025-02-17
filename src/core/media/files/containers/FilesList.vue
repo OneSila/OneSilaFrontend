@@ -61,7 +61,7 @@ const assignMedia = (media) => {
                            :variables="{
                                         filter: {
                                           ...filterVariables,
-                                          ...(ids && ids.length > 0 ? { id: { nInList: ids } } : {})
+                                          ...(ids && ids.length > 0 ? { NOT: { id: { inList: ids } } } : {}),
                                         },
                                         order: orderVariables,
                                         first: pagination.first,

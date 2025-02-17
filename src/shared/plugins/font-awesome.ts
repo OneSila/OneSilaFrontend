@@ -75,6 +75,7 @@ import {
   faChevronRight,
   faChevronLeft,
   faChevronDown,
+  faChevronUp,
   faSignOut,
   faPhone,
   faGlobe,
@@ -133,7 +134,15 @@ import {
   faClock,
   faStore,
   faExclamation,
-  faCircleDot
+  faCircleDot,
+  faTruckFast,
+  faTruck,
+  faBoxOpen,
+  faPersonWalking,
+  faCaretRight,
+  faCircleArrowRight,
+  faExchangeAlt,
+  faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -207,6 +216,7 @@ library.add(faAnglesRight as IconDefinition);
 library.add(faChevronRight as IconDefinition);
 library.add(faChevronLeft as IconDefinition);
 library.add(faChevronDown as IconDefinition);
+library.add(faChevronUp as IconDefinition);
 library.add(faSignOut as IconDefinition);
 library.add(faPhone as IconDefinition);
 library.add(faGlobe as IconDefinition);
@@ -267,6 +277,14 @@ library.add(faClock as IconDefinition);
 library.add(faStore as IconDefinition);
 library.add(faExclamation as IconDefinition);
 library.add(faCircleDot as IconDefinition);
+library.add(faTruckFast as IconDefinition);
+library.add(faTruck as IconDefinition);
+library.add(faBoxOpen as IconDefinition);
+library.add(faPersonWalking as IconDefinition);
+library.add(faCaretRight as IconDefinition);
+library.add(faCircleArrowRight as IconDefinition);
+library.add(faExchangeAlt as IconDefinition);
+library.add(faFloppyDisk as IconDefinition);
 
 export default {
   install(app) {

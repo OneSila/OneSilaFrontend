@@ -26,6 +26,8 @@ export enum FieldType {
   Email = "Email",
   Website = "Website",
   Badge = "Badge",
+  InlineItems = "InlineItems",
+  IndividualFile = "IndividualFile", // not from the media app but adding individually
 }
 
 export enum ConfigTypes {
@@ -35,13 +37,23 @@ export enum ConfigTypes {
   OPTIONAL = 'OPTIONAL'
 }
 
+export const InspectorStatus = {
+  GREEN: 1,
+  ORANGE: 2,
+  RED: 3,
+};
+
+export type InspectorStatusType = typeof InspectorStatus[keyof typeof InspectorStatus];
+
 export const OrderStatus = {
   DRAFT: 'DRAFT',
-  PENDING: 'PENDING',
-  PENDING_INVENTORY: 'PENDING_INVENTORY',
+  PENDING: 'PENDING_PROCESSING',
+  PENDING_INVENTORY: 'AWAIT_INVENTORY',
   TO_PICK: 'TOPICK',
-  TO_SHIP: 'TOSHIP',
-  DONE: 'DONE',
+  TO_SHIP: 'TO_SHIP',
+  TO_ORDER: 'TO_ORDER',
+  PENDING_SHIPPING_APPROVAL: 'PENDING_SHIPPING_APPROVAL',
+  DONE: 'SHIPPED',
   CANCELLED: 'CANCELLED',
   HOLD: 'HOLD',
   EXCHANGED: 'EXCHANGED',
@@ -55,6 +67,12 @@ export const OrderStatus = {
   PENDING_DELIVERY: 'PENDING_DELIVERY',
   DELIVERED: 'DELIVERED',
 };
+
+export const PurchaseOrderOpenStatuses = [
+  OrderStatus.ORDERED,
+  OrderStatus.CONFIRMED,
+  OrderStatus.PENDING_DELIVERY,
+];
 
 export const ReasonForSale = {
   SALE: 'SALE',
@@ -126,3 +144,27 @@ export const LeadTimeUnit = {
   WEEK: 3,
   MONTH: 4
 };
+
+export const INVENTORY_MOVEMENTS_MODEL_CODES = {
+  PURCHASE_ORDER: 'purchase',
+  INVENTORY_LOCATION: 'location',
+  ORDER_RETURN: 'return',
+  PACKAGE: 'package',
+};
+
+export const PackageType = {
+  BOX: 'BOX',
+  PALLET: 'PALLET',
+};
+
+export const PackageStatus = {
+  NEW: 'NEW',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PACKED: 'PACKED',
+  DISPATCHED: 'DISPATCHED',
+};
+
+export enum PackagingMode {
+  MANUAL = 'manual',
+  VIRTUAL = 'virtual',
+}

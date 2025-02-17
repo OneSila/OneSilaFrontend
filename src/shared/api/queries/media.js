@@ -198,6 +198,7 @@ export const mediaProductThroughQuery = gql`
         node {
           id
           productId
+          isMainImage
           active
           productType
           sortOrder
@@ -221,6 +222,7 @@ export const mediaProductThroughQuery = gql`
                 lastName
               }
               imageWebUrl
+              onesilaThumbnailUrl
               fileUrl
               videoUrl
           }

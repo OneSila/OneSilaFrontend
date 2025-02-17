@@ -18,7 +18,7 @@ import { completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRul
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
 import {FormType} from "../../../../shared/components/organisms/general-form/formConfig";
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
-import {Property} from "../../../../shared/components/organisms/product-properties-configurator/ProductPropertiesConfigurator.vue";
+import { Property } from "../../../../shared/components/organisms/product-properties-configurator/ProductPropertiesConfigurator.vue";
 import {Loader} from "../../../../shared/components/atoms/loader";
 
 interface Item {
@@ -37,12 +37,14 @@ const initialItems: Ref<Property[]> = ref([]);
 const updatedAddedProperties: Ref<Property[]> = ref([]);
 const propertiesItemsMap: Ref<Record<string, Item>> = ref({})
 const loading = ref(false);
+const requireEanCode = ref(false);
 
 const updateOrCreateItems = async () => {
   try {
     // Prepare the input data for the mutation
     const inputData = {
       id: id.value.toString(),
+      requireEanCode: requireEanCode.value,
       items: updatedAddedProperties.value.map(property => ({
         id: propertiesItemsMap.value[property.id]?.id || null,
         property: { id: property.id },
@@ -81,6 +83,7 @@ const fetchData = async () => {
 
   if (data && data.productPropertiesRule) {
     initialProductType.value = data.productPropertiesRule.productType;
+    requireEanCode.value = data.productPropertiesRule.requireEanCode;
     const items = data.productPropertiesRule.items;
     for (const key in items) {
         const item = items[key];
@@ -114,11 +117,6 @@ const saveMutations = async (continueEditing = false) => {
     return
   }
 
-  if (updatedAddedProperties.value.length == 0) {
-    Toast.error(t('properties.rule.error.noAddedProperties'));
-    return
-  }
-
   const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.OPTIONAL_IN_CONFIGURATOR);
   const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
 
@@ -148,6 +146,10 @@ const handleAddedProperties = (addedProperties: Property[]) => {
   updatedAddedProperties.value = addedProperties;
 }
 
+const handleRequireEanCodeUpdated = (newVal: boolean) => {
+  requireEanCode.value = newVal;
+}
+
 const handleDelete = () => {
    router.push({name: 'properties.rule.list'});
 }
@@ -172,7 +174,9 @@ onMounted(fetchData);
             v-if="initialProductType"
             :added-properties="initialItems"
             :product-type="initialProductType"
+            :require-ean-code="requireEanCode"
             @update:added-properties="handleAddedProperties"
+            @update:require-ean-code="handleRequireEanCodeUpdated"
              />
 
         <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">

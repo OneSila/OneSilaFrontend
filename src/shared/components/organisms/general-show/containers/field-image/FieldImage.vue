@@ -7,7 +7,7 @@ import { computed } from 'vue';
 
 const props = defineProps<{
   field: ImageField;
-  modelValue: string;
+  modelValue: any;
 }>();
 
 const imageUrl = computed(() => {

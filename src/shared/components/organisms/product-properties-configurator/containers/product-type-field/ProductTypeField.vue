@@ -51,7 +51,12 @@ const setField = async () => {
     labelBy: 'value',
     valueBy: 'id',
     query: propertySelectValuesQuery,
-    queryVariables: { filter: { property: { isProductType: true }, id: { "nInList": ids } }},
+    queryVariables: {
+      filter: {
+        property: { isProductType: { exact: true } },
+        NOT: { id: { inList: ids } },
+      },
+    },
     dataKey: 'propertySelectValues',
     isEdge: true,
     multiple: false,

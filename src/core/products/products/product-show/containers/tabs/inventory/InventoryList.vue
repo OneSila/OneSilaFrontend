@@ -38,26 +38,7 @@ const filters = props.product.type === ProductType.Supplier ?
 
     <template v-slot:content>
       <div class="mt-2 border border-gray-300 p-3 rounded-lg">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Flex vertical>
-            <FlexCell>
-              <Flex>
-                <FlexCell>
-                  <Icon name="warehouse"/>
-                </FlexCell>
-                <FlexCell>
-                  <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ t('inventory.inventory.labels.physical')}}</label>
-                </FlexCell>
-                <FlexCell class="mt-0.5">
-                  <span>{{ product.inventoryPhysical }}</span>
-                </FlexCell>
-              </Flex>
-            </FlexCell>
-            <FlexCell>
-               <p class="text-sm leading-6 text-gray-400">{{ t('inventory.inventory.help.physical') }}</p>
-            </FlexCell>
-          </Flex>
-
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <Flex vertical>
             <FlexCell>
               <Flex>
@@ -76,7 +57,24 @@ const filters = props.product.type === ProductType.Supplier ?
                <p class="text-sm leading-6 text-gray-400">{{ t('inventory.inventory.help.salable') }}</p>
             </FlexCell>
           </Flex>
-
+          <Flex vertical>
+            <FlexCell>
+              <Flex>
+                <FlexCell>
+                  <Icon name="warehouse"/>
+                </FlexCell>
+                <FlexCell>
+                  <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ t('inventory.inventory.labels.physical')}}</label>
+                </FlexCell>
+                <FlexCell class="mt-0.5">
+                  <span>{{ product.inventoryPhysical }}</span>
+                </FlexCell>
+              </Flex>
+            </FlexCell>
+            <FlexCell>
+               <p class="text-sm leading-6 text-gray-400">{{ t('inventory.inventory.help.physical') }}</p>
+            </FlexCell>
+          </Flex>
           <Flex vertical>
             <FlexCell>
               <Flex>
@@ -95,7 +93,24 @@ const filters = props.product.type === ProductType.Supplier ?
                <p class="text-sm leading-6 text-gray-400">{{ t('inventory.inventory.help.reserved') }}</p>
             </FlexCell>
           </Flex>
-
+          <Flex vertical>
+            <FlexCell>
+              <Flex>
+                <FlexCell>
+                  <Icon name="clock"/>
+                </FlexCell>
+                <FlexCell>
+                  <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ t('inventory.inventory.labels.awaitInventory')}}</label>
+                </FlexCell>
+                <FlexCell class="mt-0.5">
+                  <span>{{ product.inventoryAwaitInventory }}</span>
+                </FlexCell>
+              </Flex>
+            </FlexCell>
+            <FlexCell>
+               <p class="text-sm leading-6 text-gray-400">{{ t('inventory.inventory.help.awaitInventory') }}</p>
+            </FlexCell>
+          </Flex>
         </div>
       </div>
 

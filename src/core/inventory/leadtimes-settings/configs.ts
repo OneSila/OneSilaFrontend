@@ -29,8 +29,8 @@ export const baseFormConfigConstructor = (
       query: companyShippingAddressesQuery,
       queryVariables: {
           filter: {
-            company: { isSupplier: true },
-            OR: { company: { isInternalCompany: true }
+            company: { isSupplier: { exact: true } },
+            OR: { company: { isInternalCompany: { exact: true } }
           }}
       },
       dataKey: 'shippingAddresses',
@@ -63,14 +63,14 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
      {
       type: FieldType.Query,
       name: 'shippingaddress',
-      label:  t('inventory.leadTimeSettings.labels.parent'),
+      label:  t('contacts.companies.address.labels.shippingAddress'),
       labelBy: 'fullAddress',
       valueBy: 'id',
       query: companyShippingAddressesQuery,
       queryVariables: {
           filter: {
-            company: { isSupplier: true },
-            OR: { company: { isInternalCompany: true }
+            company: { isSupplier: { exact: true } },
+            OR: { company: { isInternalCompany: { exact: true } }
           }}
       },
       dataKey: 'shippingAddresses',

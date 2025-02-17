@@ -5,50 +5,59 @@ import { useRoute } from "vue-router";
 import {onMounted, Ref, ref} from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import {FieldConfigs, FormConfig, FormType, updateFieldConfigs} from "../../../../shared/components/organisms/general-form/formConfig";
-import { FieldType } from "../../../../shared/utils/constants";
-import {baseFormConfigConstructor} from "../configs";
+import {FieldType, OrderStatus} from "../../../../shared/utils/constants";
+import {baseFormConfigConstructor, getCurrentStatusOptions} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {getOrderQuery} from "../../../../shared/api/queries/salesOrders.js";
 import {updateOrderMutation} from "../../../../shared/api/mutations/salesOrders.js";
 import {invoiceAddressOnTheFlyConfig, shippingAddressOnTheFlyConfig} from "../../../purchasing/orders/configs";
+import apolloClient from "../../../../../apollo-client";
 
 const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const customerId = ref(null);
+const statusFieldUpdated = ref(false);
 const fieldsToClear: Ref<string[] | null> = ref(null);
 const formConfig: Ref<FormConfig | null> = ref(null);
 const queryCustomerId = route.query.customerId ? route.query.customerId.toString() : null;
 
-onMounted(() => {
+onMounted(async () => {
+
+  const { data } = await apolloClient.query({
+    query: getOrderQuery,
+    variables: { id: id.value },
+  });
 
   const baseForm = {
-    ...baseFormConfigConstructor(
-      t,
-      FormType.EDIT,
-      updateOrderMutation,
-      'updateOrder',
-      queryCustomerId,
+  ...baseFormConfigConstructor(
+    t,
+    FormType.EDIT,
+    updateOrderMutation,
+    'updateOrder',
+    data['order'].customer.id,
 route.query.source ? route.query.source.toString() : null
-    ),
-  };
+  ),
+};
 
-  formConfig.value = {
-    ...baseForm,
-    mutationId: id.value.toString(),
-    query: getOrderQuery,
-    queryVariables: { id: id.value },
-    queryDataKey: 'order',
-    fields: [
-      {
-        type: FieldType.Hidden,
-        name: 'id',
-        value: id.value.toString()
-      },
-      ...baseForm.fields
-    ]
-  };
+formConfig.value = {
+  ...baseForm,
+  mutationId: id.value.toString(),
+  query: getOrderQuery,
+  queryVariables: { id: id.value },
+  queryData: data,
+  queryDataKey: 'order',
+  fields: [
+    {
+      type: FieldType.Hidden,
+      name: 'id',
+      value: id.value.toString()
+    },
+    ...baseForm.fields
+  ]
+};
+
 });
 
 const handleFormUpdate = (form) => {
@@ -93,6 +102,27 @@ const handleFormUpdate = (form) => {
       return;
     }
     fieldsToClear.value = ['invoiceAddress', 'shippingAddress']
+  }
+
+    if (!statusFieldUpdated.value && formConfig.value) {
+      statusFieldUpdated.value = true;
+      const currentStatus = form.status;
+      const statusFieldIndex = formConfig.value.fields.findIndex(field => field.name === 'status');
+
+    if (statusFieldIndex !== -1) {
+      const statusField = formConfig.value.fields[statusFieldIndex];
+
+      if (statusField.type === FieldType.Choice) {
+        const newStatuses = getCurrentStatusOptions(t, currentStatus);
+
+        formConfig.value.fields[statusFieldIndex] = {
+          ...statusField,
+          options: newStatuses,
+          disabled: [OrderStatus.DONE, OrderStatus.CANCELLED].includes(currentStatus),
+        };
+      }
+    }
+
   }
 };
 

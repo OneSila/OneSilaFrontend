@@ -29,9 +29,20 @@ export const baseFormConfigConstructor = (
     },
     {
       type: FieldType.Query,
-      name: 'item',
+      name: 'product',
       query: supplierProductsQuery,
-      queryVariables: productsId.length > 0 ? { filter: {id: { "nInList": productsId }, supplier: {id: {exact: supplierId}} }} : {filter: {supplier: {id: {exact: supplierId}}}},
+      queryVariables: productsId.length > 0
+        ? {
+            filter: {
+              supplier: { id: { exact: supplierId } },
+              NOT: { id: { inList: productsId } },
+            },
+          }
+        : {
+            filter: {
+              supplier: { id: { exact: supplierId } },
+            },
+          },
       label: t('purchasing.products.show.title'),
       labelBy: 'name',
       valueBy: 'id',
@@ -71,7 +82,7 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
   headers: [t('shared.labels.product'), t('shared.labels.quantity'),  t('purchasing.products.labels.unitPrice')],
   fields: [
     {
-      name: 'item',
+      name: 'product',
       type: FieldType.NestedText,
       keys: ['name'],
       clickable: true,

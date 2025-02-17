@@ -23,13 +23,6 @@ const listingConfig = listingConfigConstructor(t);
     </template>
 
     <template v-slot:buttons>
-        <div>
-          <Link :path="{ name: 'properties.rule.create' }">
-            <Button type="button" class="btn btn-primary">
-                {{  t('properties.rule.create.title') }}
-            </Button>
-          </Link>
-      </div>
     </template>
 
 

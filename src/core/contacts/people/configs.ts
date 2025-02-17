@@ -148,6 +148,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     },
     {
       type: FieldType.Boolean,
+      addLookup: true,
       strict: true,
       name: 'active',
       label: t('shared.labels.active'),

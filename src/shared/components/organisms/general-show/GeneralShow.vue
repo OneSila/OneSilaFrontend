@@ -58,7 +58,12 @@ const updateData = (newData) => {
             </div>
           </div>
         </div>
-        <Buttons :config="config" />
+        <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8"
+          v-if="config.addEdit || config.addDelete || config.addBack || config.addCustomButtons">
+          <Buttons :config="config" />
+
+          <slot name="buttons"></slot>
+        </div>
       </template>
     </template>
   </ApolloSubscription>
