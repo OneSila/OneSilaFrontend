@@ -816,10 +816,10 @@
           "124": "Please define at least one configurator required item for the configurable rule of the product."
         },
         "labels": {
-          "missingInfo": "Missing informations",
+          "missingInfo": "Missing Information",
           "perfect": "Perfect!",
-          "missingOptionalInfo": "Missing optional informations",
-          "noMissingInfo": "Product has no missing informations!"
+          "missingOptionalInfo": "Missing Optional Information",
+          "noMissingInfo": "No Missing Information!"
         },
         "alert": {
           "refreshSuccess": "Inspector succefully refreshed!"
