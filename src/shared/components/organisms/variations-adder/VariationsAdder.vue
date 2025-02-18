@@ -59,6 +59,7 @@ let filters = {
     filters['search'] = search.value;
   }
 
+
   let variables = {
     filter: filters,
     ...fetchPaginationData.value
