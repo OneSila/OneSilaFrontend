@@ -93,22 +93,15 @@ export const HELD_ORDER = [OrderStatus.HOLD, OrderStatus.PENDING_INVENTORY];
 export const PRODUCT_SIMPLE = 'SIMPLE'
 export const PRODUCT_BUNDLE = 'BUNDLE'
 export const PRODUCT_CONFIGURABLE = 'CONFIGURABLE'
-export const PRODUCT_MANUFACTURABLE = 'MANUFACTURABLE'
-export const PRODUCT_DROPSHIP = 'DROPSHIP'
-export const PRODUCT_SUPPLIER = 'SUPPLIER'
 
 export const ProductType = {
   Simple: PRODUCT_SIMPLE,
   Bundle: PRODUCT_BUNDLE,
   Configurable: PRODUCT_CONFIGURABLE,
-  Manufacturable: PRODUCT_MANUFACTURABLE,
-  Dropship: PRODUCT_DROPSHIP,
-  Supplier: PRODUCT_SUPPLIER,
 };
 
-export const variationTypes = [PRODUCT_SIMPLE, PRODUCT_BUNDLE, PRODUCT_MANUFACTURABLE, PRODUCT_DROPSHIP]
-export const billOfMaterialsTypes = [PRODUCT_SIMPLE, PRODUCT_MANUFACTURABLE]
-export const baseProductTypes = [PRODUCT_SIMPLE, PRODUCT_DROPSHIP]
+export const variationTypes = [PRODUCT_SIMPLE, PRODUCT_BUNDLE]
+export const baseProductTypes = [PRODUCT_SIMPLE]
 
 export const OnboardingStatus = {
   ADD_COMPANY: 'ADD_COMPANY',

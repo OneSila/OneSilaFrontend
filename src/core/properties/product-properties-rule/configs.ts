@@ -15,7 +15,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
   headers: [t('properties.properties.labels.isProductType'), t('properties.properties.labels.requireEanCode')],
   fields: [
     { name: 'productType', type: FieldType.NestedText, keys: ['value'] },
@@ -29,6 +29,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addShow: true,
   addDelete: true,
   addPagination: true,
+  isMainPage: isMainPage,
   deleteMutation: deleteProductPropertiesRuleMutation,
 });
 

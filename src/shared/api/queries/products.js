@@ -11,7 +11,6 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           active
           type
           proxyId
-          productionTime
           thumbnailUrl
           inspectorStatus
           vatRate {
@@ -224,20 +223,11 @@ export const getProductQuery = gql`
       type
       proxyId
       name
-      productionTime
-      forSale
       thumbnailUrl
       vatRate {
         id
         rate
         name
-      }
-      baseProducts {
-        id
-        name
-        type
-        active
-        thumbnailUrl
       }
       allowBackorder
     }
@@ -329,7 +319,6 @@ export const manufacturableProductsQuery = gql`
         node {
           id
           name
-          productionTime
         }
         cursor
       }
@@ -349,7 +338,6 @@ export const getManufacturableProductQuery = gql`
     manufacturableProduct(id: $id) {
       id
       name
-      productionTime
     }
   }
 `;
@@ -395,7 +383,6 @@ export const billOfMaterialsQuery = gql`
           variation {
             id
             name
-            productionTime
             thumbnailUrl
             inspectorStatus
             active

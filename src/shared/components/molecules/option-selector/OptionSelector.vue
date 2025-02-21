@@ -17,11 +17,11 @@ const gridColumnsClass = computed(() => {
   }
 
   return {
-    'option-selector grid-cols-1': props.choices.length === 1,
-    'option-selector grid-cols-2': props.choices.length === 2,
-    'option-selector grid-cols-3': props.choices.length === 3,
-    'option-selector grid-cols-4': props.choices.length === 4,
-    'option-selector grid-cols-5': props.choices.length >= 5,
+    'sm:grid-cols-1': props.choices.length === 1,
+    'sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2': props.choices.length === 2,
+    'sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3': props.choices.length === 3,
+    'sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4': props.choices.length === 4,
+    'sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5': props.choices.length >= 5,
   };
 })
 
@@ -37,7 +37,6 @@ const setActive = (choice) => {
 };
 
 </script>
-
 
 <template>
   <div>
@@ -55,34 +54,3 @@ const setActive = (choice) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.option-selector {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-
-@media (min-width: 640px) {
-  .option-selector {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 768px) {
-  .option-selector {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .option-selector {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1280px) {
-  .option-selector {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-</style>

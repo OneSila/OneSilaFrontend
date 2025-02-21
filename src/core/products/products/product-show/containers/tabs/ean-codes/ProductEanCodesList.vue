@@ -8,7 +8,6 @@ import {Label} from "../../../../../../../shared/components/atoms/label";
 import {eanCodesQuery} from "../../../../../../../shared/api/queries/eanCodes.js";
 import apolloClient from "../../../../../../../../apollo-client";
 import {PrimaryButton} from "../../../../../../../shared/components/atoms/button-primary";
-import { supplierProductsQuery } from "../../../../../../../shared/api/queries/purchasing.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import {Link} from "../../../../../../../shared/components/atoms/link";
@@ -31,14 +30,12 @@ const eanCode = ref({
 });
 
 const supplierProductEanCodes: Ref<EanCode[]> = ref([]);
-const supplierProductEanCodeId = ref(null);
 const hasAvailableEanCodes = ref(false);
 
 const setDefaultValues = async () => {
   eanCode.value.id = null;
   eanCode.value.ean = '';
   supplierProductEanCodes.value = [];
-  supplierProductEanCodeId.value = null;
   hasAvailableEanCodes.value = false;
 }
 const fetchCurrentEanCode = async () => {
@@ -71,54 +68,10 @@ const fetchAvailableEanCode = async () => {
     }
 }
 
-const fetchSupplierProducts = async () => {
-
-  const {data} = await apolloClient.query({
-    query: supplierProductsQuery,
-    variables: { filter: {baseProducts: {id: { exact: props.product.id }}} },
-    fetchPolicy: 'network-only'
-  });
-
-    if (data && data.supplierProducts && data.supplierProducts.edges.length > 0) {
-      return data.supplierProducts.edges;
-    }
-
-  return [];
-}
-
-const fetchSupplierProductEanCode = async () => {
-
-  if (eanCode.value.id) {
-    return
-  }
-
-  const supplierProducts = await fetchSupplierProducts();
-
-  if (supplierProducts.length == 0) {
-    return;
-  }
-
-  const supplierProductIds = supplierProducts.map(supplierProduct => supplierProduct.node.proxyId);
-
-  const {data} = await apolloClient.query({
-    query: eanCodesQuery,
-    variables: { filter: { inheritTo: {id: {inList: supplierProductIds}}, internal: { exact: false } } },
-    fetchPolicy: 'network-only'
-  });
-
-    if (data && data.eanCodes && data.eanCodes.edges.length > 0) {
-      supplierProductEanCodes.value = data.eanCodes.edges.map(edge => ({
-        id: edge.node.id,
-        name: `${edge.node.productName} - ${edge.node.eanCode}`
-      }));
-    }
-}
-
 const fetchNeededData = async () => {
   await setDefaultValues();
   await fetchCurrentEanCode();
   await fetchAvailableEanCode();
-  await fetchSupplierProductEanCode();
 }
 
 const copyUrlToClipboard = async () => {
@@ -132,26 +85,6 @@ const copyUrlToClipboard = async () => {
 };
 
 onMounted(fetchNeededData)
-
-const handleSave = async () => {
-  const inputData = {
-    id: supplierProductEanCodeId.value,
-    product: {id: props.product.id},
-    internal: false,
-    alreadyUsed: true,
-  };
-
-  const {data} = await apolloClient.mutate({
-    mutation: updateEanCodeMutation,
-    variables: { data: inputData }
-  });
-
-  if (data) {
-    Toast.success(t('products.eanCodes.assignSuccessfully'));
-  }
-
-  await fetchNeededData();
-}
 
 const handleAssign = async () => {
   const inputData = {
@@ -239,14 +172,7 @@ const handleRealease = async () => {
                 </FlexCell>
                 <FlexCell>
                   <Flex class="w-full lg:w-1/2 gap-4">
-                    <FlexCell grow>
-                      <Selector  v-model="supplierProductEanCodeId" :options="supplierProductEanCodes" :disabled="eanCode.id !== null" value-by="id" label-by="name"  />
-                    </FlexCell>
-                    <FlexCell>
-                      <PrimaryButton @click="handleSave" :disabled="supplierProductEanCodeId == null">
-                        {{ t('shared.button.save') }}
-                      </PrimaryButton>
-                    </FlexCell>
+
                   </Flex>
                 </FlexCell>
               </Flex>

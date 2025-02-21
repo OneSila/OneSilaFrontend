@@ -3,7 +3,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { Product } from "../../../../../../configs";
 import { useI18n } from "vue-i18n";
-import { ProductType, variationTypes, billOfMaterialsTypes } from "../../../../../../../../../shared/utils/constants";
+import { ProductType, variationTypes } from "../../../../../../../../../shared/utils/constants";
 import { productsQuery } from "../../../../../../../../../shared/api/queries/products.js";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
@@ -29,9 +29,7 @@ const fetchData = async () => {
     case ProductType.Bundle:
       typeFilter = variationTypes;
       break;
-    case ProductType.Manufacturable:
-      typeFilter = billOfMaterialsTypes;
-      break;
+
     default:
       typeFilter = variationTypes;
   }

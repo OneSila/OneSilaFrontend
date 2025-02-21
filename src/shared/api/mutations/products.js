@@ -39,13 +39,6 @@ export const updateProductMutation = gql`
         id
         rate
       }
-      baseProducts {
-        id
-        name
-        type
-        active
-        thumbnailUrl
-      }
     }
   }
 `;

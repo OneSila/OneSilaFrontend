@@ -1,17 +1,17 @@
 <script setup lang="ts">
 
-import { useI18n } from 'vue-i18n';
-import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { Button } from "../../../../shared/components/atoms/button";
-import { Link } from "../../../../shared/components/atoms/link";
-import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
-import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
-import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery} from "../configs";
+import {useI18n} from 'vue-i18n';
+import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
+import {Button} from "../../../../shared/components/atoms/button";
+import {Link} from "../../../../shared/components/atoms/link";
+import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue"
+import {GeneralListing} from "../../../../shared/components/organisms/general-listing";
+import {searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery} from "../configs";
 
-const { t } = useI18n();
+const {t} = useI18n();
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t);
+const listingConfig = listingConfigConstructor(t, null, null, null, true);
 
 </script>
 
@@ -19,27 +19,16 @@ const listingConfig = listingConfigConstructor(t);
   <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'sales.orders.list' }, name: t('sales.orders.title') }]" />
+      <Breadcrumbs :links="[{ path: { name: 'sales.orders.list' }, name: t('sales.orders.title') }]"/>
     </template>
 
-    <template v-slot:buttons>
-        <div>
-          <Link :path="{ name: 'sales.orders.create' }">
-            <Button type="button" class="btn btn-primary">
-                {{  t('sales.orders.create.title') }}
-            </Button>
-          </Link>
-      </div>
-    </template>
-
-
-   <template v-slot:content>
-     <GeneralListing
-         :searchConfig="searchConfig"
-         :config="listingConfig"
-         :query="listingQuery"
-         :query-key="listingQueryKey"
+    <template v-slot:content>
+      <GeneralListing
+          :searchConfig="searchConfig"
+          :config="listingConfig"
+          :query="listingQuery"
+          :query-key="listingQueryKey"
       />
-   </template>
+    </template>
   </GeneralTemplate>
 </template>

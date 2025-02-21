@@ -21,10 +21,7 @@ export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
 export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.variation'), code: ProductType.Simple },
   { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
-  { name: t('products.products.labels.type.choices.dropship'), code: ProductType.Dropship },
-  { name: t('products.products.labels.type.choices.manufacturable'), code: ProductType.Manufacturable },
   { name: t('products.products.labels.type.choices.configurable'), code: ProductType.Configurable },
-  { name: t('products.products.labels.type.choices.supplier'), code: ProductType.Supplier },
 ];
 
 export const getInspectorErrors = (t) => [
@@ -57,11 +54,8 @@ export const getInspectorErrors = (t) => [
 
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Configurable]: { text: t('products.products.labels.type.choices.configurable'), color: 'blue' },
-  [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'green' },
+  [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'purple' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
-  [ProductType.Dropship]: { text: t('products.products.labels.type.choices.dropship'), color: 'primary' },
-  [ProductType.Manufacturable]: { text: t('products.products.labels.type.choices.manufacturable'), color: 'red' },
-  [ProductType.Supplier]: { text: t('products.products.labels.type.choices.supplier'), color: 'purple' },
 });
 
 export const getInspectorStatusOptions = (t) => [
@@ -217,13 +211,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     },
     {
       type: FieldType.Boolean,
-      strict: true,
-      addLookup: true,
-      name: 'forSale',
-      label: t('products.products.labels.forSale')
-    },
-    {
-      type: FieldType.Boolean,
       addLookup: true,
       strict: true,
       name: 'active',
@@ -242,8 +229,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.inspectorStatus'), t('products.products.labels.type.title'), t('shared.labels.active'), t('products.products.labels.allowBackorder')],
+export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
+  headers: [t('shared.labels.name'), t('products.products.labels.inspectorStatus'), t('products.products.labels.type.title'), t('shared.labels.active')],
   fields: [
     {
       type: FieldType.Text,
@@ -265,16 +252,16 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
       type: FieldType.Boolean,
       name: 'active'
     },
-    {
-      type: FieldType.Boolean,
-      name: 'allowBackorder'
-    },
   ],
   identifierKey: 'id',
   addActions: false,
   showUrlName: 'products.products.show',
   addShow: true,
   addPagination: true,
+  addBulkEdit: false,
+  isMainPage: isMainPage,
+  defaultGridIcon: 'box',
+  addGridView: true,
 });
 
 export const listingQueryKey = 'products';
@@ -304,16 +291,10 @@ export interface Product {
   proxyId?: string;
   sku: string;
   active: boolean;
-  forSale: boolean;
   type: string;
   inspector: Inspector;
   vatRate?: VatRate;
   allowBackorder: boolean;
-  productionTime?: number;
-  inventoryPhysical?: number;
-  inventorySalable?: number;
-  inventoryReserved?: number;
-  inventoryAwaitInventory?: number;
   baseProducts?: BaseProduct[]
 }
 

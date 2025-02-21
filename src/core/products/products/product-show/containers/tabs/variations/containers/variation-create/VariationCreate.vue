@@ -58,8 +58,6 @@ const getMutation = () => {
       return createBundleVariationMutation;
     case ProductType.Configurable:
       return createConfigurableVariationMutation;
-    case ProductType.Manufacturable:
-      return createBillOfMaterialMutation;
     default:
       return null;
   }

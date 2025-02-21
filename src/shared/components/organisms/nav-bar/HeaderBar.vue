@@ -58,28 +58,12 @@ const allowCreateDropdown = () => {
       path: { name: 'products.products.create' },
     },
     {
-      label: t('contacts.companies.create.title'),
-      icon: 'envelope',
-      path: { name: 'contacts.companies.create' },
-    },
-    {
-      label: t('sales.orders.create.title'),
-      icon: 'cart-shopping',
-      path: { name: 'sales.orders.create' },
-    },
-    {
-      label: t('purchasing.orders.create.title'),
-      icon: 'receipt',
-      path: { name: 'purchasing.orders.create' },
-    },
-    {
-      label: t('inventory.inventory.create.title'),
-      icon: 'warehouse',
-      path: { name: 'inventory.inventory.create' },
-    },
+      label: t('properties.properties.create.title'),
+      icon: 'screwdriver-wrench',
+      path: { name: 'properties.properties.create' },
+    }
   ];
 }
-
 
 
 </script>

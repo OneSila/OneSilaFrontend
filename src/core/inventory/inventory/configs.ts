@@ -8,7 +8,6 @@ import {createInventoryLocationMutation, deleteInventoryMutation} from "../../..
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {baseFormConfigConstructor as baseStocklocationConfigConstructor } from '../inventory-location/configs'
 import { getInventorySubscription } from '../../../shared/api/subscriptions/inventory.js';
-import {purchaseOrdersQuery} from "../../../shared/api/queries/purchasing";
 
 export const MOVEMENT_FROM_MODELS = (t) => [
   { code: INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER, name: t('purchasing.orders.title') },
@@ -57,7 +56,6 @@ export const getProductField = (productId, t): FormField => {
         labelBy: 'name',
         valueBy: 'id',
         query: productsQuery,
-        queryVariables: {"filter": {"type": {"exact": ProductType.Supplier}}},
         dataKey: 'products',
         isEdge: true,
         multiple: false,
@@ -106,21 +104,6 @@ export const baseFormConfigConstructor = (
           labelBy: 'name',
           valueBy: 'code',
         },
-    {
-      type: FieldType.Query,
-      name: 'movementFromId',
-      label: t('inventory.movements.labels.movementFrom'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: purchaseOrdersQuery,
-      dataKey: null,
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      disabled: movementFromModelFromUrl == null,
-      default: movementFromIdFromUrl || null,
-    },
     {
       type: FieldType.Choice,
       name: 'movementToModel',

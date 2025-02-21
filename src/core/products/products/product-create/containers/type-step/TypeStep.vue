@@ -12,27 +12,15 @@ import dropshipType from "../../../../../../assets/images/product-types/dropship
 import {ProductType} from "../../../../../../shared/utils/constants";
 import {FormType} from "../product";
 
-const props = defineProps<{form: FormType, hasSupplierProduct: boolean}>();
+const props = defineProps<{form: FormType}>();
 const emit = defineEmits(['for-sale-changed', 'empty-variations']);
 
-const baseTypeChoice = [
+const typeChoice = [
   { name: ProductType.Simple },
-  { name: ProductType.Dropship }
-];
-
-const additionalTypeChoice = [
-  { name: ProductType.Bundle },
   { name: ProductType.Configurable },
-  { name: ProductType.Manufacturable }
+  { name: ProductType.Bundle }
 ];
 
-const typeChoice = computed(() => {
-  if (props.hasSupplierProduct) {
-    return baseTypeChoice;
-  } else {
-    return [...baseTypeChoice, ...additionalTypeChoice];
-  }
-});
 
 // when we select the type we always make for sale true in case we go back
 emit('for-sale-changed', true, false);
@@ -56,14 +44,6 @@ const { t } = useI18n();
         </div>
       </template>
 
-      <template #BUNDLE>
-        <div>
-          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>
-          <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>
-          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />
-        </div>
-      </template>
-
       <template #CONFIGURABLE>
         <div>
           <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.configurable.title') }}</h3>
@@ -72,19 +52,12 @@ const { t } = useI18n();
         </div>
       </template>
 
-      <template #MANUFACTURABLE>
-        <div>
-          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.manufacturable.title') }}</h3>
-          <p>{{ t('products.products.create.wizard.stepOne.manufacturable.example') }}</p>
-          <Image :source="manufacturableType" alt="Configurable" class="w-full max-h-[35rem]" />
-        </div>
-      </template>
 
-      <template #DROPSHIP>
+      <template #BUNDLE>
         <div>
-          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.dropship.title') }}</h3>
-          <p>{{ t('products.products.create.wizard.stepOne.dropship.example') }}</p>
-          <Image :source="dropshipType" alt="Configurable" class="w-full max-h-[35rem]" />
+          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>
+          <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>
+          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />
         </div>
       </template>
 

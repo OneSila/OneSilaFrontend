@@ -39,7 +39,6 @@ export const baseFormConfigConstructor = (
           filter: {
             AND: [
               { NOT: { id: { inList: productsId } } },
-              { NOT: { type: { inList: [ProductType.Supplier] } } },
             ],
           },
         }
@@ -96,10 +95,10 @@ export const listingConfigConstructor = (t: Function, orderId: string): ListingC
   identifierKey: 'id',
   identifierVariables: {orderId: orderId},
   addActions: true,
-  addEdit: true,
+  addEdit: false,
   editUrlName: 'sales.orders.items.edit',
   addShow: false,
-  addDelete: true,
+  addDelete: false,
   addPagination: true,
   deleteMutation: deleteOrderItemMutation,
 });

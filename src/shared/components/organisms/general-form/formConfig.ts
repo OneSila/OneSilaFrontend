@@ -241,6 +241,9 @@ export interface FormConfig {
   addCancel?: boolean;  // if we add the cancel / back button
   cancelLabel?: string; // label for cancel / back button
   cancelUrl?: Url; // url to land after cancel
+  addShow?: boolean;  // if we add the show button from the edit page
+  showLabel?: string; // label for show button
+  showUrlName?: string; // url to land after show
   addDelete?: boolean; // Relevant only for Edit forms
   deleteLabel?: string; // delete label
   deleteMutation?: string; // New addition for delete operation
@@ -259,6 +262,7 @@ export interface FormConfigDefaultTranslations {
   cancelLabel: string;
   submitAndContinueLabel: string;
   deleteLabel: string;
+  showLabel: string;
 }
 
 export const defaultFormConfig = {
@@ -276,6 +280,7 @@ export function getEnhancedConfig(config: Partial<FormConfig>, defaultTranslatio
   enhancedConfig.cancelLabel = config.cancelLabel || defaultTranslations.cancelLabel;
   enhancedConfig.submitAndContinueLabel = config.submitAndContinueLabel || defaultTranslations.submitAndContinueLabel;
   enhancedConfig.deleteLabel = config.deleteLabel || defaultTranslations.deleteLabel;
+  enhancedConfig.showLabel = config.showLabel || defaultTranslations.showLabel;
 
   // if we have addDelete but not have deleteUrl it will get the submit one that is usually the listing
   if (enhancedConfig.addDelete && !enhancedConfig.deleteUrl) {

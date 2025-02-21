@@ -13,7 +13,7 @@ const { t } = useI18n();
 const route = useRoute();
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, route.params.productId ? route.params.productId.toString() : null);
+const listingConfig = listingConfigConstructor(t, route.params.productId ? route.params.productId.toString() : null, true);
 
 </script>
 

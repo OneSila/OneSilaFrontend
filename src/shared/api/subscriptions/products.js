@@ -9,31 +9,14 @@ export const productSubscription = gql`
       type
       proxyId
       name
-      productionTime
-      forSale
       thumbnailUrl
-      inventoryPhysical
-      inventorySalable
-      inventoryReserved
-      inventoryAwaitInventory
       inspector {
         id
-      }
-      supplier {
-        id
-        name
       }
       vatRate {
         id
         rate
         name
-      }
-      baseProducts {
-        id
-        name
-        type
-        active
-        thumbnailUrl
       }
       allowBackorder
     }

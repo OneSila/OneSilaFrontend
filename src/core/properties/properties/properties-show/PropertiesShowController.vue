@@ -21,6 +21,7 @@ const id = ref(String(route.params.id));
 const tabItems = ref();
 const showValues = ref(false);
 const isProductType = ref(false);
+const hasImage = ref(false);
 const loading = ref(true);
 
 tabItems.value = [
@@ -45,6 +46,10 @@ const onDataFetched = (data) => {
     } as ShowField;
 
     showConfig.fields.push(hasImageField);
+
+    if (data[showConfig.subscriptionKey].hasImage) {
+      hasImage.value = true;
+    }
   }
 
   if (!showValues.value) {
@@ -89,7 +94,7 @@ const onDataFetched = (data) => {
             <RulesList v-if="!isProductType" :id="id" :is-product-type="isProductType" />
           </template>
           <template v-slot:values>
-            <ValuesList v-if="showValues" :id="id" />
+            <ValuesList v-if="showValues && !loading" :id="id" :add-grid="hasImage" />
           </template>
         </Tabs>
       </Card>

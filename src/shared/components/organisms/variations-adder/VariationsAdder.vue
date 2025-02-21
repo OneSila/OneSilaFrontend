@@ -4,7 +4,7 @@ import { RelatedProduct } from "../../../../core/products/products/product-creat
 import { Button } from "../../atoms/button";
 import { Icon } from "../../atoms/icon";
 import {useI18n} from "vue-i18n";
-import {billOfMaterialsTypes, ProductType, variationTypes} from "../../../utils/constants";
+import { ProductType, variationTypes } from "../../../utils/constants";
 import apolloClient from "../../../../../apollo-client";
 import { productsQuery } from "../../../api/queries/products.js";
 import { TextInput } from "../../atoms/input-text";
@@ -40,9 +40,6 @@ const fetchData = async () => {
     case ProductType.Configurable:
     case ProductType.Bundle:
       typeFilter = variationTypes;
-      break;
-    case ProductType.Manufacturable:
-      typeFilter = billOfMaterialsTypes;
       break;
     default:
       typeFilter = variationTypes;
@@ -122,7 +119,7 @@ const handleRemoveVariation = async (variationId: string) => {
 }
 
 const hasQty = () => {
-  return props.type === ProductType.Manufacturable || props.type === ProductType.Bundle;
+  return props.type === ProductType.Bundle;
 }
 
 const dragStart = (id) => {
@@ -302,7 +299,6 @@ onMounted(fetchData);
           <th>{{ t('shared.labels.active') }}</th>
           <th>{{ t('products.products.labels.inspectorStatus') }}</th>
           <th v-if="hasQty()">{{ t('shared.labels.quantity') }}</th>
-          <th v-if="type === ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -340,12 +336,6 @@ onMounted(fetchData);
               {{ getInspectorStatusBadgeMap()[item.inspectorStatus].text }}
             </td>
             <td v-if="hasQty()">{{ item.quantity }}</td>
-            <td v-if="type == ProductType.Manufacturable">
-              <span v-if="item.productionTime">
-                {{ item.productionTime }}
-              </span>
-              <span v-else>-</span>
-            </td>
           </tr>
         </tbody>
       </table>

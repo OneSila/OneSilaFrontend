@@ -8,7 +8,6 @@ import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQu
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
-import {customerOnTheFlyConfig} from "../customers/configs";
 import { createOrderItemsMutation, updateOrderItemMutation, deleteOrderItemsMutation } from "../../../shared/api/mutations/salesOrders.js";
 import { productsQuery } from "../../../shared/api/queries/products.js";
 
@@ -100,9 +99,8 @@ export const getCurrentStatusOptions = (t, currentStatus): Array<{ code: string;
 const getSubmitUrl = (customerId, source) => {
   if (customerId && source === 'company') {
     return { name: 'contacts.companies.show', params: { id: customerId }, query: { tab: 'orders' } };
-  } else if (customerId) {
-    return { name: 'sales.customers.show', params: { id: customerId }, query: { tab: 'orders' } };
   }
+
   return { name: 'sales.orders.list' };
 };
 
@@ -138,7 +136,6 @@ const getCustomerField = (customerId, source, t): FormField => {
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
-      createOnFlyConfig: customerOnTheFlyConfig(t)
     };
   }
 }
@@ -301,12 +298,6 @@ export const baseFormConfigConstructor = (
           labelBy: 'name',
           valueBy: 'id',
           query: productsQuery,
-          queryVariables:
-          {
-              filter: {
-                 NOT: { type: { inList: [ProductType.Supplier] } } ,
-              },
-            },
           dataKey: 'products',
           isEdge: true,
           multiple: false,
@@ -459,18 +450,19 @@ const getUrlQueryParams = (customerId: string | null = null, productId: string |
   return Object.keys(params).length > 0 ? params : undefined;
 }
 
-export const listingConfigConstructor = (t: Function, customerId: string|null = null, productId: string|null = null, source: string|null = null): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, customerId: string|null = null, productId: string|null = null, source: string|null = null, isMainPage: boolean = false): ListingConfig => ({
   headers: getHeaders(t, customerId),
   fields: getFields(customerId, t),
   identifierKey: 'id',
-  addActions: true,
-  addEdit: true,
+  addActions: false,
+  addEdit: false,
   editUrlName: 'sales.orders.edit',
   showUrlName: 'sales.orders.show',
   urlQueryParams: getUrlQueryParams(customerId, productId, source),
   addShow: true,
   addDelete: false,
   addPagination: true,
+  isMainPage: isMainPage,
 });
 
 const getBackUrl = (customerId: string | null = null, productId: string | null = null, source: string|null = null) => {
@@ -478,8 +470,6 @@ const getBackUrl = (customerId: string | null = null, productId: string | null =
   if (customerId) {
     if (customerId && source === 'company') {
       return { name: 'contacts.companies.show', params: { id: customerId }, query: { tab: 'orders' } };
-    } else if (customerId) {
-      return { name: 'sales.customers.show', params: { id: customerId }, query: { tab: 'orders' } };
     }
   }
 
@@ -497,8 +487,8 @@ export const showConfigConstructor = (t: Function, id, customerId: string|null =
   subscriptionVariables: {pk: id},
   addBack: true,
   backUrl: getBackUrl(customerId, productId, source),
-  addCustomButtons: true,
-  addEdit: true,
+  addCustomButtons: false,
+  addEdit: false,
   editUrl: {name: 'sales.orders.edit', params: {id: id} },
   addDelete: false,
   fields: [

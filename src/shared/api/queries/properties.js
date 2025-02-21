@@ -86,6 +86,7 @@ query PropertySelectValues($first: Int, $last: Int, $after: String, $before: Str
         node {
           id
           value
+          thumbnailUrl
           property {
             id
             name

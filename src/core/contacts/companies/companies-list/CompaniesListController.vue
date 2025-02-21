@@ -11,7 +11,7 @@ import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, lis
 const { t } = useI18n();
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t);
+const listingConfig = listingConfigConstructor(t, true);
 
 </script>
 
@@ -23,13 +23,6 @@ const listingConfig = listingConfigConstructor(t);
     </template>
 
     <template v-slot:buttons>
-        <div>
-          <Link :path="{ name: 'contacts.companies.create' }">
-          <Button class="btn btn-primary">
-              {{  t('contacts.companies.create.title') }}
-          </Button>
-        </Link>
-      </div>
     </template>
 
 

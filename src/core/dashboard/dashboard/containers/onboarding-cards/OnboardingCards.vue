@@ -3,7 +3,6 @@ import {defineEmits, defineProps, onMounted, ref, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { OnboardingCard } from './../onboarding-card';
 import { customersQuery, suppliersQuery } from "../../../../../shared/api/queries/contacts.js";
-import { purchaseOrdersQuery, supplierProductsQuery } from "../../../../../shared/api/queries/purchasing.js";
 import { productsQuery } from "../../../../../shared/api/queries/products.js";
 import { ordersQuery } from "../../../../../shared/api/queries/salesOrders.js";
 import {inventoriesQuery, inventoryLocationsQuery} from "../../../../../shared/api/queries/inventory.js";
@@ -39,12 +38,8 @@ const purchaseOrderFilter = { filter: {
 const cards: OnboardingCardObject[] = [
   { key: 'member', title: t('dashboard.onboarding.cards.member.title'),
     query: membersQuery, path: 'profile.company' },
-  { key: 'supplier', title: t('dashboard.onboarding.cards.supplier.title'),
-    query: suppliersQuery, path: 'purchasing.suppliers.create', variables: excludeDemoDataFilter },
   { key: 'product', title: t('dashboard.onboarding.cards.product.title'),
     query: productsQuery, path: 'products.products.create',  variables: excludeDemoDataFilter},
-  { key: 'purchaseOrder', title: t('dashboard.onboarding.cards.purchaseOrder.title'),
-    query: purchaseOrdersQuery, path: 'purchasing.orders.create',  variables: purchaseOrderFilter},
   { key: 'inventoryLocation', title: t('dashboard.onboarding.cards.inventoryLocation.title'),
     query: inventoryLocationsQuery, path: 'inventory.inventoryLocations.create',  variables: excludeDemoDataFilter },
   { key: 'inventory', title: t('dashboard.onboarding.cards.inventory.title'),
@@ -58,9 +53,7 @@ const cards: OnboardingCardObject[] = [
 
 const steps: StepEntity[]  = [
   { attachTo: { element: '#member' }, content: { title: '', description: t('dashboard.onboarding.cards.member.details') } },
-  { attachTo: { element: '#supplier' }, content: { title: '', description: t('dashboard.onboarding.cards.supplier.details') } },
   { attachTo: { element: '#product' }, content: { title: '', description: t('dashboard.onboarding.cards.product.details') } },
-  { attachTo: { element: '#purchaseOrder' }, content: { title: '', description: t('dashboard.onboarding.cards.purchaseOrder.details') } },
   { attachTo: { element: '#inventoryLocation' }, content: { title: '', description: t('dashboard.onboarding.cards.inventoryLocation.details') } },
   { attachTo: { element: '#inventory' }, content: { title: '', description: t('dashboard.onboarding.cards.inventory.details') } },
   { attachTo: { element: '#customer' }, content: { title: '', description: t('dashboard.onboarding.cards.customer.details') } },
