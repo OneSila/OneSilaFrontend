@@ -33,6 +33,8 @@ const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
 
+const productTypePropertyValueId = ref(route.query.productTypePropertyValueId ? route.query.productTypePropertyValueId.toString() : null);
+
 const form: FormType = reactive({
   type: '',
   sku: '',
@@ -46,7 +48,7 @@ const form: FormType = reactive({
 
 const additionalFieldsForm: AdditonalFormFields = reactive({
     productType: {
-      id: null,
+      id: productTypePropertyValueId.value,
       propertyId: null
     },
     relatedProducts: [],
@@ -155,7 +157,7 @@ const createRelatedProducts = async (productId) => {
 
 const processAdditionalFields = async (productId) => {
   // Create sales price if the product is for sale and it's not an Configurable type
-  if (additionalFieldsForm.price.price && form.type !== ProductType.Configurable) {
+  if ((additionalFieldsForm.price.price || additionalFieldsForm.price.rrp) && form.type !== ProductType.Configurable) {
     await createSalesPrice(productId);
   }
 
@@ -304,7 +306,7 @@ const allowNextStep = computed(() => {
         </template>
 
         <template #generalInfoStep>
-          <GeneralInfoStep :form="form" :additional-fields-form="additionalFieldsForm" @trigger-next-step="triggerNextStep" @set-product-type-property-id="handleProductTypePropertyId" />
+          <GeneralInfoStep :form="form" :additional-fields-form="additionalFieldsForm" :hide-product-type-selector="productTypePropertyValueId !== null" @trigger-next-step="triggerNextStep" @set-product-type-property-id="handleProductTypePropertyId" />
         </template>
 
         <template #priceStep>

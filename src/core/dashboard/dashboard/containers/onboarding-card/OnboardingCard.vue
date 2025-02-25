@@ -1,24 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import apolloClient from "../../../../../../apollo-client";
 import {PrimaryButton} from "../../../../../shared/components/atoms/button-primary";
-
-export interface OnboardingCardObject {
-  key: string;
-  title: string;
-  query: any;
-  variables?: Record<string, any>;
-  path: string;
-  queryParams?: Record<string, string>;
-}
+import { OnboardingCardObject } from "./onboardingCard";
 
 const { t } = useI18n();
 const router = useRouter();
 
-const props = defineProps<{ card: OnboardingCardObject }>();
+const props = defineProps<{
+  card: OnboardingCardObject;
+  completedStatus: Record<string, boolean>;
+}>();
 
 const emit = defineEmits(['update-status']);
 
@@ -55,7 +50,7 @@ onMounted(() => {
 });
 
 const handleButtonClick = () => {
-  router.push({name: props.card.path, query: props.card.queryParams});
+  router.push({name: props.card.path, query: props.card.pathQuery, params: props.card.pathParams });
 };
 
 watch(() => isCompleted.value, (newVal) => {
@@ -63,6 +58,14 @@ watch(() => isCompleted.value, (newVal) => {
     emit('update-status', true);
   }
 });
+
+const unmetDependencies = computed(() => {
+  return props.card.dependencies?.filter(depKey => !props.completedStatus[depKey]) || [];
+});
+
+const isDisabled = computed(() => unmetDependencies.value.length > 0);
+
+
 </script>
 
 <template>
@@ -74,8 +77,24 @@ watch(() => isCompleted.value, (newVal) => {
       </svg>
     </div>
     <div v-else>
-      <PrimaryButton @click="handleButtonClick">
+      <PrimaryButton
+        @click="handleButtonClick"
+        :disabled="isDisabled"
+        class="relative group"
+      >
         {{ t('dashboard.onboarding.cards.button') }}
+
+        <!-- Tooltip (Appears Only on Hover) -->
+        <span
+          v-if="isDisabled"
+          class="invisible group-hover:visible absolute w-60 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-3 py-2 rounded shadow-lg mt-8 text-left"
+        >
+          {{ t('dashboard.onboarding.cards.dependenciesNotMeetWarning') }}
+          <br />
+          <span v-for="dep in unmetDependencies" :key="dep">
+            <br/>- {{ t(`dashboard.onboarding.cards.${dep}.title`) }}
+          </span>
+        </span>
       </PrimaryButton>
     </div>
   </div>

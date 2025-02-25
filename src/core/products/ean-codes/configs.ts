@@ -20,6 +20,12 @@ export const baseFormGenerateConfigConstructor = (
   addSubmitAndContinue: false,
   submitLabel: t('shared.button.generate'),
   addDelete: false,
+  helpSections: [
+    {
+      header: t('products.eanCodes.helpSection.prefix.header'),
+      content: t('products.eanCodes.helpSection.prefix.content'),
+    },
+  ],
   fields: [
     {
       type: FieldType.Text,

@@ -25,7 +25,7 @@ const logout = async () => {
   <div class="dropdown shrink-0">
       <Popper :placement="'bottom-start'" offsetDistance="8" class="!block">
           <button type="button" class="relative group block">
-            <Icon name="user" class="w-7 h-7 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />
+            <Icon name="user" class="w-8 h-8 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />
           </button>
           <template #content="{ close }">
               <ul class="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">

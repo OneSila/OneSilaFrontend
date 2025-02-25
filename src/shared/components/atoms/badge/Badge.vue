@@ -38,5 +38,5 @@ const badgeClass = computed(() => {
 </script>
 
 <template>
-  <span :class="badgeClass">{{ text }}</span>
+  <span class="whitespace-nowrap" :class="badgeClass">{{ text }}</span>
 </template>

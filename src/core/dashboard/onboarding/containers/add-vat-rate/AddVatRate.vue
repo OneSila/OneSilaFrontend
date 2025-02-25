@@ -92,14 +92,17 @@ const disableButton = () => {
         <FieldValue :field="fields['rate'] as ValueFormField" :model-value="form.rate" @update:modelValue="form.rate = $event" />
       </div>
     </div>
-    <div class="col-span-full mt-3">
-    <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate">
-      <template v-slot="{ mutate, loading, error }">
-        <PrimaryButton  :disabled="loading || disableButton()" @click="mutate()">
-          {{ t('shared.button.save') }}
-        </PrimaryButton>
-      </template>
-    </ApolloMutation>
+
+    <hr class="my-6"/>
+
+    <div class="flex items-center justify-end">
+      <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate">
+        <template v-slot="{ mutate, loading, error }">
+          <PrimaryButton  :disabled="loading || disableButton()" @click="mutate()">
+            {{ t('shared.button.next') }}
+          </PrimaryButton>
+        </template>
+      </ApolloMutation>
     </div>
   </div>
 </template>

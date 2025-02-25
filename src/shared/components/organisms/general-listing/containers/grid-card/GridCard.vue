@@ -17,6 +17,7 @@ const props = defineProps<{
   config: any;
   selectedEntities: string[];
   selectCheckbox: (id: string, value: boolean) => void;
+  queryObject: any;
 }>();
 
 // Compute the image field from the item's fields (internal to this component)
@@ -60,6 +61,7 @@ const getUpdatedField = (field: any, item: any, index: number) => {
   }
   return field;
 };
+
 </script>
 
 <template>
@@ -119,19 +121,19 @@ const getUpdatedField = (field: any, item: any, index: number) => {
           <a class="text-indigo-600 hover:text-indigo-900">{{ t('shared.button.edit') }}</a>
         </Link>
         <ApolloAlertMutation
-            v-if="config.addDelete && config.deleteMutation"
-            :mutation="config.deleteMutation"
-            :mutation-variables="config.identifierKey !== undefined ? { id: item.node[config.identifierKey] } : undefined"
-            :refetch-queries="() => [{
-            query: config.query,
-            variables: {
-              filter: config.fixedFilterVariables !== null ? { ...config.filterVariables, ...config.fixedFilterVariables } : config.filterVariables,
-              order: config.fixedOrderVariables !== null ? { ...config.orderVariables, ...config.fixedOrderVariables } : config.orderVariables,
-              first: config.pagination.first,
-              last: config.pagination.last,
-              before: config.pagination.before,
-              after: config.pagination.after
-            }
+          v-if="config.addDelete && config.deleteMutation"
+          :mutation="config.deleteMutation"
+          :mutation-variables="config.identifierKey !== undefined ? { id: item.node[config.identifierKey] } : undefined"
+          :refetch-queries="() => [{
+             query: queryObject.query,
+             variables: {
+               filter: queryObject.filter,
+               order: queryObject.order,
+               first: queryObject.pagination.first,
+               last: queryObject.pagination.last,
+               before: queryObject.pagination.before,
+               after: queryObject.pagination.after
+             }
           }]">
           <template #default="{ loading, confirmAndMutate }">
             <Button :disabled="loading" class="text-red-600 hover:text-red-600" @click="confirmAndMutate">

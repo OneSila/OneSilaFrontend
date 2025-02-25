@@ -348,7 +348,7 @@ onMounted(fetchData);
       </FlexCell>
     </Flex>
 
-    <div class="my-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <div class="my-4 grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-4">
       <div>
         <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop"
              @drop="handleDropAvailable">

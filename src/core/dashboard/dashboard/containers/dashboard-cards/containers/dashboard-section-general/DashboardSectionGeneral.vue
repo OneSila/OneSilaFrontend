@@ -18,17 +18,6 @@ const finshFetch = ref(false);
 
 const generalCards = ref([
   {
-    key: 'shippingAddresses',
-    query: dashboardIncompleteShippingAddress,
-    title: t('dashboard.cards.general.missingLeadTime.title'),
-    description: t('dashboard.cards.general.missingLeadTime.description'),
-    icon: 'clock',
-    color: 'red',
-    counter: 0,
-    loading: true,
-    url: { name: 'inventory.leadTimeSettings.list' },
-  },
-  {
     key: 'salesPriceLists',
     query: dashboardNotMatchingSalesPricesList,
     title: t('dashboard.cards.general.currencyMismatchPriceLists.title'),

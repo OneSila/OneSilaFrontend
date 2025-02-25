@@ -13,7 +13,7 @@ import {Selector} from "../../../../../../shared/components/atoms/selector";
 import {QueryFormField} from "../../../../../../shared/components/organisms/general-form/formConfig";
 import {selectValueOnTheFlyConfig} from "../../../../../properties/property-select-values/configs";
 
-const props = defineProps<{form: FormType, additionalFieldsForm: AdditonalFormFields}>();
+const props = defineProps<{form: FormType, hideProductTypeSelector: boolean, additionalFieldsForm: AdditonalFormFields}>();
 const productTypeId = ref(null);
 const productTypeField: Ref<QueryFormField| null> = ref(null);
 
@@ -78,8 +78,8 @@ onMounted(fetchProductType)
         </Flex>
       </FlexCell>
 
-      <FlexCell class="py-8 px-96"><hr></FlexCell>
-      <FlexCell>
+      <FlexCell v-if="!hideProductTypeSelector" class="py-8 px-96"><hr></FlexCell>
+      <FlexCell v-if="!hideProductTypeSelector">
         <Flex center>
           <FlexCell center>
               <Flex vertical class="gap-2">

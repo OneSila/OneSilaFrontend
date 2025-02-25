@@ -18,7 +18,7 @@ const emit = defineEmits(['for-sale-changed', 'empty-variations']);
 const typeChoice = [
   { name: ProductType.Simple },
   { name: ProductType.Configurable },
-  { name: ProductType.Bundle }
+  // { name: ProductType.Bundle }
 ];
 
 
@@ -53,13 +53,13 @@ const { t } = useI18n();
       </template>
 
 
-      <template #BUNDLE>
-        <div>
-          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>
-          <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>
-          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />
-        </div>
-      </template>
+<!--      <template #BUNDLE>-->
+<!--        <div>-->
+<!--          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>-->
+<!--          <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>-->
+<!--          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />-->
+<!--        </div>-->
+<!--      </template>-->
 
     </OptionSelector>
   </div>

@@ -27,7 +27,7 @@ const handleUpdateComplete = () => {
     <ApolloSubscription :subscription="meCompanySubscription" ref="apolloSubRef">
       <template v-slot:default="{ loading, error, result }">
         <template v-if="!loading && result">
-          <CompanyProfileEditForm class="w-full lg:w-1/2" :mandatory="true" :company-data="getCompany(result)"  @update-complete="handleUpdateComplete"/>
+          <CompanyProfileEditForm class="w-full" :mandatory="true" :company-data="getCompany(result)"  @update-complete="handleUpdateComplete"/>
         </template>
       </template>
     </ApolloSubscription>

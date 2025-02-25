@@ -182,7 +182,7 @@ const getImageField = (item: any) => {
                   Delete all
                 </button>
               </div>
-                <div class="table-responsive custom-table-scroll">
+                <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
                   <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                   <thead>
                   <tr>
@@ -206,13 +206,19 @@ const getImageField = (item: any) => {
                   <tbody class="divide-y divide-gray-200 bg-white">
                   <!-- Delegate each row to TableRow.vue -->
                   <TableRow
-                      v-for="item in data[queryKey].edges"
-                      :key="item.node.id"
-                      :item="item"
-                      :config="config"
-                      :selectedEntities="selectedEntities"
-                      :getUpdatedField="getUpdatedField"
-                      :selectCheckbox="selectCheckbox"/>
+                    v-for="item in data[queryKey].edges"
+                    :key="item.node.id"
+                    :item="item"
+                    :config="config"
+                    :selectedEntities="selectedEntities"
+                    :getUpdatedField="getUpdatedField"
+                    :selectCheckbox="selectCheckbox"
+                    :query-object="{
+                       query: props.query,
+                       filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
+                       order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
+                       pagination: pagination,
+                    }" />
                   </tbody>
                 </table>
               </div>
@@ -230,7 +236,13 @@ const getImageField = (item: any) => {
                     :item="item"
                     :config="config"
                     :selectedEntities="selectedEntities"
-                    :selectCheckbox="selectCheckbox"/>
+                    :selectCheckbox="selectCheckbox"
+                    :query-object="{
+                       query: props.query,
+                       filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
+                       order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
+                       pagination: pagination,
+                    }" />
               </div>
             </div>
 

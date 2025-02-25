@@ -39,6 +39,11 @@ export const navSections: NavSection[] = [
                 route: { name: 'sales.priceLists.list' }
             },
             {
+                title: 'media.title',
+                icon: 'photo-film',
+                route: { name: 'media.files' }
+            },
+            {
                 title: 'properties.title',
                 icon: 'screwdriver-wrench',
                 subItemsKey: 'properties',
@@ -57,21 +62,6 @@ export const navSections: NavSection[] = [
                     },
                 ]
             },
-            {
-                title: 'media.title',
-                icon: 'photo-film',
-                route: { name: 'media.files' }
-            },
-            {
-                title: 'contacts.title',
-                icon: 'building',
-                route: { name: 'contacts.companies.list' } // Read-Only
-            },
-            {
-                title: 'sales.orders.title',
-                icon: 'cart-shopping',
-                route: { name: 'sales.orders.list' } // Read-Only
-            }
         ]
     }
 ];
