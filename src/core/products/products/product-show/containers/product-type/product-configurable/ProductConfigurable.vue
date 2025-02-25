@@ -27,7 +27,6 @@ tabItems.value = [
     { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
-    { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
   ];
 
@@ -53,9 +52,6 @@ tabItems.value = [
       </template>
       <template v-slot:websites>
         <WebsitesView :product="product" />
-      </template>
-      <template v-slot:priceLists>
-        <SalesPricelistList :product="product" />
       </template>
     </Tabs>
   </div>

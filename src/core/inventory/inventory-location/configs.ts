@@ -35,7 +35,6 @@ export const baseFormConfigConstructor = (
       header: t('inventory.inventoryLocation.helpSection.precise.header'),
       content: t('inventory.inventoryLocation.helpSection.precise.content')
     },
-
   ],
   fields: [
         {

@@ -32,6 +32,7 @@ const showConfig = showConfigConstructor(t, id.value);
 
 const onDataFetched = (data) => {
   productTypeId.value = data[showConfig.subscriptionKey].productType.id;
+  console.log(data[showConfig.subscriptionKey])
   if (productTypeId.value) {
     updateField(
         showConfig,

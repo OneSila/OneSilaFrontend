@@ -39,8 +39,17 @@ onMounted(fetchFilterIds)
   <GeneralTemplate>
 
     <template v-slot:buttons>
+      <Flex between>
+        <FlexCell grow></FlexCell>
+        <FlexCell>
+          <Link :path="{ name: 'products.products.create', query: {productTypePropertyValueId: id} }">
+            <Button class="btn btn-primary">
+                {{  t('products.products.create.title') }}
+            </Button>
+          </Link>
+        </FlexCell>
+      </Flex>
     </template>
-
    <template v-slot:content>
       <GeneralListing
         :search-config="searchConfig"

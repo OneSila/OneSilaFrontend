@@ -33,7 +33,8 @@ watch(() => props.config, (newConfig) => {
     submitLabel: t('shared.button.save'),
     cancelLabel: t('shared.button.back'),
     submitAndContinueLabel: t('shared.button.saveAndContinue'),
-    deleteLabel: t('shared.button.delete')
+    deleteLabel: t('shared.button.delete'),
+    showLabel: t('shared.button.show')
   };
 
   enhancedConfig.value = getEnhancedConfig(newConfig, defaultTranslations);

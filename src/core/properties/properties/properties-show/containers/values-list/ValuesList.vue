@@ -8,11 +8,11 @@ import { GeneralListing } from "../../../../../../shared/components/organisms/ge
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { listingConfigConstructor, searchConfigConstructor, listingQueryKey, listingQuery } from "../../../../property-select-values/configs";
 
-const props = defineProps<{ id: string }>();
+const props = defineProps<{ id: string, addGrid: boolean }>();
 const { t } = useI18n();
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, false);
+const listingConfig = listingConfigConstructor(t, false, false, props.addGrid);
 
 </script>
 

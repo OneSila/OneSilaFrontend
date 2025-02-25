@@ -79,43 +79,161 @@ const onError = (error) => {
 </script>
 
 <template>
-  <div>
-    <TextInputPrepend id="name" class="mb-2" v-model="form.name" :mandatory="mandatory" :label="t('companyProfile.labels.companyName')" :placeholder="t('companyProfile.placeholders.companyName')">
-      <Icon name="building"/>
-    </TextInputPrepend>
-    <TextInputPrepend id="address1" class="mb-2" v-model="form.address1" :mandatory="mandatory" :label="t('companyProfile.labels.address1')" :placeholder="t('companyProfile.placeholders.address1')">
-      <Icon name="map-location"/>
-    </TextInputPrepend>
-    <TextInputPrepend id="address2" class="mb-2" v-model="form.address2"  :label="t('companyProfile.labels.address2')" :placeholder="t('companyProfile.placeholders.address2')">
-      <Icon name="map-marker"/>
-    </TextInputPrepend>
-    <TextInputPrepend id="city" class="mb-2" v-model="form.city" :mandatory="mandatory" :label="t('companyProfile.labels.city')" :placeholder="t('companyProfile.placeholders.city')">
-      <Icon name="city"/>
-    </TextInputPrepend>
-    <div class="mb-2">
-      <Label class="font-semibold text-md">{{ t('auth.register.company.placeholders.country') }}<span v-if="mandatory">*</span></Label>
-      <ApolloQuery :query="countriesQuery">
-        <template v-slot="{ result: { data } }">
-            <Selector class="mt-2" v-if="data" v-model="form.country" :options="data.countries" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.country')" filterable />
-        </template>
-      </ApolloQuery>
+  <div class="space-y-12">
+    <!-- Company Profile Section -->
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <!-- Company Name -->
+        <div class="sm:col-span-6">
+          <TextInputPrepend
+            id="name"
+            v-model="form.name"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.companyName')"
+            :placeholder="t('companyProfile.placeholders.companyName')"
+            class="mb-2"
+          >
+            <Icon name="building" />
+          </TextInputPrepend>
+        </div>
+        <!-- Address 1 -->
+        <div class="sm:col-span-6">
+          <TextInputPrepend
+            id="address1"
+            v-model="form.address1"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.address1')"
+            :placeholder="t('companyProfile.placeholders.address1')"
+            class="mb-2"
+          >
+            <Icon name="map-location" />
+          </TextInputPrepend>
+        </div>
+        <!-- Address 2 -->
+        <div class="sm:col-span-6">
+          <TextInputPrepend
+            id="address2"
+            v-model="form.address2"
+            :label="t('companyProfile.labels.address2')"
+            :placeholder="t('companyProfile.placeholders.address2')"
+            class="mb-2"
+          >
+            <Icon name="map-marker" />
+          </TextInputPrepend>
+        </div>
+        <!-- City -->
+        <div class="sm:col-span-3">
+          <TextInputPrepend
+            id="city"
+            v-model="form.city"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.city')"
+            :placeholder="t('companyProfile.placeholders.city')"
+            class="mb-2"
+          >
+            <Icon name="city" />
+          </TextInputPrepend>
+        </div>
+        <!-- Country Selector -->
+        <div class="sm:col-span-3">
+          <Label class="font-semibold text-md">
+            {{ t('auth.register.company.placeholders.country') }}
+            <span v-if="mandatory">*</span>
+          </Label>
+          <ApolloQuery :query="countriesQuery">
+            <template v-slot="{ result: { data } }">
+              <Selector
+                class="mt-2"
+                v-if="data"
+                v-model="form.country"
+                :options="data.countries"
+                labelBy="name"
+                valueBy="code"
+                :placeholder="t('auth.register.company.placeholders.selector.country')"
+                filterable
+              />
+            </template>
+          </ApolloQuery>
+        </div>
+        <!-- Postcode -->
+        <div class="sm:col-span-6">
+          <TextInputPrepend
+            id="postcode"
+            v-model="form.postcode"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.postcode')"
+            :placeholder="t('companyProfile.placeholders.postcode')"
+            class="mb-2"
+          >
+            <Icon name="signs-post" />
+          </TextInputPrepend>
+        </div>
+        <!-- Email -->
+        <div class="sm:col-span-6">
+          <EmailInput
+            id="email"
+            icon="envelope"
+            v-model:model-value="form.email"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.email')"
+            :placeholder="t('companyProfile.placeholders.email')"
+            class="mb-2"
+          />
+        </div>
+        <!-- Phone Number -->
+        <div class="sm:col-span-6">
+          <PhoneNumberInput
+            v-model:model-value="form.phoneNumber"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.phoneNumber')"
+            class="mb-2"
+          />
+        </div>
+        <!-- VAT Number -->
+        <div class="sm:col-span-6">
+          <TextInputPrepend
+            id="vatNumber"
+            v-model="form.vatNumber"
+            :label="t('companyProfile.labels.vatNumber')"
+            :placeholder="t('companyProfile.placeholders.vatNumber')"
+            class="mb-2"
+          >
+            <Icon name="receipt" />
+          </TextInputPrepend>
+        </div>
+        <!-- Website -->
+        <div class="sm:col-span-6">
+          <WebsiteInput
+            id="website"
+            icon="globe"
+            v-model:model-value="form.website"
+            :label="t('companyProfile.labels.website')"
+            :placeholder="t('companyProfile.placeholders.website')"
+            class="mb-4"
+          />
+        </div>
+      </div>
     </div>
-    <TextInputPrepend id="postcode" class="mb-2" v-model="form.postcode" :mandatory="mandatory" :label="t('companyProfile.labels.postcode')" :placeholder="t('companyProfile.placeholders.postcode')">
-      <Icon name="signs-post"/>
-    </TextInputPrepend>
-    <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.email" :mandatory="mandatory" :label="t('companyProfile.labels.email')" :placeholder="t('companyProfile.placeholders.email')" />
-    <PhoneNumberInput class="mb-2" v-model:model-value="form.phoneNumber" :mandatory="mandatory" :label="t('companyProfile.labels.phoneNumber')" />
-    <TextInputPrepend id="vatNumber" class="mb-2" v-model="form.vatNumber" :label="t('companyProfile.labels.vatNumber')" :placeholder="t('companyProfile.placeholders.vatNumber')">
-      <Icon name="receipt"/>
-    </TextInputPrepend>
-    <WebsiteInput id="website" class="mb-4" icon="globe" v-model:model-value="form.website" :label="t('companyProfile.labels.website')" :placeholder="t('companyProfile.placeholders.website')" />
 
-    <ApolloMutation :mutation="updateMyCompanyMutation" :variables="getMutationVariables()" @done="afterUpdate" @error="onError">
-      <template v-slot="{ mutate, loading, error }">
-        <Button class="btn btn-primary" :disabled="loading || isDisabled()" @click="mutate()">
-          {{ t('companyProfile.labels.updateButton') }}
-        </Button>
-      </template>
-    </ApolloMutation>
+
+    <!-- Submit Button, Right-Aligned -->
+    <div class="flex items-center justify-end">
+      <ApolloMutation
+        :mutation="updateMyCompanyMutation"
+        :variables="getMutationVariables()"
+        @done="afterUpdate"
+        @error="onError"
+      >
+        <template v-slot="{ mutate, loading }">
+          <Button
+            class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            :disabled="loading || isDisabled()"
+            @click="mutate()"
+          >
+            {{ t('shared.button.next') }}
+          </Button>
+        </template>
+      </ApolloMutation>
+    </div>
   </div>
 </template>

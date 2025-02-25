@@ -9,6 +9,7 @@ const props = defineProps<{
   field: TextField;
   modelValue?: string | number;
   imageValue?: string;
+  hideImage?: boolean;
 }>();
 
 </script>
@@ -16,21 +17,21 @@ const props = defineProps<{
 <template>
   <div :class="field.customCssClass" :style="field.customCss">
     <Flex class="gap-4">
-      <FlexCell v-if="field.addImage" center>
+      <FlexCell v-if="field.addImage && !hideImage" center>
         <div v-if="field.clickable">
           <Link :path="field.clickUrl">
-            <div v-if="imageValue" class="w-8 h-8 overflow-hidden">
-              <Image class="w-8 h-8 rounded-md overflow-hidden object-cover" :source="imageValue" :alt="String(modelValue)" />
+            <div v-if="imageValue" class="w-12 h-12 overflow-hidden">
+              <Image class="w-12 h-12 rounded-md overflow-hidden object-cover" :source="imageValue" :alt="String(modelValue)" />
             </div>
-            <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
+            <div v-else class="w-12 h-12 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
             </div>
           </Link>
         </div>
         <div v-else>
-          <div v-if="imageValue" class="w-8 h-8 overflow-hidden">
-            <Image class="w-8 h-8 rounded-md overflow-hidden object-cover" :source="imageValue" :alt="String(modelValue)" />
+          <div v-if="imageValue" class="w-12 h-12 overflow-hidden">
+            <Image class="w-12 h-12 rounded-md overflow-hidden object-cover" :source="imageValue" :alt="String(modelValue)" />
           </div>
-          <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
+            <div v-else class="w-12 h-12 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
           </div>
         </div>
       </FlexCell>

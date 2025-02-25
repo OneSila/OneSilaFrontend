@@ -58,28 +58,12 @@ const allowCreateDropdown = () => {
       path: { name: 'products.products.create' },
     },
     {
-      label: t('contacts.companies.create.title'),
-      icon: 'envelope',
-      path: { name: 'contacts.companies.create' },
-    },
-    {
-      label: t('sales.orders.create.title'),
-      icon: 'cart-shopping',
-      path: { name: 'sales.orders.create' },
-    },
-    {
-      label: t('purchasing.orders.create.title'),
-      icon: 'receipt',
-      path: { name: 'purchasing.orders.create' },
-    },
-    {
-      label: t('inventory.inventory.create.title'),
-      icon: 'warehouse',
-      path: { name: 'inventory.inventory.create' },
-    },
+      label: t('properties.properties.create.title'),
+      icon: 'screwdriver-wrench',
+      path: { name: 'properties.properties.create' },
+    }
   ];
 }
-
 
 
 </script>
@@ -87,25 +71,25 @@ const allowCreateDropdown = () => {
 <template>
     <header class="z-40 light horizontal">
         <div class="shadow-sm">
-            <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-[#182434]">
+            <div class="relative bg-white flex w-full items-center px-5 py-4 dark:bg-[#182434]">
                 <div class="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                     <a
                         href="javascript:;"
-                        class="collapse-icon flex-none dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary flex lg:hidden ltr:ml-2 rtl:mr-2 p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
+                        class="collapse-icon h-10 w-10  flex-none dark:text-[#d0d2d6] hover:text-primary dark:hover:text-primary flex lg:hidden ltr:ml-2 rtl:mr-2 p-3 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
                         @click="showSidebar()"
                     >
                         <Icon name="bars"/>
                     </a>
                 </div>
                 <div
-                    class="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
+                    class="sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
                 >
                   <GeneralSearch />
                   <LanguageDropdown :show="false" class="ms-auto w-max" @language-set="allowCreateDropdown()"/>
                       <Dropdown v-if="showProfileDropdown" :items="createDropdownItems">
                         <template #trigger>
                           <button type="button" class="relative group block">
-                            <Icon name="circle-plus" class="w-7 h-7 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />
+                            <Icon name="circle-plus" class="w-10 h-8 rounded-full object-cover saturate-50 group-hover:saturate-100 text-gray-600 hover:text-indigo-600" />
                           </button>
                         </template>
                       </Dropdown>

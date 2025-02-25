@@ -22,10 +22,7 @@ import { ForSaleStep } from "./containers/for-sale-step";
 import { PriceStep } from "./containers/price-step";
 import { SelectVariationsStep } from "./containers/select-variations-step";
 import { AdditonalFormFields, FormType } from "./containers/product";
-import {SupplierStep} from "./containers/supplier-step";
 import {createSalesPriceMutation} from "../../../../shared/api/mutations/salesPrices.js";
-import {createSupplierProductMutation} from "../../../../shared/api/mutations/purchasing.js";
-import {getProductQuery} from "../../../../shared/api/queries/products.js";
 import {createProductPropertyMutation} from "../../../../shared/api/mutations/properties.js";
 
 const { t } = useI18n();
@@ -35,16 +32,14 @@ const router = useRouter();
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
-const hasSupplierProduct = ref(false);
-const productFetched = ref(false);
+
+const productTypePropertyValueId = ref(route.query.productTypePropertyValueId ? route.query.productTypePropertyValueId.toString() : null);
 
 const form: FormType = reactive({
   type: '',
   sku: '',
   name: '',
-  productionTime: null,
   active: true,
-  forSale: true,
   vatRate: {
     id: null
   },
@@ -53,24 +48,10 @@ const form: FormType = reactive({
 
 const additionalFieldsForm: AdditonalFormFields = reactive({
     productType: {
-      id: null,
+      id: productTypePropertyValueId.value,
       propertyId: null
     },
     relatedProducts: [],
-    supplierProduct: {
-      id: null,
-      sku: '',
-      name: '',
-      quantity: null,
-      unitPrice: null,
-      supplier: {
-        id: null,
-      },
-      unit: {
-        id: null
-      },
-      baseProducts: []
-    },
     price: {
       rrp: null,
       price: null,
@@ -80,30 +61,6 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
     }
 });
 
-const fetchSupplierProduct = async (id: string | null = null) => {
-  const supplierProductId = id || (route.query.productId ? route.query.productId.toString() : null);
-
-  if (supplierProductId) {
-    const {data} = await apolloClient.query({
-      query: getProductQuery,
-      variables: { id: supplierProductId }
-    })
-
-    if (data && data.product) {
-      additionalFieldsForm.supplierProduct.id = data.product.id;
-      additionalFieldsForm.supplierProduct.baseProducts = data.product.baseProducts.map(baseProduct => ({ id: baseProduct.id }));
-      if (!id) {
-        hasSupplierProduct.value = true;
-      }
-    }
-  }
-  if (!id) {
-    productFetched.value = true;
-  }
-}
-
-onMounted(fetchSupplierProduct);
-
 const wizardSteps = computed(() => {
   let steps = [
     { title: t('products.products.labels.type.title'), name: 'typeStep' },
@@ -112,28 +69,14 @@ const wizardSteps = computed(() => {
 
   switch (form.type) {
     case ProductType.Simple:
-      steps.push({ title: t('products.products.create.wizard.stepThree.simple.title'), name: 'forSaleStep' });
-      if (form.forSale) {
-        steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
-      }
-      if (!hasSupplierProduct.value) {
-        steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
-      }
-      break;
-    case ProductType.Dropship:
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
-      if (!hasSupplierProduct.value) {
-        steps.push({ title: t('products.products.create.wizard.stepFour.simple.title'), name: 'supplierStep' });
-      }
       break;
+
     case ProductType.Bundle:
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
       steps.push({ title: t('products.products.create.wizard.stepFour.bundle.title'), name: 'selectVariationsStep' });
       break;
-    case ProductType.Manufacturable:
-      steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
-      steps.push({ title: t('products.products.create.wizard.stepFour.manufacturable.title'), name: 'selectVariationsStep' });
-      break;
+
     case ProductType.Configurable:
       steps.push({ title: t('products.products.create.wizard.stepFour.configurable.title'), name: 'selectVariationsStep' });
       break;
@@ -148,8 +91,6 @@ const getRelatedProductsMutation = (productType) => {
       return createBundleVariationsMutation;
     case ProductType.Configurable:
       return createConfigurableVariationsMutation;
-    case ProductType.Manufacturable:
-      return createBillsOfMaterialMutation;
     default:
       return null;
   }
@@ -213,48 +154,10 @@ const createRelatedProducts = async (productId) => {
     }
 };
 
-const handleSupplierProduct = async (productId) => {
-  const { id, ...supplierProductWithoutId } = additionalFieldsForm.supplierProduct;
-
-  if (additionalFieldsForm.supplierProduct.id) {
-    try {
-      if (!hasSupplierProduct.value) {
-        await fetchSupplierProduct(additionalFieldsForm.supplierProduct.id);
-      }
-
-      let ids = additionalFieldsForm.supplierProduct.baseProducts;
-      ids.push({id: productId})
-      await apolloClient.mutate({
-        mutation: updateProductMutation,
-        variables: {
-          data: {id: additionalFieldsForm.supplierProduct.id, baseProducts: ids}
-        },
-      });
-    } catch (error) {
-      console.error("Supplier product creation error:", error);
-    }
-  } else {
-    try {
-      await apolloClient.mutate({
-        mutation: createSupplierProductMutation,
-        variables: {
-          data: {...supplierProductWithoutId, baseProducts: [{ id: productId }], type: ProductType.Supplier}
-        },
-      });
-    } catch (error) {
-      console.error("Supplier product creation error:", error);
-    }
-  }
-};
-
-const isSupplierProductFilled = () => {
-  const sp = additionalFieldsForm.supplierProduct;
-  return sp.id || (sp.sku && sp.name && sp.supplier.id && sp.unit.id && sp.quantity && sp.unitPrice);
-};
 
 const processAdditionalFields = async (productId) => {
   // Create sales price if the product is for sale and it's not an Configurable type
-  if (form.forSale && additionalFieldsForm.price.price && form.type !== ProductType.Configurable) {
+  if ((additionalFieldsForm.price.price || additionalFieldsForm.price.rrp) && form.type !== ProductType.Configurable) {
     await createSalesPrice(productId);
   }
 
@@ -263,16 +166,10 @@ const processAdditionalFields = async (productId) => {
     await createProductType(productId);
   }
 
-  // Handle supplier product for Simple and Dropship product types
-  if (isSupplierProductFilled() &&
-      (form.type === ProductType.Simple || form.type === ProductType.Dropship)) {
-      await handleSupplierProduct(productId);
-    }
-
-  // Create related products for Configurable, Bundle, or Manufacturable types
+  // Create related products for Configurable, Bundle
   if (additionalFieldsForm.relatedProducts.length > 0 &&
-      (form.type === ProductType.Configurable || form.type === ProductType.Bundle || form.type === ProductType.Manufacturable)) {
-    await createRelatedProducts(productId);
+    (form.type === ProductType.Configurable || form.type === ProductType.Bundle)) {
+      await createRelatedProducts(productId);
   }
 };
 
@@ -308,13 +205,8 @@ const handleFinish = async () => {
 
       Toast.success(t('products.products.create.createSuccessfully'));
       loading.value = false;
-      const supplierProductId = route.query.productId ? route.query.productId.toString() : null;
 
-      if (supplierProductId && additionalFieldsForm.supplierProduct.id && productFetched.value) {
-        router.push({name: 'products.products.show', params: { id: supplierProductId }, query: {tab: 'products'}})
-      } else {
-        router.push({name: 'products.products.show', params: { id: data.createProduct.id }})
-      }
+      router.push({name: 'products.products.show', params: { id: data.createProduct.id }})
 
     }
   } catch (err) {
@@ -342,12 +234,7 @@ const triggerNextStep = () => {
 
 const handleForSaleChanged = (newVal, goNext) => {
 
-  form.forSale = newVal;
   if (goNext) {
-    if (!newVal && hasSupplierProduct.value) {
-      handleFinish();
-      return;
-    }
     triggerNextStep();
   }
 };
@@ -361,31 +248,10 @@ const handleProductTypePropertyId = (id) => {
 };
 
 
-const handleProductSupplierName = () => {
-  if (additionalFieldsForm.supplierProduct.name === '') {
-    additionalFieldsForm.supplierProduct.name = form.name;
-  }
-};
-
 function hasMissingVat() {
   return form.vatRate.id === '' || form.vatRate.id == null;
 }
 
-function hasMissingSupplier() {
-
-  if (additionalFieldsForm.supplierProduct.id !== null) {
-    return false; // It has a supplier, so no missing supplier
-  }
-
-  return (
-      !additionalFieldsForm.supplierProduct.sku ||
-      !additionalFieldsForm.supplierProduct.name ||
-      additionalFieldsForm.supplierProduct.quantity === null || isNaN(additionalFieldsForm.supplierProduct.quantity) ||
-      additionalFieldsForm.supplierProduct.unitPrice === null || isNaN(additionalFieldsForm.supplierProduct.unitPrice) ||
-      additionalFieldsForm.supplierProduct.supplier.id === null ||
-      additionalFieldsForm.supplierProduct.unit.id === null
-  );
-}
 
 const setDefaultCurrency = (id) => {
   additionalFieldsForm.price.currency.id = id;
@@ -403,33 +269,13 @@ const allowNextStep = computed(() => {
     return false;
   }
 
-  if (stepName === 'generalInfoStep' && (form.productionTime === null || isNaN(form.productionTime)) && form.type === ProductType.Manufacturable) {
-    return false;
-  }
-
   if (stepName === 'priceStep') {
     return !hasMissingVat();
-  }
-
-  if (stepName === 'supplierStep') {
-    return !hasMissingSupplier();
   }
 
   return true;
 });
 
-
-const clearSupplierProduct = () => {
-  if (additionalFieldsForm.supplierProduct.id !== null) {
-      additionalFieldsForm.supplierProduct.sku = '';
-      additionalFieldsForm.supplierProduct.name = '';
-      additionalFieldsForm.supplierProduct.quantity = null;
-      additionalFieldsForm.supplierProduct.unitPrice = null;
-      additionalFieldsForm.supplierProduct.supplier.id = null;
-  }
-}
-
-watch(additionalFieldsForm.supplierProduct, clearSupplierProduct)
 
 </script>
 
@@ -456,23 +302,15 @@ watch(additionalFieldsForm.supplierProduct, clearSupplierProduct)
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
-          <TypeStep v-if="productFetched" :form="form" :has-supplier-product="hasSupplierProduct" @for-sale-changed="handleForSaleChanged" @empty-variations="handleEmptyVariations" />
+          <TypeStep :form="form" @for-sale-changed="handleForSaleChanged" @empty-variations="handleEmptyVariations" />
         </template>
 
         <template #generalInfoStep>
-          <GeneralInfoStep :form="form" :additional-fields-form="additionalFieldsForm" @trigger-next-step="triggerNextStep" @set-product-type-property-id="handleProductTypePropertyId" />
-        </template>
-
-        <template #forSaleStep>
-          <ForSaleStep :form="form" @for-sale-changed="handleForSaleChanged"/>
+          <GeneralInfoStep :form="form" :additional-fields-form="additionalFieldsForm" :hide-product-type-selector="productTypePropertyValueId !== null" @trigger-next-step="triggerNextStep" @set-product-type-property-id="handleProductTypePropertyId" />
         </template>
 
         <template #priceStep>
           <PriceStep :form="form" :additional-fields-form="additionalFieldsForm" @set-default-currency="setDefaultCurrency" />
-        </template>
-
-        <template #supplierStep>
-          <SupplierStep :form="form" :additional-fields-form="additionalFieldsForm" @set-product-supplier-name="handleProductSupplierName" />
         </template>
 
         <template #selectVariationsStep>

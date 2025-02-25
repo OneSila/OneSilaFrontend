@@ -13,7 +13,7 @@ import {Selector} from "../../../../../../shared/components/atoms/selector";
 import {QueryFormField} from "../../../../../../shared/components/organisms/general-form/formConfig";
 import {selectValueOnTheFlyConfig} from "../../../../../properties/property-select-values/configs";
 
-const props = defineProps<{form: FormType, additionalFieldsForm: AdditonalFormFields}>();
+const props = defineProps<{form: FormType, hideProductTypeSelector: boolean, additionalFieldsForm: AdditonalFormFields}>();
 const productTypeId = ref(null);
 const productTypeField: Ref<QueryFormField| null> = ref(null);
 
@@ -21,9 +21,6 @@ const emit = defineEmits(['trigger-next-step', 'set-product-type-property-id']);
 const { t } = useI18n();
 
 const isGenerateDisabled = computed(() => {
-  if (props.form.type === ProductType.Manufacturable) {
-    return props.form.name.length === 0 || props.form.productionTime === null || isNaN(props.form.productionTime);
-  }
   return props.form.name.length === 0;
 });
 
@@ -81,26 +78,8 @@ onMounted(fetchProductType)
         </Flex>
       </FlexCell>
 
-      <FlexCell v-if="form.type === ProductType.Manufacturable" class="py-8 px-96"><hr></FlexCell>
-      <FlexCell v-if="form.type === ProductType.Manufacturable">
-        <Flex center>
-          <FlexCell center>
-              <Flex vertical class="gap-2">
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('products.products.labels.productionTime') }} ({{ t('shared.labels.minutes') }})*
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <TextInput class="w-96" v-model="form.productionTime" float :placeholder="t('products.products.placeholders.productionTime')" />
-              </FlexCell>
-            </Flex>
-          </FlexCell>
-        </Flex>
-      </FlexCell>
-
-      <FlexCell class="py-8 px-96"><hr></FlexCell>
-      <FlexCell>
+      <FlexCell v-if="!hideProductTypeSelector" class="py-8 px-96"><hr></FlexCell>
+      <FlexCell v-if="!hideProductTypeSelector">
         <Flex center>
           <FlexCell center>
               <Flex vertical class="gap-2">

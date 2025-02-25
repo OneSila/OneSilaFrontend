@@ -11,8 +11,7 @@ import { showConfigConstructor } from "../configs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import AddressesList from "./containers/addresses-list/AddressesList.vue";
 import PeopleList from "./containers/people-list/PeopleList.vue";
-import { default as PurchasingOrdersList } from "../../../purchasing/suppliers/supplier-show/containers/orders-list/OrdersList.vue";
-import OrdersList from "../../../sales/customers/customer-show/containers/orders-list/OrdersList.vue";
+import OrdersList from "./containers/orders-list/OrdersList.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -24,7 +23,6 @@ tabItems.value = [
     { name: 'addresses', label: t('contacts.companies.address.list.title'), icon: 'map-marker' },
     { name: 'people', label: t('contacts.people.title'), icon: 'users' },
     { name: 'orders', label: t('sales.tabs.tabs.general.orders'), icon: 'shopping-cart' },
-    { name: 'purchaseOrders', label: t('purchasing.orders.title'), icon: 'receipt' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);
@@ -55,11 +53,7 @@ const showConfig = showConfigConstructor(t, id.value);
           <template v-slot:orders>
               <OrdersList :id="id" :source="'company'" />
           </template>
-          <template v-slot:purchaseOrders>
-            <PurchasingOrdersList :id="id" :source="'company'" />
-          </template>
         </Tabs>
-
       </Card>
    </template>
   </GeneralTemplate>

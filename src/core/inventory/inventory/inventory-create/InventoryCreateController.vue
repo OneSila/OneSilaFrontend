@@ -13,7 +13,6 @@ import {FieldQuery} from "../../../../shared/components/organisms/general-form/c
 import {FieldValue} from "../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
 import {FieldChoice} from "../../../../shared/components/organisms/general-form/containers/form-fields/field-choice";
 import {FieldTextarea} from "../../../../shared/components/organisms/general-form/containers/form-fields/field-textarea";
-import {purchaseOrdersQuery} from "../../../../shared/api/queries/purchasing.js";
 import {inventoryLocationsQuery} from "../../../../shared/api/queries/inventory.js";
 import SubmitButtons from "./containers/SubmitButtons.vue";
 import {Icon} from "../../../../shared/components/atoms/icon";
@@ -127,8 +126,6 @@ const notesField: FormField = {
 
 const getQueryForModel = (modelCode) => {
   switch (modelCode) {
-    case INVENTORY_MOVEMENTS_MODEL_CODES.PURCHASE_ORDER:
-      return purchaseOrdersQuery;
     case INVENTORY_MOVEMENTS_MODEL_CODES.INVENTORY_LOCATION:
       return inventoryLocationsQuery;
     default:

@@ -45,6 +45,8 @@ export const editBaseFormConfigurator = (id: string): FormConfig => ({
   query: getPropertyQuery,
   queryVariables: { id },
   queryDataKey: 'property',
+  addShow: true,
+  showUrlName: 'properties.properties.show',
   fields: []
 });
 
@@ -205,7 +207,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
   headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('properties.properties.labels.isPublicInformation')],
   fields: [
     { name: 'name', type: FieldType.Text },
@@ -220,6 +222,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addShow: true,
   addDelete: true,
   addPagination: true,
+  isMainPage: isMainPage,
   deleteMutation: deletePropertyMutation,
 });
 

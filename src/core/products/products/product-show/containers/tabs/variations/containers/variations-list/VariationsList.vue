@@ -64,8 +64,6 @@ const getDeleteMutation = () => {
       return deleteBundleVariationMutation;
     case ProductType.Configurable:
       return deleteConfigurableVariationMutation;
-    case ProductType.Manufacturable:
-      return deleteBillOfMaterialMutation;
     default:
       return null;
   }
@@ -77,8 +75,6 @@ const getUpdateMutation = () => {
       return updateBundleVariationMutation;
     case ProductType.Configurable:
       return updateConfigurableVariationMutation;
-    case ProductType.Manufacturable:
-      return updateBillOfMaterialMutation;
     default:
       return null;
   }
@@ -130,7 +126,6 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   <th>{{ t('shared.labels.active') }}</th>
                   <th>{{ t('products.products.labels.inspectorStatus') }}</th>
                   <th v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
-                  <th v-if="product.type == ProductType.Manufacturable">{{ t('products.products.labels.productionTime') }}</th>
                   <th class="!text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
@@ -160,12 +155,6 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   </td>
                   <td v-if="product.type != ProductType.Configurable">
                     <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />
-                  </td>
-                  <td v-if="product.type == ProductType.Manufacturable">
-                    <span v-if="item.node.variation.productionTime">
-                      {{ item.node.variation.productionTime }}
-                    </span>
-                    <span v-else>-</span>
                   </td>
                   <td>
                     <div class="flex gap-4 items-center justify-end">

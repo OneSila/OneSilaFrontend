@@ -20,6 +20,12 @@ export const baseFormGenerateConfigConstructor = (
   addSubmitAndContinue: false,
   submitLabel: t('shared.button.generate'),
   addDelete: false,
+  helpSections: [
+    {
+      header: t('products.eanCodes.helpSection.prefix.header'),
+      content: t('products.eanCodes.helpSection.prefix.content'),
+    },
+  ],
   fields: [
     {
       type: FieldType.Text,
@@ -106,7 +112,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 const getAddPagination = (productId) => {
   return !productId;
 }
-export const listingConfigConstructor = (t: Function, productId: string | null = null): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, productId: string | null = null, isMainPage: boolean = false): ListingConfig => ({
   headers: [t('products.eanCodes.labels.eanCode'), t('products.eanCodes.labels.productName'), t('products.eanCodes.labels.internal'), t('products.eanCodes.labels.alreadyUsed')],
   fields: [
       { name: 'eanCode', type: FieldType.Text},
@@ -121,6 +127,7 @@ export const listingConfigConstructor = (t: Function, productId: string | null =
   urlQueryParams: productId ? { "productId": productId } : undefined,
   addShow: false,
   addDelete: true,
+  isMainPage: isMainPage,
   addPagination: getAddPagination(productId),
   deleteMutation: deleteEanCodeMutation,
 });

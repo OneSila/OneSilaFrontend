@@ -8,10 +8,6 @@ export const getInventorySubscription = gql`
         id
         sku
         name
-        supplier {
-          id
-          name
-        }
       }
       inventorylocation {
         id

@@ -79,9 +79,9 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   subscriptionVariables: {id: id},
   addBack: true,
   backUrl:  {name: 'contacts.companies.list' },
-  addEdit: true,
+  addEdit: false,
   editUrl: {name: 'contacts.companies.edit', params: {id: id} },
-  addDelete: true,
+  addDelete: false,
   deleteMutation: deleteCompanyMutation,
   deleteVariables: {id: id},
   fields: [
@@ -181,7 +181,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
   headers: [t('shared.labels.name'), t('shared.labels.email'), t('shared.labels.language'), t('contacts.companies.address.labels.country')],
   fields: [
     {
@@ -205,13 +205,14 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     },
   ],
   identifierKey: 'id',
-  addActions: true,
-  addEdit: true,
+  addActions: false,
+  addEdit: false,
   editUrlName: 'contacts.companies.edit',
   showUrlName: 'contacts.companies.show',
   addShow: true,
-  addDelete: true,
+  addDelete: false,
   addPagination: true,
+  isMainPage: isMainPage,
   deleteMutation: deleteCompanyMutation,
 });
 

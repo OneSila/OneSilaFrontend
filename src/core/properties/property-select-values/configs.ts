@@ -82,6 +82,8 @@ export const editFormConfigConstructor = (
   queryVariables: {},
   queryData: data,
   queryDataKey: 'propertySelectValue',
+  addShow: true,
+  showUrlName: 'properties.values.show',
   fields: [
         {
         type: FieldType.Hidden,
@@ -161,11 +163,14 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   orders: []
 });
 
-export const listingConfigConstructor = (t: Function, addActions: boolean = true): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, addActions: boolean = true, isMainPage: boolean = false, addGrid: boolean = false): ListingConfig => ({
   headers: [t('properties.values.show.title') , t('properties.properties.show.title')],
   fields: [
-    { name: 'value', type: FieldType.Text },
-    { name: 'property',
+    {
+      name: 'value',
+      type: FieldType.Text,
+      ...(addGrid ? { addImage: true, imageField: 'thumbnailUrl' } : {})
+    },    { name: 'property',
       type: FieldType.NestedText,
       keys: ['name'],
       clickable: true,
@@ -180,6 +185,9 @@ export const listingConfigConstructor = (t: Function, addActions: boolean = true
   addShow: true,
   addDelete: true,
   addPagination: true,
+  addGridView: addGrid,
+  defaultGridIcon: 'image',
+  isMainPage: isMainPage,
   deleteMutation: deletePropertySelectValueMutation,
 });
 

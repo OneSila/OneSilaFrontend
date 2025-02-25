@@ -528,13 +528,14 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     .table-responsive {
         @apply overflow-auto;
     }
+
     table {
         @apply w-full !border-collapse;
     }
-    table thead tr,
-    table tfoot tr {
-        @apply border-b-0 !bg-[#f6f8fa]  dark:!bg-[#1a2941];
-    }
+    /*table thead tr,*/
+    /*table tfoot tr {*/
+    /*    @apply border-b-0 !bg-[#f6f8fa]  dark:!bg-[#1a2941];*/
+    /*}*/
     table thead tr th,
     table tfoot tr th,
     table tbody tr td {
@@ -544,9 +545,9 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     table tfoot tr th {
         @apply font-semibold;
     }
-    table tbody tr {
-        @apply border-b !border-white-light/40 dark:!border-[#191e3a];
-    }
+    /*table tbody tr {*/
+    /*    @apply border-b !border-white-light/40 dark:!border-[#191e3a];*/
+    /*}*/
     table.table-hover tbody tr {
         @apply hover:!bg-white-light/20 dark:hover:!bg-[#1a2941]/40;
     }
@@ -554,10 +555,10 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply !bg-white-light/20 dark:!bg-[#1a2941]/40;
     }
 
-    table.dataTable-table tbody tr th,
-    table.dataTable-table tbody tr td {
-        @apply border-b border-white-light/40 py-3 px-4 ltr:text-left rtl:text-right dark:border-[#191e3a];
-    }
+    /*table.dataTable-table tbody tr th,*/
+    /*table.dataTable-table tbody tr td {*/
+    /*    @apply border-b border-white-light/40 py-3 px-4 ltr:text-left rtl:text-right dark:border-[#191e3a];*/
+    /*}*/
     table.dataTable-table tbody tr:last-child td {
         @apply border-b-0;
     }

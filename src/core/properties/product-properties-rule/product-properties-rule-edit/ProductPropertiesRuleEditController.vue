@@ -20,6 +20,8 @@ import {FormType} from "../../../../shared/components/organisms/general-form/for
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
 import { Property } from "../../../../shared/components/organisms/product-properties-configurator/ProductPropertiesConfigurator.vue";
 import {Loader} from "../../../../shared/components/atoms/loader";
+import {Link} from "../../../../shared/components/atoms/link";
+import {Button} from "../../../../shared/components/atoms/button";
 
 interface Item {
   id: string;
@@ -180,9 +182,14 @@ onMounted(fetchData);
              />
 
         <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-          <CancelButton @click="() => router.push({name: 'properties.rule.list'})">
+          <CancelButton @click="() => router.push({ name: 'properties.rule.list' })">
             {{ t('shared.button.cancel') }}
           </CancelButton>
+          <Link :path="{ name: 'properties.rule.show', params: { id: route.params.id } }">
+            <Button type="button" class="btn btn-info text-sm ">
+              {{ t('shared.button.show') }}
+            </Button>
+          </Link>
           <ApolloAlertMutation :mutation="deleteProductPropertiesRuleMutation" :mutation-variables="{ id: id.toString() }" @done="handleDelete">
             <template v-slot="{ loading, confirmAndMutate }">
               <DangerButton ref="deleteButtonRef" :disabled="loading" @click="confirmAndMutate">{{ t('shared.button.delete') }}</DangerButton>

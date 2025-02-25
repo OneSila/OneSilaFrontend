@@ -11,6 +11,8 @@ import { createCurrencyMutation, updateCurrencyMutation } from "../../../../../s
 import {processGraphQLErrors} from "../../../../../shared/utils";
 import {Toast} from "../../../../../shared/modules/toast";
 import {FieldQuery} from "../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import {updateMyCompanyMutation} from "../../../../../shared/api/mutations/me";
+import {Button} from "../../../../../shared/components/atoms/button";
 
 const { t } = useI18n();
 const emit = defineEmits(['currency-added']);
@@ -119,14 +121,15 @@ onMounted(setCurrency);
         <FieldQuery class="w-96" v-model="form.publicId" :field="publicCurrencyField as QueryFormField"  />
       </div>
     </div>
-    <div class="col-span-full mt-3">
-    <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate" @error="onError">
-      <template v-slot="{ mutate, loading, error }">
-        <PrimaryButton  :disabled="loading || disableButton()" @click="mutate()">
-          {{ t('shared.button.save') }}
-        </PrimaryButton>
-      </template>
-    </ApolloMutation>
+    <hr class="my-6"/>
+    <div class="flex items-center justify-end">
+      <ApolloMutation :mutation="mutation" :variables="getMutationVariables()" @done="afterUpdate" @error="onError">
+        <template v-slot="{ mutate, loading, error }">
+          <PrimaryButton :disabled="loading || disableButton()" @click="mutate()">
+            {{ t('shared.button.next') }}
+          </PrimaryButton>
+        </template>
+      </ApolloMutation>
     </div>
   </div>
 </template>

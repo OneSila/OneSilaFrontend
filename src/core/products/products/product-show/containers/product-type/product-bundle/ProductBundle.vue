@@ -28,20 +28,14 @@ const tabItems = computed(() => {
     { name: 'variations', label: t('products.products.tabs.bundleItems'), icon: 'sitemap' },
     { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
-    { name: 'inventory', label: t('products.products.tabs.inventory'), icon: 'warehouse' },
+    { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
+    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
+    { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
+    { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' }
   ];
-
-  if (props.product.forSale) {
-    items.push(
-      { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
-      { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
-      { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' }
-    );
-  }
 
   items.push(
     // { name: 'hsCodes', label: t('products.products.tabs.hsCodes'), icon: 'barcode' },
-    { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' }
   );
 
   return items;
@@ -67,16 +61,13 @@ const tabItems = computed(() => {
       <template v-slot:properties>
         <PropertiesView :product="product" />
       </template>
-      <template v-slot:inventory>
-        <InventoryList :product="product" />
-      </template>
-      <template v-if="product.forSale" v-slot:price>
+      <template v-slot:price>
         <ProductSalePriceView :product="product" />
       </template>
-      <template v-if="product.forSale" v-slot:websites>
+      <template v-slot:websites>
         <WebsitesView :product="product" />
       </template>
-      <template v-if="product.forSale" v-slot:priceLists>
+      <template v-slot:priceLists>
         <SalesPricelistList :product="product" />
       </template>
 <!--      <template v-slot:hsCodes>-->

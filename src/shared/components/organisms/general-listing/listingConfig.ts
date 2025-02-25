@@ -23,4 +23,9 @@ export interface ListingConfig {
   addPagination?: boolean;
   paginationConfig?: PaginationConfig;
   addActions?: boolean;
+  addBulkEdit?: boolean;
+  addBulkDelete?: boolean;
+  isMainPage?: boolean;
+  addGridView?: boolean;
+  defaultGridIcon?: string;
 }

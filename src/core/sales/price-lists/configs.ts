@@ -9,7 +9,6 @@ import {ShowConfig} from "../../../shared/components/organisms/general-show/show
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
 import {deleteSalesPriceListMutation} from "../../../shared/api/mutations/salesPrices.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
-import {customerOnTheFlyConfig} from "../customers/configs";
 
 const getSubmitUrl = (customerId) => {
   if (customerId) {
@@ -55,7 +54,6 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         filterable: true,
         optional: true,
         formMapIdentifier: 'id',
-        createOnFlyConfig: customerOnTheFlyConfig(t)
     };
   }
 }
@@ -131,7 +129,6 @@ export const getFields = (customerId, t, type, showPcnt: boolean = true): FormFi
       number: true,
       optional: true,
     } : null,
-    getCustomerField(customerId, t, type),
     {
       type: FieldType.Textarea,
       name: 'notes',
@@ -156,6 +153,8 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: getSubmitUrl(customerId),
   submitAndContinueUrl: getSubmitAndContinueUrl(customerId, type),
+  addShow: true,
+  showUrlName: 'sales.priceLists.show',
   deleteMutation: deleteSalesPriceListMutation,
   helpSections: [
     {
@@ -249,10 +248,9 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   ],
   orders: []
 });
-const getUrlQueryParams = (customerId) => {
-  return customerId ? { customerId: customerId } : undefined;
-}
-export const listingConfigConstructor = (t: Function, customerId: string | null = null): ListingConfig => ({
+
+
+export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
   headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.prices.labels.discountPercentage'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
@@ -285,21 +283,21 @@ export const listingConfigConstructor = (t: Function, customerId: string | null 
   addActions: true,
   editUrlName: 'sales.priceLists.edit',
   showUrlName: 'sales.priceLists.show',
-  urlQueryParams: getUrlQueryParams(customerId),
   deleteMutation: deleteSalesPriceListMutation,
   addEdit: true,
   addShow: true,
   addDelete: true,
   addPagination: true,
+  isMainPage: isMainPage,
 });
 
 export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   cols: 1,
   subscription: salesPriceListSubscription,
   subscriptionKey: 'salesPriceList',
-  subscriptionVariables: {pk: id},
+  subscriptionVariables: { pk: id },
   addBack: true,
-  backUrl:  {name: 'sales.priceLists.list' },
+  backUrl:  { name: 'sales.priceLists.list' },
   addEdit: true,
   editUrl: {name: 'sales.priceLists.edit', params: {id: id} },
   addDelete: true,
@@ -352,8 +350,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       type: FieldType.Array,
       name: 'customers',
       label: t('sales.customers.title'),
-      clickable: true,
-      clickUrl: {name: 'sales.customers.show'},
+      clickable: false,
       clickIdentifiers: [{id: ['id']}],
       keys: ['name'],
       showLabel: true

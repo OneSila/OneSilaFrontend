@@ -7,10 +7,6 @@ export const routes = [
   { path: '/settings/vat-rate/create', name: 'settings.vatRate.create', component: () => import('./vat-rates/vat-rate-create/VatRateCreateController.vue') },
   { path: '/settings/vat-rate/edit/:id', name: 'settings.vatRate.edit', component: () => import('./vat-rates/vat-rate-edit/VatRateEditController.vue') },
 
-  { path: '/settings/leadtimes', name: 'settings.leadtimes.list', component: () => import('./leadtimes/leadtimes-list/LeadTimesListController.vue') },
-  { path: '/settings/leadtime/create', name: 'settings.leadtimes.create', component: () => import('./leadtimes/leadtime-create/LeadTimeCreateController.vue') },
-  { path: '/settings/leadtime/edit/:id', name: 'settings.leadtimes.edit', component: () => import('./leadtimes/leadtime-edit/LeadTimeEditController.vue') },
-
   { path: '/settings/units', name: 'settings.units.list', component: () => import('./units/units-list/UnitListController.vue') },
   { path: '/settings/unit/edit/:id', name: 'settings.unit.edit', component: () => import('./units/unit-edit/UnitEditController.vue') },
   { path: '/settings/unit/create', name: 'settings.unit.create', component: () => import('./units/unit-create/UnitCreateController.vue') },

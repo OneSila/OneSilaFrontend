@@ -42,19 +42,21 @@ const assignMedia = (media) => {
 
 <template>
     <Card :class="['card', 'overflow-auto', { 'max-h-[50rem]': assignImages }]">
-      <div class="card-header flex justify-between items-center py-2">
+      <div class="card-header flex justify-between items-center py-2 mb-2">
           <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-300">{{ props.label }}</h4>
           <div class="bg-gray-100 px-2 py-1 rounded-lg">
               <button class="mr-2" @click="viewType = 'table'" :class="{'text-blue-500': viewType === 'table'}">
-                  <Icon name="table" />
+                  <Icon size="xl" name="table" />
               </button>
               <button @click="viewType = 'gallery'" :class="{'text-blue-500': viewType === 'gallery'}">
-                  <Icon name="images" />
+                  <Icon size="xl" name="images" />
               </button>
           </div>
       </div>
 
-      <div class="flex flex-col">
+      <hr />
+
+      <div class="flex flex-col mt-2">
           <FilterManager :searchConfig="searchConfig">
           <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
               <ApolloQuery :query="listQuery"
@@ -158,7 +160,12 @@ const assignMedia = (media) => {
                               </div>
                           </div>
                       </div>
-                      <Pagination :page-info="data[queryKey].pageInfo" />
+                      <div class="mt-4">
+                        <hr/>
+                        <div class="mt-2">
+                          <Pagination :page-info="data[queryKey].pageInfo" />
+                        </div>
+                      </div>
                     </div>
                   </template>
               </ApolloQuery>

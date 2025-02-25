@@ -12,7 +12,7 @@ const props = defineProps<{ product: Product }>();
 
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t, null);
+const listingConfig = listingConfigConstructor(t);
 
 </script>
 

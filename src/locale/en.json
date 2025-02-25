@@ -151,74 +151,43 @@
       "completedMessage": "Congratulations! You have successfully completed all the onboarding steps. You are now ready to fully utilize the platform and take advantage of all its features. Start exploring and make the most of OneSila to drive innovation and success for your business.",
       "startInnovatingButton": "Start Innovating",
       "cards": {
+        "dependenciesNotMeetWarning": "You need to follow the following steps first:",
         "button": "Let's do it",
         "header": "Learn how to use OneSila",
-        "createSupplier": {
-          "title": "Create a first supplier",
-          "details": "Add your first supplier to assign products and create purchase orders."
+        "createProductType": {
+          "title": "Define a Product Type",
+          "details": "Create product type options (e.g., 'Chair', 'Pen') to group your products."
         },
-        "createCustomer": {
-          "title": "Create a new customer",
-          "details": "A customer is a company or consumer you sell to. You will later be able to make sales orders to this company."
+        "uploadProductImage": {
+          "title": "Add Product Image",
+          "details": "Upload an image to your product."
         },
-        "createSupplierProduct": {
-          "title": "Add a new product for your supplier",
-          "details": "A supplier product represents the product or bill of material you buy. It will keep your stock and you can create products from it."
+        "addEANCode": {
+          "title": "Add EAN Code",
+          "details": "Enter your product's EAN code. You can update or remove it later."
         },
-        "createFirstProduct": {
-          "title": "Create a first product",
-          "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped."
+        "createPriceList": {
+          "title": "Create Price List",
+          "details": "Set up a price list to organize and manage your product pricing. Update it when your prices change."
         },
-        "addFirstSalesOrder": {
-          "title": "Add your first sales order",
-          "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
+        "createProperty": {
+          "title": "Create Custom Property",
+          "details": "Make a new property to add extra details about your product. For example, create a 'Brand' property."
         },
-        "addFirstPurchaseOrder": {
-          "title": "Purchase some goods",
-          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships."
+        "assignPropertyToProductType": {
+          "title": "Attach Property to Product Type",
+          "details": "Link your custom property to a product type. For instance, attach the 'Brand' property to the 'Pen' product type."
         },
-        "addFirstInventory": {
-          "title": "Add your inventory",
-          "details": "Add inventory entries to keep track of the stock levels of your products. This helps in managing and forecasting inventory needs."
+        "setProductPropertyValue": {
+          "title": "Set Product Property Value",
+          "details": "Assign the correct value to your product’s property. For example, set 'Brand' to 'Parker' for your pen."
         },
-        "inviteAnotherMember": {
-          "title": "Invite other team-members",
-          "details": "Collaborate with your team to manage the business operations or data."
+        "product": {
+          "title": "Create a Simple Product",
+          "details": "Products can be simple or configurable. Start by creating a simple product, such as a pen, to understand the basics."
         },
         "progress": {
           "details": "Complete all the steps to become a master of OneSila and make the most of its features."
-        },
-        "supplier": {
-          "title": "Create a first supplier",
-          "details": "Add your first supplier to assign products and create purchase orders."
-        },
-        "customer": {
-          "title": "Create a new customer",
-          "details": "A customer is a company or consumer you sell to. You will later be able to make sales orders to this company."
-        },
-        "supplierProduct": {
-          "title": "Add a new product for your supplier",
-          "details": "A supplier product represents the product or bill of material you buy. It will keep your stock and you can create products from it."
-        },
-        "product": {
-          "title": "Create a first product",
-          "details": "Products can be configurable, simple, bundled, manufacturable, or dropshipped."
-        },
-        "salesOrder": {
-          "title": "Add your first sales order",
-          "details": "Create a sales order to start selling products to your customers. This will help track your sales and manage inventory."
-        },
-        "purchaseOrder": {
-          "title": "Purchase that product & confirm the purchase",
-          "details": "Create a purchase order to manage your purchases from suppliers. This will help keep your inventory stocked and manage supplier relationships. Add the product you created earlier to the order and then change the status to confirm it."
-        },
-        "inventoryLocation": {
-          "title": "Add your inventory Location",
-          "details": "Define your inventory locations to organize and manage where your products are stored. This helps in tracking stock levels across different locations and improves inventory accuracy."
-        },
-        "inventory": {
-          "title": "Add your inventory",
-          "details": "Add inventory entries to keep track of the stock levels of your products. This helps in managing and forecasting inventory needs."
         },
         "member": {
           "title": "Invite other team-members",
@@ -304,7 +273,7 @@
       "saveAndContinue": "Save & Continue",
       "delete": "Delete",
       "edit": "Edit",
-      "show": "Show",
+      "show": "Details",
       "submit": "Submit",
       "add": "Add",
       "download": "Download",
@@ -691,6 +660,15 @@
       "edit": {
         "title": "Edit Ean Code"
       },
+      "helpSection": {
+        "prefix": {
+          "header": "EAN Code Prefix",
+          "content": "The prefix is the first part of an EAN-13 barcode and is assigned by GS1. It uniquely identifies your company and ensures that all generated EAN codes follow a structured format. Make sure to use the correct GS1 prefix assigned to your company to avoid conflicts with other organizations."
+        }
+      },
+      "help": {
+        "externalEanCode": "An external EAN Code is one that is not generated by our platform."
+      },
       "labels": {
         "eanCode": "EAN code",
         "isAssigned": "Is assigned to product?",
@@ -698,25 +676,26 @@
         "internal": "Internal",
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
-        "currentEanCode": "Current EanCode",
-        "externalEanCode": "External EanCode"
+        "currentEanCode": "Current EAN Code",
+        "externalEanCode": "External EAN Code"
       },
       "placeholders": {
         "eanCode": "Enter EAN code",
-        "externalEanCode": "Supplier EanCode.  Ex: 0799439112766",
+        "externalEanCode": "Your own EAN Code.  Ex: 0799439112766",
         "prefix": "Enter your company prefix"
       },
-      "updatedSuccessfully": "EanCode updated",
-      "createdSuccessfully": "EanCode created",
-      "releaseSuccessfully": "EanCode released",
-      "assignSuccessfully": "EanCode assigned",
-      "generateSuccessfully": "EanCode generation process started.  Come back later to see the result.",
+      "updatedSuccessfully": "EAN Code updated",
+      "createdSuccessfully": "EAN Code created",
+      "deletedSuccessfully": "EAN Code removed",
+      "releaseSuccessfully": "EAN Code released",
+      "assignSuccessfully": "EAN Code assigned",
+      "generateSuccessfully": "EAN Code generation process started.  Come back later to see the result.",
       "assign": {
-        "disclaimer": "Select one of the available supplier EanCodes",
-        "assign": "Assign an available internal EanCode",
-        "release": "Release EanCode? NOTE: keep in mind that it will no longer be available for other products.",
-        "error": "No EanCodes available.  Assign codes to the supplier products, or purchase some codes from GS1",
-        "errorSolution": "Generate EanCodes",
+        "disclaimer": "Select one of the available supplier EAN Codes",
+        "assign": "Assign an available internal EAN Code",
+        "release": "Release EAN Code? NOTE: keep in mind that it will no longer be available for other products.",
+        "error": "No EAN Codes available.  Assign codes to the supplier products, or purchase some codes from GS1",
+        "errorSolution": "Generate EAN Codes",
         "button": {
           "assign": "Assign",
           "release": "Release"
