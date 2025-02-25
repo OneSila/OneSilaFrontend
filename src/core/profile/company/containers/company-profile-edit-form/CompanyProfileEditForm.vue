@@ -82,12 +82,6 @@ const onError = (error) => {
   <div class="space-y-12">
     <!-- Company Profile Section -->
     <div class="border-b border-gray-900/10 pb-12">
-      <h2 class="text-base font-semibold text-gray-900">
-        {{ t('companyProfile.labels.companyProfile') }}
-      </h2>
-      <p class="mt-1 text-sm text-gray-600">
-        {{ t('companyProfile.instructions') }}
-      </p>
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <!-- Company Name -->
         <div class="sm:col-span-6">
