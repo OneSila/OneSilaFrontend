@@ -186,7 +186,7 @@ onMounted(fetchData);
             {{ t('shared.button.cancel') }}
           </CancelButton>
           <Link :path="{ name: 'properties.rule.show', params: { id: route.params.id } }">
-            <Button type="button" class="btn btn-info text-sm ">
+            <Button type="button" class="button rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm btn-info ">
               {{ t('shared.button.show') }}
             </Button>
           </Link>

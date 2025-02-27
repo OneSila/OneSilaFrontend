@@ -18,8 +18,8 @@ const formConfig = ref<FormConfig | null>(null);
 onMounted(async () => {
   let addImage = false;
   const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
+  const isRule = route.query.isRule ? route.query.isRule.toString() : null;
 
-  // If we have a propertyId, query the property to check if it "hasImage".
   if (propertyId) {
     const { data } = await apolloClient.query({
       query: getPropertyQuery,
@@ -36,7 +36,8 @@ onMounted(async () => {
     createPropertySelectValueMutation,
     'createPropertySelectValue',
     propertyId,
-    addImage
+    addImage,
+    isRule !== null
   );
 });
 </script>
