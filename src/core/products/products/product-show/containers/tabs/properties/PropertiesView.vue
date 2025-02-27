@@ -359,9 +359,8 @@ const requireTypes = [
         </ApolloQuery>
       </FlexCell>
     </Flex>
-    <hr>
     <Loader :loading="loading" />
-    <table class="table-striped table-hover custom-table mt-4">
+    <table class="divide-y divide-gray-300 table-hover custom-table mt-4">
       <thead></thead>
       <tbody>
         <template v-for="(val, index) in values">

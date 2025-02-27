@@ -10,6 +10,7 @@ export const productSubscription = gql`
       proxyId
       name
       thumbnailUrl
+      hasParents
       inspector {
         id
       }

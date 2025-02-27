@@ -2,14 +2,13 @@
 
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import SettingsTemplate from "../../SettingsTemplate.vue";
 import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
 import { getTabsConfig } from "../../tabs";
 import {onMounted, ref} from "vue";
 import apolloClient from "../../../../../apollo-client";
 import {hasDemoDataQuery} from "../../../../shared/api/queries/me.js";
-import {createDemoData, deleteDemoData} from "../../../../shared/api/mutations/auth";
+import {createDemoData, deleteDemoData} from "../../../../shared/api/mutations/auth.js";
 import {Toast} from "../../../../shared/modules/toast";
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
 import {PrimaryButton} from "../../../../shared/components/atoms/button-primary";
@@ -94,7 +93,7 @@ onMounted(getHasDemoData);
     </template>
 
     <template v-slot:breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'settings.units.list' }, name: t('settings.demoData.title') }]" />
+      <Breadcrumbs :links="[{ path: { name: 'settings.demoData.show' }, name: t('settings.demoData.title') }]" />
     </template>
 
    <template v-slot:content>
@@ -108,7 +107,7 @@ onMounted(getHasDemoData);
        <div v-else>
         <h2 class="text-xl font-semibold">{{ t('settings.demoData.create.title') }}</h2>
         <p class="mt-2">{{ t('settings.demoData.create.content') }}</p>
-        <PrimaryButton class="mt-2" @click="updateDemoData(true)">
+        <PrimaryButton class="mt-4" @click="updateDemoData(true)">
           {{ t('shared.button.create') }}
         </PrimaryButton>
       </div>

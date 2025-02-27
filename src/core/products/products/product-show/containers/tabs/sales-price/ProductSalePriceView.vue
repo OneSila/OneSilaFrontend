@@ -180,7 +180,7 @@ onMounted(loadPrices);
     </template>
 
     <template v-slot:content>
-    <table class="table-striped table-hover">
+    <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
       <thead>
         <tr>
           <th>{{ t('sales.prices.labels.rrp') }}</th>
@@ -188,7 +188,7 @@ onMounted(loadPrices);
           <th>{{ t('shared.labels.currency') }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="divide-y divide-gray-200 bg-white">
         <tr v-for="(price, index) in prices" :key="index">
           <td>
             <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.rrp" type="number" :placeholder="'99.99'" :disabled="loading || price.readonly">

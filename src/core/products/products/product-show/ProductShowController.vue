@@ -34,6 +34,7 @@ interface ProductSubscriptionResult {
     name: string;
     sku: string;
     thumbnailUrl: string;
+    hasParents: boolean;
     vatRate: {
       name: string;
     };

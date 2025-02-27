@@ -725,6 +725,7 @@
       "tabs": {
         "content": "Content",
         "variations": "Variations",
+        "parents": "Parents",
         "bundleItems": "Bundle Items",
         "bom": "Bill of Materials",
         "media": "Media",

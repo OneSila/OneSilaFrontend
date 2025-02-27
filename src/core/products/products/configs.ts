@@ -291,6 +291,7 @@ export interface Product {
   proxyId?: string;
   sku: string;
   active: boolean;
+  hasParents: boolean;
   type: string;
   inspector: Inspector;
   vatRate?: VatRate;

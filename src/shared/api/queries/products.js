@@ -157,6 +157,8 @@ export const configurableVariationsQuery = gql`
             id
             sku
             name
+            thumbnailUrl
+            inspectorStatus
           }
           variation {
             id

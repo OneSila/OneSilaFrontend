@@ -26,7 +26,6 @@ const refetchIfNecessary = (query, data) => {
 }
 
 const extractVIewsIds = (data) => {
-  console.log(data)
   if (!data || !data.edges) return [];
   return data.edges.map(edge => edge.node.salesChannelView.id);
 };
@@ -43,17 +42,17 @@ const extractVIewsIds = (data) => {
                                 before: pagination.before,
                                 after: pagination.after }">
         <template v-slot="{ result: { data }, query }">
-          <div v-if="data && refetchIfNecessary(query, data)" class="mt-5 panel p-0 border-0 overflow-hidden">
-            <div class="table-responsive">
-              <table class="table-striped table-hover">
+          <div v-if="data && refetchIfNecessary(query, data)" class="mt-5 p-0 border-0 overflow-hidden">
+            <div :class="data.salesChannelViewAssigns.edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
+              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                 <thead>
                 <tr>
-                  <th>{{ t('shared.labels.name') }}</th>
-                  <th>{{ t('shared.labels.active') }}</th>
-                  <th class="!text-end">{{ t('shared.labels.actions')}}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.name') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-sm font-semibold text-gray-900 !text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200 bg-white">
                 <tr v-for="item in data.salesChannelViewAssigns.edges" :key="item.node.id">
                   <td>{{ item.node.salesChannelView.name }}</td>
                   <td>
