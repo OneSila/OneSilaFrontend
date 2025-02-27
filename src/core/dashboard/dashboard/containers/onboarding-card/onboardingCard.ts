@@ -7,4 +7,5 @@ export interface OnboardingCardObject {
   pathQuery?: Record<string, string>;
   pathParams?: Record<string, string>;
   dependencies?: string[];
+  optional?: boolean;
 }

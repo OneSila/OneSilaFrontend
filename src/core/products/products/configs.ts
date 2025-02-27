@@ -20,7 +20,7 @@ export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
 })
 export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.variation'), code: ProductType.Simple },
-  { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
+  // { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.configurable'), code: ProductType.Configurable },
 ];
 
@@ -54,7 +54,7 @@ export const getInspectorErrors = (t) => [
 
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Configurable]: { text: t('products.products.labels.type.choices.configurable'), color: 'blue' },
-  [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'purple' },
+  // [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'purple' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
 });
 
@@ -201,7 +201,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     },
     {
       type: FieldType.Choice,
-      name: 'inspectorNotSuccefullyCodeError',
+      name: 'inspectorNotSuccessfullyCodeError',
       labelBy: 'name',
       valueBy: 'code',
       label: t('products.products.labels.inspectorErrors'),

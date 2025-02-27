@@ -7,11 +7,28 @@ import { Link } from "../../../../shared/components/atoms/link";
 import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
+import apolloClient from "../../../../../apollo-client";
+import {propertiesQuery} from "../../../../shared/api/queries/properties.js";
+import { onMounted, ref} from "vue";
 
 const { t } = useI18n();
+const productTypeId = ref<string | null>(null);
 
 const searchConfig = searchConfigConstructor(t);
 const listingConfig = listingConfigConstructor(t, true);
+
+const fetchProductType = async () => {
+    const {data} = await apolloClient.query({
+      query: propertiesQuery,
+      variables: {filter: {isProductType: { exact: true } }}
+    })
+
+    if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
+      productTypeId.value = data.properties.edges[0].node.id;
+    }
+}
+
+onMounted(fetchProductType);
 
 </script>
 
@@ -23,6 +40,13 @@ const listingConfig = listingConfigConstructor(t, true);
     </template>
 
     <template v-slot:buttons>
+        <div>
+          <Link :path="{ name: 'properties.values.create', query: { propertyId: productTypeId } }">
+          <Button type="button" class="btn btn-primary">
+              {{  t('properties.rule.create.title') }}
+          </Button>
+        </Link>
+      </div>
     </template>
 
 

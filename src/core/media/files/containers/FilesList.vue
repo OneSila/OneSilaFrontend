@@ -11,6 +11,7 @@ import { Pagination } from "../../../../shared/components/molecules/pagination";
 import {useI18n} from "vue-i18n";
 import ActionsDropdown from "./ActionsDropdown.vue";
 import { formatDate, getFileName, getFileSize, getId, getPath, TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO} from "../media";
+import {VideoListingPreview} from "../../videos/videos-list/containers/video-listing-preview";
 
 const { t } = useI18n();
 const props = defineProps<{
@@ -127,14 +128,10 @@ const assignMedia = (media) => {
                                 </template>
                                 <template v-else-if="item.node.type === TYPE_VIDEO">
                                   <Button v-if="assignImages" @click="assignMedia(item.node)">
-                                    <div class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
-                                        <Icon name="play" size="2xl" class="text-gray-600"/>
-                                    </div>
+                                    <VideoListingPreview :video-url="item.node.videoUrl" />
                                   </Button>
                                   <Link v-else :path="getPath(item.node)">
-                                    <div class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
-                                        <Icon name="play" size="2xl" class="text-gray-600"/>
-                                    </div>
+                                    <VideoListingPreview :video-url="item.node.videoUrl" />
                                   </Link>
                                 </template>
                                 <template v-else-if="item.node.type === TYPE_DOCUMENT">

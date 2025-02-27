@@ -250,7 +250,7 @@
         "protectedDelete": "Cannot delete this item because it is being used elsewhere.",
         "somethingWentWrong": "Something went wrong!",
         "deletionFailed": "Deletion operation failed. Please contact the administrators.",
-        "clipboardSuccess": "Your text was succefully copied to the clipboard",
+        "clipboardSuccess": "Your text was successfully copied to the clipboard",
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
         "errorOccurred": "An error occurred."
@@ -455,8 +455,8 @@
         },
         "members": {
           "alert": {
-            "deleteMemberSuccess": "Member was succefully deleted!",
-            "enableMemberSuccess": "Member was succefully added back!"
+            "deleteMemberSuccess": "Member was successfully deleted!",
+            "enableMemberSuccess": "Member was successfully added back!"
           },
           "labels": {
             "invitationAccepted": "Invitation Accepted"
@@ -801,7 +801,7 @@
           "noMissingInfo": "No Missing Information!"
         },
         "alert": {
-          "refreshSuccess": "Inspector succefully refreshed!"
+          "refreshSuccess": "Inspector successfully refreshed!"
         }
       },
       "labels": {
@@ -832,7 +832,7 @@
       },
       "create": {
         "title": "Create Product",
-        "createSuccefully": "Product was succefully created!",
+        "createSuccessfully": "Product was successfully created!",
         "wizard": {
           "stepOne": {
             "content": "Select what product are you trying to create?",
@@ -894,7 +894,7 @@
         "createSuccessfully": "Product Created"
       },
       "edit": {
-        "updateSuccefully": "Product was succefully updated!",
+        "updateSuccessfully": "Product was successfully updated!",
         "updateSuccessfully": "Product Updated"
       },
       "show": {
@@ -1267,8 +1267,8 @@
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
-      "updatedSuccefully": "The price for currency {currency} was succefully updated!",
-      "createdSuccessfully": "The price for currency {currency} was succefully created!",
+      "updatedSuccessfully": "The price for currency {currency} was successfully updated!",
+      "createdSuccessfully": "The price for currency {currency} was successfully created!",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
@@ -1284,7 +1284,7 @@
         "rrp": "Enter rrp"
       },
       "updatedSuccessfully": "Price for currency {currency} Updated",
-      "createSuccefully": "Price for currency {currency} was created"
+      "createSuccessfully": "Price for currency {currency} was created"
     },
     "priceLists": {
       "title": "Prices Lists",
@@ -1438,7 +1438,7 @@
       },
       "alert": {
         "prices": {
-          "succefullyUpdated": "Succefully updated the prices!",
+          "successfullyUpdated": "Successfully updated the prices!",
           "successfullyUpdated": "Prices Updated"
         }
       },
@@ -1513,14 +1513,14 @@
       "title": "Images",
       "upload": "Upload New Images",
       "create": {
-        "successfullyCreated": "Images were succefully uploaded!"
+        "successfullyCreated": "Images were successfully uploaded!"
       },
       "delete": {
-        "successfullyDeleted": "Image was succefully deleted!"
+        "successfullyDeleted": "Image was successfully deleted!"
       },
       "show": {
         "title": "Image",
-        "successfullyUpdated": "Succefully updated the image!",
+        "successfullyUpdated": "Successfully updated the image!",
         "updateFailed": "Failed to update the image. Please contact the administrators!"
       },
       "labels": {
@@ -1540,14 +1540,14 @@
       "show": {
         "title": "Video",
         "unsupportedFormatError": "This video format is not supported by your browser!",
-        "successfullyUpdated": "Succefully updated the video!",
+        "successfullyUpdated": "Successfully updated the video!",
         "updateFailed": "Failed to update the video. Please contact the administrators!"
       },
       "create": {
-        "successfullyCreated": "Videos were succefully added!"
+        "successfullyCreated": "Videos were successfully added!"
       },
       "delete": {
-        "successfullyDeleted": "Video was succefully deleted!"
+        "successfullyDeleted": "Video was successfully deleted!"
       },
       "labels": {
         "videoUrl": "Video URL"
@@ -1561,10 +1561,10 @@
         "addDocuments": "Add New Documents"
       },
       "create": {
-        "successfullyCreated": "Documents were succefully uploaded!"
+        "successfullyCreated": "Documents were successfully uploaded!"
       },
       "delete": {
-        "successfullyDeleted": "Document was succefully deleted!"
+        "successfullyDeleted": "Document was successfully deleted!"
       },
       "show": {
         "title": "Document"
@@ -1695,7 +1695,7 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "succefullyCreated": "Demo data will be added momentarily.",
+        "successfullyCreated": "Demo data will be added momentarily.",
         "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
@@ -1706,7 +1706,7 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "succefullyDelete": "Demo data will be removed momentarily.",
+        "successfullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
     },

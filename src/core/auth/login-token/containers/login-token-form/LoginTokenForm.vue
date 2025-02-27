@@ -34,7 +34,7 @@ const onAcceptInvitationCompleted = async (response) => {
   if (response.data.acceptUserInvitation) {
     const user = response.data.acceptUserInvitation;
 
-    await refreshUser(auth, {
+     refreshUser(auth, {
         username: user.username,
         language: user.language,
         firstName: user.firstName,

@@ -116,7 +116,13 @@ export const listingConfigConstructor = (t: Function, productId: string | null =
   headers: [t('products.eanCodes.labels.eanCode'), t('products.eanCodes.labels.productName'), t('products.eanCodes.labels.internal'), t('products.eanCodes.labels.alreadyUsed')],
   fields: [
       { name: 'eanCode', type: FieldType.Text},
-      { name: 'productName', type: FieldType.Text },
+      { name: 'product',
+          type: FieldType.NestedText,
+          keys: ['name'],
+          clickable: true,
+          clickIdentifiers: [{id: ['id']}],
+          clickUrl: { name: 'products.products.show' }
+      },
       { name: 'internal', type: FieldType.Boolean},
       { name: 'alreadyUsed', type: FieldType.Boolean},
   ],

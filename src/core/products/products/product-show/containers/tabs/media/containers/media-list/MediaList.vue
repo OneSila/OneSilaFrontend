@@ -14,11 +14,13 @@ import {deleteMediaProductThroughMutation, updateMediaProductThroughMutation} fr
 import { VueDraggableNext } from 'vue-draggable-next';
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {Toggle} from "../../../../../../../../../shared/components/atoms/toggle";
+import {VideoListingPreview} from "../../../../../../../../media/videos/videos-list/containers/video-listing-preview";
 
 type Media = {
   id: string;
   type: string;
   onesilaThumbnailUrl: string;
+  videoUrl: string;
   updatedAt: Date;
   owner: {
     firstName: string;
@@ -208,9 +210,7 @@ const handleMainImageChange = async (changedItem: Item) => {
                 </template>
                 <template v-else-if="item.media.type === TYPE_VIDEO">
                   <Link :path="getPath(item.media)">
-                    <div class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
-                        <Icon name="play" size="2xl" class="text-gray-600"/>
-                    </div>
+                      <VideoListingPreview :video-url="item.media.videoUrl" />
                   </Link>
                 </template>
                 <template v-else-if="item.media.type === TYPE_DOCUMENT">

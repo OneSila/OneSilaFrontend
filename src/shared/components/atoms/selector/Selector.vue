@@ -145,7 +145,7 @@ const handleKeydown = (event) => {
 <template>
   <VueSelect
     ref="selectorRef"
-    class="selector min-w-38 text-sm bg-white"
+    class="selector w-full md:min-w-38 text-sm bg-white"
     @keydown.enter="handleKeydown"
     :placeholder="placeholder || t('shared.components.molecules.selector.defaultPlaceholder')"
     :model-value="modelValue"
@@ -209,6 +209,16 @@ const handleKeydown = (event) => {
 .vs--multiple .vs__selected {
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .selector .vs__selected {
+    display: block;               /* Make it block-level so it takes full width */
+    white-space: normal !important;  /* Allow wrapping instead of preserving whitespace */
+    word-break: normal;           /* Prevent breaking words arbitrarily */
+    overflow-wrap: break-word;    /* Break long words only if absolutely necessary */
+  }
+}
+
 
 .selector.border-disabled .vs__dropdown-toggle {
   border: none;

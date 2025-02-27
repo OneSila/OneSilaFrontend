@@ -466,3 +466,14 @@ onMounted(fetchData);
     </Accordion>
   </div>
 </template>
+
+<style scoped>
+
+@media (max-width: 640px) {
+  table.table-auto th, td {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+</style>

@@ -2,16 +2,19 @@ export const routes = [
   {
     path: '/products/ean-codes',
     name: 'products.eanCodes.list',
+    meta: { title: 'products.eanCodes.title' },
     component: () => import('./ean-codes/ean-codes-list/EanCodesListController.vue')
   },
   {
     path: '/products/ean-codes/create',
     name: 'products.eanCodes.create',
-    component: () => import('./ean-codes/ean-code-create/EanCodeCreateController.vue')
+    meta: { title: 'products.eanCodes.create.title' },
+    component: () => import('./ean-codes/ean-code-create/EanCodeCreateController.vue'),
   },
   {
     path: '/products/ean-codes/edit/:id',
     name: 'products.eanCodes.edit',
+    meta: { title: 'products.eanCodes.edit.title' },
     component: () => import('./ean-codes/ean-code-edit/EanCodeEditController.vue')
   },
 
@@ -39,16 +42,19 @@ export const routes = [
   {
     path: '/products',
     name: 'products.products.list',
+    meta: { title: 'products.title' },
     component: () => import('./products/products-list/ProductsListController.vue')
   },
   {
     path: '/products/create',
     name: 'products.products.create',
+    meta: { title: 'products.products.create.title' },
     component: () => import('./products/product-create/ProductCreateController.vue')
   },
   {
     path: '/products/product/:id',
     name: 'products.products.show',
+    meta: { title: 'products.products.show.title' },
     component: () => import('./products/product-show/ProductShowController.vue'),
   }
 ];
