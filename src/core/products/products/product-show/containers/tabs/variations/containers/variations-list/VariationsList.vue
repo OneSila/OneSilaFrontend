@@ -13,10 +13,8 @@ import {ApolloAlertMutation} from "../../../../../../../../../shared/components/
 import {
   deleteConfigurableVariationMutation,
   deleteBundleVariationMutation,
-  deleteBillOfMaterialMutation,
   updateConfigurableVariationMutation,
   updateBundleVariationMutation,
-  updateBillOfMaterialMutation
 } from "../../../../../../../../../shared/api/mutations/products.js";
 import {Image} from "../../../../../../../../../shared/components/atoms/image";
 import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
@@ -117,21 +115,21 @@ const handleQuantityChanged = debounce(async (event, id) => {
                                 before: pagination.before,
                                 after: pagination.after }">
         <template v-slot="{ result: { data }, query }">
-          <div v-if="data && refetchIfNecessary(query, data)" class="mt-5 panel p-0 border-0 overflow-hidden">
-            <div class="table-responsive">
-              <table class="table-striped table-hover">
+          <div v-if="data && refetchIfNecessary(query, data)" class="mt-5 p-0 border-0 overflow-hidden">
+            <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
+              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                 <thead>
                 <tr>
-                  <th>{{ t('shared.labels.name') }}</th>
-                  <th>{{ t('shared.labels.active') }}</th>
-                  <th>{{ t('products.products.labels.inspectorStatus') }}</th>
-                  <th v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
-                  <th class="!text-end">{{ t('shared.labels.actions')}}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.name') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 !text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
-                <tbody>
 
-                <tr v-for="item in data[queryKey].edges" :key="item.node.id">
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                   <td>
                     <Link :path="{name: 'products.products.show', params: {id: item.node.variation.id}}">
                       <Flex class="gap-4">
@@ -189,10 +187,8 @@ const handleQuantityChanged = debounce(async (event, id) => {
               <Pagination :page-info="data[queryKey].pageInfo" />
             </div>
           </div>
-
         </template>
       </ApolloQuery>
-
     </template>
   </FilterManager>
 </template>

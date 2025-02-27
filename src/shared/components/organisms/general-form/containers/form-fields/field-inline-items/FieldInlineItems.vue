@@ -304,19 +304,19 @@ onMounted(() => {
       </FlexCell>
     </Flex>
 
-<table class="table-striped table-hover">
+  <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
   <thead>
     <tr>
-      <th v-if="field.allowDelete">
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="field.allowDelete">
         <Checkbox
           :modelValue="selectedRows.every(Boolean) && rows.length > 0"
           @update:modelValue="(value) => selectedRows.fill(value)"
         />
       </th>
-        <th v-for="f in field.fields" :key="f.name">
+        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-for="f in field.fields" :key="f.name">
           {{ f.label }}
         </th>
-      <th class="action-col" v-if="field.allowDelete || true"></th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 action-col" v-if="field.allowDelete || true"></th>
     </tr>
   </thead>
   <tbody>

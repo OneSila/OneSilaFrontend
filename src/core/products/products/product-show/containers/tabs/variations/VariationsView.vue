@@ -4,7 +4,7 @@ import {ref} from 'vue';
 import {Product} from "../../../../configs";
 import {useI18n} from "vue-i18n";
 import TabContentTemplate from "../TabContentTemplate.vue";
-import {SearchConfig} from "../../../../../../../shared/components/organisms/general-search/searchConfig";
+import { SearchConfig } from "../../../../../../../shared/components/organisms/general-search/searchConfig";
 import {  bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../shared/api/queries/products.js";
 import { ProductType } from "../../../../../../../shared/utils/constants";
 import VariationsList from "./containers/variations-list/VariationsList.vue";

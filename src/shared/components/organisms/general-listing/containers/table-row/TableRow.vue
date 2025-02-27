@@ -23,14 +23,14 @@ const props = defineProps<{
 
 <template>
   <tr>
-    <th v-if="config.addBulkEdit || config.addBulkDelete"
+    <td v-if="config.addBulkEdit || config.addBulkDelete"
         scope="col"
         :class="['px-4 text-left text-sm font-semibold text-gray-900',
                  selectedEntities.includes(item.node[config.identifierKey || 'id']) ? 'border-l-2 border-indigo-600' : '']">
       <Checkbox
         :modelValue="selectedEntities.includes(item.node[config.identifierKey || 'id'])"
         @update:model-value="value => selectCheckbox(item.node[config.identifierKey || 'id'], value)" />
-    </th>
+    </td>
     <td v-for="(field, index) in config.fields" :key="field.name" class="whitespace-nowrap px-3 py-4 text-sm">
       <component
         v-if="field.type === FieldType.Text && field.addImage && field.imageField"
