@@ -2,7 +2,6 @@
 
 import { GenerateDemoData } from "./containers/generate-demo-data";
 import { AddCompany } from "./containers/add-company";
-import { AddInvetoryLocation } from "./containers/add-inventory-location";
 import { AddCurrency } from "./containers/add-currency";
 import { AddVatRate } from "./containers/add-vat-rate";
 import { onMounted, ref } from "vue";
