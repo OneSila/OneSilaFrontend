@@ -35,20 +35,18 @@ tabItems.value = [
 ;
 
 onMounted(async () => {
-  // Query the current property select value.
   const { data } = await apolloClient.query({
     query: getPropertySelectValueQuery,
     variables: { id: id.value }
   });
 
-  // The query returns the property select value with a nested property.
   const propertySelectValue = data.propertySelectValue;
   const addImage = propertySelectValue && propertySelectValue.property
                   ? Boolean(propertySelectValue.property.hasImage)
                   : false;
 
-  // Build the form configuration using the addImage parameter.
   formConfig.value = editFormConfigConstructor(t, id.value, data, addImage);
+
 });
 
 </script>

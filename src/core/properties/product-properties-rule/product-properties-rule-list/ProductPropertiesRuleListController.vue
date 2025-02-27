@@ -41,7 +41,7 @@ onMounted(fetchProductType);
 
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'properties.values.create', query: { propertyId: productTypeId } }">
+          <Link :path="{ name: 'properties.values.create', query: { propertyId: productTypeId, isRule: '1' } }">
           <Button type="button" class="btn btn-primary">
               {{  t('properties.rule.create.title') }}
           </Button>

@@ -222,7 +222,7 @@ useShiftBackspaceKeyboardListener(goBack);
         </Link>
 
         <Link v-if="config.addShow && config.type === FormType.EDIT" :path="{ name: config.showUrlName, params: { id: route.params.id } }">
-          <Button type="button" class="btn btn-info text-sm ">
+          <Button type="button" class="button rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm btn-info">
             {{ config.showLabel || t('shared.button.show') }}
           </Button>
         </Link>

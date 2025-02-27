@@ -26,17 +26,18 @@ export const baseFormConfigConstructor = (
     mutation: any,
     mutationKey: string,
     propertyId: string | null = null,
-    addImage: boolean = true
+    addImage: boolean = true,
+    redirectToRules: boolean = false,
 ): FormConfig => ({
     cols: 1,
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-    submitUrl: propertyId !== null ? {
-        name: 'properties.properties.show',
-        params: {id: propertyId},
-        query: {tab: 'values'}
-    } : {name: 'properties.values.list'},
+      submitUrl: redirectToRules
+        ? { name: 'properties.rule.list' }
+        : propertyId !== null
+          ? { name: 'properties.properties.show', params: { id: propertyId }, query: { tab: 'values' } }
+          : { name: 'properties.values.list' },
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
     fields: [
@@ -85,7 +86,7 @@ export const editFormConfigConstructor = (
     t: Function,
     id: string,
     data: any,
-    addImage: boolean = true
+    addImage: boolean = true,
 ): FormConfig => ({
     cols: 1,
     type: FormType.EDIT,
@@ -220,6 +221,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     editUrl: {name: 'properties.values.edit', params: {id: id}},
     deleteMutation: deletePropertySelectValueMutation,
     deleteVariables: {id: id},
+    deleteUrl: {name: 'properties.values.list'},
     addBack: true,
     addEdit: true,
     addDelete: true,

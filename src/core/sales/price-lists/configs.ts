@@ -301,6 +301,8 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
   addEdit: true,
   editUrl: {name: 'sales.priceLists.edit', params: {id: id} },
   addDelete: true,
+  deleteVariables: {id: id},
+  deleteUrl:  { name: 'sales.priceLists.list' },
   deleteMutation: deleteSalesPriceListMutation,
   fields: [
     {

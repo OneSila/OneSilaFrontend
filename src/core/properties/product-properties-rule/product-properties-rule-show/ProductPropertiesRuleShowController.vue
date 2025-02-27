@@ -9,12 +9,8 @@ import { updateField} from "../../../../shared/components/organisms/general-show
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
-import ItemsList from "./containers/items-list/ItemsList.vue";
-import {PropertyTypes} from "../../../../shared/utils/constants";
 import ProductList from "./containers/products-list/ProductsList.vue"
-import ValuesList from "./containers/values-list/ValuesList.vue"
 import {Loader} from "../../../../shared/components/atoms/loader";
-import RulesList from "./containers/rules-list/RulesList.vue";
 
 const { t } = useI18n();
 const route = useRoute();
