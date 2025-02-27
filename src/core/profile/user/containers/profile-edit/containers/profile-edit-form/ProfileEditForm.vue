@@ -133,7 +133,9 @@ const onUploaded = async (files: any[]) => {
             </ApolloQuery>
           </div>
 
-          <div class="sm:col-span-2">
+          <hr />
+
+          <div class="flex items-center justify-end mt-4">
             <Button :disabled="loading" custom-class="btn btn-primary" @click="executeMutation()">
               {{ t('shared.button.update') }}
             </Button>

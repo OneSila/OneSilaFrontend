@@ -51,8 +51,8 @@ defineExpose({ focus });
 </script>
 
 <template>
-  <div class="w-full">
-    <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden border-2 border-gray100">
+  <div class="w-full" :class="disabled ? 'bg-gray-100' : 'bg-white'">
+    <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg  overflow-hidden border-2 border-gray100">
       <div class="grid place-items-center h-full w-12 text-gray-300">
         <Icon name="search" class="h-6 w-6" />
       </div>

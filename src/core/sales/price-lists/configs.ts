@@ -96,7 +96,7 @@ export const getFields = (customerId, t, type, showPcnt: boolean = true): FormFi
       type: FieldType.Checkbox,
       name: 'vatIncluded',
       label: t('sales.priceLists.labels.vatIncluded'),
-      default: false,
+      default: true,
       uncheckedValue: "false"
     },
     {

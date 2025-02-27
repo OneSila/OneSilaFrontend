@@ -716,7 +716,7 @@
       },
       "create": {
         "title": "Product aanmaken",
-        "createSuccefully": "Product is succesvol aangemaakt!",
+        "createSuccessfully": "Product is succesvol aangemaakt!",
         "wizard": {
           "stepOne": {
             "content": "Selecteer het product-type die u wenst aan te maken",
@@ -778,7 +778,7 @@
         "createSuccessfully": "Product aangemaakt"
       },
       "edit": {
-        "updateSuccefully": "Wijzigingen voor het product zijn opgeslagen",
+        "updateSuccessfully": "Wijzigingen voor het product zijn opgeslagen",
         "updateSuccessfully": "Product upgedate"
       },
       "show": {
@@ -1145,7 +1145,7 @@
     "prices": {
       "confirmCurrencyChange": "De veranderingen zullen verloren gaan. Zeker dat us de valuta op wilt slagen?",
       "updatedError": "Prijs voor valuta {currency} is leeg.  Pas deze aan.",
-      "updatedSuccefully": "De prijs voor valuta {currency} was opgeslagen.",
+      "updatedSuccessfully": "De prijs voor valuta {currency} was opgeslagen.",
       "labels": {
         "amount": "Prijs",
         "discountAmount": "Kortingsprijs",
@@ -1161,7 +1161,7 @@
         "rrp": "Voer RRP in"
       },
       "updatedSuccessfully": "Prijs in {currency} upgedate",
-      "createSuccefully": "Prijs voor {currency} is aangemaakt.",
+      "createSuccessfully": "Prijs voor {currency} is aangemaakt.",
       "createdSuccessfully": "De prijs is {currency} is aangemaakt"
     },
     "priceLists": {
@@ -1318,7 +1318,7 @@
       },
       "alert": {
         "prices": {
-          "succefullyUpdated": "Prijzen opgeslagen!",
+          "successfullyUpdated": "Prijzen opgeslagen!",
           "successfullyUpdated": "Prijzen upgedate"
         }
       },
@@ -1574,7 +1574,7 @@
           "text": "Dit zal de demo-data aanmaken.  Verdergaan?",
           "confirmButtonText": "Aanmaken Demo Data"
         },
-        "succefullyCreated": "Demo Data wordt aangemaakt.",
+        "successfullyCreated": "Demo Data wordt aangemaakt.",
         "successfullyCreated": "Demo data wordt aangemaakt."
       },
       "delete": {
@@ -1585,7 +1585,7 @@
           "text": "Dit zal alle Demo Data van uw account verwijderen.  Verdergaan?",
           "confirmButtonText": "Verwijderen Demo Data"
         },
-        "succefullyDelete": "Demo Data wordt verwijderd.",
+        "successfullyDelete": "Demo Data wordt verwijderd.",
         "successfullyDelete": "Demo data wordt verwijderd."
       }
     },

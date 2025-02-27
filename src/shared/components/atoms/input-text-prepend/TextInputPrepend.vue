@@ -2,7 +2,7 @@
 
 import { Label } from '../label'
 
-const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue', 'mandatory']);
+const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label', 'type', 'placeholder', 'modelValue', 'mandatory', 'disabled']);
 </script>
 
 <template>
@@ -15,7 +15,8 @@ const { id, label, type, placeholder, modelValue } = defineProps(['id', 'label',
         :id="id"
         :type="type"
         :placeholder="placeholder"
-        class="form-input ps-10"
+        :disabled="disabled"
+        :class="['form-input ps-10', { 'cursor-not-allowed': disabled, 'bg-gray-100': disabled }]"
       />
       <span class="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400">
         <slot></slot>

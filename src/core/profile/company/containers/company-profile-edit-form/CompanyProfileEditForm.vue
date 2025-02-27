@@ -14,13 +14,20 @@ import {processGraphQLErrors} from "../../../../../shared/utils";
 import {countriesQuery} from "../../../../../shared/api/queries/languages.js";
 import {Selector} from "../../../../../shared/components/atoms/selector";
 import {Label} from "../../../../../shared/components/atoms/label";
+import {injectAuth} from "../../../../../shared/modules/auth";
 
 const { t } = useI18n();
 const props = defineProps<{ companyData: MeCompanyData, mandatory?: boolean }>();
+const auth = injectAuth();
+const user = ref(auth.user)
 
 const emit = defineEmits(['updateComplete', 'unsavedChanges']);
 
 const form = ref({ ...props.companyData });
+
+if (!form.value.email) {
+  form.value.email = user.value.username
+}
 
 const getMutationVariables = () => {
   return {
@@ -97,7 +104,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
         <!-- Address 1 -->
-        <div class="sm:col-span-6">
+        <div class="sm:col-span-3">
           <TextInputPrepend
             id="address1"
             v-model="form.address1"
@@ -110,7 +117,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
         <!-- Address 2 -->
-        <div class="sm:col-span-6">
+        <div class="sm:col-span-3">
           <TextInputPrepend
             id="address2"
             v-model="form.address2"
@@ -134,8 +141,22 @@ const onError = (error) => {
             <Icon name="city" />
           </TextInputPrepend>
         </div>
-        <!-- Country Selector -->
+
         <div class="sm:col-span-3">
+          <TextInputPrepend
+            id="postcode"
+            v-model="form.postcode"
+            :mandatory="mandatory"
+            :label="t('companyProfile.labels.postcode')"
+            :placeholder="t('companyProfile.placeholders.postcode')"
+            class="mb-2"
+          >
+            <Icon name="signs-post" />
+          </TextInputPrepend>
+        </div>
+
+        <!-- Country Selector -->
+        <div class="sm:col-span-6">
           <Label class="font-semibold text-md">
             {{ t('auth.register.company.placeholders.country') }}
             <span v-if="mandatory">*</span>
@@ -156,20 +177,8 @@ const onError = (error) => {
           </ApolloQuery>
         </div>
         <!-- Postcode -->
-        <div class="sm:col-span-6">
-          <TextInputPrepend
-            id="postcode"
-            v-model="form.postcode"
-            :mandatory="mandatory"
-            :label="t('companyProfile.labels.postcode')"
-            :placeholder="t('companyProfile.placeholders.postcode')"
-            class="mb-2"
-          >
-            <Icon name="signs-post" />
-          </TextInputPrepend>
-        </div>
         <!-- Email -->
-        <div class="sm:col-span-6">
+        <div class="sm:col-span-3">
           <EmailInput
             id="email"
             icon="envelope"
@@ -181,7 +190,7 @@ const onError = (error) => {
           />
         </div>
         <!-- Phone Number -->
-        <div class="sm:col-span-6">
+        <div class="sm:col-span-3">
           <PhoneNumberInput
             v-model:model-value="form.phoneNumber"
             :mandatory="mandatory"
@@ -190,7 +199,7 @@ const onError = (error) => {
           />
         </div>
         <!-- VAT Number -->
-        <div class="sm:col-span-6">
+        <div class="sm:col-span-3">
           <TextInputPrepend
             id="vatNumber"
             v-model="form.vatNumber"
@@ -202,7 +211,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
         <!-- Website -->
-        <div class="sm:col-span-6">
+        <div class="sm:col-span-3">
           <WebsiteInput
             id="website"
             icon="globe"

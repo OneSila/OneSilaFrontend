@@ -11,6 +11,7 @@ import { TextInput } from "../../../../../../../shared/components/atoms/input-te
 import { createSalesPriceMutation, updateSalesPriceMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { currenciesQuery } from "../../../../../../../shared/api/queries/currencies.js";
+import {TextInputPrepend} from "../../../../../../../shared/components/atoms/input-text-prepend";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -20,11 +21,12 @@ interface Price {
   price: string | number | null;
   rrp: string | number | null;
   currency: string;
+  symbol: string;
   readonly: boolean;
 }
 const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
-const defaultCurrency = ref({ id: '', isoCode: '' });
+const defaultCurrency = ref({ id: '', isoCode: '', symbol: '' });
 
 const getDefaultCurrency = async () => {
   const { data } = await apolloClient.query({
@@ -44,7 +46,7 @@ const loadPrices = async () => {
 
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
-    variables: { filter: { product: {id: { exact: props.product.id }} }},
+    variables: { filter: { product: {id: { exact: props.product.id }} }, order: { currency: { isoCode: 'ASC' } } },
     fetchPolicy: 'network-only'
   });
 
@@ -53,6 +55,7 @@ const loadPrices = async () => {
     price: edge.node.price,
     rrp: edge.node.rrp,
     currency: edge.node.currency.isoCode,
+    symbol: edge.node.currency.symbol,
     readonly: !edge.node.currency.isDefaultCurrency && !!edge.node.currency.inheritsFrom,
   }));
 
@@ -67,6 +70,7 @@ const loadPrices = async () => {
       price: null,
       rrp: null,
       currency: defaultCurrency.value.isoCode,
+      symbol: defaultCurrency.value.symbol,
       readonly: false,
     });
   }
@@ -187,10 +191,14 @@ onMounted(loadPrices);
       <tbody>
         <tr v-for="(price, index) in prices" :key="index">
           <td>
-            <TextInput v-model="price.rrp" float :placeholder="t('sales.prices.placeholders.rrp')" :disabled="loading || price.readonly" />
+            <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.rrp" type="number" :placeholder="'99.99'" :disabled="loading || price.readonly">
+              {{ price.symbol }}
+            </TextInputPrepend>
           </td>
           <td>
-            <TextInput v-model="price.price" float :placeholder="t('sales.prices.placeholders.price')" :disabled="loading || price.readonly" />
+            <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.price" type="number" :placeholder="'80.99'" :disabled="loading || price.readonly">
+              {{ price.symbol }}
+            </TextInputPrepend>
           </td>
           <td>{{ price.currency }}</td>
         </tr>

@@ -2,7 +2,7 @@ import { gql } from 'graphql-tag';
 
 export const productsDashboardCardsQuery = gql`
   query ProductsDashboardCards($errorCode: String!) {
-    products(filters: { inspectorNotSuccefullyCodeError: $errorCode }) {
+    products(filters: { inspectorNotSuccessfullyCodeError: $errorCode }) {
       totalCount
     }
   }

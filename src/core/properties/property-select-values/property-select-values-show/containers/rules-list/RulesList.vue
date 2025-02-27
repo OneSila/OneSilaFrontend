@@ -39,11 +39,6 @@ onMounted(fetchFilterIds)
   <GeneralTemplate>
 
     <template v-slot:buttons>
-      <Link v-if="ruleId == null" :path="{ name: 'properties.rule.create', query: { productTypeId: id} }">
-        <Button class="btn btn-primary">
-            {{  t('properties.values.create.title') }}
-        </Button>
-      </Link>
     </template>
 
    <template v-slot:content>

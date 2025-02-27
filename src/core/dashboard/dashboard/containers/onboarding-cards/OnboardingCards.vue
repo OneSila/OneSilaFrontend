@@ -100,7 +100,8 @@ const cards = computed((): OnboardingCardObject[] => [
     title: t('dashboard.onboarding.cards.member.title'),
     query: membersQuery,
     path: 'profile.company',
-    dependencies: []
+    dependencies: [],
+    optional: true
   },
   {
     key: 'createProductType',
@@ -182,7 +183,8 @@ const cards = computed((): OnboardingCardObject[] => [
     path: 'sales.priceLists.create',
     query: salesPriceListsQuery,
     variables: excludeDemoDataFilter,
-    dependencies: []
+    dependencies: [],
+    optional: true
   }
 ]);
 
@@ -190,7 +192,7 @@ const cards = computed((): OnboardingCardObject[] => [
 // 2. Build completedStatus dynamically from the cards keys.
 const completedStatus = ref<Record<string, boolean>>(
   cards.value.reduce((acc, card) => {
-    acc[card.key] = false;
+    acc[card.key] = !!card.optional;
     return acc;
   }, {} as Record<string, boolean>)
 );
@@ -229,16 +231,27 @@ watch(isCompleted, (completed) => {
     showCreateCompleteModal.value = true;
   }
 }, { deep: true });
-const updateStatus = (key: string, status: boolean) => {
-  completedStatus.value[key] = status;
-  calculateProgress();
-};
 
 const calculateProgress = () => {
   const total = Object.keys(completedStatus.value).length;
-  const completed = Object.values(completedStatus.value).filter(status => status).length;
+
+  const completed = Object.keys(completedStatus.value).reduce((sum, key) => {
+    const card = cards.value.find(card => card.key === key);
+    return sum + ((card?.optional || completedStatus.value[key]) ? 1 : 0);
+  }, 0);
   progressPercentage.value = Math.floor((completed / total) * 100);
 };
+
+const updateStatus = (key: string, status: boolean) => {
+
+  const card = cards.value.find(card => card.key === key);
+  if (card?.optional) {
+    completedStatus.value[key] = true;
+  } else {
+    completedStatus.value[key] = status;
+  }
+  calculateProgress();
+}
 
 const progressPercentage = ref(0);
 calculateProgress();

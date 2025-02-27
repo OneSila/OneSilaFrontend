@@ -133,7 +133,9 @@ onUnmounted(() => {
             <div class="flex flex-col h-full">
               <!-- Top Content -->
               <div>
-                <p class="text-gray-800 font-semibold text-lg">{{ title }}</p>
+                <Link v-if="url" :path="url">
+                  <p class="text-gray-800 font-semibold text-lg">{{ title }}</p>
+                </Link>
                 <p class="text-gray-600 mt-2">{{ description }}</p>
               </div>
               <!-- Spacer -->
@@ -152,7 +154,9 @@ onUnmounted(() => {
           <div class="card-mobile" :class="cardColorClass">
             <div class="p-4">
               <Icon :name="iconName" class="h-12 w-12 text-white mx-auto" />
-              <h4 class="text-white text-center text-xl font-semibold mt-4">{{ title }}</h4>
+              <Link v-if="url" :path="url">
+                <h4 class="text-white text-center text-xl font-semibold mt-4">{{ title }}</h4>
+              </Link>
               <p class="text-white text-center text-2xl font-bold mt-2">
                 <span
                   class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold"

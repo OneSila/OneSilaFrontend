@@ -17,14 +17,22 @@ import HeaderBar from './shared/components/organisms/nav-bar/HeaderBar.vue';
 import {Loader} from "./shared/components/atoms/loader";
 import {DiscreteLoader} from "./shared/components/atoms/discrete-loader";
 
-const { locale } = useI18n();
+const { t } = useI18n();
 const route = useRoute();
 const auth = injectAuth();
 const app = useAppStore();
 
-if (import.meta.env.MODE === 'development') {
-  document.title = `DEV ${document.title}`;
-}
+const defaultTitle = 'OneSila';
+
+const updateDocumentTitle = () => {
+  document.title = route.meta.title
+    ? `${t(route.meta.title as string)} | ${defaultTitle}`
+    : defaultTitle;
+
+  if (import.meta.env.MODE === 'development') {
+    document.title = `DEV ${document.title}`;
+  }
+};
 
 const sidebar = ref(
   auth.user?.preferences?.sidebarToggle ?? false
@@ -52,6 +60,7 @@ watch(
   () => route.name,
   () => {
     resetLoadingStates(auth);
+    updateDocumentTitle();
   }
 );
 
