@@ -75,7 +75,7 @@ onMounted(fetchViews);
 
 <template>
   <div>
-    <Flex v-if="views.length > 0">
+    <Flex gap="2" v-if="views.length > 0">
       <FlexCell>
         <Selector v-model="selectedView"
                   :options="views"
@@ -84,7 +84,7 @@ onMounted(fetchViews);
                   :placeholder="t('products.products.placeholders.salesChannelView')"
                   filterable
                   removable
-                  class="min-w-[200px] mr-2" />
+                  class="min-w-[400px] mr-2" />
       </FlexCell>
       <FlexCell>
         <PrimaryButton :disabled="!selectedView" @click="handleCreateAssign">

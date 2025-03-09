@@ -307,6 +307,10 @@ const removePropertyValue = async () => {
     emit('remove', props.value.property.id)
     Toast.success(t('properties.rule.alert.deleteProductProperty'))
     setValues();
+    if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)) {
+      val.value = null;
+      lastSavedVal.value = val.value;
+    }
 }
 
 watch(props.value.translation, setTranslatedValues)

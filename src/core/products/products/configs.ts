@@ -305,7 +305,7 @@ export interface Select {
 }
 
 export interface  ProductPropertyTranslation {
-  id?: string;
+  id?:  string | null;
   valueText?: string;
   valueDescription?: string;
   language: string | null;
