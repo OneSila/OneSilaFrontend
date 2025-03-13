@@ -5,10 +5,7 @@ import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
 import variableType from "../../../../../../assets/images/product-types/simple.png";
-import bundleType from "../../../../../../assets/images/product-types/bundle.png";
 import configurableType from "../../../../../../assets/images/product-types/configurable.png";
-import manufacturableType from "../../../../../../assets/images/product-types/manufacturer.png";
-import dropshipType from "../../../../../../assets/images/product-types/dropship.png";
 import {ProductType} from "../../../../../../shared/utils/constants";
 import {FormType} from "../product";
 
@@ -23,7 +20,6 @@ const typeChoice = [
 
 
 // when we select the type we always make for sale true in case we go back
-emit('for-sale-changed', true, false);
 emit('empty-variations');
 
 const { t } = useI18n();

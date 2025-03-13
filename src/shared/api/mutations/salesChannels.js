@@ -1,6 +1,25 @@
 // salesChannelMutations.ts
 import { gql } from 'graphql-tag';
 
+export const createMagentoSalesChannelMutation = gql`
+  mutation createMagentoSalesChannel($data: MagentoSalesChannelInput!) {
+    createMagentoSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateMagentoSalesChannelMutation = gql`
+  mutation updateMagentoSalesChannel($data: MagentoSalesChannelPartialInput!) {
+    updateMagentoSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`
   mutation createSalesChannel($data: SalesChannelInput!) {
@@ -47,6 +66,14 @@ export const updateSalesChannelMutation = gql`
 export const deleteSalesChannelMutation = gql`
   mutation deleteSalesChannel($id: GlobalID!) {
     deleteSalesChannel(data: { id: $id }) {
+      id
+    }
+  }
+`;
+
+export const deleteIntegrationMutation = gql`
+  mutation deleteIntegration($id: GlobalID!) {
+    deleteIntegration(data: { id: $id }) {
       id
     }
   }
@@ -136,6 +163,7 @@ export const createSalesChannelViewAssignMutation = gql`
   }
 `;
 
+
 export const createSalesChannelViewAssignsMutation = gql`
   mutation createSalesChannelViewAssigns($data: [SalesChannelViewAssignInput!]!) {
     createSalesChannelViewAssigns(data: $data) {
@@ -164,6 +192,56 @@ export const updateSalesChannelViewAssignMutation = gql`
         id
         name
       }
+    }
+  }
+`;
+
+export const resyncSalesChannelViewAssignMutation = gql`
+  mutation resyncSalesChannelViewAssign($data: SalesChannelViewAssignPartialInput!) {
+    resyncSalesChannelViewAssign(data: $data) {
+      id
+      product {
+        id
+        name
+      }
+      salesChannelView {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const updateSalesChannelViewMutation = gql`
+  mutation updateSalesChannelView($data: SalesChannelViewPartialInput!) {
+    updateSalesChannelView(data: $data) {
+      id
+      name
+      active
+    }
+  }
+`;
+
+export const updateRemoteLanguageMutation = gql`
+  mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
+    updateRemoteLanguage(data: $data) {
+      id
+      localInstance
+      remoteCode
+    }
+  }
+`;
+
+export const updateRemoteCurrencyMutation = gql`
+  mutation updateRemoteCurrency($data: RemoteCurrencyPartialInput!) {
+    updateRemoteCurrency(data: $data) {
+      id
+      localInstance {
+        id
+        symbol
+        isoCode
+      }
+      remoteCode
     }
   }
 `;

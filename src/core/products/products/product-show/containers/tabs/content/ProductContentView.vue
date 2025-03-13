@@ -3,18 +3,17 @@
 import { useI18n } from 'vue-i18n';
 import {Product} from "../../../../configs";
 import {Button} from "../../../../../../../shared/components/atoms/button";
-import TabContentTemplate from "../TabContentTemplate.vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {getProductTranslationByLanguageQuery} from "../../../../../../../shared/api/queries/products.js";
 import {updateProductTranslationMutation, createProductTranslationMutation} from "../../../../../../../shared/api/mutations/products.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
 import {TextEditor} from "../../../../../../../shared/components/atoms/input-text-editor";
+import {TextHtmlEditor} from "../../../../../../../shared/components/atoms/input-text-html-editor";
 import {reactive, watch, ref} from "vue";
 import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Toast } from "../../../../../../../shared/modules/toast";
-import {FormConfig} from "../../../../../../../shared/components/organisms/general-form/formConfig";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -61,7 +60,7 @@ const setFormAndMutation = async (language) => {
     } else {
       form.name = '';
       form.shortDescription = '';
-      form.description = '';
+      form.description = '<p><br></p>';
       form.urlKey = '';
       translationId.value = null;
       mutation.value = createProductTranslationMutation;
@@ -80,6 +79,7 @@ watch(currentLanguage, async (newLanguage, oldLanguage) => {
 });
 
 const handleLanguageSelection = async (newLanguage) => {
+
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
     const confirmChange = confirm(t('products.translation.confirmLanguageChange'));
     if (!confirmChange) {
@@ -120,15 +120,17 @@ const onMutationCompleted = () => {
     <Flex vertical>
       <FlexCell>
         <Label semi-bold>{{ t('shared.labels.name') }}</Label>
-        <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="my-2 w-full" />
+        <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="mt-2 mb-4 w-full" />
       </FlexCell>
       <FlexCell>
         <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-        <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="my-2 h-32 w-full" />
+        <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-4 h-32 w-full" />
       </FlexCell>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-        <TextEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" scroll class="my-2 h-32 w-full" />
+        <div class="mt-2 mb-4">
+          <TextHtmlEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" class="h-32 w-full" />
+        </div>
       </FlexCell>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
@@ -157,7 +159,7 @@ const onMutationCompleted = () => {
                     :removable="false"
                     :placeholder="t('products.translation.placeholders.language')"
                     @update:modelValue="handleLanguageSelection"
-                    class="w-32"
+                    class="w-40"
                     labelBy="name"
                     valueBy="code"
                     mandatory

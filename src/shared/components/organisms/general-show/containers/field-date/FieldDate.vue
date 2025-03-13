@@ -25,8 +25,6 @@ const formatDate = (dateString) => {
     }).format(date);
 };
 
-
-
 const modifiedField = computed(() => ({
   ...props.field,
   type: FieldType.Text,

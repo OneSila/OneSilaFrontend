@@ -45,6 +45,10 @@ const getShowRoute = (item) => {
     [props.config.paramIdentifier || 'id']: item.node[props.config.identifierKey]
   };
 
+  if (props.config.secondIdentifierKey && props.config.secondIdentifierParam) {
+    params[props.config.secondIdentifierParam] = item.node[props.config.secondIdentifierKey];
+  }
+
   return {
     name: props.config.showUrlName,
     params,

@@ -88,6 +88,8 @@ watchEffect(() => {
 
     if (!props.mandatory) {
       dropdownOptions.value.unshift({ id: 'all', name: 'All' });
+    } else {
+      dropdownOptions.value
     }
   } else if (selectorRef.value && !selectorRef.value.search && props.limit) {
     const selectedOptions = props.options.filter((option) => {

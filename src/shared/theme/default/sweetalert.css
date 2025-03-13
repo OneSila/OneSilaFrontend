@@ -22,7 +22,7 @@ body.swal2-toast-shown .swal2-container.toast {
     margin: 0px !important;
     width: 100%;
     color: #3b3f5c;
-    font-size: 24px;
+    font-size: 16px;
     @apply ltr:!pr-10 rtl:!pl-10;
 }
 
@@ -210,6 +210,11 @@ body.swal2-toast-shown .swal2-container.toast {
     transform: rotate(-45deg);
     z-index: 1;
 }
+
+.swal2-success-fix {
+  background-color: transparent !important;
+}
+
 
 .swal2-icon.swal2-success .swal2-success-ring {
     position: absolute;

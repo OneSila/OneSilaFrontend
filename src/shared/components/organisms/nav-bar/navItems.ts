@@ -44,6 +44,11 @@ export const navSections: NavSection[] = [
                 route: { name: 'media.files' }
             },
             {
+                title: 'integrations.title',
+                icon: 'globe',
+                route: { name: 'integrations.integrations.list' }
+            },
+            {
                 title: 'properties.title',
                 icon: 'screwdriver-wrench',
                 subItemsKey: 'properties',

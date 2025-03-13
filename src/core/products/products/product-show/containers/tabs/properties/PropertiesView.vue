@@ -219,6 +219,7 @@ const handleUpdatedId = ({ oldId, newId, isTranslation }) => {
 
 const handleRemove = (id) => {
   const index = values.value.findIndex(v => v.property.id === id);
+
   if (index !== -1) {
     values.value[index].id = undefined
     values.value[index].valueBoolean = null;
@@ -227,6 +228,7 @@ const handleRemove = (id) => {
     values.value[index].valueDate = null;
     values.value[index].valueDateTime = null;
     values.value[index].valueSelect = { id: null };
+    values.value[index].translation = { id: null, valueText: "", valueDescription: "", language: language.value };
     values.value[index].valueMultiSelect = null;
   }
 };

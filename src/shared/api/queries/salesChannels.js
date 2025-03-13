@@ -41,6 +41,36 @@ export const getSalesChannelQuery = gql`
   }
 `;
 
+export const getMagentoChannelQuery = gql`
+  query getMagentoChannel($id: GlobalID!) {
+    magentoChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      hostApiUsername
+      hostApiKey
+      authenticationMethod
+      attributeSetSkeletonId
+      eanCodeAttribute
+      firstImportComplete
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+       id
+       }
+    }
+  }
+`;
+
+
 // Sales Channel Integration Pricelist Queries
 export const salesChannelIntegrationPricelistsQuery = gql`
   query SalesChannelIntegrationPricelists($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelIntegrationPricelistOrder, $filter: SalesChannelIntegrationPricelistFilter) {
@@ -90,9 +120,14 @@ export const salesChannelViewAssignsQuery = gql`
         node {
           id
           remoteUrl
+          remoteProductPercentage
           product {
             id
             name
+          }
+          remoteProduct {
+            id
+            hasErrors
           }
           salesChannelView {
             id
@@ -112,6 +147,40 @@ export const salesChannelViewAssignsQuery = gql`
     }
   }
 `;
+
+export const remoteLogsQuery = gql`
+  query RemoteLogs(
+    $first: Int, 
+    $last: Int, 
+    $after: String, 
+    $before: String, 
+    $order: RemoteLogOrder, 
+    $filter: RemoteLogFilter
+  ) {
+    remoteLogs(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          action
+          status
+          frontendName
+          frontendError
+          createdAt
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 
 export const getSalesChannelViewAssignQuery = gql`
   query getSalesChannelViewAssign($id: GlobalID!) {
@@ -138,10 +207,6 @@ export const salesChannelViewsQuery = gql`
           id
           name
           active
-          salesChannel {
-            id
- 
-          }
         }
         cursor
       }
@@ -162,8 +227,125 @@ export const getSalesChannelViewQuery = gql`
       id
       name
       active
+      url
       salesChannel {
         id
+      }
+    }
+  }
+`;
+
+export const getRemoteLanguageQuery = gql`
+  query getRemoteLanguageQueryQuery($id: GlobalID!) {
+    remoteLanguage(id: $id) {
+      id
+      localInstance
+      remoteCode
+    }
+  }
+`;
+
+export const getRemoteCurrencyQuery = gql`
+  query getrRmoteLanguageQueryQuery($id: GlobalID!) {
+    remoteCurrency(id: $id) {
+      id
+      localInstance {
+        id
+        symbol
+        isoCode
+      }
+      remoteCode
+    }
+  }
+`;
+
+export const remoteLanguagesQuery = gql`
+  query RemoteLanguages(
+    $first: Int, 
+    $last: Int, 
+    $after: String, 
+    $before: String, 
+    $order: RemoteLanguageOrder, 
+    $filter: RemoteLanguageFilter
+  ) {
+    remoteLanguages(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          localInstance
+          remoteCode
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const remoteCurrenciesQuery = gql`
+  query RemoteCurrencies(
+    $first: Int, 
+    $last: Int, 
+    $after: String, 
+    $before: String, 
+    $order: RemoteCurrencyOrder, 
+    $filter: RemoteCurrencyFilter
+  ) {
+    remoteCurrencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          remoteCode
+          localInstance {
+            id
+            name
+            symbol
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const importProcessesQuery = gql`
+  query ImportProcesses(
+    $first: Int, 
+    $last: Int, 
+    $after: String, 
+    $before: String, 
+    $order: ImportProcessOrder, 
+    $filter: ImportProcessFilter
+  ) {
+    importProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          status
+          percentage
+          createdAt
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
       }
     }
   }
