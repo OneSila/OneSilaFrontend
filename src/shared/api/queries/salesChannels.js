@@ -207,6 +207,9 @@ export const salesChannelViewsQuery = gql`
           id
           name
           active
+          salesChannel {
+            id
+          }
         }
         cursor
       }
