@@ -56,7 +56,7 @@ const props = defineProps<{
         <ApolloAlertMutation
           v-if="config.addDelete && config.deleteMutation"
           :mutation="config.deleteMutation"
-          :mutation-variables="config.identifierKey !== undefined ? { id: item.node[config.identifierKey] } : undefined"
+          :mutation-variables="config.deleteIdentifierKey ? { id: item.node[config.deleteIdentifierKey] } : (config.identifierKey ? { id: item.node[config.identifierKey] } : undefined)"
           :refetch-queries="() => [{
              query: queryObject.query,
              variables: {

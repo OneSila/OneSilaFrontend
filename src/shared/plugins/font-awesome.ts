@@ -142,7 +142,10 @@ import {
   faCaretRight,
   faCircleArrowRight,
   faExchangeAlt,
-  faFloppyDisk
+  faFloppyDisk,
+  faClipboardList,
+  faClockRotateLeft,
+  faFileImport
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -285,6 +288,10 @@ library.add(faCaretRight as IconDefinition);
 library.add(faCircleArrowRight as IconDefinition);
 library.add(faExchangeAlt as IconDefinition);
 library.add(faFloppyDisk as IconDefinition);
+library.add(faClipboardList as IconDefinition);
+library.add(faClockRotateLeft as IconDefinition);
+library.add(faFileImport as IconDefinition);
+
 
 export default {
   install(app) {

@@ -13,6 +13,7 @@ export const productSubscription = gql`
       hasParents
       inspector {
         id
+        hasMissingInformation
       }
       vatRate {
         id
@@ -20,6 +21,24 @@ export const productSubscription = gql`
         name
       }
       allowBackorder
+      saleschannelviewassignSet {
+          id
+          remoteUrl
+          remoteProductPercentage
+          product {
+            id
+            name
+          }
+          salesChannelView {
+            id
+            name
+            active
+          }
+          remoteProduct {
+            id
+            hasErrors
+          }
+        }
     }
   }
 `;

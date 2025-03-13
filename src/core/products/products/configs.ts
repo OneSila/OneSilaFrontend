@@ -274,16 +274,35 @@ export interface VatRate {
   rate: number;
 }
 
-export interface BaseProduct {
-  id: string;
-  name: string;
-  active: boolean;
-  type: string;
-  thumbnailUrl: string;
-}
 
 export interface Inspector {
   id: string;
+  hasMissingInformation: boolean;
+}
+
+export interface SalesChannelViewAssignProduct {
+  id: string;
+  name: string;
+}
+
+export interface SalesChannelView {
+  id: string;
+  name: string;
+  active: boolean;
+}
+
+export interface RemoteProduct {
+  id: string;
+  hasErrors: boolean;
+}
+
+export interface SalesChannelViewAssign {
+  id: string;
+  remoteUrl: string;
+  remoteProductPercentage: number;
+  product: SalesChannelViewAssignProduct;
+  salesChannelView: SalesChannelView;
+  remoteProduct: RemoteProduct;
 }
 
 export interface Product {
@@ -296,7 +315,7 @@ export interface Product {
   inspector: Inspector;
   vatRate?: VatRate;
   allowBackorder: boolean;
-  baseProducts?: BaseProduct[]
+  saleschannelviewassignSet: SalesChannelViewAssign[];
 }
 
 export interface Select {

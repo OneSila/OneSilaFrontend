@@ -18,7 +18,6 @@ import {Toast} from "../../../../shared/modules/toast";
 import {processGraphQLErrors} from "../../../../shared/utils";
 import {TypeStep} from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
-import { ForSaleStep } from "./containers/for-sale-step";
 import { PriceStep } from "./containers/price-step";
 import { SelectVariationsStep } from "./containers/select-variations-step";
 import { AdditonalFormFields, FormType } from "./containers/product";
@@ -302,7 +301,7 @@ const allowNextStep = computed(() => {
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
-          <TypeStep :form="form" @for-sale-changed="handleForSaleChanged" @empty-variations="handleEmptyVariations" />
+          <TypeStep :form="form" @empty-variations="handleEmptyVariations" />
         </template>
 
         <template #generalInfoStep>

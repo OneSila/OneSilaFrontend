@@ -319,7 +319,15 @@
       "image": "Image",
       "preview": "Preview",
       "discount": "Discount",
-      "discountPrice": "Discount Price"
+      "discountPrice": "Discount Price",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed",
+      "action": "Action",
+      "type": "Type",
+      "error": "Error",
+      "comingSoon": "Coming Soon",
+      "url": "URL"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -357,7 +365,10 @@
       "items": "Items",
       "shippings": "Shipments",
       "translations": "Translations",
-      "advanced": "Advanced"
+      "advanced": "Advanced",
+      "stores": "Stores",
+      "languages": "Languages",
+      "imports": "Imports"
     },
     "dropZone": {
       "multipleDraggingInstruction": "Drag and drop files here or click to upload",
@@ -891,12 +902,10 @@
               "selectVariations": "Please add the used bills of materials for the product"
             }
           }
-        },
-        "createSuccessfully": "Product Created"
+        }
       },
       "edit": {
-        "updateSuccessfully": "Product was successfully updated!",
-        "updateSuccessfully": "Product Updated"
+        "updateSuccessfully": "Product was successfully updated!"
       },
       "show": {
         "title": "Product"
@@ -1913,6 +1922,100 @@
         },
         "helpText": "The Required in Configurator and Optional in Configurator are relevant only for Configurable products only.  On other product-types they will simply act as a required properties.",
         "title": "How should the property behave for this product-type?"
+      }
+    }
+  },
+  "integrations": {
+    "title": "Integrations",
+    "show": {
+      "title": "Integration",
+      "stores": {
+        "title": "Store"
+      },
+      "languages": {
+        "labels": {
+          "remoteCode": "Remote Language Code"
+        }
+      },
+      "currencies": {
+        "labels": {
+          "remoteCode": "Remote Currency Code"
+        }
+      }
+    },
+    "create": {
+      "title": "Create Integration",
+      "success": "Your integration has been successfully created!",
+      "authMethod": {
+        "token": "Token",
+        "password": "Password"
+      },
+      "wizard": {
+        "step1": {
+          "title": "Select Integration Type",
+          "content": "Please select the type of integration you would like to create.",
+          "magentoTitle": "Magento",
+          "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
+          "shopifyTitle": "Shopify",
+          "shopifyExample": "Shopify integration is coming soon."
+        },
+        "step2": {
+          "title": "General Information",
+          "content": "Enter your integration’s hostname and connection settings."
+        },
+        "step3": {
+          "title": "Sales Channel Preferences",
+          "content": "Quickly adjust your channel preferences for syncing."
+        },
+        "step4": {
+          "magento": {
+            "title": "Magento Channel Details",
+            "content": "Provide Magento-specific information to connect your store."
+          },
+          "title": "Specific Channel Info"
+        }
+      }
+    },
+    "labels": {
+      "useConfigurableName": "Use Configurable Name",
+      "syncContents": "Sync Contents",
+      "syncEanCodes": "Sync EAN Codes",
+      "syncPrices": "Sync Prices",
+      "hostname": "Hostname",
+      "verifySSL": "Verify SSL",
+      "requestsPerMinute": "Requests Per Minute",
+      "maxRetries": "Maximum Retries",
+      "authenticationMethod": "Authentication Method",
+      "hostApiUsername": "Host API Username",
+      "hostApiKey": "Host API Key",
+      "attributeSetSkeletonId": "Attribute Set Skeleton ID",
+      "eanCodeAttribute": "EAN Code Attribute"
+    },
+    "placeholders": {
+      "hostApiUsername": "Enter API Username",
+      "hostApiKey": "Enter Access Token",
+      "attributeSetSkeletonId": "Enter attribute set skeleton ID",
+      "eanCodeAttribute": "Enter EAN code attribute"
+    },
+    "salesChannel": {
+      "toast": {
+        "resyncSuccess": "The product resync process begin. Please come later to see the results."
+      },
+      "helpText": {
+        "useConfigurableName": "If enabled, the system will always use the configurable (parent) product's name for variations.",
+        "syncContents": "Toggle this to synchronize product content from the remote system and keep your product details up-to-date.",
+        "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
+        "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
+        "cannotAssign": "Please fix the content quality before adding a new website assign.",
+        "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
+        "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",
+        "hostApiKey": "Your Access Token is available in Magento under System > Integrations.",
+        "password": "Using a password is not recommended. Use an Access Token instead."
+      },
+      "modal": {
+        "logs": {
+          "title": "Logs"
+        }
       }
     }
   }

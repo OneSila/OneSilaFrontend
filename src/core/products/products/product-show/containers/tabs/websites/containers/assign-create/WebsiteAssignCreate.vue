@@ -32,7 +32,7 @@ const fetchViews = async () => {
   loading.value = true;
   const { data } = await apolloClient.query({
     query: salesChannelViewsQuery,
-    variables: { filter: { NOT: { id: { inList: props.viewsIds } } } },
+    variables: { filter: {active: {exact: true}, NOT: { id: { inList: props.viewsIds } } } },
     fetchPolicy: 'network-only'
   });
 
@@ -71,26 +71,27 @@ const handleCreateAssign = async () => {
 watch(() => props.viewsIds, fetchViews, { deep: true });
 
 onMounted(fetchViews);
+
 </script>
 
 <template>
-  <div>
+  <div class="mt-2">
     <Flex gap="2" v-if="views.length > 0">
-      <FlexCell>
+      <FlexCell class="w-full md:w-1/2 xl:w-1/3">
         <Selector v-model="selectedView"
                   :options="views"
                   label-by="name"
                   value-by="id"
                   :placeholder="t('products.products.placeholders.salesChannelView')"
                   filterable
-                  removable
-                  class="min-w-[400px] mr-2" />
+                  removable />
       </FlexCell>
       <FlexCell>
-        <PrimaryButton :disabled="!selectedView" @click="handleCreateAssign">
+        <PrimaryButton :disabled="!selectedView || product.inspector.hasMissingInformation" @click="handleCreateAssign">
           {{ t('shared.button.add') }}
         </PrimaryButton>
       </FlexCell>
     </Flex>
+    <p v-if="views.length > 0 && product.inspector.hasMissingInformation" class="mt-3 text-sm leading-6 text-red-500">{{ t('integrations.salesChannel.helpText.cannotAssign') }}</p>
   </div>
 </template>

@@ -56,7 +56,6 @@ const handleSubmitDone = (response) => {
       Toast.success(message);
     }
   }
-
 };
 
 const handleSubmitAndContinueDoneEdit = (response) => {

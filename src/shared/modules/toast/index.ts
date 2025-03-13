@@ -28,7 +28,7 @@ const showAlert = async (type, title) => {
 const getTypeClass = (type) => {
   switch (type) {
     case 'success':
-      return 'bg-success-light dark:bg-success-dark-light';
+      return 'text-sm bg-success-light dark:bg-success-dark-light';
     case 'error':
       return 'bg-danger-light dark:bg-danger-dark-light';
     case 'warning':

@@ -12,7 +12,10 @@ export interface ListingConfig {
   identifierVariables?: Record<string, string>;
   urlQueryParams?: Record<string, string>;
   identifierKey?: string; // most times it will be 'id'
+  deleteIdentifierKey?: string; // most times it will be 'id'
   paramIdentifier?: string; // most times it will be 'id'
+  secondIdentifierKey?: string;
+  secondIdentifierParam?: string;
   addEdit?: boolean;
   editUrlName?: string;
   addShow?: boolean;

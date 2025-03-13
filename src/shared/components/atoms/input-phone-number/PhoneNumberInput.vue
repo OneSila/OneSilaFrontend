@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import MazPhoneNumberInput from 'maz-ui/components/MazPhoneNumberInput'
+import type { CountryCode } from 'maz-ui/components/MazPhoneNumberInput';
+
 import { ref } from 'vue'
 import {useI18n} from "vue-i18n";
 import {useAppStore} from "../../../plugins/store";
@@ -15,8 +17,8 @@ const props = defineProps<{
   mandatory?: boolean;
 }>();
 
-const countryCode = ref(locale.value.toUpperCase())
-const phoneNumber = ref(props.modelValue);
+const code = locale.value.toUpperCase();
+const countryCode = ref<CountryCode>(code === 'EN' ? 'GB' as CountryCode : code as CountryCode);const phoneNumber = ref(props.modelValue);
 
 const emit = defineEmits({
   'update:modelValue': (value: any) => true,
