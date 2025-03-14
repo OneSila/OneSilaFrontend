@@ -17,6 +17,7 @@
       "products": {
         "title": "Products cards",
         "description": "Ensure all product information is accurate and up-to-date to maintain inventory integrity and optimize sales performance.",
+        "noIssuesMessage": "🎉 All product data looks great! No issues found. 🚀 Ready to add more products?",
         "inspector": {
           "101": {
             "title": "Products Missing Images",
@@ -136,6 +137,7 @@
       "general": {
         "title": "General cards",
         "description": "Immediate attention required! Incorrect settings in this section may lead to system failures. Please review and update configurations to ensure stable and secure operations.",
+        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. \uD83C\uDFAF You're all set for now!",
         "missingLeadTime": {
           "title": "Addresses Missing Lead Time",
           "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
@@ -726,6 +728,7 @@
     "translation": {
       "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
       "successfullyUpdated": "The product translation has been successfully updated.",
+      "successfullyGenerated": "Content successfully generated. It cost {points} SilAI Credit(s).",
       "placeholders": {
         "language": "Select a language",
         "name": "Enter name",

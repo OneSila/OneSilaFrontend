@@ -185,10 +185,6 @@ export const baseFormConfigConstructor = (
       header: t('sales.priceLists.helpSection.discountPercentage.header'),
       content: t('sales.priceLists.helpSection.discountPercentage.content')
     },
-    {
-      header: t('sales.priceLists.helpSection.customers.header'),
-      content: t('sales.priceLists.helpSection.customers.content')
-    },
 
   ],
   fields: getFields(customerId, t, type)
@@ -213,12 +209,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('sales.priceLists.labels.autoUpdatePrices'),
     },
     {
-      type: FieldType.Boolean,
-      strict: true,
-      name: 'currencyMatchWithCustomers',
-      label: t('sales.priceLists.labels.currencyMatchWithCustomers'),
-    },
-    {
       type: FieldType.Query,
       query: currenciesQuery,
       dataKey: 'currencies',
@@ -231,20 +221,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       addLookup: true,
       lookupKeys: ['id']
     },
-    {
-      type: FieldType.Query,
-      name: 'customers',
-      label: t('sales.customers.title'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: companiesQuery,
-      queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
-      dataKey: 'companies',
-      isEdge: true,
-      filterable: true,
-      addLookup: true,
-      lookupKeys: ['id']
-    }
   ],
   orders: []
 });

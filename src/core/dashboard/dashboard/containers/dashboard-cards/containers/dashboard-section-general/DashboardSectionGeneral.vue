@@ -15,6 +15,7 @@ const { t } = useI18n();
 const showCompletedGeneralCards = ref(false);
 const hideGeneralSection = ref(true);
 const finshFetch = ref(false);
+const loading = ref(false);
 
 const generalCards = ref([
   {
@@ -32,6 +33,8 @@ const generalCards = ref([
 
 
 async function fetchGeneralCounts() {
+  loading.value = true
+
   const fetchPromises = generalCards.value.map(async (card) => {
     try {
       const { data } = await apolloClient.query({
@@ -57,6 +60,7 @@ async function fetchGeneralCounts() {
   });
 
   await Promise.all(fetchPromises);
+  loading.value = false;
 
 }
 
@@ -69,7 +73,7 @@ onMounted(async () =>  {
 </script>
 
 <template>
-  <Card v-if="!hideGeneralSection">
+  <Card v-if="!loading">
      <Flex vertical class="pb-6 gap-2">
       <FlexCell>
         <Flex between>
@@ -119,6 +123,9 @@ onMounted(async () =>  {
           :icon="card.icon"
         />
       </div>
+      <p v-if="!showCompletedGeneralCards" class="text-lg text-green-600">
+        {{ t('dashboard.cards.general.noIssuesMessage') }}
+      </p>
     </Card>
     <template v-else>
       <Card v-if="!finshFetch">
