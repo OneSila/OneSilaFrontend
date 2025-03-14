@@ -732,12 +732,6 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     transition: none !important;
 }
 
-[v-cloak] {
-    background-color: red !important;
-    display: block;
-    padding: 50px 0;
-}
-
 @keyframes spinner {
     to {
         transform: rotate(360deg);

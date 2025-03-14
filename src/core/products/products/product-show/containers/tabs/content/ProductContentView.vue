@@ -1,21 +1,28 @@
 <script setup lang="ts">
 
-import { useI18n } from 'vue-i18n';
+import {useI18n} from 'vue-i18n';
 import {Product} from "../../../../configs";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../../apollo-client";
 import {getProductTranslationByLanguageQuery} from "../../../../../../../shared/api/queries/products.js";
-import {updateProductTranslationMutation, createProductTranslationMutation} from "../../../../../../../shared/api/mutations/products.js";
+import {
+  updateProductTranslationMutation,
+  createProductTranslationMutation,
+  generateProductAiContentMutation
+} from "../../../../../../../shared/api/mutations/products.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
 import {TextEditor} from "../../../../../../../shared/components/atoms/input-text-editor";
 import {TextHtmlEditor} from "../../../../../../../shared/components/atoms/input-text-html-editor";
 import {reactive, watch, ref} from "vue";
-import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
-import { Label } from "../../../../../../../shared/components/atoms/label";
-import { Toast } from "../../../../../../../shared/modules/toast";
+import {translationLanguagesQuery} from '../../../../../../../shared/api/queries/languages.js';
+import {Label} from "../../../../../../../shared/components/atoms/label";
+import {Toast} from "../../../../../../../shared/modules/toast";
+import {Icon} from "../../../../../../../shared/components/atoms/icon";
+import {createMediaProductThroughMutation, createVideosMutation} from "../../../../../../../shared/api/mutations/media";
+import {processGraphQLErrors} from "../../../../../../../shared/utils";
 
-const { t } = useI18n();
+const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
 
 const initialForm = ref({
@@ -25,7 +32,7 @@ const initialForm = ref({
   urlKey: ''
 });
 
-const form = reactive({ ...initialForm.value });
+const form = reactive({...initialForm.value});
 const currentLanguage = ref(null);
 const mutation = ref(null);
 const translationId = ref(null);
@@ -43,9 +50,9 @@ const cleanedData = (rawData) => {
 
 const setFormAndMutation = async (language) => {
   try {
-    const { data } = await apolloClient.query({
+    const {data} = await apolloClient.query({
       query: getProductTranslationByLanguageQuery,
-      variables: { languageCode: language, productId: props.product.id },
+      variables: {languageCode: language, productId: props.product.id},
       fetchPolicy: 'network-only'
     });
 
@@ -65,7 +72,7 @@ const setFormAndMutation = async (language) => {
       translationId.value = null;
       mutation.value = createProductTranslationMutation;
     }
-    initialForm.value = { ...form };
+    initialForm.value = {...form};
   } catch (error) {
     console.error("Error fetching translation:", error);
   }
@@ -96,7 +103,7 @@ const handleLanguageSelection = async (newLanguage) => {
 const getVariables = () => {
   const variables = {
     ...form,
-    product: { id: props.product.id },
+    product: {id: props.product.id},
     language: currentLanguage.value
   };
 
@@ -109,66 +116,131 @@ const getVariables = () => {
 
 const onMutationCompleted = () => {
   Toast.success(t('products.translation.successfullyUpdated'));
-  initialForm.value = { ...form };
+  initialForm.value = {...form};
+};
+
+const onError = (error) => {
+  const validationErrors = processGraphQLErrors(error, t);
+  for (const key in validationErrors) {
+    if (validationErrors.hasOwnProperty(key)) {
+      Toast.error(validationErrors[key]);
+    }
+  }
+};
+
+const onContentGenerated = async (data) => {
+  form.description = data.data.generateProductAiContent.content
 };
 
 </script>
 
 <template>
   <Flex between>
-  <FlexCell class="w-3/4">
-    <Flex vertical>
-      <FlexCell>
-        <Label semi-bold>{{ t('shared.labels.name') }}</Label>
-        <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')" class="mt-2 mb-4 w-full" />
-      </FlexCell>
-      <FlexCell>
-        <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-        <TextEditor v-model="form.shortDescription" :placeholder="t('products.translation.placeholders.shortDescription')" scroll class="mt-2 mb-4 h-32 w-full" />
-      </FlexCell>
-      <FlexCell>
-        <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-        <div class="mt-2 mb-4">
-          <TextHtmlEditor v-model="form.description" :placeholder="t('products.translation.placeholders.description')" class="h-32 w-full" />
-        </div>
-      </FlexCell>
-      <FlexCell>
-        <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
-        <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full" />
-      </FlexCell>
-    </Flex>
-  </FlexCell>
+    <FlexCell class="w-3/4">
+      <Flex vertical>
+        <FlexCell>
+          <Label semi-bold>{{ t('shared.labels.name') }}</Label>
+          <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')"
+                     class="mt-2 mb-4 w-full"/>
+        </FlexCell>
+        <FlexCell>
+          <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
+          <TextEditor v-model="form.shortDescription"
+                      :placeholder="t('products.translation.placeholders.shortDescription')" scroll
+                      class="mt-2 mb-4 h-32 w-full"/>
+        </FlexCell>
+        <FlexCell>
+          <ApolloMutation :mutation="generateProductAiContentMutation"
+                          :variables="{ data: { id: product.id, language: currentLanguage} }"
+                          @done="onContentGenerated" @error="onError">
+            <template v-slot="{ mutate, loading, error }">
+              <Flex class="gap-4">
+                <FlexCell center>
+                  <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
+                </FlexCell>
+                <FlexCell center>
+                  <Button class="btn btn-sm btn-outline-primary" @click="mutate()">
+                    <template v-if="loading">
+                      <span class="spinner" size="sm"/>
+                    </template>
+                    <template v-else>
+                      {{ t('shared.button.generate') }}
+                    </template>
+                  </Button>
 
-  <FlexCell>
-    <Flex>
-      <FlexCell>
-      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
-        <template v-slot="{ mutate, loading, error }">
-          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
-            {{ t('shared.button.save') }}
-          </Button>
-        </template>
-      </ApolloMutation>
-      </FlexCell>
-      <FlexCell>
-      <ApolloQuery :query="translationLanguagesQuery">
-        <template v-slot="{ result: { data } }">
-          <Selector v-if="data"
-                    v-model="currentLanguage"
-                    :options="cleanedData(data.translationLanguages)"
-                    :removable="false"
-                    :placeholder="t('products.translation.placeholders.language')"
-                    @update:modelValue="handleLanguageSelection"
-                    class="w-40"
-                    labelBy="name"
-                    valueBy="code"
-                    mandatory
-                    filterable />
-        </template>
-      </ApolloQuery>
-      </FlexCell>
-    </Flex>
-  </FlexCell>
-</Flex>
+                </FlexCell>
+                <FlexCell center>
+                  <Icon name="gem" size="xl" class="text-purple-600"/>
+                </FlexCell>
+              </Flex>
+              <div class="mt-4 mb-4">
+                <TextHtmlEditor v-model="form.description"
+                                :placeholder="t('products.translation.placeholders.description')"
+                                :ai-generating="loading" class="w-full"/>
+              </div>
+            </template>
+          </ApolloMutation>
+        </FlexCell>
+        <FlexCell>
+          <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
+          <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')"
+                     class="mt-2 w-full"/>
+        </FlexCell>
+      </Flex>
+    </FlexCell>
+
+    <FlexCell>
+      <Flex>
+        <FlexCell>
+          <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted">
+            <template v-slot="{ mutate, loading, error }">
+              <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
+                {{ t('shared.button.save') }}
+              </Button>
+            </template>
+          </ApolloMutation>
+        </FlexCell>
+        <FlexCell>
+          <ApolloQuery :query="translationLanguagesQuery">
+            <template v-slot="{ result: { data } }">
+              <Selector v-if="data"
+                        v-model="currentLanguage"
+                        :options="cleanedData(data.translationLanguages)"
+                        :removable="false"
+                        :placeholder="t('products.translation.placeholders.language')"
+                        @update:modelValue="handleLanguageSelection"
+                        class="w-40"
+                        labelBy="name"
+                        valueBy="code"
+                        mandatory
+                        filterable/>
+            </template>
+          </ApolloQuery>
+        </FlexCell>
+      </Flex>
+    </FlexCell>
+  </Flex>
 
 </template>
+
+
+<style scoped>
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #1F2937;
+  border-top: 2px solid #4343d9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

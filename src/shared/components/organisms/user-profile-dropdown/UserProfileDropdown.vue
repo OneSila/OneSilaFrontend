@@ -6,6 +6,9 @@ import { ref } from 'vue';
 import { Link } from "../../atoms/link";
 import { Button } from "../../atoms/button";
 import { useI18n } from "vue-i18n";
+import {ApolloSubscription} from "../../molecules/apollo-subscription";
+import {aiPointsSubscriptions} from "../../../api/subscriptions/me";
+import {CompanyProfileEditForm} from "../../../../core/profile/company/containers/company-profile-edit-form";
 
 const { t } = useI18n();
 
@@ -38,6 +41,27 @@ const logout = async () => {
                               <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;">{{ user.username }}</a>
                           </div>
                       </div>
+                  </li>
+                 <li>
+                    <div class="flex items-center px-2 py-6  border-2 rounded-lg border-purple-400 hover:bg-purple-50">
+                      <Icon name="gem" size="xl" class="text-purple-600" />
+
+
+                        <ApolloSubscription :subscription="aiPointsSubscriptions" ref="apolloSubRef">
+                          <template v-slot:default="{ loading, error, result }">
+                            <template v-if="!loading && result">
+                              <span :class="{'text-red-600': result.myMultiTenantCompany.aiPoints < 0}"
+                                    class="ltr:ml-2 rtl:mr-2 text-lg font-bold">
+                                {{ result.myMultiTenantCompany.aiPoints }} SilAI Credits
+                              </span>
+                            </template>
+                          </template>
+                        </ApolloSubscription>
+
+                      <Icon name="info-circle"
+                            class="w-4.5 h-4.5 text-gray-400 ltr:ml-2 rtl:mr-2"
+                            :title="t('auth.register.company.aiPointsMessage')" />
+                    </div>
                   </li>
                   <li>
                     <Link :path="{name: 'profile.user'}" class="dark:hover:text-white" @click="close()" block>
