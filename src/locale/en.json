@@ -1999,7 +1999,7 @@
     },
     "salesChannel": {
       "toast": {
-        "resyncSuccess": "The product resync process begin. Please come later to see the results."
+        "resyncSuccess": "The product resync process has begun. Please come later to see the results."
       },
       "helpText": {
         "useConfigurableName": "If enabled, the system will always use the configurable (parent) product's name for variations.",
