@@ -528,3 +528,14 @@ export const refreshInspectorMutation = gql`
     }
   } 
 `;
+
+export const generateProductAiContentMutation = gql`
+mutation generateProductAiContentMutation($data: ProductAiContentInput!) {
+  generateProductAiContent(instance: $data) {
+    ... on AiContent {
+      content
+      points
+    }
+  }
+}
+`;

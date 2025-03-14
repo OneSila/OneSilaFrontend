@@ -46,3 +46,11 @@ export const meCompanySubscription = gql`
     }
   }
 `;
+
+export const aiPointsSubscriptions = gql`
+  subscription meCompany {
+    myMultiTenantCompany {
+      aiPoints
+  }
+ }
+`;

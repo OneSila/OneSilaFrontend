@@ -379,6 +379,15 @@
     },
     "components": {
       "molecules": {
+        "textHtmlEditor": {
+          "aiGenerator": {
+            "title": "Generating content...",
+            "step1": "Gathering product information",
+            "step2": "Evaluating product features",
+            "step3": "Generating description",
+            "step4": "Finalizing content"
+          }
+        },
         "selector": {
           "defaultPlaceholder": "Select an option",
           "typeToSearch": "Type to search",
@@ -445,6 +454,7 @@
         "header": "Register",
         "description": "Enter your company details",
         "languageDisclaimer": "The company language CANNOT BE CHANGED LATER ON",
+        "aiPointsMessage": "These are your SilAI Credits, your unique currency for all AI-powered processes.",
         "labels": {
           "companyName": "Company Name",
           "phoneNumber": "Phone Number",
@@ -1999,7 +2009,7 @@
     },
     "salesChannel": {
       "toast": {
-        "resyncSuccess": "The product resync process begin. Please come later to see the results."
+        "resyncSuccess": "The product resync process has begun. Please come later to see the results."
       },
       "helpText": {
         "useConfigurableName": "If enabled, the system will always use the configurable (parent) product's name for variations.",
