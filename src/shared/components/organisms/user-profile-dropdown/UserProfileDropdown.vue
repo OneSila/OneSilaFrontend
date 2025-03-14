@@ -50,9 +50,8 @@ const logout = async () => {
                         <ApolloSubscription :subscription="aiPointsSubscriptions" ref="apolloSubRef">
                           <template v-slot:default="{ loading, error, result }">
                             <template v-if="!loading && result">
-                              <span :class="{'text-red-600': result.myMultiTenantCompany.aiPoints < 0}"
-                                    class="ltr:ml-2 rtl:mr-2 text-lg font-bold">
-                                {{ result.myMultiTenantCompany.aiPoints }} SilAI Credits
+                              <span :class="{'text-red-600': (result as any).myMultiTenantCompany.aiPoints < 0}">
+                                {{ (result as any).myMultiTenantCompany.aiPoints }} SilAI Credits
                               </span>
                             </template>
                           </template>
