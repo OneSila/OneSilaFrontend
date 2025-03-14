@@ -130,7 +130,9 @@ const onError = (error) => {
 
 const onContentGenerated = async (data) => {
   form.description = data.data.generateProductAiContent.content
-};
+  Toast.success(
+    t('products.translation.successfullyGenerated', { points: data.data.generateProductAiContent.points })
+  );};
 
 </script>
 

@@ -43,8 +43,8 @@ const logout = async () => {
                       </div>
                   </li>
                  <li>
-                    <div class="flex items-center px-2 py-6  border-2 rounded-lg border-purple-400 hover:bg-purple-50">
-                      <Icon name="gem" size="xl" class="text-purple-600" />
+                    <div class="flex items-center px-2 py-6  border-2 rounded-lg border-purple-400 hover:bg-purple-50 mx-0.5">
+                      <Icon name="gem" size="xl" class="text-purple-600 mr-2" />
 
 
                         <ApolloSubscription :subscription="aiPointsSubscriptions" ref="apolloSubRef">

@@ -15,6 +15,7 @@ const { t } = useI18n();
 const showCompletedProductsCards = ref(false);
 const hideProductsSection = ref(true);
 const finshFetch = ref(false);
+const loading = ref(false);
 
 const productErrors = ref([
   // High importance errors
@@ -40,6 +41,7 @@ const productErrors = ref([
 ]);
 
 async function fetchErrorCounts() {
+  loading.value = true
   for (const error of productErrors.value) {
     try {
       const { data } = await apolloClient.query({
@@ -65,6 +67,7 @@ async function fetchErrorCounts() {
       error.loading = false;
     }
   }
+  loading.value = false;
 }
 
 onMounted(async () =>  {
@@ -75,7 +78,7 @@ onMounted(async () =>  {
 </script>
 
 <template>
-  <Card v-if="!hideProductsSection" class="py-8 mt-4">
+  <Card v-if="!loading" class="py-8">
       <Flex vertical class="py-6 gap-2">
         <FlexCell>
           <Flex between>
@@ -125,7 +128,10 @@ onMounted(async () =>  {
             :icon="err.icon"
           />
       </div>
-    </Card>
+      <p v-if="!showCompletedProductsCards" class="text-lg text-green-600">
+        {{ t('dashboard.cards.products.noIssuesMessage') }}
+      </p>
+  </Card>
     <template v-else>
       <Card v-if="!finshFetch">
         <div class="flex justify-center items-center h-64">
