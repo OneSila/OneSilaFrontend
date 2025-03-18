@@ -162,6 +162,7 @@ const handleMainImageChange = async (changedItem: Item) => {
                               <th scope="col" class="p-3.5 text-sm text-start font-semibold">{{ t('media.media.labels.lastModified') }}</th>
                               <th scope="col" class="p-3.5 text-sm text-start font-semibold">{{ t('media.media.labels.fileSize') }}</th>
                               <th scope="col" class="p-3.5 text-sm text-start font-semibold">{{ t('media.media.labels.owner') }}</th>
+                              <th scope="col" class="p-3.5 text-sm text-start font-semibold">{{ t('media.media.labels.isMainImage') }}</th>
                               <th scope="col" class="p-3.5 text-sm text-start font-semibold">{{ t('shared.labels.actions') }}</th>
                             </tr>
                         </thead>
@@ -179,9 +180,11 @@ const handleMainImageChange = async (changedItem: Item) => {
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ getFileSize(item.media) }}</td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ item.media.owner.firstName }} {{ item.media.owner.lastName }}</td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
+                                <Toggle v-if="item.media.type === TYPE_IMAGE" v-model="isMainImageMap[item.id]" @@update:model-value="handleMainImageChange(item)" />
+                              </td>
+                              <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
                                 <Flex>
                                   <FlexCell v-if="item.media.type === TYPE_IMAGE" class="mr-2">
-                                    <Toggle v-model="isMainImageMap[item.id]" @@update:model-value="handleMainImageChange(item)" />
                                   </FlexCell>
                                   <FlexCell>
                                     <ApolloAlertMutation :mutation="deleteMediaProductThroughMutation" :mutation-variables="{id: item.id}" @done="handleDeleteSuccess">

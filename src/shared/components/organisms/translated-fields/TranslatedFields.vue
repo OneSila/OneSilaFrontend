@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "../../atoms/icon";
-import {onMounted, Ref, ref} from 'vue';
+import {computed, onMounted, Ref, ref} from 'vue';
 import apolloClient from "../../../../../apollo-client";
 import {translationLanguagesQuery} from "../../../api/queries/languages.js";
 import {TextInput} from "../../atoms/input-text";
@@ -20,6 +20,7 @@ import {
 } from "../../../modules/keyboard";
 import {Toast} from "../../../modules/toast";
 import {Url} from "../../../utils/constants";
+import {AiContentTranslator} from "../ai-content-translator";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -33,6 +34,7 @@ interface TranslatableField {
   flag: string;
   error?: string | null;
   isCreate: boolean;
+  isTranslatedField?: boolean;
 }
 
 const props = defineProps<{
@@ -52,6 +54,10 @@ const props = defineProps<{
 }>();
 const translatableFields: Ref<TranslatableField[]> = ref([]);
 
+const sourceTranslationField = computed(() => {
+  return translatableFields.value.find(field => field.value && field.value.trim() !== '');
+});
+
 
 const createFields = (languages, fieldNames, labels, placeholders) => {
   const fields: TranslatableField[] = [];
@@ -66,7 +72,7 @@ const createFields = (languages, fieldNames, labels, placeholders) => {
         flag: flagMapping[language.code] || '',
         isCreate: true,
         error: null,
-        placeholder: placeholders[index] || ''
+        placeholder: placeholders[index] || '',
       });
     });
   });
@@ -194,7 +200,23 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
               <div class="col-span-full" v-for="(field, index) in translatableFields" :key="field.language">
           <Flex>
             <FlexCell center>
-              <label class="font-semibold block text-sm leading-6 text-gray-900">{{ field.label }}</label>
+              <Flex gap="4">
+                <FlexCell center>
+                  <label class="font-semibold block text-sm leading-6 text-gray-900 mb-0">{{ field.label }}</label>
+                </FlexCell>
+                <FlexCell v-if="sourceTranslationField && field.language !== sourceTranslationField.language && field.value == ''" center>
+                  <AiContentTranslator
+                    :toTranslate="sourceTranslationField.value"
+                    :fromLanguageCode="sourceTranslationField.language"
+                    :toLanguageCode="field.language"
+                    @translated="(translatedText) => field.value = translatedText"
+                  />
+                </FlexCell>
+                <FlexCell v-if="sourceTranslationField && field.language !== sourceTranslationField.language && field.value == ''" center>
+                  <Icon name="gem" size="xl" class="text-purple-600"/>
+                </FlexCell>
+              </Flex>
+
             </FlexCell>
             <FlexCell center>
               <div v-if="field.error" class="text-danger text-small blink-animation ml-1 mb-1">

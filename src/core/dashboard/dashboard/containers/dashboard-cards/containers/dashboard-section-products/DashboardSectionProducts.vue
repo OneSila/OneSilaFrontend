@@ -13,7 +13,7 @@ import apolloClient from "../../../../../../../../apollo-client";
 const { t } = useI18n();
 
 const showCompletedProductsCards = ref(false);
-const hideProductsSection = ref(true);
+const allCardsCompleted = ref(true);
 const finshFetch = ref(false);
 const loading = ref(false);
 
@@ -56,8 +56,8 @@ async function fetchErrorCounts() {
         error.counter = 0;
       }
 
-      if (error.counter !== 0 && hideProductsSection.value) {
-        hideProductsSection.value = false;
+      if (error.counter !== 0 && allCardsCompleted.value) {
+        allCardsCompleted.value = false;
       }
 
     } catch (err) {
@@ -67,6 +67,7 @@ async function fetchErrorCounts() {
       error.loading = false;
     }
   }
+
   loading.value = false;
 }
 
@@ -128,7 +129,7 @@ onMounted(async () =>  {
             :icon="err.icon"
           />
       </div>
-      <p v-if="!showCompletedProductsCards" class="text-lg text-green-600">
+      <p v-if="!showCompletedProductsCards && allCardsCompleted" class="text-lg text-green-600">
         {{ t('dashboard.cards.products.noIssuesMessage') }}
       </p>
   </Card>

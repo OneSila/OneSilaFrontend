@@ -44,6 +44,6 @@ const addVariation = (variation: RelatedProduct) => {
   <div>
     <h1 class="text-2xl text-center mb-2">{{ productDescriptionMap[form.type] }}</h1>
     <hr>
-    <VariationsAdder class="my-4" :added-variations="variations" :type="form.type" @add="addVariation" @remove="removeVariation" />
+    <VariationsAdder class="my-4" :product-type-id="additionalFieldsForm.productType.id" :added-variations="variations" :type="form.type" @add="addVariation" @remove="removeVariation" />
   </div>
 </template>
