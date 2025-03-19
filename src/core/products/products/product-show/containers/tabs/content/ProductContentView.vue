@@ -8,7 +8,6 @@ import {getProductTranslationByLanguageQuery} from "../../../../../../../shared/
 import {
   updateProductTranslationMutation,
   createProductTranslationMutation,
-  generateProductAiContentMutation
 } from "../../../../../../../shared/api/mutations/products.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
@@ -141,7 +140,7 @@ const handleError = (errors) => {
 }
 
 const shortDescriptionToolbarOptions = [
-  ['bold'],
+  ['bold', 'underline'],
   [{ list: 'bullet' }],
   ['clean']
 ];

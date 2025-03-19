@@ -206,7 +206,7 @@
       "addCompany": {
         "title": "Company",
         "subTitle": "Tell us a little about your company.",
-        "content": "We will use this information to show on all kinds of picking lists, order confirmations and more."
+        "content": "Providing your company details helps us stay in touch and offer better support when needed."
       },
       "addCurrency": {
         "title": "Currency",

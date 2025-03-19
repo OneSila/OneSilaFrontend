@@ -108,13 +108,13 @@ export const getAdvancedFields = (t, id): any[] => [
     disabled: true,
     optional: true
   },
-  {
-    type: FieldType.Textarea,
-    name: 'valueValidator',
-    label: t('properties.properties.labels.valueValidator'),
-    help: t('properties.properties.help.valueValidator'),
-    optional: true
-  },
+  // {
+  //   type: FieldType.Textarea,
+  //   name: 'valueValidator',
+  //   label: t('properties.properties.labels.valueValidator'),
+  //   help: t('properties.properties.help.valueValidator'),
+  //   optional: true
+  // },
 ] as FormField[];
 
 export const advancedFormConfigConstructor = (t: Function, id: string): FormConfig => ({
