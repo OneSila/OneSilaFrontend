@@ -20,6 +20,7 @@ import { Icon } from "../../../../../../../shared/components/atoms/icon";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
+const ruleId = ref(null);
 const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
@@ -117,6 +118,7 @@ const fetchPropertiesIds = async (productTypeValueId) => {
 
     if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
       const rule = data.productPropertiesRules.edges[0].node;
+      ruleId.value = rule.id;
       const items = rule.items;
       const propertyIds: string[] = []
 
@@ -374,6 +376,7 @@ const requireTypes = [
             <td>
               <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
                           :product-id="product.id"
+                          :rule-id="ruleId"
                           :value="val"
                           @refetch="fetchRequiredAttributesValues"
                           @update-id="handleUpdatedId"

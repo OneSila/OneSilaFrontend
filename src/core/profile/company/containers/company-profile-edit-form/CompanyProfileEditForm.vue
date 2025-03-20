@@ -17,7 +17,7 @@ import {Label} from "../../../../../shared/components/atoms/label";
 import {injectAuth} from "../../../../../shared/modules/auth";
 
 const { t } = useI18n();
-const props = defineProps<{ companyData: MeCompanyData, mandatory?: boolean }>();
+const props = defineProps<{ companyData: MeCompanyData, mandatory?: boolean, isOnboarding?: boolean }>();
 const auth = injectAuth();
 const user = ref(auth.user)
 
@@ -54,7 +54,11 @@ const isDisabled = () => {
     return false;
   }
 
-  const requiredFields = ['name', 'address1', 'city', 'email', 'phoneNumber', 'postcode', 'country'];
+  let requiredFields = ['name', 'address1', 'city', 'email', 'phoneNumber', 'postcode', 'country'];
+
+  if (props.isOnboarding) {
+    requiredFields = ['name', 'email', 'phoneNumber', 'country'];
+  }
 
   for (const field of requiredFields) {
     if (!form.value[field]) {
@@ -104,7 +108,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
         <!-- Address 1 -->
-        <div class="sm:col-span-3">
+        <div v-if="!isOnboarding" class="sm:col-span-3">
           <TextInputPrepend
             id="address1"
             v-model="form.address1"
@@ -117,7 +121,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
         <!-- Address 2 -->
-        <div class="sm:col-span-3">
+        <div v-if="!isOnboarding" class="sm:col-span-3">
           <TextInputPrepend
             id="address2"
             v-model="form.address2"
@@ -129,7 +133,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
         <!-- City -->
-        <div class="sm:col-span-3">
+        <div v-if="!isOnboarding" class="sm:col-span-3">
           <TextInputPrepend
             id="city"
             v-model="form.city"
@@ -142,7 +146,7 @@ const onError = (error) => {
           </TextInputPrepend>
         </div>
 
-        <div class="sm:col-span-3">
+        <div v-if="!isOnboarding" class="sm:col-span-3">
           <TextInputPrepend
             id="postcode"
             v-model="form.postcode"
@@ -199,7 +203,7 @@ const onError = (error) => {
           />
         </div>
         <!-- VAT Number -->
-        <div class="sm:col-span-3">
+        <div v-if="!isOnboarding" class="sm:col-span-3">
           <TextInputPrepend
             id="vatNumber"
             v-model="form.vatNumber"

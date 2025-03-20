@@ -23,11 +23,12 @@ import {Toast} from "../../../../../../../../shared/modules/toast";
 import {Icon} from "../../../../../../../../shared/components/atoms/icon";
 import {Button} from "../../../../../../../../shared/components/atoms/button";
 import {selectValueOnTheFlyConfig} from "../../../../../../../properties/property-select-values/configs";
+import {Link} from "../../../../../../../../shared/components/atoms/link";
 
 const { t } = useI18n();
 
 
-const props = defineProps<{ productId: string; value: ProductPropertyValue }>();
+const props = defineProps<{ productId: string; value: ProductPropertyValue, ruleId?: string | null }>();
 const emit = defineEmits(['refetch', 'update-id', 'remove']);
 
 const field: Ref<QueryFormField| null> = ref(null);
@@ -320,13 +321,21 @@ watch(props.value.translation, setTranslatedValues)
 <template>
   <div>
     <div class="grid grid-cols-12 gap-4 items-center my-2 md:hidden">
-      <div class="col-span-8">
+      <div class="col-span-6">
       </div>
       <div class="col-span-2 text-end">
         <Button v-if="val !== lastSavedVal" @click="saveChanges" class="rounded-md px-2 py-1 text-sm text-white shadow-sm btn-primary">
           {{ t('shared.button.save') }}
         </Button>
       </div>
+      <div  class="col-span-2 text-end">
+        <Link v-if="ruleId && value.property.isProductType" :path="{ name: 'properties.rule.edit', params: {id: ruleId}}" target="_blank">
+          <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'">
+          <Icon size="sm" name="eye" />
+        </Button>
+        </Link>
+      </div>
+
       <div class="col-span-2 text-end">
         <Button v-if="![PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)" class="btn btn-sm btn-outline-danger text-end" @click="removePropertyValue()">
           <Icon name="trash" />
@@ -342,7 +351,15 @@ watch(props.value.translation, setTranslatedValues)
         <Button @click="saveChanges" class="rounded-md px-2 py-1 text-sm text-white shadow-sm btn-primary">{{ t('shared.button.save') }}</Button>
       </template>
       <template v-else>
-        <span></span>
+        <Flex end>
+          <FlexCell>
+            <Link v-if="ruleId && value.property.isProductType" :path="{ name: 'properties.rule.edit', params: {id: ruleId}}" target="_blank">
+                <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'">
+                <Icon size="sm" name="eye" />
+              </Button>
+            </Link>
+          </FlexCell>
+        </Flex>
       </template>
     </div>
     <div class="col-span-12 md:col-span-10">
@@ -383,6 +400,7 @@ watch(props.value.translation, setTranslatedValues)
       <DateInput v-if="value.property.type === PropertyTypes.DATE" v-model="val" />
       <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
     </div>
+
     <div class="col-span-1 hidden md:block">
       <Button class="btn btn-sm btn-outline-danger" @click="removePropertyValue()">
         <Icon name="trash" />

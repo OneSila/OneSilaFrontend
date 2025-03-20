@@ -3,6 +3,7 @@ import {onMounted, Ref, ref, watch} from 'vue';
 import { RelatedProduct } from "../../../../core/products/products/product-create/containers/product";
 import { Button } from "../../atoms/button";
 import { Icon } from "../../atoms/icon";
+import { Toggle } from "../../atoms/toggle";
 import {useI18n} from "vue-i18n";
 import { ProductType, variationTypes } from "../../../utils/constants";
 import apolloClient from "../../../../../apollo-client";
@@ -14,12 +15,14 @@ import {Pagination} from "../../molecules/pagination";
 import {Link} from "../../atoms/link";
 import {Image} from "../../atoms/image";
 import {getInspectorStatusBadgeMap} from "../../../../core/products/products/configs";
+import {Label} from "../../atoms/label";
 
 const { t } = useI18n();
 
 const props = defineProps<{
   addedVariations: RelatedProduct[],
   type: string,
+  productTypeId?: string | null,
 }>();
 
 const availableVariations: Ref<RelatedProduct[]> = ref([]);
@@ -29,6 +32,7 @@ const emit = defineEmits(['add', 'remove']);
 const draggingItemId = ref(null);
 const pageInfo = ref(null);
 const limit = ref(10);
+const filterSameProductType = ref(true);
 const fetchPaginationData = ref({});
 fetchPaginationData.value['first'] = limit.value;
 
@@ -46,14 +50,19 @@ const fetchData = async () => {
   }
 
   loading.value = true;
-let filters = {
-    NOT: { id: { inList: excludedIds } },
-    type: { inList: typeFilter }
-};
+
+  let filters = {
+      NOT: { id: { inList: excludedIds } },
+      type: { inList: typeFilter }
+  };
 
 
   if (search.value.length > 0) {
     filters['search'] = search.value;
+  }
+
+  if (filterSameProductType.value && props.productTypeId) {
+    filters['valueSelectId'] = props.productTypeId;
   }
 
   let variables = {
@@ -235,6 +244,16 @@ onMounted(fetchData);
           <Button :customClass="'btn btn-primary p-2 rounded-full'" @click="fetchData">
             <Icon name="arrows-rotate" />
           </Button>
+        </FlexCell>
+      </Flex>
+      <Flex v-if="productTypeId" class="mt-2" gap="4">
+        <FlexCell>
+          <Label class="text-md font-semibold">
+            {{ t('products.products.addVariations.sameProductType') }}
+          </Label>
+        </FlexCell>
+        <FlexCell>
+          <Toggle v-model="filterSameProductType" @update:model-value="fetchData" />
         </FlexCell>
       </Flex>
 

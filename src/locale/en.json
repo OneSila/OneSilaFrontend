@@ -206,7 +206,7 @@
       "addCompany": {
         "title": "Company",
         "subTitle": "Tell us a little about your company.",
-        "content": "We will use this information to show on all kinds of picking lists, order confirmations and more."
+        "content": "Providing your company details helps us stay in touch and offer better support when needed."
       },
       "addCurrency": {
         "title": "Currency",
@@ -284,6 +284,7 @@
       "create": "Create",
       "skip": "Skip",
       "generate": "Generate",
+      "translate": "Translate",
       "change": "Change"
     },
     "labels": {
@@ -381,15 +382,6 @@
     },
     "components": {
       "molecules": {
-        "textHtmlEditor": {
-          "aiGenerator": {
-            "title": "Generating content...",
-            "step1": "Gathering product information",
-            "step2": "Evaluating product features",
-            "step3": "Generating description",
-            "step4": "Finalizing content"
-          }
-        },
         "selector": {
           "defaultPlaceholder": "Select an option",
           "typeToSearch": "Type to search",
@@ -400,6 +392,21 @@
         }
       },
       "organisms": {
+        "aiContentGenerator": {
+            "title": "Generating content...",
+            "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
+            "step1": "Gathering product information",
+            "step2": "Evaluating product features",
+            "step3": "Generating description",
+            "step4": "Finalizing content"
+        },
+        "aiContentTranslator": {
+            "title": "Translating content...",
+            "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
+            "step1": "Analyzing original text",
+            "step2": "Performing translation",
+            "step3": "Finalizing translation"
+        },
         "imageAssigner": {
           "addButton": {
             "uploadNew": "Upload new image",
@@ -696,6 +703,7 @@
         "eanCode": "EAN code",
         "isAssigned": "Is assigned to product?",
         "productName": "Product Name",
+        "attributeValue": "Attribute Value",
         "internal": "Internal",
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
@@ -728,7 +736,6 @@
     "translation": {
       "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
       "successfullyUpdated": "The product translation has been successfully updated.",
-      "successfullyGenerated": "Content successfully generated. It cost {points} SilAI Credit(s).",
       "placeholders": {
         "language": "Select a language",
         "name": "Enter name",
@@ -744,7 +751,8 @@
     "products": {
       "addVariations": {
         "dragAndDrop": "Use drag and drop or ➕ button to add new products",
-        "noVariationsLeft": "No products to add left"
+        "noVariationsLeft": "No products to add left",
+        "sameProductType": "Same product type only"
       },
       "tabs": {
         "content": "Content",
@@ -1523,6 +1531,7 @@
     "media": {
       "labels": {
         "fileName": "File Name",
+        "isMainImage": "Is Main Image",
         "lastModified": "Last Modified",
         "fileSize": "File Size",
         "owner": "Owner",

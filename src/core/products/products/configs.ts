@@ -7,6 +7,7 @@ import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
 import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 import {Badge} from "../../../shared/components/organisms/general-show/showConfig";
+import {propertySelectValuesQuerySelector} from "../../../shared/api/queries/properties.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -188,6 +189,19 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       isEdge: true,
       addLookup: true,
       lookupKeys: ['id']
+    },
+   {
+      type: FieldType.Query,
+      name: 'valueSelectId',
+      query: propertySelectValuesQuerySelector,
+      label: t('products.eanCodes.labels.attributeValue'),
+      labelBy: "fullValueName",
+      valueBy: "id",
+      dataKey: "propertySelectValues",
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
     },
     {
       type: FieldType.Choice,
