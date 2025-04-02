@@ -166,9 +166,6 @@ const shortDescriptionToolbarOptions = [
                 @translated="translatedText => form.name = translatedText"
               />
             </FlexCell>
-            <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
-              <Icon name="gem" size="xl" class="text-purple-600"/>
-            </FlexCell>
           </Flex>
 
           <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')"
@@ -200,9 +197,6 @@ const shortDescriptionToolbarOptions = [
                 :toLanguageCode="currentLanguage"
                 @translated="handleGeneratedShortDescriptionContent"
               />
-            </FlexCell>
-            <FlexCell center>
-              <Icon name="gem" size="xl" class="text-purple-600"/>
             </FlexCell>
           </Flex>
           <div class="mt-4 mb-4">
@@ -237,9 +231,6 @@ const shortDescriptionToolbarOptions = [
                 :toLanguageCode="currentLanguage"
                 @translated="handleGeneratedDescriptionContent"
               />
-            </FlexCell>
-            <FlexCell center>
-              <Icon name="gem" size="xl" class="text-purple-600"/>
             </FlexCell>
           </Flex>
           <div class="mt-4 mb-4">

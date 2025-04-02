@@ -178,7 +178,13 @@ const handleMainImageChange = async (changedItem: Item) => {
                               </td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ formatDate(item.media.updatedAt) }}</td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ getFileSize(item.media) }}</td>
-                              <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ item.media.owner.firstName }} {{ item.media.owner.lastName }}</td>
+                              <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
+                                  {{
+                                    item.media?.owner?.firstName || item.media?.owner?.lastName
+                                      ? `${item.media.owner.firstName || ''} ${item.media.owner.lastName || ''}`.trim()
+                                      : '-'
+                                  }}
+                              </td>
                               <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
                                 <Toggle v-if="item.media.type === TYPE_IMAGE" v-model="isMainImageMap[item.id]" @@update:model-value="handleMainImageChange(item)" />
                               </td>

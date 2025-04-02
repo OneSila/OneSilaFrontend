@@ -212,9 +212,6 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
                     @translated="(translatedText) => field.value = translatedText"
                   />
                 </FlexCell>
-                <FlexCell v-if="sourceTranslationField && field.language !== sourceTranslationField.language && field.value == ''" center>
-                  <Icon name="gem" size="xl" class="text-purple-600"/>
-                </FlexCell>
               </Flex>
 
             </FlexCell>

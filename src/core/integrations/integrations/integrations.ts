@@ -44,8 +44,6 @@ export interface MagentoChannelInfo extends SpecificChannelInfo {
   hostApiUsername?: string | null;
   hostApiKey: string;
   authenticationMethod: string;
-  attributeSetSkeletonId: number;
-  eanCodeAttribute: string;
 }
 
 /**
@@ -63,7 +61,5 @@ export function getMagentoDefaultFields(): MagentoChannelInfo {
     hostApiUsername: null,
     hostApiKey: "",
     authenticationMethod: AuthenticationMethod.TOKEN,
-    attributeSetSkeletonId: 4,
-    eanCodeAttribute: "ean_code"
   };
 }

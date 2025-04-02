@@ -35,6 +35,11 @@ export const routes = [
     name: 'integrations.currencies.edit',
     meta: { title: 'integrations.show.currencies.title' },
     component: () => import('./integrations/integrations-show/containers/currencies/containers/IntegrationsCurrencyEditController.vue'),
+  },
+  {
+    path: '/integrations/:type/import/:integrationId',
+    name: 'integrations.imports.create',
+    meta: { title: 'integrations.imports.create.title' },
+    component: () => import('./integrations/integrations-show/containers/imports/containers/create-import/ImportCreateController.vue'),
   }
-
 ];
