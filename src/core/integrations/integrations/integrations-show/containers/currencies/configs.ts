@@ -2,9 +2,9 @@ import { FieldType } from "../../../../../../shared/utils/constants";
 import {getRemoteCurrencyQuery, remoteCurrenciesQuery} from "../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import {FormConfig, FormType} from '../../../../../../shared/components/organisms/general-form/formConfig';
-import {currenciesQuery} from "../../../../../../shared/api/queries/currencies";
+import {currenciesQuery} from "../../../../../../shared/api/queries/currencies.js";
 import {currencyOnTheFlyConfig} from "../../../../../settings/currencies/configs";
-import {updateRemoteCurrencyMutation} from "../../../../../../shared/api/mutations/salesChannels";
+import {updateRemoteCurrencyMutation} from "../../../../../../shared/api/mutations/salesChannels.js";
 import {SearchConfig} from "../../../../../../shared/components/organisms/general-search/searchConfig";
 
 export const currencyEditFormConfigConstructor = (

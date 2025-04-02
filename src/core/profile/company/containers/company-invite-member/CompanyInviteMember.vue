@@ -31,8 +31,8 @@ const afterInvite = () => {
   emit('inviteSubmitted', form.value);
   form.value = { firstName: '', lastName: '', username: '', language: props.language };
 };
-</script>
 
+</script>
 
 <template>
   <Card class="w-1/3">

@@ -167,6 +167,9 @@ query ProductProperties($first: Int, $last: Int, $after: String, $before: String
           valueSelect {
             id
             value
+            productpropertiesruleSet {
+                id
+            }
           }
           valueMultiSelect {
              id

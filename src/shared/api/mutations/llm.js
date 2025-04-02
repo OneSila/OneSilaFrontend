@@ -37,3 +37,22 @@ export const generateAiTranslationMutation = gql`
     }
   }
 `;
+
+export const detectRemoteValidPropertiesMutation = gql`
+  mutation detectRemoteValidPropertiesMutation($data: SalesChannelPartialInput!) {
+    detectRemoteValidProperties(instance: $data) {
+      ... on AiContent {
+        content
+        points
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 
-import {FormType, QueryFormField} from "../../../general-form/formConfig";
-import {FieldType, PropertyTypes} from "../../../../../utils/constants";
-import {productPropertiesRulesQuery, propertiesQuery, propertySelectValuesQuery} from "../../../../../api/queries/properties.js";
-import {useI18n} from "vue-i18n";
-import {defineEmits, onMounted, Ref, ref, watch} from "vue";
-import {FieldQuery} from "../../../general-form/containers/form-fields/field-query";
-import {Selector} from "../../../../atoms/selector";
+import { QueryFormField } from "../../../general-form/formConfig";
+import { FieldType } from "../../../../../utils/constants";
+import { productPropertiesRulesQuery, propertySelectValuesQuery } from "../../../../../api/queries/properties.js";
+import { useI18n } from "vue-i18n";
+import { defineEmits, onMounted, Ref, ref, watch } from "vue";
+import { FieldQuery } from "../../../general-form/containers/form-fields/field-query";
+import { Selector } from "../../../../atoms/selector";
 import apolloClient from "../../../../../../../apollo-client";
 
 const props = defineProps<{ productType: { id: string, value: string } | null }>();

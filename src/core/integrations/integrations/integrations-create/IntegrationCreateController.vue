@@ -34,7 +34,7 @@ const loading = ref(false);
 const form = reactive<IntegrationCreateWizardForm>({
   generalInfo: {
     hostname: '',
-    active: false,
+    active: true,
     verifySsl: true,
     requestsPerMinute: 60,
     maxRetries: 3,

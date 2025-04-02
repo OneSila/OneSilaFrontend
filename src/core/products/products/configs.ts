@@ -1,11 +1,17 @@
-import {CreateOnTheFly, FormConfig, FormField, FormType, QueryFormField} from '../../../shared/components/organisms/general-form/formConfig';
+import {
+  CreateOnTheFly,
+  FormConfig,
+  FormField,
+  FormType,
+  QueryFormField
+} from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, InspectorStatus, InspectorStatusType, ProductType, Url} from '../../../shared/utils/constants.js'
-import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
-import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import { productsQuery } from "../../../shared/api/queries/products.js"
-import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
-import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
-import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
+import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
+import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
+import {productsQuery} from "../../../shared/api/queries/products.js"
+import {vatRatesQuery} from "../../../shared/api/queries/vatRates.js";
+import {createVatRateMutation} from "../../../shared/api/mutations/vatRates.js";
+import {baseFormConfigConstructor as baseVatRateConfigConstructor} from '../../settings/vat-rates/configs'
 import {Badge} from "../../../shared/components/organisms/general-show/showConfig";
 import {propertySelectValuesQuerySelector} from "../../../shared/api/queries/properties.js";
 
@@ -244,13 +250,17 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.inspectorStatus'), t('products.products.labels.type.title'), t('shared.labels.active')],
+  headers: [t('shared.labels.name'), t('shared.labels.sku'), t('products.products.labels.inspectorStatus'), t('products.products.labels.type.title'), t('shared.labels.active')],
   fields: [
     {
       type: FieldType.Text,
       name: 'name',
       addImage: true,
       imageField: 'thumbnailUrl'
+    },
+    {
+      type: FieldType.Text,
+      name: 'sku'
     },
     {
       name: 'inspectorStatus',

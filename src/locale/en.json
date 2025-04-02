@@ -330,6 +330,10 @@
       "type": "Type",
       "error": "Error",
       "comingSoon": "Coming Soon",
+      "remoteCode": "Remote Code",
+      "pending": "Pending Processing",
+      "progress": "Progress",
+      "new": "New",
       "url": "URL"
     },
     "validations": {
@@ -406,6 +410,14 @@
             "step1": "Analyzing original text",
             "step2": "Performing translation",
             "step3": "Finalizing translation"
+        },
+        "remotePropertiesDetector": {
+          "step1": "Analyzing remote attributes",
+          "step2": "Filtering irrelevant properties",
+          "step3": "Finalizing valid attributes",
+          "title": "Detecting valid remote properties",
+          "button": "Detect Properties",
+          "success": "Detected valid attributes. Used {points} points."
         },
         "imageAssigner": {
           "addButton": {
@@ -1636,7 +1648,7 @@
         },
         "isoCode": {
           "header": "Iso Code",
-          "content": "Offical 3 letter code of the currency, eg: GBP."
+          "content": "Official 3 letter code of the currency, eg: GBP."
         },
         "symbol": {
           "header": "Symbol",
@@ -1951,6 +1963,10 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "noImportBanner": {
+        "title": "First Import Not Completed",
+        "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2037,6 +2053,49 @@
       "modal": {
         "logs": {
           "title": "Logs"
+        }
+      }
+    },
+    "imports": {
+      "create": {
+        "title": "Create Import",
+        "wizard": {
+          "step1": {
+            "title": "Languages & Currencies",
+            "content": "Please map your remote languages and currencies to the local ones. All entries are required to continue.",
+            "languages": "Map The Languages",
+            "currencies": "Map The Currencies",
+            "noData": "No languages or currencies available. Please try again later.",
+            "fetchError": "An error occurred while fetching remote languages and currencies."
+          },
+          "step2": {
+            "title": "Select Attributes",
+            "content": "Select the attributes you want to import",
+            "eanCodeSelected": "Ean Code Attribute",
+            "selectedAttributes": "Selected Attributes",
+            "isEanCode": "Is Ean Code?",
+            "createEanCode": "Create Ean Code"
+          },
+          "step3": {
+            "title": "Default Attribute Set",
+              "content": "Select the default attribute set",
+              "attributeSetSelected": "Default Set",
+              "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
+          },
+          "finish": {
+            "title": "Finalizing Import",
+            "successMessage": "Import process created successfully!",
+            "errorMessage": "An error occurred at step \"{step}\". Please try again.",
+            "steps": {
+              "languages": "Updating languages",
+              "currencies": "Updating currencies",
+              "import": "Creating import",
+              "attributeImport": "Creating attribute import",
+              "eanCode": "Creating EAN code attribute",
+              "salesChannel": "Updating sales channel",
+              "startProcess": "Starting import process"
+            }
+          }
         }
       }
     }
