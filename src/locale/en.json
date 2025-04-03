@@ -1886,15 +1886,15 @@
       }
     },
     "rule": {
-      "title": "Product Properties Rules",
+      "title": "Product Rules",
       "create": {
-        "title": "Create Product Properties Rule"
+        "title": "Create Product Rule"
       },
       "edit": {
-        "title": "Edit Product Properties Rule"
+        "title": "Edit Product Rule"
       },
       "show": {
-        "title": "Product Properties Rule"
+        "title": "Product Rule"
       },
       "labels": {
         "type": "Rule Type",

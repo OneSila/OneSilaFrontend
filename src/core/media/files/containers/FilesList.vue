@@ -105,7 +105,13 @@ const assignMedia = (media) => {
                                             </td>
                                             <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ formatDate(item.node.updatedAt) }}</td>
                                             <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ getFileSize(item.node) }}</td>
-                                            <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">{{ item.node.owner.firstName }} {{ item.node.owner.lastName }}</td>
+                                            <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
+                                                {{
+                                                  item.node?.owner?.firstName || item.node?.owner?.lastName
+                                                    ? `${item.node.owner.firstName || ''} ${item.node.owner.lastName || ''}`.trim()
+                                                    : '-'
+                                                }}
+                                            </td>
                                             <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400 flex justify-center items-center">
                                               <ActionsDropdown :id="getId(item.node)" :type="item.node.type" :item="item.node" @trigger-refetch="refetchIfNecessary(query, data, true)" />
                                             </td>

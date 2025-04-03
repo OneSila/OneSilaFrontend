@@ -342,7 +342,7 @@ onMounted(fetchData);
         </Button>
       </FlexCell>
       <FlexCell center>
-        <Button :customClass="'btn btn-primary p-2 rounded-full'" @click="fetchData">
+        <Button :customClass="'btn btn-primary p-2.5 rounded-full'" @click="fetchData">
           <Icon name="arrows-rotate"/>
         </Button>
       </FlexCell>
