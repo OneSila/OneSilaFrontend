@@ -39,6 +39,7 @@ const listingConfig = listingConfigConstructor(t, true);
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
+         :fixed-filter-variables="{'isProductType': { exact: false }}"
       />
    </template>
   </GeneralTemplate>

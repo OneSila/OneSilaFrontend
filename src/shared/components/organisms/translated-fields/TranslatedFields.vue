@@ -27,6 +27,7 @@ const { t } = useI18n();
 interface TranslatableField {
   id?: string;
   value: string;
+  initialValue?: string; // ← NEW
   label: string;
   placeholder: string;
   fieldName: string;
@@ -108,7 +109,9 @@ const setValues = async () => {
       const translation = edge.node;
       const field = translatableFields.value.find(f => f.language === translation.language);
       if (field) {
-        field.value = translation[field.fieldName];
+        const value = translation[field.fieldName];
+        field.value = value;
+        field.initialValue = value;
         field.isCreate = false;
         field.id = translation.id;
       }
@@ -120,10 +123,13 @@ const saveMutations = async (continueEditing = false) => {
   const errors: string[] = [];
   for (const field of translatableFields.value) {
 
-    if (field.value == null || field.value == '') {
+    if (
+      field.value == null ||
+      field.value === '' ||
+      (!field.isCreate && field.value === field.initialValue)
+    ) {
       continue;
     }
-
 
     const mutation = field.isCreate ? props.createMutation : props.editMutation;
     const mutationKey = field.isCreate ? props.createMutationKey : props.editMutationKey;
@@ -158,6 +164,7 @@ const saveMutations = async (continueEditing = false) => {
       field.id = responseData.id;
       field.isCreate = false;
       field.error = null;
+      field.initialValue = field.value;
     } catch (error) {
       const validationErrors = processGraphQLErrors(error, t);
       field.error = validationErrors[field.fieldName] || validationErrors['__all__'];
@@ -211,9 +218,6 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
                     :toLanguageCode="field.language"
                     @translated="(translatedText) => field.value = translatedText"
                   />
-                </FlexCell>
-                <FlexCell v-if="sourceTranslationField && field.language !== sourceTranslationField.language && field.value == ''" center>
-                  <Icon name="gem" size="xl" class="text-purple-600"/>
                 </FlexCell>
               </Flex>
 

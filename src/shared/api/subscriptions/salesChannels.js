@@ -5,8 +5,14 @@ export const salesChannelSubscription = gql`
   subscription getSalesChannelSubscription($pk: String!) {
     salesChannel(pk: $pk) {
       id
-      name
       active
+      isImporting
+      saleschannelimportSet {
+        id
+        status
+        percentage
+        createdAt
+      }
     }
   }
 `;

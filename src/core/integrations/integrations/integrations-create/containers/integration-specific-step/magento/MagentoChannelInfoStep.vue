@@ -117,54 +117,6 @@ watch(() => props.channelInfo.authenticationMethod, (newVal) => {
         </Flex>
       </FlexCell>
 
-      <FlexCell class="py-8 px-96">
-        <hr/>
-      </FlexCell>
-
-      <FlexCell>
-        <Flex class="mt-4 gap-4" center>
-          <FlexCell center>
-            <Flex vertical class="gap-2">
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.attributeSetSkeletonId') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <TextInput
-                    class="w-96"
-                    v-model="channelInfo.attributeSetSkeletonId"
-                    :number="true"
-                    :placeholder="t('integrations.placeholders.attributeSetSkeletonId')"
-                />
-              </FlexCell>
-            </Flex>
-          </FlexCell>
-        </Flex>
-      </FlexCell>
-
-      <FlexCell>
-        <Flex class="mt-4 gap-4" center>
-          <FlexCell center>
-            <Flex vertical class="gap-2">
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.eanCodeAttribute') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <TextInput
-                    class="w-96"
-                    v-model="channelInfo.eanCodeAttribute"
-                    :placeholder="t('integrations.placeholders.eanCodeAttribute')"
-                />
-              </FlexCell>
-            </Flex>
-          </FlexCell>
-        </Flex>
-      </FlexCell>
-
-
     </Flex>
   </div>
 </template>

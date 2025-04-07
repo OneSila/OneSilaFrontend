@@ -5,7 +5,7 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Tabs } from "../../../../shared/components/molecules/tabs";
 import { Card } from "../../../../shared/components/atoms/card";
-import { useRoute } from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import { IntegrationTypes } from "../integrations";
 import { getMagentoChannelQuery, getSalesChannelQuery } from "../../../../shared/api/queries/salesChannels.js";
 import {MagentoGeneralInfoTab} from "./containers/magento-general-tab";
@@ -15,8 +15,9 @@ import { Products } from "./containers/products";
 import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
-import {Imports} from "./containers/imports";
+import { Imports } from "./containers/imports";
 
+const router = useRouter();
 const route = useRoute();
 
 const { t } = useI18n();
@@ -24,6 +25,7 @@ const id = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const salesChannelId = ref(null);
 const integrationId = ref(null);
+const firstImportCompleteRef = ref(true);
 const loading = ref(false);
 
 const integrationData = ref<any>(null);
@@ -35,7 +37,7 @@ const tabItems = ref([
   { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
   { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
   { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
-  // { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' }
+  { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' }
 ]);
 
 const getIntegrationQuery = () => {
@@ -72,10 +74,11 @@ const fetchIntegrationData = async () => {
       variables: { id: id.value },
       fetchPolicy: 'network-only'
     });
-    const { __typename, integrationPtr, saleschannelPtr,  ...cleanData } = data[getIntegrationQueryKey()];
+    const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = data[getIntegrationQueryKey()];
     integrationData.value = cleanData;
     salesChannelId.value = saleschannelPtr.id
     integrationId.value = integrationPtr.id
+    firstImportCompleteRef.value = firstImportComplete
   } catch (error) {
     console.error("Error fetching integration data:", error);
   } finally {
@@ -84,7 +87,15 @@ const fetchIntegrationData = async () => {
 };
 
 onMounted(async () => {
-  fetchIntegrationData();
+  await fetchIntegrationData();
+    if (!firstImportCompleteRef.value ) {
+    router.replace({
+      query: {
+        ...route.query,
+        tab: 'imports',
+      },
+    });
+  }
 });
 
 </script>
@@ -104,6 +115,19 @@ onMounted(async () => {
       <Card>
         <Loader :loading="loading" />
         <Tabs :tabs="tabItems">
+
+          <template v-if="!firstImportCompleteRef" #banner>
+              <div
+                class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                role="alert"
+              >
+                <span class="font-medium flex items-center gap-1">
+                  ⚠️ {{ t('integrations.show.noImportBanner.title') }}
+                </span>
+                {{ t('integrations.show.noImportBanner.content') }}
+              </div>
+            </template>
+
           <!-- General Edit Tab -->
           <template #general>
             <MagentoGeneralInfoTab v-if="!loading && integrationData" :data="integrationData" />
@@ -130,9 +154,9 @@ onMounted(async () => {
           </template>
 
           <!-- Imports Tab -->
-<!--          <template #imports>-->
-<!--            <Imports v-if="salesChannelId" :sales-channel-id="salesChannelId"  />-->
-<!--          </template>-->
+          <template #imports>
+            <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
+          </template>
         </Tabs>
       </Card>
     </template>

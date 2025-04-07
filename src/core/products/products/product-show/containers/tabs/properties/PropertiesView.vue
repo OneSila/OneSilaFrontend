@@ -56,6 +56,8 @@ const fetchRequiredProductType = async () => {
 }
 
 const fetchProductTypeValue = async (productTypePropertyId) => {
+  ruleId.value = null;
+
   const { data } = await apolloClient.query({
     query: productPropertiesQuery,
     variables: { filter: { property: { id: { exact: productTypePropertyId }}, product: { id: { exact: props.product.id }}}},
@@ -65,6 +67,10 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
   if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
     const value = data.productProperties.edges[0].node;
     const existingItem = values.value.find(v => v.property.id === value.property.id);
+
+      if (value.valueSelect && value.valueSelect.productpropertiesruleSet.length) {
+         ruleId.value = value.valueSelect.productpropertiesruleSet[0].id;
+      }
 
     if (existingItem) {
       existingItem.id = value.id;
@@ -118,7 +124,6 @@ const fetchPropertiesIds = async (productTypeValueId) => {
 
     if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
       const rule = data.productPropertiesRules.edges[0].node;
-      ruleId.value = rule.id;
       const items = rule.items;
       const propertyIds: string[] = []
 

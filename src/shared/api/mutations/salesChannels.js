@@ -246,6 +246,33 @@ export const updateRemoteCurrencyMutation = gql`
   }
 `;
 
+
+export const bulkUpdateRemoteLanguagesMutation = gql`
+  mutation bulkUpdateRemoteLanguages($data: [RemoteLanguagePartialInput!]!) {
+    updateRemoteLanguages(data: $data) {
+      id
+      localInstance
+      remoteCode
+    }
+  }
+`;
+
+
+export const bulkUpdateRemoteCurrenciesMutation = gql`
+  mutation bulkUpdateRemoteCurrencies($data: [RemoteCurrencyPartialInput!]!) {
+    updateRemoteCurrencies(data: $data) {
+      id
+      localInstance {
+        id
+        symbol
+        isoCode
+      }
+      remoteCode
+    }
+  }
+`;
+
+
 export const deleteSalesChannelViewAssignMutation = gql`
   mutation deleteSalesChannelViewAssign($id: GlobalID!) {
     deleteSalesChannelViewAssign(data: { id: $id }) {
@@ -261,3 +288,62 @@ export const deleteSalesChannelViewAssignsMutation = gql`
     }
   }
 `;
+
+
+export const createSalesChannelImportMutation = gql`
+  mutation createSalesImportProcess($data: SalesChannelImportInput!) {
+    createSalesImportProcess(data: $data) {
+      id
+      importId
+      status
+      percentage
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+
+export const updateSalesChannelImportMutation = gql`
+  mutation updateSalesImportProcess($data: SalesChannelImportPartialInput!) {
+    updateSalesImportProcess(data: $data) {
+      id
+      status
+      percentage
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+
+
+export const createImportPropertiesMutation = gql`
+  mutation createImportProperties($data: [ImportPropertyInput!]!) {
+    createImportProperties(data: $data) {
+      id
+      rawData
+      structuredData
+      successfullyImported
+      importProcess {
+        id
+      }
+    }
+  }
+`;
+
+export const createRemoteEanCodeAttributeMutation = gql`
+  mutation createRemoteEanCodeAttribute($data: MagentoRemoteEanCodeAttributeInput!) {
+    createRemoteEanCodeAttribute(instance: $data) {
+      ... on MagentoRemoteAttributeType {
+        id
+        attributeCode
+        name
+        data
+      }
+    }
+  }
+`;
+

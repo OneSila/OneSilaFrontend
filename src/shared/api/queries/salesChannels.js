@@ -60,6 +60,7 @@ export const getMagentoChannelQuery = gql`
       attributeSetSkeletonId
       eanCodeAttribute
       firstImportComplete
+      isImporting
       integrationPtr {
         id
       }
@@ -257,6 +258,7 @@ export const getRemoteCurrencyQuery = gql`
         symbol
         isoCode
       }
+      name
       remoteCode
     }
   }
@@ -275,6 +277,7 @@ export const remoteLanguagesQuery = gql`
       edges {
         node {
           id
+          name
           localInstance
           remoteCode
         }
@@ -305,10 +308,12 @@ export const remoteCurrenciesQuery = gql`
         node {
           id
           remoteCode
+          name
           localInstance {
             id
             name
             symbol
+            isoCode
           }
         }
         cursor
@@ -324,22 +329,25 @@ export const remoteCurrenciesQuery = gql`
   }
 `;
 
-export const importProcessesQuery = gql`
-  query ImportProcesses(
+export const salesChannelImportsQuery = gql`
+  query SalesChannelImports(
     $first: Int, 
     $last: Int, 
     $after: String, 
     $before: String, 
-    $order: ImportProcessOrder, 
-    $filter: ImportProcessFilter
+    $order: SalesChannelImportOrder, 
+    $filter: SalesChannelImportFilter
   ) {
-    importProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+    salesChannelImports(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id
           status
           percentage
           createdAt
+          salesChannel {
+            id
+          }
         }
         cursor
       }
@@ -350,6 +358,27 @@ export const importProcessesQuery = gql`
         hasNextPage
         hasPreviousPage
       }
+    }
+  }
+`;
+
+
+export const magentoRemoteAttributesQuery = gql`
+  query MagentoRemoteAttributes($salesChannelId: ID!) {
+    magentoRemoteAttributes(salesChannelId: $salesChannelId) {
+      id
+      attributeCode
+      name
+      data
+    }
+  }
+`;
+
+export const magentoRemoteAttributeSetsQuery = gql`
+  query MagentoRemoteAttributeSets($salesChannelId: ID!) {
+    magentoRemoteAttributeSets(salesChannelId: $salesChannelId) {
+      id
+      name
     }
   }
 `;

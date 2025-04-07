@@ -76,6 +76,7 @@ const defaultTabIndex = () => {
         </a>
       </Tab>
     </TabList>
+    <slot name="banner"></slot>
     <TabPanels>
       <TabPanel v-for="tab in props.tabs" :key="tab.name">
         <slot :name="tab.name"></slot>
