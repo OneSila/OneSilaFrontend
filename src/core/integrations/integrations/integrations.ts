@@ -27,6 +27,7 @@ export interface SalesChannelInfo {
   syncContents: boolean;
   syncEanCodes: boolean;
   syncPrices: boolean;
+  importOrders: boolean;
 }
 
 /**

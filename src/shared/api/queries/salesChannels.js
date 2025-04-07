@@ -258,6 +258,7 @@ export const getRemoteCurrencyQuery = gql`
         symbol
         isoCode
       }
+      name
       remoteCode
     }
   }
@@ -276,6 +277,7 @@ export const remoteLanguagesQuery = gql`
       edges {
         node {
           id
+          name
           localInstance
           remoteCode
         }
@@ -306,6 +308,7 @@ export const remoteCurrenciesQuery = gql`
         node {
           id
           remoteCode
+          name
           localInstance {
             id
             name

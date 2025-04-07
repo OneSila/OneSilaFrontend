@@ -44,6 +44,7 @@ const form = reactive<IntegrationCreateWizardForm>({
     syncContents: true,
     syncEanCodes: true,
     syncPrices: true,
+    importOrders: true,
   }
 });
 const specificChannelInfo = ref(getMagentoDefaultFields());

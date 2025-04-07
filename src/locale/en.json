@@ -1995,7 +1995,26 @@
           "magentoTitle": "Magento",
           "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
           "shopifyTitle": "Shopify",
-          "shopifyExample": "Shopify integration is coming soon."
+          "shopifyExample": "Shopify integration is coming soon.",
+          "magentoInfoModal": {
+          "title": "How to connect your Magento store",
+            "section": {
+              "integrationTitle": "Create an integration in Magento",
+              "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
+              "integrationStep1": "Go to System → Integrations",
+              "integrationStep2": "Click on 'Add New Integration' follow the steps, create the integration and activate it",
+              "apiSettingsTitle": "Configure your Magento API settings",
+              "apiSettingsDescription": "In order for the integration to work smoothly, please check the following settings in your Magento Admin:",
+              "apiSetting1": "Allow Anonymous Guest Access → Yes (under Web API Security)",
+              "apiSetting2": "Allow OAuth Access Tokens to be used as standalone Bearer token → Yes (under OAuth)",
+              "legacyAuthTitle": "Legacy Authentication (not recommended)",
+              "legacyAuthWarning": "You can connect using username and password, but we strongly discourage it due to lower security and possible compatibility issues.",
+              "importTitle": "Perform an initial import",
+              "importRecommendation": "After setting up the integration, we recommend performing an import to bring your existing Magento data into our system. This avoids syncing issues later on.",
+              "eanTitle": "EAN codes support",
+              "eanDescription": "If you want to sync EAN codes, make sure you have an attribute with global scope in Magento. Don't worry, missing ones can also be created during the import process."
+            }
+          }
         },
         "step2": {
           "title": "General Information",
@@ -2019,6 +2038,7 @@
       "syncContents": "Sync Contents",
       "syncEanCodes": "Sync EAN Codes",
       "syncPrices": "Sync Prices",
+      "importOrders": "Import Orders",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "requestsPerMinute": "Requests Per Minute",
@@ -2044,6 +2064,7 @@
         "syncContents": "Toggle this to synchronize product content from the remote system and keep your product details up-to-date.",
         "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
         "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
+        "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",

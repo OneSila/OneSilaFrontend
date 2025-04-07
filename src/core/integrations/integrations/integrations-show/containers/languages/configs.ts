@@ -61,7 +61,7 @@ export const languagesListingConfigConstructor = (t: Function, badgeMap: Record<
    t('shared.labels.language'),
   ],
   fields: [
-    { name: 'remoteCode', type: FieldType.Text },
+    { name: 'name', type: FieldType.Text },
     { name: 'localInstance', type: FieldType.Badge, badgeMap: badgeMap },
   ],
   identifierKey: 'id',

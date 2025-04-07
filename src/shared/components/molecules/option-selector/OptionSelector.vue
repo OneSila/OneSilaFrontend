@@ -25,16 +25,17 @@ const gridColumnsClass = computed(() => {
   };
 })
 
-const setActive = (choice) => {
+const setActive = (choice, event?: MouseEvent) => {
+  if (choice.disabled) return;
 
-  if (choice.disabled) {
-    return
-  }
+  // Ignore clicks on interactive elements like buttons or links
+  const tag = (event?.target as HTMLElement)?.tagName;
+  if (tag === 'BUTTON' || tag === 'A') return;
 
-  const optionName = choice.name;
-  activeOption.value = optionName;
-  emit('update:modelValue', optionName)
+  activeOption.value = choice.name;
+  emit('update:modelValue', choice.name);
 };
+
 
 </script>
 

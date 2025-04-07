@@ -71,7 +71,7 @@ export const currenciesListingConfigConstructor = (t: Function, specificIntegrat
     t('shared.labels.currency'),
   ],
   fields: [
-    { name: 'remoteCode', type: FieldType.Text },
+    { name: 'name', type: FieldType.Text },
     {
       name: 'localInstance',
       type: FieldType.NestedText,

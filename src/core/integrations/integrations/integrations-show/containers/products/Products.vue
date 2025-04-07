@@ -112,7 +112,7 @@ const getStatusText = (item) => {
                     <tr v-for="item in data.salesChannelViewAssigns.edges" :key="item.node.id">
                       <td>
                         <Link :path="{name: 'products.products.show', params: { id: item.node.product.id}, query: {tab: 'websites'}}">
-                          {{ item.node.salesChannelView.name }}
+                          {{ item.node.product.name }}
                         </Link>
                       </td>
                       <td>
