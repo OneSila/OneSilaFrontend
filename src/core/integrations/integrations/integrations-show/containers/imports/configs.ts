@@ -31,12 +31,14 @@ export interface SalesChannelSubscriptionResult {
 export interface RemoteLanguage {
   id: string;
   remoteCode: string;
+  name: string;
   localInstance: { id: string };
 }
 
 export interface RemoteCurrency {
   id: string;
   remoteCode: string;
+  name: string;
   localInstance: { id: string };
 }
 
