@@ -27,7 +27,7 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   editUrlName: 'properties.rule.edit',
   showUrlName: 'properties.rule.show',
   addShow: true,
-  addDelete: true,
+  addDelete: isMainPage,
   addPagination: true,
   isMainPage: isMainPage,
   deleteMutation: deleteProductPropertiesRuleMutation,
