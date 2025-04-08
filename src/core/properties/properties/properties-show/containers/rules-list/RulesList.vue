@@ -2,13 +2,11 @@
 
 import {onMounted, Ref, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Button } from "../../../../../../shared/components/atoms/button";
-import { Link } from "../../../../../../shared/components/atoms/link";
 import { GeneralListing } from "../../../../../../shared/components/organisms/general-listing";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { listingConfigConstructor, searchConfigConstructor, listingQueryKey, listingQuery } from "../../../../product-properties-rule/configs";
 import apolloClient from "../../../../../../../apollo-client";
-import {productPropertiesQuery, productPropertiesRuleItemsQuery, productPropertiesRulesQuery} from "../../../../../../shared/api/queries/properties.js";
+import { productPropertiesRuleItemsQuery } from "../../../../../../shared/api/queries/properties.js";
 
 const props = defineProps<{ id: string; isProductType: boolean }>();
 const { t } = useI18n();

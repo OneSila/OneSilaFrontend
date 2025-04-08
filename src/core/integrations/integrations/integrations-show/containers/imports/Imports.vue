@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from 'vue-i18n';
-import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { Link } from "../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { ApolloSubscription } from "../../../../../../shared/components/molecules/apollo-subscription";
 import { salesChannelSubscription } from "../../../../../../shared/api/subscriptions/salesChannels.js"
 import { DiscreteLoader } from "../../../../../../shared/components/atoms/discrete-loader";
 import { AssignProgressBar } from "../../../../../../shared/components/molecules/assign-progress-bar";
-import {getStatusBadgeMap, SalesChannelSubscriptionResult} from "./configs";
+import { getStatusBadgeMap, SalesChannelSubscriptionResult } from "./configs";
 import { Badge } from "../../../../../../shared/components/atoms/badge";
+import { updateSalesChannelImportMutation } from "../../../../../../shared/api/mutations/salesChannels";
+import { Toast } from "../../../../../../shared/modules/toast";
+import apolloClient from "../../../../../../../apollo-client";
+import {Icon} from "../../../../../../shared/components/atoms/icon";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const { t } = useI18n();
@@ -28,6 +31,35 @@ const formatDate = (dateString) => {
         hour12: false
     }).format(date);
 };
+
+const isRetryEnabled = (importItem): boolean => {
+  const createdDate = new Date(importItem.createdAt);
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  console.log(['success', 'failed'].includes(importItem.status))
+  return ['success', 'failed'].includes(importItem.status) && createdDate >= oneWeekAgo;
+};
+
+
+const retryImport = async (importId: string) => {
+  try {
+    await apolloClient.mutate({
+      mutation: updateSalesChannelImportMutation,
+      variables: {
+        data: {
+          id: importId,
+          status: "pending",
+        },
+      },
+    });
+    Toast.success(t("integrations.imports.retry.success"));
+  } catch (e) {
+    Toast.error(t("integrations.imports.retry.error"));
+    console.error("Retry failed:", e);
+  }
+};
+
 
 </script>
 
@@ -56,6 +88,7 @@ const formatDate = (dateString) => {
               <th class="p-2 text-left">{{ t('shared.labels.createdAt') }}</th>
               <th class="p-2 text-left">{{ t('shared.labels.status') }}</th>
               <th class="p-2 text-left">{{ t('shared.labels.progress') }}</th>
+              <th class="p-2 text-left">{{ t('shared.labels.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
@@ -77,6 +110,15 @@ const formatDate = (dateString) => {
                   :is-error="importItem.status === 'failed'"
                 />
               </td>
+              <td class="p-2 text-right">
+              <Button
+                :disabled="!isRetryEnabled(importItem)"
+                @click="retryImport(importItem.id)"
+              >
+                <Icon name="clock-rotate-left" size="lg" class="text-gray-500" />
+              </Button>
+            </td>
+
             </tr>
           </tbody>
         </table>

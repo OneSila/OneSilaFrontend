@@ -1965,7 +1965,7 @@
       "title": "Integration",
       "noImportBanner": {
         "title": "First Import Not Completed",
-        "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies."
+        "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies. If is already created wait for it to finish."
       },
       "stores": {
         "title": "Store"
@@ -2002,7 +2002,7 @@
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
               "integrationStep1": "Go to System → Integrations",
-              "integrationStep2": "Click on 'Add New Integration' follow the steps, create the integration and activate it",
+              "integrationStep2": "Click on 'Add New Integration' create the integration and activate it",
               "apiSettingsTitle": "Configure your Magento API settings",
               "apiSettingsDescription": "In order for the integration to work smoothly, please check the following settings in your Magento Admin:",
               "apiSetting1": "Allow Anonymous Guest Access → Yes (under Web API Security)",
@@ -2045,7 +2045,7 @@
       "maxRetries": "Maximum Retries",
       "authenticationMethod": "Authentication Method",
       "hostApiUsername": "Host API Username",
-      "hostApiKey": "Host API Key",
+      "hostApiKey": "Host API Access Token Key",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute"
     },

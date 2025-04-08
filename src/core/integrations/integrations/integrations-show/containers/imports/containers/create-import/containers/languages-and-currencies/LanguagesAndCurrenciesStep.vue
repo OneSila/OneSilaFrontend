@@ -77,12 +77,14 @@ const fetchData = async () => {
     languages.value = langRes.data.remoteLanguages.edges.map((edge: any) => ({
       id: edge.node.id,
       remoteCode: edge.node.remoteCode,
+      name: edge.node.name,
       localInstance: edge.node.localInstance || null,
     }));
 
     currencies.value = currencyRes.data.remoteCurrencies.edges.map((edge: any) => ({
       id: edge.node.id,
       remoteCode: edge.node.remoteCode,
+      name: edge.node.name,
       localInstance: edge.node.localInstance || null,
     }));
 
@@ -148,7 +150,7 @@ watch([languages, currencies], () => {
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr v-for="lang in languages" :key="lang.id" class="border-t">
-              <td class="p-3">{{ lang.remoteCode }}</td>
+              <td class="p-3">{{ lang.name }}</td>
               <td class="p-3 w-96">
                 <FieldQuery v-model="lang.localInstance" :field="languageField as QueryFormField" />
               </td>
@@ -170,7 +172,7 @@ watch([languages, currencies], () => {
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr v-for="currency in currencies" :key="currency.id" class="border-t">
-              <td class="p-3">{{ currency.remoteCode }}</td>
+              <td class="p-3">{{ currency.name }}</td>
               <td class="p-3 w-96">
                 <FieldQuery v-model="currency.localInstance.id" :field="currencyField as QueryFormField" />
               </td>

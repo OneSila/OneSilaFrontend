@@ -32,7 +32,7 @@ const fetchViews = async () => {
   loading.value = true;
   const { data } = await apolloClient.query({
     query: salesChannelViewsQuery,
-    variables: { filter: {active: {exact: true}, NOT: { id: { inList: props.viewsIds } } } },
+    variables: { filter: { salesChannel: { active: {exact: true} }, NOT: { id: { inList: props.viewsIds } } } },
     fetchPolicy: 'network-only'
   });
 
