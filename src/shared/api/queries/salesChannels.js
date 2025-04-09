@@ -54,6 +54,7 @@ export const getMagentoChannelQuery = gql`
       syncContents
       syncEanCodes
       syncPrices
+      importOrders
       hostApiUsername
       hostApiKey
       authenticationMethod

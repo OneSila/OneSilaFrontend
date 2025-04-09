@@ -1963,6 +1963,11 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "sections": {
+        "throttling": "Throttling",
+        "syncPreferences": "Sync Preferences",
+        "authentication": "Authentication"
+      },
       "noImportBanner": {
         "title": "First Import Not Completed",
         "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies. If is already created wait for it to finish."
@@ -2005,8 +2010,8 @@
               "integrationStep2": "Click on 'Add New Integration' create the integration and activate it",
               "apiSettingsTitle": "Configure your Magento API settings",
               "apiSettingsDescription": "In order for the integration to work smoothly, please check the following settings in your Magento Admin:",
-              "apiSetting1": "Allow Anonymous Guest Access → Yes (under Web API Security)",
-              "apiSetting2": "Allow OAuth Access Tokens to be used as standalone Bearer token → Yes (under OAuth)",
+              "apiSetting1": "'Allow OAuth Access Tokens to be used as standalone Bearer tokens' → Yes (mandatory, located under: Stores → Configuration → Services → OAuth → OAuth Customer Settings)",
+              "apiSetting2": "'Allow Anonymous Guest Access' → Yes (optional, located under: Stores → Configuration → Services → Magento Web API → Web API Security)",
               "legacyAuthTitle": "Legacy Authentication (not recommended)",
               "legacyAuthWarning": "You can connect using username and password, but we strongly discourage it due to lower security and possible compatibility issues.",
               "importTitle": "Perform an initial import",
@@ -2095,7 +2100,11 @@
             "eanCodeSelected": "Ean Code Attribute",
             "selectedAttributes": "Selected Attributes",
             "isEanCode": "Is Ean Code?",
-            "createEanCode": "Create Ean Code"
+            "createEanCode": "Create Ean Code",
+            "description": {
+              "attributes": "Please select the attributes that you want to import into your system. Include both frontend-visible properties and internal Magento attributes managed by extensions.",
+              "eanCode": "Select which attribute will be used as the EAN code. If you don't have one yet but want to sync EAN codes using OneSila, you can create it now."
+            }
           },
           "step3": {
             "title": "Default Attribute Set",

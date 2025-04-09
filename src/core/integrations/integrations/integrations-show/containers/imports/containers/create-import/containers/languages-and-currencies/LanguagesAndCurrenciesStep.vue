@@ -85,7 +85,7 @@ const fetchData = async () => {
       id: edge.node.id,
       remoteCode: edge.node.remoteCode,
       name: edge.node.name,
-      localInstance: edge.node.localInstance || null,
+      localInstance: edge.node.localInstance || {id: null},
     }));
 
     if (!languages.value.length || !currencies.value.length) {

@@ -73,7 +73,7 @@ const allowNextStep = computed(() => {
     const langsValid = mappedData.value.languages.length > 0 &&
       mappedData.value.languages.every((l) => l.localInstance);
     const currenciesValid = mappedData.value.currencies.length > 0 &&
-      mappedData.value.currencies.every((c) => c.localInstance);
+      mappedData.value.currencies.every((c) => c.localInstance.id);
     return langsValid && currenciesValid;
   }
   if (step.value === 1) {

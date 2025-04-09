@@ -166,6 +166,18 @@ if (props.initialEanCode) {
     </h1>
     <hr/>
 
+    <div>
+      <p class="text-gray-600 border-l-2 py-1 px-1 border-primary mb-1">
+        {{ t('integrations.imports.create.wizard.step2.description.attributes') }}
+      </p>
+
+      <p v-if="props.syncEanCodes" class="text-gray-600 border-l-2 py-1 px-1 border-primary">
+        {{ t('integrations.imports.create.wizard.step2.description.eanCode') }}
+      </p>
+    </div>
+
+
+
     <div v-if="props.attributes.length === 0" class="text-center py-4">
       <DiscreteLoader :loading="true"/>
     </div>
