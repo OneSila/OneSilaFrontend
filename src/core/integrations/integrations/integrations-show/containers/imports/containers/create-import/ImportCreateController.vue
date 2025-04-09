@@ -160,13 +160,16 @@ onMounted(async () => {
 
 
 const bulkUpdateRemoteLanguages = async () => {
-
   try {
-    const {data} = await apolloClient.mutate({
+    const data = mappedData.value.languages.map((language) => ({
+      id: language.id,
+      remoteCode: language.remoteCode,
+      localInstance: language.localInstance,
+    }));
+
+    const { data: result } = await apolloClient.mutate({
       mutation: bulkUpdateRemoteLanguagesMutation,
-      variables: {
-        data: mappedData.value.languages
-      },
+      variables: { data },
     });
 
   } catch (err) {
@@ -174,6 +177,7 @@ const bulkUpdateRemoteLanguages = async () => {
     throw err;
   }
 };
+
 
 const bulkUpdateRemoteCurrencies = async () => {
   try {
