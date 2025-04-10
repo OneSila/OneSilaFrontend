@@ -2,7 +2,7 @@
 import { onMounted, ref, defineProps, computed, defineExpose, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { remoteLanguagesQuery, remoteCurrenciesQuery } from "../../../../../../../../../../shared/api/queries/salesChannels.js";
-import {languagesQuery} from "../../../../../../../../../../shared/api/queries/languages.js";
+import {companyLanguagesQuery} from "../../../../../../../../../../shared/api/queries/languages.js";
 import {currenciesQuery} from "../../../../../../../../../../shared/api/queries/currencies.js";
 
 import {FieldType} from "../../../../../../../../../../shared/utils/constants";
@@ -33,8 +33,8 @@ const languageField = computed(() => ({
     label: t("shared.placeholders.language"),
     labelBy: "name",
     valueBy: "code",
-    query: languagesQuery,
-    dataKey: "languages",
+    query: companyLanguagesQuery,
+    dataKey: "companyLanguages",
     isEdge: false,
     multiple: false,
     filterable: true,

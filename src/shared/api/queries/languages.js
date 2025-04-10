@@ -12,6 +12,32 @@ query languages {
 }
 `;
 
+
+export const interfaceLanguagesQuery = gql`
+  query interfaceLanguages {
+    interfaceLanguages {
+      name
+      code
+      bidi
+      nameLocal
+      nameTranslated
+    }
+  }
+`;
+
+export const companyLanguagesQuery = gql`
+  query companyLanguages {
+    companyLanguages {
+      name
+      code
+      bidi
+      nameLocal
+      nameTranslated
+    }
+  }
+`;
+
+
 export const customerLanguagesQuery = gql`
   query customerLanguages {
     customerLanguages{

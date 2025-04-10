@@ -127,9 +127,46 @@ export const PropertyTypes = {
 };
 
 export const flagMapping: { [key: string]: string } = {
-  'en': '🇬🇧',
-  'nl': '🇳🇱'
+  'en': '🇬🇧', // English (UK)
+  'fr': '🇫🇷', // French
+  'nl': '🇳🇱', // Dutch
+  'de': '🇩🇪', // German
+  'it': '🇮🇹', // Italian
+  'es': '🇪🇸', // Spanish
+  'pt': '🇵🇹', // Portuguese
+  'pl': '🇵🇱', // Polish
+  'ro': '🇷🇴', // Romanian
+  'bg': '🇧🇬', // Bulgarian
+  'hr': '🇭🇷', // Croatian
+  'cs': '🇨🇿', // Czech
+  'da': '🇩🇰', // Danish
+  'et': '🇪🇪', // Estonian
+  'fi': '🇫🇮', // Finnish
+  'el': '🇬🇷', // Greek
+  'hu': '🇭🇺', // Hungarian
+  'lv': '🇱🇻', // Latvian
+  'lt': '🇱🇹', // Lithuanian
+  'sk': '🇸🇰', // Slovak
+  'sl': '🇸🇮', // Slovenian
+  'sv': '🇸🇪', // Swedish
+  'th': '🇹🇭', // Thai
+  'ja': '🇯🇵', // Japanese
+  'zh-hans': '🇨🇳', // Simplified Chinese
+  'hi': '🇮🇳', // Hindi
+  'pt-br': '🇧🇷', // Portuguese (Brazil)
+  'ru': '🇷🇺', // Russian
+  'af': '🇿🇦', // Afrikaans (South Africa)
+  'ar': '🇸🇦', // Arabic (Saudi Arabia as default)
+  'he': '🇮🇱', // Hebrew
+  'tr': '🇹🇷', // Turkish
+  'id': '🇮🇩', // Indonesian
+  'ko': '🇰🇷', // Korean
+  'ms': '🇲🇾', // Malay
+  'vi': '🇻🇳', // Vietnamese
+  'fa': '🇮🇷', // Persian (Iran)
+  'ur': '🇵🇰', // Urdu (Pakistan)
 };
+
 
 export const LeadTimeUnit = {
   HOUR: 1,

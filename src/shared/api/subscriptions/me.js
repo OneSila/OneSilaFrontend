@@ -33,6 +33,11 @@ export const meCompanySubscription = gql`
       vatNumber
       website
       fullAddress
+      languageDetail {
+         code
+         name
+      }
+      languages
       multitenantuserSet {
           id
           isActive

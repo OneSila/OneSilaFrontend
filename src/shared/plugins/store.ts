@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import apolloClient from '../../../apollo-client';
 import appSetting from './../../app-setting';
-import { languagesQuery } from '../api/queries/languages.js';
+import { interfaceLanguagesQuery } from '../api/queries/languages.js';
 import { DEFAULT_LANGUAGE } from '../utils/constants'
 
 interface Language {
@@ -38,12 +38,12 @@ export const useAppStore = defineStore('app', {
 
           if (!expireLanguageListDate || new Date() > expireLanguageListDate) {
             const { data } = await apolloClient.query({
-              query: languagesQuery,
+              query: interfaceLanguagesQuery,
             });
 
-            if (data && data.languages) {
-              this.languageList = data.languages as Language[];
-              localStorage.setItem('languageList', JSON.stringify(data.languages));
+            if (data && data.interfaceLanguages) {
+              this.languageList = data.interfaceLanguages as Language[];
+              localStorage.setItem('languageList', JSON.stringify(data.interfaceLanguages));
 
               const newExpireDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000));
               localStorage.setItem('expireLanguageList', newExpireDate.toISOString());
@@ -53,6 +53,7 @@ export const useAppStore = defineStore('app', {
             this.languageList = storedLanguages ? JSON.parse(storedLanguages) as Language[] : [];
           }
         },
+
     updateRTLClass(bidi: boolean) {
       this.rtlClass = bidi ? 'rtl' : 'ltr';
     },

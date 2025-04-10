@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { updateMyCompanyMutation } from "./../../../../../shared/api/mutations/me.js";
 import { TextInputPrepend } from '../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from "../../../../../shared/components/atoms/icon";
@@ -11,10 +11,11 @@ import {EmailInput} from "../../../../../shared/components/atoms/input-email";
 import {WebsiteInput} from "../../../../../shared/components/atoms/input-website";
 import {Toast} from "../../../../../shared/modules/toast";
 import {processGraphQLErrors} from "../../../../../shared/utils";
-import {countriesQuery} from "../../../../../shared/api/queries/languages.js";
+import {countriesQuery, languagesQuery} from "../../../../../shared/api/queries/languages.js";
 import {Selector} from "../../../../../shared/components/atoms/selector";
 import {Label} from "../../../../../shared/components/atoms/label";
 import {injectAuth} from "../../../../../shared/modules/auth";
+import apolloClient from "../../../../../../apollo-client";
 
 const { t } = useI18n();
 const props = defineProps<{ companyData: MeCompanyData, mandatory?: boolean, isOnboarding?: boolean }>();
@@ -24,6 +25,8 @@ const user = ref(auth.user)
 const emit = defineEmits(['updateComplete', 'unsavedChanges']);
 
 const form = ref({ ...props.companyData });
+const languages = ref<{ code: string; name: string }[]>([]);
+const defaultLanguageCode = computed(() => props.companyData.language);
 
 if (!form.value.email) {
   form.value.email = user.value.username
@@ -40,7 +43,8 @@ const getMutationVariables = () => {
     email: form.value.email,
     phoneNumber: form.value.phoneNumber,
     vatNumber: form.value.vatNumber,
-    website: form.value.website
+    website: form.value.website,
+    languages: form.value.languages
   };
 };
 
@@ -87,12 +91,20 @@ const onError = (error) => {
     }
 }};
 
+onMounted(async () => {
+  const { data } = await apolloClient.query({ query: languagesQuery });
+
+  if (data?.languages) {
+    languages.value = data.languages
+  }
+});
+
 </script>
 
 <template>
   <div class="space-y-12">
     <!-- Company Profile Section -->
-    <div class="border-b border-gray-900/10 pb-12">
+    <div class="border-b border-gray-900/10 pb-20">
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <!-- Company Name -->
         <div class="sm:col-span-6">
@@ -225,6 +237,27 @@ const onError = (error) => {
             class="mb-4"
           />
         </div>
+
+        <!-- Language Selector -->
+        <div class="sm:col-span-3">
+          <Label class="font-semibold text-md">
+            {{ t('companyProfile.labels.companyLanguages') }}
+          </Label>
+          <Selector
+            class="mt-2"
+            v-model="form.languages"
+            :options="languages"
+            labelBy="name"
+            valueBy="code"
+            :multiple="true"
+            :placeholder="t('companyProfile.placeholders.companyLanguages')"
+            filterable
+          />
+          <div v-if="isOnboarding" class="mt-1 text-sm leading-6 text-gray-400">
+            <p>*{{ t('auth.register.company.helpText.languages') }}</p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -243,7 +276,7 @@ const onError = (error) => {
             :disabled="loading || isDisabled()"
             @click="mutate()"
           >
-            {{ t('shared.button.next') }}
+            {{ isOnboarding ? t('shared.button.next') : t('shared.button.save') }}
           </Button>
         </template>
       </ApolloMutation>

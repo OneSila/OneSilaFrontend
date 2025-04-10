@@ -492,6 +492,10 @@
             "language": "Select language"
           }
         },
+        "helpText": {
+          "language": "This is your company's default language. All translatable content will be created in this language. This cannot be changed later.",
+          "languages": "These are the languages your company will support for translations. You can update this list later."
+        },
         "button": {
           "createCompany": "Create Company"
         },
@@ -577,6 +581,8 @@
       "postcode": "Postcode",
       "city": "City",
       "vatNumber": "VAT Number",
+      "defaultLanguage": "Default Language",
+      "companyLanguages": "Company Languages",
       "website": "Website",
       "updateButton": "Update Company",
       "editProfile": "Edit Profile",
@@ -591,6 +597,8 @@
       "postcode": "Enter postcode",
       "city": "Enter city",
       "vatNumber": "Enter VAT number",
+      "defaultLanguage": "Enter Default Language",
+      "companyLanguages": "Enter Company Languages",
       "website": "Enter website URL"
     },
     "messages": {

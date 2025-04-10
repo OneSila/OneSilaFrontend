@@ -54,9 +54,10 @@ const props = defineProps<{
   relatedId: string;
 }>();
 const translatableFields: Ref<TranslatableField[]> = ref([]);
+const defaultLanguageCode = ref<string | null>(null);
 
 const sourceTranslationField = computed(() => {
-  return translatableFields.value.find(field => field.value && field.value.trim() !== '');
+  return translatableFields.value.find(field => field.language === defaultLanguageCode.value);
 });
 
 
@@ -87,14 +88,20 @@ const setValues = async () => {
     fetchPolicy: 'network-only'
   });
 
-  if (data && data.translationLanguages && data.translationLanguages.languages.length > 0) {
-   const languages = data.translationLanguages.languages;
+  if (data?.translationLanguages?.languages?.length) {
+    const allLanguages = data.translationLanguages.languages;
+    defaultLanguageCode.value = data.translationLanguages.defaultLanguage.code;
+
+    const sortedLanguages = [
+      ...allLanguages.filter(lang => lang.code === defaultLanguageCode.value),
+      ...allLanguages.filter(lang => lang.code !== defaultLanguageCode.value),
+    ];
 
     const fieldNames = Array.isArray(props.fieldName) ? props.fieldName : [props.fieldName];
     const labels = Array.isArray(props.label) ? props.label : [props.label];
     const placeholders = Array.isArray(props.placeholder) ? props.placeholder : [props.placeholder];
 
-    translatableFields.value = createFields(languages, fieldNames, labels, placeholders);
+    translatableFields.value = createFields(sortedLanguages, fieldNames, labels, placeholders);
   }
 
    // Fetch translations

@@ -11,10 +11,9 @@ import Icon from "../../../../../shared/components/atoms/icon/Icon.vue";
 import TextInputPrepend from "../../../../../shared/components/atoms/input-text-prepend/TextInputPrepend.vue";
 import { registerCompanyMutation } from '../../../../../shared/api/mutations/auth.js'
 import { languagesQuery, countriesQuery } from "../../../../../shared/api/queries/languages.js";
-import {PhoneNumberInput} from "../../../../../shared/components/atoms/input-phone-number";
-import {displayApolloError} from "../../../../../shared/utils";
-import {useEnterKeyboardListener} from "../../../../../shared/modules/keyboard";
-import {Link} from "../../../../../shared/components/atoms/link";
+import { PhoneNumberInput } from "../../../../../shared/components/atoms/input-phone-number";
+import { displayApolloError } from "../../../../../shared/utils";
+import { useEnterKeyboardListener } from "../../../../../shared/modules/keyboard";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -85,6 +84,9 @@ useEnterKeyboardListener(onSubmit);
     <ApolloQuery :query="languagesQuery">
       <template v-slot="{ result: { data } }">
           <Selector v-if="data" v-model="form.language" :options="data.languages" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.language')" filterable />
+          <div class="mt-1 text-sm leading-6 text-gray-400">
+            <p>*{{ t('auth.register.company.helpText.language') }}</p>
+          </div>
       </template>
     </ApolloQuery>
     </div>

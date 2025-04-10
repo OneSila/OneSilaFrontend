@@ -10,7 +10,7 @@ import {
   languagesListingQuery
 } from "./configs";
 import apolloClient from "../../../../../../../apollo-client";
-import { languagesQuery } from "../../../../../../shared/api/queries/languages.js";
+import { companyLanguagesQuery } from "../../../../../../shared/api/queries/languages.js";
 import {ListingConfig} from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
@@ -20,12 +20,12 @@ const { t } = useI18n();
 
 const fetchLanguages = async () => {
   const {data} = await apolloClient.query({
-    query: languagesQuery,
+    query: companyLanguagesQuery,
   });
 
-  if (data && data.languages) {
+  if (data && data.companyLanguages) {
       const map = {};
-      data.languages.forEach(lang => {
+      data.companyLanguages.forEach(lang => {
         map[lang.code] = { text: lang.name, color: 'blue' };
       });
       badgeMap.value = map;

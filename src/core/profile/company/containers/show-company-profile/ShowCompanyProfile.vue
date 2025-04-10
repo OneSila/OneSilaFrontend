@@ -37,6 +37,11 @@ const props = defineProps<{ companyData: MeCompanyData }>();
         <Icon class="shrink-0" name="receipt"/>
         {{ t('companyProfile.labels.vatNumber') }}: {{ props.companyData.vatNumber || '-' }}
       </li>
+      <li class="flex items-center gap-2" v-if="props.companyData.languageDetail">
+        <Icon class="shrink-0" name="language" />
+        {{ t('companyProfile.labels.defaultLanguage') }}: {{ props.companyData.languageDetail.name }}
+      </li>
+
     </ul>
   </div>
 </template>
