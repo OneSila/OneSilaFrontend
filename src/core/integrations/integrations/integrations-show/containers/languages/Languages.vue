@@ -11,9 +11,12 @@ import {
 } from "./configs";
 import apolloClient from "../../../../../../../apollo-client";
 import { companyLanguagesQuery } from "../../../../../../shared/api/queries/languages.js";
-import {ListingConfig} from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { Button } from "../../../../../../shared/components/atoms/button";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
+const emit = defineEmits(['pull-data']);
+
 const badgeMap = ref({});
 const listingConfig = ref<ListingConfig | null>(null);
 const { t } = useI18n();
@@ -42,6 +45,9 @@ const searchConfig = languagesSearchConfigConstructor(t);
   <GeneralTemplate>
 
     <template v-slot:buttons>
+      <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
+        {{ t('integrations.labels.pullData') }}
+      </Button>
     </template>
 
     <template v-slot:content>

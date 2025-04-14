@@ -1971,6 +1971,10 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "pullData": {
+        "success": "Website, languages and currencies pulled successfully.",
+        "error": "Failed to pull remote data. Please try again."
+      },
       "sections": {
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
@@ -2060,7 +2064,8 @@
       "hostApiUsername": "Host API Username",
       "hostApiKey": "Host API Access Token Key",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
-      "eanCodeAttribute": "EAN Code Attribute"
+      "eanCodeAttribute": "EAN Code Attribute",
+      "pullData": "Pull Data"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",

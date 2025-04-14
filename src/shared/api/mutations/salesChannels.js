@@ -347,3 +347,11 @@ export const createRemoteEanCodeAttributeMutation = gql`
   }
 `;
 
+export const refreshSalesChannelWebsitesMutation = gql`
+  mutation refreshSalesChannelWebsites($data: SalesChannelPartialInput!) {
+    refreshSalesChannelWebsites(data: $data) {
+      id
+      active
+    }
+  }
+`;
