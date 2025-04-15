@@ -100,7 +100,7 @@ onMounted(getHasDemoData);
       <div v-if="hasDemoData">
         <h2 class="text-xl font-semibold">{{ t('settings.demoData.delete.title') }}</h2>
         <p class="mt-2">{{ t('settings.demoData.delete.content') }}</p>
-        <DangerButton class="mt-4" @click="updateDemoData(false)">
+        <DangerButton :disabled="true" class="mt-4" @click="updateDemoData(false)">
           {{ t('shared.button.delete') }}
         </DangerButton>
       </div>
