@@ -38,12 +38,6 @@ export const storeEditFormConfigConstructor = (
       label: t('shared.labels.url'),
       number: false,
     },
-    {
-      type: FieldType.Boolean,
-      strict: false,
-      name: 'active',
-      label: t('shared.labels.active')
-    }
   ]
 });
 

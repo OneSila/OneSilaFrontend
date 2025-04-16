@@ -116,7 +116,7 @@ const getStatusText = (item) => {
                         </Link>
                       </td>
                       <td>
-                        <Icon v-if="item.node.salesChannelView.active" name="check-circle" class="ml-2 text-green-500"/>
+                        <Icon v-if="item.node.product.active" name="check-circle" class="ml-2 text-green-500"/>
                         <Icon v-else name="times-circle" class="ml-2 text-red-500"/>
                       </td>
                       <td>
