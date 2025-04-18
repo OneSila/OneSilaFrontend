@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
 import { Toast } from "../../../modules/toast";
-import {displayApolloError} from "../../../utils";
+import { displayApolloError}  from "../../../utils";
 
 interface SwalOptions {
   title?: string;

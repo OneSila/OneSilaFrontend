@@ -14,7 +14,7 @@ import {
 } from "../../../shared/api/queries/properties.js";
 import {
     createPropertySelectValueMutation,
-    deletePropertySelectValueMutation,
+    deletePropertySelectValueMutation, deletePropertySelectValuesMutation,
     updatePropertySelectValueMutation
 } from "../../../shared/api/mutations/properties.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
@@ -210,6 +210,10 @@ export const listingConfigConstructor = (t: Function, addActions: boolean = true
     defaultGridIcon: 'image',
     isMainPage: isMainPage,
     deleteMutation: deletePropertySelectValueMutation,
+    addBulkDelete: isMainPage,
+    bulkDeleteMutation: deletePropertySelectValuesMutation,
+    bulkDeleteSuccessAlert: t('properties.values.alert.toast.bulkDeleteSuccess'),
+    bulkDeleteErrorAlert: t('properties.values.alert.toast.bulkDeleteError'),
 });
 
 export const showConfigConstructor = (t: Function, id): ShowConfig => ({

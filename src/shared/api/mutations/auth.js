@@ -5,6 +5,7 @@ export const registerMutation = gql`
     registerUser(username: $username, password: $password, language: $language) {
       multiTenantCompany {
         id
+        language
       }
       username
       language
@@ -27,6 +28,7 @@ mutation Login($username: String!, $password: String!) {
     onboardingStatus
     multiTenantCompany {
       id
+      language
     }
   }
 }`;
@@ -43,6 +45,7 @@ mutation GoToStep($onboardingStatus: String!) {
     onboardingStatus
     multiTenantCompany {
       id
+      language
     }
   }
 }`;
@@ -59,6 +62,7 @@ mutation authenticateToken($token: String!) {
     onboardingStatus
     multiTenantCompany {
       id
+      language
     }
   }
 }`;
@@ -75,6 +79,7 @@ mutation acceptUserInvitation($language: String!, $password: String!) {
     onboardingStatus
     multiTenantCompany {
       id
+      language
     }
   }
 }`;

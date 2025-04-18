@@ -5,7 +5,11 @@ import {ListingConfig} from "../../../shared/components/organisms/general-listin
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import { eanCodesQuery } from "../../../shared/api/queries/eanCodes.js"
 import { productsQuery } from "../../../shared/api/queries/products.js"
-import {deleteEanCodeMutation, generateEanCodes} from "../../../shared/api/mutations/eanCodes.js";
+import {
+    deleteEanCodeMutation,
+    deleteEanCodesMutation,
+    generateEanCodes
+} from "../../../shared/api/mutations/eanCodes.js";
 
 export const baseFormGenerateConfigConstructor = (
   t: Function,
@@ -136,6 +140,10 @@ export const listingConfigConstructor = (t: Function, productId: string | null =
   isMainPage: isMainPage,
   addPagination: getAddPagination(productId),
   deleteMutation: deleteEanCodeMutation,
+  bulkDeleteMutation: deleteEanCodesMutation,
+  addBulkDelete: true,
+  bulkDeleteSuccessAlert: t('products.eanCodes.alert.toast.bulkDeleteSuccess'),
+  bulkDeleteErrorAlert: t('products.eanCodes.alert.toast.bulkDeleteError')
 });
 
 export const listingQueryKey = 'eanCodes';

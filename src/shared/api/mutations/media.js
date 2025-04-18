@@ -39,8 +39,8 @@ export const deleteMediaMutation = gql`
 `;
 
 export const deleteMediasMutation = gql`
-  mutation deleteMedias($ids: [GlobalID!]!) {
-    deleteMedias(data: {ids: $ids}) {
+  mutation deleteMedias($data: [NodeInput!]!) {
+    deleteMedias(data: $data) {
       id
     }
   }
@@ -82,8 +82,8 @@ export const deleteImageMutation = gql`
 `;
 
 export const deleteImagesMutation = gql`
-  mutation deleteImages($ids: [GlobalID!]!) {
-    deleteImages(data: {ids: $ids}) {
+  mutation deleteImages($data: [NodeInput!]!) {
+    deleteImages(data: $data) {
       id
     }
   }
@@ -122,8 +122,8 @@ export const deleteFileMutation = gql`
 `;
 
 export const deleteFilesMutation = gql`
-  mutation deleteFiles($ids: [GlobalID!]!) {
-    deleteFiles(data: {ids: $ids}) {
+  mutation deleteFiles($data: [NodeInput!]!) {
+    deleteFiles(data: $data) {
       id
     }
   }
@@ -165,8 +165,8 @@ export const deleteVideoMutation = gql`
 `;
 
 export const deleteVideosMutation = gql`
-  mutation deleteVideos($ids: [GlobalID!]!) {
-    deleteVideos(data: {ids: $ids}) {
+  mutation deleteVideos($data: [NodeInput!]!) {
+    deleteVideos(data: $data) {
       id
     }
   }

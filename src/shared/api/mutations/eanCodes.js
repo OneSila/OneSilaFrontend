@@ -83,6 +83,20 @@ export const assignEanCodeMutation = gql`
   }
 `;
 
+export const assignEanCodesMutation = gql`
+    mutation assignEanCodes($data: BulkAssignEancodesInput!) {
+      assignEanCodes(instance: $data) {
+        id
+        eanCode
+        product {
+          id
+          sku
+          name
+        }
+      }
+    }
+`;
+
 export const deleteEanCodeMutation = gql`
   mutation deleteEanCode($id: GlobalID!) {
     deleteEanCode(data: {id: $id}) {
@@ -92,8 +106,8 @@ export const deleteEanCodeMutation = gql`
 `;
 
 export const deleteEanCodesMutation = gql`
-  mutation deleteEanCodes($ids: [GlobalID!]!) {
-    deleteEanCodes(data: {ids: $ids}) {
+  mutation deleteEanCodes($data: [NodeInput!]!) {
+    deleteEanCodes(data: $data) {
       id
     }
   }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { useI18n } from 'vue-i18n';
+import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
 import {onMounted, ref, Ref, watch} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
@@ -11,14 +11,14 @@ import {
   propertiesQuery
 } from "../../../../../../../shared/api/queries/properties.js";
 import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
-import { ValueInput } from "./value-input";
-import { Loader } from "../../../../../../../shared/components/atoms/loader";
-import { translationLanguagesQuery } from "../../../../../../../shared/api/queries/languages.js";
-import { Selector } from "../../../../../../../shared/components/atoms/selector";
-import { Icon } from "../../../../../../../shared/components/atoms/icon";
+import {ValueInput} from "./value-input";
+import {Loader} from "../../../../../../../shared/components/atoms/loader";
+import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
+import {Selector} from "../../../../../../../shared/components/atoms/selector";
+import {Icon} from "../../../../../../../shared/components/atoms/icon";
 
 
-const { t } = useI18n();
+const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
 const ruleId = ref(null);
 const values: Ref<ProductPropertyValue[]> = ref([]);
@@ -28,29 +28,29 @@ const language: Ref<string | null> = ref(null);
 
 const fetchRequiredProductType = async () => {
 
-    const {data} = await apolloClient.query({
-      query: propertiesQuery,
-      variables: { filter: { isProductType: { exact: true } }},
-      fetchPolicy: 'network-only'
-    })
+  const {data} = await apolloClient.query({
+    query: propertiesQuery,
+    variables: {filter: {isProductType: {exact: true}}},
+    fetchPolicy: 'network-only'
+  })
 
-    if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
-      const productType = data.properties.edges[0].node
-      const toAdd: ProductPropertyValue = {
-        property: {
-          id: productType.id,
-          name: productType.name,
-          type: productType.type,
-          isProductType: true,
-          requireType: ConfigTypes.REQUIRED
-        },
-        translation: {
-           language: null
-        }
+  if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
+    const productType = data.properties.edges[0].node
+    const toAdd: ProductPropertyValue = {
+      property: {
+        id: productType.id,
+        name: productType.name,
+        type: productType.type,
+        isProductType: true,
+        requireType: ConfigTypes.REQUIRED
+      },
+      translation: {
+        language: null
       }
-      values.value.push(toAdd);
-      return productType.id;
     }
+    values.value.push(toAdd);
+    return productType.id;
+  }
 
   return null;
 }
@@ -58,9 +58,9 @@ const fetchRequiredProductType = async () => {
 const fetchProductTypeValue = async (productTypePropertyId) => {
   ruleId.value = null;
 
-  const { data } = await apolloClient.query({
+  const {data} = await apolloClient.query({
     query: productPropertiesQuery,
-    variables: { filter: { property: { id: { exact: productTypePropertyId }}, product: { id: { exact: props.product.id }}}},
+    variables: {filter: {property: {id: {exact: productTypePropertyId}}, product: {id: {exact: props.product.id}}}},
     fetchPolicy: 'network-only'
   });
 
@@ -68,13 +68,13 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
     const value = data.productProperties.edges[0].node;
     const existingItem = values.value.find(v => v.property.id === value.property.id);
 
-      if (value.valueSelect && value.valueSelect.productpropertiesruleSet.length) {
-         ruleId.value = value.valueSelect.productpropertiesruleSet[0].id;
-      }
+    if (value.valueSelect && value.valueSelect.productpropertiesruleSet.length) {
+      ruleId.value = value.valueSelect.productpropertiesruleSet[0].id;
+    }
 
     if (existingItem) {
       existingItem.id = value.id;
-      existingItem.valueSelect = { id: value.valueSelect.id };
+      existingItem.valueSelect = {id: value.valueSelect.id};
     } else {
       const toAdd: ProductPropertyValue = {
         id: value.id,
@@ -102,7 +102,7 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
 
 const setCurrentLanguage = async () => {
 
-  const { data } = await apolloClient.query({
+  const {data} = await apolloClient.query({
     query: translationLanguagesQuery,
     fetchPolicy: 'network-only'
   });
@@ -116,56 +116,56 @@ const setCurrentLanguage = async () => {
 
 const fetchPropertiesIds = async (productTypeValueId) => {
 
-    const {data} = await apolloClient.query({
-      query: productPropertiesRulesQuery,
-      variables: { filter: { productType: {id: {exact: productTypeValueId }} }},
-      fetchPolicy: 'network-only'
-    })
+  const {data} = await apolloClient.query({
+    query: productPropertiesRulesQuery,
+    variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
+    fetchPolicy: 'network-only'
+  })
 
-    if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
-      const rule = data.productPropertiesRules.edges[0].node;
-      const items = rule.items;
-      const propertyIds: string[] = []
+  if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
+    const rule = data.productPropertiesRules.edges[0].node;
+    const items = rule.items;
+    const propertyIds: string[] = []
 
-      for (const item of items) {
-        const toAdd: ProductPropertyValue = {
-          property: {
-            id: item.property.id,
-            name: item.property.name,
-            type: item.property.type,
-            isProductType: false,
-            requireType: item.type
-          },
-          valueBoolean: undefined,
-          valueInt: null,
-          valueFloat: null,
-          valueDate: null,
-          valueDateTime: null,
-          valueSelect: {id: null},
-          valueMultiSelect: null,
-          translation: {
-           language: null
-          }
+    for (const item of items) {
+      const toAdd: ProductPropertyValue = {
+        property: {
+          id: item.property.id,
+          name: item.property.name,
+          type: item.property.type,
+          isProductType: false,
+          requireType: item.type
+        },
+        valueBoolean: undefined,
+        valueInt: null,
+        valueFloat: null,
+        valueDate: null,
+        valueDateTime: null,
+        valueSelect: {id: null},
+        valueMultiSelect: null,
+        translation: {
+          language: null
         }
-        values.value.push(toAdd);
-        propertyIds.push(item.property.id)
+      }
+      values.value.push(toAdd);
+      propertyIds.push(item.property.id)
 
-        if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(item.property.type) && language.value == null) {
-          await setCurrentLanguage();
-        }
-
+      if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(item.property.type) && language.value == null) {
+        await setCurrentLanguage();
       }
 
-      return propertyIds
     }
 
-    return [];
+    return propertyIds
+  }
+
+  return [];
 }
 
 const setInitialValues = async (propertiesIds) => {
-  const { data } = await apolloClient.query({
+  const {data} = await apolloClient.query({
     query: productPropertiesQuery,
-    variables: { filter: { property: { id: { inList: propertiesIds }}, product: { id: { exact: props.product.id }}}},
+    variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
     fetchPolicy: 'network-only'
   });
 
@@ -181,8 +181,11 @@ const setInitialValues = async (propertiesIds) => {
         existingItem.valueFloat = value.valueFloat ?? null;
         existingItem.valueDate = value.valueDate ?? null;
         existingItem.valueDateTime = value.valueDatetime ?? null;
-        existingItem.valueSelect = value.valueSelect ? { id: value.valueSelect.id } : {id: null};
-        existingItem.valueMultiSelect = value.valueMultiSelect ? value.valueMultiSelect.map(v => ({ id: v.id, value: v.value })) : null;
+        existingItem.valueSelect = value.valueSelect ? {id: value.valueSelect.id} : {id: null};
+        existingItem.valueMultiSelect = value.valueMultiSelect ? value.valueMultiSelect.map(v => ({
+          id: v.id,
+          value: v.value
+        })) : null;
       }
     });
   }
@@ -213,7 +216,7 @@ const fetchRequiredAttributesValues = async () => {
   loading.value = false
 }
 
-const handleUpdatedId = ({ oldId, newId, isTranslation }) => {
+const handleUpdatedId = ({oldId, newId, isTranslation}) => {
   const index = values.value.findIndex(v => v.property.id === oldId);
   if (index !== -1) {
     if (isTranslation) {
@@ -234,8 +237,8 @@ const handleRemove = (id) => {
     values.value[index].valueFloat = null;
     values.value[index].valueDate = null;
     values.value[index].valueDateTime = null;
-    values.value[index].valueSelect = { id: null };
-    values.value[index].translation = { id: null, valueText: "", valueDescription: "", language: language.value };
+    values.value[index].valueSelect = {id: null};
+    values.value[index].translation = {id: null, valueText: "", valueDescription: "", language: language.value};
     values.value[index].valueMultiSelect = null;
   }
 };
@@ -246,13 +249,19 @@ const fetchFieldTranslation = async (value: ProductPropertyValue) => {
     return
   }
 
-  const { data } = await apolloClient.query({
+  const {data} = await apolloClient.query({
     query: productPropertyTextTranslationsQuery,
-    variables: { filter:
-          { productProperty:
-                { property: { id: { exact: value.property.id }},
-                  product: { id: { exact: props.product.id }}},
-            language: {exact: language.value}} },
+    variables: {
+      filter:
+          {
+            productProperty:
+                {
+                  property: {id: {exact: value.property.id}},
+                  product: {id: {exact: props.product.id}}
+                },
+            language: {exact: language.value}
+          }
+    },
     fetchPolicy: 'network-only'
   });
 
@@ -285,20 +294,27 @@ const populateTranslatableFields = async () => {
 watch(language, populateTranslatableFields)
 onMounted(fetchRequiredAttributesValues);
 
-const getIconColor = (requireType) => {
-  switch (requireType) {
-    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
-      return 'text-red-500'; // Red
-    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
-      return 'text-orange-500'; // Orange
-    case ConfigTypes.OPTIONAL:
-      return 'text-yellow-500'; // Yellow
-    case ConfigTypes.REQUIRED:
-      return 'text-green-500'; // Green
-    default:
-      return 'text-gray-500'; // Default color if type is unknown
+const getIconColor = (requireType: string, isFilled = false) => {
+
+  if (isFilled) {
+    if ([ConfigTypes.REQUIRED, ConfigTypes.REQUIRED_IN_CONFIGURATOR, ConfigTypes.OPTIONAL_IN_CONFIGURATOR].includes(requireType as ConfigTypes)) {
+      return 'text-red-500';
+    }
+    if (requireType === ConfigTypes.OPTIONAL) {
+      return 'text-yellow-500';
+    }
   }
-}
+
+  if ([ConfigTypes.REQUIRED, ConfigTypes.REQUIRED_IN_CONFIGURATOR, ConfigTypes.OPTIONAL_IN_CONFIGURATOR].includes(requireType as ConfigTypes)) {
+    return 'text-red-500';
+  }
+  if (requireType === ConfigTypes.OPTIONAL) {
+    return 'text-yellow-500';
+  }
+
+  return 'text-gray-400';
+};
+
 
 const getTooltip = (requireType) => {
   switch (requireType) {
@@ -315,28 +331,93 @@ const getTooltip = (requireType) => {
   }
 }
 
-const getExtendedTooltip = (requireType) => {
-  switch (requireType) {
-    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
-      return t('properties.rule.configTypes.requiredInConfigurator.example');
-    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
-      return t('properties.rule.configTypes.optionalInConfigurator.example');
-    case ConfigTypes.OPTIONAL:
-      return t('properties.rule.configTypes.optional.example');
-    case ConfigTypes.REQUIRED:
+const getExtendedTooltip = (metaType: string): string => {
+  switch (metaType) {
+    case 'REQUIRED':
       return t('properties.rule.configTypes.required.example');
+    case 'OPTIONAL':
+      return t('properties.rule.configTypes.optional.example');
+    case 'FILLED':
+      return t('properties.rule.configTypes.filled.example');
     default:
       return '';
   }
-}
+};
+
 
 const requireTypes = [
-  { value: ConfigTypes.REQUIRED, label: t('properties.rule.configTypes.required.title') },
-  { value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title') },
-  { value: ConfigTypes.REQUIRED_IN_CONFIGURATOR, label: t('properties.rule.configTypes.requiredInConfigurator.title') },
-  { value: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, label: t('properties.rule.configTypes.optionalInConfigurator.title') },
-
+  {value: ConfigTypes.REQUIRED, label: t('properties.rule.configTypes.required.title')},
+  {value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title')},
+  {value: 'FILLED', label: t('properties.rule.configTypes.filled.title')}
 ];
+
+
+const hasValue = (val: ProductPropertyValue): boolean => {
+  const propType = val.property.type;
+
+  if (propType === PropertyTypes.TEXT || propType === PropertyTypes.DESCRIPTION) {
+    return !!(val.translation?.valueText || val.translation?.valueDescription);
+  }
+  if (propType === PropertyTypes.BOOLEAN) return val.valueBoolean !== null && val.valueBoolean !== undefined;
+  if (propType === PropertyTypes.INT) return val.valueInt !== null && val.valueInt !== undefined;
+  if (propType === PropertyTypes.FLOAT) return val.valueFloat !== null && val.valueFloat !== undefined;
+  if (propType === PropertyTypes.DATE) return !!val.valueDate;
+  if (propType === PropertyTypes.DATETIME) return !!val.valueDateTime;
+  if (propType === PropertyTypes.SELECT) return !!val.valueSelect?.id;
+  if (propType === PropertyTypes.MULTISELECT) return Array.isArray(val.valueMultiSelect) && val.valueMultiSelect.length > 0;
+
+  return false;
+};
+
+
+const isRequired = (requireType: string | undefined): boolean => {
+  return [
+    ConfigTypes.REQUIRED,
+    ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+    ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+  ].includes(requireType as ConfigTypes);
+};
+
+const handleValueUpdate = ({id, type, value, language}) => {
+  const target = values.value.find(v => v.property.id === id);
+  if (!target) return;
+
+  switch (type) {
+    case PropertyTypes.TEXT:
+      target.translation.valueText = value;
+      break;
+    case PropertyTypes.DESCRIPTION:
+      target.translation.valueDescription = value;
+      break;
+    case PropertyTypes.BOOLEAN:
+      target.valueBoolean = value;
+      break;
+    case PropertyTypes.INT:
+      target.valueInt = value;
+      break;
+    case PropertyTypes.FLOAT:
+      target.valueFloat = value;
+      break;
+    case PropertyTypes.DATE:
+      target.valueDate = value;
+      break;
+    case PropertyTypes.DATETIME:
+      target.valueDateTime = value;
+      break;
+    case PropertyTypes.SELECT:
+      target.valueSelect = {id: value};
+      break;
+    case PropertyTypes.MULTISELECT:
+      target.valueMultiSelect = value.map(v => ({id: v}));
+      break;
+  }
+
+  // Also update the language if it's a text/description field
+  if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(type)) {
+    target.translation.language = language;
+  }
+};
+
 
 </script>
 
@@ -345,13 +426,14 @@ const requireTypes = [
     <Flex between class="mb-2">
       <FlexCell grow center>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 ml-2 mb-4">
-          <div v-for="(type, index) in requireTypes" :key="index" class="flex items-center space-x-2" :title="getExtendedTooltip(type.value)">
-            <Icon name="circle-dot" :class="getIconColor(type.value)" />
+          <div v-for="(type, index) in requireTypes" :key="index" class="flex items-center space-x-2"
+               :title="getExtendedTooltip(type.value)">
+            <Icon name="circle-dot" :class="getIconColor(type.value)"/>
             <span>{{ type.label }}</span>
           </div>
         </div>
       </FlexCell>
-      <FlexCell v-if="language" >
+      <FlexCell v-if="language">
         <ApolloQuery :query="translationLanguagesQuery">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
@@ -363,32 +445,45 @@ const requireTypes = [
                       labelBy="name"
                       valueBy="code"
                       mandatory
-                      filterable />
+                      filterable/>
           </template>
         </ApolloQuery>
       </FlexCell>
     </Flex>
-    <Loader :loading="loading" />
+    <Loader :loading="loading"/>
     <table class="divide-y divide-gray-300 table-hover custom-table mt-4">
       <thead></thead>
       <tbody>
-        <template v-for="(val, index) in values">
-          <tr>
-            <th class="font-semibold left-align">
-              <Icon name="circle-dot" :class="getIconColor(val.property.requireType)" :title="getTooltip(val.property.requireType)" />
-              {{ val.property.name }}
-            </th>
-            <td>
-              <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
-                          :product-id="product.id"
-                          :rule-id="ruleId"
-                          :value="val"
-                          @refetch="fetchRequiredAttributesValues"
-                          @update-id="handleUpdatedId"
-                          @remove="handleRemove" />
-            </td>
-          </tr>
-        </template>
+      <template v-for="(val, index) in values">
+        <tr>
+          <th class="font-semibold left-align">
+            <Icon
+                name="circle-dot"
+                :class="[
+                'transition-all duration-200',
+                {
+                  'text-gray-400': hasValue(val),
+                  'text-red-500': !hasValue(val) && isRequired(val.property.requireType),
+                  'text-yellow-500': !hasValue(val) && !isRequired(val.property.requireType),
+                }
+                ]"
+                :title="getTooltip(val.property.requireType)"
+            />
+
+            {{ val.property.name }}
+          </th>
+          <td>
+            <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+                        :product-id="product.id"
+                        :rule-id="ruleId"
+                        :value="val"
+                        @refetch="fetchRequiredAttributesValues"
+                        @update-id="handleUpdatedId"
+                        @update-value="handleValueUpdate"
+                        @remove="handleRemove"/>
+          </td>
+        </tr>
+      </template>
       </tbody>
     </table>
   </div>

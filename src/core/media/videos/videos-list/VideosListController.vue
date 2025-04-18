@@ -10,6 +10,7 @@ import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
 import { ref } from "vue";
 import { TYPE_VIDEO } from "../../files/media";
+import { deleteVideosMutation } from "../../../../shared/api/mutations/media.js"
 
 const { t } = useI18n();
 const refetchNeeded = ref(false);
@@ -59,6 +60,9 @@ const handleRefeched = () => {
                                  :default-view-type="defaultView"
                                  :label="t('media.videos.title')"
                                  :refetch-needed="refetchNeeded"
+                                 :bulk-delete-mutation="deleteVideosMutation"
+                                 :bulk-delete-success-alert="t('media.videos.alert.toast.bulkDeleteSuccess')"
+                                 :bulk-delete-error-alert="t('media.videos.alert.toast.bulkDeleteError')"
                                  @refetched="handleRefeched"
                       />
                   </div>

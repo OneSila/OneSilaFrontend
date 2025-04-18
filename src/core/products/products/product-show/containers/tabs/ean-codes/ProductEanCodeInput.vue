@@ -17,6 +17,7 @@ import ApolloAlertMutation from "../../../../../../../shared/components/molecule
 import {
   FieldValue
 } from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
+import Swal, { SweetAlertOptions } from "sweetalert2";
 
 const { t } = useI18n();
 
@@ -31,6 +32,29 @@ const eanCode = ref({
 });
 
 const lastSavedEanCode = ref(props.initialEanCode?.ean || '');
+
+const defaultSwalOptions = {
+  title: t('products.eanCodes.invalidEanCodeAlert.title'),
+  text: t('products.eanCodes.invalidEanCodeAlert.text'),
+  confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
+  cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
+  icon: 'warning',
+  showCancelButton: true,
+  reverseButtons: true,
+  padding: '2em'
+};
+
+const defaultSwalClasses = {
+  popup: 'sweet-alerts',
+  confirmButton: 'btn btn-secondary',
+  cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3'
+}
+
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: defaultSwalClasses,
+  buttonsStyling: false
+});
 
 watchEffect(() => {
   if (props.initialEanCode) {
@@ -50,6 +74,7 @@ const getEanCode = (): ValueFormField => ({
 });
 
 const handleCreate = async () => {
+
   const inputData = {
     eanCode: eanCode.value.ean,
     product: { id: props.product.id },
@@ -70,6 +95,7 @@ const handleCreate = async () => {
 };
 
 const handleEdit = async () => {
+
   const inputData = {
     id: eanCode.value.id,
     eanCode: eanCode.value.ean,
@@ -109,14 +135,47 @@ const handleDelete = async () => {
     }
 };
 
+const isValidEan13 = (ean: string): boolean => {
+  if (!/^\d{13}$/.test(ean)) return false;
+
+  const digits = ean.split('').map(Number);
+  const checkDigit = digits.pop();
+
+  const sum = digits.reduce((acc, digit, idx) => {
+    return acc + digit * (idx % 2 === 0 ? 1 : 3);
+  }, 0);
+
+  const calculatedCheck = (10 - (sum % 10)) % 10;
+  return calculatedCheck === checkDigit;
+};
+
+
 const handleSave = async () => {
   errors.value = {};
-  lastSavedEanCode.value = eanCode.value.ean;
+
+  const trimmedEan = eanCode.value.ean.trim();
+
+  // If empty, delete it
+  if (!trimmedEan) {
+    await handleDelete();
+    return;
+  }
+
+  // Soft validation for EAN13
+  if (!isValidEan13(trimmedEan)) {
+  const result = await swalWithBootstrapButtons.fire(defaultSwalOptions as SweetAlertOptions);
+
+    if (!result.isConfirmed) {
+      // Revert
+      eanCode.value.ean = lastSavedEanCode.value;
+      return;
+    }
+  }
 
   try {
-    if (!eanCode.value.ean.trim()) {
-      await handleDelete(); // If empty, delete the EAN code
-    } else if (eanCode.value.id) {
+    lastSavedEanCode.value = trimmedEan;
+
+    if (eanCode.value.id) {
       await handleEdit();
     } else {
       await handleCreate();
@@ -125,6 +184,7 @@ const handleSave = async () => {
     errors.value = processGraphQLErrors(err, t);
   }
 };
+
 
 const isSaveDisabled = computed(() => lastSavedEanCode.value === eanCode.value.ean);
 

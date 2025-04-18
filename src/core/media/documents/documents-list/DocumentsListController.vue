@@ -10,6 +10,7 @@ import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
 import { TYPE_DOCUMENT } from "../../files/media";
+import { deleteFilesMutation } from "../../../../shared/api/mutations/media.js"
 
 const { t } = useI18n();
 const refetchNeeded = ref(false);
@@ -58,6 +59,9 @@ const handleRefeched = () => {
                           :default-view-type="defaultView"
                           :label="t('media.documents.title')"
                           :refetch-needed="refetchNeeded"
+                          :bulk-delete-mutation="deleteFilesMutation"
+                          :bulk-delete-success-alert="t('media.documents.alert.toast.bulkDeleteSuccess')"
+                          :bulk-delete-error-alert="t('media.documents.alert.toast.bulkDeleteError')"
                           @refetched="handleRefeched"
                       />
                   </div>

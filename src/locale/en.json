@@ -255,7 +255,9 @@
         "clipboardSuccess": "Your text was successfully copied to the clipboard",
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
-        "errorOccurred": "An error occurred."
+        "errorOccurred": "An error occurred.",
+        "bulkDeleteSuccess": "Items deleted successfully.",
+        "bulkDeleteError": "An error occurred while deleting items."
       }
     },
     "button": {
@@ -285,6 +287,8 @@
       "skip": "Skip",
       "generate": "Generate",
       "translate": "Translate",
+      "deleteAll": "Delete all",
+      "editAll": "Edit all",
       "change": "Change"
     },
     "labels": {
@@ -396,6 +400,25 @@
         }
       },
       "organisms": {
+        "aiBulkTranslator": {
+          "button": "AI Translate",
+          "title": "Translate {count} {type}",
+          "description": "This tool uses AI to auto-translate the selected entities. You’ll be able to preview and confirm translations in the next step (coming soon).",
+          "startButton": "Start Translation",
+          "sourceLanguage": "Source Language",
+          "targetLanguages": "Target Language(s)",
+          "startedToast": "Translation started. The process is running in the background.",
+          "overrideCheckbox": "Override existing translations if already present",
+          "error": {
+            "missingLanguages": "Please select both source and target languages.",
+            "general": "Something went wrong while starting the translation."
+          },
+          "types": {
+            "products": "products",
+            "properties": "properties",
+            "values": "select values"
+          }
+        },
         "aiContentGenerator": {
             "title": "Generating content...",
             "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
@@ -710,6 +733,10 @@
       "edit": {
         "title": "Edit Ean Code"
       },
+      "invalidEanCodeAlert": {
+        "title": "This EAN code looks invalid",
+        "text": "The code you've entered does not pass EAN-13 validation rules. Are you sure you want to continue?"
+      },
       "helpSection": {
         "prefix": {
           "header": "EAN Code Prefix",
@@ -728,7 +755,8 @@
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
         "currentEanCode": "Current EAN Code",
-        "externalEanCode": "External EAN Code"
+        "externalEanCode": "External EAN Code",
+        "assignBulk": "Assign EAN Codes"
       },
       "placeholders": {
         "eanCode": "Enter EAN code",
@@ -750,6 +778,21 @@
         "button": {
           "assign": "Assign",
           "release": "Release"
+        }
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "EAN codes deleted successfully.",
+          "bulkDeleteError": "Failed to delete EAN codes. Please try again.",
+          "success": {
+                "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
+              },
+              "warning": {
+                "noAvailable": "No EAN codes could be assigned"
+              },
+              "error": {
+                "assignBulk": "An error occurred while assigning EAN codes"
+              }
         }
       }
     },
@@ -773,6 +816,12 @@
         "dragAndDrop": "Use drag and drop or ➕ button to add new products",
         "noVariationsLeft": "No products to add left",
         "sameProductType": "Same product type only"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Products deleted successfully.",
+          "bulkDeleteError": "Failed to delete products. Please try again."
+        }
       },
       "tabs": {
         "content": "Content",
@@ -1339,6 +1388,12 @@
     },
     "priceLists": {
       "title": "Prices Lists",
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Price lists deleted successfully.",
+          "bulkDeleteError": "Failed to delete price lists. Please try again."
+        }
+      },
       "helpSection": {
         "name": {
           "header": "Name",
@@ -1559,6 +1614,12 @@
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add from existing media",
         "images": "Images"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Files deleted successfully.",
+          "bulkDeleteError": "Failed to delete files."
+        }
       }
     },
     "images": {
@@ -1584,6 +1645,12 @@
       },
       "placeholders": {
         "imageType": "Image Type"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Images deleted successfully.",
+          "bulkDeleteError": "Failed to delete images."
+        }
       }
     },
     "videos": {
@@ -1603,6 +1670,12 @@
       },
       "labels": {
         "videoUrl": "Video URL"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Videos deleted successfully.",
+          "bulkDeleteError": "Failed to delete videos."
+        }
       }
     },
     "documents": {
@@ -1620,6 +1693,12 @@
       },
       "show": {
         "title": "Document"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Documents deleted successfully.",
+          "bulkDeleteError": "Failed to delete documents."
+        }
       }
     }
   },
@@ -1802,6 +1881,12 @@
       "error": {
         "duplicate": "Property with that name already exists."
       },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Properties deleted successfully.",
+          "bulkDeleteError": "Failed to delete properties. Please try again."
+        }
+      },
       "create": {
         "title": "Create Property",
         "wizard": {
@@ -1891,6 +1976,12 @@
       },
       "placeholders": {
         "value": "Enter value"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Property values deleted successfully.",
+          "bulkDeleteError": "Failed to delete property values. Please try again."
+        }
       }
     },
     "rule": {
@@ -1939,6 +2030,10 @@
         "noAddedProperties": "You need to add some properties for the rule!"
       },
       "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Rules deleted successfully.",
+          "bulkDeleteError": "Failed to delete rules. Please try again."
+        },
         "updateSuccess": "Rule Updated",
         "createSuccess": "Rule Created",
         "createProductProperty": "Product Property Created",
@@ -1957,6 +2052,10 @@
         "required": {
           "title": "Required",
           "example": "This property will be enforced as required on products with the selected product-type."
+        },
+        "filled": {
+          "title": "Done",
+          "example": "This property has a value ad is ready to go."
         },
         "optional": {
           "title": "Optional",
