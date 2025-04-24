@@ -48,7 +48,7 @@ const clearSelection = () => {
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
-         :fixed-filter-variables="{'property': {'isProductType': { exact: false }}}"
+         :fixed-filter-variables="{'isProductType': false }"
           >
       <template #bulkActions="{ selectedEntities }">
         <AiBulkTranslator :type="'values'" :selected-entities="selectedEntities" @started="clearSelection" />

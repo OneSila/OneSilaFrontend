@@ -244,7 +244,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       lookupKeys: ['hasMissingInformation'],
       label: t('products.products.inspector.labels.missingInfo'),
       addLookup: true,
-      lookupType: 'none'
     },
   ],
   orders: []

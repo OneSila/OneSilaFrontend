@@ -45,7 +45,9 @@ const onDataFetched = (data) => {
       type: FieldType.Boolean
     } as ShowField;
 
-    showConfig.fields.push(hasImageField);
+    if (!showConfig.fields.some(f => f.name === 'hasImage')) {
+      showConfig.fields.push(hasImageField);
+    }
 
     if (data[showConfig.subscriptionKey].hasImage) {
       hasImage.value = true;
