@@ -8,9 +8,10 @@ import {
   isAuthenticated,
   isChangingAuthState,
   isUserPageLoading,
+  removeAuth,
   resetLoadingStates
 } from './shared/modules/auth';
-import {onMounted, onUpdated, ref, watch} from "vue";
+import {computed, onMounted, onUpdated, ref, watch} from "vue";
 import { useAppStore } from './shared/plugins/store';
 import SideBar from './shared/components/organisms/nav-bar/SideBar.vue';
 import HeaderBar from './shared/components/organisms/nav-bar/HeaderBar.vue';
@@ -64,6 +65,22 @@ watch(
   }
 );
 
+const isLoggedIn = computed(() =>
+  isAuthenticated(auth) &&
+  hasCompany(auth) &&
+  isActive(auth)
+);
+
+onMounted(() => {
+  window.addEventListener('storage', (e: StorageEvent) => {
+    if (e.key === 'auth_user') {
+      if (!e.newValue) {
+        removeAuth(auth);
+      }
+    }
+  });
+});
+
 </script>
 
 <template>
@@ -76,7 +93,7 @@ watch(
       </div>
     </div>
       <template v-else>
-        <div v-if="isAuthenticated(auth) && hasCompany(auth) && isActive(auth)" class="main-section antialiased relative font-nunito text-sm font-normal vertical"
+        <div v-if="isLoggedIn" class="main-section antialiased relative font-nunito text-sm font-normal vertical"
                 :class="[sidebar ? 'toggle-sidebar' : '', app.rtlClass]">
 
         <div class="relative">
