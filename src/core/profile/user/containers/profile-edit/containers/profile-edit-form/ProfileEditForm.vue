@@ -132,7 +132,6 @@ const onUploaded = async (files: any[]) => {
               </template>
             </ApolloQuery>
           </div>
-
           <hr />
 
           <div class="flex items-center justify-end mt-4">
