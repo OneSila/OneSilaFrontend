@@ -158,6 +158,11 @@ const deleteAll = async (query) => {
 
                 <!-- Bulk Delete Button (Gallery View) -->
                 <div v-if="selectedEntities.length > 0 && haveBulkDelete" class="flex justify-end gap-4 mb-2">
+
+                  <span class="text-sm font-semibold text-gray-900 self-center">
+                    {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
+                  </span>
+
                   <Button @click="deleteAll(query)" class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     {{ t('shared.button.deleteAll') }}
                   </Button>

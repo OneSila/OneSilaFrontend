@@ -207,6 +207,10 @@ defineExpose({
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 
+              <span class="text-sm font-semibold text-gray-900">
+                {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
+              </span>
+
               <!-- Bulk action buttons (only if any items are selected) -->
               <div v-if="selectedEntities.length > 0 && viewType === 'grid' && haveBulk" class="flex items-center space-x-3">
                 <button v-if="config.addBulkEdit" type="button"
@@ -243,6 +247,11 @@ defineExpose({
             <div v-if="viewType === 'table'">
               <div v-if="selectedEntities.length > 0" class="absolute flex h-12 items-center space-x-3 bg-white"
                    :class="config.addGridView ? 'left-4 top-4' : 'left-12 top-1 '">
+
+                <span class="text-sm font-semibold text-gray-900">
+                  {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
+                </span>
+
                 <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
                   {{ t('shared.button.editAll') }}

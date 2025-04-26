@@ -13,6 +13,10 @@ export const getPropertySubscription = gql`
       isProductType
       internalName
       valueValidator
+      propertytranslationSet {
+          name
+          language
+      }
     }
   }
 `;
@@ -34,6 +38,10 @@ export const getPropertySelectValueSubscription = gql`
     propertySelectValue(pk: $pk) {
       id
       value
+      propertyselectvaluetranslationSet {
+        language
+        value
+      }
       property {
         id
         name

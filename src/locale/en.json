@@ -300,6 +300,7 @@
       "name": "Name",
       "active": "Active",
       "actions": "Actions",
+      "selected": "Selected",
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",

@@ -8,12 +8,13 @@ import {Card} from "../../../../shared/components/atoms/card";
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
-import {FieldType, PropertyTypes} from "../../../../shared/utils/constants";
+import {FieldType, flagMapping, PropertyTypes} from "../../../../shared/utils/constants";
 import ProductList from "./containers/products-list/ProductsList.vue"
 import ValuesList from "./containers/values-list/ValuesList.vue"
 import {Loader} from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
 import {ShowField} from "../../../../shared/components/organisms/general-show/showConfig";
+import {TextInput} from "../../../../shared/components/atoms/input-text";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -23,9 +24,11 @@ const showValues = ref(false);
 const isProductType = ref(false);
 const hasImage = ref(false);
 const loading = ref(true);
+const translatableFields = ref([]);
 
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
+    { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
     { name: 'products', label: t('products.title'), icon: 'box' },
     { name: 'configurators', label: t('properties.rule.title'), icon: 'cog' },
     { name: 'values', label: t('properties.values.title'), icon: 'sitemap' },
@@ -37,6 +40,7 @@ const onDataFetched = (data) => {
 
   showValues.value = data[showConfig.subscriptionKey].type === PropertyTypes.SELECT || data[showConfig.subscriptionKey].type === PropertyTypes.MULTISELECT;
   isProductType.value = data[showConfig.subscriptionKey].isProductType;
+  translatableFields.value = data[showConfig.subscriptionKey].propertytranslationSet;
 
   if ([PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(data[showConfig.subscriptionKey].type)) {
     const hasImageField =  {
@@ -88,6 +92,28 @@ const onDataFetched = (data) => {
         <Tabs :tabs="tabItems">
           <template v-slot:general>
             <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+          </template>
+          <template v-slot:translations>
+            <div class="w-full md:w-1/2 px-2 box-border" v-for="(field, index) in translatableFields" :key="field.language">
+              <Flex>
+                <FlexCell center>
+                  <Flex gap="4">
+                    <FlexCell center>
+                      <label class="font-semibold block text-sm leading-6 text-gray-900 mb-0">{{ field.label }}</label>
+                    </FlexCell>
+                    <FlexCell
+                        v-if="sourceTranslationField && field.language !== sourceTranslationField.language && field.name == ''"
+                        center>
+                    </FlexCell>
+                  </Flex>
+
+                </FlexCell>
+
+              </Flex>
+              <div class="mt-2">
+                <TextInput class="w-full" :model-value="field.name" :prepend="flagMapping[field.language]" disabled />
+              </div>
+            </div>
           </template>
           <template v-slot:products>
              <ProductList :id="id" />
