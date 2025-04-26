@@ -15,13 +15,18 @@ import { Loader } from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
 import { TextInput } from "../../../../shared/components/atoms/input-text";
 
+interface TranslatableField {
+  language: string;
+  value: string;
+}
+
 const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const tabItems = ref();
 const isProductType = ref(false);
 const loading = ref(true);
-const translatableFields = ref([]);
+const translatableFields = ref<TranslatableField[]>([]);
 
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
@@ -77,21 +82,6 @@ const onDataFetched = (data) => {
           </template>
           <template v-slot:translations>
             <div class="w-full md:w-1/2 px-2 box-border" v-for="(field, index) in translatableFields" :key="field.language">
-              <Flex>
-                <FlexCell center>
-                  <Flex gap="4">
-                    <FlexCell center>
-                      <label class="font-semibold block text-sm leading-6 text-gray-900 mb-0">{{ field.label }}</label>
-                    </FlexCell>
-                    <FlexCell
-                        v-if="sourceTranslationField && field.language !== sourceTranslationField.language && field.value == ''"
-                        center>
-                    </FlexCell>
-                  </Flex>
-
-                </FlexCell>
-
-              </Flex>
               <div class="mt-2">
                 <TextInput class="w-full" :model-value="field.value" :prepend="flagMapping[field.language]" disabled />
               </div>
