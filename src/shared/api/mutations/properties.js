@@ -44,8 +44,8 @@ export const deletePropertyMutation = gql`
 `;
 
 export const deletePropertiesMutation = gql`
-  mutation deleteProperties($ids: [GlobalID!]!) {
-    deleteProperties(data: {ids: $ids}) {
+  mutation deleteProperties($data: [NodeInput!]!) {
+    deleteProperties(data: $data) {
       id
     }
   }
@@ -135,8 +135,8 @@ export const deletePropertySelectValueMutation = gql`
 `;
 
 export const deletePropertySelectValuesMutation = gql`
-  mutation deletePropertySelectValues($ids: [GlobalID!]!) {
-    deletePropertySelectValues(data: {ids: $ids}) {
+  mutation deletePropertySelectValues($data: [NodeInput!]!) {
+    deletePropertySelectValues(data: $data) {
       id
     }
   }
@@ -410,8 +410,8 @@ export const deleteProductPropertiesRuleMutation = gql`
 `;
 
 export const deleteProductPropertiesRulesMutation = gql`
-  mutation deleteProductPropertiesRules($ids: [GlobalID!]!) {
-    deleteProductPropertiesRules(data: {ids: $ids}) {
+  mutation deleteProductPropertiesRules($data: [NodeInput!]!) {
+    deleteProductPropertiesRules(data: $data) {
       id
     }
   }

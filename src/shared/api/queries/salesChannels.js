@@ -54,6 +54,7 @@ export const getMagentoChannelQuery = gql`
       syncContents
       syncEanCodes
       syncPrices
+      importOrders
       hostApiUsername
       hostApiKey
       authenticationMethod
@@ -125,6 +126,7 @@ export const salesChannelViewAssignsQuery = gql`
           product {
             id
             name
+            active
           }
           remoteProduct {
             id

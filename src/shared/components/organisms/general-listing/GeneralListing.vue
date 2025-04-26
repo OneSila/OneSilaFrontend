@@ -1,23 +1,22 @@
 <script lang="ts" setup>
 
-import {computed, Ref, ref} from "vue";
-import {Button} from '././../../atoms/button';
-import {ApolloAlertMutation} from '././../../molecules/apollo-alert-mutation';
-import {ListingConfig} from './listingConfig';
-import {Pagination} from "../../molecules/pagination";
-import {Link} from "../../atoms/link";
-import {useI18n} from "vue-i18n";
-import {SearchConfig} from "../general-search/searchConfig";
-import {FilterManager} from "../../molecules/filter-manager";
-import {getFieldComponent} from "../general-show/showConfig";
-import {FieldType} from "../../../utils/constants";
-import {Checkbox} from "../../atoms/checkbox";
-import {Icon} from "../../atoms/icon";
-import {Image} from "../../atoms/image";
-import {TableRow} from "./containers/table-row";
-import {GridCard} from "./containers/grid-card";
+import { computed, ref } from "vue";
+import { ListingConfig } from './listingConfig';
+import { Pagination } from "../../molecules/pagination";
+import { useI18n } from "vue-i18n";
+import { SearchConfig } from "../general-search/searchConfig";
+import { FilterManager } from "../../molecules/filter-manager";
+import { FieldType } from "../../../utils/constants";
+import { Checkbox } from "../../atoms/checkbox";
+import { Icon } from "../../atoms/icon";
+import { TableRow } from "./containers/table-row";
+import { GridCard } from "./containers/grid-card";
+import apolloClient from "../../../../../apollo-client";
+import { Toast } from "../../../modules/toast";
+import Swal from 'sweetalert2';
+import { SweetAlertOptions } from 'sweetalert2';
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const props = withDefaults(
     defineProps<{
@@ -33,6 +32,10 @@ const props = withDefaults(
       fixedOrderVariables: null
     }
 );
+const slots = defineSlots<{
+  bulkActions?: (scope: { selectedEntities: string[]; viewType: string }) => any;
+}>();
+
 
 const getShowRoute = (item) => {
 
@@ -67,13 +70,12 @@ const getUpdatedField = (field, item, index) => {
   return field;
 }
 
-// --- Bulk Selection Logic ---
 
 // Use a generic variable name so this component remains general.
 const selectedEntities = ref<string[]>([]);
 
 // "haveBulk" is true when either bulk edit or bulk delete is enabled.
-const haveBulk = computed(() => props.config.addBulkEdit || props.config.addBulkDelete);
+const haveBulk = computed(() => props.config.addBulkEdit || (props.config.addBulkDelete && props.config.bulkDeleteMutation));
 
 // For an individual row, add or remove its ID from the selection.
 const selectCheckbox = (id: string, value: boolean) => {
@@ -122,6 +124,69 @@ const getImageField = (item: any) => {
   return null;
 };
 
+const deleteAll = async (query) => {
+
+  const defaultSwalOptions = {
+    title: t('shared.alert.mutationAlert.title'),
+    text: t('shared.alert.mutationAlert.text'),
+    confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
+    cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
+    icon: 'warning',
+    showCancelButton: true,
+    reverseButtons: true,
+    padding: '2em'
+  };
+
+  const defaultSwalClasses = {
+    popup: 'sweet-alerts',
+    confirmButton: 'btn btn-secondary',
+    cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3'
+  }
+
+    const swalWithBootstrapButtons = Swal.mixin({
+    customClass: defaultSwalClasses,
+    buttonsStyling: false
+  });
+
+  const result = await swalWithBootstrapButtons.fire(defaultSwalOptions as SweetAlertOptions);
+
+  if (!result.isConfirmed) {
+    return
+  }
+
+  const inputData = selectedEntities.value.map((entity) => ({
+    id: entity
+  }));
+
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: props.config.bulkDeleteMutation,
+      variables: { data: inputData }
+    });
+
+    Toast.success(
+      props.config.bulkDeleteSuccessAlert || t('shared.alert.toast.bulkDeleteSuccess')
+    );
+
+    query.refetch();
+  } catch (error) {
+    Toast.error(
+      props.config.bulkDeleteErrorAlert || t('shared.alert.toast.bulkDeleteError')
+    );
+  }
+
+  selectedEntities.value = [];
+};
+
+const clearSelected = () => {
+  selectedEntities.value = []
+}
+
+defineExpose({
+  clearSelected
+})
+
+
 </script>
 
 <template>
@@ -142,17 +207,22 @@ const getImageField = (item: any) => {
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 
+              <span class="text-sm font-semibold text-gray-900">
+                {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
+              </span>
+
               <!-- Bulk action buttons (only if any items are selected) -->
-              <div v-if="selectedEntities.length > 0 && viewType === 'grid' && haveBulk"
-                   class="flex items-center space-x-3">
-                <button type="button"
+              <div v-if="selectedEntities.length > 0 && viewType === 'grid' && haveBulk" class="flex items-center space-x-3">
+                <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                  Bulk edit
+                  {{ t('shared.button.editAll') }}
                 </button>
-                <button type="button"
+                <button v-if="config.addBulkDelete && config.bulkDeleteMutation" type="button" @click="deleteAll(query)"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                  Delete all
+                  {{ t('shared.button.deleteAll') }}
                 </button>
+
+                <slot name="bulkActions" v-bind="{ selectedEntities, viewType }" />
               </div>
               <!-- Select All control -->
               <div v-if="viewType === 'grid' && haveBulk" class="flex items-center mt-1">
@@ -177,14 +247,21 @@ const getImageField = (item: any) => {
             <div v-if="viewType === 'table'">
               <div v-if="selectedEntities.length > 0" class="absolute flex h-12 items-center space-x-3 bg-white"
                    :class="config.addGridView ? 'left-4 top-4' : 'left-12 top-1 '">
-                <button type="button"
+
+                <span class="text-sm font-semibold text-gray-900">
+                  {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
+                </span>
+
+                <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
-                  Bulk edit
+                  {{ t('shared.button.editAll') }}
                 </button>
-                <button type="button"
+                <button v-if="config.addBulkDelete && config.bulkDeleteMutation" type="button" @click="deleteAll(query)"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
-                  Delete all
+                  {{ t('shared.button.deleteAll') }}
                 </button>
+
+                <slot name="bulkActions" v-bind="{ selectedEntities, viewType }" />
               </div>
                 <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
                   <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
@@ -211,6 +288,7 @@ const getImageField = (item: any) => {
                   <!-- Delegate each row to TableRow.vue -->
                   <TableRow
                     v-for="item in data[queryKey].edges"
+                    :have-bulk="haveBulk"
                     :key="item.node.id"
                     :item="item"
                     :config="config"
@@ -236,6 +314,7 @@ const getImageField = (item: any) => {
                 <!-- Delegate each grid card to GridCard.vue -->
                 <GridCard
                     v-for="item in data[queryKey].edges"
+                    :have-bulk="haveBulk"
                     :key="item.node.id"
                     :item="item"
                     :config="config"

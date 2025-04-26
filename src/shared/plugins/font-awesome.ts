@@ -147,7 +147,8 @@ import {
   faClockRotateLeft,
   faFileImport,
   faGem,
-  faCircle
+  faCircle,
+  faGauge
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -295,6 +296,7 @@ library.add(faClockRotateLeft as IconDefinition);
 library.add(faFileImport as IconDefinition);
 library.add(faGem as IconDefinition);
 library.add(faCircle as IconDefinition);
+library.add(faGauge as IconDefinition);
 
 
 export default {

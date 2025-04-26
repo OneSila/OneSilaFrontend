@@ -1,10 +1,10 @@
-import {FieldType} from "../../../../../../shared/utils/constants";
+import { FieldType } from "../../../../../../shared/utils/constants";
 import { remoteLanguagesQuery, getRemoteLanguageQuery } from "../../../../../../shared/api/queries/salesChannels.js";
-import {ListingConfig} from "../../../../../../shared/components/organisms/general-listing/listingConfig";
-import {Badge} from "../../../../../../shared/components/organisms/general-show/showConfig";
-import {FormConfig, FormType} from '../../../../../../shared/components/organisms/general-form/formConfig';
-import {languagesQuery} from "../../../../../../shared/api/queries/languages";
-import {updateRemoteLanguageMutation} from "../../../../../../shared/api/mutations/salesChannels.js";
+import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { Badge } from "../../../../../../shared/components/organisms/general-show/showConfig";
+import { FormConfig, FormType } from '../../../../../../shared/components/organisms/general-form/formConfig';
+import { companyLanguagesQuery } from "../../../../../../shared/api/queries/languages.js";
+import { updateRemoteLanguageMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
 
 export const languageEditFormConfigConstructor = (
   t: Function,
@@ -38,8 +38,8 @@ export const languageEditFormConfigConstructor = (
       label: t("shared.placeholders.language"),
       labelBy: "name",
       valueBy: "code",
-      query: languagesQuery,
-      dataKey: "languages",
+      query: companyLanguagesQuery,
+      dataKey: "companyLanguages",
       isEdge: false,
       multiple: false,
       filterable: true,

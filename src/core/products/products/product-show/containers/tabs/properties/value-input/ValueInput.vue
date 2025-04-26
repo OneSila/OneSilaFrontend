@@ -29,7 +29,7 @@ const { t } = useI18n();
 
 
 const props = defineProps<{ productId: string; value: ProductPropertyValue, ruleId?: string | null }>();
-const emit = defineEmits(['refetch', 'update-id', 'remove']);
+const emit = defineEmits(['refetch', 'update-id', 'remove', 'update-value']);
 
 const field: Ref<QueryFormField| null> = ref(null);
 const val: Ref<any> = ref(null);
@@ -196,6 +196,14 @@ const saveChanges = async () => {
       await createTranslationValue(translationInputData);
     }
   }
+
+  emit('update-value', {
+    id: props.value.property.id,
+    type: props.value.property.type,
+    value: val.value,
+    language: props.value.translation.language,
+  });
+
 
 };
 

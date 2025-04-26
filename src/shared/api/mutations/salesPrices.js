@@ -133,8 +133,8 @@ export const deleteSalesPriceListMutation = gql`
 `;
 
 export const deleteSalesPriceListsMutation = gql`
-  mutation deleteSalesPriceLists($ids: [GlobalID!]!) {
-    deleteSalesPriceLists(data: {ids: $ids}) {
+  mutation deleteSalesPriceLists($data: [NodeInput!]!) {
+    deleteSalesPriceLists(data: $data) {
       id
     }
   }

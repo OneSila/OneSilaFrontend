@@ -3,7 +3,11 @@ import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import {getPropertyQuery, propertiesQuery} from "../../../shared/api/queries/properties.js";
-import {deletePropertyMutation, updatePropertyMutation} from "../../../shared/api/mutations/properties.js";
+import {
+  deletePropertiesMutation,
+  deletePropertyMutation,
+  updatePropertyMutation
+} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getPropertySubscription } from '../../../shared/api/subscriptions/properties.js';
 
@@ -224,6 +228,10 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   addPagination: true,
   isMainPage: isMainPage,
   deleteMutation: deletePropertyMutation,
+  addBulkDelete: true,
+  bulkDeleteMutation: deletePropertiesMutation,
+  bulkDeleteSuccessAlert: t('properties.properties.alert.toast.bulkDeleteSuccess'),
+  bulkDeleteErrorAlert: t('properties.properties.alert.toast.bulkDeleteError'),
 });
 
 export const showConfigConstructor = (t: Function, id): ShowConfig => ({

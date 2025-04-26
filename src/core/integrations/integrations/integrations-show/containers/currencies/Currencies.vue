@@ -8,8 +8,11 @@ import {
   listingQuery,
   listingQueryKey
 } from "./configs";
+import { Button } from "../../../../../../shared/components/atoms/button";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
+const emit = defineEmits(['pull-data']);
+
 const { t } = useI18n();
 
 const searchConfig = currenciesSearchConfigConstructor(t);
@@ -20,6 +23,9 @@ const listingConfig = currenciesListingConfigConstructor(t, props.id);
   <GeneralTemplate>
 
     <template v-slot:buttons>
+      <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
+        {{ t('integrations.labels.pullData') }}
+      </Button>
     </template>
 
     <template v-slot:content>

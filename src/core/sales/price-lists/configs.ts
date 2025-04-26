@@ -7,7 +7,10 @@ import {companiesQuery} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
-import {deleteSalesPriceListMutation} from "../../../shared/api/mutations/salesPrices.js";
+import {
+  deleteSalesPriceListMutation,
+  deleteSalesPriceListsMutation
+} from "../../../shared/api/mutations/salesPrices.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 
 const getSubmitUrl = (customerId) => {
@@ -260,6 +263,10 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   editUrlName: 'sales.priceLists.edit',
   showUrlName: 'sales.priceLists.show',
   deleteMutation: deleteSalesPriceListMutation,
+  addBulkDelete: true,
+  bulkDeleteMutation: deleteSalesPriceListsMutation,
+  bulkDeleteSuccessAlert: t('sales.priceLists.alert.toast.bulkDeleteSuccess'),
+  bulkDeleteErrorAlert: t('sales.priceLists.alert.toast.bulkDeleteError'),
   addEdit: true,
   addShow: true,
   addDelete: true,

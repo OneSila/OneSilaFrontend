@@ -16,6 +16,8 @@ import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
 import { Imports } from "./containers/imports";
+import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
+import {Toast} from "../../../../shared/modules/toast";
 
 const router = useRouter();
 const route = useRoute();
@@ -98,6 +100,30 @@ onMounted(async () => {
   }
 });
 
+const pullData = async () => {
+  try {
+    loading.value = true;
+    await apolloClient.mutate({
+      mutation: refreshSalesChannelWebsitesMutation,
+      variables: {
+        data: {
+          id: salesChannelId.value,
+        },
+      },
+    });
+    Toast.success(t("integrations.show.pullData.success"));
+
+    const currentUrl = window.location.pathname + window.location.search;
+    window.location.href = currentUrl;
+
+  } catch (error) {
+    Toast.error(t("integrations.show.pullData.error"));
+    console.error("Pull data failed:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
 </script>
 
 <template>
@@ -140,17 +166,17 @@ onMounted(async () => {
 
           <!-- Views (Stores) Tab -->
           <template #stores>
-            <Stores v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" />
+            <Stores v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
 
           <!-- Languages Tab -->
           <template #languages>
-            <Languages v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId"  />
+            <Languages v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
 
           <!-- Currencies Tab -->
           <template #currencies>
-            <Currencies v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId"  />
+            <Currencies v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
 
           <!-- Imports Tab -->

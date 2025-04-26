@@ -6,6 +6,7 @@ export const salesPricesQuery = gql`
       edges {
         node {
           id
+          realId
           product {
             id
             sku

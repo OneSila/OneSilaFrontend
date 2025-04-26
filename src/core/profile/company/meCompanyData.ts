@@ -15,9 +15,16 @@ export interface CompanyUser {
   isMultiTenantCompanyOwner: boolean;
   invitationAccepted: boolean;
 }
+
+export interface LanguageDetail {
+    code: string;
+    name: string;
+}
+
 export interface MeCompanyData {
   name: string;
   language: string;
+  languages: string[];
   address1?: string;
   address2?: string;
   postcode?: string;
@@ -29,12 +36,14 @@ export interface MeCompanyData {
   vatNumber?: string;
   website?: string;
   multitenantuserSet: CompanyUser[];
+  languageDetail: LanguageDetail;
 }
 
 export interface MeCompanySubscriptionResult {
   myMultiTenantCompany: {
     name: string;
     language: string;
+    languages: string[];
     address1: string;
     address2: string;
     postcode: string;
@@ -44,6 +53,7 @@ export interface MeCompanySubscriptionResult {
     vatNumber: string;
     website: string;
     multitenantuserSet: MultiTenantUser[];
+    languageDetail: LanguageDetail;
   };
 }
 

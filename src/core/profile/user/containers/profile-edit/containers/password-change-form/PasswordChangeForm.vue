@@ -77,7 +77,7 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
 <template>
   <div class="rounded-md p-4 mb-5 bg-white dark:bg-[#182434]">
       <h6 class="text-lg font-bold mb-5">{{ t('profile.labels.changePassword') }}</h6>
-          <div>
+        <div>
           <TextInputPrepend id="firstName" v-model="form.newPassword" :label="t('profile.labels.newPassword')" type="password"
                             :placeholder="t('profile.placeholders.newPassword')">
             <Icon name="lock"/>
@@ -88,6 +88,10 @@ watch(hasUnsavedChanges, (newVal, oldVal) => {
                             :placeholder="t('profile.placeholders.confirmNewPassword')">
             <Icon name="lock"/>
           </TextInputPrepend>
+        </div>
+        <div v-if="form.newPassword !== '' && form.newPassword != form.confirmNewPassword" class="text-danger text-small blink-animation ml-1 mb-1">
+          <Icon size="sm" name="exclamation-circle" />
+          <span class="ml-1">{{ t('profile.messages.changePasswordMatch') }}</span>
         </div>
 
         <hr/>

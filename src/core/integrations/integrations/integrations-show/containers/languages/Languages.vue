@@ -10,22 +10,25 @@ import {
   languagesListingQuery
 } from "./configs";
 import apolloClient from "../../../../../../../apollo-client";
-import { languagesQuery } from "../../../../../../shared/api/queries/languages.js";
-import {ListingConfig} from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { companyLanguagesQuery } from "../../../../../../shared/api/queries/languages.js";
+import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { Button } from "../../../../../../shared/components/atoms/button";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
+const emit = defineEmits(['pull-data']);
+
 const badgeMap = ref({});
 const listingConfig = ref<ListingConfig | null>(null);
 const { t } = useI18n();
 
 const fetchLanguages = async () => {
   const {data} = await apolloClient.query({
-    query: languagesQuery,
+    query: companyLanguagesQuery,
   });
 
-  if (data && data.languages) {
+  if (data && data.companyLanguages) {
       const map = {};
-      data.languages.forEach(lang => {
+      data.companyLanguages.forEach(lang => {
         map[lang.code] = { text: lang.name, color: 'blue' };
       });
       badgeMap.value = map;
@@ -42,6 +45,9 @@ const searchConfig = languagesSearchConfigConstructor(t);
   <GeneralTemplate>
 
     <template v-slot:buttons>
+      <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
+        {{ t('integrations.labels.pullData') }}
+      </Button>
     </template>
 
     <template v-slot:content>

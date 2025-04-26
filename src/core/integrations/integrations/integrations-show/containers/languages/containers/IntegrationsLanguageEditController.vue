@@ -15,6 +15,7 @@ const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
 
 const formConfig = languageEditFormConfigConstructor(t, type.value, languageId.value, integrationId);
+
 </script>
 
 <template>

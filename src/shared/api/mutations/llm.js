@@ -38,6 +38,24 @@ export const generateAiTranslationMutation = gql`
   }
 `;
 
+export const bulkTranslateAiContentMutation = gql`
+  mutation bulkTranslateAiContentMutation($data: AIBulkTranslationInput!) {
+    bulkTranslateAiContent(instance: $data) {
+      ... on AiTaskResponse {
+        success
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 export const detectRemoteValidPropertiesMutation = gql`
   mutation detectRemoteValidPropertiesMutation($data: SalesChannelPartialInput!) {
     detectRemoteValidProperties(instance: $data) {

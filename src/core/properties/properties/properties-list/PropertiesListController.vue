@@ -7,11 +7,19 @@ import { Link } from "../../../../shared/components/atoms/link";
 import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
+import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
+import {ref} from "vue";
 
 const { t } = useI18n();
 
 const searchConfig = searchConfigConstructor(t);
 const listingConfig = listingConfigConstructor(t, true);
+
+const generalListingRef = ref<any>(null);
+const clearSelection = () => {
+  generalListingRef.value?.clearSelected?.()
+}
+
 
 </script>
 
@@ -35,12 +43,16 @@ const listingConfig = listingConfigConstructor(t, true);
 
    <template v-slot:content>
      <GeneralListing
+         ref="generalListingRef"
          :searchConfig="searchConfig"
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
-         :fixed-filter-variables="{'isProductType': { exact: false }}"
-      />
+         :fixed-filter-variables="{'isProductType': { exact: false }}">
+      <template #bulkActions="{ selectedEntities }">
+        <AiBulkTranslator :type="'properties'" :selected-entities="selectedEntities" @started="clearSelection" />
+      </template>
+    </GeneralListing>
    </template>
   </GeneralTemplate>
 </template>

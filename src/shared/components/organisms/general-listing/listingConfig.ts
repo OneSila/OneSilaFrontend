@@ -28,6 +28,9 @@ export interface ListingConfig {
   addActions?: boolean;
   addBulkEdit?: boolean;
   addBulkDelete?: boolean;
+  bulkDeleteMutation?: any;
+  bulkDeleteSuccessAlert?: string;
+  bulkDeleteErrorAlert?: string;
   isMainPage?: boolean;
   addGridView?: boolean;
   defaultGridIcon?: string;

@@ -15,22 +15,14 @@ import {PrimaryButton} from "../../../../../../../shared/components/atoms/button
 import {vatRatesQuery} from "../../../../../../../shared/api/queries/vatRates.js";
 import {FieldQuery} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {FieldCheckbox} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-checkbox";
-import {Label} from "../../../../../../../shared/components/atoms/label";
 import {SecondaryButton} from "../../../../../../../shared/components/atoms/button-secondary";
 import apolloClient from "../../../../../../../../apollo-client";
 import {updateProductMutation} from "../../../../../../../shared/api/mutations/products.js";
 import {useRouter} from "vue-router";
 import { ProductType } from "../../../../../../../shared/utils/constants";
-import { leadTimesQuery, leadTimeProductsOutOfStockQuery } from "../../../../../../../shared/api/queries/leadtimes.js";
-import { createLeadTimeProductOutOfStockMutation, updateLeadTimeProductOutOfStockMutation, deleteLeadTimeProductOutOfStockMutation } from "../../../../../../../shared/api/mutations/leadtimes.js";
-import {leadTimeOnTheFlyConfig} from "../../../../../../settings/leadtimes/configs";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
-
-const leadtimeVal = ref(null);
-const leadtimeOutOfStockId = ref(null);
-const leadtimeInitialVal = ref(null);
 
 const form = reactive({
   id: props.product.id,
@@ -81,22 +73,6 @@ const fields = {
   } : null,
 };
 
-const leadtimeField = {
-      type: FieldType.Query,
-      name: 'leadtime',
-      label:  t('settings.leadtimes.labels.outOfStock'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: leadTimesQuery,
-      dataKey: 'leadTimes',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      optional: true,
-      formMapIdentifier: 'id',
-      createOnFlyConfig: leadTimeOnTheFlyConfig(t),
-}
-
 const getCleanData = (data) => {
   let cleanedData =  {
     id: data.id,
@@ -107,6 +83,8 @@ const getCleanData = (data) => {
 
   if (data.vatRate?.id) {
     cleanedData['vatRate'] = data.vatRate;
+  } else {
+    cleanedData['vatRate'] = null;
   }
 
   return cleanedData;
@@ -162,7 +140,7 @@ const handleSubmitAndRedirect = async () => {
       <!-- Conditionally Rendered VAT Rate Field -->
       <div class="col-span-full mt-3" v-if="product.type !== ProductType.Configurable">
         <label v-if="fields.vatRate" class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields['vatRate'].label }}</label>
-        <FieldQuery :field="fields['vatRate'] as QueryFormField" :model-value="form.vatRate.id" @update:modelValue="form.vatRate.id = $event"/>
+        <FieldQuery :field="fields['vatRate'] as QueryFormField" v-model="form.vatRate.id" @update:modelValue="form.vatRate.id = $event"/>
       </div>
 
       <div class="col-span-full mt-3">

@@ -8,12 +8,18 @@ import {Card} from "../../../../shared/components/atoms/card";
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
-import {FieldType, PropertyTypes} from "../../../../shared/utils/constants";
+import {FieldType, flagMapping, PropertyTypes} from "../../../../shared/utils/constants";
 import ProductList from "./containers/products-list/ProductsList.vue"
 import ValuesList from "./containers/values-list/ValuesList.vue"
 import {Loader} from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
 import {ShowField} from "../../../../shared/components/organisms/general-show/showConfig";
+import {TextInput} from "../../../../shared/components/atoms/input-text";
+
+interface TranslatableField {
+  language: string;
+  name: string;
+}
 
 const { t } = useI18n();
 const route = useRoute();
@@ -23,9 +29,11 @@ const showValues = ref(false);
 const isProductType = ref(false);
 const hasImage = ref(false);
 const loading = ref(true);
+const translatableFields = ref<TranslatableField[]>([]);
 
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
+    { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
     { name: 'products', label: t('products.title'), icon: 'box' },
     { name: 'configurators', label: t('properties.rule.title'), icon: 'cog' },
     { name: 'values', label: t('properties.values.title'), icon: 'sitemap' },
@@ -37,6 +45,7 @@ const onDataFetched = (data) => {
 
   showValues.value = data[showConfig.subscriptionKey].type === PropertyTypes.SELECT || data[showConfig.subscriptionKey].type === PropertyTypes.MULTISELECT;
   isProductType.value = data[showConfig.subscriptionKey].isProductType;
+  translatableFields.value = data[showConfig.subscriptionKey].propertytranslationSet;
 
   if ([PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(data[showConfig.subscriptionKey].type)) {
     const hasImageField =  {
@@ -45,7 +54,9 @@ const onDataFetched = (data) => {
       type: FieldType.Boolean
     } as ShowField;
 
-    showConfig.fields.push(hasImageField);
+    if (!showConfig.fields.some(f => f.name === 'hasImage')) {
+      showConfig.fields.push(hasImageField);
+    }
 
     if (data[showConfig.subscriptionKey].hasImage) {
       hasImage.value = true;
@@ -86,6 +97,13 @@ const onDataFetched = (data) => {
         <Tabs :tabs="tabItems">
           <template v-slot:general>
             <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+          </template>
+          <template v-slot:translations>
+            <div class="w-full md:w-1/2 px-2 box-border" v-for="(field, index) in translatableFields" :key="field.language">
+              <div class="mt-2">
+                <TextInput class="w-full" :model-value="field.name" :prepend="flagMapping[field.language]" disabled />
+              </div>
+            </div>
           </template>
           <template v-slot:products>
              <ProductList :id="id" />

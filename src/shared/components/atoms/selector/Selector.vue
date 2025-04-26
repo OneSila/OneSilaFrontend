@@ -193,6 +193,7 @@ const handleKeydown = (event) => {
 .selector .vs__selected-options {
   align-items: flex-start;
   align-content: flex-start;
+  min-width: 100px;
 }
 
 /* .selector .vs__search {

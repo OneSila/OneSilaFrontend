@@ -8,6 +8,7 @@ import FilesSideBar from "./containers/FilesSideBar.vue";
 import FilesList from "./containers/FilesList.vue";
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import { mediaQuery } from "../../../shared/api/queries/media.js";
+import { deleteMediasMutation } from "../../../shared/api/mutations/media.js"
 import MediaCards from "./containers/MediaCards.vue";
 
 const { t } = useI18n();
@@ -57,6 +58,9 @@ const handleRefeched = () => {
                                  :default-view-type="defaultView"
                                  :label="t('media.media.labels.recentFiles')"
                                  :refetch-needed="refetchNeeded"
+                                 :bulk-delete-mutation="deleteMediasMutation"
+                                 :bulk-delete-success-alert="t('media.media.alert.toast.bulkDeleteSuccess')"
+                                 :bulk-delete-error-alert="t('media.media.alert.toast.bulkDeleteError')"
                                  @refetched="handleRefeched"
                       />
                   </div>

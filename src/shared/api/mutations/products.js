@@ -52,8 +52,8 @@ export const deleteProductMutation = gql`
 `;
 
 export const deleteProductsMutation = gql`
-  mutation deleteProducts($ids: [GlobalID!]!) {
-    deleteProducts(data: {ids: $ids}) {
+  mutation deleteProducts($data: [NodeInput!]!) {
+    deleteProducts(data: $data) {
       id
     }
   }

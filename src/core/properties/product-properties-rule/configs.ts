@@ -3,7 +3,12 @@ import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { productPropertiesRulesListingQuery } from "../../../shared/api/queries/properties.js";
-import {deleteProductPropertiesRuleMutation, deletePropertyMutation, updatePropertyMutation} from "../../../shared/api/mutations/properties.js";
+import {
+  deleteProductPropertiesRuleMutation,
+  deleteProductPropertiesRulesMutation,
+  deletePropertyMutation,
+  updatePropertyMutation
+} from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getProductPropertiesRuleSubscription } from '../../../shared/api/subscriptions/properties.js';
 
@@ -31,6 +36,10 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   addPagination: true,
   isMainPage: isMainPage,
   deleteMutation: deleteProductPropertiesRuleMutation,
+  addBulkDelete: isMainPage,
+  bulkDeleteMutation: deleteProductPropertiesRulesMutation,
+  bulkDeleteSuccessAlert: t('properties.rule.alert.toast.bulkDeleteSuccess'),
+  bulkDeleteErrorAlert: t('properties.rule.alert.toast.bulkDeleteError'),
 });
 
 export const showConfigConstructor = (t: Function, id): ShowConfig => ({

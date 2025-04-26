@@ -255,7 +255,9 @@
         "clipboardSuccess": "Your text was successfully copied to the clipboard",
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
-        "errorOccurred": "An error occurred."
+        "errorOccurred": "An error occurred.",
+        "bulkDeleteSuccess": "Items deleted successfully.",
+        "bulkDeleteError": "An error occurred while deleting items."
       }
     },
     "button": {
@@ -285,6 +287,8 @@
       "skip": "Skip",
       "generate": "Generate",
       "translate": "Translate",
+      "deleteAll": "Delete all",
+      "editAll": "Edit all",
       "change": "Change"
     },
     "labels": {
@@ -296,6 +300,7 @@
       "name": "Name",
       "active": "Active",
       "actions": "Actions",
+      "selected": "Selected",
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",
@@ -396,6 +401,25 @@
         }
       },
       "organisms": {
+        "aiBulkTranslator": {
+          "button": "AI Translate",
+          "title": "Translate {count} {type}",
+          "description": "This tool uses AI to auto-translate the selected entities. You’ll be able to preview and confirm translations in the next step (coming soon).",
+          "startButton": "Start Translation",
+          "sourceLanguage": "Source Language",
+          "targetLanguages": "Target Language(s)",
+          "startedToast": "Translation started. The process is running in the background.",
+          "overrideCheckbox": "Override existing translations if already present",
+          "error": {
+            "missingLanguages": "Please select both source and target languages.",
+            "general": "Something went wrong while starting the translation."
+          },
+          "types": {
+            "products": "products",
+            "properties": "properties",
+            "values": "select values"
+          }
+        },
         "aiContentGenerator": {
             "title": "Generating content...",
             "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
@@ -492,6 +516,10 @@
             "language": "Select language"
           }
         },
+        "helpText": {
+          "language": "This is your company's default language. All translatable content will be created in this language. This cannot be changed later.",
+          "languages": "These are the languages your company will support for translations. You can update this list later."
+        },
         "button": {
           "createCompany": "Create Company"
         },
@@ -565,7 +593,10 @@
       "confirmNewPassword": "Confirm your new password"
     },
     "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
-    "changesMade": "Changes were made"
+    "changesMade": "Changes were made",
+    "messages": {
+      "changePasswordMatch": "The passwords should match in order to update!"
+    }
   },
   "companyProfile": {
     "labels": {
@@ -577,6 +608,8 @@
       "postcode": "Postcode",
       "city": "City",
       "vatNumber": "VAT Number",
+      "defaultLanguage": "Default Language",
+      "companyLanguages": "Company Languages",
       "website": "Website",
       "updateButton": "Update Company",
       "editProfile": "Edit Profile",
@@ -591,10 +624,13 @@
       "postcode": "Enter postcode",
       "city": "Enter city",
       "vatNumber": "Enter VAT number",
+      "defaultLanguage": "Enter Default Language",
+      "companyLanguages": "Enter Company Languages",
       "website": "Enter website URL"
     },
     "messages": {
       "unsavedChanges": "You have unapplied changes. Are you sure you want to abort?",
+      "changePasswordMatch": "The passwords should match in order to update!",
       "changesMade": "Changes were made",
       "joined": "Joined"
     }
@@ -702,6 +738,10 @@
       "edit": {
         "title": "Edit Ean Code"
       },
+      "invalidEanCodeAlert": {
+        "title": "This EAN code looks invalid",
+        "text": "The code you've entered does not pass EAN-13 validation rules. Are you sure you want to continue?"
+      },
       "helpSection": {
         "prefix": {
           "header": "EAN Code Prefix",
@@ -720,7 +760,8 @@
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
         "currentEanCode": "Current EAN Code",
-        "externalEanCode": "External EAN Code"
+        "externalEanCode": "External EAN Code",
+        "assignBulk": "Assign EAN Codes"
       },
       "placeholders": {
         "eanCode": "Enter EAN code",
@@ -742,6 +783,21 @@
         "button": {
           "assign": "Assign",
           "release": "Release"
+        }
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "EAN codes deleted successfully.",
+          "bulkDeleteError": "Failed to delete EAN codes. Please try again.",
+          "success": {
+                "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
+              },
+              "warning": {
+                "noAvailable": "No EAN codes could be assigned"
+              },
+              "error": {
+                "assignBulk": "An error occurred while assigning EAN codes"
+              }
         }
       }
     },
@@ -765,6 +821,12 @@
         "dragAndDrop": "Use drag and drop or ➕ button to add new products",
         "noVariationsLeft": "No products to add left",
         "sameProductType": "Same product type only"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Products deleted successfully.",
+          "bulkDeleteError": "Failed to delete products. Please try again."
+        }
       },
       "tabs": {
         "content": "Content",
@@ -1331,6 +1393,12 @@
     },
     "priceLists": {
       "title": "Prices Lists",
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Price lists deleted successfully.",
+          "bulkDeleteError": "Failed to delete price lists. Please try again."
+        }
+      },
       "helpSection": {
         "name": {
           "header": "Name",
@@ -1551,6 +1619,12 @@
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add from existing media",
         "images": "Images"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Files deleted successfully.",
+          "bulkDeleteError": "Failed to delete files."
+        }
       }
     },
     "images": {
@@ -1576,6 +1650,12 @@
       },
       "placeholders": {
         "imageType": "Image Type"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Images deleted successfully.",
+          "bulkDeleteError": "Failed to delete images."
+        }
       }
     },
     "videos": {
@@ -1595,6 +1675,12 @@
       },
       "labels": {
         "videoUrl": "Video URL"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Videos deleted successfully.",
+          "bulkDeleteError": "Failed to delete videos."
+        }
       }
     },
     "documents": {
@@ -1612,6 +1698,12 @@
       },
       "show": {
         "title": "Document"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Documents deleted successfully.",
+          "bulkDeleteError": "Failed to delete documents."
+        }
       }
     }
   },
@@ -1794,6 +1886,12 @@
       "error": {
         "duplicate": "Property with that name already exists."
       },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Properties deleted successfully.",
+          "bulkDeleteError": "Failed to delete properties. Please try again."
+        }
+      },
       "create": {
         "title": "Create Property",
         "wizard": {
@@ -1883,6 +1981,12 @@
       },
       "placeholders": {
         "value": "Enter value"
+      },
+      "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Property values deleted successfully.",
+          "bulkDeleteError": "Failed to delete property values. Please try again."
+        }
       }
     },
     "rule": {
@@ -1931,6 +2035,10 @@
         "noAddedProperties": "You need to add some properties for the rule!"
       },
       "alert": {
+        "toast": {
+          "bulkDeleteSuccess": "Rules deleted successfully.",
+          "bulkDeleteError": "Failed to delete rules. Please try again."
+        },
         "updateSuccess": "Rule Updated",
         "createSuccess": "Rule Created",
         "createProductProperty": "Product Property Created",
@@ -1950,6 +2058,10 @@
           "title": "Required",
           "example": "This property will be enforced as required on products with the selected product-type."
         },
+        "filled": {
+          "title": "Done",
+          "example": "This property has a value ad is ready to go."
+        },
         "optional": {
           "title": "Optional",
           "example": "This property will be added on the product pages, but not enforced as required."
@@ -1963,6 +2075,15 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "pullData": {
+        "success": "Website, languages and currencies pulled successfully.",
+        "error": "Failed to pull remote data. Please try again."
+      },
+      "sections": {
+        "throttling": "Throttling",
+        "syncPreferences": "Sync Preferences",
+        "authentication": "Authentication"
+      },
       "noImportBanner": {
         "title": "First Import Not Completed",
         "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies. If is already created wait for it to finish."
@@ -2005,8 +2126,8 @@
               "integrationStep2": "Click on 'Add New Integration' create the integration and activate it",
               "apiSettingsTitle": "Configure your Magento API settings",
               "apiSettingsDescription": "In order for the integration to work smoothly, please check the following settings in your Magento Admin:",
-              "apiSetting1": "Allow Anonymous Guest Access → Yes (under Web API Security)",
-              "apiSetting2": "Allow OAuth Access Tokens to be used as standalone Bearer token → Yes (under OAuth)",
+              "apiSetting1": "'Allow OAuth Access Tokens to be used as standalone Bearer tokens' → Yes (mandatory, located under: Stores → Configuration → Services → OAuth → OAuth Customer Settings)",
+              "apiSetting2": "'Allow Anonymous Guest Access' → Yes (optional, located under: Stores → Configuration → Services → Magento Web API → Web API Security)",
               "legacyAuthTitle": "Legacy Authentication (not recommended)",
               "legacyAuthWarning": "You can connect using username and password, but we strongly discourage it due to lower security and possible compatibility issues.",
               "importTitle": "Perform an initial import",
@@ -2047,7 +2168,8 @@
       "hostApiUsername": "Host API Username",
       "hostApiKey": "Host API Access Token Key",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
-      "eanCodeAttribute": "EAN Code Attribute"
+      "eanCodeAttribute": "EAN Code Attribute",
+      "pullData": "Pull Data"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",
@@ -2078,6 +2200,10 @@
       }
     },
     "imports": {
+      "retry": {
+        "success": "Retry import process success",
+        "error": "Retry import process had an unexpected error"
+      },
       "create": {
         "title": "Create Import",
         "wizard": {
@@ -2095,7 +2221,11 @@
             "eanCodeSelected": "Ean Code Attribute",
             "selectedAttributes": "Selected Attributes",
             "isEanCode": "Is Ean Code?",
-            "createEanCode": "Create Ean Code"
+            "createEanCode": "Create Ean Code",
+            "description": {
+              "attributes": "Please select the attributes that you want to import into your system. Include both frontend-visible properties and internal Magento attributes managed by extensions.",
+              "eanCode": "Select which attribute will be used as the EAN code. If you don't have one yet but want to sync EAN codes using OneSila, you can create it now."
+            }
           },
           "step3": {
             "title": "Default Attribute Set",

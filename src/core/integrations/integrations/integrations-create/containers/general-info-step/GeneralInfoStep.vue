@@ -5,6 +5,7 @@ import { TextInput } from "../../../../../../shared/components/atoms/input-text"
 import { Label } from "../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 import { IntegrationGeneralInfo } from "../../../integrations";
+import {Accordion} from "../../../../../../shared/components/atoms/accordion";
 
 const props = defineProps<{
   generalInfo: IntegrationGeneralInfo
@@ -12,6 +13,10 @@ const props = defineProps<{
 
 
 const { t } = useI18n();
+
+const accordionItems = [
+  { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' }
+];
 
 </script>
 
@@ -56,39 +61,49 @@ const { t } = useI18n();
       <FlexCell>
         <Flex class="mt-4 gap-4" center>
           <FlexCell center>
-            <Flex vertical class="gap-2">
+            <Accordion :items="accordionItems">
+              <template #throttling>
               <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.requestsPerMinute') }}
-                </Label>
+                <Flex class="mt-4 gap-4" center>
+                  <FlexCell center>
+                    <Flex vertical class="gap-2">
+                      <FlexCell>
+                        <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                          {{ t('integrations.labels.requestsPerMinute') }}
+                        </Label>
+                      </FlexCell>
+                      <FlexCell>
+                        <TextInput class="w-96" v-model="generalInfo.requestsPerMinute" :number="true" placeholder="60" />
+                        <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
+                          <p>{{ t('integrations.salesChannel.helpText.requestsPerMinute') }}</p>
+                        </div>
+                      </FlexCell>
+                    </Flex>
+                  </FlexCell>
+                </Flex>
               </FlexCell>
-              <FlexCell>
-                <TextInput class="w-96" v-model="generalInfo.requestsPerMinute" :number="true" placeholder="60" />
-                <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
-                  <p>{{ t('integrations.salesChannel.helpText.requestsPerMinute') }}</p>
-                </div>
-              </FlexCell>
-            </Flex>
-          </FlexCell>
-        </Flex>
-      </FlexCell>
 
-      <FlexCell>
-        <Flex class="mt-4 gap-4" center>
-          <FlexCell center>
-            <Flex vertical class="gap-2">
               <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.maxRetries') }}
-                </Label>
+                <Flex class="mt-4 gap-4" center>
+                  <FlexCell center>
+                    <Flex vertical class="gap-2">
+                      <FlexCell>
+                        <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                          {{ t('integrations.labels.maxRetries') }}
+                        </Label>
+                      </FlexCell>
+                      <FlexCell>
+                        <TextInput class="w-96" v-model="generalInfo.maxRetries" :number="true" :min-number="1" :max-number="20" placeholder="3" />
+                        <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
+                          <p>{{ t('integrations.salesChannel.helpText.maxRetries') }}</p>
+                        </div>
+                      </FlexCell>
+                    </Flex>
+                  </FlexCell>
+                </Flex>
               </FlexCell>
-              <FlexCell>
-                <TextInput class="w-96" v-model="generalInfo.maxRetries" :number="true" :min-number="1" :max-number="20" placeholder="3" />
-                <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
-                  <p>{{ t('integrations.salesChannel.helpText.maxRetries') }}</p>
-                </div>
-              </FlexCell>
-            </Flex>
+              </template>
+            </Accordion>
           </FlexCell>
         </Flex>
       </FlexCell>

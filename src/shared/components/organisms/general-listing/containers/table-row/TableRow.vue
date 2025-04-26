@@ -15,6 +15,7 @@ const props = defineProps<{
   config: any;
   selectedEntities: string[];
   queryObject: any;
+  haveBulk: any;
   getUpdatedField: (field: any, item: any, index: number) => any;
   selectCheckbox: (id: string, value: boolean) => void;
 }>();
@@ -23,7 +24,7 @@ const props = defineProps<{
 
 <template>
   <tr>
-    <td v-if="config.addBulkEdit || config.addBulkDelete"
+    <td v-if="haveBulk"
         scope="col"
         :class="['px-4 text-left text-sm font-semibold text-gray-900',
                  selectedEntities.includes(item.node[config.identifierKey || 'id']) ? 'border-l-2 border-indigo-600' : '']">

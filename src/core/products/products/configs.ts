@@ -5,15 +5,16 @@ import {
   FormType,
   QueryFormField
 } from '../../../shared/components/organisms/general-form/formConfig';
-import {FieldType, InspectorStatus, InspectorStatusType, ProductType, Url} from '../../../shared/utils/constants.js'
-import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
-import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
-import {productsQuery} from "../../../shared/api/queries/products.js"
-import {vatRatesQuery} from "../../../shared/api/queries/vatRates.js";
-import {createVatRateMutation} from "../../../shared/api/mutations/vatRates.js";
-import {baseFormConfigConstructor as baseVatRateConfigConstructor} from '../../settings/vat-rates/configs'
-import {Badge} from "../../../shared/components/organisms/general-show/showConfig";
-import {propertySelectValuesQuerySelector} from "../../../shared/api/queries/properties.js";
+import { FieldType, InspectorStatus, InspectorStatusType, ProductType, Url } from '../../../shared/utils/constants.js'
+import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
+import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
+import { productsQuery } from "../../../shared/api/queries/products.js"
+import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
+import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
+import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
+import { Badge } from "../../../shared/components/organisms/general-show/showConfig";
+import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
+import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -243,7 +244,6 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       lookupKeys: ['hasMissingInformation'],
       label: t('products.products.inspector.labels.missingInfo'),
       addLookup: true,
-      lookupType: 'none'
     },
   ],
   orders: []
@@ -286,6 +286,10 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   isMainPage: isMainPage,
   defaultGridIcon: 'box',
   addGridView: true,
+  addBulkDelete: isMainPage,
+  bulkDeleteMutation: deleteProductsMutation,
+  bulkDeleteSuccessAlert: t('products.products.alert.toast.bulkDeleteSuccess'),
+  bulkDeleteErrorAlert: t('products.products.alert.toast.bulkDeleteError')
 });
 
 export const listingQueryKey = 'products';

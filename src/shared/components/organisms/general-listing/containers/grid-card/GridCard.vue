@@ -15,6 +15,7 @@ const {t} = useI18n();
 const props = defineProps<{
   item: any;
   config: any;
+  haveBulk: any;
   selectedEntities: string[];
   selectCheckbox: (id: string, value: boolean) => void;
   queryObject: any;
@@ -68,7 +69,7 @@ const getUpdatedField = (field: any, item: any, index: number) => {
   <div class="card bg-white rounded-xl shadow-md overflow-hidden relative"
        :class="['px-4 text-left text-sm font-semibold text-gray-900', selectedEntities.includes(item.node[config.identifierKey || 'id']) ? 'border-2 border-indigo-600' : '']">
     <!-- Checkbox overlay in top-left corner -->
-    <div v-if="config.addBulkEdit || config.addBulkDelete" class="absolute top-2 left-2 z-10">
+    <div v-if="haveBulk" class="absolute top-2 left-2 z-10">
       <Checkbox
           :modelValue="selectedEntities.includes(item.node[config.identifierKey || 'id'])"
           @update:model-value="value => selectCheckbox(item.node[config.identifierKey || 'id'], value)"/>
