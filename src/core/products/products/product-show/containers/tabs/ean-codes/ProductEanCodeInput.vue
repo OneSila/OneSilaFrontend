@@ -36,7 +36,7 @@ const lastSavedEanCode = ref(props.initialEanCode?.ean || '');
 const defaultSwalOptions = {
   title: t('products.eanCodes.invalidEanCodeAlert.title'),
   text: t('products.eanCodes.invalidEanCodeAlert.text'),
-  confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
+  confirmButtonText: t('shared.alert.mutationAlert.confirmButtonTextSimpleYes'),
   cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
   icon: 'warning',
   showCancelButton: true,
