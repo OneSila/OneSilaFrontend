@@ -16,7 +16,10 @@ import { TypeStep } from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
 import { SalesChannelStep } from "./containers/sales-channel-step";
 import { MagentoChannelInfoStep } from "./containers/integration-specific-step/magento";
-import { createMagentoSalesChannelMutation } from "../../../../shared/api/mutations/salesChannels.js";
+import {
+  createMagentoSalesChannelMutation,
+  createShopifySalesChannelMutation
+} from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import apolloClient from "../../../../../apollo-client";
@@ -24,7 +27,7 @@ import apolloClient from "../../../../../apollo-client";
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const selectedIntegrationType = ref<IntegrationTypes>(IntegrationTypes.Magento);
+const selectedIntegrationType = ref<IntegrationTypes>();
 
 
 const wizardRef = ref();
@@ -53,7 +56,9 @@ watch(selectedIntegrationType, (newType) => {
   if (newType === IntegrationTypes.Magento) {
     Object.assign(specificChannelInfo.value, getMagentoDefaultFields());
   } else if (newType === IntegrationTypes.Shopify) {
-    Object.assign(specificChannelInfo.value, {});
+    for (const key in specificChannelInfo.value) {
+      delete specificChannelInfo.value[key];
+    }
   }
 });
 
@@ -64,12 +69,22 @@ const stepFourLabel = computed(() => {
   return t('integrations.create.wizard.step4.title');
 });
 
-const wizardSteps = computed(() => [
-  { title: t('integrations.create.wizard.step1.title'), name: 'typeStep' },
-  { title: t('integrations.create.wizard.step2.title'), name: 'generalInfoStep' },
-  { title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' },
-  { title: stepFourLabel.value, name: 'specificChannelStep' }
-]);
+const wizardSteps = computed(() => {
+  const steps = [
+    { title: t('integrations.create.wizard.step1.title'),    name: 'typeStep' },
+    { title: t('integrations.create.wizard.step2.title'),    name: 'generalInfoStep' },
+    { title: t('integrations.create.wizard.step3.title'),    name: 'salesChannelStep' },
+  ]
+
+  if (selectedIntegrationType.value === IntegrationTypes.Magento) {
+    steps.push({
+      title: stepFourLabel.value,
+      name:  'specificChannelStep'
+    })
+  }
+
+  return steps
+})
 
 const updateStep = (val) => {
   step.value = val;
@@ -130,20 +145,38 @@ const getIntegrationMutation = () => {
   switch (selectedIntegrationType.value) {
     case IntegrationTypes.Magento:
       return createMagentoSalesChannelMutation;
-      //   case IntegrationTypes.Shopify:
-      //     return createShopifyMutation;
+    case IntegrationTypes.Shopify:
+      return createShopifySalesChannelMutation;
     default:
       return null;
   }
 }
 
+const getIntegrationMutationKey = () => {
+  switch (selectedIntegrationType.value) {
+    case IntegrationTypes.Magento:
+      return 'createMagentoSalesChannel';
+    case IntegrationTypes.Shopify:
+      return 'createShopifySalesChannel';
+    default:
+      return '';
+  }
+};
+
+
 const handleFinish = async () => {
   loading.value = true;
+  const mutationKey = getIntegrationMutationKey();
+
   try {
+
     const mutation = getIntegrationMutation();
     if (!mutation) {
       return;
     }
+
+    console.log(specificChannelInfo.value)
+
     // Flatten the form fields into a single object
     const dataInput = {
       ...form.generalInfo,
@@ -156,11 +189,12 @@ const handleFinish = async () => {
       variables: { data: dataInput },
     });
 
-    if (data && data.createMagentoSalesChannel) {
+    if (data && data[mutationKey]) {
       Toast.success(t('integrations.create.success'));
       loading.value = false;
       router.push({ name: 'integrations.integrations.list'});
     }
+
   } catch (err) {
     loading.value = false;
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
@@ -201,11 +235,14 @@ const handleFinish = async () => {
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
-          <TypeStep :type="selectedIntegrationType" />
+          <TypeStep :type="selectedIntegrationType" @update:type="val => selectedIntegrationType = val" />
         </template>
 
         <template #generalInfoStep>
-          <GeneralInfoStep :general-info="form.generalInfo" />
+          <GeneralInfoStep
+              :general-info="form.generalInfo"
+              :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
+          />
         </template>
 
         <template #salesChannelStep>

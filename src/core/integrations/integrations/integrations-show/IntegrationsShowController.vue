@@ -7,8 +7,13 @@ import { Tabs } from "../../../../shared/components/molecules/tabs";
 import { Card } from "../../../../shared/components/atoms/card";
 import {useRoute, useRouter} from "vue-router";
 import { IntegrationTypes } from "../integrations";
-import { getMagentoChannelQuery, getSalesChannelQuery } from "../../../../shared/api/queries/salesChannels.js";
-import {MagentoGeneralInfoTab} from "./containers/magento-general-tab";
+import {
+  getMagentoChannelQuery,
+  getSalesChannelQuery,
+  getShopifyChannelQuery
+} from "../../../../shared/api/queries/salesChannels.js";
+import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
+import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -43,29 +48,36 @@ const tabItems = ref([
 ]);
 
 const getIntegrationQuery = () => {
-
-  if (type.value === IntegrationTypes.Magento) {
-    return getMagentoChannelQuery;
+  switch (type.value) {
+    case IntegrationTypes.Magento:
+      return getMagentoChannelQuery;
+    case IntegrationTypes.Shopify:
+      return getShopifyChannelQuery;
+    default:
+      return getSalesChannelQuery;
   }
-
-  return getSalesChannelQuery;
 };
 
 const getIntegrationQueryKey = () => {
-
-  if (type.value === IntegrationTypes.Magento) {
-    return "magentoChannel";
+  switch (type.value) {
+    case IntegrationTypes.Magento:
+      return "magentoChannel";
+    case IntegrationTypes.Shopify:
+      return "shopifyChannel";
+    default:
+      return "salesChannel";
   }
-
-  return "salesChannel";
 };
 
 const getGeneralComponent = () => {
-  if (type.value === IntegrationTypes.Magento) {
-    return null;
+  switch (type.value) {
+    case IntegrationTypes.Magento:
+      return MagentoGeneralInfoTab;
+    case IntegrationTypes.Shopify:
+      return ShopifyGeneralInfoTab;
+    default:
+      return null;
   }
-
-  return null;
 };
 
 const fetchIntegrationData = async () => {
@@ -156,7 +168,11 @@ const pullData = async () => {
 
           <!-- General Edit Tab -->
           <template #general>
-            <MagentoGeneralInfoTab v-if="!loading && integrationData" :data="integrationData" />
+            <component
+              v-if="!loading && integrationData"
+              :is="getGeneralComponent()"
+              :data="integrationData"
+            />
           </template>
 
           <!-- Products Tab -->

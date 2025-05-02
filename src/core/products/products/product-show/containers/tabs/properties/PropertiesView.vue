@@ -301,7 +301,7 @@ const getIconColor = (requireType: string, isFilled = false) => {
       return 'text-red-500';
     }
     if (requireType === ConfigTypes.OPTIONAL) {
-      return 'text-yellow-500';
+      return 'text-orange-400';
     }
   }
 
@@ -309,7 +309,7 @@ const getIconColor = (requireType: string, isFilled = false) => {
     return 'text-red-500';
   }
   if (requireType === ConfigTypes.OPTIONAL) {
-    return 'text-yellow-500';
+    return 'text-orange-400';
   }
 
   return 'text-gray-400';
@@ -464,7 +464,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
                 {
                   'text-gray-400': hasValue(val),
                   'text-red-500': !hasValue(val) && isRequired(val.property.requireType),
-                  'text-yellow-500': !hasValue(val) && !isRequired(val.property.requireType),
+                  'text-orange-400': !hasValue(val) && !isRequired(val.property.requireType),
                 }
                 ]"
                 :title="getTooltip(val.property.requireType)"
