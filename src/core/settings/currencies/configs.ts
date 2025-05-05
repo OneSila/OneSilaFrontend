@@ -97,14 +97,14 @@ export const getNonDefaultFields = (t): FormField[] => {
       name: 'exchangeRate',
       label: t('settings.currencies.labels.exchangeRate'),
       placeholder: t('settings.currencies.placeholders.exchangeRate'),
-      number: true,
+      float: true,
     },
     {
       type: FieldType.Text,
       name: 'roundPricesUpTo',
       label: t('settings.currencies.labels.roundPricesUpTo'),
       placeholder: t('settings.currencies.placeholders.roundPricesUpTo'),
-      number: true,
+      float: true,
     },
   ];
 }
