@@ -241,6 +241,7 @@
         "title": "Are you sure?",
         "text": "You won't be able to revert this!",
         "confirmButtonText": "Yes, delete it!",
+        "confirmButtonTextSimpleYes": "Yes, continue!",
         "cancelButtonText": "No, cancel!"
       },
       "toast": {
