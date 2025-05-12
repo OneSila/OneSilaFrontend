@@ -259,6 +259,7 @@ export const getSalesChannelViewQuery = gql`
       id
       active
       url
+      name
       salesChannel {
         id
       }

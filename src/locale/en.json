@@ -280,6 +280,7 @@
       "edit": "Edit",
       "show": "Details",
       "submit": "Submit",
+      "retry": "Retry",
       "add": "Add",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -2089,6 +2090,10 @@
         "title": "First Import Not Completed",
         "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies. If is already created wait for it to finish."
       },
+      "shopifyNotConnectedBanner": {
+        "title": "Shopify connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2163,6 +2168,7 @@
       "importOrders": "Import Orders",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
+      "successfullyConnected": "Connected",
       "requestsPerMinute": "Requests Per Minute",
       "maxRetries": "Maximum Retries",
       "authenticationMethod": "Authentication Method",

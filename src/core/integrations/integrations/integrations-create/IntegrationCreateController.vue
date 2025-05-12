@@ -23,6 +23,7 @@ import {
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import apolloClient from "../../../../../apollo-client";
+import { cleanShopHostname } from "../configs";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -175,8 +176,6 @@ const handleFinish = async () => {
       return;
     }
 
-    console.log(specificChannelInfo.value)
-
     // Flatten the form fields into a single object
     const dataInput = {
       ...form.generalInfo,
@@ -192,7 +191,7 @@ const handleFinish = async () => {
     if (data && data[mutationKey]) {
       Toast.success(t('integrations.create.success'));
       loading.value = false;
-      router.push({ name: 'integrations.integrations.list'});
+      handleSalesChannelSuccess(data[mutationKey], selectedIntegrationType.value);
     }
 
   } catch (err) {
@@ -207,6 +206,28 @@ const handleFinish = async () => {
       }
     }
   }
+};
+
+const handleSalesChannelSuccess = (channelData: any, integrationType: string) => {
+  if (integrationType === IntegrationTypes.Shopify) {
+    const shop = channelData.hostname;
+    const state = channelData.state;
+
+    if (!shop || !state) {
+      Toast.error('Shopify channel missing shop or state');
+      return;
+    }
+
+    const apiGraphqlUrl = import.meta.env.VITE_APP_API_GRAPHQL_URL;
+    const backendBaseUrl = apiGraphqlUrl.replace(/\/graphql\/?$/, '');
+    const oauthUrl = `${backendBaseUrl}/integrations/shopify/oauth/start?shop=${cleanShopHostname(shop)}&state=${state}`;
+
+    window.location.href = oauthUrl;
+    return;
+  }
+
+  // Default success: go to integrations list
+  router.push({ name: 'integrations.integrations.list' });
 };
 
 </script>

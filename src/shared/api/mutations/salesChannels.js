@@ -24,6 +24,7 @@ export const createShopifySalesChannelMutation = gql`
     createShopifySalesChannel(data: $data) {
       id
       hostname
+      state
     }
   }
 `;
@@ -33,6 +34,7 @@ export const updateShopifySalesChannelMutation = gql`
     updateShopifySalesChannel(data: $data) {
       id
       hostname
+      state
     }
   }
 `;

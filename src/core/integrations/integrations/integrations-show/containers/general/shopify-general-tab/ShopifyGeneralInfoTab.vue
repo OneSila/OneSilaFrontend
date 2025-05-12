@@ -13,6 +13,8 @@ import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEn
 import { useRouter } from "vue-router";
 import { updateShopifySalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
+import { cleanShopHostname } from "../../../../configs";
+import apolloClient from "../../../../../../../../apollo-client";
 
 interface EditShopifyForm {
   id: string;
@@ -26,6 +28,8 @@ interface EditShopifyForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  accessToken?: string;
+  state?: string;
 }
 
 const props = defineProps<{ data: EditShopifyForm }>();
@@ -65,6 +69,33 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
 
 const onSubmitPressed = () => submitButtonRef.value?.$el.click();
 const onSubmitAndContinuePressed = () => submitContinueButtonRef.value?.$el.click();
+
+const handleRetryConnect = async () => {
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: updateShopifySalesChannelMutation,
+      variables: {
+        data: {
+          id: formData.value.id,
+        },
+      },
+    });
+
+    const updated = data?.updateShopifySalesChannel;
+    if (updated?.state && updated?.hostname) {
+
+      const apiGraphqlUrl = import.meta.env.VITE_APP_API_GRAPHQL_URL;
+      const backendBaseUrl = apiGraphqlUrl.replace(/\/graphql\/?$/, '');
+      const redirectUrl = `${backendBaseUrl}/integrations/shopify/oauth/start?shop=${cleanShopHostname(updated.hostname)}&state=${updated.state}`;
+
+      window.location.href = redirectUrl;
+    } else {
+      Toast.error('Retry failed. Missing hostname or state.');
+    }
+  } catch (error) {
+    Toast.error('Retry failed.');
+  }
+};
 
 useEnterKeyboardListener(onSubmitPressed);
 useShiftEnterKeyboardListener(onSubmitAndContinuePressed);
@@ -163,7 +194,15 @@ useShiftBackspaceKeyboardListener(goBack);
     </Accordion>
 
     <!-- Actions -->
-    <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+    <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 pt-4 sm:px-8">
+
+      <div class="md:col-span-12 col-span-12" v-if="!formData.accessToken">
+        <PrimaryButton @click="handleRetryConnect">
+          {{ t('shared.button.retry') }}
+        </PrimaryButton>
+      </div>
+
+
       <RouterLink :to="{ name: 'integrations.integrations.list' }">
         <CancelButton>
           {{ t('shared.button.back') }}
@@ -187,4 +226,12 @@ useShiftBackspaceKeyboardListener(goBack);
       </ApolloMutation>
     </div>
   </div>
+
+  <div v-if="!formData.accessToken" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 mt-4" role="alert">
+    <span class="font-medium flex items-center gap-1">
+      ⚠️ {{ t('integrations.show.shopifyNotConnectedBanner.title') }}
+    </span>
+    {{ t('integrations.show.shopifyNotConnectedBanner.content') }}
+  </div>
+
 </template>
