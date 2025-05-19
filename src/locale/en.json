@@ -2213,6 +2213,7 @@
         "error": "Retry import process had an unexpected error"
       },
       "create": {
+        "success": "Create import process success",
         "title": "Create Import",
         "wizard": {
           "step1": {
