@@ -19,6 +19,26 @@ export const updateMagentoSalesChannelMutation = gql`
   }
 `;
 
+export const createShopifySalesChannelMutation = gql`
+  mutation createShopifySalesChannel($data: ShopifySalesChannelInput!) {
+    createShopifySalesChannel(data: $data) {
+      id
+      hostname
+      state
+    }
+  }
+`;
+
+export const updateShopifySalesChannelMutation = gql`
+  mutation updateShopifySalesChannel($data: ShopifySalesChannelPartialInput!) {
+    updateShopifySalesChannel(data: $data) {
+      id
+      hostname
+      state
+    }
+  }
+`;
+
 
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`

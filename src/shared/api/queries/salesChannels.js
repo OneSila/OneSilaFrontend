@@ -7,7 +7,6 @@ export const salesChannelsQuery = gql`
       edges {
         node {
           id
-          name
           active
           multiTenantCompany {
             id
@@ -31,7 +30,6 @@ export const getSalesChannelQuery = gql`
   query getSalesChannel($id: GlobalID!) {
     salesChannel(id: $id) {
       id
-      name
       active
       multiTenantCompany {
         id
@@ -71,6 +69,34 @@ export const getMagentoChannelQuery = gql`
     }
   }
 `;
+
+export const getShopifyChannelQuery = gql`
+  query getShopifyChannel($id: GlobalID!) {
+    shopifyChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      accessToken
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
 
 
 // Sales Channel Integration Pricelist Queries
@@ -231,9 +257,9 @@ export const getSalesChannelViewQuery = gql`
   query getSalesChannelView($id: GlobalID!) {
     salesChannelView(id: $id) {
       id
-      name
       active
       url
+      name
       salesChannel {
         id
       }

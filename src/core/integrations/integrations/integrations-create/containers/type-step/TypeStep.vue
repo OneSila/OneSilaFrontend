@@ -34,7 +34,7 @@ watch(
 
 const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
-  { name: IntegrationTypes.Shopify, disabled: true }
+  { name: IntegrationTypes.Shopify, disabled: false }
 ];
 
 const onModalOpen = () => {
@@ -119,7 +119,7 @@ const closeModal = () => {
               <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.magentoTitle') }}</h3>
             </FlexCell>
             <FlexCell center>
-              <Icon class="text-gray-500" @click.stop="onModalOpen" name="circle-info" size="md" />
+              <Icon class="text-gray-500" @click.stop="onModalOpen" name="circle-info" size="lg" />
             </FlexCell>
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.magentoExample') }}</p>

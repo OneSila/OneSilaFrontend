@@ -9,6 +9,7 @@ export const integrationsQuery = gql`
           proxyId
           hostname
           active
+          connected
           verifySsl
           requestsPerMinute
           maxRetries

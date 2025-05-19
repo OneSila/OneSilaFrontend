@@ -280,6 +280,7 @@
       "edit": "Edit",
       "show": "Details",
       "submit": "Submit",
+      "retry": "Retry",
       "add": "Add",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -2089,6 +2090,10 @@
         "title": "First Import Not Completed",
         "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies. If is already created wait for it to finish."
       },
+      "shopifyNotConnectedBanner": {
+        "title": "Shopify connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2163,6 +2168,7 @@
       "importOrders": "Import Orders",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
+      "successfullyConnected": "Connected",
       "requestsPerMinute": "Requests Per Minute",
       "maxRetries": "Maximum Retries",
       "authenticationMethod": "Authentication Method",
@@ -2190,6 +2196,7 @@
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
+        "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
         "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",
         "hostApiKey": "Your Access Token is available in Magento under System > Integrations.",
         "password": "Using a password is not recommended. Use an Access Token instead."
@@ -2206,6 +2213,7 @@
         "error": "Retry import process had an unexpected error"
       },
       "create": {
+        "success": "Create import process success",
         "title": "Create Import",
         "wizard": {
           "step1": {
