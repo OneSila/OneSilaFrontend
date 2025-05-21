@@ -28,7 +28,7 @@ import { cleanShopHostname } from "../configs";
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const selectedIntegrationType = ref<IntegrationTypes>();
+const selectedIntegrationType = ref<IntegrationTypes>(IntegrationTypes.None);
 
 
 const wizardRef = ref();
@@ -95,7 +95,7 @@ const allowNextStep = computed(() => {
 
   const stepName = wizardSteps.value[step.value].name;
 
-  if (stepName === 'typeStep' && selectedIntegrationType.value === null) {
+  if (stepName === 'typeStep' && selectedIntegrationType.value === IntegrationTypes.None) {
     return false;
   }
 

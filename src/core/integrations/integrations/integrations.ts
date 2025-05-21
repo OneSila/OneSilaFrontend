@@ -1,6 +1,7 @@
 export enum IntegrationTypes {
   Magento = 'magento',
-  Shopify = 'shopify'
+  Shopify = 'shopify',
+  None = 'none',
 }
 
 export enum AuthenticationMethod {

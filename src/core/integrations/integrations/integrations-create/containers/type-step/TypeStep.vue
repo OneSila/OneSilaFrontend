@@ -2,7 +2,6 @@
 import { defineProps, defineEmits, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IntegrationTypes } from "../../../integrations";
-// Import the images for integration types.
 import magentoType from "../../../../../../assets/images/integration-types/magento.png";
 import shopifyType from "../../../../../../assets/images/integration-types/shopify.png";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
