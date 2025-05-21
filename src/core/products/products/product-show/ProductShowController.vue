@@ -29,12 +29,18 @@ const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 
-interface ProductSubscriptionResult {
+interface  ProductSubscriptionResult {
   product: {
     name: string;
     sku: string;
     thumbnailUrl: string;
     hasParents: boolean;
+    aliasParentProduct: {
+      id: string;
+      name: string;
+      sku: string;
+      type: string;
+    },
     vatRate: {
       name: string;
     };
@@ -44,12 +50,20 @@ interface ProductSubscriptionResult {
   };
 }
 
-const getResultData = (result, field: string | null = null, vatRateField: string | null = null) => {
+const getResultData = (result, field: string | null = null, vatRateField: string | null = null, aliasParentProductField: string | null = null) => {
   const r: ProductSubscriptionResult = result;
 
   if (vatRateField !== null){
     if (r.product.vatRate) {
       return r.product.vatRate[vatRateField];
+    } else {
+      return null
+    }
+  }
+
+  if (aliasParentProductField !== null){
+    if (r.product.aliasParentProduct) {
+      return r.product.aliasParentProduct[aliasParentProductField];
     } else {
       return null
     }
@@ -63,7 +77,13 @@ const getResultData = (result, field: string | null = null, vatRateField: string
 }
 
 
-const getProductComponent = (type) => {
+const getProductComponent = (type, aliasParentProduct: object | null = null) => {
+
+
+  if (type == ProductType.Alias && aliasParentProduct) {
+    type = aliasParentProduct.type;
+  }
+
   if (type == ProductType.Bundle) {
     return ProductBundle;
   }
@@ -119,10 +139,21 @@ const redirectToList = (response) => {
                       <p class="text-white-dark">{{ getResultData(result, null, 'name') }}</p>
                     </Flex>
                     <Flex>
-                      <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
-                      <Badge
-                        :text="getProductTypeBadgeMap(t)[getResultData(result, 'type')].text"
-                        :color="getProductTypeBadgeMap(t)[getResultData(result, 'type')].color" />
+                      <FlexCell>
+                        <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
+                      </FlexCell>
+                      <FlexCell>
+                        <Flex>
+                          <FlexCell>
+                            <Badge :text="getProductTypeBadgeMap(t)[getResultData(result, 'type')].text"
+                                   :color="getProductTypeBadgeMap(t)[getResultData(result, 'type')].color" />
+                          </FlexCell>
+                          <FlexCell v-if="getResultData(result, 'type') == ProductType.Alias">
+                            / <Badge :text="getProductTypeBadgeMap(t)[getResultData(result, 'type', null, 'type')].text" :color="getProductTypeBadgeMap(t)[getResultData(result, 'type', null, 'type')].color" />
+                          </FlexCell>
+                        </Flex>
+                      </FlexCell>
+
                     </Flex>
                     <Flex class="gap-2">
                       <FlexCell>
@@ -130,7 +161,7 @@ const redirectToList = (response) => {
                           <Icon v-if="getResultData(result, 'active')" name="check-circle" class="ml-1 text-green-500" />
                           <Icon v-else name="times-circle" class="ml-1 text-red-500" />
                       </FlexCell>
-                      <FlexCell v-if="getResultData(result, 'type') == ProductType.Simple">
+                      <FlexCell v-if="getResultData(result, 'type') == ProductType.Simple || getResultData(result, 'type', null, 'type') == ProductType.Simple">
                         <Flex>
                           <FlexCell>
                             <Label semi-bold>{{ t('products.products.labels.allowBackorder') }}: </Label>
@@ -138,6 +169,21 @@ const redirectToList = (response) => {
                           <FlexCell>
                             <Icon v-if="getResultData(result, 'allowBackorder')" name="check-circle" class="ml-1 text-green-500" />
                             <Icon v-else name="times-circle" class="ml-1 text-red-500" />
+                          </FlexCell>
+                        </Flex>
+                      </FlexCell>
+                    </Flex>
+
+                    <Flex>
+                      <FlexCell v-if="getResultData(result, 'type') == ProductType.Alias">
+                        <Flex>
+                          <FlexCell>
+                            <Label semi-bold>{{ t('products.products.labels.aliasParentProduct') }}: </Label>
+                          </FlexCell>
+                          <FlexCell>
+                            <Link :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }">
+                              {{ getResultData(result, 'name', null, 'name') }}
+                            </Link>
                           </FlexCell>
                         </Flex>
                       </FlexCell>
@@ -156,7 +202,7 @@ const redirectToList = (response) => {
               </div>
               <ProductInspector :product="getResultData(result)" />
             </div>
-            <component :key="getResultData(result, 'type')" :is="getProductComponent(getResultData(result, 'type'))" :product="getResultData(result)"/>
+            <component :key="getResultData(result, 'type')" :is="getProductComponent(getResultData(result, 'type'), getResultData(result, 'aliasParentProduct'))" :product="getResultData(result)"/>
           </Card>
         </template>
       </template>

@@ -78,8 +78,8 @@ onMounted(fetchProductType)
         </Flex>
       </FlexCell>
 
-      <FlexCell v-if="!hideProductTypeSelector" class="py-8 px-96"><hr></FlexCell>
-      <FlexCell v-if="!hideProductTypeSelector">
+      <FlexCell v-if="!hideProductTypeSelector && form.type !== ProductType.Alias" class="py-8 px-96"><hr></FlexCell>
+      <FlexCell v-if="!hideProductTypeSelector  && form.type !== ProductType.Alias">
         <Flex center>
           <FlexCell center>
               <Flex vertical class="gap-2">

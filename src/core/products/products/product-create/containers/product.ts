@@ -2,9 +2,14 @@ export interface FormType {
   type: string;
   sku: string;
   name: string;
+  aliasCopyImages: boolean;
+  aliasCopyProductProperties: boolean;
   vatRate: {
     id: string | null;
   },
+  aliasParentProduct: {
+    id: string | null;
+  }
 }
 
 export interface RelatedProduct {

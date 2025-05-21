@@ -832,6 +832,7 @@
       },
       "tabs": {
         "content": "Content",
+        "aliasProducts": "Alias Products",
         "variations": "Variations",
         "parents": "Parents",
         "bundleItems": "Bundle Items",
@@ -921,6 +922,7 @@
             "bundle": "Bundle Product",
             "variation": "Simple Product",
             "dropship": "Dropship Product",
+            "alias": "Alias Product",
             "manufacturable": "Manufacturable Product",
             "supplier": "Supplier Product"
           }
@@ -932,7 +934,8 @@
         "forSale": "For Sale",
         "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
-        "inspectorStatus": "Content Quality"
+        "inspectorStatus": "Content Quality",
+        "aliasParentProduct": "Alias Target"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
@@ -964,6 +967,23 @@
             "dropship": {
               "title": "Dropshipping",
               "example": "Eg: Furniture shipped directly from the manufacturer to the customer."
+            },
+            "alias": {
+              "title": "Alias",
+              "example": "Eg: The same pen sold as both a 'Stylus Pen' and a 'Fountain Pen' for SEO purposes."
+            }
+          },
+          "stepAlias": {
+            "title": "Alias Settings",
+            "content": "Link this product to an existing one and choose what to reuse.",
+            "labels": {
+              "aliasParent": "Clone from product (alias target)",
+              "copyImages": "Copy images from original product",
+              "copyProperties": "Copy properties from original product"
+            },
+            "helpText": {
+              "copyImages": "If enabled, all images from the original product will be copied to this alias product.",
+              "copyProperties": "If enabled, product attributes (e.g. color, material) from the original product will be cloned."
             }
           },
           "stepTwo": {
