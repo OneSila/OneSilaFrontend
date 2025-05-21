@@ -6,6 +6,8 @@ import { Image } from "../../../../../../shared/components/atoms/image";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
 import variableType from "../../../../../../assets/images/product-types/simple.png";
 import configurableType from "../../../../../../assets/images/product-types/configurable.png";
+import bundleType from "../../../../../../assets/images/product-types/bundle.png";
+import aliasType from "../../../../../../assets/images/product-types/alias.png";
 import {ProductType} from "../../../../../../shared/utils/constants";
 import {FormType} from "../product";
 
@@ -15,7 +17,8 @@ const emit = defineEmits(['for-sale-changed', 'empty-variations']);
 const typeChoice = [
   { name: ProductType.Simple },
   { name: ProductType.Configurable },
-  // { name: ProductType.Bundle }
+  { name: ProductType.Bundle },
+  { name: ProductType.Alias }
 ];
 
 
@@ -49,13 +52,21 @@ const { t } = useI18n();
       </template>
 
 
-<!--      <template #BUNDLE>-->
-<!--        <div>-->
-<!--          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>-->
-<!--          <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>-->
-<!--          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />-->
-<!--        </div>-->
-<!--      </template>-->
+      <template #BUNDLE>
+        <div>
+          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.bundle.title') }}</h3>
+          <p>{{ t('products.products.create.wizard.stepOne.bundle.example') }}</p>
+          <Image :source="bundleType" alt="Bundle" class="w-full max-h-[35rem]" />
+        </div>
+      </template>
+
+      <template #ALIAS>
+        <div>
+          <h3 class="text-lg font-bold">{{ t('products.products.create.wizard.stepOne.alias.title') }}</h3>
+          <p>{{ t('products.products.create.wizard.stepOne.alias.example') }}</p>
+          <Image :source="aliasType" alt="Alias" class="w-full max-h-[35rem]" />
+        </div>
+      </template>
 
     </OptionSelector>
   </div>

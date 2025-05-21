@@ -11,6 +11,21 @@ export const productSubscription = gql`
       name
       thumbnailUrl
       hasParents
+      aliasParentProduct {
+        id
+        name
+        sku
+        type
+      }
+      aliasProducts {
+        id
+        name
+        type
+        sku
+        active
+        thumbnailUrl
+        inspectorStatus
+      }
       inspector {
         id
         hasMissingInformation

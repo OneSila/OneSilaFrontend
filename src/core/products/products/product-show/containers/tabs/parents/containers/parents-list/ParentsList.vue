@@ -1,85 +1,120 @@
 <script setup lang="ts">
-import { getInspectorStatusBadgeMap, Product } from "../../../../../../configs";
+import { getInspectorStatusBadgeMap, Product, getProductTypeBadgeMap } from "../../../../../../configs";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { useI18n } from "vue-i18n";
-import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
-import { FilterManager } from "../../../../../../../../../shared/components/molecules/filter-manager";
+import { onMounted, ref } from "vue";
+import { configurableVariationsQuery, bundleVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
+import apolloClient from "../../../../../../../../../../apollo-client";
+import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
+import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 
 const { t } = useI18n();
+const props = defineProps<{ product: Product }>();
 
-const props = defineProps<{
-  product: Product,
-  searchConfig: any,
-  listQuery: any,
-  queryKey: string,
-}>();
+const parents = ref<any[]>([]);
+const loading = ref(true);
 
+const fetchConfigurableVariations = async () => {
+  const { data } = await apolloClient.query({
+    query: configurableVariationsQuery,
+    variables: {
+      filter: { variation: { id: { exact: props.product.id } } },
+      first: 100
+    },
+    fetchPolicy: 'network-only'
+  });
+
+  const edges = data?.configurableVariations?.edges || [];
+  return edges.map(edge => edge.node.parent);
+};
+
+const fetchBundleVariations = async () => {
+  const { data } = await apolloClient.query({
+    query: bundleVariationsQuery,
+    variables: {
+      filter: { variation: { id: { exact: props.product.id } } },
+      first: 100
+    },
+    fetchPolicy: 'network-only'
+  });
+
+  const edges = data?.bundleVariations?.edges || [];
+  return edges.map(edge => edge.node.parent);
+};
+
+onMounted(async () => {
+  loading.value = true;
+  const [configurable, bundle] = await Promise.all([
+    fetchConfigurableVariations(),
+    fetchBundleVariations()
+  ]);
+
+  const combined = [...configurable, ...bundle];
+  const unique = Object.values(
+    combined.reduce((acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    }, {} as Record<string, any>)
+  );
+
+  parents.value = unique;
+  loading.value = false;
+});
 
 </script>
 
 <template>
-  <FilterManager :search-config="searchConfig">
-    <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-      <ApolloQuery
-        :query="listQuery"
-        :variables="{
-          filter: { ...filterVariables, variation: { id: { exact: product.id } } },
-          order: orderVariables,
-          first: pagination.first,
-          last: pagination.last,
-          before: pagination.before,
-          after: pagination.after
-        }"
-      >
-        <template v-slot="{ result: { data }, query }">
-          <div v-if="data" class="mt-5 p-0 border-0 overflow-hidden">
-            <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
-              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.name') }}</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="item in data[queryKey].edges" :key="item.node.id">
-                    <td>
-                      <Link :path="{ name: 'products.products.show', params: { id: item.node.parent.id } }">
-                        <div class="flex gap-4 items-center">
-                          <div v-if="item.node.parent.thumbnailUrl" class="w-8 h-8 overflow-hidden">
-                            <img
-                              class="w-8 h-8 rounded-md object-cover"
-                              :src="item.node.parent.thumbnailUrl"
-                              :alt="item.node.parent.name"
-                            />
-                          </div>
-                          <div
-                            v-else
-                            class="w-8 h-8 rounded-md bg-gray-200 flex justify-center items-center"
-                          ></div>
-                          <span>{{ item.node.parent.name }}</span>
-                        </div>
-                      </Link>
-                    </td>
-                    <td>
-                      <Icon v-if="item.node.parent.active" name="check-circle" class="ml-2 text-green-500" />
-                      <Icon v-else name="times-circle" class="ml-2 text-red-500" />
-                    </td>
-                    <td>
-                      {{ getInspectorStatusBadgeMap()[item.node.parent.inspectorStatus].text }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="py-2 px-2">
-              <Pagination :page-info="data[queryKey].pageInfo" />
-            </div>
-          </div>
-        </template>
-      </ApolloQuery>
-    </template>
-  </FilterManager>
+  <div>
+    <Loader :loading="loading" />
+
+    <div class="table-responsive">
+      <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+        <thead>
+          <tr>
+            <th class="px-3 py-2 text-left">{{ t('shared.labels.name') }}</th>
+            <th class="px-3 py-2 text-left">{{ t('shared.labels.type') }}</th>
+            <th class="px-3 py-2 text-left">{{ t('shared.labels.active') }}</th>
+            <th class="px-3 py-2 text-left">{{ t('products.products.labels.inspectorStatus') }}</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr v-for="parent in parents" :key="parent.id">
+            <td>
+              <Link :path="{ name: 'products.products.show', params: { id: parent.id } }">
+                <div class="flex gap-4 items-center">
+                  <div v-if="parent.thumbnailUrl" class="w-8 h-8 overflow-hidden">
+                    <img
+                      class="w-8 h-8 rounded-md object-cover"
+                      :src="parent.thumbnailUrl"
+                      :alt="parent.name"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="w-8 h-8 rounded-md bg-gray-200 flex justify-center items-center"
+                  ></div>
+                  <span>{{ parent.name }}</span>
+                </div>
+              </Link>
+            </td>
+            <td>
+              <Badge
+                v-if="parent.type"
+                :text="getProductTypeBadgeMap(t)[parent.type]?.text"
+                :color="getProductTypeBadgeMap(t)[parent.type]?.color"
+              />
+            </td>
+            <td>
+              <Icon v-if="parent.active" name="check-circle" class="text-green-500" />
+              <Icon v-else name="times-circle" class="text-red-500" />
+            </td>
+            <td>
+              {{ getInspectorStatusBadgeMap()[parent.inspectorStatus]?.text || '-' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>

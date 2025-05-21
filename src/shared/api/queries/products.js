@@ -157,6 +157,7 @@ export const configurableVariationsQuery = gql`
             id
             sku
             name
+            type
             active
             thumbnailUrl
             inspectorStatus
@@ -166,6 +167,7 @@ export const configurableVariationsQuery = gql`
             sku
             name
             active
+            type
             thumbnailUrl
             inspectorStatus
           }
@@ -193,11 +195,16 @@ export const bundleVariationsQuery = gql`
             id
             sku
             name
+            type
+            active
+            thumbnailUrl
+            inspectorStatus
           }
           variation {
             id
             sku
             active
+            type
             name
             thumbnailUrl
             inspectorStatus
@@ -227,6 +234,28 @@ export const getProductQuery = gql`
       proxyId
       name
       thumbnailUrl
+      productpropertySet {
+        id
+        valueSelect {
+          id
+        }
+        property {
+          id
+          name
+          type
+          isProductType
+        }
+      }
+      salespriceSet {
+        id
+        price
+        rrp
+        currency {
+          id
+          isoCode
+          isDefaultCurrency
+        }
+      }
       vatRate {
         id
         rate

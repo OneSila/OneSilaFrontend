@@ -10,6 +10,7 @@ import VariationsView from "../../tabs/variations/VariationsView.vue";
 import MediaView from "../../tabs/media/MediaView.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
+import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -17,13 +18,25 @@ const { t } = useI18n();
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-    { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
-    { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
-    { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
-    { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
-    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
-  ];
+  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+  { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
+  { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
+  { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+];
+
+if (props.product.aliasProducts?.length > 0) {
+  tabItems.value.push({
+    name: 'aliasProducts',
+    label: t('products.products.tabs.aliasProducts'),
+    icon: 'clone'
+  });
+}
+
+tabItems.value.push(
+  { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
+  { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
+);
+
 
 </script>
 
@@ -41,6 +54,9 @@ tabItems.value = [
       </template>
       <template v-slot:properties>
         <PropertiesView :product="product" />
+      </template>
+      <template v-if="product.aliasProducts.length" v-slot:aliasProducts>
+        <AliasProductsView :product="product" />
       </template>
       <template v-slot:variations>
         <VariationsView :product="product" />
