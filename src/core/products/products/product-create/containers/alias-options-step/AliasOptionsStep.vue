@@ -7,11 +7,12 @@ import { Label } from "../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 import { FieldQuery } from "../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+import { QueryFormField } from "../../../../../../shared/components/organisms/general-form/formConfig";
 
 const props = defineProps<{ form: FormType }>();
 const { t } = useI18n();
 
-const aliasParentProductField = computed(() => ({
+const aliasParentProductField = computed<QueryFormField>(() => ({
   type: FieldType.Query,
   name: 'aliasParentProduct',
   label: t('products.products.create.wizard.stepAlias.labels.aliasParent'),
@@ -22,7 +23,6 @@ const aliasParentProductField = computed(() => ({
   isEdge: true,
   multiple: false,
   filterable: true,
-  formMapIdentifier: 'id',
   queryVariables: {
     filter: { NOT: { type: { exact: ProductType.Alias } } }
   }

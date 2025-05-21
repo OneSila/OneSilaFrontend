@@ -342,13 +342,20 @@ export interface Product {
   active: boolean;
   hasParents: boolean;
   type: string;
-  aliasProducts: Product[];
-  aliasParentProduct: Product;
+  aliasProducts: ProductWithAliasFields[];
+  aliasParentProduct: ProductWithAliasFields;
   inspector: Inspector;
   vatRate?: VatRate;
   allowBackorder: boolean;
   saleschannelviewassignSet: SalesChannelViewAssign[];
 }
+
+export interface ProductWithAliasFields extends Product {
+  name: string;
+  thumbnailUrl?: string;
+  inspectorStatus: number;
+}
+
 
 export interface Select {
   id: string | null;

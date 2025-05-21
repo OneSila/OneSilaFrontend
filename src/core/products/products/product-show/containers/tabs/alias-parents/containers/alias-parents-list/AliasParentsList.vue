@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { Product } from "../../../../../../configs";
+import { ProductWithAliasFields } from "../../../../../../configs";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { getProductTypeBadgeMap, getInspectorStatusBadgeMap } from "../../../../../../configs";
 
-const props = defineProps<{ products: Product[] }>();
+const props = defineProps<{ products: ProductWithAliasFields[] }>();
 const { t } = useI18n();
 
 const aliasProducts = computed(() => props.products ?? []);

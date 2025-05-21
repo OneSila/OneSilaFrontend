@@ -21,7 +21,7 @@ import ProductBundle from "./containers/product-type/product-bundle/ProductBundl
 import ProductConfigurable from "./containers/product-type/product-configurable/ProductConfigurable.vue";
 import ProductVariation from "./containers/product-type/product-variation/ProductVariation.vue";
 
-import { getProductTypeBadgeMap } from "../configs";
+import {getProductTypeBadgeMap, ProductWithAliasFields} from "../configs";
 import {ProductInspector} from "./containers/product-inspector";
 
 const { t } = useI18n();
@@ -77,7 +77,7 @@ const getResultData = (result, field: string | null = null, vatRateField: string
 }
 
 
-const getProductComponent = (type, aliasParentProduct: object | null = null) => {
+const getProductComponent = (type, aliasParentProduct: ProductWithAliasFields | null = null) => {
 
 
   if (type == ProductType.Alias && aliasParentProduct) {
