@@ -220,7 +220,7 @@ const handleSalesChannelSuccess = (channelData: any, integrationType: string) =>
 
     const apiGraphqlUrl = import.meta.env.VITE_APP_API_GRAPHQL_URL;
     const backendBaseUrl = apiGraphqlUrl.replace(/\/graphql\/?$/, '');
-    const oauthUrl = `${backendBaseUrl}/integrations/shopify/oauth/start?shop=${cleanShopHostname(shop)}&state=${state}`;
+    const oauthUrl = `${backendBaseUrl}/direct/integrations/shopify/oauth/start?shop=${cleanShopHostname(shop)}&state=${state}`;
 
     window.location.href = oauthUrl;
     return;

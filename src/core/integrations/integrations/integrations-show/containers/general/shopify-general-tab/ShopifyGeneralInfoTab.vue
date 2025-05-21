@@ -86,7 +86,7 @@ const handleRetryConnect = async () => {
 
       const apiGraphqlUrl = import.meta.env.VITE_APP_API_GRAPHQL_URL;
       const backendBaseUrl = apiGraphqlUrl.replace(/\/graphql\/?$/, '');
-      const redirectUrl = `${backendBaseUrl}/integrations/shopify/oauth/start?shop=${cleanShopHostname(updated.hostname)}&state=${updated.state}`;
+      const redirectUrl = `${backendBaseUrl}/direct/integrations/shopify/oauth/start?shop=${cleanShopHostname(updated.hostname)}&state=${updated.state}`;
 
       window.location.href = redirectUrl;
     } else {
