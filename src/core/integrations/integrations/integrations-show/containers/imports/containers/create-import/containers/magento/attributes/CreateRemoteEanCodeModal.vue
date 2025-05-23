@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Button } from '../../../../../../../../../../shared/components/atoms/button';
-import { TextInputPrepend } from '../../../../../../../../../../shared/components/atoms/input-text-prepend';
-import { Icon } from '../../../../../../../../../../shared/components/atoms/icon';
-import { Card } from '../../../../../../../../../../shared/components/atoms/card';
+import { Button } from '../../../../../../../../../../../shared/components/atoms/button';
+import { TextInputPrepend } from '../../../../../../../../../../../shared/components/atoms/input-text-prepend';
+import { Icon } from '../../../../../../../../../../../shared/components/atoms/icon';
+import { Card } from '../../../../../../../../../../../shared/components/atoms/card';
 
 import { useI18n } from 'vue-i18n';
 

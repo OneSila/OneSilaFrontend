@@ -271,6 +271,10 @@ function cleanFormData(data) {
     delete cleanedData.vatRate;
   }
 
+  if (cleanedData.type !== ProductType.Alias) {
+    delete cleanedData.aliasParentProduct;
+  }
+
   return cleanedData;
 }
 
@@ -308,7 +312,6 @@ const handleFinish = async () => {
       }
     }
   }
-
 }
 
 const updateStep = (val) => {
