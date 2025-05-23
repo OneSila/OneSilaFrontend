@@ -85,7 +85,7 @@ const fetchData = async () => {
       id: edge.node.id,
       remoteCode: edge.node.remoteCode,
       name: edge.node.name,
-      localInstance: edge.node.localInstance || {id: null},
+      localInstance: edge.node.localInstance ? edge.node.localInstance.id : null,
     }));
 
     if (!languages.value.length || !currencies.value.length) {
@@ -174,7 +174,7 @@ watch([languages, currencies], () => {
             <tr v-for="currency in currencies" :key="currency.id" class="border-t">
               <td class="p-3">{{ currency.name }}</td>
               <td class="p-3 w-96">
-                <FieldQuery v-model="currency.localInstance.id" :field="currencyField as QueryFormField" />
+                <FieldQuery v-model="currency.localInstance" :field="currencyField as QueryFormField" />
               </td>
             </tr>
           </tbody>

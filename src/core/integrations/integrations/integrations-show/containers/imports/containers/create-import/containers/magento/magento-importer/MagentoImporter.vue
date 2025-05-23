@@ -67,7 +67,7 @@ const allowNextStep = computed(() => {
     const langsValid = mappedData.value.languages.length > 0 &&
       mappedData.value.languages.every((l) => l.localInstance);
     const currenciesValid = mappedData.value.currencies.length > 0 &&
-      mappedData.value.currencies.every((c) => c.localInstance.id);
+      mappedData.value.currencies.every((c) => c.localInstance);
     return langsValid && currenciesValid;
   }
   if (step.value === 1) {
@@ -178,7 +178,7 @@ const bulkUpdateRemoteCurrencies = async () => {
     const data = mappedData.value.currencies.map((currency) => ({
       id: currency.id,
       remoteCode: currency.remoteCode,
-      localInstance: { id: currency.localInstance.id },
+      localInstance: { id: currency.localInstance },
     }));
 
     const { data: result } = await apolloClient.mutate({
@@ -367,10 +367,10 @@ const handleFinish = async () => {
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
         </div>
-  </div>
+    </div>
 
     <div v-if="finishLoading" class="fixed inset-0 z-50 flex items-center justify-center">
-        <div class="absolute inset-0 bg-black opacity-50"></div>
+      <div class="absolute inset-0 bg-black opacity-50"></div>
         <div class="relative bg-white dark:bg-[#191e3a] rounded-lg p-6 w-96 shadow-lg z-50 flex flex-col items-center gap-4">
           <h2 class="text-lg font-semibold text-center text-dark dark:text-white-light">
             {{ t('integrations.imports.create.wizard.finish.title') }}
@@ -383,7 +383,7 @@ const handleFinish = async () => {
             ></div>
           </div>
         </div>
-      </div>
+    </div>
 
     <Wizard :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
         <template #generalStep>

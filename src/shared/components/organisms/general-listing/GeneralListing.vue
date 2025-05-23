@@ -203,7 +203,7 @@ defineExpose({
                               after: pagination.after }">
         <template v-slot="{ result: { loading, error, data }, query }">
 
-          <div v-if="data" class="mt-5 p-0 border-0 overflow-hidden"
+          <div v-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 

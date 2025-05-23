@@ -237,7 +237,7 @@ const createRelatedProducts = async (productId) => {
         variables,
       });
     } catch (error) {
-      console.error("Related products creation error:", error);
+      console.error("Related products creation error:", error)
     }
 };
 

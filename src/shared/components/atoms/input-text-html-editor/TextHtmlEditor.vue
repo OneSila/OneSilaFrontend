@@ -20,7 +20,6 @@ const { t } = useI18n();
 const content = ref(props.modelValue || '');
 
 const defaultToolbarOptions = [
-  [{ font: ['sans-serif', 'serif', 'monospace'] }],
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   ['bold', 'italic', 'underline'],
   [{ list: 'ordered' }, { list: 'bullet' }],

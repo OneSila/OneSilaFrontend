@@ -68,27 +68,6 @@ const retryImport = async (importId: string) => {
   }
 };
 
-const createImport = async () => {
-  try {
-    const { data } = await apolloClient.mutate({
-      mutation: createSalesChannelImportMutation,
-      variables: {
-        data: {
-          salesChannel: { id: props.salesChannelId },
-          status: 'pending',
-        },
-      },
-    });
-
-    Toast.success(t("integrations.imports.create.success"));
-  } catch (err) {
-    const validationErrors = processGraphQLErrors(err, t);
-    if (validationErrors['__all__']) {
-      Toast.error(validationErrors['__all__']);
-    }
-  }
-};
-
 </script>
 
 <template>
@@ -98,17 +77,6 @@ const createImport = async () => {
       <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
         <div></div>
         <div>
-          <template v-if="type === 'shopify'">
-            <Button
-              :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
-              @click="createImport"
-              type="button"
-              class="btn btn-primary"
-            >
-              {{ t('integrations.imports.create.title') }}
-            </Button>
-          </template>
-          <template v-else>
             <Link
               :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
               :path="{ name: 'integrations.imports.create', params: { integrationId: id } }"
@@ -121,7 +89,6 @@ const createImport = async () => {
                 {{ t('integrations.imports.create.title') }}
               </Button>
             </Link>
-          </template>
         </div>
       </div>
 
