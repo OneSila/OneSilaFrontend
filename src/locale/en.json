@@ -239,7 +239,7 @@
     "alert": {
       "mutationAlert": {
         "title": "Are you sure?",
-        "text": "You won't be able to revert this!",
+        "text": "Approving WILL remove the information from all your sales channels as well.",
         "confirmButtonText": "Yes, delete it!",
         "confirmButtonTextSimpleYes": "Yes, continue!",
         "cancelButtonText": "No, cancel!"
