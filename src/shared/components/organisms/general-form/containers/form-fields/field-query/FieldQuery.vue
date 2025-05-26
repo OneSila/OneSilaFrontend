@@ -100,7 +100,11 @@ function processAndCleanData(rawData: any) {
 
   // Automatically select the single value if the field is mandatory and there is only one option
   if (!props.field.optional && cleanedData.value.length === 1 && (selectedValue.value === undefined || selectedValue.value === null)) {
-    updateValue(cleanedData.value[0][props.field.valueBy]);
+    if (props.field.multiple) {
+      updateValue([cleanedData.value[0][props.field.valueBy]]);
+    } else {
+      updateValue(cleanedData.value[0][props.field.valueBy]);
+    }
   }
 
   // Auto-select based on setDefaultKey and defaultExpectedValue

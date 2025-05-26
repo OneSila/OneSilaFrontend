@@ -4,7 +4,7 @@ import {ref, onMounted, watch, Ref} from 'vue';
 import {ProductPropertyValue} from "../../../../../configs";
 import {ConfigTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import {propertySelectValuesQuery} from "../../../../../../../../shared/api/queries/properties.js";
+import {propertySelectValuesQuerySimpleSelector} from "../../../../../../../../shared/api/queries/properties.js";
 import {TextInput} from "../../../../../../../../shared/components/atoms/input-text";
 import {TextEditor} from "../../../../../../../../shared/components/atoms/input-text-editor";
 import {Toggle} from "../../../../../../../../shared/components/atoms/toggle";
@@ -278,7 +278,7 @@ onMounted(async () => {
       name: 'propertySelectValue',
       labelBy: 'value',
       valueBy: 'id',
-      query: propertySelectValuesQuery,
+      query: propertySelectValuesQuerySimpleSelector,
       queryVariables: { filter: { property: { id: { exact: props.value.property.id } } } },
       dataKey: 'propertySelectValues',
       isEdge: true,
