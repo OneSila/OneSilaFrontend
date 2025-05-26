@@ -335,6 +335,32 @@ export interface SalesChannelViewAssign {
   remoteProduct: RemoteProduct;
 }
 
+export interface ProductProperty {
+  id: string;
+  property: {
+    id: string;
+    name: string;
+    type: string;
+    isProductType: boolean;
+  };
+  valueSelect?: {
+    id: string;
+    value: string;
+    productpropertiesruleSet?: { id: string }[];
+  } | null;
+  valueMultiSelect?: {
+    id: string;
+    value: string;
+  }[] | null;
+  valueBoolean?: boolean | null;
+  valueInt?: number | null;
+  valueFloat?: number | null;
+  valueDate?: string | null;
+  valueDatetime?: string | null;
+
+}
+
+
 export interface Product {
   id: string;
   proxyId?: string;
@@ -348,6 +374,7 @@ export interface Product {
   vatRate?: VatRate;
   allowBackorder: boolean;
   saleschannelviewassignSet: SalesChannelViewAssign[];
+  productpropertySet: ProductProperty[];
 }
 
 export interface ProductWithAliasFields extends Product {

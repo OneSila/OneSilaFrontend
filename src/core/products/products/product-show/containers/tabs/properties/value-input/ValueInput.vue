@@ -372,7 +372,7 @@ const getTooltip = (requireType) => {
     <div class="grid grid-cols-12 md:grid-cols-12 gap-4 items-start">
 
       <!-- Label + status + actions -->
-      <div class="col-span-12 md:col-span-2">
+      <div class="col-span-12 md:col-span-3">
         <Flex class="gap-2 md:justify-between flex-wrap">
           <FlexCell center>
             <label class="font-semibold text-sm flex items-center gap-2">
@@ -412,7 +412,7 @@ const getTooltip = (requireType) => {
       </div>
 
       <!-- Input -->
-      <div class="col-span-11 md:col-span-9">
+      <div class="col-span-11 md:col-span-8">
         <FieldQuery
           v-if="value.property.type === PropertyTypes.SELECT && field !== null"
           :field="field"

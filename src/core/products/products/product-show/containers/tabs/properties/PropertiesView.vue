@@ -20,85 +20,51 @@ import {Icon} from "../../../../../../../shared/components/atoms/icon";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
-const ruleId = ref(null);
+const ruleId: Ref<string | null> = ref(null);
+
 const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
 
-const fetchRequiredProductType = async () => {
 
-  const {data} = await apolloClient.query({
-    query: propertiesQuery,
-    variables: {filter: {isProductType: {exact: true}}},
-    fetchPolicy: 'network-only'
-  })
-
-  if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
-    const productType = data.properties.edges[0].node
-    const toAdd: ProductPropertyValue = {
-      property: {
-        id: productType.id,
-        name: productType.name,
-        type: productType.type,
-        isProductType: true,
-        requireType: ConfigTypes.REQUIRED
-      },
-      translation: {
-        language: null
-      }
-    }
-    values.value.push(toAdd);
-    return productType.id;
-  }
-
-  return null;
-}
-
-const fetchProductTypeValue = async (productTypePropertyId) => {
+const fetchProductTypeValue = async () => {
   ruleId.value = null;
 
-  const {data} = await apolloClient.query({
-    query: productPropertiesQuery,
-    variables: {filter: {property: {id: {exact: productTypePropertyId}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
-  });
+  const productTypeProperty = props.product.productpropertySet.find(
+    p => p.property?.isProductType
+  );
 
-  if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
-    const value = data.productProperties.edges[0].node;
-    const existingItem = values.value.find(v => v.property.id === value.property.id);
+  if (!productTypeProperty) return null;
 
-    if (value.valueSelect && value.valueSelect.productpropertiesruleSet.length) {
-      ruleId.value = value.valueSelect.productpropertiesruleSet[0].id;
+  const value: ProductPropertyValue = {
+    id: productTypeProperty.id,
+    property: {
+      id: productTypeProperty.property.id,
+      name: productTypeProperty.property.name,
+      type: productTypeProperty.property.type,
+      isProductType: true,
+    },
+    valueSelect: productTypeProperty.valueSelect
+      ? { id: productTypeProperty.valueSelect.id }
+      : { id: null },
+    translation: {
+      language: null
     }
+  };
 
-    if (existingItem) {
-      existingItem.id = value.id;
-      existingItem.valueSelect = {id: value.valueSelect.id};
-    } else {
-      const toAdd: ProductPropertyValue = {
-        id: value.id,
-        property: {
-          id: value.property.id,
-          name: value.property.name,
-          type: value.property.type,
-          isProductType: true,
-        },
-        valueSelect: {
-          id: value.valueSelect.id
-        },
-        translation: {
-          language: null
-        }
-      };
-      values.value.push(toAdd);
-    }
-
-    return value.valueSelect.id;
+  if (
+    productTypeProperty.valueSelect &&
+    productTypeProperty.valueSelect.productpropertiesruleSet?.length
+  ) {
+    ruleId.value = productTypeProperty.valueSelect.productpropertiesruleSet[0].id;
   }
 
-  return null;
+  values.value.push(value);
+
+  return productTypeProperty.valueSelect?.id ?? null;
 };
+
 
 const setCurrentLanguage = async () => {
 
@@ -162,40 +128,40 @@ const fetchPropertiesIds = async (productTypeValueId) => {
   return [];
 }
 
-const setInitialValues = async (propertiesIds) => {
-  const {data} = await apolloClient.query({
-    query: productPropertiesQuery,
-    variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
-  });
+const setInitialValues = async (propertiesIds: string[]) => {
+  const productProperties = props.product.productpropertySet ?? [];
 
-  if (data && data.productProperties && data.productProperties.edges) {
-    data.productProperties.edges.forEach(edge => {
-      const value = edge.node;
-      const existingItem = values.value.find(v => v.property.id === value.property.id);
+  for (const value of productProperties) {
+    if (!propertiesIds.includes(value.property.id)) continue;
 
-      if (existingItem) {
-        existingItem.id = value.id;
-        existingItem.valueBoolean = value.valueBoolean ?? null;
-        existingItem.valueInt = value.valueInt ?? null;
-        existingItem.valueFloat = value.valueFloat ?? null;
-        existingItem.valueDate = value.valueDate ?? null;
-        existingItem.valueDateTime = value.valueDatetime ?? null;
-        existingItem.valueSelect = value.valueSelect ? {id: value.valueSelect.id} : {id: null};
-        existingItem.valueMultiSelect = value.valueMultiSelect ? value.valueMultiSelect.map(v => ({
-          id: v.id,
-          value: v.value
-        })) : null;
-      }
-    });
+    const existingItem = values.value.find(v => v.property.id === value.property.id);
+    if (!existingItem) continue;
+
+    existingItem.id = value.id;
+    existingItem.valueBoolean = value.valueBoolean ?? null;
+    existingItem.valueInt = value.valueInt ?? null;
+    existingItem.valueFloat = value.valueFloat ?? null;
+    existingItem.valueDate = value.valueDate ?? null;
+    existingItem.valueDateTime = value.valueDatetime ?? null;
+
+    existingItem.valueSelect = value.valueSelect
+      ? {
+          id: value.valueSelect.id,
+        }
+      : { id: null };
+
+    existingItem.valueMultiSelect = value.valueMultiSelect
+      ? value.valueMultiSelect.map(v => ({ id: v.id, value: v.value }))
+      : null;
   }
 
   return true;
 };
 
-const fetchRequiredAttributes = async (productTypePropertyId) => {
 
-  const productTypeValueId = await fetchProductTypeValue(productTypePropertyId);
+const fetchRequiredAttributes = async () => {
+
+  const productTypeValueId = await fetchProductTypeValue();
 
   if (props.product.type == ProductType.Configurable) {
     lastSavedValues.value = values.value;
@@ -211,8 +177,7 @@ const fetchRequiredAttributesValues = async () => {
   loading.value = true
   values.value = [];
   language.value = null;
-  const productTypePropertyId = await fetchRequiredProductType();
-  await fetchRequiredAttributes(productTypePropertyId);
+  await fetchRequiredAttributes();
   loading.value = false
 }
 
