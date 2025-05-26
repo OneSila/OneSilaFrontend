@@ -86,7 +86,13 @@ const modalColsed = () => {
                 >
                   <template v-slot="{ loading, confirmAndMutate }">
                     <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
-                      {{ t('shared.button.delete') }}
+                      <!-- Icon only on small screens -->
+                      <Icon name="trash" class="block sm:hidden" />
+
+                      <!-- Text only on sm and up -->
+                      <span class="hidden sm:inline">
+                        {{ t('shared.button.delete') }}
+                      </span>
                     </Button>
                   </template>
                 </ApolloAlertMutation>

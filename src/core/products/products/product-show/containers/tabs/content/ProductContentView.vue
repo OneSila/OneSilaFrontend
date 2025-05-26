@@ -148,8 +148,38 @@ const shortDescriptionToolbarOptions = [
 </script>
 
 <template>
+
+  <Flex end>
+    <FlexCell>
+      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted" @error="handleError">
+        <template v-slot="{ mutate, loading, error }">
+          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
+            {{ t('shared.button.save') }}
+          </Button>
+        </template>
+      </ApolloMutation>
+    </FlexCell>
+    <FlexCell>
+      <ApolloQuery :query="translationLanguagesQuery">
+        <template v-slot="{ result: { data } }">
+          <Selector v-if="data"
+                    v-model="currentLanguage"
+                    :options="cleanedData(data.translationLanguages)"
+                    :removable="false"
+                    :placeholder="t('products.translation.placeholders.language')"
+                    @update:modelValue="handleLanguageSelection"
+                    class="w-40"
+                    labelBy="name"
+                    valueBy="code"
+                    mandatory
+                    filterable/>
+        </template>
+      </ApolloQuery>
+    </FlexCell>
+  </Flex>
+
   <Flex between>
-    <FlexCell class="w-3/4">
+    <FlexCell class="w-full xl:w-2/3">
       <Flex vertical>
         <FlexCell>
           <Flex  class="gap-4">
@@ -252,35 +282,5 @@ const shortDescriptionToolbarOptions = [
       </Flex>
     </FlexCell>
 
-    <FlexCell>
-      <Flex>
-        <FlexCell>
-          <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted" @error="handleError">
-            <template v-slot="{ mutate, loading, error }">
-              <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
-                {{ t('shared.button.save') }}
-              </Button>
-            </template>
-          </ApolloMutation>
-        </FlexCell>
-        <FlexCell>
-          <ApolloQuery :query="translationLanguagesQuery">
-            <template v-slot="{ result: { data } }">
-              <Selector v-if="data"
-                        v-model="currentLanguage"
-                        :options="cleanedData(data.translationLanguages)"
-                        :removable="false"
-                        :placeholder="t('products.translation.placeholders.language')"
-                        @update:modelValue="handleLanguageSelection"
-                        class="w-40"
-                        labelBy="name"
-                        valueBy="code"
-                        mandatory
-                        filterable/>
-            </template>
-          </ApolloQuery>
-        </FlexCell>
-      </Flex>
-    </FlexCell>
   </Flex>
 </template>

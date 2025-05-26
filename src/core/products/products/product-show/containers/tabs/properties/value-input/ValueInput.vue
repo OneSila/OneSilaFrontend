@@ -2,7 +2,7 @@
 
 import {ref, onMounted, watch, Ref} from 'vue';
 import {ProductPropertyValue} from "../../../../../configs";
-import { FieldType, flagMapping, PropertyTypes } from "../../../../../../../../shared/utils/constants";
+import {ConfigTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {propertySelectValuesQuery} from "../../../../../../../../shared/api/queries/properties.js";
 import {TextInput} from "../../../../../../../../shared/components/atoms/input-text";
@@ -324,96 +324,140 @@ const removePropertyValue = async () => {
 
 watch(props.value.translation, setTranslatedValues)
 
+const hasValue = (val: ProductPropertyValue): boolean => {
+  const propType = val.property.type;
+
+  if (propType === PropertyTypes.TEXT || propType === PropertyTypes.DESCRIPTION) {
+    return !!(val.translation?.valueText || val.translation?.valueDescription);
+  }
+  if (propType === PropertyTypes.BOOLEAN) return val.valueBoolean !== null && val.valueBoolean !== undefined;
+  if (propType === PropertyTypes.INT) return val.valueInt !== null && val.valueInt !== undefined;
+  if (propType === PropertyTypes.FLOAT) return val.valueFloat !== null && val.valueFloat !== undefined;
+  if (propType === PropertyTypes.DATE) return !!val.valueDate;
+  if (propType === PropertyTypes.DATETIME) return !!val.valueDateTime;
+  if (propType === PropertyTypes.SELECT) return !!val.valueSelect?.id;
+  if (propType === PropertyTypes.MULTISELECT) return Array.isArray(val.valueMultiSelect) && val.valueMultiSelect.length > 0;
+
+  return false;
+};
+
+
+const isRequired = (requireType: string | undefined): boolean => {
+  return [
+    ConfigTypes.REQUIRED,
+    ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+    ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+  ].includes(requireType as ConfigTypes);
+};
+
+const getTooltip = (requireType) => {
+  switch (requireType) {
+    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
+      return t('properties.rule.configTypes.requiredInConfigurator.title');
+    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
+      return t('properties.rule.configTypes.optionalInConfigurator.title');
+    case ConfigTypes.OPTIONAL:
+      return t('properties.rule.configTypes.optional.title');
+    case ConfigTypes.REQUIRED:
+      return t('properties.rule.configTypes.required.title');
+    default:
+      return '';
+  }
+}
+
 </script>
 
 <template>
-  <div>
-    <div class="grid grid-cols-12 gap-4 items-center my-2 md:hidden">
-      <div class="col-span-6">
-      </div>
-      <div class="col-span-2 text-end">
-        <Button v-if="val !== lastSavedVal" @click="saveChanges" class="rounded-md px-2 py-1 text-sm text-white shadow-sm btn-primary">
-          {{ t('shared.button.save') }}
-        </Button>
-      </div>
-      <div  class="col-span-2 text-end">
-        <Link v-if="ruleId && value.property.isProductType" :path="{ name: 'properties.rule.edit', params: {id: ruleId}}" target="_blank">
-          <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'">
-          <Icon size="sm" name="eye" />
-        </Button>
-        </Link>
+
+    <div class="grid grid-cols-12 md:grid-cols-12 gap-4 items-start">
+
+      <!-- Label + status + actions -->
+      <div class="col-span-12 md:col-span-2">
+        <Flex class="gap-2 md:justify-between flex-wrap">
+          <FlexCell center>
+            <label class="font-semibold text-sm flex items-center gap-2">
+              <Icon
+                name="circle-dot"
+                :class="[
+                  'transition-all duration-200',
+                  {
+                    'text-gray-400': hasValue(value),
+                    'text-red-500': !hasValue(value) && isRequired(value.property.requireType),
+                    'text-orange-400': !hasValue(value) && !isRequired(value.property.requireType),
+                  }
+                ]"
+                :title="getTooltip(value.property.requireType)"
+              />
+              {{ value.property.name }}
+            </label>
+          </FlexCell>
+          <FlexCell center>
+              <template v-if="[PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type) && value.translation.language && flagMapping.hasOwnProperty(value.translation.language) && val == lastSavedVal">
+                <span>{{ flagMapping[value.translation.language] }}</span>
+              </template>
+
+              <template v-else-if="val !== lastSavedVal">
+                <Button @click="saveChanges" class="btn btn-sm btn-primary">{{ t('shared.button.save') }}</Button>
+              </template>
+
+              <template v-else-if="ruleId && value.property.isProductType">
+                <Link :path="{ name: 'properties.rule.edit', params: { id: ruleId } }" target="_blank">
+                  <Button class="btn btn-sm btn-primary p-2 rounded-full">
+                    <Icon name="eye" />
+                  </Button>
+                </Link>
+              </template>
+          </FlexCell>
+        </Flex>
       </div>
 
-      <div class="col-span-2 text-end">
-        <Button v-if="![PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)" class="btn btn-sm btn-outline-danger text-end" @click="removePropertyValue()">
+      <!-- Input -->
+      <div class="col-span-11 md:col-span-9">
+        <FieldQuery
+          v-if="value.property.type === PropertyTypes.SELECT && field !== null"
+          :field="field"
+          v-model="val"
+        />
+        <FieldQuery
+          v-if="value.property.type === PropertyTypes.MULTISELECT && field !== null"
+          :field="field"
+          v-model="val"
+          multiple
+        />
+        <TextInput
+          v-if="value.property.type === PropertyTypes.INT"
+          class="w-full"
+          v-model="val"
+          number
+        />
+        <TextInput
+          v-if="value.property.type === PropertyTypes.FLOAT"
+          class="w-full"
+          v-model="val"
+          float
+        />
+        <TextInput
+          v-if="value.property.type === PropertyTypes.TEXT"
+          class="w-full"
+          v-model="val"
+        />
+        <TextEditor
+          v-if="value.property.type === PropertyTypes.DESCRIPTION"
+          v-model="val"
+          class="h-32"
+        />
+        <Toggle v-if="value.property.type === PropertyTypes.BOOLEAN" v-model="val" />
+        <DateInput v-if="value.property.type === PropertyTypes.DATE" v-model="val" />
+        <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
+      </div>
+
+      <!-- Trash -->
+      <div class="col-span-1">
+        <Button class="btn btn-sm btn-outline-danger" @click="removePropertyValue()">
           <Icon name="trash" />
         </Button>
       </div>
     </div>
-    <div class="grid grid-cols-12 gap-4 items-center">
-    <div class="col-span-1 text-end hidden md:block">
-      <template v-if="[PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type) && value.translation.language && flagMapping.hasOwnProperty(value.translation.language) && val == lastSavedVal">
-        <span>{{ flagMapping[value.translation.language] }}</span>
-      </template>
-      <template v-else-if="val !== lastSavedVal">
-        <Button @click="saveChanges" class="rounded-md px-2 py-1 text-sm text-white shadow-sm btn-primary">{{ t('shared.button.save') }}</Button>
-      </template>
-      <template v-else>
-        <Flex end>
-          <FlexCell>
-            <Link v-if="ruleId && value.property.isProductType" :path="{ name: 'properties.rule.edit', params: {id: ruleId}}" target="_blank">
-                <Button :customClass="'ltr:ml-2 rtl:mr-2 btn btn-primary p-2 rounded-full'">
-                <Icon size="sm" name="eye" />
-              </Button>
-            </Link>
-          </FlexCell>
-        </Flex>
-      </template>
-    </div>
-    <div class="col-span-12 md:col-span-10">
-      <FieldQuery
-        v-if="value.property.type === PropertyTypes.SELECT && field !== null"
-        :field="field"
-        v-model="val"
-      />
-      <FieldQuery
-        v-if="value.property.type === PropertyTypes.MULTISELECT && field !== null"
-        :field="field"
-        v-model="val"
-        multiple
-      />
-      <TextInput
-        v-if="value.property.type === PropertyTypes.INT"
-        class="w-full"
-        v-model="val"
-        number
-      />
-      <TextInput
-        v-if="value.property.type === PropertyTypes.FLOAT"
-        class="w-full"
-        v-model="val"
-        float
-      />
-      <TextInput
-        v-if="value.property.type === PropertyTypes.TEXT"
-        class="w-full"
-        v-model="val"
-      />
-      <TextEditor
-        v-if="value.property.type === PropertyTypes.DESCRIPTION"
-        v-model="val"
-        class="h-32"
-      />
-      <Toggle v-if="value.property.type === PropertyTypes.BOOLEAN" v-model="val" />
-      <DateInput v-if="value.property.type === PropertyTypes.DATE" v-model="val" />
-      <DateTimeInput v-if="value.property.type === PropertyTypes.DATETIME" v-model="val" />
-    </div>
 
-    <div class="col-span-1 hidden md:block">
-      <Button class="btn btn-sm btn-outline-danger" @click="removePropertyValue()">
-        <Icon name="trash" />
-      </Button>
-    </div>
-  </div>
-  </div>
 </template>
+

@@ -69,13 +69,23 @@ const barColor = computed(() => {
 <template>
   <div>
     <div class="flex justify-between mb-1">
-      <span :class="['text-base', 'font-medium', labelColor]">
+      <!-- Label text (Processing / Completed) — hidden on small screens -->
+      <span :class="['text-base', 'font-medium', labelColor, 'hidden sm:block']">
         {{ label }}
       </span>
+
+      <!-- Percentage text only for small screens -->
+      <span :class="[labelColor, 'text-sm', 'font-medium', 'block sm:hidden']">
+        {{ Math.floor(displayedProgress) }}%
+      </span>
     </div>
-    <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
-      <div :class="[barColor, 'text-xs', 'font-medium', 'text-white', 'text-center', 'p-0.5', 'leading-none', 'rounded-full']"
-           :style="{ width: displayedProgress + '%' }">
+
+    <!-- Progress bar only on medium and up -->
+    <div class="hidden sm:block w-full bg-gray-200 rounded-full dark:bg-gray-700">
+      <div
+        :class="[barColor, 'text-xs', 'font-medium', 'text-white', 'text-center', 'p-0.5', 'leading-none', 'rounded-full']"
+        :style="{ width: displayedProgress + '%' }"
+      >
         <span>{{ Math.floor(displayedProgress) }}%</span>
       </div>
     </div>

@@ -316,21 +316,6 @@ const getIconColor = (requireType: string, isFilled = false) => {
 };
 
 
-const getTooltip = (requireType) => {
-  switch (requireType) {
-    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
-      return t('properties.rule.configTypes.requiredInConfigurator.title');
-    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
-      return t('properties.rule.configTypes.optionalInConfigurator.title');
-    case ConfigTypes.OPTIONAL:
-      return t('properties.rule.configTypes.optional.title');
-    case ConfigTypes.REQUIRED:
-      return t('properties.rule.configTypes.required.title');
-    default:
-      return '';
-  }
-}
-
 const getExtendedTooltip = (metaType: string): string => {
   switch (metaType) {
     case 'REQUIRED':
@@ -352,31 +337,7 @@ const requireTypes = [
 ];
 
 
-const hasValue = (val: ProductPropertyValue): boolean => {
-  const propType = val.property.type;
 
-  if (propType === PropertyTypes.TEXT || propType === PropertyTypes.DESCRIPTION) {
-    return !!(val.translation?.valueText || val.translation?.valueDescription);
-  }
-  if (propType === PropertyTypes.BOOLEAN) return val.valueBoolean !== null && val.valueBoolean !== undefined;
-  if (propType === PropertyTypes.INT) return val.valueInt !== null && val.valueInt !== undefined;
-  if (propType === PropertyTypes.FLOAT) return val.valueFloat !== null && val.valueFloat !== undefined;
-  if (propType === PropertyTypes.DATE) return !!val.valueDate;
-  if (propType === PropertyTypes.DATETIME) return !!val.valueDateTime;
-  if (propType === PropertyTypes.SELECT) return !!val.valueSelect?.id;
-  if (propType === PropertyTypes.MULTISELECT) return Array.isArray(val.valueMultiSelect) && val.valueMultiSelect.length > 0;
-
-  return false;
-};
-
-
-const isRequired = (requireType: string | undefined): boolean => {
-  return [
-    ConfigTypes.REQUIRED,
-    ConfigTypes.REQUIRED_IN_CONFIGURATOR,
-    ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
-  ].includes(requireType as ConfigTypes);
-};
 
 const handleValueUpdate = ({id, type, value, language}) => {
   const target = values.value.find(v => v.property.id === id);
@@ -451,41 +412,21 @@ const handleValueUpdate = ({id, type, value, language}) => {
       </FlexCell>
     </Flex>
     <Loader :loading="loading"/>
-    <table class="divide-y divide-gray-300 table-hover custom-table mt-4">
-      <thead></thead>
-      <tbody>
-      <template v-for="(val, index) in values">
-        <tr>
-          <th class="font-semibold left-align">
-            <Icon
-                name="circle-dot"
-                :class="[
-                'transition-all duration-200',
-                {
-                  'text-gray-400': hasValue(val),
-                  'text-red-500': !hasValue(val) && isRequired(val.property.requireType),
-                  'text-orange-400': !hasValue(val) && !isRequired(val.property.requireType),
-                }
-                ]"
-                :title="getTooltip(val.property.requireType)"
-            />
+    <div class="mt-4 space-y-6">
+  <div v-for="(val, index) in values" :key="val.property.id">
+      <ValueInput
+        v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+        :product-id="product.id"
+        :rule-id="ruleId"
+        :value="val"
+        @refetch="fetchRequiredAttributesValues"
+        @update-id="handleUpdatedId"
+        @update-value="handleValueUpdate"
+        @remove="handleRemove"
+      />
+  </div>
+</div>
 
-            {{ val.property.name }}
-          </th>
-          <td>
-            <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
-                        :product-id="product.id"
-                        :rule-id="ruleId"
-                        :value="val"
-                        @refetch="fetchRequiredAttributesValues"
-                        @update-id="handleUpdatedId"
-                        @update-value="handleValueUpdate"
-                        @remove="handleRemove"/>
-          </td>
-        </tr>
-      </template>
-      </tbody>
-    </table>
   </div>
 </template>
 
