@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import {computed, ref, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { Label } from "../../../../../../../shared/components/atoms/label";
@@ -15,6 +15,12 @@ import { updateShopifySalesChannelMutation } from "../../../../../../../shared/a
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { cleanShopHostname } from "../../../../configs";
 import apolloClient from "../../../../../../../../apollo-client";
+import {FieldType, PropertyTypes} from "../../../../../../../shared/utils/constants";
+import {propertiesQuery} from "../../../../../../../shared/api/queries/properties";
+import {QueryFormField} from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import {
+  FieldQuery
+} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 
 interface EditShopifyForm {
   id: string;
@@ -30,6 +36,9 @@ interface EditShopifyForm {
   importOrders: boolean;
   accessToken?: string;
   state?: string;
+  vendorProperty: {
+    id: string;
+  };
 }
 
 const props = defineProps<{ data: EditShopifyForm }>();
@@ -52,6 +61,7 @@ watch(() => props.data, (newData) => {
 
 const cleanupAndMutate = async (mutate) => {
   fieldErrors.value = {};
+  console.log(formData.value)
   await mutate({ variables: { data: formData.value } });
 };
 
@@ -97,6 +107,21 @@ const handleRetryConnect = async () => {
   }
 };
 
+const propertyField = computed(() => ({
+    type: FieldType.Query,
+    name: 'property',
+    label: t('properties.properties.show.title'),
+    labelBy: 'name',
+    valueBy: 'id',
+    query: propertiesQuery,
+    queryVariables: { filter: {'type': {'exact': PropertyTypes.SELECT }, 'isProductType': {'exact': false }} },
+    dataKey: 'properties',
+    isEdge: true,
+    multiple: false,
+    filterable: true,
+    formMapIdentifier: 'id',
+}));
+
 useEnterKeyboardListener(onSubmitPressed);
 useShiftEnterKeyboardListener(onSubmitAndContinuePressed);
 useShiftBackspaceKeyboardListener(goBack);
@@ -124,15 +149,21 @@ useShiftBackspaceKeyboardListener(goBack);
           </FlexCell>
         </Flex>
       </div>
-      <div class="md:col-span-2 col-span-6">
-        <Flex class="mt-8" gap="2">
+    </div>
+
+    <div class="grid grid-cols-12 gap-4">
+      <div class="md:col-span-6 col-span-12">
+        <Flex vertical>
           <FlexCell>
-            <Label class="font-semibold text-sm text-gray-900 mb-1">
-              {{ t('integrations.labels.verifySSL') }}
+            <Label class="font-semibold block text-sm leading-6 text-gray-900">
+              {{ t('integrations.labels.vendorProperty') }}
             </Label>
           </FlexCell>
           <FlexCell>
-            <Toggle v-model="formData.verifySsl" />
+            <FieldQuery v-model="formData.vendorProperty.id" :field="propertyField as QueryFormField" />
+            <div class="mt-1 text-sm leading-6 text-gray-400">
+              <p>{{ t('integrations.salesChannel.helpText.shopifyVendorProperty') }}</p>
+            </div>
           </FlexCell>
         </Flex>
       </div>

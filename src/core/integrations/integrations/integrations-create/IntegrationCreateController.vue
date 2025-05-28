@@ -10,12 +10,13 @@ import {
   IntegrationCreateWizardForm,
   IntegrationTypes,
   getMagentoDefaultFields,
-  AuthenticationMethod
+  AuthenticationMethod, MagentoChannelInfo, ShopifyChannelInfo, getDefaultFields, getShopifyDefaultFields
 } from "../integrations";
 import { TypeStep } from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
 import { SalesChannelStep } from "./containers/sales-channel-step";
 import { MagentoChannelInfoStep } from "./containers/integration-specific-step/magento";
+import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
 import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation
@@ -51,22 +52,33 @@ const form = reactive<IntegrationCreateWizardForm>({
     importOrders: true,
   }
 });
-const specificChannelInfo = ref(getMagentoDefaultFields());
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | {}>({});
 
 watch(selectedIntegrationType, (newType) => {
-  if (newType === IntegrationTypes.Magento) {
-    Object.assign(specificChannelInfo.value, getMagentoDefaultFields());
-  } else if (newType === IntegrationTypes.Shopify) {
-    for (const key in specificChannelInfo.value) {
-      delete specificChannelInfo.value[key];
-    }
+
+  for (const key in specificChannelInfo.value) {
+    delete specificChannelInfo.value[key];
   }
+
+  if (newType === IntegrationTypes.Shopify) {
+    Object.assign(specificChannelInfo.value, getShopifyDefaultFields());
+  } else if (newType === IntegrationTypes.Magento) {
+    Object.assign(specificChannelInfo.value, getMagentoDefaultFields());
+  } else {
+    specificChannelInfo.value = {};
+  }
+
 });
 
 const stepFourLabel = computed(() => {
   if (selectedIntegrationType.value === IntegrationTypes.Magento) {
     return t('integrations.create.wizard.step4.magento.title');
   }
+
+  if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
+    return t('integrations.create.wizard.step4.shopify.title');
+  }
+
   return t('integrations.create.wizard.step4.title');
 });
 
@@ -75,14 +87,8 @@ const wizardSteps = computed(() => {
     { title: t('integrations.create.wizard.step1.title'),    name: 'typeStep' },
     { title: t('integrations.create.wizard.step2.title'),    name: 'generalInfoStep' },
     { title: t('integrations.create.wizard.step3.title'),    name: 'salesChannelStep' },
+    { title: stepFourLabel.value,    name: 'specificChannelStep' },
   ]
-
-  if (selectedIntegrationType.value === IntegrationTypes.Magento) {
-    steps.push({
-      title: stepFourLabel.value,
-      name:  'specificChannelStep'
-    })
-  }
 
   return steps
 })
@@ -90,6 +96,11 @@ const wizardSteps = computed(() => {
 const updateStep = (val) => {
   step.value = val;
 }
+
+function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
+  return value && typeof value.hostApiKey === 'string';
+}
+
 
 const allowNextStep = computed(() => {
 
@@ -113,7 +124,8 @@ const allowNextStep = computed(() => {
 
   if (
     stepName === 'specificChannelStep' &&
-    selectedIntegrationType.value === IntegrationTypes.Magento
+    selectedIntegrationType.value === IntegrationTypes.Magento &&
+    isMagentoChannelInfo(specificChannelInfo.value)
   ) {
     const key = specificChannelInfo.value.hostApiKey;
     if (!key || key.trim() === '') {
@@ -135,9 +147,9 @@ const getIntegrationComponent = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Magento) {
     return MagentoChannelInfoStep;
   }
-  // if (type === IntegrationTypes.Shopify) {
-  //   return ShopifySpecificComponent;
-  // }
+  if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
+    return ShopifyChannelInfoStep;
+  }
   return null;
 };
 
@@ -263,6 +275,7 @@ const handleSalesChannelSuccess = (channelData: any, integrationType: string) =>
           <GeneralInfoStep
               :general-info="form.generalInfo"
               :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
+              :show-ssl="selectedIntegrationType !== IntegrationTypes.Shopify"
           />
         </template>
 

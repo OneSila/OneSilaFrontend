@@ -93,6 +93,9 @@ export const getShopifyChannelQuery = gql`
       saleschannelPtr {
         id
       }
+      vendorProperty {
+        id
+      }
     }
   }
 `;

@@ -2176,6 +2176,10 @@
             "title": "Magento Channel Details",
             "content": "Provide Magento-specific information to connect your store."
           },
+          "shopify": {
+            "title": "Shopify Channel Details",
+            "content": "Provide Shopify-specific configuration to connect your store."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2196,6 +2200,7 @@
       "hostApiKey": "Host API Access Token Key",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
+      "vendorProperty": "Vendor Property",
       "pullData": "Pull Data"
     },
     "placeholders": {
@@ -2219,7 +2224,8 @@
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
         "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",
         "hostApiKey": "Your Access Token is available in Magento under System > Integrations.",
-        "password": "Using a password is not recommended. Use an Access Token instead."
+        "password": "Using a password is not recommended. Use an Access Token instead.",
+        "shopifyVendorProperty": "This must be a property of type Select. Its selected value will be sent as the product's vendor in Shopify."
       },
       "modal": {
         "logs": {

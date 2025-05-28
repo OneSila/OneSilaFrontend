@@ -9,7 +9,8 @@ import {Accordion} from "../../../../../../shared/components/atoms/accordion";
 
 const props = defineProps<{
   generalInfo: IntegrationGeneralInfo,
-  maxRequestsPerMinute: number | undefined
+  maxRequestsPerMinute: number | undefined,
+  showSsl: boolean
 }>();
 
 const { t } = useI18n();
@@ -40,7 +41,7 @@ const accordionItems = [
             </Flex>
           </FlexCell>
         </Flex>
-        <Flex class="mt-4 gap-4" center>
+        <Flex v-if="showSsl" class="mt-4 gap-4" center>
           <FlexCell center>
             <Flex class="gap-2 w-96">
               <FlexCell>

@@ -23,6 +23,7 @@ import { Currencies } from "./containers/currencies";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
+import {ProductType} from "../../../../shared/utils/constants";
 
 const router = useRouter();
 const route = useRoute();
@@ -89,6 +90,16 @@ const fetchIntegrationData = async () => {
       fetchPolicy: 'network-only'
     });
     const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = data[getIntegrationQueryKey()];
+
+    if (type.value == IntegrationTypes.Shopify) {
+      if (cleanData.vendorProperty && typeof cleanData.vendorProperty === 'object') {
+        const { __typename: _ignored, ...vendorWithoutTypename } = cleanData.vendorProperty;
+        cleanData.vendorProperty = vendorWithoutTypename;
+      } else {
+        cleanData.vendorProperty = { id: null };
+      }
+    }
+
     integrationData.value = cleanData;
     salesChannelId.value = saleschannelPtr.id
     integrationId.value = integrationPtr.id
