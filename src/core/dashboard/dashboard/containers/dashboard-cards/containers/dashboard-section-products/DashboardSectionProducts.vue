@@ -24,20 +24,22 @@ const productErrors = ref([
   // { errorCode: 104, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 105, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   // { errorCode: 106, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 110, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 111, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 117, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 120, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 121, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 124, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+
   // Medium importance errors
   { errorCode: 109, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
-  { errorCode: 110, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
-  { errorCode: 111, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
   { errorCode: 112, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
   // { errorCode: 114, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
   { errorCode: 116, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
   // Low importance errors
-  { errorCode: 117, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
-  { errorCode: 118, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
-  { errorCode: 120, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
-  { errorCode: 121, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
+  // { errorCode: 118, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
+
   { errorCode: 123, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
-  { errorCode: 124, importance: 'low', icon: 'info-circle', color: 'yellow', counter: 0, loading: true  },
 ]);
 
 async function fetchErrorCounts() {
