@@ -11,7 +11,10 @@ import { CancelButton } from "../../../../../../../shared/components/atoms/butto
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../../../../shared/modules/keyboard";
 import { useRouter } from "vue-router";
-import { updateShopifySalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
+import {
+  getShopifyRedirectUrlMutation,
+  updateShopifySalesChannelMutation
+} from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { cleanShopHostname } from "../../../../configs";
 import apolloClient from "../../../../../../../../apollo-client";
@@ -82,30 +85,46 @@ const onSubmitAndContinuePressed = () => submitContinueButtonRef.value?.$el.clic
 
 const handleRetryConnect = async () => {
   try {
-    const { data } = await apolloClient.mutate({
+    fieldErrors.value = {};
+
+    // Step 1: Refresh the state by calling updateShopifySalesChannel
+    const { data: updateData } = await apolloClient.mutate({
       mutation: updateShopifySalesChannelMutation,
       variables: {
-        data: {
-          id: formData.value.id,
-        },
+        data: { id: formData.value.id },
       },
     });
 
-    const updated = data?.updateShopifySalesChannel;
-    if (updated?.state && updated?.hostname) {
+    const updated = updateData?.updateShopifySalesChannel;
 
-      const apiGraphqlUrl = import.meta.env.VITE_APP_API_GRAPHQL_URL;
-      const backendBaseUrl = apiGraphqlUrl.replace(/\/graphql\/?$/, '');
-      const redirectUrl = `${backendBaseUrl}/direct/integrations/shopify/oauth/start?shop=${cleanShopHostname(updated.hostname)}&state=${updated.state}`;
-
-      window.location.href = redirectUrl;
-    } else {
-      Toast.error('Retry failed. Missing hostname or state.');
+    if (!updated?.id) {
+      Toast.error(t('integrations.salesChannel.shopify.retry.failedGeneric'));
+      return;
     }
+
+    // Step 2: Get the new redirect URL
+    const { data: redirectData } = await apolloClient.mutate({
+      mutation: getShopifyRedirectUrlMutation,
+      variables: {
+        data: { id: updated.id },
+      },
+    });
+
+    const result = redirectData?.getShopifyRedirectUrl;
+
+    if (result?.redirectUrl) {
+      window.location.href = result.redirectUrl;
+      return;
+    }
+
+    Toast.error(t('integrations.salesChannel.shopify.retry.failedRedirect'));
+
   } catch (error) {
-    Toast.error('Retry failed.');
+    Toast.error(t('integrations.salesChannel.shopify.retry.failedException'));
+    console.error(error);
   }
 };
+
 
 const propertyField = computed(() => ({
     type: FieldType.Query,

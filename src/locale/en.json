@@ -2220,6 +2220,11 @@
         },
         "labels": {
           "goToStore": "Go To Store"
+        },
+        "retry": {
+          "failedGeneric": "Retry failed. Could not update Shopify channel.",
+          "failedRedirect": "Retry failed. Could not obtain redirect URL.",
+          "failedException": "Retry failed due to a system error."
         }
       },
       "toast": {
