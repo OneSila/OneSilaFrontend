@@ -19,12 +19,12 @@ import { MagentoChannelInfoStep } from "./containers/integration-specific-step/m
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
 import {
   createMagentoSalesChannelMutation,
-  createShopifySalesChannelMutation
+  createShopifySalesChannelMutation, getShopifyRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import apolloClient from "../../../../../apollo-client";
-import { cleanShopHostname } from "../configs";
+import {cleanShopHostname} from "../configs";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -35,6 +35,12 @@ const selectedIntegrationType = ref<IntegrationTypes>(IntegrationTypes.None);
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
+const queryParams = route.query;
+const isExternalInstall = ref(queryParams.isExternal === 'true');
+
+if (queryParams.type && Object.values(IntegrationTypes).includes(queryParams.type as IntegrationTypes)) {
+  selectedIntegrationType.value = queryParams.type as IntegrationTypes;
+}
 
 const form = reactive<IntegrationCreateWizardForm>({
   generalInfo: {
@@ -53,6 +59,37 @@ const form = reactive<IntegrationCreateWizardForm>({
   }
 });
 const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | {}>({});
+
+if (isExternalInstall.value && selectedIntegrationType.value === IntegrationTypes.Shopify) {
+
+  if (queryParams.shop) {
+    let hostname = String(queryParams.shop).trim();
+
+    if (!hostname.startsWith('http://') && !hostname.startsWith('https://')) {
+      hostname = `https://${hostname}`;
+    }
+
+    form.generalInfo.hostname = hostname;
+  }
+
+  Object.assign(specificChannelInfo.value, getShopifyDefaultFields());
+
+  if (queryParams.hmac && typeof queryParams.hmac === 'string') {
+    (specificChannelInfo.value as ShopifyChannelInfo).hmac = queryParams.hmac;
+  }
+
+  if (queryParams.timestamp && typeof queryParams.timestamp === 'string') {
+    (specificChannelInfo.value as ShopifyChannelInfo).timestamp = queryParams.timestamp;
+  }
+
+  if (queryParams.host && typeof queryParams.host === 'string') {
+    (specificChannelInfo.value as ShopifyChannelInfo).host = queryParams.host;
+  }
+
+  (specificChannelInfo.value as ShopifyChannelInfo).isExternalInstall = true;
+
+}
+
 
 watch(selectedIntegrationType, (newType) => {
 
@@ -83,18 +120,25 @@ const stepFourLabel = computed(() => {
 });
 
 const wizardSteps = computed(() => {
-  const steps = [
-    { title: t('integrations.create.wizard.step1.title'),    name: 'typeStep' },
-    { title: t('integrations.create.wizard.step2.title'),    name: 'generalInfoStep' },
-    { title: t('integrations.create.wizard.step3.title'),    name: 'salesChannelStep' },
-    { title: stepFourLabel.value,    name: 'specificChannelStep' },
-  ]
+  const baseSteps = [
+    { title: t('integrations.create.wizard.step1.title'), name: 'typeStep' },
+    { title: t('integrations.create.wizard.step2.title'), name: 'generalInfoStep' },
+    { title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' },
+    { title: stepFourLabel.value, name: 'specificChannelStep' },
+  ];
 
-  return steps
-})
+  // Remove type step if it's an external install with a predefined type
+  if (isExternalInstall.value && selectedIntegrationType.value !== IntegrationTypes.None) {
+    return baseSteps.slice(1);
+  }
+
+  return baseSteps;
+});
+
 
 const updateStep = (val) => {
   step.value = val;
+  console.log(val)
 }
 
 function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
@@ -195,6 +239,16 @@ const handleFinish = async () => {
       ...specificChannelInfo.value,
     };
 
+    if (
+      selectedIntegrationType.value === IntegrationTypes.Shopify &&
+      (specificChannelInfo.value as ShopifyChannelInfo)?.vendorProperty?.id == null
+    ) {
+      if ('vendorProperty' in specificChannelInfo.value) {
+        delete (dataInput as any).vendorProperty;
+      }
+    }
+
+
     const { data, errors } = await apolloClient.mutate({
       mutation,
       variables: { data: dataInput },
@@ -220,27 +274,43 @@ const handleFinish = async () => {
   }
 };
 
-const handleSalesChannelSuccess = (channelData: any, integrationType: string) => {
+const handleSalesChannelSuccess = async (channelData: any, integrationType: string) => {
   if (integrationType === IntegrationTypes.Shopify) {
-    const shop = channelData.hostname;
-    const state = channelData.state;
+    const id = channelData.id;
 
-    if (!shop || !state) {
-      Toast.error('Shopify channel missing shop or state');
+    const { data } = await apolloClient.mutate({
+      mutation: getShopifyRedirectUrlMutation,
+      variables: {
+        data: { id },
+      },
+    });
+
+    const result = data?.getShopifyRedirectUrl;
+
+    if (result?.redirectUrl) {
+      window.location.href = result.redirectUrl;
       return;
     }
 
-    const apiGraphqlUrl = import.meta.env.VITE_APP_API_GRAPHQL_URL;
-    const backendBaseUrl = apiGraphqlUrl.replace(/\/graphql\/?$/, '');
-    const oauthUrl = `${backendBaseUrl}/direct/integrations/shopify/oauth/start?shop=${cleanShopHostname(shop)}&state=${state}`;
+    // If we have errors from OperationInfo
+    const messages = result?.messages || [];
+    messages.forEach((msg: any) => {
+      Toast.error(msg.message);
+    });
 
-    window.location.href = oauthUrl;
+    // Redirect to show page anyway
+    router.push({
+      name: 'integrations.integrations.show',
+      params: { type: IntegrationTypes.Shopify, id },
+    });
+
     return;
   }
 
-  // Default success: go to integrations list
+  // Fallback: all other integrations
   router.push({ name: 'integrations.integrations.list' });
 };
+
 
 </script>
 
@@ -276,6 +346,7 @@ const handleSalesChannelSuccess = (channelData: any, integrationType: string) =>
               :general-info="form.generalInfo"
               :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
               :show-ssl="selectedIntegrationType !== IntegrationTypes.Shopify"
+              :is-external-install="isExternalInstall"
           />
         </template>
 

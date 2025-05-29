@@ -2210,6 +2210,18 @@
       "eanCodeAttribute": "Enter EAN code attribute"
     },
     "salesChannel": {
+      "shopify": {
+        "installed": {
+          "title": "Shopify Connected",
+          "loading": "Connecting your store",
+          "success": "Your Shopify store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
+        },
+        "labels": {
+          "goToStore": "Go To Store"
+        }
+      },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results."
       },

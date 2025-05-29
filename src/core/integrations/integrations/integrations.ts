@@ -49,8 +49,13 @@ export interface MagentoChannelInfo extends SpecificChannelInfo {
 }
 
 export interface ShopifyChannelInfo extends SpecificChannelInfo {
-  vendorProperty: {id: string | null;}
+  vendorProperty: { id: string | null };
+  hmac?: string;
+  host?: string;
+  timestamp?: string;
+  isExternalInstall?: boolean;
 }
+
 
 /**
  * The complete integration create wizard form.

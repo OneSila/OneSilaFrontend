@@ -6,11 +6,14 @@ import { Label } from "../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 import { IntegrationGeneralInfo } from "../../../integrations";
 import {Accordion} from "../../../../../../shared/components/atoms/accordion";
+import {TextInputPrepend} from "../../../../../../shared/components/atoms/input-text-prepend";
+import {Icon} from "../../../../../../shared/components/atoms/icon";
 
 const props = defineProps<{
   generalInfo: IntegrationGeneralInfo,
   maxRequestsPerMinute: number | undefined,
   showSsl: boolean
+  isExternalInstall: boolean
 }>();
 
 const { t } = useI18n();
@@ -36,7 +39,15 @@ const accordionItems = [
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput class="w-96" v-model="generalInfo.hostname" placeholder="https://example.com" />
+                <TextInputPrepend
+                  v-if="isExternalInstall"
+                  v-model="generalInfo.hostname"
+                  class="w-96"
+                  :disabled="true"
+                >
+                  <Icon size="sm" name="lock" />
+                </TextInputPrepend>
+                <TextInput v-else class="w-96" v-model="generalInfo.hostname" placeholder="https://example.com" />
               </FlexCell>
             </Flex>
           </FlexCell>

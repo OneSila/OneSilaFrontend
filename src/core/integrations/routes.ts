@@ -41,5 +41,17 @@ export const routes = [
     name: 'integrations.imports.create',
     meta: { title: 'integrations.imports.create.title' },
     component: () => import('./integrations/integrations-show/containers/imports/containers/create-import/ImportCreateController.vue'),
-  }
+  },
+  {
+    path: '/integrations/shopify/installed',
+    name: 'integrations.shopify.installed',
+    meta: { title: 'integrations.shopify.installed.title' },
+    component: () => import('./integrations/integrations-shopify-installed/ShopifyInstalledController.vue'),
+  },
+  {
+    path: '/integrations/shopify/entry',
+    name: 'integrations.shopify.entry',
+    meta: { title: 'integrations.shopify.entry.title' },
+    component: () => import('./integrations/integrations-shopify-entry/ShopifyEntryController.vue'),
+  },
 ];

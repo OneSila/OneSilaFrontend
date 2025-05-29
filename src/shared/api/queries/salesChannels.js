@@ -100,6 +100,46 @@ export const getShopifyChannelQuery = gql`
   }
 `;
 
+export const getShopifyChannelsQuery = gql`
+  query GetShopifyChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: ShopifySalesChannelOrder
+    $filters: ShopifySalesChannelFilter
+  ) {
+    shopifyChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          state
+          createdAt
+          integrationPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
 
 
 // Sales Channel Integration Pricelist Queries

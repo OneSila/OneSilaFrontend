@@ -375,3 +375,40 @@ export const refreshSalesChannelWebsitesMutation = gql`
     }
   }
 `;
+
+export const getShopifyRedirectUrlMutation = gql`
+    mutation GetShopifyRedirectUrl($data: ShopifySalesChannelPartialInput!) {
+      getShopifyRedirectUrl(instance: $data) {
+        ... on ShopifyRedirectUrlType {
+          redirectUrl
+        }
+        ... on OperationInfo {
+          messages {
+            kind
+            message
+            field
+            code
+          }
+        }
+      }
+}
+`;
+
+export const validateShopifyAuthMutation = gql`
+  mutation ValidateShopifyAuth($data: ShopifyValidateAuthInput!) {
+    validateShopifyAuth(instance: $data) {
+      ... on ShopifySalesChannelType {
+        id
+        hostname
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
