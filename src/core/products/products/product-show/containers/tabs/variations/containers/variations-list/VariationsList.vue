@@ -29,8 +29,13 @@ const emit = defineEmits(['refetched', 'update-ids']);
 const localQuantities = ref<{ [key: string]: number }>({});
 
 const initializeLocalQuantities = (data) => {
+  let type = props.product.type;
 
-  if (data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length && props.product.type != ProductType.Configurable) {
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  if (data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length && type != ProductType.Configurable) {
     data[props.queryKey].edges.forEach((edge) => {
       localQuantities.value[edge.node.id] = edge.node.quantity;
     });
@@ -57,7 +62,13 @@ const refetchIfNecessary = (query, data) => {
 }
 
 const getDeleteMutation = () => {
-  switch(props.product.type) {
+  let type = props.product.type;
+
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  switch(type) {
     case ProductType.Bundle:
       return deleteBundleVariationMutation;
     case ProductType.Configurable:
@@ -68,7 +79,13 @@ const getDeleteMutation = () => {
 };
 
 const getUpdateMutation = () => {
-  switch(props.product.type) {
+  let type = props.product.type;
+
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  switch(type) {
     case ProductType.Bundle:
       return updateBundleVariationMutation;
     case ProductType.Configurable:
@@ -100,8 +117,6 @@ const handleQuantityChanged = debounce(async (event, id) => {
 }, 500);
 
 
-
-
 </script>
 
 <template>
@@ -124,7 +139,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 !text-end">{{ t('shared.labels.actions')}}</th>
+                  <th scope="col" class="px-3 py-3.5 text-sm font-semibold text-gray-900 !text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
 

@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { TextInput } from "../../../../../../shared/components/atoms/input-text";
-import { Label } from "../../../../../../shared/components/atoms/label";
-import { Toggle } from "../../../../../../shared/components/atoms/toggle";
-import { Selector } from "../../../../../../shared/components/atoms/selector";
-import { AuthenticationMethod } from "../../../integrations";
-import { processGraphQLErrors } from "../../../../../../shared/utils";
+import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
+import { Label } from "../../../../../../../shared/components/atoms/label";
+import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
+import { Selector } from "../../../../../../../shared/components/atoms/selector";
+import { AuthenticationMethod } from "../../../../integrations";
+import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import {
   useEnterKeyboardListener, useShiftBackspaceKeyboardListener,
   useShiftEnterKeyboardListener
-} from "../../../../../../shared/modules/keyboard";
+} from "../../../../../../../shared/modules/keyboard";
 import { useRouter } from "vue-router";
-import { updateMagentoSalesChannelMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
-import { Toast } from "../../../../../../shared/modules/toast";
-import { PrimaryButton } from "../../../../../../shared/components/atoms/button-primary";
-import { SecondaryButton } from "../../../../../../shared/components/atoms/button-secondary";
-import { CancelButton } from "../../../../../../shared/components/atoms/button-cancel";
-import { Accordion } from "../../../../../../shared/components/atoms/accordion";
+import { updateMagentoSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
+import { Toast } from "../../../../../../../shared/modules/toast";
+import { PrimaryButton } from "../../../../../../../shared/components/atoms/button-primary";
+import { SecondaryButton } from "../../../../../../../shared/components/atoms/button-secondary";
+import { CancelButton } from "../../../../../../../shared/components/atoms/button-cancel";
+import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
 
 interface EditMagentoForm {
   hostname: string;

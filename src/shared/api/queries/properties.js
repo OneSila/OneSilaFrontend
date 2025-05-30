@@ -130,6 +130,27 @@ query PropertySelectValues($first: Int, $last: Int, $after: String, $before: Str
   }
 `;
 
+export const propertySelectValuesQuerySimpleSelector = gql`
+query PropertySelectValues($first: Int, $last: Int, $after: String, $before: String, $order: PropertySelectValueOrder, $filter: PropertySelectValueFilter) {
+    propertySelectValues(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          value
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getPropertySelectValueQuery = gql`
   query getPropertySelectValue($id: GlobalID!) {
     propertySelectValue(id: $id) {

@@ -1,6 +1,6 @@
 import {FieldType} from "../../../shared/utils/constants";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
-import { integrationsQuery } from "../../../shared/api/queries/integrations.js";
+import {integrationsQuery} from "../../../shared/api/queries/integrations.js";
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {IntegrationTypes} from "./integrations";
 import {deleteIntegrationMutation} from "../../../shared/api/mutations/salesChannels";
@@ -28,7 +28,8 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingIntegrationTypeBadgeMap = (t: Function) => ({
-  [IntegrationTypes.Magento]: { text: 'Magento', color: 'blue' }
+  [IntegrationTypes.Magento]: { text: 'Magento', color: 'red' },
+  [IntegrationTypes.Shopify]: { text: 'Shopify', color: 'green' }
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
@@ -37,6 +38,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     t('shared.labels.type'),
     t('shared.labels.active'),
     t('integrations.labels.verifySSL'),
+    t('integrations.labels.successfullyConnected'),
     t('integrations.labels.requestsPerMinute'),
   ],
   fields: [
@@ -44,6 +46,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     { name: 'type', type: FieldType.Badge, badgeMap: listingIntegrationTypeBadgeMap(t) },
     { name: 'active', type: FieldType.Boolean },
     { name: 'verifySsl', type: FieldType.Boolean },
+    { name: 'connected', type: FieldType.Boolean },
     { name: 'requestsPerMinute', type: FieldType.Text },
   ],
   showUrlName: 'integrations.integrations.show',
@@ -58,5 +61,9 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addDelete: true,
 });
 
+export function cleanShopHostname(input: string): string {
+  const url = new URL(input.startsWith('http') ? input : `https://${input}`);
+  return url.hostname;
+}
 export const listingQueryKey = 'integrations';
 export const listingQuery = integrationsQuery;

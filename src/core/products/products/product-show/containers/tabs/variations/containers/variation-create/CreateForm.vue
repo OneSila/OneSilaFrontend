@@ -23,8 +23,13 @@ const cleanedData = (rawData) => {
 const fetchData = async () => {
   loading.value = true;
   let typeFilter;
+  let type = props.product.type;
 
-  switch (props.product.type) {
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  switch (type) {
     case ProductType.Configurable:
     case ProductType.Bundle:
       typeFilter = variationTypes;
@@ -68,7 +73,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
     </svg>
   </Flex>
-  <Flex v-else>
+  <Flex v-else gap="2">
     <FlexCell>
       <Selector v-if="variations.length > 0"
                 v-model="form.variation"
@@ -81,7 +86,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
                 filterable
                 class="min-w-[200px] mr-2" />
     </FlexCell>
-    <FlexCell v-if="product.type !== ProductType.Configurable" >
+    <FlexCell v-if="product.type !== ProductType.Configurable">
       <TextInput v-model="form.quantity" float :placeholder="t('shared.placeholders.quantity')" class="w-32" />
     </FlexCell>
   </Flex>

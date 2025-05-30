@@ -1,6 +1,7 @@
 export enum IntegrationTypes {
   Magento = 'magento',
-  Shopify = 'shopify'
+  Shopify = 'shopify',
+  None = 'none',
 }
 
 export enum AuthenticationMethod {
@@ -47,6 +48,15 @@ export interface MagentoChannelInfo extends SpecificChannelInfo {
   authenticationMethod: string;
 }
 
+export interface ShopifyChannelInfo extends SpecificChannelInfo {
+  vendorProperty: { id: string | null };
+  hmac?: string;
+  host?: string;
+  timestamp?: string;
+  isExternalInstall?: boolean;
+}
+
+
 /**
  * The complete integration create wizard form.
  * Instead of directly extending a specific channel interface,
@@ -64,3 +74,20 @@ export function getMagentoDefaultFields(): MagentoChannelInfo {
     authenticationMethod: AuthenticationMethod.TOKEN,
   };
 }
+
+export function getShopifyDefaultFields(): ShopifyChannelInfo {
+  return {
+    vendorProperty: { id: null },
+  };
+}
+
+export const getDefaultFields = (type: IntegrationTypes) => {
+  switch (type) {
+    case IntegrationTypes.Magento:
+      return getMagentoDefaultFields();
+    case IntegrationTypes.Shopify:
+      return getShopifyDefaultFields();
+    default:
+      return {};
+  }
+};

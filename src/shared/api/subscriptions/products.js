@@ -11,6 +11,46 @@ export const productSubscription = gql`
       name
       thumbnailUrl
       hasParents
+      productpropertySet {
+          id
+          property {
+            id
+            name
+            type
+            isProductType
+          }
+          valueSelect {
+            id
+            value
+            productpropertiesruleSet {
+                id
+            }
+          }
+          valueMultiSelect {
+             id
+             value
+          }
+          valueBoolean
+          valueInt
+          valueFloat
+          valueDate
+          valueDatetime
+      }
+      aliasParentProduct {
+        id
+        name
+        sku
+        type
+      }
+      aliasProducts {
+        id
+        name
+        type
+        sku
+        active
+        thumbnailUrl
+        inspectorStatus
+      }
       inspector {
         id
         hasMissingInformation

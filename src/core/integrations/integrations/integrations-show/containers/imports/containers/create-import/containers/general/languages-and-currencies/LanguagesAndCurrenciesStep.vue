@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref, defineProps, computed, defineExpose, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { remoteLanguagesQuery, remoteCurrenciesQuery } from "../../../../../../../../../../shared/api/queries/salesChannels.js";
-import {companyLanguagesQuery} from "../../../../../../../../../../shared/api/queries/languages.js";
-import {currenciesQuery} from "../../../../../../../../../../shared/api/queries/currencies.js";
+import { remoteLanguagesQuery, remoteCurrenciesQuery } from "../../../../../../../../../../../shared/api/queries/salesChannels.js";
+import {companyLanguagesQuery} from "../../../../../../../../../../../shared/api/queries/languages.js";
+import {currenciesQuery} from "../../../../../../../../../../../shared/api/queries/currencies.js";
 
-import {FieldType} from "../../../../../../../../../../shared/utils/constants";
-import apolloClient from "../../../../../../../../../../../apollo-client";
+import {FieldType} from "../../../../../../../../../../../shared/utils/constants";
+import apolloClient from "../../../../../../../../../../../../apollo-client";
 import {
   FieldQuery
-} from "../../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import { currencyOnTheFlyConfig } from "../../../../../../../../../settings/currencies/configs";
-import { DiscreteLoader } from "../../../../../../../../../../shared/components/atoms/discrete-loader";
-import { RemoteLanguage, RemoteCurrency } from "../../../../configs";
-import { QueryFormField } from "../../../../../../../../../../shared/components/organisms/general-form/formConfig";
+} from "../../../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import { currencyOnTheFlyConfig } from "../../../../../../../../../../settings/currencies/configs";
+import { DiscreteLoader } from "../../../../../../../../../../../shared/components/atoms/discrete-loader";
+import { RemoteLanguage, RemoteCurrency } from "../../../../../configs";
+import { QueryFormField } from "../../../../../../../../../../../shared/components/organisms/general-form/formConfig";
 
 const { t } = useI18n();
 
@@ -85,7 +85,7 @@ const fetchData = async () => {
       id: edge.node.id,
       remoteCode: edge.node.remoteCode,
       name: edge.node.name,
-      localInstance: edge.node.localInstance || {id: null},
+      localInstance: edge.node.localInstance ? edge.node.localInstance.id : null,
     }));
 
     if (!languages.value.length || !currencies.value.length) {
@@ -174,7 +174,7 @@ watch([languages, currencies], () => {
             <tr v-for="currency in currencies" :key="currency.id" class="border-t">
               <td class="p-3">{{ currency.name }}</td>
               <td class="p-3 w-96">
-                <FieldQuery v-model="currency.localInstance.id" :field="currencyField as QueryFormField" />
+                <FieldQuery v-model="currency.localInstance" :field="currencyField as QueryFormField" />
               </td>
             </tr>
           </tbody>

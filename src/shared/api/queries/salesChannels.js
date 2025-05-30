@@ -7,7 +7,6 @@ export const salesChannelsQuery = gql`
       edges {
         node {
           id
-          name
           active
           multiTenantCompany {
             id
@@ -31,7 +30,6 @@ export const getSalesChannelQuery = gql`
   query getSalesChannel($id: GlobalID!) {
     salesChannel(id: $id) {
       id
-      name
       active
       multiTenantCompany {
         id
@@ -68,6 +66,77 @@ export const getMagentoChannelQuery = gql`
       saleschannelPtr {
        id
        }
+    }
+  }
+`;
+
+export const getShopifyChannelQuery = gql`
+  query getShopifyChannel($id: GlobalID!) {
+    shopifyChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      accessToken
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+      vendorProperty {
+        id
+      }
+    }
+  }
+`;
+
+export const getShopifyChannelsQuery = gql`
+  query GetShopifyChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: ShopifySalesChannelOrder
+    $filters: ShopifySalesChannelFilter
+  ) {
+    shopifyChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          state
+          createdAt
+          integrationPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `;
@@ -231,9 +300,9 @@ export const getSalesChannelViewQuery = gql`
   query getSalesChannelView($id: GlobalID!) {
     salesChannelView(id: $id) {
       id
-      name
       active
       url
+      name
       salesChannel {
         id
       }

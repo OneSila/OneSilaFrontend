@@ -155,23 +155,22 @@ const getVariables = () => {
       {{ t('shared.components.organisms.aiBulkTranslator.button') }}
     </button>
 
-    <div ref="panelRef"  v-if="showTranslate" class="absolute z-[10] mt-2 left-0 rounded-xl bg-white shadow-lg border border-gray-200 p-4">
-    <div class="flex justify-between items-start mb-4 border-b border-gray-200 pb-4">
-      <h3 class="text-sm font-semibold text-gray-800 flex items-center">
-        <Icon name="globe" size="sm" class="text-purple-600 mr-2" />
-        {{ t('shared.components.organisms.aiBulkTranslator.title', {
-          count: props.selectedEntities.length,
-          type: t(`shared.components.organisms.aiBulkTranslator.types.${props.type}`)
-        }) }}
-      </h3>
-      <button
-        class="text-gray-400 hover:text-gray-600 ml-auto"
-        @click="showTranslate = false"
-      >
-        <Icon name="x" size="sm" />
-      </button>
-    </div>
-
+    <div ref="panelRef"  v-if="showTranslate" class="absolute z-[999] mt-2 left-0 rounded-xl bg-white shadow-lg border border-gray-200 p-4">
+      <div class="flex justify-between items-start mb-4 border-b border-gray-200 pb-4">
+        <h3 class="text-sm font-semibold text-gray-800 flex items-center">
+          <Icon name="globe" size="sm" class="text-purple-600 mr-2" />
+          {{ t('shared.components.organisms.aiBulkTranslator.title', {
+            count: props.selectedEntities.length,
+            type: t(`shared.components.organisms.aiBulkTranslator.types.${props.type}`)
+          }) }}
+        </h3>
+        <button
+          class="text-gray-400 hover:text-gray-600 ml-auto"
+          @click="showTranslate = false"
+        >
+          <Icon name="x" size="sm" />
+        </button>
+      </div>
 
       <div class="text-xs text-gray-600 leading-snug w-full">
 

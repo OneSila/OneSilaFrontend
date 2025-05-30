@@ -53,7 +53,13 @@ const handleAddClick = () => {
 };
 
 const getMutation = () => {
-  switch(props.product.type) {
+  let type = props.product.type;
+
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  switch(type) {
     case ProductType.Bundle:
       return createBundleVariationMutation;
     case ProductType.Configurable:
@@ -69,7 +75,13 @@ const getVariables = () => {
     variation: { id: form.value.variation }
   }
 
- if (props.product.type !== ProductType.Configurable) {
+  let type = props.product.type;
+
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+ if (type !== ProductType.Configurable) {
    variables['quantity'] = form.value.quantity;
  }
 

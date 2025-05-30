@@ -9,12 +9,20 @@ import { DiscreteLoader } from "../../../../../../shared/components/atoms/discre
 import { AssignProgressBar } from "../../../../../../shared/components/molecules/assign-progress-bar";
 import { getStatusBadgeMap, SalesChannelSubscriptionResult } from "./configs";
 import { Badge } from "../../../../../../shared/components/atoms/badge";
-import { updateSalesChannelImportMutation } from "../../../../../../shared/api/mutations/salesChannels";
+import {
+  createSalesChannelImportMutation,
+  updateSalesChannelImportMutation
+} from "../../../../../../shared/api/mutations/salesChannels";
 import { Toast } from "../../../../../../shared/modules/toast";
 import apolloClient from "../../../../../../../apollo-client";
 import {Icon} from "../../../../../../shared/components/atoms/icon";
+import { useRoute } from "vue-router";
+import { processGraphQLErrors } from "../../../../../../shared/utils";
 
+const route = useRoute();
 const props = defineProps<{ id: string; salesChannelId: string }>();
+const type = ref(String(route.params.type));
+
 const { t } = useI18n();
 
 const statusBadgeMap = ref(getStatusBadgeMap(t));
@@ -60,7 +68,6 @@ const retryImport = async (importId: string) => {
   }
 };
 
-
 </script>
 
 <template>
@@ -70,14 +77,18 @@ const retryImport = async (importId: string) => {
       <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
         <div></div>
         <div>
-          <Link
-            :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
-            :path="{ name: 'integrations.imports.create', params: { integrationId: id } }"
-          >
-            <Button :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting" type="button" class="btn btn-primary">
-              {{ t('integrations.imports.create.title') }}
-            </Button>
-          </Link>
+            <Link
+              :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
+              :path="{ name: 'integrations.imports.create', params: { integrationId: id } }"
+            >
+              <Button
+                :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
+                type="button"
+                class="btn btn-primary"
+              >
+                {{ t('integrations.imports.create.title') }}
+              </Button>
+            </Link>
         </div>
       </div>
 

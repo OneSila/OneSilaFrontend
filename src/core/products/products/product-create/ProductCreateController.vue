@@ -8,7 +8,6 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
 import { ProductType } from "../../../../shared/utils/constants";
 import {
-  createBillsOfMaterialMutation,
   createBundleVariationsMutation,
   createProductMutation,
   createConfigurableVariationsMutation, updateProductMutation
@@ -19,10 +18,13 @@ import {processGraphQLErrors} from "../../../../shared/utils";
 import {TypeStep} from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
 import { PriceStep } from "./containers/price-step";
+import { AliasOptionsStep } from "./containers/alias-options-step";
 import { SelectVariationsStep } from "./containers/select-variations-step";
 import { AdditonalFormFields, FormType } from "./containers/product";
-import {createSalesPriceMutation} from "../../../../shared/api/mutations/salesPrices.js";
-import {createProductPropertyMutation} from "../../../../shared/api/mutations/properties.js";
+import { createSalesPriceMutation } from "../../../../shared/api/mutations/salesPrices.js";
+import { createProductPropertyMutation } from "../../../../shared/api/mutations/properties.js";
+import { getProductQuery } from "../../../../shared/api/queries/products.js";
+
 
 const { t } = useI18n();
 const route = useRoute();
@@ -39,7 +41,12 @@ const form: FormType = reactive({
   sku: '',
   name: '',
   active: true,
+  aliasCopyImages: true,
+  aliasCopyProductProperties: true,
   vatRate: {
+    id: null
+  },
+  aliasParentProduct: {
     id: null
   },
   allowBackorder: false,
@@ -60,22 +67,102 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
     }
 });
 
+watch(
+  () => form.aliasParentProduct.id,
+  async (newVal, oldVal) => {
+    // RESET everything if alias is cleared
+    if (newVal == null) {
+      form.name = '';
+      form.vatRate.id = null;
+
+      additionalFieldsForm.productType.id = null;
+      additionalFieldsForm.productType.propertyId = null;
+
+      additionalFieldsForm.price.rrp = null;
+      additionalFieldsForm.price.price = null;
+      additionalFieldsForm.price.currency.id = null;
+
+      return;
+    }
+
+    // If no change or falsy, skip
+    if (!newVal || newVal === oldVal) return;
+
+    try {
+      const { data } = await apolloClient.query({
+        query: getProductQuery,
+        variables: { id: newVal },
+        fetchPolicy: 'network-only'
+      });
+
+      const product = data?.product;
+      if (!product) return;
+
+      console.log('Fetched alias parent product:', product);
+
+      // 1. Set product type if found in productpropertySet
+      const productTypeProperty = product.productpropertySet.find(
+        p => p.property?.isProductType
+      );
+
+      if (productTypeProperty) {
+        additionalFieldsForm.productType.id = productTypeProperty.valueSelect?.id || null;
+        additionalFieldsForm.productType.propertyId = productTypeProperty.property?.id || null;
+      } else {
+        additionalFieldsForm.productType.id = null;
+        additionalFieldsForm.productType.propertyId = null;
+      }
+
+      // 2. Set price from default currency price if available
+      const defaultPrice = product.salespriceSet.find(
+        sp => sp.currency?.isDefaultCurrency
+      );
+
+      if (defaultPrice) {
+        additionalFieldsForm.price.rrp = defaultPrice.rrp;
+        additionalFieldsForm.price.price = defaultPrice.price;
+        additionalFieldsForm.price.currency.id = defaultPrice.currency.id;
+      } else {
+        additionalFieldsForm.price.rrp = null;
+        additionalFieldsForm.price.price = null;
+        additionalFieldsForm.price.currency.id = null;
+      }
+
+      // 3. Set name
+      form.name = product.name || '';
+
+      // 4. Set vatRate
+      form.vatRate.id = product.vatRate?.id || null;
+
+    } catch (error) {
+      console.error("Failed to fetch alias parent product:", error);
+    }
+  }
+);
+
+
+
+
 const wizardSteps = computed(() => {
   let steps = [
-    { title: t('products.products.labels.type.title'), name: 'typeStep' },
-    { title: t('products.products.create.wizard.stepTwo.title'), name: 'generalInfoStep' },
+    { title: t('products.products.labels.type.title'), name: 'typeStep' }
   ];
+
+  if (form.type === ProductType.Alias) {
+    steps.push({ title: t('products.products.create.wizard.stepAlias.title'), name: 'aliasOptionsStep' });
+  }
+
+  steps.push({ title: t('products.products.create.wizard.stepTwo.title'), name: 'generalInfoStep' });
 
   switch (form.type) {
     case ProductType.Simple:
+    case ProductType.Alias:
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
       break;
-
     case ProductType.Bundle:
       steps.push({ title: t('products.products.create.wizard.stepThree.title'), name: 'priceStep' });
       steps.push({ title: t('products.products.create.wizard.stepFour.bundle.title'), name: 'selectVariationsStep' });
       break;
-
     case ProductType.Configurable:
       steps.push({ title: t('products.products.create.wizard.stepFour.configurable.title'), name: 'selectVariationsStep' });
       break;
@@ -83,6 +170,7 @@ const wizardSteps = computed(() => {
 
   return steps;
 });
+
 
 const getRelatedProductsMutation = (productType) => {
   switch(productType) {
@@ -149,7 +237,7 @@ const createRelatedProducts = async (productId) => {
         variables,
       });
     } catch (error) {
-      console.error("Related products creation error:", error);
+      console.error("Related products creation error:", error)
     }
 };
 
@@ -181,6 +269,10 @@ function cleanFormData(data) {
 
   if (cleanedData.vatRate && Object.keys(cleanedData.vatRate).length === 0) {
     delete cleanedData.vatRate;
+  }
+
+  if (cleanedData.type !== ProductType.Alias) {
+    delete cleanedData.aliasParentProduct;
   }
 
   return cleanedData;
@@ -220,7 +312,6 @@ const handleFinish = async () => {
       }
     }
   }
-
 }
 
 const updateStep = (val) => {
@@ -264,6 +355,10 @@ const allowNextStep = computed(() => {
     return false;
   }
 
+  if (stepName === 'aliasOptionsStep' && !form.aliasParentProduct?.id) {
+    return false;
+  }
+
   if (stepName === 'generalInfoStep' && form.name === '') {
     return false;
   }
@@ -302,6 +397,10 @@ const allowNextStep = computed(() => {
 
         <template #typeStep>
           <TypeStep :form="form" @empty-variations="handleEmptyVariations" />
+        </template>
+
+        <template #aliasOptionsStep>
+          <AliasOptionsStep :form="form" />
         </template>
 
         <template #generalInfoStep>

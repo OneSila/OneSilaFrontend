@@ -239,7 +239,7 @@
     "alert": {
       "mutationAlert": {
         "title": "Are you sure?",
-        "text": "You won't be able to revert this!",
+        "text": "Approving WILL remove the information from all your sales channels as well.",
         "confirmButtonText": "Yes, delete it!",
         "confirmButtonTextSimpleYes": "Yes, continue!",
         "cancelButtonText": "No, cancel!"
@@ -280,6 +280,7 @@
       "edit": "Edit",
       "show": "Details",
       "submit": "Submit",
+      "retry": "Retry",
       "add": "Add",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -831,6 +832,7 @@
       },
       "tabs": {
         "content": "Content",
+        "aliasProducts": "Alias Products",
         "variations": "Variations",
         "parents": "Parents",
         "bundleItems": "Bundle Items",
@@ -920,6 +922,7 @@
             "bundle": "Bundle Product",
             "variation": "Simple Product",
             "dropship": "Dropship Product",
+            "alias": "Alias Product",
             "manufacturable": "Manufacturable Product",
             "supplier": "Supplier Product"
           }
@@ -931,7 +934,8 @@
         "forSale": "For Sale",
         "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
-        "inspectorStatus": "Content Quality"
+        "inspectorStatus": "Content Quality",
+        "aliasParentProduct": "Alias Target"
       },
       "placeholders": {
         "vatRate": "Add a vat rate",
@@ -963,6 +967,23 @@
             "dropship": {
               "title": "Dropshipping",
               "example": "Eg: Furniture shipped directly from the manufacturer to the customer."
+            },
+            "alias": {
+              "title": "Alias",
+              "example": "Eg: The same pen sold as both a 'Stylus Pen' and a 'Fountain Pen' for SEO purposes."
+            }
+          },
+          "stepAlias": {
+            "title": "Alias Settings",
+            "content": "Link this product to an existing one and choose what to reuse.",
+            "labels": {
+              "aliasParent": "Clone from product (alias target)",
+              "copyImages": "Copy images from original product",
+              "copyProperties": "Copy properties from original product"
+            },
+            "helpText": {
+              "copyImages": "If enabled, all images from the original product will be copied to this alias product.",
+              "copyProperties": "If enabled, product attributes (e.g. color, material) from the original product will be cloned."
             }
           },
           "stepTwo": {
@@ -2089,6 +2110,10 @@
         "title": "First Import Not Completed",
         "content": "We highly recommend running an import after creating the integration to ensure that we start from the same data point and avoid inconsistencies. If is already created wait for it to finish."
       },
+      "shopifyNotConnectedBanner": {
+        "title": "Shopify connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2151,6 +2176,10 @@
             "title": "Magento Channel Details",
             "content": "Provide Magento-specific information to connect your store."
           },
+          "shopify": {
+            "title": "Shopify Channel Details",
+            "content": "Provide Shopify-specific configuration to connect your store."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2163,6 +2192,7 @@
       "importOrders": "Import Orders",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
+      "successfullyConnected": "Connected",
       "requestsPerMinute": "Requests Per Minute",
       "maxRetries": "Maximum Retries",
       "authenticationMethod": "Authentication Method",
@@ -2170,6 +2200,7 @@
       "hostApiKey": "Host API Access Token Key",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
+      "vendorProperty": "Vendor Property",
       "pullData": "Pull Data"
     },
     "placeholders": {
@@ -2179,6 +2210,23 @@
       "eanCodeAttribute": "Enter EAN code attribute"
     },
     "salesChannel": {
+      "shopify": {
+        "installed": {
+          "title": "Shopify Connected",
+          "loading": "Connecting your store",
+          "success": "Your Shopify store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
+        },
+        "labels": {
+          "goToStore": "Go To Store"
+        },
+        "retry": {
+          "failedGeneric": "Retry failed. Could not update Shopify channel.",
+          "failedRedirect": "Retry failed. Could not obtain redirect URL.",
+          "failedException": "Retry failed due to a system error."
+        }
+      },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results."
       },
@@ -2190,9 +2238,11 @@
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
+        "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
         "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",
         "hostApiKey": "Your Access Token is available in Magento under System > Integrations.",
-        "password": "Using a password is not recommended. Use an Access Token instead."
+        "password": "Using a password is not recommended. Use an Access Token instead.",
+        "shopifyVendorProperty": "This must be a property of type Select. Its selected value will be sent as the product's vendor in Shopify."
       },
       "modal": {
         "logs": {
@@ -2206,6 +2256,7 @@
         "error": "Retry import process had an unexpected error"
       },
       "create": {
+        "success": "Create import process success",
         "title": "Create Import",
         "wizard": {
           "step1": {

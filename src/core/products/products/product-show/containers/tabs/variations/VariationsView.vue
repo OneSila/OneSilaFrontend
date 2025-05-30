@@ -36,7 +36,13 @@ const getIds = (newIds) => {
 };
 
 const getQuery = () => {
-  switch(props.product.type) {
+  let type = props.product.type;
+
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  switch(type) {
     case ProductType.Bundle:
       return bundleVariationsQuery;
     case ProductType.Configurable:
@@ -47,7 +53,13 @@ const getQuery = () => {
 };
 
 const getQueryKey = () => {
-  switch(props.product.type) {
+  let type = props.product.type;
+
+  if (type == ProductType.Alias) {
+    type = props.product.aliasParentProduct.type;
+  }
+
+  switch(type) {
     case ProductType.Bundle:
       return 'bundleVariations';
     case ProductType.Configurable:

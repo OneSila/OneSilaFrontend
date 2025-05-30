@@ -93,14 +93,16 @@ export const HELD_ORDER = [OrderStatus.HOLD, OrderStatus.PENDING_INVENTORY];
 export const PRODUCT_SIMPLE = 'SIMPLE'
 export const PRODUCT_BUNDLE = 'BUNDLE'
 export const PRODUCT_CONFIGURABLE = 'CONFIGURABLE'
+export const PRODUCT_ALIAS = 'ALIAS'
 
 export const ProductType = {
   Simple: PRODUCT_SIMPLE,
   Bundle: PRODUCT_BUNDLE,
   Configurable: PRODUCT_CONFIGURABLE,
+  Alias: PRODUCT_ALIAS,
 };
 
-export const variationTypes = [PRODUCT_SIMPLE, PRODUCT_BUNDLE]
+export const variationTypes = [PRODUCT_SIMPLE, PRODUCT_BUNDLE, PRODUCT_ALIAS]
 export const baseProductTypes = [PRODUCT_SIMPLE]
 
 export const OnboardingStatus = {

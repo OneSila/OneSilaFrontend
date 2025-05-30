@@ -6,11 +6,15 @@ import { Label } from "../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 import { IntegrationGeneralInfo } from "../../../integrations";
 import {Accordion} from "../../../../../../shared/components/atoms/accordion";
+import {TextInputPrepend} from "../../../../../../shared/components/atoms/input-text-prepend";
+import {Icon} from "../../../../../../shared/components/atoms/icon";
 
 const props = defineProps<{
-  generalInfo: IntegrationGeneralInfo
+  generalInfo: IntegrationGeneralInfo,
+  maxRequestsPerMinute: number | undefined,
+  showSsl: boolean
+  isExternalInstall: boolean
 }>();
-
 
 const { t } = useI18n();
 
@@ -35,12 +39,20 @@ const accordionItems = [
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput class="w-96" v-model="generalInfo.hostname" placeholder="https://example.com" />
+                <TextInputPrepend
+                  v-if="isExternalInstall"
+                  v-model="generalInfo.hostname"
+                  class="w-96"
+                  :disabled="true"
+                >
+                  <Icon size="sm" name="lock" />
+                </TextInputPrepend>
+                <TextInput v-else class="w-96" v-model="generalInfo.hostname" placeholder="https://example.com" />
               </FlexCell>
             </Flex>
           </FlexCell>
         </Flex>
-        <Flex class="mt-4 gap-4" center>
+        <Flex v-if="showSsl" class="mt-4 gap-4" center>
           <FlexCell center>
             <Flex class="gap-2 w-96">
               <FlexCell>
@@ -73,9 +85,16 @@ const accordionItems = [
                         </Label>
                       </FlexCell>
                       <FlexCell>
-                        <TextInput class="w-96" v-model="generalInfo.requestsPerMinute" :number="true" placeholder="60" />
+                        <TextInput class="w-96" v-model="generalInfo.requestsPerMinute" :number="true" placeholder="60" :min-number="1" :max-number="maxRequestsPerMinute"  />
                         <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
                           <p>{{ t('integrations.salesChannel.helpText.requestsPerMinute') }}</p>
+                          <p v-if="maxRequestsPerMinute" class="text-red-500">
+                            {{ t(
+                                'integrations.salesChannel.helpText.maxRequestsPerMinute',
+                                { max: maxRequestsPerMinute }
+                              )
+                            }}
+                          </p>
                         </div>
                       </FlexCell>
                     </Flex>

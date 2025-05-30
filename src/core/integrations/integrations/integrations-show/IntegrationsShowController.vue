@@ -7,8 +7,13 @@ import { Tabs } from "../../../../shared/components/molecules/tabs";
 import { Card } from "../../../../shared/components/atoms/card";
 import {useRoute, useRouter} from "vue-router";
 import { IntegrationTypes } from "../integrations";
-import { getMagentoChannelQuery, getSalesChannelQuery } from "../../../../shared/api/queries/salesChannels.js";
-import {MagentoGeneralInfoTab} from "./containers/magento-general-tab";
+import {
+  getMagentoChannelQuery,
+  getSalesChannelQuery,
+  getShopifyChannelQuery
+} from "../../../../shared/api/queries/salesChannels.js";
+import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
+import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -18,6 +23,7 @@ import { Currencies } from "./containers/currencies";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
+import {ProductType} from "../../../../shared/utils/constants";
 
 const router = useRouter();
 const route = useRoute();
@@ -43,29 +49,36 @@ const tabItems = ref([
 ]);
 
 const getIntegrationQuery = () => {
-
-  if (type.value === IntegrationTypes.Magento) {
-    return getMagentoChannelQuery;
+  switch (type.value) {
+    case IntegrationTypes.Magento:
+      return getMagentoChannelQuery;
+    case IntegrationTypes.Shopify:
+      return getShopifyChannelQuery;
+    default:
+      return getSalesChannelQuery;
   }
-
-  return getSalesChannelQuery;
 };
 
 const getIntegrationQueryKey = () => {
-
-  if (type.value === IntegrationTypes.Magento) {
-    return "magentoChannel";
+  switch (type.value) {
+    case IntegrationTypes.Magento:
+      return "magentoChannel";
+    case IntegrationTypes.Shopify:
+      return "shopifyChannel";
+    default:
+      return "salesChannel";
   }
-
-  return "salesChannel";
 };
 
 const getGeneralComponent = () => {
-  if (type.value === IntegrationTypes.Magento) {
-    return null;
+  switch (type.value) {
+    case IntegrationTypes.Magento:
+      return MagentoGeneralInfoTab;
+    case IntegrationTypes.Shopify:
+      return ShopifyGeneralInfoTab;
+    default:
+      return null;
   }
-
-  return null;
 };
 
 const fetchIntegrationData = async () => {
@@ -77,6 +90,16 @@ const fetchIntegrationData = async () => {
       fetchPolicy: 'network-only'
     });
     const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = data[getIntegrationQueryKey()];
+
+    if (type.value == IntegrationTypes.Shopify) {
+      if (cleanData.vendorProperty && typeof cleanData.vendorProperty === 'object') {
+        const { __typename: _ignored, ...vendorWithoutTypename } = cleanData.vendorProperty;
+        cleanData.vendorProperty = vendorWithoutTypename;
+      } else {
+        cleanData.vendorProperty = { id: null };
+      }
+    }
+
     integrationData.value = cleanData;
     salesChannelId.value = saleschannelPtr.id
     integrationId.value = integrationPtr.id
@@ -143,10 +166,7 @@ const pullData = async () => {
         <Tabs :tabs="tabItems">
 
           <template v-if="!firstImportCompleteRef" #banner>
-              <div
-                class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                role="alert"
-              >
+              <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                 <span class="font-medium flex items-center gap-1">
                   ⚠️ {{ t('integrations.show.noImportBanner.title') }}
                 </span>
@@ -156,7 +176,11 @@ const pullData = async () => {
 
           <!-- General Edit Tab -->
           <template #general>
-            <MagentoGeneralInfoTab v-if="!loading && integrationData" :data="integrationData" />
+            <component
+              v-if="!loading && integrationData"
+              :is="getGeneralComponent()"
+              :data="integrationData"
+            />
           </template>
 
           <!-- Products Tab -->

@@ -19,6 +19,26 @@ export const updateMagentoSalesChannelMutation = gql`
   }
 `;
 
+export const createShopifySalesChannelMutation = gql`
+  mutation createShopifySalesChannel($data: ShopifySalesChannelInput!) {
+    createShopifySalesChannel(data: $data) {
+      id
+      hostname
+      state
+    }
+  }
+`;
+
+export const updateShopifySalesChannelMutation = gql`
+  mutation updateShopifySalesChannel($data: ShopifySalesChannelPartialInput!) {
+    updateShopifySalesChannel(data: $data) {
+      id
+      hostname
+      state
+    }
+  }
+`;
+
 
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`
@@ -352,6 +372,43 @@ export const refreshSalesChannelWebsitesMutation = gql`
     refreshSalesChannelWebsites(data: $data) {
       id
       active
+    }
+  }
+`;
+
+export const getShopifyRedirectUrlMutation = gql`
+    mutation GetShopifyRedirectUrl($data: ShopifySalesChannelPartialInput!) {
+      getShopifyRedirectUrl(instance: $data) {
+        ... on ShopifyRedirectUrlType {
+          redirectUrl
+        }
+        ... on OperationInfo {
+          messages {
+            kind
+            message
+            field
+            code
+          }
+        }
+      }
+}
+`;
+
+export const validateShopifyAuthMutation = gql`
+  mutation ValidateShopifyAuth($data: ShopifyValidateAuthInput!) {
+    validateShopifyAuth(instance: $data) {
+      ... on ShopifySalesChannelType {
+        id
+        hostname
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
     }
   }
 `;

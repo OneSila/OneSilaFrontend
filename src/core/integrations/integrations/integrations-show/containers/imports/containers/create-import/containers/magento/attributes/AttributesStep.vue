@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import {ref, computed, watch} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {DiscreteLoader} from '../../../../../../../../../../shared/components/atoms/discrete-loader';
-import {Toggle} from '../../../../../../../../../../shared/components/atoms/toggle';
-import {Button} from '../../../../../../../../../../shared/components/atoms/button';
-import {Modal} from '../../../../../../../../../../shared/components/atoms/modal';
+import {DiscreteLoader} from '../../../../../../../../../../../shared/components/atoms/discrete-loader';
+import {Toggle} from '../../../../../../../../../../../shared/components/atoms/toggle';
+import {Button} from '../../../../../../../../../../../shared/components/atoms/button';
+import {Modal} from '../../../../../../../../../../../shared/components/atoms/modal';
 import {
   AiRemotePropertyDetector
-} from '../../../../../../../../../../shared/components/organisms/ai-remote-property-detector';
-import {Icon} from "../../../../../../../../../../shared/components/atoms/icon";
+} from '../../../../../../../../../../../shared/components/organisms/ai-remote-property-detector';
+import {Icon} from "../../../../../../../../../../../shared/components/atoms/icon";
 import CreateRemoteEanCodeModal from './CreateRemoteEanCodeModal.vue';
 
 const props = defineProps<{

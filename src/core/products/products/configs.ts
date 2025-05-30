@@ -28,8 +28,9 @@ export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
 })
 export const getProductTypeOptions = (t) => [
   { name: t('products.products.labels.type.choices.variation'), code: ProductType.Simple },
-  // { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
+  { name: t('products.products.labels.type.choices.bundle'), code: ProductType.Bundle },
   { name: t('products.products.labels.type.choices.configurable'), code: ProductType.Configurable },
+  { name: t('products.products.labels.type.choices.alias'), code: ProductType.Alias },
 ];
 
 export const getInspectorErrors = (t) => [
@@ -62,8 +63,9 @@ export const getInspectorErrors = (t) => [
 
 export const getProductTypeBadgeMap = (t) => ({
   [ProductType.Configurable]: { text: t('products.products.labels.type.choices.configurable'), color: 'blue' },
-  // [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'purple' },
+  [ProductType.Bundle]: { text: t('products.products.labels.type.choices.bundle'), color: 'purple' },
   [ProductType.Simple]: { text: t('products.products.labels.type.choices.variation'), color: 'yellow' },
+  [ProductType.Alias]: { text: t('products.products.labels.type.choices.alias'), color: 'green' },
 });
 
 export const getInspectorStatusOptions = (t) => [
@@ -333,6 +335,32 @@ export interface SalesChannelViewAssign {
   remoteProduct: RemoteProduct;
 }
 
+export interface ProductProperty {
+  id: string;
+  property: {
+    id: string;
+    name: string;
+    type: string;
+    isProductType: boolean;
+  };
+  valueSelect?: {
+    id: string;
+    value: string;
+    productpropertiesruleSet?: { id: string }[];
+  } | null;
+  valueMultiSelect?: {
+    id: string;
+    value: string;
+  }[] | null;
+  valueBoolean?: boolean | null;
+  valueInt?: number | null;
+  valueFloat?: number | null;
+  valueDate?: string | null;
+  valueDatetime?: string | null;
+
+}
+
+
 export interface Product {
   id: string;
   proxyId?: string;
@@ -340,11 +368,21 @@ export interface Product {
   active: boolean;
   hasParents: boolean;
   type: string;
+  aliasProducts: ProductWithAliasFields[];
+  aliasParentProduct: ProductWithAliasFields;
   inspector: Inspector;
   vatRate?: VatRate;
   allowBackorder: boolean;
   saleschannelviewassignSet: SalesChannelViewAssign[];
+  productpropertySet: ProductProperty[];
 }
+
+export interface ProductWithAliasFields extends Product {
+  name: string;
+  thumbnailUrl?: string;
+  inspectorStatus: number;
+}
+
 
 export interface Select {
   id: string | null;

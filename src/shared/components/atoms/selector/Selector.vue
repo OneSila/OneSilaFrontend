@@ -2,8 +2,9 @@
 import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import { createPopper, Placement } from '@popperjs/core';
-import { onMounted, Ref, ref, watchEffect } from 'vue';
+import {computed, onMounted, Ref, ref, watchEffect} from 'vue';
 import { useI18n } from 'vue-i18n';
+import { Icon } from "../icon";
 
 const props = withDefaults(
   defineProps<{
@@ -142,6 +143,42 @@ const handleKeydown = (event) => {
 };
 
 
+const getLabel = (option: any): string | null => {
+  if (!option) return null;
+
+  if (props.valueBy && typeof option !== 'object') {
+    const match = dropdownOptions.value.find(opt => {
+      const optValue = opt[props.valueBy!];
+      return optValue === option || JSON.stringify(optValue) === JSON.stringify(option);
+    });
+
+    if (match && props.labelBy) {
+      return match[props.labelBy] ?? null;
+    }
+
+    return null;
+  }
+
+  if (
+    typeof option === 'object' &&
+    props.labelBy &&
+    option.hasOwnProperty(props.labelBy)
+  ) {
+    const value = option[props.labelBy];
+    if (typeof value === 'string' && value.startsWith('UHJv')) {
+      return null;
+    }
+    return value;
+  }
+
+  if (!props.valueBy && typeof option === 'string') {
+    return option;
+  }
+
+  return null;
+};
+
+
 </script>
 
 <template>
@@ -167,6 +204,41 @@ const handleKeydown = (event) => {
     @option:selecting="(event) => emit('selected', event)"
     @option:deselected="(event) => emit('deselected', event)"
   >
+
+<!-- Pills for multiple -->
+<template v-if="multiple" #selected-option-container="{ option, deselect, disabled }">
+  <span
+    class="inline-flex items-center rounded-full bg-gray-100 text-sm text-gray-800 px-3 py-1 mr-1 mb-1 border border-gray-400 transition-colors duration-200 hover:bg-gray-200 cursor-pointer"
+  >
+    <span v-if="getLabel(option) != null">
+      {{ getLabel(option) }}
+    </span>
+    <span v-else class="text-gray-400 italic flex items-center gap-1">
+      <Icon name="spinner" class="animate-spin" />
+      {{ t('shared.labels.loading') }}
+    </span>
+
+    <button
+      type="button"
+      @mousedown.prevent.stop="deselect(option)"
+      class="ml-2 text-gray-500 hover:text-red-500 transition-colors duration-200"
+      :disabled="disabled"
+    >
+      <Icon name="circle-xmark" size="sm" />
+    </button>
+  </span>
+</template>
+
+  <!-- Show loading for single when value is still an ID -->
+  <template v-else-if="getLabel(modelValue) === null" #selected-option>
+    <span class="text-gray-400 italic flex items-center gap-1">
+      <Icon name="spinner" class="animate-spin" />
+      {{ t('shared.labels.loading') }}
+    </span>
+  </template>
+
+
+
     <template #no-options>
       <div class="w-full px-2 text-left text-opacity-50">
         <em>{{ t('shared.components.molecules.selector.typeToSearch') }}.</em>

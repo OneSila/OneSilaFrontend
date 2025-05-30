@@ -15,7 +15,9 @@ const props = defineProps<{
   modelValue: any;
 }>();
 
-onMounted(fetchData);
+onMounted(() => {
+  fetchData(null, true);
+});
 
 const emit = defineEmits(['update:modelValue']);
 const showCreateOnFlyModal = ref(false);
@@ -52,7 +54,37 @@ const updateValue = (value) => {
   }
 };
 
-async function fetchData(searchValue: string | null | undefined = null) {
+async function ensureSelectedValuesArePresent() {
+  if (!props.field.valueBy || !selectedValue.value) return;
+
+  const selectedIds = Array.isArray(selectedValue.value)
+    ? selectedValue.value
+    : [selectedValue.value];
+
+  const currentIds = cleanedData.value.map(item => item[props.field.valueBy!]);
+
+  const missingIds = selectedIds.filter(id => !currentIds.includes(id));
+  if (missingIds.length === 0) return;
+
+  const { data } = await apolloClient.query({
+    query: props.field.query as unknown as DocumentNode,
+    variables: {
+      filter: {
+        [props.field.valueBy]: { inList: missingIds }
+      }
+    },
+    fetchPolicy: 'network-only'
+  });
+
+  const newItems = props.field.isEdge
+    ? data[props.field.dataKey]?.edges?.map((e: any) => e.node) ?? []
+    : data[props.field.dataKey] ?? [];
+
+  cleanedData.value = [...cleanedData.value, ...newItems];
+}
+
+
+async function fetchData(searchValue: string | null | undefined = null, ensureSelected: boolean = false) {
   try {
     loading.value = true;
     // Start with existing query variables or initialize if not set
@@ -77,6 +109,11 @@ async function fetchData(searchValue: string | null | undefined = null) {
     });
 
     processAndCleanData(data[props.field.dataKey]);
+
+    if (ensureSelected) {
+      await ensureSelectedValuesArePresent();
+    }
+
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -84,26 +121,49 @@ async function fetchData(searchValue: string | null | undefined = null) {
 }
 
 function processAndCleanData(rawData: any) {
-  let toCleanData = [];
+  let newData = [];
+
   if (props.field.isEdge && rawData?.edges) {
-    toCleanData = rawData.edges.map((edge: any) => edge.node);
+    newData = rawData.edges.map((edge: any) => edge.node);
 
     if (!isLiveUpdate.value && rawData.pageInfo && rawData.pageInfo.hasNextPage === true) {
       isLiveUpdate.value = true;
     }
-
   } else {
-    toCleanData = rawData;
+    newData = rawData;
   }
+
   rawDataRef.value = rawData;
-  cleanedData.value = toCleanData;
 
-  // Automatically select the single value if the field is mandatory and there is only one option
+  const preservedItems: any[] = [];
+
+  const selectedIds: (string | number)[] = Array.isArray(selectedValue.value)
+      ? selectedValue.value
+      : selectedValue.value ? [selectedValue.value] : [];
+
+    if (props.field.valueBy && selectedIds.length > 0) {
+      const currentIds = new Set<string | number>(
+        newData.map(item => item[props.field.valueBy!] as string | number)
+      );
+
+      for (const prev of cleanedData.value) {
+        const val = prev[props.field.valueBy!] as string | number;
+        if (selectedIds.includes(val) && !currentIds.has(val)) {
+          preservedItems.push(prev);
+        }
+      }
+    }
+
+  cleanedData.value = [...newData, ...preservedItems];
+
   if (!props.field.optional && cleanedData.value.length === 1 && (selectedValue.value === undefined || selectedValue.value === null)) {
-    updateValue(cleanedData.value[0][props.field.valueBy]);
+    if (props.field.multiple) {
+      updateValue([cleanedData.value[0][props.field.valueBy]]);
+    } else {
+      updateValue(cleanedData.value[0][props.field.valueBy]);
+    }
   }
 
-  // Auto-select based on setDefaultKey and defaultExpectedValue
   if (props.field.setDefaultKey && (selectedValue.value === undefined || selectedValue.value === null)) {
     const defaultValue = props.field.defaultExpectedValue === undefined ? true : props.field.defaultExpectedValue;
     const defaultEntry = cleanedData.value.find(entry => entry[props.field.setDefaultKey!] === defaultValue);
@@ -112,6 +172,7 @@ function processAndCleanData(rawData: any) {
     }
   }
 }
+
 
 const handleCancel = () => {
   showCreateOnFlyModal.value = false
@@ -149,15 +210,7 @@ const handleSubmit = (data) => {
 
 const handleInput = debounce(async (searchValue: string) => {
 
-  // we will do a research if we have isLiveUpdate enabled and
-  // either we don't have anything selected then we want to search on every change
-  // or if we have only one in the results because that is autoselected and if we don't refetch then the
-  // component will get stuck
-  if (isLiveUpdate.value &&
-    (
-      (selectedValue.value === null || selectedValue.value === undefined) ||
-      cleanedData.value.filter(item => item.id !== 'add-entry').length === 1
-    )
+  if (isLiveUpdate.value
   ) {
     fetchData(searchValue);
   }

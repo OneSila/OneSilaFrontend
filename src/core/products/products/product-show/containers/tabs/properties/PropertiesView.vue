@@ -20,40 +20,13 @@ import {Icon} from "../../../../../../../shared/components/atoms/icon";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
-const ruleId = ref(null);
+const ruleId: Ref<string | null> = ref(null);
+
 const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
 
-const fetchRequiredProductType = async () => {
-
-  const {data} = await apolloClient.query({
-    query: propertiesQuery,
-    variables: {filter: {isProductType: {exact: true}}},
-    fetchPolicy: 'network-only'
-  })
-
-  if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
-    const productType = data.properties.edges[0].node
-    const toAdd: ProductPropertyValue = {
-      property: {
-        id: productType.id,
-        name: productType.name,
-        type: productType.type,
-        isProductType: true,
-        requireType: ConfigTypes.REQUIRED
-      },
-      translation: {
-        language: null
-      }
-    }
-    values.value.push(toAdd);
-    return productType.id;
-  }
-
-  return null;
-}
 
 const fetchProductTypeValue = async (productTypePropertyId) => {
   ruleId.value = null;
@@ -99,6 +72,7 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
 
   return null;
 };
+
 
 const setCurrentLanguage = async () => {
 
@@ -192,6 +166,36 @@ const setInitialValues = async (propertiesIds) => {
 
   return true;
 };
+
+
+const fetchRequiredProductType = async () => {
+
+  const {data} = await apolloClient.query({
+    query: propertiesQuery,
+    variables: {filter: {isProductType: {exact: true}}},
+    fetchPolicy: 'network-only'
+  })
+
+  if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
+    const productType = data.properties.edges[0].node
+    const toAdd: ProductPropertyValue = {
+      property: {
+        id: productType.id,
+        name: productType.name,
+        type: productType.type,
+        isProductType: true,
+        requireType: ConfigTypes.REQUIRED
+      },
+      translation: {
+        language: null
+      }
+    }
+    values.value.push(toAdd);
+    return productType.id;
+  }
+
+  return null;
+}
 
 const fetchRequiredAttributes = async (productTypePropertyId) => {
 
@@ -301,7 +305,7 @@ const getIconColor = (requireType: string, isFilled = false) => {
       return 'text-red-500';
     }
     if (requireType === ConfigTypes.OPTIONAL) {
-      return 'text-yellow-500';
+      return 'text-orange-400';
     }
   }
 
@@ -309,27 +313,12 @@ const getIconColor = (requireType: string, isFilled = false) => {
     return 'text-red-500';
   }
   if (requireType === ConfigTypes.OPTIONAL) {
-    return 'text-yellow-500';
+    return 'text-orange-400';
   }
 
   return 'text-gray-400';
 };
 
-
-const getTooltip = (requireType) => {
-  switch (requireType) {
-    case ConfigTypes.REQUIRED_IN_CONFIGURATOR:
-      return t('properties.rule.configTypes.requiredInConfigurator.title');
-    case ConfigTypes.OPTIONAL_IN_CONFIGURATOR:
-      return t('properties.rule.configTypes.optionalInConfigurator.title');
-    case ConfigTypes.OPTIONAL:
-      return t('properties.rule.configTypes.optional.title');
-    case ConfigTypes.REQUIRED:
-      return t('properties.rule.configTypes.required.title');
-    default:
-      return '';
-  }
-}
 
 const getExtendedTooltip = (metaType: string): string => {
   switch (metaType) {
@@ -352,31 +341,7 @@ const requireTypes = [
 ];
 
 
-const hasValue = (val: ProductPropertyValue): boolean => {
-  const propType = val.property.type;
 
-  if (propType === PropertyTypes.TEXT || propType === PropertyTypes.DESCRIPTION) {
-    return !!(val.translation?.valueText || val.translation?.valueDescription);
-  }
-  if (propType === PropertyTypes.BOOLEAN) return val.valueBoolean !== null && val.valueBoolean !== undefined;
-  if (propType === PropertyTypes.INT) return val.valueInt !== null && val.valueInt !== undefined;
-  if (propType === PropertyTypes.FLOAT) return val.valueFloat !== null && val.valueFloat !== undefined;
-  if (propType === PropertyTypes.DATE) return !!val.valueDate;
-  if (propType === PropertyTypes.DATETIME) return !!val.valueDateTime;
-  if (propType === PropertyTypes.SELECT) return !!val.valueSelect?.id;
-  if (propType === PropertyTypes.MULTISELECT) return Array.isArray(val.valueMultiSelect) && val.valueMultiSelect.length > 0;
-
-  return false;
-};
-
-
-const isRequired = (requireType: string | undefined): boolean => {
-  return [
-    ConfigTypes.REQUIRED,
-    ConfigTypes.REQUIRED_IN_CONFIGURATOR,
-    ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
-  ].includes(requireType as ConfigTypes);
-};
 
 const handleValueUpdate = ({id, type, value, language}) => {
   const target = values.value.find(v => v.property.id === id);
@@ -451,41 +416,21 @@ const handleValueUpdate = ({id, type, value, language}) => {
       </FlexCell>
     </Flex>
     <Loader :loading="loading"/>
-    <table class="divide-y divide-gray-300 table-hover custom-table mt-4">
-      <thead></thead>
-      <tbody>
-      <template v-for="(val, index) in values">
-        <tr>
-          <th class="font-semibold left-align">
-            <Icon
-                name="circle-dot"
-                :class="[
-                'transition-all duration-200',
-                {
-                  'text-gray-400': hasValue(val),
-                  'text-red-500': !hasValue(val) && isRequired(val.property.requireType),
-                  'text-yellow-500': !hasValue(val) && !isRequired(val.property.requireType),
-                }
-                ]"
-                :title="getTooltip(val.property.requireType)"
-            />
+    <div class="mt-4 space-y-6">
+  <div v-for="(val, index) in values" :key="val.property.id">
+      <ValueInput
+        v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+        :product-id="product.id"
+        :rule-id="ruleId"
+        :value="val"
+        @refetch="fetchRequiredAttributesValues"
+        @update-id="handleUpdatedId"
+        @update-value="handleValueUpdate"
+        @remove="handleRemove"
+      />
+  </div>
+</div>
 
-            {{ val.property.name }}
-          </th>
-          <td>
-            <ValueInput v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
-                        :product-id="product.id"
-                        :rule-id="ruleId"
-                        :value="val"
-                        @refetch="fetchRequiredAttributesValues"
-                        @update-id="handleUpdatedId"
-                        @update-value="handleValueUpdate"
-                        @remove="handleRemove"/>
-          </td>
-        </tr>
-      </template>
-      </tbody>
-    </table>
   </div>
 </template>
 
