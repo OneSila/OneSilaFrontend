@@ -12,6 +12,7 @@ import { ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../../shared/modules/toast";
 import { assignEanCodesMutation } from "../../../../shared/api/mutations/eanCodes.js";
+import {BulkProductPropertyAssigner} from "../../../../shared/components/organisms/bulk=product-property-assigner";
 
 const { t } = useI18n();
 
@@ -85,6 +86,11 @@ const handleBulkAssign = async (selectedEntities: any[]) => {
           <div class="flex items-center space-x-2">
             <AiBulkTranslator
               :type="'products'"
+              :selected-entities="selectedEntities"
+              @started="clearSelection"
+            />
+
+            <BulkProductPropertyAssigner
               :selected-entities="selectedEntities"
               @started="clearSelection"
             />

@@ -67,11 +67,26 @@ const calculatePosition = (dropdownList, component, { width }) => {
 };
 
 watchEffect(() => {
-  dropdownOptions.value = props.options;
+  dropdownOptions.value = [...props.options];
+
   if (props.showAddEntry && props.valueBy && props.labelBy) {
-    dropdownOptions.value.unshift({ [props.valueBy]: 'add-entry', [props.labelBy]: t('shared.components.molecules.selector.addEntry') });
+    const valueBy = props.valueBy;
+    const labelBy = props.labelBy;
+
+    const alreadyExists = dropdownOptions.value.some(
+      (opt) => opt?.[valueBy] === 'add-entry'
+    );
+
+    if (!alreadyExists) {
+      dropdownOptions.value.unshift({
+        [valueBy]: 'add-entry',
+        [labelBy]: t('shared.components.molecules.selector.addEntry'),
+      });
+    }
   }
 });
+
+
 
 watchEffect(() => {
   if (props.boolean) {

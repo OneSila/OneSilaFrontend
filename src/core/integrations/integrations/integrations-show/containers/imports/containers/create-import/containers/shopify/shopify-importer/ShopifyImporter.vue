@@ -52,7 +52,6 @@ const allowNextStep = computed(() => {
 
 
 const updateMappedData = (data) => {
-  console.log(data);
   mappedData.value = data;
 };
 

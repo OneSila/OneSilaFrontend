@@ -67,7 +67,6 @@ const updateOrCreateItems = async () => {
     return !(!responseData || !responseData.id);
 
   } catch (err) {
-    console.log(err);
     return false;
   }
 };
