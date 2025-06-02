@@ -417,18 +417,18 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
-  <div v-for="(val, index) in values" :key="val.property.id">
-      <ValueInput
-        v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
-        :product-id="product.id"
-        :rule-id="ruleId"
-        :value="val"
-        @refetch="fetchRequiredAttributesValues"
-        @update-id="handleUpdatedId"
-        @update-value="handleValueUpdate"
-        @remove="handleRemove"
-      />
-  </div>
+    <div v-for="(val, index) in values" :key="val.property.id">
+        <ValueInput
+          v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+          :product-id="product.id"
+          :rule-id="ruleId"
+          :value="val"
+          @refetch="fetchRequiredAttributesValues"
+          @update-id="handleUpdatedId"
+          @update-value="handleValueUpdate"
+          @remove="handleRemove"
+        />
+    </div>
 </div>
 
   </div>

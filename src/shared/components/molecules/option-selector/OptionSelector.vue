@@ -3,6 +3,7 @@ import {computed, ref} from 'vue';
 
 interface Choice {
   name: string;
+  banner?: string;
   disabled?: boolean
 }
 
@@ -57,12 +58,21 @@ const setActive = (choice, event?: MouseEvent) => {
         <slot :name="choice.name"></slot>
         <!-- If the choice is disabled, overlay a ribbon -->
         <template v-if="choice.disabled">
-          <div class="ribbon-container">
-            <div class="ribbon-wrapper">
-              <div class="ribbon-cs">{{ $t('shared.labels.comingSoon') }}</div>
+          <div class="ribbon-danger-container">
+            <div class="ribbon-danger-wrapper">
+              <div class="ribbon-danger-cs">{{ $t('shared.labels.comingSoon') }}</div>
             </div>
           </div>
         </template>
+        <template v-else>
+          <template v-if="choice.banner">
+            <div class="ribbon-container">
+              <div class="ribbon-wrapper">
+                <div class="ribbon-cs">{{ $t('shared.labels.beta') }}</div>
+              </div>
+            </div>
+          </template>
+       </template>
       </div>
     </div>
   </div>
@@ -109,4 +119,46 @@ const setActive = (choice, event?: MouseEvent) => {
 .ribbon-cs:after {
   right: 0;
 }
+
+.ribbon-danger-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.ribbon-danger-wrapper {
+  width: 85px;
+  height: 88px;
+  overflow: hidden;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+}
+.ribbon-danger-cs {
+  font: 1em Sans-Serif;
+  color: #fff;
+  text-align: center;
+  transform: rotate(45deg);
+  position: relative;
+  padding: 7px 0;
+  left: -5px;
+  top: 15px;
+  width: 120px;
+  background-color: #DC3545;
+}
+.ribbon-danger-cs:before,
+.ribbon-danger-cs:after {
+  content: "";
+  border-top: #DC3545;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  position: absolute;
+  bottom: -3px;
+}
+.ribbon-danger-cs:before {
+  left: 0;
+}
+.ribbon-danger-cs:after {
+  right: 0;
+}
+
 </style>

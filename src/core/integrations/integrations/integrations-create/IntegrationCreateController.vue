@@ -138,7 +138,6 @@ const wizardSteps = computed(() => {
 
 const updateStep = (val) => {
   step.value = val;
-  console.log(val)
 }
 
 function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {

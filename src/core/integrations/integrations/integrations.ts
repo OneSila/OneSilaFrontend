@@ -1,6 +1,7 @@
 export enum IntegrationTypes {
   Magento = 'magento',
   Shopify = 'shopify',
+  Woocommerce = 'woocommerce',
   None = 'none',
 }
 

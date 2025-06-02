@@ -64,8 +64,14 @@ watch(() => props.data, (newData) => {
 
 const cleanupAndMutate = async (mutate) => {
   fieldErrors.value = {};
-  console.log(formData.value)
-  await mutate({ variables: { data: formData.value } });
+
+  const payload = { ...formData.value };
+
+  if (!payload.vendorProperty?.id) {
+    delete (payload as any).vendorProperty;
+  }
+
+  await mutate({ variables: { data: payload } });
 };
 
 const handleError = (errors) => {

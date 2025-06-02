@@ -341,6 +341,7 @@
       "pending": "Pending Processing",
       "progress": "Progress",
       "new": "New",
+      "beta": "BETA",
       "url": "URL"
     },
     "validations": {
@@ -403,6 +404,12 @@
         }
       },
       "organisms": {
+        "bulkProductPropertyAssigner": {
+          "title": "To assign to {count} product(s)",
+          "button": "Assign Properties",
+          "assignSuccess": "Properties were successfully assigned to the selected products.",
+          "overrideIfExistsCheckbox": "Override if property already exists"
+        },
         "aiBulkTranslator": {
           "button": "AI Translate",
           "title": "Translate {count} {type}",
@@ -2142,7 +2149,9 @@
           "magentoTitle": "Magento",
           "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
           "shopifyTitle": "Shopify",
-          "shopifyExample": "Shopify integration is coming soon.",
+          "shopifyExample": "Shopify integration to manage your products in seconds.",
+          "woocommerceTitle": "Woocommerce",
+          "woocommerceExample": "Woocommerce integration is coming soon.",
           "magentoInfoModal": {
           "title": "How to connect your Magento store",
             "section": {
