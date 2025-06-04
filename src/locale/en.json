@@ -2217,6 +2217,7 @@
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
       "region": "Region",
+      "country": "Country",
       "pullData": "Pull Data"
     },
     "placeholders": {
@@ -2229,6 +2230,31 @@
       "northAmerica": "North America",
       "europe": "Europe",
       "farEast": "Far East"
+    },
+    "countries": {
+      "canada": "Canada",
+      "unitedStates": "United States",
+      "mexico": "Mexico",
+      "brazil": "Brazil",
+      "ireland": "Ireland",
+      "spain": "Spain",
+      "unitedKingdom": "United Kingdom",
+      "france": "France",
+      "belgium": "Belgium",
+      "netherlands": "Netherlands",
+      "germany": "Germany",
+      "italy": "Italy",
+      "sweden": "Sweden",
+      "southAfrica": "South Africa",
+      "poland": "Poland",
+      "egypt": "Egypt",
+      "turkey": "Turkey",
+      "saudiArabia": "Saudi Arabia",
+      "unitedArabEmirates": "United Arab Emirates",
+      "india": "India",
+      "singapore": "Singapore",
+      "australia": "Australia",
+      "japan": "Japan"
     },
     "salesChannel": {
       "shopify": {
