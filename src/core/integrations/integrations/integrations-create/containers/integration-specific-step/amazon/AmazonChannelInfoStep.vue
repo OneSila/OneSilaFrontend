@@ -3,7 +3,7 @@ import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Selector } from "../../../../../../../shared/components/atoms/selector";
-import type { AmazonChannelInfo } from '../../../../integrations';
+import { AmazonChannelInfo, AmazonRegions } from '../../../../integrations';
 
 const props = defineProps<{
   channelInfo: AmazonChannelInfo
@@ -12,9 +12,9 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const regionChoices = [
-  { id: 'NORTH_AMERICA', text: t('integrations.regions.northAmerica') },
-  { id: 'EUROPE', text: t('integrations.regions.europe') },
-  { id: 'FAR_EAST', text: t('integrations.regions.farEast') },
+  { id: AmazonRegions.NORTH_AMERICA, text: t('integrations.regions.northAmerica') },
+  { id: AmazonRegions.EUROPE, text: t('integrations.regions.europe') },
+  { id: AmazonRegions.FAR_EAST, text: t('integrations.regions.farEast') },
 ];
 </script>
 

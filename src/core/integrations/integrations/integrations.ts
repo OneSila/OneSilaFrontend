@@ -7,9 +7,9 @@ export enum IntegrationTypes {
 }
 
 export enum AmazonRegions {
-  NORTH_AMERICA = 'NORTH_AMERICA',
-  EUROPE = 'EUROPE',
-  FAR_EAST = 'FAR_EAST',
+  NORTH_AMERICA = 'NA',
+  EUROPE = 'EU',
+  FAR_EAST = 'FE',
 }
 
 export enum AuthenticationMethod {
