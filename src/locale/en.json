@@ -2121,6 +2121,10 @@
         "title": "Shopify connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
+      "amazonNotConnectedBanner": {
+        "title": "Amazon connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2256,6 +2260,11 @@
       "australia": "Australia",
       "japan": "Japan"
     },
+    "amazon": {
+      "installed": {
+        "title": "Amazon Connected"
+      }
+    },
     "salesChannel": {
       "shopify": {
         "installed": {
@@ -2272,6 +2281,15 @@
           "failedGeneric": "Retry failed. Could not update Shopify channel.",
           "failedRedirect": "Retry failed. Could not obtain redirect URL.",
           "failedException": "Retry failed due to a system error."
+        }
+      },
+      "amazon": {
+        "installed": {
+          "title": "Amazon Connected",
+          "loading": "Connecting your store",
+          "success": "Your Amazon store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
         }
       },
       "toast": {
