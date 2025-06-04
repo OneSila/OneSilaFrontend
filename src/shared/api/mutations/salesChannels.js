@@ -39,6 +39,24 @@ export const updateShopifySalesChannelMutation = gql`
   }
 `;
 
+export const createAmazonSalesChannelMutation = gql`
+  mutation createAmazonSalesChannel($data: AmazonSalesChannelInput!) {
+    createAmazonSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateAmazonSalesChannelMutation = gql`
+  mutation updateAmazonSalesChannel($data: AmazonSalesChannelPartialInput!) {
+    updateAmazonSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`

@@ -10,16 +10,25 @@ import {
   IntegrationCreateWizardForm,
   IntegrationTypes,
   getMagentoDefaultFields,
-  AuthenticationMethod, MagentoChannelInfo, ShopifyChannelInfo, getDefaultFields, getShopifyDefaultFields
+  AuthenticationMethod,
+  MagentoChannelInfo,
+  ShopifyChannelInfo,
+  AmazonChannelInfo,
+  getDefaultFields,
+  getShopifyDefaultFields,
+  getAmazonDefaultFields
 } from "../integrations";
 import { TypeStep } from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
 import { SalesChannelStep } from "./containers/sales-channel-step";
 import { MagentoChannelInfoStep } from "./containers/integration-specific-step/magento";
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
+import { AmazonChannelInfoStep } from "./containers/integration-specific-step/amazon";
 import {
   createMagentoSalesChannelMutation,
-  createShopifySalesChannelMutation, getShopifyRedirectUrlMutation
+  createShopifySalesChannelMutation,
+  createAmazonSalesChannelMutation,
+  getShopifyRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
@@ -58,7 +67,7 @@ const form = reactive<IntegrationCreateWizardForm>({
     importOrders: true,
   }
 });
-const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | {}>({});
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | AmazonChannelInfo | {}>({});
 
 if (isExternalInstall.value && selectedIntegrationType.value === IntegrationTypes.Shopify) {
 
@@ -101,6 +110,8 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getShopifyDefaultFields());
   } else if (newType === IntegrationTypes.Magento) {
     Object.assign(specificChannelInfo.value, getMagentoDefaultFields());
+  } else if (newType === IntegrationTypes.Amazon) {
+    Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
   } else {
     specificChannelInfo.value = {};
   }
@@ -114,6 +125,10 @@ const stepFourLabel = computed(() => {
 
   if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
     return t('integrations.create.wizard.step4.shopify.title');
+  }
+
+  if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
+    return t('integrations.create.wizard.step4.amazon.title');
   }
 
   return t('integrations.create.wizard.step4.title');
@@ -193,6 +208,9 @@ const getIntegrationComponent = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
     return ShopifyChannelInfoStep;
   }
+  if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
+    return AmazonChannelInfoStep;
+  }
   return null;
 };
 
@@ -203,6 +221,8 @@ const getIntegrationMutation = () => {
       return createMagentoSalesChannelMutation;
     case IntegrationTypes.Shopify:
       return createShopifySalesChannelMutation;
+    case IntegrationTypes.Amazon:
+      return createAmazonSalesChannelMutation;
     default:
       return null;
   }
@@ -214,6 +234,8 @@ const getIntegrationMutationKey = () => {
       return 'createMagentoSalesChannel';
     case IntegrationTypes.Shopify:
       return 'createShopifySalesChannel';
+    case IntegrationTypes.Amazon:
+      return 'createAmazonSalesChannel';
     default:
       return '';
   }

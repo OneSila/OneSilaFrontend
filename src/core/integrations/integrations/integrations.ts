@@ -6,6 +6,12 @@ export enum IntegrationTypes {
   None = 'none',
 }
 
+export enum AmazonRegions {
+  NORTH_AMERICA = 'NORTH_AMERICA',
+  EUROPE = 'EUROPE',
+  FAR_EAST = 'FAR_EAST',
+}
+
 export enum AuthenticationMethod {
   TOKEN = 'TOK',
   PASSWORD = 'PAS'
@@ -58,6 +64,10 @@ export interface ShopifyChannelInfo extends SpecificChannelInfo {
   isExternalInstall?: boolean;
 }
 
+export interface AmazonChannelInfo extends SpecificChannelInfo {
+  region: string | null;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -83,12 +93,20 @@ export function getShopifyDefaultFields(): ShopifyChannelInfo {
   };
 }
 
+export function getAmazonDefaultFields(): AmazonChannelInfo {
+  return {
+    region: null,
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
       return getMagentoDefaultFields();
     case IntegrationTypes.Shopify:
       return getShopifyDefaultFields();
+    case IntegrationTypes.Amazon:
+      return getAmazonDefaultFields();
     default:
       return {};
   }
