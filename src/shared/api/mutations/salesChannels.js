@@ -430,3 +430,42 @@ export const validateShopifyAuthMutation = gql`
     }
   }
 `;
+
+
+export const getAmazonRedirectUrlMutation = gql`
+  mutation GetAmazonRedirectUrl($data: AmazonSalesChannelPartialInput!) {
+    getAmazonRedirectUrl(instance: $data) {
+      ... on AmazonRedirectUrlType {
+        redirectUrl
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
+export const validateAmazonAuthMutation = gql`
+  mutation ValidateAmazonAuth($data: AmazonValidateAuthInput!) {
+    validateAmazonAuth(instance: $data) {
+      ... on AmazonSalesChannelType {
+        id
+        region
+        country
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;

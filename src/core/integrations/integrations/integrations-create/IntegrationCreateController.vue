@@ -28,7 +28,7 @@ import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation,
   createAmazonSalesChannelMutation,
-  getShopifyRedirectUrlMutation
+  getShopifyRedirectUrlMutation, getAmazonRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
@@ -159,6 +159,16 @@ function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
   return value && typeof value.hostApiKey === 'string';
 }
 
+function isAmazonChannelInfo(value: any): value is AmazonChannelInfo {
+  return (
+    value &&
+    typeof value.region === 'string' &&
+    value.region.trim() !== '' &&
+    typeof value.country === 'string' &&
+    value.country.trim() !== ''
+  );
+}
+
 
 const allowNextStep = computed(() => {
 
@@ -197,6 +207,15 @@ const allowNextStep = computed(() => {
       }
     }
   }
+
+  if (
+  stepName === 'specificChannelStep' &&
+  selectedIntegrationType.value === IntegrationTypes.Amazon &&
+  !isAmazonChannelInfo(specificChannelInfo.value)
+) {
+  return false;
+}
+
 
   return true;
 });
@@ -295,36 +314,75 @@ const handleFinish = async () => {
   }
 };
 
+const handleShopifySalesChannelSuccess = async (channelData: any) => {
+  const id = channelData.id;
+
+  const { data } = await apolloClient.mutate({
+    mutation: getShopifyRedirectUrlMutation,
+    variables: {
+      data: { id },
+    },
+  });
+
+  const result = data?.getShopifyRedirectUrl;
+
+  if (result?.redirectUrl) {
+    window.location.href = result.redirectUrl;
+    return;
+  }
+
+  // If we have errors from OperationInfo
+  const messages = result?.messages || [];
+  messages.forEach((msg: any) => {
+    Toast.error(msg.message);
+  });
+
+  // Redirect to show page anyway
+  router.push({
+    name: 'integrations.integrations.show',
+    params: { type: IntegrationTypes.Shopify, id },
+  });
+};
+
+const handleAmazonSalesChannelSuccess = async (channelData: any) => {
+  const id = channelData.id;
+
+  const { data } = await apolloClient.mutate({
+    mutation: getAmazonRedirectUrlMutation,
+    variables: {
+      data: { id },
+    },
+  });
+
+  const result = data?.getAmazonRedirectUrl;
+
+  if (result?.redirectUrl) {
+    window.location.href = result.redirectUrl;
+    return;
+  }
+
+  const messages = result?.messages || [];
+  messages.forEach((msg: any) => {
+    Toast.error(msg.message);
+  });
+
+  // Redirect to show page anyway
+  router.push({
+    name: 'integrations.integrations.show',
+    params: { type: IntegrationTypes.Amazon, id },
+  });
+};
+
+
+
 const handleSalesChannelSuccess = async (channelData: any, integrationType: string) => {
   if (integrationType === IntegrationTypes.Shopify) {
-    const id = channelData.id;
+    await handleShopifySalesChannelSuccess(channelData);
+    return;
+  }
 
-    const { data } = await apolloClient.mutate({
-      mutation: getShopifyRedirectUrlMutation,
-      variables: {
-        data: { id },
-      },
-    });
-
-    const result = data?.getShopifyRedirectUrl;
-
-    if (result?.redirectUrl) {
-      window.location.href = result.redirectUrl;
-      return;
-    }
-
-    // If we have errors from OperationInfo
-    const messages = result?.messages || [];
-    messages.forEach((msg: any) => {
-      Toast.error(msg.message);
-    });
-
-    // Redirect to show page anyway
-    router.push({
-      name: 'integrations.integrations.show',
-      params: { type: IntegrationTypes.Shopify, id },
-    });
-
+  if (integrationType === IntegrationTypes.Amazon) {
+    await handleAmazonSalesChannelSuccess(channelData);
     return;
   }
 
