@@ -2150,6 +2150,8 @@
           "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
           "shopifyTitle": "Shopify",
           "shopifyExample": "Shopify integration to manage your products in seconds.",
+          "amazonTitle": "Amazon",
+          "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "Woocommerce integration is coming soon.",
           "magentoInfoModal": {
@@ -2189,6 +2191,10 @@
             "title": "Shopify Channel Details",
             "content": "Provide Shopify-specific configuration to connect your store."
           },
+          "amazon": {
+            "title": "Amazon Channel Details",
+            "content": "Provide Amazon-specific configuration to connect your marketplace."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2210,6 +2216,7 @@
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
+      "region": "Region",
       "pullData": "Pull Data"
     },
     "placeholders": {
@@ -2217,6 +2224,11 @@
       "hostApiKey": "Enter Access Token",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute"
+    },
+    "regions": {
+      "northAmerica": "North America",
+      "europe": "Europe",
+      "farEast": "Far East"
     },
     "salesChannel": {
       "shopify": {
