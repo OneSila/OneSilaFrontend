@@ -12,6 +12,32 @@ export enum AmazonRegions {
   FAR_EAST = 'FE',
 }
 
+export enum AmazonCountries {
+  CANADA = 'CA',
+  UNITED_STATES = 'US',
+  MEXICO = 'MX',
+  BRAZIL = 'BR',
+  IRELAND = 'IE',
+  SPAIN = 'ES',
+  UNITED_KINGDOM = 'GB',
+  FRANCE = 'FR',
+  BELGIUM = 'BE',
+  NETHERLANDS = 'NL',
+  GERMANY = 'DE',
+  ITALY = 'IT',
+  SWEDEN = 'SE',
+  SOUTH_AFRICA = 'ZA',
+  POLAND = 'PL',
+  EGYPT = 'EG',
+  TURKEY = 'TR',
+  SAUDI_ARABIA = 'SA',
+  UNITED_ARAB_EMIRATES = 'AE',
+  INDIA = 'IN',
+  SINGAPORE = 'SG',
+  AUSTRALIA = 'AU',
+  JAPAN = 'JP',
+}
+
 export enum AuthenticationMethod {
   TOKEN = 'TOK',
   PASSWORD = 'PAS'
@@ -66,6 +92,7 @@ export interface ShopifyChannelInfo extends SpecificChannelInfo {
 
 export interface AmazonChannelInfo extends SpecificChannelInfo {
   region: string | null;
+  country: string | null;
 }
 
 
@@ -96,6 +123,7 @@ export function getShopifyDefaultFields(): ShopifyChannelInfo {
 export function getAmazonDefaultFields(): AmazonChannelInfo {
   return {
     region: null,
+    country: null,
   };
 }
 
