@@ -49,7 +49,7 @@ To run the application locally, you need to start both the frontend and the back
 
 ### Starting the Frontend
 
-1. In a new terminal window, navigate to the OneSila Frontend director
+1. In a new terminal window, navigate to the OneSila Frontend directory
 2. Run the following command to start the frontend service:
 
 ```bash
