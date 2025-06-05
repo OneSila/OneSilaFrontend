@@ -5,8 +5,9 @@ import { useRoute, useRouter } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../../shared/components/molecules/breadcrumbs";
 import { MagentoImporter } from "./containers/magento/magento-importer";
-import {IntegrationTypes} from "../../../../../integrations";
+import { IntegrationTypes } from "../../../../../integrations";
 import { ShopifyImporter } from "./containers/shopify/shopify-importer";
+import { WoocommerceImporter } from "./containers/woocommerce/woocommerce-importer";
 
 
 const { t } = useI18n();
@@ -32,6 +33,7 @@ const type = ref(String(route.params.type));
     <template #content>
       <MagentoImporter v-if="type == IntegrationTypes.Magento" :integration-id="integrationId" :type="type" />
       <ShopifyImporter v-else-if="type == IntegrationTypes.Shopify" :integration-id="integrationId" :type="type" />
+      <WoocommerceImporter v-else-if="type == IntegrationTypes.Woocommerce" :integration-id="integrationId" :type="type" />
     </template>
   </GeneralTemplate>
 </template>
