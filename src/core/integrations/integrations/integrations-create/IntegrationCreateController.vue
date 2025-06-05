@@ -10,16 +10,20 @@ import {
   IntegrationCreateWizardForm,
   IntegrationTypes,
   getMagentoDefaultFields,
-  AuthenticationMethod, MagentoChannelInfo, ShopifyChannelInfo, getDefaultFields, getShopifyDefaultFields
+  AuthenticationMethod, MagentoChannelInfo, ShopifyChannelInfo, WoocommerceChannelInfo,
+  getDefaultFields, getShopifyDefaultFields, getWoocommerceDefaultFields
 } from "../integrations";
 import { TypeStep } from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
 import { SalesChannelStep } from "./containers/sales-channel-step";
 import { MagentoChannelInfoStep } from "./containers/integration-specific-step/magento";
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
+import { WoocommerceChannelInfoStep } from "./containers/integration-specific-step/woocommerce";
 import {
   createMagentoSalesChannelMutation,
-  createShopifySalesChannelMutation, getShopifyRedirectUrlMutation
+  createShopifySalesChannelMutation,
+  createWoocommerceSalesChannelMutation,
+  getShopifyRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
@@ -58,7 +62,7 @@ const form = reactive<IntegrationCreateWizardForm>({
     importOrders: true,
   }
 });
-const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | {}>({});
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | {}>({});
 
 if (isExternalInstall.value && selectedIntegrationType.value === IntegrationTypes.Shopify) {
 
@@ -101,6 +105,8 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getShopifyDefaultFields());
   } else if (newType === IntegrationTypes.Magento) {
     Object.assign(specificChannelInfo.value, getMagentoDefaultFields());
+  } else if (newType === IntegrationTypes.Woocommerce) {
+    Object.assign(specificChannelInfo.value, getWoocommerceDefaultFields());
   } else {
     specificChannelInfo.value = {};
   }
@@ -114,6 +120,10 @@ const stepFourLabel = computed(() => {
 
   if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
     return t('integrations.create.wizard.step4.shopify.title');
+  }
+
+  if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
+    return t('integrations.create.wizard.step4.woocommerce.title');
   }
 
   return t('integrations.create.wizard.step4.title');
@@ -142,6 +152,10 @@ const updateStep = (val) => {
 
 function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
   return value && typeof value.hostApiKey === 'string';
+}
+
+function isWoocommerceChannelInfo(value: any): value is WoocommerceChannelInfo {
+  return value && typeof value.consumerKey === 'string' && typeof value.consumerSecret === 'string';
 }
 
 
@@ -183,6 +197,18 @@ const allowNextStep = computed(() => {
     }
   }
 
+  if (
+    stepName === 'specificChannelStep' &&
+    selectedIntegrationType.value === IntegrationTypes.Woocommerce &&
+    isWoocommerceChannelInfo(specificChannelInfo.value)
+  ) {
+    const key = specificChannelInfo.value.consumerKey;
+    const secret = specificChannelInfo.value.consumerSecret;
+    if (!key || key.trim() === '' || !secret || secret.trim() === '') {
+      return false;
+    }
+  }
+
   return true;
 });
 
@@ -192,6 +218,9 @@ const getIntegrationComponent = () => {
   }
   if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
     return ShopifyChannelInfoStep;
+  }
+  if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
+    return WoocommerceChannelInfoStep;
   }
   return null;
 };
@@ -203,6 +232,8 @@ const getIntegrationMutation = () => {
       return createMagentoSalesChannelMutation;
     case IntegrationTypes.Shopify:
       return createShopifySalesChannelMutation;
+    case IntegrationTypes.Woocommerce:
+      return createWoocommerceSalesChannelMutation;
     default:
       return null;
   }
@@ -214,6 +245,8 @@ const getIntegrationMutationKey = () => {
       return 'createMagentoSalesChannel';
     case IntegrationTypes.Shopify:
       return 'createShopifySalesChannel';
+    case IntegrationTypes.Woocommerce:
+      return 'createWoocommerceSalesChannel';
     default:
       return '';
   }

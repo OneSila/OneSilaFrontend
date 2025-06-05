@@ -57,6 +57,11 @@ export interface ShopifyChannelInfo extends SpecificChannelInfo {
   isExternalInstall?: boolean;
 }
 
+export interface WoocommerceChannelInfo extends SpecificChannelInfo {
+  consumerKey: string;
+  consumerSecret: string;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -82,12 +87,21 @@ export function getShopifyDefaultFields(): ShopifyChannelInfo {
   };
 }
 
+export function getWoocommerceDefaultFields(): WoocommerceChannelInfo {
+  return {
+    consumerKey: '',
+    consumerSecret: '',
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
       return getMagentoDefaultFields();
     case IntegrationTypes.Shopify:
       return getShopifyDefaultFields();
+    case IntegrationTypes.Woocommerce:
+      return getWoocommerceDefaultFields();
     default:
       return {};
   }

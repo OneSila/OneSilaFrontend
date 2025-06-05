@@ -2151,7 +2151,7 @@
           "shopifyTitle": "Shopify",
           "shopifyExample": "Shopify integration to manage your products in seconds.",
           "woocommerceTitle": "Woocommerce",
-          "woocommerceExample": "Woocommerce integration is coming soon.",
+          "woocommerceExample": "WooCommerce integration to manage your products.",
           "magentoInfoModal": {
           "title": "How to connect your Magento store",
             "section": {
@@ -2189,6 +2189,10 @@
             "title": "Shopify Channel Details",
             "content": "Provide Shopify-specific configuration to connect your store."
           },
+          "woocommerce": {
+            "title": "WooCommerce Channel Details",
+            "content": "Provide WooCommerce-specific information to connect your store."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2207,6 +2211,8 @@
       "authenticationMethod": "Authentication Method",
       "hostApiUsername": "Host API Username",
       "hostApiKey": "Host API Access Token Key",
+      "consumerKey": "Consumer Key",
+      "consumerSecret": "Consumer Secret",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
@@ -2215,6 +2221,8 @@
     "placeholders": {
       "hostApiUsername": "Enter API Username",
       "hostApiKey": "Enter Access Token",
+      "consumerKey": "Enter Consumer Key",
+      "consumerSecret": "Enter Consumer Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute"
     },
