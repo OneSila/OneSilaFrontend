@@ -22,14 +22,14 @@ const { t } = useI18n();
             <Flex vertical class="gap-2">
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.consumerKey') }}
+                  {{ t('integrations.labels.apiKey') }}
                 </Label>
               </FlexCell>
               <FlexCell>
                 <TextInput
                     class="w-96"
-                    v-model="channelInfo.consumerKey"
-                    :placeholder="t('integrations.placeholders.consumerKey')"
+                    v-model="channelInfo.apiKey"
+                    :placeholder="t('integrations.placeholders.apiKey')"
                 />
               </FlexCell>
             </Flex>
@@ -42,14 +42,14 @@ const { t } = useI18n();
             <Flex vertical class="gap-2">
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.consumerSecret') }}
+                  {{ t('integrations.labels.apiSecret') }}
                 </Label>
               </FlexCell>
               <FlexCell>
                 <TextInput
                     class="w-96"
-                    v-model="channelInfo.consumerSecretKey"
-                    :placeholder="t('integrations.placeholders.consumerSecret')"
+                    v-model="channelInfo.apiSecret"
+                    :placeholder="t('integrations.placeholders.apiSecret')"
                 />
               </FlexCell>
             </Flex>

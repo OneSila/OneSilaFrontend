@@ -155,7 +155,7 @@ function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
 }
 
 function isWoocommerceChannelInfo(value: any): value is WoocommerceChannelInfo {
-  return value && typeof value.consumerKey === 'string' && typeof value.consumerSecretKey === 'string';
+  return value && typeof value.apiKey === 'string' && typeof value.apiSecret === 'string';
 }
 
 
@@ -202,8 +202,8 @@ const allowNextStep = computed(() => {
     selectedIntegrationType.value === IntegrationTypes.Woocommerce &&
     isWoocommerceChannelInfo(specificChannelInfo.value)
   ) {
-    const key = specificChannelInfo.value.consumerKey;
-    const secret = specificChannelInfo.value.consumerSecretKey;
+    const key = specificChannelInfo.value.apiKey;
+    const secret = specificChannelInfo.value.apiSecret;
     if (!key || key.trim() === '' || !secret || secret.trim() === '') {
       return false;
     }

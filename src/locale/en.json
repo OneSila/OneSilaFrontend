@@ -2211,8 +2211,8 @@
       "authenticationMethod": "Authentication Method",
       "hostApiUsername": "Host API Username",
       "hostApiKey": "Host API Access Token Key",
-      "consumerKey": "Consumer Key",
-      "consumerSecret": "Consumer Secret",
+      "apiKey": "API Key",
+      "apiSecret": "API Secret",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
@@ -2221,8 +2221,8 @@
     "placeholders": {
       "hostApiUsername": "Enter API Username",
       "hostApiKey": "Enter Access Token",
-      "consumerKey": "Enter Consumer Key",
-      "consumerSecret": "Enter Consumer Secret",
+      "apiKey": "Enter API Key",
+      "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute"
     },

@@ -24,8 +24,8 @@ interface EditWoocommerceForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
-  consumerKey: string;
-  consumerSecretKey: string;
+  apiKey: string;
+  apiSecret: string;
 }
 
 const props = defineProps<{ data: EditWoocommerceForm }>();
@@ -85,15 +85,15 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
     <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.consumerKey') }}
+          {{ t('integrations.labels.apiKey') }}
         </Label>
-        <TextInput v-model="formData.consumerKey" class="w-full" :placeholder="t('integrations.placeholders.consumerKey')" />
+        <TextInput v-model="formData.apiKey" class="w-full" :placeholder="t('integrations.placeholders.apiKey')" />
       </div>
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.consumerSecret') }}
+          {{ t('integrations.labels.apiSecret') }}
         </Label>
-        <TextInput v-model="formData.consumerSecretKey" class="w-full" :placeholder="t('integrations.placeholders.consumerSecret')" />
+        <TextInput v-model="formData.apiSecret" class="w-full" :placeholder="t('integrations.placeholders.apiSecret')" />
       </div>
     </div>
 

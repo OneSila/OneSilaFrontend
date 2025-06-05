@@ -114,8 +114,8 @@ export const getWoocommerceChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
-      consumerKey
-      consumerSecretKey
+      apiKey
+      apiSecret
       firstImportComplete
       isImporting
       integrationPtr {
