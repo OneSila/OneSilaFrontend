@@ -48,7 +48,7 @@ const { t } = useI18n();
               <FlexCell>
                 <TextInput
                     class="w-96"
-                    v-model="channelInfo.consumerSecret"
+                    v-model="channelInfo.consumerSecretKey"
                     :placeholder="t('integrations.placeholders.consumerSecret')"
                 />
               </FlexCell>

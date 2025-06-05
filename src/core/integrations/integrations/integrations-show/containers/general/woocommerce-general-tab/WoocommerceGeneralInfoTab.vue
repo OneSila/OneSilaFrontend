@@ -25,7 +25,7 @@ interface EditWoocommerceForm {
   syncPrices: boolean;
   importOrders: boolean;
   consumerKey: string;
-  consumerSecret: string;
+  consumerSecretKey: string;
 }
 
 const props = defineProps<{ data: EditWoocommerceForm }>();
@@ -93,7 +93,7 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.consumerSecret') }}
         </Label>
-        <TextInput v-model="formData.consumerSecret" class="w-full" :placeholder="t('integrations.placeholders.consumerSecret')" />
+        <TextInput v-model="formData.consumerSecretKey" class="w-full" :placeholder="t('integrations.placeholders.consumerSecret')" />
       </div>
     </div>
 

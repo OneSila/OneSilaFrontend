@@ -115,7 +115,7 @@ export const getWoocommerceChannelQuery = gql`
       syncPrices
       importOrders
       consumerKey
-      consumerSecret
+      consumerSecretKey
       firstImportComplete
       isImporting
       integrationPtr {

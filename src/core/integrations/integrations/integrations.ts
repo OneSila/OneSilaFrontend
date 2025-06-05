@@ -59,7 +59,7 @@ export interface ShopifyChannelInfo extends SpecificChannelInfo {
 
 export interface WoocommerceChannelInfo extends SpecificChannelInfo {
   consumerKey: string;
-  consumerSecret: string;
+  consumerSecretKey: string;
 }
 
 
@@ -90,7 +90,7 @@ export function getShopifyDefaultFields(): ShopifyChannelInfo {
 export function getWoocommerceDefaultFields(): WoocommerceChannelInfo {
   return {
     consumerKey: '',
-    consumerSecret: '',
+    consumerSecretKey: '',
   };
 }
 

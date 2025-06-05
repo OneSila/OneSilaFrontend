@@ -155,7 +155,7 @@ function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
 }
 
 function isWoocommerceChannelInfo(value: any): value is WoocommerceChannelInfo {
-  return value && typeof value.consumerKey === 'string' && typeof value.consumerSecret === 'string';
+  return value && typeof value.consumerKey === 'string' && typeof value.consumerSecretKey === 'string';
 }
 
 
@@ -203,7 +203,7 @@ const allowNextStep = computed(() => {
     isWoocommerceChannelInfo(specificChannelInfo.value)
   ) {
     const key = specificChannelInfo.value.consumerKey;
-    const secret = specificChannelInfo.value.consumerSecret;
+    const secret = specificChannelInfo.value.consumerSecretKey;
     if (!key || key.trim() === '' || !secret || secret.trim() === '') {
       return false;
     }
