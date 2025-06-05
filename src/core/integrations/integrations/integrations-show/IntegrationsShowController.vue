@@ -16,7 +16,6 @@ import {
 import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
 import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
 import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
-import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
