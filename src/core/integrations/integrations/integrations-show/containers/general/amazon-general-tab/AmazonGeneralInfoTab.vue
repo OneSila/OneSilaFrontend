@@ -15,6 +15,7 @@ import { updateAmazonSalesChannelMutation } from "../../../../../../../shared/ap
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { AmazonRegions, AmazonCountries } from "../../../../integrations";
 import {FieldDate} from "../../../../../../../shared/components/organisms/general-show/containers/field-date";
+import { FieldType } from "../../../../../../../shared/utils/constants";
 
 interface EditAmazonForm {
   id: string;
@@ -166,7 +167,7 @@ useShiftBackspaceKeyboardListener(goBack);
           {{ t('integrations.labels.refreshTokenExpiration') }}
         </Label>
         <div class="flex items-center gap-4">
-          <FieldDate :class="refreshClass" :field="{ name: 'refreshTokenExpiration' }" :model-value="formData.refreshTokenExpiration" />
+          <FieldDate :class="refreshClass" :field="{ name: 'refreshTokenExpiration', type: FieldType.Date }" :model-value="formData.refreshTokenExpiration || ''" />
           <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
         </div>
       </div>
