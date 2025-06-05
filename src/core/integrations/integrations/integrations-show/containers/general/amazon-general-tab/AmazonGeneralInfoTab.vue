@@ -11,9 +11,10 @@ import { CancelButton } from "../../../../../../../shared/components/atoms/butto
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../../../../shared/modules/keyboard";
 import { useRouter } from 'vue-router';
-import { AmazonRegions, AmazonCountries } from '../../../integrations';
 import { updateAmazonSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
+import { AmazonRegions, AmazonCountries } from "../../../../integrations";
+import {FieldDate} from "../../../../../../../shared/components/organisms/general-show/containers/field-date";
 
 interface EditAmazonForm {
   id: string;
@@ -158,6 +159,19 @@ useShiftBackspaceKeyboardListener(goBack);
 
 <template>
   <div class="space-y-12">
+
+    <div class="grid grid-cols-12 gap-4">
+      <div class="md:col-span-6 col-span-12">
+        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+          {{ t('integrations.labels.refreshTokenExpiration') }}
+        </Label>
+        <div class="flex items-center gap-4">
+          <FieldDate :class="refreshClass" :field="{ name: 'refreshTokenExpiration' }" :model-value="formData.refreshTokenExpiration" />
+          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
+        </div>
+      </div>
+    </div>
+
     <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-8 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
@@ -191,18 +205,6 @@ useShiftBackspaceKeyboardListener(goBack);
           {{ t('integrations.labels.country') }}
         </Label>
         <TextInput :model-value="countryLabel" disabled class="w-full" />
-      </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-4">
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.refreshTokenExpiration') }}
-        </Label>
-        <div class="flex items-center gap-2">
-          <span :class="refreshClass">{{ formData.refreshTokenExpiration }}</span>
-          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
-        </div>
       </div>
     </div>
 
