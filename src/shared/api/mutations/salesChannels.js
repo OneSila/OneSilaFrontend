@@ -39,6 +39,24 @@ export const updateShopifySalesChannelMutation = gql`
   }
 `;
 
+export const createWoocommerceSalesChannelMutation = gql`
+  mutation createWoocommerceSalesChannel($data: WoocommerceSalesChannelInput!) {
+    createWoocommerceSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateWoocommerceSalesChannelMutation = gql`
+  mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
+    updateWoocommerceSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`

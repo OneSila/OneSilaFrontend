@@ -10,10 +10,12 @@ import { IntegrationTypes } from "../integrations";
 import {
   getMagentoChannelQuery,
   getSalesChannelQuery,
-  getShopifyChannelQuery
+  getShopifyChannelQuery,
+  getWoocommerceChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
 import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
+import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -54,6 +56,8 @@ const getIntegrationQuery = () => {
       return getMagentoChannelQuery;
     case IntegrationTypes.Shopify:
       return getShopifyChannelQuery;
+    case IntegrationTypes.Woocommerce:
+      return getWoocommerceChannelQuery;
     default:
       return getSalesChannelQuery;
   }
@@ -65,6 +69,8 @@ const getIntegrationQueryKey = () => {
       return "magentoChannel";
     case IntegrationTypes.Shopify:
       return "shopifyChannel";
+    case IntegrationTypes.Woocommerce:
+      return "woocommerceChannel";
     default:
       return "salesChannel";
   }
@@ -76,6 +82,8 @@ const getGeneralComponent = () => {
       return MagentoGeneralInfoTab;
     case IntegrationTypes.Shopify:
       return ShopifyGeneralInfoTab;
+    case IntegrationTypes.Woocommerce:
+      return WoocommerceGeneralInfoTab;
     default:
       return null;
   }

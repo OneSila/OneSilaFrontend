@@ -100,6 +100,34 @@ export const getShopifyChannelQuery = gql`
   }
 `;
 
+export const getWoocommerceChannelQuery = gql`
+  query getWoocommerceChannel($id: GlobalID!) {
+    woocommerceChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      apiKey
+      apiSecret
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
 export const getShopifyChannelsQuery = gql`
   query GetShopifyChannels(
     $first: Int
