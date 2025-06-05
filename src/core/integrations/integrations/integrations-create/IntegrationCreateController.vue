@@ -268,8 +268,7 @@ const handleFinish = async () => {
     const dataInput = {
       ...form.generalInfo,
       ...form.salesChannelInfo,
-      ...specificChannelInfo.value,
-      type: selectedIntegrationType.value,
+      ...specificChannelInfo.value
     };
 
     if (
