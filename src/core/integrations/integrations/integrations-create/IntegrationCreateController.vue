@@ -269,6 +269,7 @@ const handleFinish = async () => {
       ...form.generalInfo,
       ...form.salesChannelInfo,
       ...specificChannelInfo.value,
+      type: selectedIntegrationType.value,
     };
 
     if (
