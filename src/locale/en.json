@@ -281,6 +281,7 @@
       "show": "Details",
       "submit": "Submit",
       "retry": "Retry",
+      "refresh": "Refresh",
       "add": "Add",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -2222,6 +2223,7 @@
       "vendorProperty": "Vendor Property",
       "region": "Region",
       "country": "Country",
+      "refreshTokenExpiration": "Refresh Token Expiration",
       "pullData": "Pull Data"
     },
     "placeholders": {
