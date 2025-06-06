@@ -43,7 +43,7 @@ const createShopifySalesChannel = async (queryParams: Record<string, any>, hostn
   const existing = data?.shopifyChannels?.edges?.[0]?.node;
   if (existing) {
     console.log('Shopify channel already exists, skipping creation.');
-    return existing; // Return the existing channel
+    return existing;
   }
 
   // 2. Prepare default input
@@ -226,7 +226,7 @@ onMounted(async () => {
     }
 
     const createdChannel = await createShopifySalesChannel(queryParams, hostname);
-    console.log(createdChannel)
+
     if (!createdChannel) {
       Toast.error(t('integrations.salesChannel.shopify.installed.genericError'));
       throw new Error('Create sales channel fail!.');
@@ -236,7 +236,7 @@ onMounted(async () => {
 
   } catch (e) {
     Toast.error(t('integrations.salesChannel.shopify.installed.genericError'));
-    console.log(e)
+
     if (isAuthenticated(auth) && hasCompany(auth)) {
       await router.replace({ name: 'integrations.integrations.list' });
     } else {
