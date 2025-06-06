@@ -2,15 +2,15 @@
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
-import { Breadcrumbs } from '../../../../shared/components/molecules/breadcrumbs';
-import GeneralTemplate from '../../../../shared/templates/GeneralTemplate.vue';
-import {Loader} from "../../../../shared/components/atoms/loader";
-import { validateShopifyAuthMutation } from "../../../../shared/api/mutations/salesChannels.js";
-import apolloClient from "../../../../../apollo-client";
-import {Card} from "../../../../shared/components/atoms/card";
-import {Link} from "../../../../shared/components/atoms/link";
-import {Button} from "../../../../shared/components/atoms/button";
-import {IntegrationTypes} from "../integrations";
+import { Breadcrumbs } from '../../../../../shared/components/molecules/breadcrumbs';
+import GeneralTemplate from '../../../../../shared/templates/GeneralTemplate.vue';
+import {Loader} from "../../../../../shared/components/atoms/loader";
+import { validateShopifyAuthMutation } from "../../../../../shared/api/mutations/salesChannels.js";
+import apolloClient from "../../../../../../apollo-client";
+import {Card} from "../../../../../shared/components/atoms/card";
+import {Link} from "../../../../../shared/components/atoms/link";
+import {Button} from "../../../../../shared/components/atoms/button";
+import {IntegrationTypes} from "../../integrations";
 
 const { t } = useI18n();
 const route = useRoute();

@@ -10,10 +10,12 @@ import { IntegrationTypes } from "../integrations";
 import {
   getMagentoChannelQuery,
   getSalesChannelQuery,
-  getShopifyChannelQuery
+  getShopifyChannelQuery,
+  getAmazonChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
 import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
+import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -23,7 +25,6 @@ import { Currencies } from "./containers/currencies";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
-import {ProductType} from "../../../../shared/utils/constants";
 
 const router = useRouter();
 const route = useRoute();
@@ -48,12 +49,22 @@ const tabItems = ref([
   { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' }
 ]);
 
+if (type.value === IntegrationTypes.Amazon) {
+  tabItems.value.push(
+    { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+    { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
+    { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
+  );
+}
+
 const getIntegrationQuery = () => {
   switch (type.value) {
     case IntegrationTypes.Magento:
       return getMagentoChannelQuery;
     case IntegrationTypes.Shopify:
       return getShopifyChannelQuery;
+    case IntegrationTypes.Amazon:
+      return getAmazonChannelQuery;
     default:
       return getSalesChannelQuery;
   }
@@ -65,6 +76,8 @@ const getIntegrationQueryKey = () => {
       return "magentoChannel";
     case IntegrationTypes.Shopify:
       return "shopifyChannel";
+    case IntegrationTypes.Amazon:
+      return "amazonChannel";
     default:
       return "salesChannel";
   }
@@ -76,6 +89,8 @@ const getGeneralComponent = () => {
       return MagentoGeneralInfoTab;
     case IntegrationTypes.Shopify:
       return ShopifyGeneralInfoTab;
+    case IntegrationTypes.Amazon:
+      return AmazonGeneralInfoTab;
     default:
       return null;
   }
@@ -206,6 +221,21 @@ const pullData = async () => {
           <!-- Imports Tab -->
           <template #imports>
             <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
+          </template>
+
+          <!-- Product Rules Tab (Amazon only) -->
+          <template #productRules>
+            <div />
+          </template>
+
+          <!-- Properties Tab (Amazon only) -->
+          <template #properties>
+            <div />
+          </template>
+
+          <!-- Property Select Values Tab (Amazon only) -->
+          <template #propertySelectValues>
+            <div />
           </template>
         </Tabs>
       </Card>

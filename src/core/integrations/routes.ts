@@ -46,7 +46,7 @@ export const routes = [
     path: '/integrations/shopify/installed',
     name: 'integrations.shopify.installed',
     meta: { title: 'integrations.shopify.installed.title' },
-    component: () => import('./integrations/integrations-shopify-installed/ShopifyInstalledController.vue'),
+    component: () => import('./integrations/integrations-installed/shopify-installed/ShopifyInstalledController.vue'),
   },
   {
     path: '/integrations/shopify/entry',
@@ -54,4 +54,11 @@ export const routes = [
     meta: { title: 'integrations.shopify.entry.title' },
     component: () => import('./integrations/integrations-shopify-entry/ShopifyEntryController.vue'),
   },
+  {
+    path: '/integrations/amazon/installed',
+    name: 'integrations.amazon.installed',
+    meta: { title: 'integrations.amazon.installed.title' },
+    component: () => import('./integrations/integrations-installed/amazon-installed/AmazonInstalledController.vue'),
+  }
+
 ];
