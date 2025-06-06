@@ -281,6 +281,7 @@
       "show": "Details",
       "submit": "Submit",
       "retry": "Retry",
+      "refresh": "Refresh",
       "add": "Add",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -2121,6 +2122,10 @@
         "title": "Shopify connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
+      "amazonNotConnectedBanner": {
+        "title": "Amazon connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2150,6 +2155,8 @@
           "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
           "shopifyTitle": "Shopify",
           "shopifyExample": "Shopify integration to manage your products in seconds.",
+          "amazonTitle": "Amazon",
+          "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "Woocommerce integration is coming soon.",
           "magentoInfoModal": {
@@ -2189,6 +2196,10 @@
             "title": "Shopify Channel Details",
             "content": "Provide Shopify-specific configuration to connect your store."
           },
+          "amazon": {
+            "title": "Amazon Channel Details",
+            "content": "Provide Amazon-specific configuration to connect your marketplace."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2210,6 +2221,9 @@
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
+      "region": "Region",
+      "country": "Country",
+      "refreshTokenExpiration": "Refresh Token Expiration",
       "pullData": "Pull Data"
     },
     "placeholders": {
@@ -2217,6 +2231,41 @@
       "hostApiKey": "Enter Access Token",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute"
+    },
+    "regions": {
+      "northAmerica": "North America",
+      "europe": "Europe",
+      "farEast": "Far East"
+    },
+    "countries": {
+      "canada": "Canada",
+      "unitedStates": "United States",
+      "mexico": "Mexico",
+      "brazil": "Brazil",
+      "ireland": "Ireland",
+      "spain": "Spain",
+      "unitedKingdom": "United Kingdom",
+      "france": "France",
+      "belgium": "Belgium",
+      "netherlands": "Netherlands",
+      "germany": "Germany",
+      "italy": "Italy",
+      "sweden": "Sweden",
+      "southAfrica": "South Africa",
+      "poland": "Poland",
+      "egypt": "Egypt",
+      "turkey": "Turkey",
+      "saudiArabia": "Saudi Arabia",
+      "unitedArabEmirates": "United Arab Emirates",
+      "india": "India",
+      "singapore": "Singapore",
+      "australia": "Australia",
+      "japan": "Japan"
+    },
+    "amazon": {
+      "installed": {
+        "title": "Amazon Connected"
+      }
     },
     "salesChannel": {
       "shopify": {
@@ -2234,6 +2283,15 @@
           "failedGeneric": "Retry failed. Could not update Shopify channel.",
           "failedRedirect": "Retry failed. Could not obtain redirect URL.",
           "failedException": "Retry failed due to a system error."
+        }
+      },
+      "amazon": {
+        "installed": {
+          "title": "Amazon Connected",
+          "loading": "Connecting your store",
+          "success": "Your Amazon store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
         }
       },
       "toast": {

@@ -2,7 +2,40 @@ export enum IntegrationTypes {
   Magento = 'magento',
   Shopify = 'shopify',
   Woocommerce = 'woocommerce',
+  Amazon = 'amazon',
   None = 'none',
+}
+
+export enum AmazonRegions {
+  NORTH_AMERICA = 'NA',
+  EUROPE = 'EU',
+  FAR_EAST = 'FE',
+}
+
+export enum AmazonCountries {
+  CANADA = 'CA',
+  UNITED_STATES = 'US',
+  MEXICO = 'MX',
+  BRAZIL = 'BR',
+  IRELAND = 'IE',
+  SPAIN = 'ES',
+  UNITED_KINGDOM = 'GB',
+  FRANCE = 'FR',
+  BELGIUM = 'BE',
+  NETHERLANDS = 'NL',
+  GERMANY = 'DE',
+  ITALY = 'IT',
+  SWEDEN = 'SE',
+  SOUTH_AFRICA = 'ZA',
+  POLAND = 'PL',
+  EGYPT = 'EG',
+  TURKEY = 'TR',
+  SAUDI_ARABIA = 'SA',
+  UNITED_ARAB_EMIRATES = 'AE',
+  INDIA = 'IN',
+  SINGAPORE = 'SG',
+  AUSTRALIA = 'AU',
+  JAPAN = 'JP',
 }
 
 export enum AuthenticationMethod {
@@ -57,6 +90,11 @@ export interface ShopifyChannelInfo extends SpecificChannelInfo {
   isExternalInstall?: boolean;
 }
 
+export interface AmazonChannelInfo extends SpecificChannelInfo {
+  region: string | null;
+  country: string | null;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -82,12 +120,21 @@ export function getShopifyDefaultFields(): ShopifyChannelInfo {
   };
 }
 
+export function getAmazonDefaultFields(): AmazonChannelInfo {
+  return {
+    region: null,
+    country: null,
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
       return getMagentoDefaultFields();
     case IntegrationTypes.Shopify:
       return getShopifyDefaultFields();
+    case IntegrationTypes.Amazon:
+      return getAmazonDefaultFields();
     default:
       return {};
   }

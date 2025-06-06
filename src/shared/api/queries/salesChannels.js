@@ -141,6 +141,36 @@ export const getShopifyChannelsQuery = gql`
   }
 `;
 
+export const getAmazonChannelQuery = gql`
+  query getAmazonChannel($id: GlobalID!) {
+    amazonChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      accessToken
+      refreshTokenExpiration
+      region
+      country
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
 
 // Sales Channel Integration Pricelist Queries
 export const salesChannelIntegrationPricelistsQuery = gql`

@@ -38,6 +38,11 @@ router.beforeEach((to, from, next) => {
   const auth = detectAuth();
   const routeName = (to.name as string) || '';
 
+  if (routeName == 'integrations.shopify.entry' || routeName == 'integrations.shopify.installed') {
+    console.log('?? this?')
+      return next();
+  }
+
   // Set page loader to true if navigating to an authenticated route
   if (isAuthenticated(auth) && hasCompany(auth) && isActive(auth)) {
     setPageLoader(auth, true);
