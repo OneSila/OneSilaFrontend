@@ -9,7 +9,7 @@ import { FieldQuery } from "../../../../../../shared/components/organisms/genera
 import { productsQuery } from "../../../../../../shared/api/queries/products.js";
 import { QueryFormField } from "../../../../../../shared/components/organisms/general-form/formConfig";
 
-const props = defineProps<{ form: FormType }>();
+const props = defineProps<{ form: FormType, preselectedParentId?: string | null, disableParentSelector?: boolean }>();
 const { t } = useI18n();
 
 const aliasParentProductField = computed<QueryFormField>(() => ({
@@ -23,10 +23,17 @@ const aliasParentProductField = computed<QueryFormField>(() => ({
   isEdge: true,
   multiple: false,
   filterable: true,
+  disabled: props.disableParentSelector,
   queryVariables: {
     filter: { NOT: { type: { exact: ProductType.Alias } } }
   }
 }));
+
+onMounted(() => {
+  if (props.preselectedParentId) {
+    props.form.aliasParentProduct.id = props.preselectedParentId;
+  }
+});
 
 </script>
 
