@@ -26,6 +26,12 @@ import { createProductPropertyMutation } from "../../../../shared/api/mutations/
 import { getProductQuery } from "../../../../shared/api/queries/products.js";
 
 
+interface WizardStep {
+  title: string;
+  name: string;
+}
+
+
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -150,7 +156,8 @@ watch(
 
 
 const wizardSteps = computed(() => {
-  let steps = [];
+  const steps: WizardStep[] = [];
+
   if (!aliasProductParentId.value) {
     steps.push({ title: t('products.products.labels.type.title'), name: 'typeStep' });
   }
