@@ -11,6 +11,7 @@ import { Toast } from "../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { useRouter } from "vue-router";
 import { updateWoocommerceSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
+import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
 
 interface EditWoocommerceForm {
   id: string;
@@ -35,6 +36,11 @@ const fieldErrors = ref<Record<string, string>>({});
 const router = useRouter();
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
+
+const accordionItems = [
+  { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
+  { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' }
+];
 
 watch(() => props.data, (newData) => {
   formData.value = { ...newData };
@@ -96,6 +102,58 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
         <TextInput v-model="formData.apiSecret" class="w-full" :placeholder="t('integrations.placeholders.apiSecret')" />
       </div>
     </div>
+
+    <Accordion class="mt-8" :items="accordionItems">
+      <!-- Throttling -->
+      <template #throttling>
+        <div class="grid grid-cols-12 gap-4">
+          <div class="md:col-span-6 col-span-12">
+            <Label class="font-semibold block text-sm text-gray-900 mb-1">
+              {{ t('integrations.labels.requestsPerMinute') }}
+            </Label>
+            <TextInput v-model="formData.requestsPerMinute" :number="true" :min-number="1" :max-number="60" placeholder="60" class="w-full" />
+            <div class="mt-1 text-sm leading-6 text-gray-400">
+              <p class="text-red-500" v-if="fieldErrors['requestsPerMinute']">{{ fieldErrors['requestsPerMinute'] }}</p>
+              <p>{{ t('integrations.salesChannel.helpText.requestsPerMinute') }}</p>
+            </div>
+          </div>
+
+          <div class="md:col-span-6 col-span-12">
+            <Label class="font-semibold text-sm text-gray-900 mb-1">
+              {{ t('integrations.labels.maxRetries') }}
+            </Label>
+            <TextInput v-model="formData.maxRetries" :number="true" :min-number="1" :max-number="20" placeholder="3" class="w-full" />
+            <div class="mt-1 text-sm leading-6 text-gray-400">
+              <p class="text-red-500" v-if="fieldErrors['maxRetries']">{{ fieldErrors['maxRetries'] }}</p>
+              <p>{{ t('integrations.salesChannel.helpText.maxRetries') }}</p>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Sync -->
+      <template #sync>
+        <div class="space-y-4">
+          <div class="grid grid-cols-12 items-center" v-for="toggleField in ['useConfigurableName', 'syncContents', 'syncEanCodes', 'syncPrices', 'importOrders']" :key="toggleField">
+            <div class="md:col-span-4 col-span-12">
+              <Flex gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900 mb-1">
+                    {{ t(`integrations.labels.${toggleField}`) }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <Toggle v-model="formData[toggleField]" />
+                </FlexCell>
+              </Flex>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t(`integrations.salesChannel.helpText.${toggleField}`) }}
+            </div>
+          </div>
+        </div>
+      </template>
+    </Accordion>
 
     <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
       <RouterLink :to="{ name: 'integrations.integrations.list' }">
