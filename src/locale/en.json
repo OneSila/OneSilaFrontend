@@ -182,7 +182,7 @@
         },
         "setProductPropertyValue": {
           "title": "Set Product Property Value",
-          "details": "Assign the correct value to your product’s property. For example, set 'Brand' to 'Parker' for your pen."
+          "details": "Assign the correct value to your product's property. For example, set 'Brand' to 'Parker' for your pen."
         },
         "product": {
           "title": "Create a Simple Product",
@@ -413,7 +413,7 @@
         "aiBulkTranslator": {
           "button": "AI Translate",
           "title": "Translate {count} {type}",
-          "description": "This tool uses AI to auto-translate the selected entities. You’ll be able to preview and confirm translations in the next step (coming soon).",
+          "description": "This tool uses AI to auto-translate the selected entities. You'll be able to preview and confirm translations in the next step (coming soon).",
           "startButton": "Start Translation",
           "sourceLanguage": "Source Language",
           "targetLanguages": "Target Language(s)",
@@ -2153,7 +2153,7 @@
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "magentoInfoModal": {
-          "title": "How to connect your Magento store",
+            "title": "How to connect your Magento store",
             "section": {
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
@@ -2170,11 +2170,27 @@
               "eanTitle": "EAN codes support",
               "eanDescription": "If you want to sync EAN codes, make sure you have an attribute with global scope in Magento. Don't worry, missing ones can also be created during the import process."
             }
+          },
+          "woocommerceInfoModal": {
+            "title": "How to connect your WooCommerce store",
+            "integrationTitle": "Create API credentials in WooCommerce",
+            "integrationDescription": "Before connecting your store, you need to create API credentials in your WooCommerce admin panel.",
+            "integrationStep1": "Go to WooCommerce → Settings → Advanced → REST API",
+            "integrationStep2": "Click 'Add Key' and create a new API key",
+            "integrationStep3": "Set the permissions to 'Read/Write'",
+            "apiSettingsTitle": "Configure your WooCommerce API settings",
+            "apiSettingsDescription": "Ensure your WooCommerce store has the following settings:",
+            "apiSetting1": "Enable REST API access",
+            "apiSetting2": "Configure SSL if using HTTPS",
+            "importTitle": "Perform an initial import",
+            "importRecommendation": "After setting up the integration, we recommend performing an import to bring your existing WooCommerce data into our system.",
+            "eanTitle": "EAN codes support",
+            "eanDescription": "If you want to sync EAN codes, make sure you have a custom field or attribute set up in WooCommerce for EAN codes."
           }
         },
         "step2": {
           "title": "General Information",
-          "content": "Enter your integration’s hostname and connection settings."
+          "content": "Enter your integration's hostname and connection settings."
         },
         "step3": {
           "title": "Sales Channel Preferences",
