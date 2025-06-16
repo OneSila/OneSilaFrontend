@@ -1417,7 +1417,7 @@
         "discountPercentage": "Enter discount percentage",
         "price": "Enter price",
         "rrp": "Enter rrp"
-      },
+      }
     },
     "priceLists": {
       "title": "Prices Lists",
