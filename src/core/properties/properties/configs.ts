@@ -208,6 +208,17 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         addLookup: true
       },
     ],
+  orders: [
+    {
+      name: t('shared.labels.name'),
+      value: 'name'
+    },
+    {
+      name: t('products.products.labels.type.title'),
+      value: 'type'
+    },
+    {
+      name: t('properties.properties.labels.isPublicInformation'),
   orders: []
 });
 

@@ -20,3 +20,12 @@ export const hasDemoDataQuery = gql`
     }
   }
 `;
+
+export const generateUserCredentialsQuery = gql`
+  query GenerateUserCredentials($identifier: String) {
+    generateUserCredentials(identifier: $identifier) {
+      username
+      password
+    }
+  }
+`;

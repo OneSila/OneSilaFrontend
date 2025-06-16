@@ -85,7 +85,7 @@ mutation acceptUserInvitation($language: String!, $password: String!) {
 }`;
 
 export const registerCompanyMutation = gql`
-  mutation RegisterCompany($country: String!, $name: String!, $language: String!, $phoneNumber: String!) {
+  mutation RegisterCompany($country: String!, $name: String!, $language: String, $phoneNumber: String) {
     registerMyMultiTenantCompany(data: {
       country: $country,
       name: $name,

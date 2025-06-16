@@ -716,7 +716,7 @@
       },
       "create": {
         "title": "Product aanmaken",
-        "createSuccessfully": "Product is succesvol aangemaakt!",
+        "createdSuccessfully": "Product is succesvol aangemaakt!",
         "wizard": {
           "stepOne": {
             "content": "Selecteer het product-type die u wenst aan te maken",
@@ -1161,8 +1161,7 @@
         "rrp": "Voer RRP in"
       },
       "updatedSuccessfully": "Prijs in {currency} upgedate",
-      "createSuccessfully": "Prijs voor {currency} is aangemaakt.",
-      "createdSuccessfully": "De prijs is {currency} is aangemaakt"
+      "createdSuccessfully": "Prijs is {currency} is aangemaakt"
     },
     "priceLists": {
       "title": "Prijslijsten",

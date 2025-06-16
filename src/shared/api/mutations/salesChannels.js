@@ -48,9 +48,27 @@ export const createWoocommerceSalesChannelMutation = gql`
   }
 `;
 
+export const createAmazonSalesChannelMutation = gql`
+  mutation createAmazonSalesChannel($data: AmazonSalesChannelInput!) {
+    createAmazonSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateAmazonSalesChannelMutation = gql`
+  mutation updateAmazonSalesChannel($data: AmazonSalesChannelPartialInput!) {
+    updateAmazonSalesChannel(data: $data) {
       id
       hostname
     }
@@ -418,6 +436,45 @@ export const validateShopifyAuthMutation = gql`
       ... on ShopifySalesChannelType {
         id
         hostname
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
+
+export const getAmazonRedirectUrlMutation = gql`
+  mutation GetAmazonRedirectUrl($data: AmazonSalesChannelPartialInput!) {
+    getAmazonRedirectUrl(instance: $data) {
+      ... on AmazonRedirectUrlType {
+        redirectUrl
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
+export const validateAmazonAuthMutation = gql`
+  mutation ValidateAmazonAuth($data: AmazonValidateAuthInput!) {
+    validateAmazonAuth(instance: $data) {
+      ... on AmazonSalesChannelType {
+        id
+        region
+        country
       }
       ... on OperationInfo {
         messages {

@@ -4,7 +4,8 @@ import { useI18n } from 'vue-i18n';
 import { IntegrationTypes } from "../../../integrations";
 import magentoType from "../../../../../../assets/images/integration-types/magento.png";
 import shopifyType from "../../../../../../assets/images/integration-types/shopify.png";
-import woocommerceType from "../../../../../../assets/images/integration-types/woo-commerce.jpg";
+import woocomerceType from "../../../../../../assets/images/integration-types/woo-commerce.jpg";
+import amazonType from "../../../../../../assets/images/integration-types/amazon.png";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
@@ -36,7 +37,8 @@ watch(
 const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
   { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Woocommerce, disabled: false }
+  { name: IntegrationTypes.Amazon, disabled: false, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Woocommerce, disabled: true }
 ];
 
 const onMagentoModalOpen = () => {
@@ -198,6 +200,13 @@ const closeModal = () => {
           <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.shopifyTitle') }}</h3>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.shopifyExample') }}</p>
           <Image :source="shopifyType" alt="Shopify" class="w-full max-h-[35rem]" />
+        </div>
+      </template>
+      <template #amazon>
+        <div>
+          <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.amazonTitle') }}</h3>
+          <p class="mb-4">{{ t('integrations.create.wizard.step1.amazonExample') }}</p>
+          <Image :source="amazonType" alt="Amazon" class="w-full max-h-[35rem]" />
         </div>
       </template>
       <template #woocommerce>
