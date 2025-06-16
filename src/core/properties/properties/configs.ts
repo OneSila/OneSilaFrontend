@@ -254,6 +254,11 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       type: FieldType.Text,
     },
     {
+      label: t('properties.properties.labels.internalName'),
+      name: 'internalName',
+      type: FieldType.Text,
+    },
+    {
       label: t('products.products.labels.type.title'),
       name: 'type',
       type: FieldType.Badge,
