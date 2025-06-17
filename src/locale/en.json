@@ -2105,6 +2105,9 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "amazon": {
+        "title": "Amazon Integration"
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
