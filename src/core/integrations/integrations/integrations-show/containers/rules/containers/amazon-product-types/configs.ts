@@ -42,13 +42,14 @@ export const amazonProductTypeEditFormConfigConstructor = (
       type: FieldType.Query,
       name: 'localInstance',
       label: t('properties.rule.title'),
-      labelBy: 'productType.value',
+      labelBy: 'value',
       valueBy: 'id',
       query: productPropertiesRulesListingQuery,
       dataKey: 'productPropertiesRules',
       isEdge: true,
       multiple: false,
       filterable: true,
+      formMapIdentifier: 'id',
     }
   ]
 });
@@ -57,8 +58,8 @@ export const amazonProductTypesSearchConfigConstructor = (t: Function): SearchCo
   search: true,
   orderKey: "sort",
   filters: [
-    { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), addLookup: true, strict: true },
-    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), addLookup: true, strict: true },
+    { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
   ],
   orders: []
 });
@@ -76,7 +77,14 @@ export const amazonProductTypesListingConfigConstructor = (t: Function, specific
     { name: 'productTypeCode', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
     { name: 'mappedRemotely', type: FieldType.Boolean },
-    { name: 'localInstance', type: FieldType.NestedText, keys: ['productType','value'], showLabel: true }
+    { name: 'localInstance',
+      type: FieldType.NestedText,
+      keys: ['productType','value'],
+      showLabel: true,
+      clickable: true,
+      clickIdentifiers: [{id: ['id']}],
+      clickUrl: { name: 'properties.rule.show' }
+    }
   ],
   identifierKey: 'id',
   urlQueryParams: {integrationId: specificIntegrationId },
