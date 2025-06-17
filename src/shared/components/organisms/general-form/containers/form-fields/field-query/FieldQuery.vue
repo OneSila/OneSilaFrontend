@@ -56,8 +56,6 @@ const updateValue = (value) => {
 
 async function ensureSelectedValuesArePresent() {
   if (!props.field.valueBy || !selectedValue.value) return;
-  console.log(selectedValue.value)
-
 
   const extractId = (item: any): string | number | undefined => {
     return typeof item === 'object' && item !== null

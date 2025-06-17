@@ -649,6 +649,7 @@ export const amazonProductTypesQuery = gql`
           name
           localInstance {
             id
+            value
             productType {
               id
               value
@@ -678,6 +679,7 @@ export const getAmazonProductTypeQuery = gql`
       name
       localInstance {
         id
+        value
         productType {
           id
           value

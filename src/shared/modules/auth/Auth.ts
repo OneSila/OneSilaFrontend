@@ -158,7 +158,6 @@ export const isActive = (auth: Auth): boolean => auth.user.active;
 
 export const isFinishedOnboarding = (auth: Auth): boolean => {
   const status = auth.user.onboardingStatus;
-  console.log(status);
   return status === OnboardingStatus.DONE || status === OnboardingStatus.COMPLETE_DASHBOARD_CARDS || status === OnboardingStatus.DASHBOARD_CARDS_PRESENTATION;
 };
 

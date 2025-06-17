@@ -40,6 +40,7 @@ onMounted(async () => {
     isRule !== null
   );
 });
+
 </script>
 
 <template>
