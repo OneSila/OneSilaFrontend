@@ -19,6 +19,7 @@ onMounted(async () => {
   let addImage = false;
   const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
   const isRule = route.query.isRule ? route.query.isRule.toString() : null;
+  const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
 
   if (propertyId) {
     const { data } = await apolloClient.query({
@@ -37,7 +38,8 @@ onMounted(async () => {
     'createPropertySelectValue',
     propertyId,
     addImage,
-    isRule !== null
+    isRule !== null,
+    amazonRuleId
   );
 });
 
