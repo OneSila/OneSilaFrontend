@@ -28,16 +28,13 @@ export const baseFormConfigConstructor = (
     propertyId: string | null = null,
     addImage: boolean = true,
     redirectToRules: boolean = false,
+    amazonRuleId: string | null = null,
 ): FormConfig => ({
     cols: 1,
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-      submitUrl: redirectToRules
-        ? { name: 'properties.rule.list' }
-        : propertyId !== null
-          ? { name: 'properties.properties.show', params: { id: propertyId }, query: { tab: 'values' } }
-          : { name: 'properties.values.list' },
+    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId),
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
     fields: [
@@ -56,6 +53,26 @@ export const baseFormConfigConstructor = (
         } as FormField] : [])
     ],
 });
+
+const getSubmitUrl = (
+    redirectToRules: boolean,
+    propertyId: string | null,
+    amazonRuleId: string | null,
+) => {
+    if (redirectToRules && amazonRuleId) {
+        return { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: amazonRuleId } };
+    }
+
+    if (redirectToRules) {
+        return { name: 'properties.rule.list' };
+    }
+
+    if (propertyId !== null) {
+        return { name: 'properties.properties.show', params: { id: propertyId }, query: { tab: 'values' } };
+    }
+
+    return { name: 'properties.values.list' };
+};
 
 export const selectValueOnTheFlyConfig = (t: Function, propertyId): CreateOnTheFly => ({
     config: {
