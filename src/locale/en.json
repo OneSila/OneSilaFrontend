@@ -2138,6 +2138,33 @@
         "labels": {
           "remoteCode": "Remote Currency Code"
         }
+      },
+      "productRules": {
+        "title": "Amazon Rules",
+        "labels": {
+          "productTypeCode": "Product Type Code"
+        }
+      },
+      "properties": {
+        "title": "Amazon Properties",
+        "labels": {
+          "code": "Code",
+          "type": "Type",
+          "allowsUnmappedValues": "Allow Unmapped Values"
+        }
+      },
+      "propertySelectValues": {
+        "title": "Amazon Property Values",
+        "labels": {
+          "remoteName": "Remote Name",
+          "remoteValue": "Remote Value",
+          "amazonProperty": "Amazon Property",
+          "marketplace": "Marketplace"
+        }
+      },
+      "mapping": {
+        "mappedLocally": "Mapped Locally",
+        "mappedRemotely": "Mapped Remotely"
       }
     },
     "create": {

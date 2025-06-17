@@ -1,0 +1,83 @@
+import { FieldType } from "../../../../../../shared/utils/constants";
+import { amazonPropertiesQuery, getAmazonPropertyQuery } from "../../../../../../shared/api/queries/salesChannels.js";
+import { propertiesQuery } from "../../../../../../shared/api/queries/properties.js";
+import { updateAmazonPropertyMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
+import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { FormConfig, FormType } from '../../../../../../shared/components/organisms/general-form/formConfig';
+import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+
+export const amazonPropertyEditFormConfigConstructor = (
+  t: Function,
+  type: string,
+  propertyId: string,
+  integrationId: string
+): FormConfig => ({
+  cols: 1,
+  type: FormType.EDIT,
+  mutation: updateAmazonPropertyMutation,
+  mutationKey: "updateAmazonProperty",
+  query: getAmazonPropertyQuery,
+  queryVariables: { id: propertyId },
+  queryDataKey: "amazonProperty",
+  submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'properties' } },
+  fields: [
+    { type: FieldType.Hidden, name: 'id', value: propertyId },
+    { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true },
+    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), disabled: true },
+    { type: FieldType.Text, name: 'type', label: t('integrations.show.properties.labels.type'), disabled: true },
+    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true },
+    {
+      type: FieldType.Query,
+      name: 'localInstance',
+      label: t('properties.properties.title'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: propertiesQuery,
+      dataKey: 'properties',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+    }
+  ]
+});
+
+export const amazonPropertiesSearchConfigConstructor = (t: Function): SearchConfig => ({
+  search: true,
+  orderKey: "sort",
+  filters: [
+    { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), addLookup: true, strict: true },
+    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), addLookup: true, strict: true },
+    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), addLookup: true, strict: true },
+    { type: FieldType.Text, name: 'type', label: t('integrations.show.properties.labels.type') }
+  ],
+  orders: []
+});
+
+export const amazonPropertiesListingConfigConstructor = (t: Function, specificIntegrationId): ListingConfig => ({
+  headers: [
+    t('shared.labels.name'),
+    t('integrations.show.properties.labels.code'),
+    t('integrations.show.mapping.mappedLocally'),
+    t('integrations.show.mapping.mappedRemotely'),
+    t('properties.properties.title')
+  ],
+  fields: [
+    { name: 'name', type: FieldType.Text },
+    { name: 'code', type: FieldType.Text },
+    { name: 'mappedLocally', type: FieldType.Boolean },
+    { name: 'mappedRemotely', type: FieldType.Boolean },
+    { name: 'localInstance', type: FieldType.NestedText, keys: ['name'], showLabel: true }
+  ],
+  identifierKey: 'id',
+  urlQueryParams: {integrationId: specificIntegrationId },
+  addActions: true,
+  addEdit: true,
+  addShow: true,
+  editUrlName: 'integrations.amazonProperties.edit',
+  showUrlName: 'integrations.amazonProperties.edit',
+  addDelete: false,
+  addPagination: true,
+});
+
+export const listingQueryKey = 'amazonProperties';
+export const listingQuery = amazonPropertiesQuery;

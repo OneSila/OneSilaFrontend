@@ -22,6 +22,9 @@ import { Products } from "./containers/products";
 import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
+import { AmazonProductTypes } from "./containers/amazon-product-types";
+import { AmazonProperties } from "./containers/amazon-properties";
+import { AmazonPropertySelectValues } from "./containers/amazon-property-select-values";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
@@ -225,17 +228,17 @@ const pullData = async () => {
 
           <!-- Product Rules Tab (Amazon only) -->
           <template #productRules>
-            <div />
+            <AmazonProductTypes v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
 
           <!-- Properties Tab (Amazon only) -->
           <template #properties>
-            <div />
+            <AmazonProperties v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
 
           <!-- Property Select Values Tab (Amazon only) -->
           <template #propertySelectValues>
-            <div />
+            <AmazonPropertySelectValues v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
         </Tabs>
       </Card>
