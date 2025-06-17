@@ -507,6 +507,14 @@ export const amazonPropertiesQuery = gql`
           id
           mappedLocally
           mappedRemotely
+          code
+          name
+          type
+          allowsUnmappedValues
+          localInstance {
+            id
+            name
+          }
         }
         cursor
       }
@@ -527,6 +535,14 @@ export const getAmazonPropertyQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      code
+      name
+      type
+      allowsUnmappedValues
+      localInstance {
+        id
+        name
+      }
     }
   }
 `;
@@ -554,6 +570,20 @@ export const amazonPropertySelectValuesQuery = gql`
           id
           mappedLocally
           mappedRemotely
+          amazonProperty {
+            id
+            name
+          }
+          marketplace {
+            id
+            name
+          }
+          remoteValue
+          remoteName
+          localInstance {
+            id
+            value
+          }
         }
         cursor
       }
@@ -574,6 +604,20 @@ export const getAmazonPropertySelectValueQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      amazonProperty {
+        id
+        name
+      }
+      marketplace {
+        id
+        name
+      }
+      remoteValue
+      remoteName
+      localInstance {
+        id
+        value
+      }
     }
   }
 `;
@@ -601,6 +645,15 @@ export const amazonProductTypesQuery = gql`
           id
           mappedLocally
           mappedRemotely
+          productTypeCode
+          name
+          localInstance {
+            id
+            productType {
+              id
+              value
+            }
+          }
         }
         cursor
       }
@@ -621,6 +674,15 @@ export const getAmazonProductTypeQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      productTypeCode
+      name
+      localInstance {
+        id
+        productType {
+          id
+          value
+        }
+      }
     }
   }
 `;

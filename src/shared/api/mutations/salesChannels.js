@@ -471,25 +471,6 @@ export const validateAmazonAuthMutation = gql`
 `;
 
 // Amazon Property Mutations
-export const createAmazonPropertyMutation = gql`
-  mutation createAmazonProperty($data: AmazonPropertyInput!) {
-    createAmazonProperty(data: $data) {
-      id
-      mappedLocally
-      mappedRemotely
-    }
-  }
-`;
-
-export const createAmazonPropertiesMutation = gql`
-  mutation createAmazonProperties($data: [AmazonPropertyInput!]!) {
-    createAmazonProperties(data: $data) {
-      id
-      mappedLocally
-      mappedRemotely
-    }
-  }
-`;
 
 export const updateAmazonPropertyMutation = gql`
   mutation updateAmazonProperty($data: AmazonPropertyPartialInput!) {
@@ -502,25 +483,6 @@ export const updateAmazonPropertyMutation = gql`
 `;
 
 // Amazon Property Select Value Mutations
-export const createAmazonPropertySelectValueMutation = gql`
-  mutation createAmazonPropertySelectValue($data: AmazonPropertySelectValueInput!) {
-    createAmazonPropertySelectValue(data: $data) {
-      id
-      mappedLocally
-      mappedRemotely
-    }
-  }
-`;
-
-export const createAmazonPropertySelectValuesMutation = gql`
-  mutation createAmazonPropertySelectValues($data: [AmazonPropertySelectValueInput!]!) {
-    createAmazonPropertySelectValues(data: $data) {
-      id
-      mappedLocally
-      mappedRemotely
-    }
-  }
-`;
 
 export const updateAmazonPropertySelectValueMutation = gql`
   mutation updateAmazonPropertySelectValue($data: AmazonPropertySelectValuePartialInput!) {
@@ -533,25 +495,6 @@ export const updateAmazonPropertySelectValueMutation = gql`
 `;
 
 // Amazon Product Type Mutations
-export const createAmazonProductTypeMutation = gql`
-  mutation createAmazonProductType($data: AmazonProductTypeInput!) {
-    createAmazonProductType(data: $data) {
-      id
-      mappedLocally
-      mappedRemotely
-    }
-  }
-`;
-
-export const createAmazonProductTypesMutation = gql`
-  mutation createAmazonProductTypes($data: [AmazonProductTypeInput!]!) {
-    createAmazonProductTypes(data: $data) {
-      id
-      mappedLocally
-      mappedRemotely
-    }
-  }
-`;
 
 export const updateAmazonProductTypeMutation = gql`
   mutation updateAmazonProductType($data: AmazonProductTypePartialInput!) {

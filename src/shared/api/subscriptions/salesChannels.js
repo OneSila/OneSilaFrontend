@@ -50,6 +50,14 @@ export const getAmazonPropertySubscription = gql`
       id
       mappedLocally
       mappedRemotely
+      code
+      name
+      type
+      allowsUnmappedValues
+      localInstance {
+        id
+        name
+      }
     }
   }
 `;
@@ -61,6 +69,20 @@ export const getAmazonPropertySelectValueSubscription = gql`
       id
       mappedLocally
       mappedRemotely
+      amazonProperty {
+        id
+        name
+      }
+      marketplace {
+        id
+        name
+      }
+      remoteValue
+      remoteName
+      localInstance {
+        id
+        value
+      }
     }
   }
 `;
@@ -72,6 +94,15 @@ export const getAmazonProductTypeSubscription = gql`
       id
       mappedLocally
       mappedRemotely
+      productTypeCode
+      name
+      localInstance {
+        id
+        productType {
+          id
+          value
+        }
+      }
     }
   }
 `;
