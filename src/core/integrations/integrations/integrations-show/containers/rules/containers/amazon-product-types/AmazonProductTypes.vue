@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
-import { GeneralListing } from "../../../../../../shared/components/organisms/general-listing";
-import { Button } from "../../../../../../shared/components/atoms/button";
-import { amazonPropertiesSearchConfigConstructor, amazonPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
+import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
+import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
+import { Button } from "../../../../../../../../shared/components/atoms/button";
+import { amazonProductTypesSearchConfigConstructor, amazonProductTypesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
-const searchConfig = amazonPropertiesSearchConfigConstructor(t);
-const listingConfig = amazonPropertiesListingConfigConstructor(t, props.id);
+const searchConfig = amazonProductTypesSearchConfigConstructor(t);
+const listingConfig = amazonProductTypesListingConfigConstructor(t, props.id);
 </script>
 
 <template>

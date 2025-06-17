@@ -1,10 +1,10 @@
-import { FieldType } from "../../../../../../shared/utils/constants";
-import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery } from "../../../../../../shared/api/queries/salesChannels.js";
-import { propertySelectValuesQuery } from "../../../../../../shared/api/queries/properties.js";
-import { updateAmazonPropertySelectValueMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
-import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
-import { FormConfig, FormType } from '../../../../../../shared/components/organisms/general-form/formConfig';
-import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import { FieldType } from "../../../../../../../../shared/utils/constants";
+import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import { propertySelectValuesQuery } from "../../../../../../../../shared/api/queries/properties.js";
+import { updateAmazonPropertySelectValueMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
+import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { FormConfig, FormType } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
+import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 
 export const amazonPropertySelectValueEditFormConfigConstructor = (
   t: Function,
