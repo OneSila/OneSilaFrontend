@@ -49,7 +49,6 @@ const tabItems = ref([
   { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
   { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
   { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
-  { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' }
 ]);
 
 if (type.value === IntegrationTypes.Amazon) {
@@ -58,6 +57,8 @@ if (type.value === IntegrationTypes.Amazon) {
     { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
     { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
   );
+
+  tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
 }
 
 const getIntegrationQuery = () => {

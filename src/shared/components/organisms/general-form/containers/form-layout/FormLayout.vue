@@ -26,6 +26,12 @@ const computedStyle = computed(() => props.config.customStyle || '');
           <FlexCell v-if="field.type === FieldType.Checkbox" class="ml-2" center>
             <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />
           </FlexCell>
+          <FlexCell center>
+            <div v-if="errors && errors[field.name]" class="text-danger text-small blink-animation ml-1 mb-1">
+              <Icon size="sm" name="exclamation-circle" />
+              <span class="ml-1">{{ errors[field.name] }}</span>
+            </div>
+          </FlexCell>
         </Flex>
           <div v-if="field.type !== FieldType.Checkbox" class="mt-2" >
             <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />

@@ -1,4 +1,4 @@
-import { FieldType } from "../../../../../../../../shared/utils/constants";
+import {FieldType, getPropertyTypeOptions} from "../../../../../../../../shared/utils/constants";
 import { amazonPropertiesQuery, getAmazonPropertyQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertiesQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import { updateAmazonPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
@@ -23,9 +23,18 @@ export const amazonPropertyEditFormConfigConstructor = (
   fields: [
     { type: FieldType.Hidden, name: 'id', value: propertyId },
     { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true },
-    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), disabled: true },
-    { type: FieldType.Text, name: 'type', label: t('integrations.show.properties.labels.type'), disabled: true },
-    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('products.products.labels.type.title'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      disabled: true,
+      removable: false
+    },
+    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true, strict: true },
+    { type: FieldType.Text, name: 'name', label: t('shared.labels.name') },
     {
       type: FieldType.Query,
       name: 'localInstance',
@@ -37,6 +46,7 @@ export const amazonPropertyEditFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      formMapIdentifier: 'id',
     }
   ]
 });

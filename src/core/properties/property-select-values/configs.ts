@@ -60,7 +60,12 @@ const getSubmitUrl = (
     amazonRuleId: string | null,
 ) => {
     if (redirectToRules && amazonRuleId) {
-        return { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: amazonRuleId } };
+        const [ruleId, integrationId] = amazonRuleId.split('__');
+        const url: any = { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: ruleId } };
+        if (integrationId) {
+            url.query = { integrationId };
+        }
+        return url;
     }
 
     if (redirectToRules) {
