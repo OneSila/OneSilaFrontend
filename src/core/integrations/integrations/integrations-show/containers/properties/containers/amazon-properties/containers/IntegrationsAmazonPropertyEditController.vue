@@ -26,6 +26,15 @@ const formConfig = amazonPropertyEditFormConfigConstructor(t, type.value, proper
           { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'properties'} }, name: t('integrations.show.amazon.title') }
         ]" />
     </template>
+    <template v-slot:buttons>
+        <div>
+          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${propertyId}__${integrationId}` } }">
+            <Button type="button" class="btn btn-primary">
+                {{  t('properties.properties.create.title') }}
+            </Button>
+          </Link>
+      </div>
+    </template>
     <template v-slot:content>
       <GeneralForm :config="formConfig" />
     </template>

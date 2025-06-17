@@ -67,6 +67,19 @@ export const amazonPropertiesSearchConfigConstructor = (t: Function): SearchConf
       options: getPropertyTypeOptions(t),
       addLookup: true
     },
+    {
+      type: FieldType.Query,
+      name: 'localInstance',
+      label: t('properties.properties.title'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: propertiesQuery,
+      dataKey: 'properties',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id']
+    },
   ],
   orders: []
 });

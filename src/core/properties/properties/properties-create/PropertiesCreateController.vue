@@ -25,6 +25,7 @@ import {processGraphQLErrors} from "../../../../shared/utils";
 const router = useRouter();
 const { t } = useI18n();
 const route = useRoute();
+const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
@@ -133,7 +134,16 @@ const handleFinish = async () => {
 
     if (data && data.createProperty) {
       Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
-      router.push({name: 'properties.properties.edit', params: { id: data.createProperty.id}, query: {tab: 'translations'}})
+      if (amazonRuleId) {
+        const [ruleId, integrationId] = amazonRuleId.split('__');
+        const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId } };
+        if (integrationId) {
+          url.query = { integrationId };
+        }
+        router.push(url);
+      } else {
+        router.push({name: 'properties.properties.edit', params: { id: data.createProperty.id}, query: {tab: 'translations'}})
+      }
     }
   } catch (err) {
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
