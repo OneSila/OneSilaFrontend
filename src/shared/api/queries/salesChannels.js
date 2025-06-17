@@ -483,3 +483,144 @@ export const magentoRemoteAttributeSetsQuery = gql`
     }
   }
 `;
+
+// Amazon Property Queries
+export const amazonPropertiesQuery = gql`
+  query AmazonProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonPropertyOrder
+    $filter: AmazonPropertyFilter
+  ) {
+    amazonProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonPropertyQuery = gql`
+  query getAmazonProperty($id: GlobalID!) {
+    amazonProperty(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Property Select Value Queries
+export const amazonPropertySelectValuesQuery = gql`
+  query AmazonPropertySelectValues(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonPropertySelectValueOrder
+    $filter: AmazonPropertySelectValueFilter
+  ) {
+    amazonPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonPropertySelectValueQuery = gql`
+  query getAmazonPropertySelectValue($id: GlobalID!) {
+    amazonPropertySelectValue(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Product Type Queries
+export const amazonProductTypesQuery = gql`
+  query AmazonProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonProductTypeOrder
+    $filter: AmazonProductTypeFilter
+  ) {
+    amazonProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonProductTypeQuery = gql`
+  query getAmazonProductType($id: GlobalID!) {
+    amazonProductType(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;

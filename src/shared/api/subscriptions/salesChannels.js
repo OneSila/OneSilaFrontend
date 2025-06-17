@@ -42,3 +42,36 @@ export const salesChannelViewAssignSubscription = gql`
     }
   }
 `;
+
+// Amazon Property Subscription
+export const getAmazonPropertySubscription = gql`
+  subscription getAmazonPropertySubscription($pk: String!) {
+    amazonProperty(pk: $pk) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Property Select Value Subscription
+export const getAmazonPropertySelectValueSubscription = gql`
+  subscription getAmazonPropertySelectValueSubscription($pk: String!) {
+    amazonPropertySelectValue(pk: $pk) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Product Type Subscription
+export const getAmazonProductTypeSubscription = gql`
+  subscription getAmazonProductTypeSubscription($pk: String!) {
+    amazonProductType(pk: $pk) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
