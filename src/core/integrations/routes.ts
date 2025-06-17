@@ -40,19 +40,19 @@ export const routes = [
     path: '/integrations/:type/product-type/:id',
     name: 'integrations.amazonProductTypes.edit',
     meta: { title: 'integrations.show.productRules.title' },
-    component: () => import('./integrations/integrations-show/containers/amazon-product-types/containers/IntegrationsAmazonProductTypeEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/rules/containers/amazon-product-types/containers/IntegrationsAmazonProductTypeEditController.vue'),
   },
   {
     path: '/integrations/:type/amazon-property/:id',
     name: 'integrations.amazonProperties.edit',
     meta: { title: 'integrations.show.properties.title' },
-    component: () => import('./integrations/integrations-show/containers/amazon-properties/containers/IntegrationsAmazonPropertyEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/properties/containers/amazon-properties/containers/IntegrationsAmazonPropertyEditController.vue'),
   },
   {
     path: '/integrations/:type/amazon-property-value/:id',
     name: 'integrations.amazonPropertySelectValues.edit',
     meta: { title: 'integrations.show.propertySelectValues.title' },
-    component: () => import('./integrations/integrations-show/containers/amazon-property-select-values/containers/IntegrationsAmazonPropertySelectValueEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/property-select-values/containers/amazon-property-select-values/containers/IntegrationsAmazonPropertySelectValueEditController.vue'),
   },
   {
     path: '/integrations/:type/import/:integrationId',

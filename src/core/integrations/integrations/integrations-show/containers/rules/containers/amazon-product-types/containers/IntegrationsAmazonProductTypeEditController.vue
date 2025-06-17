@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
-import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
-import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
+import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
+import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
+import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import { useRoute } from "vue-router";
 import { amazonProductTypeEditFormConfigConstructor } from "../configs";
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { IntegrationTypes } from '../../../integrations';
-import { AmazonPropertySelectValues } from '../amazon-property-select-values';
+import { AmazonPropertySelectValues } from './containers/amazon-property-select-values';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
