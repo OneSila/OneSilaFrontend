@@ -136,6 +136,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                 <thead>
                 <tr>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.name') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.sku') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
@@ -158,6 +159,9 @@ const handleQuantityChanged = debounce(async (event, id) => {
                         <FlexCell center>{{ item.node.variation.name }}</FlexCell>
                       </Flex>
                     </Link>
+                  </td>
+                  <td>
+                    {{ item.node.variation.sku }}
                   </td>
                   <td>
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />

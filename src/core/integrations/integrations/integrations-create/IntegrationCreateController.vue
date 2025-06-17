@@ -47,10 +47,6 @@ const loading = ref(false);
 const queryParams = route.query;
 const isExternalInstall = ref(queryParams.isExternal === 'true');
 
-if (queryParams.type && Object.values(IntegrationTypes).includes(queryParams.type as IntegrationTypes)) {
-  selectedIntegrationType.value = queryParams.type as IntegrationTypes;
-}
-
 const form = reactive<IntegrationCreateWizardForm>({
   generalInfo: {
     hostname: '',
@@ -68,37 +64,6 @@ const form = reactive<IntegrationCreateWizardForm>({
   }
 });
 const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | AmazonChannelInfo | {}>({});
-
-if (isExternalInstall.value && selectedIntegrationType.value === IntegrationTypes.Shopify) {
-
-  if (queryParams.shop) {
-    let hostname = String(queryParams.shop).trim();
-
-    if (!hostname.startsWith('http://') && !hostname.startsWith('https://')) {
-      hostname = `https://${hostname}`;
-    }
-
-    form.generalInfo.hostname = hostname;
-  }
-
-  Object.assign(specificChannelInfo.value, getShopifyDefaultFields());
-
-  if (queryParams.hmac && typeof queryParams.hmac === 'string') {
-    (specificChannelInfo.value as ShopifyChannelInfo).hmac = queryParams.hmac;
-  }
-
-  if (queryParams.timestamp && typeof queryParams.timestamp === 'string') {
-    (specificChannelInfo.value as ShopifyChannelInfo).timestamp = queryParams.timestamp;
-  }
-
-  if (queryParams.host && typeof queryParams.host === 'string') {
-    (specificChannelInfo.value as ShopifyChannelInfo).host = queryParams.host;
-  }
-
-  (specificChannelInfo.value as ShopifyChannelInfo).isExternalInstall = true;
-
-}
-
 
 watch(selectedIntegrationType, (newType) => {
 
@@ -141,11 +106,6 @@ const wizardSteps = computed(() => {
     { title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' },
     { title: stepFourLabel.value, name: 'specificChannelStep' },
   ];
-
-  // Remove type step if it's an external install with a predefined type
-  if (isExternalInstall.value && selectedIntegrationType.value !== IntegrationTypes.None) {
-    return baseSteps.slice(1);
-  }
 
   return baseSteps;
 });

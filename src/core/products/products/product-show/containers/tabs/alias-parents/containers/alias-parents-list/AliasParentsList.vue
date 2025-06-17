@@ -19,6 +19,7 @@ const aliasProducts = computed(() => props.products ?? []);
       <thead>
         <tr>
           <th class="px-3 py-2 text-left">{{ t('shared.labels.name') }}</th>
+          <th class="px-3 py-2 text-left">{{ t('shared.labels.sku') }}</th>
           <th class="px-3 py-2 text-left">{{ t('shared.labels.type') }}</th>
           <th class="px-3 py-2 text-left">{{ t('shared.labels.active') }}</th>
           <th class="px-3 py-2 text-left">{{ t('products.products.labels.inspectorStatus') }}</th>
@@ -43,6 +44,9 @@ const aliasProducts = computed(() => props.products ?? []);
                 <span>{{ alias.name }}</span>
               </div>
             </Link>
+          </td>
+          <td>
+            {{ alias.sku }}
           </td>
           <td>
             <Badge

@@ -26,6 +26,12 @@ import { createProductPropertyMutation } from "../../../../shared/api/mutations/
 import { getProductQuery } from "../../../../shared/api/queries/products.js";
 
 
+interface WizardStep {
+  title: string;
+  name: string;
+}
+
+
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
@@ -35,6 +41,7 @@ const step = ref(0);
 const loading = ref(false);
 
 const productTypePropertyValueId = ref(route.query.productTypePropertyValueId ? route.query.productTypePropertyValueId.toString() : null);
+const aliasProductParentId = ref(route.query.aliasProductParentId ? route.query.aliasProductParentId.toString() : null);
 
 const form: FormType = reactive({
   type: '',
@@ -66,6 +73,11 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
       }
     }
 });
+
+if (aliasProductParentId.value) {
+  form.type = ProductType.Alias;
+  form.aliasParentProduct.id = aliasProductParentId.value;
+}
 
 watch(
   () => form.aliasParentProduct.id,
@@ -138,15 +150,17 @@ watch(
       console.error("Failed to fetch alias parent product:", error);
     }
   }
-);
+, { immediate: aliasProductParentId.value !== null });
 
 
 
 
 const wizardSteps = computed(() => {
-  let steps = [
-    { title: t('products.products.labels.type.title'), name: 'typeStep' }
-  ];
+  const steps: WizardStep[] = [];
+
+  if (!aliasProductParentId.value) {
+    steps.push({ title: t('products.products.labels.type.title'), name: 'typeStep' });
+  }
 
   if (form.type === ProductType.Alias) {
     steps.push({ title: t('products.products.create.wizard.stepAlias.title'), name: 'aliasOptionsStep' });
@@ -400,7 +414,11 @@ const allowNextStep = computed(() => {
         </template>
 
         <template #aliasOptionsStep>
-          <AliasOptionsStep :form="form" />
+          <AliasOptionsStep
+            :form="form"
+            :preselected-parent-id="aliasProductParentId"
+            :disable-parent-selector="aliasProductParentId !== null"
+          />
         </template>
 
         <template #generalInfoStep>

@@ -56,10 +56,18 @@ const updateValue = (value) => {
 
 async function ensureSelectedValuesArePresent() {
   if (!props.field.valueBy || !selectedValue.value) return;
+  console.log(selectedValue.value)
 
-  const selectedIds = Array.isArray(selectedValue.value)
-    ? selectedValue.value
-    : [selectedValue.value];
+
+  const extractId = (item: any): string | number | undefined => {
+    return typeof item === 'object' && item !== null
+      ? item[props.field.valueBy!]
+      : item;
+  };
+
+  const selectedIds: (string | number | undefined)[] = Array.isArray(selectedValue.value)
+    ? selectedValue.value.map(extractId).filter(Boolean)
+    : [extractId(selectedValue.value)].filter(Boolean);
 
   const currentIds = cleanedData.value.map(item => item[props.field.valueBy!]);
 
