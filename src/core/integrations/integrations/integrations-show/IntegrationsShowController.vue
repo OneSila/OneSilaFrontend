@@ -22,9 +22,9 @@ import { Products } from "./containers/products";
 import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
-import { AmazonProductTypes } from "./containers/amazon-product-types";
-import { AmazonProperties } from "./containers/amazon-properties";
-import { AmazonPropertySelectValues } from "./containers/amazon-property-select-values";
+import { Rules } from "./containers/rules";
+import { Properties } from "./containers/properties";
+import { PropertySelectValues } from "./containers/property-select-values";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
@@ -226,19 +226,19 @@ const pullData = async () => {
             <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
           </template>
 
-          <!-- Product Rules Tab (Amazon only) -->
+          <!-- Rules Tab -->
           <template #productRules>
-            <AmazonProductTypes v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
+            <Rules v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
 
-          <!-- Properties Tab (Amazon only) -->
+          <!-- Properties Tab -->
           <template #properties>
-            <AmazonProperties v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
+            <Properties v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
 
-          <!-- Property Select Values Tab (Amazon only) -->
+          <!-- Property Select Values Tab -->
           <template #propertySelectValues>
-            <AmazonPropertySelectValues v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
+            <PropertySelectValues v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
         </Tabs>
       </Card>
