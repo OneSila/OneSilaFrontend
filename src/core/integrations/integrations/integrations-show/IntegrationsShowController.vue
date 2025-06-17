@@ -131,7 +131,7 @@ const fetchIntegrationData = async () => {
 
 onMounted(async () => {
   await fetchIntegrationData();
-    if (!firstImportCompleteRef.value ) {
+    if (!firstImportCompleteRef.value && type.value != IntegrationTypes.Amazon) {
     router.replace({
       query: {
         ...route.query,

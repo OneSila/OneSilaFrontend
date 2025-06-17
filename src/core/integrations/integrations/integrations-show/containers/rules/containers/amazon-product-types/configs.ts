@@ -36,7 +36,6 @@ export const amazonProductTypeEditFormConfigConstructor = (
       type: FieldType.Text,
       label: t('shared.labels.name'),
       name: 'name',
-      disabled: true
     },
     {
       type: FieldType.Query,
