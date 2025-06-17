@@ -6,6 +6,8 @@ import { Breadcrumbs } from "../../../../../../../../../shared/components/molecu
 import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import { useRoute } from "vue-router";
 import { amazonPropertyEditFormConfigConstructor } from "../configs";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
 
 const { t } = useI18n();
 const route = useRoute();
