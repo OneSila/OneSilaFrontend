@@ -58,7 +58,15 @@ export const amazonPropertiesSearchConfigConstructor = (t: Function): SearchConf
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), addLookup: true, strict: true },
     { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), addLookup: true, strict: true },
     { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), addLookup: true, strict: true },
-    { type: FieldType.Text, name: 'type', label: t('integrations.show.properties.labels.type') }
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('products.products.labels.type.title'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      addLookup: true
+    },
   ],
   orders: []
 });
