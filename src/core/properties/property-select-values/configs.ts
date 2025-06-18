@@ -37,6 +37,7 @@ export const baseFormConfigConstructor = (
     submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId),
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
+    ...(redirectToRules && amazonRuleId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
     fields: [
         getPropertyField(t, propertyId, type),
         {

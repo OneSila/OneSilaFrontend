@@ -10,7 +10,8 @@ export const amazonPropertyEditFormConfigConstructor = (
   t: Function,
   type: string,
   propertyId: string,
-  integrationId: string
+  integrationId: string,
+  defaultPropertyId: string | null = null
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -47,6 +48,7 @@ export const amazonPropertyEditFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      ...(defaultPropertyId ? { default: defaultPropertyId } : {})
     }
   ]
 });

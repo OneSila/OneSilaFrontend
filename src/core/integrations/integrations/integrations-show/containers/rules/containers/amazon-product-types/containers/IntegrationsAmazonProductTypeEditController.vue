@@ -7,9 +7,10 @@ import { GeneralForm } from "../../../../../../../../../shared/components/organi
 import { useRoute } from "vue-router";
 import { amazonProductTypeEditFormConfigConstructor } from "../configs";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import {propertiesQuery} from "../../../../../../../../../shared/api/queries/properties";
-import {Link} from "../../../../../../../../../shared/components/atoms/link";
-import {Button} from "../../../../../../../../../shared/components/atoms/button";
+import { productPropertiesRulesQuery, propertiesQuery } from "../../../../../../../../../shared/api/queries/properties.js";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -17,10 +18,23 @@ const route = useRoute();
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
+const defaultRuleId = route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null;
+const resolvedDefaultRuleId = ref<string | null>(null);
+
 const propertyProductTypeId = ref<string | null>(null);
 const formData = ref<Record<string, any>>({});
+const formConfig = ref<FormConfig | null>(null);
 
-const formConfig = amazonProductTypeEditFormConfigConstructor(t, type.value, productTypeId.value, integrationId);
+const setupFormConfig = () => {
+  formConfig.value = amazonProductTypeEditFormConfigConstructor(
+    t,
+    type.value,
+    productTypeId.value,
+    integrationId,
+    resolvedDefaultRuleId.value
+  );
+};
+
 
 const fetchProductType = async () => {
     const {data} = await apolloClient.query({
@@ -33,7 +47,35 @@ const fetchProductType = async () => {
     }
 }
 
-onMounted(fetchProductType);
+const fetchDefaultRuleId = async () => {
+  if (!defaultRuleId) return;
+
+  const { data } = await apolloClient.query({
+    query: productPropertiesRulesQuery,
+    variables: {
+      filter: {
+        productType: {
+          id: {
+            exact: defaultRuleId
+          }
+        }
+      }
+    }
+  });
+
+  const ruleNode = data?.productPropertiesRules?.edges?.[0]?.node;
+  if (ruleNode?.productType?.id === defaultRuleId) {
+    resolvedDefaultRuleId.value = ruleNode.id;
+  }
+};
+
+
+onMounted(async () => {
+  await fetchProductType();
+  await fetchDefaultRuleId();
+  setupFormConfig();
+});
+
 
 const handleFormUpdate = (form) => {
   formData.value = form;
@@ -62,7 +104,7 @@ const handleFormUpdate = (form) => {
     </template>
 
     <template v-slot:content>
-      <GeneralForm :config="formConfig" @form-updated="handleFormUpdate" />
+      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" />
     </template>
   </GeneralTemplate>
 </template>

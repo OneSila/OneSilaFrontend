@@ -10,7 +10,8 @@ export const amazonProductTypeEditFormConfigConstructor = (
   t: Function,
   type: string,
   productTypeId: string,
-  integrationId: string
+  integrationId: string,
+  defaultRuleId: string | null = null
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -49,6 +50,7 @@ export const amazonProductTypeEditFormConfigConstructor = (
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
+      ...(defaultRuleId ? { default: defaultRuleId } : {})
     }
   ]
 });

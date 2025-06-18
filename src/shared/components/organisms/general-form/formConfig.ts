@@ -255,6 +255,7 @@ export interface FormConfig {
   submitSuccessUpdate?: string; // toast message after update
   fields: FormField[];
   helpSections?: HelpSection[];
+  addIdAsQueryParamInSubmitUrl?: boolean // on the submit url add the ID as query param
 }
 
 export interface FormConfigDefaultTranslations {

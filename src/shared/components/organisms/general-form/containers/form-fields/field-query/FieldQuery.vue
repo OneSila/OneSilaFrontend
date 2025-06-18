@@ -178,7 +178,7 @@ function processAndCleanData(rawData: any) {
     }
   }
 
-  if (props.field.default) {
+  if (props.field.default && !selectedValue.value) {
     updateValue(props.field.default);
   }
 }

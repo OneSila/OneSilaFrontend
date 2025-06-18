@@ -12,12 +12,13 @@ import { Button } from "../../../../../../../../../shared/components/atoms/butto
 const { t } = useI18n();
 const route = useRoute();
 
-const propertyId = ref(String(route.params.id));
+const amazonPropertyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
+const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
 const formData = ref<Record<string, any>>({});
 
-const formConfig = amazonPropertyEditFormConfigConstructor(t, type.value, propertyId.value, integrationId);
+const formConfig = amazonPropertyEditFormConfigConstructor(t, type.value, amazonPropertyId.value, integrationId, propertyId);
 
 const handleFormUpdate = (form) => {
   formData.value = form;
@@ -35,7 +36,7 @@ const handleFormUpdate = (form) => {
     </template>
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${propertyId}__${integrationId}`, name: formData.name, type: formData.type } }">
+          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${amazonPropertyId}__${integrationId}`, name: formData.name, type: formData.type } }">
             <Button type="button" class="btn btn-primary">
                 {{  t('properties.properties.create.title') }}
             </Button>

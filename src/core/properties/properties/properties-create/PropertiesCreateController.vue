@@ -143,7 +143,7 @@ const handleFinish = async () => {
         const [ruleId, integrationId] = amazonRuleId.split('__');
         const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId } };
         if (integrationId) {
-          url.query = { integrationId };
+          url.query = { integrationId, propertyId: data.createProperty.id };
         }
         router.push(url);
       } else {
