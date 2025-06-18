@@ -28,6 +28,7 @@ const route = useRoute();
 const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
 const nameFromUrl = route.query.name ? route.query.name.toString() : '';
 const typeFromUrl = route.query.type ? route.query.type.toString() : '';
+const amazonCreateValue = route.query.amazonCreateValue ? route.query.amazonCreateValue.toString() : null;
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
@@ -144,7 +145,13 @@ const handleFinish = async () => {
         const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
         const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
         if (integrationId) {
-          url.query = { integrationId, salesChannelId, propertyId: data.createProperty.id, wizard: isAmazonWizard ? '1' : '0', };
+          url.query = {
+            integrationId,
+            salesChannelId,
+            propertyId: data.createProperty.id,
+            wizard: isAmazonWizard ? '1' : '0',
+            ...(amazonCreateValue ? { amazonCreateValue } : {}),
+          };
         }
         router.push(url);
       } else {

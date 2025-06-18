@@ -113,7 +113,7 @@ const handleFormUpdate = (form) => {
     </template>
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`, name: formData.name, type: formData.type, amazonWizard: isWizard ? '1' : '0', } }">
+          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`, name: formData.name, type: formData.type, amazonWizard: isWizard ? '1' : '0', ...(amazonCreateValue ? { amazonCreateValue } : {}) } }">
             <Button type="button" class="btn btn-primary">
                 {{  t('properties.properties.create.title') }}
             </Button>
