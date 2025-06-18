@@ -110,6 +110,11 @@ onMounted(async () => {
   nextWizardId.value = nextId;
 
   enhancedConfig.value.addSubmitAndContinue = false;
+  enhancedConfig.value.cancelUrl = {
+    name: 'integrations.integrations.show',
+    params: { type: type.value, id: integrationId },
+    query: { tab: 'propertySelectValues' }
+  };
 
   if (nextId) {
     enhancedConfig.value.submitUrl = {
