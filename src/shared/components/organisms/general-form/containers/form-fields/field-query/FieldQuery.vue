@@ -177,6 +177,10 @@ function processAndCleanData(rawData: any) {
       updateValue(defaultEntry[props.field.valueBy]);
     }
   }
+
+  if (props.field.default) {
+    updateValue(props.field.default);
+  }
 }
 
 
