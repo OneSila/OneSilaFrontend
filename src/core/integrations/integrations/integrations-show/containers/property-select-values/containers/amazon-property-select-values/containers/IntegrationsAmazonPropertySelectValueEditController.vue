@@ -18,6 +18,7 @@ import { getAmazonPropertySelectValueQuery, getAmazonPropertyQuery } from "../..
 import { selectValueOnTheFlyConfig } from "../../../../../../../../properties/property-select-values/configs";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
+import {Link} from "../../../../../../../../../shared/components/atoms/link";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -140,14 +141,6 @@ const handleSubmit = async () => {
         ]" />
     </template>
     <template v-slot:content>
-      <div v-if="!propertyMapped" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-        <span class="font-medium flex items-center gap-1">
-          ⚠️ {{ t('integrations.show.propertySelectValues.notMappedBanner.title') }}
-        </span>
-        <RouterLink :to="{ name: 'integrations.amazonProperties.edit', params: { type: type, id: amazonPropertyId }, query: { integrationId } }" class="underline">
-          {{ t('integrations.show.propertySelectValues.notMappedBanner.content') }}
-        </RouterLink>
-      </div>
       <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
           <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
@@ -193,7 +186,15 @@ const handleSubmit = async () => {
                     </FlexCell>
                   </Flex>
                 </div>
-                <div class="col-span-full">
+                <div v-if="!propertyMapped" class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                  <span class="font-medium flex items-center gap-1">
+                    ⚠️ {{ t('integrations.show.propertySelectValues.notMappedBanner.title') }}
+                  </span>
+                  <Link :path="{ name: 'integrations.amazonProperties.edit', params: { type: type, id: amazonPropertyId }, query: { integrationId } }" class="underline">
+                    {{ t('integrations.show.propertySelectValues.notMappedBanner.content') }}
+                  </Link>
+                </div>
+                <div v-else class="col-span-full">
                   <Flex vertical>
                     <FlexCell>
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
