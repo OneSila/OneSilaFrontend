@@ -29,6 +29,7 @@ const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
 const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
 const isWizard = route.query.wizard === '1';
+const nextWizardId = ref<string | null>(null);
 
 const amazonPropertyId = ref<string | null>(null);
 const localPropertyId = ref<string | null>(null);
@@ -102,13 +103,38 @@ onMounted(async () => {
       localInstanceField.value.createOnFlyConfig = selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName);
     }
   }
+
+  if (!isWizard) return;
+
+  const { nextId, last } = await fetchNextUnmapped();
+  nextWizardId.value = nextId;
+
+  enhancedConfig.value.addSubmitAndContinue = false;
+
+  if (nextId) {
+    enhancedConfig.value.submitUrl = {
+      name: 'integrations.amazonPropertySelectValues.edit',
+      params: { type: type.value, id: nextId },
+      query: { integrationId, salesChannelId, wizard: '1' },
+    };
+    enhancedConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
+  } else if (last) {
+    enhancedConfig.value.submitUrl = {
+      name: 'integrations.integrations.show',
+      params: { type: type.value, id: integrationId },
+      query: { tab: 'propertySelectValues' }
+    };
+  } else {
+    Toast.success(t('integrations.show.mapping.allMappedSuccess'));
+    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'propertySelectValues' } });
+  }
 });
 
-const fetchNextUnmapped = async () => {
+const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   const { data } = await apolloClient.query({
     query: listingQuery,
     variables: {
-      first: 1,
+      first: 2,
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: { exact: false },
@@ -118,23 +144,17 @@ const fetchNextUnmapped = async () => {
     fetchPolicy: 'network-only',
   });
   const edges = data?.amazonPropertySelectValues?.edges || [];
-  return edges.length > 0 ? edges[0].node.id : null;
+  let nextId: string | null = null;
+  for (const edge of edges) {
+    if (edge.node.id !== valueId.value) {
+      nextId = edge.node.id;
+      break;
+    }
+  }
+  const last = edges.length === 1 && edges[0].node.id === valueId.value;
+  return { nextId, last };
 };
 
-const handleSubmit = async () => {
-  if (!isWizard) return;
-  const nextId = await fetchNextUnmapped();
-  if (nextId) {
-    router.replace({
-      name: 'integrations.amazonPropertySelectValues.edit',
-      params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
-    });
-  } else {
-    Toast.success(t('integrations.show.mapping.allMappedSuccess'));
-    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'propertySelectValues' } });
-  }
-};
 </script>
 
 <template>
@@ -212,10 +232,10 @@ const handleSubmit = async () => {
                 </div>
               </div>
             </div>
-            <SubmitButtons :config="enhancedConfig" :form="updatableForm" @submit="handleSubmit" />
+              <SubmitButtons :config="enhancedConfig" :form="updatableForm" />
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-  </GeneralTemplate>
+      </template>
+    </GeneralTemplate>
 </template>
