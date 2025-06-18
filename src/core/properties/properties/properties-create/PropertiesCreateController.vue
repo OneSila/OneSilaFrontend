@@ -32,6 +32,7 @@ const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
 const isAmazonWizard = route.query.amazonWizard === '1';
+const amazonCreateValue = route.query.amazonCreateValue ? route.query.amazonCreateValue.toString() : null;
 
 interface PropertyForm {
   name: string,
@@ -144,7 +145,13 @@ const handleFinish = async () => {
         const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
         const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
         if (integrationId) {
-          url.query = { integrationId, salesChannelId, propertyId: data.createProperty.id, wizard: isAmazonWizard ? '1' : '0', };
+          url.query = {
+            integrationId,
+            salesChannelId,
+            propertyId: data.createProperty.id,
+            wizard: isAmazonWizard ? '1' : '0',
+            ...(amazonCreateValue ? { amazonCreateValue } : {}),
+          };
         }
         router.push(url);
       } else {
