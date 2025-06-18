@@ -18,6 +18,7 @@ const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
 const propertyProductTypeId = ref<string | null>(null);
+const formData = ref<Record<string, any>>({});
 
 const formConfig = amazonProductTypeEditFormConfigConstructor(t, type.value, productTypeId.value, integrationId);
 
@@ -34,6 +35,10 @@ const fetchProductType = async () => {
 
 onMounted(fetchProductType);
 
+const handleFormUpdate = (form) => {
+  formData.value = form;
+};
+
 </script>
 
 <template>
@@ -48,7 +53,7 @@ onMounted(fetchProductType);
 
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}` } }">
+          <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}`, value: formData.name } }">
             <Button type="button" class="btn btn-primary">
                 {{  t('properties.rule.create.title') }}
             </Button>
@@ -57,7 +62,7 @@ onMounted(fetchProductType);
     </template>
 
     <template v-slot:content>
-      <GeneralForm :config="formConfig" />
+      <GeneralForm :config="formConfig" @form-updated="handleFormUpdate" />
     </template>
   </GeneralTemplate>
 </template>

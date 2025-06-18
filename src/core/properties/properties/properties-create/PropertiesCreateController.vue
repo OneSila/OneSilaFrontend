@@ -26,6 +26,8 @@ const router = useRouter();
 const { t } = useI18n();
 const route = useRoute();
 const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
+const nameFromUrl = route.query.name ? route.query.name.toString() : '';
+const typeFromUrl = route.query.type ? route.query.type.toString() : '';
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
@@ -52,18 +54,21 @@ const preview = reactive({
 });
 
 const form: PropertyForm = reactive({
-  name: '',
-  type: '',
+  name: nameFromUrl,
+  type: typeFromUrl,
   isPublicInformation: true,
   addToFilters: false,
   hasImage: false,
 });
 
 const wizardSteps = computed(() => {
-  return [
-    {title: t('properties.properties.create.wizard.stepOne.title'), name: 'generalStep'},
-    {title: t('properties.properties.create.wizard.stepTwo.title'), name: 'typeStep'},
+  const steps = [
+    {title: t('properties.properties.create.wizard.stepOne.title'), name: 'generalStep'}
   ];
+  if (!typeFromUrl) {
+    steps.push({title: t('properties.properties.create.wizard.stepTwo.title'), name: 'typeStep'});
+  }
+  return steps;
 });
 
 const typeChoices = [
