@@ -1,6 +1,7 @@
 import { FieldType } from "../../../../../../../../shared/utils/constants";
 import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertySelectValuesQuery } from "../../../../../../../../shared/api/queries/properties.js";
+import { selectValueOnTheFlyConfig } from "../../../../../../../properties/property-select-values/configs";
 import { updateAmazonPropertySelectValueMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { FormConfig, FormType } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
@@ -10,7 +11,8 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
   t: Function,
   type: string,
   valueId: string,
-  integrationId: string
+  integrationId: string,
+  propertyId: string | null = null
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -22,10 +24,10 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
   submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'propertySelectValues' } },
   fields: [
     { type: FieldType.Hidden, name: 'id', value: valueId },
-    { type: FieldType.Text, name: 'remoteName', label: t('integrations.show.propertySelectValues.labels.remoteName'), disabled: true },
+    { type: FieldType.Text, name: 'amazonProperty', label: t('integrations.show.propertySelectValues.labels.amazonProperty'), disabled: true },
+    { type: FieldType.Text, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace'), disabled: true },
     { type: FieldType.Text, name: 'remoteValue', label: t('integrations.show.propertySelectValues.labels.remoteValue'), disabled: true },
-    { type: FieldType.NestedText, name: 'amazonProperty', label: t('integrations.show.propertySelectValues.labels.amazonProperty'), keys: ['name'], disabled: true, showLabel: true },
-    { type: FieldType.NestedText, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace'), keys: ['name'], disabled: true, showLabel: true },
+    { type: FieldType.Text, name: 'remoteName', label: t('shared.labels.name') },
     {
       type: FieldType.Query,
       name: 'localInstance',
@@ -37,6 +39,8 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      formMapIdentifier: 'id',
+      ...(propertyId ? { queryVariables: { filter: { property: { id: { exact: propertyId } } } }, createOnFlyConfig: selectValueOnTheFlyConfig(t, propertyId) } : {}),
     }
   ]
 });
@@ -66,11 +70,11 @@ export const amazonPropertySelectValuesListingConfigConstructor = (t: Function, 
   fields: [
     { name: 'remoteName', type: FieldType.Text },
     { name: 'remoteValue', type: FieldType.Text },
-    { name: 'amazonProperty', type: FieldType.NestedText, keys: ['name'], showLabel: true },
-    { name: 'marketplace', type: FieldType.NestedText, keys: ['name'], showLabel: true },
+    { name: 'amazonProperty', type: FieldType.NestedText, keys: ['name'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'integrations.amazonProperties.edit' } },
+    { name: 'marketplace', type: FieldType.NestedText, keys: ['name'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'integrations.stores.edit' } },
     { name: 'mappedLocally', type: FieldType.Boolean },
     { name: 'mappedRemotely', type: FieldType.Boolean },
-    { name: 'localInstance', type: FieldType.NestedText, keys: ['value'], showLabel: true }
+    { name: 'localInstance', type: FieldType.NestedText, keys: ['value'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'properties.values.show' } }
   ],
   identifierKey: 'id',
   urlQueryParams: {integrationId: specificIntegrationId },

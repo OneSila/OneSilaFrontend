@@ -2163,6 +2163,10 @@
           "remoteValue": "Remote Value",
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace"
+        },
+        "notMappedBanner": {
+          "title": "Amazon property not mapped",
+          "content": "Map the Amazon property first before mapping values."
         }
       },
       "mapping": {
