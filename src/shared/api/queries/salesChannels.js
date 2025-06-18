@@ -573,6 +573,8 @@ export const amazonPropertySelectValuesQuery = gql`
           amazonProperty {
             id
             name
+            mappedLocally
+            mappedRemotely
           }
           marketplace {
             id

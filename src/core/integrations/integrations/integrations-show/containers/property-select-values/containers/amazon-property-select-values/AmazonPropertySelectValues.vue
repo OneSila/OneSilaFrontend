@@ -21,9 +21,9 @@ const fetchFirstUnmapped = async () => {
     variables: {
       first: 1,
       filter: {
+        amazonProperty: { mappedLocally: true },
         salesChannel: { id: { exact: props.salesChannelId } },
-        mappedLocally: { exact: false },
-        amazonProperty: { mappedLocally: { exact: true } },
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter, RouterLink } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
@@ -27,11 +27,6 @@ const localPropertyId = ref<string | null>(null);
 const propertyMapped = ref(true);
 
 const formConfig = amazonPropertySelectValueEditFormConfigConstructor(t, type.value, valueId.value, integrationId);
-
-if (isWizard) {
-  formConfig.submitUrl = undefined;
-  formConfig.submitLabel = t('integrations.show.mapping.saveAndMapNext');
-}
 
 onMounted(async () => {
   const { data } = await apolloClient.query({

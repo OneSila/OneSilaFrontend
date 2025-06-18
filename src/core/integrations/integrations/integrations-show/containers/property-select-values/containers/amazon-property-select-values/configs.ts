@@ -49,8 +49,8 @@ export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function): 
   search: true,
   orderKey: "sort",
   filters: [
-    { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), addLookup: true, strict: true },
-    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), addLookup: true, strict: true },
+    { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
     { type: FieldType.Text, name: 'amazonProperty', label: t('integrations.show.propertySelectValues.labels.amazonProperty') },
     { type: FieldType.Text, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace') }
   ],
@@ -70,8 +70,8 @@ export const amazonPropertySelectValuesListingConfigConstructor = (t: Function, 
   fields: [
     { name: 'remoteName', type: FieldType.Text },
     { name: 'remoteValue', type: FieldType.Text },
-    { name: 'amazonProperty', type: FieldType.NestedText, keys: ['name'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'integrations.amazonProperties.edit' } },
-    { name: 'marketplace', type: FieldType.NestedText, keys: ['name'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'integrations.stores.edit' } },
+    { name: 'amazonProperty', type: FieldType.NestedText, keys: ['name'], showLabel: true, },
+    { name: 'marketplace', type: FieldType.NestedText, keys: ['name'], showLabel: true },
     { name: 'mappedLocally', type: FieldType.Boolean },
     { name: 'mappedRemotely', type: FieldType.Boolean },
     { name: 'localInstance', type: FieldType.NestedText, keys: ['value'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'properties.values.show' } }
