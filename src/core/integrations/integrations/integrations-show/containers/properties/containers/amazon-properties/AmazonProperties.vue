@@ -6,7 +6,7 @@ import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTem
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 import { amazonPropertiesSearchConfigConstructor, amazonPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
-import apolloClient from "../../../../../../../../apollo-client";
+import apolloClient from "../../../../../../../../../apollo-client";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -22,7 +22,7 @@ const fetchFirstUnmapped = async () => {
       first: 1,
       filter: {
         salesChannel: { id: { exact: props.salesChannelId } },
-        mappedLocally: { exact: false },
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',

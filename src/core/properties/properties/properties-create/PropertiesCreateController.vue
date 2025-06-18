@@ -31,6 +31,7 @@ const typeFromUrl = route.query.type ? route.query.type.toString() : '';
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
+const isAmazonWizard = route.query.amazonWizard === '1';
 
 interface PropertyForm {
   name: string,
@@ -140,10 +141,10 @@ const handleFinish = async () => {
     if (data && data.createProperty) {
       Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
       if (amazonRuleId) {
-        const [ruleId, integrationId] = amazonRuleId.split('__');
-        const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId } };
+        const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
+        const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
         if (integrationId) {
-          url.query = { integrationId, propertyId: data.createProperty.id };
+          url.query = { integrationId, salesChannelId, propertyId: data.createProperty.id, wizard: isAmazonWizard ? '1' : '0', };
         }
         router.push(url);
       } else {

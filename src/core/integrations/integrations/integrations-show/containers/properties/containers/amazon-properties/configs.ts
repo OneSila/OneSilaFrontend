@@ -99,7 +99,14 @@ export const amazonPropertiesListingConfigConstructor = (t: Function, specificIn
     { name: 'code', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
     { name: 'mappedRemotely', type: FieldType.Boolean },
-    { name: 'localInstance', type: FieldType.NestedText, keys: ['name'], showLabel: true }
+    { name: 'localInstance',
+      type: FieldType.NestedText,
+      keys: ['name'],
+      showLabel: true,
+      clickable: true,
+      clickIdentifiers: [{id: ['id']}],
+      clickUrl: { name: 'properties.properties.show' }
+    }
   ],
   identifierKey: 'id',
   urlQueryParams: {integrationId: specificIntegrationId },
