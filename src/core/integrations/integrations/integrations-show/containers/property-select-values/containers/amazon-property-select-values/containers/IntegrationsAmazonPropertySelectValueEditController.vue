@@ -137,12 +137,13 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       first: 2,
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
-        mappedLocally: { exact: false },
-        amazonProperty: { mappedLocally: true },
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',
   });
+
+
   const edges = data?.amazonPropertySelectValues?.edges || [];
   let nextId: string | null = null;
   for (const edge of edges) {
