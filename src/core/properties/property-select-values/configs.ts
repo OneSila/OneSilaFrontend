@@ -86,7 +86,7 @@ const getSubmitUrl = (
     return { name: 'properties.values.list' };
 };
 
-export const selectValueOnTheFlyConfig = (t: Function, propertyId): CreateOnTheFly => ({
+export const selectValueOnTheFlyConfig = (t: Function, propertyId, defaultValue: string | null = null): CreateOnTheFly => ({
     config: {
         cols: 1,
         type: FormType.CREATE,
@@ -105,10 +105,11 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId): CreateOnTheF
                 type: FieldType.Text,
                 name: 'value',
                 label: t('properties.values.show.title'),
-                placeholder: t('properties.values.placeholders.value')
+                placeholder: t('properties.values.placeholders.value'),
             },
         ],
-    }
+    },
+      ...(defaultValue ? { defaults: { value: defaultValue } } : {}),
 })
 
 export const editFormConfigConstructor = (

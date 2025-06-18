@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter, RouterLink } from 'vue-router';
+import { useRouter } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
@@ -18,7 +18,7 @@ import { getAmazonPropertySelectValueQuery, getAmazonPropertyQuery } from "../..
 import { selectValueOnTheFlyConfig } from "../../../../../../../../properties/property-select-values/configs";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
-import {Link} from "../../../../../../../../../shared/components/atoms/link";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -52,6 +52,12 @@ const form = reactive({
   remoteName: '',
   localInstance: { id: null as string | null },
 });
+
+const updatableForm = computed(() => ({
+  id: form.id,
+  remoteName: form.remoteName,
+  localInstance: form.localInstance.id,
+}));
 
 const localInstanceField = ref<QueryFormField>({
   type: FieldType.Query,
@@ -93,7 +99,7 @@ onMounted(async () => {
     localPropertyId.value = propData?.amazonProperty?.localInstance?.id || null;
     if (localPropertyId.value) {
       localInstanceField.value.queryVariables = { filter: { property: { id: { exact: localPropertyId.value } } } };
-      localInstanceField.value.createOnFlyConfig = selectValueOnTheFlyConfig(t, localPropertyId.value);
+      localInstanceField.value.createOnFlyConfig = selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName);
     }
   }
 });
@@ -106,7 +112,7 @@ const fetchNextUnmapped = async () => {
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: { exact: false },
-        amazonProperty: { mappedLocally: { exact: true } },
+        amazonProperty: { mappedLocally: true },
       },
     },
     fetchPolicy: 'network-only',
@@ -206,7 +212,7 @@ const handleSubmit = async () => {
                 </div>
               </div>
             </div>
-            <SubmitButtons :config="enhancedConfig" :form="form" @submit="handleSubmit" />
+            <SubmitButtons :config="enhancedConfig" :form="updatableForm" @submit="handleSubmit" />
           </div>
         </div>
       </div>

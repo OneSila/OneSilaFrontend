@@ -34,6 +34,23 @@ const form = reactive(props.config.fields.reduce((acc, field) => {
   return acc;
 }, {}));
 
+if (props.defaults) {
+  let anyDefaultUpdated = false;
+
+  for (const [key, value] of Object.entries(props.defaults)) {
+    if (form[key] === null || form[key] === undefined) {
+      form[key] = value;
+      anyDefaultUpdated = true;
+    }
+  }
+
+  if (anyDefaultUpdated) {
+    emit('formUpdated', form);
+  }
+}
+
+
+
 const handleUpdateErrors = (validationErrors) => {
   errors.value = validationErrors;
 
