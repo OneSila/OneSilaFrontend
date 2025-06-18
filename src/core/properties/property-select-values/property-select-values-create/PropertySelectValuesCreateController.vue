@@ -14,6 +14,7 @@ import { getPropertyQuery } from "../../../../shared/api/queries/properties.js";
 const { t } = useI18n();
 const route = useRoute();
 const formConfig = ref<FormConfig | null>(null);
+const defaultValue = route.query.value ? route.query.value.toString() : '';
 
 onMounted(async () => {
   let addImage = false;
@@ -41,6 +42,13 @@ onMounted(async () => {
     isRule !== null,
     amazonRuleId
   );
+
+  if (defaultValue && formConfig.value) {
+    const valueField = formConfig.value.fields.find(field => field.name === 'value');
+    if (valueField) {
+      valueField.default = defaultValue;
+    }
+  }
 });
 
 </script>

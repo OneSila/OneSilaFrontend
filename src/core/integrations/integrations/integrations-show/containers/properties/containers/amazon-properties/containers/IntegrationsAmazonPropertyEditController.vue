@@ -15,8 +15,13 @@ const route = useRoute();
 const propertyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
+const formData = ref<Record<string, any>>({});
 
 const formConfig = amazonPropertyEditFormConfigConstructor(t, type.value, propertyId.value, integrationId);
+
+const handleFormUpdate = (form) => {
+  formData.value = form;
+};
 </script>
 
 <template>
@@ -30,7 +35,7 @@ const formConfig = amazonPropertyEditFormConfigConstructor(t, type.value, proper
     </template>
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${propertyId}__${integrationId}` } }">
+          <Link :path="{ name: 'properties.properties.create', query: { amazonRuleId: `${propertyId}__${integrationId}`, name: formData.name, type: formData.type } }">
             <Button type="button" class="btn btn-primary">
                 {{  t('properties.properties.create.title') }}
             </Button>
@@ -38,7 +43,7 @@ const formConfig = amazonPropertyEditFormConfigConstructor(t, type.value, proper
       </div>
     </template>
     <template v-slot:content>
-      <GeneralForm :config="formConfig" />
+      <GeneralForm :config="formConfig" @form-updated="handleFormUpdate" />
     </template>
   </GeneralTemplate>
 </template>
