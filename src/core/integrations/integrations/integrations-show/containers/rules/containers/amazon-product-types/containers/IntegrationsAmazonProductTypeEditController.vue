@@ -6,7 +6,7 @@ import GeneralTemplate from "../../../../../../../../../shared/templates/General
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
 import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import { useRoute } from "vue-router";
-import { amazonProductTypeEditFormConfigConstructor } from "../configs";
+import { amazonProductTypeEditFormConfigConstructor, listingQuery } from "../configs";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { productPropertiesRulesQuery, propertiesQuery } from "../../../../../../../../../shared/api/queries/properties.js";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
@@ -29,6 +29,7 @@ const resolvedDefaultRuleId = ref<string | null>(null);
 const propertyProductTypeId = ref<string | null>(null);
 const formData = ref<Record<string, any>>({});
 const formConfig = ref<FormConfig | null>(null);
+const nextWizardId = ref<string | null>(null);
 
 const setupFormConfig = () => {
   formConfig.value = amazonProductTypeEditFormConfigConstructor(
@@ -46,11 +47,11 @@ if (isWizard) {
   formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
 }
 
-const fetchNextUnmapped = async () => {
+const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   const { data } = await apolloClient.query({
     query: listingQuery,
     variables: {
-      first: 1,
+      first: 2,
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: { exact: false },
@@ -59,22 +60,15 @@ const fetchNextUnmapped = async () => {
     fetchPolicy: 'network-only',
   });
   const edges = data?.amazonProductTypes?.edges || [];
-  return edges.length > 0 ? edges[0].node.id : null;
-};
-
-const handleSubmit = async () => {
-  if (!isWizard) return;
-  const nextId = await fetchNextUnmapped();
-  if (nextId) {
-    router.replace({
-      name: 'integrations.amazonProductTypes.edit',
-      params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
-    });
-  } else {
-    Toast.success(t('integrations.show.mapping.allMappedSuccess'));
-    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+  let nextId: string | null = null;
+  for (const edge of edges) {
+    if (edge.node.id !== productTypeId.value) {
+      nextId = edge.node.id;
+      break;
+    }
   }
+  const last = edges.length === 1 && edges[0].node.id === productTypeId.value;
+  return { nextId, last };
 };
 
 const fetchProductType = async () => {
@@ -115,6 +109,31 @@ onMounted(async () => {
   await fetchProductType();
   await fetchDefaultRuleId();
   setupFormConfig();
+
+  if (!isWizard) return;
+
+  const { nextId, last } = await fetchNextUnmapped();
+  nextWizardId.value = nextId;
+
+  formConfig.value.addSubmitAndContinue = false;
+
+  if (nextId) {
+    formConfig.value.submitUrl = {
+      name: 'integrations.amazonProductTypes.edit',
+      params: { type: type.value, id: nextId },
+      query: { integrationId, salesChannelId, wizard: '1' },
+    };
+    formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
+  } else if (last) {
+    formConfig.value.submitUrl = {
+      name: 'integrations.integrations.show',
+      params: { type: type.value, id: integrationId },
+      query: { tab: 'productRules' }
+    };
+  } else {
+    Toast.success(t('integrations.show.mapping.allMappedSuccess'));
+    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+  }
 });
 
 
@@ -136,7 +155,7 @@ const handleFormUpdate = (form) => {
 
     <template v-slot:buttons>
         <div>
-          <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}`, value: formData.name } }">
+          <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`, value: formData.name } }">
             <Button type="button" class="btn btn-primary">
                 {{  t('properties.rule.create.title') }}
             </Button>
@@ -145,7 +164,7 @@ const handleFormUpdate = (form) => {
     </template>
 
     <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @submit="handleSubmit" />
+      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" />
     </template>
   </GeneralTemplate>
 </template>

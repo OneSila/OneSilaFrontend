@@ -61,10 +61,16 @@ const getSubmitUrl = (
     amazonRuleId: string | null,
 ) => {
     if (redirectToRules && amazonRuleId) {
-        const [ruleId, integrationId] = amazonRuleId.split('__');
+        const [ruleId, integrationId, salesChannelId, wizard] = amazonRuleId.split('__');
         const url: any = { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: ruleId } };
         if (integrationId) {
-            url.query = { integrationId };
+            url.query = { integrationId } as any;
+            if (salesChannelId) {
+                url.query.salesChannelId = salesChannelId;
+            }
+            if (wizard) {
+                url.query.wizard = wizard;
+            }
         }
         return url;
     }

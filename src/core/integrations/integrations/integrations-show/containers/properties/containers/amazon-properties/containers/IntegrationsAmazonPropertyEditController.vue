@@ -27,24 +27,29 @@ const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
 const nextWizardId = ref<string | null>(null);
 
-const fetchNextUnmapped = async (): Promise<string | null> => {
+const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   const { data } = await apolloClient.query({
     query: amazonPropertiesQuery,
     variables: {
-      first: 1,
+      first: 2,
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: false,
-        NOT: {
-          id: { exact: amazonPropertyId.value },
-        },
       },
     },
     fetchPolicy: 'network-only',
   });
 
   const edges = data?.amazonProperties?.edges || [];
-  return edges.length > 0 ? edges[0].node.id : null;
+  let nextId: string | null = null;
+  for (const edge of edges) {
+    if (edge.node.id !== amazonPropertyId.value) {
+      nextId = edge.node.id;
+      break;
+    }
+  }
+  const last = edges.length === 1 && edges[0].node.id === amazonPropertyId.value;
+  return { nextId, last };
 };
 
 onMounted(async () => {
@@ -52,27 +57,31 @@ onMounted(async () => {
 
   if (!isWizard) return;
 
-  const nextId = await fetchNextUnmapped();
+  const { nextId, last } = await fetchNextUnmapped();
   nextWizardId.value = nextId;
 
-  if (!nextId) {
+  formConfig.value.addSubmitAndContinue = false;
+
+  if (nextId) {
+    formConfig.value.submitUrl = {
+      name: 'integrations.amazonProperties.edit',
+      params: { type: type.value, id: nextId },
+      query: { integrationId, salesChannelId, wizard: '1' },
+    };
+    formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
+  } else if (last) {
+    formConfig.value.submitUrl = {
+      name: 'integrations.integrations.show',
+      params: { type: type.value, id: integrationId },
+      query: { tab: 'properties' }
+    };
+  } else {
     Toast.success(t('integrations.show.mapping.allMappedSuccess'));
     router.push({
       name: 'integrations.integrations.show',
       params: { type: type.value, id: integrationId },
       query: { tab: 'properties' }
     });
-  } else {
-    formConfig.value.addSubmitAndContinue = false;
-    formConfig.value.submitUrl = {
-      name: 'integrations.amazonProperties.edit',
-      params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
-    };
-    console.log(amazonPropertyId.value)
-    console.log(nextId)
-    console.log(formConfig.value.submitUrl)
-    formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   }
 });
 
