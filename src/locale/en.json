@@ -2167,7 +2167,10 @@
       },
       "mapping": {
         "mappedLocally": "Mapped Locally",
-        "mappedRemotely": "Mapped Remotely"
+        "mappedRemotely": "Mapped Remotely",
+        "startMapping": "Start Mapping",
+        "saveAndMapNext": "Save & Map Next",
+        "allMappedSuccess": "You mapped all the values"
       }
     },
     "create": {
