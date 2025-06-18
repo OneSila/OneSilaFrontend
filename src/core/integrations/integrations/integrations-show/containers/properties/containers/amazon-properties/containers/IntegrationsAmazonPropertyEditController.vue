@@ -23,6 +23,7 @@ const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard == '1';
 const propertyId = route.query.propertyId?.toString() || null;
+const amazonCreateValue = route.query.amazonCreateValue?.toString() || null;
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
 const nextWizardId = ref<string | null>(null);
@@ -54,6 +55,15 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 
 onMounted(async () => {
   formConfig.value = amazonPropertyEditFormConfigConstructor(t, type.value, amazonPropertyId.value, integrationId, propertyId);
+
+  if (amazonCreateValue) {
+    formConfig.value.submitUrl = {
+      name: 'integrations.amazonPropertySelectValues.edit',
+      params: { type: type.value, id: amazonCreateValue },
+      query: { integrationId, salesChannelId, ...(isWizard ? { wizard: '1' } : {}) },
+    };
+    return;
+  }
 
   if (!isWizard) return;
 
