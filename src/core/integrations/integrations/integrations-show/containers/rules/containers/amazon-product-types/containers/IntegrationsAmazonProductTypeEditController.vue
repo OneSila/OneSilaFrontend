@@ -41,12 +41,6 @@ const setupFormConfig = () => {
   );
 };
 
-
-if (isWizard) {
-  formConfig.value.submitUrl = undefined;
-  formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
-}
-
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   const { data } = await apolloClient.query({
     query: listingQuery,
@@ -54,7 +48,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       first: 2,
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
-        mappedLocally: { exact: false },
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',
@@ -110,7 +104,7 @@ onMounted(async () => {
   await fetchDefaultRuleId();
   setupFormConfig();
 
-  if (!isWizard) return;
+  if (!isWizard || formConfig.value == null) return;
 
   const { nextId, last } = await fetchNextUnmapped();
   nextWizardId.value = nextId;
