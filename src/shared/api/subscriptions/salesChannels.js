@@ -13,6 +13,13 @@ export const salesChannelSubscription = gql`
         percentage
         createdAt
       }
+      amazonImports {
+        id
+        type
+        status
+        percentage
+        createdAt
+      }
     }
   }
 `;
