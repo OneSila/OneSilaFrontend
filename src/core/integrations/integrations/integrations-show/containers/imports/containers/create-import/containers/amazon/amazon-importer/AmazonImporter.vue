@@ -2,13 +2,12 @@
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { Wizard } from '../../../../../../../../../../shared/components/molecules/wizard';
-import { OptionSelector } from '../../../../../../../../../../shared/components/molecules/option-selector';
-import apolloClient from '../../../../../../../../../../../apollo-client';
-import { Toast } from '../../../../../../../../../../shared/modules/toast';
-import { createAmazonImportProcessMutation } from '../../../../../../../../../../shared/api/mutations/salesChannels';
-import { amazonImportProcessesQuery } from '../../../../../../../../../../shared/api/queries/salesChannels';
-import { IntegrationTypes } from '../../../../../../integrations';
+import { Wizard } from '../../../../../../../../../../../shared/components/molecules/wizard';
+import { OptionSelector } from '../../../../../../../../../../../shared/components/molecules/option-selector';
+import apolloClient from '../../../../../../../../../../../../apollo-client';
+import { Toast } from '../../../../../../../../../../../shared/modules/toast';
+import { createAmazonImportProcessMutation } from '../../../../../../../../../../../shared/api/mutations/salesChannels';
+import { amazonImportProcessesQuery } from '../../../../../../../../../../../shared/api/queries/salesChannels';
 
 const props = defineProps<{ integrationId: string; type: string }>();
 const router = useRouter();
@@ -20,7 +19,7 @@ const loading = ref(false);
 
 const typeChoices = computed(() => [
   { name: 'schema' },
-  { name: 'products', disabled: !hasFinishedSchema.value },
+  { name: 'products', disabled: !hasFinishedSchema.value, hideDisabledBanner: true },
 ]);
 
 const fetchImports = async () => {
@@ -28,17 +27,24 @@ const fetchImports = async () => {
   try {
     const { data } = await apolloClient.query({
       query: amazonImportProcessesQuery,
-      variables: { filter: { salesChannel: { id: { exact: props.integrationId } } } },
+      variables: {
+        filter: {
+          salesChannel: { id: { exact: props.integrationId } },
+          type: { exact: 'schema' },
+          status: { exact: 'success' },
+        }
+      },
       fetchPolicy: 'network-only',
     });
     const edges = data?.amazonImportProcesses?.edges || [];
-    hasFinishedSchema.value = edges.some((e: any) => e.node.type === 'schema' && e.node.status === 'success');
+    hasFinishedSchema.value = edges.length > 0;
   } catch (e) {
     console.error(e);
   } finally {
     loading.value = false;
   }
 };
+
 
 onMounted(fetchImports);
 

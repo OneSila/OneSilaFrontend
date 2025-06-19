@@ -57,9 +57,10 @@ if (type.value === IntegrationTypes.Amazon) {
     { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
     { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
   );
-
-  tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
 }
+
+tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+
 
 const getIntegrationQuery = () => {
   switch (type.value) {
