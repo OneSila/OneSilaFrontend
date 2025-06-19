@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { Wizard } from '../../../../../../../../../../../shared/components/molecules/wizard';
 import { OptionSelector } from '../../../../../../../../../../../shared/components/molecules/option-selector';
+import { Icon } from '../../../../../../../../../../../shared/components/atoms/icon';
 import apolloClient from '../../../../../../../../../../../../apollo-client';
 import { Toast } from '../../../../../../../../../../../shared/modules/toast';
 import { createAmazonImportProcessMutation } from '../../../../../../../../../../../shared/api/mutations/salesChannels';
@@ -78,13 +79,25 @@ const wizardSteps = [{ title: t('integrations.imports.create.title'), name: 'sel
       <div class="flex flex-col gap-6">
         <OptionSelector v-model="importType" :choices="typeChoices">
           <template #schema>
-            <div>
-              <h3 class="text-lg font-bold">{{ t('integrations.imports.types.schema') }}</h3>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold">{{ t('integrations.imports.types.schema') }}</h3>
+                <Icon name="circle-info" class="text-gray-500" />
+              </div>
+              <p class="text-sm text-gray-500">Initial setup required to enable product imports.</p>
             </div>
           </template>
           <template #products>
-            <div>
-              <h3 class="text-lg font-bold">{{ t('integrations.imports.types.products') }}</h3>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold">{{ t('integrations.imports.types.products') }}</h3>
+                <Icon name="circle-info" class="text-gray-500" />
+              </div>
+              <p class="text-sm text-gray-500">Imports actual product data from Amazon.</p>
+              <div v-if="!hasFinishedSchema" class="text-sm text-gray-400 flex items-center gap-1">
+                <Icon name="exclamation-circle" class="text-gray-400" />
+                <span>Please complete the schema import first.</span>
+              </div>
             </div>
           </template>
         </OptionSelector>

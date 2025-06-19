@@ -7,7 +7,12 @@ import { DiscreteLoader } from "../../../../../../../shared/components/atoms/dis
 import { AssignProgressBar } from "../../../../../../../shared/components/molecules/assign-progress-bar";
 import { Badge } from "../../../../../../../shared/components/atoms/badge";
 import { salesChannelSubscription } from "../../../../../../../shared/api/subscriptions/salesChannels.js";
+import {
+  updateAmazonImportProcessMutation,
+} from "../../../../../../../shared/api/mutations/salesChannels";
+import { Toast } from "../../../../../../../shared/modules/toast";
 import { getStatusBadgeMap, SalesChannelSubscriptionResult } from "../configs";
+import apolloClient from "../../../../../../../../apollo-client";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const { t } = useI18n();
@@ -24,6 +29,26 @@ const formatDate = (dateString: string) => {
     minute: '2-digit',
     hour12: false,
   }).format(date);
+};
+
+const isRetryEnabled = (importItem: any): boolean => {
+  const createdDate = new Date(importItem.createdAt);
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  return ['success', 'failed'].includes(importItem.status) && createdDate >= oneWeekAgo;
+};
+
+const retryImport = async (importId: string) => {
+  try {
+    await apolloClient.mutate({
+      mutation: updateAmazonImportProcessMutation,
+      variables: { data: { id: importId, status: 'pending' } },
+    });
+    Toast.success(t('integrations.imports.retry.success'));
+  } catch (e) {
+    Toast.error(t('integrations.imports.retry.error'));
+    console.error('Retry failed:', e);
+  }
 };
 </script>
 
@@ -49,6 +74,7 @@ const formatDate = (dateString: string) => {
                 <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
                 <th class="p-2 text-left">{{ t('shared.labels.status') }}</th>
                 <th class="p-2 text-left">{{ t('shared.labels.progress') }}</th>
+                <th class="p-2 text-left">{{ t('shared.labels.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
@@ -60,6 +86,11 @@ const formatDate = (dateString: string) => {
                 </td>
                 <td class="p-2">
                   <AssignProgressBar :progress="importItem.percentage" :is-error="importItem.status === 'failed'" />
+                </td>
+                <td class="p-2 text-right">
+                  <Button :disabled="!isRetryEnabled(importItem)" @click="retryImport(importItem.id)">
+                    <Icon name="clock-rotate-left" size="lg" class="text-gray-500" />
+                  </Button>
                 </td>
               </tr>
             </tbody>
