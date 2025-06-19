@@ -186,6 +186,9 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     <FlexCell>
                       <TextInput v-model="form.amazonProperty" disabled class="w-full" />
                     </FlexCell>
+                    <FlexCell>
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.amazonProperty') }}</p>
+                    </FlexCell>
                   </Flex>
                 </div>
                 <div class="col-span-full">
@@ -195,6 +198,9 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     </FlexCell>
                     <FlexCell>
                       <TextInput v-model="form.marketplace" disabled class="w-full" />
+                    </FlexCell>
+                    <FlexCell>
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.marketplace') }}</p>
                     </FlexCell>
                   </Flex>
                 </div>
@@ -206,6 +212,9 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     <FlexCell>
                       <TextInput v-model="form.remoteValue" disabled class="w-full" />
                     </FlexCell>
+                    <FlexCell>
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.remoteValue') }}</p>
+                    </FlexCell>
                   </Flex>
                 </div>
                 <div class="col-span-full">
@@ -215,6 +224,9 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     </FlexCell>
                     <FlexCell>
                       <TextInput v-model="form.remoteName" class="w-full" />
+                    </FlexCell>
+                    <FlexCell>
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.remoteName') }}</p>
                     </FlexCell>
                   </Flex>
                 </div>
@@ -233,6 +245,9 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     </FlexCell>
                     <FlexCell>
                       <FieldQuery :field="localInstanceField as QueryFormField" v-model="form.localInstance.id" @update:modelValue="form.localInstance.id = $event" />
+                    </FlexCell>
+                    <FlexCell>
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.selectValue') }}</p>
                     </FlexCell>
                   </Flex>
                 </div>
