@@ -519,3 +519,18 @@ export const createAmazonImportProcessMutation = gql`
     }
   }
 `;
+
+export const updateAmazonImportProcessMutation = gql`
+  mutation updateAmazonImportProcess($data: AmazonSalesChannelImportPartialInput!) {
+    updateAmazonImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
