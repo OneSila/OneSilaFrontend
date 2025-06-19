@@ -23,7 +23,7 @@ export const amazonPropertyEditFormConfigConstructor = (
   submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'properties' } },
   fields: [
     { type: FieldType.Hidden, name: 'id', value: propertyId },
-    { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true },
+    { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true, help: t('integrations.show.properties.help.code') },
     {
       type: FieldType.Choice,
       name: 'type',
@@ -32,14 +32,16 @@ export const amazonPropertyEditFormConfigConstructor = (
       valueBy: 'code',
       options: getPropertyTypeOptions(t),
       disabled: true,
-      removable: false
+      removable: false,
+      help: t('integrations.show.properties.help.type')
     },
-    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true, strict: true },
-    { type: FieldType.Text, name: 'name', label: t('shared.labels.name') },
+    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true, strict: true, help: t('integrations.show.properties.help.allowsUnmappedValues') },
+    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), help: t('integrations.show.properties.help.name') },
     {
       type: FieldType.Query,
       name: 'localInstance',
-      label: t('properties.properties.title'),
+      label: t('integrations.show.properties.labels.property'),
+      help: t('integrations.show.properties.help.property'),
       labelBy: 'name',
       valueBy: 'id',
       query: propertiesQuery,

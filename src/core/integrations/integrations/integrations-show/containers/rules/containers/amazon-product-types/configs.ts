@@ -31,17 +31,20 @@ export const amazonProductTypeEditFormConfigConstructor = (
       type: FieldType.Text,
       label: t('integrations.show.productRules.labels.productTypeCode'),
       name: 'productTypeCode',
-      disabled: true
+      disabled: true,
+      help: t('integrations.show.productRules.help.productTypeCode'),
     },
     {
       type: FieldType.Text,
       label: t('shared.labels.name'),
       name: 'name',
+      help: t('integrations.show.productRules.help.name'),
     },
     {
       type: FieldType.Query,
       name: 'localInstance',
-      label: t('properties.rule.title'),
+      label: t('integrations.show.productRules.labels.productRule'),
+      help: t('integrations.show.productRules.help.productRule'),
       labelBy: 'value',
       valueBy: 'id',
       query: productPropertiesRulesListingQuery,
