@@ -171,6 +171,52 @@ export const getAmazonChannelQuery = gql`
   }
 `;
 
+export const amazonChannelsQuery = gql`
+  query amazonChannelsQuery(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonSalesChannelOrder
+    $filters: AmazonSalesChannelFilter
+  ) {
+    amazonChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          region
+          country
+          createdAt
+          integrationPtr {
+            id
+          }
+          saleschannelPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+
 
 // Sales Channel Integration Pricelist Queries
 export const salesChannelIntegrationPricelistsQuery = gql`

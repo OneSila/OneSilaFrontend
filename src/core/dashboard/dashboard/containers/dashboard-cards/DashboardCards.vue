@@ -2,13 +2,15 @@
 
 import { DashboardSectionProducts } from "./containers/dashboard-section-products";
 import { DashboardSectionAmazon } from "./containers/dashboard-section-amazon";
+import { injectAuth } from "../../../../../shared/modules/auth";
+const auth = injectAuth();
 
 </script>
 
 <template>
   <div>
     <DashboardSectionProducts />
-    <DashboardSectionAmazon />
+    <DashboardSectionAmazon v-if="auth.user.company?.hasAmazonIntegration" />
   </div>
 </template>
 

@@ -3,7 +3,13 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { injectAuth } from '../../../../../../../shared/modules/auth';
 import { integrationsQuery } from '../../../../../../../shared/api/queries/integrations.js';
-import { getAmazonChannelQuery, amazonPropertiesQuery, amazonProductTypesQuery, amazonPropertySelectValuesQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
+import {
+  getAmazonChannelQuery,
+  amazonPropertiesQuery,
+  amazonProductTypesQuery,
+  amazonPropertySelectValuesQuery,
+  amazonChannelsQuery
+} from '../../../../../../../shared/api/queries/salesChannels.js';
 import apolloClient from '../../../../../../../../apollo-client';
 import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import { DashboardCard } from '../dashboard-card';
@@ -71,43 +77,39 @@ const fetchAmazonIntegrations = async () => {
   }
 
   loading.value = true;
+
   const { data } = await apolloClient.query({
-    query: integrationsQuery,
-    variables: {
-      filter: { type: { exact: IntegrationTypes.Amazon } },
-    },
-    fetchPolicy: 'network-only',
+    query: amazonChannelsQuery,
+    fetchPolicy: 'network-only'
   });
 
-  const edges = data?.integrations?.edges || [];
+  const edges = data?.amazonChannels?.edges || [];
+
   for (const edge of edges) {
-    const node = edge.node;
-    const { data: channelData } = await apolloClient.query({
-      query: getAmazonChannelQuery,
-      variables: { id: node.id },
-      fetchPolicy: 'network-only',
-    });
-    const channel = channelData?.amazonChannel;
+    const channel = edge.node;
+
     if (channel?.saleschannelPtr?.id) {
       const counts = await fetchCounts(channel.saleschannelPtr.id);
       integrations.value.push({
-        integrationId: node.id,
-        hostname: node.hostname,
+        integrationId: channel.id,
+        hostname: channel.hostname,
         salesChannelId: channel.saleschannelPtr.id,
         ...counts,
       });
     }
   }
+
   loading.value = false;
   finishedFetch.value = true;
 };
+
 
 onMounted(fetchAmazonIntegrations);
 </script>
 
 <template>
   <template v-if="integrations.length">
-    <Card v-for="integration in integrations" :key="integration.integrationId" class="py-8 mb-4">
+    <Card v-for="integration in integrations" :key="integration.integrationId" class="py-8 mb-4 mt-4">
       <Flex vertical class="pb-6 gap-2">
         <FlexCell>
           <Flex between>
@@ -147,7 +149,7 @@ onMounted(fetchAmazonIntegrations);
         </FlexCell>
       </Flex>
 
-      <div class="cards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         <DashboardCard
           :counter="integration.properties"
           :title="t('dashboard.cards.amazon.unmappedProperties.title')"
