@@ -2161,7 +2161,13 @@
       "productRules": {
         "title": "Amazon Rules",
         "labels": {
-          "productTypeCode": "Product Type Code"
+          "productTypeCode": "Product Type Code",
+          "productRule": "Product Rule"
+        },
+        "help": {
+          "productTypeCode": "Amazon identifier for this product type.",
+          "name": "Original Amazon name for the product type. You may change it.",
+          "productRule": "Select the local product rule to link with this Amazon product type."
         }
       },
       "properties": {
@@ -2169,7 +2175,15 @@
         "labels": {
           "code": "Code",
           "type": "Type",
-          "allowsUnmappedValues": "Allow Unmapped Values"
+          "allowsUnmappedValues": "Allow Unmapped Values",
+          "property": "Property"
+        },
+        "help": {
+          "code": "Amazon's code for this property.",
+          "type": "Type mapped from Amazon. Cannot be changed.",
+          "allowsUnmappedValues": "Allow values that have not been mapped locally.",
+          "name": "Name from Amazon. You can modify it.",
+          "property": "Select the local property this Amazon property maps to."
         }
       },
       "propertySelectValues": {
@@ -2178,7 +2192,15 @@
           "remoteName": "Remote Name",
           "remoteValue": "Remote Value",
           "amazonProperty": "Amazon Property",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "selectValue": "Select Value"
+        },
+        "help": {
+          "amazonProperty": "Amazon property to which this value belongs.",
+          "marketplace": "Amazon marketplace for this value.",
+          "remoteValue": "Value exactly as defined in Amazon.",
+          "remoteName": "Name from Amazon. You can change it.",
+          "selectValue": "Choose the local value that matches this Amazon value."
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",
