@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 
 import { DashboardSectionProducts } from "./containers/dashboard-section-products";
-import { DashboardSectionGeneral } from "./containers/dashboard-section-general";
-import { DashboardSectionOrders } from "./containers/dashboard-section-orders";
+import { DashboardSectionAmazon } from "./containers/dashboard-section-amazon";
 
 </script>
 
 <template>
   <div>
     <DashboardSectionProducts />
+    <DashboardSectionAmazon />
   </div>
 </template>
 

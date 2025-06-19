@@ -146,6 +146,22 @@
           "title": "Price Lists with Currency Mismatched Customers",
           "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
         }
+      },
+      "amazon": {
+        "title": "Amazon integration",
+        "description": "Resolve unmapped Amazon data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Amazon properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Amazon product types that need mapping."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Amazon property values that need mapping."
+        }
       }
     },
     "onboarding": {
