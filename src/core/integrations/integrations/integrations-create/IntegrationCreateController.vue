@@ -45,7 +45,6 @@ const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
 const queryParams = route.query;
-const isExternalInstall = ref(queryParams.isExternal === 'true');
 
 const form = reactive<IntegrationCreateWizardForm>({
   generalInfo: {
@@ -385,7 +384,6 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
               :general-info="form.generalInfo"
               :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
               :show-ssl="selectedIntegrationType !== IntegrationTypes.Shopify"
-              :is-external-install="isExternalInstall"
           />
         </template>
 
