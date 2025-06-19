@@ -2397,6 +2397,10 @@
         "success": "Retry import process success",
         "error": "Retry import process had an unexpected error"
       },
+      "types": {
+        "schema": "Schema",
+        "products": "Products"
+      },
       "create": {
         "success": "Create import process success",
         "title": "Create Import",

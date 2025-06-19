@@ -735,4 +735,36 @@ export const getAmazonProductTypeQuery = gql`
       }
     }
   }
+`;export const amazonImportProcessesQuery = gql`
+  query AmazonImportProcesses(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: AmazonSalesChannelImportOrder,
+    $filter: AmazonSalesChannelImportFilter
+  ) {
+    amazonImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          status
+          percentage
+          createdAt
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
 `;
