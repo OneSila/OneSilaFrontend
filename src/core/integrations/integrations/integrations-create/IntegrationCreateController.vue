@@ -142,10 +142,12 @@ const allowNextStep = computed(() => {
     if (!hostname || hostname.trim() === '') {
       return false;
     }
-    // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
-    const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
-    if (!urlPattern.test(hostname)) {
-      return false;
+    if (selectedIntegrationType.value !== IntegrationTypes.Amazon) {
+      // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
+      const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
+      if (!urlPattern.test(hostname)) {
+        return false;
+      }
     }
   }
 
@@ -382,6 +384,7 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
         <template #generalInfoStep>
           <GeneralInfoStep
               :general-info="form.generalInfo"
+              :integration-type="selectedIntegrationType"
               :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
               :show-ssl="selectedIntegrationType !== IntegrationTypes.Shopify"
           />
