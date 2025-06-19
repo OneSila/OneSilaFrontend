@@ -36,7 +36,7 @@ watch(
 const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
   { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Amazon, disabled: true },
+  { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Woocommerce, disabled: true }
 ];
 

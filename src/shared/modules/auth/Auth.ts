@@ -15,7 +15,7 @@ export type User = {
   firstName: string;
   lastName: string;
   onboardingStatus: string | null;
-  company: object | null;
+  company: Company | null;
   companyOwner: boolean;
   active: boolean;
   preferences?: UserPreferences;
@@ -31,6 +31,13 @@ export const defaultUserPreferences: UserPreferences = {
   sidebarToggle: false,
   pageLoader: false,
 };
+
+export type Company = {
+  id: string;
+  name: string;
+  hasAmazonIntegration?: boolean;
+};
+
 
 export const defaultUser: User = {
   username: '',
@@ -102,7 +109,7 @@ export const setPageLoader = (auth: Auth, state: boolean): void => {
 };
 
 
-export const setCompanyToUser = (auth: Auth, company: { id: string; name: string }): void => {
+export const setCompanyToUser = (auth: Auth, company: Company): void => {
   const updatedUser = {
     ...auth.user,
     company: company,

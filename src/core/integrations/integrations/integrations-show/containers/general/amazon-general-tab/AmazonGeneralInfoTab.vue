@@ -176,9 +176,9 @@ useShiftBackspaceKeyboardListener(goBack);
     <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-8 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.hostname') }}
+          {{ t('shared.labels.name') }}
         </Label>
-        <TextInput v-model="formData.hostname" placeholder="https://example.com" disabled class="w-full" />
+        <TextInput v-model="formData.hostname" :placeholder="t('shared.placeholders.name')" class="w-full" />
       </div>
       <div class="md:col-span-2 col-span-6">
         <Flex class="mt-8" gap="2">
