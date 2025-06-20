@@ -469,3 +469,68 @@ export const validateAmazonAuthMutation = gql`
     }
   }
 `;
+
+// Amazon Property Mutations
+
+export const updateAmazonPropertyMutation = gql`
+  mutation updateAmazonProperty($data: AmazonPropertyPartialInput!) {
+    updateAmazonProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Property Select Value Mutations
+
+export const updateAmazonPropertySelectValueMutation = gql`
+  mutation updateAmazonPropertySelectValue($data: AmazonPropertySelectValuePartialInput!) {
+    updateAmazonPropertySelectValue(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Product Type Mutations
+
+export const updateAmazonProductTypeMutation = gql`
+  mutation updateAmazonProductType($data: AmazonProductTypePartialInput!) {
+    updateAmazonProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+export const createAmazonImportProcessMutation = gql`
+  mutation createAmazonImportProcess($data: AmazonSalesChannelImportInput!) {
+    createAmazonImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateAmazonImportProcessMutation = gql`
+  mutation updateAmazonImportProcess($data: AmazonSalesChannelImportPartialInput!) {
+    updateAmazonImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;

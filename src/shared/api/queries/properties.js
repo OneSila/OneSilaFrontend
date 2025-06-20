@@ -342,6 +342,7 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
         node {
           id
           requireEanCode
+          value
           productType {
             id
             value

@@ -146,6 +146,22 @@
           "title": "Price Lists with Currency Mismatched Customers",
           "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
         }
+      },
+      "amazon": {
+        "title": "Amazon integration",
+        "description": "Resolve unmapped Amazon data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Amazon properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Amazon product types that need mapping."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Amazon property values that need mapping."
+        }
       }
     },
     "onboarding": {
@@ -2105,6 +2121,9 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "amazon": {
+        "title": "Amazon Integration"
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -2138,6 +2157,62 @@
         "labels": {
           "remoteCode": "Remote Currency Code"
         }
+      },
+      "productRules": {
+        "title": "Amazon Rules",
+        "labels": {
+          "productTypeCode": "Product Type Code",
+          "productRule": "Product Rule"
+        },
+        "help": {
+          "productTypeCode": "Amazon identifier for this product type.",
+          "name": "Original Amazon name for the product type. You may change it.",
+          "productRule": "Select the local product rule to link with this Amazon product type."
+        }
+      },
+      "properties": {
+        "title": "Amazon Properties",
+        "labels": {
+          "code": "Code",
+          "type": "Type",
+          "allowsUnmappedValues": "Allow Unmapped Values",
+          "property": "Property"
+        },
+        "help": {
+          "code": "Amazon's code for this property.",
+          "type": "Type mapped from Amazon. Cannot be changed.",
+          "allowsUnmappedValues": "Allow values that have not been mapped locally.",
+          "name": "Name from Amazon. You can modify it.",
+          "property": "Select the local property this Amazon property maps to."
+        }
+      },
+      "propertySelectValues": {
+        "title": "Amazon Property Values",
+        "labels": {
+          "remoteName": "Remote Name",
+          "remoteValue": "Remote Value",
+          "amazonProperty": "Amazon Property",
+          "marketplace": "Marketplace",
+          "selectValue": "Select Value"
+        },
+        "help": {
+          "amazonProperty": "Amazon property to which this value belongs.",
+          "marketplace": "Amazon marketplace for this value.",
+          "remoteValue": "Value exactly as defined in Amazon.",
+          "remoteName": "Name from Amazon. You can change it.",
+          "selectValue": "Choose the local value that matches this Amazon value."
+        },
+        "notMappedBanner": {
+          "title": "Amazon property not mapped",
+          "content": "Map the Amazon property first before mapping values."
+        }
+      },
+      "mapping": {
+        "mappedLocally": "Mapped Locally",
+        "mappedRemotely": "Mapped Remotely",
+        "startMapping": "Start Mapping",
+        "saveAndMapNext": "Save & Map Next",
+        "allMappedSuccess": "You mapped all the values"
       }
     },
     "create": {
@@ -2321,6 +2396,10 @@
       "retry": {
         "success": "Retry import process success",
         "error": "Retry import process had an unexpected error"
+      },
+      "types": {
+        "schema": "Schema",
+        "products": "Products"
       },
       "create": {
         "success": "Create import process success",

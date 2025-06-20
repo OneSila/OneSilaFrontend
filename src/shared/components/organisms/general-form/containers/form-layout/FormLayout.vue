@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { FormConfig } from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";
 import { getFieldComponent } from "../../../general-form/formConfig";
+import { Icon } from "../../../../atoms/icon";
 
 const props = defineProps<{
   config: FormConfig;
@@ -25,6 +26,12 @@ const computedStyle = computed(() => props.config.customStyle || '');
           </FlexCell>
           <FlexCell v-if="field.type === FieldType.Checkbox" class="ml-2" center>
             <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />
+          </FlexCell>
+          <FlexCell center>
+            <div v-if="errors && errors[field.name]" class="text-danger text-small blink-animation ml-1 mb-1">
+              <Icon size="sm" name="exclamation-circle" />
+              <span class="ml-1">{{ errors[field.name] }}</span>
+            </div>
           </FlexCell>
         </Flex>
           <div v-if="field.type !== FieldType.Checkbox" class="mt-2" >

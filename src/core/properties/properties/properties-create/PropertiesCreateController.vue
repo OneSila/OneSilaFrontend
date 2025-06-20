@@ -25,9 +25,14 @@ import {processGraphQLErrors} from "../../../../shared/utils";
 const router = useRouter();
 const { t } = useI18n();
 const route = useRoute();
+const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
+const nameFromUrl = route.query.name ? route.query.name.toString() : '';
+const typeFromUrl = route.query.type ? route.query.type.toString() : '';
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
+const isAmazonWizard = route.query.amazonWizard === '1';
+const amazonCreateValue = route.query.amazonCreateValue ? route.query.amazonCreateValue.toString() : null;
 
 interface PropertyForm {
   name: string,
@@ -51,18 +56,21 @@ const preview = reactive({
 });
 
 const form: PropertyForm = reactive({
-  name: '',
-  type: '',
+  name: nameFromUrl,
+  type: typeFromUrl,
   isPublicInformation: true,
   addToFilters: false,
   hasImage: false,
 });
 
 const wizardSteps = computed(() => {
-  return [
-    {title: t('properties.properties.create.wizard.stepOne.title'), name: 'generalStep'},
-    {title: t('properties.properties.create.wizard.stepTwo.title'), name: 'typeStep'},
+  const steps = [
+    {title: t('properties.properties.create.wizard.stepOne.title'), name: 'generalStep'}
   ];
+  if (!typeFromUrl) {
+    steps.push({title: t('properties.properties.create.wizard.stepTwo.title'), name: 'typeStep'});
+  }
+  return steps;
 });
 
 const typeChoices = [
@@ -133,7 +141,22 @@ const handleFinish = async () => {
 
     if (data && data.createProperty) {
       Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
-      router.push({name: 'properties.properties.edit', params: { id: data.createProperty.id}, query: {tab: 'translations'}})
+      if (amazonRuleId) {
+        const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
+        const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
+        if (integrationId) {
+          url.query = {
+            integrationId,
+            salesChannelId,
+            propertyId: data.createProperty.id,
+            wizard: isAmazonWizard ? '1' : '0',
+            ...(amazonCreateValue ? { amazonCreateValue } : {}),
+          };
+        }
+        router.push(url);
+      } else {
+        router.push({name: 'properties.properties.edit', params: { id: data.createProperty.id}, query: {tab: 'translations'}})
+      }
     }
   } catch (err) {
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };

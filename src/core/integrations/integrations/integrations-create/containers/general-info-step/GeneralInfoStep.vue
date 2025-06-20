@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { TextInput } from "../../../../../../shared/components/atoms/input-text";
 import { Label } from "../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../shared/components/atoms/toggle";
-import { IntegrationGeneralInfo } from "../../../integrations";
+import { IntegrationGeneralInfo, IntegrationTypes } from "../../../integrations";
 import {Accordion} from "../../../../../../shared/components/atoms/accordion";
-import {TextInputPrepend} from "../../../../../../shared/components/atoms/input-text-prepend";
-import {Icon} from "../../../../../../shared/components/atoms/icon";
 
 const props = defineProps<{
   generalInfo: IntegrationGeneralInfo,
   maxRequestsPerMinute: number | undefined,
-  showSsl: boolean
-  isExternalInstall: boolean
+  showSsl: boolean,
+  integrationType: IntegrationTypes
 }>();
 
 const { t } = useI18n();
@@ -21,6 +19,18 @@ const { t } = useI18n();
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' }
 ];
+
+const hostnameLabel = computed(() => {
+  return props.integrationType === IntegrationTypes.Amazon
+    ? t('shared.labels.name')
+    : t('integrations.labels.hostname');
+});
+
+const hostnamePlaceholder = computed(() => {
+  return props.integrationType === IntegrationTypes.Amazon
+    ? t('shared.placeholders.name')
+    : 'https://example.com';
+});
 
 </script>
 
@@ -35,19 +45,11 @@ const accordionItems = [
             <Flex vertical class="gap-2">
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.hostname') }}*
+                  {{ hostnameLabel }}*
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInputPrepend
-                  v-if="isExternalInstall"
-                  v-model="generalInfo.hostname"
-                  class="w-96"
-                  :disabled="true"
-                >
-                  <Icon size="sm" name="lock" />
-                </TextInputPrepend>
-                <TextInput v-else class="w-96" v-model="generalInfo.hostname" placeholder="https://example.com" />
+                <TextInput class="w-96" v-model="generalInfo.hostname" :placeholder="hostnamePlaceholder" />
               </FlexCell>
             </Flex>
           </FlexCell>
