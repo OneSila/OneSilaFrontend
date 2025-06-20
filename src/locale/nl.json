@@ -348,7 +348,8 @@
         "members": {
           "alert": {
             "deleteMemberSuccess": "Gebruiker was succesvol verwijderd!",
-            "enableMemberSuccess": "Gebruiker succesvol opnieuw toegevoegd!"
+            "enableMemberSuccess": "Gebruiker succesvol opnieuw toegevoegd!",
+            "resendInviteSuccess": "Uitnodiging opnieuw verzonden!"
           },
           "labels": {
             "invitationAccepted": "Uitnodiging geaccepteerd"

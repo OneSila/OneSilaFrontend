@@ -16,3 +16,10 @@ mutation enableUser($id: GlobalID!) {
     isActive
   }
 }`;
+
+export const resendInviteMutation = gql`
+mutation resendInvite($id: GlobalID!) {
+  resendInvite(data: {id: $id}) {
+    id
+  }
+}`;
