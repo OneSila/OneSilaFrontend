@@ -536,7 +536,8 @@
         "members": {
           "alert": {
             "deleteMemberSuccess": "Member was successfully deleted!",
-            "enableMemberSuccess": "Member was successfully added back!"
+            "enableMemberSuccess": "Member was successfully added back!",
+            "resendInviteSuccess": "Invitation resent successfully!"
           },
           "labels": {
             "invitationAccepted": "Invitation Accepted"
