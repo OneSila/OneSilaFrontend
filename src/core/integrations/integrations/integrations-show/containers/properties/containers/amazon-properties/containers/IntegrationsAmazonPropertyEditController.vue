@@ -126,7 +126,7 @@ const handleFormUpdate = (form) => {
             amazonWizard: isWizard ? '1' : '0',
             ...(amazonCreateValue ? { amazonCreateValue } : {}) } }">
             <Button type="button" class="btn btn-info">
-                {{  t('properties.properties.create.title') }}
+              {{ t('integrations.show.generateProperty') }}
             </Button>
           </Link>
         </template>

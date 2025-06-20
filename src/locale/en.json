@@ -2213,7 +2213,9 @@
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values"
-      }
+      },
+      "generateProperty": "Generate Property",
+      "generateProductType": "Generate Product Type"
     },
     "create": {
       "title": "Create Integration",
