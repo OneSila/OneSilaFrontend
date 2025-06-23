@@ -276,17 +276,44 @@ const shortDescriptionToolbarOptions = [
     </FlexCell>
   </Flex>
 
-  <Flex between wrap class="mt-4 gap-4">
-    <FlexCell class="w-full lg:w-40">
+  <hr class="mt-4">
+
+  <div
+    class="
+      mt-4
+      grid gap-4
+      grid-cols-1
+      lg:grid-cols-12
+      xl:grid-cols-10
+      2xl:grid-cols-10
+    "
+  >
+    <!-- Sales Channel Tabs -->
+    <div
+      class="
+        col-span-1
+        lg:col-span-12
+        xl:col-span-2
+        2xl:col-span-2
+      "
+    >
       <SalesChannelTabs
         v-model="currentSalesChannel"
         :channels="salesChannels"
         @update:modelValue="handleSalesChannelSelection"
       />
-    </FlexCell>
+    </div>
 
-    <FlexCell class="w-full lg:w-1/2 2xl:w-1/3 order-2 lg:order-none">
-      <div class="border border-gray-200 rounded p-4 bg-white">
+    <!-- Product Content Form -->
+    <div
+      class="
+        col-span-1
+        lg:col-span-7
+        xl:col-span-4
+        2xl:col-span-4
+      "
+    >
+      <div class="p-2 bg-white">
         <ProductContentForm
           :form="form"
           :field-errors="fieldErrors"
@@ -297,16 +324,24 @@ const shortDescriptionToolbarOptions = [
           @shortDescription="handleGeneratedShortDescriptionContent"
         />
       </div>
-    </FlexCell>
+    </div>
 
-    <FlexCell class="w-full lg:w-1/2 2xl:w-2/3 order-3 lg:order-none">
+    <!-- Product Content Preview -->
+    <div
+      class="
+        col-span-1
+        lg:col-span-5
+        xl:col-span-4
+        2xl:col-span-4
+      "
+    >
       <ProductContentPreview
         :content="previewContent"
         :default-content="defaultPreviewContent"
         :current-channel="currentSalesChannel"
         :channels="salesChannels"
       />
-    </FlexCell>
+    </div>
+  </div>
 
-  </Flex>
 </template>
