@@ -38,7 +38,8 @@ const fetchPoints = async () => {
       variables: { filter: { productTranslation: { id: { exact: props.translationId } } } },
       fetchPolicy: 'network-only',
     });
-    bulletPoints.value = data?.productTranslationBulletPoints.edges.map((e: any) => e.node) || [];
+    bulletPoints.value =
+      data?.productTranslationBulletPoints.edges.map((e: any) => ({ ...e.node })) || [];
     initialBulletPoints.value = JSON.parse(JSON.stringify(bulletPoints.value));
     emit('update:bulletPoints', bulletPoints.value);
   } catch (e) {
@@ -48,7 +49,6 @@ const fetchPoints = async () => {
 
 onMounted(fetchPoints);
 watch(() => props.translationId, fetchPoints);
-watch(bulletPoints, (val) => emit('update:bulletPoints', val), { deep: true });
 
 const addBulletPoint = () => {
   if (bulletPoints.value.length >= 10) return;
