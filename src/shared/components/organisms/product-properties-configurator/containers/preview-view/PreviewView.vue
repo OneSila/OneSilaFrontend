@@ -15,6 +15,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['imaged-added']);
 
+
 </script>
 
 <template>
