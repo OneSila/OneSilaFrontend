@@ -359,7 +359,8 @@
       "progress": "Progress",
       "new": "New",
       "beta": "BETA",
-      "url": "URL"
+      "url": "URL",
+      "default": "Default"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"

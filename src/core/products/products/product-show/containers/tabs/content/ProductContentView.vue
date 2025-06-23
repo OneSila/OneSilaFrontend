@@ -4,20 +4,14 @@ import {useI18n} from 'vue-i18n';
 import {Product} from "../../../../configs";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../../apollo-client";
-import {getProductTranslationByLanguageQuery,
-        getProductContentByLanguageAndChannelQuery} from "../../../../../../../shared/api/queries/products.js";
-import {
-  updateProductTranslationMutation,
-  createProductTranslationMutation,
-  updateProductContentMutation,
-  createProductContentMutation,
-} from "../../../../../../../shared/api/mutations/products.js";
+import { getProductContentByLanguageAndChannelQuery, getProductContentByLanguageAndDefaultQuery } from "../../../../../../../shared/api/queries/products.js";
+import { createProductTranslationMutation, updateProductTranslationMutation } from "../../../../../../../shared/api/mutations/products.js";
 import { integrationsQuery } from "../../../../../../../shared/api/queries/integrations.js";
-import {Selector} from "../../../../../../../shared/components/atoms/selector";
-import {reactive, watch, ref, onMounted, computed} from "vue";
-import {translationLanguagesQuery} from '../../../../../../../shared/api/queries/languages.js';
-import {Toast} from "../../../../../../../shared/modules/toast";
-import {processGraphQLErrors} from "../../../../../../../shared/utils";
+import { Selector} from "../../../../../../../shared/components/atoms/selector";
+import { reactive, watch, ref, onMounted, computed } from "vue";
+import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
+import { Toast } from "../../../../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { IntegrationTypes } from "../../../../../../integrations/integrations/integrations";
 import SalesChannelTabs from "./SalesChannelTabs.vue";
 import ProductContentPreview from "./ProductContentPreview.vue";
@@ -87,46 +81,80 @@ onMounted(async () => {
 
 const setFormAndMutation = async (language, channel) => {
   try {
-    const {data} = await apolloClient.query({
-      query: getProductContentByLanguageAndChannelQuery,
-      variables: {languageCode: language, productId: props.product.id, salesChannelId: channel === 'default' ? null : channel},
-      fetchPolicy: 'network-only'
-    });
-
-    if (data && data.productContents.edges.length === 1) {
-      const translation = data.productContents.edges[0].node;
-      form.name = translation.name;
-      form.shortDescription = translation.shortDescription;
-      form.description = translation.description;
-      form.urlKey = translation.urlKey;
-      translationId.value = translation.id;
-      mutation.value = updateProductContentMutation;
-      previewContent.value = translation;
-    } else {
-      form.name = '';
-      form.shortDescription = '<p><br></p>';
-      form.description = '<p><br></p>';
-      form.urlKey = '';
-      translationId.value = null;
-      mutation.value = createProductContentMutation;
-      previewContent.value = null;
-    }
-    initialForm.value = {...form};
-
-    if (channel !== 'default') {
-      const { data: def } = await apolloClient.query({
-        query: getProductContentByLanguageAndChannelQuery,
-        variables: { languageCode: language, productId: props.product.id, salesChannelId: null },
+    if (channel === 'default') {
+      // Query where salesChannel is null (Default)
+      const { data } = await apolloClient.query({
+        query: getProductContentByLanguageAndDefaultQuery,
+        variables: { languageCode: language, productId: props.product.id },
         fetchPolicy: 'network-only'
       });
-      defaultPreviewContent.value = def?.productContents.edges[0]?.node || null;
-    } else {
+
+      if (data && data.productTranslations.edges.length === 1) {
+        const translation = data.productTranslations.edges[0].node;
+        form.name = translation.name;
+        form.shortDescription = translation.shortDescription;
+        form.description = translation.description;
+        form.urlKey = translation.urlKey;
+        translationId.value = translation.id;
+        mutation.value = updateProductTranslationMutation;
+        previewContent.value = translation;
+      } else {
+        form.name = '';
+        form.shortDescription = '<p><br></p>';
+        form.description = '<p><br></p>';
+        form.urlKey = '';
+        translationId.value = null;
+        mutation.value = createProductTranslationMutation;
+        previewContent.value = null;
+      }
+      initialForm.value = { ...form };
       defaultPreviewContent.value = null;
+
+    } else {
+      // Query with specific salesChannelId
+      const { data } = await apolloClient.query({
+        query: getProductContentByLanguageAndChannelQuery,
+        variables: {
+          languageCode: language,
+          productId: props.product.id,
+          salesChannelId: channel
+        },
+        fetchPolicy: 'network-only'
+      });
+
+      if (data && data.productTranslations.edges.length === 1) {
+        const translation = data.productTranslations.edges[0].node;
+        form.name = translation.name;
+        form.shortDescription = translation.shortDescription;
+        form.description = translation.description;
+        form.urlKey = translation.urlKey;
+        translationId.value = translation.id;
+        mutation.value = updateProductTranslationMutation;
+        previewContent.value = translation;
+      } else {
+        form.name = '';
+        form.shortDescription = '<p><br></p>';
+        form.description = '<p><br></p>';
+        form.urlKey = '';
+        translationId.value = null;
+        mutation.value = createProductTranslationMutation;
+        previewContent.value = null;
+      }
+      initialForm.value = { ...form };
+
+      // Fetch default translation for preview/fallback
+      const { data: def } = await apolloClient.query({
+        query: getProductContentByLanguageAndDefaultQuery,
+        variables: { languageCode: language, productId: props.product.id },
+        fetchPolicy: 'network-only'
+      });
+      defaultPreviewContent.value = def?.productTranslations.edges[0]?.node || null;
     }
   } catch (error) {
     console.error("Error fetching translation:", error);
   }
 };
+
 
 watch(currentLanguage, async (newLanguage, oldLanguage) => {
   if (oldLanguage === null) {
