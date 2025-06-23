@@ -249,6 +249,52 @@ export const deleteProductTranslationsMutation = gql`
   }
 `;
 
+export const createProductTranslationBulletPointMutation = gql`
+  mutation createProductTranslationBulletPoint($data: ProductTranslationBulletPointInput!) {
+    createProductTranslationBulletPoint(data: $data) {
+      id
+      text
+      sortOrder
+    }
+  }
+`;
+
+export const createProductTranslationBulletPointsMutation = gql`
+  mutation createProductTranslationBulletPoints($data: [ProductTranslationBulletPointInput!]!) {
+    createProductTranslationBulletPoints(data: $data) {
+      id
+      text
+      sortOrder
+    }
+  }
+`;
+
+export const updateProductTranslationBulletPointMutation = gql`
+  mutation updateProductTranslationBulletPoint($data: ProductTranslationBulletPointPartialInput!) {
+    updateProductTranslationBulletPoint(data: $data) {
+      id
+      text
+      sortOrder
+    }
+  }
+`;
+
+export const deleteProductTranslationBulletPointMutation = gql`
+  mutation deleteProductTranslationBulletPoint($id: GlobalID!) {
+    deleteProductTranslationBulletPoint(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteProductTranslationBulletPointsMutation = gql`
+  mutation deleteProductTranslationBulletPoints($ids: [GlobalID!]!) {
+    deleteProductTranslationBulletPoints(data: {ids: $ids}) {
+      id
+    }
+  }
+`;
+
 export const createConfigurableVariationMutation = gql`
   mutation createConfigurableVariation($data: ConfigurableVariationInput!) {
     createConfigurableVariation(data: $data) {

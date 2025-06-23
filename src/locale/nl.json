@@ -594,11 +594,13 @@
         "name": "Product Naam",
         "shortDescription": "Korte beschrijving van het product voor de snelle lezer.",
         "description": "Schrijf hier de lange product beschrijving die tot in detail gaat. Voor de geïnformeerde klant.",
-        "urlKey": "Voer URL sleutel in"
+        "urlKey": "Voer URL sleutel in",
+        "bulletPoint": "Voer bullet point in"
       },
       "labels": {
         "description": "Beschrijving",
-        "urlKey": "URL Sleutel"
+        "urlKey": "URL Sleutel",
+        "bulletPoints": "Opsommingpunten"
       }
     },
     "products": {

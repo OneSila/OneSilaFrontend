@@ -833,13 +833,15 @@
       "placeholders": {
         "language": "Select a language",
         "name": "Enter name",
-        "shortDescription": "Enter a short description",
-        "description": "Enter a detailed description",
-        "urlKey": "Enter URL key"
+      "shortDescription": "Enter a short description",
+      "description": "Enter a detailed description",
+        "urlKey": "Enter URL key",
+        "bulletPoint": "Enter bullet point"
       },
       "labels": {
         "description": "Description",
-        "urlKey": "URL Key"
+        "urlKey": "URL Key",
+        "bulletPoints": "Bullet Points"
       }
     },
     "products": {

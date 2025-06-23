@@ -147,6 +147,20 @@ export const getProductTranslationByLanguageQuery = gql`
   }
 `;
 
+export const productTranslationBulletPointsQuery = gql`
+  query ProductTranslationBulletPoints($filter: ProductTranslationBulletPointFilter) {
+    productTranslationBulletPoints(filters: $filter, order: { sortOrder: ASC }) {
+      edges {
+        node {
+          id
+          text
+          sortOrder
+        }
+      }
+    }
+  }
+`;
+
 export const configurableVariationsQuery = gql`
   query ConfigurableVariations($first: Int, $last: Int, $after: String, $before: String, $order: ConfigurableVariationOrder, $filter: ConfigurableVariationFilter) {
     configurableVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {

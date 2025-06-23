@@ -8,7 +8,13 @@ import {getProductTranslationByLanguageQuery} from "../../../../../../../shared/
 import {
   updateProductTranslationMutation,
   createProductTranslationMutation,
+  createProductTranslationBulletPointMutation,
+  createProductTranslationBulletPointsMutation,
+  updateProductTranslationBulletPointMutation,
+  deleteProductTranslationBulletPointMutation,
+  deleteProductTranslationBulletPointsMutation,
 } from "../../../../../../../shared/api/mutations/products.js";
+import { productTranslationBulletPointsQuery } from "../../../../../../../shared/api/queries/products.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
 import {TextEditor} from "../../../../../../../shared/components/atoms/input-text-editor";
@@ -22,6 +28,7 @@ import {createMediaProductThroughMutation, createVideosMutation} from "../../../
 import {processGraphQLErrors} from "../../../../../../../shared/utils";
 import {AiContentGenerator} from "../../../../../../../shared/components/organisms/ai-content-generator";
 import {AiContentTranslator} from "../../../../../../../shared/components/organisms/ai-content-translator";
+import TranslationBulletPoints, { BulletPoint } from "./TranslationBulletPoints.vue";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -39,6 +46,8 @@ const mutation = ref(null);
 const translationId = ref(null);
 const oldLang = ref(currentLanguage.value);
 const fieldErrors = ref<Record<string, string>>({});
+const bulletPoints = ref<BulletPoint[]>([]);
+const initialBulletPoints = ref<BulletPoint[]>([]);
 
 const cleanedData = (rawData) => {
   if (rawData && rawData.languages.length > 0) {
@@ -49,6 +58,30 @@ const cleanedData = (rawData) => {
     return rawData.languages;
   }
   return [];
+};
+
+const fetchBulletPoints = async () => {
+  if (!translationId.value) {
+    bulletPoints.value = [];
+    initialBulletPoints.value = [];
+    return;
+  }
+  const { data } = await apolloClient.query({
+    query: productTranslationBulletPointsQuery,
+    variables: { filter: { translation: { id: { exact: translationId.value } } } },
+    fetchPolicy: 'network-only'
+  });
+  if (data && data.productTranslationBulletPoints) {
+    bulletPoints.value = data.productTranslationBulletPoints.edges.map((e) => ({
+      id: e.node.id,
+      text: e.node.text,
+      sortOrder: e.node.sortOrder,
+    })).sort((a,b) => a.sortOrder - b.sortOrder);
+    initialBulletPoints.value = bulletPoints.value.map((p) => ({ ...p }));
+  } else {
+    bulletPoints.value = [];
+    initialBulletPoints.value = [];
+  }
 };
 
 const setFormAndMutation = async (language) => {
@@ -67,6 +100,7 @@ const setFormAndMutation = async (language) => {
       form.urlKey = translation.urlKey;
       translationId.value = translation.id;
       mutation.value = updateProductTranslationMutation;
+      await fetchBulletPoints();
     } else {
       form.name = '';
       form.shortDescription = '<p><br></p>';
@@ -74,6 +108,8 @@ const setFormAndMutation = async (language) => {
       form.urlKey = '';
       translationId.value = null;
       mutation.value = createProductTranslationMutation;
+      bulletPoints.value = [];
+      initialBulletPoints.value = [];
     }
     initialForm.value = {...form};
   } catch (error) {
@@ -117,10 +153,57 @@ const getVariables = () => {
   return {data: variables};
 };
 
-const onMutationCompleted = () => {
+const onMutationCompleted = async (response) => {
+  const dataKey = mutation.value === createProductTranslationMutation ? 'createProductTranslation' : 'updateProductTranslation';
+  const translation = response.data?.[dataKey];
+  if (translation?.id) {
+    translationId.value = translation.id;
+  }
+  await saveBulletPoints();
   Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = {...form};
   fieldErrors.value = {};
+};
+
+const saveBulletPoints = async () => {
+  if (!translationId.value) return;
+  const initialMap = Object.fromEntries(initialBulletPoints.value.map(p => [p.id, p]));
+  const toCreate = bulletPoints.value.filter(p => !p.id).map(p => ({
+    translation: { id: translationId.value },
+    text: p.text,
+    sortOrder: p.sortOrder,
+  }));
+  const toUpdate = bulletPoints.value.filter(p => p.id && initialMap[p.id] && (p.text !== initialMap[p.id].text || p.sortOrder !== initialMap[p.id].sortOrder)).map(p => ({ id: p.id, text: p.text, sortOrder: p.sortOrder }));
+  const currentIds = bulletPoints.value.filter(p => p.id).map(p => p.id);
+  const toDelete = initialBulletPoints.value.filter(p => p.id && !currentIds.includes(p.id)).map(p => p.id);
+
+  if (toDelete.length === 1) {
+    await apolloClient.mutate({ mutation: deleteProductTranslationBulletPointMutation, variables: { id: toDelete[0] } });
+  } else if (toDelete.length > 1) {
+    await apolloClient.mutate({ mutation: deleteProductTranslationBulletPointsMutation, variables: { ids: toDelete } });
+  }
+
+  for (const data of toUpdate) {
+    await apolloClient.mutate({ mutation: updateProductTranslationBulletPointMutation, variables: { data } });
+  }
+
+  if (toCreate.length === 1) {
+    const { data } = await apolloClient.mutate({ mutation: createProductTranslationBulletPointMutation, variables: { data: toCreate[0] } });
+    if (data?.createProductTranslationBulletPoint?.id) {
+      const target = bulletPoints.value.find(p => !p.id && p.text === toCreate[0].text);
+      if (target) target.id = data.createProductTranslationBulletPoint.id;
+    }
+  } else if (toCreate.length > 1) {
+    const { data } = await apolloClient.mutate({ mutation: createProductTranslationBulletPointsMutation, variables: { data: toCreate } });
+    if (data?.createProductTranslationBulletPoints) {
+      data.createProductTranslationBulletPoints.forEach((bp, index) => {
+        const target = bulletPoints.value.find(p => !p.id && p.sortOrder === toCreate[index].sortOrder);
+        if (target) target.id = bp.id;
+      });
+    }
+  }
+
+  initialBulletPoints.value = bulletPoints.value.map(p => ({ ...p }));
 };
 
 const handleGeneratedDescriptionContent =  (newVal) => {
@@ -273,6 +356,9 @@ const shortDescriptionToolbarOptions = [
           </div>
         </FlexCell>
         <FlexCell>
+          <TranslationBulletPoints v-model="bulletPoints" />
+        </FlexCell>
+        <FlexCell>
           <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
           <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full"/>
           <div class="mb-1 text-sm leading-6">
@@ -280,6 +366,13 @@ const shortDescriptionToolbarOptions = [
           </div>
         </FlexCell>
       </Flex>
+    </FlexCell>
+    <FlexCell class="hidden xl:block w-1/3 p-4">
+      <div v-if="bulletPoints.length">
+        <ul class="list-disc ml-6 mt-4">
+          <li v-for="p in bulletPoints" :key="p.sortOrder">{{ p.text }}</li>
+        </ul>
+      </div>
     </FlexCell>
 
   </Flex>
