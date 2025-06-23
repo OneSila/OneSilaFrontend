@@ -840,7 +840,8 @@
       },
       "labels": {
         "description": "Description",
-        "urlKey": "URL Key"
+        "urlKey": "URL Key",
+        "bulletPoints": "Bullet Points"
       },
       "warning": {
         "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."

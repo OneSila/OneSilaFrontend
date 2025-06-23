@@ -499,3 +499,17 @@ export const getBillOfMaterialQuery = gql`
   }
 `;
 
+
+export const productTranslationBulletPointsQuery = gql`
+  query ProductTranslationBulletPoints($filter: ProductTranslationBulletPointFilter) {
+    productTranslationBulletPoints(filters: $filter, order: { sortOrder: ASC }) {
+      edges {
+        node {
+          id
+          text
+          sortOrder
+        }
+      }
+    }
+  }
+`;

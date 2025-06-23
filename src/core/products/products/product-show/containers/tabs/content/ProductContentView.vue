@@ -16,6 +16,7 @@ import { IntegrationTypes } from "../../../../../../integrations/integrations/in
 import SalesChannelTabs from "./SalesChannelTabs.vue";
 import ProductContentPreview from "./ProductContentPreview.vue";
 import ProductContentForm from "./ProductContentForm.vue";
+import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -38,6 +39,8 @@ const salesChannels = ref<any[]>([]);
 const previewContent = ref<any | null>(null);
 const defaultPreviewContent = ref<any | null>(null);
 const fieldErrors = ref<Record<string, string>>({});
+const bulletPointsRef = ref<any>(null);
+const previewBulletPoints = ref<any[]>([]);
 
 
 const cleanedData = (rawData) => {
@@ -214,7 +217,16 @@ const getVariables = () => {
   return {data: variables};
 };
 
-const onMutationCompleted = () => {
+const onMutationCompleted = async (response) => {
+  const data = response?.data?.updateProductTranslation || response?.data?.createProductTranslation;
+  if (data && !translationId.value) {
+    translationId.value = data.id;
+    mutation.value = updateProductTranslationMutation;
+  }
+  try {
+    await bulletPointsRef.value?.save(translationId.value);
+    previewBulletPoints.value = bulletPointsRef.value?.bulletPoints || [];
+  } catch (e) { /* errors handled in component */ }
   Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = {...form};
   fieldErrors.value = {};
@@ -227,6 +239,15 @@ const handleGeneratedDescriptionContent =  (newVal) => {
 
 const handleGeneratedShortDescriptionContent =  (newVal) => {
   form.shortDescription = newVal;
+};
+
+const handleSave = async (mutate) => {
+  try {
+    const response = await mutate();
+    await onMutationCompleted(response);
+  } catch (e) {
+    handleError(e);
+  }
 };
 
 const handleError = (errors) => {
@@ -249,9 +270,9 @@ const shortDescriptionToolbarOptions = [
 
   <Flex end>
     <FlexCell>
-      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted" @error="handleError">
-        <template v-slot="{ mutate, loading, error }">
-          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
+      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
+        <template v-slot="{ mutate, loading }">
+          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="handleSave(mutate)">
             {{ t('shared.button.save') }}
           </Button>
         </template>
@@ -323,6 +344,11 @@ const shortDescriptionToolbarOptions = [
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
         />
+        <ProductTranslationBulletPoints
+          ref="bulletPointsRef"
+          :translation-id="translationId"
+          @update:bulletPoints="previewBulletPoints = $event"
+        />
       </div>
     </div>
 
@@ -340,6 +366,7 @@ const shortDescriptionToolbarOptions = [
         :default-content="defaultPreviewContent"
         :current-channel="currentSalesChannel"
         :channels="salesChannels"
+        :bullet-points="previewBulletPoints"
       />
     </div>
   </div>
