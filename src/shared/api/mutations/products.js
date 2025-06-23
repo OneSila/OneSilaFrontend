@@ -233,6 +233,30 @@ export const updateProductTranslationMutation = gql`
   }
 `;
 
+export const createProductContentMutation = gql`
+  mutation createProductContent($data: ProductContentInput!) {
+    createProductContent(data: $data) {
+      id
+      name
+      shortDescription
+      description
+      urlKey
+    }
+  }
+`;
+
+export const updateProductContentMutation = gql`
+  mutation updateProductContent($data: ProductContentPartialInput!) {
+    updateProductContent(data: $data) {
+      id
+      name
+      shortDescription
+      description
+      urlKey
+    }
+  }
+`;
+
 export const deleteProductTranslationMutation = gql`
   mutation deleteProductTranslation($id: GlobalID!) {
     deleteProductTranslation(data: {id: $id}) {

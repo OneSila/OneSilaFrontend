@@ -840,6 +840,9 @@
       "labels": {
         "description": "Description",
         "urlKey": "URL Key"
+      },
+      "warning": {
+        "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
       }
     },
     "products": {
