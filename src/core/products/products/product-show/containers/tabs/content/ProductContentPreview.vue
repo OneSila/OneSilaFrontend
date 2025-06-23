@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
+import { getContentFieldRules } from './contentFieldRules';
 
 const props = defineProps<{
   content: any | null;
@@ -37,6 +38,8 @@ const channelInfo = computed(() => {
   return { type: ch.type, label: cleanHostname(ch.hostname, ch.type) };
 });
 
+const fieldRules = computed(() => getContentFieldRules(channelInfo.value.type));
+
 function isEmptyContent(value: string | undefined | null): boolean {
   if (!value) return true;
 
@@ -50,15 +53,17 @@ const finalPreview = computed(() => {
   return {
     name: props.content?.name || base.name || '',
     shortDescription:
-      !isEmptyContent(props.content?.shortDescription)
-        ? props.content?.shortDescription
-        : (base.shortDescription || ''),
+      fieldRules.value.shortDescription
+        ? (!isEmptyContent(props.content?.shortDescription)
+            ? props.content?.shortDescription
+            : (base.shortDescription || ''))
+        : '',
     description:
       !isEmptyContent(props.content?.description)
         ? props.content?.description
         : (base.description || ''),
-    urlKey: props.content?.urlKey || base.urlKey || '',
-    bulletPoints: props.bulletPoints || [],
+    urlKey: fieldRules.value.urlKey ? (props.content?.urlKey || base.urlKey || '') : '',
+    bulletPoints: fieldRules.value.bulletPoints ? (props.bulletPoints || []) : [],
   };
 });
 
@@ -91,11 +96,14 @@ const previewUrl = computed(() => {
         </div>
       </div>
       <div class="w-2/3">
-        <div
+        <div v-if="fieldRules.shortDescription"
           class="min-h-16 text-gray-700"
           :class="{ 'opacity-50 italic': !props.content?.shortDescription && props.defaultContent }"
           v-html="finalPreview.shortDescription"
         />
+        <ul v-else-if="fieldRules.bulletPoints && finalPreview.bulletPoints.length" class="list-disc pl-6 text-gray-700">
+          <li v-for="bp in finalPreview.bulletPoints" :key="bp.id || bp.text">{{ bp.text }}</li>
+        </ul>
       </div>
     </div>
     <!-- Description below -->
@@ -105,7 +113,7 @@ const previewUrl = computed(() => {
         :class="{ 'opacity-50 italic': !props.content?.description && props.defaultContent }"
         v-html="finalPreview.description"
       />
-      <ul v-if="finalPreview.bulletPoints.length" class="list-disc pl-6 mt-2 text-gray-700">
+      <ul v-if="fieldRules.shortDescription && finalPreview.bulletPoints.length" class="list-disc pl-6 mt-2 text-gray-700">
         <li v-for="bp in finalPreview.bulletPoints" :key="bp.id || bp.text">{{ bp.text }}</li>
       </ul>
     </div>
