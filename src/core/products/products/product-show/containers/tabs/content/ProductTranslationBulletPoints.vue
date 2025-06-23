@@ -19,7 +19,10 @@ import { Toast } from '../../../../../../../shared/modules/toast';
 const { t } = useI18n();
 
 const props = defineProps<{ translationId: string | null }>();
-const emit = defineEmits<{ (e: 'update:bulletPoints', value: any[]): void }>();
+const emit = defineEmits<{
+  (e: 'update:bulletPoints', value: any[]): void;
+  (e: 'initial-bullet-points', value: any[]): void;
+}>();
 
 const bulletPoints = ref<any[]>([]);
 const initialBulletPoints = ref<any[]>([]);
@@ -29,7 +32,6 @@ const fetchPoints = async () => {
   if (!props.translationId) {
     bulletPoints.value = [];
     initialBulletPoints.value = [];
-    emit('update:bulletPoints', bulletPoints.value);
     return;
   }
   try {
@@ -41,7 +43,7 @@ const fetchPoints = async () => {
     bulletPoints.value =
       data?.productTranslationBulletPoints.edges.map((e: any) => ({ ...e.node })) || [];
     initialBulletPoints.value = JSON.parse(JSON.stringify(bulletPoints.value));
-    emit('update:bulletPoints', bulletPoints.value);
+    emit('initial-bullet-points', initialBulletPoints.value);
   } catch (e) {
     console.error('Failed to load bullet points', e);
   }
@@ -71,15 +73,26 @@ const save = async (newTranslationId?: string) => {
   const toCreate = bulletPoints.value
     .filter((bp) => !bp.id && bp.text.trim())
     .map((bp) => ({ text: bp.text, sortOrder: bp.sortOrder, productTranslation: { id: tId } }));
+
   const toUpdate = bulletPoints.value
     .filter((bp) => {
       const orig = initialBulletPoints.value.find((o) => o.id === bp.id);
-      return bp.id && orig && (bp.text !== orig.text || bp.sortOrder !== orig.sortOrder);
+      // Only update if it’s NOT empty after trimming
+      return bp.id && orig && bp.text.trim() && (bp.text !== orig.text || bp.sortOrder !== orig.sortOrder);
     })
     .map((bp) => ({ id: bp.id, text: bp.text, sortOrder: bp.sortOrder }));
-  const toDelete = initialBulletPoints.value
-    .filter((bp) => !bulletPoints.value.find((b) => b.id === bp.id))
-    .map((bp) => ({ id: bp.id }));
+
+  // Add: Delete bullet points that were present initially, but now are either gone OR emptied out
+  const toDelete = [
+    // Deleted entirely (removed from the array)
+    ...initialBulletPoints.value
+      .filter((bp) => !bulletPoints.value.find((b) => b.id === bp.id))
+      .map((bp) => ({ id: bp.id })),
+    // Or cleared text (exists, but text is empty)
+    ...bulletPoints.value
+      .filter((bp) => bp.id && !bp.text.trim())
+      .map((bp) => ({ id: bp.id }))
+];
 
 
   try {
@@ -102,13 +115,14 @@ const save = async (newTranslationId?: string) => {
       });
     }
     await fetchPoints();
+    return [...bulletPoints.value];
   } catch (errors) {
     const validationErrors = processGraphQLErrors(errors, t);
     fieldErrors.value = validationErrors;
     if (validationErrors['__all__']) {
       Toast.error(validationErrors['__all__']);
     }
-    throw errors;
+    return  [];
   }
 };
 

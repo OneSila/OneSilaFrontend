@@ -212,10 +212,11 @@ const onMutationCompleted = async (response) => {
     translationId.value = data.id;
     mutation.value = updateProductTranslationMutation;
   }
+  let latestBulletPoints = [];
   try {
-    await bulletPointsRef.value?.save(translationId.value);
-    // bullet points are emitted from the child component after saving
+    latestBulletPoints = await bulletPointsRef.value?.save(translationId.value) || [];
   } catch (e) { /* errors handled in component */ }
+  previewBulletPoints.value = latestBulletPoints;
   Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = {...form};
   fieldErrors.value = {};
@@ -336,7 +337,7 @@ const shortDescriptionToolbarOptions = [
         <ProductTranslationBulletPoints
           ref="bulletPointsRef"
           :translation-id="translationId"
-          @update:bulletPoints="previewBulletPoints = $event"
+          @initial-bullet-points="previewBulletPoints = [...$event]"
         />
       </div>
     </div>
