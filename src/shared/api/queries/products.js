@@ -147,6 +147,26 @@ export const getProductTranslationByLanguageQuery = gql`
   }
 `;
 
+export const getProductContentByLanguageAndChannelQuery = gql`
+  query getProductContentByLanguageAndChannel($languageCode: String!, $productId: GlobalID!, $salesChannelId: GlobalID) {
+    productContents(filters: {
+      language: {exact: $languageCode},
+      product: {id: {exact: $productId}},
+      salesChannel: {id: {exact: $salesChannelId}}
+    }) {
+      edges {
+        node {
+          id
+          name
+          shortDescription
+          description
+          urlKey
+        }
+      }
+    }
+  }
+`;
+
 export const configurableVariationsQuery = gql`
   query ConfigurableVariations($first: Int, $last: Int, $after: String, $before: String, $order: ConfigurableVariationOrder, $filter: ConfigurableVariationFilter) {
     configurableVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
