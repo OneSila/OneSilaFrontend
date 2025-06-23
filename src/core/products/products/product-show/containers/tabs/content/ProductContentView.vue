@@ -276,8 +276,8 @@ const shortDescriptionToolbarOptions = [
     </FlexCell>
   </Flex>
 
-  <Flex between class="mt-4">
-    <FlexCell class="w-40">
+  <Flex between wrap class="mt-4 gap-4">
+    <FlexCell class="w-full lg:w-40">
       <SalesChannelTabs
         v-model="currentSalesChannel"
         :channels="salesChannels"
@@ -285,19 +285,21 @@ const shortDescriptionToolbarOptions = [
       />
     </FlexCell>
 
-    <FlexCell class="w-full xl:w-1/2">
-      <ProductContentForm
-        :form="form"
-        :field-errors="fieldErrors"
-        :product-id="product.id"
-        :current-language="currentLanguage"
-        :short-description-toolbar-options="shortDescriptionToolbarOptions"
-        @description="handleGeneratedDescriptionContent"
-        @shortDescription="handleGeneratedShortDescriptionContent"
-      />
+    <FlexCell class="w-full lg:w-1/2 2xl:w-1/3 order-2 lg:order-none">
+      <div class="border border-gray-200 rounded p-4 bg-white">
+        <ProductContentForm
+          :form="form"
+          :field-errors="fieldErrors"
+          :product-id="product.id"
+          :current-language="currentLanguage"
+          :short-description-toolbar-options="shortDescriptionToolbarOptions"
+          @description="handleGeneratedDescriptionContent"
+          @shortDescription="handleGeneratedShortDescriptionContent"
+        />
+      </div>
     </FlexCell>
 
-    <FlexCell class="hidden xl:block xl:w-1/3">
+    <FlexCell class="w-full lg:w-1/2 2xl:w-2/3 order-3 lg:order-none">
       <ProductContentPreview
         :content="previewContent"
         :default-content="defaultPreviewContent"
