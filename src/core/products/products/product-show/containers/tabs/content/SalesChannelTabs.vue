@@ -38,8 +38,8 @@ const select = (val: string) => emit('update:modelValue', val);
 </script>
 
 <template>
-  <div>
-    <div class="overflow-y-auto max-h-[500px]">
+  <div class="md:pr-4 md:border-r md:border-gray-200">
+    <div class="flex overflow-x-auto md:block md:overflow-y-auto md:max-h-[500px] gap-2 md:gap-0">
       <div
         class="cursor-pointer flex items-center gap-2 p-2"
         :class="{ 'bg-primary text-white': modelValue === 'default' }"
