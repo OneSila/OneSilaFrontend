@@ -54,17 +54,6 @@ const cleanedData = (rawData) => {
   return [];
 };
 
-const cleanHostname = (hostname: string, type: string) => {
-  if (!hostname) return '';
-  if (type === IntegrationTypes.Amazon) {
-    return hostname;
-  }
-  try {
-    const url = new URL(hostname.startsWith('http') ? hostname : `https://${hostname}`);
-    const clean = url.hostname.replace(/^www\./i, '');
-    return clean.split('.')[0];
-  } catch { return hostname; }
-};
 
 const loadSalesChannels = async () => {
   try {

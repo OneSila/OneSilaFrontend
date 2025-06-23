@@ -591,8 +591,8 @@ export const deleteProductTranslationBulletPointMutation = gql`
 `;
 
 export const deleteProductTranslationBulletPointsMutation = gql`
-  mutation deleteProductTranslationBulletPoints($ids: [GlobalID!]!) {
-    deleteProductTranslationBulletPoints(data: {ids: $ids}) {
+  mutation deleteProductTranslationBulletPoints($data: [NodeInput!]!) {
+    deleteProductTranslationBulletPoints(data: $data) {
       id
     }
   }

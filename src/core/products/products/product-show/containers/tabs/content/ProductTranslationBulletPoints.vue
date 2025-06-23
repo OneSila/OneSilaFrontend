@@ -35,7 +35,7 @@ const fetchPoints = async () => {
   try {
     const { data } = await apolloClient.query({
       query: productTranslationBulletPointsQuery,
-      variables: { filter: { translation: { id: { exact: props.translationId } } } },
+      variables: { filter: { productTranslation: { id: { exact: props.translationId } } } },
       fetchPolicy: 'network-only',
     });
     bulletPoints.value = data?.productTranslationBulletPoints.edges.map((e: any) => e.node) || [];
@@ -70,7 +70,7 @@ const save = async (newTranslationId?: string) => {
 
   const toCreate = bulletPoints.value
     .filter((bp) => !bp.id && bp.text.trim())
-    .map((bp) => ({ text: bp.text, sortOrder: bp.sortOrder, translation: { id: tId } }));
+    .map((bp) => ({ text: bp.text, sortOrder: bp.sortOrder, productTranslation: { id: tId } }));
   const toUpdate = bulletPoints.value
     .filter((bp) => {
       const orig = initialBulletPoints.value.find((o) => o.id === bp.id);
@@ -79,7 +79,8 @@ const save = async (newTranslationId?: string) => {
     .map((bp) => ({ id: bp.id, text: bp.text, sortOrder: bp.sortOrder }));
   const toDelete = initialBulletPoints.value
     .filter((bp) => !bulletPoints.value.find((b) => b.id === bp.id))
-    .map((bp) => bp.id);
+    .map((bp) => ({ id: bp.id }));
+
 
   try {
     if (toCreate.length) {
@@ -97,7 +98,7 @@ const save = async (newTranslationId?: string) => {
     if (toDelete.length) {
       await apolloClient.mutate({
         mutation: deleteProductTranslationBulletPointsMutation,
-        variables: { ids: toDelete },
+        variables: { data: toDelete },
       });
     }
     await fetchPoints();
@@ -116,19 +117,32 @@ defineExpose({ save });
 
 <template>
   <div class="mt-4">
-    <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
+    <Flex middle between>
+      <FlexCell>
+        <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
+      </FlexCell>
+      <FlexCell>
+        <div v-if="bulletPoints.length < 10" class="mt-2">
+          <Button class="btn btn-outline-primary btn-sm" @click="addBulletPoint">
+            <Icon name="plus" />
+          </Button>
+        </div>
+      </FlexCell>
+    </Flex>
     <VueDraggableNext v-model="bulletPoints" class="mt-2 space-y-2" @end="onReorder">
-      <div v-for="(point, index) in bulletPoints" :key="point.id || index" class="flex items-start gap-2">
-        <TextInput v-model="point.text" class="w-full" />
-        <Button class="btn btn-outline-danger" @click="removeBulletPoint(index)">
-          <Icon name="trash" />
-        </Button>
-      </div>
+      <Flex between middle v-for="(point, index) in bulletPoints" :key="point.id || index" class="gap-2 w-full">
+        <FlexCell>
+          <Icon class="text-primary" name="fa-up-down-left-right" />
+        </FlexCell>
+        <FlexCell grow>
+          <TextInput v-model="point.text" class="w-full" />
+        </FlexCell>
+        <FlexCell>
+          <Button class="btn btn-sm btn-outline-danger" @click="removeBulletPoint(index)">
+            <Icon name="trash" />
+          </Button>
+        </FlexCell>
+      </Flex>
     </VueDraggableNext>
-    <div v-if="bulletPoints.length < 10" class="mt-2">
-      <Button class="btn btn-outline-primary" @click="addBulletPoint">
-        <Icon name="plus" />
-      </Button>
-    </div>
   </div>
 </template>
