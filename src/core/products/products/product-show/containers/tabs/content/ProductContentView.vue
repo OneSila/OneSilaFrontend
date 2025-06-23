@@ -214,7 +214,7 @@ const onMutationCompleted = async (response) => {
   }
   try {
     await bulletPointsRef.value?.save(translationId.value);
-    previewBulletPoints.value = bulletPointsRef.value?.bulletPoints || [];
+    // bullet points are emitted from the child component after saving
   } catch (e) { /* errors handled in component */ }
   Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = {...form};
