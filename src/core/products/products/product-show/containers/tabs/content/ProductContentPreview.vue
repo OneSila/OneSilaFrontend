@@ -7,6 +7,7 @@ const props = defineProps<{
   defaultContent: any | null;
   currentChannel: string;
   channels: any[];
+  bulletPoints?: any[];
 }>();
 
 const cleanHostname = (hostname: string, type: string) => {
@@ -57,6 +58,7 @@ const finalPreview = computed(() => {
         ? props.content?.description
         : (base.description || ''),
     urlKey: props.content?.urlKey || base.urlKey || '',
+    bulletPoints: props.bulletPoints || [],
   };
 });
 
@@ -103,6 +105,9 @@ const previewUrl = computed(() => {
         :class="{ 'opacity-50 italic': !props.content?.description && props.defaultContent }"
         v-html="finalPreview.description"
       />
+      <ul v-if="finalPreview.bulletPoints.length" class="list-disc pl-6 mt-2 text-gray-700">
+        <li v-for="bp in finalPreview.bulletPoints" :key="bp.id || bp.text">{{ bp.text }}</li>
+      </ul>
     </div>
   </div>
 </template>
