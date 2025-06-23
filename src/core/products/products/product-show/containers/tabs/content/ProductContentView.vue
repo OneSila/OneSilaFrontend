@@ -154,6 +154,11 @@ const setFormAndMutation = async (language, channel) => {
   } catch (error) {
     console.error("Error fetching translation:", error);
   }
+
+  if (fieldRules.value.bulletPoints && bulletPointsRef.value?.fetchPoints) {
+    previewBulletPoints.value = await bulletPointsRef.value.fetchPoints();
+  }
+
 };
 
 

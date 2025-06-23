@@ -48,7 +48,7 @@ const emit = defineEmits<{
 
 <template>
   <Flex vertical>
-    <FlexCell v-if="showShortDescription">
+    <FlexCell>
       <Flex  class="gap-4">
         <FlexCell center>
           <Label semi-bold>{{ t('shared.labels.name') }}</Label>

@@ -32,7 +32,7 @@ const fetchPoints = async () => {
   if (!props.translationId) {
     bulletPoints.value = [];
     initialBulletPoints.value = [];
-    return;
+    return [];
   }
   try {
     const { data } = await apolloClient.query({
@@ -44,9 +44,12 @@ const fetchPoints = async () => {
       data?.productTranslationBulletPoints.edges.map((e: any) => ({ ...e.node })) || [];
     initialBulletPoints.value = JSON.parse(JSON.stringify(bulletPoints.value));
     emit('initial-bullet-points', initialBulletPoints.value);
+    return [...initialBulletPoints.value];
   } catch (e) {
     console.error('Failed to load bullet points', e);
   }
+
+  return [];
 };
 
 onMounted(fetchPoints);
@@ -126,7 +129,7 @@ const save = async (newTranslationId?: string) => {
   }
 };
 
-defineExpose({ save });
+defineExpose({ save, fetchPoints });
 </script>
 
 <template>
