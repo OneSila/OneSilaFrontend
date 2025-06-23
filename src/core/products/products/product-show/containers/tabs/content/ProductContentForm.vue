@@ -30,6 +30,14 @@ const props = defineProps({
     type: Array as PropType<any[]>,
     required: true,
   },
+  showShortDescription: {
+    type: Boolean,
+    default: true,
+  },
+  showUrlKey: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits<{
@@ -40,7 +48,7 @@ const emit = defineEmits<{
 
 <template>
   <Flex vertical>
-    <FlexCell>
+    <FlexCell v-if="showShortDescription">
       <Flex  class="gap-4">
         <FlexCell center>
           <Label semi-bold>{{ t('shared.labels.name') }}</Label>
@@ -63,7 +71,7 @@ const emit = defineEmits<{
       </div>
     </FlexCell>
 
-    <FlexCell>
+    <FlexCell v-if="showShortDescription">
       <Flex class="gap-4">
         <FlexCell center>
           <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
@@ -130,7 +138,7 @@ const emit = defineEmits<{
         <p class="text-red-500" v-if="fieldErrors['description']">{{ fieldErrors['description'] }}</p>
       </div>
     </FlexCell>
-    <FlexCell>
+    <FlexCell v-if="showUrlKey">
       <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
       <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full"/>
       <div class="mb-1 text-sm leading-6">

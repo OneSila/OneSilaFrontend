@@ -13,6 +13,7 @@ import { translationLanguagesQuery } from '../../../../../../../shared/api/queri
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { IntegrationTypes } from "../../../../../../integrations/integrations/integrations";
+import { getContentFieldRules } from './contentFieldRules';
 import SalesChannelTabs from "./SalesChannelTabs.vue";
 import ProductContentPreview from "./ProductContentPreview.vue";
 import ProductContentForm from "./ProductContentForm.vue";
@@ -41,6 +42,14 @@ const defaultPreviewContent = ref<any | null>(null);
 const fieldErrors = ref<Record<string, string>>({});
 const bulletPointsRef = ref<any>(null);
 const previewBulletPoints = ref<any[]>([]);
+
+const currentChannelType = computed(() => {
+  if (currentSalesChannel.value === 'default') return 'default';
+  const ch = salesChannels.value.find((c: any) => c.id === currentSalesChannel.value);
+  return ch?.type || 'default';
+});
+
+const fieldRules = computed(() => getContentFieldRules(currentChannelType.value));
 
 
 const cleanedData = (rawData) => {
@@ -159,6 +168,12 @@ watch(currentSalesChannel, async (newChannel, oldChannelVal) => {
   if (oldChannelVal === null) {
     await setFormAndMutation(currentLanguage.value, newChannel);
     oldChannel.value = newChannel;
+  }
+});
+
+watch(currentChannelType, (newType) => {
+  if (!getContentFieldRules(newType).bulletPoints) {
+    previewBulletPoints.value = [];
   }
 });
 
@@ -331,10 +346,13 @@ const shortDescriptionToolbarOptions = [
           :product-id="product.id"
           :current-language="currentLanguage"
           :short-description-toolbar-options="shortDescriptionToolbarOptions"
+          :show-short-description="fieldRules.shortDescription"
+          :show-url-key="fieldRules.urlKey"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
         />
         <ProductTranslationBulletPoints
+          v-if="fieldRules.bulletPoints"
           ref="bulletPointsRef"
           :translation-id="translationId"
           @initial-bullet-points="previewBulletPoints = [...$event]"
@@ -356,7 +374,7 @@ const shortDescriptionToolbarOptions = [
         :default-content="defaultPreviewContent"
         :current-channel="currentSalesChannel"
         :channels="salesChannels"
-        :bullet-points="previewBulletPoints"
+        :bullet-points="fieldRules.bulletPoints ? previewBulletPoints : []"
       />
     </div>
   </div>
