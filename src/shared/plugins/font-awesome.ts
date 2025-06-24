@@ -149,7 +149,8 @@ import {
   faGem,
   faCircle,
   faGauge,
-  faClone
+  faClone,
+  faUpDownLeftRight
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -299,6 +300,7 @@ library.add(faGem as IconDefinition);
 library.add(faCircle as IconDefinition);
 library.add(faGauge as IconDefinition);
 library.add(faClone as IconDefinition);
+library.add(faUpDownLeftRight as IconDefinition);
 
 
 export default {
