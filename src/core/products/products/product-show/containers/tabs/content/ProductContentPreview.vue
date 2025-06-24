@@ -76,7 +76,7 @@ const previewUrl = computed(() => {
 
 
 <template>
-  <div class="sticky top-20 rounded shadow bg-white border p-0 max-w-2xl mx-auto max-h-[520px] overflow-y-auto custom-scrollbar">
+  <div class="sticky w-full top-20 rounded shadow bg-white border p-0 max-h-[520px] overflow-y-auto custom-scrollbar">
     <!-- Fake Browser Bar -->
     <div class="flex items-center bg-gray-100 border-b border-gray-200 px-5 py-2 rounded-t">
       <div class="w-3 h-3 rounded-full bg-red-400 mr-2"></div>

@@ -38,8 +38,15 @@ const select = (val: string) => emit('update:modelValue', val);
 </script>
 
 <template>
-  <div class="md:border-r md:border-gray-200">
-    <div class="flex overflow-x-auto md:block md:overflow-y-auto md:max-h-[500px] gap-2 md:gap-0">
+  <div class="lg:border-l lg:border-gray-200">
+    <div
+      class="
+        flex overflow-x-auto custom-scrollbar
+        lg:block lg:overflow-y-auto lg:max-h-[500px] gap-2 lg:gap-0
+        max-w-[200px] sm:max-w-none
+      "
+    >
+      <!-- Default channel -->
       <div
         class="cursor-pointer flex items-center gap-2 p-2"
         :class="{ 'bg-primary text-white': modelValue === 'default' }"
@@ -48,6 +55,7 @@ const select = (val: string) => emit('update:modelValue', val);
         <Icon name="store" class="w-4 h-4" />
         {{ t('shared.labels.default') }}
       </div>
+      <!-- Other channels -->
       <div
         v-for="channel in channels"
         :key="channel.id"
@@ -63,8 +71,28 @@ const select = (val: string) => emit('update:modelValue', val);
         {{ cleanHostname(channel.hostname, channel.type) }}
       </div>
     </div>
-    <div v-if="modelValue !== 'default'" class="text-xs text-orange-700 mt-2">
-      {{ t('products.translation.warning.inheritFromDefault') }}
-    </div>
   </div>
 </template>
+
+<style scoped>
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #c0c0c0;
+}
+
+</style>

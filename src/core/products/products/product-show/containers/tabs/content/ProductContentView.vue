@@ -279,10 +279,13 @@ const shortDescriptionToolbarOptions = [
 <template>
 
   <Flex end>
+    <FlexCell class="block lg:hidden">
+      <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+    </FlexCell>
     <FlexCell>
       <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
         <template v-slot="{ mutate, loading }">
-          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="handleSave(mutate)">
+          <Button :customClass="'btn btn-primary mx-2'" :disabled="loading" @click="handleSave(mutate)">
             {{ t('shared.button.save') }}
           </Button>
         </template>
@@ -307,6 +310,15 @@ const shortDescriptionToolbarOptions = [
     </FlexCell>
   </Flex>
 
+  <Flex v-if="currentSalesChannel !== 'default'" class=" mt-2 block lg:hidden">
+    <FlexCell>
+      <div class="text-xs text-orange-700">
+        {{ t('products.translation.warning.inheritFromDefault') }}
+      </div>
+    </FlexCell>
+  </Flex>
+
+
   <hr class="mt-4">
 
   <div
@@ -319,29 +331,14 @@ const shortDescriptionToolbarOptions = [
       2xl:grid-cols-10
     "
   >
-    <!-- Sales Channel Tabs -->
-    <div
-      class="
-        col-span-1
-        lg:col-span-12
-        xl:col-span-2
-        2xl:col-span-2
-      "
-    >
-      <SalesChannelTabs
-        v-model="currentSalesChannel"
-        :channels="salesChannels"
-        @update:modelValue="handleSalesChannelSelection"
-      />
-    </div>
 
     <!-- Product Content Form -->
     <div
       class="
         col-span-1
-        lg:col-span-7
-        xl:col-span-4
-        2xl:col-span-4
+        lg:col-span-6
+        xl:col-span-5
+        2xl:col-span-5
       "
     >
       <div class="p-2 bg-white">
@@ -369,18 +366,32 @@ const shortDescriptionToolbarOptions = [
     <div
       class="
         col-span-1
-        lg:col-span-5
-        xl:col-span-4
-        2xl:col-span-4
+        lg:col-span-6
+        xl:col-span-5
+        2xl:col-span-5
       "
     >
-      <ProductContentPreview
-        :content="previewContent"
-        :default-content="defaultPreviewContent"
-        :current-channel="currentSalesChannel"
-        :channels="salesChannels"
-        :bullet-points="fieldRules.bulletPoints ? previewBulletPoints : []"
-      />
+      <Flex vertical gap="4">
+      <FlexCell class="hidden lg:block ml-auto w-52">
+          <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+        </FlexCell>
+        <FlexCell class="w-full">
+          <ProductContentPreview
+            :content="previewContent"
+            :default-content="defaultPreviewContent"
+            :current-channel="currentSalesChannel"
+            :channels="salesChannels"
+            :bullet-points="fieldRules.bulletPoints ? previewBulletPoints : []"
+          />
+        <Flex v-if="currentSalesChannel !== 'default'" class="mt-2 hidden lg:block">
+          <FlexCell>
+            <div class="text-xs text-orange-700">
+              {{ t('products.translation.warning.inheritFromDefault') }}
+            </div>
+          </FlexCell>
+        </Flex>
+        </FlexCell>
+      </Flex>
     </div>
   </div>
 
