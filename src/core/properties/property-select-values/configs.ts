@@ -28,18 +28,16 @@ export const baseFormConfigConstructor = (
     propertyId: string | null = null,
     addImage: boolean = true,
     redirectToRules: boolean = false,
+    amazonRuleId: string | null = null,
 ): FormConfig => ({
     cols: 1,
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-      submitUrl: redirectToRules
-        ? { name: 'properties.rule.list' }
-        : propertyId !== null
-          ? { name: 'properties.properties.show', params: { id: propertyId }, query: { tab: 'values' } }
-          : { name: 'properties.values.list' },
+    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId),
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
+    ...(redirectToRules && amazonRuleId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
     fields: [
         getPropertyField(t, propertyId, type),
         {
@@ -57,7 +55,38 @@ export const baseFormConfigConstructor = (
     ],
 });
 
-export const selectValueOnTheFlyConfig = (t: Function, propertyId): CreateOnTheFly => ({
+const getSubmitUrl = (
+    redirectToRules: boolean,
+    propertyId: string | null,
+    amazonRuleId: string | null,
+) => {
+    if (redirectToRules && amazonRuleId) {
+        const [ruleId, integrationId, salesChannelId, wizard] = amazonRuleId.split('__');
+        const url: any = { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: ruleId } };
+        if (integrationId) {
+            url.query = { integrationId } as any;
+            if (salesChannelId) {
+                url.query.salesChannelId = salesChannelId;
+            }
+            if (wizard) {
+                url.query.wizard = wizard;
+            }
+        }
+        return url;
+    }
+
+    if (redirectToRules) {
+        return { name: 'properties.rule.list' };
+    }
+
+    if (propertyId !== null) {
+        return { name: 'properties.properties.show', params: { id: propertyId }, query: { tab: 'values' } };
+    }
+
+    return { name: 'properties.values.list' };
+};
+
+export const selectValueOnTheFlyConfig = (t: Function, propertyId, defaultValue: string | null = null): CreateOnTheFly => ({
     config: {
         cols: 1,
         type: FormType.CREATE,
@@ -76,10 +105,11 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId): CreateOnTheF
                 type: FieldType.Text,
                 name: 'value',
                 label: t('properties.values.show.title'),
-                placeholder: t('properties.values.placeholders.value')
+                placeholder: t('properties.values.placeholders.value'),
             },
         ],
-    }
+    },
+      ...(defaultValue ? { defaults: { value: defaultValue } } : {}),
 })
 
 export const editFormConfigConstructor = (

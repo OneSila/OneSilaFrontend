@@ -15,12 +15,26 @@ const { t } = useI18n();
 const auth = injectAuth();
 const user = ref(auth.user)
 const router = useRouter();
+const previousHasAmazon = ref<boolean | null>(null);
 
 const logout = async () => {
 
   await removeAuth(auth);
   router.replace({ name: 'auth.login' });
 };
+
+const handleSubscriptionResult = (data: any) => {
+  const current = data?.myMultiTenantCompany?.hasAmazonIntegration ?? false; // default to false
+  const previous = auth.user.company?.hasAmazonIntegration ?? false;
+
+  if (auth.user.company && current !== previous) {
+    auth.user.company.hasAmazonIntegration = current;
+    localStorage.setItem('auth_user', JSON.stringify(auth.user));
+  }
+
+  previousHasAmazon.value = current;
+};
+
 
 </script>
 
@@ -47,7 +61,7 @@ const logout = async () => {
                       <Icon name="gem" size="xl" class="text-purple-600 mr-2" />
 
 
-                        <ApolloSubscription :subscription="aiPointsSubscriptions" ref="apolloSubRef">
+                        <ApolloSubscription :subscription="aiPointsSubscriptions"  @result-updated="handleSubscriptionResult" ref="apolloSubRef">
                           <template v-slot:default="{ loading, error, result }">
                             <template v-if="!loading && result">
                               <span :class="{'text-red-600': (result as any).myMultiTenantCompany.aiPoints < 0}">

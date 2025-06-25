@@ -9,6 +9,7 @@ const result = ref(null);
 const error = ref(null);
 const loading = ref(true);
 let subscriptionObserver;
+const emit = defineEmits(['result-updated']);
 
 const subscribe = () => {
   const observable = apolloClient.subscribe({
@@ -20,6 +21,7 @@ const subscribe = () => {
     next: ({data}) => {
       result.value = data;
       loading.value = false;
+      emit('result-updated', data);
     },
     error: (e) => {
       error.value = e;

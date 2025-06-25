@@ -171,6 +171,52 @@ export const getAmazonChannelQuery = gql`
   }
 `;
 
+export const amazonChannelsQuery = gql`
+  query amazonChannelsQuery(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonSalesChannelOrder
+    $filters: AmazonSalesChannelFilter
+  ) {
+    amazonChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          region
+          country
+          createdAt
+          integrationPtr {
+            id
+          }
+          saleschannelPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+
 
 // Sales Channel Integration Pricelist Queries
 export const salesChannelIntegrationPricelistsQuery = gql`
@@ -480,6 +526,245 @@ export const magentoRemoteAttributeSetsQuery = gql`
     magentoRemoteAttributeSets(salesChannelId: $salesChannelId) {
       id
       name
+    }
+  }
+`;
+
+// Amazon Property Queries
+export const amazonPropertiesQuery = gql`
+  query AmazonProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonPropertyOrder
+    $filter: AmazonPropertyFilter
+  ) {
+    amazonProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          code
+          name
+          type
+          allowsUnmappedValues
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonPropertyQuery = gql`
+  query getAmazonProperty($id: GlobalID!) {
+    amazonProperty(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      code
+      name
+      type
+      allowsUnmappedValues
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
+// Amazon Property Select Value Queries
+export const amazonPropertySelectValuesQuery = gql`
+  query AmazonPropertySelectValues(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonPropertySelectValueOrder
+    $filter: AmazonPropertySelectValueFilter
+  ) {
+    amazonPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          amazonProperty {
+            id
+            name
+            mappedLocally
+            mappedRemotely
+          }
+          marketplace {
+            id
+            name
+          }
+          remoteValue
+          remoteName
+          localInstance {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonPropertySelectValueQuery = gql`
+  query getAmazonPropertySelectValue($id: GlobalID!) {
+    amazonPropertySelectValue(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      amazonProperty {
+        id
+        name
+      }
+      marketplace {
+        id
+        name
+      }
+      remoteValue
+      remoteName
+      localInstance {
+        id
+        value
+      }
+    }
+  }
+`;
+
+// Amazon Product Type Queries
+export const amazonProductTypesQuery = gql`
+  query AmazonProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonProductTypeOrder
+    $filter: AmazonProductTypeFilter
+  ) {
+    amazonProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          productTypeCode
+          name
+          localInstance {
+            id
+            value
+            productType {
+              id
+              value
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonProductTypeQuery = gql`
+  query getAmazonProductType($id: GlobalID!) {
+    amazonProductType(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      productTypeCode
+      name
+      localInstance {
+        id
+        value
+        productType {
+          id
+          value
+        }
+      }
+    }
+  }
+`;export const amazonImportProcessesQuery = gql`
+  query AmazonImportProcesses(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: AmazonSalesChannelImportOrder,
+    $filter: AmazonSalesChannelImportFilter
+  ) {
+    amazonImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          status
+          percentage
+          createdAt
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `;
