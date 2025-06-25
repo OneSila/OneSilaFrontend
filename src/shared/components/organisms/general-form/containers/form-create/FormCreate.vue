@@ -81,5 +81,9 @@ watch(() => props.fieldsToClear, (fields) => {
       <FormLayout :config="config" :form="form" :errors="outsideErrors !== null && outsideErrors !== undefined ? outsideErrors : errors" />
     </div>
   </div>
-  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" />
+  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" >
+    <template #additional-button>
+      <slot name="additional-button" />
+    </template>
+  </SubmitButtons>
 </template>

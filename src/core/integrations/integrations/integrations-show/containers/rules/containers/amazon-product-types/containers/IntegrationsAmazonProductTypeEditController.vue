@@ -152,18 +152,16 @@ const handleFormUpdate = (form) => {
         ]" />
     </template>
 
-    <template v-slot:buttons>
-        <div>
+    <template v-slot:content>
+      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" >
+        <template #additional-button>
           <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`, value: formData.name } }">
-            <Button type="button" class="btn btn-primary">
-                {{  t('properties.rule.create.title') }}
+            <Button type="button" class="btn btn-info">
+              {{ t('integrations.show.generateProductType') }}
             </Button>
           </Link>
-      </div>
-    </template>
-
-    <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" />
+        </template>
+      </GeneralForm>
     </template>
   </GeneralTemplate>
 </template>

@@ -359,7 +359,8 @@
       "progress": "Progress",
       "new": "New",
       "beta": "BETA",
-      "url": "URL"
+      "url": "URL",
+      "default": "Default"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -839,7 +840,11 @@
       },
       "labels": {
         "description": "Description",
-        "urlKey": "URL Key"
+        "urlKey": "URL Key",
+        "bulletPoints": "Bullet Points"
+      },
+      "warning": {
+        "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
       }
     },
     "products": {
@@ -2213,7 +2218,9 @@
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values"
-      }
+      },
+      "generateProperty": "Generate Property",
+      "generateProductType": "Generate Product Type"
     },
     "create": {
       "title": "Create Integration",

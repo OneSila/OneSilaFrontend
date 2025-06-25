@@ -243,6 +243,8 @@ useShiftBackspaceKeyboardListener(goBack);
           </template>
         </ApolloAlertMutation>
 
+        <slot name="additional-button" />
+
         <ApolloMutation v-if="config.addSubmitAndContinue" :mutation="config.mutation" @done="handleSubmitAndContinueDone" @error="handleError">
           <template v-slot="{ mutate, loading }">
             <SecondaryButton ref="submitContinueButtonRef" :disabled="loading" @click="cleanupAndMutate(mutate)">{{ config.submitAndContinueLabel }}</SecondaryButton>

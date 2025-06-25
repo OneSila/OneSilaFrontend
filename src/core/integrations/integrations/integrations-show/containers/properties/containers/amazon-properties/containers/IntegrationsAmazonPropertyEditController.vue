@@ -116,22 +116,21 @@ const handleFormUpdate = (form) => {
           { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'properties'} }, name: t('integrations.show.amazon.title') }
         ]" />
     </template>
-    <template v-slot:buttons>
-        <div>
+    <template v-slot:content>
+      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" >
+        <template #additional-button>
           <Link :path="{ name: 'properties.properties.create', query: {
             amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
             name: formData.name,
             type: formData.type,
             amazonWizard: isWizard ? '1' : '0',
             ...(amazonCreateValue ? { amazonCreateValue } : {}) } }">
-            <Button type="button" class="btn btn-primary">
-                {{  t('properties.properties.create.title') }}
+            <Button type="button" class="btn btn-info">
+              {{ t('integrations.show.generateProperty') }}
             </Button>
           </Link>
-      </div>
-    </template>
-    <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" />
+        </template>
+      </GeneralForm>
     </template>
   </GeneralTemplate>
 </template>

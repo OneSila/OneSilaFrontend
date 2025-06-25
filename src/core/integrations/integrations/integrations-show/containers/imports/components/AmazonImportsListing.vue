@@ -13,6 +13,7 @@ import {
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { getStatusBadgeMap, SalesChannelSubscriptionResult } from "../configs";
 import apolloClient from "../../../../../../../../apollo-client";
+import {Icon} from "../../../../../../../shared/components/atoms/icon";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const { t } = useI18n();
