@@ -2241,6 +2241,21 @@
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "Woocommerce integration is coming soon.",
+          "woocommerceInfoModal": {
+            "title": "How to connect your WooCommerce store",
+            "section": {
+              "integrationTitle": "Generate API keys in WooCommerce",
+              "integrationDescription": "Follow these steps to create an API key in your WooCommerce admin:",
+              "integrationStep1": "Go to your WordPress admin.",
+              "integrationStep2": "Under the WooCommerce section, click Settings.",
+              "integrationStep3": "Find the tab 'Advanced' and click it.",
+              "integrationStep4": "Click the sub-tab 'REST API'.",
+              "integrationStep5": "Click 'Add Key'.",
+              "integrationStep6": "Fill in the key settings: description as 'OneSila' (or preferred name), choose the user and set permissions to 'Read/Write'.",
+              "integrationStep7": "Click Generate API Key.",
+              "integrationStep8": "Copy the Consumer Key and Consumer Secret for this integration."
+            }
+          },
           "magentoInfoModal": {
           "title": "How to connect your Magento store",
             "section": {
