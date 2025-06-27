@@ -330,6 +330,7 @@ export interface SalesChannelViewAssign {
   id: string;
   remoteUrl: string;
   remoteProductPercentage: number;
+  formattedIssues?: { message?: string | null; severity?: string | null }[];
   product: SalesChannelViewAssignProduct;
   salesChannelView: SalesChannelView;
   remoteProduct: RemoteProduct;
