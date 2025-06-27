@@ -38,7 +38,7 @@ const props = defineProps<{
       </FlexCell>
       <FlexCell center grow>
         <Link v-if="field.clickable" :path="field.clickUrl" :title="modelValue">{{ shortenText(modelValue, 64) }}</Link>
-        <span :title="modelValue" v-else>{{ shortenText(modelValue, 64) }}</span>
+        <span :title="modelValue != null ? modelValue.toString() : undefined" v-else>{{ shortenText(modelValue, 64) }}</span>
       </FlexCell>
     </Flex>
   </div>
