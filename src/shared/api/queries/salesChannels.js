@@ -157,6 +157,7 @@ export const getAmazonChannelQuery = gql`
       importOrders
       accessToken
       refreshTokenExpiration
+      expirationDate
       region
       country
       firstImportComplete

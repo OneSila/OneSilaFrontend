@@ -2320,7 +2320,7 @@
       "vendorProperty": "Vendor Property",
       "region": "Region",
       "country": "Country",
-      "refreshTokenExpiration": "Refresh Token Expiration",
+      "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data"
     },
     "placeholders": {
