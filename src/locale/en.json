@@ -2411,6 +2411,9 @@
       "modal": {
         "logs": {
           "title": "Logs"
+        },
+        "issues": {
+          "title": "Issues"
         }
       }
     },

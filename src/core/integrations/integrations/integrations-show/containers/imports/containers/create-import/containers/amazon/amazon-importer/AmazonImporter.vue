@@ -82,7 +82,6 @@ const wizardSteps = [{ title: t('integrations.imports.create.title'), name: 'sel
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2">
                 <h3 class="text-lg font-bold">{{ t('integrations.imports.types.schema') }}</h3>
-                <Icon name="circle-info" class="text-gray-500" />
               </div>
               <p class="text-sm text-gray-500">Initial setup required to enable product imports.</p>
             </div>
@@ -91,7 +90,6 @@ const wizardSteps = [{ title: t('integrations.imports.create.title'), name: 'sel
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2">
                 <h3 class="text-lg font-bold">{{ t('integrations.imports.types.products') }}</h3>
-                <Icon name="circle-info" class="text-gray-500" />
               </div>
               <p class="text-sm text-gray-500">Imports actual product data from Amazon.</p>
               <div v-if="!hasFinishedSchema" class="text-sm text-gray-400 flex items-center gap-1">

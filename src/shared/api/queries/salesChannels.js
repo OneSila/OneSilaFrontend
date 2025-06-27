@@ -329,7 +329,6 @@ export const remoteLogsQuery = gql`
   }
 `;
 
-
 export const getSalesChannelViewAssignQuery = gql`
   query getSalesChannelViewAssign($id: GlobalID!) {
     salesChannelViewAssign(id: $id) {
