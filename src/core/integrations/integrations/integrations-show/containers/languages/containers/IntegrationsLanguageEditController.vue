@@ -24,7 +24,8 @@ const formConfig = languageEditFormConfigConstructor(t, type.value, languageId.v
       <Breadcrumbs
         :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'languages'} }, name: t('integrations.show.title') }
+          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'languages'} }, name: t('integrations.show.title') },
+          { name: t('integrations.show.mapRemoteLanguage') }
         ]" />
     </template>
     <template v-slot:content>
