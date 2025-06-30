@@ -60,19 +60,7 @@ const updatableForm = computed(() => ({
   localInstance: form.localInstance.id,
 }));
 
-const localInstanceField = ref<QueryFormField>({
-  type: FieldType.Query,
-  name: 'localInstance',
-  label: t('properties.values.title'),
-  labelBy: 'value',
-  valueBy: 'id',
-  query: propertySelectValuesQuery,
-  dataKey: 'propertySelectValues',
-  isEdge: true,
-  multiple: false,
-  filterable: true,
-  formMapIdentifier: 'id',
-});
+const localInstanceField = ref<QueryFormField | null>(null);
 
 onMounted(async () => {
   const { data } = await apolloClient.query({
@@ -99,8 +87,22 @@ onMounted(async () => {
     propertyMapped.value = propData?.amazonProperty?.mappedLocally ?? true;
     localPropertyId.value = propData?.amazonProperty?.localInstance?.id || null;
     if (localPropertyId.value) {
-      localInstanceField.value.queryVariables = { filter: { property: { id: { exact: localPropertyId.value } } } };
-      localInstanceField.value.createOnFlyConfig = selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName);
+
+     localInstanceField.value = {
+        type: FieldType.Query,
+        name: 'localInstance',
+        label: t('properties.values.title'),
+        labelBy: 'value',
+        valueBy: 'id',
+        query: propertySelectValuesQuery,
+        queryVariables: { filter: { property: { id: { exact: localPropertyId.value } } } },
+        dataKey: 'propertySelectValues',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        formMapIdentifier: 'id',
+        createOnFlyConfig: selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName)
+      }
     }
   }
 
@@ -245,7 +247,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <FieldQuery :field="localInstanceField as QueryFormField" v-model="form.localInstance.id" @update:modelValue="form.localInstance.id = $event" />
+                      <FieldQuery v-if="localInstanceField" :field="localInstanceField as QueryFormField" v-model="form.localInstance.id" @update:modelValue="form.localInstance.id = $event" />
                     </FlexCell>
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.selectValue') }}</p>

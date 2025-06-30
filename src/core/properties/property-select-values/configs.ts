@@ -35,6 +35,7 @@ export const baseFormConfigConstructor = (
     mutation: mutation,
     mutationKey: mutationKey,
     submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId),
+    addSubmitAndContinue: !amazonRuleId,
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
     ...(redirectToRules && amazonRuleId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
