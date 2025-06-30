@@ -151,20 +151,20 @@ onMounted(fetchAmazonIntegrations);
 
       <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         <DashboardCard
-          :counter="integration.properties"
-          :title="t('dashboard.cards.amazon.unmappedProperties.title')"
-          :description="t('dashboard.cards.amazon.unmappedProperties.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
-          color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
-        />
-        <DashboardCard
           :counter="integration.productTypes"
           :title="t('dashboard.cards.amazon.unmappedProductTypes.title')"
           :description="t('dashboard.cards.amazon.unmappedProductTypes.description')"
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.properties"
+          :title="t('dashboard.cards.amazon.unmappedProperties.title')"
+          :description="t('dashboard.cards.amazon.unmappedProperties.description')"
+          :hide-on-complete="!showCompletedAmazonCards"
+          color="red"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
         />
         <DashboardCard
           :counter="integration.selectValues"

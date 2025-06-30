@@ -9,6 +9,7 @@ import apolloClient from '../../../../../../../../../../../../apollo-client';
 import { Toast } from '../../../../../../../../../../../shared/modules/toast';
 import { createAmazonImportProcessMutation } from '../../../../../../../../../../../shared/api/mutations/salesChannels';
 import { amazonImportProcessesQuery } from '../../../../../../../../../../../shared/api/queries/salesChannels';
+import {processGraphQLErrors} from "../../../../../../../../../../../shared/utils";
 
 const props = defineProps<{ integrationId: string; type: string }>();
 const router = useRouter();
@@ -64,8 +65,10 @@ const createImport = async () => {
     Toast.success(t('integrations.imports.create.success'));
     router.push({ name: 'integrations.integrations.show', params: { id: props.integrationId, type: props.type }, query: { tab: 'imports' } });
   } catch (err) {
-    console.error(err);
-    Toast.error(t('shared.form.error'));
+    const validationErrors = processGraphQLErrors(err, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
   }
 };
 

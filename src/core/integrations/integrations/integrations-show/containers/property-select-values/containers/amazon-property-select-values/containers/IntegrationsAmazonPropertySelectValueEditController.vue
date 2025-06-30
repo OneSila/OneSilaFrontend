@@ -32,7 +32,10 @@ const isWizard = route.query.wizard === '1';
 const nextWizardId = ref<string | null>(null);
 
 const amazonPropertyId = ref<string | null>(null);
+const amazonPropertyName = ref('');
+const marketplaceId = ref<string | null>(null);
 const localPropertyId = ref<string | null>(null);
+const localPropertyName = ref('');
 const propertyMapped = ref(true);
 
 const formConfig: FormConfig = amazonPropertySelectValueEditFormConfigConstructor(t, type.value, valueId.value, integrationId);
@@ -60,19 +63,33 @@ const updatableForm = computed(() => ({
   localInstance: form.localInstance.id,
 }));
 
-const localInstanceField = ref<QueryFormField>({
-  type: FieldType.Query,
-  name: 'localInstance',
-  label: t('properties.values.title'),
-  labelBy: 'value',
-  valueBy: 'id',
-  query: propertySelectValuesQuery,
-  dataKey: 'propertySelectValues',
-  isEdge: true,
-  multiple: false,
-  filterable: true,
-  formMapIdentifier: 'id',
-});
+const localInstanceField = ref<QueryFormField | null>(null);
+
+const amazonPropertyEditPath = computed(() =>
+  amazonPropertyId.value
+    ? {
+        name: 'integrations.amazonProperties.edit',
+        params: { type: type.value, id: amazonPropertyId.value },
+        query: { integrationId, salesChannelId }
+      }
+    : null
+);
+
+const marketplaceEditPath = computed(() =>
+  marketplaceId.value
+    ? {
+        name: 'integrations.stores.edit',
+        params: { type: type.value, id: marketplaceId.value },
+        query: { integrationId }
+      }
+    : null
+);
+
+const localPropertyEditPath = computed(() =>
+  localPropertyId.value
+    ? { name: 'properties.properties.edit', params: { id: localPropertyId.value } }
+    : null
+);
 
 onMounted(async () => {
   const { data } = await apolloClient.query({
@@ -83,8 +100,10 @@ onMounted(async () => {
 
   const valueData = data?.amazonPropertySelectValue;
   amazonPropertyId.value = valueData?.amazonProperty?.id || null;
+  amazonPropertyName.value = valueData?.amazonProperty?.name || '';
+  marketplaceId.value = valueData?.marketplace?.id || null;
 
-  form.amazonProperty = valueData?.amazonProperty?.name || '';
+  form.amazonProperty = amazonPropertyName.value;
   form.marketplace = valueData?.marketplace?.name || '';
   form.remoteValue = valueData?.remoteValue || '';
   form.remoteName = valueData?.remoteName || '';
@@ -98,9 +117,24 @@ onMounted(async () => {
     });
     propertyMapped.value = propData?.amazonProperty?.mappedLocally ?? true;
     localPropertyId.value = propData?.amazonProperty?.localInstance?.id || null;
+    localPropertyName.value = propData?.amazonProperty?.localInstance?.name || '';
     if (localPropertyId.value) {
-      localInstanceField.value.queryVariables = { filter: { property: { id: { exact: localPropertyId.value } } } };
-      localInstanceField.value.createOnFlyConfig = selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName);
+
+     localInstanceField.value = {
+        type: FieldType.Query,
+        name: 'localInstance',
+        label: t('properties.values.title'),
+        labelBy: 'value',
+        valueBy: 'id',
+        query: propertySelectValuesQuery,
+        queryVariables: { filter: { property: { id: { exact: localPropertyId.value } } } },
+        dataKey: 'propertySelectValues',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        formMapIdentifier: 'id',
+        createOnFlyConfig: selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName)
+      }
     }
   }
 
@@ -169,7 +203,8 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       <Breadcrumbs
         :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'propertySelectValues'} }, name: t('integrations.show.amazon.title') }
+          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'propertySelectValues'} }, name: t('integrations.show.amazon.title') },
+          { name: t('integrations.show.mapSelectValue') }
         ]" />
     </template>
     <template v-slot:content>
@@ -184,10 +219,19 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.amazonProperty') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <TextInput v-model="form.amazonProperty" disabled class="w-full" />
+                      <Link v-if="amazonPropertyEditPath" :path="amazonPropertyEditPath">{{ form.amazonProperty }}</Link>
+                      <span v-else>{{ form.amazonProperty }}</span>
+                    </FlexCell>
+                  </Flex>
+                </div>
+                <div v-if="localPropertyName" class="col-span-full">
+                  <Flex vertical>
+                    <FlexCell>
+                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.localProperty') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.amazonProperty') }}</p>
+                      <Link v-if="localPropertyEditPath" :path="localPropertyEditPath">{{ localPropertyName }}</Link>
+                      <span v-else>{{ localPropertyName }}</span>
                     </FlexCell>
                   </Flex>
                 </div>
@@ -197,10 +241,8 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <TextInput v-model="form.marketplace" disabled class="w-full" />
-                    </FlexCell>
-                    <FlexCell>
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.marketplace') }}</p>
+                      <Link v-if="marketplaceEditPath" :path="marketplaceEditPath">{{ form.marketplace }}</Link>
+                      <span v-else>{{ form.marketplace }}</span>
                     </FlexCell>
                   </Flex>
                 </div>
@@ -244,7 +286,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <FieldQuery :field="localInstanceField as QueryFormField" v-model="form.localInstance.id" @update:modelValue="form.localInstance.id = $event" />
+                      <FieldQuery v-if="localInstanceField" :field="localInstanceField as QueryFormField" v-model="form.localInstance.id" @update:modelValue="form.localInstance.id = $event" />
                     </FlexCell>
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.selectValue') }}</p>

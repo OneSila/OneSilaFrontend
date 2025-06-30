@@ -45,7 +45,7 @@ const startMapping = async () => {
   }
 };
 
-const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t);
+const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, props.id);
 </script>
 
