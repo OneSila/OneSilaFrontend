@@ -114,7 +114,12 @@ const viewType = ref('table'); // default view
 // Limit per page selector
 const router = useRouter();
 const route = useRoute();
-const perPageOptions = [10, 20, 50, 100];
+const perPageOptions = [
+  { name: '10', value: 10 },
+  { name: '20', value: 20 },
+  { name: '50', value: 50 },
+  { name: '100', value: 100 },
+];
 const limitPerPage = ref<number>(props.searchConfig.limitPerPage ?? 20);
 
 watch(() => route.query.limitPerPage, (val) => {
@@ -126,10 +131,11 @@ watch(() => route.query.limitPerPage, (val) => {
 
 const updateLimitPerPage = (value: number) => {
   const newQuery = { ...route.query, limitPerPage: String(value) };
-  delete newQuery.first;
-  delete newQuery.last;
-  delete newQuery.before;
-  delete newQuery.after;
+  ['first', 'last', 'before', 'after'].forEach((key) => {
+    if (key in newQuery) {
+      delete newQuery[key];
+    }
+  });
   router.push({ query: newQuery });
 };
 
@@ -357,12 +363,14 @@ defineExpose({
               <Pagination v-if="config.addPagination" :alignment="config.paginationConfig?.alignment"
                           :button-class="config.paginationConfig?.buttonClass"
                           :page-info="data[queryKey].pageInfo" :use-icons="config.paginationConfig?.useIcons"/>
-              <div v-if="config.addPagination">
+              <div v-if="config.addPagination && (data[queryKey].pageInfo.hasNextPage || data[queryKey].pageInfo.hasPreviousPage)">
                 <Selector
                     :options="perPageOptions"
                     :model-value="limitPerPage"
                     :clearable="false"
                     dropdown-position="bottom"
+                    value-by="value"
+                    label-by="name"
                     :placeholder="t('pagination.perPage')"
                     @update:model-value="updateLimitPerPage"/>
               </div>

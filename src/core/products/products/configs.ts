@@ -6,7 +6,7 @@ import {
   QueryFormField
 } from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType, InspectorStatus, InspectorStatusType, ProductType, Url } from '../../../shared/utils/constants.js'
-import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
+import {OrderType, SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
@@ -51,7 +51,7 @@ export const getInspectorErrors = (t) => [
   { code: "115", name: t(`dashboard.cards.products.inspector.115.title`) },
   { code: "116", name: t(`dashboard.cards.products.inspector.116.title`) },
   { code: "117", name: t(`dashboard.cards.products.inspector.117.title`) },
-  { code: "118", name: t(`dashboard.cards.products.inspector.118.title`) },
+  // { code: "118", name: t(`dashboard.cards.products.inspector.118.title`) },
   { code: "119", name: t(`dashboard.cards.products.inspector.119.title`) },
   { code: "120", name: t(`dashboard.cards.products.inspector.120.title`) },
   { code: "121", name: t(`dashboard.cards.products.inspector.121.title`) },
@@ -248,7 +248,58 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       addLookup: true,
     },
   ],
-  orders: []
+  orders: [
+    {
+      name: 'translations_Name',
+      label: t('shared.labels.name'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'translations_Name',
+      label: t('shared.labels.name'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'sku',
+      label: t('shared.labels.sku'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'sku',
+      label: t('shared.labels.sku'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'active',
+      label: t('shared.labels.active'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'active',
+      label: t('shared.labels.active'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'updatedAt',
+      label: t('shared.labels.updatedAt'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'updatedAt',
+      label: t('shared.labels.updatedAt'),
+      type: OrderType.DESC
+    },
+  ]
 });
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({

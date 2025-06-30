@@ -72,6 +72,7 @@ watch(() => route.query, (newQuery) => {
   const queryLimit = parseInt(newQuery.limitPerPage as string, 10);
   if (!isNaN(queryLimit)) {
     limit.value = queryLimit;
+    setPaginationVariables(limit.value, null, null, null);
   } else {
     limit.value = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
   }
