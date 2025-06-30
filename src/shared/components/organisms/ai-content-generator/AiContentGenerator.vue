@@ -26,7 +26,7 @@ const mutationVariables = computed(() => {
     contentAiGenerateType: props.contentAiGenerateType,
   };
   if (props.salesChannelType && props.salesChannelType !== 'default') {
-    data.salesChannelType = props.salesChannelType;
+    data.salesChannelType = props.salesChannelType.toUpperCase();
   }
   return { data };
 });
