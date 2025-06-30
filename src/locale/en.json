@@ -246,7 +246,8 @@
     "prev": "Prev",
     "next": "Next",
     "last": "Last",
-    "total": "Total of {num}"
+    "total": "Total of {num}",
+    "perPage": "Per Page"
   },
   "shared": {
     "validationErrors": {

@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { ListingConfig } from './listingConfig';
 import { Pagination } from "../../molecules/pagination";
+import { Selector } from "../../atoms/selector";
+import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from "vue-i18n";
 import { SearchConfig } from "../general-search/searchConfig";
 import { FilterManager } from "../../molecules/filter-manager";
@@ -108,6 +110,28 @@ const allSelected = (items: any[]): boolean => {
 
 // If config.addGridView is true, allow switching between "table" and "grid" views.
 const viewType = ref('table'); // default view
+
+// Limit per page selector
+const router = useRouter();
+const route = useRoute();
+const perPageOptions = [10, 20, 50, 100];
+const limitPerPage = ref<number>(props.searchConfig.limitPerPage ?? 20);
+
+watch(() => route.query.limitPerPage, (val) => {
+  const parsed = parseInt(val as string, 10);
+  if (!isNaN(parsed)) {
+    limitPerPage.value = parsed;
+  }
+}, { immediate: true });
+
+const updateLimitPerPage = (value: number) => {
+  const newQuery = { ...route.query, limitPerPage: String(value) };
+  delete newQuery.first;
+  delete newQuery.last;
+  delete newQuery.before;
+  delete newQuery.after;
+  router.push({ query: newQuery });
+};
 
 // Helper: for a given item, return the first field that has addImage and an imageField.
 const getImageField = (item: any) => {
@@ -329,10 +353,19 @@ defineExpose({
               </div>
             </div>
 
-            <div v-if="config.addPagination || config.addGridView" class="py-4 px-2 mt-4">
+            <div v-if="config.addPagination || config.addGridView" class="py-4 px-2 mt-4 flex items-center space-x-2">
               <Pagination v-if="config.addPagination" :alignment="config.paginationConfig?.alignment"
                           :button-class="config.paginationConfig?.buttonClass"
                           :page-info="data[queryKey].pageInfo" :use-icons="config.paginationConfig?.useIcons"/>
+              <div v-if="config.addPagination">
+                <Selector
+                    :options="perPageOptions"
+                    :model-value="limitPerPage"
+                    :clearable="false"
+                    dropdown-position="bottom"
+                    :placeholder="t('pagination.perPage')"
+                    @update:model-value="updateLimitPerPage"/>
+              </div>
             </div>
 
           </div>

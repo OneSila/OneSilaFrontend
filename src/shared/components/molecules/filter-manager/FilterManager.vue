@@ -18,7 +18,8 @@ const last = ref<number | null>(null);
 const before = ref<string | null>(null);
 const after = ref<string | null>(null);
 
-const limit: number = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
+// make the limit reactive so it can be changed via query params
+const limit = ref<number>(props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage);
 
 const keysToWatch = ref<string[]>([]);
 const filtersWithLookup = ref<Record<string, any>>({});
@@ -66,6 +67,14 @@ const setPaginationVariables = (
 
 watch(() => route.query, (newQuery) => {
   const updatedVariables = {};
+
+  // update the page limit if a query parameter is provided
+  const queryLimit = parseInt(newQuery.limitPerPage as string, 10);
+  if (!isNaN(queryLimit)) {
+    limit.value = queryLimit;
+  } else {
+    limit.value = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
+  }
   
   keysToWatch.value.forEach(key => {
     if (newQuery[key] !== undefined && key != props.searchConfig.orderKey) {
@@ -147,21 +156,21 @@ watch(() => route.query, (newQuery) => {
   const afterValue = typeof newQuery.after === 'string' ? newQuery.after : null;
 
   if (newQuery.before) {
-    setPaginationVariables(null, limit, beforeValue, null);
+    setPaginationVariables(null, limit.value, beforeValue, null);
   }
   if (newQuery.after) {
-    setPaginationVariables(limit, null, null, afterValue);
+    setPaginationVariables(limit.value, null, null, afterValue);
   }
   if (newQuery.last === 'true') {
-    setPaginationVariables(null, limit, null, null);
+    setPaginationVariables(null, limit.value, null, null);
   }
   if (newQuery.first === 'true') {
-    setPaginationVariables(limit, null, null, null);
+    setPaginationVariables(limit.value, null, null, null);
   }
 
   // if no parameter show first page
   if (first.value == null && last.value == null && before.value == null && after.value == null) {
-    first.value = limit;
+    first.value = limit.value;
   }
 
 }, { immediate: true });
