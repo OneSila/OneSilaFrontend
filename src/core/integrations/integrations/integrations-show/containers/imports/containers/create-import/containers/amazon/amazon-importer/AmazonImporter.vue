@@ -9,6 +9,7 @@ import apolloClient from '../../../../../../../../../../../../apollo-client';
 import { Toast } from '../../../../../../../../../../../shared/modules/toast';
 import { createAmazonImportProcessMutation } from '../../../../../../../../../../../shared/api/mutations/salesChannels';
 import { amazonImportProcessesQuery } from '../../../../../../../../../../../shared/api/queries/salesChannels';
+import {processGraphQLErrors} from "../../../../../../../../../../../shared/utils";
 
 const props = defineProps<{ integrationId: string; type: string }>();
 const router = useRouter();
@@ -64,8 +65,10 @@ const createImport = async () => {
     Toast.success(t('integrations.imports.create.success'));
     router.push({ name: 'integrations.integrations.show', params: { id: props.integrationId, type: props.type }, query: { tab: 'imports' } });
   } catch (err) {
-    console.error(err);
-    Toast.error(t('shared.form.error'));
+    const validationErrors = processGraphQLErrors(err, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
   }
 };
 
@@ -82,7 +85,6 @@ const wizardSteps = [{ title: t('integrations.imports.create.title'), name: 'sel
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2">
                 <h3 class="text-lg font-bold">{{ t('integrations.imports.types.schema') }}</h3>
-                <Icon name="circle-info" class="text-gray-500" />
               </div>
               <p class="text-sm text-gray-500">Initial setup required to enable product imports.</p>
             </div>
@@ -91,7 +93,6 @@ const wizardSteps = [{ title: t('integrations.imports.create.title'), name: 'sel
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-2">
                 <h3 class="text-lg font-bold">{{ t('integrations.imports.types.products') }}</h3>
-                <Icon name="circle-info" class="text-gray-500" />
               </div>
               <p class="text-sm text-gray-500">Imports actual product data from Amazon.</p>
               <div v-if="!hasFinishedSchema" class="text-sm text-gray-400 flex items-center gap-1">

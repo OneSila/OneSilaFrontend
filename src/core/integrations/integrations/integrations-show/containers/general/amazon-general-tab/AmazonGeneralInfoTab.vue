@@ -30,7 +30,7 @@ interface EditAmazonForm {
   syncPrices: boolean;
   importOrders: boolean;
   accessToken?: string;
-  refreshTokenExpiration?: string;
+  expirationDate?: string;
   region: string | null;
   country: string | null;
 }
@@ -120,8 +120,8 @@ const countryLabel = computed(() => {
 });
 
 const refreshClass = computed(() => {
-  if (!formData.value.refreshTokenExpiration) return '';
-  const expiration = new Date(formData.value.refreshTokenExpiration);
+  if (!formData.value.expirationDate) return '';
+  const expiration = new Date(formData.value.expirationDate);
   const now = new Date();
   const diff = expiration.getTime() - now.getTime();
   const months = diff / (1000 * 60 * 60 * 24 * 30);
@@ -164,10 +164,10 @@ useShiftBackspaceKeyboardListener(goBack);
     <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.refreshTokenExpiration') }}
+          {{ t('integrations.labels.expirationDate') }}
         </Label>
         <div class="flex items-center gap-4">
-          <FieldDate :class="refreshClass" :field="{ name: 'refreshTokenExpiration', type: FieldType.Date }" :model-value="formData.refreshTokenExpiration || ''" />
+          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />
           <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
         </div>
       </div>

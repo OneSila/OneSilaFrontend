@@ -14,7 +14,7 @@ import {
   deleteSalesChannelViewAssignMutation,
   resyncSalesChannelViewAssignMutation
 } from "../../../../../../shared/api/mutations/salesChannels.js";
-import {displayApolloError} from "../../../../../../shared/utils";
+import { displayApolloError, shortenText } from "../../../../../../shared/utils";
 import {Toast} from "../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../../../../../products/products/product-show/containers/tabs/websites/containers/logs-info-modal";
 import {Badge} from "../../../../../../shared/components/atoms/badge";
@@ -111,8 +111,8 @@ const getStatusText = (item) => {
                     <tbody class="divide-y divide-gray-200 bg-white">
                     <tr v-for="item in data.salesChannelViewAssigns.edges" :key="item.node.id">
                       <td>
-                        <Link :path="{name: 'products.products.show', params: { id: item.node.product.id}, query: {tab: 'websites'}}">
-                          {{ item.node.product.name }}
+                        <Link :title="item.node.product.name" :path="{name: 'products.products.show', params: { id: item.node.product.id}, query: {tab: 'websites'}}">
+                          {{ shortenText(item.node.product.name, 64) }}
                         </Link>
                       </td>
                       <td>

@@ -52,9 +52,6 @@ const listingConfig = amazonPropertiesListingConfigConstructor(t, props.id);
 <template>
   <GeneralTemplate>
     <template v-slot:buttons>
-      <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
-        {{ t('integrations.labels.pullData') }}
-      </Button>
       <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">
         {{ t('integrations.show.mapping.startMapping') }}
       </Button>

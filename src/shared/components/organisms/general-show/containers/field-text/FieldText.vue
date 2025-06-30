@@ -3,6 +3,7 @@
 import { Link } from '../../../../atoms/link';
 import { TextField } from '../../showConfig';
 import {Image} from "../../../../atoms/image";
+import { shortenText } from "../../../../../utils";
 import {Icon} from "../../../../atoms/icon";
 
 const props = defineProps<{
@@ -36,8 +37,8 @@ const props = defineProps<{
         </div>
       </FlexCell>
       <FlexCell center grow>
-        <Link v-if="field.clickable" :path="field.clickUrl">{{ modelValue }}</Link>
-        <span v-else>{{ modelValue }}</span>
+        <Link v-if="field.clickable" :path="field.clickUrl" :title="modelValue">{{ shortenText(modelValue, 64) }}</Link>
+        <span :title="modelValue != null ? modelValue.toString() : undefined" v-else>{{ shortenText(modelValue, 64) }}</span>
       </FlexCell>
     </Flex>
   </div>

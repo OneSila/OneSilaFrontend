@@ -157,6 +157,7 @@ export const getAmazonChannelQuery = gql`
       importOrders
       accessToken
       refreshTokenExpiration
+      expirationDate
       region
       country
       firstImportComplete
@@ -328,7 +329,6 @@ export const remoteLogsQuery = gql`
     }
   }
 `;
-
 
 export const getSalesChannelViewAssignQuery = gql`
   query getSalesChannelViewAssign($id: GlobalID!) {

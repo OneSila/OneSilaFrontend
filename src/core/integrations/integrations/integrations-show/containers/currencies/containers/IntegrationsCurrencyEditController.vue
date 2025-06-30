@@ -22,7 +22,8 @@ const formConfig = currencyEditFormConfigConstructor(t, type.value, currencyId.v
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: { name: 'integrations.integrations.show' }, name: t('integrations.show.title') }
+          { path: { name: 'integrations.integrations.show' }, name: t('integrations.show.title') },
+          { name: t('integrations.show.mapRemoteCurrency') }
       ]" />
     </template>
     <template v-slot:content>

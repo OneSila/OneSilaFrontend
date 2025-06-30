@@ -21,6 +21,7 @@ const { t } = useI18n();
 
 const selectedType = ref(props.type);
 const showMagentoInfoModal = ref(false);
+const showWoocommerceInfoModal = ref(false);
 
 watch(selectedType, (newVal) => {
   emit('update:type', newVal);
@@ -46,6 +47,14 @@ const onModalOpen = () => {
 
 const closeModal = () => {
   showMagentoInfoModal.value = false;
+}
+
+const onWoocommerceModalOpen = () => {
+  showWoocommerceInfoModal.value = true;
+}
+
+const closeWoocommerceModal = () => {
+  showWoocommerceInfoModal.value = false;
 }
 
 </script>
@@ -112,6 +121,37 @@ const closeModal = () => {
         </div>
       </Card>
     </Modal>
+    <Modal v-if="showWoocommerceInfoModal" v-model="showWoocommerceInfoModal" @closed="showWoocommerceInfoModal = false">
+      <Card class="modal-content w-[80%] px-10 pt-10">
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold leading-7 text-gray-900">
+            {{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationTitle') }}
+          </h3>
+        </div>
+        <div class="space-y-6 pr-2 mb=4 overflow-y-auto max-h-96">
+          <div>
+            <p class="text-sm text-gray-700">
+              {{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationDescription') }}
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep1') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep2') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep3') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep4') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep5') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep6') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep7') }}</li>
+              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep8') }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr/>
+        <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-outline-dark" @click="closeWoocommerceModal">{{ t('shared.button.cancel') }}</Button>
+        </div>
+      </Card>
+    </Modal>
     <hr />
     <!-- OptionSelector uses v-model bound to our local selectedType and the choices array -->
     <OptionSelector v-model="selectedType" :choices="typeChoices">
@@ -145,7 +185,14 @@ const closeModal = () => {
       </template>
       <template #woocommerce>
         <div>
-          <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.woocommerceTitle') }}</h3>
+          <Flex gap="2">
+            <FlexCell center>
+              <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.woocommerceTitle') }}</h3>
+            </FlexCell>
+            <FlexCell center>
+              <Icon class="text-gray-500" @click.stop="onWoocommerceModalOpen" name="circle-info" size="lg" />
+            </FlexCell>
+          </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.woocommerceExample') }}</p>
           <Image :source="woocomerceType" alt="woocommerce" class="w-full max-h-[35rem]" />
         </div>

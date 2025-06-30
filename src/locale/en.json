@@ -2199,11 +2199,13 @@
           "remoteValue": "Remote Value",
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace",
+          "localProperty": "Local Property",
           "selectValue": "Select Value"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "marketplace": "Amazon marketplace for this value.",
+          "localProperty": "Local property that this Amazon property maps to.",
           "remoteValue": "Value exactly as defined in Amazon.",
           "remoteName": "Name from Amazon. You can change it.",
           "selectValue": "Choose the local value that matches this Amazon value."
@@ -2221,7 +2223,13 @@
         "allMappedSuccess": "You mapped all the values"
       },
       "generateProperty": "Generate Property",
-      "generateProductType": "Generate Product Type"
+      "generateProductType": "Generate Product Type",
+      "mapProperty": "Map Property",
+      "mapProductType": "Map Product Type",
+      "mapSelectValue": "Map Select Value",
+      "mapRemoteLanguage": "Map Remote Language",
+      "mapRemoteStore": "Map Remote Store",
+      "mapRemoteCurrency": "Map Remote Currency"
     },
     "create": {
       "title": "Create Integration",
@@ -2242,6 +2250,21 @@
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "Woocommerce integration is coming soon.",
+          "woocommerceInfoModal": {
+            "title": "How to connect your WooCommerce store",
+            "section": {
+              "integrationTitle": "Generate API keys in WooCommerce",
+              "integrationDescription": "Follow these steps to create an API key in your WooCommerce admin:",
+              "integrationStep1": "Go to your WordPress admin.",
+              "integrationStep2": "Under the WooCommerce section, click Settings.",
+              "integrationStep3": "Find the tab 'Advanced' and click it.",
+              "integrationStep4": "Click the sub-tab 'REST API'.",
+              "integrationStep5": "Click 'Add Key'.",
+              "integrationStep6": "Fill in the key settings: description as 'OneSila' (or preferred name), choose the user and set permissions to 'Read/Write'.",
+              "integrationStep7": "Click Generate API Key.",
+              "integrationStep8": "Copy the Consumer Key and Consumer Secret for this integration."
+            }
+          },
           "magentoInfoModal": {
           "title": "How to connect your Magento store",
             "section": {
@@ -2306,7 +2329,7 @@
       "vendorProperty": "Vendor Property",
       "region": "Region",
       "country": "Country",
-      "refreshTokenExpiration": "Refresh Token Expiration",
+      "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data"
     },
     "placeholders": {
@@ -2397,6 +2420,9 @@
       "modal": {
         "logs": {
           "title": "Logs"
+        },
+        "issues": {
+          "title": "Issues"
         }
       }
     },

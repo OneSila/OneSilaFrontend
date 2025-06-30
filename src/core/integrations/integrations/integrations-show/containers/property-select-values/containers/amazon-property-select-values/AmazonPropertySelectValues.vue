@@ -45,16 +45,13 @@ const startMapping = async () => {
   }
 };
 
-const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t);
+const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, props.id);
 </script>
 
 <template>
   <GeneralTemplate>
     <template v-slot:buttons>
-      <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
-        {{ t('integrations.labels.pullData') }}
-      </Button>
       <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">
         {{ t('integrations.show.mapping.startMapping') }}
       </Button>

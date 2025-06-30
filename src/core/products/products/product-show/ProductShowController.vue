@@ -20,6 +20,7 @@ import { Link } from "../../../../shared/components/atoms/link";
 import ProductBundle from "./containers/product-type/product-bundle/ProductBundle.vue";
 import ProductConfigurable from "./containers/product-type/product-configurable/ProductConfigurable.vue";
 import ProductVariation from "./containers/product-type/product-variation/ProductVariation.vue";
+import { shortenText } from "../../../../shared/utils/index"
 
 import {getProductTypeBadgeMap, ProductWithAliasFields} from "../configs";
 import {ProductInspector} from "./containers/product-inspector";
@@ -129,7 +130,9 @@ const redirectToList = (response) => {
                     <Icon class="text-white" size="xl" name="question" />
                   </div>
                   <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
-                    <h5 class="text-[#3b3f5c] text-[15px] font-semibold text-xl mb-2 dark:text-white-light">{{ getResultData(result, 'name') }}</h5>
+                    <h5 class="text-[#3b3f5c] text-[15px] font-semibold text-xl mb-2 dark:text-white-light" :title="getResultData(result, 'name')">
+                      {{ shortenText(getResultData(result, 'name'), 64) }}
+                    </h5>
                     <Flex>
                       <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
                       <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
