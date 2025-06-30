@@ -219,25 +219,8 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.amazonProperty') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <Link v-if="amazonPropertyEditPath" :path="amazonPropertyEditPath" class="underline text-primary-600">{{ form.amazonProperty }}</Link>
+                      <Link v-if="amazonPropertyEditPath" :path="amazonPropertyEditPath">{{ form.amazonProperty }}</Link>
                       <span v-else>{{ form.amazonProperty }}</span>
-                    </FlexCell>
-                    <FlexCell>
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.amazonProperty') }}</p>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="marketplaceEditPath" :path="marketplaceEditPath" class="underline text-primary-600">{{ form.marketplace }}</Link>
-                      <span v-else>{{ form.marketplace }}</span>
-                    </FlexCell>
-                    <FlexCell>
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.marketplace') }}</p>
                     </FlexCell>
                   </Flex>
                 </div>
@@ -247,8 +230,19 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.localProperty') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <Link v-if="localPropertyEditPath" :path="localPropertyEditPath" class="underline text-primary-600">{{ localPropertyName }}</Link>
+                      <Link v-if="localPropertyEditPath" :path="localPropertyEditPath">{{ localPropertyName }}</Link>
                       <span v-else>{{ localPropertyName }}</span>
+                    </FlexCell>
+                  </Flex>
+                </div>
+                <div class="col-span-full">
+                  <Flex vertical>
+                    <FlexCell>
+                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</Label>
+                    </FlexCell>
+                    <FlexCell>
+                      <Link v-if="marketplaceEditPath" :path="marketplaceEditPath">{{ form.marketplace }}</Link>
+                      <span v-else>{{ form.marketplace }}</span>
                     </FlexCell>
                   </Flex>
                 </div>

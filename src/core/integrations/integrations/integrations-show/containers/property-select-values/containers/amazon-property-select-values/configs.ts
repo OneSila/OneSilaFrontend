@@ -1,4 +1,4 @@
-import { FieldType } from "../../../../../../../../shared/utils/constants";
+import {FieldType, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery, amazonPropertiesQuery, amazonChannelsQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertySelectValuesQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import { selectValueOnTheFlyConfig } from "../../../../../../../properties/property-select-values/configs";
@@ -64,7 +64,7 @@ export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function, s
       isEdge: true,
       addLookup: true,
       lookupKeys: ['id'],
-      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } }
+      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } }, type: {inList: [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]} } }
     },
     {
       type: FieldType.Query,

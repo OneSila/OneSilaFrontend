@@ -219,7 +219,11 @@ export const displayApolloError = (error) => {
   Toast.error(error.toString().replace('ApolloError: ', ''));
 }
 
-export const shortenText = (text: string | null | undefined, max: number = 256): string => {
-  if (typeof text !== 'string') return '';
+export const shortenText = (
+  text: string | number | null | undefined,
+  max: number = 256
+): string | number => {
+  if (typeof text === 'number') return text;
+  if (!text) return '';
   return text.length > max ? text.slice(0, max) + '…' : text;
 };
