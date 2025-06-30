@@ -358,6 +358,8 @@ const shortDescriptionToolbarOptions = [
           v-if="fieldRules.bulletPoints"
           ref="bulletPointsRef"
           :translation-id="translationId"
+          :product-id="product.id"
+          :language-code="currentLanguage"
           @initial-bullet-points="previewBulletPoints = [...$event]"
         />
       </div>

@@ -15,10 +15,11 @@ import {
 } from '../../../../../../../shared/api/mutations/products.js';
 import { processGraphQLErrors } from '../../../../../../../shared/utils';
 import { Toast } from '../../../../../../../shared/modules/toast';
+import { AiBulletPointsGenerator } from '../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 
 const { t } = useI18n();
 
-const props = defineProps<{ translationId: string | null }>();
+const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null }>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
   (e: 'initial-bullet-points', value: any[]): void;
@@ -27,6 +28,14 @@ const emit = defineEmits<{
 const bulletPoints = ref<any[]>([]);
 const initialBulletPoints = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
+
+const handleGeneratedBulletPoints = (list: any[]) => {
+  bulletPoints.value = list.map((bp, idx) => ({
+    id: null,
+    text: bp.text,
+    sortOrder: idx,
+  }));
+};
 
 const fetchPoints = async () => {
   if (!props.translationId) {
@@ -144,6 +153,13 @@ defineExpose({ save, fetchPoints });
             <Icon name="plus" />
           </Button>
         </div>
+      </FlexCell>
+      <FlexCell>
+        <AiBulletPointsGenerator
+          :product-id="props.productId"
+          :language-code="props.languageCode"
+          @generated="handleGeneratedBulletPoints"
+        />
       </FlexCell>
     </Flex>
     <VueDraggableNext v-model="bulletPoints" class="mt-2 space-y-2" @end="onReorder">

@@ -468,6 +468,13 @@
             "step2": "Performing translation",
             "step3": "Finalizing translation"
         },
+        "aiBulletPointsGenerator": {
+            "title": "Generating bullet points...",
+            "success": "Bullet points successfully generated. It cost {points} SilAI Credit(s).",
+            "step1": "Gathering product information",
+            "step2": "Generating bullet points",
+            "step3": "Finalizing"
+        },
         "remotePropertiesDetector": {
           "step1": "Analyzing remote attributes",
           "step2": "Filtering irrelevant properties",
