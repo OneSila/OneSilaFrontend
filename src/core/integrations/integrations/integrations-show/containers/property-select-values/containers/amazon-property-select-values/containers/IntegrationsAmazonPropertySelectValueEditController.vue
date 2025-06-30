@@ -32,7 +32,10 @@ const isWizard = route.query.wizard === '1';
 const nextWizardId = ref<string | null>(null);
 
 const amazonPropertyId = ref<string | null>(null);
+const amazonPropertyName = ref('');
+const marketplaceId = ref<string | null>(null);
 const localPropertyId = ref<string | null>(null);
+const localPropertyName = ref('');
 const propertyMapped = ref(true);
 
 const formConfig: FormConfig = amazonPropertySelectValueEditFormConfigConstructor(t, type.value, valueId.value, integrationId);
@@ -62,6 +65,32 @@ const updatableForm = computed(() => ({
 
 const localInstanceField = ref<QueryFormField | null>(null);
 
+const amazonPropertyEditPath = computed(() =>
+  amazonPropertyId.value
+    ? {
+        name: 'integrations.amazonProperties.edit',
+        params: { type: type.value, id: amazonPropertyId.value },
+        query: { integrationId, salesChannelId }
+      }
+    : null
+);
+
+const marketplaceEditPath = computed(() =>
+  marketplaceId.value
+    ? {
+        name: 'integrations.stores.edit',
+        params: { type: type.value, id: marketplaceId.value },
+        query: { integrationId }
+      }
+    : null
+);
+
+const localPropertyEditPath = computed(() =>
+  localPropertyId.value
+    ? { name: 'properties.properties.edit', params: { id: localPropertyId.value } }
+    : null
+);
+
 onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getAmazonPropertySelectValueQuery,
@@ -71,8 +100,10 @@ onMounted(async () => {
 
   const valueData = data?.amazonPropertySelectValue;
   amazonPropertyId.value = valueData?.amazonProperty?.id || null;
+  amazonPropertyName.value = valueData?.amazonProperty?.name || '';
+  marketplaceId.value = valueData?.marketplace?.id || null;
 
-  form.amazonProperty = valueData?.amazonProperty?.name || '';
+  form.amazonProperty = amazonPropertyName.value;
   form.marketplace = valueData?.marketplace?.name || '';
   form.remoteValue = valueData?.remoteValue || '';
   form.remoteName = valueData?.remoteName || '';
@@ -86,6 +117,7 @@ onMounted(async () => {
     });
     propertyMapped.value = propData?.amazonProperty?.mappedLocally ?? true;
     localPropertyId.value = propData?.amazonProperty?.localInstance?.id || null;
+    localPropertyName.value = propData?.amazonProperty?.localInstance?.name || '';
     if (localPropertyId.value) {
 
      localInstanceField.value = {
@@ -187,7 +219,8 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.amazonProperty') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <TextInput v-model="form.amazonProperty" disabled class="w-full" />
+                      <Link v-if="amazonPropertyEditPath" :path="amazonPropertyEditPath" class="underline text-primary-600">{{ form.amazonProperty }}</Link>
+                      <span v-else>{{ form.amazonProperty }}</span>
                     </FlexCell>
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.amazonProperty') }}</p>
@@ -200,10 +233,22 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <TextInput v-model="form.marketplace" disabled class="w-full" />
+                      <Link v-if="marketplaceEditPath" :path="marketplaceEditPath" class="underline text-primary-600">{{ form.marketplace }}</Link>
+                      <span v-else>{{ form.marketplace }}</span>
                     </FlexCell>
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.marketplace') }}</p>
+                    </FlexCell>
+                  </Flex>
+                </div>
+                <div v-if="localPropertyName" class="col-span-full">
+                  <Flex vertical>
+                    <FlexCell>
+                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.localProperty') }}</Label>
+                    </FlexCell>
+                    <FlexCell>
+                      <Link v-if="localPropertyEditPath" :path="localPropertyEditPath" class="underline text-primary-600">{{ localPropertyName }}</Link>
+                      <span v-else>{{ localPropertyName }}</span>
                     </FlexCell>
                   </Flex>
                 </div>
