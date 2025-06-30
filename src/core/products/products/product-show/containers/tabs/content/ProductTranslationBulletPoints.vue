@@ -143,9 +143,16 @@ defineExpose({ save, fetchPoints });
 
 <template>
   <div class="mt-4">
-    <Flex middle between>
+    <Flex gap="4" middle between>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
+      </FlexCell>
+      <FlexCell grow>
+        <AiBulletPointsGenerator
+          :product-id="props.productId"
+          :language-code="props.languageCode"
+          @generated="handleGeneratedBulletPoints"
+        />
       </FlexCell>
       <FlexCell>
         <div v-if="bulletPoints.length < 10" class="mt-2">
@@ -153,13 +160,6 @@ defineExpose({ save, fetchPoints });
             <Icon name="plus" />
           </Button>
         </div>
-      </FlexCell>
-      <FlexCell>
-        <AiBulletPointsGenerator
-          :product-id="props.productId"
-          :language-code="props.languageCode"
-          @generated="handleGeneratedBulletPoints"
-        />
       </FlexCell>
     </Flex>
     <VueDraggableNext v-model="bulletPoints" class="mt-2 space-y-2" @end="onReorder">

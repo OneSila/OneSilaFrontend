@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const onClicked = (event, navigationCallback) => {
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || props.target === '_blank') {
     return;
   }
 
