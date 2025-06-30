@@ -96,7 +96,11 @@ const generateValuePath = computed(() =>
   localPropertyId.value
     ? {
         name: 'properties.values.create',
-        query: { propertyId: localPropertyId.value, value: form.remoteName },
+        query: {
+          propertyId: localPropertyId.value,
+          amazonSelectValueId: `${valueId.value}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
+          value: form.remoteName,
+        },
       }
     : null
 );

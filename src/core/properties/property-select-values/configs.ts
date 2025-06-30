@@ -29,13 +29,14 @@ export const baseFormConfigConstructor = (
     addImage: boolean = true,
     redirectToRules: boolean = false,
     amazonRuleId: string | null = null,
+    amazonSelectValueId: string | null = null,
 ): FormConfig => ({
     cols: 1,
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId),
-    addSubmitAndContinue: !amazonRuleId,
+    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId, amazonSelectValueId),
+    addSubmitAndContinue: !amazonRuleId && !amazonSelectValueId,
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
     ...(redirectToRules && amazonRuleId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
@@ -60,7 +61,22 @@ const getSubmitUrl = (
     redirectToRules: boolean,
     propertyId: string | null,
     amazonRuleId: string | null,
+    amazonSelectValueId: string | null,
 ) => {
+    if (amazonSelectValueId) {
+        const [selectValueId, integrationId, salesChannelId, wizard] = amazonSelectValueId.split('__');
+        const url: any = { name: 'integrations.amazonPropertySelectValues.edit', params: { type: 'amazon', id: selectValueId } };
+        if (integrationId) {
+            url.query = { integrationId } as any;
+            if (salesChannelId) {
+                url.query.salesChannelId = salesChannelId;
+            }
+            if (wizard) {
+                url.query.wizard = wizard;
+            }
+        }
+        return url;
+    }
     if (redirectToRules && amazonRuleId) {
         const [ruleId, integrationId, salesChannelId, wizard] = amazonRuleId.split('__');
         const url: any = { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: ruleId } };
