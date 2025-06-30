@@ -311,6 +311,11 @@
       "editAll": "Edit all",
       "change": "Change"
     },
+    "colors": {
+      "red": "Red",
+      "green": "Green",
+      "orange": "Orange"
+    },
     "labels": {
       "createdAt": "Created At",
       "updatedAt": "Updated At",

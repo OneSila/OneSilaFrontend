@@ -300,7 +300,7 @@ onMounted(fetchData);
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap()[variation.inspectorStatus].text }}
+              {{ getInspectorStatusBadgeMap(t)[variation.inspectorStatus].text }}
             </td>
           </tr>
         </tbody>
@@ -352,7 +352,7 @@ onMounted(fetchData);
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap()[item.inspectorStatus].text }}
+              {{ getInspectorStatusBadgeMap(t)[item.inspectorStatus].text }}
             </td>
             <td v-if="hasQty()">{{ item.quantity }}</td>
           </tr>

@@ -60,7 +60,7 @@ const aliasProducts = computed(() => props.products ?? []);
             <Icon v-else name="times-circle" class="text-red-500" />
           </td>
           <td>
-            {{ getInspectorStatusBadgeMap()[alias.inspectorStatus]?.text || '-' }}
+            {{ getInspectorStatusBadgeMap(t)[alias.inspectorStatus]?.text || '-' }}
           </td>
         </tr>
       </tbody>

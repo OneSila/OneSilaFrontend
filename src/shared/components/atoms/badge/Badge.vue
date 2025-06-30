@@ -5,6 +5,7 @@ import { computed } from 'vue';
 const props = defineProps<{
   text: string;
   color: string;
+  hoverText?: string;
 }>();
 
 
@@ -38,5 +39,5 @@ const badgeClass = computed(() => {
 </script>
 
 <template>
-  <span class="whitespace-nowrap" :class="badgeClass">{{ text }}</span>
+  <span class="whitespace-nowrap" :class="badgeClass" :title="hoverText">{{ text }}</span>
 </template>

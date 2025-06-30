@@ -76,6 +76,7 @@ export interface ArrayField extends ShowBaseField {
 export interface Badge {
   text: string;
   color: string;
+  hoverText?: string;
 }
 
 export interface BadgeField extends ShowBaseField {
