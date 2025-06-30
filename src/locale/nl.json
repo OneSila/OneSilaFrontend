@@ -123,7 +123,8 @@
     "prev": "Vorige",
     "next": "Volgende",
     "last": "Laatste",
-    "total": "Totaal van {num}"
+    "total": "Totaal van {num}",
+    "perPage": "Per pagina"
   },
   "shared": {
     "validationErrors": {
