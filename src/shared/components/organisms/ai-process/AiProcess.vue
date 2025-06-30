@@ -27,6 +27,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'processed', result: string): void;
+  (e: 'bullet-points-processed', points: any[]): void;
 }>();
 
 const { t } = useI18n();
@@ -61,10 +62,15 @@ const onCompleted = (data: any) => {
   loading.value = false;
 
   const result = data?.data?.[props.mutationKey]?.content;
+  const bulletPointsResult = data?.data?.[props.mutationKey]?.bulletPoints;
   const points = data?.data?.[props.mutationKey]?.points;
 
   if (result) {
     emit("processed", result);
+  }
+
+  if (bulletPointsResult) {
+    emit('bullet-points-processed', bulletPointsResult);
   }
 
   if (points && props.successToastKey) {
