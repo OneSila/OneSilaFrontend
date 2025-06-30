@@ -300,18 +300,19 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.selectValue') }}</p>
                     </FlexCell>
-                    <FlexCell>
-                      <Link v-if="generateValuePath" :path="generateValuePath">
-                        <Button type="button" class="btn btn-info">
-                          {{ t('integrations.show.generatePropertySelectValue') }}
-                        </Button>
-                      </Link>
-                    </FlexCell>
                   </Flex>
                 </div>
               </div>
             </div>
-              <SubmitButtons :config="enhancedConfig" :form="updatableForm" />
+              <SubmitButtons :config="enhancedConfig" :form="updatableForm" >
+                <template v-slot:additional-button>
+                  <Link v-if="generateValuePath" :path="generateValuePath">
+                    <Button type="button" class="btn btn-info">
+                      {{ t('integrations.show.generatePropertySelectValue') }}
+                    </Button>
+                  </Link>
+                </template>
+              </SubmitButtons>
             </div>
           </div>
         </div>

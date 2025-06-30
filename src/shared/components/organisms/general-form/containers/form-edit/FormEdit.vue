@@ -111,12 +111,12 @@ watch(() => props.fieldsToClear, (fields) => {
       </ApolloQuery>
   </div>
   <SubmitButtons
-  v-if="!config.hideButtons"
-  :form="form"
-  :config="config"
-  @submit="emit('submit')"
-  @update-errors="handleUpdateErrors"
->
+    v-if="!config.hideButtons"
+    :form="form"
+    :config="config"
+    @submit="emit('submit')"
+    @update-errors="handleUpdateErrors"
+  >
   <template #additional-button>
     <slot name="additional-button" />
   </template>
