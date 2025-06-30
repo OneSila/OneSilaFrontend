@@ -9,36 +9,35 @@ const router = useRouter();
 const navigating = ref(false);
 
 const goBack = async () => {
-  const getBasePath = (url?: string | null) => {
-    if (!url) return null;
-    return url.split('?')[0];
+  const getBasePath = (url: string) => {
+    return url.split('?')[0].split('#')[0];
   };
 
-  const initialRoute = getBasePath(router.options.history.state.current as string | undefined);
-  let backRoute = getBasePath(router.options.history.state.back as string | undefined);
+  const initialPath = getBasePath(window.location.pathname);
+  navigating.value = true;
 
-  if (backRoute === null) {
-    router.back();
-  } else {
-    // keep going back until the route base path changes
-    while (true) {
-      navigating.value = true;
-      const trimmedBack = getBasePath(backRoute);
+  let attempts = 0;
+  while (attempts++ < 10) {
+    window.history.back();
 
-      if (trimmedBack !== initialRoute) {
-        router.back();
-        navigating.value = false;
-        break;
-      }
+    // Wait a bit for the route to update
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-      router.back();
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      backRoute = getBasePath(router.options.history.state.back as string | undefined);
-      navigating.value = false;
-      if (backRoute === null) break;
+    const currentPath = getBasePath(window.location.pathname);
+
+    if (currentPath !== initialPath) {
+      break;
+    }
+
+    // Optional: stop early if history is exhausted
+    if (window.history.length <= 1) {
+      break;
     }
   }
+
+  navigating.value = false;
 };
+
 </script>
 
 <template>
