@@ -2225,6 +2225,7 @@
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
+      "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",
       "mapSelectValue": "Map Select Value",

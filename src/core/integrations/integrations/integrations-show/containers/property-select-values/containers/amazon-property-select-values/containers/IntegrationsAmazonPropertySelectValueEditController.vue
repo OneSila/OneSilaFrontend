@@ -19,6 +19,7 @@ import { selectValueOnTheFlyConfig } from "../../../../../../../../properties/pr
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -91,6 +92,15 @@ const localPropertyEditPath = computed(() =>
     : null
 );
 
+const generateValuePath = computed(() =>
+  localPropertyId.value
+    ? {
+        name: 'properties.values.create',
+        query: { propertyId: localPropertyId.value, value: form.remoteName },
+      }
+    : null
+);
+
 onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getAmazonPropertySelectValueQuery,
@@ -132,8 +142,7 @@ onMounted(async () => {
         isEdge: true,
         multiple: false,
         filterable: true,
-        formMapIdentifier: 'id',
-        createOnFlyConfig: selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName)
+        formMapIdentifier: 'id'
       }
     }
   }
@@ -290,6 +299,13 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     </FlexCell>
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.selectValue') }}</p>
+                    </FlexCell>
+                    <FlexCell>
+                      <Link v-if="generateValuePath" :path="generateValuePath">
+                        <Button type="button" class="btn btn-info">
+                          {{ t('integrations.show.generatePropertySelectValue') }}
+                        </Button>
+                      </Link>
                     </FlexCell>
                   </Flex>
                 </div>
