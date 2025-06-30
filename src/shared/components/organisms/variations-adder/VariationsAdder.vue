@@ -16,6 +16,7 @@ import {Link} from "../../atoms/link";
 import {Image} from "../../atoms/image";
 import {getInspectorStatusBadgeMap} from "../../../../core/products/products/configs";
 import {Label} from "../../atoms/label";
+import { shortenText } from "../../../utils";
 
 const { t } = useI18n();
 
@@ -290,7 +291,9 @@ onMounted(fetchData);
                         <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
                       </div>
                     </FlexCell>
-                    <FlexCell center>{{ variation.name }}</FlexCell>
+                    <FlexCell center :title="variation.name">
+                      {{ shortenText(variation.name, 64) }}
+                    </FlexCell>
                   </Flex>
                 </FlexCell>
               </Flex>
@@ -342,7 +345,9 @@ onMounted(fetchData);
                         <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
                       </div>
                     </FlexCell>
-                    <FlexCell center>{{ item.name }}</FlexCell>
+                    <FlexCell center :title="item.name">
+                      {{ shortenText(item.name, 64) }}
+                    </FlexCell>
                   </Flex>
                 </FlexCell>
               </Flex>
