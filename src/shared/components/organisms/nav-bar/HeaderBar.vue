@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { Icon } from "../../atoms/icon";
 import { Dropdown } from "../../molecules/dropdown";
+import { BackButton } from "../../molecules/back-button";
 import LanguageDropdown from "../../molecules/languages-dropdown/LanguageDropdown.vue";
 import UserProfileDropdown from "../user-profile-dropdown/UserProfileDropdown.vue";
 import GeneralSearch from "../general-search/GeneralSearch.vue";
@@ -93,6 +94,7 @@ const allowCreateDropdown = () => {
                           </button>
                         </template>
                       </Dropdown>
+                  <BackButton />
                   <UserProfileDropdown />
                 </div>
             </div>
