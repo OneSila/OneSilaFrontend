@@ -1,5 +1,5 @@
 import { FieldType } from "../../../../../../../../shared/utils/constants";
-import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery, amazonPropertiesQuery, amazonChannelsQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertySelectValuesQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import { selectValueOnTheFlyConfig } from "../../../../../../../properties/property-select-values/configs";
 import { updateAmazonPropertySelectValueMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
@@ -46,14 +46,40 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
   ]
 });
 
-export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function): SearchConfig => ({
+export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
   search: true,
   orderKey: "sort",
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
     { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
-    { type: FieldType.Text, name: 'amazonProperty', label: t('integrations.show.propertySelectValues.labels.amazonProperty') },
-    { type: FieldType.Text, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace') }
+    {
+      type: FieldType.Query,
+      name: 'amazonProperty',
+      label: t('integrations.show.propertySelectValues.labels.amazonProperty'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: amazonPropertiesQuery,
+      dataKey: 'amazonProperties',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id'],
+      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } }
+    },
+    {
+      type: FieldType.Query,
+      name: 'marketplace',
+      label: t('integrations.show.propertySelectValues.labels.marketplace'),
+      labelBy: 'hostname',
+      valueBy: 'id',
+      query: amazonChannelsQuery,
+      dataKey: 'amazonChannels',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id'],
+      queryVariables: { filters: { id: { exact: salesChannelId } } }
+    }
   ],
   orders: []
 });
