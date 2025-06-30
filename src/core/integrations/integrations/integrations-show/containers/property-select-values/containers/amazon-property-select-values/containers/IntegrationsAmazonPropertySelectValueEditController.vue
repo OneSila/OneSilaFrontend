@@ -169,7 +169,8 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       <Breadcrumbs
         :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'propertySelectValues'} }, name: t('integrations.show.amazon.title') }
+          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'propertySelectValues'} }, name: t('integrations.show.amazon.title') },
+          { name: t('integrations.show.mapSelectValue') }
         ]" />
     </template>
     <template v-slot:content>

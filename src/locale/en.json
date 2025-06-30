@@ -2220,7 +2220,10 @@
         "allMappedSuccess": "You mapped all the values"
       },
       "generateProperty": "Generate Property",
-      "generateProductType": "Generate Product Type"
+      "generateProductType": "Generate Product Type",
+      "mapProperty": "Map Property",
+      "mapProductType": "Map Product Type",
+      "mapSelectValue": "Map Select Value"
     },
     "create": {
       "title": "Create Integration",
