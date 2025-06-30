@@ -8,6 +8,7 @@ interface Props {
   productId: string | number;
   languageCode: string | null;
   contentAiGenerateType: string;
+  salesChannelType?: string;
 }
 
 const { t } = useI18n();
@@ -18,13 +19,17 @@ const emit = defineEmits<{
 }>();
 
 
-const mutationVariables = computed(() => ({
-  data: {
+const mutationVariables = computed(() => {
+  const data: Record<string, any> = {
     id: props.productId,
     languageCode: props.languageCode,
     contentAiGenerateType: props.contentAiGenerateType,
-  },
-}));
+  };
+  if (props.salesChannelType && props.salesChannelType !== 'default') {
+    data.salesChannelType = props.salesChannelType;
+  }
+  return { data };
+});
 
 const steps = computed(() => [
   t("shared.components.organisms.aiContentGenerator.step1"),
