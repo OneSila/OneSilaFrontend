@@ -74,12 +74,13 @@ export const getInspectorStatusOptions = (t) => [
   { name: '🔴', code: InspectorStatus.RED },
 ];
 
-export const getInspectorStatusBadgeMap = (): Record<string, Badge> => {
-  const defaultBadge: Badge = { text: '🔴', color: 'none' };
+export const getInspectorStatusBadgeMap = (t?: Function): Record<string, Badge> => {
+  const translate = (key: string) => (t ? t(key) : key);
+  const defaultBadge: Badge = { text: '🔴', color: 'none', hoverText: translate('shared.colors.red') };
 
   const badgeMap: Record<InspectorStatusType, Badge> = {
-    [InspectorStatus.GREEN]: { text: '🟢', color: 'none' },
-    [InspectorStatus.ORANGE]: { text: '🟠', color: 'none' },
+    [InspectorStatus.GREEN]: { text: '🟢', color: 'none', hoverText: translate('shared.colors.green') },
+    [InspectorStatus.ORANGE]: { text: '🟠', color: 'none', hoverText: translate('shared.colors.orange') },
     [InspectorStatus.RED]: defaultBadge,
   };
 
@@ -318,7 +319,7 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
     {
       name: 'inspectorStatus',
       type: FieldType.Badge,
-      badgeMap: getInspectorStatusBadgeMap(),
+      badgeMap: getInspectorStatusBadgeMap(t),
     },
     {
       type: FieldType.Badge,

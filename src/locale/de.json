@@ -3,7 +3,12 @@
     "button": {
       "login": "Anmelden",
       "register": "Registrieren",
-      "recover": "Wiederherstellen"
+    "recover": "Wiederherstellen"
+    },
+    "colors": {
+      "red": "Rot",
+      "green": "Grün",
+      "orange": "Orange"
     }
   },
   "auth": {

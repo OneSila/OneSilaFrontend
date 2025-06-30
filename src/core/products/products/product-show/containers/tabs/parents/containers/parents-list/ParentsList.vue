@@ -111,7 +111,7 @@ onMounted(async () => {
               <Icon v-else name="times-circle" class="text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap()[parent.inspectorStatus]?.text || '-' }}
+              {{ getInspectorStatusBadgeMap(t)[parent.inspectorStatus]?.text || '-' }}
             </td>
           </tr>
         </tbody>

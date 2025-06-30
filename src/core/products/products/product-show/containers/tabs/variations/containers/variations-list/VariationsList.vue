@@ -171,7 +171,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
                   <td>
-                    {{ getInspectorStatusBadgeMap()[item.node.variation.inspectorStatus].text }}
+                    {{ getInspectorStatusBadgeMap(t)[item.node.variation.inspectorStatus].text }}
                   </td>
                   <td v-if="product.type != ProductType.Configurable">
                     <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />
