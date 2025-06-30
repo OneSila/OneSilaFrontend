@@ -2223,7 +2223,10 @@
       "generateProductType": "Generate Product Type",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",
-      "mapSelectValue": "Map Select Value"
+      "mapSelectValue": "Map Select Value",
+      "mapRemoteLanguage": "Map Remote Language",
+      "mapRemoteStore": "Map Remote Store",
+      "mapRemoteCurrency": "Map Remote Currency"
     },
     "create": {
       "title": "Create Integration",
