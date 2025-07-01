@@ -345,6 +345,7 @@ useShiftBackspaceKeyboardListener(goBack);
               <tr>
                 <th>{{ t('shared.labels.name') }}</th>
                 <th>{{ t('integrations.show.properties.labels.code') }}</th>
+                <th>{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</th>
                 <th>{{ t('shared.labels.unit') }}</th>
               </tr>
             </thead>
@@ -352,6 +353,7 @@ useShiftBackspaceKeyboardListener(goBack);
               <tr v-for="(config, index) in unitConfigurators" :key="config.id">
                 <td>{{ config.name }}</td>
                 <td>{{ config.code }}</td>
+                <td>{{ config.marketplace?.name }}</td>
                 <td>
                   <Selector
                     v-model="config.selectedUnit"
