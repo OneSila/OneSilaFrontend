@@ -804,6 +804,10 @@ export const amazonDefaultUnitConfiguratorsQuery = gql`
           id
           name
           code
+          marketplace {
+            id
+            name
+          }
           selectedUnit
           choices
         }
@@ -826,6 +830,10 @@ export const getAmazonDefaultUnitConfiguratorQuery = gql`
       id
       name
       code
+      marketplace {
+        id
+        name
+      }
       selectedUnit
       choices
     }
