@@ -6,6 +6,8 @@ import GeneralTemplate from "../../../../../../../../../shared/templates/General
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
 import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import { amazonPropertyEditFormConfigConstructor } from "../configs";
+import { FieldType } from "../../../../../../../../../shared/utils/constants";
+import { propertiesQuery } from "../../../../../../../../../shared/api/queries/properties.js";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../../../../apollo-client";
@@ -100,6 +102,35 @@ onMounted(async () => {
   }
 });
 
+const handleSetData = (data: any) => {
+  const propertyType = data?.amazonProperty?.type;
+  if (!formConfig.value || !propertyType) return;
+
+  const field = {
+    type: FieldType.Query,
+    name: 'localInstance',
+    label: t('integrations.show.properties.labels.property'),
+    help: t('integrations.show.properties.help.property'),
+    labelBy: 'name',
+    valueBy: 'id',
+    query: propertiesQuery,
+    queryVariables: { filter: { type: { exact: propertyType } } },
+    dataKey: 'properties',
+    isEdge: true,
+    multiple: false,
+    filterable: true,
+    formMapIdentifier: 'id',
+    ...(propertyId ? { default: propertyId } : {})
+  };
+
+  const index = formConfig.value.fields.findIndex(f => f.name === 'localInstance');
+  if (index === -1) {
+    formConfig.value.fields.push(field as any);
+  } else {
+    formConfig.value.fields[index] = field as any;
+  }
+};
+
 const handleFormUpdate = (form) => {
   formData.value = form;
 };
@@ -118,7 +149,7 @@ const handleFormUpdate = (form) => {
         ]" />
     </template>
     <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" >
+      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData" >
         <template #additional-button>
           <Link :path="{ name: 'properties.properties.create', query: {
             amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
