@@ -15,10 +15,11 @@ import {
 } from '../../../../../../../shared/api/mutations/products.js';
 import { processGraphQLErrors } from '../../../../../../../shared/utils';
 import { Toast } from '../../../../../../../shared/modules/toast';
+import { AiBulletPointsGenerator } from '../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 
 const { t } = useI18n();
 
-const props = defineProps<{ translationId: string | null }>();
+const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null }>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
   (e: 'initial-bullet-points', value: any[]): void;
@@ -27,6 +28,14 @@ const emit = defineEmits<{
 const bulletPoints = ref<any[]>([]);
 const initialBulletPoints = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
+
+const handleGeneratedBulletPoints = (list: any[]) => {
+  bulletPoints.value = list.map((bp, idx) => ({
+    id: null,
+    text: bp.text,
+    sortOrder: idx,
+  }));
+};
 
 const fetchPoints = async () => {
   if (!props.translationId) {
@@ -134,9 +143,16 @@ defineExpose({ save, fetchPoints });
 
 <template>
   <div class="mt-4">
-    <Flex middle between>
+    <Flex gap="4" middle between>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
+      </FlexCell>
+      <FlexCell grow>
+        <AiBulletPointsGenerator
+          :product-id="props.productId"
+          :language-code="props.languageCode"
+          @generated="handleGeneratedBulletPoints"
+        />
       </FlexCell>
       <FlexCell>
         <div v-if="bulletPoints.length < 10" class="mt-2">

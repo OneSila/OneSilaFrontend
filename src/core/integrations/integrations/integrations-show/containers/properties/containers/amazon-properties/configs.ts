@@ -36,22 +36,7 @@ export const amazonPropertyEditFormConfigConstructor = (
       help: t('integrations.show.properties.help.type')
     },
     { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true, strict: true, help: t('integrations.show.properties.help.allowsUnmappedValues') },
-    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), help: t('integrations.show.properties.help.name') },
-    {
-      type: FieldType.Query,
-      name: 'localInstance',
-      label: t('integrations.show.properties.labels.property'),
-      help: t('integrations.show.properties.help.property'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: propertiesQuery,
-      dataKey: 'properties',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      ...(defaultPropertyId ? { default: defaultPropertyId } : {})
-    }
+    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), help: t('integrations.show.properties.help.name') }
   ]
 });
 

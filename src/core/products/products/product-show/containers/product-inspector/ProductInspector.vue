@@ -127,7 +127,6 @@ const tabMap: Record<number, string> = {
   115: 'general',
   116: 'priceLists',
   117: 'variations',
-  118: 'variations',
   119: 'variations',
   120: 'variations',
   121: 'variations',
@@ -153,6 +152,7 @@ const refreshInspector = async () => {
     color.value = getColor(data.refreshInspector.hasMissingInformation, data.refreshInspector.hasMissingOptionalInformation)
 
     Toast.success(t('products.products.inspector.alert.refreshSuccess'))
+    window.location.reload();
   }
 }
 

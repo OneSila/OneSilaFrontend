@@ -733,6 +733,18 @@ export const getAmazonProductTypeQuery = gql`
           value
         }
       }
+      amazonproducttypeitemSet {
+        id
+        remoteProperty {
+          id
+          name
+          code
+          mappedLocally
+          allowsUnmappedValues
+          type
+        }
+        remoteType
+      }
     }
   }
 `;export const amazonImportProcessesQuery = gql`

@@ -35,6 +35,7 @@ const field: Ref<QueryFormField| null> = ref(null);
 const val: Ref<any> = ref(null);
 const lastSavedVal: Ref<any> = ref(null);
 const lastSavedLanguage: Ref<any> = ref(null);
+const saving = ref(false);
 
 const createInputData = () => {
   const inputData: any = {
@@ -168,43 +169,46 @@ const updateTranslationValue = async (inputData: any) => {
 };
 
 const saveChanges = async () => {
-  const inputData = createInputData();
+  saving.value = true;
+  try {
+    const inputData = createInputData();
 
-  if (inputData == null) {
-    await removePropertyValue();
-    return
-  }
-
-  let productPropertyId = null
-  if (props.value.id) {
-    productPropertyId = await updateValue(inputData);
-  } else {
-    productPropertyId = await createValue(inputData);
-  }
-
-  lastSavedVal.value = val.value;
-  if (props.value.property.isProductType) {
-    emit('refetch');
-  }
-
-  if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)) {
-    const translationInputData = createTranslationInputData(productPropertyId);
-
-    if (props.value.translation.id) {
-      await updateTranslationValue(translationInputData);
-    } else {
-      await createTranslationValue(translationInputData);
+    if (inputData == null) {
+      await removePropertyValue();
+      return;
     }
+
+    let productPropertyId = null;
+    if (props.value.id) {
+      productPropertyId = await updateValue(inputData);
+    } else {
+      productPropertyId = await createValue(inputData);
+    }
+
+    lastSavedVal.value = val.value;
+    if (props.value.property.isProductType) {
+      emit('refetch');
+    }
+
+    if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type)) {
+      const translationInputData = createTranslationInputData(productPropertyId);
+
+      if (props.value.translation.id) {
+        await updateTranslationValue(translationInputData);
+      } else {
+        await createTranslationValue(translationInputData);
+      }
+    }
+
+    emit('update-value', {
+      id: props.value.property.id,
+      type: props.value.property.type,
+      value: val.value,
+      language: props.value.translation.language,
+    });
+  } finally {
+    saving.value = false;
   }
-
-  emit('update-value', {
-    id: props.value.property.id,
-    type: props.value.property.type,
-    value: val.value,
-    language: props.value.translation.language,
-  });
-
-
 };
 
 
@@ -397,7 +401,9 @@ const getTooltip = (requireType) => {
               </template>
 
               <template v-else-if="val !== lastSavedVal">
-                <Button @click="saveChanges" class="btn btn-sm btn-primary">{{ t('shared.button.save') }}</Button>
+                <Button @click="saveChanges" class="btn btn-sm btn-primary" :disabled="saving" :loading="saving">
+                  {{ t('shared.button.save') }}
+                </Button>
               </template>
 
               <template v-else-if="ruleId && value.property.isProductType">

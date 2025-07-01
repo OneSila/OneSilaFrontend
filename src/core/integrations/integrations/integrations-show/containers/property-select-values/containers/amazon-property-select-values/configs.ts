@@ -12,7 +12,6 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
   type: string,
   valueId: string,
   integrationId: string,
-  propertyId: string | null = null
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -28,21 +27,6 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
     { type: FieldType.Text, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace'), disabled: true, help: t('integrations.show.propertySelectValues.help.marketplace') },
     { type: FieldType.Text, name: 'remoteValue', label: t('integrations.show.propertySelectValues.labels.remoteValue'), disabled: true, help: t('integrations.show.propertySelectValues.help.remoteValue') },
     { type: FieldType.Text, name: 'remoteName', label: t('shared.labels.name'), help: t('integrations.show.propertySelectValues.help.remoteName') },
-    {
-      type: FieldType.Query,
-      name: 'localInstance',
-      label: t('integrations.show.propertySelectValues.labels.selectValue'),
-      help: t('integrations.show.propertySelectValues.help.selectValue'),
-      labelBy: 'value',
-      valueBy: 'id',
-      query: propertySelectValuesQuery,
-      dataKey: 'propertySelectValues',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      formMapIdentifier: 'id',
-      ...(propertyId ? { queryVariables: { filter: { property: { id: { exact: propertyId } } } }, createOnFlyConfig: selectValueOnTheFlyConfig(t, propertyId) } : {}),
-    }
   ]
 });
 

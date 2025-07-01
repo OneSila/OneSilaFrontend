@@ -24,8 +24,8 @@ const handleFormUpdate = (updatedForm) => {
   emit('formUpdated', updatedForm);
 };
 
-const handleSetData = (form) => {
-  emit('setData', form);
+const handleSetData = (data) => {
+  emit('setData', data);
 };
 
 watch(() => props.config, (newConfig) => {

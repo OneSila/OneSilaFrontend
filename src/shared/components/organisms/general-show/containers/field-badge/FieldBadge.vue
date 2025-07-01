@@ -18,7 +18,8 @@ function getBadgeData(key: string | number) {
     <Badge
       v-if="modelValue && getBadgeData(modelValue)"
       :text="getBadgeData(modelValue).text"
-      :color="getBadgeData(modelValue).color" />
+      :color="getBadgeData(modelValue).color"
+      :hover-text="getBadgeData(modelValue).hoverText" />
     <span v-else>{{ modelValue }}</span>
   </div>
 </template>

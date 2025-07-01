@@ -350,6 +350,7 @@ const shortDescriptionToolbarOptions = [
           :short-description-toolbar-options="shortDescriptionToolbarOptions"
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
+          :sales-channel-type="currentChannelType"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
         />
@@ -357,6 +358,8 @@ const shortDescriptionToolbarOptions = [
           v-if="fieldRules.bulletPoints"
           ref="bulletPointsRef"
           :translation-id="translationId"
+          :product-id="product.id"
+          :language-code="currentLanguage"
           @initial-bullet-points="previewBulletPoints = [...$event]"
         />
       </div>

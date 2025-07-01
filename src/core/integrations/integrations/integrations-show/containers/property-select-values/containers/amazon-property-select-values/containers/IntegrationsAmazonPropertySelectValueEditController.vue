@@ -15,10 +15,10 @@ import { propertySelectValuesQuery } from "../../../../../../../../../shared/api
 import { useRoute } from "vue-router";
 import { amazonPropertySelectValueEditFormConfigConstructor, listingQuery } from "../configs";
 import { getAmazonPropertySelectValueQuery, getAmazonPropertyQuery } from "../../../../../../../../../shared/api/queries/salesChannels";
-import { selectValueOnTheFlyConfig } from "../../../../../../../../properties/property-select-values/configs";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -54,13 +54,15 @@ const form = reactive({
   marketplace: '',
   remoteValue: '',
   remoteName: '',
-  localInstance: { id: null as string | null },
+  localInstance: { id: route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null },
 });
+
+console.log(form)
 
 const updatableForm = computed(() => ({
   id: form.id,
   remoteName: form.remoteName,
-  localInstance: form.localInstance.id,
+  localInstance: { id: form.localInstance.id },
 }));
 
 const localInstanceField = ref<QueryFormField | null>(null);
@@ -91,6 +93,19 @@ const localPropertyEditPath = computed(() =>
     : null
 );
 
+const generateValuePath = computed(() =>
+  localPropertyId.value
+    ? {
+        name: 'properties.values.create',
+        query: {
+          propertyId: localPropertyId.value,
+          amazonSelectValueId: `${valueId.value}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
+          value: form.remoteName,
+        },
+      }
+    : null
+);
+
 onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getAmazonPropertySelectValueQuery,
@@ -107,7 +122,11 @@ onMounted(async () => {
   form.marketplace = valueData?.marketplace?.name || '';
   form.remoteValue = valueData?.remoteValue || '';
   form.remoteName = valueData?.remoteName || '';
-  form.localInstance.id = valueData?.localInstance?.id || null;
+
+  if (valueData?.localInstance?.id) {
+      form.localInstance.id = valueData?.localInstance?.id;
+
+  }
 
   if (amazonPropertyId.value) {
     const { data: propData } = await apolloClient.query({
@@ -133,7 +152,6 @@ onMounted(async () => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
-        createOnFlyConfig: selectValueOnTheFlyConfig(t, localPropertyId.value, form.remoteName)
       }
     }
   }
@@ -295,7 +313,15 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                 </div>
               </div>
             </div>
-              <SubmitButtons :config="enhancedConfig" :form="updatableForm" />
+              <SubmitButtons :config="enhancedConfig" :form="updatableForm" >
+                <template v-slot:additional-button>
+                  <Link v-if="generateValuePath" :path="generateValuePath">
+                    <Button type="button" class="btn btn-info">
+                      {{ t('integrations.show.generatePropertySelectValue') }}
+                    </Button>
+                  </Link>
+                </template>
+              </SubmitButtons>
             </div>
           </div>
         </div>

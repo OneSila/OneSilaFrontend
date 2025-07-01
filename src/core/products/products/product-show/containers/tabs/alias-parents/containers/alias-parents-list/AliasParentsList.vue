@@ -6,6 +6,7 @@ import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { getProductTypeBadgeMap, getInspectorStatusBadgeMap } from "../../../../../../configs";
+import { shortenText } from "../../../../../../../../../shared/utils";
 
 const props = defineProps<{ products: ProductWithAliasFields[] }>();
 const { t } = useI18n();
@@ -41,7 +42,7 @@ const aliasProducts = computed(() => props.products ?? []);
                   v-else
                   class="w-8 h-8 rounded-md bg-gray-200 flex justify-center items-center"
                 ></div>
-                <span>{{ alias.name }}</span>
+                <span :title="alias.name">{{ shortenText(alias.name, 64) }}</span>
               </div>
             </Link>
           </td>
@@ -60,7 +61,7 @@ const aliasProducts = computed(() => props.products ?? []);
             <Icon v-else name="times-circle" class="text-red-500" />
           </td>
           <td>
-            {{ getInspectorStatusBadgeMap()[alias.inspectorStatus]?.text || '-' }}
+            {{ getInspectorStatusBadgeMap(t)[alias.inspectorStatus]?.text || '-' }}
           </td>
         </tr>
       </tbody>

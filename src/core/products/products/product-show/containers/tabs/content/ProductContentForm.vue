@@ -38,6 +38,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  salesChannelType: {
+    type: String as PropType<string | undefined>,
+    default: undefined,
+  },
 });
 
 const emit = defineEmits<{
@@ -81,6 +85,7 @@ const emit = defineEmits<{
               :productId="productId"
               :languageCode="currentLanguage"
               contentAiGenerateType="SHORT_DESCRIPTION"
+              :sales-channel-type="salesChannelType"
               @generated="val => emit('shortDescription', val)"
             />
         </FlexCell>
@@ -115,6 +120,7 @@ const emit = defineEmits<{
               :productId="productId"
               :languageCode="currentLanguage"
               contentAiGenerateType="DESCRIPTION"
+              :sales-channel-type="salesChannelType"
               @generated="val => emit('description', val)"
             />
         </FlexCell>

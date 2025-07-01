@@ -8,6 +8,7 @@ import { configurableVariationsQuery, bundleVariationsQuery } from "../../../../
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
+import { shortenText } from "../../../../../../../../../shared/utils";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -94,7 +95,7 @@ onMounted(async () => {
                     v-else
                     class="w-8 h-8 rounded-md bg-gray-200 flex justify-center items-center"
                   ></div>
-                  <span>{{ parent.name }}</span>
+                  <span :title="parent.name">{{ shortenText(parent.name, 64) }}</span>
                 </div>
               </Link>
             </td>
@@ -110,7 +111,7 @@ onMounted(async () => {
               <Icon v-else name="times-circle" class="text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap()[parent.inspectorStatus]?.text || '-' }}
+              {{ getInspectorStatusBadgeMap(t)[parent.inspectorStatus]?.text || '-' }}
             </td>
           </tr>
         </tbody>

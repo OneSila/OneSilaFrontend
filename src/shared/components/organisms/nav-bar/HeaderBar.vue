@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { Icon } from "../../atoms/icon";
 import { Dropdown } from "../../molecules/dropdown";
+import { BackButton } from "../../molecules/back-button";
 import LanguageDropdown from "../../molecules/languages-dropdown/LanguageDropdown.vue";
 import UserProfileDropdown from "../user-profile-dropdown/UserProfileDropdown.vue";
 import GeneralSearch from "../general-search/GeneralSearch.vue";
@@ -85,6 +86,8 @@ const allowCreateDropdown = () => {
                     class="sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
                 >
                   <GeneralSearch />
+
+                  <BackButton />
                   <LanguageDropdown :show="false" class="ms-auto w-max" @language-set="allowCreateDropdown()"/>
                       <Dropdown v-if="showProfileDropdown" :items="createDropdownItems">
                         <template #trigger>
