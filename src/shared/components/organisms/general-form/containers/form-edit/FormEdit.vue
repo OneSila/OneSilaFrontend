@@ -29,6 +29,8 @@ const initialFormUpdate = (data: any) => {
     return true;
   }
 
+  emit('setData', data);
+
   const dataToEdit = props.config.queryDataKey ? data[props.config.queryDataKey] : data;
 
   props.config.fields.forEach(field => {

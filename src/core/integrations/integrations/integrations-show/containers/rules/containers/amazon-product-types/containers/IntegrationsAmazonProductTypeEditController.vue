@@ -11,6 +11,11 @@ import apolloClient from "../../../../../../../../../../apollo-client";
 import { productPropertiesRulesQuery, propertiesQuery } from "../../../../../../../../../shared/api/queries/properties.js";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Card } from "../../../../../../../../../shared/components/atoms/card";
+import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
+import { getPropertyTypeBadgeMap } from "../../../../../../../../properties/properties/configs";
+import { ConfigTypes } from "../../../../../../../../../shared/utils/constants";
+import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 
@@ -30,6 +35,20 @@ const propertyProductTypeId = ref<string | null>(null);
 const formData = ref<Record<string, any>>({});
 const formConfig = ref<FormConfig | null>(null);
 const nextWizardId = ref<string | null>(null);
+const items = ref<any[]>([]);
+
+const handleSetData = (data: any) => {
+  items.value = data?.amazonProductType?.amazonproducttypeitemSet || [];
+};
+
+const configTypeChoices = [
+  { id: ConfigTypes.REQUIRED_IN_CONFIGURATOR, text: t('properties.rule.configTypes.requiredInConfigurator.title') },
+  { id: ConfigTypes.OPTIONAL_IN_CONFIGURATOR, text: t('properties.rule.configTypes.optionalInConfigurator.title') },
+  { id: ConfigTypes.REQUIRED, text: t('properties.rule.configTypes.required.title') },
+  { id: ConfigTypes.OPTIONAL, text: t('properties.rule.configTypes.optional.title') }
+];
+
+const propertyTypeBadgeMap = getPropertyTypeBadgeMap(t);
 
 const setupFormConfig = () => {
   formConfig.value = amazonProductTypeEditFormConfigConstructor(
@@ -99,6 +118,7 @@ const fetchDefaultRuleId = async () => {
 };
 
 
+
 onMounted(async () => {
   await fetchProductType();
   await fetchDefaultRuleId();
@@ -154,15 +174,50 @@ const handleFormUpdate = (form) => {
     </template>
 
     <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" >
-        <template #additional-button>
-          <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`, value: formData.name } }">
-            <Button type="button" class="btn btn-info">
-              {{ t('integrations.show.generateProductType') }}
-            </Button>
-          </Link>
-        </template>
-      </GeneralForm>
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div>
+          <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData" >
+            <template #additional-button>
+              <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`, value: formData.name } }">
+                <Button type="button" class="btn btn-info">
+                  {{ t('integrations.show.generateProductType') }}
+                </Button>
+              </Link>
+            </template>
+          </GeneralForm>
+        </div>
+        <div>
+          <Card v-if="items.length">
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                <thead>
+                  <tr>
+                    <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
+                    <th class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
+                    <th class="p-2 text-left">{{ t('integrations.show.properties.labels.allowsUnmappedValues') }}</th>
+                    <th class="p-2 text-left">{{ t('integrations.show.properties.labels.type') }}</th>
+                    <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <tr v-for="item in items" :key="item.id">
+                    <td class="p-2">{{ item.remoteProperty.name }}</td>
+                    <td class="p-2">{{ item.remoteProperty.code }}</td>
+                    <td class="p-2">
+                      <Icon v-if="item.remoteProperty.allowsUnmappedValues" name="check-circle" class="text-green-500" />
+                      <Icon v-else name="times-circle" class="text-red-500" />
+                    </td>
+                    <td class="p-2">
+                      <Badge :color="propertyTypeBadgeMap[item.remoteProperty.type]?.color" :text="propertyTypeBadgeMap[item.remoteProperty.type]?.text" />
+                    </td>
+                    <td class="p-2">{{ configTypeChoices.find(c => c.id === item.remoteType)?.text }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      </div>
     </template>
   </GeneralTemplate>
 </template>
