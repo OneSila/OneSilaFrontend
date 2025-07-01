@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
-import { FieldInlineItems } from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-inline-items";
-import { FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { Selector } from "../../../../../../../shared/components/atoms/selector";
 import { amazonDefaultUnitConfiguratorsQuery } from "../../../../../../../shared/api/queries/salesChannels.js";
 import { updateAmazonDefaultUnitConfiguratorMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { PrimaryButton } from "../../../../../../../shared/components/atoms/button-primary";
@@ -20,6 +19,7 @@ import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { AmazonRegions, AmazonCountries } from "../../../../integrations";
 import {FieldDate} from "../../../../../../../shared/components/organisms/general-show/containers/field-date";
 import { FieldType } from "../../../../../../../shared/utils/constants";
+import apolloClient from "../../../../../../../../apollo-client";
 
 interface EditAmazonForm {
   id: string;
@@ -48,33 +48,17 @@ const fieldErrors = ref<Record<string, string>>({});
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
 const unitConfigurators = ref<any[]>([]);
+const originalUnitConfigurators = ref<any[]>([]);
 
-const unitConfiguratorField = {
-  type: FieldType.InlineItems,
-  name: 'unitConfigurators',
-  label: t('integrations.labels.defaultUnits'),
-  valueKey: 'salesChannel',
-  allowAdd: false,
-  allowDelete: false,
-  query: amazonDefaultUnitConfiguratorsQuery,
-  dataKey: 'amazonDefaultUnitConfigurators',
-  isEdge: true,
-  createMutation: null,
-  createMutationKey: '',
-  editMutation: updateAmazonDefaultUnitConfiguratorMutation,
-  editMutationKey: 'updateAmazonDefaultUnitConfigurator',
-  deleteMutation: null,
-  deleteMutationKey: '',
-  mode: FormType.EDIT,
-  fields: [
-    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), disabled: true },
-    { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true },
-    { type: FieldType.Choice, name: 'selectedUnit', label: t('shared.labels.unit'), labelBy: 'name', valueBy: 'value', optionsField: 'choices' },
-  ],
-};
 
 watch(() => props.data, (newData) => {
   formData.value = { ...newData };
+}, { deep: true });
+
+watch(unitConfigurators, (val) => {
+  if (!originalUnitConfigurators.value.length && val.length) {
+    originalUnitConfigurators.value = JSON.parse(JSON.stringify(val));
+  }
 }, { deep: true });
 
 const accordionItems = [
@@ -149,6 +133,60 @@ const countryLabel = computed(() => {
   }
 });
 
+const fetchUnitConfigurators = async () => {
+  try {
+    const { data } = await apolloClient.query({
+      query: amazonDefaultUnitConfiguratorsQuery,
+      variables: {
+        filter: { salesChannel: { id: { exact: formData.value.id } } },
+      },
+      fetchPolicy: 'network-only',
+    });
+    const raw = data.amazonDefaultUnitConfigurators.edges.map((e: any) => e.node);
+    raw.forEach((item: any) => {
+      if (Array.isArray(item.choices)) {
+        item.choices = item.choices.map((c: any) =>
+          typeof c === 'object'
+            ? { name: c.name ?? c.label ?? c.value, value: c.value ?? c.id }
+            : { name: c, value: c },
+        );
+      }
+    });
+    unitConfigurators.value = raw;
+    originalUnitConfigurators.value = JSON.parse(JSON.stringify(raw));
+  } catch (e) {
+    console.error('Error loading unit configurators', e);
+  }
+};
+
+onMounted(fetchUnitConfigurators);
+watch(() => props.data.id, fetchUnitConfigurators);
+
+const isConfiguratorDirty = (index: number) => {
+  const current = unitConfigurators.value[index];
+  const original = originalUnitConfigurators.value[index];
+  if (!current || !original) return false;
+  return current.selectedUnit !== original.selectedUnit;
+};
+
+const saveUnitConfigurators = async () => {
+  for (let i = 0; i < unitConfigurators.value.length; i++) {
+    if (isConfiguratorDirty(i)) {
+      const row = unitConfigurators.value[i];
+      try {
+        await apolloClient.mutate({
+          mutation: updateAmazonDefaultUnitConfiguratorMutation,
+          variables: { data: { id: row.id, selectedUnit: row.selectedUnit } },
+        });
+        originalUnitConfigurators.value[i] = JSON.parse(JSON.stringify(row));
+      } catch (e) {
+        console.error('Error updating unit configurator', e);
+        throw e;
+      }
+    }
+  }
+};
+
 const refreshClass = computed(() => {
   if (!formData.value.expirationDate) return '';
   const expiration = new Date(formData.value.expirationDate);
@@ -162,7 +200,12 @@ const refreshClass = computed(() => {
 
 const cleanupAndMutate = async (mutate) => {
   fieldErrors.value = {};
-  await mutate({ variables: { data: formData.value } });
+  try {
+    await saveUnitConfigurators();
+    await mutate({ variables: { data: formData.value } });
+  } catch (e) {
+    handleError(e);
+  }
 };
 
 const handleError = (errors) => {
@@ -289,7 +332,29 @@ useShiftBackspaceKeyboardListener(goBack);
       </template>
 
       <template #units>
-        <FieldInlineItems v-model="unitConfigurators" :field="unitConfiguratorField" />
+        <table class="table-auto w-full">
+          <thead>
+            <tr>
+              <th>{{ t('shared.labels.name') }}</th>
+              <th>{{ t('integrations.show.properties.labels.code') }}</th>
+              <th>{{ t('shared.labels.unit') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(config, index) in unitConfigurators" :key="config.id">
+              <td>{{ config.name }}</td>
+              <td>{{ config.code }}</td>
+              <td>
+                <Selector
+                  v-model="config.selectedUnit"
+                  :options="config.choices"
+                  label-by="name"
+                  value-by="value"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </template>
     </Accordion>
 
