@@ -780,3 +780,62 @@ export const getAmazonProductTypeQuery = gql`
     }
   }
 `;
+
+// Amazon Default Unit Configurator Queries
+export const amazonDefaultUnitConfiguratorsQuery = gql`
+  query AmazonDefaultUnitConfigurators(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonDefaultUnitConfiguratorOrder
+    $filter: AmazonDefaultUnitConfiguratorFilter
+  ) {
+    amazonDefaultUnitConfigurators(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+          code
+          marketplace {
+            id
+            name
+          }
+          selectedUnit
+          choices
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonDefaultUnitConfiguratorQuery = gql`
+  query getAmazonDefaultUnitConfigurator($id: GlobalID!) {
+    amazonDefaultUnitConfigurator(id: $id) {
+      id
+      name
+      code
+      marketplace {
+        id
+        name
+      }
+      selectedUnit
+      choices
+    }
+  }
+`;

@@ -141,6 +141,14 @@ const deselectAll = () => {
   selectedRows.value = selectedRows.value.map(() => false);
 };
 
+// Return field config merged with row specific options if provided
+const getFieldWithRow = (fieldItem: any, row: any) => {
+  if (fieldItem.optionsField && row[fieldItem.optionsField]) {
+    return { ...fieldItem, options: row[fieldItem.optionsField] };
+  }
+  return fieldItem;
+};
+
 // Show a confirmation alert before deletion
 const triggerDeleteAlert = async () => {
   const defaultSwalOptions = {
@@ -345,7 +353,7 @@ onMounted(() => {
             <component
               v-model="row[fieldItem.name]"
               :is="getFieldComponent(fieldItem.type)"
-              :field="fieldItem"
+              :field="getFieldWithRow(fieldItem, row)"
             />
           </div>
         </div>
