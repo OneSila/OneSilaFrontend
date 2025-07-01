@@ -16,6 +16,7 @@ import { Badge } from "../../../../../../../../../shared/components/atoms/badge"
 import { getPropertyTypeBadgeMap } from "../../../../../../../../properties/properties/configs";
 import { ConfigTypes } from "../../../../../../../../../shared/utils/constants";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
+import { Accordion } from "../../../../../../../../../shared/components/atoms/accordion";
 import {FormConfig, FormType} from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import {HelpSection} from "../../../../../../../../../shared/components/organisms/general-form/containers/help-section";
@@ -52,6 +53,10 @@ const configTypeChoices = [
 ];
 
 const propertyTypeBadgeMap = getPropertyTypeBadgeMap(t);
+
+const accordionItems = [
+  { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
+];
 
 const setupFormConfig = () => {
   formConfig.value = amazonProductTypeEditFormConfigConstructor(
@@ -186,35 +191,37 @@ const handleFormUpdate = (form) => {
             </Link>
           </template>
         </GeneralForm>
-        <div>
-          <div v-if="items.length" class="mt-4 grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
-            <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-              <div class="overflow-x-auto">
-                <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                  <thead>
-                    <tr>
-                      <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
-                      <th class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
-                      <th class="p-2 text-left">{{ t('integrations.show.properties.labels.allowsUnmappedValues') }}</th>
-                      <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-200 bg-white">
-                    <tr v-for="item in items" :key="item.id">
-                      <td class="p-2">{{ item.remoteProperty.name }}</td>
-                      <td class="p-2">{{ item.remoteProperty.code }}</td>
-                      <td class="p-2">
-                        <Icon v-if="item.remoteProperty.allowsUnmappedValues" name="check-circle" class="text-green-500" />
-                        <Icon v-else name="times-circle" class="text-red-500" />
-                      </td>
-                      <td class="p-2">{{ configTypeChoices.find(c => c.id === item.remoteType)?.text }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+        <Accordion v-if="items.length" class="mt-4" :items="accordionItems">
+          <template #items>
+            <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+              <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+                <div class="overflow-x-auto">
+                  <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                    <thead>
+                      <tr>
+                        <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
+                        <th class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
+                        <th class="p-2 text-left">{{ t('integrations.show.mapping.mappedLocally') }}</th>
+                        <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                      <tr v-for="item in items" :key="item.id">
+                        <td class="p-2">{{ item.remoteProperty.name }}</td>
+                        <td class="p-2">{{ item.remoteProperty.code }}</td>
+                        <td class="p-2">
+                          <Icon v-if="item.remoteProperty.mappedLocally" name="check-circle" class="text-green-500" />
+                          <Icon v-else name="times-circle" class="text-red-500" />
+                        </td>
+                        <td class="p-2">{{ configTypeChoices.find(c => c.id === item.remoteType)?.text }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              </div>
-          </div>
-        </div>
+            </div>
+          </template>
+        </Accordion>
 
     </template>
   </GeneralTemplate>
