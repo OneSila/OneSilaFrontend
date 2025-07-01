@@ -2150,7 +2150,8 @@
       "sections": {
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
-        "authentication": "Authentication"
+        "authentication": "Authentication",
+        "defaultUnits": "Default Units"
       },
       "noImportBanner": {
         "title": "First Import Not Completed",
@@ -2344,7 +2345,8 @@
       "region": "Region",
       "country": "Country",
       "expirationDate": "Access Token Expiration",
-      "pullData": "Pull Data"
+      "pullData": "Pull Data",
+      "defaultUnits": "Default Units"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",

@@ -534,3 +534,16 @@ export const updateAmazonImportProcessMutation = gql`
     }
   }
 `;
+
+// Amazon Default Unit Configurator Mutation
+export const updateAmazonDefaultUnitConfiguratorMutation = gql`
+  mutation updateAmazonDefaultUnitConfigurator($data: AmazonDefaultUnitConfiguratorPartialInput!) {
+    updateAmazonDefaultUnitConfigurator(data: $data) {
+      id
+      name
+      code
+      selectedUnit
+      choices
+    }
+  }
+`;
