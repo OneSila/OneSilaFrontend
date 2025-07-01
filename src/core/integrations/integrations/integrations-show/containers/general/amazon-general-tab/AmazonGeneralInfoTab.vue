@@ -57,7 +57,10 @@ watch(() => props.data, (newData) => {
 
 watch(unitConfigurators, (val) => {
   if (!originalUnitConfigurators.value.length && val.length) {
-    originalUnitConfigurators.value = JSON.parse(JSON.stringify(val));
+    originalUnitConfigurators.value = val.map((v: any) => ({
+      id: v.id,
+      selectedUnit: v.selectedUnit,
+    }));
   }
 }, { deep: true });
 
@@ -142,8 +145,8 @@ const fetchUnitConfigurators = async () => {
       },
       fetchPolicy: 'network-only',
     });
-    const raw = data.amazonDefaultUnitConfigurators.edges.map((e: any) => e.node);
-    raw.forEach((item: any) => {
+    const raw = data.amazonDefaultUnitConfigurators.edges.map((e: any) => {
+      const item = { ...e.node };
       if (Array.isArray(item.choices)) {
         item.choices = item.choices.map((c: any) =>
           typeof c === 'object'
@@ -151,9 +154,10 @@ const fetchUnitConfigurators = async () => {
             : { name: c, value: c },
         );
       }
+      return item;
     });
     unitConfigurators.value = raw;
-    originalUnitConfigurators.value = JSON.parse(JSON.stringify(raw));
+    originalUnitConfigurators.value = raw.map((r: any) => ({ id: r.id, selectedUnit: r.selectedUnit }));
   } catch (e) {
     console.error('Error loading unit configurators', e);
   }
@@ -178,7 +182,10 @@ const saveUnitConfigurators = async () => {
           mutation: updateAmazonDefaultUnitConfiguratorMutation,
           variables: { data: { id: row.id, selectedUnit: row.selectedUnit } },
         });
-        originalUnitConfigurators.value[i] = JSON.parse(JSON.stringify(row));
+        originalUnitConfigurators.value[i] = {
+          id: row.id,
+          selectedUnit: row.selectedUnit,
+        };
       } catch (e) {
         console.error('Error updating unit configurator', e);
         throw e;
