@@ -5,6 +5,10 @@ import { TextInput } from "../../../../../../../shared/components/atoms/input-te
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
+import { FieldInlineItems } from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-inline-items";
+import { FormType } from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { amazonDefaultUnitConfiguratorsQuery } from "../../../../../../../shared/api/queries/salesChannels.js";
+import { updateAmazonDefaultUnitConfiguratorMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { PrimaryButton } from "../../../../../../../shared/components/atoms/button-primary";
 import { SecondaryButton } from "../../../../../../../shared/components/atoms/button-secondary";
 import { CancelButton } from "../../../../../../../shared/components/atoms/button-cancel";
@@ -43,6 +47,31 @@ const formData = ref<EditAmazonForm>({ ...props.data });
 const fieldErrors = ref<Record<string, string>>({});
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
+const unitConfigurators = ref<any[]>([]);
+
+const unitConfiguratorField = {
+  type: FieldType.InlineItems,
+  name: 'unitConfigurators',
+  label: t('integrations.labels.defaultUnits'),
+  valueKey: 'salesChannel',
+  allowAdd: false,
+  allowDelete: false,
+  query: amazonDefaultUnitConfiguratorsQuery,
+  dataKey: 'amazonDefaultUnitConfigurators',
+  isEdge: true,
+  createMutation: null,
+  createMutationKey: '',
+  editMutation: updateAmazonDefaultUnitConfiguratorMutation,
+  editMutationKey: 'updateAmazonDefaultUnitConfigurator',
+  deleteMutation: null,
+  deleteMutationKey: '',
+  mode: FormType.EDIT,
+  fields: [
+    { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), disabled: true },
+    { type: FieldType.Text, name: 'code', label: t('shared.labels.code'), disabled: true },
+    { type: FieldType.Choice, name: 'selectedUnit', label: t('shared.labels.unit'), labelBy: 'name', valueBy: 'value', optionsField: 'choices' },
+  ],
+};
 
 watch(() => props.data, (newData) => {
   formData.value = { ...newData };
@@ -51,6 +80,7 @@ watch(() => props.data, (newData) => {
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
   { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' },
+  { name: 'units', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
 ];
 
 const regionLabel = computed(() => {
@@ -256,6 +286,10 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
           </div>
         </div>
+      </template>
+
+      <template #units>
+        <FieldInlineItems v-model="unitConfigurators" :field="unitConfiguratorField" />
       </template>
     </Accordion>
 
