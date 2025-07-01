@@ -339,29 +339,31 @@ useShiftBackspaceKeyboardListener(goBack);
       </template>
 
       <template #units>
-        <table class="table-auto w-full">
-          <thead>
-            <tr>
-              <th>{{ t('shared.labels.name') }}</th>
-              <th>{{ t('integrations.show.properties.labels.code') }}</th>
-              <th>{{ t('shared.labels.unit') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(config, index) in unitConfigurators" :key="config.id">
-              <td>{{ config.name }}</td>
-              <td>{{ config.code }}</td>
-              <td>
-                <Selector
-                  v-model="config.selectedUnit"
-                  :options="config.choices"
-                  label-by="name"
-                  value-by="value"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="max-h-[700px] overflow-y-auto border rounded-md custom-scrollbar">
+          <table class="table-auto w-full">
+            <thead>
+              <tr>
+                <th>{{ t('shared.labels.name') }}</th>
+                <th>{{ t('integrations.show.properties.labels.code') }}</th>
+                <th>{{ t('shared.labels.unit') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(config, index) in unitConfigurators" :key="config.id">
+                <td>{{ config.name }}</td>
+                <td>{{ config.code }}</td>
+                <td>
+                  <Selector
+                    v-model="config.selectedUnit"
+                    :options="config.choices"
+                    label-by="name"
+                    value-by="value"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
     </Accordion>
 
@@ -397,3 +399,30 @@ useShiftBackspaceKeyboardListener(goBack);
     {{ t('integrations.show.amazonNotConnectedBanner.content') }}
   </div>
 </template>
+
+<style scoped>
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4361EE;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #c0c0c0;
+}
+
+.custom-scrollbar {
+  padding-right: 15px;
+}
+
+</style>
