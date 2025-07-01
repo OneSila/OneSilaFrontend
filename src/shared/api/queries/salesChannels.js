@@ -739,6 +739,7 @@ export const getAmazonProductTypeQuery = gql`
           id
           name
           code
+          mappedLocally
           allowsUnmappedValues
           type
         }
