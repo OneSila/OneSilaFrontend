@@ -68,7 +68,7 @@ const unitConfiguratorField = {
   mode: FormType.EDIT,
   fields: [
     { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), disabled: true },
-    { type: FieldType.Text, name: 'code', label: t('shared.labels.code'), disabled: true },
+    { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true },
     { type: FieldType.Choice, name: 'selectedUnit', label: t('shared.labels.unit'), labelBy: 'name', valueBy: 'value', optionsField: 'choices' },
   ],
 };

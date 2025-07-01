@@ -151,7 +151,8 @@ import {
   faGauge,
   faClone,
   faPaperPlane,
-  faUpDownLeftRight
+  faUpDownLeftRight,
+  faWeightHanging
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -303,6 +304,7 @@ library.add(faGauge as IconDefinition);
 library.add(faClone as IconDefinition);
 library.add(faPaperPlane as IconDefinition);
 library.add(faUpDownLeftRight as IconDefinition);
+library.add(faWeightHanging as IconDefinition);
 
 
 export default {
