@@ -24,7 +24,6 @@ const errors: Ref<Record<string, string> | null> = ref(null);
 
 const initialFormUpdate = (data: any) => {
 
-  emit('setData', data)
   // we want to updated only the first time then we can freely update it from outside without coming back to the initial values (example using clear fields)
   if (Object.keys(form).length !== 0) {
     return true;
@@ -66,6 +65,7 @@ const initialFormUpdate = (data: any) => {
   });
 
   emit('formUpdated', form);
+
   return true;
 };
 

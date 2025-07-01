@@ -16,8 +16,11 @@ import { Badge } from "../../../../../../../../../shared/components/atoms/badge"
 import { getPropertyTypeBadgeMap } from "../../../../../../../../properties/properties/configs";
 import { ConfigTypes } from "../../../../../../../../../shared/utils/constants";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
-import { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import {FormConfig, FormType} from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
+import {HelpSection} from "../../../../../../../../../shared/components/organisms/general-form/containers/help-section";
+import {FormCreate} from "../../../../../../../../../shared/components/organisms/general-form/containers/form-create";
+import {FormEdit} from "../../../../../../../../../shared/components/organisms/general-form/containers/form-edit";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -174,50 +177,45 @@ const handleFormUpdate = (form) => {
     </template>
 
     <template v-slot:content>
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData" >
+          <template #additional-button>
+            <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`, value: formData.name } }">
+              <Button type="button" class="btn btn-info">
+                {{ t('integrations.show.generateProductType') }}
+              </Button>
+            </Link>
+          </template>
+        </GeneralForm>
         <div>
-          <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData" >
-            <template #additional-button>
-              <Link :path="{ name: 'properties.values.create', query: { propertyId: propertyProductTypeId, isRule: '1', amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`, value: formData.name } }">
-                <Button type="button" class="btn btn-info">
-                  {{ t('integrations.show.generateProductType') }}
-                </Button>
-              </Link>
-            </template>
-          </GeneralForm>
+          <div v-if="items.length" class="mt-4 grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+            <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+              <div class="overflow-x-auto">
+                <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                  <thead>
+                    <tr>
+                      <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
+                      <th class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
+                      <th class="p-2 text-left">{{ t('integrations.show.properties.labels.allowsUnmappedValues') }}</th>
+                      <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200 bg-white">
+                    <tr v-for="item in items" :key="item.id">
+                      <td class="p-2">{{ item.remoteProperty.name }}</td>
+                      <td class="p-2">{{ item.remoteProperty.code }}</td>
+                      <td class="p-2">
+                        <Icon v-if="item.remoteProperty.allowsUnmappedValues" name="check-circle" class="text-green-500" />
+                        <Icon v-else name="times-circle" class="text-red-500" />
+                      </td>
+                      <td class="p-2">{{ configTypeChoices.find(c => c.id === item.remoteType)?.text }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              </div>
+          </div>
         </div>
-        <div>
-          <Card v-if="items.length">
-            <div class="overflow-x-auto">
-              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                <thead>
-                  <tr>
-                    <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
-                    <th class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
-                    <th class="p-2 text-left">{{ t('integrations.show.properties.labels.allowsUnmappedValues') }}</th>
-                    <th class="p-2 text-left">{{ t('integrations.show.properties.labels.type') }}</th>
-                    <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="item in items" :key="item.id">
-                    <td class="p-2">{{ item.remoteProperty.name }}</td>
-                    <td class="p-2">{{ item.remoteProperty.code }}</td>
-                    <td class="p-2">
-                      <Icon v-if="item.remoteProperty.allowsUnmappedValues" name="check-circle" class="text-green-500" />
-                      <Icon v-else name="times-circle" class="text-red-500" />
-                    </td>
-                    <td class="p-2">
-                      <Badge :color="propertyTypeBadgeMap[item.remoteProperty.type]?.color" :text="propertyTypeBadgeMap[item.remoteProperty.type]?.text" />
-                    </td>
-                    <td class="p-2">{{ configTypeChoices.find(c => c.id === item.remoteType)?.text }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </div>
-      </div>
+
     </template>
   </GeneralTemplate>
 </template>
