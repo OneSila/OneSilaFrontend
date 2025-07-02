@@ -251,12 +251,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   ],
   orders: [
     {
-      name: 'translations_Name',
+      name: 'name',
       label: t('shared.labels.name'),
       type: OrderType.ASC
     },
     {
-      name: 'translations_Name',
+      name: 'name',
       label: t('shared.labels.name'),
       type: OrderType.DESC
     },
