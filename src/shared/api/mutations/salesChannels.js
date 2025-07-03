@@ -494,6 +494,14 @@ export const updateAmazonPropertySelectValueMutation = gql`
   }
 `;
 
+export const bulkUpdateAmazonPropertySelectValueLocalInstanceMutation = gql`
+  mutation bulkUpdateAmazonPropertySelectValueLocalInstance($data: BulkAmazonPropertySelectValueLocalInstanceInput!) {
+    bulkUpdateAmazonPropertySelectValueLocalInstance(data: $data) {
+      ids
+    }
+  }
+`;
+
 // Amazon Product Type Mutations
 
 export const updateAmazonProductTypeMutation = gql`
