@@ -6,6 +6,7 @@ import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTem
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 import { amazonPropertySelectValuesSearchConfigConstructor, amazonPropertySelectValuesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
+import BulkAmazonPropertySelectValueAssigner from './BulkAmazonPropertySelectValueAssigner.vue';
 import apolloClient from "../../../../../../../../../apollo-client";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
@@ -64,7 +65,14 @@ const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, prop
         :query="listingQuery"
         :query-key="listingQueryKey"
         :fixed-filter-variables="{'salesChannel': {'id': {exact: salesChannelId}}}"
-      />
+      >
+        <template #bulkActions="{ selectedEntities }">
+          <BulkAmazonPropertySelectValueAssigner
+            :selected-entities="selectedEntities"
+            @started="emit('pull-data')"
+          />
+        </template>
+      </GeneralListing>
     </template>
   </GeneralTemplate>
 </template>
