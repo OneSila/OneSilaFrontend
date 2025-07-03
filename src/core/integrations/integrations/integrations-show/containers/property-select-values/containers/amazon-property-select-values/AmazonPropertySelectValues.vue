@@ -47,8 +47,9 @@ const startMapping = async () => {
   }
 };
 
-const clearSelection = () => {
+const clearSelection = (query?: any) => {
   generalListingRef.value?.clearSelected?.()
+  query?.refetch?.()
 }
 
 const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
@@ -72,10 +73,10 @@ const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, prop
         :query-key="listingQueryKey"
         :fixed-filter-variables="{'salesChannel': {'id': {exact: salesChannelId}}}"
       >
-        <template #bulkActions="{ selectedEntities }">
+        <template #bulkActions="{ selectedEntities, query }">
           <BulkAmazonPropertySelectValueAssigner
             :selected-entities="selectedEntities"
-            @started="clearSelection"
+            @started="clearSelection(query)"
           />
         </template>
       </GeneralListing>
