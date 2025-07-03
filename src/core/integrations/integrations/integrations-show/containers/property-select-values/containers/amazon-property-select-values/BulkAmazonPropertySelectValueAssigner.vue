@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Label } from '../../../../../../../../shared/components/atoms/label';
@@ -7,7 +7,7 @@ import { FieldQuery } from '../../../../../../../../shared/components/organisms/
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { propertiesQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../shared/api/queries/properties';
 import apolloClient from '../../../../../../../../../apollo-client';
-import { FieldType } from '../../../../../../../../shared/utils/constants';
+import {FieldType, PropertyTypes} from '../../../../../../../../shared/utils/constants';
 import { QueryFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { selectValueOnTheFlyConfig } from '../../../../../../../properties/property-select-values/configs';
 import { Toast } from '../../../../../../../../shared/modules/toast';
@@ -23,6 +23,7 @@ const showPanel = ref(false);
 const selectedProperty = ref<string | null>(null);
 const selectedValue = ref<string | null>(null);
 const field = ref<QueryFormField | null>(null);
+const panelRef = ref<HTMLElement | null>(null);
 
 const propertyField = {
   type: FieldType.Query,
@@ -31,7 +32,7 @@ const propertyField = {
   labelBy: 'name',
   valueBy: 'id',
   query: propertiesQuery,
-  queryVariables: { filter: { isProductType: { exact: false } } },
+  queryVariables: { filter: { isProductType: { exact: false }, type: {exact: PropertyTypes.SELECT} } },
   dataKey: 'properties',
   isEdge: true,
   multiple: false,
@@ -91,10 +92,30 @@ const onAssignSubmit = async () => {
     }
   }
 };
+
+const handleGlobalClick = (event: MouseEvent) => {
+  const clickedEl = event.target as HTMLElement;
+  const clickedInsidePanel = panelRef.value?.contains(clickedEl);
+  const clickedInsideSelectorDropdown = !!clickedEl.closest('.vs__dropdown-menu');
+  const clickedInsideUniversalModal = !!clickedEl.closest('.vue-universal-modal-content');
+
+  if (!clickedInsidePanel && !clickedInsideSelectorDropdown && !clickedInsideUniversalModal) {
+    showPanel.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleGlobalClick, true);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleGlobalClick, true);
+});
+
 </script>
 
 <template>
-  <div class="relative inline-block text-right">
+  <div class="relative inline-block text-right" ref="panelRef">
     <button
       type="button"
       @click="showPanel = !showPanel"

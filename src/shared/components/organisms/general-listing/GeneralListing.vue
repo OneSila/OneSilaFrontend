@@ -77,7 +77,7 @@ const getUpdatedField = (field, item, index) => {
 const selectedEntities = ref<string[]>([]);
 
 // "haveBulk" is true when either bulk edit or bulk delete is enabled.
-const haveBulk = computed(() => props.config.addBulkEdit || (props.config.addBulkDelete && props.config.bulkDeleteMutation));
+const haveBulk = computed(() => props.config.addBulkEdit || (props.config.addBulkDelete && props.config.bulkDeleteMutation) || props.config.addBulkActions);
 
 // For an individual row, add or remove its ID from the selection.
 const selectCheckbox = (id: string, value: boolean) => {
@@ -275,12 +275,7 @@ defineExpose({
             </div>
 
             <div v-if="viewType === 'table'">
-              <div v-if="selectedEntities.length > 0" class="absolute flex h-12 items-center space-x-3 bg-white"
-                   :class="config.addGridView ? 'left-4 top-4' : 'left-12 top-1 '">
-
-                <span class="text-sm font-semibold text-gray-900">
-                  {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
-                </span>
+              <div v-if="selectedEntities.length > 0" class="flex ml-4 items-center space-x-3 bg-white">
 
                 <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">

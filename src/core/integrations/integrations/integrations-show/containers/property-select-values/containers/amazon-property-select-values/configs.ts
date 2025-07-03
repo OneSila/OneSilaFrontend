@@ -96,6 +96,7 @@ export const amazonPropertySelectValuesListingConfigConstructor = (t: Function, 
   showUrlName: 'integrations.amazonPropertySelectValues.edit',
   addDelete: false,
   addPagination: true,
+  addBulkActions: true,
 });
 
 export const listingQueryKey = 'amazonPropertySelectValues';

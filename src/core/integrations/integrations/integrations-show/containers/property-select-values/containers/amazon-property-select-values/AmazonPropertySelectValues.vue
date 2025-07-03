@@ -15,6 +15,7 @@ const { t } = useI18n();
 const router = useRouter();
 
 const canStartMapping = ref(false);
+const generalListingRef = ref<any>(null);
 
 const fetchFirstUnmapped = async () => {
   const { data } = await apolloClient.query({
@@ -46,6 +47,10 @@ const startMapping = async () => {
   }
 };
 
+const clearSelection = () => {
+  generalListingRef.value?.clearSelected?.()
+}
+
 const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, props.id);
 </script>
@@ -60,6 +65,7 @@ const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, prop
 
     <template v-slot:content>
       <GeneralListing
+        ref="generalListingRef"
         :search-config="searchConfig"
         :config="listingConfig"
         :query="listingQuery"
@@ -69,7 +75,7 @@ const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, prop
         <template #bulkActions="{ selectedEntities }">
           <BulkAmazonPropertySelectValueAssigner
             :selected-entities="selectedEntities"
-            @started="emit('pull-data')"
+            @started="clearSelection"
           />
         </template>
       </GeneralListing>
