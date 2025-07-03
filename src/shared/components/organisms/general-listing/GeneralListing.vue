@@ -35,7 +35,7 @@ const props = withDefaults(
     }
 );
 const slots = defineSlots<{
-  bulkActions?: (scope: { selectedEntities: string[]; viewType: string }) => any;
+  bulkActions?: (scope: { selectedEntities: string[]; viewType: string; query: any }) => any;
 }>();
 
 
@@ -252,7 +252,7 @@ defineExpose({
                   {{ t('shared.button.deleteAll') }}
                 </button>
 
-                <slot name="bulkActions" v-bind="{ selectedEntities, viewType }" />
+                <slot name="bulkActions" v-bind="{ selectedEntities, viewType, query }" />
               </div>
               <!-- Select All control -->
               <div v-if="viewType === 'grid' && haveBulk" class="flex items-center mt-1">
@@ -286,7 +286,7 @@ defineExpose({
                   {{ t('shared.button.deleteAll') }}
                 </button>
 
-                <slot name="bulkActions" v-bind="{ selectedEntities, viewType }" />
+                  <slot name="bulkActions" v-bind="{ selectedEntities, viewType, query }" />
               </div>
                 <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
                   <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
