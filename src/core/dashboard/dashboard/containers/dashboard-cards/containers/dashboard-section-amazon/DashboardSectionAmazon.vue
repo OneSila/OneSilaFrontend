@@ -8,6 +8,7 @@ import {
   amazonPropertiesQuery,
   amazonProductTypesQuery,
   amazonPropertySelectValuesQuery,
+  amazonDefaultUnitConfiguratorsQuery,
   amazonChannelsQuery
 } from '../../../../../../../shared/api/queries/salesChannels.js';
 import apolloClient from '../../../../../../../../apollo-client';
@@ -28,6 +29,7 @@ interface AmazonCardData {
   properties: number;
   productTypes: number;
   selectValues: number;
+  unitConfigurators: number;
 }
 
 const showCompletedAmazonCards = ref(false);
@@ -36,7 +38,7 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
-  const [propRes, typeRes, valueRes] = await Promise.all([
+  const [propRes, typeRes, valueRes, unitRes] = await Promise.all([
     apolloClient.query({
       query: amazonPropertiesQuery,
       variables: {
@@ -61,12 +63,21 @@ const fetchCounts = async (salesChannelId: string) => {
       },
       fetchPolicy: 'network-only',
     }),
+    apolloClient.query({
+      query: amazonDefaultUnitConfiguratorsQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } } },
+      },
+      fetchPolicy: 'network-only',
+    }),
   ]);
 
   return {
     properties: propRes.data?.amazonProperties?.totalCount || 0,
     productTypes: typeRes.data?.amazonProductTypes?.totalCount || 0,
     selectValues: valueRes.data?.amazonPropertySelectValues?.totalCount || 0,
+    unitConfigurators: unitRes.data?.amazonDefaultUnitConfigurators?.totalCount || 0,
   };
 };
 
@@ -173,6 +184,14 @@ onMounted(fetchAmazonIntegrations);
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.unitConfigurators"
+          :title="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.title')"
+          :description="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.description')"
+          :hide-on-complete="!showCompletedAmazonCards"
+          color="red"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'general', accordion: 'units' } }"
         />
       </div>
     </Card>
