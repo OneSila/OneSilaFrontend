@@ -1,5 +1,11 @@
 import {FieldType, PropertyTypes} from "../../../../../../../../shared/utils/constants";
-import { amazonPropertySelectValuesQuery, getAmazonPropertySelectValueQuery, amazonPropertiesQuery, amazonChannelsQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import {
+  amazonPropertySelectValuesQuery,
+  getAmazonPropertySelectValueQuery,
+  amazonPropertiesQuery,
+  amazonChannelsQuery,
+  salesChannelViewsQuery
+} from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertySelectValuesQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import { selectValueOnTheFlyConfig } from "../../../../../../../properties/property-select-values/configs";
 import { updateAmazonPropertySelectValueMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
@@ -54,15 +60,15 @@ export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function, s
       type: FieldType.Query,
       name: 'marketplace',
       label: t('integrations.show.propertySelectValues.labels.marketplace'),
-      labelBy: 'hostname',
+      labelBy: 'name',
       valueBy: 'id',
-      query: amazonChannelsQuery,
-      dataKey: 'amazonChannels',
+      query: salesChannelViewsQuery,
+      dataKey: 'salesChannelViews',
       filterable: true,
       isEdge: true,
       addLookup: true,
       lookupKeys: ['id'],
-      queryVariables: { filters: { id: { exact: salesChannelId } } }
+      queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } }
     }
   ],
   orders: []
