@@ -13,7 +13,7 @@ import { SecondaryButton } from "../../../../../../../shared/components/atoms/bu
 import { CancelButton } from "../../../../../../../shared/components/atoms/button-cancel";
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../../../../shared/modules/keyboard";
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { updateAmazonSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { AmazonRegions, AmazonCountries } from "../../../../integrations";
@@ -42,6 +42,7 @@ interface EditAmazonForm {
 const props = defineProps<{ data: EditAmazonForm }>();
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 
 const formData = ref<EditAmazonForm>({ ...props.data });
 const fieldErrors = ref<Record<string, string>>({});
@@ -63,6 +64,8 @@ watch(unitConfigurators, (val) => {
     }));
   }
 }, { deep: true });
+
+const openAccordionItem = computed(() => String(route.query.accordion || ''));
 
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
@@ -289,7 +292,7 @@ useShiftBackspaceKeyboardListener(goBack);
       </div>
     </div>
 
-    <Accordion class="mt-8" :items="accordionItems">
+    <Accordion class="mt-8" :items="accordionItems" :default-active="openAccordionItem" :key="openAccordionItem">
       <template #throttling>
         <div class="grid grid-cols-12 gap-4">
           <div class="md:col-span-6 col-span-12">

@@ -161,6 +161,10 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Amazon property values that need mapping."
+        },
+        "unmappedDefaultUnitConfigurators": {
+          "title": "Default Unit Configurator",
+          "description": "Amazon unit configurators missing a default unit."
         }
       }
     },
