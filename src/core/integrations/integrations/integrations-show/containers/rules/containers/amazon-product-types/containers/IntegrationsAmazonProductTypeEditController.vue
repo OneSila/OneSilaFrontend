@@ -58,7 +58,7 @@ const configTypeChoices = [
 const propertyTypeBadgeMap = getPropertyTypeBadgeMap(t);
 
 const accordionItems = [
-  {name: 'items', label: t('shared.tabs.items'), icon: 'sitemap'},
+  {name: 'items', label: t('integrations.imports.types.schema'), icon: 'sitemap'},
 ];
 
 const setupFormConfig = () => {
