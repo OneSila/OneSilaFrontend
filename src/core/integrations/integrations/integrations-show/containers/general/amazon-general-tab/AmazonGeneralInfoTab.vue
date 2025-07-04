@@ -339,7 +339,7 @@ useShiftBackspaceKeyboardListener(goBack);
       </template>
 
       <template #units>
-        <div class="max-h-[700px] overflow-y-auto border rounded-md custom-scrollbar">
+        <div class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar">
           <table class="table-auto w-full">
             <thead>
               <tr>

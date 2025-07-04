@@ -28,6 +28,7 @@ export interface ListingConfig {
   addActions?: boolean;
   addBulkEdit?: boolean;
   addBulkDelete?: boolean;
+  addBulkActions?: boolean;
   bulkDeleteMutation?: any;
   bulkDeleteSuccessAlert?: string;
   bulkDeleteErrorAlert?: string;

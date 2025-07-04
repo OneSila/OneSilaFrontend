@@ -35,7 +35,7 @@ const props = withDefaults(
     }
 );
 const slots = defineSlots<{
-  bulkActions?: (scope: { selectedEntities: string[]; viewType: string }) => any;
+  bulkActions?: (scope: { selectedEntities: string[]; viewType: string; query: any }) => any;
 }>();
 
 
@@ -77,7 +77,7 @@ const getUpdatedField = (field, item, index) => {
 const selectedEntities = ref<string[]>([]);
 
 // "haveBulk" is true when either bulk edit or bulk delete is enabled.
-const haveBulk = computed(() => props.config.addBulkEdit || (props.config.addBulkDelete && props.config.bulkDeleteMutation));
+const haveBulk = computed(() => props.config.addBulkEdit || (props.config.addBulkDelete && props.config.bulkDeleteMutation) || props.config.addBulkActions);
 
 // For an individual row, add or remove its ID from the selection.
 const selectCheckbox = (id: string, value: boolean) => {
@@ -252,7 +252,7 @@ defineExpose({
                   {{ t('shared.button.deleteAll') }}
                 </button>
 
-                <slot name="bulkActions" v-bind="{ selectedEntities, viewType }" />
+                <slot name="bulkActions" v-bind="{ selectedEntities, viewType, query }" />
               </div>
               <!-- Select All control -->
               <div v-if="viewType === 'grid' && haveBulk" class="flex items-center mt-1">
@@ -275,12 +275,7 @@ defineExpose({
             </div>
 
             <div v-if="viewType === 'table'">
-              <div v-if="selectedEntities.length > 0" class="absolute flex h-12 items-center space-x-3 bg-white"
-                   :class="config.addGridView ? 'left-4 top-4' : 'left-12 top-1 '">
-
-                <span class="text-sm font-semibold text-gray-900">
-                  {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
-                </span>
+              <div v-if="selectedEntities.length > 0" class="flex ml-4 items-center space-x-3 bg-white">
 
                 <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
@@ -291,7 +286,7 @@ defineExpose({
                   {{ t('shared.button.deleteAll') }}
                 </button>
 
-                <slot name="bulkActions" v-bind="{ selectedEntities, viewType }" />
+                  <slot name="bulkActions" v-bind="{ selectedEntities, viewType, query }" />
               </div>
                 <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
                   <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
