@@ -6,6 +6,7 @@ import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTem
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 import { amazonPropertySelectValuesSearchConfigConstructor, amazonPropertySelectValuesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
+import BulkAmazonPropertySelectValueAssigner from './BulkAmazonPropertySelectValueAssigner.vue';
 import apolloClient from "../../../../../../../../../apollo-client";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
@@ -14,6 +15,7 @@ const { t } = useI18n();
 const router = useRouter();
 
 const canStartMapping = ref(false);
+const generalListingRef = ref<any>(null);
 
 const fetchFirstUnmapped = async () => {
   const { data } = await apolloClient.query({
@@ -45,6 +47,11 @@ const startMapping = async () => {
   }
 };
 
+const clearSelection = (query?: any) => {
+  generalListingRef.value?.clearSelected?.()
+  query?.refetch?.()
+}
+
 const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, props.id);
 </script>
@@ -59,12 +66,20 @@ const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, prop
 
     <template v-slot:content>
       <GeneralListing
+        ref="generalListingRef"
         :search-config="searchConfig"
         :config="listingConfig"
         :query="listingQuery"
         :query-key="listingQueryKey"
         :fixed-filter-variables="{'salesChannel': {'id': {exact: salesChannelId}}}"
-      />
+      >
+        <template #bulkActions="{ selectedEntities, query }">
+          <BulkAmazonPropertySelectValueAssigner
+            :selected-entities="selectedEntities"
+            @started="clearSelection(query)"
+          />
+        </template>
+      </GeneralListing>
     </template>
   </GeneralTemplate>
 </template>

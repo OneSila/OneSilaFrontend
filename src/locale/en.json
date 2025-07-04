@@ -2227,7 +2227,10 @@
         "notMappedBanner": {
           "title": "Amazon property not mapped",
           "content": "Map the Amazon property first before mapping values."
-        }
+        },
+        "bulkAssign": "Assign Select Value",
+        "bulkAssignTitle": "Assign to {count} value(s)",
+        "assignSuccess": "Values were successfully assigned"
       },
       "mapping": {
         "mappedLocally": "Mapped Locally",
