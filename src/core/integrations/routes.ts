@@ -60,12 +60,13 @@ export const routes = [
     meta: { title: 'integrations.imports.create.title' },
     component: () => import('./integrations/integrations-show/containers/imports/containers/create-import/ImportCreateController.vue'),
   },
-  {
-    path: '/integrations/shopify/installed',
-    name: 'integrations.shopify.installed',
-    meta: { title: 'integrations.shopify.installed.title' },
-    component: () => import('./integrations/integrations-installed/shopify-installed/ShopifyInstalledController.vue'),
-  },
+  // temporary commented since we no longer to oAuth
+  // {
+  //   path: '/integrations/shopify/installed',
+  //   name: 'integrations.shopify.installed',
+  //   meta: { title: 'integrations.shopify.installed.title' },
+  //   component: () => import('./integrations/integrations-installed/shopify-installed/ShopifyInstalledController.vue'),
+  // },
   {
     path: '/integrations/shopify/entry',
     name: 'integrations.shopify.entry',

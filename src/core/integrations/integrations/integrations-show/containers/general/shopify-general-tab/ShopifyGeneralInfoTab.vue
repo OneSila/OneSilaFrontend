@@ -37,10 +37,8 @@ interface EditShopifyForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
-  /*
   apiKey: string;
   apiSecret: string;
-  */
   accessToken?: string;
   state?: string;
   vendorProperty: {
@@ -198,7 +196,6 @@ useShiftBackspaceKeyboardListener(goBack);
     </div>
   </div>
 
-  <!--
   <div class="grid grid-cols-12 gap-4">
     <div class="md:col-span-6 col-span-12">
       <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
@@ -213,14 +210,13 @@ useShiftBackspaceKeyboardListener(goBack);
       <TextInput v-model="formData.apiSecret" disabled :secret="true" class="w-full" />
     </div>
   </div>
-  -->
 
   <div class="grid grid-cols-12 gap-4">
     <div class="md:col-span-12 col-span-12">
       <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
         {{ t('integrations.labels.accessToken') }}
       </Label>
-      <TextInput v-model="formData.accessToken" class="w-full" />
+      <TextInput v-model="formData.accessToken" secret class="w-full" />
     </div>
   </div>
 

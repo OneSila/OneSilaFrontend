@@ -2374,7 +2374,7 @@
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
       "apiKey": "API Key",
-      "apiSecret": "API Secret",
+      "apiSecret": "API secret key",
       "accessToken": "Access Token",
       "region": "Region",
       "country": "Country",
@@ -2387,8 +2387,8 @@
       "hostApiKey": "Enter Access Token",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute",
-      "apiKey": "Enter API Key",
-      "apiSecret": "Enter API Secret",
+      "apiKey": "Enter API key",
+      "apiSecret": "Enter API secret key",
       "accessToken": "Enter Access Token"
     },
     "regions": {

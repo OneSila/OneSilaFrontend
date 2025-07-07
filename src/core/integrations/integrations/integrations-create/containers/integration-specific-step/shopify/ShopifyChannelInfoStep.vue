@@ -56,7 +56,6 @@ const propertyField = computed(() => ({
         <Flex class="mt-4 gap-4" center>
           <FlexCell center>
             <Flex vertical class="gap-2">
-              <!--
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
                   {{ t('integrations.labels.apiKey') }}
@@ -82,8 +81,6 @@ const propertyField = computed(() => ({
                     :secret="true"
                 />
               </FlexCell>
-              -->
-
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
                   {{ t('integrations.labels.accessToken') }}
@@ -94,6 +91,7 @@ const propertyField = computed(() => ({
                     class="w-96"
                     v-model="channelInfo.accessToken"
                     :placeholder="t('integrations.placeholders.accessToken')"
+                    secret
                 />
               </FlexCell>
 
