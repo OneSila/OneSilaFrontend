@@ -58,6 +58,7 @@ import {
   faStar,
   faStarHalf,
   faEye,
+  faEyeSlash,
   faArrowUp,
   faArrowDown,
   faArrowRightArrowLeft,
@@ -211,6 +212,7 @@ library.add(faHourglassStart as IconDefinition);
 library.add(faStar as IconDefinition);
 library.add(faStarHalf as IconDefinition);
 library.add(faEye as IconDefinition);
+library.add(faEyeSlash as IconDefinition);
 library.add(faArrowUp as IconDefinition);
 library.add(faArrowRightArrowLeft as IconDefinition);
 library.add(faBullseye as IconDefinition);
