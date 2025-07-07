@@ -112,7 +112,9 @@ useEnterKeyboardListener(onNextPressed);
     <slot :name="steps[currentStep].name"></slot>
   </div>
   <div v-if="showButtons" class="flex justify-between items-center mt-8">
-    <slot name="additionalButtons"></slot>
+    <div>
+      <slot name="additionalButtons"></slot>
+    </div>
     <div class="flex justify-end gap-2">
       <CancelButton
         v-if="addSkip"
