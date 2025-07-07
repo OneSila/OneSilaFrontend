@@ -84,6 +84,8 @@ export interface MagentoChannelInfo extends SpecificChannelInfo {
 
 export interface ShopifyChannelInfo extends SpecificChannelInfo {
   vendorProperty: { id: string | null };
+  apiKey: string;
+  apiSecret: string;
   hmac?: string;
   host?: string;
   timestamp?: string;
@@ -117,6 +119,8 @@ export function getMagentoDefaultFields(): MagentoChannelInfo {
 export function getShopifyDefaultFields(): ShopifyChannelInfo {
   return {
     vendorProperty: { id: null },
+    apiKey: '',
+    apiSecret: '',
   };
 }
 
