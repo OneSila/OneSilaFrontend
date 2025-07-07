@@ -4,6 +4,9 @@ import {reactive, computed, ref, onMounted, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";
+import { Icon } from "../../../../shared/components/atoms/icon";
+import { Modal } from "../../../../shared/components/atoms/modal";
+import { MagentoInfoCard, WoocommerceInfoCard } from "./containers/type-step/info-cards";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
 import {
@@ -45,6 +48,8 @@ const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
 const queryParams = route.query;
+const showInfoModal = ref(false);
+const infoComponent = ref();
 
 const form = reactive<IntegrationCreateWizardForm>({
   generalInfo: {
@@ -114,6 +119,24 @@ const updateStep = (val) => {
   step.value = val;
 }
 
+const openInfoModal = () => {
+  if (selectedIntegrationType.value === IntegrationTypes.Magento) {
+    infoComponent.value = MagentoInfoCard;
+  } else if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
+    infoComponent.value = WoocommerceInfoCard;
+  } else {
+    infoComponent.value = null;
+  }
+
+  if (infoComponent.value) {
+    showInfoModal.value = true;
+  }
+};
+
+const closeInfoModal = () => {
+  showInfoModal.value = false;
+};
+
 function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
   return value && typeof value.hostApiKey === 'string';
 }
@@ -180,6 +203,11 @@ const allowNextStep = computed(() => {
 
   return true;
 });
+
+const hasInfoCard = computed(() =>
+  selectedIntegrationType.value === IntegrationTypes.Magento ||
+  selectedIntegrationType.value === IntegrationTypes.Woocommerce
+);
 
 const getIntegrationComponent = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Magento) {
@@ -375,6 +403,9 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
           <p class="text-xl font-semibold text-white mt-2">{{ t('shared.labels.loading') }}</p>
         </div>
       </div>
+      <Modal v-if="showInfoModal" v-model="showInfoModal" @closed="showInfoModal = false">
+        <component :is="infoComponent" @close="closeInfoModal" />
+      </Modal>
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
@@ -396,6 +427,16 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
         <template #specificChannelStep>
           <component :is="getIntegrationComponent()" :channel-info="specificChannelInfo"/>
+        </template>
+
+        <template #additionalButtons>
+          <Icon
+            v-if="step > 0 && hasInfoCard"
+            class="text-gray-500 cursor-pointer"
+            @click.stop="openInfoModal"
+            name="circle-info"
+            size="lg"
+          />
         </template>
 
       </Wizard>
