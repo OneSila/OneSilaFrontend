@@ -2305,6 +2305,23 @@
               "eanTitle": "EAN codes support",
               "eanDescription": "If you want to sync EAN codes, make sure you have an attribute with global scope in Magento. Don't worry, missing ones can also be created during the import process."
             }
+          },
+          "shopifyInfoModal": {
+            "title": "How to connect your Shopify store",
+            "section": {
+              "integrationTitle": "Create your Shopify app",
+              "integrationDescription": "Follow these steps to set up a custom app in Shopify:",
+              "integrationStep1": "From the sidebar click Apps and then All apps.",
+              "integrationStep2": "Click Create app.",
+              "integrationStep3": "Select 'Create app manually', choose a name like 'OneSila' and click Create.",
+                "integrationStep4": "In another tab go to your admin store and in the Sales channels sidebar click 'View your online store'. This opens your website. Copy the URL from the browser.",
+                "integrationStep5": "Click 'Choose distribution', select 'Custom distribution', click Select and confirm. When prompted for Store domain, paste the domain from the previous step.",
+              "integrationStep6": "Go to Configuration and set the App URL and Allowed redirection URL(s) below, then save.",
+                "integrationStep7": "At step 2 of the Shopify wizard you will need the URL from step 4. Go to Overview and follow the wizard until step 4, then copy the Client ID and Client Secret into the fields.",
+              "integrationStep8": "After the final step you will be redirected to Shopify admin. Click Install.",
+              "appUrlLabel": "App URL",
+              "allowedRedirectUrlLabel": "Allowed redirection URL(s)"
+            }
           }
         },
         "step2": {
