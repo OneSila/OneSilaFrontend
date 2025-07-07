@@ -36,7 +36,8 @@ import {
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import apolloClient from "../../../../../apollo-client";
-import {cleanShopHostname} from "../configs";
+import { cleanShopHostname } from "../configs";
+import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -330,6 +331,21 @@ const handleShopifySalesChannelSuccess = async (channelData: any) => {
     Toast.error(msg.message);
   });
   */
+  try {
+    loading.value = true;
+    await apolloClient.mutate({
+      mutation: refreshSalesChannelWebsitesMutation,
+      variables: {
+        data: { id },
+      },
+    });
+    Toast.success(t("integrations.show.pullData.success"));
+  } catch (error) {
+    Toast.error(t("integrations.show.pullData.error"));
+    console.error("Pull data failed:", error);
+  } finally {
+    loading.value = false;
+  }
 
   // Redirect to show page anyway
   router.push({

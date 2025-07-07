@@ -67,12 +67,12 @@ export const routes = [
   //   meta: { title: 'integrations.shopify.installed.title' },
   //   component: () => import('./integrations/integrations-installed/shopify-installed/ShopifyInstalledController.vue'),
   // },
-  {
-    path: '/integrations/shopify/entry',
-    name: 'integrations.shopify.entry',
-    meta: { title: 'integrations.shopify.entry.title' },
-    component: () => import('./integrations/integrations-shopify-entry/ShopifyEntryController.vue'),
-  },
+  // {
+  //   path: '/integrations/shopify/entry',
+  //   name: 'integrations.shopify.entry',
+  //   meta: { title: 'integrations.shopify.entry.title' },
+  //   component: () => import('./integrations/integrations-shopify-entry/ShopifyEntryController.vue'),
+  // },
   {
     path: '/integrations/amazon/installed',
     name: 'integrations.amazon.installed',

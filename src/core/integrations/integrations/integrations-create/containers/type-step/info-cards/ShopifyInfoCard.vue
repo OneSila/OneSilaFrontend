@@ -9,7 +9,6 @@ import step3Image from "../../../../../../../assets/images/integrations/info/sho
 import step4Image from "../../../../../../../assets/images/integrations/info/shopify/step4.png";
 import step5Image1 from "../../../../../../../assets/images/integrations/info/shopify/step5-1.png";
 import step5Image2 from "../../../../../../../assets/images/integrations/info/shopify/step5-2.png";
-import step5Image3 from "../../../../../../../assets/images/integrations/info/shopify/step5-3.png";
 import step6Image from "../../../../../../../assets/images/integrations/info/shopify/step-6.png";
 import step8Image from "../../../../../../../assets/images/integrations/info/shopify/step8.png";
 
@@ -54,19 +53,14 @@ const close = () => emit("close");
           <Image :source="step2Image" alt="step 2" class="w-full rounded-md" />
         </div>
         <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
-          <p class="text-sm text-gray-700">
+          <div>
+                      <p class="text-sm text-gray-700">
             {{
               t(
                 "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep3",
               )
             }}
           </p>
-          <Image
-            :source="step3Image"
-            alt="step 3"
-            class="w-full rounded-md mt-2 md:mt-0"
-          />
-        </div>
         <p class="text-sm text-gray-700">
           {{
             t(
@@ -74,6 +68,15 @@ const close = () => emit("close");
             )
           }}
         </p>
+          </div>
+
+          <Image
+            :source="step3Image"
+            alt="step 3"
+            class="w-full rounded-md mt-2 md:mt-0"
+          />
+        </div>
+
       </div>
 
 
@@ -108,6 +111,7 @@ const close = () => emit("close");
             alt="step 5-2"
             class="w-full rounded-md mt-2 md:mt-0"
           />
+          <div>
           <p class="text-sm text-gray-700">
             {{
               t(
@@ -115,21 +119,24 @@ const close = () => emit("close");
               )
             }}
           </p>
-        </div>
-
-        <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
-          <p class="text-sm text-gray-700">
-            {{
+            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
+              <li>write_products</li>
+              <li>read_products</li>
+              <li>write_publications</li>
+              <li>read_publications</li>
+              <li>read_locales</li>
+              <li>read_orders</li>
+            </ul>
+          <p class="text-sm text-gray-700 mt-2">
+            <strong>
+              {{
               t(
                 "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5Part3",
               )
             }}
+            </strong>
           </p>
-          <Image
-            :source="step5Image3"
-            alt="step 5-3"
-            class="w-full rounded-md mt-2 md:mt-0"
-          />
+          </div>
         </div>
       </div>
 
@@ -148,13 +155,22 @@ const close = () => emit("close");
             alt="step 6"
             class="w-full rounded-md md:col-span-6"
           />
-          <p class="text-sm text-gray-700 mt-4 md:mt-0 md:col-span-6">
-            {{
-              t(
-                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep6",
-              )
-            }}
-          </p>
+          <div class=" md:mt-0 md:col-span-6">
+            <p class="text-sm text-gray-700">
+              {{
+                t(
+                  "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep6Part1",
+                )
+              }}
+            </p>
+            <p class="text-sm text-gray-700 mt-4">
+              {{
+                t(
+                  "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep6Part2",
+                )
+              }}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -200,11 +216,6 @@ const close = () => emit("close");
               )
             }}
           </p>
-          <Image
-            :source="step8Image"
-            alt="step 8"
-            class="w-full rounded-md mt-2 md:mt-0"
-          />
         </div>
       </div>
     </div>
