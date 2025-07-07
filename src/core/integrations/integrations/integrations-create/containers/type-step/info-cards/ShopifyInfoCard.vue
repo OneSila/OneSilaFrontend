@@ -40,7 +40,13 @@ const copyToClipboard = async (text: string) => {
     <div class="space-y-10 pr-2 mb-4 overflow-y-auto max-h-96">
       <!-- Create custom app -->
       <div class="space-y-4">
-        <h4 class="text-lg font-semibold">Create Custom App</h4>
+        <h4 class="text-lg font-semibold">
+          {{
+            t(
+              "integrations.create.wizard.step1.shopifyInfoModal.section.customAppTitle",
+            )
+          }}
+        </h4>
         <p class="text-sm text-gray-700">
           {{
             t(
@@ -76,7 +82,13 @@ const copyToClipboard = async (text: string) => {
 
       <!-- Detect website url -->
       <div class="space-y-2">
-        <h4 class="text-lg font-semibold">Detect Website URL</h4>
+        <h4 class="text-lg font-semibold">
+          {{
+            t(
+              "integrations.create.wizard.step1.shopifyInfoModal.section.detectWebsiteUrlTitle",
+            )
+          }}
+        </h4>
         <div class="md:grid md:grid-cols-12 md:gap-4 items-start">
           <p class="text-sm text-gray-700 md:col-span-9">
             {{
@@ -95,7 +107,13 @@ const copyToClipboard = async (text: string) => {
 
       <!-- Configure distribution -->
       <div class="space-y-4">
-        <h4 class="text-lg font-semibold">Configure Distribution</h4>
+        <h4 class="text-lg font-semibold">
+          {{
+            t(
+              "integrations.create.wizard.step1.shopifyInfoModal.section.configureDistributionTitle",
+            )
+          }}
+        </h4>
 
         <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
           <p class="text-sm text-gray-700">
@@ -145,7 +163,13 @@ const copyToClipboard = async (text: string) => {
 
       <!-- Configure urls -->
       <div class="space-y-4">
-        <h4 class="text-lg font-semibold">Configure URLs</h4>
+        <h4 class="text-lg font-semibold">
+          {{
+            t(
+              "integrations.create.wizard.step1.shopifyInfoModal.section.configureUrlsTitle",
+            )
+          }}
+        </h4>
         <div class="md:grid md:grid-cols-12 md:gap-4 items-start">
           <Image
             :source="step6Image"
@@ -230,7 +254,13 @@ const copyToClipboard = async (text: string) => {
 
       <!-- Finish wizard -->
       <div class="space-y-2">
-        <h4 class="text-lg font-semibold">Finish Current Wizard</h4>
+        <h4 class="text-lg font-semibold">
+          {{
+            t(
+              "integrations.create.wizard.step1.shopifyInfoModal.section.finishWizardTitle",
+            )
+          }}
+        </h4>
         <p class="text-sm text-gray-700">
           {{
             t(
