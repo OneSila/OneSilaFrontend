@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { Icon } from '../icon';
 
 const props = defineProps<{
   placeholder?: string;
@@ -25,6 +26,24 @@ const emit = defineEmits({
 });
 
 const input: any = ref(null);
+const showPassword = ref(false);
+
+const togglePasswordVisibility = () => {
+  if (props.disabled) {
+    return;
+  }
+  showPassword.value = !showPassword.value;
+};
+
+const inputType = computed(() => {
+  if (props.secret) {
+    return showPassword.value ? 'text' : 'password';
+  }
+  if (props.number || props.float) {
+    return 'number';
+  }
+  return 'text';
+});
 
 const focus = () => {
   input.value?.focus();
@@ -61,14 +80,14 @@ const handleInput = (event) => {
 </script>
 
 <template>
-  <div v-if="prepend" class="relative mt-2 w-full">
-    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
+  <div v-if="prepend || secret" class="relative mt-2 w-full">
+    <span v-if="prepend" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600">
       {{ prepend }}
     </span>
     <input
       ref="input"
-      class="text-input focus:outline-none focus:border-sky-500 focus:ring-sky-500 block rounded-md px-3 py-2 text-sm placeholder:italic focus:ring-1  w-full"
-      :type="secret ? 'password' : (number || float) ? 'number' : 'text'"
+      class="text-input focus:outline-none focus:border-sky-500 focus:ring-sky-500 block rounded-md px-3 py-2 text-sm placeholder:italic focus:ring-1 w-full"
+      :type="inputType"
       :step="float ? 'any' : (number ? '1' : undefined)"
       :min="number && minNumber ? minNumber : undefined"
       :max="number && maxNumber ? maxNumber : undefined"
@@ -86,14 +105,25 @@ const handleInput = (event) => {
       @input="handleInput"
       @focus="$emit('focus')"
       @keyup.enter="blur"
-      :style="{ paddingLeft: prepend ? '2.5rem' : undefined }"
+      :style="{
+        paddingLeft: prepend ? '2.5rem' : undefined,
+        paddingRight: secret ? '2.5rem' : undefined
+      }"
     />
+    <span
+      v-if="secret"
+      class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer"
+      :class="{ 'cursor-not-allowed pointer-events-none': disabled }"
+      @click="togglePasswordVisibility"
+    >
+      <Icon :name="showPassword ? 'eye-slash' : 'eye'" />
+    </span>
   </div>
   <input
     v-else
     ref="input"
     class="text-input focus:outline-none focus:border-sky-500 focus:ring-sky-500 block rounded-md px-3 py-2 text-sm placeholder:italic focus:ring-1"
-    :type="secret ? 'password' : (number || float) ? 'number' : 'text'"
+    :type="inputType"
     :step="float ? 'any' : (number ? '1' : undefined)"
     :min="number && minNumber ? minNumber : undefined"
     :max="number && maxNumber ? maxNumber : undefined"
