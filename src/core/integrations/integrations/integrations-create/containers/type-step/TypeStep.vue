@@ -12,7 +12,7 @@ import { Icon } from "../../../../../../shared/components/atoms/icon";
 import { Modal } from "../../../../../../shared/components/atoms/modal";
 import {Badge} from "../../../../../../shared/components/atoms/badge";
 import {Button} from "../../../../../../shared/components/atoms/button";
-import { MagentoInfoCard, WoocommerceInfoCard } from "./info-cards";
+import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard } from "./info-cards";
 
 const props = defineProps<{ type: IntegrationTypes }>();
 const emit = defineEmits<{ (e: 'update:type', value: IntegrationTypes): void }>();
@@ -43,6 +43,11 @@ const typeChoices = [
 
 const onModalOpen = () => {
   infoComponent.value = MagentoInfoCard;
+  showInfoModal.value = true;
+};
+
+const onShopifyModalOpen = () => {
+  infoComponent.value = ShopifyInfoCard;
   showInfoModal.value = true;
 };
 
@@ -84,7 +89,14 @@ const closeModal = () => {
       </template>
       <template #shopify>
         <div>
-          <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.shopifyTitle') }}</h3>
+          <Flex gap="2">
+            <FlexCell center>
+              <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.shopifyTitle') }}</h3>
+            </FlexCell>
+            <FlexCell center>
+              <Icon class="text-gray-500" @click.stop="onShopifyModalOpen" name="circle-info" size="lg" />
+            </FlexCell>
+          </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.shopifyExample') }}</p>
           <Image :source="shopifyType" alt="Shopify" class="w-full max-h-[35rem]" />
         </div>

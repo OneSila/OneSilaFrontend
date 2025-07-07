@@ -6,7 +6,7 @@ import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs
 import { Wizard } from "../../../../shared/components/molecules/wizard";
 import { Icon } from "../../../../shared/components/atoms/icon";
 import { Modal } from "../../../../shared/components/atoms/modal";
-import { MagentoInfoCard, WoocommerceInfoCard } from "./containers/type-step/info-cards";
+import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard } from "./containers/type-step/info-cards";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
 import {
@@ -122,6 +122,8 @@ const updateStep = (val) => {
 const openInfoModal = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Magento) {
     infoComponent.value = MagentoInfoCard;
+  } else if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
+    infoComponent.value = ShopifyInfoCard;
   } else if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
     infoComponent.value = WoocommerceInfoCard;
   } else {
