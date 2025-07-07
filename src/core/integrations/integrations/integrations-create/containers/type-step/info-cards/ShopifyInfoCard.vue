@@ -2,9 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { Card } from "../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../shared/components/atoms/button";
-import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { Image } from "../../../../../../../shared/components/atoms/image";
-import { Toast } from "../../../../../../../shared/modules/toast";
 
 import step2Image from "../../../../../../../assets/images/integrations/info/shopify/step2.png";
 import step3Image from "../../../../../../../assets/images/integrations/info/shopify/step3.png";
@@ -19,15 +17,6 @@ const emit = defineEmits<{ (e: "close"): void }>();
 const { t } = useI18n();
 const close = () => emit("close");
 
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    Toast.success(t("shared.alert.toast.clipboardSuccess"));
-  } catch (err) {
-    console.error("Failed to copy:", err);
-    Toast.error(t("shared.alert.toast.clipboardFail"));
-  }
-};
 </script>
 
 <template>
@@ -78,32 +67,15 @@ const copyToClipboard = async (text: string) => {
             class="w-full rounded-md mt-2 md:mt-0"
           />
         </div>
-      </div>
-
-      <!-- Detect website url -->
-      <div class="space-y-2">
-        <h4 class="text-lg font-semibold">
+        <p class="text-sm text-gray-700">
           {{
             t(
-              "integrations.create.wizard.step1.shopifyInfoModal.section.detectWebsiteUrlTitle",
+              "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep4",
             )
           }}
-        </h4>
-        <div class="md:grid md:grid-cols-12 md:gap-4 items-start">
-          <p class="text-sm text-gray-700 md:col-span-9">
-            {{
-              t(
-                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep4",
-              )
-            }}
-          </p>
-          <Image
-            :source="step4Image"
-            alt="step 4"
-            class="w-full rounded-md mt-2 md:mt-0 md:col-span-3"
-          />
-        </div>
+        </p>
       </div>
+
 
       <!-- Configure distribution -->
       <div class="space-y-4">
@@ -161,7 +133,7 @@ const copyToClipboard = async (text: string) => {
         </div>
       </div>
 
-      <!-- Configure urls -->
+      <!-- Install app and get credentials -->
       <div class="space-y-4">
         <h4 class="text-lg font-semibold">
           {{
@@ -176,79 +148,38 @@ const copyToClipboard = async (text: string) => {
             alt="step 6"
             class="w-full rounded-md md:col-span-6"
           />
-          <div class="mt-4 md:mt-0 md:col-span-6 space-y-2">
-            <p class="text-sm text-gray-700">
-              {{
-                t(
-                  "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep6",
-                )
-              }}
-            </p>
-            <div class="space-y-2">
-              <label class="text-sm font-semibold block text-gray-900">
-                {{
-                  t(
-                    "integrations.create.wizard.step1.shopifyInfoModal.section.appUrlLabel",
-                  )
-                }}
-              </label>
-              <div class="relative mt-1 rounded-lg shadow-sm">
-                <input
-                  disabled
-                  type="text"
-                  value="https://onesila.app/integrations/shopify/entry"
-                  class="w-full rounded-lg border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <Button
-                    @click="
-                      copyToClipboard(
-                        'https://onesila.app/integrations/shopify/entry',
-                      )
-                    "
-                    class="ml-4 flex-shrink-0"
-                  >
-                    <Icon
-                      name="clipboard"
-                      class="h-5 w-5 text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </Button>
-                </div>
-              </div>
-              <label class="text-sm font-semibold block text-gray-900">
-                {{
-                  t(
-                    "integrations.create.wizard.step1.shopifyInfoModal.section.allowedRedirectUrlLabel",
-                  )
-                }}
-              </label>
-              <div class="relative mt-1 rounded-lg shadow-sm">
-                <input
-                  disabled
-                  type="text"
-                  value="https://onesila.app/integrations/shopify/installed"
-                  class="w-full rounded-lg border-0 py-1.5 pl-2 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <Button
-                    @click="
-                      copyToClipboard(
-                        'https://onesila.app/integrations/shopify/installed',
-                      )
-                    "
-                    class="ml-4 flex-shrink-0"
-                  >
-                    <Icon
-                      name="clipboard"
-                      class="h-5 w-5 text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <p class="text-sm text-gray-700 mt-4 md:mt-0 md:col-span-6">
+            {{
+              t(
+                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep6",
+              )
+            }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Detect website url -->
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold">
+          {{
+            t(
+              "integrations.create.wizard.step1.shopifyInfoModal.section.detectWebsiteUrlTitle",
+            )
+          }}
+        </h4>
+        <div class="md:grid md:grid-cols-12 md:gap-4 items-start">
+          <p class="text-sm text-gray-700 md:col-span-9">
+            {{
+              t(
+                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep7",
+              )
+            }}
+          </p>
+          <Image
+            :source="step4Image"
+            alt="step 7"
+            class="w-full rounded-md mt-2 md:mt-0 md:col-span-3"
+          />
         </div>
       </div>
 
@@ -261,22 +192,14 @@ const copyToClipboard = async (text: string) => {
             )
           }}
         </h4>
-        <p class="text-sm text-gray-700">
-          {{
-            t(
-              "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep7",
-            )
-          }}
-        </p>
-        <br>
         <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
-        <p class="text-sm text-gray-700">
-          {{
-            t(
-              "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep8",
-            )
-          }}
-        </p>
+          <p class="text-sm text-gray-700">
+            {{
+              t(
+                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep8",
+              )
+            }}
+          </p>
           <Image
             :source="step8Image"
             alt="step 8"
