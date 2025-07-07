@@ -2,6 +2,7 @@
 import { computed, defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
+import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { ShopifyChannelInfo } from '../../../../integrations';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { Button } from "../../../../../../../shared/components/atoms/button";
@@ -77,6 +78,31 @@ const propertyField = computed(() => ({
                 <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
                   <p>{{ t('integrations.salesChannel.helpText.shopifyVendorProperty') }}</p>
                 </div>
+              </FlexCell>
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('integrations.labels.apiKey') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <TextInput
+                    class="w-96"
+                    v-model="channelInfo.apiKey"
+                    :placeholder="t('integrations.placeholders.apiKey')"
+                />
+              </FlexCell>
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('integrations.labels.apiSecret') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <TextInput
+                    class="w-96"
+                    v-model="channelInfo.apiSecret"
+                    :placeholder="t('integrations.placeholders.apiSecret')"
+                    :secret="true"
+                />
               </FlexCell>
             </Flex>
           </FlexCell>
