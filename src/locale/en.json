@@ -2322,7 +2322,12 @@
               "integrationStep7": "At step 2 of the Shopify wizard you will need the URL from step 4. Go to Overview and follow the wizard until step 4, then copy the Client ID and Client Secret into the fields.",
               "integrationStep8": "After the final step you will be redirected to Shopify admin. Click Install.",
               "appUrlLabel": "App URL",
-              "allowedRedirectUrlLabel": "Allowed redirection URL(s)"
+              "allowedRedirectUrlLabel": "Allowed redirection URL(s)",
+              "customAppTitle": "Create Custom App",
+              "detectWebsiteUrlTitle": "Detect Website URL",
+              "configureDistributionTitle": "Configure Distribution",
+              "configureUrlsTitle": "Configure URLs",
+              "finishWizardTitle": "Finish Current Wizard"
             }
           }
         },
