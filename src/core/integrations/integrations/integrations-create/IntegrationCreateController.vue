@@ -309,6 +309,7 @@ const handleFinish = async () => {
 const handleShopifySalesChannelSuccess = async (channelData: any) => {
   const id = channelData.id;
 
+  /*
   const { data } = await apolloClient.mutate({
     mutation: getShopifyRedirectUrlMutation,
     variables: {
@@ -328,6 +329,7 @@ const handleShopifySalesChannelSuccess = async (channelData: any) => {
   messages.forEach((msg: any) => {
     Toast.error(msg.message);
   });
+  */
 
   // Redirect to show page anyway
   router.push({

@@ -2375,6 +2375,7 @@
       "vendorProperty": "Vendor Property",
       "apiKey": "API Key",
       "apiSecret": "API Secret",
+      "accessToken": "Access Token",
       "region": "Region",
       "country": "Country",
       "expirationDate": "Access Token Expiration",
@@ -2387,7 +2388,8 @@
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute",
       "apiKey": "Enter API Key",
-      "apiSecret": "Enter API Secret"
+      "apiSecret": "Enter API Secret",
+      "accessToken": "Enter Access Token"
     },
     "regions": {
       "northAmerica": "North America",
