@@ -208,7 +208,8 @@ const allowNextStep = computed(() => {
 
 const hasInfoCard = computed(() =>
   selectedIntegrationType.value === IntegrationTypes.Magento ||
-  selectedIntegrationType.value === IntegrationTypes.Woocommerce
+  selectedIntegrationType.value === IntegrationTypes.Woocommerce ||
+  selectedIntegrationType.value === IntegrationTypes.Shopify
 );
 
 const getIntegrationComponent = () => {

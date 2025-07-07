@@ -13,6 +13,7 @@ import step5Image1 from "../../../../../../../assets/images/integrations/info/sh
 import step5Image2 from "../../../../../../../assets/images/integrations/info/shopify/step5-2.png";
 import step5Image3 from "../../../../../../../assets/images/integrations/info/shopify/step5-3.png";
 import step6Image from "../../../../../../../assets/images/integrations/info/shopify/step-6.png";
+import step8Image from "../../../../../../../assets/images/integrations/info/shopify/step8.png";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 const { t } = useI18n();
@@ -100,7 +101,7 @@ const copyToClipboard = async (text: string) => {
           <p class="text-sm text-gray-700">
             {{
               t(
-                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5",
+                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5Part1",
               )
             }}
           </p>
@@ -117,10 +118,10 @@ const copyToClipboard = async (text: string) => {
             alt="step 5-2"
             class="w-full rounded-md mt-2 md:mt-0"
           />
-          <p class="text-sm text-gray-700 md:text-right">
+          <p class="text-sm text-gray-700">
             {{
               t(
-                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5",
+                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5Part2",
               )
             }}
           </p>
@@ -130,7 +131,7 @@ const copyToClipboard = async (text: string) => {
           <p class="text-sm text-gray-700">
             {{
               t(
-                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5",
+                "integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5Part3",
               )
             }}
           </p>
@@ -237,6 +238,8 @@ const copyToClipboard = async (text: string) => {
             )
           }}
         </p>
+        <br>
+        <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
         <p class="text-sm text-gray-700">
           {{
             t(
@@ -244,6 +247,12 @@ const copyToClipboard = async (text: string) => {
             )
           }}
         </p>
+          <Image
+            :source="step8Image"
+            alt="step 8"
+            class="w-full rounded-md mt-2 md:mt-0"
+          />
+        </div>
       </div>
     </div>
 
