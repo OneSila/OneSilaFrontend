@@ -3,7 +3,16 @@ import { useI18n } from 'vue-i18n';
 import { Card } from '../../../../../../../shared/components/atoms/card';
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
+import { Image } from '../../../../../../../shared/components/atoms/image';
 import { Toast } from '../../../../../../../shared/modules/toast';
+
+import step2Image from '../../../../../../../assets/images/integrations/info/shopify/step2.png';
+import step3Image from '../../../../../../../assets/images/integrations/info/shopify/step3.png';
+import step4Image from '../../../../../../../assets/images/integrations/info/shopify/step4.png';
+import step5Image1 from '../../../../../../../assets/images/integrations/info/shopify/step5-1.png';
+import step5Image2 from '../../../../../../../assets/images/integrations/info/shopify/step5-2.png';
+import step5Image3 from '../../../../../../../assets/images/integrations/info/shopify/step5-3.png';
+import step6Image from '../../../../../../../assets/images/integrations/info/shopify/step-6.png';
 
 const emit = defineEmits<{ (e: 'close'): void }>();
 const { t } = useI18n();
@@ -27,44 +36,57 @@ const copyToClipboard = async (text: string) => {
         {{ t('integrations.create.wizard.step1.shopifyInfoModal.title') }}
       </h3>
     </div>
-    <div class="space-y-8 pr-2 mb-4 overflow-y-auto max-h-96">
-      <!-- Step 1 -->
-      <div>
+    <div class="space-y-10 pr-2 mb-4 overflow-y-auto max-h-96">
+      <!-- Create custom app -->
+      <div class="space-y-4">
+        <h4 class="text-lg font-semibold">Create Custom App</h4>
         <p class="text-sm text-gray-700">
           {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep1') }}
         </p>
+        <div class="space-y-2">
+          <p class="text-sm text-gray-700">
+            {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep2') }}
+          </p>
+          <Image :source="step2Image" alt="step 2" class="w-full rounded-md" />
+        </div>
+        <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
+          <p class="text-sm text-gray-700">
+            {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep3') }}
+          </p>
+          <Image :source="step3Image" alt="step 3" class="w-full rounded-md mt-2 md:mt-0" />
+        </div>
       </div>
 
-      <!-- Step 2 -->
-      <div>
-        <p class="text-sm text-gray-700">
-          {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep2') }}
-        </p>
+      <!-- Detect website url -->
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold">Detect Website URL</h4>
+        <div class="md:grid md:grid-cols-12 md:gap-4 items-start">
+          <p class="text-sm text-gray-700 md:col-span-9">
+            {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep4') }}
+          </p>
+          <Image :source="step4Image" alt="step 4" class="w-full rounded-md mt-2 md:mt-0 md:col-span-3" />
+        </div>
       </div>
 
-      <!-- Step 3 -->
-      <div>
-        <p class="text-sm text-gray-700">
-          {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep3') }}
-        </p>
+      <!-- Configure distribution -->
+      <div class="space-y-4">
+        <h4 class="text-lg font-semibold">Configure Distribution</h4>
+        <div class="md:grid md:grid-cols-2 md:gap-4 items-start">
+          <p class="text-sm text-gray-700">
+            {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5') }}
+          </p>
+          <div class="space-y-2">
+            <Image :source="step5Image1" alt="step 5-1" class="w-full rounded-md" />
+            <Image :source="step5Image2" alt="step 5-2" class="w-full rounded-md" />
+            <Image :source="step5Image3" alt="step 5-3" class="w-full rounded-md" />
+          </div>
+        </div>
       </div>
 
-      <!-- Step 4 -->
-      <div>
-        <p class="text-sm text-gray-700">
-          {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep4') }}
-        </p>
-      </div>
-
-      <!-- Step 5 -->
-      <div>
-        <p class="text-sm text-gray-700">
-          {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep5') }}
-        </p>
-      </div>
-
-      <!-- Step 6 with URLs -->
-      <div>
+      <!-- Configure urls -->
+      <div class="space-y-4">
+        <h4 class="text-lg font-semibold">Configure URLs</h4>
+        <Image :source="step6Image" alt="step 6" class="w-full rounded-md" />
         <p class="text-sm text-gray-700">
           {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep6') }}
         </p>
@@ -94,15 +116,12 @@ const copyToClipboard = async (text: string) => {
         </div>
       </div>
 
-      <!-- Step 7 -->
-      <div>
+      <!-- Finish wizard -->
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold">Finish Current Wizard</h4>
         <p class="text-sm text-gray-700">
           {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep7') }}
         </p>
-      </div>
-
-      <!-- Step 8 -->
-      <div>
         <p class="text-sm text-gray-700">
           {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep8') }}
         </p>
