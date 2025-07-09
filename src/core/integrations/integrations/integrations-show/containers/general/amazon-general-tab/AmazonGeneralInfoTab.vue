@@ -245,15 +245,15 @@ useShiftBackspaceKeyboardListener(goBack);
   <div class="space-y-12">
 
     <div class="grid grid-cols-12 gap-4">
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.expirationDate') }}
-        </Label>
-        <div class="flex items-center gap-4">
-          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />
-          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
-        </div>
-      </div>
+<!--      <div class="md:col-span-6 col-span-12">-->
+<!--        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">-->
+<!--          {{ t('integrations.labels.expirationDate') }}-->
+<!--        </Label>-->
+<!--        <div class="flex items-center gap-4">-->
+<!--          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />-->
+<!--          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
 
     <div class="grid grid-cols-12 gap-4">
