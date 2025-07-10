@@ -204,8 +204,7 @@ const handleFormUpdate = (form) => {
           <Accordion v-if="items.length" :items="accordionItems">
             <template #items>
 
-
-              <div class="overflow-x-auto">
+              <div class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar overflow-x-auto">
                 <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                   <thead>
                   <tr>
@@ -240,3 +239,31 @@ const handleFormUpdate = (form) => {
     </template>
   </GeneralTemplate>
 </template>
+
+
+<style scoped>
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4361EE;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #c0c0c0;
+}
+
+.custom-scrollbar {
+  padding-right: 15px;
+}
+
+</style>
