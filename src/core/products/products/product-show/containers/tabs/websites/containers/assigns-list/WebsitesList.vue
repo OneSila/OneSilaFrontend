@@ -22,6 +22,7 @@ const infoId = ref(null);
 const showInfoModal = ref(false);
 const issuesList = ref<SalesChannelViewAssign['formattedIssues'] | null>(null);
 const showIssuesModal = ref(false);
+const issuesAssignId = ref(null);
 
 const onResyncError = (error) => {
   displayApolloError(error);
@@ -36,7 +37,8 @@ const setInfoId = (id) => {
   showInfoModal.value = true;
 }
 
-const setIssues = (issues) => {
+const setIssues = (issues, id) => {
+  issuesAssignId.value = id;
   issuesList.value = issues || [];
   showIssuesModal.value = true;
 }
@@ -48,6 +50,7 @@ const modalColsed = () => {
 
 const issuesModalClosed = () => {
   issuesList.value = null;
+  issuesAssignId.value = null;
   showIssuesModal.value = false;
 }
 
@@ -78,7 +81,7 @@ const issuesModalClosed = () => {
             <td>
               <div class="flex gap-4 items-center justify-end">
 
-                <Button v-if="item.formattedIssues?.length" @click="setIssues(item.formattedIssues)">
+                <Button v-if="item.formattedIssues?.length" @click="setIssues(item.formattedIssues, item.id)">
                   <Icon name="exclamation-triangle" size="lg" class="text-red-500" />
                 </Button>
 
@@ -122,6 +125,6 @@ const issuesModalClosed = () => {
         </table>
       </div>
       <LogsInfoModal v-model="showInfoModal" :id="infoId" @modal-closed="modalColsed()" />
-      <IssuesInfoModal v-model="showIssuesModal" :issues="issuesList" @modal-closed="issuesModalClosed()" />
+      <IssuesInfoModal v-model="showIssuesModal" :issues="issuesList" :id="issuesAssignId" @modal-closed="issuesModalClosed()" />
     </div>
 </template>

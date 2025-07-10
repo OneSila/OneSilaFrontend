@@ -250,6 +250,18 @@ export const resyncSalesChannelViewAssignMutation = gql`
   }
 `;
 
+export const refreshLatestAmazonIssuesMutation = gql`
+  mutation refreshLatestAmazonIssues($data: SalesChannelViewAssignPartialInput!) {
+    refreshLatestAmazonIssues(data: $data) {
+      id
+      formattedIssues {
+        message
+        severity
+      }
+    }
+  }
+`;
+
 export const updateSalesChannelViewMutation = gql`
   mutation updateSalesChannelView($data: SalesChannelViewPartialInput!) {
     updateSalesChannelView(data: $data) {
