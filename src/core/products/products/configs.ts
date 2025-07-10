@@ -220,7 +220,7 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
             type: FieldType.Query,
             name: 'amazonProductsWithIssuesForSalesChannel',
             query: amazonChannelsQuerySelector,
-            label: t('salesChannel.amazon.labels.productsWithIssuesForSalesChannel'),
+            label: t('integrations.salesChannel.amazon.labels.productsWithIssuesForSalesChannel'),
             labelBy: 'hostname',
             valueBy: 'id',
             dataKey: 'amazonChannels',

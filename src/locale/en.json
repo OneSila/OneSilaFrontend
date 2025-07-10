@@ -2430,7 +2430,7 @@
           "missingParams": "Missing required query parameters. Please retry the installation."
         },
         "labels": {
-          "productsWithIssuesForSalesChannel": "Products With Issues"
+          "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
       },
       "toast": {
