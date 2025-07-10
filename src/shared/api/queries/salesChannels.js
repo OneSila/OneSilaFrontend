@@ -84,6 +84,7 @@ export const getShopifyChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      listingOwner
       accessToken
       firstImportComplete
       isImporting
@@ -155,6 +156,7 @@ export const getAmazonChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      listingOwner
       accessToken
       refreshTokenExpiration
       expirationDate

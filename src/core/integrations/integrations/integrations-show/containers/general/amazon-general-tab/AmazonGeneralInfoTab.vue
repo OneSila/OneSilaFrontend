@@ -33,6 +33,7 @@ interface EditAmazonForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  listingOwner: boolean;
   accessToken?: string;
   expirationDate?: string;
   region: string | null;
@@ -321,7 +322,7 @@ useShiftBackspaceKeyboardListener(goBack);
 
       <template #sync>
         <div class="space-y-4">
-          <div class="grid grid-cols-12 items-center" v-for="toggleField in ['useConfigurableName','syncContents','syncEanCodes','syncPrices','importOrders']" :key="toggleField">
+          <div class="grid grid-cols-12 items-center" v-for="toggleField in ['useConfigurableName','syncContents','syncEanCodes','syncPrices','importOrders','listingOwner']" :key="toggleField">
             <div class="md:col-span-4 col-span-12">
               <Flex gap="2">
                 <FlexCell>
