@@ -276,6 +276,22 @@ useShiftBackspaceKeyboardListener(goBack);
           </FlexCell>
         </Flex>
       </div>
+
+      <div class="md:col-span-2 col-span-6">
+        <Flex class="mt-8" gap="2">
+          <FlexCell>
+            <Label class="font-semibold text-sm text-gray-900 mb-1">
+              {{ t('integrations.labels.listingOwner') }}
+            </Label>
+          </FlexCell>
+          <FlexCell>
+            <Toggle v-model="formData.listingOwner" />
+          </FlexCell>
+        </Flex>
+        <div class="mt-1 text-sm leading-6 text-gray-400">
+          <p>{{ t('integrations.salesChannel.helpText.listingOwner') }}</p>
+        </div>
+      </div>
     </div>
 
     <div class="grid grid-cols-12 gap-4">
@@ -322,7 +338,7 @@ useShiftBackspaceKeyboardListener(goBack);
 
       <template #sync>
         <div class="space-y-4">
-          <div class="grid grid-cols-12 items-center" v-for="toggleField in ['useConfigurableName','syncContents','syncEanCodes','syncPrices','importOrders','listingOwner']" :key="toggleField">
+          <div class="grid grid-cols-12 items-center" v-for="toggleField in ['useConfigurableName','syncContents','syncEanCodes','syncPrices','importOrders']" :key="toggleField">
             <div class="md:col-span-4 col-span-12">
               <Flex gap="2">
                 <FlexCell>
