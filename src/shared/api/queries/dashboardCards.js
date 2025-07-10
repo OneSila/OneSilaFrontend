@@ -49,7 +49,7 @@ export const dashboardNotMatchingSalesPricesList = gql`
 `;
 
 export const dashboardAmazonProductsWithIssues = gql`
-  query DashboardAmazonProductsWithIssues($salesChannelId: GlobalID!) {
+  query DashboardAmazonProductsWithIssues($salesChannelId: String) {
     products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId }) {
       totalCount
     }
