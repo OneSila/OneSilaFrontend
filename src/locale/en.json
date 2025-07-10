@@ -373,7 +373,10 @@
       "new": "New",
       "beta": "BETA",
       "url": "URL",
-      "default": "Default"
+      "default": "Default",
+      "submissionId": "Submission ID",
+      "processingStatus": "Processing Status",
+      "issues": "Issues"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
