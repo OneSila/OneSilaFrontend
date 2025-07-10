@@ -60,14 +60,14 @@ defineExpose({
 });
 
 const handleInput = (event: Event) => {
-  let value = (event.target as HTMLInputElement).value;
+  let value: string | number = (event.target as HTMLInputElement).value;
 
   if (props.number) {
     value = props.float ? parseFloat(value) : parseInt(value, 10);
   }
 
   if (props.float) {
-    value = parseFloat(value);
+    value = parseFloat(value.toString());
   }
 
   emit('update:modelValue', value);
