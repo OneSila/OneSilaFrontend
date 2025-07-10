@@ -219,6 +219,41 @@ export const amazonChannelsQuery = gql`
   }
 `;
 
+export const amazonChannelsQuerySelector = gql`
+  query AmazonChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonSalesChannelOrder
+    $filters: AmazonSalesChannelFilter
+  ) {
+    amazonChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 
 
 // Sales Channel Integration Pricelist Queries

@@ -2421,6 +2421,9 @@
           "success": "Your Amazon store was successfully connected!",
           "genericError": "Something went wrong while connecting your store.",
           "missingParams": "Missing required query parameters. Please retry the installation."
+        },
+        "labels": {
+          "productsWithIssuesForSalesChannel": "Products With Issues"
         }
       },
       "toast": {

@@ -14,6 +14,7 @@ import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 import { Badge } from "../../../shared/components/organisms/general-show/showConfig";
 import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
+import { amazonChannelsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
@@ -182,7 +183,7 @@ export const baseFormConfigConstructor = (
   fields: getFields(type, t),
 });
 
-export const searchConfigConstructor = (t: Function): SearchConfig => ({
+export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false): SearchConfig => ({
   search: true,
   orderKey: "sort",
   filters: [
@@ -208,6 +209,19 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       labelBy: "fullValueName",
       valueBy: "id",
       dataKey: "propertySelectValues",
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+    },
+    hasAmazon && {
+      type: FieldType.Query,
+      name: 'amazonProductsWithIssuesForSalesChannel',
+      query: amazonChannelsQuerySelector,
+      label: t('salesChannel.amazon.labels.productsWithIssuesForSalesChannel'),
+      labelBy: 'hostname',
+      valueBy: 'id',
+      dataKey: 'amazonChannels',
       filterable: true,
       multiple: false,
       isEdge: true,
@@ -248,7 +262,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('products.products.inspector.labels.missingInfo'),
       addLookup: true,
     },
-  ],
+  ].filter(Boolean),
   orders: [
     {
       name: 'name',
