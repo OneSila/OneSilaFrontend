@@ -288,9 +288,6 @@ useShiftBackspaceKeyboardListener(goBack);
             <Toggle v-model="formData.listingOwner" />
           </FlexCell>
         </Flex>
-        <div class="mt-1 text-sm leading-6 text-gray-400">
-          <p>{{ t('integrations.salesChannel.helpText.listingOwner') }}</p>
-        </div>
       </div>
     </div>
 
