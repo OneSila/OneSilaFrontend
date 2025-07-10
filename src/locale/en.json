@@ -164,6 +164,10 @@
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
           "description": "Amazon unit configurators missing a default unit."
+        },
+        "productsWithIssues": {
+          "title": "Products With Issues",
+          "description": "Amazon products that failed to sync correctly."
         }
       }
     },

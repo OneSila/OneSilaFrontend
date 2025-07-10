@@ -47,3 +47,11 @@ export const dashboardNotMatchingSalesPricesList = gql`
       }
     }
 `;
+
+export const dashboardAmazonProductsWithIssues = gql`
+  query DashboardAmazonProductsWithIssues($salesChannelId: GlobalID!) {
+    products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId }) {
+      totalCount
+    }
+  }
+`;
