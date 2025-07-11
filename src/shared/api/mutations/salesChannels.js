@@ -252,7 +252,7 @@ export const resyncSalesChannelViewAssignMutation = gql`
 
 export const refreshLatestAmazonIssuesMutation = gql`
   mutation refreshLatestAmazonIssues($data: SalesChannelViewAssignPartialInput!) {
-    refreshLatestAmazonIssues(data: $data) {
+    refreshAmazonLatestIssues(instance: $data) {
       id
       formattedIssues {
         message

@@ -18,12 +18,12 @@ const emit = defineEmits(['modal-closed']);
 const localShowModal = ref(props.modelValue);
 const issues: Ref<FormattedIssue[]> = ref(props.issues ?? []);
 const { t } = useI18n();
-
+console.log(props.issues)
 const loading = ref(false);
+issues.value = props.issues ?? [];
 
 const fetchIssues = async () => {
   if (!props.id) {
-    issues.value = props.issues ?? [];
     return;
   }
   loading.value = true;
@@ -31,8 +31,8 @@ const fetchIssues = async () => {
     mutation: refreshLatestAmazonIssuesMutation,
     variables: { data: { id: props.id } },
   });
-  if (data && data.refreshLatestAmazonIssues) {
-    issues.value = data.refreshLatestAmazonIssues.formattedIssues || [];
+  if (data && data.refreshAmazonLatestIssues) {
+    issues.value = data.refreshAmazonLatestIssues.formattedIssues || [];
   } else if (props.issues) {
     issues.value = props.issues;
   }
@@ -41,8 +41,8 @@ const fetchIssues = async () => {
 
 watch(() => props.modelValue, (newVal) => {
   localShowModal.value = newVal;
-  if (newVal) {
-    fetchIssues();
+  if (newVal && props.issues) {
+    issues.value = props.issues;
   }
 });
 
@@ -70,6 +70,7 @@ const closeModal = () => {
         </ul>
         <hr />
         <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-primary" @click="fetchIssues">{{ t('shared.button.refresh') }}</Button>
           <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
         </div>
       </Card>
