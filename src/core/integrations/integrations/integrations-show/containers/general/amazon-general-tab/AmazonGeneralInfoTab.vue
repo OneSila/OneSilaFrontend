@@ -33,6 +33,7 @@ interface EditAmazonForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  listingOwner: boolean;
   accessToken?: string;
   expirationDate?: string;
   region: string | null;
@@ -245,15 +246,15 @@ useShiftBackspaceKeyboardListener(goBack);
   <div class="space-y-12">
 
     <div class="grid grid-cols-12 gap-4">
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.expirationDate') }}
-        </Label>
-        <div class="flex items-center gap-4">
-          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />
-          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
-        </div>
-      </div>
+<!--      <div class="md:col-span-6 col-span-12">-->
+<!--        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">-->
+<!--          {{ t('integrations.labels.expirationDate') }}-->
+<!--        </Label>-->
+<!--        <div class="flex items-center gap-4">-->
+<!--          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />-->
+<!--          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
 
     <div class="grid grid-cols-12 gap-4">
@@ -272,6 +273,19 @@ useShiftBackspaceKeyboardListener(goBack);
           </FlexCell>
           <FlexCell>
             <Toggle v-model="formData.active" />
+          </FlexCell>
+        </Flex>
+      </div>
+
+      <div class="md:col-span-2 col-span-6">
+        <Flex class="mt-8" gap="2">
+          <FlexCell>
+            <Label class="font-semibold text-sm text-gray-900 mb-1">
+              {{ t('integrations.labels.listingOwner') }}
+            </Label>
+          </FlexCell>
+          <FlexCell>
+            <Toggle v-model="formData.listingOwner" />
           </FlexCell>
         </Flex>
       </div>

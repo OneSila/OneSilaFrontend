@@ -6,7 +6,7 @@ import {
   QueryFormField
 } from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType, InspectorStatus, InspectorStatusType, ProductType, Url } from '../../../shared/utils/constants.js'
-import {OrderType, SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
+import { OrderType, SearchConfig, SearchFilter } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
@@ -14,6 +14,7 @@ import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 import { Badge } from "../../../shared/components/organisms/general-show/showConfig";
 import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
+import { amazonChannelsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
@@ -182,7 +183,7 @@ export const baseFormConfigConstructor = (
   fields: getFields(type, t),
 });
 
-export const searchConfigConstructor = (t: Function): SearchConfig => ({
+export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false): SearchConfig => ({
   search: true,
   orderKey: "sort",
   filters: [
@@ -213,6 +214,23 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       isEdge: true,
       addLookup: false,
     },
+    ...(
+      hasAmazon
+        ? [{
+            type: FieldType.Query,
+            name: 'amazonProductsWithIssuesForSalesChannel',
+            query: amazonChannelsQuerySelector,
+            label: t('integrations.salesChannel.amazon.labels.productsWithIssuesForSalesChannel'),
+            labelBy: 'hostname',
+            valueBy: 'id',
+            dataKey: 'amazonChannels',
+            filterable: true,
+            multiple: false,
+            isEdge: true,
+            addLookup: false,
+          } as SearchFilter]
+        : []
+    ),
     {
       type: FieldType.Choice,
       name: 'type',
@@ -382,6 +400,7 @@ export interface SalesChannelViewAssign {
   id: string;
   remoteUrl: string;
   remoteProductPercentage: number;
+  integrationType: string;
   formattedIssues?: { message?: string | null; severity?: string | null }[];
   product: SalesChannelViewAssignProduct;
   salesChannelView: SalesChannelView;

@@ -18,10 +18,12 @@ import { IssuesInfoModal } from "../issues-info-modal";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
-const infoId = ref(null);
+const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
+const infoIntegrationType = ref<string | undefined>(undefined);
 const issuesList = ref<SalesChannelViewAssign['formattedIssues'] | null>(null);
 const showIssuesModal = ref(false);
+const issuesAssignId = ref(null);
 
 const onResyncError = (error) => {
   displayApolloError(error);
@@ -31,23 +33,27 @@ const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'))
 };
 
-const setInfoId = (id) => {
+const setInfoId = (id: string | null, type: string | null) => {
   infoId.value = id;
+  infoIntegrationType.value = type || undefined;
   showInfoModal.value = true;
 }
 
-const setIssues = (issues) => {
+const setIssues = (issues, id) => {
+  issuesAssignId.value = id;
   issuesList.value = issues || [];
   showIssuesModal.value = true;
 }
 
 const modalColsed = () => {
   infoId.value = null;
+  infoIntegrationType.value = undefined;
   showInfoModal.value = false;
 }
 
 const issuesModalClosed = () => {
   issuesList.value = null;
+  issuesAssignId.value = null;
   showIssuesModal.value = false;
 }
 
@@ -78,11 +84,11 @@ const issuesModalClosed = () => {
             <td>
               <div class="flex gap-4 items-center justify-end">
 
-                <Button v-if="item.formattedIssues?.length" @click="setIssues(item.formattedIssues)">
+                <Button v-if="item.formattedIssues?.length" @click="setIssues(item.formattedIssues, item.id)">
                   <Icon name="exclamation-triangle" size="lg" class="text-red-500" />
                 </Button>
 
-                <Button :disabled="!item.remoteProduct?.id" @click="setInfoId(item.remoteProduct?.id)">
+                <Button :disabled="!item.remoteProduct?.id" @click="setInfoId(item.remoteProduct?.id, item.integrationType)">
                   <Icon name="clipboard-list" size="lg" class="text-gray-500" />
                 </Button>
 
@@ -121,7 +127,7 @@ const issuesModalClosed = () => {
           </tbody>
         </table>
       </div>
-      <LogsInfoModal v-model="showInfoModal" :id="infoId" @modal-closed="modalColsed()" />
-      <IssuesInfoModal v-model="showIssuesModal" :issues="issuesList" @modal-closed="issuesModalClosed()" />
+      <LogsInfoModal v-model="showInfoModal" :id="infoId" :integration-type="infoIntegrationType" @modal-closed="modalColsed()" />
+      <IssuesInfoModal v-model="showIssuesModal" :issues="issuesList" :id="issuesAssignId" @modal-closed="issuesModalClosed()" />
     </div>
 </template>

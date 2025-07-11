@@ -7,6 +7,7 @@ import { Link } from "../../../../shared/components/atoms/link";
 import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from "../configs";
+import { injectAuth } from "../../../../shared/modules/auth";
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
 import { ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
@@ -16,7 +17,8 @@ import {BulkProductPropertyAssigner} from "../../../../shared/components/organis
 
 const { t } = useI18n();
 
-const searchConfig = searchConfigConstructor(t);
+const auth = injectAuth();
+const searchConfig = searchConfigConstructor(t, auth.user.company?.hasAmazonIntegration);
 const listingConfig = listingConfigConstructor(t, true);
 const generalListingRef = ref<any>(null);
 

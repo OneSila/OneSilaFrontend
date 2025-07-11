@@ -115,7 +115,6 @@
             "title": "Configurable Products with No Applicable Configurator Rules",
             "description": "Define at least one configurator required item for these configurable products."
           }
-
         }
       },
       "orders": {
@@ -165,6 +164,10 @@
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
           "description": "Amazon unit configurators missing a default unit."
+        },
+        "productsWithIssues": {
+          "title": "Products With Issues",
+          "description": "Amazon products that failed to sync correctly."
         }
       }
     },
@@ -370,7 +373,10 @@
       "new": "New",
       "beta": "BETA",
       "url": "URL",
-      "default": "Default"
+      "default": "Default",
+      "submissionId": "Submission ID",
+      "processingStatus": "Processing Status",
+      "issues": "Issues"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -458,26 +464,26 @@
           }
         },
         "aiContentGenerator": {
-            "title": "Generating content...",
-            "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
-            "step1": "Gathering product information",
-            "step2": "Evaluating product features",
-            "step3": "Generating description",
-            "step4": "Finalizing content"
+          "title": "Generating content...",
+          "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
+          "step1": "Gathering product information",
+          "step2": "Evaluating product features",
+          "step3": "Generating description",
+          "step4": "Finalizing content"
         },
         "aiContentTranslator": {
-            "title": "Translating content...",
-            "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
-            "step1": "Analyzing original text",
-            "step2": "Performing translation",
-            "step3": "Finalizing translation"
+          "title": "Translating content...",
+          "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
+          "step1": "Analyzing original text",
+          "step2": "Performing translation",
+          "step3": "Finalizing translation"
         },
         "aiBulletPointsGenerator": {
-            "title": "Generating bullet points...",
-            "success": "Bullet points successfully generated. It cost {points} SilAI Credit(s).",
-            "step1": "Gathering product information",
-            "step2": "Generating bullet points",
-            "step3": "Finalizing"
+          "title": "Generating bullet points...",
+          "success": "Bullet points successfully generated. It cost {points} SilAI Credit(s).",
+          "step1": "Gathering product information",
+          "step2": "Generating bullet points",
+          "step3": "Finalizing"
         },
         "remotePropertiesDetector": {
           "step1": "Analyzing remote attributes",
@@ -835,14 +841,14 @@
           "bulkDeleteSuccess": "EAN codes deleted successfully.",
           "bulkDeleteError": "Failed to delete EAN codes. Please try again.",
           "success": {
-                "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
-              },
-              "warning": {
-                "noAvailable": "No EAN codes could be assigned"
-              },
-              "error": {
-                "assignBulk": "An error occurred while assigning EAN codes"
-              }
+            "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
+          },
+          "warning": {
+            "noAvailable": "No EAN codes could be assigned"
+          },
+          "error": {
+            "assignBulk": "An error occurred while assigning EAN codes"
+          }
         }
       }
     },
@@ -1079,135 +1085,135 @@
   "inventory": {
     "title": "Warehouse",
     "packages": {
-       "title": "Packages",
-        "create": {
-          "title": "Create Packages",
-          "virtual": {
-            "title": "Guided Virtual Tour Packaging",
-            "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
-            "selectPackageType": "Please select the package type you gonna use",
-            "actions": {
-              "start": "Let's Start",
-              "arrived": "I Arrived",
-              "addAll": "Add All",
-              "quantityInputPlaceholder": "Enter quantity to add",
-              "addQuantity": "Add Quantity",
-              "packageFull": "Package Full",
-              "finish": "Finish"
-            },
-            "instructions": {
-              "prepare": {
-                "title": "Prepare Your Way",
-                "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
-              },
-              "move": {
-                "title": "Go to {location}",
-                "description": "Navigate to the designated location {location}."
-              },
-              "collect": {
-                "title": "Add to Package",
-                "description": "Place {quantity} of {item} into {package}.",
-                "general": {
-                  "addAll": "If all the products fit in the package, press Add.",
-                  "packageFull": "If the package is full and you cannot add anymore, press Package Full."
-                },
-                "extra": {
-                  "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
-                }
-              },
-              "confirm": {
-                "title": "Confirm the Shipment",
-                "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
-              }
-            },
-            "virtualTour": {
-              "itemsToShip": "Items to Ship",
-              "packages": "Packages",
-              "noPackagesYet": "No packages created yet.",
-              "prepare": "Prepare your way",
-              "collect": "Collect the products",
-              "confirm": "Confirm the shipment",
-              "packageName": "Package {index}"
-            },
-            "error": {
-              "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
-              "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
-              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
-              "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
-            },
-            "packageType": {
-              "error": "Please select a valid package type."
-            },
-            "packageFull": {
-              "error": "The package is full. You cannot add more items."
-            },
-            "packageSave": {
-              "success": "The package has been saved successfully.",
-              "error": "Failed to save the package. Please try again."
-            },
-          "confirmationSuccess": "The package has been confirmed successfully."
+      "title": "Packages",
+      "create": {
+        "title": "Create Packages",
+        "virtual": {
+          "title": "Guided Virtual Tour Packaging",
+          "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
+          "selectPackageType": "Please select the package type you gonna use",
+          "actions": {
+            "start": "Let's Start",
+            "arrived": "I Arrived",
+            "addAll": "Add All",
+            "quantityInputPlaceholder": "Enter quantity to add",
+            "addQuantity": "Add Quantity",
+            "packageFull": "Package Full",
+            "finish": "Finish"
           },
-          "manual": {
-            "button": {
-              "add": "Add package",
-              "remove": "Remove package"
+          "instructions": {
+            "prepare": {
+              "title": "Prepare Your Way",
+              "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
             },
-            "title": "Manual Packaging Entry",
-            "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
-              "createStep": {
-                "title": "Create Your Packages",
-                "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+            "move": {
+              "title": "Go to {location}",
+              "description": "Navigate to the designated location {location}."
+            },
+            "collect": {
+              "title": "Add to Package",
+              "description": "Place {quantity} of {item} into {package}.",
+              "general": {
+                "addAll": "If all the products fit in the package, press Add.",
+                "packageFull": "If the package is full and you cannot add anymore, press Package Full."
               },
-            "assignItemsStep": {
-              "title": "Assign Items to Packages",
-              "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
-              "noItemsToShip": "No items left to assign.",
-              "emptyPackage": "This package is currently empty.",
-              "packageName": "Package {index}",
-              "success": "Items have been successfully assigned to the package.",
-              "error": {
-                "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
-                "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
-                "packageCreationFailed": "Failed to create the package. Please try again.",
-                "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
-              },
-              "modal": {
-                "title": "Assign Item to Package",
-                "quantity": "Quantity",
-                "package": "Package"
+              "extra": {
+                "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
               }
+            },
+            "confirm": {
+              "title": "Confirm the Shipment",
+              "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
+            }
+          },
+          "virtualTour": {
+            "itemsToShip": "Items to Ship",
+            "packages": "Packages",
+            "noPackagesYet": "No packages created yet.",
+            "prepare": "Prepare your way",
+            "collect": "Collect the products",
+            "confirm": "Confirm the shipment",
+            "packageName": "Package {index}"
+          },
+          "error": {
+            "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
+            "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
+            "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
+            "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
+          },
+          "packageType": {
+            "error": "Please select a valid package type."
+          },
+          "packageFull": {
+            "error": "The package is full. You cannot add more items."
+          },
+          "packageSave": {
+            "success": "The package has been saved successfully.",
+            "error": "Failed to save the package. Please try again."
+          },
+          "confirmationSuccess": "The package has been confirmed successfully."
+        },
+        "manual": {
+          "button": {
+            "add": "Add package",
+            "remove": "Remove package"
+          },
+          "title": "Manual Packaging Entry",
+          "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
+          "createStep": {
+            "title": "Create Your Packages",
+            "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+          },
+          "assignItemsStep": {
+            "title": "Assign Items to Packages",
+            "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
+            "noItemsToShip": "No items left to assign.",
+            "emptyPackage": "This package is currently empty.",
+            "packageName": "Package {index}",
+            "success": "Items have been successfully assigned to the package.",
+            "error": {
+              "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
+              "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
+              "packageCreationFailed": "Failed to create the package. Please try again.",
+              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
+            },
+            "modal": {
+              "title": "Assign Item to Package",
+              "quantity": "Quantity",
+              "package": "Package"
             }
           }
-        },
-        "edit": {
-          "title": "Edit Package"
-        },
-        "show": {
-          "title": "Package Details"
-        },
-       "type": {
-          "box": "Box",
-          "pallet": "Pallet"
-       },
-       "status": {
-          "new": "New",
-          "inProgress": "In Progress",
-          "packed": "Packed",
-          "dispatched": "Dispatched"
-       },
-       "placeholders": {
-          "trackingCode": "Enter tracking code",
-          "trackingLink": "Enter tracking link URL"
-       },
-       "labels": {
-          "trackingCode": "Tracking Code",
-          "trackingLink": "Tracking Link",
-          "type": "Package Type",
-          "status": "Package Status",
-          "shippingLabel": "Shipping Label",
-          "customsDocument": "Customs Document"
-       }
-     },
+        }
+      },
+      "edit": {
+        "title": "Edit Package"
+      },
+      "show": {
+        "title": "Package Details"
+      },
+      "type": {
+        "box": "Box",
+        "pallet": "Pallet"
+      },
+      "status": {
+        "new": "New",
+        "inProgress": "In Progress",
+        "packed": "Packed",
+        "dispatched": "Dispatched"
+      },
+      "placeholders": {
+        "trackingCode": "Enter tracking code",
+        "trackingLink": "Enter tracking link URL"
+      },
+      "labels": {
+        "trackingCode": "Tracking Code",
+        "trackingLink": "Tracking Link",
+        "type": "Package Type",
+        "status": "Package Status",
+        "shippingLabel": "Shipping Label",
+        "customsDocument": "Customs Document"
+      }
+    },
     "shipments": {
       "title": "Shipments",
       "button": {
@@ -2288,7 +2294,7 @@
             }
           },
           "magentoInfoModal": {
-          "title": "How to connect your Magento store",
+            "title": "How to connect your Magento store",
             "section": {
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
@@ -2363,6 +2369,7 @@
       "syncEanCodes": "Sync EAN Codes",
       "syncPrices": "Sync Prices",
       "importOrders": "Import Orders",
+      "listingOwner": "Listing Owner",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "successfullyConnected": "Connected",
@@ -2452,6 +2459,9 @@
           "success": "Your Amazon store was successfully connected!",
           "genericError": "Something went wrong while connecting your store.",
           "missingParams": "Missing required query parameters. Please retry the installation."
+        },
+        "labels": {
+          "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
       },
       "toast": {
@@ -2463,6 +2473,7 @@
         "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
         "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
+        "listingOwner": "Enable if you are the owner of the product listings.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
@@ -2487,7 +2498,10 @@
       },
       "types": {
         "schema": "Schema",
-        "products": "Products"
+        "products": "Products",
+        "schemaDescription": "Initial setup required to enable product imports.",
+        "productsDescription": "Imports actual product data from Amazon.",
+        "schemaRequired": "Please complete the schema import first."
       },
       "create": {
         "success": "Create import process success",
@@ -2515,9 +2529,9 @@
           },
           "step3": {
             "title": "Default Attribute Set",
-              "content": "Select the default attribute set",
-              "attributeSetSelected": "Default Set",
-              "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
+            "content": "Select the default attribute set",
+            "attributeSetSelected": "Default Set",
+            "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
           },
           "finish": {
             "title": "Finalizing Import",

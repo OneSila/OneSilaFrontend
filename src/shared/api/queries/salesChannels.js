@@ -157,6 +157,7 @@ export const getAmazonChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      listingOwner
       accessToken
       refreshTokenExpiration
       expirationDate
@@ -205,6 +206,41 @@ export const amazonChannelsQuery = gql`
           saleschannelPtr {
             id
           }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const amazonChannelsQuerySelector = gql`
+  query AmazonChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonSalesChannelOrder
+    $filters: AmazonSalesChannelFilter
+  ) {
+    amazonChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
         }
         cursor
       }
@@ -271,6 +307,7 @@ export const salesChannelViewAssignsQuery = gql`
           id
           remoteUrl
           remoteProductPercentage
+          integrationType
           product {
             id
             name
@@ -332,10 +369,50 @@ export const remoteLogsQuery = gql`
   }
 `;
 
+export const amazonRemoteLogsQuery = gql`
+  query AmazonRemoteLogs(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: AmazonRemoteLogOrder,
+    $filter: AmazonRemoteLogFilter
+  ) {
+    amazonRemoteLogs(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          action
+          status
+          frontendName
+          frontendError
+          createdAt
+          submissionId
+          processingStatus
+          formattedIssues {
+            message
+            severity
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getSalesChannelViewAssignQuery = gql`
   query getSalesChannelViewAssign($id: GlobalID!) {
     salesChannelViewAssign(id: $id) {
       id
+      integrationType
       product {
         id
         name

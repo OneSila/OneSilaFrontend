@@ -22,8 +22,9 @@ import {Badge} from "../../../../../../shared/components/atoms/badge";
 
 const { t } = useI18n();
 const props = defineProps<{ salesChannelId: string }>();
-const infoId = ref(null);
+const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
+const infoIntegrationType = ref<string | undefined>(undefined);
 const router = useRouter();
 
 const searchConfig: SearchConfig = {
@@ -41,13 +42,15 @@ const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'))
 };
 
-const setInfoId = (id) => {
+const setInfoId = (id: string | null, type: string | null) => {
   infoId.value = id;
+  infoIntegrationType.value = type || undefined;
   showInfoModal.value = true;
 }
 
 const modalColsed = () => {
   infoId.value = null;
+  infoIntegrationType.value = undefined;
   showInfoModal.value = false;
 }
 
@@ -125,7 +128,7 @@ const getStatusText = (item) => {
                       <td>
                         <div class="flex gap-4 items-center justify-end">
 
-                          <Button :disabled="!item.node.remoteProduct?.id" @click="setInfoId(item.node.remoteProduct?.id)">
+                          <Button :disabled="!item.node.remoteProduct?.id" @click="setInfoId(item.node.remoteProduct?.id, item.node.integrationType)">
                             <Icon name="clipboard-list" size="lg" class="text-gray-500" />
                           </Button>
 
@@ -173,6 +176,6 @@ const getStatusText = (item) => {
           </ApolloQuery>
         </template>
       </FilterManager>
-    <LogsInfoModal v-model="showInfoModal" :id="infoId" @modal-closed="modalColsed()" />
+    <LogsInfoModal v-model="showInfoModal" :id="infoId" :integration-type="infoIntegrationType" @modal-closed="modalColsed()" />
   </div>
 </template>

@@ -438,7 +438,10 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
               :general-info="form.generalInfo"
               :integration-type="selectedIntegrationType"
               :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
-              :show-ssl="selectedIntegrationType !== IntegrationTypes.Shopify"
+              :show-ssl="
+                selectedIntegrationType !== IntegrationTypes.Shopify &&
+                selectedIntegrationType !== IntegrationTypes.Amazon
+              "
           />
         </template>
 
@@ -462,5 +465,4 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
       </Wizard>
    </template>
-  </GeneralTemplate>
-</template>
+  </GeneralTemplate></template>

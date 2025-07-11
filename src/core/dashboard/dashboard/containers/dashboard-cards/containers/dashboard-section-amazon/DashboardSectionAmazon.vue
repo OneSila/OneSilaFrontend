@@ -11,6 +11,7 @@ import {
   amazonDefaultUnitConfiguratorsQuery,
   amazonChannelsQuery
 } from '../../../../../../../shared/api/queries/salesChannels.js';
+import { dashboardAmazonProductsWithIssues } from '../../../../../../../shared/api/queries/dashboardCards.js';
 import apolloClient from '../../../../../../../../apollo-client';
 import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import { DashboardCard } from '../dashboard-card';
@@ -30,6 +31,7 @@ interface AmazonCardData {
   productTypes: number;
   selectValues: number;
   unitConfigurators: number;
+  productsWithIssues: number;
 }
 
 const showCompletedAmazonCards = ref(false);
@@ -38,7 +40,7 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
-  const [propRes, typeRes, valueRes, unitRes] = await Promise.all([
+  const [propRes, typeRes, valueRes, unitRes, issuesRes] = await Promise.all([
     apolloClient.query({
       query: amazonPropertiesQuery,
       variables: {
@@ -71,6 +73,13 @@ const fetchCounts = async (salesChannelId: string) => {
       },
       fetchPolicy: 'network-only',
     }),
+    apolloClient.query({
+      query: dashboardAmazonProductsWithIssues,
+      variables: {
+        salesChannelId,
+      },
+      fetchPolicy: 'network-only',
+    }),
   ]);
 
   return {
@@ -78,6 +87,7 @@ const fetchCounts = async (salesChannelId: string) => {
     productTypes: typeRes.data?.amazonProductTypes?.totalCount || 0,
     selectValues: valueRes.data?.amazonPropertySelectValues?.totalCount || 0,
     unitConfigurators: unitRes.data?.amazonDefaultUnitConfigurators?.totalCount || 0,
+    productsWithIssues: issuesRes.data?.products?.totalCount || 0,
   };
 };
 
@@ -192,6 +202,14 @@ onMounted(fetchAmazonIntegrations);
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'general', accordion: 'units' } }"
+        />
+        <DashboardCard
+          :counter="integration.productsWithIssues"
+          :title="t('dashboard.cards.amazon.productsWithIssues.title')"
+          :description="t('dashboard.cards.amazon.productsWithIssues.description')"
+          :hide-on-complete="!showCompletedAmazonCards"
+          color="red"
+          :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId } }"
         />
       </div>
     </Card>
