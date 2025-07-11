@@ -306,6 +306,7 @@ export const salesChannelViewAssignsQuery = gql`
           id
           remoteUrl
           remoteProductPercentage
+          integrationType
           product {
             id
             name
@@ -410,6 +411,7 @@ export const getSalesChannelViewAssignQuery = gql`
   query getSalesChannelViewAssign($id: GlobalID!) {
     salesChannelViewAssign(id: $id) {
       id
+      integrationType
       product {
         id
         name
