@@ -201,7 +201,7 @@ onMounted(fetchAmazonIntegrations);
           :description="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.description')"
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'general', accordion: 'units' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'defaultUnits', mappedLocally: false } }"
         />
         <DashboardCard
           :counter="integration.productsWithIssues"
