@@ -23,7 +23,7 @@ const fetchFirstUnmapped = async () => {
       first: 1,
       filter: {
         salesChannel: { id: { exact: props.salesChannelId } },
-        mappedRemotely: false,
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',

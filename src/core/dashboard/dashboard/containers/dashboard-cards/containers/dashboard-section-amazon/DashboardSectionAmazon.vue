@@ -2,9 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { injectAuth } from '../../../../../../../shared/modules/auth';
-import { integrationsQuery } from '../../../../../../../shared/api/queries/integrations.js';
 import {
-  getAmazonChannelQuery,
   amazonPropertiesQuery,
   amazonProductTypesQuery,
   amazonPropertySelectValuesQuery,
@@ -13,7 +11,6 @@ import {
 } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { dashboardAmazonProductsWithIssues } from '../../../../../../../shared/api/queries/dashboardCards.js';
 import apolloClient from '../../../../../../../../apollo-client';
-import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import { DashboardCard } from '../dashboard-card';
 import { Toggle } from '../../../../../../../shared/components/atoms/toggle';
 import { Card } from '../../../../../../../shared/components/atoms/card';
@@ -69,7 +66,7 @@ const fetchCounts = async (salesChannelId: string) => {
       query: amazonDefaultUnitConfiguratorsQuery,
       variables: {
         first: 1,
-        filter: { salesChannel: { id: { exact: salesChannelId } } },
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false  },
       },
       fetchPolicy: 'network-only',
     }),

@@ -133,7 +133,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       first: 2,
       filter: {
         salesChannel: { id: { exact: salesChannelId } },
-        mappedRemotely: false,
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',
@@ -202,7 +202,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.unit') }}</Label>
                     </FlexCell>
                     <FlexCell>
-                      <Selector v-model="form.selectedUnit" :options="form.choices" label-by="name" value-by="value" />
+                      <Selector v-model="form.selectedUnit" :options="form.choices" label-by="name" value-by="value" filterable />
                     </FlexCell>
                   </Flex>
                 </div>

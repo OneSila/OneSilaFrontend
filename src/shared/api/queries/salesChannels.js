@@ -887,7 +887,6 @@ export const amazonDefaultUnitConfiguratorsQuery = gql`
             name
           }
           selectedUnit
-          choices
         }
         cursor
       }
