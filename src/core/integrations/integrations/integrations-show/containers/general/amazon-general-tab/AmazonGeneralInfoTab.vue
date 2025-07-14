@@ -316,30 +316,3 @@ useShiftBackspaceKeyboardListener(goBack);
     {{ t('integrations.show.amazonNotConnectedBanner.content') }}
   </div>
 </template>
-
-<style scoped>
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #4361EE;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #c0c0c0;
-}
-
-.custom-scrollbar {
-  padding-right: 15px;
-}
-
-</style>

@@ -32,7 +32,7 @@ export const amazonDefaultUnitConfiguratorsSearchConfigConstructor = (t: Functio
   search: true,
   orderKey: "sort",
   filters: [
-    { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
     { type: FieldType.Query, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace'), labelBy: 'name', valueBy: 'id', query: salesChannelViewsQuery, dataKey: 'salesChannelViews', filterable: true, isEdge: true, addLookup: true, lookupKeys: ['id'], queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } } }
   ],
   orders: []
