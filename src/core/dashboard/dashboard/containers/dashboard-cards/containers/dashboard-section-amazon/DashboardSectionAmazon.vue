@@ -26,6 +26,7 @@ interface AmazonCardData {
   salesChannelId: string;
   properties: number;
   productTypes: number;
+  localProductTypes: number;
   selectValues: number;
   unitConfigurators: number;
   productsWithIssues: number;
@@ -37,7 +38,7 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
-  const [propRes, typeRes, valueRes, unitRes, issuesRes] = await Promise.all([
+  const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
     apolloClient.query({
       query: amazonPropertiesQuery,
       variables: {
@@ -51,6 +52,14 @@ const fetchCounts = async (salesChannelId: string) => {
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
+      },
+      fetchPolicy: 'network-only',
+    }),
+    apolloClient.query({
+      query: amazonProductTypesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedRemotely: false },
       },
       fetchPolicy: 'network-only',
     }),
@@ -82,6 +91,7 @@ const fetchCounts = async (salesChannelId: string) => {
   return {
     properties: propRes.data?.amazonProperties?.totalCount || 0,
     productTypes: typeRes.data?.amazonProductTypes?.totalCount || 0,
+    localProductTypes: localTypeRes.data?.amazonProductTypes?.totalCount || 0,
     selectValues: valueRes.data?.amazonPropertySelectValues?.totalCount || 0,
     unitConfigurators: unitRes.data?.amazonDefaultUnitConfigurators?.totalCount || 0,
     productsWithIssues: issuesRes.data?.products?.totalCount || 0,
@@ -175,6 +185,14 @@ onMounted(fetchAmazonIntegrations);
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.localProductTypes"
+          :title="t('dashboard.cards.amazon.unmappedLocalProductTypes.title')"
+          :description="t('dashboard.cards.amazon.unmappedLocalProductTypes.description')"
+          :hide-on-complete="!showCompletedAmazonCards"
+          color="red"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
         <DashboardCard
           :counter="integration.properties"
