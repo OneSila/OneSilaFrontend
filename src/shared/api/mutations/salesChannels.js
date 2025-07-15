@@ -527,7 +527,7 @@ export const updateAmazonProductTypeMutation = gql`
 `;
 
 export const suggestAmazonProductTypeMutation = gql`
-  mutation suggestAmazonProductType($name: String!, $marketplace: SalesChannelViewPartialInput!) {
+  mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
     suggestAmazonProductType(name: $name, marketplace: $marketplace) {
       productTypeVersion
       productTypes {
