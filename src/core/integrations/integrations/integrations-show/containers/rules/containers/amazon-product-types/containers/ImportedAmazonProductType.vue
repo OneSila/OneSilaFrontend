@@ -15,6 +15,7 @@ import apolloClient from "../../../../../../../../../../apollo-client";
 import {QueryFormField} from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import {FieldType} from "../../../../../../../../../shared/utils/constants";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
+import {CancelButton} from "../../../../../../../../../shared/components/atoms/button-cancel";
 
 const {t} = useI18n();
 const route = useRoute();
@@ -150,8 +151,10 @@ const save = async () => {
             </div>
             <hr />
             <div class="flex items-center justify-end gap-x-3 px-4 py-4 sm:px-8">
+              <CancelButton  @click="router.back()">
+                  {{ t('shared.button.back') }}
+                </CancelButton>
               <Button type="button" class="btn btn-primary" :loading="saving" :disabled="saving" @click="save">{{ t('shared.button.save') }}</Button>
-              <Button type="button" class="btn btn-secondary" @click="router.back()">{{ t('shared.button.cancel') }}</Button>
             </div>
           </div>
         </div>
