@@ -9,6 +9,11 @@
       "red": "Rouge",
       "green": "Vert",
       "orange": "Orange"
+    },
+    "labels": {
+      "message": "Message",
+      "severity": "Gravité",
+      "validationIssue": "Problème de validation"
     }
   },
   "auth": {

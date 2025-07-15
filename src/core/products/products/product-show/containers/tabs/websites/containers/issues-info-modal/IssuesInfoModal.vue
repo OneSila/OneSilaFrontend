@@ -81,7 +81,7 @@ const closeModal = () => {
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="(issue, index) in issues" :key="index">
-                <td class="break-words">{{ issue.message }}</td>
+                <td class="break-words max-w-xs">{{ issue.message }}</td>
                 <td class="capitalize">{{ issue.severity }}</td>
                 <td>
                   <Icon v-if="issue.validationIssue" name="check-circle" class="text-green-500" />

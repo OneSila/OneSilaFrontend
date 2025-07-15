@@ -9,6 +9,11 @@
       "red": "Rot",
       "green": "Grün",
       "orange": "Orange"
+    },
+    "labels": {
+      "message": "Nachricht",
+      "severity": "Schweregrad",
+      "validationIssue": "Validierungsfehler"
     }
   },
   "auth": {

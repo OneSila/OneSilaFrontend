@@ -380,7 +380,10 @@
       "default": "Default",
       "submissionId": "Submission ID",
       "processingStatus": "Processing Status",
-      "issues": "Issues"
+      "issues": "Issues",
+      "message": "Message",
+      "severity": "Severity",
+      "validationIssue": "Validation Issue"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
