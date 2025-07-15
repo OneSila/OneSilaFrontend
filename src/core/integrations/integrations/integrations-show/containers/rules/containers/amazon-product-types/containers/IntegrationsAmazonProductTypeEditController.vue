@@ -1,13 +1,33 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import {useRoute} from 'vue-router';
+import apolloClient from '../../../../../../../../../../apollo-client';
+import {getAmazonProductTypeQuery} from '../../../../../../../../../shared/api/queries/salesChannels.js';
 import RemotelyMappedAmazonProductType from './RemotelyMappedAmazonProductType.vue';
 import ImportedAmazonProductType from './ImportedAmazonProductType.vue';
 
 const route = useRoute();
-const imported = computed(() => route.query.imported === '1');
+const productTypeId = String(route.params.id);
+const productType = ref<any | null>(null);
+const loading = ref(true);
+
+onMounted(async () => {
+  const {data} = await apolloClient.query({
+    query: getAmazonProductTypeQuery,
+    variables: {id: productTypeId},
+    fetchPolicy: 'network-only',
+  });
+  productType.value = data?.amazonProductType || null;
+  loading.value = false;
+});
+
+const imported = computed(() => productType.value?.imported);
 </script>
 
 <template>
-  <component :is="imported ? RemotelyMappedAmazonProductType : ImportedAmazonProductType" />
+  <component
+    v-if="!loading"
+    :is="imported ? RemotelyMappedAmazonProductType : ImportedAmazonProductType"
+    :product-type="productType"
+  />
 </template>

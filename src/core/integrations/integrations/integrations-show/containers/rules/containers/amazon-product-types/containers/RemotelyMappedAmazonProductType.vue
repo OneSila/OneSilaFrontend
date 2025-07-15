@@ -30,6 +30,8 @@ const {t} = useI18n();
 const route = useRoute();
 const router = useRouter();
 
+const props = defineProps<{ productType: any | null }>();
+
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
@@ -69,6 +71,9 @@ const setupFormConfig = () => {
       integrationId,
       resolvedDefaultRuleId.value
   );
+  if (props.productType) {
+    formConfig.value.queryData = { amazonProductType: props.productType };
+  }
 };
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
