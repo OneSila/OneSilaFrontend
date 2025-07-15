@@ -157,6 +157,10 @@
           "title": "Unmapped Product Types",
           "description": "Amazon product types that need mapping."
         },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped Local Product Types",
+          "description": "Local product types that need mapping to Amazon."
+        },
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Amazon property values that need mapping."
