@@ -2264,6 +2264,7 @@
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
+      "pullLocalRules": "Pull Local Rules",
       "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",
