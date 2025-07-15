@@ -41,7 +41,6 @@ export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function, s
   orderKey: "sort",
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
-    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
     {
       type: FieldType.Query,
       name: 'amazonProperty',
@@ -81,7 +80,6 @@ export const amazonPropertySelectValuesListingConfigConstructor = (t: Function, 
     t('integrations.show.propertySelectValues.labels.amazonProperty'),
     t('integrations.show.propertySelectValues.labels.marketplace'),
     t('integrations.show.mapping.mappedLocally'),
-    t('integrations.show.mapping.mappedRemotely'),
     t('properties.values.title')
   ],
   fields: [
@@ -90,7 +88,6 @@ export const amazonPropertySelectValuesListingConfigConstructor = (t: Function, 
     { name: 'amazonProperty', type: FieldType.NestedText, keys: ['name'], showLabel: true, },
     { name: 'marketplace', type: FieldType.NestedText, keys: ['name'], showLabel: true },
     { name: 'mappedLocally', type: FieldType.Boolean },
-    { name: 'mappedRemotely', type: FieldType.Boolean },
     { name: 'localInstance', type: FieldType.NestedText, keys: ['value'], showLabel: true, clickable: true, clickIdentifiers: [{id: ['id']}], clickUrl: { name: 'properties.values.show' } }
   ],
   identifierKey: 'id',

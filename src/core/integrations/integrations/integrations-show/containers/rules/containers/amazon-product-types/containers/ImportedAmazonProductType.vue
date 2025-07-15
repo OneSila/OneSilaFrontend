@@ -19,6 +19,7 @@ import {CancelButton} from "../../../../../../../../../shared/components/atoms/b
 import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
+import {Selector} from "../../../../../../../../../shared/components/atoms/selector";
 
 const {t} = useI18n();
 const route = useRoute();
@@ -112,6 +113,8 @@ const fetchAllProductTypes = async () => {
         marketplace: { id: marketplace.value }
       }
     });
+
+    console.log(data?.suggestAmazonProductType?.productTypes)
     allProductTypes.value = data?.suggestAmazonProductType?.productTypes || [];
     if (!allProductTypes.value.length) {
       errors.value.__all__ = t('integrations.show.productRules.errors.noSuggestions');
@@ -196,7 +199,7 @@ const save = async () => {
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 md:divide-x">
                 <div class="space-y-4">
-                  <h3 class="font-semibold">{{ t('integrations.show.productRules.titles.suggestUsingName') }}</h3>
+                  <h3 class="font-semibold text-lg">{{ t('integrations.show.productRules.titles.suggestUsingName') }}</h3>
                   <div>
                     <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.productRules.labels.productName') }}</label>
                     <TextInput v-model="productName" class="w-full" />
@@ -229,7 +232,7 @@ const save = async () => {
                   </div>
                 </div>
                 <div class="space-y-4 md:pl-6">
-                  <h3 class="font-semibold">{{ t('integrations.show.productRules.titles.searchInAll') }}</h3>
+                  <h3 class="font-semibold text-lg">{{ t('integrations.show.productRules.titles.searchInAll') }}</h3>
                   <div>
                     <label class="font-semibold block text-sm leading-6 text-gray-900">{{ marketplaceField.label }}</label>
                     <FieldQuery :field="marketplaceField" v-model="marketplace" />
@@ -242,6 +245,7 @@ const save = async () => {
                     <Button type="button" class="btn btn-secondary" :loading="loadingSuggestions" :disabled="loadingSuggestions" @click="fetchAllProductTypes">{{ t('shared.button.search') }}</Button>
                   </div>
                   <Selector
+                    class="max-h-10 "
                     v-if="allProductTypes.length"
                     v-model="selectedCode"
                     :options="allProductTypes"
