@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import {Breadcrumbs} from "../../../../../../../../../shared/components/molecules/breadcrumbs";
@@ -9,6 +9,8 @@ import {Button} from "../../../../../../../../../shared/components/atoms/button"
 import {FieldQuery} from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {salesChannelViewsQuery} from "../../../../../../../../../shared/api/queries/salesChannels.js";
 import {suggestAmazonProductTypeMutation, updateAmazonProductTypeMutation} from "../../../../../../../../../shared/api/mutations/salesChannels.js";
+import {listingQuery} from '../configs';
+import {Link} from "../../../../../../../../../shared/components/atoms/link";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {QueryFormField} from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import {FieldType} from "../../../../../../../../../shared/utils/constants";
@@ -18,11 +20,19 @@ const {t} = useI18n();
 const route = useRoute();
 const router = useRouter();
 
+const props = defineProps<{ productType: any | null }>();
+
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
+
+const localInstancePath = computed(() => {
+  const id = props.productType?.localInstance?.id;
+  return id ? { name: 'properties.rule.show', params: { id } } : null;
+});
+const localInstanceName = computed(() => props.productType?.localInstance?.value || '');
 
 const marketplaceField: QueryFormField = {
   type: FieldType.Query,
@@ -42,6 +52,8 @@ const productName = ref('');
 const marketplace = ref('');
 const suggestions = ref<any[]>([]);
 const selected = ref<string>('');
+const saving = ref(false);
+const nextWizardId = ref<string | null>(null);
 
 const fetchSuggestions = async () => {
   if (!productName.value || !marketplace.value) return;
@@ -55,14 +67,51 @@ const fetchSuggestions = async () => {
   suggestions.value = data?.suggestAmazonProductType?.productTypes || [];
 };
 
+const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
+  const {data} = await apolloClient.query({
+    query: listingQuery,
+    variables: {
+      first: 2,
+      filter: {
+        salesChannel: {id: {exact: salesChannelId}},
+        mappedLocally: false,
+      },
+    },
+    fetchPolicy: 'network-only',
+  });
+  const edges = data?.amazonProductTypes?.edges || [];
+  let nextId: string | null = null;
+  for (const edge of edges) {
+    if (edge.node.id !== productTypeId.value) {
+      nextId = edge.node.id;
+      break;
+    }
+  }
+  const last = edges.length === 1 && edges[0].node.id === productTypeId.value;
+  return {nextId, last};
+};
+
 const save = async () => {
   if (!selected.value) return;
+  saving.value = true;
   await apolloClient.mutate({
     mutation: updateAmazonProductTypeMutation,
     variables: { data: { id: productTypeId.value, productTypeCode: selected.value, name: productName.value, imported: true } }
   });
+  saving.value = false;
   Toast.success(t('shared.success'));
-  router.back();
+  if (!isWizard) {
+    router.back();
+    return;
+  }
+  const {nextId, last} = await fetchNextUnmapped();
+  if (nextId) {
+    router.push({ name: 'integrations.amazonProductTypes.edit', params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
+  } else if (last) {
+    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+  } else {
+    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+  }
 };
 </script>
 
@@ -72,27 +121,39 @@ const save = async () => {
       <Breadcrumbs :links="[{ path: { name: 'integrations.integrations.list' }, name: t('integrations.title') }, { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'productRules'} }, name: t('integrations.show.amazon.title') }, { name: t('integrations.show.mapProductType') }]" />
     </template>
     <template #content>
-      <div class="space-y-6">
-        <div>
-          <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</label>
-          <TextInput v-model="productName" class="w-full" />
-          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.productRules.help.name') }}</p>
-        </div>
-        <div>
-          <FieldQuery :field="marketplaceField" v-model="marketplace" />
-        </div>
-        <div>
-          <Button type="button" class="btn btn-secondary" @click="fetchSuggestions">{{ t('shared.button.search') }}</Button>
-        </div>
-        <div v-if="suggestions.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="s in suggestions" :key="s.name" class="p-4 border rounded cursor-pointer" :class="{ 'border-primary': selected === s.name }" @click="selected = s.name">
-            <strong>{{ s.displayName }}</strong>
-            <p class="text-sm text-gray-500">{{ s.name }}</p>
+      <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+            <div class="px-4 py-6 sm:p-8 space-y-6">
+              <div v-if="localInstanceName">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.productRules.labels.productRule') }}</label>
+                <Link v-if="localInstancePath" :path="localInstancePath">{{ localInstanceName }}</Link>
+                <span v-else>{{ localInstanceName }}</span>
+              </div>
+              <div>
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</label>
+                <TextInput v-model="productName" class="w-full" />
+                <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.productRules.help.name') }}</p>
+              </div>
+              <div>
+                <FieldQuery :field="marketplaceField" v-model="marketplace" />
+              </div>
+              <div>
+                <Button type="button" class="btn btn-secondary" @click="fetchSuggestions">{{ t('shared.button.search') }}</Button>
+              </div>
+              <div v-if="suggestions.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-for="s in suggestions" :key="s.name" class="p-4 border rounded cursor-pointer" :class="{ 'border-primary': selected === s.name }" @click="selected = s.name">
+                  <strong>{{ s.displayName }}</strong>
+                  <p class="text-sm text-gray-500">{{ s.name }}</p>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="flex items-center justify-end gap-x-3 px-4 py-4 sm:px-8">
+              <Button type="button" class="btn btn-primary" :loading="saving" :disabled="saving" @click="save">{{ t('shared.button.save') }}</Button>
+              <Button type="button" class="btn btn-secondary" @click="router.back()">{{ t('shared.button.cancel') }}</Button>
+            </div>
           </div>
-        </div>
-        <div class="mt-4 flex gap-2">
-          <Button type="button" class="btn btn-primary" @click="save">{{ t('shared.button.save') }}</Button>
-          <Button type="button" class="btn btn-secondary" @click="router.back()">{{ t('shared.button.cancel') }}</Button>
         </div>
       </div>
     </template>
