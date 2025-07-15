@@ -18,6 +18,7 @@ import {Toast} from "../../../../../../../../../shared/modules/toast";
 import {CancelButton} from "../../../../../../../../../shared/components/atoms/button-cancel";
 import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
+import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
 
 const {t} = useI18n();
 const route = useRoute();
