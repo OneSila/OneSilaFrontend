@@ -2192,12 +2192,18 @@
         "title": "Amazon Rules",
         "labels": {
           "productTypeCode": "Product Type Code",
-          "productRule": "Product Rule"
+          "productRule": "Product Rule",
+          "productName": "Product name",
+          "selectedProductType": "Selected product type"
         },
         "help": {
           "productTypeCode": "Amazon identifier for this product type.",
-          "name": "Name of a product using this type, if available.",
+          "productName": "Provide a product name and Amazon will suggest matching types.",
           "productRule": "Select the local product rule to link with this Amazon product type."
+        },
+        "titles": {
+          "suggestUsingName": "Get suggestion using product name",
+          "searchInAll": "Search in all"
         },
         "errors": {
           "noSuggestions": "No recommended product types found."
