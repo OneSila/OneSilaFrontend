@@ -2198,6 +2198,9 @@
           "productTypeCode": "Amazon identifier for this product type.",
           "name": "Name of a product using this type, if available.",
           "productRule": "Select the local product rule to link with this Amazon product type."
+        },
+        "errors": {
+          "noSuggestions": "No recommended product types found."
         }
       },
       "properties": {

@@ -16,6 +16,8 @@ import {QueryFormField} from "../../../../../../../../../shared/components/organ
 import {FieldType} from "../../../../../../../../../shared/utils/constants";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
 import {CancelButton} from "../../../../../../../../../shared/components/atoms/button-cancel";
+import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
+import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 
 const {t} = useI18n();
 const route = useRoute();
@@ -54,18 +56,41 @@ const marketplace = ref('');
 const suggestions = ref<any[]>([]);
 const selected = ref<string>('');
 const saving = ref(false);
+const loadingSuggestions = ref(false);
+const errors = ref<Record<string, string>>({});
 const nextWizardId = ref<string | null>(null);
 
 const fetchSuggestions = async () => {
-  if (!productName.value || !marketplace.value) return;
-  const {data} = await apolloClient.mutate({
-    mutation: suggestAmazonProductTypeMutation,
-    variables: {
-      name: productName.value,
-      marketplace: {id: marketplace.value}
+  errors.value = {};
+  if (!productName.value) {
+    errors.value.name = t('shared.validationErrors.required');
+  }
+  if (!marketplace.value) {
+    errors.value.marketplace = t('shared.validationErrors.required');
+  }
+  if (Object.keys(errors.value).length) return;
+
+  loadingSuggestions.value = true;
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: suggestAmazonProductTypeMutation,
+      variables: {
+        name: productName.value,
+        marketplace: { id: marketplace.value }
+      }
+    });
+    suggestions.value = data?.suggestAmazonProductType?.productTypes || [];
+    if (!suggestions.value.length) {
+      errors.value.__all__ = t('integrations.show.productRules.errors.noSuggestions');
     }
-  });
-  suggestions.value = data?.suggestAmazonProductType?.productTypes || [];
+  } catch (err) {
+    const validationErrors = processGraphQLErrors(err, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
+  } finally {
+    loadingSuggestions.value = false;
+  }
 };
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
@@ -125,6 +150,7 @@ const save = async () => {
       <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
           <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+            <Loader :loading="loadingSuggestions" />
             <div class="px-4 py-6 sm:p-8 space-y-6">
               <div v-if="localInstanceName">
                 <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.productRules.labels.productRule') }}</label>
@@ -134,13 +160,25 @@ const save = async () => {
               <div>
                 <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</label>
                 <TextInput v-model="productName" class="w-full" />
+                <div v-if="errors.name" class="text-danger text-small blink-animation ml-1 mb-1">
+                  <Icon size="sm" name="exclamation-circle" />
+                  <span class="ml-1">{{ errors.name }}</span>
+                </div>
                 <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.productRules.help.name') }}</p>
               </div>
               <div>
                 <FieldQuery :field="marketplaceField" v-model="marketplace" />
+                <div v-if="errors.marketplace" class="text-danger text-small blink-animation ml-1 mb-1">
+                  <Icon size="sm" name="exclamation-circle" />
+                  <span class="ml-1">{{ errors.marketplace }}</span>
+                </div>
               </div>
               <div>
-                <Button type="button" class="btn btn-secondary" @click="fetchSuggestions">{{ t('shared.button.search') }}</Button>
+                <Button type="button" class="btn btn-secondary" :loading="loadingSuggestions" :disabled="loadingSuggestions" @click="fetchSuggestions">{{ t('shared.button.search') }}</Button>
+              </div>
+              <div v-if="errors.__all__" class="text-danger text-small blink-animation ml-1 mb-1">
+                <Icon size="sm" name="exclamation-circle" />
+                <span class="ml-1">{{ errors.__all__ }}</span>
               </div>
               <div v-if="suggestions.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div v-for="s in suggestions" :key="s.name" class="p-4 border rounded cursor-pointer" :class="{ 'border-primary': selected === s.name }" @click="selected = s.name">
