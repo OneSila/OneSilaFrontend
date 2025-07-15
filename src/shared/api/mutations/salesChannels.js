@@ -526,6 +526,14 @@ export const updateAmazonProductTypeMutation = gql`
   }
 `;
 
+export const createAmazonProductTypesFromLocalRulesMutation = gql`
+  mutation createAmazonProductTypesFromLocalRules($data: AmazonSalesChannelPartialInput!) {
+    createAmazonProductTypesFromLocalRules(instance: $data) {
+      id
+    }
+  }
+`;
+
 export const suggestAmazonProductTypeMutation = gql`
   mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
     suggestAmazonProductType(name: $name, marketplace: $marketplace) {
