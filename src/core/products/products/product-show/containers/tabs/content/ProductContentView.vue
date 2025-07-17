@@ -4,24 +4,20 @@ import {useI18n} from 'vue-i18n';
 import {Product} from "../../../../configs";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../../apollo-client";
-import {getProductTranslationByLanguageQuery} from "../../../../../../../shared/api/queries/products.js";
-import {
-  updateProductTranslationMutation,
-  createProductTranslationMutation,
-} from "../../../../../../../shared/api/mutations/products.js";
-import {Selector} from "../../../../../../../shared/components/atoms/selector";
-import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
-import {TextEditor} from "../../../../../../../shared/components/atoms/input-text-editor";
-import {TextHtmlEditor} from "../../../../../../../shared/components/atoms/input-text-html-editor";
-import {reactive, watch, ref} from "vue";
-import {translationLanguagesQuery} from '../../../../../../../shared/api/queries/languages.js';
-import {Label} from "../../../../../../../shared/components/atoms/label";
-import {Toast} from "../../../../../../../shared/modules/toast";
-import {Icon} from "../../../../../../../shared/components/atoms/icon";
-import {createMediaProductThroughMutation, createVideosMutation} from "../../../../../../../shared/api/mutations/media";
-import {processGraphQLErrors} from "../../../../../../../shared/utils";
-import {AiContentGenerator} from "../../../../../../../shared/components/organisms/ai-content-generator";
-import {AiContentTranslator} from "../../../../../../../shared/components/organisms/ai-content-translator";
+import { getProductContentByLanguageAndChannelQuery, getProductContentByLanguageAndDefaultQuery } from "../../../../../../../shared/api/queries/products.js";
+import { createProductTranslationMutation, updateProductTranslationMutation } from "../../../../../../../shared/api/mutations/products.js";
+import { integrationsQuery } from "../../../../../../../shared/api/queries/integrations.js";
+import { Selector} from "../../../../../../../shared/components/atoms/selector";
+import { reactive, watch, ref, onMounted, computed } from "vue";
+import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
+import { Toast } from "../../../../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../../../../shared/utils";
+import { IntegrationTypes } from "../../../../../../integrations/integrations/integrations";
+import { getContentFieldRules } from './contentFieldRules';
+import SalesChannelTabs from "./SalesChannelTabs.vue";
+import ProductContentPreview from "./ProductContentPreview.vue";
+import ProductContentForm from "./ProductContentForm.vue";
+import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -35,10 +31,26 @@ const initialForm = ref({
 
 const form = reactive({...initialForm.value});
 const currentLanguage = ref(null);
+const currentSalesChannel = ref<'default' | string>('default');
 const mutation = ref(null);
 const translationId = ref(null);
 const oldLang = ref(currentLanguage.value);
+const oldChannel = ref(currentSalesChannel.value);
+const salesChannels = ref<any[]>([]);
+const previewContent = ref<any | null>(null);
+const defaultPreviewContent = ref<any | null>(null);
 const fieldErrors = ref<Record<string, string>>({});
+const bulletPointsRef = ref<any>(null);
+const previewBulletPoints = ref<any[]>([]);
+
+const currentChannelType = computed(() => {
+  if (currentSalesChannel.value === 'default') return 'default';
+  const ch = salesChannels.value.find((c: any) => c.id === currentSalesChannel.value);
+  return ch?.type || 'default';
+});
+
+const fieldRules = computed(() => getContentFieldRules(currentChannelType.value));
+
 
 const cleanedData = (rawData) => {
   if (rawData && rawData.languages.length > 0) {
@@ -51,40 +63,122 @@ const cleanedData = (rawData) => {
   return [];
 };
 
-const setFormAndMutation = async (language) => {
-  try {
-    const {data} = await apolloClient.query({
-      query: getProductTranslationByLanguageQuery,
-      variables: {languageCode: language, productId: props.product.id},
-      fetchPolicy: 'network-only'
-    });
 
-    if (data && data.productTranslations.edges.length === 1) {
-      const translation = data.productTranslations.edges[0].node;
-      form.name = translation.name;
-      form.shortDescription = translation.shortDescription;
-      form.description = translation.description;
-      form.urlKey = translation.urlKey;
-      translationId.value = translation.id;
-      mutation.value = updateProductTranslationMutation;
-    } else {
-      form.name = '';
-      form.shortDescription = '<p><br></p>';
-      form.description = '<p><br></p>';
-      form.urlKey = '';
-      translationId.value = null;
-      mutation.value = createProductTranslationMutation;
-    }
-    initialForm.value = {...form};
-  } catch (error) {
-    console.error("Error fetching translation:", error);
+const loadSalesChannels = async () => {
+  try {
+    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'network-only' });
+    salesChannels.value = data?.integrations.edges.map((e: any) => e.node) || [];
+  } catch (e) {
+    console.error('Failed to load sales channels', e);
   }
 };
 
+onMounted(async () => {
+  await loadSalesChannels();
+  if (currentLanguage.value !== null) {
+    await setFormAndMutation(currentLanguage.value, currentSalesChannel.value);
+  }
+});
+
+const setFormAndMutation = async (language, channel) => {
+  try {
+    if (channel === 'default') {
+      // Query where salesChannel is null (Default)
+      const { data } = await apolloClient.query({
+        query: getProductContentByLanguageAndDefaultQuery,
+        variables: { languageCode: language, productId: props.product.id },
+        fetchPolicy: 'network-only'
+      });
+
+      if (data && data.productTranslations.edges.length === 1) {
+        const translation = data.productTranslations.edges[0].node;
+        form.name = translation.name;
+        form.shortDescription = translation.shortDescription;
+        form.description = translation.description;
+        form.urlKey = translation.urlKey;
+        translationId.value = translation.id;
+        mutation.value = updateProductTranslationMutation;
+        previewContent.value = translation;
+      } else {
+        form.name = '';
+        form.shortDescription = '<p><br></p>';
+        form.description = '<p><br></p>';
+        form.urlKey = '';
+        translationId.value = null;
+        mutation.value = createProductTranslationMutation;
+        previewContent.value = null;
+      }
+      initialForm.value = { ...form };
+      defaultPreviewContent.value = null;
+
+    } else {
+      // Query with specific salesChannelId
+      const { data } = await apolloClient.query({
+        query: getProductContentByLanguageAndChannelQuery,
+        variables: {
+          languageCode: language,
+          productId: props.product.id,
+          salesChannelId: channel
+        },
+        fetchPolicy: 'network-only'
+      });
+
+      if (data && data.productTranslations.edges.length === 1) {
+        const translation = data.productTranslations.edges[0].node;
+        form.name = translation.name;
+        form.shortDescription = translation.shortDescription;
+        form.description = translation.description;
+        form.urlKey = translation.urlKey;
+        translationId.value = translation.id;
+        mutation.value = updateProductTranslationMutation;
+        previewContent.value = translation;
+      } else {
+        form.name = '';
+        form.shortDescription = '<p><br></p>';
+        form.description = '<p><br></p>';
+        form.urlKey = '';
+        translationId.value = null;
+        mutation.value = createProductTranslationMutation;
+        previewContent.value = null;
+      }
+      initialForm.value = { ...form };
+
+      // Fetch default translation for preview/fallback
+      const { data: def } = await apolloClient.query({
+        query: getProductContentByLanguageAndDefaultQuery,
+        variables: { languageCode: language, productId: props.product.id },
+        fetchPolicy: 'network-only'
+      });
+      defaultPreviewContent.value = def?.productTranslations.edges[0]?.node || null;
+    }
+  } catch (error) {
+    console.error("Error fetching translation:", error);
+  }
+
+  if (fieldRules.value.bulletPoints && bulletPointsRef.value?.fetchPoints) {
+    previewBulletPoints.value = await bulletPointsRef.value.fetchPoints();
+  }
+
+};
+
+
 watch(currentLanguage, async (newLanguage, oldLanguage) => {
   if (oldLanguage === null) {
-    await setFormAndMutation(newLanguage);
+    await setFormAndMutation(newLanguage, currentSalesChannel.value);
     oldLang.value = newLanguage;
+  }
+});
+
+watch(currentSalesChannel, async (newChannel, oldChannelVal) => {
+  if (oldChannelVal === null) {
+    await setFormAndMutation(currentLanguage.value, newChannel);
+    oldChannel.value = newChannel;
+  }
+});
+
+watch(currentChannelType, (newType) => {
+  if (!getContentFieldRules(newType).bulletPoints) {
+    previewBulletPoints.value = [];
   }
 });
 
@@ -99,7 +193,21 @@ const handleLanguageSelection = async (newLanguage) => {
   }
 
   oldLang.value = newLanguage;
-  await setFormAndMutation(newLanguage);
+  await setFormAndMutation(newLanguage, currentSalesChannel.value);
+};
+
+const handleSalesChannelSelection = async (newChannel) => {
+
+  if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
+    const confirmChange = confirm(t('products.translation.confirmLanguageChange'));
+    if (!confirmChange) {
+      currentSalesChannel.value = oldChannel.value;
+      return;
+    }
+  }
+
+  oldChannel.value = newChannel;
+  await setFormAndMutation(currentLanguage.value, newChannel);
 };
 
 
@@ -107,7 +215,8 @@ const getVariables = () => {
   const variables = {
     ...form,
     product: {id: props.product.id},
-    language: currentLanguage.value
+    language: currentLanguage.value,
+    salesChannel: currentSalesChannel.value === 'default' ? null : { id: currentSalesChannel.value }
   };
 
   if (translationId.value) {
@@ -117,10 +226,21 @@ const getVariables = () => {
   return {data: variables};
 };
 
-const onMutationCompleted = () => {
+const onMutationCompleted = async (response) => {
+  const data = response?.data?.updateProductTranslation || response?.data?.createProductTranslation;
+  if (data && !translationId.value) {
+    translationId.value = data.id;
+    mutation.value = updateProductTranslationMutation;
+  }
+  let latestBulletPoints = [];
+  try {
+    latestBulletPoints = await bulletPointsRef.value?.save(translationId.value) || [];
+  } catch (e) { /* errors handled in component */ }
+  previewBulletPoints.value = latestBulletPoints;
   Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = {...form};
   fieldErrors.value = {};
+  previewContent.value = {...form};
 };
 
 const handleGeneratedDescriptionContent =  (newVal) => {
@@ -129,6 +249,15 @@ const handleGeneratedDescriptionContent =  (newVal) => {
 
 const handleGeneratedShortDescriptionContent =  (newVal) => {
   form.shortDescription = newVal;
+};
+
+const handleSave = async (mutate) => {
+  try {
+    const response = await mutate();
+    await onMutationCompleted(response);
+  } catch (e) {
+    handleError(e);
+  }
 };
 
 const handleError = (errors) => {
@@ -150,10 +279,13 @@ const shortDescriptionToolbarOptions = [
 <template>
 
   <Flex end>
+    <FlexCell class="block lg:hidden">
+      <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+    </FlexCell>
     <FlexCell>
-      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()" @done="onMutationCompleted" @error="handleError">
-        <template v-slot="{ mutate, loading, error }">
-          <Button :customClass="'btn btn-primary mr-2'" :disabled="loading" @click="mutate">
+      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
+        <template v-slot="{ mutate, loading }">
+          <Button :customClass="'btn btn-primary mx-2'" :disabled="loading" @click="handleSave(mutate)">
             {{ t('shared.button.save') }}
           </Button>
         </template>
@@ -178,109 +310,92 @@ const shortDescriptionToolbarOptions = [
     </FlexCell>
   </Flex>
 
-  <Flex between>
-    <FlexCell class="w-full xl:w-2/3">
-      <Flex vertical>
-        <FlexCell>
-          <Flex  class="gap-4">
-            <FlexCell center>
-              <Label semi-bold>{{ t('shared.labels.name') }}</Label>
-            </FlexCell>
-            <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
-              <AiContentTranslator
-                :product="{ id: product.id }"
-                productContentType="NAME"
-                toTranslate=""
-                fromLanguageCode="en"
-                :toLanguageCode="currentLanguage"
-                @translated="translatedText => form.name = translatedText"
-              />
-            </FlexCell>
-          </Flex>
+  <Flex v-if="currentSalesChannel !== 'default'" class=" mt-2 block lg:hidden">
+    <FlexCell>
+      <div class="text-xs text-orange-700">
+        {{ t('products.translation.warning.inheritFromDefault') }}
+      </div>
+    </FlexCell>
+  </Flex>
 
-          <TextInput v-model="form.name" :placeholder="t('products.translation.placeholders.name')"
-                     class="mt-2 mb-4 w-full"/>
-          <div class="mb-1 text-sm leading-6">
-            <p class="text-red-500" v-if="fieldErrors['name']">{{ fieldErrors['name'] }}</p>
-          </div>
-        </FlexCell>
 
-        <FlexCell>
-          <Flex class="gap-4">
-            <FlexCell center>
-              <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
-            </FlexCell>
-            <FlexCell center>
-                <AiContentGenerator
-                  :productId="product.id"
-                  :languageCode="currentLanguage"
-                  contentAiGenerateType="SHORT_DESCRIPTION"
-                  @generated="handleGeneratedShortDescriptionContent"
-                />
-            </FlexCell>
-            <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
-              <AiContentTranslator
-                :product="{ id: product.id }"
-                productContentType="SHORT_DESCRIPTION"
-                toTranslate=""
-                fromLanguageCode="en"
-                :toLanguageCode="currentLanguage"
-                @translated="handleGeneratedShortDescriptionContent"
-              />
-            </FlexCell>
-          </Flex>
-          <div class="mt-4 mb-4">
-            <TextHtmlEditor v-model="form.shortDescription" :toolbar-options="shortDescriptionToolbarOptions"
-                            :placeholder="t('products.translation.placeholders.shortDescription')"
-                            class="w-full" />
-          </div>
-          <div class="mb-1 text-sm leading-6">
-            <p class="text-red-500" v-if="fieldErrors['shortDescription']">{{ fieldErrors['shortDescription'] }}</p>
-          </div>
-        </FlexCell>
+  <hr class="mt-4">
 
-        <FlexCell>
-          <Flex class="gap-4">
-            <FlexCell center>
-              <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
-            </FlexCell>
-            <FlexCell center>
-                <AiContentGenerator
-                  :productId="product.id"
-                  :languageCode="currentLanguage"
-                  contentAiGenerateType="DESCRIPTION"
-                  @generated="handleGeneratedDescriptionContent"
-                />
-            </FlexCell>
-            <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
-              <AiContentTranslator
-                :product="{ id: product.id }"
-                productContentType="DESCRIPTION"
-                toTranslate=""
-                fromLanguageCode="en"
-                :toLanguageCode="currentLanguage"
-                @translated="handleGeneratedDescriptionContent"
-              />
-            </FlexCell>
-          </Flex>
-          <div class="mt-4 mb-4">
-            <TextHtmlEditor v-model="form.description"
-                            :placeholder="t('products.translation.placeholders.description')"
-                            class="w-full" />
-          </div>
-          <div class="mb-1 text-sm leading-6">
-            <p class="text-red-500" v-if="fieldErrors['description']">{{ fieldErrors['description'] }}</p>
-          </div>
+  <div
+    class="
+      mt-4
+      grid gap-4
+      grid-cols-1
+      lg:grid-cols-12
+      xl:grid-cols-10
+      2xl:grid-cols-10
+    "
+  >
+
+    <!-- Product Content Form -->
+    <div
+      class="
+        col-span-1
+        lg:col-span-6
+        xl:col-span-5
+        2xl:col-span-5
+      "
+    >
+      <div class="p-2 bg-white">
+        <ProductContentForm
+          :form="form"
+          :field-errors="fieldErrors"
+          :product-id="product.id"
+          :current-language="currentLanguage"
+          :short-description-toolbar-options="shortDescriptionToolbarOptions"
+          :show-short-description="fieldRules.shortDescription"
+          :show-url-key="fieldRules.urlKey"
+          :sales-channel-type="currentChannelType"
+          @description="handleGeneratedDescriptionContent"
+          @shortDescription="handleGeneratedShortDescriptionContent"
+        />
+        <ProductTranslationBulletPoints
+          v-if="fieldRules.bulletPoints"
+          ref="bulletPointsRef"
+          :translation-id="translationId"
+          :product-id="product.id"
+          :language-code="currentLanguage"
+          @initial-bullet-points="previewBulletPoints = [...$event]"
+        />
+      </div>
+    </div>
+
+    <!-- Product Content Preview -->
+    <div
+      class="
+        col-span-1
+        lg:col-span-6
+        xl:col-span-5
+        2xl:col-span-5
+      "
+    >
+      <Flex vertical gap="4">
+      <FlexCell class="hidden lg:block ml-auto w-52">
+          <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
         </FlexCell>
-        <FlexCell>
-          <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
-          <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full"/>
-          <div class="mb-1 text-sm leading-6">
-            <p class="text-red-500" v-if="fieldErrors['urlKey']">{{ fieldErrors['urlKey'] }}</p>
-          </div>
+        <FlexCell class="w-full">
+          <ProductContentPreview
+            :content="previewContent"
+            :default-content="defaultPreviewContent"
+            :current-channel="currentSalesChannel"
+            :channels="salesChannels"
+            :bullet-points="fieldRules.bulletPoints ? previewBulletPoints : []"
+          />
+        <Flex v-if="currentSalesChannel !== 'default'" class="mt-2 hidden lg:block">
+          <FlexCell>
+            <div class="text-xs text-orange-700">
+              {{ t('products.translation.warning.inheritFromDefault') }}
+            </div>
+          </FlexCell>
+        </Flex>
         </FlexCell>
       </Flex>
-    </FlexCell>
+    </div>
+  </div>
 
-  </Flex>
 </template>

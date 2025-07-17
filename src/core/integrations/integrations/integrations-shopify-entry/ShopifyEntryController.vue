@@ -81,6 +81,7 @@ const createShopifySalesChannel = async (queryParams: Record<string, any>, hostn
 const handleShopifySalesChannelSuccess = async (channelData: any) => {
   const id = channelData.id;
 
+  /*
   const { data } = await apolloClient.mutate({
     mutation: getShopifyRedirectUrlMutation,
     variables: { data: { id } },
@@ -97,6 +98,7 @@ const handleShopifySalesChannelSuccess = async (channelData: any) => {
   messages.forEach((msg: any) => {
     Toast.error(msg.message);
   });
+  */
 
   router.push({
     name: 'integrations.integrations.show',

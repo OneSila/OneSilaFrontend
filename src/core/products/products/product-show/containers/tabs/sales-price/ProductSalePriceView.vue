@@ -191,12 +191,12 @@ onMounted(loadPrices);
       <tbody class="divide-y divide-gray-200 bg-white">
         <tr v-for="(price, index) in prices" :key="index">
           <td>
-            <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.rrp" type="number" :placeholder="'99.99'" :disabled="loading || price.readonly">
+            <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.rrp" type="number" :disabled="loading || price.readonly">
               {{ price.symbol }}
             </TextInputPrepend>
           </td>
           <td>
-            <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.price" type="number" :placeholder="'80.99'" :disabled="loading || price.readonly">
+            <TextInputPrepend class="w-full md:w-1/2" id="amount" v-model="price.price" type="number" :disabled="loading || price.readonly">
               {{ price.symbol }}
             </TextInputPrepend>
           </td>

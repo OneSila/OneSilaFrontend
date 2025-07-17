@@ -7,7 +7,7 @@ import { Icon } from "../../../../../shared/components/atoms/icon";
 import { Button } from "../../../../../shared/components/atoms/button";
 import { Modal } from "../../../../../shared/components/atoms/modal";
 import Vue3Datatable from "@bhplugin/vue3-datatable";
-import { disableMemberMutation, enableMemberMutation } from "../../../../../shared/api/mutations/members.js";
+import { disableMemberMutation, enableMemberMutation, resendInviteMutation } from "../../../../../shared/api/mutations/members.js";
 import "@bhplugin/vue3-datatable/dist/style.css";
 import { injectAuth, isCompanyOwner } from '../../../../../shared/modules/auth';
 import {Toast} from "../../../../../shared/modules/toast";
@@ -69,6 +69,10 @@ const onMemberEnabledCompleted = (response) => {
   Toast.success(t('auth.register.company.members.alert.enableMemberSuccess'));
 };
 
+const onInviteResendCompleted = () => {
+  Toast.success(t('auth.register.company.members.alert.resendInviteSuccess'));
+};
+
 const onMemberActionError = (error) => {
   Toast.error(error);
 };
@@ -118,7 +122,7 @@ const inviteMember = () => {
           <Icon v-else name="times-circle" class="text-red-500" />
         </template>
         <template #actions="row" v-if="isCompanyOwner(auth)">
-          <div v-if="isCompanyOwner(auth) && row.value.invitationAccepted && !row.value.isOwner">
+          <div v-if="row.value.invitationAccepted && !row.value.isOwner">
             <ApolloMutation
               v-if="row.value.isActive"
               :mutation="disableMemberMutation"
@@ -140,6 +144,19 @@ const inviteMember = () => {
               <template #default="{ mutate, loading }">
                 <button type="button" :disabled="loading" @click="mutate">
                   <Icon name="undo-alt" class="text-green-500" />
+                </button>
+              </template>
+            </ApolloMutation>
+          </div>
+          <div v-else-if="!row.value.invitationAccepted && !row.value.isOwner">
+            <ApolloMutation
+              :mutation="resendInviteMutation"
+              :variables="{ id: row.value.id }"
+              @done="onInviteResendCompleted"
+              @error="onMemberActionError">
+              <template #default="{ mutate, loading }">
+                <button type="button" :disabled="loading" @click="mutate">
+                  <Icon name="paper-plane" class="text-blue-500" />
                 </button>
               </template>
             </ApolloMutation>

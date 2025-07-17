@@ -24,8 +24,8 @@ const handleFormUpdate = (updatedForm) => {
   emit('formUpdated', updatedForm);
 };
 
-const handleSetData = (form) => {
-  emit('setData', form);
+const handleSetData = (data) => {
+  emit('setData', data);
 };
 
 watch(() => props.config, (newConfig) => {
@@ -47,8 +47,17 @@ watch(() => props.config, (newConfig) => {
     <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
       <HelpSection :config="enhancedConfig" />
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-        <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear"  @submit="emit('submit')" @form-updated="handleFormUpdate" />
-        <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @submit="emit('submit')"  @set-data="handleSetData" @form-updated="handleFormUpdate" />
+        <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear"  @submit="emit('submit')" @form-updated="handleFormUpdate" >
+          <template #additional-button>
+            <slot name="additional-button" />
+          </template>
+        </FormCreate>
+
+        <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @submit="emit('submit')"  @set-data="handleSetData" @form-updated="handleFormUpdate" >
+            <template #additional-button>
+              <slot name="additional-button" />
+            </template>
+        </FormEdit>
       </div>
     </div>
   </div>

@@ -6,7 +6,7 @@ import {
   QueryFormField
 } from '../../../shared/components/organisms/general-form/formConfig';
 import { FieldType, InspectorStatus, InspectorStatusType, ProductType, Url } from '../../../shared/utils/constants.js'
-import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
+import { OrderType, SearchConfig, SearchFilter } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
@@ -14,6 +14,7 @@ import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 import { Badge } from "../../../shared/components/organisms/general-show/showConfig";
 import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
+import { amazonChannelsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
@@ -51,7 +52,7 @@ export const getInspectorErrors = (t) => [
   { code: "115", name: t(`dashboard.cards.products.inspector.115.title`) },
   { code: "116", name: t(`dashboard.cards.products.inspector.116.title`) },
   { code: "117", name: t(`dashboard.cards.products.inspector.117.title`) },
-  { code: "118", name: t(`dashboard.cards.products.inspector.118.title`) },
+  // { code: "118", name: t(`dashboard.cards.products.inspector.118.title`) },
   { code: "119", name: t(`dashboard.cards.products.inspector.119.title`) },
   { code: "120", name: t(`dashboard.cards.products.inspector.120.title`) },
   { code: "121", name: t(`dashboard.cards.products.inspector.121.title`) },
@@ -74,12 +75,13 @@ export const getInspectorStatusOptions = (t) => [
   { name: '🔴', code: InspectorStatus.RED },
 ];
 
-export const getInspectorStatusBadgeMap = (): Record<string, Badge> => {
-  const defaultBadge: Badge = { text: '🔴', color: 'none' };
+export const getInspectorStatusBadgeMap = (t?: Function): Record<string, Badge> => {
+  const translate = (key: string) => (t ? t(key) : key);
+  const defaultBadge: Badge = { text: '🔴', color: 'none', hoverText: translate('shared.colors.red') };
 
   const badgeMap: Record<InspectorStatusType, Badge> = {
-    [InspectorStatus.GREEN]: { text: '🟢', color: 'none' },
-    [InspectorStatus.ORANGE]: { text: '🟠', color: 'none' },
+    [InspectorStatus.GREEN]: { text: '🟢', color: 'none', hoverText: translate('shared.colors.green') },
+    [InspectorStatus.ORANGE]: { text: '🟠', color: 'none', hoverText: translate('shared.colors.orange') },
     [InspectorStatus.RED]: defaultBadge,
   };
 
@@ -181,7 +183,7 @@ export const baseFormConfigConstructor = (
   fields: getFields(type, t),
 });
 
-export const searchConfigConstructor = (t: Function): SearchConfig => ({
+export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false): SearchConfig => ({
   search: true,
   orderKey: "sort",
   filters: [
@@ -212,6 +214,23 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       isEdge: true,
       addLookup: false,
     },
+    ...(
+      hasAmazon
+        ? [{
+            type: FieldType.Query,
+            name: 'amazonProductsWithIssuesForSalesChannel',
+            query: amazonChannelsQuerySelector,
+            label: t('integrations.salesChannel.amazon.labels.productsWithIssuesForSalesChannel'),
+            labelBy: 'hostname',
+            valueBy: 'id',
+            dataKey: 'amazonChannels',
+            filterable: true,
+            multiple: false,
+            isEdge: true,
+            addLookup: false,
+          } as SearchFilter]
+        : []
+    ),
     {
       type: FieldType.Choice,
       name: 'type',
@@ -248,7 +267,58 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       addLookup: true,
     },
   ],
-  orders: []
+  orders: [
+    {
+      name: 'name',
+      label: t('shared.labels.name'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'name',
+      label: t('shared.labels.name'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'sku',
+      label: t('shared.labels.sku'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'sku',
+      label: t('shared.labels.sku'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'active',
+      label: t('shared.labels.active'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'active',
+      label: t('shared.labels.active'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'updatedAt',
+      label: t('shared.labels.updatedAt'),
+      type: OrderType.ASC
+    },
+    {
+      name: 'updatedAt',
+      label: t('shared.labels.updatedAt'),
+      type: OrderType.DESC
+    },
+  ]
 });
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
@@ -267,7 +337,7 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
     {
       name: 'inspectorStatus',
       type: FieldType.Badge,
-      badgeMap: getInspectorStatusBadgeMap(),
+      badgeMap: getInspectorStatusBadgeMap(t),
     },
     {
       type: FieldType.Badge,
@@ -330,6 +400,8 @@ export interface SalesChannelViewAssign {
   id: string;
   remoteUrl: string;
   remoteProductPercentage: number;
+  integrationType: string;
+  formattedIssues?: { message?: string | null; severity?: string | null }[];
   product: SalesChannelViewAssignProduct;
   salesChannelView: SalesChannelView;
   remoteProduct: RemoteProduct;

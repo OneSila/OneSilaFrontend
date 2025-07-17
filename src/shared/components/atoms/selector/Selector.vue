@@ -159,7 +159,7 @@ const handleKeydown = (event) => {
 
 
 const getLabel = (option: any): string | null => {
-  if (!option) return null;
+  if (!option && !props.boolean) return null;
 
   if (props.valueBy && typeof option !== 'object') {
     const match = dropdownOptions.value.find(opt => {

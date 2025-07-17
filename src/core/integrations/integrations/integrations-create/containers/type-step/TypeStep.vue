@@ -10,9 +10,9 @@ import { OptionSelector } from "../../../../../../shared/components/molecules/op
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
 import { Modal } from "../../../../../../shared/components/atoms/modal";
-import { Card } from "../../../../../../shared/components/atoms/card";
 import {Badge} from "../../../../../../shared/components/atoms/badge";
 import {Button} from "../../../../../../shared/components/atoms/button";
+import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard } from "./info-cards";
 
 const props = defineProps<{ type: IntegrationTypes }>();
 const emit = defineEmits<{ (e: 'update:type', value: IntegrationTypes): void }>();
@@ -20,8 +20,8 @@ const emit = defineEmits<{ (e: 'update:type', value: IntegrationTypes): void }>(
 const { t } = useI18n();
 
 const selectedType = ref(props.type);
-const showMagentoInfoModal = ref(false);
-const showWooCommerceInfoModal = ref(false);
+const showInfoModal = ref(false);
+const infoComponent = ref();
 
 watch(selectedType, (newVal) => {
   emit('update:type', newVal);
@@ -37,22 +37,28 @@ watch(
 const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
   { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Amazon, disabled: false, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Woocommerce, disabled: true }
 ];
 
-const onMagentoModalOpen = () => {
-  showMagentoInfoModal.value = true;
-}
+const onModalOpen = () => {
+  infoComponent.value = MagentoInfoCard;
+  showInfoModal.value = true;
+};
 
-const onWooCommerceModalOpen = () => {
-  showWooCommerceInfoModal.value = true;
-}
+const onShopifyModalOpen = () => {
+  infoComponent.value = ShopifyInfoCard;
+  showInfoModal.value = true;
+};
+
+const onWoocommerceModalOpen = () => {
+  infoComponent.value = WoocommerceInfoCard;
+  showInfoModal.value = true;
+};
 
 const closeModal = () => {
-  showMagentoInfoModal.value = false;
-  showWooCommerceInfoModal.value = false;
-}
+  showInfoModal.value = false;
+};
 
 </script>
 
@@ -61,125 +67,11 @@ const closeModal = () => {
     <h1 class="text-2xl text-center mb-2">
       {{ t('integrations.create.wizard.step1.content') }}
     </h1>
-    
-    <!-- Magento Info Modal -->
-    <Modal v-if="showMagentoInfoModal" v-model="showMagentoInfoModal" @closed="showMagentoInfoModal = false">
-      <Card class="modal-content w-[80%] px-10 pt-10">
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold leading-7 text-gray-900">
-            {{ t('integrations.create.wizard.step1.magentoInfoModal.section.integrationTitle') }}
-          </h3>
-        </div>
-        <div class="space-y-6 pr-2 mb=4 overflow-y-auto max-h-96">
-          <div>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.magentoInfoModal.section.integrationDescription') }}
-            </p>
-            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-              <li>{{ t('integrations.create.wizard.step1.magentoInfoModal.section.integrationStep1') }}</li>
-              <li>{{ t('integrations.create.wizard.step1.magentoInfoModal.section.integrationStep2') }}</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.magentoInfoModal.section.apiSettingsTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.magentoInfoModal.section.apiSettingsDescription') }}
-            </p>
-            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-              <li>{{ t('integrations.create.wizard.step1.magentoInfoModal.section.apiSetting1') }}</li>
-              <li>{{ t('integrations.create.wizard.step1.magentoInfoModal.section.apiSetting2') }}</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="text-lg font-semibold text-red-500">{{ t('integrations.create.wizard.step1.magentoInfoModal.section.legacyAuthTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.magentoInfoModal.section.legacyAuthWarning') }}
-            </p>
-          </div>
-
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.magentoInfoModal.section.importTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.magentoInfoModal.section.importRecommendation') }}
-            </p>
-          </div>
-
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.magentoInfoModal.section.eanTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.magentoInfoModal.section.eanDescription') }}
-            </p>
-          </div>
-        </div>
-
-        <hr/>
-        <div class="flex justify-end gap-4 mt-4">
-          <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
-        </div>
-      </Card>
+    <Modal v-if="showInfoModal" v-model="showInfoModal" @closed="showInfoModal = false">
+      <component :is="infoComponent" @close="closeModal" />
     </Modal>
-
-    <!-- WooCommerce Info Modal -->
-    <Modal v-if="showWooCommerceInfoModal" v-model="showWooCommerceInfoModal" @closed="showWooCommerceInfoModal = false">
-      <Card class="modal-content w-[80%] px-10 pt-10">
-        <div class="mb-6">
-          <h3 class="text-xl font-semibold leading-7 text-gray-900">
-            {{ t('integrations.create.wizard.step1.woocommerceInfoModal.title') }}
-          </h3>
-        </div>
-        <div class="space-y-6 pr-2 mb=4 overflow-y-auto max-h-96">
-          <!-- Integration Section -->
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationDescription') }}
-            </p>
-            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep1') }}</li>
-              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep2') }}</li>
-              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep3') }}</li>
-            </ul>
-          </div>
-
-          <!-- API Settings Section -->
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.woocommerceInfoModal.apiSettingsTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.woocommerceInfoModal.apiSettingsDescription') }}
-            </p>
-            <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.apiSetting1') }}</li>
-              <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.apiSetting2') }}</li>
-            </ul>
-          </div>
-
-          <!-- Import Section -->
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.woocommerceInfoModal.importTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.woocommerceInfoModal.importRecommendation') }}
-            </p>
-          </div>
-
-          <!-- EAN Codes Section -->
-          <div>
-            <h4 class="text-lg font-semibold">{{ t('integrations.create.wizard.step1.woocommerceInfoModal.eanTitle') }}</h4>
-            <p class="text-sm text-gray-700">
-              {{ t('integrations.create.wizard.step1.woocommerceInfoModal.eanDescription') }}
-            </p>
-          </div>
-        </div>
-
-        <hr/>
-        <div class="flex justify-end gap-4 mt-4">
-          <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
-        </div>
-      </Card>
-    </Modal>
-
     <hr />
+    <!-- OptionSelector uses v-model bound to our local selectedType and the choices array -->
     <OptionSelector v-model="selectedType" :choices="typeChoices">
       <template #magento>
         <div>
@@ -188,7 +80,7 @@ const closeModal = () => {
               <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.magentoTitle') }}</h3>
             </FlexCell>
             <FlexCell center>
-              <Icon class="text-gray-500 cursor-pointer" @click.stop="onMagentoModalOpen" name="circle-info" size="lg" />
+              <Icon class="text-gray-500" @click.stop="onModalOpen" name="circle-info" size="lg" />
             </FlexCell>
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.magentoExample') }}</p>
@@ -197,7 +89,14 @@ const closeModal = () => {
       </template>
       <template #shopify>
         <div>
-          <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.shopifyTitle') }}</h3>
+          <Flex gap="2">
+            <FlexCell center>
+              <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.shopifyTitle') }}</h3>
+            </FlexCell>
+            <FlexCell center>
+              <Icon class="text-gray-500" @click.stop="onShopifyModalOpen" name="circle-info" size="lg" />
+            </FlexCell>
+          </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.shopifyExample') }}</p>
           <Image :source="shopifyType" alt="Shopify" class="w-full max-h-[35rem]" />
         </div>
@@ -216,11 +115,11 @@ const closeModal = () => {
               <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.woocommerceTitle') }}</h3>
             </FlexCell>
             <FlexCell center>
-              <Icon class="text-gray-500 cursor-pointer" @click.stop="onWooCommerceModalOpen" name="circle-info" size="lg" />
+              <Icon class="text-gray-500" @click.stop="onWoocommerceModalOpen" name="circle-info" size="lg" />
             </FlexCell>
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.woocommerceExample') }}</p>
-          <Image :source="woocommerceType" alt="woocommerce" class="w-full max-h-[35rem]" />
+          <Image :source="woocomerceType" alt="woocommerce" class="w-full max-h-[35rem]" />
         </div>
       </template>
     </OptionSelector>

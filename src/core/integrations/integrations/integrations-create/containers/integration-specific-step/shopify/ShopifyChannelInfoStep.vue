@@ -2,6 +2,7 @@
 import { computed, defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
+import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { ShopifyChannelInfo } from '../../../../integrations';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { Button } from "../../../../../../../shared/components/atoms/button";
@@ -56,20 +57,58 @@ const propertyField = computed(() => ({
           <FlexCell center>
             <Flex vertical class="gap-2">
               <FlexCell>
-                <div class="w-96">
-                  <Flex class="gap-2 mt-4" end>
-                    <FlexCell center>
-                      <Button class="btn-primary p-2.5 rounded-full" @click="openInNewTab">
-                        <Icon name="plus"/>
-                      </Button>
-                    </FlexCell>
-                  </Flex>
-                </div>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('integrations.labels.apiKey') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <TextInput
+                    class="w-96"
+                    v-model="channelInfo.apiKey"
+                    :placeholder="t('integrations.placeholders.apiKey')"
+                />
               </FlexCell>
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.vendorProperty') }}
+                  {{ t('integrations.labels.apiSecret') }}
                 </Label>
+              </FlexCell>
+              <FlexCell>
+                <TextInput
+                    class="w-96"
+                    v-model="channelInfo.apiSecret"
+                    :placeholder="t('integrations.placeholders.apiSecret')"
+                    :secret="true"
+                />
+              </FlexCell>
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('integrations.labels.accessToken') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <TextInput
+                    class="w-96"
+                    v-model="channelInfo.accessToken"
+                    :placeholder="t('integrations.placeholders.accessToken')"
+                    secret
+                />
+              </FlexCell>
+
+              <FlexCell>
+                <Flex between>
+                  <FlexCell grow>
+                    <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                      {{ t('integrations.labels.vendorProperty') }}
+                    </Label>
+                  </FlexCell>
+                    <FlexCell center>
+                      <Button class="btn-primary px-1.5 py-1 rounded-full" @click="openInNewTab">
+                        <Icon name="plus"/>
+                      </Button>
+                    </FlexCell>
+                </Flex>
+
               </FlexCell>
               <FlexCell>
                 <FieldQuery v-model="channelInfo.vendorProperty.id" :field="propertyField as QueryFormField" />

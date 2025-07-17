@@ -34,6 +34,23 @@ const form = reactive(props.config.fields.reduce((acc, field) => {
   return acc;
 }, {}));
 
+if (props.defaults) {
+  let anyDefaultUpdated = false;
+
+  for (const [key, value] of Object.entries(props.defaults)) {
+    if (form[key] === null || form[key] === undefined) {
+      form[key] = value;
+      anyDefaultUpdated = true;
+    }
+  }
+
+  if (anyDefaultUpdated) {
+    emit('formUpdated', form);
+  }
+}
+
+
+
 const handleUpdateErrors = (validationErrors) => {
   errors.value = validationErrors;
 
@@ -64,5 +81,9 @@ watch(() => props.fieldsToClear, (fields) => {
       <FormLayout :config="config" :form="form" :errors="outsideErrors !== null && outsideErrors !== undefined ? outsideErrors : errors" />
     </div>
   </div>
-  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" />
+  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" >
+    <template #additional-button>
+      <slot name="additional-button" />
+    </template>
+  </SubmitButtons>
 </template>

@@ -19,7 +19,7 @@ import {
   useShiftDeleteKeyboardListener,
   useShiftEnterKeyboardListener,
 } from "../../../../../modules/keyboard";
-import {FieldType} from "../../../../../utils/constants";
+import { FieldType, Url } from "../../../../../utils/constants";
 import apolloClient from "../../../../../../../apollo-client";
 
 const props = defineProps<{ config: FormConfig; form: any;}>();
@@ -33,8 +33,9 @@ const submitContinueButtonRef = ref();
 const submitButtonRef = ref();
 
 const handleSubmitDone = (response) => {
+  const resultData = response.data?.[props.config.mutationKey];
 
-  if (!response.data || (!props.config.allowNull && !response.data[props.config.mutationKey])) {
+  if (!response.data || (!props.config.allowNull && !resultData)) {
     Toast.error(t('shared.alert.toast.unexpectedResult'));
     return;
   }
@@ -46,7 +47,17 @@ const handleSubmitDone = (response) => {
   props.config.afterSubmitCallback?.();
 
   if (props.config.submitUrl) {
-    router.push(props.config.submitUrl);
+    const finalUrl: Url = { ...props.config.submitUrl };
+
+    if (props.config.addIdAsQueryParamInSubmitUrl && resultData?.id) {
+      const queryParamKey = `${props.config.mutationKey}Id`;
+      finalUrl.query = {
+        ...(props.config.submitUrl.query || {}),
+        [queryParamKey]: resultData.id,
+      };
+    }
+
+    router.push(finalUrl);
     emit('submit', response);
     if (props.config.type === FormType.CREATE) {
       const message = props.config.submitSuccessCreate || t('shared.alert.toast.submitSuccessCreate');
@@ -231,6 +242,8 @@ useShiftBackspaceKeyboardListener(goBack);
             <DangerButton ref="deleteButtonRef" :disabled="loading" @click="confirmAndMutate">{{ config.deleteLabel }}</DangerButton>
           </template>
         </ApolloAlertMutation>
+
+        <slot name="additional-button" />
 
         <ApolloMutation v-if="config.addSubmitAndContinue" :mutation="config.mutation" @done="handleSubmitAndContinueDone" @error="handleError">
           <template v-slot="{ mutate, loading }">

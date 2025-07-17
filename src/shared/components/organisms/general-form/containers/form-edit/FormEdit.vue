@@ -29,6 +29,8 @@ const initialFormUpdate = (data: any) => {
     return true;
   }
 
+  emit('setData', data);
+
   const dataToEdit = props.config.queryDataKey ? data[props.config.queryDataKey] : data;
 
   props.config.fields.forEach(field => {
@@ -63,6 +65,7 @@ const initialFormUpdate = (data: any) => {
   });
 
   emit('formUpdated', form);
+
   return true;
 };
 
@@ -110,6 +113,16 @@ watch(() => props.fieldsToClear, (fields) => {
         </template>
       </ApolloQuery>
   </div>
-  <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" />
+  <SubmitButtons
+    v-if="!config.hideButtons"
+    :form="form"
+    :config="config"
+    @submit="emit('submit')"
+    @update-errors="handleUpdateErrors"
+  >
+  <template #additional-button>
+    <slot name="additional-button" />
+  </template>
+</SubmitButtons>
 
 </template>

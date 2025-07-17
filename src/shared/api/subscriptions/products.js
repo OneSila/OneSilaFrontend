@@ -65,6 +65,11 @@ export const productSubscription = gql`
           id
           remoteUrl
           remoteProductPercentage
+          integrationType
+          formattedIssues {
+            message
+            severity
+          }
           product {
             id
             name

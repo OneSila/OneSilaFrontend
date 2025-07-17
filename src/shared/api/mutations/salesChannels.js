@@ -268,6 +268,18 @@ export const resyncSalesChannelViewAssignMutation = gql`
   }
 `;
 
+export const refreshLatestAmazonIssuesMutation = gql`
+  mutation refreshLatestAmazonIssues($data: SalesChannelViewAssignPartialInput!) {
+    refreshAmazonLatestIssues(instance: $data) {
+      id
+      formattedIssues {
+        message
+        severity
+      }
+    }
+  }
+`;
+
 export const updateSalesChannelViewMutation = gql`
   mutation updateSalesChannelView($data: SalesChannelViewPartialInput!) {
     updateSalesChannelView(data: $data) {
@@ -484,6 +496,92 @@ export const validateAmazonAuthMutation = gql`
           code
         }
       }
+    }
+  }
+`;
+
+// Amazon Property Mutations
+
+export const updateAmazonPropertyMutation = gql`
+  mutation updateAmazonProperty($data: AmazonPropertyPartialInput!) {
+    updateAmazonProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+// Amazon Property Select Value Mutations
+
+export const updateAmazonPropertySelectValueMutation = gql`
+  mutation updateAmazonPropertySelectValue($data: AmazonPropertySelectValuePartialInput!) {
+    updateAmazonPropertySelectValue(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const bulkUpdateAmazonPropertySelectValueLocalInstanceMutation = gql`
+  mutation bulkUpdateAmazonPropertySelectValueLocalInstance($data: BulkAmazonPropertySelectValueLocalInstanceInput!) {
+    bulkUpdateAmazonPropertySelectValueLocalInstance(instance: $data) {
+      id
+    }
+  }
+`;
+
+// Amazon Product Type Mutations
+
+export const updateAmazonProductTypeMutation = gql`
+  mutation updateAmazonProductType($data: AmazonProductTypePartialInput!) {
+    updateAmazonProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+export const createAmazonImportProcessMutation = gql`
+  mutation createAmazonImportProcess($data: AmazonSalesChannelImportInput!) {
+    createAmazonImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateAmazonImportProcessMutation = gql`
+  mutation updateAmazonImportProcess($data: AmazonSalesChannelImportPartialInput!) {
+    updateAmazonImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+// Amazon Default Unit Configurator Mutation
+export const updateAmazonDefaultUnitConfiguratorMutation = gql`
+  mutation updateAmazonDefaultUnitConfigurator($data: AmazonDefaultUnitConfiguratorPartialInput!) {
+    updateAmazonDefaultUnitConfigurator(data: $data) {
+      id
+      name
+      code
+      selectedUnit
+      choices
     }
   }
 `;

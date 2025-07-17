@@ -7,7 +7,7 @@ import {Modal} from "../../../../../../../../../shared/components/atoms/modal";
 import {Loader} from "../../../../../../../../../shared/components/atoms/loader";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import { remoteLogsQuery } from "../../../../../../../../../shared/api/queries/salesChannels.js";
+import { remoteLogsQuery, amazonRemoteLogsQuery } from "../../../../../../../../../shared/api/queries/salesChannels.js";
 
 export interface RemoteLog {
   id: string;
@@ -17,6 +17,9 @@ export interface RemoteLog {
   status: string;
   createdAt: string;
   frontendError: string;
+  submissionId?: string | null;
+  processingStatus?: string | null;
+  formattedIssues?: { message?: string | null; severity?: string | null }[];
 }
 
 export interface RemoteLogEdge {
@@ -25,7 +28,7 @@ export interface RemoteLogEdge {
 }
 
 
-const props = defineProps<{ modelValue: boolean; id?: string | null }>();
+const props = defineProps<{ modelValue: boolean; id?: string | null; integrationType?: string }>();
 const emit = defineEmits(['modal-closed']);
 const localShowModal = ref(props.modelValue);
 const loading = ref(false);
@@ -53,14 +56,18 @@ const fetchLogs = async () => {
   }
 
   loading.value = true;
+  const query = props.integrationType === 'amazon' ? amazonRemoteLogsQuery : remoteLogsQuery;
+
   const {data} = await apolloClient.query({
-    query: remoteLogsQuery,
+    query,
     variables: {filter: {remoteProduct: {id: {exact: props.id }}}},
     fetchPolicy: 'network-only'
   });
 
-  if (data && data.remoteLogs && data.remoteLogs.edges.length > 0) {
-    logs.value = data.remoteLogs.edges;
+  const logsData = props.integrationType === 'amazon' ? data?.amazonRemoteLogs : data?.remoteLogs;
+
+  if (logsData && logsData.edges.length > 0) {
+    logs.value = logsData.edges;
   }
   loading.value = false;
 }
@@ -135,6 +142,15 @@ const statusBadge = {
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                 {{ t('shared.labels.error') }}
               </th>
+              <th v-if="props.integrationType === 'amazon'" scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                {{ t('shared.labels.submissionId') }}
+              </th>
+              <th v-if="props.integrationType === 'amazon'" scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                {{ t('shared.labels.processingStatus') }}
+              </th>
+              <th v-if="props.integrationType === 'amazon'" scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                {{ t('shared.labels.issues') }}
+              </th>
 
             </tr>
             </thead>
@@ -153,6 +169,15 @@ const statusBadge = {
                   <div class="whitespace-pre-wrap break-words">
                     {{ log.node.frontendError }}
                   </div>
+                </td>
+                <td v-if="props.integrationType === 'amazon'">{{ log.node.submissionId }}</td>
+                <td v-if="props.integrationType === 'amazon'">{{ log.node.processingStatus }}</td>
+                <td v-if="props.integrationType === 'amazon'">
+                  <ul v-if="log.node.formattedIssues && log.node.formattedIssues.length" class="list-disc ml-4">
+                    <li v-for="(issue, index) in log.node.formattedIssues" :key="index">
+                      {{ issue.message }}
+                    </li>
+                  </ul>
                 </td>
               </tr>
             </tbody>

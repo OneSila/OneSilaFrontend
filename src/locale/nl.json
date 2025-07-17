@@ -123,7 +123,8 @@
     "prev": "Vorige",
     "next": "Volgende",
     "last": "Laatste",
-    "total": "Totaal van {num}"
+    "total": "Totaal van {num}",
+    "perPage": "Per pagina"
   },
   "shared": {
     "validationErrors": {
@@ -177,6 +178,11 @@
       "change": "Wijzig",
       "fix": "Fixen",
       "downloadConfirmation": ""
+    },
+    "colors": {
+      "red": "Rood",
+      "green": "Groen",
+      "orange": "Oranje"
     },
     "labels": {
       "createdAt": "Gecreëerd op",
@@ -348,7 +354,8 @@
         "members": {
           "alert": {
             "deleteMemberSuccess": "Gebruiker was succesvol verwijderd!",
-            "enableMemberSuccess": "Gebruiker succesvol opnieuw toegevoegd!"
+            "enableMemberSuccess": "Gebruiker succesvol opnieuw toegevoegd!",
+            "resendInviteSuccess": "Uitnodiging opnieuw verzonden!"
           },
           "labels": {
             "invitationAccepted": "Uitnodiging geaccepteerd"
@@ -599,6 +606,9 @@
       "labels": {
         "description": "Beschrijving",
         "urlKey": "URL Sleutel"
+      },
+      "warning": {
+        "inheritFromDefault": "Lege velden worden overgenomen van de standaardversie voor deze taal in de uiteindelijke productinhoud."
       }
     },
     "products": {

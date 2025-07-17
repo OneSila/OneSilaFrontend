@@ -18,6 +18,7 @@ import {
 } from "../../../../../../../../../shared/api/mutations/products.js";
 import {Image} from "../../../../../../../../../shared/components/atoms/image";
 import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
+import { shortenText } from "../../../../../../../../../shared/utils";
 import {ref} from "vue";
 import debounce from 'lodash.debounce'
 import apolloClient from "../../../../../../../../../../apollo-client";
@@ -136,6 +137,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                 <thead>
                 <tr>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.name') }}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.sku') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
@@ -155,16 +157,21 @@ const handleQuantityChanged = debounce(async (event, id) => {
                             <div v-else class="w-8 h-8 overflow-hidden rounded-md bg-gray-200 flex justify-center items-center">
                           </div>
                         </FlexCell>
-                        <FlexCell center>{{ item.node.variation.name }}</FlexCell>
+                        <FlexCell center :title="item.node.variation.name">
+                          {{ shortenText(item.node.variation.name, 64) }}
+                        </FlexCell>
                       </Flex>
                     </Link>
+                  </td>
+                  <td>
+                    {{ item.node.variation.sku }}
                   </td>
                   <td>
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
                   <td>
-                    {{ getInspectorStatusBadgeMap()[item.node.variation.inspectorStatus].text }}
+                    {{ getInspectorStatusBadgeMap(t)[item.node.variation.inspectorStatus].text }}
                   </td>
                   <td v-if="product.type != ProductType.Configurable">
                     <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />

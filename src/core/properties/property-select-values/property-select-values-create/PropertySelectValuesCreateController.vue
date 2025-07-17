@@ -14,11 +14,14 @@ import { getPropertyQuery } from "../../../../shared/api/queries/properties.js";
 const { t } = useI18n();
 const route = useRoute();
 const formConfig = ref<FormConfig | null>(null);
+const defaultValue = route.query.value ? route.query.value.toString() : '';
 
 onMounted(async () => {
   let addImage = false;
   const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
   const isRule = route.query.isRule ? route.query.isRule.toString() : null;
+  const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
+  const amazonSelectValueId = route.query.amazonSelectValueId ? route.query.amazonSelectValueId.toString() : null;
 
   if (propertyId) {
     const { data } = await apolloClient.query({
@@ -37,9 +40,19 @@ onMounted(async () => {
     'createPropertySelectValue',
     propertyId,
     addImage,
-    isRule !== null
+    isRule !== null,
+    amazonRuleId,
+    amazonSelectValueId
   );
+
+  if (defaultValue && formConfig.value) {
+    const valueField = formConfig.value.fields.find(field => field.name === 'value');
+    if (valueField) {
+      valueField.default = defaultValue;
+    }
+  }
 });
+
 </script>
 
 <template>

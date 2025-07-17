@@ -19,12 +19,21 @@ export interface SalesChannelImportItem {
   createdAt: string;
 }
 
+export interface AmazonSalesChannelImportItem {
+  id: string;
+  type: string;
+  status: 'new' | 'pending' | 'failed' | 'success' | 'processing';
+  percentage: number;
+  createdAt: string;
+}
+
 export interface SalesChannelSubscriptionResult {
   salesChannel: {
     id: string;
     active: boolean;
     isImporting: boolean;
     saleschannelimportSet: SalesChannelImportItem[];
+    amazonImports: AmazonSalesChannelImportItem[];
   };
 }
 

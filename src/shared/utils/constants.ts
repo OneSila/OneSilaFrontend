@@ -200,3 +200,15 @@ export enum PackagingMode {
   MANUAL = 'manual',
   VIRTUAL = 'virtual',
 }
+
+export const getPropertyTypeOptions = (t) => [
+  { name: t('properties.properties.types.int'), code: PropertyTypes.INT },
+  { name: t('properties.properties.types.float'), code: PropertyTypes.FLOAT },
+  { name: t('properties.properties.types.text'), code: PropertyTypes.TEXT },
+  { name: t('properties.properties.types.description'), code: PropertyTypes.DESCRIPTION },
+  { name: t('properties.properties.types.boolean'), code: PropertyTypes.BOOLEAN },
+  { name: t('properties.properties.types.date'), code: PropertyTypes.DATE },
+  { name: t('properties.properties.types.datetime'), code: PropertyTypes.DATETIME },
+  { name: t('properties.properties.types.select'), code: PropertyTypes.SELECT },
+  { name: t('properties.properties.types.multiselect'), code: PropertyTypes.MULTISELECT }
+];

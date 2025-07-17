@@ -233,6 +233,30 @@ export const updateProductTranslationMutation = gql`
   }
 `;
 
+export const createProductContentMutation = gql`
+  mutation createProductContent($data: ProductContentInput!) {
+    createProductContent(data: $data) {
+      id
+      name
+      shortDescription
+      description
+      urlKey
+    }
+  }
+`;
+
+export const updateProductContentMutation = gql`
+  mutation updateProductContent($data: ProductContentPartialInput!) {
+    updateProductContent(data: $data) {
+      id
+      name
+      shortDescription
+      description
+      urlKey
+    }
+  }
+`;
+
 export const deleteProductTranslationMutation = gql`
   mutation deleteProductTranslation($id: GlobalID!) {
     deleteProductTranslation(data: {id: $id}) {
@@ -527,4 +551,49 @@ export const refreshInspectorMutation = gql`
       errors
     }
   } 
+`;
+export const createProductTranslationBulletPointMutation = gql`
+  mutation createProductTranslationBulletPoint($data: ProductTranslationBulletPointInput!) {
+    createProductTranslationBulletPoint(data: $data) {
+      id
+      text
+      sortOrder
+    }
+  }
+`;
+
+export const createProductTranslationBulletPointsMutation = gql`
+  mutation createProductTranslationBulletPoints($data: [ProductTranslationBulletPointInput!]!) {
+    createProductTranslationBulletPoints(data: $data) {
+      id
+      text
+      sortOrder
+    }
+  }
+`;
+
+export const updateProductTranslationBulletPointMutation = gql`
+  mutation updateProductTranslationBulletPoint($data: ProductTranslationBulletPointPartialInput!) {
+    updateProductTranslationBulletPoint(data: $data) {
+      id
+      text
+      sortOrder
+    }
+  }
+`;
+
+export const deleteProductTranslationBulletPointMutation = gql`
+  mutation deleteProductTranslationBulletPoint($id: GlobalID!) {
+    deleteProductTranslationBulletPoint(data: {id: $id}) {
+      id
+    }
+  }
+`;
+
+export const deleteProductTranslationBulletPointsMutation = gql`
+  mutation deleteProductTranslationBulletPoints($data: [NodeInput!]!) {
+    deleteProductTranslationBulletPoints(data: $data) {
+      id
+    }
+  }
 `;

@@ -5,6 +5,7 @@ interface Choice {
   name: string;
   banner?: string;
   disabled?: boolean
+  hideDisabledBanner?: boolean;
 }
 
 const props = defineProps<{ choices: Choice[], modelValue: string; row?: boolean }>();
@@ -57,7 +58,7 @@ const setActive = (choice, event?: MouseEvent) => {
       >
         <slot :name="choice.name"></slot>
         <!-- If the choice is disabled, overlay a ribbon -->
-        <template v-if="choice.disabled">
+        <template v-if="choice.disabled && !choice.hideDisabledBanner">
           <div class="ribbon-danger-container">
             <div class="ribbon-danger-wrapper">
               <div class="ribbon-danger-cs">{{ $t('shared.labels.comingSoon') }}</div>

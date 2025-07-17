@@ -24,6 +24,9 @@ import { Products } from "./containers/products";
 import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
+import { Rules } from "./containers/rules";
+import { Properties } from "./containers/properties";
+import { PropertySelectValues } from "./containers/property-select-values";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
@@ -48,7 +51,6 @@ const tabItems = ref([
   { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
   { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
   { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
-  { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' }
 ]);
 
 if (type.value === IntegrationTypes.Amazon) {
@@ -58,6 +60,9 @@ if (type.value === IntegrationTypes.Amazon) {
     { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
   );
 }
+
+tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+
 
 const getIntegrationQuery = () => {
   switch (type.value) {
@@ -136,7 +141,7 @@ const fetchIntegrationData = async () => {
 
 onMounted(async () => {
   await fetchIntegrationData();
-    if (!firstImportCompleteRef.value ) {
+    if (!firstImportCompleteRef.value && type.value != IntegrationTypes.Amazon) {
     router.replace({
       query: {
         ...route.query,
@@ -231,19 +236,19 @@ const pullData = async () => {
             <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
           </template>
 
-          <!-- Product Rules Tab (Amazon only) -->
+          <!-- Rules Tab -->
           <template #productRules>
-            <div />
+            <Rules v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
 
-          <!-- Properties Tab (Amazon only) -->
+          <!-- Properties Tab -->
           <template #properties>
-            <div />
+            <Properties v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
 
-          <!-- Property Select Values Tab (Amazon only) -->
+          <!-- Property Select Values Tab -->
           <template #propertySelectValues>
-            <div />
+            <PropertySelectValues v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
         </Tabs>
       </Card>

@@ -14,7 +14,7 @@ import {
   deleteSalesChannelViewAssignMutation,
   resyncSalesChannelViewAssignMutation
 } from "../../../../../../shared/api/mutations/salesChannels.js";
-import {displayApolloError} from "../../../../../../shared/utils";
+import { displayApolloError, shortenText } from "../../../../../../shared/utils";
 import {Toast} from "../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../../../../../products/products/product-show/containers/tabs/websites/containers/logs-info-modal";
 import {Badge} from "../../../../../../shared/components/atoms/badge";
@@ -22,8 +22,9 @@ import {Badge} from "../../../../../../shared/components/atoms/badge";
 
 const { t } = useI18n();
 const props = defineProps<{ salesChannelId: string }>();
-const infoId = ref(null);
+const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
+const infoIntegrationType = ref<string | undefined>(undefined);
 const router = useRouter();
 
 const searchConfig: SearchConfig = {
@@ -41,13 +42,15 @@ const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'))
 };
 
-const setInfoId = (id) => {
+const setInfoId = (id: string | null, type: string | null) => {
   infoId.value = id;
+  infoIntegrationType.value = type || undefined;
   showInfoModal.value = true;
 }
 
 const modalColsed = () => {
   infoId.value = null;
+  infoIntegrationType.value = undefined;
   showInfoModal.value = false;
 }
 
@@ -111,8 +114,8 @@ const getStatusText = (item) => {
                     <tbody class="divide-y divide-gray-200 bg-white">
                     <tr v-for="item in data.salesChannelViewAssigns.edges" :key="item.node.id">
                       <td>
-                        <Link :path="{name: 'products.products.show', params: { id: item.node.product.id}, query: {tab: 'websites'}}">
-                          {{ item.node.product.name }}
+                        <Link :title="item.node.product.name" :path="{name: 'products.products.show', params: { id: item.node.product.id}, query: {tab: 'websites'}}">
+                          {{ shortenText(item.node.product.name, 64) }}
                         </Link>
                       </td>
                       <td>
@@ -125,7 +128,7 @@ const getStatusText = (item) => {
                       <td>
                         <div class="flex gap-4 items-center justify-end">
 
-                          <Button :disabled="!item.node.remoteProduct?.id" @click="setInfoId(item.node.remoteProduct?.id)">
+                          <Button :disabled="!item.node.remoteProduct?.id" @click="setInfoId(item.node.remoteProduct?.id, item.node.integrationType)">
                             <Icon name="clipboard-list" size="lg" class="text-gray-500" />
                           </Button>
 
@@ -173,6 +176,6 @@ const getStatusText = (item) => {
           </ApolloQuery>
         </template>
       </FilterManager>
-    <LogsInfoModal v-model="showInfoModal" :id="infoId" @modal-closed="modalColsed()" />
+    <LogsInfoModal v-model="showInfoModal" :id="infoId" :integration-type="infoIntegrationType" @modal-closed="modalColsed()" />
   </div>
 </template>

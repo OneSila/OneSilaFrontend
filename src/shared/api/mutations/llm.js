@@ -74,3 +74,24 @@ export const detectRemoteValidPropertiesMutation = gql`
     }
   }
 `;
+
+export const generateProductAiBulletPointsMutation = gql`
+  mutation generateProductAiBulletPointsMutation($data: ProductAiBulletPointsInput!) {
+    generateProductBulletPointsAi(instance: $data) {
+      ... on AiBulletPoints {
+        bulletPoints {
+          text
+        }
+        points
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;

@@ -115,7 +115,6 @@
             "title": "Configurable Products with No Applicable Configurator Rules",
             "description": "Define at least one configurator required item for these configurable products."
           }
-
         }
       },
       "orders": {
@@ -145,6 +144,30 @@
         "currencyMismatchPriceLists": {
           "title": "Price Lists with Currency Mismatched Customers",
           "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
+        }
+      },
+      "amazon": {
+        "title": "Amazon integration",
+        "description": "Resolve unmapped Amazon data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Amazon properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Amazon product types that need mapping."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Amazon property values that need mapping."
+        },
+        "unmappedDefaultUnitConfigurators": {
+          "title": "Default Unit Configurator",
+          "description": "Amazon unit configurators missing a default unit."
+        },
+        "productsWithIssues": {
+          "title": "Products With Issues",
+          "description": "Amazon products that failed to sync correctly."
         }
       }
     },
@@ -230,7 +253,8 @@
     "prev": "Prev",
     "next": "Next",
     "last": "Last",
-    "total": "Total of {num}"
+    "total": "Total of {num}",
+    "perPage": "Per Page"
   },
   "shared": {
     "validationErrors": {
@@ -294,6 +318,11 @@
       "editAll": "Edit all",
       "change": "Change"
     },
+    "colors": {
+      "red": "Red",
+      "green": "Green",
+      "orange": "Orange"
+    },
     "labels": {
       "createdAt": "Created At",
       "updatedAt": "Updated At",
@@ -343,7 +372,11 @@
       "progress": "Progress",
       "new": "New",
       "beta": "BETA",
-      "url": "URL"
+      "url": "URL",
+      "default": "Default",
+      "submissionId": "Submission ID",
+      "processingStatus": "Processing Status",
+      "issues": "Issues"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -431,19 +464,26 @@
           }
         },
         "aiContentGenerator": {
-            "title": "Generating content...",
-            "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
-            "step1": "Gathering product information",
-            "step2": "Evaluating product features",
-            "step3": "Generating description",
-            "step4": "Finalizing content"
+          "title": "Generating content...",
+          "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
+          "step1": "Gathering product information",
+          "step2": "Evaluating product features",
+          "step3": "Generating description",
+          "step4": "Finalizing content"
         },
         "aiContentTranslator": {
-            "title": "Translating content...",
-            "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
-            "step1": "Analyzing original text",
-            "step2": "Performing translation",
-            "step3": "Finalizing translation"
+          "title": "Translating content...",
+          "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
+          "step1": "Analyzing original text",
+          "step2": "Performing translation",
+          "step3": "Finalizing translation"
+        },
+        "aiBulletPointsGenerator": {
+          "title": "Generating bullet points...",
+          "success": "Bullet points successfully generated. It cost {points} SilAI Credit(s).",
+          "step1": "Gathering product information",
+          "step2": "Generating bullet points",
+          "step3": "Finalizing"
         },
         "remotePropertiesDetector": {
           "step1": "Analyzing remote attributes",
@@ -536,7 +576,8 @@
         "members": {
           "alert": {
             "deleteMemberSuccess": "Member was successfully deleted!",
-            "enableMemberSuccess": "Member was successfully added back!"
+            "enableMemberSuccess": "Member was successfully added back!",
+            "resendInviteSuccess": "Invitation resent successfully!"
           },
           "labels": {
             "invitationAccepted": "Invitation Accepted"
@@ -800,14 +841,14 @@
           "bulkDeleteSuccess": "EAN codes deleted successfully.",
           "bulkDeleteError": "Failed to delete EAN codes. Please try again.",
           "success": {
-                "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
-              },
-              "warning": {
-                "noAvailable": "No EAN codes could be assigned"
-              },
-              "error": {
-                "assignBulk": "An error occurred while assigning EAN codes"
-              }
+            "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
+          },
+          "warning": {
+            "noAvailable": "No EAN codes could be assigned"
+          },
+          "error": {
+            "assignBulk": "An error occurred while assigning EAN codes"
+          }
         }
       }
     },
@@ -823,7 +864,11 @@
       },
       "labels": {
         "description": "Description",
-        "urlKey": "URL Key"
+        "urlKey": "URL Key",
+        "bulletPoints": "Bullet Points"
+      },
+      "warning": {
+        "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
       }
     },
     "products": {
@@ -861,56 +906,56 @@
       },
       "inspector": {
         "errors": {
-          "101": "Product has missing images",
-          "102": "Product is missing default price",
-          "103": "Product has inactive bills of materials",
-          "104": "Bundle product has inactive items",
-          "105": "Product is missing required variations",
-          "106": "Bundle product is missing items",
-          "107": "Manufacturable product is missing bill of materials",
-          "108": "Product is missing supplier products",
-          "109": "Product is missing an EAN code",
-          "110": "Product is missing a required product type property",
-          "111": "Product is missing required properties",
-          "112": "Product is missing optional properties",
-          "113": "Supplier product is missing required prices",
-          "114": "Product is missing stock",
-          "115": "Product is missing lead time when out of stock",
+          "101": "Images missing",
+          "102": "Default price missing",
+          "103": "Inactive bills of materials",
+          "104": "Inactive items",
+          "105": "Required variations missing",
+          "106": "Items missing",
+          "107": "Bill of materials missing",
+          "108": "Supplier products missing",
+          "109": "EAN code missing",
+          "110": "Product type missing",
+          "111": "Required properties missing",
+          "112": "Optional properties missing",
+          "113": "Required prices missing",
+          "114": "Stock missing",
+          "115": "Lead time missing",
           "116": "Manual price list price should have at least override price",
-          "117": "Variations do not have the same product type",
-          "118": "Items do not have the same product type",
-          "119": "Bill of materials do not have the same product type",
+          "117": "Variations have different product types",
+          "118": "Items have different product types",
+          "119": "Bill of materials have different product types",
           "120": "Items have inspectors missing mandatory information",
-          "121": "Variations have inspectors missing mandatory information",
-          "122": "Bill of materials have inspectors missing mandatory information",
-          "123": "Configurable product has duplicate variations",
-          "124": "Configurable product has no applicable configurator rules"
+          "121": "Some Variations are incomplete",
+          "122": "Some Bill of materials are incomplete",
+          "123": "Some variations are duplicates",
+          "124": "Product type rule is not configured for a configurable product"
         },
         "help": {
-          "101": "Please add at least one image to the product",
-          "102": "Please ensure that the product has a valid default price",
-          "103": "Please ensure all bills of materials of the manufacturable product are active",
-          "104": "Please ensure all items in the bundle product are active",
-          "105": "Please add at least one variation to the configurable product",
-          "106": "Please add items to the bundle product",
-          "107": "Please add bill of materials to the manufacturable product",
-          "108": "Please add supplier products to the product",
-          "109": "Please provide an EAN code for the product",
-          "110": "Please add the product type to the product",
-          "111": "Please ensure all required properties are assigned to the product",
-          "112": "Please ensure all optional properties are assigned to the product",
-          "113": "Please add at least one price to the supplier product",
-          "114": "Please ensure the product has stock or allows backorder",
-          "115": "Please specify the lead time for the product when out of stock",
-          "116": "Please ensure manual price list prices have an override price if auto-update is disabled",
-          "117": "Please ensure all variations have the same product type",
-          "118": "Please ensure all items have the same product type",
-          "119": "Please ensure all bill of materials have the same product type",
-          "120": "Please resolve missing mandatory information in the items' inspectors",
-          "121": "Please resolve missing mandatory information in the variations' inspectors",
-          "122": "Please resolve missing mandatory information in the bills of materials' inspectors",
-          "123": "Please ensure that all variations have different required properties",
-          "124": "Please define at least one configurator required item for the configurable rule of the product."
+          "101": "add at least one image to the product",
+          "102": "ensure that the product has a valid default price",
+          "103": "ensure all bills of materials of the manufacturable product are active",
+          "104": "ensure all items in the bundle product are active",
+          "105": "add at least one variation to the configurable product",
+          "106": "add items to the bundle product",
+          "107": "add bill of materials to the manufacturable product",
+          "108": "add supplier products to the product",
+          "109": "Set an EAN code for on product",
+          "110": "add the product type to the product",
+          "111": "ensure all required properties are assigned to the product",
+          "112": "ensure all optional properties are assigned to the product",
+          "113": "add at least one price to the supplier product",
+          "114": "ensure the product has stock or allows backorders",
+          "115": "specify the lead time for the product when out of stock",
+          "116": "ensure manual price list prices have an override price if auto-update is disabled",
+          "117": "ensure all variations have the same product type",
+          "118": "ensure all items have the same product type",
+          "119": "ensure all bill of materials have the same product type",
+          "120": "resolve missing mandatory information in the items",
+          "121": "resolve missing mandatory information in the variations",
+          "122": "resolve missing mandatory information in the bills of materials",
+          "123": "ensure all variations have a different configuration on their configurable properties",
+          "124": "define at least one configurator required item on the product type rule"
         },
         "labels": {
           "missingInfo": "Missing Information",
@@ -1040,135 +1085,135 @@
   "inventory": {
     "title": "Warehouse",
     "packages": {
-       "title": "Packages",
-        "create": {
-          "title": "Create Packages",
-          "virtual": {
-            "title": "Guided Virtual Tour Packaging",
-            "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
-            "selectPackageType": "Please select the package type you gonna use",
-            "actions": {
-              "start": "Let's Start",
-              "arrived": "I Arrived",
-              "addAll": "Add All",
-              "quantityInputPlaceholder": "Enter quantity to add",
-              "addQuantity": "Add Quantity",
-              "packageFull": "Package Full",
-              "finish": "Finish"
-            },
-            "instructions": {
-              "prepare": {
-                "title": "Prepare Your Way",
-                "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
-              },
-              "move": {
-                "title": "Go to {location}",
-                "description": "Navigate to the designated location {location}."
-              },
-              "collect": {
-                "title": "Add to Package",
-                "description": "Place {quantity} of {item} into {package}.",
-                "general": {
-                  "addAll": "If all the products fit in the package, press Add.",
-                  "packageFull": "If the package is full and you cannot add anymore, press Package Full."
-                },
-                "extra": {
-                  "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
-                }
-              },
-              "confirm": {
-                "title": "Confirm the Shipment",
-                "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
-              }
-            },
-            "virtualTour": {
-              "itemsToShip": "Items to Ship",
-              "packages": "Packages",
-              "noPackagesYet": "No packages created yet.",
-              "prepare": "Prepare your way",
-              "collect": "Collect the products",
-              "confirm": "Confirm the shipment",
-              "packageName": "Package {index}"
-            },
-            "error": {
-              "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
-              "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
-              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
-              "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
-            },
-            "packageType": {
-              "error": "Please select a valid package type."
-            },
-            "packageFull": {
-              "error": "The package is full. You cannot add more items."
-            },
-            "packageSave": {
-              "success": "The package has been saved successfully.",
-              "error": "Failed to save the package. Please try again."
-            },
-          "confirmationSuccess": "The package has been confirmed successfully."
+      "title": "Packages",
+      "create": {
+        "title": "Create Packages",
+        "virtual": {
+          "title": "Guided Virtual Tour Packaging",
+          "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
+          "selectPackageType": "Please select the package type you gonna use",
+          "actions": {
+            "start": "Let's Start",
+            "arrived": "I Arrived",
+            "addAll": "Add All",
+            "quantityInputPlaceholder": "Enter quantity to add",
+            "addQuantity": "Add Quantity",
+            "packageFull": "Package Full",
+            "finish": "Finish"
           },
-          "manual": {
-            "button": {
-              "add": "Add package",
-              "remove": "Remove package"
+          "instructions": {
+            "prepare": {
+              "title": "Prepare Your Way",
+              "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
             },
-            "title": "Manual Packaging Entry",
-            "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
-              "createStep": {
-                "title": "Create Your Packages",
-                "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+            "move": {
+              "title": "Go to {location}",
+              "description": "Navigate to the designated location {location}."
+            },
+            "collect": {
+              "title": "Add to Package",
+              "description": "Place {quantity} of {item} into {package}.",
+              "general": {
+                "addAll": "If all the products fit in the package, press Add.",
+                "packageFull": "If the package is full and you cannot add anymore, press Package Full."
               },
-            "assignItemsStep": {
-              "title": "Assign Items to Packages",
-              "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
-              "noItemsToShip": "No items left to assign.",
-              "emptyPackage": "This package is currently empty.",
-              "packageName": "Package {index}",
-              "success": "Items have been successfully assigned to the package.",
-              "error": {
-                "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
-                "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
-                "packageCreationFailed": "Failed to create the package. Please try again.",
-                "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
-              },
-              "modal": {
-                "title": "Assign Item to Package",
-                "quantity": "Quantity",
-                "package": "Package"
+              "extra": {
+                "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
               }
+            },
+            "confirm": {
+              "title": "Confirm the Shipment",
+              "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
+            }
+          },
+          "virtualTour": {
+            "itemsToShip": "Items to Ship",
+            "packages": "Packages",
+            "noPackagesYet": "No packages created yet.",
+            "prepare": "Prepare your way",
+            "collect": "Collect the products",
+            "confirm": "Confirm the shipment",
+            "packageName": "Package {index}"
+          },
+          "error": {
+            "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
+            "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
+            "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
+            "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
+          },
+          "packageType": {
+            "error": "Please select a valid package type."
+          },
+          "packageFull": {
+            "error": "The package is full. You cannot add more items."
+          },
+          "packageSave": {
+            "success": "The package has been saved successfully.",
+            "error": "Failed to save the package. Please try again."
+          },
+          "confirmationSuccess": "The package has been confirmed successfully."
+        },
+        "manual": {
+          "button": {
+            "add": "Add package",
+            "remove": "Remove package"
+          },
+          "title": "Manual Packaging Entry",
+          "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
+          "createStep": {
+            "title": "Create Your Packages",
+            "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+          },
+          "assignItemsStep": {
+            "title": "Assign Items to Packages",
+            "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
+            "noItemsToShip": "No items left to assign.",
+            "emptyPackage": "This package is currently empty.",
+            "packageName": "Package {index}",
+            "success": "Items have been successfully assigned to the package.",
+            "error": {
+              "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
+              "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
+              "packageCreationFailed": "Failed to create the package. Please try again.",
+              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
+            },
+            "modal": {
+              "title": "Assign Item to Package",
+              "quantity": "Quantity",
+              "package": "Package"
             }
           }
-        },
-        "edit": {
-          "title": "Edit Package"
-        },
-        "show": {
-          "title": "Package Details"
-        },
-       "type": {
-          "box": "Box",
-          "pallet": "Pallet"
-       },
-       "status": {
-          "new": "New",
-          "inProgress": "In Progress",
-          "packed": "Packed",
-          "dispatched": "Dispatched"
-       },
-       "placeholders": {
-          "trackingCode": "Enter tracking code",
-          "trackingLink": "Enter tracking link URL"
-       },
-       "labels": {
-          "trackingCode": "Tracking Code",
-          "trackingLink": "Tracking Link",
-          "type": "Package Type",
-          "status": "Package Status",
-          "shippingLabel": "Shipping Label",
-          "customsDocument": "Customs Document"
-       }
-     },
+        }
+      },
+      "edit": {
+        "title": "Edit Package"
+      },
+      "show": {
+        "title": "Package Details"
+      },
+      "type": {
+        "box": "Box",
+        "pallet": "Pallet"
+      },
+      "status": {
+        "new": "New",
+        "inProgress": "In Progress",
+        "packed": "Packed",
+        "dispatched": "Dispatched"
+      },
+      "placeholders": {
+        "trackingCode": "Enter tracking code",
+        "trackingLink": "Enter tracking link URL"
+      },
+      "labels": {
+        "trackingCode": "Tracking Code",
+        "trackingLink": "Tracking Link",
+        "type": "Package Type",
+        "status": "Package Status",
+        "shippingLabel": "Shipping Label",
+        "customsDocument": "Customs Document"
+      }
+    },
     "shipments": {
       "title": "Shipments",
       "button": {
@@ -2103,6 +2148,9 @@
     "title": "Integrations",
     "show": {
       "title": "Integration",
+      "amazon": {
+        "title": "Amazon Integration"
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -2110,7 +2158,8 @@
       "sections": {
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
-        "authentication": "Authentication"
+        "authentication": "Authentication",
+        "defaultUnits": "Default Units"
       },
       "noImportBanner": {
         "title": "First Import Not Completed",
@@ -2136,7 +2185,77 @@
         "labels": {
           "remoteCode": "Remote Currency Code"
         }
-      }
+      },
+      "productRules": {
+        "title": "Amazon Rules",
+        "labels": {
+          "productTypeCode": "Product Type Code",
+          "productRule": "Product Rule"
+        },
+        "help": {
+          "productTypeCode": "Amazon identifier for this product type.",
+          "name": "Original Amazon name for the product type. You may change it.",
+          "productRule": "Select the local product rule to link with this Amazon product type."
+        }
+      },
+      "properties": {
+        "title": "Amazon Properties",
+        "labels": {
+          "code": "Code",
+          "type": "Type",
+          "allowsUnmappedValues": "Allow Unmapped Values",
+          "property": "Property"
+        },
+        "help": {
+          "code": "Amazon's code for this property.",
+          "type": "Type mapped from Amazon. Cannot be changed.",
+          "allowsUnmappedValues": "Allow values that have not been mapped locally.",
+          "name": "Name from Amazon. You can modify it.",
+          "property": "Select the local property this Amazon property maps to."
+        }
+      },
+      "propertySelectValues": {
+        "title": "Amazon Property Values",
+        "labels": {
+          "remoteName": "Remote Name",
+          "remoteValue": "Remote Value",
+          "amazonProperty": "Amazon Property",
+          "marketplace": "Marketplace",
+          "localProperty": "Local Property",
+          "selectValue": "Select Value"
+        },
+        "help": {
+          "amazonProperty": "Amazon property to which this value belongs.",
+          "marketplace": "Amazon marketplace for this value.",
+          "localProperty": "Local property that this Amazon property maps to.",
+          "remoteValue": "Value exactly as defined in Amazon.",
+          "remoteName": "Name from Amazon. You can change it.",
+          "selectValue": "Choose the local value that matches this Amazon value."
+        },
+        "notMappedBanner": {
+          "title": "Amazon property not mapped",
+          "content": "Map the Amazon property first before mapping values."
+        },
+        "bulkAssign": "Assign Select Value",
+        "bulkAssignTitle": "Assign to {count} value(s)",
+        "assignSuccess": "Values were successfully assigned"
+      },
+      "mapping": {
+        "mappedLocally": "Mapped Locally",
+        "mappedRemotely": "Mapped Remotely",
+        "startMapping": "Start Mapping",
+        "saveAndMapNext": "Save & Map Next",
+        "allMappedSuccess": "You mapped all the values"
+      },
+      "generateProperty": "Generate Property",
+      "generateProductType": "Generate Product Type",
+      "generatePropertySelectValue": "Generate Select Value",
+      "mapProperty": "Map Property",
+      "mapProductType": "Map Product Type",
+      "mapSelectValue": "Map Select Value",
+      "mapRemoteLanguage": "Map Remote Language",
+      "mapRemoteStore": "Map Remote Store",
+      "mapRemoteCurrency": "Map Remote Currency"
     },
     "create": {
       "title": "Create Integration",
@@ -2191,6 +2310,31 @@
             "importRecommendation": "After setting up the integration, we recommend performing an import to bring your existing WooCommerce data into our system.",
             "eanTitle": "EAN codes support",
             "eanDescription": "If you want to sync EAN codes, make sure you have a custom field or attribute set up in WooCommerce for EAN codes."
+          },
+          "shopifyInfoModal": {
+            "title": "How to connect your Shopify store",
+            "section": {
+              "integrationTitle": "Create your Shopify app",
+              "integrationDescription": "Follow these steps using your Shopify admin account:",
+              "integrationStep1": "From your Shopify admin dashboard, open Settings.",
+              "integrationStep2": "Use the search bar to find 'App development'.",
+              "integrationStep3": "If prompted, click 'Allow custom app development' and confirm.",
+              "integrationStep4": "Choose 'Create an app', give it a name like 'OneSila' and wait for it to finish.",
+              "integrationStep5Part1": "Open the new app and go to 'Configuration'.",
+              "integrationStep5Part2": "Under 'Admin API integration' click 'Configure' and enable these scopes:",
+              "integrationStep5Part3": "Click 'Save'.",
+              "integrationStep6Part1": "In 'API credentials' select 'Install app' and confirm. ",
+              "integrationStep6Part2": "Now the API key, API secret key and Admin API access token are ready for the last step of this wizard.",
+              "integrationStep7": "From the Sales channels sidebar choose 'View your online store' and copy the URL from your browser and paste it in the step 2 of this wizard.",
+              "integrationStep8": "During step 4 of the wizard paste the API key, secret key and access token, then click Finish.",
+              "appUrlLabel": "App URL",
+              "allowedRedirectUrlLabel": "Allowed redirection URL(s)",
+              "customAppTitle": "Create Custom App",
+              "detectWebsiteUrlTitle": "Find Your Store URL",
+              "configureDistributionTitle": "Configure API Scopes",
+              "configureUrlsTitle": "Install App and Get Credentials",
+              "finishWizardTitle": "Finish the Wizard"
+            }
           }
         },
         "step2": {
@@ -2228,6 +2372,7 @@
       "syncEanCodes": "Sync EAN Codes",
       "syncPrices": "Sync Prices",
       "importOrders": "Import Orders",
+      "listingOwner": "Listing Owner",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "successfullyConnected": "Connected",
@@ -2236,15 +2381,17 @@
       "authenticationMethod": "Authentication Method",
       "hostApiUsername": "Host API Username",
       "hostApiKey": "Host API Access Token Key",
-      "apiKey": "API Key",
-      "apiSecret": "API Secret",
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
+      "apiKey": "API Key",
+      "apiSecret": "API secret key",
+      "accessToken": "Access Token",
       "region": "Region",
       "country": "Country",
-      "refreshTokenExpiration": "Refresh Token Expiration",
-      "pullData": "Pull Data"
+      "expirationDate": "Access Token Expiration",
+      "pullData": "Pull Data",
+      "defaultUnits": "Default Units"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",
@@ -2252,7 +2399,8 @@
       "apiKey": "Enter API Key",
       "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
-      "eanCodeAttribute": "Enter EAN code attribute"
+      "eanCodeAttribute": "Enter EAN code attribute",
+      "accessToken": "Enter Access Token"
     },
     "regions": {
       "northAmerica": "North America",
@@ -2314,6 +2462,9 @@
           "success": "Your Amazon store was successfully connected!",
           "genericError": "Something went wrong while connecting your store.",
           "missingParams": "Missing required query parameters. Please retry the installation."
+        },
+        "labels": {
+          "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
       },
       "toast": {
@@ -2325,6 +2476,7 @@
         "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
         "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
+        "listingOwner": "Enable if you are the owner of the product listings.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
@@ -2336,6 +2488,9 @@
       "modal": {
         "logs": {
           "title": "Logs"
+        },
+        "issues": {
+          "title": "Issues"
         }
       }
     },
@@ -2343,6 +2498,13 @@
       "retry": {
         "success": "Retry import process success",
         "error": "Retry import process had an unexpected error"
+      },
+      "types": {
+        "schema": "Schema",
+        "products": "Products",
+        "schemaDescription": "Initial setup required to enable product imports.",
+        "productsDescription": "Imports actual product data from Amazon.",
+        "schemaRequired": "Please complete the schema import first."
       },
       "create": {
         "success": "Create import process success",
@@ -2370,9 +2532,9 @@
           },
           "step3": {
             "title": "Default Attribute Set",
-              "content": "Select the default attribute set",
-              "attributeSetSelected": "Default Set",
-              "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
+            "content": "Select the default attribute set",
+            "attributeSetSelected": "Default Set",
+            "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
           },
           "finish": {
             "title": "Finalizing Import",

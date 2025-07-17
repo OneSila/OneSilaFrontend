@@ -1,5 +1,5 @@
 import { CreateOnTheFly, FormConfig, FormField, FormType } from '../../../shared/components/organisms/general-form/formConfig';
-import { FieldType, PropertyTypes } from '../../../shared/utils/constants';
+import {FieldType, getPropertyTypeOptions, PropertyTypes} from '../../../shared/utils/constants';
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import {getPropertyQuery, propertiesQuery} from "../../../shared/api/queries/properties.js";
@@ -10,18 +10,6 @@ import {
 } from "../../../shared/api/mutations/properties.js";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { getPropertySubscription } from '../../../shared/api/subscriptions/properties.js';
-
-const getTypeOptions = (t) => [
-  { name: t('properties.properties.types.int'), code: PropertyTypes.INT },
-  { name: t('properties.properties.types.float'), code: PropertyTypes.FLOAT },
-  { name: t('properties.properties.types.text'), code: PropertyTypes.TEXT },
-  { name: t('properties.properties.types.description'), code: PropertyTypes.DESCRIPTION },
-  { name: t('properties.properties.types.boolean'), code: PropertyTypes.BOOLEAN },
-  { name: t('properties.properties.types.date'), code: PropertyTypes.DATE },
-  { name: t('properties.properties.types.datetime'), code: PropertyTypes.DATETIME },
-  { name: t('properties.properties.types.select'), code: PropertyTypes.SELECT },
-  { name: t('properties.properties.types.multiselect'), code: PropertyTypes.MULTISELECT }
-];
 
 export const getPropertyTypeBadgeMap = (t) => ({
   [PropertyTypes.INT]: { text: t('properties.properties.types.int'), color: 'blue' },
@@ -66,7 +54,7 @@ export const getEditFields = (t: Function, id: string) => [
     label: t('products.products.labels.type.title'),
     labelBy: 'name',
     valueBy: 'code',
-    options: getTypeOptions(t),
+    options: getPropertyTypeOptions(t),
     disabled: true,
     removable: false
   },
@@ -108,7 +96,7 @@ export const getAdvancedFields = (t, id): any[] => [
     help: t('properties.properties.help.internalName'),
     labelBy: 'name',
     valueBy: 'code',
-    options: getTypeOptions(t),
+    options: getPropertyTypeOptions(t),
     disabled: true,
     optional: true
   },
@@ -154,7 +142,7 @@ export const baseFormConfigConstructor = (
       label: t('products.products.labels.type.title'),
       labelBy: 'name',
       valueBy: 'code',
-      options: getTypeOptions(t),
+      options: getPropertyTypeOptions(t),
       help: t('properties.properties.help.type')
     },
     {
@@ -204,7 +192,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         label: t('products.products.labels.type.title'),
         labelBy: 'name',
         valueBy: 'code',
-        options: getTypeOptions(t),
+        options: getPropertyTypeOptions(t),
         addLookup: true
       },
     ],

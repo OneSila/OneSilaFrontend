@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Icon } from "../../atoms/icon";
 
 interface AccordionItem {
@@ -10,9 +10,24 @@ interface AccordionItem {
 
 const props = defineProps<{
   items: AccordionItem[];
+  defaultActive?: string | null;
 }>();
 
 const activeIndex = ref<number | null>(null);
+
+onMounted(() => {
+  if (props.defaultActive) {
+    const idx = props.items.findIndex(i => i.name === props.defaultActive);
+    if (idx !== -1) activeIndex.value = idx;
+  }
+});
+
+watch(() => props.defaultActive, (val) => {
+  if (val) {
+    const idx = props.items.findIndex(i => i.name === val);
+    if (idx !== -1) activeIndex.value = idx;
+  }
+});
 
 const toggleAccordion = (index: number) => {
   activeIndex.value = activeIndex.value === index ? null : index;
