@@ -257,6 +257,7 @@ export const refreshLatestAmazonIssuesMutation = gql`
       formattedIssues {
         message
         severity
+        validationIssue
       }
     }
   }
