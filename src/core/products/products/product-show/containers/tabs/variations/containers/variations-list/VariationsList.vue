@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {getInspectorStatusBadgeMap, Product} from "../../../../../../configs";
+import {getInspectorStatusIconMap, Product} from "../../../../../../configs";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import {useI18n} from "vue-i18n";
@@ -32,6 +32,21 @@ const localQuantities = ref<{ [key: string]: number }>({});
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentId = computed(() => isAlias.value ? props.product.aliasParentProduct.id : props.product.id);
 const parentType = computed(() => isAlias.value ? props.product.aliasParentProduct.type : props.product.type);
+
+function iconColorClass(color?: string) {
+  switch (color) {
+    case 'green':
+      return 'text-green-500';
+    case 'yellow':
+      return 'text-yellow-500';
+    case 'orange':
+      return 'text-orange-500';
+    case 'red':
+      return 'text-red-500';
+    default:
+      return '';
+  }
+}
 
 const initializeLocalQuantities = (data) => {
   if (
@@ -164,7 +179,12 @@ const handleQuantityChanged = debounce(async (event, id) => {
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
                   <td>
-                    {{ getInspectorStatusBadgeMap(t)[item.node.variation.inspectorStatus].text }}
+                    <Icon
+                      :name="getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].name"
+                      size="sm"
+                      :class="iconColorClass(getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].color)"
+                      :title="getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].hoverText"
+                    />
                   </td>
                   <td v-if="parentType != ProductType.Configurable">
                     <template v-if="isAlias">
