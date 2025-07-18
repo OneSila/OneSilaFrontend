@@ -83,7 +83,7 @@ const getQueryKey = () => {
                       @refetched="handleRefeched"
                       @update-ids="getIds" />
 
-      <div class="mt-2">
+      <div v-if="product.type !== ProductType.Alias" class="mt-2">
         <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
       </div>
     </template>

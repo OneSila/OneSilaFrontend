@@ -19,7 +19,7 @@ import {
 import {Image} from "../../../../../../../../../shared/components/atoms/image";
 import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
 import { shortenText } from "../../../../../../../../../shared/utils";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import debounce from 'lodash.debounce'
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
@@ -29,14 +29,15 @@ const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQ
 const emit = defineEmits(['refetched', 'update-ids']);
 const localQuantities = ref<{ [key: string]: number }>({});
 
+const isAlias = computed(() => props.product.type === ProductType.Alias);
+const parentId = computed(() => isAlias.value ? props.product.aliasParentProduct.id : props.product.id);
+const parentType = computed(() => isAlias.value ? props.product.aliasParentProduct.type : props.product.type);
+
 const initializeLocalQuantities = (data) => {
-  let type = props.product.type;
-
-  if (type == ProductType.Alias) {
-    type = props.product.aliasParentProduct.type;
-  }
-
-  if (data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length && type != ProductType.Configurable) {
+  if (
+    data[props.queryKey].edges.length !== Object.keys(localQuantities.value).length &&
+    parentType.value != ProductType.Configurable
+  ) {
     data[props.queryKey].edges.forEach((edge) => {
       localQuantities.value[edge.node.id] = edge.node.quantity;
     });
@@ -63,13 +64,7 @@ const refetchIfNecessary = (query, data) => {
 }
 
 const getDeleteMutation = () => {
-  let type = props.product.type;
-
-  if (type == ProductType.Alias) {
-    type = props.product.aliasParentProduct.type;
-  }
-
-  switch(type) {
+  switch(parentType.value) {
     case ProductType.Bundle:
       return deleteBundleVariationMutation;
     case ProductType.Configurable:
@@ -80,13 +75,7 @@ const getDeleteMutation = () => {
 };
 
 const getUpdateMutation = () => {
-  let type = props.product.type;
-
-  if (type == ProductType.Alias) {
-    type = props.product.aliasParentProduct.type;
-  }
-
-  switch(type) {
+  switch(parentType.value) {
     case ProductType.Bundle:
       return updateBundleVariationMutation;
     case ProductType.Configurable:
@@ -97,6 +86,10 @@ const getUpdateMutation = () => {
 };
 
 const handleQuantityChanged = debounce(async (event, id) => {
+
+  if (isAlias.value) {
+    return;
+  }
 
   if (event == '' || event == null || isNaN(event)) {
     return
@@ -124,7 +117,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
   <FilterManager :searchConfig="searchConfig">
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
       <ApolloQuery :query="listQuery"
-                   :variables="{filter: {...filterVariables, 'parent': {'id': {'exact': product.id}}},
+                   :variables="{filter: {...filterVariables, 'parent': {'id': {'exact': parentId}}},
                                 order:orderVariables,
                                 first: pagination.first,
                                 last: pagination.last,
@@ -140,8 +133,8 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.sku') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
-                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="product.type != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
-                  <th scope="col" class="px-3 py-3.5 text-sm font-semibold text-gray-900 !text-end">{{ t('shared.labels.actions')}}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="parentType != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
+                  <th v-if="!isAlias" scope="col" class="px-3 py-3.5 text-sm font-semibold text-gray-900 !text-end">{{ t('shared.labels.actions')}}</th>
                 </tr>
                 </thead>
 
@@ -173,10 +166,15 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   <td>
                     {{ getInspectorStatusBadgeMap(t)[item.node.variation.inspectorStatus].text }}
                   </td>
-                  <td v-if="product.type != ProductType.Configurable">
-                    <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />
+                  <td v-if="parentType != ProductType.Configurable">
+                    <template v-if="isAlias">
+                      {{ item.node.quantity }}
+                    </template>
+                    <template v-else>
+                      <TextInput v-model="localQuantities[item.node.id]" @update:model-value="handleQuantityChanged($event, item.node.id)" float />
+                    </template>
                   </td>
-                  <td>
+                  <td v-if="!isAlias">
                     <div class="flex gap-4 items-center justify-end">
                       <ApolloAlertMutation
                         :mutation="getDeleteMutation()"
@@ -184,7 +182,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                         :refetch-queries="() => [{
                          query: listQuery,
                          variables: {
-                           filter: {...filterVariables, 'parent': {'id': {'exact': product.id}}},
+                           filter: {...filterVariables, 'parent': {'id': {'exact': parentId}}},
                            order: orderVariables,
                            first: pagination.first,
                            last: pagination.last,
