@@ -320,7 +320,6 @@ onMounted(fetchData);
             <td>
               <Icon
                 :name="getInspectorStatusIconMap(t)[variation.inspectorStatus].name"
-                size="sm"
                 :class="iconColorClass(getInspectorStatusIconMap(t)[variation.inspectorStatus].color)"
                 :title="getInspectorStatusIconMap(t)[variation.inspectorStatus].hoverText"
               />
@@ -379,7 +378,6 @@ onMounted(fetchData);
             <td>
               <Icon
                 :name="getInspectorStatusIconMap(t)[item.inspectorStatus].name"
-                size="sm"
                 :class="iconColorClass(getInspectorStatusIconMap(t)[item.inspectorStatus].color)"
                 :title="getInspectorStatusIconMap(t)[item.inspectorStatus].hoverText"
               />

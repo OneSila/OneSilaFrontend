@@ -181,7 +181,6 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   <td>
                     <Icon
                       :name="getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].name"
-                      size="sm"
                       :class="iconColorClass(getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].color)"
                       :title="getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].hoverText"
                     />

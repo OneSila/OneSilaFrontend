@@ -78,7 +78,6 @@ function iconColorClass(color?: string) {
           <td>
             <Icon
               :name="getInspectorStatusIconMap(t)[alias.inspectorStatus]?.name"
-              size="sm"
               :class="iconColorClass(getInspectorStatusIconMap(t)[alias.inspectorStatus]?.color)"
               :title="getInspectorStatusIconMap(t)[alias.inspectorStatus]?.hoverText"
             />

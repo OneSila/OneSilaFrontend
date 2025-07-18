@@ -128,7 +128,6 @@ onMounted(async () => {
             <td>
               <Icon
                 :name="getInspectorStatusIconMap(t)[parent.inspectorStatus]?.name"
-                size="sm"
                 :class="iconColorClass(getInspectorStatusIconMap(t)[parent.inspectorStatus]?.color)"
                 :title="getInspectorStatusIconMap(t)[parent.inspectorStatus]?.hoverText"
               />

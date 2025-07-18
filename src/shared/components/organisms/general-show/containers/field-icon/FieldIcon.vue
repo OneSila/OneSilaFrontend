@@ -32,7 +32,7 @@ function colorClass(color?: string) {
     <Icon
       v-if="modelValue && getIconData(modelValue)"
       :name="getIconData(modelValue).name"
-      :size="getIconData(modelValue).size || 'sm'"
+      :size="getIconData(modelValue).size"
       :class="colorClass(getIconData(modelValue).color)"
       :title="getIconData(modelValue).hoverText" />
     <span v-else>{{ modelValue }}</span>
