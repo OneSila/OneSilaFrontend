@@ -12,7 +12,7 @@ import { productsQuery } from "../../../shared/api/queries/products.js"
 import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
 import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
-import { Badge } from "../../../shared/components/organisms/general-show/showConfig";
+import { Badge, Icon } from "../../../shared/components/organisms/general-show/showConfig";
 import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
 import { amazonChannelsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
@@ -88,6 +88,22 @@ export const getInspectorStatusBadgeMap = (t?: Function): Record<string, Badge> 
   return {
     ...badgeMap,
     default: defaultBadge,
+  };
+};
+
+export const getInspectorStatusIconMap = (t?: Function): Record<string, Icon> => {
+  const translate = (key: string) => (t ? t(key) : key);
+  const defaultIcon: Icon = { name: 'circle-xmark', color: 'red', hoverText: translate('shared.colors.red') };
+
+  const iconMap: Record<InspectorStatusType, Icon> = {
+    [InspectorStatus.GREEN]: { name: 'circle-check', color: 'green', hoverText: translate('shared.colors.green') },
+    [InspectorStatus.ORANGE]: { name: 'circle-exclamation', color: 'orange', hoverText: translate('shared.colors.orange') },
+    [InspectorStatus.RED]: defaultIcon,
+  };
+
+  return {
+    ...iconMap,
+    default: defaultIcon,
   };
 };
 
@@ -336,8 +352,8 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
     },
     {
       name: 'inspectorStatus',
-      type: FieldType.Badge,
-      badgeMap: getInspectorStatusBadgeMap(t),
+      type: FieldType.Icon,
+      iconMap: getInspectorStatusIconMap(t),
     },
     {
       type: FieldType.Badge,

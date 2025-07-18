@@ -10,6 +10,7 @@ import {FieldDate} from "./containers/field-date";
 import {FieldEmail} from "./containers/field-email";
 import {FieldWebsite} from "./containers/field-website";
 import {FieldBadge} from "./containers/field-badge";
+import {FieldIcon} from "./containers/field-icon";
 import {FieldIndividualFile} from "./containers/field-individual-file";
 
 export interface ShowBaseField {
@@ -79,12 +80,24 @@ export interface Badge {
   hoverText?: string;
 }
 
+export interface Icon {
+  name: string;
+  size?: string;
+  color?: 'green' | 'yellow' | 'orange' | 'red';
+  hoverText?: string;
+}
+
 export interface BadgeField extends ShowBaseField {
   type: FieldType.Badge;
   badgeMap: Record<string, Badge>;
 }
 
-export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IndividualFileField;
+export interface IconField extends ShowBaseField {
+  type: FieldType.Icon;
+  iconMap: Record<string, Icon>;
+}
+
+export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | IndividualFileField;
 
 export const updateField = (showConfig, fieldName, newConfig) => {
   const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
@@ -104,6 +117,7 @@ export const getFieldComponent = (type) => {
     case FieldType.Date: return FieldDate;
     case FieldType.Email: return FieldEmail;
     case FieldType.Website: return FieldWebsite;
+    case FieldType.Icon: return FieldIcon;
     case FieldType.Badge: return FieldBadge;
     case FieldType.IndividualFile: return FieldIndividualFile;
     default: return null;
