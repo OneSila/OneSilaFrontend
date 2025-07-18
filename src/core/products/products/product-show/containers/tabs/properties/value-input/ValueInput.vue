@@ -292,7 +292,7 @@ onMounted(async () => {
     };
   }
 
-  if (field.value && props.value.property.type == PropertyTypes.SELECT) {
+  if (field.value && [PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(props.value.property.type) ) {
     field.value['createOnFlyConfig'] = selectValueOnTheFlyConfig(t, props.value.property.id)
   }
 

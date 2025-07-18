@@ -207,14 +207,14 @@ const handleSubmit = (data) => {
 
   processAndCleanData(rawDataRef.value);
 
-  if (props.field.multiple) {
-    const newData = selectedValue.value;
-    newData.push(data[props.field.valueBy]);
-    updateValue(newData);
-
-  } else {
-    updateValue(data[props.field.valueBy]);
-  }
+if (props.field.multiple) {
+  updateValue([
+    ...(selectedValue.value || []),
+    data[props.field.valueBy]
+  ]);
+} else {
+  updateValue(data[props.field.valueBy]);
+}
   showCreateOnFlyModal.value = false;
 };
 
