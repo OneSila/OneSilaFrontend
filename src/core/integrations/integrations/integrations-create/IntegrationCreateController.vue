@@ -108,6 +108,8 @@ const stepFourLabel = computed(() => {
 
   if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
     return t('integrations.create.wizard.step4.woocommerce.title');
+  }
+
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
     return t('integrations.create.wizard.step4.amazon.title');
   }
@@ -211,7 +213,6 @@ const allowNextStep = computed(() => {
   }
 
   if (
-<<<<<<< HEAD
     stepName === 'specificChannelStep' &&
     selectedIntegrationType.value === IntegrationTypes.Woocommerce &&
     isWoocommerceChannelInfo(specificChannelInfo.value)
@@ -222,15 +223,14 @@ const allowNextStep = computed(() => {
       return false;
     }
   }
-=======
-  stepName === 'specificChannelStep' &&
+
+  if (stepName === 'specificChannelStep' &&
   selectedIntegrationType.value === IntegrationTypes.Amazon &&
   !isAmazonChannelInfo(specificChannelInfo.value)
 ) {
   return false;
 }
 
->>>>>>> development
 
   return true;
 });

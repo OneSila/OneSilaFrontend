@@ -12,23 +12,23 @@ const close = () => emit('close');
   <Card class="modal-content w-[80%] px-10 pt-10">
     <div class="mb-6">
       <h3 class="text-xl font-semibold leading-7 text-gray-900">
-        {{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationTitle') }}
+        {{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationTitle') }}
       </h3>
     </div>
     <div class="space-y-6 pr-2 mb=4 overflow-y-auto max-h-96">
       <div>
         <p class="text-sm text-gray-700">
-          {{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationDescription') }}
+          {{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationDescription') }}
         </p>
         <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep1') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep2') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep3') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep4') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep5') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep6') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep7') }}</li>
-          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.section.integrationStep8') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep1') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep2') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep3') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep4') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep5') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep6') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep7') }}</li>
+          <li>{{ t('integrations.create.wizard.step1.woocommerceInfoModal.integrationStep8') }}</li>
         </ul>
       </div>
     </div>
