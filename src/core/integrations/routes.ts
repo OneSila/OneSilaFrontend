@@ -55,6 +55,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/property-select-values/containers/amazon-property-select-values/containers/IntegrationsAmazonPropertySelectValueEditController.vue'),
   },
   {
+    path: '/integrations/:type/amazon-default-unit-configurator/:id',
+    name: 'integrations.amazonDefaultUnitConfigurators.edit',
+    meta: { title: 'integrations.show.sections.defaultUnits' },
+    component: () => import('./integrations/integrations-show/containers/default-unit-configurators/containers/amazon-unit-configurators/containers/IntegrationsAmazonDefaultUnitConfiguratorEditController.vue'),
+  },
+  {
     path: '/integrations/:type/import/:integrationId',
     name: 'integrations.imports.create',
     meta: { title: 'integrations.imports.create.title' },

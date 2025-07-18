@@ -157,6 +157,10 @@
           "title": "Unmapped Product Types",
           "description": "Amazon product types that need mapping."
         },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped Local Product Types",
+          "description": "Local product types that need mapping to Amazon."
+        },
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Amazon property values that need mapping."
@@ -376,7 +380,10 @@
       "default": "Default",
       "submissionId": "Submission ID",
       "processingStatus": "Processing Status",
-      "issues": "Issues"
+      "issues": "Issues",
+      "message": "Message",
+      "severity": "Severity",
+      "validationIssue": "Validation Issue"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -2190,12 +2197,21 @@
         "title": "Amazon Rules",
         "labels": {
           "productTypeCode": "Product Type Code",
-          "productRule": "Product Rule"
+          "productRule": "Product Rule",
+          "productName": "Product name",
+          "selectedProductType": "Selected product type"
         },
         "help": {
           "productTypeCode": "Amazon identifier for this product type.",
-          "name": "Original Amazon name for the product type. You may change it.",
+          "productName": "Provide a product name and Amazon will suggest matching types.",
           "productRule": "Select the local product rule to link with this Amazon product type."
+        },
+        "titles": {
+          "suggestUsingName": "Get suggestion using product name",
+          "searchInAll": "Search in all"
+        },
+        "errors": {
+          "noSuggestions": "No recommended product types found."
         }
       },
       "properties": {
@@ -2249,6 +2265,7 @@
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
+      "pullLocalRules": "Pull Local Rules",
       "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",

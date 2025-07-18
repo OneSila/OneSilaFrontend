@@ -27,6 +27,7 @@ import { Currencies } from "./containers/currencies";
 import { Rules } from "./containers/rules";
 import { Properties } from "./containers/properties";
 import { PropertySelectValues } from "./containers/property-select-values";
+import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
@@ -57,7 +58,8 @@ if (type.value === IntegrationTypes.Amazon) {
   tabItems.value.push(
     { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
     { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
-    { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
+    { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
+    { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' }
   );
 }
 
@@ -249,6 +251,11 @@ const pullData = async () => {
           <!-- Property Select Values Tab -->
           <template #propertySelectValues>
             <PropertySelectValues v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
+          </template>
+
+          <!-- Default Units Tab -->
+          <template #defaultUnits>
+            <DefaultUnitConfigurators v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
         </Tabs>
       </Card>

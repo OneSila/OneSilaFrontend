@@ -69,6 +69,7 @@ export const productSubscription = gql`
           formattedIssues {
             message
             severity
+            validationIssue
           }
           product {
             id

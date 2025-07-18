@@ -219,7 +219,10 @@
       "image": "Afbeelding",
       "preview": "Preview",
       "discount": "Korting",
-      "discountPrice": ""
+      "discountPrice": "",
+      "message": "Bericht",
+      "severity": "Ernst",
+      "validationIssue": "Validatiefout"
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"

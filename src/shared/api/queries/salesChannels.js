@@ -830,6 +830,7 @@ export const getAmazonProductTypeQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      imported
       productTypeCode
       name
       localInstance {
@@ -916,7 +917,6 @@ export const amazonDefaultUnitConfiguratorsQuery = gql`
             name
           }
           selectedUnit
-          choices
         }
         cursor
       }

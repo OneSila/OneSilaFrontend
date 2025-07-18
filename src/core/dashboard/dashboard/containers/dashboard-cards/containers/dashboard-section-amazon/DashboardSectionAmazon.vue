@@ -2,9 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { injectAuth } from '../../../../../../../shared/modules/auth';
-import { integrationsQuery } from '../../../../../../../shared/api/queries/integrations.js';
 import {
-  getAmazonChannelQuery,
   amazonPropertiesQuery,
   amazonProductTypesQuery,
   amazonPropertySelectValuesQuery,
@@ -13,7 +11,6 @@ import {
 } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { dashboardAmazonProductsWithIssues } from '../../../../../../../shared/api/queries/dashboardCards.js';
 import apolloClient from '../../../../../../../../apollo-client';
-import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import { DashboardCard } from '../dashboard-card';
 import { Toggle } from '../../../../../../../shared/components/atoms/toggle';
 import { Card } from '../../../../../../../shared/components/atoms/card';
@@ -29,6 +26,7 @@ interface AmazonCardData {
   salesChannelId: string;
   properties: number;
   productTypes: number;
+  localProductTypes: number;
   selectValues: number;
   unitConfigurators: number;
   productsWithIssues: number;
@@ -40,7 +38,7 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
-  const [propRes, typeRes, valueRes, unitRes, issuesRes] = await Promise.all([
+  const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
     apolloClient.query({
       query: amazonPropertiesQuery,
       variables: {
@@ -58,6 +56,14 @@ const fetchCounts = async (salesChannelId: string) => {
       fetchPolicy: 'network-only',
     }),
     apolloClient.query({
+      query: amazonProductTypesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedRemotely: false },
+      },
+      fetchPolicy: 'network-only',
+    }),
+    apolloClient.query({
       query: amazonPropertySelectValuesQuery,
       variables: {
         first: 1,
@@ -69,7 +75,7 @@ const fetchCounts = async (salesChannelId: string) => {
       query: amazonDefaultUnitConfiguratorsQuery,
       variables: {
         first: 1,
-        filter: { salesChannel: { id: { exact: salesChannelId } } },
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false  },
       },
       fetchPolicy: 'network-only',
     }),
@@ -85,6 +91,7 @@ const fetchCounts = async (salesChannelId: string) => {
   return {
     properties: propRes.data?.amazonProperties?.totalCount || 0,
     productTypes: typeRes.data?.amazonProductTypes?.totalCount || 0,
+    localProductTypes: localTypeRes.data?.amazonProductTypes?.totalCount || 0,
     selectValues: valueRes.data?.amazonPropertySelectValues?.totalCount || 0,
     unitConfigurators: unitRes.data?.amazonDefaultUnitConfigurators?.totalCount || 0,
     productsWithIssues: issuesRes.data?.products?.totalCount || 0,
@@ -180,6 +187,14 @@ onMounted(fetchAmazonIntegrations);
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
         />
         <DashboardCard
+          :counter="integration.localProductTypes"
+          :title="t('dashboard.cards.amazon.unmappedLocalProductTypes.title')"
+          :description="t('dashboard.cards.amazon.unmappedLocalProductTypes.description')"
+          :hide-on-complete="!showCompletedAmazonCards"
+          color="red"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
+        />
+        <DashboardCard
           :counter="integration.properties"
           :title="t('dashboard.cards.amazon.unmappedProperties.title')"
           :description="t('dashboard.cards.amazon.unmappedProperties.description')"
@@ -201,7 +216,7 @@ onMounted(fetchAmazonIntegrations);
           :description="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.description')"
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'general', accordion: 'units' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'defaultUnits', mappedLocally: false } }"
         />
         <DashboardCard
           :counter="integration.productsWithIssues"
