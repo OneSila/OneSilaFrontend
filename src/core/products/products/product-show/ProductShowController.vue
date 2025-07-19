@@ -129,7 +129,7 @@ const redirectToList = (response) => {
                   <div v-else class="mb-5 w-20 h-20 overflow-hidden rounded-md bg-gray-300 flex justify-center items-center">
                     <Icon class="text-white" size="xl" name="question" />
                   </div>
-                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
+                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 sm:text-left">
                     <h5 class="text-[#3b3f5c] text-[15px] font-semibold text-xl mb-2 dark:text-white-light" :title="getResultData(result, 'name')">
                       {{ shortenText(getResultData(result, 'name'), 64) }}
                     </h5>
