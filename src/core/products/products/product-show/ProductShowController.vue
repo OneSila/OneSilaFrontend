@@ -119,8 +119,8 @@ const redirectToList = (response) => {
         <template v-if="!loading && result">
           <Card>
             <div class="grid xl:grid-cols-2 gap-8 mb-6">
-              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none sm:max-h-48 max-h-72">
-                <div class="p-5 flex items-center flex-col sm:flex-row">
+              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none sm:max-h-48 max-h-none">
+                <div class="p-5 flex items-start sm:items-center flex-col sm:flex-row">
                   <Link v-if="getResultData(result, 'thumbnailUrl')" :path="{ name: 'products.products.show', params: { id: id }, query: { ...route.query, tab: 'media' } }">
                     <div class="mb-5 w-20 h-20 overflow-hidden">
                       <Image class="w-20 h-20 rounded-md overflow-hidden object-cover" :source="getResultData(result, 'thumbnailUrl')" />
@@ -129,7 +129,7 @@ const redirectToList = (response) => {
                   <div v-else class="mb-5 w-20 h-20 overflow-hidden rounded-md bg-gray-300 flex justify-center items-center">
                     <Icon class="text-white" size="xl" name="question" />
                   </div>
-                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 sm:text-left">
+                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-left">
                     <h5 class="text-[#3b3f5c] text-[15px] font-semibold text-xl mb-2 dark:text-white-light" :title="getResultData(result, 'name')">
                       {{ shortenText(getResultData(result, 'name'), 64) }}
                     </h5>
