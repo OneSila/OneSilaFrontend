@@ -7,7 +7,7 @@ import { Toggle } from "../../atoms/toggle";
 import {useI18n} from "vue-i18n";
 import { ProductType, variationTypes } from "../../../utils/constants";
 import apolloClient from "../../../../../apollo-client";
-import { productsQuery } from "../../../api/queries/products.js";
+import { minimalProductsQuery } from "../../../api/queries/products.js";
 import { TextInput } from "../../atoms/input-text";
 import debounce from 'lodash.debounce';
 import Swal from 'sweetalert2';
@@ -87,7 +87,7 @@ const fetchData = async () => {
   };
 
   const { data } = await apolloClient.query({
-    query: productsQuery,
+    query: minimalProductsQuery,
     variables: variables,
     fetchPolicy: 'network-only'
   });

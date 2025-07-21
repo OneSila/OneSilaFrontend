@@ -1,5 +1,33 @@
 import { gql } from 'graphql-tag';
 
+
+export const minimalProductsQuery = gql`  
+query Products($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
+    products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+          type
+          proxyId
+          thumbnailUrl
+          inspectorStatus
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const productsQuery = gql`  
 query Products($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
     products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
