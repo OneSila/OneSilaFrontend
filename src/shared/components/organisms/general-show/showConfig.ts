@@ -12,6 +12,7 @@ import {FieldWebsite} from "./containers/field-website";
 import {FieldBadge} from "./containers/field-badge";
 import {FieldIcon} from "./containers/field-icon";
 import {FieldIndividualFile} from "./containers/field-individual-file";
+import {FieldInspectorProgress} from "./containers/field-inspector-progress";
 
 export interface ShowBaseField {
   name: string;
@@ -97,7 +98,11 @@ export interface IconField extends ShowBaseField {
   iconMap: Record<string, Icon>;
 }
 
-export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | IndividualFileField;
+export interface InspectorProgressField extends ShowBaseField {
+  type: FieldType.InspectorProgress;
+}
+
+export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | IndividualFileField | InspectorProgressField;
 
 export const updateField = (showConfig, fieldName, newConfig) => {
   const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
@@ -120,6 +125,7 @@ export const getFieldComponent = (type) => {
     case FieldType.Icon: return FieldIcon;
     case FieldType.Badge: return FieldBadge;
     case FieldType.IndividualFile: return FieldIndividualFile;
+    case FieldType.InspectorProgress: return FieldInspectorProgress;
     default: return null;
   }
 };
