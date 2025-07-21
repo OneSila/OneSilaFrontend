@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
 
 .popover-content.middle {
   top: 50%;
-  left: calc(100% + 0.5rem);
+  left: 50px;
   transform: translateY(-50%);
 }
 </style>
