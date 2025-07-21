@@ -227,13 +227,15 @@ const cancel = () => {
       />
     </template>
     <template v-slot:content>
-      <div v-if="formConfig && Object.keys(fields).length">
-        <div class="px-4 py-6 sm:p-8">
-          <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-            <div v-if="fields.property && fields.property.type !== FieldType.Hidden" class="col-span-full">
-              <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.property.label }}</label>
-              <FieldQuery :field="fields.property as QueryFormField" :model-value="form.property.id" @update:modelValue="form.property.id = $event" />
-            </div>
+      <div v-if="formConfig && Object.keys(fields).length" class="space-y-10 divide-y divide-gray-900/10 mt-4">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+            <div class="px-4 py-6 sm:p-8">
+              <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+                <div v-if="fields.property && fields.property.type !== FieldType.Hidden" class="col-span-full">
+                  <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.property.label }}</label>
+                  <FieldQuery :field="fields.property as QueryFormField" :model-value="form.property.id" @update:modelValue="form.property.id = $event" />
+                </div>
 
             <div class="col-span-full mt-3">
               <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.value.label }}</label>
@@ -244,16 +246,18 @@ const cancel = () => {
               <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.image.label }}</label>
               <FieldImage :field="fields.image as ImageFormField" :model-value="form.image" @update:modelValue="form.image = $event" />
             </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+              <CancelButton @click="cancel">{{ t('shared.button.cancel') }}</CancelButton>
+              <SecondaryButton v-if="formConfig.addSubmitAndContinue" @click="checkDuplicatesAndCreate(true)">
+                {{ t('shared.button.saveAndContinue') }}
+              </SecondaryButton>
+              <PrimaryButton @click="checkDuplicatesAndCreate(false)">
+                {{ t('shared.button.save') }}
+              </PrimaryButton>
+            </div>
           </div>
-        </div>
-        <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-          <CancelButton @click="cancel">{{ t('shared.button.cancel') }}</CancelButton>
-          <SecondaryButton v-if="formConfig.addSubmitAndContinue" @click="checkDuplicatesAndCreate(true)">
-            {{ t('shared.button.saveAndContinue') }}
-          </SecondaryButton>
-          <PrimaryButton @click="checkDuplicatesAndCreate(false)">
-            {{ t('shared.button.save') }}
-          </PrimaryButton>
         </div>
       </div>
     </template>
