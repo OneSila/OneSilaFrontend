@@ -351,9 +351,8 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
       name: 'sku'
     },
     {
-      name: 'inspectorStatus',
-      type: FieldType.Icon,
-      iconMap: getInspectorStatusIconMap(t),
+      name: 'percentageInspectorStatus',
+      type: FieldType.InspectorProgress,
     },
     {
       type: FieldType.Badge,
@@ -469,6 +468,11 @@ export interface ProductWithAliasFields extends Product {
   name: string;
   thumbnailUrl?: string;
   inspectorStatus: number;
+  percentageInspectorStatus?: {
+    percentage: number;
+    inspectorStatus: number;
+    blocks: { code: string | number; completed: boolean }[];
+  };
 }
 
 

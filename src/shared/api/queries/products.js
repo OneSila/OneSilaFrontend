@@ -12,7 +12,14 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           type
           proxyId
           thumbnailUrl
-          inspectorStatus
+          percentageInspectorStatus {
+            percentage
+            inspectorStatus
+            blocks {
+              code
+              completed
+            }
+          }
           vatRate {
             id
             name
