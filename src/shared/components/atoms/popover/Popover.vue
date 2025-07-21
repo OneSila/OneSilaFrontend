@@ -59,3 +59,17 @@ onBeforeUnmount(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.popover-content.bottom {
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.popover-content.middle {
+  top: 50%;
+  left: calc(100% + 0.5rem);
+  transform: translateY(-50%);
+}
+</style>

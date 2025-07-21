@@ -69,7 +69,7 @@ const barColor = computed(() => {
 
 <template>
   <div :class="field.customCssClass" :style="field.customCss">
-    <Popover position="bottom" :hover="!isMobile">
+    <Popover position="middle" :hover="!isMobile">
       <template #trigger>
         <div>
           <div class="w-20 mb-1">
@@ -89,7 +89,11 @@ const barColor = computed(() => {
       </template>
       <div class="bg-white p-4 rounded shadow-md text-left">
         <ul>
-          <li v-for="block in modelValue?.blocks" :key="block.code" class="flex items-center gap-2 py-2 z-50">
+          <li
+            v-for="block in modelValue?.blocks"
+            :key="block.code"
+            class="flex items-center gap-2 py-2 z-50 hover:bg-gray-100 border-b border-gray-200 last:border-b-0"
+          >
             <Icon :name="block.completed ? 'circle-check' : 'circle-xmark'" size="sm"
                   :class="block.completed ? 'text-green-600' : 'text-red-600'" />
             <span>{{ t(`dashboard.cards.products.inspector.${block.code}.title`) }}</span>
