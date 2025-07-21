@@ -5,10 +5,9 @@ import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs';
-import SettingsTemplate from "../../SettingsTemplate.vue";
 import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
 import { getTabsConfig } from "../../tabs";
-import { Alert } from "../../../../shared/components/atoms/alert";
+import SettingsTemplate from "../../SettingsTemplate.vue";
 
 const { t } = useI18n();
 
@@ -37,10 +36,12 @@ const listingConfig = listingConfigConstructor(t);
     </template>
 
     <template v-slot:content>
-      <Alert variant="info" class="mb-4">
-        <template #title>{{ t('settings.brandIdentity.descriptionCard.title') }}</template>
+      <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+        <span class="font-medium flex items-center gap-1">
+          ⚠️ {{ t('settings.brandIdentity.descriptionCard.title') }}
+        </span>
         {{ t('settings.brandIdentity.descriptionCard.content') }}
-      </Alert>
+      </div>
       <GeneralListing
         :searchConfig="searchConfig"
         :config="listingConfig"

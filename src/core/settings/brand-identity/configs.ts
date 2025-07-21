@@ -67,12 +67,10 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   headers: [
     t('settings.brandIdentity.labels.brand'),
     t('shared.labels.language'),
-    t('settings.brandIdentity.labels.prompt'),
   ],
   fields: [
     { name: 'brandValue', type: FieldType.NestedText, keys: ['value'] },
     { name: 'language', type: FieldType.Text },
-    { name: 'prompt', type: FieldType.Text },
   ],
   identifierKey: 'id',
   addActions: true,
