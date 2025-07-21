@@ -320,7 +320,9 @@
       "translate": "Translate",
       "deleteAll": "Delete all",
       "editAll": "Edit all",
-      "change": "Change"
+      "change": "Change",
+      "createAnyway": "Create anyway",
+      "abort": "Abort"
     },
     "colors": {
       "red": "Red",
@@ -2042,8 +2044,12 @@
         "date": "Date",
         "datetime": "Date and Time",
         "select": "Single Select",
-        "multiselect": "Multiselect"
+      "multiselect": "Multiselect"
       }
+    },
+    "duplicateModal": {
+      "title": "Properties with similar name found",
+      "content": "Select an existing property below or create the new one anyway."
     },
     "values": {
       "title": "Select Values",

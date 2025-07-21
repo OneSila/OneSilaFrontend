@@ -10,6 +10,18 @@ export const createPropertyMutation = gql`
   }
 `;
 
+export const checkPropertyForDuplicatesMutation = gql`
+  mutation checkPropertyForDuplicates($data: PropertyInput!) {
+    checkPropertyForDuplicates(data: $data) {
+      duplicateFound
+      duplicates {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const createPropertiesMutation = gql`
   mutation createProperties($data: [PropertyInput!]!) {
     createProperties(data: $data) {

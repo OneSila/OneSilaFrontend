@@ -19,7 +19,8 @@ import {DateInput} from "../../../../shared/components/atoms/input-date";
 import DateTimeInput from "../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
-import { createPropertyMutation } from "../../../../shared/api/mutations/properties.js";
+import { createPropertyMutation, checkPropertyForDuplicatesMutation } from "../../../../shared/api/mutations/properties.js";
+import { DuplicateModal } from "../../../../shared/components/molecules/duplicate-modal";
 import {processGraphQLErrors} from "../../../../shared/utils";
 
 const router = useRouter();
@@ -33,6 +34,8 @@ const step = ref(0);
 const loading = ref(false);
 const isAmazonWizard = route.query.amazonWizard === '1';
 const amazonCreateValue = route.query.amazonCreateValue ? route.query.amazonCreateValue.toString() : null;
+const showDuplicateModal = ref(false);
+const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
 
 interface PropertyForm {
   name: string,
@@ -132,35 +135,53 @@ const onError = (error) => {
   }
 };
 
+const createProperty = async () => {
+  const { data } = await apolloClient.mutate({
+    mutation: createPropertyMutation,
+    variables: { data: form }
+  });
+
+  if (data && data.createProperty) {
+    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+    if (amazonRuleId) {
+      const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
+      const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
+      if (integrationId) {
+        url.query = {
+          integrationId,
+          salesChannelId,
+          propertyId: data.createProperty.id,
+          wizard: isAmazonWizard ? '1' : '0',
+          ...(amazonCreateValue ? { amazonCreateValue } : {}),
+        };
+      }
+      router.push(url);
+    } else {
+      router.push({ name: 'properties.properties.edit', params: { id: data.createProperty.id }, query: { tab: 'translations' } });
+    }
+  }
+};
+
 const handleFinish = async () => {
-  try{
+  try {
     const { data } = await apolloClient.mutate({
-      mutation: createPropertyMutation,
-      variables: {data: form}
+      mutation: checkPropertyForDuplicatesMutation,
+      variables: { data: form }
     });
 
-    if (data && data.createProperty) {
-      Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
-      if (amazonRuleId) {
-        const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
-        const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
-        if (integrationId) {
-          url.query = {
-            integrationId,
-            salesChannelId,
-            propertyId: data.createProperty.id,
-            wizard: isAmazonWizard ? '1' : '0',
-            ...(amazonCreateValue ? { amazonCreateValue } : {}),
-          };
-        }
-        router.push(url);
-      } else {
-        router.push({name: 'properties.properties.edit', params: { id: data.createProperty.id}, query: {tab: 'translations'}})
-      }
+    if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
+      duplicateItems.value = data.checkPropertyForDuplicates.duplicates.map((p: any) => ({
+        label: p.name,
+        urlParam: { name: 'properties.properties.show', params: { id: p.id } }
+      }));
+      showDuplicateModal.value = true;
+      return;
     }
+
+    await createProperty();
   } catch (err) {
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
-    onError(graphqlError)
+    onError(graphqlError);
   }
 }
 
@@ -181,6 +202,7 @@ const multiSelectorPreviewExamples = [
 </script>
 
 <template>
+  <div>
   <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
@@ -379,4 +401,12 @@ const multiSelectorPreviewExamples = [
       </Wizard>
    </template>
   </GeneralTemplate>
+  <DuplicateModal
+      v-model="showDuplicateModal"
+      :title="t('properties.properties.duplicateModal.title')"
+      :content="t('properties.properties.duplicateModal.content')"
+      :items="duplicateItems"
+      @create-anyway="createProperty"
+  />
+  </div>
 </template>
