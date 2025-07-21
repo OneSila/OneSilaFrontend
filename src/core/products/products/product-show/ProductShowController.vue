@@ -20,12 +20,13 @@ import { Link } from "../../../../shared/components/atoms/link";
 import ProductBundle from "./containers/product-type/product-bundle/ProductBundle.vue";
 import ProductConfigurable from "./containers/product-type/product-configurable/ProductConfigurable.vue";
 import ProductVariation from "./containers/product-type/product-variation/ProductVariation.vue";
-import { shortenText } from "../../../../shared/utils/index"
+import {processGraphQLErrors, shortenText} from "../../../../shared/utils/index"
 
 import {getProductTypeBadgeMap, ProductWithAliasFields} from "../configs";
 import {ProductInspector} from "./containers/product-inspector";
 import apolloClient from "../../../../../apollo-client";
 import { DuplicateProductModal } from "./containers/duplicate-product-modal";
+import {Toast} from "../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -115,8 +116,11 @@ const handleDuplicate = async (sku: string | null) => {
     if (data && data.duplicateProduct) {
       router.push({ name: 'products.products.show', params: { id: data.duplicateProduct.id } });
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
   }
 };
 
