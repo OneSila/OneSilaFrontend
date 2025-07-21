@@ -1633,6 +1633,26 @@
         "week": "Week",
         "month": "Maand"
       }
+    },
+    "brandIdentity": {
+      "title": "Merkidentiteit",
+      "create": {
+        "title": "Merkbeschrijving toevoegen"
+      },
+      "edit": {
+        "title": "Merkbeschrijving bewerken"
+      },
+      "labels": {
+        "brand": "Merk",
+        "prompt": "Beschrijving"
+      },
+      "placeholders": {
+        "prompt": "Voer beschrijving in"
+      },
+      "descriptionCard": {
+        "title": "Geef je merken een stem",
+        "content": "Voeg een aangepaste beschrijving toe voor dit merk om te bepalen hoe het wordt weergegeven in AI-gegenereerde inhoud. Je kunt verschillende beschrijvingen maken voor verschillende talen. Als de taal leeg blijft, wordt dit de standaardbeschrijving voor het merk."
+      }
     }
   },
   "network": {

@@ -37,6 +37,25 @@ export const routes = [
         component: () => import('./vat-rates/vat-rate-edit/VatRateEditController.vue')
     },
 
+    {
+        path: '/settings/brand-identity',
+        name: 'settings.brandIdentity.list',
+        meta: { title: 'settings.title' },
+        component: () => import('./brand-identity/brand-custom-prompts-list/BrandCustomPromptsListController.vue')
+    },
+    {
+        path: '/settings/brand-identity/create',
+        name: 'settings.brandIdentity.create',
+        meta: { title: 'settings.title' },
+        component: () => import('./brand-identity/brand-custom-prompt-create/BrandCustomPromptCreateController.vue')
+    },
+    {
+        path: '/settings/brand-identity/edit/:id',
+        name: 'settings.brandIdentity.edit',
+        meta: { title: 'settings.title' },
+        component: () => import('./brand-identity/brand-custom-prompt-edit/BrandCustomPromptEditController.vue')
+    },
+
     // {
     //     path: '/settings/units',
     //     name: 'settings.units.list',

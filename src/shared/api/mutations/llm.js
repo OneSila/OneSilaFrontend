@@ -95,3 +95,64 @@ export const generateProductAiBulletPointsMutation = gql`
     }
   }
 `;
+
+export const createBrandCustomPromptMutation = gql`
+  mutation createBrandCustomPrompt($data: BrandCustomPromptInput!) {
+    createBrandCustomPrompt(data: $data) {
+      id
+      language
+      prompt
+      brandValue {
+        id
+        value
+        fullValueName
+      }
+    }
+  }
+`;
+
+export const createBrandCustomPromptsMutation = gql`
+  mutation createBrandCustomPrompts($data: [BrandCustomPromptInput!]!) {
+    createBrandCustomPrompts(data: $data) {
+      id
+      language
+      prompt
+      brandValue {
+        id
+        value
+        fullValueName
+      }
+    }
+  }
+`;
+
+export const updateBrandCustomPromptMutation = gql`
+  mutation updateBrandCustomPrompt($data: BrandCustomPromptPartialInput!) {
+    updateBrandCustomPrompt(data: $data) {
+      id
+      language
+      prompt
+      brandValue {
+        id
+        value
+        fullValueName
+      }
+    }
+  }
+`;
+
+export const deleteBrandCustomPromptMutation = gql`
+  mutation deleteBrandCustomPrompt($id: GlobalID!) {
+    deleteBrandCustomPrompt(data: { id: $id }) {
+      id
+    }
+  }
+`;
+
+export const deleteBrandCustomPromptsMutation = gql`
+  mutation deleteBrandCustomPrompts($ids: [GlobalID!]!) {
+    deleteBrandCustomPrompts(data: { ids: $ids }) {
+      id
+    }
+  }
+`;
