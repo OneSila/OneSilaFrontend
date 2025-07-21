@@ -188,7 +188,7 @@ const checkDuplicatesAndCreate = async (editAfter = false) => {
     const propertyId = cleanedData.property.id || cleanedData.property;
     const { data } = await apolloClient.mutate({
       mutation: checkPropertySelectValueForDuplicatesMutation,
-      variables: { property: propertyId, value: cleanedData.value },
+      variables: { property: {id: propertyId}, value: cleanedData.value },
     });
 
     if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
