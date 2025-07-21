@@ -1092,7 +1092,8 @@
       },
       "duplicateModal": {
         "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
-      }
+      },
+      "duplicateSuccessfully": "Product was successfully duplicated!"
     }
   },
   "inventory": {

@@ -799,7 +799,8 @@
       },
       "show": {
         "title": "Product"
-      }
+      },
+      "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
   },
   "inventory": {
