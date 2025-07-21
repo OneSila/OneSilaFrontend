@@ -158,7 +158,7 @@ const redirectToList = (response) => {
                       </FlexCell>
 
                     </Flex>
-                    <Flex class="gap-2  flex-col sm:flex-row">
+                    <Flex class="gap-2 flex-col sm:flex-row">
                       <FlexCell>
                         <Label semi-bold>{{ t('shared.labels.active') }}:</Label>
                           <Icon v-if="getResultData(result, 'active')" name="check-circle" class="ml-1 text-green-500" />
