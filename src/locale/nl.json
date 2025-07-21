@@ -177,7 +177,9 @@
       "generate": "Genereren",
       "change": "Wijzig",
       "fix": "Fixen",
-      "downloadConfirmation": ""
+      "downloadConfirmation": "",
+      "createAnyway": "Toch aanmaken",
+      "abort": "Afbreken"
     },
     "colors": {
       "red": "Rood",
@@ -1708,8 +1710,12 @@
         "date": "Datum",
         "datetime": "Datum en Tijd",
         "select": "Enkele keuze",
-        "multiselect": "Meerdere keuzes"
+      "multiselect": "Meerdere keuzes"
       }
+    },
+    "duplicateModal": {
+      "title": "Eigenschappen met gelijkaardige naam gevonden",
+      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan."
     },
     "values": {
       "title": "Selectie Waardes",
