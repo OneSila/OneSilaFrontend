@@ -285,9 +285,10 @@
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
         "errorOccurred": "An error occurred.",
-        "bulkDeleteSuccess": "Items deleted successfully.",
-        "bulkDeleteError": "An error occurred while deleting items."
-      }
+      "bulkDeleteSuccess": "Items deleted successfully.",
+      "bulkDeleteError": "An error occurred while deleting items."
+      },
+      "noData": "The rule has no required in configurator properties, therefore we can't generate variation based on that"
     },
     "button": {
       "login": "Log in",
@@ -386,7 +387,9 @@
       "issues": "Issues",
       "message": "Message",
       "severity": "Severity",
-      "validationIssue": "Validation Issue"
+      "validationIssue": "Validation Issue",
+      "manual": "Manual",
+      "generate": "Generate"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -1063,10 +1066,11 @@
             }
           },
           "stepFour": {
-            "configurable": {
-              "title": "Variations",
-              "selectVariations": "Please select the variations:"
-            },
+          "configurable": {
+            "title": "Variations",
+            "selectVariations": "Please select the variations:",
+            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically."
+          },
             "simple": {
               "title": "Buying",
               "whereBuy": "Where do you buy it?",

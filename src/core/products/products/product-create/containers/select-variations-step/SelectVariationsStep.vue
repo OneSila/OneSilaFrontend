@@ -58,7 +58,7 @@ const handleSelectedUpdate = (vals: string[]) => {
     <h1 class="text-2xl text-center mb-2">{{ productDescriptionMap[form.type] }}</h1>
     <hr>
     <div v-if="form.type === PRODUCT_CONFIGURABLE && additionalFieldsForm.productType.id">
-      <OptionSelector v-model="mode" :choices="[{ name: 'manual' }, { name: 'generate' }]" row>
+      <OptionSelector v-model="mode" :choices="[{ name: 'manual' }, { name: 'generate' }]">
         <template #manual>
           <span class="font-medium">{{ t('shared.labels.manual') }}</span>
         </template>

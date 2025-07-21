@@ -225,7 +225,12 @@
       "discountPrice": "",
       "message": "Bericht",
       "severity": "Ernst",
-      "validationIssue": "Validatiefout"
+      "validationIssue": "Validatiefout",
+      "manual": "Handmatig",
+      "generate": "Genereren"
+    },
+    "alert": {
+      "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"
@@ -771,10 +776,11 @@
             }
           },
           "stepFour": {
-            "configurable": {
-              "title": "Variaties",
-              "selectVariations": "Selecteer de variaties:"
-            },
+          "configurable": {
+            "title": "Variaties",
+            "selectVariations": "Selecteer de variaties:",
+            "generateDescription": "Kies hieronder de waarden. Variaties voor deze waarden worden automatisch gegenereerd."
+          },
             "simple": {
               "title": "Kopen",
               "whereBuy": "Waar koopt u dit item?",
