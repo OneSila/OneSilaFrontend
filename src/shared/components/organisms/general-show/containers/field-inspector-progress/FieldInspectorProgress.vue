@@ -40,7 +40,6 @@ const label = computed(() => {
 
 const labelColor = computed(() => {
   if (!props.modelValue) return '';
-  if (props.modelValue.percentage < 100) return 'text-yellow-500';
   switch (props.modelValue.inspectorStatus) {
     case InspectorStatus.GREEN:
       return 'text-green-600';
@@ -55,7 +54,6 @@ const labelColor = computed(() => {
 
 const barColor = computed(() => {
   if (!props.modelValue) return '';
-  if (props.modelValue.percentage < 100) return 'bg-yellow-400';
   switch (props.modelValue.inspectorStatus) {
     case InspectorStatus.GREEN:
       return 'bg-green-500';
@@ -74,10 +72,7 @@ const barColor = computed(() => {
     <Popover position="bottom" :hover="!isMobile">
       <template #trigger>
         <div>
-          <div class="flex justify-between mb-1">
-            <span :class="['text-base', 'font-medium', labelColor, 'hidden sm:block']">
-              {{ label }}
-            </span>
+          <div class="w-20 mb-1">
             <span :class="[labelColor, 'text-sm', 'font-medium', 'block sm:hidden']">
               {{ Math.floor(modelValue?.percentage ?? 0) }}%
             </span>
@@ -92,9 +87,9 @@ const barColor = computed(() => {
           </div>
         </div>
       </template>
-      <div class="bg-white p-2 rounded shadow-md text-left">
+      <div class="bg-white p-4 rounded shadow-md text-left">
         <ul>
-          <li v-for="block in modelValue?.blocks" :key="block.code" class="flex items-center gap-2 py-1">
+          <li v-for="block in modelValue?.blocks" :key="block.code" class="flex items-center gap-2 py-2 z-50">
             <Icon :name="block.completed ? 'circle-check' : 'circle-xmark'" size="sm"
                   :class="block.completed ? 'text-green-600' : 'text-red-600'" />
             <span>{{ t(`dashboard.cards.products.inspector.${block.code}.title`) }}</span>
