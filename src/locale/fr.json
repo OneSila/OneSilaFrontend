@@ -14,7 +14,12 @@
     "labels": {
       "message": "Message",
       "severity": "Gravité",
-      "validationIssue": "Problème de validation"
+      "validationIssue": "Problème de validation",
+      "manual": "Manuel",
+      "generate": "Générer"
+    },
+    "alert": {
+      "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."
     }
   },
   "auth": {
@@ -58,6 +63,20 @@
       },
       "placeholders": {
         "email": "Entrez l'e-mail"
+      }
+    }
+  }
+  ,
+  "products": {
+    "products": {
+      "create": {
+        "wizard": {
+          "stepFour": {
+            "configurable": {
+              "generateDescription": "Choisissez les valeurs ci-dessous. Les variations pour ces valeurs seront g\u00e9n\u00e9r\u00e9es automatiquement."
+            }
+          }
+        }
       }
     }
   }

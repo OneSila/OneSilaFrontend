@@ -2,8 +2,6 @@
 import { ref, onMounted, watch, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Accordion } from '../../atoms/accordion';
-import { PrimaryButton } from '../../atoms/button-primary';
-import { SecondaryButton } from '../../atoms/button-secondary';
 import apolloClient from '../../../../../apollo-client';
 import { productPropertiesRulesQuery, propertySelectValuesQuery } from '../../../api/queries/properties.js';
 import { ConfigTypes } from '../../../utils/constants';
@@ -104,21 +102,35 @@ const deselectAll = (idx: number) => {
   properties.value[idx].selected = [];
   emitSelected();
 };
+
+const toggleAll = (idx: number) => {
+  if (properties.value[idx].selected.length === properties.value[idx].values.length) {
+    deselectAll(idx);
+  } else {
+    selectAll(idx);
+  }
+};
 </script>
 
 <template>
   <div>
+    <p class="mb-4 text-sm text-gray-500" v-if="!loading && properties.length">
+      {{ t('products.products.create.wizard.stepFour.configurable.generateDescription') }}
+    </p>
     <div v-if="loading" class="text-center my-4">{{ t('shared.labels.loading') }}</div>
-    <Accordion v-else-if="properties.length" :items="properties.map((p, i) => ({ name: 'prop' + i, label: p.propertyName }))">
+    <Accordion v-else-if="properties.length"
+               :items="properties.map((p, i) => ({ name: 'prop' + i, label: `${p.propertyName} (${p.selected.length} / ${p.values.length} ${t('shared.labels.selected')})` }))"
+               default-active="prop0">
       <template v-for="(prop, index) in properties" #[`prop${index}`]="">
-        <div class="mb-2 flex justify-end gap-2">
-          <PrimaryButton class="px-2 py-1" @click="selectAll(index)">
-            {{ t('shared.button.selectAll') }}
-          </PrimaryButton>
-          <SecondaryButton class="px-2 py-1" @click="deselectAll(index)">
-            {{ t('shared.button.deselectAll') }}
-          </SecondaryButton>
+        <div class="mb-2 flex justify-end">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" :checked="prop.selected.length === prop.values.length" @change="toggleAll(index)" />
+            <span class="font-medium">
+              {{ prop.selected.length === prop.values.length ? t('shared.button.deselectAll') : t('shared.button.selectAll') }}
+            </span>
+          </label>
         </div>
+        <hr class="mb-2">
         <div class="overflow-y-auto max-h-60">
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
             <label v-for="val in prop.values" :key="val.id" class="flex items-center gap-2">
@@ -129,6 +141,8 @@ const deselectAll = (idx: number) => {
         </div>
       </template>
     </Accordion>
-    <div v-else class="text-center text-gray-500">{{ t('shared.alert.noData') }}</div>
+    <div v-else class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center" role="alert">
+      {{ t('shared.alert.noData') }}
+    </div>
   </div>
 </template>
