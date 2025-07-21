@@ -114,6 +114,7 @@ const handleDuplicate = async (sku: string | null) => {
     });
 
     if (data && data.duplicateProduct) {
+      Toast.success(t('products.products.duplicateSuccessfully'));
       router.push({ name: 'products.products.show', params: { id: data.duplicateProduct.id } });
     }
   } catch (error) {
