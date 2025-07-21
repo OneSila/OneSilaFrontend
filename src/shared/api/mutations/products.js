@@ -599,9 +599,9 @@ export const deleteProductTranslationBulletPointsMutation = gql`
 `;
 
 export const generateProductVariationsMutation = gql`
-  mutation generateProductVariations($product: ProductPartialInput!, $rule: ProductPropertiesRulePartialInput!, $values: [PropertySelectValuePartialInput!]!) {
-    generateProductVariations(product: $product, rule: $rule, values: $values) {
-      id
+  mutation generateProductVariations($product: ProductPartialInput!, $ruleProductType: PropertySelectValuePartialInput!, $selectValues: [PropertySelectValuePartialInput!]!) {
+    generateProductVariations(product: $product, ruleProductType: $ruleProductType, selectValues: $selectValues) {
+      success
     }
   }
 `;

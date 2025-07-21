@@ -44,5 +44,4 @@ export interface AdditonalFormFields {
   relatedProducts: RelatedProduct[];
   productType: ProductType;
   propertyValueIds: string[];
-  ruleId: string | null;
 }

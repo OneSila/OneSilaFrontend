@@ -20,7 +20,6 @@ const productDescriptionMap = {
 
 const mode = ref('manual');
 const selectedValues = ref<string[]>(props.additionalFieldsForm.propertyValueIds);
-const ruleId = ref<string | null>(null);
 
 const resetForm = () => {
   isFormVisible.value = false;
@@ -48,16 +47,8 @@ watch(selectedValues, () => {
   props.additionalFieldsForm.propertyValueIds = selectedValues.value;
 });
 
-watch(ruleId, () => {
-  props.additionalFieldsForm.ruleId = ruleId.value;
-});
-
 const handleSelectedUpdate = (vals: string[]) => {
   selectedValues.value = vals;
-};
-
-const handleRuleIdUpdate = (id: string | null) => {
-  ruleId.value = id;
 };
 
 </script>
@@ -79,7 +70,7 @@ const handleRuleIdUpdate = (id: string | null) => {
 
     <div class="my-4">
       <VariationsAdder v-if="mode === 'manual'" class="my-4" :product-type-id="additionalFieldsForm.productType.id" :added-variations="variations" :type="form.type" @add="addVariation" @remove="removeVariation" />
-      <VariationsGenerator v-else class="my-4" :product-type-id="additionalFieldsForm.productType.id" @update:selected="handleSelectedUpdate" @update:rule-id="handleRuleIdUpdate" />
+      <VariationsGenerator v-else class="my-4" :product-type-id="additionalFieldsForm.productType.id" @update:selected="handleSelectedUpdate" />
     </div>
   </div>
 </template>

@@ -68,7 +68,6 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
     },
     relatedProducts: [],
     propertyValueIds: [],
-    ruleId: null,
     price: {
       rrp: null,
       price: null,
@@ -99,7 +98,6 @@ watch(
       additionalFieldsForm.price.currency.id = null;
 
       additionalFieldsForm.propertyValueIds = [];
-      additionalFieldsForm.ruleId = null;
 
       return;
     }
@@ -268,8 +266,8 @@ const generateVariations = async (productId) => {
       mutation: generateProductVariationsMutation,
       variables: {
         product: { id: productId },
-        rule: { id: additionalFieldsForm.ruleId },
-        values: additionalFieldsForm.propertyValueIds.map(id => ({ id }))
+        ruleProductType: { id: additionalFieldsForm.productType.id },
+        selectValues: additionalFieldsForm.propertyValueIds.map(id => ({ id }))
       }
     });
   } catch (error) {
@@ -291,7 +289,8 @@ const processAdditionalFields = async (productId) => {
 
   // Create related products or generate variations
   if (form.type === ProductType.Configurable) {
-    if (additionalFieldsForm.propertyValueIds.length > 0 && additionalFieldsForm.ruleId) {
+    if (additionalFieldsForm.propertyValueIds.length > 0 && additionalFieldsForm.productType.id) {
+      alert('????')
       await generateVariations(productId);
     } else if (additionalFieldsForm.relatedProducts.length > 0) {
       await createRelatedProducts(productId);
