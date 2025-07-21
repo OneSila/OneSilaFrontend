@@ -120,6 +120,18 @@ export const createPropertySelectValueMutation = gql`
   }
 `;
 
+export const checkPropertySelectValueForDuplicatesMutation = gql`
+  mutation checkPropertySelectValueForDuplicates($property: GlobalID!, $value: String!) {
+    checkPropertySelectValueForDuplicates(property: $property, value: $value) {
+      duplicateFound
+      duplicates {
+        id
+        value
+      }
+    }
+  }
+`;
+
 export const createPropertySelectValuesMutation = gql`
   mutation createPropertySelectValues($data: [PropertySelectValueInput!]!) {
     createPropertySelectValues(data: $data) {
