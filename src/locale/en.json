@@ -1961,6 +1961,26 @@
         "week": "Week",
         "month": "Month"
       }
+    },
+    "brandIdentity": {
+      "title": "Brand Identity",
+      "create": {
+        "title": "Add Brand Description"
+      },
+      "edit": {
+        "title": "Edit Brand Description"
+      },
+      "labels": {
+        "brand": "Brand",
+        "prompt": "Description"
+      },
+      "placeholders": {
+        "prompt": "Enter description"
+      },
+      "descriptionCard": {
+        "title": "Give your brands a voice",
+        "content": "Add a custom description for this brand to guide how it's represented in AI-generated content. You can create different descriptions for different languages. If the language is left empty, this will act as the default description for the brand."
+      }
     }
   },
   "network": {
