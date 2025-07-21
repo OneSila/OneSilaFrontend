@@ -599,9 +599,10 @@ export const deleteProductTranslationBulletPointsMutation = gql`
 `;
 
 export const duplicateProductMutation = gql`
-  mutation duplicateProduct($id: GlobalID!, $sku: String) {
-    duplicateProduct(id: $id, sku: $sku) {
-      id
+    mutation($product: ProductPartialInput!, $sku: String) {
+      duplicateProduct(product: $product, sku: $sku) {
+        id
+        sku
+      }
     }
-  }
 `;

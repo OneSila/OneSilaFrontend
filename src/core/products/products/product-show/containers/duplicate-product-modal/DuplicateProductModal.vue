@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Modal } from '../../../../../shared/components/atoms/modal';
-import { Card } from '../../../../../shared/components/atoms/card';
-import { TextInput } from '../../../../../shared/components/atoms/input-text';
-import { Button } from '../../../../../shared/components/atoms/button';
+import { Card } from "../../../../../../shared/components/atoms/card";
+import { Modal } from "../../../../../../shared/components/atoms/modal";
+import { TextInput } from "../../../../../../shared/components/atoms/input-text";
+import { Button } from "../../../../../../shared/components/atoms/button";
 
 const props = defineProps<{ modelValue: boolean }>();
 const emit = defineEmits<{
@@ -29,6 +29,7 @@ const submit = () => {
   emit('duplicate', sku.value.trim() === '' ? null : sku.value.trim());
   closeModal();
 };
+
 </script>
 
 <template>

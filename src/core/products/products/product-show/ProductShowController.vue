@@ -109,7 +109,7 @@ const handleDuplicate = async (sku: string | null) => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: duplicateProductMutation,
-      variables: { id: id.value, sku },
+      variables: { product: {id: id.value}, sku },
     });
 
     if (data && data.duplicateProduct) {
@@ -215,7 +215,7 @@ const handleDuplicate = async (sku: string | null) => {
               </div>
               <ProductInspector :product="getResultData(result)" />
             </div>
-            <Flex between>
+            <Flex gap="2" between>
               <FlexCell grow></FlexCell>
               <FlexCell>
                 <Button class="btn btn-sm btn-outline-primary" @click="showDuplicateModal = true">
