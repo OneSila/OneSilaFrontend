@@ -11,8 +11,8 @@ export const createPropertyMutation = gql`
 `;
 
 export const checkPropertyForDuplicatesMutation = gql`
-  mutation checkPropertyForDuplicates($data: PropertyInput!) {
-    checkPropertyForDuplicates(data: $data) {
+  mutation checkPropertyForDuplicates($name: String!) {
+    checkPropertyForDuplicates(name: $name) {
       duplicateFound
       duplicates {
         id

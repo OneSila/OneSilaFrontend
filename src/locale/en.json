@@ -2048,8 +2048,8 @@
       }
     },
     "duplicateModal": {
-      "title": "Properties with similar name found",
-      "content": "Select an existing property below or create the new one anyway."
+      "title": "Properties with Similar Names Found",
+      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property."
     },
     "values": {
       "title": "Select Values",

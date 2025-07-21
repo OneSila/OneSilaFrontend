@@ -166,7 +166,7 @@ const handleFinish = async () => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: checkPropertyForDuplicatesMutation,
-      variables: { data: form }
+      variables: { name: form.name }
     });
 
     if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
@@ -403,8 +403,8 @@ const multiSelectorPreviewExamples = [
   </GeneralTemplate>
   <DuplicateModal
       v-model="showDuplicateModal"
-      :title="t('properties.properties.duplicateModal.title')"
-      :content="t('properties.properties.duplicateModal.content')"
+      :title="t('properties.duplicateModal.title')"
+      :content="t('properties.duplicateModal.content')"
       :items="duplicateItems"
       @create-anyway="createProperty"
   />

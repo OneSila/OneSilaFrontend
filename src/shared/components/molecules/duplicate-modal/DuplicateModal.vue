@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { Modal } from '../../../../shared/components/atoms/modal';
 import { Card } from '../../../../shared/components/atoms/card';
 import { Button } from '../../../../shared/components/atoms/button';
+import {Link} from "../../atoms/link";
 
 interface DuplicateItem {
   label: string;
@@ -44,10 +45,7 @@ const createAnyway = () => {
   close();
 };
 
-const openItem = (item: DuplicateItem) => {
-  router.push(item.urlParam);
-  close();
-};
+
 </script>
 
 <template>
@@ -57,9 +55,9 @@ const openItem = (item: DuplicateItem) => {
       <p v-if="content" class="mb-4">{{ content }}</p>
       <ul v-if="items.length" class="list-disc pl-5 mb-4">
         <li v-for="(item, index) in items" :key="index">
-          <button type="button" class="text-primary underline" @click="openItem(item)">
+          <Link :path="item.urlParam" target="_blank">
             {{ item.label }}
-          </button>
+          </Link>
         </li>
       </ul>
       <div class="flex justify-end gap-4 mt-4">
