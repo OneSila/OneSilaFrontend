@@ -192,19 +192,22 @@ const redirectToList = (response) => {
                       </FlexCell>
                     </Flex>
                   </div>
-                  <div class="self-start">
-                    <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
-                      <template v-slot="{ loading, confirmAndMutate }">
-                        <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
-                          {{ t('shared.button.delete') }}
-                        </Button>
-                      </template>
-                    </ApolloAlertMutation>
-                  </div>
                 </div>
               </div>
               <ProductInspector :product="getResultData(result)" />
             </div>
+            <Flex between>
+              <FlexCell grow></FlexCell>
+              <FlexCell>
+                <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
+                  <template v-slot="{ loading, confirmAndMutate }">
+                    <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
+                      {{ t('shared.button.delete') }}
+                    </Button>
+                  </template>
+                </ApolloAlertMutation>
+              </FlexCell>
+            </Flex>
             <component :key="getResultData(result, 'type')" :is="getProductComponent(getResultData(result, 'type'), getResultData(result, 'aliasParentProduct'))" :product="getResultData(result)"/>
           </Card>
         </template>
