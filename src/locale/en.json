@@ -318,6 +318,7 @@
       "skip": "Skip",
       "generate": "Generate",
       "translate": "Translate",
+      "duplicate": "Duplicate",
       "deleteAll": "Delete all",
       "editAll": "Edit all",
       "change": "Change",
@@ -1088,6 +1089,9 @@
       },
       "show": {
         "title": "Product"
+      },
+      "duplicateModal": {
+        "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
       }
     }
   },

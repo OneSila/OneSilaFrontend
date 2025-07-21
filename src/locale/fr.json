@@ -3,7 +3,8 @@
     "button": {
       "login": "Se connecter",
       "register": "S'inscrire",
-    "recover": "Récupérer"
+      "recover": "Récupérer",
+      "duplicate": "Dupliquer"
     },
     "colors": {
       "red": "Rouge",

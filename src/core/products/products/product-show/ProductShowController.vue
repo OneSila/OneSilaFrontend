@@ -11,7 +11,7 @@ import { ApolloSubscription } from "../../../../shared/components/molecules/apol
 import { Icon } from "../../../../shared/components/atoms/icon";
 import { Label } from "../../../../shared/components/atoms/label";
 import { ProductType } from "../../../../shared/utils/constants";
-import { deleteProductMutation } from "../../../../shared/api/mutations/products.js";
+import { deleteProductMutation, duplicateProductMutation } from "../../../../shared/api/mutations/products.js";
 import { Button } from "../../../../shared/components/atoms/button";
 import { ApolloAlertMutation } from "../../../../shared/components/molecules/apollo-alert-mutation";
 import { Badge } from "../../../../shared/components/atoms/badge";
@@ -24,11 +24,14 @@ import { shortenText } from "../../../../shared/utils/index"
 
 import {getProductTypeBadgeMap, ProductWithAliasFields} from "../configs";
 import {ProductInspector} from "./containers/product-inspector";
+import apolloClient from "../../../../../apollo-client";
+import { DuplicateProductModal } from "./containers/duplicate-product-modal";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
+const showDuplicateModal = ref(false);
 
 interface  ProductSubscriptionResult {
   product: {
@@ -102,9 +105,25 @@ const redirectToList = (response) => {
   }
 }
 
+const handleDuplicate = async (sku: string | null) => {
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: duplicateProductMutation,
+      variables: { id: id.value, sku },
+    });
+
+    if (data && data.duplicateProduct) {
+      router.push({ name: 'products.products.show', params: { id: data.duplicateProduct.id } });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 </script>
 
 <template>
+  <div>
     <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
@@ -199,6 +218,11 @@ const redirectToList = (response) => {
             <Flex between>
               <FlexCell grow></FlexCell>
               <FlexCell>
+                <Button class="btn btn-sm btn-outline-primary" @click="showDuplicateModal = true">
+                  {{ t('shared.button.duplicate') }}
+                </Button>
+              </FlexCell>
+              <FlexCell>
                 <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
                   <template v-slot="{ loading, confirmAndMutate }">
                     <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
@@ -215,4 +239,6 @@ const redirectToList = (response) => {
      </ApolloSubscription>
    </template>
   </GeneralTemplate>
+  <DuplicateProductModal v-model="showDuplicateModal" @duplicate="handleDuplicate" />
+  </div>
 </template>
