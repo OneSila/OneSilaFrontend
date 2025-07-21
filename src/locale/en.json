@@ -448,6 +448,9 @@
         },
         "selectAllCheckbox": {
           "label": "Select All"
+        },
+        "deselectAllCheckbox": {
+          "label": "Deselect All"
         }
       },
       "organisms": {
@@ -1069,7 +1072,8 @@
           "configurable": {
             "title": "Variations",
             "selectVariations": "Please select the variations:",
-            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically."
+            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
+            "generateTitle": "Generate variations"
           },
             "simple": {
               "title": "Buying",

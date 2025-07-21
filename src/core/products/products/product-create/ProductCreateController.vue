@@ -290,7 +290,6 @@ const processAdditionalFields = async (productId) => {
   // Create related products or generate variations
   if (form.type === ProductType.Configurable) {
     if (additionalFieldsForm.propertyValueIds.length > 0 && additionalFieldsForm.productType.id) {
-      alert('????')
       await generateVariations(productId);
     } else if (additionalFieldsForm.relatedProducts.length > 0) {
       await createRelatedProducts(productId);

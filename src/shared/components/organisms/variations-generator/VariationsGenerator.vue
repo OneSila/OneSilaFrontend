@@ -115,7 +115,12 @@ const toggleAll = (idx: number) => {
 <template>
   <div>
     <p class="mb-4 text-sm text-gray-500" v-if="!loading && properties.length">
-      {{ t('products.products.create.wizard.stepFour.configurable.generateDescription') }}
+      <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+        <span class="font-medium flex items-center gap-1">
+          ➕ {{ t('products.products.create.wizard.stepFour.configurable.generateTitle')  }}
+        </span>
+        {{ t('products.products.create.wizard.stepFour.configurable.generateDescription') }}
+      </div>
     </p>
     <div v-if="loading" class="text-center my-4">{{ t('shared.labels.loading') }}</div>
     <Accordion v-else-if="properties.length"
@@ -126,7 +131,7 @@ const toggleAll = (idx: number) => {
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" :checked="prop.selected.length === prop.values.length" @change="toggleAll(index)" />
             <span class="font-medium">
-              {{ prop.selected.length === prop.values.length ? t('shared.button.deselectAll') : t('shared.button.selectAll') }}
+              {{ prop.selected.length === prop.values.length ? t('shared.components.molecules.deselectAllCheckbox.label') : t('shared.components.molecules.selectAllCheckbox.label') }}
             </span>
           </label>
         </div>
