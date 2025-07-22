@@ -1,9 +1,9 @@
 .tippy-box[data-theme~='primary'] {
-    background-color: #4361ee;
+    background-color: #4646e5;
 }
 
 .tippy-box[data-theme~='primary'][data-placement^='top'] > .tippy-arrow::before {
-    border-top-color: #4361ee;
+    border-top-color: #4646e5;
 }
 
 .tippy-box[data-theme~='success'] {
