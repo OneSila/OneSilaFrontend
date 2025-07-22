@@ -114,14 +114,14 @@ const toggleAll = (idx: number) => {
 
 <template>
   <div>
-    <p class="mb-4 text-sm text-gray-500" v-if="!loading && properties.length">
+    <div class="mb-4 text-sm text-gray-500" v-if="!loading && properties.length">
       <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
         <span class="font-medium flex items-center gap-1">
           ➕ {{ t('products.products.create.wizard.stepFour.configurable.generateTitle')  }}
         </span>
         {{ t('products.products.create.wizard.stepFour.configurable.generateDescription') }}
       </div>
-    </p>
+    </div>
     <div v-if="loading" class="text-center my-4">{{ t('shared.labels.loading') }}</div>
     <Accordion v-else-if="properties.length"
                :items="properties.map((p, i) => ({ name: 'prop' + i, label: `${p.propertyName} (${p.selected.length} / ${p.values.length} ${t('shared.labels.selected')})` }))"
