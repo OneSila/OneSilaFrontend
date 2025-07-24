@@ -28,9 +28,9 @@ const formConfig = ref<FormConfig | null>(null)
 const tabItems = ref();
 
 tabItems.value = [
-    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-    { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
-  ];
+  { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
+  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+];
 
 ;
 
