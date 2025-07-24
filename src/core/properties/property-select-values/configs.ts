@@ -224,6 +224,18 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
             addLookup: true,
             lookupKeys: ['id']
         },
+        {
+            type: FieldType.Boolean,
+            name: 'missingMainTranslation',
+            label: t('properties.values.labels.missingMainTranslation'),
+            strict: true,
+        },
+        {
+            type: FieldType.Boolean,
+            name: 'missingTranslations',
+            label: t('properties.values.labels.missingTranslations'),
+            strict: true,
+        },
     ],
     orders: []
 });
