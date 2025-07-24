@@ -55,3 +55,35 @@ export const dashboardAmazonProductsWithIssues = gql`
     }
   }
 `;
+
+export const dashboardPropertiesMissingMainTranslations = gql`
+  query DashboardPropertiesMissingMainTranslations {
+    properties(filters: { missingMainTranslation: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertiesMissingTranslations = gql`
+  query DashboardPropertiesMissingTranslations {
+    properties(filters: { missingTranslations: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesMissingMainTranslations = gql`
+  query DashboardPropertySelectValuesMissingMainTranslations {
+    propertySelectValues(filters: { missingMainTranslation: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesMissingTranslations = gql`
+  query DashboardPropertySelectValuesMissingTranslations {
+    propertySelectValues(filters: { missingTranslations: true }) {
+      totalCount
+    }
+  }
+`;

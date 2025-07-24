@@ -6,7 +6,12 @@ import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { Card } from "../../../../../../../shared/components/atoms/card";
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
-import { dashboardIncompleteShippingAddress, dashboardNotMatchingSalesPricesList } from "../../../../../../../shared/api/queries/dashboardCards.js"
+import {
+  dashboardPropertiesMissingMainTranslations,
+  dashboardPropertiesMissingTranslations,
+  dashboardPropertySelectValuesMissingMainTranslations,
+  dashboardPropertySelectValuesMissingTranslations,
+} from "../../../../../../../shared/api/queries/dashboardCards.js"
 import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
@@ -19,15 +24,48 @@ const loading = ref(false);
 
 const generalCards = ref([
   {
-    key: 'salesPriceLists',
-    query: dashboardNotMatchingSalesPricesList,
-    title: t('dashboard.cards.general.currencyMismatchPriceLists.title'),
-    description: t('dashboard.cards.general.currencyMismatchPriceLists.description'),
-    icon: 'exchange-alt',
+    key: 'propertiesMissingMainTranslation',
+    query: dashboardPropertiesMissingMainTranslations,
+    title: t('dashboard.cards.general.propertiesMissingMainTranslation.title'),
+    description: t('dashboard.cards.general.propertiesMissingMainTranslation.description'),
+    icon: 'language',
     color: 'red',
     counter: 0,
     loading: true,
-    url: { name: 'sales.priceLists.list', query: { currencyMatchWithCustomers: false } },
+    url: { name: 'properties.properties.list', query: { missingMainTranslation: true } },
+  },
+  {
+    key: 'propertiesMissingTranslations',
+    query: dashboardPropertiesMissingTranslations,
+    title: t('dashboard.cards.general.propertiesMissingTranslations.title'),
+    description: t('dashboard.cards.general.propertiesMissingTranslations.description'),
+    icon: 'language',
+    color: 'orange',
+    counter: 0,
+    loading: true,
+    url: { name: 'properties.properties.list', query: { missingTranslations: true } },
+  },
+  {
+    key: 'propertySelectValuesMissingMainTranslation',
+    query: dashboardPropertySelectValuesMissingMainTranslations,
+    title: t('dashboard.cards.general.propertySelectValuesMissingMainTranslation.title'),
+    description: t('dashboard.cards.general.propertySelectValuesMissingMainTranslation.description'),
+    icon: 'language',
+    color: 'red',
+    counter: 0,
+    loading: true,
+    url: { name: 'properties.values.list', query: { missingMainTranslation: true } },
+  },
+  {
+    key: 'propertySelectValuesMissingTranslations',
+    query: dashboardPropertySelectValuesMissingTranslations,
+    title: t('dashboard.cards.general.propertySelectValuesMissingTranslations.title'),
+    description: t('dashboard.cards.general.propertySelectValuesMissingTranslations.description'),
+    icon: 'language',
+    color: 'orange',
+    counter: 0,
+    loading: true,
+    url: { name: 'properties.values.list', query: { missingTranslations: true } },
   },
 ]);
 

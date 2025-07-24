@@ -135,7 +135,7 @@
       },
       "general": {
         "title": "General cards",
-        "description": "Immediate attention required! Incorrect settings in this section may lead to system failures. Please review and update configurations to ensure stable and secure operations.",
+        "description": "Improve your data quality by resolving the following issues.",
         "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. \uD83C\uDFAF You're all set for now!",
         "missingLeadTime": {
           "title": "Addresses Missing Lead Time",
@@ -144,6 +144,22 @@
         "currencyMismatchPriceLists": {
           "title": "Price Lists with Currency Mismatched Customers",
           "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
+        },
+        "propertiesMissingMainTranslation": {
+          "title": "Properties Missing Main Translation",
+          "description": "These properties lack translations for your company's main language."
+        },
+        "propertiesMissingTranslations": {
+          "title": "Properties Missing Translations",
+          "description": "These properties are not translated into all required languages."
+        },
+        "propertySelectValuesMissingMainTranslation": {
+          "title": "Select Values Missing Main Translation",
+          "description": "Some select values lack translations for your company's main language."
+        },
+        "propertySelectValuesMissingTranslations": {
+          "title": "Select Values Missing Translations",
+          "description": "Some select values are missing translations for all required languages."
         }
       },
       "amazon": {
@@ -2053,7 +2069,9 @@
         "isProductType": "Product Type",
         "requireEanCode": "Require Ean Code",
         "internalName": "Internal Name",
-        "valueValidator": "Value Validator"
+        "valueValidator": "Value Validator",
+        "missingMainTranslation": "Missing Main Translation",
+        "missingTranslations": "Missing Translations"
       },
       "placeholders": {
         "internalName": "Enter internal name",
@@ -2096,7 +2114,9 @@
         "title": "Value"
       },
       "labels": {
-        "value": "Value"
+        "value": "Value",
+        "missingMainTranslation": "Missing Main Translation",
+        "missingTranslations": "Missing Translations"
       },
       "placeholders": {
         "value": "Enter value"
