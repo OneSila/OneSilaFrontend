@@ -10,7 +10,9 @@ import { ProductType } from "../../../../shared/utils/constants";
 import {
   createBundleVariationsMutation,
   createProductMutation,
-  createConfigurableVariationsMutation, updateProductMutation
+  createConfigurableVariationsMutation,
+  updateProductMutation,
+  generateProductVariationsMutation
 } from "../../../../shared/api/mutations/products.js"
 import apolloClient from "../../../../../apollo-client";
 import {Toast} from "../../../../shared/modules/toast";
@@ -65,6 +67,7 @@ const additionalFieldsForm: AdditonalFormFields = reactive({
       propertyId: null
     },
     relatedProducts: [],
+    propertyValueIds: [],
     price: {
       rrp: null,
       price: null,
@@ -93,6 +96,8 @@ watch(
       additionalFieldsForm.price.rrp = null;
       additionalFieldsForm.price.price = null;
       additionalFieldsForm.price.currency.id = null;
+
+      additionalFieldsForm.propertyValueIds = [];
 
       return;
     }
@@ -255,6 +260,21 @@ const createRelatedProducts = async (productId) => {
     }
 };
 
+const generateVariations = async (productId) => {
+  try {
+    await apolloClient.mutate({
+      mutation: generateProductVariationsMutation,
+      variables: {
+        product: { id: productId },
+        ruleProductType: { id: additionalFieldsForm.productType.id },
+        selectValues: additionalFieldsForm.propertyValueIds.map(id => ({ id }))
+      }
+    });
+  } catch (error) {
+    console.error('Generate variations error:', error);
+  }
+};
+
 
 const processAdditionalFields = async (productId) => {
   // Create sales price if the product is for sale and it's not an Configurable type
@@ -267,10 +287,15 @@ const processAdditionalFields = async (productId) => {
     await createProductType(productId);
   }
 
-  // Create related products for Configurable, Bundle
-  if (additionalFieldsForm.relatedProducts.length > 0 &&
-    (form.type === ProductType.Configurable || form.type === ProductType.Bundle)) {
+  // Create related products or generate variations
+  if (form.type === ProductType.Configurable) {
+    if (additionalFieldsForm.propertyValueIds.length > 0 && additionalFieldsForm.productType.id) {
+      await generateVariations(productId);
+    } else if (additionalFieldsForm.relatedProducts.length > 0) {
       await createRelatedProducts(productId);
+    }
+  } else if (form.type === ProductType.Bundle && additionalFieldsForm.relatedProducts.length > 0) {
+    await createRelatedProducts(productId);
   }
 };
 
@@ -308,7 +333,7 @@ const handleFinish = async () => {
       const productId  = data.createProduct.id;
       await processAdditionalFields(productId);
 
-      Toast.success(t('products.products.create.createSuccessfully'));
+      Toast.success(t('products.products.create.createdSuccessfully'));
       loading.value = false;
 
       router.push({name: 'products.products.show', params: { id: data.createProduct.id }})

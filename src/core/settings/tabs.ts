@@ -23,4 +23,10 @@ export const getTabsConfig = (t: Function): TabItem[] => [
     icon: 'database',
     url: 'settings.demoData.show',
   },
+  {
+    name: 'brandIdentity',
+    label: t('settings.brandIdentity.title'),
+    icon: 'comment-dots',
+    url: 'settings.brandIdentity.list',
+  },
 ];

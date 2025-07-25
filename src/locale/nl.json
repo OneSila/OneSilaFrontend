@@ -175,9 +175,12 @@
       "create": "Aanmaken",
       "skip": "Overslaan",
       "generate": "Genereren",
+      "duplicate": "Dupliceren",
       "change": "Wijzig",
       "fix": "Fixen",
-      "downloadConfirmation": ""
+      "downloadConfirmation": "",
+      "createAnyway": "Toch aanmaken",
+      "abort": "Afbreken"
     },
     "colors": {
       "red": "Rood",
@@ -219,7 +222,15 @@
       "image": "Afbeelding",
       "preview": "Preview",
       "discount": "Korting",
-      "discountPrice": ""
+      "discountPrice": "",
+      "message": "Bericht",
+      "severity": "Ernst",
+      "validationIssue": "Validatiefout",
+      "manual": "Handmatig",
+      "generate": "Genereren"
+    },
+    "alert": {
+      "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
     },
     "validations": {
       "quantity": "Voer een geldige hoeveelheid in"
@@ -726,7 +737,7 @@
       },
       "create": {
         "title": "Product aanmaken",
-        "createSuccessfully": "Product is succesvol aangemaakt!",
+        "createdSuccessfully": "Product is succesvol aangemaakt!",
         "wizard": {
           "stepOne": {
             "content": "Selecteer het product-type die u wenst aan te maken",
@@ -765,10 +776,11 @@
             }
           },
           "stepFour": {
-            "configurable": {
-              "title": "Variaties",
-              "selectVariations": "Selecteer de variaties:"
-            },
+          "configurable": {
+            "title": "Variaties",
+            "selectVariations": "Selecteer de variaties:",
+            "generateDescription": "Kies hieronder de waarden. Variaties voor deze waarden worden automatisch gegenereerd."
+          },
             "simple": {
               "title": "Kopen",
               "whereBuy": "Waar koopt u dit item?",
@@ -793,7 +805,8 @@
       },
       "show": {
         "title": "Product"
-      }
+      },
+      "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
   },
   "inventory": {
@@ -1171,8 +1184,7 @@
         "rrp": "Voer RRP in"
       },
       "updatedSuccessfully": "Prijs in {currency} upgedate",
-      "createSuccessfully": "Prijs voor {currency} is aangemaakt.",
-      "createdSuccessfully": "De prijs is {currency} is aangemaakt"
+      "createdSuccessfully": "Prijs is {currency} is aangemaakt"
     },
     "priceLists": {
       "title": "Prijslijsten",
@@ -1627,6 +1639,26 @@
         "week": "Week",
         "month": "Maand"
       }
+    },
+    "brandIdentity": {
+      "title": "Merkidentiteit",
+      "create": {
+        "title": "Merkbeschrijving toevoegen"
+      },
+      "edit": {
+        "title": "Merkbeschrijving bewerken"
+      },
+      "labels": {
+        "brand": "Merk",
+        "prompt": "Beschrijving"
+      },
+      "placeholders": {
+        "prompt": "Voer beschrijving in"
+      },
+      "descriptionCard": {
+        "title": "Geef je merken een stem",
+        "content": "Voeg een aangepaste beschrijving toe voor dit merk om te bepalen hoe het wordt weergegeven in AI-gegenereerde inhoud. Je kunt verschillende beschrijvingen maken voor verschillende talen. Als de taal leeg blijft, wordt dit de standaardbeschrijving voor het merk."
+      }
     }
   },
   "network": {
@@ -1706,8 +1738,12 @@
         "date": "Datum",
         "datetime": "Datum en Tijd",
         "select": "Enkele keuze",
-        "multiselect": "Meerdere keuzes"
+      "multiselect": "Meerdere keuzes"
       }
+    },
+    "duplicateModal": {
+      "title": "Eigenschappen met gelijkaardige naam gevonden",
+      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan."
     },
     "values": {
       "title": "Selectie Waardes",

@@ -11,7 +11,7 @@ import { ApolloSubscription } from "../../../../shared/components/molecules/apol
 import { Icon } from "../../../../shared/components/atoms/icon";
 import { Label } from "../../../../shared/components/atoms/label";
 import { ProductType } from "../../../../shared/utils/constants";
-import { deleteProductMutation } from "../../../../shared/api/mutations/products.js";
+import { deleteProductMutation, duplicateProductMutation } from "../../../../shared/api/mutations/products.js";
 import { Button } from "../../../../shared/components/atoms/button";
 import { ApolloAlertMutation } from "../../../../shared/components/molecules/apollo-alert-mutation";
 import { Badge } from "../../../../shared/components/atoms/badge";
@@ -20,15 +20,19 @@ import { Link } from "../../../../shared/components/atoms/link";
 import ProductBundle from "./containers/product-type/product-bundle/ProductBundle.vue";
 import ProductConfigurable from "./containers/product-type/product-configurable/ProductConfigurable.vue";
 import ProductVariation from "./containers/product-type/product-variation/ProductVariation.vue";
-import { shortenText } from "../../../../shared/utils/index"
+import {processGraphQLErrors, shortenText} from "../../../../shared/utils/index"
 
 import {getProductTypeBadgeMap, ProductWithAliasFields} from "../configs";
 import {ProductInspector} from "./containers/product-inspector";
+import apolloClient from "../../../../../apollo-client";
+import { DuplicateProductModal } from "./containers/duplicate-product-modal";
+import {Toast} from "../../../../shared/modules/toast";
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
+const showDuplicateModal = ref(false);
 
 interface  ProductSubscriptionResult {
   product: {
@@ -102,9 +106,29 @@ const redirectToList = (response) => {
   }
 }
 
+const handleDuplicate = async (sku: string | null) => {
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: duplicateProductMutation,
+      variables: { product: {id: id.value}, sku },
+    });
+
+    if (data && data.duplicateProduct) {
+      Toast.success(t('products.products.duplicateSuccessfully'));
+      router.push({ name: 'products.products.show', params: { id: data.duplicateProduct.id } });
+    }
+  } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
+  }
+};
+
 </script>
 
 <template>
+  <div>
     <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
@@ -119,8 +143,8 @@ const redirectToList = (response) => {
         <template v-if="!loading && result">
           <Card>
             <div class="grid xl:grid-cols-2 gap-8 mb-6">
-              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none sm:max-h-48 max-h-72">
-                <div class="p-5 flex items-center flex-col sm:flex-row">
+              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none sm:max-h-48 max-h-none">
+                <div class="p-5 flex items-center sm:items-center flex-col sm:flex-row">
                   <Link v-if="getResultData(result, 'thumbnailUrl')" :path="{ name: 'products.products.show', params: { id: id }, query: { ...route.query, tab: 'media' } }">
                     <div class="mb-5 w-20 h-20 overflow-hidden">
                       <Image class="w-20 h-20 rounded-md overflow-hidden object-cover" :source="getResultData(result, 'thumbnailUrl')" />
@@ -129,7 +153,7 @@ const redirectToList = (response) => {
                   <div v-else class="mb-5 w-20 h-20 overflow-hidden rounded-md bg-gray-300 flex justify-center items-center">
                     <Icon class="text-white" size="xl" name="question" />
                   </div>
-                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-center sm:text-left">
+                  <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-left">
                     <h5 class="text-[#3b3f5c] text-[15px] font-semibold text-xl mb-2 dark:text-white-light" :title="getResultData(result, 'name')">
                       {{ shortenText(getResultData(result, 'name'), 64) }}
                     </h5>
@@ -158,7 +182,7 @@ const redirectToList = (response) => {
                       </FlexCell>
 
                     </Flex>
-                    <Flex class="gap-2  flex-col sm:flex-row">
+                    <Flex class="gap-2 flex-col sm:flex-row">
                       <FlexCell>
                         <Label semi-bold>{{ t('shared.labels.active') }}:</Label>
                           <Icon v-if="getResultData(result, 'active')" name="check-circle" class="ml-1 text-green-500" />
@@ -192,19 +216,27 @@ const redirectToList = (response) => {
                       </FlexCell>
                     </Flex>
                   </div>
-                  <div class="self-start">
-                    <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
-                      <template v-slot="{ loading, confirmAndMutate }">
-                        <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
-                          {{ t('shared.button.delete') }}
-                        </Button>
-                      </template>
-                    </ApolloAlertMutation>
-                  </div>
                 </div>
               </div>
               <ProductInspector :product="getResultData(result)" />
             </div>
+            <Flex gap="2" between>
+              <FlexCell grow></FlexCell>
+              <FlexCell>
+                <Button class="btn btn-sm btn-outline-primary" @click="showDuplicateModal = true">
+                  {{ t('shared.button.duplicate') }}
+                </Button>
+              </FlexCell>
+              <FlexCell>
+                <ApolloAlertMutation :mutation="deleteProductMutation" :mutation-variables="{id: id}" @done="redirectToList">
+                  <template v-slot="{ loading, confirmAndMutate }">
+                    <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">
+                      {{ t('shared.button.delete') }}
+                    </Button>
+                  </template>
+                </ApolloAlertMutation>
+              </FlexCell>
+            </Flex>
             <component :key="getResultData(result, 'type')" :is="getProductComponent(getResultData(result, 'type'), getResultData(result, 'aliasParentProduct'))" :product="getResultData(result)"/>
           </Card>
         </template>
@@ -212,4 +244,6 @@ const redirectToList = (response) => {
      </ApolloSubscription>
    </template>
   </GeneralTemplate>
+  <DuplicateProductModal v-model="showDuplicateModal" @duplicate="handleDuplicate" />
+  </div>
 </template>

@@ -3,12 +3,23 @@
     "button": {
       "login": "Anmelden",
       "register": "Registrieren",
-    "recover": "Wiederherstellen"
+      "recover": "Wiederherstellen",
+      "duplicate": "Duplizieren"
     },
     "colors": {
       "red": "Rot",
       "green": "Grün",
       "orange": "Orange"
+    },
+    "labels": {
+      "message": "Nachricht",
+      "severity": "Schweregrad",
+      "validationIssue": "Validierungsfehler",
+      "manual": "Manuell",
+      "generate": "Generieren"
+    },
+    "alert": {
+      "noData": "Die Regel hat keine erforderlichen Konfiguratoreigenschaften, daher k\u00f6nnen keine Varianten generiert werden."
     }
   },
   "auth": {
@@ -52,6 +63,20 @@
       },
       "placeholders": {
         "email": "E-Mail eingeben"
+      }
+    }
+  }
+  ,
+  "products": {
+    "products": {
+      "create": {
+        "wizard": {
+          "stepFour": {
+            "configurable": {
+              "generateDescription": "W\u00e4hlen Sie unten die Werte aus. Varianten f\u00fcr diese Werte werden automatisch erstellt."
+            }
+          }
+        }
       }
     }
   }

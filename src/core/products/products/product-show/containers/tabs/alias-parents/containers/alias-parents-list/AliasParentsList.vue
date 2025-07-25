@@ -5,13 +5,28 @@ import { ProductWithAliasFields } from "../../../../../../configs";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
-import { getProductTypeBadgeMap, getInspectorStatusBadgeMap } from "../../../../../../configs";
+import { getProductTypeBadgeMap, getInspectorStatusIconMap } from "../../../../../../configs";
 import { shortenText } from "../../../../../../../../../shared/utils";
 
 const props = defineProps<{ products: ProductWithAliasFields[] }>();
 const { t } = useI18n();
 
 const aliasProducts = computed(() => props.products ?? []);
+
+function iconColorClass(color?: string) {
+  switch (color) {
+    case 'green':
+      return 'text-green-500';
+    case 'yellow':
+      return 'text-yellow-500';
+    case 'orange':
+      return 'text-orange-500';
+    case 'red':
+      return 'text-red-500';
+    default:
+      return '';
+  }
+}
 </script>
 
 <template>
@@ -61,7 +76,11 @@ const aliasProducts = computed(() => props.products ?? []);
             <Icon v-else name="times-circle" class="text-red-500" />
           </td>
           <td>
-            {{ getInspectorStatusBadgeMap(t)[alias.inspectorStatus]?.text || '-' }}
+            <Icon
+              :name="getInspectorStatusIconMap(t)[alias.inspectorStatus]?.name"
+              :class="iconColorClass(getInspectorStatusIconMap(t)[alias.inspectorStatus]?.color)"
+              :title="getInspectorStatusIconMap(t)[alias.inspectorStatus]?.hoverText"
+            />
           </td>
         </tr>
       </tbody>

@@ -10,6 +10,18 @@ export const createPropertyMutation = gql`
   }
 `;
 
+export const checkPropertyForDuplicatesMutation = gql`
+  mutation checkPropertyForDuplicates($name: String!) {
+    checkPropertyForDuplicates(name: $name) {
+      duplicateFound
+      duplicates {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const createPropertiesMutation = gql`
   mutation createProperties($data: [PropertyInput!]!) {
     createProperties(data: $data) {
@@ -104,6 +116,18 @@ export const createPropertySelectValueMutation = gql`
     createPropertySelectValue(data: $data) {
       id
       value
+    }
+  }
+`;
+
+export const checkPropertySelectValueForDuplicatesMutation = gql`
+  mutation checkPropertySelectValueForDuplicates($property: PropertyPartialInput!, $value: String!) {
+    checkPropertySelectValueForDuplicates(property: $property, value: $value) {
+      duplicateFound
+      duplicates {
+        id
+        value
+      }
     }
   }
 `;

@@ -33,6 +33,7 @@ interface EditAmazonForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  listingOwner: boolean;
   accessToken?: string;
   expirationDate?: string;
   region: string | null;
@@ -48,21 +49,8 @@ const formData = ref<EditAmazonForm>({ ...props.data });
 const fieldErrors = ref<Record<string, string>>({});
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
-const unitConfigurators = ref<any[]>([]);
-const originalUnitConfigurators = ref<any[]>([]);
-
-
 watch(() => props.data, (newData) => {
   formData.value = { ...newData };
-}, { deep: true });
-
-watch(unitConfigurators, (val) => {
-  if (!originalUnitConfigurators.value.length && val.length) {
-    originalUnitConfigurators.value = val.map((v: any) => ({
-      id: v.id,
-      selectedUnit: v.selectedUnit,
-    }));
-  }
 }, { deep: true });
 
 const openAccordionItem = computed(() => String(route.query.accordion || ''));
@@ -70,7 +58,6 @@ const openAccordionItem = computed(() => String(route.query.accordion || ''));
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
   { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' },
-  { name: 'units', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
 ];
 
 const regionLabel = computed(() => {
@@ -139,64 +126,6 @@ const countryLabel = computed(() => {
   }
 });
 
-const fetchUnitConfigurators = async () => {
-  try {
-    const { data } = await apolloClient.query({
-      query: amazonDefaultUnitConfiguratorsQuery,
-      variables: {
-        filter: { salesChannel: { id: { exact: formData.value.id } } },
-      },
-      fetchPolicy: 'network-only',
-    });
-    const raw = data.amazonDefaultUnitConfigurators.edges.map((e: any) => {
-      const item = { ...e.node };
-      if (Array.isArray(item.choices)) {
-        item.choices = item.choices.map((c: any) =>
-          typeof c === 'object'
-            ? { name: c.name ?? c.label ?? c.value, value: c.value ?? c.id }
-            : { name: c, value: c },
-        );
-      }
-      return item;
-    });
-    unitConfigurators.value = raw;
-    originalUnitConfigurators.value = raw.map((r: any) => ({ id: r.id, selectedUnit: r.selectedUnit }));
-  } catch (e) {
-    console.error('Error loading unit configurators', e);
-  }
-};
-
-onMounted(fetchUnitConfigurators);
-watch(() => props.data.id, fetchUnitConfigurators);
-
-const isConfiguratorDirty = (index: number) => {
-  const current = unitConfigurators.value[index];
-  const original = originalUnitConfigurators.value[index];
-  if (!current || !original) return false;
-  return current.selectedUnit !== original.selectedUnit;
-};
-
-const saveUnitConfigurators = async () => {
-  for (let i = 0; i < unitConfigurators.value.length; i++) {
-    if (isConfiguratorDirty(i)) {
-      const row = unitConfigurators.value[i];
-      try {
-        await apolloClient.mutate({
-          mutation: updateAmazonDefaultUnitConfiguratorMutation,
-          variables: { data: { id: row.id, selectedUnit: row.selectedUnit } },
-        });
-        originalUnitConfigurators.value[i] = {
-          id: row.id,
-          selectedUnit: row.selectedUnit,
-        };
-      } catch (e) {
-        console.error('Error updating unit configurator', e);
-        throw e;
-      }
-    }
-  }
-};
-
 const refreshClass = computed(() => {
   if (!formData.value.expirationDate) return '';
   const expiration = new Date(formData.value.expirationDate);
@@ -211,7 +140,6 @@ const refreshClass = computed(() => {
 const cleanupAndMutate = async (mutate) => {
   fieldErrors.value = {};
   try {
-    await saveUnitConfigurators();
     await mutate({ variables: { data: formData.value } });
   } catch (e) {
     handleError(e);
@@ -245,15 +173,15 @@ useShiftBackspaceKeyboardListener(goBack);
   <div class="space-y-12">
 
     <div class="grid grid-cols-12 gap-4">
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.expirationDate') }}
-        </Label>
-        <div class="flex items-center gap-4">
-          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />
-          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>
-        </div>
-      </div>
+<!--      <div class="md:col-span-6 col-span-12">-->
+<!--        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">-->
+<!--          {{ t('integrations.labels.expirationDate') }}-->
+<!--        </Label>-->
+<!--        <div class="flex items-center gap-4">-->
+<!--          <FieldDate :class="refreshClass" :field="{ name: 'expirationDate', type: FieldType.Date }" :model-value="formData.expirationDate || ''" />-->
+<!--          <PrimaryButton @click="handleRefresh">{{ t('shared.button.refresh') }}</PrimaryButton>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
 
     <div class="grid grid-cols-12 gap-4">
@@ -272,6 +200,19 @@ useShiftBackspaceKeyboardListener(goBack);
           </FlexCell>
           <FlexCell>
             <Toggle v-model="formData.active" />
+          </FlexCell>
+        </Flex>
+      </div>
+
+      <div class="md:col-span-2 col-span-6">
+        <Flex class="mt-8" gap="2">
+          <FlexCell>
+            <Label class="font-semibold text-sm text-gray-900 mb-1">
+              {{ t('integrations.labels.listingOwner') }}
+            </Label>
+          </FlexCell>
+          <FlexCell>
+            <Toggle v-model="formData.listingOwner" />
           </FlexCell>
         </Flex>
       </div>
@@ -341,35 +282,6 @@ useShiftBackspaceKeyboardListener(goBack);
         </div>
       </template>
 
-      <template #units>
-        <div class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar">
-          <table class="table-auto w-full">
-            <thead>
-              <tr>
-                <th>{{ t('shared.labels.name') }}</th>
-                <th>{{ t('integrations.show.properties.labels.code') }}</th>
-                <th>{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</th>
-                <th>{{ t('shared.labels.unit') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(config, index) in unitConfigurators" :key="config.id">
-                <td>{{ config.name }}</td>
-                <td>{{ config.code }}</td>
-                <td>{{ config.marketplace?.name }}</td>
-                <td>
-                  <Selector
-                    v-model="config.selectedUnit"
-                    :options="config.choices"
-                    label-by="name"
-                    value-by="value"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </template>
     </Accordion>
 
     <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 pt-4 sm:px-8">
@@ -404,30 +316,3 @@ useShiftBackspaceKeyboardListener(goBack);
     {{ t('integrations.show.amazonNotConnectedBanner.content') }}
   </div>
 </template>
-
-<style scoped>
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #4361EE;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #c0c0c0;
-}
-
-.custom-scrollbar {
-  padding-right: 15px;
-}
-
-</style>

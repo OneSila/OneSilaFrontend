@@ -115,7 +115,6 @@
             "title": "Configurable Products with No Applicable Configurator Rules",
             "description": "Define at least one configurator required item for these configurable products."
           }
-
         }
       },
       "orders": {
@@ -136,7 +135,7 @@
       },
       "general": {
         "title": "General cards",
-        "description": "Immediate attention required! Incorrect settings in this section may lead to system failures. Please review and update configurations to ensure stable and secure operations.",
+        "description": "Improve your data quality by resolving the following issues.",
         "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. \uD83C\uDFAF You're all set for now!",
         "missingLeadTime": {
           "title": "Addresses Missing Lead Time",
@@ -145,6 +144,22 @@
         "currencyMismatchPriceLists": {
           "title": "Price Lists with Currency Mismatched Customers",
           "description": "Some price lists are associated with customers whose currencies do not match the price list's currency. This can lead to pricing errors and billing inconsistencies."
+        },
+        "propertiesMissingMainTranslation": {
+          "title": "Properties Missing Main Translation",
+          "description": "These properties lack translations for your company's main language."
+        },
+        "propertiesMissingTranslations": {
+          "title": "Properties Missing Translations",
+          "description": "These properties are not translated into all required languages."
+        },
+        "propertySelectValuesMissingMainTranslation": {
+          "title": "Select Values Missing Main Translation",
+          "description": "Some select values lack translations for your company's main language."
+        },
+        "propertySelectValuesMissingTranslations": {
+          "title": "Select Values Missing Translations",
+          "description": "Some select values are missing translations for all required languages."
         }
       },
       "amazon": {
@@ -158,6 +173,10 @@
           "title": "Unmapped Product Types",
           "description": "Amazon product types that need mapping."
         },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped Local Product Types",
+          "description": "Local product types that need mapping to Amazon."
+        },
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Amazon property values that need mapping."
@@ -165,6 +184,10 @@
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
           "description": "Amazon unit configurators missing a default unit."
+        },
+        "productsWithIssues": {
+          "title": "Products With Issues",
+          "description": "Amazon products that failed to sync correctly."
         }
       }
     },
@@ -202,7 +225,7 @@
         },
         "setProductPropertyValue": {
           "title": "Set Product Property Value",
-          "details": "Assign the correct value to your product’s property. For example, set 'Brand' to 'Parker' for your pen."
+          "details": "Assign the correct value to your product's property. For example, set 'Brand' to 'Parker' for your pen."
         },
         "product": {
           "title": "Create a Simple Product",
@@ -278,9 +301,10 @@
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
         "errorOccurred": "An error occurred.",
-        "bulkDeleteSuccess": "Items deleted successfully.",
-        "bulkDeleteError": "An error occurred while deleting items."
-      }
+      "bulkDeleteSuccess": "Items deleted successfully.",
+      "bulkDeleteError": "An error occurred while deleting items."
+      },
+      "noData": "The rule has no required in configurator properties, therefore we can't generate variation based on that"
     },
     "button": {
       "login": "Log in",
@@ -311,9 +335,12 @@
       "skip": "Skip",
       "generate": "Generate",
       "translate": "Translate",
+      "duplicate": "Duplicate",
       "deleteAll": "Delete all",
       "editAll": "Edit all",
-      "change": "Change"
+      "change": "Change",
+      "createAnyway": "Create anyway",
+      "abort": "Abort"
     },
     "colors": {
       "red": "Red",
@@ -370,7 +397,15 @@
       "new": "New",
       "beta": "BETA",
       "url": "URL",
-      "default": "Default"
+      "default": "Default",
+      "submissionId": "Submission ID",
+      "processingStatus": "Processing Status",
+      "issues": "Issues",
+      "message": "Message",
+      "severity": "Severity",
+      "validationIssue": "Validation Issue",
+      "manual": "Manual",
+      "generate": "Generate"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -429,6 +464,9 @@
         },
         "selectAllCheckbox": {
           "label": "Select All"
+        },
+        "deselectAllCheckbox": {
+          "label": "Deselect All"
         }
       },
       "organisms": {
@@ -441,7 +479,7 @@
         "aiBulkTranslator": {
           "button": "AI Translate",
           "title": "Translate {count} {type}",
-          "description": "This tool uses AI to auto-translate the selected entities. You’ll be able to preview and confirm translations in the next step (coming soon).",
+          "description": "This tool uses AI to auto-translate the selected entities. You'll be able to preview and confirm translations in the next step (coming soon).",
           "startButton": "Start Translation",
           "sourceLanguage": "Source Language",
           "targetLanguages": "Target Language(s)",
@@ -458,26 +496,26 @@
           }
         },
         "aiContentGenerator": {
-            "title": "Generating content...",
-            "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
-            "step1": "Gathering product information",
-            "step2": "Evaluating product features",
-            "step3": "Generating description",
-            "step4": "Finalizing content"
+          "title": "Generating content...",
+          "success": "Content successfully generated. It cost {points} SilAI Credit(s).",
+          "step1": "Gathering product information",
+          "step2": "Evaluating product features",
+          "step3": "Generating description",
+          "step4": "Finalizing content"
         },
         "aiContentTranslator": {
-            "title": "Translating content...",
-            "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
-            "step1": "Analyzing original text",
-            "step2": "Performing translation",
-            "step3": "Finalizing translation"
+          "title": "Translating content...",
+          "success": "Content successfully translated. It cost {points} SilAI Credit(s).",
+          "step1": "Analyzing original text",
+          "step2": "Performing translation",
+          "step3": "Finalizing translation"
         },
         "aiBulletPointsGenerator": {
-            "title": "Generating bullet points...",
-            "success": "Bullet points successfully generated. It cost {points} SilAI Credit(s).",
-            "step1": "Gathering product information",
-            "step2": "Generating bullet points",
-            "step3": "Finalizing"
+          "title": "Generating bullet points...",
+          "success": "Bullet points successfully generated. It cost {points} SilAI Credit(s).",
+          "step1": "Gathering product information",
+          "step2": "Generating bullet points",
+          "step3": "Finalizing"
         },
         "remotePropertiesDetector": {
           "step1": "Analyzing remote attributes",
@@ -835,14 +873,14 @@
           "bulkDeleteSuccess": "EAN codes deleted successfully.",
           "bulkDeleteError": "Failed to delete EAN codes. Please try again.",
           "success": {
-                "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
-              },
-              "warning": {
-                "noAvailable": "No EAN codes could be assigned"
-              },
-              "error": {
-                "assignBulk": "An error occurred while assigning EAN codes"
-              }
+            "assignBulk": "Successfully assigned EAN codes to {count} product(s)"
+          },
+          "warning": {
+            "noAvailable": "No EAN codes could be assigned"
+          },
+          "error": {
+            "assignBulk": "An error occurred while assigning EAN codes"
+          }
         }
       }
     },
@@ -991,7 +1029,7 @@
       },
       "create": {
         "title": "Create Product",
-        "createSuccessfully": "Product was successfully created!",
+        "createdSuccessfully": "Product was successfully created!",
         "wizard": {
           "stepOne": {
             "content": "Select what product are you trying to create?",
@@ -1047,10 +1085,12 @@
             }
           },
           "stepFour": {
-            "configurable": {
-              "title": "Variations",
-              "selectVariations": "Please select the variations:"
-            },
+          "configurable": {
+            "title": "Variations",
+            "selectVariations": "Please select the variations:",
+            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
+            "generateTitle": "Generate variations"
+          },
             "simple": {
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
@@ -1073,141 +1113,145 @@
       },
       "show": {
         "title": "Product"
-      }
+      },
+      "duplicateModal": {
+        "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
+      },
+      "duplicateSuccessfully": "Product was successfully duplicated!"
     }
   },
   "inventory": {
     "title": "Warehouse",
     "packages": {
-       "title": "Packages",
-        "create": {
-          "title": "Create Packages",
-          "virtual": {
-            "title": "Guided Virtual Tour Packaging",
-            "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
-            "selectPackageType": "Please select the package type you gonna use",
-            "actions": {
-              "start": "Let's Start",
-              "arrived": "I Arrived",
-              "addAll": "Add All",
-              "quantityInputPlaceholder": "Enter quantity to add",
-              "addQuantity": "Add Quantity",
-              "packageFull": "Package Full",
-              "finish": "Finish"
-            },
-            "instructions": {
-              "prepare": {
-                "title": "Prepare Your Way",
-                "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
-              },
-              "move": {
-                "title": "Go to {location}",
-                "description": "Navigate to the designated location {location}."
-              },
-              "collect": {
-                "title": "Add to Package",
-                "description": "Place {quantity} of {item} into {package}.",
-                "general": {
-                  "addAll": "If all the products fit in the package, press Add.",
-                  "packageFull": "If the package is full and you cannot add anymore, press Package Full."
-                },
-                "extra": {
-                  "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
-                }
-              },
-              "confirm": {
-                "title": "Confirm the Shipment",
-                "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
-              }
-            },
-            "virtualTour": {
-              "itemsToShip": "Items to Ship",
-              "packages": "Packages",
-              "noPackagesYet": "No packages created yet.",
-              "prepare": "Prepare your way",
-              "collect": "Collect the products",
-              "confirm": "Confirm the shipment",
-              "packageName": "Package {index}"
-            },
-            "error": {
-              "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
-              "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
-              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
-              "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
-            },
-            "packageType": {
-              "error": "Please select a valid package type."
-            },
-            "packageFull": {
-              "error": "The package is full. You cannot add more items."
-            },
-            "packageSave": {
-              "success": "The package has been saved successfully.",
-              "error": "Failed to save the package. Please try again."
-            },
-          "confirmationSuccess": "The package has been confirmed successfully."
+      "title": "Packages",
+      "create": {
+        "title": "Create Packages",
+        "virtual": {
+          "title": "Guided Virtual Tour Packaging",
+          "description": "Use your mobile device to get step-by-step directions through the warehouse, guiding you to pick and pack items in real-time.",
+          "selectPackageType": "Please select the package type you gonna use",
+          "actions": {
+            "start": "Let's Start",
+            "arrived": "I Arrived",
+            "addAll": "Add All",
+            "quantityInputPlaceholder": "Enter quantity to add",
+            "addQuantity": "Add Quantity",
+            "packageFull": "Package Full",
+            "finish": "Finish"
           },
-          "manual": {
-            "button": {
-              "add": "Add package",
-              "remove": "Remove package"
+          "instructions": {
+            "prepare": {
+              "title": "Prepare Your Way",
+              "description": "Optimize the item picking sequence by reordering the items to be shipped. Follow the guided process step-by-step for a smooth packaging experience."
             },
-            "title": "Manual Packaging Entry",
-            "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
-              "createStep": {
-                "title": "Create Your Packages",
-                "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+            "move": {
+              "title": "Go to {location}",
+              "description": "Navigate to the designated location {location}."
+            },
+            "collect": {
+              "title": "Add to Package",
+              "description": "Place {quantity} of {item} into {package}.",
+              "general": {
+                "addAll": "If all the products fit in the package, press Add.",
+                "packageFull": "If the package is full and you cannot add anymore, press Package Full."
               },
-            "assignItemsStep": {
-              "title": "Assign Items to Packages",
-              "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
-              "noItemsToShip": "No items left to assign.",
-              "emptyPackage": "This package is currently empty.",
-              "packageName": "Package {index}",
-              "success": "Items have been successfully assigned to the package.",
-              "error": {
-                "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
-                "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
-                "packageCreationFailed": "Failed to create the package. Please try again.",
-                "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
-              },
-              "modal": {
-                "title": "Assign Item to Package",
-                "quantity": "Quantity",
-                "package": "Package"
+              "extra": {
+                "partialAdd": "If only some items fit in the package, add the quantity that fits, then press Package Full and add the remaining."
               }
+            },
+            "confirm": {
+              "title": "Confirm the Shipment",
+              "description": "Ensure all items are collected and packed properly. You can also adjust the tracking codes and finalize package details."
+            }
+          },
+          "virtualTour": {
+            "itemsToShip": "Items to Ship",
+            "packages": "Packages",
+            "noPackagesYet": "No packages created yet.",
+            "prepare": "Prepare your way",
+            "collect": "Collect the products",
+            "confirm": "Confirm the shipment",
+            "packageName": "Package {index}"
+          },
+          "error": {
+            "cannotRemoveWithItems": "You cannot remove a package that contains items. Remove the items first.",
+            "noStockForProduct": "There is no stock for the selected product in the location. Please restock and try again. The process cannot continue!",
+            "inventoryMovementFailed": "Failed to move inventory for the package. Please try again.",
+            "quantityExceedsAvailable": "The quantity entered exceeds the available quantity. Please adjust the quantity."
+          },
+          "packageType": {
+            "error": "Please select a valid package type."
+          },
+          "packageFull": {
+            "error": "The package is full. You cannot add more items."
+          },
+          "packageSave": {
+            "success": "The package has been saved successfully.",
+            "error": "Failed to save the package. Please try again."
+          },
+          "confirmationSuccess": "The package has been confirmed successfully."
+        },
+        "manual": {
+          "button": {
+            "add": "Add package",
+            "remove": "Remove package"
+          },
+          "title": "Manual Packaging Entry",
+          "description": "Ideal for logging already packed items. Create packages and assign items to them after packing is completed.",
+          "createStep": {
+            "title": "Create Your Packages",
+            "description": "In this step, you can create and organize your packages. Add boxes or pallets and define their details such as tracking information, shipping label, and customs documents."
+          },
+          "assignItemsStep": {
+            "title": "Assign Items to Packages",
+            "description": "In this step, you will assign items to each package based on your shipment. Drag and drop items into the respective packages, and confirm quantities where necessary.",
+            "noItemsToShip": "No items left to assign.",
+            "emptyPackage": "This package is currently empty.",
+            "packageName": "Package {index}",
+            "success": "Items have been successfully assigned to the package.",
+            "error": {
+              "noItemsInPackage": "You cannot finish the process. At least one package has no items assigned. Add items or remove the package.",
+              "cannotRemoveWithItems": "Cannot remove the package because it contains assigned items.",
+              "packageCreationFailed": "Failed to create the package. Please try again.",
+              "inventoryMovementFailed": "Failed to move inventory for the package. Please try again."
+            },
+            "modal": {
+              "title": "Assign Item to Package",
+              "quantity": "Quantity",
+              "package": "Package"
             }
           }
-        },
-        "edit": {
-          "title": "Edit Package"
-        },
-        "show": {
-          "title": "Package Details"
-        },
-       "type": {
-          "box": "Box",
-          "pallet": "Pallet"
-       },
-       "status": {
-          "new": "New",
-          "inProgress": "In Progress",
-          "packed": "Packed",
-          "dispatched": "Dispatched"
-       },
-       "placeholders": {
-          "trackingCode": "Enter tracking code",
-          "trackingLink": "Enter tracking link URL"
-       },
-       "labels": {
-          "trackingCode": "Tracking Code",
-          "trackingLink": "Tracking Link",
-          "type": "Package Type",
-          "status": "Package Status",
-          "shippingLabel": "Shipping Label",
-          "customsDocument": "Customs Document"
-       }
-     },
+        }
+      },
+      "edit": {
+        "title": "Edit Package"
+      },
+      "show": {
+        "title": "Package Details"
+      },
+      "type": {
+        "box": "Box",
+        "pallet": "Pallet"
+      },
+      "status": {
+        "new": "New",
+        "inProgress": "In Progress",
+        "packed": "Packed",
+        "dispatched": "Dispatched"
+      },
+      "placeholders": {
+        "trackingCode": "Enter tracking code",
+        "trackingLink": "Enter tracking link URL"
+      },
+      "labels": {
+        "trackingCode": "Tracking Code",
+        "trackingLink": "Tracking Link",
+        "type": "Package Type",
+        "status": "Package Status",
+        "shippingLabel": "Shipping Label",
+        "customsDocument": "Customs Document"
+      }
+    },
     "shipments": {
       "title": "Shipments",
       "button": {
@@ -1441,8 +1485,8 @@
     "prices": {
       "confirmCurrencyChange": "The current changes will be lost, are you sure you want to change the currency?",
       "updatedError": "Price for currency {currency} is wrong. Please adjust it!",
-      "updatedSuccessfully": "The price for currency {currency} was successfully updated!",
-      "createdSuccessfully": "The price for currency {currency} was successfully created!",
+      "updatedSuccessfully": "Price for currency {currency} was updated.",
+      "createdSuccessfully": "Price for currency {currency} was created.",
       "labels": {
         "amount": "Amount",
         "discountAmount": "Discount Amount",
@@ -1456,9 +1500,7 @@
         "discountPercentage": "Enter discount percentage",
         "price": "Enter price",
         "rrp": "Enter rrp"
-      },
-      "updatedSuccessfully": "Price for currency {currency} Updated",
-      "createSuccessfully": "Price for currency {currency} was created"
+      }
     },
     "priceLists": {
       "title": "Prices Lists",
@@ -1943,6 +1985,26 @@
         "week": "Week",
         "month": "Month"
       }
+    },
+    "brandIdentity": {
+      "title": "Brand Identity",
+      "create": {
+        "title": "Add Brand Description"
+      },
+      "edit": {
+        "title": "Edit Brand Description"
+      },
+      "labels": {
+        "brand": "Brand",
+        "prompt": "Description"
+      },
+      "placeholders": {
+        "prompt": "Enter description"
+      },
+      "descriptionCard": {
+        "title": "Give your brands a voice",
+        "content": "Add a custom description for this brand to guide how it's represented in AI-generated content. You can create different descriptions for different languages. If the language is left empty, this will act as the default description for the brand."
+      }
     }
   },
   "network": {
@@ -2007,7 +2069,9 @@
         "isProductType": "Product Type",
         "requireEanCode": "Require Ean Code",
         "internalName": "Internal Name",
-        "valueValidator": "Value Validator"
+        "valueValidator": "Value Validator",
+        "missingMainTranslation": "Missing Main Translation",
+        "missingTranslations": "Missing Translations"
       },
       "placeholders": {
         "internalName": "Enter internal name",
@@ -2031,8 +2095,12 @@
         "date": "Date",
         "datetime": "Date and Time",
         "select": "Single Select",
-        "multiselect": "Multiselect"
+      "multiselect": "Multiselect"
       }
+    },
+    "duplicateModal": {
+      "title": "Properties with Similar Names Found",
+      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property."
     },
     "values": {
       "title": "Select Values",
@@ -2046,7 +2114,9 @@
         "title": "Value"
       },
       "labels": {
-        "value": "Value"
+        "value": "Value",
+        "missingMainTranslation": "Missing Main Translation",
+        "missingTranslations": "Missing Translations"
       },
       "placeholders": {
         "value": "Enter value"
@@ -2186,12 +2256,21 @@
         "title": "Amazon Rules",
         "labels": {
           "productTypeCode": "Product Type Code",
-          "productRule": "Product Rule"
+          "productRule": "Product Rule",
+          "productName": "Product name",
+          "selectedProductType": "Selected product type"
         },
         "help": {
           "productTypeCode": "Amazon identifier for this product type.",
-          "name": "Original Amazon name for the product type. You may change it.",
+          "productName": "Provide a product name and Amazon will suggest matching types.",
           "productRule": "Select the local product rule to link with this Amazon product type."
+        },
+        "titles": {
+          "suggestUsingName": "Get suggestion using product name",
+          "searchInAll": "Search in all"
+        },
+        "errors": {
+          "noSuggestions": "No recommended product types found."
         }
       },
       "properties": {
@@ -2245,6 +2324,7 @@
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
+      "pullLocalRules": "Pull Local Rules",
       "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",
@@ -2271,24 +2351,9 @@
           "amazonTitle": "Amazon",
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
-          "woocommerceExample": "Woocommerce integration is coming soon.",
-          "woocommerceInfoModal": {
-            "title": "How to connect your WooCommerce store",
-            "section": {
-              "integrationTitle": "Generate API keys in WooCommerce",
-              "integrationDescription": "Follow these steps to create an API key in your WooCommerce admin:",
-              "integrationStep1": "Go to your WordPress admin.",
-              "integrationStep2": "Under the WooCommerce section, click Settings.",
-              "integrationStep3": "Find the tab 'Advanced' and click it.",
-              "integrationStep4": "Click the sub-tab 'REST API'.",
-              "integrationStep5": "Click 'Add Key'.",
-              "integrationStep6": "Fill in the key settings: description as 'OneSila' (or preferred name), choose the user and set permissions to 'Read/Write'.",
-              "integrationStep7": "Click Generate API Key.",
-              "integrationStep8": "Copy the Consumer Key and Consumer Secret for this integration."
-            }
-          },
+          "woocommerceExample": "WooCommerce integration to manage your products.",
           "magentoInfoModal": {
-          "title": "How to connect your Magento store",
+            "title": "How to connect your Magento store",
             "section": {
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
@@ -2305,11 +2370,52 @@
               "eanTitle": "EAN codes support",
               "eanDescription": "If you want to sync EAN codes, make sure you have an attribute with global scope in Magento. Don't worry, missing ones can also be created during the import process."
             }
+          },
+          "woocommerceInfoModal": {
+            "title": "How to connect your WooCommerce store",
+            "integrationTitle": "Create API credentials in WooCommerce",
+            "integrationDescription": "Before connecting your store, you need to create API credentials in your WooCommerce admin panel.",
+            "integrationStep1": "Go to WooCommerce → Settings → Advanced → REST API",
+            "integrationStep2": "Click 'Add Key' and create a new API key",
+            "integrationStep3": "Set the permissions to 'Read/Write'",
+            "apiSettingsTitle": "Configure your WooCommerce API settings",
+            "apiSettingsDescription": "Ensure your WooCommerce store has the following settings:",
+            "apiSetting1": "Enable REST API access",
+            "apiSetting2": "Configure SSL if using HTTPS",
+            "importTitle": "Perform an initial import",
+            "importRecommendation": "After setting up the integration, we recommend performing an import to bring your existing WooCommerce data into our system.",
+            "eanTitle": "EAN codes support",
+            "eanDescription": "If you want to sync EAN codes, make sure you have a custom field or attribute set up in WooCommerce for EAN codes."
+          },
+          "shopifyInfoModal": {
+            "title": "How to connect your Shopify store",
+            "section": {
+              "integrationTitle": "Create your Shopify app",
+              "integrationDescription": "Follow these steps using your Shopify admin account:",
+              "integrationStep1": "From your Shopify admin dashboard, open Settings.",
+              "integrationStep2": "Use the search bar to find 'App development'.",
+              "integrationStep3": "If prompted, click 'Allow custom app development' and confirm.",
+              "integrationStep4": "Choose 'Create an app', give it a name like 'OneSila' and wait for it to finish.",
+              "integrationStep5Part1": "Open the new app and go to 'Configuration'.",
+              "integrationStep5Part2": "Under 'Admin API integration' click 'Configure' and enable these scopes:",
+              "integrationStep5Part3": "Click 'Save'.",
+              "integrationStep6Part1": "In 'API credentials' select 'Install app' and confirm. ",
+              "integrationStep6Part2": "Now the API key, API secret key and Admin API access token are ready for the last step of this wizard.",
+              "integrationStep7": "From the Sales channels sidebar choose 'View your online store' and copy the URL from your browser and paste it in the step 2 of this wizard.",
+              "integrationStep8": "During step 4 of the wizard paste the API key, secret key and access token, then click Finish.",
+              "appUrlLabel": "App URL",
+              "allowedRedirectUrlLabel": "Allowed redirection URL(s)",
+              "customAppTitle": "Create Custom App",
+              "detectWebsiteUrlTitle": "Find Your Store URL",
+              "configureDistributionTitle": "Configure API Scopes",
+              "configureUrlsTitle": "Install App and Get Credentials",
+              "finishWizardTitle": "Finish the Wizard"
+            }
           }
         },
         "step2": {
           "title": "General Information",
-          "content": "Enter your integration’s hostname and connection settings."
+          "content": "Enter your integration's hostname and connection settings."
         },
         "step3": {
           "title": "Sales Channel Preferences",
@@ -2323,6 +2429,10 @@
           "shopify": {
             "title": "Shopify Channel Details",
             "content": "Provide Shopify-specific configuration to connect your store."
+          },
+          "woocommerce": {
+            "title": "WooCommerce Channel Details",
+            "content": "Provide WooCommerce-specific information to connect your store."
           },
           "amazon": {
             "title": "Amazon Channel Details",
@@ -2338,6 +2448,7 @@
       "syncEanCodes": "Sync EAN Codes",
       "syncPrices": "Sync Prices",
       "importOrders": "Import Orders",
+      "listingOwner": "Listing Owner",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "successfullyConnected": "Connected",
@@ -2349,6 +2460,9 @@
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
+      "apiKey": "API Key",
+      "apiSecret": "API secret key",
+      "accessToken": "Access Token",
       "region": "Region",
       "country": "Country",
       "expirationDate": "Access Token Expiration",
@@ -2358,8 +2472,11 @@
     "placeholders": {
       "hostApiUsername": "Enter API Username",
       "hostApiKey": "Enter Access Token",
+      "apiKey": "Enter API Key",
+      "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
-      "eanCodeAttribute": "Enter EAN code attribute"
+      "eanCodeAttribute": "Enter EAN code attribute",
+      "accessToken": "Enter Access Token"
     },
     "regions": {
       "northAmerica": "North America",
@@ -2421,6 +2538,9 @@
           "success": "Your Amazon store was successfully connected!",
           "genericError": "Something went wrong while connecting your store.",
           "missingParams": "Missing required query parameters. Please retry the installation."
+        },
+        "labels": {
+          "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
       },
       "toast": {
@@ -2432,6 +2552,7 @@
         "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
         "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
+        "listingOwner": "Enable if you are the owner of the product listings.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
@@ -2456,7 +2577,10 @@
       },
       "types": {
         "schema": "Schema",
-        "products": "Products"
+        "products": "Products",
+        "schemaDescription": "Initial setup required to enable product imports.",
+        "productsDescription": "Imports actual product data from Amazon.",
+        "schemaRequired": "Please complete the schema import first."
       },
       "create": {
         "success": "Create import process success",
@@ -2484,9 +2608,9 @@
           },
           "step3": {
             "title": "Default Attribute Set",
-              "content": "Select the default attribute set",
-              "attributeSetSelected": "Default Set",
-              "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
+            "content": "Select the default attribute set",
+            "attributeSetSelected": "Default Set",
+            "helpText": "The selected attribute set defines the initial structure of your product attributes. Additional properties managed in OneSila will be added afterwards."
           },
           "finish": {
             "title": "Finalizing Import",

@@ -55,23 +55,30 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/property-select-values/containers/amazon-property-select-values/containers/IntegrationsAmazonPropertySelectValueEditController.vue'),
   },
   {
+    path: '/integrations/:type/amazon-default-unit-configurator/:id',
+    name: 'integrations.amazonDefaultUnitConfigurators.edit',
+    meta: { title: 'integrations.show.sections.defaultUnits' },
+    component: () => import('./integrations/integrations-show/containers/default-unit-configurators/containers/amazon-unit-configurators/containers/IntegrationsAmazonDefaultUnitConfiguratorEditController.vue'),
+  },
+  {
     path: '/integrations/:type/import/:integrationId',
     name: 'integrations.imports.create',
     meta: { title: 'integrations.imports.create.title' },
     component: () => import('./integrations/integrations-show/containers/imports/containers/create-import/ImportCreateController.vue'),
   },
-  {
-    path: '/integrations/shopify/installed',
-    name: 'integrations.shopify.installed',
-    meta: { title: 'integrations.shopify.installed.title' },
-    component: () => import('./integrations/integrations-installed/shopify-installed/ShopifyInstalledController.vue'),
-  },
-  {
-    path: '/integrations/shopify/entry',
-    name: 'integrations.shopify.entry',
-    meta: { title: 'integrations.shopify.entry.title' },
-    component: () => import('./integrations/integrations-shopify-entry/ShopifyEntryController.vue'),
-  },
+  // temporary commented since we no longer to oAuth
+  // {
+  //   path: '/integrations/shopify/installed',
+  //   name: 'integrations.shopify.installed',
+  //   meta: { title: 'integrations.shopify.installed.title' },
+  //   component: () => import('./integrations/integrations-installed/shopify-installed/ShopifyInstalledController.vue'),
+  // },
+  // {
+  //   path: '/integrations/shopify/entry',
+  //   name: 'integrations.shopify.entry',
+  //   meta: { title: 'integrations.shopify.entry.title' },
+  //   component: () => import('./integrations/integrations-shopify-entry/ShopifyEntryController.vue'),
+  // },
   {
     path: '/integrations/amazon/installed',
     name: 'integrations.amazon.installed',

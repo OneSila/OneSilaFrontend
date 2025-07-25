@@ -7,14 +7,14 @@ import { Toggle } from "../../atoms/toggle";
 import {useI18n} from "vue-i18n";
 import { ProductType, variationTypes } from "../../../utils/constants";
 import apolloClient from "../../../../../apollo-client";
-import { productsQuery } from "../../../api/queries/products.js";
+import { minimalProductsQuery } from "../../../api/queries/products.js";
 import { TextInput } from "../../atoms/input-text";
 import debounce from 'lodash.debounce';
 import Swal from 'sweetalert2';
 import {Pagination} from "../../molecules/pagination";
 import {Link} from "../../atoms/link";
 import {Image} from "../../atoms/image";
-import {getInspectorStatusBadgeMap} from "../../../../core/products/products/configs";
+import {getInspectorStatusIconMap} from "../../../../core/products/products/configs";
 import {Label} from "../../atoms/label";
 import { shortenText } from "../../../utils";
 
@@ -36,6 +36,21 @@ const limit = ref(10);
 const filterSameProductType = ref(true);
 const fetchPaginationData = ref({});
 fetchPaginationData.value['first'] = limit.value;
+
+function iconColorClass(color?: string) {
+  switch (color) {
+    case 'green':
+      return 'text-green-500';
+    case 'yellow':
+      return 'text-yellow-500';
+    case 'orange':
+      return 'text-orange-500';
+    case 'red':
+      return 'text-red-500';
+    default:
+      return '';
+  }
+}
 
 const fetchData = async () => {
   const excludedIds = props.addedVariations.map(product => product.id);
@@ -72,7 +87,7 @@ const fetchData = async () => {
   };
 
   const { data } = await apolloClient.query({
-    query: productsQuery,
+    query: minimalProductsQuery,
     variables: variables,
     fetchPolicy: 'network-only'
   });
@@ -303,7 +318,11 @@ onMounted(fetchData);
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap(t)[variation.inspectorStatus].text }}
+              <Icon
+                :name="getInspectorStatusIconMap(t)[variation.inspectorStatus].name"
+                :class="iconColorClass(getInspectorStatusIconMap(t)[variation.inspectorStatus].color)"
+                :title="getInspectorStatusIconMap(t)[variation.inspectorStatus].hoverText"
+              />
             </td>
           </tr>
         </tbody>
@@ -357,7 +376,11 @@ onMounted(fetchData);
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap(t)[item.inspectorStatus].text }}
+              <Icon
+                :name="getInspectorStatusIconMap(t)[item.inspectorStatus].name"
+                :class="iconColorClass(getInspectorStatusIconMap(t)[item.inspectorStatus].color)"
+                :title="getInspectorStatusIconMap(t)[item.inspectorStatus].hoverText"
+              />
             </td>
             <td v-if="hasQty()">{{ item.quantity }}</td>
           </tr>

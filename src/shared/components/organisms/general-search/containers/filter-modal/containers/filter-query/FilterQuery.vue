@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import {ref, watch, watchEffect, onMounted, Ref} from 'vue';
+import debounce from 'lodash.debounce';
 import { useRoute } from 'vue-router';
 import { Selector } from '../../../../../../atoms/selector';
 import { Label } from '../../../../../../atoms/label';
@@ -17,8 +18,17 @@ const selectedValue = ref(
   props.filter.default !== undefined ? props.filter.default : null
 );
 
-const fetchData = async () => {
-  const variables = { ...props.filter.queryVariables };
+const fetchData = async (searchValue: string | null = null) => {
+  const variables = { ...props.filter.queryVariables } as any;
+
+  if (!variables.filter) {
+    variables.filter = {};
+  }
+
+  if (searchValue !== null && searchValue !== undefined) {
+    variables.filter.search = searchValue;
+  }
+
   try {
     loading.value = true;
     const { data } = await apolloClient.query({
@@ -29,7 +39,7 @@ const fetchData = async () => {
     if (data && data[props.filter.dataKey]) {
       cleanedData.value = cleanData(data[props.filter.dataKey]);
     }
-     loading.value = false;
+    loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
     loading.value = false;
@@ -48,7 +58,11 @@ watchEffect(() => {
   emit('update-value', selectedValue.value);
 });
 
-watch(() => props.filter.queryVariables, fetchData, { deep: true });
+watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
+
+const handleInput = debounce(async (searchValue: string) => {
+  fetchData(searchValue);
+}, 500);
 
 const cleanData = (rawData) => {
   if (props.filter.isEdge && rawData?.edges) {
@@ -85,7 +99,8 @@ const disabled = ref(props.filter.disabled === true);
           :filterable="filterable"
           :removable="removable"
           :limit="limit"
-          :disabled="disabled" />
+          :disabled="disabled"
+          @searched="handleInput" />
       <Selector
           v-else
           class="h-9"

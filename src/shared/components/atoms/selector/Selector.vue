@@ -141,10 +141,24 @@ watchEffect(() => {
 });
 
 const onModelValueUpdated = (value) => {
+
+    if (props.multiple && Array.isArray(value)) {
+      if (value.includes('add-entry')) {
+        emit('add-clicked');
+
+        // Remove 'add-entry' from the array before emitting the update
+        const filtered = value.filter(v => v !== 'add-entry');
+        emit('update:modelValue', filtered);
+        return;
+      }
+  }
+
    if (value === 'add-entry') {
     emit('add-clicked');
     return;
   }
+
+
 
   if (!value) {
     emit('deselected', value);

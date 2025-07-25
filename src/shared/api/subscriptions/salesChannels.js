@@ -38,6 +38,7 @@ export const salesChannelViewAssignSubscription = gql`
   subscription getSalesChannelViewAssignSubscription($pk: String!) {
     salesChannelViewAssign(pk: $pk) {
       id
+      integrationType
       product {
         id
         name

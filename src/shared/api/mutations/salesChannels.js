@@ -39,9 +39,27 @@ export const updateShopifySalesChannelMutation = gql`
   }
 `;
 
+export const createWoocommerceSalesChannelMutation = gql`
+  mutation createWoocommerceSalesChannel($data: WoocommerceSalesChannelInput!) {
+    createWoocommerceSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const createAmazonSalesChannelMutation = gql`
   mutation createAmazonSalesChannel($data: AmazonSalesChannelInput!) {
     createAmazonSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateWoocommerceSalesChannelMutation = gql`
+  mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
+    updateWoocommerceSalesChannel(data: $data) {
       id
       hostname
     }
@@ -245,6 +263,19 @@ export const resyncSalesChannelViewAssignMutation = gql`
       salesChannelView {
         id
         name
+      }
+    }
+  }
+`;
+
+export const refreshLatestAmazonIssuesMutation = gql`
+  mutation refreshLatestAmazonIssues($data: SalesChannelViewAssignPartialInput!) {
+    refreshAmazonLatestIssues(instance: $data) {
+      id
+      formattedIssues {
+        message
+        severity
+        validationIssue
       }
     }
   }
@@ -510,6 +541,27 @@ export const updateAmazonProductTypeMutation = gql`
       id
       mappedLocally
       mappedRemotely
+    }
+  }
+`;
+
+export const createAmazonProductTypesFromLocalRulesMutation = gql`
+  mutation createAmazonProductTypesFromLocalRules($data: AmazonSalesChannelPartialInput!) {
+    createAmazonProductTypesFromLocalRules(instance: $data) {
+      id
+    }
+  }
+`;
+
+export const suggestAmazonProductTypeMutation = gql`
+  mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
+    suggestAmazonProductType(name: $name, marketplace: $marketplace) {
+      productTypeVersion
+      productTypes {
+        displayName
+        marketplaceIds
+        name
+      }
     }
   }
 `;

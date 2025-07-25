@@ -111,26 +111,31 @@ useEnterKeyboardListener(onNextPressed);
   <div class="tab-content mt-4">
     <slot :name="steps[currentStep].name"></slot>
   </div>
-  <div v-if="showButtons" class="flex justify-end mt-8">
-    <CancelButton
-      v-if="addSkip"
-      @click="goToStep(steps.length - 1)"
-    >
-      {{ t('shared.button.skip') }}
-    </CancelButton>
-    <CancelButton
-      v-if="currentStep > 0"
-      @click="previousStep"
-    >
-      {{ t('shared.button.back') }}
-    </CancelButton>
-    <PrimaryButton
-      ref="nextButtonRef"
-      :disabled="!allowNextStep"
-      @click="nextStep"
-    >
-      {{ currentStep === steps.length - 1 ? t('shared.button.finish') : t('shared.button.next') }}
-    </PrimaryButton>
+  <div v-if="showButtons" class="flex justify-between items-center mt-8">
+    <div>
+      <slot name="additionalButtons"></slot>
+    </div>
+    <div class="flex justify-end gap-2">
+      <CancelButton
+        v-if="addSkip"
+        @click="goToStep(steps.length - 1)"
+      >
+        {{ t('shared.button.skip') }}
+      </CancelButton>
+      <CancelButton
+        v-if="currentStep > 0"
+        @click="previousStep"
+      >
+        {{ t('shared.button.back') }}
+      </CancelButton>
+      <PrimaryButton
+        ref="nextButtonRef"
+        :disabled="!allowNextStep"
+        @click="nextStep"
+      >
+        {{ currentStep === steps.length - 1 ? t('shared.button.finish') : t('shared.button.next') }}
+      </PrimaryButton>
+    </div>
   </div>
   </Card>
 </template>

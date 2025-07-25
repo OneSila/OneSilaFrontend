@@ -82,6 +82,9 @@ function isValidPrice(unformatedPrice) {
   const price = parseFloat(unformatedPrice.price);
   const rrp = parseFloat(unformatedPrice.rrp);
 
+  if (unformatedPrice.readonly) {
+    return true; // if is readonly we skip the validaiton
+  }
 
   if (isNaN(price) && isNaN(rrp)) {
     return false;

@@ -47,3 +47,43 @@ export const dashboardNotMatchingSalesPricesList = gql`
       }
     }
 `;
+
+export const dashboardAmazonProductsWithIssues = gql`
+  query DashboardAmazonProductsWithIssues($salesChannelId: String) {
+    products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertiesMissingMainTranslations = gql`
+  query DashboardPropertiesMissingMainTranslations {
+    properties(filters: { missingMainTranslation: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertiesMissingTranslations = gql`
+  query DashboardPropertiesMissingTranslations {
+    properties(filters: { missingTranslations: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesMissingMainTranslations = gql`
+  query DashboardPropertySelectValuesMissingMainTranslations {
+    propertySelectValues(filters: { missingMainTranslation: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesMissingTranslations = gql`
+  query DashboardPropertySelectValuesMissingTranslations {
+    propertySelectValues(filters: { missingTranslations: true }) {
+      totalCount
+    }
+  }
+`;

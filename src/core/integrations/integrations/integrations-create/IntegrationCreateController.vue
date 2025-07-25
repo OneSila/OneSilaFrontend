@@ -4,36 +4,45 @@ import {reactive, computed, ref, onMounted, watch} from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";
+import { Icon } from "../../../../shared/components/atoms/icon";
+import { Modal } from "../../../../shared/components/atoms/modal";
+import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard } from "./containers/type-step/info-cards";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
 import {
+  AuthenticationMethod,
+  getDefaultFields,
+  getAmazonDefaultFields,
+  getMagentoDefaultFields,
+  getShopifyDefaultFields,
+  getWoocommerceDefaultFields,
   IntegrationCreateWizardForm,
   IntegrationTypes,
-  getMagentoDefaultFields,
-  AuthenticationMethod,
+  AmazonChannelInfo,
   MagentoChannelInfo,
   ShopifyChannelInfo,
-  AmazonChannelInfo,
-  getDefaultFields,
-  getShopifyDefaultFields,
-  getAmazonDefaultFields
+  WoocommerceChannelInfo,
 } from "../integrations";
 import { TypeStep } from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
 import { SalesChannelStep } from "./containers/sales-channel-step";
 import { MagentoChannelInfoStep } from "./containers/integration-specific-step/magento";
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
+import { WoocommerceChannelInfoStep } from "./containers/integration-specific-step/woocommerce";
 import { AmazonChannelInfoStep } from "./containers/integration-specific-step/amazon";
 import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation,
   createAmazonSalesChannelMutation,
-  getShopifyRedirectUrlMutation, getAmazonRedirectUrlMutation
+  createWoocommerceSalesChannelMutation,
+  getShopifyRedirectUrlMutation,
+  getAmazonRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import apolloClient from "../../../../../apollo-client";
-import {cleanShopHostname} from "../configs";
+import { cleanShopHostname } from "../configs";
+import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -45,6 +54,8 @@ const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
 const queryParams = route.query;
+const showInfoModal = ref(false);
+const infoComponent = ref();
 
 const form = reactive<IntegrationCreateWizardForm>({
   generalInfo: {
@@ -62,7 +73,9 @@ const form = reactive<IntegrationCreateWizardForm>({
     importOrders: true,
   }
 });
-const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | AmazonChannelInfo | {}>({});
+
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | {}>({});
+
 
 watch(selectedIntegrationType, (newType) => {
 
@@ -74,6 +87,8 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getShopifyDefaultFields());
   } else if (newType === IntegrationTypes.Magento) {
     Object.assign(specificChannelInfo.value, getMagentoDefaultFields());
+  } else if (newType === IntegrationTypes.Woocommerce) {
+    Object.assign(specificChannelInfo.value, getWoocommerceDefaultFields());
   } else if (newType === IntegrationTypes.Amazon) {
     Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
   } else {
@@ -89,6 +104,10 @@ const stepFourLabel = computed(() => {
 
   if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
     return t('integrations.create.wizard.step4.shopify.title');
+  }
+
+  if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
+    return t('integrations.create.wizard.step4.woocommerce.title');
   }
 
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
@@ -114,8 +133,32 @@ const updateStep = (val) => {
   step.value = val;
 }
 
+const openInfoModal = () => {
+  if (selectedIntegrationType.value === IntegrationTypes.Magento) {
+    infoComponent.value = MagentoInfoCard;
+  } else if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
+    infoComponent.value = ShopifyInfoCard;
+  } else if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
+    infoComponent.value = WoocommerceInfoCard;
+  } else {
+    infoComponent.value = null;
+  }
+
+  if (infoComponent.value) {
+    showInfoModal.value = true;
+  }
+};
+
+const closeInfoModal = () => {
+  showInfoModal.value = false;
+};
+
 function isMagentoChannelInfo(value: any): value is MagentoChannelInfo {
   return value && typeof value.hostApiKey === 'string';
+}
+
+function isWoocommerceChannelInfo(value: any): value is WoocommerceChannelInfo {
+  return value && typeof value.apiKey === 'string' && typeof value.apiSecret === 'string';
 }
 
 function isAmazonChannelInfo(value: any): value is AmazonChannelInfo {
@@ -170,7 +213,18 @@ const allowNextStep = computed(() => {
   }
 
   if (
-  stepName === 'specificChannelStep' &&
+    stepName === 'specificChannelStep' &&
+    selectedIntegrationType.value === IntegrationTypes.Woocommerce &&
+    isWoocommerceChannelInfo(specificChannelInfo.value)
+  ) {
+    const key = specificChannelInfo.value.apiKey;
+    const secret = specificChannelInfo.value.apiSecret;
+    if (!key || key.trim() === '' || !secret || secret.trim() === '') {
+      return false;
+    }
+  }
+
+  if (stepName === 'specificChannelStep' &&
   selectedIntegrationType.value === IntegrationTypes.Amazon &&
   !isAmazonChannelInfo(specificChannelInfo.value)
 ) {
@@ -181,12 +235,21 @@ const allowNextStep = computed(() => {
   return true;
 });
 
+const hasInfoCard = computed(() =>
+  selectedIntegrationType.value === IntegrationTypes.Magento ||
+  selectedIntegrationType.value === IntegrationTypes.Woocommerce ||
+  selectedIntegrationType.value === IntegrationTypes.Shopify
+);
+
 const getIntegrationComponent = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Magento) {
     return MagentoChannelInfoStep;
   }
   if (selectedIntegrationType.value === IntegrationTypes.Shopify) {
     return ShopifyChannelInfoStep;
+  }
+  if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
+    return WoocommerceChannelInfoStep;
   }
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
     return AmazonChannelInfoStep;
@@ -201,6 +264,8 @@ const getIntegrationMutation = () => {
       return createMagentoSalesChannelMutation;
     case IntegrationTypes.Shopify:
       return createShopifySalesChannelMutation;
+    case IntegrationTypes.Woocommerce:
+      return createWoocommerceSalesChannelMutation;
     case IntegrationTypes.Amazon:
       return createAmazonSalesChannelMutation;
     default:
@@ -214,6 +279,8 @@ const getIntegrationMutationKey = () => {
       return 'createMagentoSalesChannel';
     case IntegrationTypes.Shopify:
       return 'createShopifySalesChannel';
+    case IntegrationTypes.Woocommerce:
+      return 'createWoocommerceSalesChannel';
     case IntegrationTypes.Amazon:
       return 'createAmazonSalesChannel';
     default:
@@ -237,7 +304,7 @@ const handleFinish = async () => {
     const dataInput = {
       ...form.generalInfo,
       ...form.salesChannelInfo,
-      ...specificChannelInfo.value,
+      ...specificChannelInfo.value
     };
 
     if (
@@ -278,6 +345,7 @@ const handleFinish = async () => {
 const handleShopifySalesChannelSuccess = async (channelData: any) => {
   const id = channelData.id;
 
+  /*
   const { data } = await apolloClient.mutate({
     mutation: getShopifyRedirectUrlMutation,
     variables: {
@@ -297,6 +365,22 @@ const handleShopifySalesChannelSuccess = async (channelData: any) => {
   messages.forEach((msg: any) => {
     Toast.error(msg.message);
   });
+  */
+  try {
+    loading.value = true;
+    await apolloClient.mutate({
+      mutation: refreshSalesChannelWebsitesMutation,
+      variables: {
+        data: { id },
+      },
+    });
+    Toast.success(t("integrations.show.pullData.success"));
+  } catch (error) {
+    Toast.error(t("integrations.show.pullData.error"));
+    console.error("Pull data failed:", error);
+  } finally {
+    loading.value = false;
+  }
 
   // Redirect to show page anyway
   router.push({
@@ -375,6 +459,9 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
           <p class="text-xl font-semibold text-white mt-2">{{ t('shared.labels.loading') }}</p>
         </div>
       </div>
+      <Modal v-if="showInfoModal" v-model="showInfoModal" @closed="showInfoModal = false">
+        <component :is="infoComponent" @close="closeInfoModal" />
+      </Modal>
       <Wizard ref="wizardRef" :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
 
         <template #typeStep>
@@ -386,7 +473,10 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
               :general-info="form.generalInfo"
               :integration-type="selectedIntegrationType"
               :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
-              :show-ssl="selectedIntegrationType !== IntegrationTypes.Shopify"
+              :show-ssl="
+                selectedIntegrationType !== IntegrationTypes.Shopify &&
+                selectedIntegrationType !== IntegrationTypes.Amazon
+              "
           />
         </template>
 
@@ -398,7 +488,16 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
           <component :is="getIntegrationComponent()" :channel-info="specificChannelInfo"/>
         </template>
 
+        <template #additionalButtons>
+          <Icon
+            v-if="step > 0 && hasInfoCard"
+            class="text-gray-500 cursor-pointer"
+            @click.stop="openInfoModal"
+            name="circle-info"
+            size="lg"
+          />
+        </template>
+
       </Wizard>
    </template>
-  </GeneralTemplate>
-</template>
+  </GeneralTemplate></template>

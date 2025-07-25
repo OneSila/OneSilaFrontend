@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getInspectorStatusBadgeMap, Product, getProductTypeBadgeMap } from "../../../../../../configs";
+import { getInspectorStatusIconMap, Product, getProductTypeBadgeMap } from "../../../../../../configs";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { useI18n } from "vue-i18n";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
@@ -15,6 +15,21 @@ const props = defineProps<{ product: Product }>();
 
 const parents = ref<any[]>([]);
 const loading = ref(true);
+
+function iconColorClass(color?: string) {
+  switch (color) {
+    case 'green':
+      return 'text-green-500';
+    case 'yellow':
+      return 'text-yellow-500';
+    case 'orange':
+      return 'text-orange-500';
+    case 'red':
+      return 'text-red-500';
+    default:
+      return '';
+  }
+}
 
 const fetchConfigurableVariations = async () => {
   const { data } = await apolloClient.query({
@@ -111,7 +126,11 @@ onMounted(async () => {
               <Icon v-else name="times-circle" class="text-red-500" />
             </td>
             <td>
-              {{ getInspectorStatusBadgeMap(t)[parent.inspectorStatus]?.text || '-' }}
+              <Icon
+                :name="getInspectorStatusIconMap(t)[parent.inspectorStatus]?.name"
+                :class="iconColorClass(getInspectorStatusIconMap(t)[parent.inspectorStatus]?.color)"
+                :title="getInspectorStatusIconMap(t)[parent.inspectorStatus]?.hoverText"
+              />
             </td>
           </tr>
         </tbody>

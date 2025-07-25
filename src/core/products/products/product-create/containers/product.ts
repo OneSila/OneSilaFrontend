@@ -43,4 +43,5 @@ export interface AdditonalFormFields {
   price: Price;
   relatedProducts: RelatedProduct[];
   productType: ProductType;
+  propertyValueIds: string[];
 }

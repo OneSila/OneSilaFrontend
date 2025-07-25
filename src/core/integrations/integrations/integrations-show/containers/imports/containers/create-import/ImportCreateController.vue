@@ -6,6 +6,7 @@ import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTem
 import { Breadcrumbs } from "../../../../../../../../shared/components/molecules/breadcrumbs";
 import { MagentoImporter } from "./containers/magento/magento-importer";
 import { ShopifyImporter } from "./containers/shopify/shopify-importer";
+import { WoocommerceImporter } from "./containers/woocommerce/woocommerce-importer";
 import { AmazonImporter } from "./containers/amazon/amazon-importer";
 import {IntegrationTypes} from "../../../../../integrations";
 
@@ -34,6 +35,7 @@ const type = ref(String(route.params.type));
       <MagentoImporter v-if="type == IntegrationTypes.Magento" :integration-id="integrationId" :type="type" />
       <ShopifyImporter v-else-if="type == IntegrationTypes.Shopify" :integration-id="integrationId" :type="type" />
       <AmazonImporter v-else-if="type == IntegrationTypes.Amazon" :integration-id="integrationId" :type="type" />
+      <WoocommerceImporter v-else-if="type == IntegrationTypes.Woocommerce" :integration-id="integrationId" :type="type" />
     </template>
   </GeneralTemplate>
 </template>

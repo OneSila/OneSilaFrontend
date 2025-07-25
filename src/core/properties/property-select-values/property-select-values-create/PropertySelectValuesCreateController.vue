@@ -1,19 +1,34 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
-import { GeneralForm } from "../../../../shared/components/organisms/general-form";
-import { FormType, FormConfig } from '../../../../shared/components/organisms/general-form/formConfig';
-import { createPropertySelectValueMutation } from "../../../../shared/api/mutations/properties.js";
+import { useRoute, useRouter } from 'vue-router';
+import { FieldValue } from "../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
+import { FieldQuery } from "../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import { FieldImage } from "../../../../shared/components/organisms/general-form/containers/form-fields/field-image";
+import { FormType, FormConfig, cleanUpDataForMutation, ValueFormField, QueryFormField, ImageFormField } from '../../../../shared/components/organisms/general-form/formConfig';
+import { FieldType } from '../../../../shared/utils/constants';
+import { createPropertySelectValueMutation, checkPropertySelectValueForDuplicatesMutation } from "../../../../shared/api/mutations/properties.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import apolloClient from "../../../../../apollo-client";
 import { getPropertyQuery } from "../../../../shared/api/queries/properties.js";
+import { PrimaryButton } from "../../../../shared/components/atoms/button-primary";
+import { SecondaryButton } from "../../../../shared/components/atoms/button-secondary";
+import { CancelButton } from "../../../../shared/components/atoms/button-cancel";
+import { DuplicateModal } from "../../../../shared/components/molecules/duplicate-modal";
+import { Toast } from "../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../shared/utils";
 
 const { t } = useI18n();
 const route = useRoute();
+const router = useRouter();
 const formConfig = ref<FormConfig | null>(null);
+const fields = reactive<Record<string, any>>({});
+const form = reactive<Record<string, any>>({});
+const showDuplicateModal = ref(false);
+const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
+const continueEditing = ref(false);
 const defaultValue = route.query.value ? route.query.value.toString() : '';
 
 onMounted(async () => {
@@ -45,13 +60,159 @@ onMounted(async () => {
     amazonSelectValueId
   );
 
-  if (defaultValue && formConfig.value) {
-    const valueField = formConfig.value.fields.find(field => field.name === 'value');
-    if (valueField) {
-      valueField.default = defaultValue;
+  if (formConfig.value) {
+    formConfig.value.fields.forEach(field => {
+      fields[field.name] = field;
+      if (field.type === FieldType.Hidden) {
+        const hiddenField = field as any;
+        form[field.name] = hiddenField.value;
+      } else if (field.default !== undefined) {
+        form[field.name] = field.default;
+      } else if (field.type === FieldType.Query) {
+        const qField = field as QueryFormField;
+        form[field.name] = qField.multiple ? [] : { id: null };
+      } else {
+        form[field.name] = null;
+      }
+    });
+    if (defaultValue) {
+      form['value'] = defaultValue;
     }
   }
 });
+
+const onDuplicate = () => {
+  Toast.error(t('properties.properties.error.duplicate'));
+};
+
+const onTooLong = () => {
+  Toast.error(t('shared.alert.toast.tooLongError', { fieldName: t('properties.values.labels.value').toLowerCase(), max: 255 }));
+};
+
+const onError = (error) => {
+  const validationErrors = processGraphQLErrors(error, t);
+  for (const key in validationErrors) {
+    if (validationErrors.hasOwnProperty(key)) {
+      const errorMessage = validationErrors[key];
+      if (errorMessage.includes('duplicate')) {
+        onDuplicate();
+        break;
+      }
+      if (errorMessage.includes('255')) {
+        onTooLong();
+        break;
+      }
+    }
+  }
+};
+
+const createSelectValue = async () => {
+  if (!formConfig.value) return;
+  try {
+    const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
+    const { data } = await apolloClient.mutate({
+      mutation: createPropertySelectValueMutation,
+      variables: { data: cleanedData },
+    });
+
+    const resultData = data?.createPropertySelectValue;
+    if (!data || !resultData) {
+      Toast.error(t('shared.alert.toast.unexpectedResult'));
+      return;
+    }
+
+    const finalUrl: any = { ...formConfig.value.submitUrl };
+    if (formConfig.value.addIdAsQueryParamInSubmitUrl && resultData.id) {
+      const queryParamKey = `${formConfig.value.mutationKey}Id`;
+      finalUrl.query = {
+        ...(formConfig.value.submitUrl.query || {}),
+        [queryParamKey]: resultData.id,
+      };
+    }
+
+    if (continueEditing.value && formConfig.value.submitAndContinueUrl) {
+      const redirectUrl = formConfig.value.submitAndContinueUrl;
+      const routePath = router.getRoutes().find(r => r.name === redirectUrl.name)?.path;
+      const urlParamMatches = routePath?.match(/:(\w+)/g) || [];
+      let query = redirectUrl.query || {};
+      let params = redirectUrl.params || {};
+      let allParamsAvailable = true;
+
+      const hasMapping = Boolean(formConfig.value.redirectIdentifiers && Object.keys(formConfig.value.redirectIdentifiers).length);
+      const mappingLookup: Record<string, string> = {};
+      if (hasMapping && formConfig.value.redirectIdentifiers) {
+        formConfig.value.redirectIdentifiers.forEach(identifier => {
+          const key = Object.keys(identifier)[0];
+          mappingLookup[key] = identifier[key];
+        });
+      }
+
+      for (let param of urlParamMatches) {
+        const paramName = param.substring(1);
+        if (params[paramName] === undefined) {
+          if (resultData[paramName] !== undefined) {
+            if (hasMapping) {
+              const mappedParamName = mappingLookup[paramName] || paramName;
+              if (resultData[mappedParamName] !== undefined) {
+                params[paramName] = resultData[mappedParamName];
+              }
+            } else {
+              params[paramName] = resultData[paramName];
+            }
+          } else {
+            allParamsAvailable = false;
+            break;
+          }
+        }
+      }
+
+      if (allParamsAvailable) {
+        router.push({ name: redirectUrl.name, params, query });
+        Toast.success(t('shared.alert.toast.submitSuccessCreate'));
+        return;
+      }
+    }
+
+    router.push(finalUrl);
+    Toast.success(t('shared.alert.toast.submitSuccessCreate'));
+  } catch (err) {
+    onError(err);
+  }
+};
+
+const checkDuplicatesAndCreate = async (editAfter = false) => {
+  continueEditing.value = editAfter;
+  if (!formConfig.value) return;
+  try {
+    const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
+    const propertyId = cleanedData.property.id || cleanedData.property;
+    const { data } = await apolloClient.mutate({
+      mutation: checkPropertySelectValueForDuplicatesMutation,
+      variables: { property: {id: propertyId}, value: cleanedData.value },
+    });
+
+    if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
+      duplicateItems.value = data.checkPropertySelectValueForDuplicates.duplicates.map((p: any) => ({
+        label: p.value || p.id,
+        urlParam: { name: 'properties.values.show', params: { id: p.id } }
+      }));
+      showDuplicateModal.value = true;
+      return;
+    }
+
+    await createSelectValue();
+  } catch (err) {
+    onError(err);
+  }
+};
+
+const cancel = () => {
+  if (formConfig.value?.cancelUrl) {
+    router.push(formConfig.value.cancelUrl);
+  } else if (formConfig.value?.submitUrl) {
+    router.push(formConfig.value.submitUrl);
+  }
+};
 
 </script>
 
@@ -66,7 +227,46 @@ onMounted(async () => {
       />
     </template>
     <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" />
+      <div v-if="formConfig && Object.keys(fields).length" class="space-y-10 divide-y divide-gray-900/10 mt-4">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+            <div class="px-4 py-6 sm:p-8">
+              <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+                <div v-if="fields.property && fields.property.type !== FieldType.Hidden" class="col-span-full">
+                  <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.property.label }}</label>
+                  <FieldQuery :field="fields.property as QueryFormField" :model-value="form.property.id" @update:modelValue="form.property.id = $event" />
+                </div>
+
+            <div class="col-span-full mt-3">
+              <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.value.label }}</label>
+              <FieldValue :field="fields.value as ValueFormField" :model-value="form.value" @update:modelValue="form.value = $event" />
+            </div>
+
+            <div v-if="fields.image" class="col-span-full mt-3">
+              <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{ fields.image.label }}</label>
+              <FieldImage :field="fields.image as ImageFormField" :model-value="form.image" @update:modelValue="form.image = $event" />
+            </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+              <CancelButton @click="cancel">{{ t('shared.button.cancel') }}</CancelButton>
+              <SecondaryButton v-if="formConfig.addSubmitAndContinue" @click="checkDuplicatesAndCreate(true)">
+                {{ t('shared.button.saveAndContinue') }}
+              </SecondaryButton>
+              <PrimaryButton @click="checkDuplicatesAndCreate(false)">
+                {{ t('shared.button.save') }}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
   </GeneralTemplate>
+  <DuplicateModal
+    v-model="showDuplicateModal"
+    :title="t('properties.duplicateModal.title')"
+    :content="t('properties.duplicateModal.content')"
+    :items="duplicateItems"
+    @create-anyway="createSelectValue"
+  />
 </template>

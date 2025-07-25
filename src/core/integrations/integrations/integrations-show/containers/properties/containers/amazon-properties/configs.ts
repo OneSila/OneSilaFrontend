@@ -45,7 +45,6 @@ export const amazonPropertiesSearchConfigConstructor = (t: Function): SearchConf
   orderKey: "sort",
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
-    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
     { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), addLookup: true, strict: true },
     {
       type: FieldType.Choice,
@@ -78,14 +77,12 @@ export const amazonPropertiesListingConfigConstructor = (t: Function, specificIn
     t('shared.labels.name'),
     t('integrations.show.properties.labels.code'),
     t('integrations.show.mapping.mappedLocally'),
-    t('integrations.show.mapping.mappedRemotely'),
     t('properties.properties.title')
   ],
   fields: [
     { name: 'name', type: FieldType.Text },
     { name: 'code', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
-    { name: 'mappedRemotely', type: FieldType.Boolean },
     { name: 'localInstance',
       type: FieldType.NestedText,
       keys: ['name'],

@@ -30,6 +30,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 export const listingIntegrationTypeBadgeMap = (t: Function) => ({
   [IntegrationTypes.Magento]: { text: 'Magento', color: 'red' },
   [IntegrationTypes.Shopify]: { text: 'Shopify', color: 'green' },
+  [IntegrationTypes.Woocommerce]: { text: 'Woocommerce', color: 'blue' },
   [IntegrationTypes.Amazon]: { text: 'Amazon', color: 'yellow' }
 });
 

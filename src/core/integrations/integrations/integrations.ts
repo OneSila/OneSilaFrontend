@@ -84,15 +84,24 @@ export interface MagentoChannelInfo extends SpecificChannelInfo {
 
 export interface ShopifyChannelInfo extends SpecificChannelInfo {
   vendorProperty: { id: string | null };
+  apiKey: string;
+  apiSecret: string;
+  accessToken: string;
   hmac?: string;
   host?: string;
   timestamp?: string;
   isExternalInstall?: boolean;
 }
 
+export interface WoocommerceChannelInfo extends SpecificChannelInfo {
+  apiKey: string;
+  apiSecret: string;
+}
+
 export interface AmazonChannelInfo extends SpecificChannelInfo {
   region: string | null;
   country: string | null;
+  listingOwner: boolean;
 }
 
 
@@ -117,13 +126,24 @@ export function getMagentoDefaultFields(): MagentoChannelInfo {
 export function getShopifyDefaultFields(): ShopifyChannelInfo {
   return {
     vendorProperty: { id: null },
+    apiKey: '',
+    apiSecret: '',
+    accessToken: '',
   };
+}
+
+export function getWoocommerceDefaultFields(): WoocommerceChannelInfo {
+  return {
+    apiKey: '',
+    apiSecret: '',
+  }
 }
 
 export function getAmazonDefaultFields(): AmazonChannelInfo {
   return {
     region: null,
     country: null,
+    listingOwner: false,
   };
 }
 
@@ -133,6 +153,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getMagentoDefaultFields();
     case IntegrationTypes.Shopify:
       return getShopifyDefaultFields();
+    case IntegrationTypes.Woocommerce:
+      return getWoocommerceDefaultFields();
     case IntegrationTypes.Amazon:
       return getAmazonDefaultFields();
     default:

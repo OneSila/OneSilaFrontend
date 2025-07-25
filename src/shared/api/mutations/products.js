@@ -597,3 +597,20 @@ export const deleteProductTranslationBulletPointsMutation = gql`
     }
   }
 `;
+
+export const generateProductVariationsMutation = gql`
+  mutation generateProductVariations($product: ProductPartialInput!, $ruleProductType: PropertySelectValuePartialInput!, $selectValues: [PropertySelectValuePartialInput!]!) {
+    generateProductVariations(product: $product, ruleProductType: $ruleProductType, selectValues: $selectValues) {
+      success
+    }
+  }
+`;
+
+export const duplicateProductMutation = gql`
+    mutation($product: ProductPartialInput!, $sku: String) {
+      duplicateProduct(product: $product, sku: $sku) {
+        id
+        sku
+      }
+    }
+`;

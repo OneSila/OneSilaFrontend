@@ -7,6 +7,9 @@ import { GeneralListing } from "../../../../../../../../shared/components/organi
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 import { amazonProductTypesSearchConfigConstructor, amazonProductTypesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
 import apolloClient from "../../../../../../../../../apollo-client";
+import { Toast } from "../../../../../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../../../../../shared/utils";
+import { createAmazonProductTypesFromLocalRulesMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -14,6 +17,7 @@ const { t } = useI18n();
 const router = useRouter();
 
 const canStartMapping = ref(false);
+const pulling = ref(false);
 
 const fetchFirstUnmapped = async () => {
   const { data } = await apolloClient.query({
@@ -45,6 +49,25 @@ const startMapping = async () => {
   }
 };
 
+const pullLocalRules = async () => {
+  pulling.value = true;
+  try {
+    await apolloClient.mutate({
+      mutation: createAmazonProductTypesFromLocalRulesMutation,
+      variables: { data: { id: props.salesChannelId } },
+    });
+    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+    emit('pull-data');
+  } catch (err) {
+    const validationErrors = processGraphQLErrors(err, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
+  } finally {
+    pulling.value = false;
+  }
+};
+
 const searchConfig = amazonProductTypesSearchConfigConstructor(t);
 const listingConfig = amazonProductTypesListingConfigConstructor(t, props.id);
 </script>
@@ -52,6 +75,9 @@ const listingConfig = amazonProductTypesListingConfigConstructor(t, props.id);
 <template>
   <GeneralTemplate>
     <template v-slot:buttons>
+      <Button type="button" class="btn btn-primary" :disabled="pulling" @click="pullLocalRules">
+        {{ t('integrations.show.pullLocalRules') }}
+      </Button>
       <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">
         {{ t('integrations.show.mapping.startMapping') }}
       </Button>

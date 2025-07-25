@@ -58,6 +58,7 @@ import {
   faStar,
   faStarHalf,
   faEye,
+  faEyeSlash,
   faArrowUp,
   faArrowDown,
   faArrowRightArrowLeft,
@@ -152,7 +153,8 @@ import {
   faClone,
   faPaperPlane,
   faUpDownLeftRight,
-  faWeightHanging
+  faWeightHanging,
+  faCommentDots
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -211,6 +213,7 @@ library.add(faHourglassStart as IconDefinition);
 library.add(faStar as IconDefinition);
 library.add(faStarHalf as IconDefinition);
 library.add(faEye as IconDefinition);
+library.add(faEyeSlash as IconDefinition);
 library.add(faArrowUp as IconDefinition);
 library.add(faArrowRightArrowLeft as IconDefinition);
 library.add(faBullseye as IconDefinition);
@@ -305,6 +308,7 @@ library.add(faClone as IconDefinition);
 library.add(faPaperPlane as IconDefinition);
 library.add(faUpDownLeftRight as IconDefinition);
 library.add(faWeightHanging as IconDefinition);
+library.add(faCommentDots as IconDefinition);
 
 
 export default {
