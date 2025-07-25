@@ -24,7 +24,7 @@ const loading = ref(false);
 
 const generalCards = ref([
   {
-    key: 'propertiesMissingMainTranslation',
+    key: 'properties',
     query: dashboardPropertiesMissingMainTranslations,
     title: t('dashboard.cards.general.propertiesMissingMainTranslation.title'),
     description: t('dashboard.cards.general.propertiesMissingMainTranslation.description'),
@@ -35,7 +35,7 @@ const generalCards = ref([
     url: { name: 'properties.properties.list', query: { missingMainTranslation: true } },
   },
   {
-    key: 'propertiesMissingTranslations',
+    key: 'properties',
     query: dashboardPropertiesMissingTranslations,
     title: t('dashboard.cards.general.propertiesMissingTranslations.title'),
     description: t('dashboard.cards.general.propertiesMissingTranslations.description'),
@@ -46,7 +46,7 @@ const generalCards = ref([
     url: { name: 'properties.properties.list', query: { missingTranslations: true } },
   },
   {
-    key: 'propertySelectValuesMissingMainTranslation',
+    key: 'propertySelectValues',
     query: dashboardPropertySelectValuesMissingMainTranslations,
     title: t('dashboard.cards.general.propertySelectValuesMissingMainTranslation.title'),
     description: t('dashboard.cards.general.propertySelectValuesMissingMainTranslation.description'),
@@ -57,7 +57,7 @@ const generalCards = ref([
     url: { name: 'properties.values.list', query: { missingMainTranslation: true } },
   },
   {
-    key: 'propertySelectValuesMissingTranslations',
+    key: 'propertySelectValues',
     query: dashboardPropertySelectValuesMissingTranslations,
     title: t('dashboard.cards.general.propertySelectValuesMissingTranslations.title'),
     description: t('dashboard.cards.general.propertySelectValuesMissingTranslations.description'),
@@ -111,6 +111,7 @@ onMounted(async () =>  {
 </script>
 
 <template>
+  <div class="py-8 mb-4 mt-4">
   <Card v-if="!loading">
      <Flex vertical class="pb-6 gap-2">
       <FlexCell>
@@ -161,7 +162,7 @@ onMounted(async () =>  {
           :icon="card.icon"
         />
       </div>
-      <p v-if="!showCompletedGeneralCards" class="text-lg text-green-600">
+      <p v-if="showCompletedGeneralCards" class="text-lg text-green-600">
         {{ t('dashboard.cards.general.noIssuesMessage') }}
       </p>
     </Card>
@@ -172,5 +173,6 @@ onMounted(async () =>  {
         </div>
      </Card>
     </template>
+  </div>
 
 </template>
