@@ -156,23 +156,33 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 const save = async () => {
   if (!selectedCode.value) return;
   saving.value = true;
-  await apolloClient.mutate({
-    mutation: updateAmazonProductTypeMutation,
-    variables: { data: { id: productTypeId.value, productTypeCode: selectedCode.value, name: selectedName.value, imported: true } }
-  });
-  saving.value = false;
-  Toast.success(t('shared.success'));
-  if (!isWizard) {
-    router.back();
-    return;
-  }
-  const {nextId, last} = await fetchNextUnmapped();
-  if (nextId) {
-    router.push({ name: 'integrations.amazonProductTypes.edit', params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
-  } else if (last) {
-    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
-  } else {
-    router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+  try {
+    await apolloClient.mutate({
+      mutation: updateAmazonProductTypeMutation,
+      variables: { data: { id: productTypeId.value, productTypeCode: selectedCode.value, name: selectedName.value, imported: true } }
+    });
+    Toast.success(t('shared.success'));
+
+    if (!isWizard) {
+      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+      return;
+    }
+
+    const {nextId, last} = await fetchNextUnmapped();
+    if (nextId) {
+      router.push({ name: 'integrations.amazonProductTypes.edit', params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
+    } else if (last) {
+      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+    } else {
+      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+    }
+  } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    if (validationErrors['__all__']) {
+      Toast.error(validationErrors['__all__']);
+    }
+  } finally {
+    saving.value = false;
   }
 };
 </script>
@@ -259,9 +269,11 @@ const save = async () => {
             </div>
             <hr />
             <div class="flex items-center justify-end gap-x-3 px-4 py-4 sm:px-8">
-              <CancelButton @click="router.back()">
-                {{ t('shared.button.back') }}
-              </CancelButton>
+              <Link :path="{ name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'productRules' } }">
+                <CancelButton>
+                  {{ t('shared.button.back') }}
+                </CancelButton>
+              </Link>
               <Button type="button" class="btn btn-primary" :loading="saving" :disabled="saving" @click="save">{{ t('shared.button.save') }}</Button>
             </div>
           </div>
