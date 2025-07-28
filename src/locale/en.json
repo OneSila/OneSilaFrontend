@@ -2239,6 +2239,10 @@
         "title": "Amazon connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
+      "ebayNotConnectedBanner": {
+        "title": "Ebay connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
       "stores": {
         "title": "Store"
       },
@@ -2350,6 +2354,8 @@
           "shopifyExample": "Shopify integration to manage your products in seconds.",
           "amazonTitle": "Amazon",
           "amazonExample": "Amazon integration to manage your marketplace listings.",
+          "ebayTitle": "Ebay",
+          "ebayExample": "Ebay integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "magentoInfoModal": {
@@ -2513,6 +2519,11 @@
         "title": "Amazon Connected"
       }
     },
+    "ebay": {
+      "installed": {
+        "title": "Ebay Connected"
+      }
+    },
     "salesChannel": {
       "shopify": {
         "installed": {
@@ -2541,6 +2552,15 @@
         },
         "labels": {
           "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
+        }
+      },
+      "ebay": {
+        "installed": {
+          "title": "Ebay Connected",
+          "loading": "Connecting your store",
+          "success": "Your Ebay store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
         }
       },
       "toast": {

@@ -13,12 +13,14 @@ import {
   AuthenticationMethod,
   getDefaultFields,
   getAmazonDefaultFields,
+  getEbayDefaultFields,
   getMagentoDefaultFields,
   getShopifyDefaultFields,
   getWoocommerceDefaultFields,
   IntegrationCreateWizardForm,
   IntegrationTypes,
   AmazonChannelInfo,
+  EbayChannelInfo,
   MagentoChannelInfo,
   ShopifyChannelInfo,
   WoocommerceChannelInfo,
@@ -30,13 +32,16 @@ import { MagentoChannelInfoStep } from "./containers/integration-specific-step/m
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
 import { WoocommerceChannelInfoStep } from "./containers/integration-specific-step/woocommerce";
 import { AmazonChannelInfoStep } from "./containers/integration-specific-step/amazon";
+import { EbayChannelInfoStep } from "./containers/integration-specific-step/ebay";
 import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation,
   createAmazonSalesChannelMutation,
+  createEbaySalesChannelMutation,
   createWoocommerceSalesChannelMutation,
   getShopifyRedirectUrlMutation,
   getAmazonRedirectUrlMutation
+  , getEbayRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
@@ -74,7 +79,7 @@ const form = reactive<IntegrationCreateWizardForm>({
   }
 });
 
-const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | {}>({});
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | EbayChannelInfo | {}>({});
 
 
 watch(selectedIntegrationType, (newType) => {
@@ -91,6 +96,8 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getWoocommerceDefaultFields());
   } else if (newType === IntegrationTypes.Amazon) {
     Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
+  } else if (newType === IntegrationTypes.Ebay) {
+    Object.assign(specificChannelInfo.value, getEbayDefaultFields());
   } else {
     specificChannelInfo.value = {};
   }
@@ -112,6 +119,10 @@ const stepFourLabel = computed(() => {
 
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
     return t('integrations.create.wizard.step4.amazon.title');
+  }
+
+  if (selectedIntegrationType.value === IntegrationTypes.Ebay) {
+    return t('integrations.create.wizard.step4.ebay.title');
   }
 
   return t('integrations.create.wizard.step4.title');
@@ -162,6 +173,16 @@ function isWoocommerceChannelInfo(value: any): value is WoocommerceChannelInfo {
 }
 
 function isAmazonChannelInfo(value: any): value is AmazonChannelInfo {
+  return (
+    value &&
+    typeof value.region === 'string' &&
+    value.region.trim() !== '' &&
+    typeof value.country === 'string' &&
+    value.country.trim() !== ''
+  );
+}
+
+function isEbayChannelInfo(value: any): value is EbayChannelInfo {
   return (
     value &&
     typeof value.region === 'string' &&
@@ -224,12 +245,21 @@ const allowNextStep = computed(() => {
     }
   }
 
-  if (stepName === 'specificChannelStep' &&
-  selectedIntegrationType.value === IntegrationTypes.Amazon &&
-  !isAmazonChannelInfo(specificChannelInfo.value)
-) {
-  return false;
-}
+  if (
+    stepName === 'specificChannelStep' &&
+    selectedIntegrationType.value === IntegrationTypes.Amazon &&
+    !isAmazonChannelInfo(specificChannelInfo.value)
+  ) {
+    return false;
+  }
+
+  if (
+    stepName === 'specificChannelStep' &&
+    selectedIntegrationType.value === IntegrationTypes.Ebay &&
+    !isEbayChannelInfo(specificChannelInfo.value)
+  ) {
+    return false;
+  }
 
 
   return true;
@@ -254,6 +284,9 @@ const getIntegrationComponent = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
     return AmazonChannelInfoStep;
   }
+  if (selectedIntegrationType.value === IntegrationTypes.Ebay) {
+    return EbayChannelInfoStep;
+  }
   return null;
 };
 
@@ -268,6 +301,8 @@ const getIntegrationMutation = () => {
       return createWoocommerceSalesChannelMutation;
     case IntegrationTypes.Amazon:
       return createAmazonSalesChannelMutation;
+    case IntegrationTypes.Ebay:
+      return createEbaySalesChannelMutation;
     default:
       return null;
   }
@@ -283,6 +318,8 @@ const getIntegrationMutationKey = () => {
       return 'createWoocommerceSalesChannel';
     case IntegrationTypes.Amazon:
       return 'createAmazonSalesChannel';
+    case IntegrationTypes.Ebay:
+      return 'createEbaySalesChannel';
     default:
       return '';
   }
@@ -418,6 +455,34 @@ const handleAmazonSalesChannelSuccess = async (channelData: any) => {
   });
 };
 
+const handleEbaySalesChannelSuccess = async (channelData: any) => {
+  const id = channelData.id;
+
+  const { data } = await apolloClient.mutate({
+    mutation: getEbayRedirectUrlMutation,
+    variables: {
+      data: { id },
+    },
+  });
+
+  const result = data?.getEbayRedirectUrl;
+
+  if (result?.redirectUrl) {
+    window.location.href = result.redirectUrl;
+    return;
+  }
+
+  const messages = result?.messages || [];
+  messages.forEach((msg: any) => {
+    Toast.error(msg.message);
+  });
+
+  router.push({
+    name: 'integrations.integrations.show',
+    params: { type: IntegrationTypes.Ebay, id },
+  });
+};
+
 
 
 const handleSalesChannelSuccess = async (channelData: any, integrationType: string) => {
@@ -428,6 +493,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
   if (integrationType === IntegrationTypes.Amazon) {
     await handleAmazonSalesChannelSuccess(channelData);
+    return;
+  }
+
+  if (integrationType === IntegrationTypes.Ebay) {
+    await handleEbaySalesChannelSuccess(channelData);
     return;
   }
 

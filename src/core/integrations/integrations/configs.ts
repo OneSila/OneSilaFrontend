@@ -31,7 +31,8 @@ export const listingIntegrationTypeBadgeMap = (t: Function) => ({
   [IntegrationTypes.Magento]: { text: 'Magento', color: 'red' },
   [IntegrationTypes.Shopify]: { text: 'Shopify', color: 'green' },
   [IntegrationTypes.Woocommerce]: { text: 'Woocommerce', color: 'blue' },
-  [IntegrationTypes.Amazon]: { text: 'Amazon', color: 'yellow' }
+  [IntegrationTypes.Amazon]: { text: 'Amazon', color: 'yellow' },
+  [IntegrationTypes.Ebay]: { text: 'Ebay', color: 'purple' }
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({

@@ -84,6 +84,12 @@ export const routes = [
     name: 'integrations.amazon.installed',
     meta: { title: 'integrations.amazon.installed.title' },
     component: () => import('./integrations/integrations-installed/amazon-installed/AmazonInstalledController.vue'),
+  },
+  {
+    path: '/integrations/ebay/installed',
+    name: 'integrations.ebay.installed',
+    meta: { title: 'integrations.ebay.installed.title' },
+    component: () => import('./integrations/integrations-installed/ebay-installed/EbayInstalledController.vue'),
   }
 
 ];

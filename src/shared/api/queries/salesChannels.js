@@ -283,6 +283,114 @@ export const amazonChannelsQuerySelector = gql`
   }
 `;
 
+export const getEbayChannelQuery = gql`
+  query getEbayChannel($id: GlobalID!) {
+    ebayChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      region
+      country
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
+export const ebayChannelsQuery = gql`
+  query ebayChannelsQuery(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbaySalesChannelOrder
+    $filters: EbaySalesChannelFilter
+  ) {
+    ebayChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          region
+          country
+          createdAt
+          integrationPtr {
+            id
+          }
+          saleschannelPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const ebayChannelsQuerySelector = gql`
+  query EbayChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbaySalesChannelOrder
+    $filters: EbaySalesChannelFilter
+  ) {
+    ebayChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 
 
 // Sales Channel Integration Pricelist Queries

@@ -105,6 +105,12 @@ export interface AmazonChannelInfo extends SpecificChannelInfo {
   listingOwner: boolean;
 }
 
+export interface EbayChannelInfo extends SpecificChannelInfo {
+  region: string | null;
+  country: string | null;
+  listingOwner?: boolean;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -148,6 +154,14 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   };
 }
 
+export function getEbayDefaultFields(): EbayChannelInfo {
+  return {
+    region: null,
+    country: null,
+    listingOwner: false,
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
@@ -158,6 +172,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getWoocommerceDefaultFields();
     case IntegrationTypes.Amazon:
       return getAmazonDefaultFields();
+    case IntegrationTypes.Ebay:
+      return getEbayDefaultFields();
     default:
       return {};
   }
