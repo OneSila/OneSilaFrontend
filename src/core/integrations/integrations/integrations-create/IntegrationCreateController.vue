@@ -32,7 +32,6 @@ import { MagentoChannelInfoStep } from "./containers/integration-specific-step/m
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
 import { WoocommerceChannelInfoStep } from "./containers/integration-specific-step/woocommerce";
 import { AmazonChannelInfoStep } from "./containers/integration-specific-step/amazon";
-import { EbayChannelInfoStep } from "./containers/integration-specific-step/ebay";
 import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation,
@@ -133,8 +132,11 @@ const wizardSteps = computed(() => {
     { title: t('integrations.create.wizard.step1.title'), name: 'typeStep' },
     { title: t('integrations.create.wizard.step2.title'), name: 'generalInfoStep' },
     { title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' },
-    { title: stepFourLabel.value, name: 'specificChannelStep' },
   ];
+
+  if (selectedIntegrationType.value !== IntegrationTypes.Ebay) {
+    baseSteps.push({ title: stepFourLabel.value, name: 'specificChannelStep' });
+  }
 
   return baseSteps;
 });
@@ -182,15 +184,6 @@ function isAmazonChannelInfo(value: any): value is AmazonChannelInfo {
   );
 }
 
-function isEbayChannelInfo(value: any): value is EbayChannelInfo {
-  return (
-    value &&
-    typeof value.region === 'string' &&
-    value.region.trim() !== '' &&
-    typeof value.country === 'string' &&
-    value.country.trim() !== ''
-  );
-}
 
 
 const allowNextStep = computed(() => {
@@ -253,13 +246,6 @@ const allowNextStep = computed(() => {
     return false;
   }
 
-  if (
-    stepName === 'specificChannelStep' &&
-    selectedIntegrationType.value === IntegrationTypes.Ebay &&
-    !isEbayChannelInfo(specificChannelInfo.value)
-  ) {
-    return false;
-  }
 
 
   return true;
@@ -283,9 +269,6 @@ const getIntegrationComponent = () => {
   }
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
     return AmazonChannelInfoStep;
-  }
-  if (selectedIntegrationType.value === IntegrationTypes.Ebay) {
-    return EbayChannelInfoStep;
   }
   return null;
 };
@@ -555,7 +538,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
         </template>
 
         <template #specificChannelStep>
-          <component :is="getIntegrationComponent()" :channel-info="specificChannelInfo"/>
+          <component
+            v-if="selectedIntegrationType !== IntegrationTypes.Ebay"
+            :is="getIntegrationComponent()"
+            :channel-info="specificChannelInfo"
+          />
         </template>
 
         <template #additionalButtons>

@@ -21,13 +21,15 @@ const accordionItems = [
 ];
 
 const hostnameLabel = computed(() => {
-  return props.integrationType === IntegrationTypes.Amazon
+  return props.integrationType === IntegrationTypes.Amazon ||
+    props.integrationType === IntegrationTypes.Ebay
     ? t('shared.labels.name')
     : t('integrations.labels.hostname');
 });
 
 const hostnamePlaceholder = computed(() => {
-  return props.integrationType === IntegrationTypes.Amazon
+  return props.integrationType === IntegrationTypes.Amazon ||
+    props.integrationType === IntegrationTypes.Ebay
     ? t('shared.placeholders.name')
     : 'https://example.com';
 });
