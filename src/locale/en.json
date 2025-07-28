@@ -2444,6 +2444,10 @@
             "title": "Amazon Channel Details",
             "content": "Provide Amazon-specific configuration to connect your marketplace."
           },
+          "ebay": {
+            "title": "Ebay Channel Details",
+            "content": "Provide Ebay-specific configuration to connect your marketplace."
+          },
           "title": "Specific Channel Info"
         }
       }

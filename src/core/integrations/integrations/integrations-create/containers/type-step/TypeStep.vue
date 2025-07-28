@@ -6,6 +6,7 @@ import magentoType from "../../../../../../assets/images/integration-types/magen
 import shopifyType from "../../../../../../assets/images/integration-types/shopify.png";
 import woocomerceType from "../../../../../../assets/images/integration-types/woo-commerce.jpg";
 import amazonType from "../../../../../../assets/images/integration-types/amazon.png";
+import ebayType from "../../../../../../assets/images/integration-types/ebay.jpg";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
@@ -125,8 +126,16 @@ const closeModal = () => {
       </template>
       <template #ebay>
         <div>
-          <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.ebayTitle') }}</h3>
+          <Flex gap="2">
+            <FlexCell center>
+              <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.ebayTitle') }}</h3>
+            </FlexCell>
+<!--            <FlexCell center>-->
+<!--              <Icon class="text-gray-500" @click.stop="ON" name="circle-info" size="lg" />-->
+<!--            </FlexCell>-->
+          </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.ebayExample') }}</p>
+          <Image :source="ebayType" alt="ebay" class="w-full max-h-[35rem]" />
         </div>
       </template>
     </OptionSelector>
