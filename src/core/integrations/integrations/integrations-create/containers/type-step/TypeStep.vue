@@ -38,7 +38,8 @@ const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
   { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') }
+  { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Ebay, banner: t('shared.labels.beta') }
 ];
 
 const onModalOpen = () => {
@@ -120,6 +121,12 @@ const closeModal = () => {
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.woocommerceExample') }}</p>
           <Image :source="woocomerceType" alt="woocommerce" class="w-full max-h-[35rem]" />
+        </div>
+      </template>
+      <template #ebay>
+        <div>
+          <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.ebayTitle') }}</h3>
+          <p class="mb-4">{{ t('integrations.create.wizard.step1.ebayExample') }}</p>
         </div>
       </template>
     </OptionSelector>

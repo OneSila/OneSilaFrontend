@@ -57,6 +57,15 @@ export const createAmazonSalesChannelMutation = gql`
   }
 `;
 
+export const createEbaySalesChannelMutation = gql`
+  mutation createEbaySalesChannel($data: EbaySalesChannelInput!) {
+    createEbaySalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
@@ -69,6 +78,15 @@ export const updateWoocommerceSalesChannelMutation = gql`
 export const updateAmazonSalesChannelMutation = gql`
   mutation updateAmazonSalesChannel($data: AmazonSalesChannelPartialInput!) {
     updateAmazonSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateEbaySalesChannelMutation = gql`
+  mutation updateEbaySalesChannel($data: EbaySalesChannelPartialInput!) {
+    updateEbaySalesChannel(data: $data) {
       id
       hostname
     }
@@ -481,6 +499,24 @@ export const getAmazonRedirectUrlMutation = gql`
   }
 `;
 
+export const getEbayRedirectUrlMutation = gql`
+  mutation GetEbayRedirectUrl($data: EbaySalesChannelPartialInput!) {
+    getEbayRedirectUrl(instance: $data) {
+      ... on EbayRedirectUrlType {
+        redirectUrl
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 export const validateAmazonAuthMutation = gql`
   mutation ValidateAmazonAuth($data: AmazonValidateAuthInput!) {
     validateAmazonAuth(instance: $data) {
@@ -488,6 +524,24 @@ export const validateAmazonAuthMutation = gql`
         id
         region
         country
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
+export const validateEbayAuthMutation = gql`
+  mutation ValidateEbayAuth($data: EbayValidateAuthInput!) {
+    validateEbayAuth(instance: $data) {
+      ... on EbaySalesChannelType {
+        id
       }
       ... on OperationInfo {
         messages {

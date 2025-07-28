@@ -12,12 +12,14 @@ import {
   getSalesChannelQuery,
   getShopifyChannelQuery,
   getWoocommerceChannelQuery,
-  getAmazonChannelQuery
+  getAmazonChannelQuery,
+  getEbayChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
 import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
 import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
 import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
+import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -76,6 +78,8 @@ const getIntegrationQuery = () => {
       return getWoocommerceChannelQuery;
     case IntegrationTypes.Amazon:
       return getAmazonChannelQuery;
+    case IntegrationTypes.Ebay:
+      return getEbayChannelQuery;
     default:
       return getSalesChannelQuery;
   }
@@ -91,6 +95,8 @@ const getIntegrationQueryKey = () => {
       return "woocommerceChannel";
     case IntegrationTypes.Amazon:
       return "amazonChannel";
+    case IntegrationTypes.Ebay:
+      return "ebayChannel";
     default:
       return "salesChannel";
   }
@@ -106,6 +112,8 @@ const getGeneralComponent = () => {
       return WoocommerceGeneralInfoTab;
     case IntegrationTypes.Amazon:
       return AmazonGeneralInfoTab;
+    case IntegrationTypes.Ebay:
+      return EbayGeneralInfoTab;
     default:
       return null;
   }
