@@ -13,7 +13,6 @@ import {
   AuthenticationMethod,
   getDefaultFields,
   getAmazonDefaultFields,
-  getEbayDefaultFields,
   getMagentoDefaultFields,
   getShopifyDefaultFields,
   getWoocommerceDefaultFields,
@@ -96,7 +95,7 @@ watch(selectedIntegrationType, (newType) => {
   } else if (newType === IntegrationTypes.Amazon) {
     Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
   } else if (newType === IntegrationTypes.Ebay) {
-    Object.assign(specificChannelInfo.value, getEbayDefaultFields());
+     specificChannelInfo.value = {};
   } else {
     specificChannelInfo.value = {};
   }
@@ -199,7 +198,7 @@ const allowNextStep = computed(() => {
     if (!hostname || hostname.trim() === '') {
       return false;
     }
-    if (selectedIntegrationType.value !== IntegrationTypes.Amazon) {
+    if (selectedIntegrationType.value !== IntegrationTypes.Amazon && selectedIntegrationType.value !== IntegrationTypes.Ebay) {
       // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
       const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
       if (!urlPattern.test(hostname)) {
@@ -326,6 +325,9 @@ const handleFinish = async () => {
       ...form.salesChannelInfo,
       ...specificChannelInfo.value
     };
+
+    console.log(dataInput);
+    console.log(specificChannelInfo.value);
 
     if (
       selectedIntegrationType.value === IntegrationTypes.Shopify &&

@@ -154,14 +154,6 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   };
 }
 
-export function getEbayDefaultFields(): EbayChannelInfo {
-  return {
-    region: null,
-    country: null,
-    listingOwner: false,
-  };
-}
-
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
