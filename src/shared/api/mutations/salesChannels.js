@@ -291,6 +291,17 @@ export const updateSalesChannelViewMutation = gql`
   }
 `;
 
+export const updateAmazonSalesChannelViewMutation = gql`
+  mutation updateAmazonSalesChannelView($data: AmazonSalesChannelViewPartialInput!) {
+    updateAmazonSalesChannelView(data: $data) {
+      id
+      name
+      active
+      isDefault
+    }
+  }
+`;
+
 export const updateRemoteLanguageMutation = gql`
   mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
     updateRemoteLanguage(data: $data) {

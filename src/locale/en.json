@@ -2240,7 +2240,10 @@
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
       "stores": {
-        "title": "Store"
+        "title": "Store",
+        "labels": {
+          "isDefault": "Is Default Store"
+        }
       },
       "languages": {
         "labels": {
