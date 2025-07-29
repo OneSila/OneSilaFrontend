@@ -340,6 +340,7 @@ export const salesChannelViewAssignsQuery = gql`
             id
             name
             active
+            type
           }
           remoteProduct {
             id
