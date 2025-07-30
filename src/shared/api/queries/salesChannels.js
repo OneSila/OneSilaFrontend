@@ -340,6 +340,7 @@ export const salesChannelViewAssignsQuery = gql`
             id
             name
             active
+            type
           }
           remoteProduct {
             id
@@ -486,6 +487,47 @@ export const getSalesChannelViewQuery = gql`
       active
       url
       name
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const amazonChannelViewsQuery = gql`
+  query AmazonChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: AmazonSalesChannelViewOrder, $filter: AmazonSalesChannelViewFilter) {
+    amazonChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          active
+          isDefault
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getAmazonChannelViewQuery = gql`
+  query getAmazonChannelView($id: GlobalID!) {
+    amazonChannelView(id: $id) {
+      id
+      active
+      url
+      name
+      isDefault
       salesChannel {
         id
       }

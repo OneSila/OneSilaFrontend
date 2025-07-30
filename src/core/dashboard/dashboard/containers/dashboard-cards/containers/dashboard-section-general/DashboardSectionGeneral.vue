@@ -148,7 +148,7 @@ onMounted(async () =>  {
       </FlexCell>
     </Flex>
 
-      <div class="cards grid grid-cols-1 2xl:grid-cols-2 gap-4">
+      <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         <DashboardCard
           v-for="card in generalCards"
           :key="card.key"
