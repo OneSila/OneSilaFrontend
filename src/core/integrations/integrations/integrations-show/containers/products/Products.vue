@@ -18,6 +18,7 @@ import { displayApolloError, shortenText } from "../../../../../../shared/utils"
 import {Toast} from "../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../../../../../products/products/product-show/containers/tabs/websites/containers/logs-info-modal";
 import {Badge} from "../../../../../../shared/components/atoms/badge";
+import {getProductTypeBadgeMap} from "../../../../../products/products/configs";
 
 
 const { t } = useI18n();
@@ -101,6 +102,9 @@ const getStatusText = (item) => {
                         {{ t('shared.labels.name') }}
                       </th>
                       <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        {{ t('shared.labels.type') }}
+                      </th>
+                      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         {{ t('shared.labels.active') }}
                       </th>
                       <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -117,6 +121,12 @@ const getStatusText = (item) => {
                         <Link :title="item.node.product.name" :path="{name: 'products.products.show', params: { id: item.node.product.id}, query: {tab: 'websites'}}">
                           {{ shortenText(item.node.product.name, 64) }}
                         </Link>
+                      </td>
+                      <td>
+                        <Badge
+                          :text="getProductTypeBadgeMap(t)[item.node.product.type]?.text"
+                          :color="getProductTypeBadgeMap(t)[item.node.product.type]?.color"
+                        />
                       </td>
                       <td>
                         <Icon v-if="item.node.product.active" name="check-circle" class="ml-2 text-green-500"/>

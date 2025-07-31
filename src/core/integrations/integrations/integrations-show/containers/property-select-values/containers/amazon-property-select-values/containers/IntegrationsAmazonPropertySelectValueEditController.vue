@@ -152,6 +152,7 @@ onMounted(async () => {
         multiple: false,
         filterable: true,
         formMapIdentifier: 'id',
+        dropdownPosition: 'bottom'
       }
     }
   }
