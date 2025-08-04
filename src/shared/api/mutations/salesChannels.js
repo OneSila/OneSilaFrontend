@@ -272,11 +272,6 @@ export const refreshLatestAmazonIssuesMutation = gql`
   mutation refreshLatestAmazonIssues($data: SalesChannelViewAssignPartialInput!) {
     refreshAmazonLatestIssues(instance: $data) {
       id
-      formattedIssues {
-        message
-        severity
-        validationIssue
-      }
     }
   }
 `;

@@ -416,7 +416,6 @@ export interface SalesChannelViewAssign {
   remoteUrl: string;
   remoteProductPercentage: number;
   integrationType: string;
-  formattedIssues?: { message?: string | null; severity?: string | null }[];
   product: SalesChannelViewAssignProduct;
   salesChannelView: SalesChannelView;
   remoteProduct: RemoteProduct;

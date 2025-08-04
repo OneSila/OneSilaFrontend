@@ -8,20 +8,17 @@ import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { ApolloAlertMutation } from "../../../../../../../../../shared/components/molecules/apollo-alert-mutation";
 import { deleteSalesChannelViewAssignMutation } from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import { Product } from "../../../../../../configs";
-import type { SalesChannelViewAssign } from "../../../../../../configs";
 import { AssignProgressBar } from "../../../../../../../../../shared/components/molecules/assign-progress-bar";
 import { resyncSalesChannelViewAssignMutation } from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import { displayApolloError } from "../../../../../../../../../shared/utils";
 import { Toast} from "../../../../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../logs-info-modal";
-import { IssuesInfoModal } from "../issues-info-modal";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
 const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
 const infoIntegrationType = ref<string | undefined>(undefined);
-const issuesList = ref<SalesChannelViewAssign['formattedIssues'] | null>(null);
 const showIssuesModal = ref(false);
 const issuesAssignId = ref(null);
 
@@ -41,7 +38,6 @@ const setInfoId = (id: string | null, type: string | null) => {
 
 const setIssues = (issues, id) => {
   issuesAssignId.value = id;
-  issuesList.value = issues || [];
   showIssuesModal.value = true;
 }
 
@@ -52,7 +48,6 @@ const modalColsed = () => {
 }
 
 const issuesModalClosed = () => {
-  issuesList.value = null;
   issuesAssignId.value = null;
   showIssuesModal.value = false;
 }
@@ -83,10 +78,6 @@ const issuesModalClosed = () => {
             </td>
             <td>
               <div class="flex gap-4 items-center justify-end">
-
-                <Button v-if="item.formattedIssues?.length" @click="setIssues(item.formattedIssues, item.id)">
-                  <Icon name="exclamation-triangle" size="lg" class="text-red-500" />
-                </Button>
 
                 <Button :disabled="!item.remoteProduct?.id" @click="setInfoId(item.remoteProduct?.id, item.integrationType)">
                   <Icon name="clipboard-list" size="lg" class="text-gray-500" />
@@ -128,6 +119,5 @@ const issuesModalClosed = () => {
         </table>
       </div>
       <LogsInfoModal v-model="showInfoModal" :id="infoId" :integration-type="infoIntegrationType" @modal-closed="modalColsed()" />
-      <IssuesInfoModal v-model="showIssuesModal" :issues="issuesList" :id="issuesAssignId" @modal-closed="issuesModalClosed()" />
     </div>
 </template>
