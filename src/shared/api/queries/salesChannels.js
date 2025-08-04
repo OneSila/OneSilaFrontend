@@ -297,10 +297,9 @@ export const getEbayChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
-      region
-      country
       firstImportComplete
       isImporting
+      accessToken
       integrationPtr {
         id
       }

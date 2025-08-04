@@ -35,11 +35,10 @@ interface EditEbayForm {
   listingOwner: boolean;
   accessToken?: string;
   expirationDate?: string;
-  region: string | null;
-  country: string | null;
 }
 
 const props = defineProps<{ data: EditEbayForm }>();
+
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
@@ -58,72 +57,6 @@ const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
   { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' },
 ];
-
-const regionLabel = computed(() => {
-  switch (formData.value.region) {
-    case AmazonRegions.NORTH_AMERICA:
-      return t('integrations.regions.northAmerica');
-    case AmazonRegions.EUROPE:
-      return t('integrations.regions.europe');
-    case AmazonRegions.FAR_EAST:
-      return t('integrations.regions.farEast');
-    default:
-      return '';
-  }
-});
-
-const countryLabel = computed(() => {
-  switch (formData.value.country) {
-    case AmazonCountries.CANADA:
-      return t('integrations.countries.canada');
-    case AmazonCountries.UNITED_STATES:
-      return t('integrations.countries.unitedStates');
-    case AmazonCountries.MEXICO:
-      return t('integrations.countries.mexico');
-    case AmazonCountries.BRAZIL:
-      return t('integrations.countries.brazil');
-    case AmazonCountries.IRELAND:
-      return t('integrations.countries.ireland');
-    case AmazonCountries.SPAIN:
-      return t('integrations.countries.spain');
-    case AmazonCountries.UNITED_KINGDOM:
-      return t('integrations.countries.unitedKingdom');
-    case AmazonCountries.FRANCE:
-      return t('integrations.countries.france');
-    case AmazonCountries.BELGIUM:
-      return t('integrations.countries.belgium');
-    case AmazonCountries.NETHERLANDS:
-      return t('integrations.countries.netherlands');
-    case AmazonCountries.GERMANY:
-      return t('integrations.countries.germany');
-    case AmazonCountries.ITALY:
-      return t('integrations.countries.italy');
-    case AmazonCountries.SWEDEN:
-      return t('integrations.countries.sweden');
-    case AmazonCountries.SOUTH_AFRICA:
-      return t('integrations.countries.southAfrica');
-    case AmazonCountries.POLAND:
-      return t('integrations.countries.poland');
-    case AmazonCountries.EGYPT:
-      return t('integrations.countries.egypt');
-    case AmazonCountries.TURKEY:
-      return t('integrations.countries.turkey');
-    case AmazonCountries.SAUDI_ARABIA:
-      return t('integrations.countries.saudiArabia');
-    case AmazonCountries.UNITED_ARAB_EMIRATES:
-      return t('integrations.countries.unitedArabEmirates');
-    case AmazonCountries.INDIA:
-      return t('integrations.countries.india');
-    case AmazonCountries.SINGAPORE:
-      return t('integrations.countries.singapore');
-    case AmazonCountries.AUSTRALIA:
-      return t('integrations.countries.australia');
-    case AmazonCountries.JAPAN:
-      return t('integrations.countries.japan');
-    default:
-      return '';
-  }
-});
 
 const refreshClass = computed(() => {
   if (!formData.value.expirationDate) return '';
@@ -203,33 +136,6 @@ useShiftBackspaceKeyboardListener(goBack);
         </Flex>
       </div>
 
-      <div class="md:col-span-2 col-span-6">
-        <Flex class="mt-8" gap="2">
-          <FlexCell>
-            <Label class="font-semibold text-sm text-gray-900 mb-1">
-              {{ t('integrations.labels.listingOwner') }}
-            </Label>
-          </FlexCell>
-          <FlexCell>
-            <Toggle v-model="formData.listingOwner" />
-          </FlexCell>
-        </Flex>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-4">
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.region') }}
-        </Label>
-        <TextInput :model-value="regionLabel" disabled class="w-full" />
-      </div>
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.country') }}
-        </Label>
-        <TextInput :model-value="countryLabel" disabled class="w-full" />
-      </div>
     </div>
 
     <Accordion class="mt-8" :items="accordionItems" :default-active="openAccordionItem" :key="openAccordionItem">
