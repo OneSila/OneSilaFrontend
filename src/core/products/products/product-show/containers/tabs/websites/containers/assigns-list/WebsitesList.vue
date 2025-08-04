@@ -52,7 +52,6 @@ const modalColsed = () => {
 }
 
 const issuesModalClosed = () => {
-  issuesList.value = null;
   issuesAssignId.value = null;
   showIssuesModal.value = false;
 }
@@ -83,10 +82,6 @@ const issuesModalClosed = () => {
             </td>
             <td>
               <div class="flex gap-4 items-center justify-end">
-
-                <Button v-if="item.formattedIssues?.length" @click="setIssues(item.formattedIssues, item.id)">
-                  <Icon name="exclamation-triangle" size="lg" class="text-red-500" />
-                </Button>
 
                 <Button :disabled="!item.remoteProduct?.id" @click="setInfoId(item.remoteProduct?.id, item.integrationType)">
                   <Icon name="clipboard-list" size="lg" class="text-gray-500" />
@@ -128,6 +123,6 @@ const issuesModalClosed = () => {
         </table>
       </div>
       <LogsInfoModal v-model="showInfoModal" :id="infoId" :integration-type="infoIntegrationType" @modal-closed="modalColsed()" />
-      <IssuesInfoModal v-model="showIssuesModal" :issues="issuesList" :id="issuesAssignId" @modal-closed="issuesModalClosed()" />
+      <IssuesInfoModal v-model="showIssuesModal" :id="issuesAssignId" @modal-closed="issuesModalClosed()" />
     </div>
 </template>
