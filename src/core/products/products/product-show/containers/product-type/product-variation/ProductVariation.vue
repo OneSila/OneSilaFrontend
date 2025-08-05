@@ -108,7 +108,11 @@ const tabItems = computed(() => {
         <ProductEanCodesList :product="product" />
       </template>
       <template v-if="amazonProducts.length" v-slot:amazon>
-        <AmazonView :product="product" :amazon-products="amazonProducts" />
+        <AmazonView
+          :product="product"
+          :amazon-products="amazonProducts"
+          @refresh-amazon-products="fetchAmazonProducts"
+        />
       </template>
     </Tabs>
   </div>
