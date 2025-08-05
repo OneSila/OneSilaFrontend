@@ -6,10 +6,10 @@ import { Product } from '../../../../configs';
 import { Accordion } from '../../../../../../../shared/components/atoms/accordion';
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
-import { amazonProductsQuery } from '../../../../../../../shared/api/queries/amazonProducts.js';
+import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import apolloClient from '../../../../../../../../apollo-client';
 
-const props = defineProps<{ product: Product }>();
+const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
 const { t } = useI18n();
 
 interface AmazonProductIssue {
@@ -27,56 +27,44 @@ interface AmazonProduct {
   issues: AmazonProductIssue[];
 }
 
-const result = ref();
+const views = ref<any[]>([]);
 const loading = ref(false);
 
-const fetchProducts = async () => {
+const fetchViews = async () => {
   loading.value = true;
   const { data } = await apolloClient.query({
-    query: amazonProductsQuery,
-    variables: { localInstance: props.product.id },
+    query: amazonChannelViewsQuery,
     fetchPolicy: 'network-only',
   });
-
-  result.value = data;
+  views.value = data.amazonChannelViews?.edges?.map((edge: any) => edge.node) || [];
   loading.value = false;
 };
 
-onMounted(fetchProducts);
-
-const viewNameMap = computed<Record<string, string>>(() => {
-  console.log(props.product.saleschannelviewassignSet)
-  const map: Record<string, string> = {};
-  props.product.saleschannelviewassignSet.forEach((assign: any) => {
-    map[assign.salesChannelView.remoteId] = assign.salesChannelView.name;
-  });
-  return map;
-});
+onMounted(fetchViews);
 
 interface AccordionItem {
   name: string;
   label: string;
-  issues: AmazonProductIssue[];
+  validationIssues: AmazonProductIssue[];
+  otherIssues: AmazonProductIssue[];
 }
 
 const accordionItems = computed<AccordionItem[]>(() => {
-  const items: AccordionItem[] = [];
-  const edges = result.value?.amazonProducts?.edges || [];
-
-  edges.forEach((edge: { node: AmazonProduct }) => {
-    const node = edge.node;
-    const marketplaces = node.createdMarketplaces || [];
-
-    marketplaces.forEach((viewId: string) => {
-      const issues =
-        node.issues?.filter((issue) => issue.view?.remoteId === viewId) || [];
-
-      const label = viewNameMap.value[viewId] || viewId;
-      items.push({ name: `${node.id}-${viewId}`, label, issues });
+  return views.value.map((view: any) => {
+    const allIssues: AmazonProductIssue[] = [];
+    props.amazonProducts.forEach((product: AmazonProduct) => {
+      const issuesForView =
+        product.issues?.filter((issue) => issue.view?.remoteId === view.remoteId) || [];
+      allIssues.push(...issuesForView);
     });
-  });
 
-  return items;
+    return {
+      name: view.remoteId,
+      label: view.name || view.remoteId,
+      validationIssues: allIssues.filter((i) => i.isValidationIssue),
+      otherIssues: allIssues.filter((i) => !i.isValidationIssue),
+    };
+  });
 });
 
 
@@ -88,31 +76,51 @@ const accordionItems = computed<AccordionItem[]>(() => {
       <LocalLoader :loading="loading" />
       <div v-if="!loading && accordionItems.length">
         <Accordion :items="accordionItems">
-          <template v-for="item in accordionItems" #[item.name]>
-            <div class="mb-4 flex gap-2">
-              <Button class="btn btn-sm btn-outline-primary">{{ t('shared.button.resync') }}</Button>
-              <Button class="btn btn-sm btn-outline-primary">{{ t('shared.button.validate') }}</Button>
-              <Button class="btn btn-sm btn-outline-primary">{{ t('shared.button.fetchIssues') }}</Button>
+          <template v-for="item in accordionItems" #[item.name + '-actions']>
+            <div class="flex gap-2">
+              <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.resync') }}</Button>
+              <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.validate') }}</Button>
+              <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.fetchIssues') }}</Button>
             </div>
-            <div v-if="item.issues.length">
+          </template>
+          <template v-for="item in accordionItems" #[item.name]>
+            <div v-if="item.validationIssues.length" class="mb-4">
+              <h4 class="font-semibold mb-2">{{ t('products.products.amazon.validationIssues') }}</h4>
+              <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.validationIssuesDescription') }}</p>
               <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                 <thead>
                   <tr>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.code') }}</th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="issue in item.issues" :key="issue.id">
-                    <td class="break-words">{{ issue.code }}</td>
+                  <tr v-for="issue in item.validationIssues" :key="issue.id">
                     <td class="break-words max-w-xs">{{ issue.message }}</td>
-                    <td class="capitalize">{{ issue.severity }}</td>
+                    <td class="capitalize" :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }">{{ issue.severity }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div v-else class="text-sm text-gray-500">{{ t('shared.labels.noIssues') }}</div>
+            <div v-if="item.otherIssues.length" class="mb-4">
+              <h4 class="font-semibold mb-2">{{ t('products.products.amazon.otherIssues') }}</h4>
+              <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.otherIssuesDescription') }}</p>
+              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                <thead>
+                  <tr>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                  <tr v-for="issue in item.otherIssues" :key="issue.id">
+                    <td class="break-words max-w-xs">{{ issue.message }}</td>
+                    <td class="capitalize" :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }">{{ issue.severity }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div v-if="!item.validationIssues.length && !item.otherIssues.length" class="text-sm text-gray-500">{{ t('shared.labels.noIssues') }}</div>
           </template>
         </Accordion>
       </div>
