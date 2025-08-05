@@ -7,9 +7,13 @@ import { Accordion } from '../../../../../../../shared/components/atoms/accordio
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
 import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
+import { resyncAmazonProductMutation, refreshAmazonProductIssuesMutation } from '../../../../../../../shared/api/mutations/amazonProducts.js';
+import { Toast } from '../../../../../../../shared/modules/toast';
+import { displayApolloError } from '../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../apollo-client';
 
 const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
+const emit = defineEmits(['refreshAmazonProducts']);
 const { t } = useI18n();
 
 interface AmazonProductIssue {
@@ -43,10 +47,12 @@ const fetchViews = async () => {
 onMounted(fetchViews);
 
 interface AccordionItem {
+  id: string;
   name: string;
   label: string;
   validationIssues: AmazonProductIssue[];
   otherIssues: AmazonProductIssue[];
+  remoteProductId: string | null;
 }
 
 const accordionItems = computed<AccordionItem[]>(() => {
@@ -58,20 +64,43 @@ const accordionItems = computed<AccordionItem[]>(() => {
     )
     .map((view: any) => {
       const allIssues: AmazonProductIssue[] = [];
+      let remoteProductId: string | null = null;
       props.amazonProducts.forEach((product: AmazonProduct) => {
+        if (product.createdMarketplaces.includes(view.remoteId)) {
+          remoteProductId = product.id;
+        }
         const issuesForView =
           product.issues?.filter((issue) => issue.view?.remoteId === view.remoteId) || [];
         allIssues.push(...issuesForView);
       });
 
       return {
+        id: view.id,
         name: view.remoteId,
         label: view.name || view.remoteId,
         validationIssues: allIssues.filter((i) => i.isValidationIssue),
         otherIssues: allIssues.filter((i) => !i.isValidationIssue),
+        remoteProductId,
       };
     });
 });
+
+
+const onResyncSuccess = () => {
+  Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
+  emit('refreshAmazonProducts');
+  fetchViews();
+};
+
+const onFetchIssuesSuccess = () => {
+  Toast.success(t('shared.toast.submitSuccessUpdate'));
+  emit('refreshAmazonProducts');
+  fetchViews();
+};
+
+const onError = (error) => {
+  displayApolloError(error);
+};
 
 
 </script>
@@ -84,9 +113,42 @@ const accordionItems = computed<AccordionItem[]>(() => {
         <Accordion :items="accordionItems">
           <template v-for="item in accordionItems" #[item.name+'-actions'] :key="item.name+'-actions'">
             <div class="flex gap-2">
-              <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.resync') }}</Button>
-              <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.validate') }}</Button>
-              <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.fetchIssues') }}</Button>
+              <ApolloMutation
+                :mutation="resyncAmazonProductMutation"
+                :variables="{ remoteProduct: { id: item.remoteProductId }, view: { id: item.id }, forceValidationOnly: false }"
+                @done="onResyncSuccess"
+                @error="onError"
+              >
+                <template #default="{ mutate, loading }">
+                  <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+                    {{ t('shared.button.resync') }}
+                  </Button>
+                </template>
+              </ApolloMutation>
+              <ApolloMutation
+                :mutation="resyncAmazonProductMutation"
+                :variables="{ remoteProduct: { id: item.remoteProductId }, view: { id: item.id }, forceValidationOnly: true }"
+                @done="onResyncSuccess"
+                @error="onError"
+              >
+                <template #default="{ mutate, loading }">
+                  <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+                    {{ t('shared.button.validate') }}
+                  </Button>
+                </template>
+              </ApolloMutation>
+              <ApolloMutation
+                :mutation="refreshAmazonProductIssuesMutation"
+                :variables="{ remoteProduct: { id: item.remoteProductId }, view: { id: item.id } }"
+                @done="onFetchIssuesSuccess"
+                @error="onError"
+              >
+                <template #default="{ mutate, loading }">
+                  <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+                    {{ t('shared.button.fetchIssues') }}
+                  </Button>
+                </template>
+              </ApolloMutation>
             </div>
           </template>
           <template v-for="item in accordionItems" #[item.name] :key="item.name">
