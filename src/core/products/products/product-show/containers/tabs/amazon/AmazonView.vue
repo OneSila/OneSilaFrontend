@@ -50,21 +50,27 @@ interface AccordionItem {
 }
 
 const accordionItems = computed<AccordionItem[]>(() => {
-  return views.value.map((view: any) => {
-    const allIssues: AmazonProductIssue[] = [];
-    props.amazonProducts.forEach((product: AmazonProduct) => {
-      const issuesForView =
-        product.issues?.filter((issue) => issue.view?.remoteId === view.remoteId) || [];
-      allIssues.push(...issuesForView);
-    });
+  return views.value
+    .filter((view: any) =>
+      props.amazonProducts.some((product: AmazonProduct) =>
+        product.createdMarketplaces.includes(view.remoteId),
+      ),
+    )
+    .map((view: any) => {
+      const allIssues: AmazonProductIssue[] = [];
+      props.amazonProducts.forEach((product: AmazonProduct) => {
+        const issuesForView =
+          product.issues?.filter((issue) => issue.view?.remoteId === view.remoteId) || [];
+        allIssues.push(...issuesForView);
+      });
 
-    return {
-      name: view.remoteId,
-      label: view.name || view.remoteId,
-      validationIssues: allIssues.filter((i) => i.isValidationIssue),
-      otherIssues: allIssues.filter((i) => !i.isValidationIssue),
-    };
-  });
+      return {
+        name: view.remoteId,
+        label: view.name || view.remoteId,
+        validationIssues: allIssues.filter((i) => i.isValidationIssue),
+        otherIssues: allIssues.filter((i) => !i.isValidationIssue),
+      };
+    });
 });
 
 
@@ -76,14 +82,14 @@ const accordionItems = computed<AccordionItem[]>(() => {
       <LocalLoader :loading="loading" />
       <div v-if="!loading && accordionItems.length">
         <Accordion :items="accordionItems">
-          <template v-for="item in accordionItems" #[item.name + '-actions']>
+          <template v-for="item in accordionItems" #[item.name+'-actions'] :key="item.name+'-actions'">
             <div class="flex gap-2">
               <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.resync') }}</Button>
               <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.validate') }}</Button>
               <Button class="btn btn-sm btn-outline-primary" @click.stop>{{ t('shared.button.fetchIssues') }}</Button>
             </div>
           </template>
-          <template v-for="item in accordionItems" #[item.name]>
+          <template v-for="item in accordionItems" #[item.name] :key="item.name">
             <div v-if="item.validationIssues.length" class="mb-4">
               <h4 class="font-semibold mb-2">{{ t('products.products.amazon.validationIssues') }}</h4>
               <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.validationIssuesDescription') }}</p>

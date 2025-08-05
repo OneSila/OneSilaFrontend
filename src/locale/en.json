@@ -945,8 +945,8 @@
       "amazon": {
         "validationIssues": "Validation Issues",
         "validationIssuesDescription": "Issues detected locally before sending the product to Amazon.",
-        "otherIssues": "Other Issues",
-        "otherIssuesDescription": "Issues returned by Amazon after processing the product."
+        "otherIssues": "Remote Product Issues",
+        "otherIssuesDescription": "Issues already present in Amazon for this product."
       },
       "inspector": {
         "errors": {
