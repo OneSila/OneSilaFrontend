@@ -18,13 +18,13 @@ interface AmazonProductIssue {
   message?: string | null;
   severity?: string | null;
   isValidationIssue?: boolean | null;
-  view?: { id: string; name?: string } | null;
+  view?: { remoteId: string; name?: string } | null;
 }
 
 interface AmazonProduct {
   id: string;
   createdMarketplaces: string[];
-  issues: { edges: { node: AmazonProductIssue }[] };
+  issues: AmazonProductIssue[];
 }
 
 const result = ref();
@@ -37,6 +37,7 @@ const fetchProducts = async () => {
     variables: { localInstance: props.product.id },
     fetchPolicy: 'network-only',
   });
+
   result.value = data;
   loading.value = false;
 };
@@ -44,9 +45,10 @@ const fetchProducts = async () => {
 onMounted(fetchProducts);
 
 const viewNameMap = computed<Record<string, string>>(() => {
+  console.log(props.product.saleschannelviewassignSet)
   const map: Record<string, string> = {};
   props.product.saleschannelviewassignSet.forEach((assign: any) => {
-    map[assign.salesChannelView.id] = assign.salesChannelView.name;
+    map[assign.salesChannelView.remoteId] = assign.salesChannelView.name;
   });
   return map;
 });
@@ -60,18 +62,24 @@ interface AccordionItem {
 const accordionItems = computed<AccordionItem[]>(() => {
   const items: AccordionItem[] = [];
   const edges = result.value?.amazonProducts?.edges || [];
+
   edges.forEach((edge: { node: AmazonProduct }) => {
     const node = edge.node;
     const marketplaces = node.createdMarketplaces || [];
+
     marketplaces.forEach((viewId: string) => {
       const issues =
-        node.issues?.edges?.filter((e) => e.node.view?.id === viewId).map((e) => e.node) || [];
+        node.issues?.filter((issue) => issue.view?.remoteId === viewId) || [];
+
       const label = viewNameMap.value[viewId] || viewId;
       items.push({ name: `${node.id}-${viewId}`, label, issues });
     });
   });
+
   return items;
 });
+
+
 </script>
 
 <template>

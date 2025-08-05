@@ -8,18 +8,14 @@ export const amazonProductsQuery = gql`
           id
           createdMarketplaces
           issues {
-            edges {
-              node {
-                id
-                code
-                message
-                severity
-                isValidationIssue
-                view {
-                  id
-                  name
-                }
-              }
+            id
+            code
+            message
+            severity
+            isValidationIssue
+            view {
+              remoteId
+              name
             }
           }
         }
