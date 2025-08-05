@@ -4,7 +4,10 @@
       "login": "Se connecter",
       "register": "S'inscrire",
       "recover": "Récupérer",
-      "duplicate": "Dupliquer"
+      "duplicate": "Dupliquer",
+      "resync": "Resync",
+      "validate": "Validate",
+      "fetchIssues": "Fetch Issues"
     },
     "colors": {
       "red": "Rouge",
@@ -16,7 +19,9 @@
       "severity": "Gravité",
       "validationIssue": "Problème de validation",
       "manual": "Manuel",
-      "generate": "Générer"
+      "generate": "Générer",
+      "code": "Code",
+      "noIssues": "Aucun problème"
     },
     "alert": {
       "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."
@@ -77,6 +82,9 @@
             }
           }
         }
+      },
+      "tabs": {
+        "amazon": "Amazon"
       }
     }
   }

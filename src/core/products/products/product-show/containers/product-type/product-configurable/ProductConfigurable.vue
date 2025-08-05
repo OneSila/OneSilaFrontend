@@ -11,6 +11,7 @@ import MediaView from "../../tabs/media/MediaView.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
+import AmazonView from "../../tabs/amazon/AmazonView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -35,6 +36,7 @@ if (props.product.aliasProducts?.length > 0) {
 tabItems.value.push(
   { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
   { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
+  { name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' },
 );
 
 
@@ -63,6 +65,9 @@ tabItems.value.push(
       </template>
       <template v-slot:websites>
         <WebsitesView :product="product" />
+      </template>
+      <template v-slot:amazon>
+        <AmazonView :product="product" />
       </template>
     </Tabs>
   </div>

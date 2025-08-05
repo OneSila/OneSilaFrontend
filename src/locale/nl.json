@@ -180,7 +180,10 @@
       "fix": "Fixen",
       "downloadConfirmation": "",
       "createAnyway": "Toch aanmaken",
-      "abort": "Afbreken"
+      "abort": "Afbreken",
+      "resync": "Resync",
+      "validate": "Validate",
+      "fetchIssues": "Fetch Issues"
     },
     "colors": {
       "red": "Rood",
@@ -227,7 +230,9 @@
       "severity": "Ernst",
       "validationIssue": "Validatiefout",
       "manual": "Handmatig",
-      "generate": "Genereren"
+      "generate": "Genereren",
+      "code": "Code",
+      "noIssues": "Geen problemen"
     },
     "alert": {
       "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
@@ -644,7 +649,8 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "inventoryMovements": ""
+        "inventoryMovements": "",
+        "amazon": "Amazon"
       },
       "inspector": {
         "labels": {

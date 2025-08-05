@@ -4,7 +4,10 @@
       "login": "Anmelden",
       "register": "Registrieren",
       "recover": "Wiederherstellen",
-      "duplicate": "Duplizieren"
+      "duplicate": "Duplizieren",
+      "resync": "Resync",
+      "validate": "Validate",
+      "fetchIssues": "Fetch Issues"
     },
     "colors": {
       "red": "Rot",
@@ -16,7 +19,9 @@
       "severity": "Schweregrad",
       "validationIssue": "Validierungsfehler",
       "manual": "Manuell",
-      "generate": "Generieren"
+      "generate": "Generieren",
+      "code": "Code",
+      "noIssues": "Keine Probleme"
     },
     "alert": {
       "noData": "Die Regel hat keine erforderlichen Konfiguratoreigenschaften, daher k\u00f6nnen keine Varianten generiert werden."
@@ -77,6 +82,9 @@
             }
           }
         }
+      },
+      "tabs": {
+        "amazon": "Amazon"
       }
     }
   }
