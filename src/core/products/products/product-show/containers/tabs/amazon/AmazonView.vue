@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useQuery } from '@vue/apollo-composable';
 import TabContentTemplate from '../TabContentTemplate.vue';
 import { Product } from '../../../../configs';
 import { Accordion } from '../../../../../../../shared/components/atoms/accordion';
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
 import { amazonProductsQuery } from '../../../../../../../shared/api/queries/amazonProducts.js';
+import apolloClient from '../../../../../../../../apollo-client';
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -27,9 +27,21 @@ interface AmazonProduct {
   issues: { edges: { node: AmazonProductIssue }[] };
 }
 
-const { result, loading } = useQuery(amazonProductsQuery, {
-  localInstance: props.product.id,
-});
+const result = ref();
+const loading = ref(false);
+
+const fetchProducts = async () => {
+  loading.value = true;
+  const { data } = await apolloClient.query({
+    query: amazonProductsQuery,
+    variables: { localInstance: props.product.id },
+    fetchPolicy: 'network-only',
+  });
+  result.value = data;
+  loading.value = false;
+};
+
+onMounted(fetchProducts);
 
 const viewNameMap = computed<Record<string, string>>(() => {
   const map: Record<string, string> = {};
