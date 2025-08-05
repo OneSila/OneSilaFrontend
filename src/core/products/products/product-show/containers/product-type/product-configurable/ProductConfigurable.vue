@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {useI18n} from "vue-i18n";
-import {ref} from "vue";
+import {ref, computed, onMounted} from "vue";
 import {Tabs} from "../../../../../../../shared/components/molecules/tabs";
 import {Product} from "../../../../configs"
 import ProductEditView from "../../tabs/general/ProductEditView.vue";
@@ -12,32 +12,52 @@ import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
+import { amazonProductsQuery } from "../../../../../../../shared/api/queries/amazonProducts.js";
+import apolloClient from "../../../../../../../../apollo-client";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 
-const tabItems = ref();
+const amazonProducts = ref<any[]>([]);
 
-tabItems.value = [
-  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-  { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
-  { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
-  { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
-];
-
-if (props.product.aliasProducts?.length > 0) {
-  tabItems.value.push({
-    name: 'aliasProducts',
-    label: t('products.products.tabs.aliasProducts'),
-    icon: 'clone'
+const fetchAmazonProducts = async () => {
+  const { data } = await apolloClient.query({
+    query: amazonProductsQuery,
+    variables: { localInstance: props.product.id },
+    fetchPolicy: 'network-only',
   });
-}
+  amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
+};
 
-tabItems.value.push(
-  { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
-  { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
-  { name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' },
-);
+onMounted(fetchAmazonProducts);
+
+const tabItems = computed(() => {
+  const items = [
+    { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+    { name: 'productContent', label: t('products.products.tabs.content'), icon: 'rectangle-list' },
+    { name: 'media', label: t('products.products.tabs.media'), icon: 'photo-film' },
+    { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+  ];
+
+  if (props.product.aliasProducts?.length > 0) {
+    items.push({
+      name: 'aliasProducts',
+      label: t('products.products.tabs.aliasProducts'),
+      icon: 'clone'
+    });
+  }
+
+  items.push(
+    { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
+    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' }
+  );
+
+  if (amazonProducts.value.length > 0) {
+    items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
+  }
+
+  return items;
+});
 
 
 </script>
@@ -66,8 +86,8 @@ tabItems.value.push(
       <template v-slot:websites>
         <WebsitesView :product="product" />
       </template>
-      <template v-slot:amazon>
-        <AmazonView :product="product" />
+      <template v-if="amazonProducts.length" v-slot:amazon>
+        <AmazonView :product="product" :amazon-products="amazonProducts" />
       </template>
     </Tabs>
   </div>

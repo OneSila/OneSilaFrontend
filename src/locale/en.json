@@ -934,13 +934,19 @@
         "inventory": "Inventory",
         "inventoryMovements": "Inventory Movements",
         "websites": "Channels",
-        "amazon": "Amazon",
-        "supplierProducts": "Supplier Products",
-        "saleOrders": "Sale Orders",
-        "purchasingOrders": "Purchase Orders",
-        "properties": "Properties",
-        "hsCodes": "HS Codes",
-        "eanCodes": "EAN Codes"
+      "amazon": "Amazon",
+      "supplierProducts": "Supplier Products",
+      "saleOrders": "Sale Orders",
+      "purchasingOrders": "Purchase Orders",
+      "properties": "Properties",
+      "hsCodes": "HS Codes",
+      "eanCodes": "EAN Codes"
+      },
+      "amazon": {
+        "validationIssues": "Validation Issues",
+        "validationIssuesDescription": "Issues detected locally before sending the product to Amazon.",
+        "otherIssues": "Other Issues",
+        "otherIssuesDescription": "Issues returned by Amazon after processing the product."
       },
       "inspector": {
         "errors": {

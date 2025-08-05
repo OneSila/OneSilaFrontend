@@ -52,6 +52,9 @@ const isActive = (index: number) => activeIndex.value === index;
             <FlexCell center grow>
               <span>{{ item.label }}</span>
             </FlexCell>
+            <FlexCell center @click.stop>
+              <slot :name="item.name + '-actions'"></slot>
+            </FlexCell>
             <FlexCell center>
               <svg
                 v-if="isActive(index)"

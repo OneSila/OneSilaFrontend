@@ -500,6 +500,7 @@ export const amazonChannelViewsQuery = gql`
       edges {
         node {
           id
+          remoteId
           name
           active
           isDefault
