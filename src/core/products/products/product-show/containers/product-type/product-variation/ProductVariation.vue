@@ -15,6 +15,7 @@ import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 import ParentsView from "../../tabs/parents/ParentsView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
+import AmazonView from "../../tabs/amazon/AmazonView.vue";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -48,6 +49,7 @@ const tabItems = computed(() => {
     { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
+    { name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' },
   );
 
   return items;
@@ -87,6 +89,9 @@ const tabItems = computed(() => {
       </template>
       <template v-slot:eanCodes>
         <ProductEanCodesList :product="product" />
+      </template>
+      <template v-slot:amazon>
+        <AmazonView :product="product" />
       </template>
     </Tabs>
   </div>
