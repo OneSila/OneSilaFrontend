@@ -236,6 +236,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
             label: t('properties.values.labels.missingTranslations'),
             strict: true,
         },
+        {
+            type: FieldType.Boolean,
+            name: 'usedInProducts',
+            label: t('properties.values.labels.usedInProducts'),
+            strict: true,
+        },
     ],
     orders: []
 });

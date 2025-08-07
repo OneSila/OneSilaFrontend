@@ -2080,7 +2080,8 @@
         "internalName": "Internal Name",
         "valueValidator": "Value Validator",
         "missingMainTranslation": "Missing Main Translation",
-        "missingTranslations": "Missing Translations"
+        "missingTranslations": "Missing Translations",
+        "usedInProducts": "Used In Products"
       },
       "placeholders": {
         "internalName": "Enter internal name",
@@ -2125,7 +2126,8 @@
       "labels": {
         "value": "Value",
         "missingMainTranslation": "Missing Main Translation",
-        "missingTranslations": "Missing Translations"
+        "missingTranslations": "Missing Translations",
+        "usedInProducts": "Used In Products"
       },
       "placeholders": {
         "value": "Enter value"
