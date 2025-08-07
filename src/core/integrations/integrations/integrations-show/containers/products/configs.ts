@@ -3,6 +3,13 @@ import { salesChannelViewAssignsQuery, salesChannelViewsQuery } from "../../../.
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
 import { deleteSalesChannelViewAssignMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
+import { getProductTypeBadgeMap } from "../../../../../products/products/configs";
+
+const getStatusBadgeMap = (t: Function) => ({
+  completed: { text: t('shared.labels.completed'), color: 'green' },
+  failed: { text: t('shared.labels.failed'), color: 'red' },
+  processing: { text: t('shared.labels.processing'), color: 'yellow' },
+});
 
 export const productsSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
   search: true,
@@ -27,19 +34,20 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
     },
     {
       type: FieldType.Query,
-      name: 'NOT',
+      name: 'notSalesChannelView',
+      isNot: true,
       label: t('integrations.show.products.labels.excludeStores'),
       labelBy: 'name',
       valueBy: 'id',
       query: salesChannelViewsQuery,
       dataKey: 'salesChannelViews',
       isEdge: true,
-      multiple: true,
+      multiple: false,
       filterable: true,
       removable: true,
       addLookup: true,
       lookupKeys: ['salesChannelView', 'id'],
-      lookupType: 'inList',
+      lookupType: 'exact',
       queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
     },
   ],
@@ -49,6 +57,9 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
 export const productsListingConfigConstructor = (t: Function): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
+    t('products.products.labels.type.title'),
+    t('shared.labels.active'),
+    t('shared.labels.status'),
     t('shared.labels.sku'),
     t('integrations.show.products.labels.store'),
   ],
@@ -60,6 +71,29 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
       clickable: true,
       clickUrl: { name: 'products.products.show' },
       clickIdentifiers: [{ id: ['id'] }],
+    },
+    {
+      name: 'product.type',
+      type: FieldType.Badge,
+      badgeMap: getProductTypeBadgeMap(t),
+    },
+    {
+      name: 'product.active',
+      type: FieldType.Boolean,
+    },
+    {
+      name: 'status',
+      type: FieldType.Badge,
+      badgeMap: getStatusBadgeMap(t),
+      accessor: (node) => {
+        if (node.remoteProduct?.hasErrors) {
+          return 'failed';
+        }
+        if (node.remoteProductPercentage === 100) {
+          return 'completed';
+        }
+        return 'processing';
+      },
     },
     {
       name: 'product',
