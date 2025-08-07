@@ -16,15 +16,12 @@ import {
   dashboardPropertySelectValuesUsedInProductsMissingMainTranslations,
   dashboardPropertySelectValuesUsedInProductsMissingTranslations,
 } from "../../../../../../../shared/api/queries/dashboardCards.js"
-import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
 
 const showCompletedGeneralCards = ref(false);
 const hideGeneralSection = ref(true);
-const finshFetch = ref(false);
-const loading = ref(false);
 
 const generalCards = ref([
   {
@@ -119,8 +116,6 @@ const generalCards = ref([
 
 
 async function fetchGeneralCounts() {
-  loading.value = true
-
   const fetchPromises = generalCards.value.map(async (card) => {
     try {
       const { data } = await apolloClient.query({
@@ -146,21 +141,18 @@ async function fetchGeneralCounts() {
   });
 
   await Promise.all(fetchPromises);
-  loading.value = false;
-
 }
 
 
 onMounted(async () =>  {
   await fetchGeneralCounts();
-  finshFetch.value = true;
 });
 
 </script>
 
 <template>
   <div class="py-8 mb-4 mt-4">
-  <Card v-if="!loading">
+  <Card>
      <Flex vertical class="pb-6 gap-2">
       <FlexCell>
         <Flex between>
@@ -214,13 +206,6 @@ onMounted(async () =>  {
         {{ t('dashboard.cards.general.noIssuesMessage') }}
       </p>
     </Card>
-    <template v-else>
-      <Card v-if="!finshFetch">
-        <div class="flex justify-center items-center h-64">
-          <LocalLoader loading />
-        </div>
-     </Card>
-    </template>
   </div>
 
 </template>

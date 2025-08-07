@@ -111,7 +111,10 @@ onUnmounted(() => {
       class="flex-item-inner"
       :class="{ 'no-flip': isMobile || isCompleted }"
     >
-      <div class="card">
+      <div
+        class="card transition-all duration-300"
+        :class="{ 'blur-sm animate-pulse': props.loading }"
+      >
         <!-- For Desktop -->
         <template v-if="!isMobile">
           <!-- Card Front -->

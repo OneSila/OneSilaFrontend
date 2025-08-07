@@ -7,14 +7,12 @@ import {Card} from "../../../../../../../shared/components/atoms/card";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
 import { dashboardOngoingOrders, dashboardOngoingShipments } from "../../../../../../../shared/api/queries/dashboardCards.js"
-import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
 
 const showCompletedOrdersCards = ref(false);
 const hideOrdersSection = ref(true);
-const finshFetch = ref(false);
 
 const orderCards = ref([
   {
@@ -84,7 +82,6 @@ async function fetchOrderCounts() {
 
 onMounted(async () =>  {
   await fetchOrderCounts();
-  finshFetch.value = true;
 });
 
 </script>
@@ -141,12 +138,4 @@ onMounted(async () =>  {
         />
       </div>
     </Card>
-    <template v-else>
-      <Card v-if="!finshFetch">
-        <div class="flex justify-center items-center h-64">
-          <LocalLoader loading />
-        </div>
-     </Card>
-    </template>
-
 </template>

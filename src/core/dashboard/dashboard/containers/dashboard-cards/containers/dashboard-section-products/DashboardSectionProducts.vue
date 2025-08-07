@@ -7,15 +7,12 @@ import {Card} from "../../../../../../../shared/components/atoms/card";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
 import { productsDashboardCardsQuery } from "../../../../../../../shared/api/queries/dashboardCards.js"
-import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
 
 const showCompletedProductsCards = ref(false);
 const allCardsCompleted = ref(true);
-const finshFetch = ref(false);
-const loading = ref(false);
 
 const productErrors = ref([
   // High importance errors
@@ -41,7 +38,6 @@ const productErrors = ref([
 ]);
 
 async function fetchErrorCounts() {
-  loading.value = true
   for (const error of productErrors.value) {
     try {
       const { data } = await apolloClient.query({
@@ -68,18 +64,16 @@ async function fetchErrorCounts() {
     }
   }
 
-  loading.value = false;
 }
 
 onMounted(async () =>  {
   await fetchErrorCounts();
-  finshFetch.value = true;
 });
 
 </script>
 
 <template>
-  <Card v-if="!loading" class="py-8">
+  <Card class="py-8">
       <Flex vertical class="py-6 gap-2">
         <FlexCell>
           <Flex between>
@@ -133,12 +127,5 @@ onMounted(async () =>  {
         {{ t('dashboard.cards.products.noIssuesMessage') }}
       </p>
   </Card>
-    <template v-else>
-      <Card v-if="!finshFetch">
-        <div class="flex justify-center items-center h-64">
-          <LocalLoader loading />
-        </div>
-     </Card>
-    </template>
 
 </template>

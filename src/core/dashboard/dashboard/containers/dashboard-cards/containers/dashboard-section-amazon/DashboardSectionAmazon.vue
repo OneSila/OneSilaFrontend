@@ -15,7 +15,6 @@ import { DashboardCard } from '../dashboard-card';
 import { Toggle } from '../../../../../../../shared/components/atoms/toggle';
 import { Card } from '../../../../../../../shared/components/atoms/card';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
-import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
 
 const { t } = useI18n();
 const auth = injectAuth();
@@ -30,12 +29,11 @@ interface AmazonCardData {
   selectValues: number;
   unitConfigurators: number;
   productsWithIssues: number;
+  loading: boolean;
 }
 
 const showCompletedAmazonCards = ref(false);
 const integrations = ref<AmazonCardData[]>([]);
-const loading = ref(false);
-const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
   const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
@@ -100,11 +98,8 @@ const fetchCounts = async (salesChannelId: string) => {
 
 const fetchAmazonIntegrations = async () => {
   if (!(auth.user?.company as any)?.hasAmazonIntegration) {
-    finishedFetch.value = true;
     return;
   }
-
-  loading.value = true;
 
   const { data } = await apolloClient.query({
     query: amazonChannelsQuery,
@@ -117,18 +112,24 @@ const fetchAmazonIntegrations = async () => {
     const channel = edge.node;
 
     if (channel?.saleschannelPtr?.id) {
-      const counts = await fetchCounts(channel.saleschannelPtr.id);
-      integrations.value.push({
+      const integrationData: AmazonCardData = {
         integrationId: channel.id,
         hostname: channel.hostname,
         salesChannelId: channel.saleschannelPtr.id,
-        ...counts,
-      });
+        properties: 0,
+        productTypes: 0,
+        localProductTypes: 0,
+        selectValues: 0,
+        unitConfigurators: 0,
+        productsWithIssues: 0,
+        loading: true,
+      };
+      integrations.value.push(integrationData);
+      const counts = await fetchCounts(channel.saleschannelPtr.id);
+      Object.assign(integrationData, counts);
+      integrationData.loading = false;
     }
   }
-
-  loading.value = false;
-  finishedFetch.value = true;
 };
 
 
@@ -183,6 +184,7 @@ onMounted(fetchAmazonIntegrations);
           :title="t('dashboard.cards.amazon.unmappedProductTypes.title')"
           :description="t('dashboard.cards.amazon.unmappedProductTypes.description')"
           :hide-on-complete="!showCompletedAmazonCards"
+          :loading="integration.loading"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
         />
@@ -191,6 +193,7 @@ onMounted(fetchAmazonIntegrations);
           :title="t('dashboard.cards.amazon.unmappedLocalProductTypes.title')"
           :description="t('dashboard.cards.amazon.unmappedLocalProductTypes.description')"
           :hide-on-complete="!showCompletedAmazonCards"
+          :loading="integration.loading"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
@@ -199,6 +202,7 @@ onMounted(fetchAmazonIntegrations);
           :title="t('dashboard.cards.amazon.unmappedProperties.title')"
           :description="t('dashboard.cards.amazon.unmappedProperties.description')"
           :hide-on-complete="!showCompletedAmazonCards"
+          :loading="integration.loading"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
         />
@@ -207,6 +211,7 @@ onMounted(fetchAmazonIntegrations);
           :title="t('dashboard.cards.amazon.unmappedSelectValues.title')"
           :description="t('dashboard.cards.amazon.unmappedSelectValues.description')"
           :hide-on-complete="!showCompletedAmazonCards"
+          :loading="integration.loading"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all' } }"
         />
@@ -215,6 +220,7 @@ onMounted(fetchAmazonIntegrations);
           :title="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.title')"
           :description="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.description')"
           :hide-on-complete="!showCompletedAmazonCards"
+          :loading="integration.loading"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'defaultUnits', mappedLocally: false } }"
         />
@@ -223,16 +229,10 @@ onMounted(fetchAmazonIntegrations);
           :title="t('dashboard.cards.amazon.productsWithIssues.title')"
           :description="t('dashboard.cards.amazon.productsWithIssues.description')"
           :hide-on-complete="!showCompletedAmazonCards"
+          :loading="integration.loading"
           color="red"
           :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId, active: true } }"
         />
-      </div>
-    </Card>
-  </template>
-  <template v-else-if="!finishedFetch">
-    <Card>
-      <div class="flex justify-center items-center h-64">
-        <LocalLoader loading />
       </div>
     </Card>
   </template>
