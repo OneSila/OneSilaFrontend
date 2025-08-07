@@ -160,6 +160,22 @@
         "propertySelectValuesMissingTranslations": {
           "title": "Select Values Missing Translations",
           "description": "Some select values are missing translations for all required languages."
+        },
+        "propertiesUsedInProductsMissingMainTranslation": {
+          "title": "Properties Used in Products Missing Main Translation",
+          "description": "These properties are used in products and lack translations for your company's main language."
+        },
+        "propertiesUsedInProductsMissingTranslations": {
+          "title": "Properties Used in Products Missing Translations",
+          "description": "These properties are used in products and are not translated into all required languages."
+        },
+        "propertySelectValuesUsedInProductsMissingMainTranslation": {
+          "title": "Select Values Used in Products Missing Main Language",
+          "description": "Some select values used in products lack translations for your company's main language."
+        },
+        "propertySelectValuesUsedInProductsMissingTranslations": {
+          "title": "Select Values Used in Products Missing Translations",
+          "description": "Some select values used in products are missing translations for all required languages."
         }
       },
       "amazon": {

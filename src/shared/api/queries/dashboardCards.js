@@ -87,3 +87,35 @@ export const dashboardPropertySelectValuesMissingTranslations = gql`
     }
   }
 `;
+
+export const dashboardPropertiesUsedInProductsMissingMainTranslations = gql`
+  query DashboardPropertiesUsedInProductsMissingMainTranslations {
+    properties(filters: { missingMainTranslation: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertiesUsedInProductsMissingTranslations = gql`
+  query DashboardPropertiesUsedInProductsMissingTranslations {
+    properties(filters: { missingTranslations: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesUsedInProductsMissingMainTranslations = gql`
+  query DashboardPropertySelectValuesUsedInProductsMissingMainTranslations {
+    propertySelectValues(filters: { missingMainTranslation: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesUsedInProductsMissingTranslations = gql`
+  query DashboardPropertySelectValuesUsedInProductsMissingTranslations {
+    propertySelectValues(filters: { missingTranslations: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
