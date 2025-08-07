@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import debounce from "lodash.debounce";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -13,8 +13,9 @@ const props = withDefaults(
     updateRoute?: boolean;
     routeKey?: string;
     debounce?: number;
+    loading?: boolean;
   }>(),
-  { routeKey: "search", debounce: 600 }
+  { routeKey: "search", debounce: 600, loading: false }
 );
 
 const { t } = useI18n();
@@ -23,6 +24,7 @@ const route = useRoute();
 const input = ref<HTMLInputElement | null>(null);
 const emit = defineEmits(["update:modelValue"]);
 const inputValue = ref((props.modelValue || "").slice(0, 100));
+const loading = computed(() => props.loading);
 
 watch(() => props.modelValue, (newValue) => {
   if (newValue === null) {
@@ -65,7 +67,8 @@ const onInput = () => {
   <div class="w-full" :class="disabled ? 'bg-gray-100' : 'bg-white'">
     <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg  overflow-hidden border-2 border-gray100">
       <div class="grid place-items-center h-full w-12 text-gray-300">
-        <Icon name="search" class="h-6 w-6" />
+        <Icon v-if="!loading" name="search" class="h-6 w-6" />
+        <div v-else class="loader-mini"></div>
       </div>
       <input
         ref="input"
@@ -79,4 +82,39 @@ const onInput = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.loader-mini {
+  width: 24px;
+  aspect-ratio: 1;
+  display: grid;
+}
+
+.loader-mini::before,
+.loader-mini::after {
+  content: "";
+  grid-area: 1/1;
+  --c: no-repeat radial-gradient(farthest-side, currentColor 92%, #0000);
+  background:
+    var(--c) 50% 0,
+    var(--c) 50% 100%,
+    var(--c) 100% 50%,
+    var(--c) 0 50%;
+  background-size: 5px 5px;
+  animation: l2 1s infinite;
+}
+
+.loader-mini::after {
+  margin: 2px;
+  filter: hue-rotate(45deg);
+  background-size: 3px 3px;
+  animation-direction: reverse;
+}
+
+@keyframes l2 {
+  100% {
+    transform: rotate(0.5turn);
+  }
+}
+</style>
 

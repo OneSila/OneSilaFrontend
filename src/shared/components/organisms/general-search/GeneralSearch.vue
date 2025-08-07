@@ -13,6 +13,8 @@ const routeKey = ref('search');
 const appStore = useAppStore();
 const searchConfig = ref<SearchConfig>(defaultSearchConfig);
 const route = useRoute();
+const isLoading = ref(false);
+let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const clearSearchInput = () => {
   search.value = '';
@@ -35,6 +37,14 @@ watch(() => route.query[routeKey.value], (newQueryValue) => {
   }
 }, {immediate: true});
 
+watch(() => route.fullPath, () => {
+  isLoading.value = true;
+  if (loadingTimeout) clearTimeout(loadingTimeout);
+  loadingTimeout = setTimeout(() => {
+    isLoading.value = false;
+  }, 500);
+});
+
 </script>
 
 <template>
@@ -46,6 +56,7 @@ watch(() => route.query[routeKey.value], (newQueryValue) => {
           :updateRoute="true"
           :debounce="200"
           routeKey="search"
+          :loading="isLoading"
       />
     </FlexCell>
     <FlexCell center>
