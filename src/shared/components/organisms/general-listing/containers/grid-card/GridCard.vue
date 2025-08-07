@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps, computed} from 'vue';
+import {defineProps, defineSlots, computed} from 'vue';
 import {Button} from '../../../../atoms/button';
 import {ApolloAlertMutation} from '../../../../molecules/apollo-alert-mutation';
 import {Link} from '../../../../atoms/link';
@@ -19,6 +19,10 @@ const props = defineProps<{
   selectedEntities: string[];
   selectCheckbox: (id: string, value: boolean) => void;
   queryObject: any;
+}>();
+
+const slots = defineSlots<{
+  additionalButtons?: (scope: { item: any }) => any;
 }>();
 
 // Compute the image field from the item's fields (internal to this component)
@@ -115,6 +119,7 @@ const getUpdatedField = (field: any, item: any, index: number) => {
       </table>
       <!-- Actions -->
       <div v-if="config.addActions" class="flex gap-4 justify-end mt-2">
+        <slot name="additionalButtons" :item="item" />
         <Link v-if="config.addEdit"
               :path="{ name: config.editUrlName,
                        params: config.identifierKey !== undefined ? { ...config.identifierVariables, id: item.node[config.identifierKey] } : undefined,
@@ -143,6 +148,6 @@ const getUpdatedField = (field: any, item: any, index: number) => {
           </template>
         </ApolloAlertMutation>
       </div>
-    </div>
+      </div>
   </div>
 </template>

@@ -1842,6 +1842,16 @@
         "title": "Hoe moet deze eigenschap zich gedragen op het product-type?"
       }
     }
+  },
+  "integrations": {
+    "show": {
+      "products": {
+        "labels": {
+          "store": "Winkel",
+          "excludeStores": "Winkels uitsluiten"
+        }
+      }
+    }
   }
 ,
   "integrations": {
