@@ -1843,4 +1843,13 @@
       }
     }
   }
+,
+  "integrations": {
+    "salesChannel": {
+      "labels": {
+        "assignedToSalesChannelView": "Toegewezen aan winkel",
+        "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+      }
+    }
+  }
 }

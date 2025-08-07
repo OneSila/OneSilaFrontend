@@ -14,7 +14,7 @@ import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 import { Badge, Icon } from "../../../shared/components/organisms/general-show/showConfig";
 import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
-import { amazonChannelsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
+import { amazonChannelsQuerySelector, salesChannelViewsQuery } from "../../../shared/api/queries/salesChannels.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
@@ -225,6 +225,32 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       labelBy: "fullValueName",
       valueBy: "id",
       dataKey: "propertySelectValues",
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+    },
+    {
+      type: FieldType.Query,
+      name: 'assignedToSalesChannelViewId',
+      query: salesChannelViewsQuery,
+      label: t('integrations.salesChannel.labels.assignedToSalesChannelView'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'salesChannelViews',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+    },
+    {
+      type: FieldType.Query,
+      name: 'notAssignedToSalesChannelViewId',
+      query: salesChannelViewsQuery,
+      label: t('integrations.salesChannel.labels.notAssignedToSalesChannelView'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'salesChannelViews',
       filterable: true,
       multiple: false,
       isEdge: true,

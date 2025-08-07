@@ -2555,6 +2555,10 @@
           "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
       },
+      "labels": {
+        "assignedToSalesChannelView": "Assigned To Store",
+        "notAssignedToSalesChannelView": "Not Assigned To Store"
+      },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results."
       },
