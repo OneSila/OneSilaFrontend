@@ -31,7 +31,7 @@ watch(
 
 watch(() => route.query[routeKey.value], (newQueryValue) => {
   if (newQueryValue && typeof newQueryValue === 'string') {
-    search.value = newQueryValue;
+    search.value = newQueryValue.slice(0, 100);
   }
 }, {immediate: true});
 
