@@ -21,11 +21,15 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const input = ref<HTMLInputElement | null>(null);
-const inputValue = ref(props.modelValue || "");
+const emit = defineEmits(["update:modelValue"]);
+const inputValue = ref((props.modelValue || "").slice(0, 100));
 
 watch(() => props.modelValue, (newValue) => {
   if (newValue === null) {
     newValue = "";
+  }
+  if (newValue.length > 100) {
+    newValue = newValue.slice(0, 100);
   }
   inputValue.value = newValue;
   updateRoute(newValue);
@@ -48,6 +52,13 @@ const focus = () => {
 };
 
 defineExpose({ focus });
+
+const onInput = () => {
+  if (inputValue.value.length > 100) {
+    inputValue.value = inputValue.value.slice(0, 100);
+  }
+  emit("update:modelValue", inputValue.value);
+};
 </script>
 
 <template>
@@ -63,7 +74,7 @@ defineExpose({ focus });
         type="text"
         :placeholder="placeholder || t('shared.button.search')"
         :disabled="disabled"
-        @input="$emit('update:modelValue', inputValue)"
+        @input="onInput"
       />
     </div>
   </div>
