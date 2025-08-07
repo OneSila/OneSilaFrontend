@@ -339,6 +339,7 @@ export const salesChannelViewAssignsQuery = gql`
           product {
             id
             name
+            sku
             active
             type
           }

@@ -2264,6 +2264,12 @@
           "remoteCode": "Remote Currency Code"
         }
       },
+      "products": {
+        "labels": {
+          "store": "Store",
+          "excludeStores": "Exclude Stores"
+        }
+      },
       "productRules": {
         "title": "Amazon Rules",
         "labels": {

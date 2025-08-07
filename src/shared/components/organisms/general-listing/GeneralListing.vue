@@ -36,6 +36,7 @@ const props = withDefaults(
 );
 const slots = defineSlots<{
   bulkActions?: (scope: { selectedEntities: string[]; viewType: string; query: any }) => any;
+  additionalButtons?: (scope: { item: any }) => any;
 }>();
 
 
@@ -325,7 +326,12 @@ defineExpose({
                        filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
                        order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                        pagination: pagination,
-                    }" />
+                    }"
+                  >
+                    <template #additionalButtons="{ item: tableItem }">
+                      <slot name="additionalButtons" :item="tableItem" />
+                    </template>
+                  </TableRow>
                   </tbody>
                 </table>
               </div>
@@ -350,7 +356,12 @@ defineExpose({
                        filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
                        order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                        pagination: pagination,
-                    }" />
+                    }"
+                >
+                  <template #additionalButtons="{ item: gridItem }">
+                    <slot name="additionalButtons" :item="gridItem" />
+                  </template>
+                </GridCard>
               </div>
             </div>
 

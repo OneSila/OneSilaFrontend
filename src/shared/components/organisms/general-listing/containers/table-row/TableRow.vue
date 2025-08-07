@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+import { defineProps, defineSlots } from 'vue';
 import { Button } from '../../../../atoms/button';
 import { ApolloAlertMutation } from '../../../../molecules/apollo-alert-mutation';
 import { Link } from '../../../../atoms/link';
@@ -20,6 +20,10 @@ const props = defineProps<{
   selectCheckbox: (id: string, value: boolean) => void;
 }>();
 
+const slots = defineSlots<{
+  additionalButtons?: (scope: { item: any }) => any;
+}>();
+
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const props = defineProps<{
         :modelValue="selectedEntities.includes(item.node[config.identifierKey || 'id'])"
         @update:model-value="value => selectCheckbox(item.node[config.identifierKey || 'id'], value)" />
     </td>
-    <td v-for="(field, index) in config.fields" :key="field.name" class="whitespace-nowrap px-3 py-4 text-sm">
+    <td v-for="(field, index) in config.fields" :key="field.name + '-' + index" class="whitespace-nowrap px-3 py-4 text-sm">
       <component
         v-if="field.type === FieldType.Text && field.addImage && field.imageField"
         :is="getFieldComponent(field.type)"
@@ -47,6 +51,7 @@ const props = defineProps<{
     </td>
     <td v-if="config.addActions">
       <div class="flex gap-4 items-center justify-end">
+        <slot name="additionalButtons" :item="item" />
         <Link
           v-if="config.addEdit"
           :path="{ name: config.editUrlName,
