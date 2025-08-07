@@ -124,7 +124,7 @@ onMounted(async () =>  {
             :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
             :hide-on-complete="!showCompletedProductsCards"
             :loading="err.loading"
-            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode } }"
+            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
             :color="err.color"
             :icon="err.icon"
           />
