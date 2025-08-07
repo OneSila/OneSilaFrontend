@@ -2,7 +2,7 @@ import { gql } from 'graphql-tag';
 
 export const productsDashboardCardsQuery = gql`
   query ProductsDashboardCards($errorCode: String!) {
-    products(filters: { inspectorNotSuccessfullyCodeError: $errorCode }) {
+    products(filters: { inspectorNotSuccessfullyCodeError: $errorCode, active: { exact: true } }) {
       totalCount
     }
   }
@@ -50,7 +50,7 @@ export const dashboardNotMatchingSalesPricesList = gql`
 
 export const dashboardAmazonProductsWithIssues = gql`
   query DashboardAmazonProductsWithIssues($salesChannelId: String) {
-    products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId }) {
+    products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId, active: { exact: true } }) {
       totalCount
     }
   }

@@ -36,7 +36,7 @@
             "description": "Activate all items in these bundle products."
           },
           "105": {
-            "title": "Products Missing Required Variations",
+            "title": "Products Missing Variations",
             "description": "Add required variations to these configurable products."
           },
           "106": {
@@ -56,8 +56,8 @@
             "description": "Provide EAN codes for these products."
           },
           "110": {
-            "title": "Products Missing Required Product Type Properties",
-            "description": "Assign required product type properties to these products."
+            "title": "Product Type Missing",
+            "description": "Assign a product type to these products."
           },
           "111": {
             "title": "Products Missing Required Properties",
@@ -84,7 +84,7 @@
             "description": "Add override prices to manual price list prices where auto-update is disabled."
           },
           "117": {
-            "title": "Variations with Different Product Types",
+            "title": "Variation Product Type Mismatch",
             "description": "Ensure all variations have the same product type."
           },
           "118": {
@@ -112,7 +112,7 @@
             "description": "Ensure variations in these configurable products have unique required properties."
           },
           "124": {
-            "title": "Configurable Products with No Applicable Configurator Rules",
+            "title": "Configurable Product Missing Rule Configuration",
             "description": "Define at least one configurator required item for these configurable products."
           }
         }
@@ -136,7 +136,7 @@
       "general": {
         "title": "General cards",
         "description": "Improve your data quality by resolving the following issues.",
-        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. \uD83C\uDFAF You're all set for now!",
+        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. 🎯 You're all set for now!",
         "missingLeadTime": {
           "title": "Addresses Missing Lead Time",
           "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
@@ -154,7 +154,7 @@
           "description": "These properties are not translated into all required languages."
         },
         "propertySelectValuesMissingMainTranslation": {
-          "title": "Select Values Missing Main Translation",
+          "title": "Select Values Missing Main Language",
           "description": "Some select values lack translations for your company's main language."
         },
         "propertySelectValuesMissingTranslations": {
@@ -301,8 +301,8 @@
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
         "errorOccurred": "An error occurred.",
-      "bulkDeleteSuccess": "Items deleted successfully.",
-      "bulkDeleteError": "An error occurred while deleting items."
+        "bulkDeleteSuccess": "Items deleted successfully.",
+        "bulkDeleteError": "An error occurred while deleting items."
       },
       "noData": "The rule has no required in configurator properties, therefore we can't generate variation based on that"
     },
@@ -934,13 +934,13 @@
         "inventory": "Inventory",
         "inventoryMovements": "Inventory Movements",
         "websites": "Channels",
-      "amazon": "Amazon",
-      "supplierProducts": "Supplier Products",
-      "saleOrders": "Sale Orders",
-      "purchasingOrders": "Purchase Orders",
-      "properties": "Properties",
-      "hsCodes": "HS Codes",
-      "eanCodes": "EAN Codes"
+        "amazon": "Amazon",
+        "supplierProducts": "Supplier Products",
+        "saleOrders": "Sale Orders",
+        "purchasingOrders": "Purchase Orders",
+        "properties": "Properties",
+        "hsCodes": "HS Codes",
+        "eanCodes": "EAN Codes"
       },
       "amazon": {
         "validationIssues": "Validation Issues",
@@ -1097,12 +1097,12 @@
             }
           },
           "stepFour": {
-          "configurable": {
-            "title": "Variations",
-            "selectVariations": "Please select the variations:",
-            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
-            "generateTitle": "Generate variations"
-          },
+            "configurable": {
+              "title": "Variations",
+              "selectVariations": "Please select the variations:",
+              "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
+              "generateTitle": "Generate variations"
+            },
             "simple": {
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
@@ -1672,7 +1672,6 @@
       },
       "alert": {
         "prices": {
-          "successfullyUpdated": "Successfully updated the prices!",
           "successfullyUpdated": "Prices Updated"
         }
       },
@@ -1954,7 +1953,6 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "successfullyCreated": "Demo data will be added momentarily.",
         "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
@@ -1965,7 +1963,6 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "successfullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
     },
@@ -2107,7 +2104,7 @@
         "date": "Date",
         "datetime": "Date and Time",
         "select": "Single Select",
-      "multiselect": "Multiselect"
+        "multiselect": "Multiselect"
       }
     },
     "duplicateModal": {
