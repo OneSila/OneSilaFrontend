@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref, watchEffect, watch, onMounted, onUnmounted } from 'vue';
+import { defineProps, computed, ref, onMounted, onUnmounted } from 'vue';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { Link } from "../../../../../../../shared/components/atoms/link";
 import { useI18n } from 'vue-i18n';
@@ -12,14 +12,13 @@ const props = defineProps<{
   description: string;
   hideOnComplete?: boolean;
   url?: Url;
-  loading?: boolean;
   icon?: string;
 }>();
 
 const { t } = useI18n();
 
 const isCompleted = computed(() => {
-  return !props.loading && Number(props.counter) === 0;
+  return Number(props.counter) === 0;
 });
 
 const showCard = computed(() => {
@@ -69,25 +68,6 @@ const iconName = computed(() => {
   return isCompleted.value ? 'check-circle' : icon;
 });
 
-const displayCounter = ref(props.counter);
-
-watchEffect(() => {
-  if (props.loading) {
-    const interval = setInterval(() => {
-      displayCounter.value = Math.floor(Math.random() * 100);
-    }, 50);
-
-    const stopLoading = () => {
-      if (!props.loading) {
-        clearInterval(interval);
-        displayCounter.value = props.counter;
-      }
-    };
-    watch(() => props.loading, stopLoading, { immediate: true });
-  } else {
-    displayCounter.value = props.counter;
-  }
-});
 
 const isMobile = ref(false);
 
@@ -113,7 +93,6 @@ onUnmounted(() => {
     >
       <div
         class="card transition-all duration-300"
-        :class="{ 'blur-sm animate-pulse': props.loading }"
       >
         <!-- For Desktop -->
         <template v-if="!isMobile">
@@ -126,7 +105,7 @@ onUnmounted(() => {
                   class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold"
                   :class="textColorClass"
                 >
-                  {{ displayCounter }}
+                  {{ counter }}
                 </span>
               </div>
           </div>
@@ -165,7 +144,7 @@ onUnmounted(() => {
                   class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold"
                   :class="textColorClass"
                 >
-                  {{ displayCounter }}
+                  {{ counter }}
                 </span>              </p>
               <p class="text-white mt-4">{{ description }}</p>
               <div class="mt-4">

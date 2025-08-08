@@ -110,18 +110,24 @@ onMounted(async () =>  {
       </Flex>
 
       <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-          <DashboardCard
+          <Transition
             v-for="err in productErrors"
             :key="err.errorCode"
-            :counter="err.counter"
-            :title="t(`dashboard.cards.products.inspector.${err.errorCode}.title`)"
-            :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
-            :hide-on-complete="!showCompletedProductsCards"
-            :loading="err.loading"
-            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
-            :color="err.color"
-            :icon="err.icon"
-          />
+            enter-active-class="transition-all duration-200"
+            enter-from-class="opacity-0 blur-sm"
+            enter-to-class="opacity-100 blur-0"
+          >
+            <DashboardCard
+              v-if="!err.loading"
+              :counter="err.counter"
+              :title="t(`dashboard.cards.products.inspector.${err.errorCode}.title`)"
+              :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
+              :hide-on-complete="!showCompletedProductsCards"
+              :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
+              :color="err.color"
+              :icon="err.icon"
+            />
+          </Transition>
       </div>
       <p v-if="!showCompletedProductsCards && allCardsCompleted" class="text-lg text-green-600">
         {{ t('dashboard.cards.products.noIssuesMessage') }}

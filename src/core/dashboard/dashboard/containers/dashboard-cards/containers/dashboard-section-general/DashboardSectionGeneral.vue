@@ -189,18 +189,24 @@ onMounted(async () =>  {
     </Flex>
 
       <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-        <DashboardCard
+        <Transition
           v-for="card in generalCards"
           :key="card.key"
-          :counter="card.counter"
-          :description="card.description"
-          :hide-on-complete="!showCompletedGeneralCards"
-          :loading="card.loading"
-          :title="card.title"
-          :url="card.url"
-          :color="card.color"
-          :icon="card.icon"
-        />
+          enter-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 blur-sm"
+          enter-to-class="opacity-100 blur-0"
+        >
+          <DashboardCard
+            v-if="!card.loading"
+            :counter="card.counter"
+            :description="card.description"
+            :hide-on-complete="!showCompletedGeneralCards"
+            :title="card.title"
+            :url="card.url"
+            :color="card.color"
+            :icon="card.icon"
+          />
+        </Transition>
       </div>
       <p v-if="showCompletedGeneralCards" class="text-lg text-green-600">
         {{ t('dashboard.cards.general.noIssuesMessage') }}

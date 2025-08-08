@@ -124,18 +124,24 @@ onMounted(async () =>  {
       </Flex>
 
       <div class="cards grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
-        <DashboardCard
+        <Transition
           v-for="card in orderCards"
           :key="card.key"
-          :counter="card.counter"
-          :description="card.description"
-          :hide-on-complete="!showCompletedOrdersCards"
-          :loading="card.loading"
-          :title="card.title"
-          :url="card.url"
-          :color="card.color"
-          :icon="card.icon"
-        />
+          enter-active-class="transition-all duration-200"
+          enter-from-class="opacity-0 blur-sm"
+          enter-to-class="opacity-100 blur-0"
+        >
+          <DashboardCard
+            v-if="!card.loading"
+            :counter="card.counter"
+            :description="card.description"
+            :hide-on-complete="!showCompletedOrdersCards"
+            :title="card.title"
+            :url="card.url"
+            :color="card.color"
+            :icon="card.icon"
+          />
+        </Transition>
       </div>
     </Card>
 </template>
