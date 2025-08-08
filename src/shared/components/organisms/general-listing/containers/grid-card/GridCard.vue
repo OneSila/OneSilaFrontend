@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps, computed} from 'vue';
+import {defineProps, defineSlots, computed} from 'vue';
 import {Button} from '../../../../atoms/button';
 import {ApolloAlertMutation} from '../../../../molecules/apollo-alert-mutation';
 import {Link} from '../../../../atoms/link';
@@ -7,7 +7,7 @@ import {Icon} from '../../../../atoms/icon';
 import {Image} from '../../../../atoms/image';
 import {Checkbox} from '../../../../atoms/checkbox';
 import {useI18n} from 'vue-i18n';
-import {getFieldComponent} from '../../../general-show/showConfig';
+import {getFieldComponent, accessNestedProperty} from '../../../general-show/showConfig';
 import {FieldType} from '../../../../../utils/constants';
 
 const {t} = useI18n();
@@ -21,14 +21,20 @@ const props = defineProps<{
   queryObject: any;
 }>();
 
+const slots = defineSlots<{
+  additionalButtons?: (scope: { item: any }) => any;
+}>();
+
 // Compute the image field from the item's fields (internal to this component)
 const imageField = computed(() => {
   for (const field of props.config.fields) {
     if (field.type === FieldType.Text && field.addImage && field.imageField) {
-      if (props.item.node[field.imageField]) {
+      const imageValue = field.imageField.includes('.') ? accessNestedProperty(props.item.node, field.imageField.split('.')) : props.item.node[field.imageField];
+      if (imageValue) {
+        const modelValue = getModelValue(field, props.item);
         return {
-          imageValue: props.item.node[field.imageField],
-          modelValue: props.item.node[field.name],
+          imageValue,
+          modelValue,
           clickable: props.config.addShow
         };
       }
@@ -61,6 +67,16 @@ const getUpdatedField = (field: any, item: any, index: number) => {
     };
   }
   return field;
+};
+
+const getModelValue = (field: any, item: any) => {
+  if (typeof field.accessor === 'function') {
+    return field.accessor(item.node);
+  }
+  if (field.name && field.name.includes('.')) {
+    return accessNestedProperty(item.node, field.name.split('.'));
+  }
+  return item.node[field.name];
 };
 
 </script>
@@ -107,7 +123,7 @@ const getUpdatedField = (field: any, item: any, index: number) => {
           <td>
             <component :is="getFieldComponent(field.type)"
                        :field="getUpdatedField(field, item, index)"
-                       :model-value="item.node[field.name]"
+                       :model-value="getModelValue(field, item)"
                        :hide-image="true"/>
           </td>
         </tr>
@@ -115,6 +131,7 @@ const getUpdatedField = (field: any, item: any, index: number) => {
       </table>
       <!-- Actions -->
       <div v-if="config.addActions" class="flex gap-4 justify-end mt-2">
+        <slot name="additionalButtons" :item="item" />
         <Link v-if="config.addEdit"
               :path="{ name: config.editUrlName,
                        params: config.identifierKey !== undefined ? { ...config.identifierVariables, id: item.node[config.identifierKey] } : undefined,
@@ -143,6 +160,6 @@ const getUpdatedField = (field: any, item: any, index: number) => {
           </template>
         </ApolloAlertMutation>
       </div>
-    </div>
+      </div>
   </div>
 </template>

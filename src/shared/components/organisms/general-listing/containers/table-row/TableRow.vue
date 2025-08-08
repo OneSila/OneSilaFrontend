@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+import { defineProps, defineSlots } from 'vue';
 import { Button } from '../../../../atoms/button';
 import { ApolloAlertMutation } from '../../../../molecules/apollo-alert-mutation';
 import { Link } from '../../../../atoms/link';
 import { Checkbox } from '../../../../atoms/checkbox';
 import { useI18n } from 'vue-i18n';
-import { getFieldComponent } from '../../../general-show/showConfig';
+import { getFieldComponent, accessNestedProperty } from '../../../general-show/showConfig';
 import { FieldType } from '../../../../../utils/constants';
 
 const { t } = useI18n();
@@ -20,6 +20,27 @@ const props = defineProps<{
   selectCheckbox: (id: string, value: boolean) => void;
 }>();
 
+const slots = defineSlots<{
+  additionalButtons?: (scope: { item: any }) => any;
+}>();
+
+const getModelValue = (field: any, item: any) => {
+  if (typeof field.accessor === 'function') {
+    return field.accessor(item.node);
+  }
+  if (field.name && field.name.includes('.')) {
+    return accessNestedProperty(item.node, field.name.split('.'));
+  }
+  return item.node[field.name];
+};
+
+const getImageValue = (field: any, item: any) => {
+  if (field.imageField && field.imageField.includes('.')) {
+    return accessNestedProperty(item.node, field.imageField.split('.'));
+  }
+  return item.node[field.imageField];
+};
+
 </script>
 
 <template>
@@ -32,21 +53,22 @@ const props = defineProps<{
         :modelValue="selectedEntities.includes(item.node[config.identifierKey || 'id'])"
         @update:model-value="value => selectCheckbox(item.node[config.identifierKey || 'id'], value)" />
     </td>
-    <td v-for="(field, index) in config.fields" :key="field.name" class="whitespace-nowrap px-3 py-4 text-sm">
+    <td v-for="(field, index) in config.fields" :key="field.name + '-' + index" class="whitespace-nowrap px-3 py-4 text-sm">
       <component
         v-if="field.type === FieldType.Text && field.addImage && field.imageField"
         :is="getFieldComponent(field.type)"
         :field="getUpdatedField(field, item, index)"
-        :model-value="item.node[field.name]"
-        :image-value="item.node[field.imageField]" />
+        :model-value="getModelValue(field, item)"
+        :image-value="getImageValue(field, item)" />
       <component
         v-else
         :is="getFieldComponent(field.type)"
         :field="getUpdatedField(field, item, index)"
-        :model-value="item.node[field.name]" />
+        :model-value="getModelValue(field, item)" />
     </td>
     <td v-if="config.addActions">
       <div class="flex gap-4 items-center justify-end">
+        <slot name="additionalButtons" :item="item" />
         <Link
           v-if="config.addEdit"
           :path="{ name: config.editUrlName,

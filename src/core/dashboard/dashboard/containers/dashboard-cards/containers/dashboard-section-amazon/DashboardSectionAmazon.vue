@@ -224,7 +224,7 @@ onMounted(fetchAmazonIntegrations);
           :description="t('dashboard.cards.amazon.productsWithIssues.description')"
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
-          :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId } }"
+          :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId, active: true } }"
         />
       </div>
     </Card>

@@ -27,8 +27,6 @@ const productErrors = ref([
   { errorCode: 110, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 111, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 117, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
-  { errorCode: 120, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
-  { errorCode: 121, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 124, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
 
   // Medium importance errors
@@ -126,7 +124,7 @@ onMounted(async () =>  {
             :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
             :hide-on-complete="!showCompletedProductsCards"
             :loading="err.loading"
-            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode } }"
+            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
             :color="err.color"
             :icon="err.icon"
           />

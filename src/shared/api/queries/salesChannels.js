@@ -339,6 +339,7 @@ export const salesChannelViewAssignsQuery = gql`
           product {
             id
             name
+            sku
             active
             type
           }
@@ -500,6 +501,7 @@ export const amazonChannelViewsQuery = gql`
       edges {
         node {
           id
+          remoteId
           name
           active
           isDefault

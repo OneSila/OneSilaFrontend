@@ -199,6 +199,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         strict: true,
       },
       {
+        type: FieldType.Boolean,
+        name: 'usedInProducts',
+        label: t('properties.properties.labels.usedInProducts'),
+        strict: true,
+      },
+      {
         type: FieldType.Choice,
         name: 'type',
         label: t('products.products.labels.type.title'),

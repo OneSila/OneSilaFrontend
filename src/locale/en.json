@@ -36,7 +36,7 @@
             "description": "Activate all items in these bundle products."
           },
           "105": {
-            "title": "Products Missing Required Variations",
+            "title": "Products Missing Variations",
             "description": "Add required variations to these configurable products."
           },
           "106": {
@@ -56,8 +56,8 @@
             "description": "Provide EAN codes for these products."
           },
           "110": {
-            "title": "Products Missing Required Product Type Properties",
-            "description": "Assign required product type properties to these products."
+            "title": "Product Type Missing",
+            "description": "Assign a product type to these products."
           },
           "111": {
             "title": "Products Missing Required Properties",
@@ -84,7 +84,7 @@
             "description": "Add override prices to manual price list prices where auto-update is disabled."
           },
           "117": {
-            "title": "Variations with Different Product Types",
+            "title": "Variation Product Type Mismatch",
             "description": "Ensure all variations have the same product type."
           },
           "118": {
@@ -112,7 +112,7 @@
             "description": "Ensure variations in these configurable products have unique required properties."
           },
           "124": {
-            "title": "Configurable Products with No Applicable Configurator Rules",
+            "title": "Configurable Product Missing Rule Configuration",
             "description": "Define at least one configurator required item for these configurable products."
           }
         }
@@ -136,7 +136,7 @@
       "general": {
         "title": "General cards",
         "description": "Improve your data quality by resolving the following issues.",
-        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. \uD83C\uDFAF You're all set for now!",
+        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. 🎯 You're all set for now!",
         "missingLeadTime": {
           "title": "Addresses Missing Lead Time",
           "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
@@ -154,12 +154,28 @@
           "description": "These properties are not translated into all required languages."
         },
         "propertySelectValuesMissingMainTranslation": {
-          "title": "Select Values Missing Main Translation",
+          "title": "Select Values Missing Main Language",
           "description": "Some select values lack translations for your company's main language."
         },
         "propertySelectValuesMissingTranslations": {
           "title": "Select Values Missing Translations",
           "description": "Some select values are missing translations for all required languages."
+        },
+        "propertiesUsedInProductsMissingMainTranslation": {
+          "title": "Properties Used in Products Missing Main Translation",
+          "description": "These properties are used in products and lack translations for your company's main language."
+        },
+        "propertiesUsedInProductsMissingTranslations": {
+          "title": "Properties Used in Products Missing Translations",
+          "description": "These properties are used in products and are not translated into all required languages."
+        },
+        "propertySelectValuesUsedInProductsMissingMainTranslation": {
+          "title": "Select Values Used in Products Missing Main Language",
+          "description": "Some select values used in products lack translations for your company's main language."
+        },
+        "propertySelectValuesUsedInProductsMissingTranslations": {
+          "title": "Select Values Used in Products Missing Translations",
+          "description": "Some select values used in products are missing translations for all required languages."
         }
       },
       "amazon": {
@@ -301,8 +317,8 @@
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
         "errorOccurred": "An error occurred.",
-      "bulkDeleteSuccess": "Items deleted successfully.",
-      "bulkDeleteError": "An error occurred while deleting items."
+        "bulkDeleteSuccess": "Items deleted successfully.",
+        "bulkDeleteError": "An error occurred while deleting items."
       },
       "noData": "The rule has no required in configurator properties, therefore we can't generate variation based on that"
     },
@@ -328,6 +344,9 @@
       "retry": "Retry",
       "refresh": "Refresh",
       "add": "Add",
+      "resync": "Resync",
+      "validate": "Validate",
+      "fetchIssues": "Fetch Issues",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
@@ -404,6 +423,8 @@
       "message": "Message",
       "severity": "Severity",
       "validationIssue": "Validation Issue",
+      "code": "Code",
+      "noIssues": "No Issues",
       "manual": "Manual",
       "generate": "Generate"
     },
@@ -929,12 +950,19 @@
         "inventory": "Inventory",
         "inventoryMovements": "Inventory Movements",
         "websites": "Channels",
+        "amazon": "Amazon",
         "supplierProducts": "Supplier Products",
         "saleOrders": "Sale Orders",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
+      },
+      "amazon": {
+        "validationIssues": "Validation Issues",
+        "validationIssuesDescription": "Issues detected locally before sending the product to Amazon.",
+        "otherIssues": "Remote Product Issues",
+        "otherIssuesDescription": "Issues already present in Amazon for this product."
       },
       "inspector": {
         "errors": {
@@ -1085,12 +1113,12 @@
             }
           },
           "stepFour": {
-          "configurable": {
-            "title": "Variations",
-            "selectVariations": "Please select the variations:",
-            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
-            "generateTitle": "Generate variations"
-          },
+            "configurable": {
+              "title": "Variations",
+              "selectVariations": "Please select the variations:",
+              "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
+              "generateTitle": "Generate variations"
+            },
             "simple": {
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
@@ -1660,7 +1688,6 @@
       },
       "alert": {
         "prices": {
-          "successfullyUpdated": "Successfully updated the prices!",
           "successfullyUpdated": "Prices Updated"
         }
       },
@@ -1942,7 +1969,6 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "successfullyCreated": "Demo data will be added momentarily.",
         "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
@@ -1953,7 +1979,6 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "successfullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
     },
@@ -2071,7 +2096,8 @@
         "internalName": "Internal Name",
         "valueValidator": "Value Validator",
         "missingMainTranslation": "Missing Main Translation",
-        "missingTranslations": "Missing Translations"
+        "missingTranslations": "Missing Translations",
+        "usedInProducts": "Used In Products"
       },
       "placeholders": {
         "internalName": "Enter internal name",
@@ -2095,7 +2121,7 @@
         "date": "Date",
         "datetime": "Date and Time",
         "select": "Single Select",
-      "multiselect": "Multiselect"
+        "multiselect": "Multiselect"
       }
     },
     "duplicateModal": {
@@ -2116,7 +2142,8 @@
       "labels": {
         "value": "Value",
         "missingMainTranslation": "Missing Main Translation",
-        "missingTranslations": "Missing Translations"
+        "missingTranslations": "Missing Translations",
+        "usedInProducts": "Used In Products"
       },
       "placeholders": {
         "value": "Enter value"
@@ -2253,6 +2280,12 @@
       "currencies": {
         "labels": {
           "remoteCode": "Remote Currency Code"
+        }
+      },
+      "products": {
+        "labels": {
+          "store": "Store",
+          "excludeStores": "Exclude Stores"
         }
       },
       "productRules": {
@@ -2545,6 +2578,10 @@
         "labels": {
           "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
+      },
+      "labels": {
+        "assignedToSalesChannelView": "Assigned To Store",
+        "notAssignedToSalesChannelView": "Not Assigned To Store"
       },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results."

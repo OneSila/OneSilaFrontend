@@ -35,22 +35,21 @@ if (props.searchConfig.orderKey) {
 
 props.searchConfig.filters?.forEach((filter: SearchFilter) => {
   keysToWatch.value.push(filter.name);
-  if (filter.addLookup) {
-    // filtersWithLookup.value[filter.name] = filter.lookupKeys || [];
-    let l: string | null = 'exact';
-    if (filter.lookupType) {
-      if (filter.lookupType == 'none') {
-        l = null;
-      } else {
-        l = filter.lookupType;
-      }
-    }
 
-    filtersWithLookup.value[filter.name] = {
-      keys: filter.lookupKeys || [],
-      lookup: l
-    };
+  let l: string | null = 'exact';
+  if (filter.lookupType) {
+    if (filter.lookupType == 'none') {
+      l = null;
+    } else {
+      l = filter.lookupType;
+    }
   }
+
+  filtersWithLookup.value[filter.name] = {
+    keys: filter.lookupKeys || [],
+    lookup: filter.addLookup ? l : null,
+    isNot: filter.isNot || false,
+  };
 });
 
 const setPaginationVariables = (
@@ -86,36 +85,42 @@ watch(() => route.query, (newQuery) => {
       }
 
       if (key in filtersWithLookup.value) {
-        const lookup = filtersWithLookup.value[key]['lookup'];
+        const { lookup, keys, isNot } = filtersWithLookup.value[key];
 
-        // if we have exact lookups like go into a foreign key with an id we need to have ex: {'company: {'id': {'exact': val}}}
-        if (filtersWithLookup.value[key]['keys'].length > 0) {
-          const nestedObject = {};
-          filtersWithLookup.value[key]['keys'].forEach(nestedKey => {
-            if (lookup) {
-              nestedObject[nestedKey] = { [lookup]: value };
-            } else {
-              // if lookup is null, directly assign the value like: {'company': {'id': value}}
-              nestedObject[nestedKey] = value;
-            }
-          });
-          updatedVariables[key] = nestedObject;
-        } else {
-          // else we can have only the exact with the value like: {"type": {"exact": "VARIATION"}}
-          if (lookup) {
-            updatedVariables[key] = { [lookup]: value };
-          } else {
-            // if lookup is null, directly assign the value like: {"type": "VARIATION"}
-            updatedVariables[key] = value;
+        const buildObject = () => {
+          if (keys.length > 0) {
+            const nestedObject = {} as Record<string, any>;
+            let currentLevel = nestedObject;
+            keys.forEach((nestedKey: string, index: number, array: string[]) => {
+              if (index === array.length - 1) {
+                currentLevel[nestedKey] = lookup ? { [lookup]: value } : value;
+              } else {
+                currentLevel[nestedKey] = {};
+                currentLevel = currentLevel[nestedKey];
+              }
+            });
+            return nestedObject;
           }
+          return lookup ? { [lookup]: value } : value;
+        };
+
+        const builtValue = buildObject();
+
+        if (isNot) {
+          if (!updatedVariables['NOT']) {
+            updatedVariables['NOT'] = {};
+          }
+          if (typeof builtValue === 'object' && !Array.isArray(builtValue)) {
+            updatedVariables['NOT'] = { ...updatedVariables['NOT'], ...builtValue };
+          } else {
+            updatedVariables['NOT'][key] = builtValue;
+          }
+        } else {
+          updatedVariables[key] = builtValue;
         }
       } else {
         // if there is no lockup used we will just add the value
         updatedVariables[key] = value;
-      }
-
-      if (updatedVariables[key] === null) {
-        delete updatedVariables[key];
       }
     }
   });
