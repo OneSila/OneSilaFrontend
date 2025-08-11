@@ -420,6 +420,8 @@
       "submissionId": "Submission ID",
       "processingStatus": "Processing Status",
       "issues": "Issues",
+      "lastSyncAt": "Last synced at",
+      "fetchedAt": "Fetched at",
       "message": "Message",
       "severity": "Severity",
       "validationIssue": "Validation Issue",

@@ -7,8 +7,11 @@ export const amazonProductsQuery = gql`
         node {
           id
           createdMarketplaces
+          lastSyncAt
+          syncingCurrentPercentage
           issues {
             id
+            createdAt
             code
             message
             severity
