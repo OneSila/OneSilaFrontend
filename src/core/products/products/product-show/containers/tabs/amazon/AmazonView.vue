@@ -6,6 +6,7 @@ import { Product } from '../../../../configs';
 import { Accordion } from '../../../../../../../shared/components/atoms/accordion';
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
+import { AssignProgressBar } from '../../../../../../../shared/components/molecules/assign-progress-bar';
 import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { resyncAmazonProductMutation, refreshAmazonProductIssuesMutation } from '../../../../../../../shared/api/mutations/amazonProducts.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
@@ -23,11 +24,14 @@ interface AmazonProductIssue {
   severity?: string | null;
   isValidationIssue?: boolean | null;
   view?: { remoteId: string; name?: string } | null;
+  createdAt?: string | null;
 }
 
 interface AmazonProduct {
   id: string;
   createdMarketplaces: string[];
+  lastSyncAt?: string | null;
+  syncingCurrentPercentage?: number | null;
   issues: AmazonProductIssue[];
 }
 
@@ -53,6 +57,8 @@ interface AccordionItem {
   validationIssues: AmazonProductIssue[];
   otherIssues: AmazonProductIssue[];
   remoteProductId: string | null;
+  lastSyncAt?: string | null;
+  syncingCurrentPercentage?: number | null;
 }
 
 const accordionItems = computed<AccordionItem[]>(() => {
@@ -65,9 +71,13 @@ const accordionItems = computed<AccordionItem[]>(() => {
     .map((view: any) => {
       const allIssues: AmazonProductIssue[] = [];
       let remoteProductId: string | null = null;
+      let lastSyncAt: string | null = null;
+      let syncingCurrentPercentage: number | null = null;
       props.amazonProducts.forEach((product: AmazonProduct) => {
         if (product.createdMarketplaces.includes(view.remoteId)) {
           remoteProductId = product.id;
+          lastSyncAt = product.lastSyncAt ?? null;
+          syncingCurrentPercentage = product.syncingCurrentPercentage ?? null;
         }
         const issuesForView =
           product.issues?.filter((issue) => issue.view?.remoteId === view.remoteId) || [];
@@ -81,6 +91,8 @@ const accordionItems = computed<AccordionItem[]>(() => {
         validationIssues: allIssues.filter((i) => i.isValidationIssue),
         otherIssues: allIssues.filter((i) => !i.isValidationIssue),
         remoteProductId,
+        lastSyncAt,
+        syncingCurrentPercentage,
       };
     });
 });
@@ -106,6 +118,19 @@ const onFetchIssuesSuccess = () => {
 
 const onError = (error) => {
   displayApolloError(error);
+};
+
+const formatDate = (dateString?: string | null) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
 };
 
 
@@ -158,6 +183,14 @@ const onError = (error) => {
             </div>
           </template>
           <template v-for="item in accordionItems" #[item.name] :key="item.name">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+              <div class="text-sm text-gray-500 mb-2 sm:mb-0">
+                {{ t('shared.labels.lastSyncAt') }}: {{ formatDate(item.lastSyncAt) }}
+              </div>
+              <div class="w-full sm:w-48">
+                <AssignProgressBar :progress="item.syncingCurrentPercentage ?? 0" />
+              </div>
+            </div>
             <div v-if="item.validationIssues.length" class="mb-4">
               <h4 class="font-semibold mb-2">{{ t('products.products.amazon.validationIssues') }}</h4>
               <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.validationIssuesDescription') }}</p>
@@ -166,12 +199,14 @@ const onError = (error) => {
                   <tr>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="issue in item.validationIssues" :key="issue.id">
                     <td class="break-words max-w-xs">{{ issue.message }}</td>
                     <td class="capitalize" :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }">{{ issue.severity }}</td>
+                    <td>{{ formatDate(issue.createdAt) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -184,12 +219,14 @@ const onError = (error) => {
                   <tr>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="issue in item.otherIssues" :key="issue.id">
                     <td class="break-words max-w-xs">{{ issue.message }}</td>
                     <td class="capitalize" :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }">{{ issue.severity }}</td>
+                    <td>{{ formatDate(issue.createdAt) }}</td>
                   </tr>
                 </tbody>
               </table>
