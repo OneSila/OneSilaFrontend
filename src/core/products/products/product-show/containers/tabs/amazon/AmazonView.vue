@@ -92,8 +92,14 @@ const onResyncSuccess = () => {
   fetchViews();
 };
 
+const onValidateSuccess = () => {
+  Toast.success(t('integrations.salesChannel.toast.validateSuccess'));
+  emit('refreshAmazonProducts');
+  fetchViews();
+};
+
 const onFetchIssuesSuccess = () => {
-  Toast.success(t('shared.toast.submitSuccessUpdate'));
+  Toast.success(t('integrations.salesChannel.toast.fetchIssuesSuccess'));
   emit('refreshAmazonProducts');
   fetchViews();
 };
@@ -128,7 +134,7 @@ const onError = (error) => {
               <ApolloMutation
                 :mutation="resyncAmazonProductMutation"
                 :variables="{ remoteProduct: { id: item.remoteProductId }, view: { id: item.id }, forceValidationOnly: true }"
-                @done="onResyncSuccess"
+                @done="onValidateSuccess"
                 @error="onError"
               >
                 <template #default="{ mutate, loading }">
