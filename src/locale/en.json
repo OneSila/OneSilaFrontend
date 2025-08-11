@@ -2584,7 +2584,9 @@
         "notAssignedToSalesChannelView": "Not Assigned To Store"
       },
       "toast": {
-        "resyncSuccess": "The product resync process has begun. Please come later to see the results."
+        "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
+        "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
+        "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },
       "helpText": {
         "useConfigurableName": "If enabled, the system will always use the configurable (parent) product's name for variations.",
