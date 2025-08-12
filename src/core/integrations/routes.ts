@@ -37,6 +37,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/currencies/containers/IntegrationsCurrencyEditController.vue'),
   },
   {
+    path: '/integrations/:type/price-list/:integrationId/create',
+    name: 'integrations.priceLists.create',
+    meta: { title: 'sales.priceLists.create.title' },
+    component: () => import('./integrations/integrations-show/containers/price-lists/containers/IntegrationsPriceListCreateController.vue'),
+  },
+  {
     path: '/integrations/:type/product-type/:id',
     name: 'integrations.amazonProductTypes.edit',
     meta: { title: 'integrations.show.productRules.title' },
