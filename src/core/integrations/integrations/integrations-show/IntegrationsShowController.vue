@@ -24,6 +24,7 @@ import { Products } from "./containers/products";
 import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
+import { PriceLists } from "./containers/price-lists";
 import { Rules } from "./containers/rules";
 import { Properties } from "./containers/properties";
 import { PropertySelectValues } from "./containers/property-select-values";
@@ -52,6 +53,7 @@ const tabItems = ref([
   { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
   { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
   { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
+  { name: 'priceLists', label: t('sales.priceLists.title'), icon: 'money-bill' },
 ]);
 
 if (type.value === IntegrationTypes.Amazon) {
@@ -231,6 +233,11 @@ const pullData = async () => {
           <!-- Currencies Tab -->
           <template #currencies>
             <Currencies v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
+          </template>
+
+          <!-- Price Lists Tab -->
+          <template #priceLists>
+            <PriceLists v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
           </template>
 
           <!-- Imports Tab -->
