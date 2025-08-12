@@ -20,6 +20,12 @@ export const priceListCreateFormConfigConstructor = (
   mutation: createSalesChannelIntegrationPricelistMutation,
   mutationKey: 'createSalesChannelIntegrationPricelist',
   submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'priceLists' } },
+  helpSections: [
+    {
+      header: t('integrations.show.priceLists.helpSection.rules.header'),
+      content: t('integrations.show.priceLists.helpSection.rules.content'),
+    },
+  ],
   fields: [
     {
       type: FieldType.Hidden,

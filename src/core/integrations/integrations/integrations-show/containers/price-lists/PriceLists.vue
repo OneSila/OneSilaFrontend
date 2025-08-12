@@ -12,7 +12,6 @@ import {
 } from './configs';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
-const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
 const searchConfig = priceListsSearchConfigConstructor(t);
@@ -28,9 +27,6 @@ const listingConfig = priceListsListingConfigConstructor(t, props.id);
             {{ t('sales.priceLists.create.title') }}
           </Button>
         </Link>
-        <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
-          {{ t('integrations.labels.pullData') }}
-        </Button>
       </div>
     </template>
 

@@ -1583,7 +1583,7 @@
         }
       },
       "create": {
-        "title": "Create Price List"
+        "title": "Add Price List"
       },
       "show": {
         "title": "Price List"
@@ -2282,6 +2282,14 @@
       "currencies": {
         "labels": {
           "remoteCode": "Remote Currency Code"
+        }
+      },
+      "priceLists": {
+        "helpSection": {
+          "rules": {
+            "header": "How price lists work",
+            "content": "Think of price lists like calendars for your prices. When you add price lists to a sales channel, we first look for a list whose dates include today. If we can't find one, we use the list without dates—the default. If there is no default, we use the base price in that currency. Each sales channel can only have one default list and its dated lists cannot overlap. Different channels can still have lists with the same dates."
+          }
         }
       },
       "products": {
