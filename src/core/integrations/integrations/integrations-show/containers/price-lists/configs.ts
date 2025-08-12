@@ -32,6 +32,7 @@ export const priceListCreateFormConfigConstructor = (
       label: t('sales.priceLists.title'),
       labelBy: 'name',
       valueBy: 'id',
+      formMapIdentifier: 'id',
       query: salesPriceListsQuery,
       dataKey: 'salesPriceLists',
       isEdge: true,

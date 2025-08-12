@@ -78,10 +78,6 @@ export const salesPriceListsQuery = gql`
           }
           vatIncluded
           autoUpdatePrices
-          customers {
-            id
-            name
-          }
         }
         cursor
       }
@@ -169,10 +165,6 @@ export const getSalesPriceListQuery = gql`
       autoUpdatePrices
       startDate
       endDate
-      customers {
-        id
-        name
-      }
       salespricelistitemSet {
         id
         product {
