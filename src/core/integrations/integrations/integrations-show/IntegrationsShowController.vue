@@ -237,7 +237,7 @@ const pullData = async () => {
 
           <!-- Price Lists Tab -->
           <template #priceLists>
-            <PriceLists v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
+            <PriceLists v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" />
           </template>
 
           <!-- Imports Tab -->
