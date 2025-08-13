@@ -33,10 +33,6 @@ export const salesPriceListSubscription = gql`
       }
       vatIncluded
       autoUpdatePrices
-      customers {
-        id
-        name
-      }
     }
   }
 `;

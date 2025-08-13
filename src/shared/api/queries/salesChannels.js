@@ -292,9 +292,10 @@ export const salesChannelIntegrationPricelistsQuery = gql`
       edges {
         node {
           id
-          name
-          active
-          multiTenantCompany {
+          salesChannel {
+            id
+          }
+          priceList {
             id
             name
           }
@@ -316,9 +317,10 @@ export const getSalesChannelIntegrationPricelistQuery = gql`
   query getSalesChannelIntegrationPricelist($id: GlobalID!) {
     salesChannelIntegrationPricelist(id: $id) {
       id
-      name
-      active
-      multiTenantCompany {
+      salesChannel {
+        id
+      }
+      priceList {
         id
         name
       }
@@ -813,6 +815,7 @@ export const getAmazonPropertySelectValueQuery = gql`
       }
       remoteValue
       remoteName
+      translatedRemoteName
       localInstance {
         id
         value

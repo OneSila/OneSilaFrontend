@@ -226,6 +226,8 @@
       "preview": "Preview",
       "discount": "Korting",
       "discountPrice": "",
+      "lastSyncAt": "Last synced at",
+      "fetchedAt": "Fetched at",
       "message": "Bericht",
       "severity": "Ernst",
       "validationIssue": "Validatiefout",

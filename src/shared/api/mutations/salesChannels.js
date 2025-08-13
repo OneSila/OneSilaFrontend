@@ -148,9 +148,10 @@ export const createSalesChannelIntegrationPricelistMutation = gql`
   mutation createSalesChannelIntegrationPricelist($data: SalesChannelIntegrationPricelistInput!) {
     createSalesChannelIntegrationPricelist(data: $data) {
       id
-      name
-      active
-      multiTenantCompany {
+      salesChannel {
+        id
+      }
+      priceList {
         id
         name
       }
@@ -162,9 +163,10 @@ export const createSalesChannelIntegrationPricelistsMutation = gql`
   mutation createSalesChannelIntegrationPricelists($data: [SalesChannelIntegrationPricelistInput!]!) {
     createSalesChannelIntegrationPricelists(data: $data) {
       id
-      name
-      active
-      multiTenantCompany {
+      salesChannel {
+        id
+      }
+      priceList {
         id
         name
       }
@@ -176,9 +178,10 @@ export const updateSalesChannelIntegrationPricelistMutation = gql`
   mutation updateSalesChannelIntegrationPricelist($data: SalesChannelIntegrationPricelistPartialInput!) {
     updateSalesChannelIntegrationPricelist(data: $data) {
       id
-      name
-      active
-      multiTenantCompany {
+      salesChannel {
+        id
+      }
+      priceList {
         id
         name
       }

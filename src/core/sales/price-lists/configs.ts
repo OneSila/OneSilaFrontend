@@ -330,15 +330,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       type: FieldType.Boolean,
       label: t('sales.priceLists.labels.autoUpdatePrices'),
       showLabel: true,
-    },
-    {
-      type: FieldType.Array,
-      name: 'customers',
-      label: t('sales.customers.title'),
-      clickable: false,
-      clickIdentifiers: [{id: ['id']}],
-      keys: ['name'],
-      showLabel: true
     }
   ]
 });

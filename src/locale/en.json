@@ -420,6 +420,8 @@
       "submissionId": "Submission ID",
       "processingStatus": "Processing Status",
       "issues": "Issues",
+      "lastSyncAt": "Last synced at",
+      "fetchedAt": "Fetched at",
       "message": "Message",
       "severity": "Severity",
       "validationIssue": "Validation Issue",
@@ -1581,7 +1583,7 @@
         }
       },
       "create": {
-        "title": "Create Price List"
+        "title": "Add Price List"
       },
       "show": {
         "title": "Price List"
@@ -2282,6 +2284,14 @@
           "remoteCode": "Remote Currency Code"
         }
       },
+      "priceLists": {
+        "helpSection": {
+          "rules": {
+            "header": "How price lists work",
+            "content": "Think of price lists like calendars for your prices. When you add price lists to a sales channel, we first look for a list whose dates include today. If we can't find one, we use the list without dates, the default. If there is no default, we use the base price in that currency. Each sales channel can only have one default list and its dated lists cannot overlap."
+          }
+        }
+      },
       "products": {
         "labels": {
           "store": "Store",
@@ -2333,7 +2343,8 @@
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace",
           "localProperty": "Local Property",
-          "selectValue": "Select Value"
+          "selectValue": "Select Value",
+          "translatedRemoteName": "Translated Name"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
@@ -2341,11 +2352,17 @@
           "localProperty": "Local property that this Amazon property maps to.",
           "remoteValue": "Value exactly as defined in Amazon.",
           "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the local value that matches this Amazon value."
+          "selectValue": "Choose the local value that matches this Amazon value.",
+          "translatedRemoteName": "Translated name for this value."
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",
           "content": "Map the Amazon property first before mapping values."
+        },
+        "recommendation": {
+          "title": "Recommendations",
+          "searching": "Searching for suggestions...",
+          "none": "No suggestion found"
         },
         "bulkAssign": "Assign Select Value",
         "bulkAssignTitle": "Assign to {count} value(s)",
@@ -2584,7 +2601,9 @@
         "notAssignedToSalesChannelView": "Not Assigned To Store"
       },
       "toast": {
-        "resyncSuccess": "The product resync process has begun. Please come later to see the results."
+        "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
+        "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
+        "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },
       "helpText": {
         "useConfigurableName": "If enabled, the system will always use the configurable (parent) product's name for variations.",
