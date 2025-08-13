@@ -26,6 +26,7 @@ const fetchFirstUnmapped = async () => {
         salesChannel: { id: { exact: props.salesChannelId } },
         mappedLocally: false,
       },
+      order: { marketplace: { isDefault: 'DESC' } },
     },
     fetchPolicy: 'network-only',
   });

@@ -242,6 +242,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
         salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: false,
       },
+      order: { marketplace: { isDefault: 'DESC' } },
     },
     fetchPolicy: 'network-only',
   });
