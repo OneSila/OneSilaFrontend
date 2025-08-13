@@ -126,10 +126,12 @@ const fetchRecommendations = async () => {
       variables: { property: { id: localPropertyId.value }, value: searchValue },
     });
     if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
-      recommendations.value = data.checkPropertySelectValueForDuplicates.duplicates.map((p: any) => ({
-        id: p.id,
-        value: p.value || p.id,
-      }));
+      recommendations.value = data.checkPropertySelectValueForDuplicates.duplicates
+        .filter((p: any) => p.id !== form.localInstance.id)
+        .map((p: any) => ({
+          id: p.id,
+          value: p.value || p.id,
+        }));
     } else {
       recommendations.value = [];
     }
@@ -147,6 +149,15 @@ watch(() => [form.remoteName, form.translatedRemoteName], () => {
 watch(localPropertyId, () => {
   debouncedFetchRecommendations();
 });
+
+watch(() => form.localInstance.id, () => {
+  recommendations.value = recommendations.value.filter(r => r.id !== form.localInstance.id);
+});
+
+const selectRecommendation = (id: string) => {
+  form.localInstance.id = id;
+  recommendations.value = recommendations.value.filter(r => r.id !== id);
+};
 
 onMounted(async () => {
   const { data } = await apolloClient.query({
@@ -382,7 +393,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                           :key="item.id"
                           type="button"
                           class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
-                          @click="form.localInstance.id = item.id"
+                          @click="selectRecommendation(item.id)"
                         >
                           {{ item.value }}
                         </button>
