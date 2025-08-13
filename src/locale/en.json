@@ -2343,7 +2343,8 @@
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace",
           "localProperty": "Local Property",
-          "selectValue": "Select Value"
+          "selectValue": "Select Value",
+          "translatedRemoteName": "Translated Name"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
@@ -2351,11 +2352,17 @@
           "localProperty": "Local property that this Amazon property maps to.",
           "remoteValue": "Value exactly as defined in Amazon.",
           "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the local value that matches this Amazon value."
+          "selectValue": "Choose the local value that matches this Amazon value.",
+          "translatedRemoteName": "Translated name for this value."
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",
           "content": "Map the Amazon property first before mapping values."
+        },
+        "recommendation": {
+          "title": "Recommendations",
+          "searching": "Searching for suggestions...",
+          "none": "No suggestion found"
         },
         "bulkAssign": "Assign Select Value",
         "bulkAssignTitle": "Assign to {count} value(s)",

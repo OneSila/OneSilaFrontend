@@ -815,6 +815,7 @@ export const getAmazonPropertySelectValueQuery = gql`
       }
       remoteValue
       remoteName
+      translatedRemoteName
       localInstance {
         id
         value
