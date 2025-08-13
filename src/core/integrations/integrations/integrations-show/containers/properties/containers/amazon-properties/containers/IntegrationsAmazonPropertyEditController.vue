@@ -209,28 +209,30 @@ const selectRecommendation = (id: string) => {
             </Button>
           </Link>
         </template>
-      </GeneralForm>
-      <div v-if="formConfig" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
-        <div v-if="loadingRecommendations" class="flex items-center gap-2">
-          <LocalLoader :loading="true" />
-          <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
-        </div>
-        <div v-else>
-          <div v-if="recommendations.length" class="flex flex-wrap gap-2">
-            <button
-              v-for="item in recommendations"
-              :key="item.id"
-              type="button"
-              class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
-              @click="selectRecommendation(item.id)"
-            >
-              {{ item.name }}
-            </button>
+        <template #additional-fields>
+          <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
+            <div v-if="loadingRecommendations" class="flex items-center gap-2">
+              <LocalLoader :loading="true" />
+              <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
+            </div>
+            <div v-else>
+              <div v-if="recommendations.length" class="flex flex-wrap gap-2">
+                <button
+                  v-for="item in recommendations"
+                  :key="item.id"
+                  type="button"
+                  class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
+                  @click="selectRecommendation(item.id)"
+                >
+                  {{ item.name }}
+                </button>
+              </div>
+              <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+            </div>
           </div>
-          <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
-        </div>
-      </div>
+        </template>
+      </GeneralForm>
     </template>
   </GeneralTemplate>
 </template>
