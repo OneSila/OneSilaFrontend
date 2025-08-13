@@ -11,7 +11,6 @@ import { propertiesQuery } from "../../../../../../../../../shared/api/queries/p
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Label } from "../../../../../../../../../shared/components/atoms/label";
-import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { amazonPropertiesQuery } from "../../../../../../../../../shared/api/queries/salesChannels";
@@ -213,7 +212,7 @@ const selectRecommendation = (id: string) => {
           <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
             <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
             <div v-if="loadingRecommendations" class="flex items-center gap-2">
-              <LocalLoader :loading="true" />
+              <div class="loader-mini"></div>
               <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
             </div>
             <div v-else>
@@ -236,3 +235,38 @@ const selectRecommendation = (id: string) => {
     </template>
   </GeneralTemplate>
 </template>
+
+<style scoped>
+.loader-mini {
+  width: 24px;
+  aspect-ratio: 1;
+  display: grid;
+}
+
+.loader-mini::before,
+.loader-mini::after {
+  content: "";
+  grid-area: 1/1;
+  --c: no-repeat radial-gradient(farthest-side, currentColor 92%, #0000);
+  background:
+    var(--c) 50% 0,
+    var(--c) 50% 100%,
+    var(--c) 100% 50%,
+    var(--c) 0 50%;
+  background-size: 5px 5px;
+  animation: l2 1s infinite;
+}
+
+.loader-mini::after {
+  margin: 2px;
+  filter: hue-rotate(45deg);
+  background-size: 3px 3px;
+  animation-direction: reverse;
+}
+
+@keyframes l2 {
+  100% {
+    transform: rotate(0.5turn);
+  }
+}
+</style>
