@@ -25,8 +25,8 @@ const groupedViews = computed(() => {
 
 <template>
   <div class="border-r border-gray-200 pr-4">
-    <div class="max-h-[500px] overflow-y-auto">
-      <div v-for="group in groupedViews" :key="group.salesChannelId" class="mb-4 space-y-4">
+    <div class="max-h-[660px] overflow-y-auto">
+      <div v-for="group in groupedViews" :key="group.salesChannelId" class="mb-4 space-y-2">
         <div
           v-for="view in group.views"
           :key="view.id"
