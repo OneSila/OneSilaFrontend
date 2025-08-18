@@ -105,8 +105,6 @@ const otherIssues = computed(() => {
     ) || []
   );
 });
-
-const isProductActive = computed(() => !!selectedProduct.value);
 const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
 
 const onResyncSuccess = () => {
@@ -160,21 +158,10 @@ const formatDate = (dateString?: string | null) => {
             <div v-if="selectedView">
               <div class="mb-4">
                 <div class="flex flex-col sm:flex-row sm:justify-between mb-4">
-                  <div class="flex flex-col gap-2 text-sm text-gray-500">
+                  <div v-if="selectedProduct" class="flex flex-col gap-2 text-sm text-gray-500">
                     <div>
                       <span class="font-medium">{{ t('shared.labels.lastSyncAt') }}:</span>
                       {{ formatDate(lastSyncAt) }}
-                    </div>
-                    <div class="flex items-center">
-                      <span class="font-medium mr-1">{{ t('shared.labels.status') }}:</span>
-                      <Icon
-                        :name="isProductActive ? 'circle-check' : 'circle-xmark'"
-                        class="w-4 h-4 mr-1"
-                        :class="isProductActive ? 'text-green-500' : 'text-red-500'"
-                      />
-                      <span>
-                        {{ isProductActive ? t('shared.labels.active') : t('shared.labels.inactive') }}
-                      </span>
                     </div>
                     <div>
                       <span class="font-medium">{{ t('shared.labels.progress') }}:</span>
