@@ -23,7 +23,9 @@
       "manual": "Manuell",
       "generate": "Generieren",
       "code": "Code",
-      "noIssues": "Keine Probleme"
+      "noIssues": "Keine Probleme",
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "alert": {
       "noData": "Die Regel hat keine erforderlichen Konfiguratoreigenschaften, daher k\u00f6nnen keine Varianten generiert werden."

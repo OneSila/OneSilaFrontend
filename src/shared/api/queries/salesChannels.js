@@ -509,6 +509,7 @@ export const amazonChannelViewsQuery = gql`
           isDefault
           salesChannel {
             id
+            hostname
           }
         }
         cursor
@@ -534,6 +535,7 @@ export const getAmazonChannelViewQuery = gql`
       isDefault
       salesChannel {
         id
+        hostname
       }
     }
   }
