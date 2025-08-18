@@ -6,6 +6,7 @@ import { Product } from '../../../../configs';
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
 import { AssignProgressBar } from '../../../../../../../shared/components/molecules/assign-progress-bar';
+import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import AmazonMarketplaceTabs from './components/AmazonMarketplaceTabs.vue';
 import AmazonAsinSection from './components/AmazonAsinSection.vue';
 import AmazonGtinExemptionSection from './components/AmazonGtinExemptionSection.vue';
@@ -20,6 +21,7 @@ import {
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../apollo-client';
+import { ProductType } from '../../../../../../../shared/utils/constants';
 
 const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
 const emit = defineEmits(['refreshAmazonProducts']);
@@ -104,6 +106,9 @@ const otherIssues = computed(() => {
   );
 });
 
+const isProductActive = computed(() => !!selectedProduct.value);
+const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
+
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
   emit('refreshAmazonProducts');
@@ -146,135 +151,166 @@ const formatDate = (dateString?: string | null) => {
       <LocalLoader :loading="loading" />
       <div v-if="!loading && views.length" class="flex">
         <AmazonMarketplaceTabs
-          class="w-64"
+          class="w-72"
           v-model="selectedViewId"
           :views="views"
           :amazon-products="amazonProducts"
         />
-        <div class="flex-1 pl-4">
-          <div v-if="selectedView">
-            <div v-if="selectedProduct" class="mb-4">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-                <div class="text-sm text-gray-500 mb-2 sm:mb-0">
-                  {{ t('shared.labels.lastSyncAt') }}: {{ formatDate(lastSyncAt) }}
-                </div>
-                <div class="w-full sm:w-48">
-                  <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
+          <div class="flex-1 pl-4">
+            <div v-if="selectedView">
+              <div class="mb-4">
+                <div class="flex flex-col sm:flex-row sm:justify-between mb-4">
+                  <div class="flex flex-col gap-2 text-sm text-gray-500">
+                    <div>
+                      <span class="font-medium">{{ t('shared.labels.lastSyncAt') }}:</span>
+                      {{ formatDate(lastSyncAt) }}
+                    </div>
+                    <div class="flex items-center">
+                      <span class="font-medium mr-1">{{ t('shared.labels.status') }}:</span>
+                      <Icon
+                        :name="isProductActive ? 'circle-check' : 'circle-xmark'"
+                        class="w-4 h-4 mr-1"
+                        :class="isProductActive ? 'text-green-500' : 'text-red-500'"
+                      />
+                      <span>
+                        {{ isProductActive ? t('shared.labels.active') : t('shared.labels.inactive') }}
+                      </span>
+                    </div>
+                    <div>
+                      <span class="font-medium">{{ t('shared.labels.progress') }}:</span>
+                      <div class="w-48 mt-1">
+                        <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex gap-2 mt-2 sm:mt-0">
+                    <ApolloMutation
+                      :mutation="resyncAmazonProductMutation"
+                      :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView.id }, forceValidationOnly: false }"
+                      @done="onResyncSuccess"
+                      @error="onError"
+                    >
+                      <template #default="{ mutate, loading }">
+                        <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+                          {{ t('shared.button.resync') }}
+                        </Button>
+                      </template>
+                    </ApolloMutation>
+                    <ApolloMutation
+                      :mutation="resyncAmazonProductMutation"
+                      :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView.id }, forceValidationOnly: true }"
+                      @done="onValidateSuccess"
+                      @error="onError"
+                    >
+                      <template #default="{ mutate, loading }">
+                        <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+                          {{ t('shared.button.validate') }}
+                        </Button>
+                      </template>
+                    </ApolloMutation>
+                    <ApolloMutation
+                      v-if="remoteProductId"
+                      :mutation="refreshAmazonProductIssuesMutation"
+                      :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView.id } }"
+                      @done="onFetchIssuesSuccess"
+                      @error="onError"
+                    >
+                      <template #default="{ mutate, loading }">
+                        <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+                          {{ t('shared.button.fetchIssues') }}
+                        </Button>
+                      </template>
+                    </ApolloMutation>
+                  </div>
                 </div>
               </div>
-              <div class="flex gap-2">
-                <ApolloMutation
-                  :mutation="resyncAmazonProductMutation"
-                  :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView.id }, forceValidationOnly: false }"
-                  @done="onResyncSuccess"
-                  @error="onError"
-                >
-                  <template #default="{ mutate, loading }">
-                    <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
-                      {{ t('shared.button.resync') }}
-                    </Button>
-                  </template>
-                </ApolloMutation>
-                <ApolloMutation
-                  :mutation="resyncAmazonProductMutation"
-                  :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView.id }, forceValidationOnly: true }"
-                  @done="onValidateSuccess"
-                  @error="onError"
-                >
-                  <template #default="{ mutate, loading }">
-                    <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
-                      {{ t('shared.button.validate') }}
-                    </Button>
-                  </template>
-                </ApolloMutation>
-                <ApolloMutation
-                  v-if="remoteProductId"
-                  :mutation="refreshAmazonProductIssuesMutation"
-                  :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView.id } }"
-                  @done="onFetchIssuesSuccess"
-                  @error="onError"
-                >
-                  <template #default="{ mutate, loading }">
-                    <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
-                      {{ t('shared.button.fetchIssues') }}
-                    </Button>
-                  </template>
-                </ApolloMutation>
+
+              <div class="border-t my-4"></div>
+
+              <div class="mb-4">
+                <h4 class="font-semibold mb-2">{{ t('products.products.amazon.validationIssues') }}</h4>
+                <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.validationIssuesDescription') }}</p>
+                <div v-if="validationIssues.length">
+                  <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                    <thead>
+                      <tr>
+                        <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
+                        <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                        <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                      <tr v-for="issue in validationIssues" :key="issue.id">
+                        <td class="break-words max-w-xs">{{ issue.message }}</td>
+                        <td
+                          class="capitalize flex items-center gap-1"
+                          :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
+                        >
+                          <Icon
+                            :name="issue.severity === 'ERROR' ? 'circle-xmark' : 'circle-exclamation'"
+                            class="w-4 h-4"
+                          />
+                          {{ issue.severity }}
+                        </td>
+                        <td>{{ formatDate(issue.createdAt) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div v-else class="text-sm text-gray-500">
+                  {{ t('shared.labels.noIssues') }}
+                </div>
               </div>
+
+              <div class="mb-4">
+                <h4 class="font-semibold mb-2">{{ t('products.products.amazon.otherIssues') }}</h4>
+                <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.otherIssuesDescription') }}</p>
+                <div v-if="otherIssues.length">
+                  <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                    <thead>
+                      <tr>
+                        <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
+                        <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                        <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                      <tr v-for="issue in otherIssues" :key="issue.id">
+                        <td class="break-words max-w-xs">{{ issue.message }}</td>
+                        <td
+                          class="capitalize flex items-center gap-1"
+                          :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
+                        >
+                          <Icon
+                            :name="issue.severity === 'ERROR' ? 'circle-xmark' : 'circle-exclamation'"
+                            class="w-4 h-4"
+                          />
+                          {{ issue.severity }}
+                        </td>
+                        <td>{{ formatDate(issue.createdAt) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div v-else class="text-sm text-gray-500">
+                  {{ t('shared.labels.noIssues') }}
+                </div>
+              </div>
+
+              <div class="border-t my-4"></div>
+
+              <AmazonAsinSection class="mb-4" />
+              <AmazonGtinExemptionSection class="mb-4" />
+              <AmazonBrowseNodeSection class="mb-4" />
+              <AmazonUnmappedValuesSection class="mb-4" />
+              <AmazonVariationThemeSection v-if="isConfigurable" class="mb-4" />
             </div>
-
-            <div class="border-t my-4"></div>
-
-            <div v-if="validationIssues.length" class="mb-4">
-              <h4 class="font-semibold mb-2">{{ t('products.products.amazon.validationIssues') }}</h4>
-              <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.validationIssuesDescription') }}</p>
-              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                <thead>
-                  <tr>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="issue in validationIssues" :key="issue.id">
-                    <td class="break-words max-w-xs">{{ issue.message }}</td>
-                    <td
-                      class="capitalize"
-                      :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
-                    >
-                      {{ issue.severity }}
-                    </td>
-                    <td>{{ formatDate(issue.createdAt) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div v-if="otherIssues.length" class="mb-4">
-              <h4 class="font-semibold mb-2">{{ t('products.products.amazon.otherIssues') }}</h4>
-              <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.otherIssuesDescription') }}</p>
-              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                <thead>
-                  <tr>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
-                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="issue in otherIssues" :key="issue.id">
-                    <td class="break-words max-w-xs">{{ issue.message }}</td>
-                    <td
-                      class="capitalize"
-                      :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
-                    >
-                      {{ issue.severity }}
-                    </td>
-                    <td>{{ formatDate(issue.createdAt) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div v-if="!validationIssues.length && !otherIssues.length" class="text-sm text-gray-500">
-              {{ t('shared.labels.noIssues') }}
-            </div>
-
-            <div class="border-t my-4"></div>
-
-            <AmazonAsinSection class="mb-4" />
-            <AmazonGtinExemptionSection class="mb-4" />
-            <AmazonBrowseNodeSection class="mb-4" />
-            <AmazonUnmappedValuesSection class="mb-4" />
-            <AmazonVariationThemeSection class="mb-4" />
           </div>
         </div>
-      </div>
-      <div v-else-if="!loading" class="text-sm text-gray-500">
-        {{ t('shared.labels.noIssues') }}
-      </div>
-    </template>
-  </TabContentTemplate>
-</template>
+        <div v-else-if="!loading" class="text-sm text-gray-500">
+          {{ t('shared.labels.noIssues') }}
+        </div>
+      </template>
+    </TabContentTemplate>
+  </template>
 

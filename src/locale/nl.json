@@ -198,6 +198,7 @@
       "or": "Of",
       "name": "Naam",
       "active": "Actief",
+      "inactive": "Inactive",
       "actions": "Acties",
       "shortDescription": "Korte Omschrijving",
       "quantity": "Hoeveelheid",
