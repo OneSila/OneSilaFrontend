@@ -23,7 +23,9 @@
       "manual": "Manuel",
       "generate": "Générer",
       "code": "Code",
-      "noIssues": "Aucun problème"
+      "noIssues": "Aucun problème",
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "alert": {
       "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."

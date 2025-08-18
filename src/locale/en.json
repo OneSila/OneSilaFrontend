@@ -374,6 +374,7 @@
       "or": "Or",
       "name": "Name",
       "active": "Active",
+      "inactive": "Inactive",
       "actions": "Actions",
       "selected": "Selected",
       "shortDescription": "Short description",
