@@ -859,6 +859,7 @@ export const amazonProductTypesQuery = gql`
               value
             }
           }
+          variationThemes
         }
         cursor
       }
@@ -902,9 +903,11 @@ export const getAmazonProductTypeQuery = gql`
         }
         remoteType
       }
+      variationThemes
     }
   }
-`;export const amazonImportProcessesQuery = gql`
+`;
+export const amazonImportProcessesQuery = gql`
   query AmazonImportProcesses(
     $first: Int,
     $last: Int,
