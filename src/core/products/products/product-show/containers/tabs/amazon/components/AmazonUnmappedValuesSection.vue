@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
-import { amazonProductPropertiesQuery } from '../../../../../../../../../shared/api/queries/amazonProductProperties.js';
+import { amazonProductPropertiesQuery } from '../../../../../../../../shared/api/queries/amazonProductProperties.js';
 
 interface SelectValue {
   id: string;
