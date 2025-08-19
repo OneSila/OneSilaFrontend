@@ -38,10 +38,9 @@ export const createAmazonProductBrowseNodeMutation = gql`
 
 export const updateAmazonProductBrowseNodeMutation = gql`
   mutation updateAmazonProductBrowseNode(
-    $id: GlobalID!
     $data: AmazonProductBrowseNodePartialInput!
   ) {
-    updateAmazonProductBrowseNode(id: $id, data: $data) {
+    updateAmazonProductBrowseNode(data: $data) {
       id
       recommendedBrowseNodeId
     }
@@ -49,8 +48,8 @@ export const updateAmazonProductBrowseNodeMutation = gql`
 `;
 
 export const deleteAmazonProductBrowseNodeMutation = gql`
-  mutation deleteAmazonProductBrowseNode($id: GlobalID!) {
-    deleteAmazonProductBrowseNode(id: $id) {
+  mutation deleteAmazonProductBrowseNode($data: NodeInput!) {
+    deleteAmazonProductBrowseNode(data: $data) {
       id
     }
   }

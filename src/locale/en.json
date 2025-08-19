@@ -975,6 +975,7 @@
         "asinSaved": "ASIN saved",
         "asinDeleted": "ASIN deleted",
         "browseNode": "Browse node",
+        "browseNodeDescription": "Select the browse node for this product.",
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
         "recommendedProductTypes": "Recommended product types"

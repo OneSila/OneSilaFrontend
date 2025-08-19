@@ -147,8 +147,10 @@ const saveSelection = async () => {
     await apolloClient.mutate({
       mutation: updateAmazonProductBrowseNodeMutation,
       variables: {
-        id: productBrowseNodeId.value,
-        data: { recommendedBrowseNodeId: node.remoteId },
+        data: {
+          id: productBrowseNodeId.value,
+          recommendedBrowseNodeId: node.remoteId,
+        },
       },
     });
   } else {
@@ -156,9 +158,9 @@ const saveSelection = async () => {
       mutation: createAmazonProductBrowseNodeMutation,
       variables: {
         data: {
-          product: props.productId,
-          salesChannel: props.salesChannelId,
-          salesChannelView: props.salesChannelViewId,
+          product: { id: props.productId },
+          salesChannel: { id: props.salesChannelId },
+          salesChannelView: { id: props.salesChannelViewId },
           recommendedBrowseNodeId: node.remoteId,
         },
       },
@@ -173,7 +175,7 @@ const removeSelection = async () => {
   if (!productBrowseNodeId.value) return;
   await apolloClient.mutate({
     mutation: deleteAmazonProductBrowseNodeMutation,
-    variables: { id: productBrowseNodeId.value },
+    variables: { data: { id: productBrowseNodeId.value } },
   });
   productBrowseNodeId.value = null;
   selectedNodeDetails.value = null;
@@ -195,6 +197,9 @@ watch([
 <template>
   <div class="p-4 border rounded space-y-4">
     <h4 class="font-semibold">{{ t('products.products.amazon.browseNode') }}</h4>
+    <p class="text-xs text-gray-500">
+      {{ t('products.products.amazon.browseNodeDescription') }}
+    </p>
 
     <div class="p-3 border rounded">
       <div v-if="displayedNode" class="mb-2">
@@ -285,7 +290,9 @@ watch([
         >
           <span class="flex items-center gap-2 flex-1">
             <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
-            {{ node.name }}
+            <span>
+              <div>{{ node.name }}</div>
+            </span>
           </span>
           <div class="flex gap-2">
             <template v-if="pendingNode && pendingNode.remoteId === node.remoteId">
