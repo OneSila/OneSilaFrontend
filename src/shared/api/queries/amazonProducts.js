@@ -27,3 +27,40 @@ export const amazonProductsQuery = gql`
   }
 `;
 
+export const amazonBrowseNodesQuery = gql`
+  query AmazonBrowseNodes($filter: AmazonBrowseNodeFilter) {
+    amazonBrowseNodes(filters: $filter) {
+      edges {
+        node {
+          id
+          remoteId
+          name
+          contextName
+          hasChildren
+          isRoot
+          childNodeIds
+          browsePathByName
+          productTypeDefinitions
+          pathDepth
+        }
+      }
+    }
+  }
+`;
+
+export const amazonProductBrowseNodesQuery = gql`
+  query AmazonProductBrowseNodes($filter: AmazonProductBrowseNodeFilter) {
+    amazonProductBrowseNodes(filters: $filter) {
+      edges {
+        node {
+          id
+          recommendedBrowseNodeId
+          salesChannelView {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
