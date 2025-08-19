@@ -293,6 +293,12 @@ const formatDate = (dateString?: string | null) => {
               />
               <AmazonGtinExemptionSection class="mb-4" />
               <AmazonBrowseNodeSection class="mb-4" />
+              <AmazonUnmappedValuesSection
+                v-if="remoteProductId"
+                class="mb-4"
+                :remote-product-id="remoteProductId"
+              />
+              <AmazonVariationThemeSection v-if="isConfigurable" class="mb-4" />
               <AmazonUnmappedValuesSection class="mb-4" />
               <AmazonVariationThemeSection
                 v-if="isConfigurable && selectedView"
