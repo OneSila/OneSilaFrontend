@@ -972,7 +972,11 @@
         "asinDescription": "Provide the Amazon Standard Identification Number for this product.",
         "asinPlaceholder": "Enter ASIN",
         "asinSaved": "ASIN saved",
-        "asinDeleted": "ASIN deleted"
+        "asinDeleted": "ASIN deleted",
+        "browseNode": "Browse node",
+        "noBrowseNodeSelected": "No browse node selected",
+        "browseNodeRoot": "Root",
+        "recommendedProductTypes": "Recommended product types"
       },
       "inspector": {
         "errors": {
