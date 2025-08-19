@@ -3,34 +3,36 @@ import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { amazonProductPropertiesQuery } from '../../../../../../../../shared/api/queries/amazonProductProperties.js';
+import { Link } from '../../../../../../../../shared/components/atoms/link';
 
 interface SelectValue {
   id: string;
   remoteValue?: string | null;
   remoteName?: string | null;
   localInstance?: { id: string } | null;
+  salesChannel?: { id: string; ptrId: string } | null;
 }
 
-const props = defineProps<{ remoteProductId: string | null }>();
+const props = defineProps<{
+  remoteProductId: string | null;
+}>();
 
 const { t } = useI18n();
 
 const properties = ref<any[]>([]);
-const loading = ref(false);
 
 const fetchProperties = async () => {
   if (!props.remoteProductId) {
     properties.value = [];
     return;
   }
-  loading.value = true;
   const { data } = await apolloClient.query({
     query: amazonProductPropertiesQuery,
     variables: { remoteProductId: props.remoteProductId },
     fetchPolicy: 'network-only',
   });
-  properties.value = data?.amazonProductProperties?.edges?.map((e: any) => e.node) || [];
-  loading.value = false;
+  properties.value =
+    data?.amazonProductProperties?.edges?.map((e: any) => e.node) || [];
 };
 
 watch(
@@ -42,35 +44,55 @@ watch(
 );
 
 const unmappedValues = computed(() => {
-  const result: SelectValue[] = [];
+  const map = new Map<string, SelectValue>();
   for (const prop of properties.value) {
+    const values: SelectValue[] = [];
     if (prop.remoteSelectValue && !prop.remoteSelectValue.localInstance) {
-      result.push(prop.remoteSelectValue);
+      values.push(prop.remoteSelectValue);
     }
     if (Array.isArray(prop.remoteSelectValues)) {
       for (const val of prop.remoteSelectValues as SelectValue[]) {
         if (!val.localInstance) {
-          result.push(val);
+          values.push(val);
         }
       }
     }
+    for (const val of values) {
+      if (!map.has(val.id)) {
+        map.set(val.id, val);
+      }
+    }
   }
-  return result;
+  return Array.from(map.values());
 });
 </script>
 
 <template>
-  <div v-if="unmappedValues.length" class="p-2 border rounded text-sm">
-    <div class="mb-2 font-medium">{{ t('dashboard.cards.amazon.unmappedSelectValues.title') }}</div>
-    <p class="mb-2 text-gray-500">{{ t('dashboard.cards.amazon.unmappedSelectValues.description') }}</p>
-    <ul class="list-disc pl-4">
+  <div
+    v-if="unmappedValues.length"
+    class="p-4 border rounded bg-gray-50 text-sm space-y-2"
+  >
+    <div class="font-medium">
+      {{ t('dashboard.cards.amazon.unmappedSelectValues.title') }}
+    </div>
+    <p class="text-gray-500">
+      {{ t('dashboard.cards.amazon.unmappedSelectValues.description') }}
+    </p>
+    <ul class="list-disc pl-5 space-y-1">
       <li v-for="value in unmappedValues" :key="value.id">
-        <RouterLink
+        <Link
           class="text-primary hover:underline"
-          :to="{ name: 'integrations.amazonPropertySelectValues.edit', params: { type: 'amazon', id: value.id } }"
+          :path="{
+            name: 'integrations.amazonPropertySelectValues.edit',
+            params: { type: 'amazon', id: value.id },
+            query: {
+              integrationId: value.salesChannel?.ptrId,
+              salesChannelId: value.salesChannel?.id,
+            },
+          }"
         >
           {{ value.remoteName || value.remoteValue || value.id }}
-        </RouterLink>
+        </Link>
       </li>
     </ul>
   </div>
