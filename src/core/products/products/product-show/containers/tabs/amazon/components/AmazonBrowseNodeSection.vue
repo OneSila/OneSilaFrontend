@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import {
   amazonBrowseNodesQuery,
   amazonProductBrowseNodesQuery,
@@ -178,13 +179,24 @@ const removeSelection = async () => {
   selectedNodeDetails.value = null;
   pendingNode.value = null;
 };
+
+const cancelSelection = () => {
+  pendingNode.value = null;
+};
+
+watch([
+  () => props.salesChannelViewId,
+  () => props.marketplaceId,
+], () => {
+  goToLevel(null);
+});
 </script>
 
 <template>
-  <div>
-    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.browseNode') }}</h4>
+  <div class="p-4 border rounded space-y-4">
+    <h4 class="font-semibold">{{ t('products.products.amazon.browseNode') }}</h4>
 
-    <div class="mb-4">
+    <div class="p-3 border rounded">
       <div v-if="displayedNode" class="mb-2">
         <div class="flex justify-between items-start">
           <div class="text-sm">
@@ -192,7 +204,7 @@ const removeSelection = async () => {
           </div>
           <div
             v-if="displayedNode.productTypeDefinitions.length"
-            class="text-xs text-gray-500 ml-4"
+            class="text-sm text-gray-500 ml-4 pl-4 border-l"
           >
             <div>{{ t('products.products.amazon.recommendedProductTypes') }}</div>
             <ul class="list-disc ml-4">
@@ -214,8 +226,15 @@ const removeSelection = async () => {
             {{ t('shared.button.save') }}
           </Button>
           <Button
+            v-if="pendingNode"
+            class="btn btn-sm btn-outline-dark"
+            @click="cancelSelection"
+          >
+            {{ t('shared.button.cancel') }}
+          </Button>
+          <Button
             v-if="productBrowseNodeId"
-            class="btn btn-xs btn-outline-danger"
+            class="btn btn-sm btn-outline-danger"
             @click="removeSelection"
           >
             {{ t('shared.button.delete') }}
@@ -227,7 +246,7 @@ const removeSelection = async () => {
       </div>
     </div>
 
-    <div class="border rounded p-2">
+    <div class="p-3 border rounded">
       <div class="mb-2 text-base font-semibold flex flex-wrap items-center gap-1 py-2">
         <span
           class="cursor-pointer hover:underline"
@@ -244,7 +263,7 @@ const removeSelection = async () => {
         </template>
         <Button
           v-if="pathStack.length"
-          class="btn btn-xs btn-outline-primary ml-auto"
+          class="btn btn-sm btn-outline-primary ml-auto"
           @click="goBack"
         >
           {{ t('shared.button.back') }}
@@ -260,26 +279,34 @@ const removeSelection = async () => {
           :key="node.remoteId"
           :class="[
             'flex justify-between items-center py-1 border-b last:border-b-0',
-            { 'cursor-pointer hover:bg-gray-100': node.hasChildren },
+            node.hasChildren ? 'cursor-pointer hover:bg-gray-100' : 'cursor-not-allowed',
           ]"
           @click="node.hasChildren && goToChild(node)"
         >
-          <span class="flex-1">{{ node.name }}</span>
-          <Button
-            v-if="pendingNode && pendingNode.remoteId === node.remoteId"
-            class="btn btn-xs btn-primary"
-            disabled
-            @click.stop
-          >
-            {{ t('shared.labels.selected') }}
-          </Button>
-          <Button
-            v-else
-            class="btn btn-xs btn-outline-primary"
-            @click.stop="selectNode(node)"
-          >
-            {{ t('shared.button.select') }}
-          </Button>
+          <span class="flex items-center gap-2 flex-1">
+            <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
+            {{ node.name }}
+          </span>
+          <div class="flex gap-2">
+            <template v-if="pendingNode && pendingNode.remoteId === node.remoteId">
+              <Button class="btn btn-sm btn-primary" disabled @click.stop>
+                {{ t('shared.labels.selected') }}
+              </Button>
+              <Button
+                class="btn btn-sm btn-outline-danger"
+                @click.stop="cancelSelection"
+              >
+                {{ t('shared.button.cancel') }}
+              </Button>
+            </template>
+            <Button
+              v-else
+              class="btn btn-sm btn-outline-primary"
+              @click.stop="selectNode(node)"
+            >
+              {{ t('shared.button.select') }}
+            </Button>
+          </div>
         </li>
       </ul>
     </div>
