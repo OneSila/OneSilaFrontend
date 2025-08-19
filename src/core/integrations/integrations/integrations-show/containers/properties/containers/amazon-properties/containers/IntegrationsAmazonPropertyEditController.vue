@@ -156,7 +156,7 @@ const fetchRecommendations = async () => {
 
     if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
       recommendations.value = data.checkPropertyForDuplicates.duplicates
-        .filter((p: any) => p.id !== formData.value.localInstance)
+        .filter((p: any) => p.id !== formData.value.localInstance?.id)
         .map((p: any) => ({ id: p.id, name: p.name }));
     } else {
       recommendations.value = [];

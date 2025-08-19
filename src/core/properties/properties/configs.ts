@@ -198,12 +198,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         label: t('properties.properties.labels.missingTranslations'),
         strict: true,
       },
-      {
-        type: FieldType.Boolean,
-        name: 'usedInProducts',
-        label: t('properties.properties.labels.usedInProducts'),
-        strict: true,
-      },
+      // {
+      //   type: FieldType.Boolean,
+      //   name: 'usedInProducts',
+      //   label: t('properties.properties.labels.usedInProducts'),
+      //   strict: true,
+      // },
       {
         type: FieldType.Choice,
         name: 'type',
