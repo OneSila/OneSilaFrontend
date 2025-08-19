@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
@@ -37,7 +37,10 @@ const loadingNodes = ref(false);
 const currentParentId = ref<string | null>(null);
 const pathStack = ref<BrowseNode[]>([]);
 const selectedNodeDetails = ref<BrowseNode | null>(null);
+const pendingNode = ref<BrowseNode | null>(null);
 const productBrowseNodeId = ref<string | null>(null);
+
+const displayedNode = computed(() => pendingNode.value || selectedNodeDetails.value);
 
 const fetchNodes = async () => {
   if (!props.marketplaceId) return;
@@ -65,6 +68,7 @@ watch([
 const fetchSelected = async () => {
   if (!props.productId || !props.salesChannelViewId) {
     selectedNodeDetails.value = null;
+    pendingNode.value = null;
     productBrowseNodeId.value = null;
     return;
   }
@@ -85,6 +89,7 @@ const fetchSelected = async () => {
     productBrowseNodeId.value = null;
     selectedNodeDetails.value = null;
   }
+  pendingNode.value = null;
 };
 
 const fetchSelectedNodeDetails = async (remoteId: string) => {
@@ -112,15 +117,23 @@ const goToChild = (node: BrowseNode) => {
   currentParentId.value = node.remoteId;
 };
 
-const goBack = () => {
-  pathStack.value.pop();
-  currentParentId.value = pathStack.value.length
-    ? pathStack.value[pathStack.value.length - 1].remoteId
-    : null;
+const goToLevel = (index: number | null) => {
+  if (index === null) {
+    pathStack.value = [];
+    currentParentId.value = null;
+    return;
+  }
+  pathStack.value = pathStack.value.slice(0, index + 1);
+  currentParentId.value = pathStack.value[index].remoteId;
 };
 
-const selectNode = async (node: BrowseNode) => {
-  if (!props.productId || !props.salesChannelId || !props.salesChannelViewId) return;
+const selectNode = (node: BrowseNode) => {
+  pendingNode.value = node;
+};
+
+const saveSelection = async () => {
+  const node = pendingNode.value;
+  if (!node || !props.productId || !props.salesChannelId || !props.salesChannelViewId) return;
   if (productBrowseNodeId.value) {
     await apolloClient.mutate({
       mutation: updateAmazonProductBrowseNodeMutation,
@@ -144,6 +157,7 @@ const selectNode = async (node: BrowseNode) => {
     productBrowseNodeId.value = data?.createAmazonProductBrowseNode?.id || null;
   }
   await fetchSelectedNodeDetails(node.remoteId);
+  pendingNode.value = null;
 };
 
 const removeSelection = async () => {
@@ -154,6 +168,7 @@ const removeSelection = async () => {
   });
   productBrowseNodeId.value = null;
   selectedNodeDetails.value = null;
+  pendingNode.value = null;
 };
 </script>
 
@@ -162,20 +177,40 @@ const removeSelection = async () => {
     <h4 class="font-semibold mb-2">{{ t('products.products.amazon.browseNode') }}</h4>
 
     <div class="mb-4">
-      <div v-if="selectedNodeDetails" class="mb-2">
+      <div v-if="displayedNode" class="mb-2">
         <div class="text-sm">
-          {{ selectedNodeDetails.browsePathByName.join(' > ') }}
+          {{ displayedNode.browsePathByName.join(' > ') }}
         </div>
         <div
-          v-if="selectedNodeDetails.productTypeDefinitions.length"
+          v-if="displayedNode.productTypeDefinitions.length"
           class="text-xs text-gray-500 mt-1"
         >
-          {{ t('products.products.amazon.recommendedProductTypes') }}:
-          {{ selectedNodeDetails.productTypeDefinitions.join(', ') }}
+          {{ t('products.products.amazon.recommendedProductTypes') }}
+          <ul class="list-disc ml-4">
+            <li
+              v-for="type in displayedNode.productTypeDefinitions"
+              :key="type"
+            >
+              {{ type }}
+            </li>
+          </ul>
         </div>
-        <Button class="btn btn-xs btn-outline-danger mt-2" @click="removeSelection">
-          {{ t('shared.button.remove') }}
-        </Button>
+        <div class="flex gap-2 mt-2">
+          <Button
+            v-if="pendingNode"
+            class="btn btn-xs btn-outline-primary"
+            @click="saveSelection"
+          >
+            {{ t('shared.button.save') }}
+          </Button>
+          <Button
+            v-if="productBrowseNodeId"
+            class="btn btn-xs btn-outline-danger"
+            @click="removeSelection"
+          >
+            {{ t('shared.button.remove') }}
+          </Button>
+        </div>
       </div>
       <div v-else class="text-sm text-gray-500">
         {{ t('products.products.amazon.noBrowseNodeSelected') }}
@@ -183,14 +218,20 @@ const removeSelection = async () => {
     </div>
 
     <div class="border rounded p-2">
-      <div class="mb-2 flex items-center justify-between">
-        <div class="text-sm font-semibold">
-          <span v-if="pathStack.length">{{ pathStack.map((p) => p.name).join(' / ') }}</span>
-          <span v-else>{{ t('products.products.amazon.browseNodeRoot') }}</span>
-        </div>
-        <Button v-if="pathStack.length" class="btn btn-xs btn-outline-primary" @click="goBack">
-          {{ t('shared.button.back') }}
-        </Button>
+      <div class="mb-2 text-sm font-semibold flex flex-wrap items-center gap-1">
+        <span
+          class="cursor-pointer hover:underline"
+          @click="goToLevel(null)"
+          >{{ t('products.products.amazon.browseNodeRoot') }}</span
+        >
+        <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
+          <span>&gt;</span>
+          <span
+            class="cursor-pointer hover:underline"
+            @click="goToLevel(index)"
+            >{{ crumb.name }}</span
+          >
+        </template>
       </div>
 
       <div v-if="loadingNodes">
@@ -200,21 +241,28 @@ const removeSelection = async () => {
         <li
           v-for="node in nodes"
           :key="node.remoteId"
-          class="flex justify-between items-center py-1 border-b last:border-b-0"
+          :class="[
+            'flex justify-between items-center py-1 border-b last:border-b-0',
+            { 'cursor-pointer hover:bg-gray-100': node.hasChildren },
+          ]"
+          @click="node.hasChildren && goToChild(node)"
         >
-          <span>{{ node.name }}</span>
-          <div class="flex gap-1">
-            <Button class="btn btn-xs btn-outline-primary" @click="selectNode(node)">
-              {{ t('shared.button.select') }}
-            </Button>
-            <Button
-              v-if="node.hasChildren"
-              class="btn btn-xs btn-outline-secondary"
-              @click="goToChild(node)"
-            >
-              {{ t('shared.button.open') }}
-            </Button>
-          </div>
+          <span class="flex-1">{{ node.name }}</span>
+          <Button
+            v-if="pendingNode && pendingNode.remoteId === node.remoteId"
+            class="btn btn-xs btn-primary"
+            disabled
+            @click.stop
+          >
+            {{ t('shared.labels.selected') }}
+          </Button>
+          <Button
+            v-else
+            class="btn btn-xs btn-outline-primary"
+            @click.stop="selectNode(node)"
+          >
+            {{ t('shared.button.select') }}
+          </Button>
         </li>
       </ul>
     </div>
