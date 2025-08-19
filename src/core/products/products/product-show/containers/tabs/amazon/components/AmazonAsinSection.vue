@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useApolloClient } from '@vue/apollo-composable';
 import { amazonMerchantAsinsQuery } from '../../../../../../../../shared/api/queries/amazonMerchantAsins.js';
 import {
   createAmazonMerchantAsinMutation,
@@ -15,10 +14,10 @@ import { FieldValue } from '../../../../../../../../shared/components/organisms/
 import { ValueFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../../../../../../shared/utils/constants';
 import { Label } from '../../../../../../../../shared/components/atoms/label';
+import apolloClient from "../../../../../../../../../apollo-client";
 
 const props = defineProps<{ product: any; view: any }>();
 const { t } = useI18n();
-const apolloClient = useApolloClient().client;
 
 const asin = ref('');
 const asinId = ref<string | null>(null);
@@ -111,12 +110,18 @@ const isSaveDisabled = computed(() => asin.value === lastSavedAsin.value);
     <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
       {{ t('products.products.amazon.asin') }}
     </Label>
-    <FieldValue class="w-96" v-model="asin" :field="field()" />
     <div v-if="errors.asin" class="text-danger text-small mt-1">
       {{ errors.asin }}
     </div>
-    <PrimaryButton class="mt-2" :disabled="isSaveDisabled" @click="handleSave">
-      {{ t('shared.button.save') }}
-    </PrimaryButton>
+    <Flex middle gap="2">
+      <FlexCell>
+        <FieldValue class="w-96" v-model="asin" :field="field()" />
+      </FlexCell>
+      <FlexCell>
+          <PrimaryButton :disabled="isSaveDisabled" @click="handleSave">
+            {{ t('shared.button.save') }}
+          </PrimaryButton>
+      </FlexCell>
+    </Flex>
   </div>
 </template>
