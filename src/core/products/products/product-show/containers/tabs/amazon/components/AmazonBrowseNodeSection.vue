@@ -127,6 +127,14 @@ const goToLevel = (index: number | null) => {
   currentParentId.value = pathStack.value[index].remoteId;
 };
 
+const goBack = () => {
+  if (!pathStack.value.length) {
+    goToLevel(null);
+    return;
+  }
+  const target = pathStack.value.length - 2;
+  goToLevel(target >= 0 ? target : null);
+};
 const selectNode = (node: BrowseNode) => {
   pendingNode.value = node;
 };
@@ -139,14 +147,14 @@ const saveSelection = async () => {
       mutation: updateAmazonProductBrowseNodeMutation,
       variables: {
         id: productBrowseNodeId.value,
-        input: { recommendedBrowseNodeId: node.remoteId },
+        data: { recommendedBrowseNodeId: node.remoteId },
       },
     });
   } else {
     const { data } = await apolloClient.mutate({
       mutation: createAmazonProductBrowseNodeMutation,
       variables: {
-        input: {
+        data: {
           product: props.productId,
           salesChannel: props.salesChannelId,
           salesChannelView: props.salesChannelViewId,
@@ -178,27 +186,29 @@ const removeSelection = async () => {
 
     <div class="mb-4">
       <div v-if="displayedNode" class="mb-2">
-        <div class="text-sm">
-          {{ displayedNode.browsePathByName.join(' > ') }}
-        </div>
-        <div
-          v-if="displayedNode.productTypeDefinitions.length"
-          class="text-xs text-gray-500 mt-1"
-        >
-          {{ t('products.products.amazon.recommendedProductTypes') }}
-          <ul class="list-disc ml-4">
-            <li
-              v-for="type in displayedNode.productTypeDefinitions"
-              :key="type"
-            >
-              {{ type }}
-            </li>
-          </ul>
+        <div class="flex justify-between items-start">
+          <div class="text-sm">
+            {{ displayedNode.browsePathByName.join(' > ') }}
+          </div>
+          <div
+            v-if="displayedNode.productTypeDefinitions.length"
+            class="text-xs text-gray-500 ml-4"
+          >
+            <div>{{ t('products.products.amazon.recommendedProductTypes') }}</div>
+            <ul class="list-disc ml-4">
+              <li
+                v-for="type in displayedNode.productTypeDefinitions"
+                :key="type"
+              >
+                {{ type }}
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="flex gap-2 mt-2">
           <Button
             v-if="pendingNode"
-            class="btn btn-xs btn-outline-primary"
+            class="btn btn-sm btn-primary"
             @click="saveSelection"
           >
             {{ t('shared.button.save') }}
@@ -218,7 +228,7 @@ const removeSelection = async () => {
     </div>
 
     <div class="border rounded p-2">
-      <div class="mb-2 text-sm font-semibold flex flex-wrap items-center gap-1">
+      <div class="mb-2 text-base font-semibold flex flex-wrap items-center gap-1 py-2">
         <span
           class="cursor-pointer hover:underline"
           @click="goToLevel(null)"
@@ -232,6 +242,13 @@ const removeSelection = async () => {
             >{{ crumb.name }}</span
           >
         </template>
+        <Button
+          v-if="pathStack.length"
+          class="btn btn-xs btn-outline-primary ml-auto"
+          @click="goBack"
+        >
+          {{ t('shared.button.back') }}
+        </Button>
       </div>
 
       <div v-if="loadingNodes">

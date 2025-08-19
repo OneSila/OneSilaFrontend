@@ -28,8 +28,8 @@ export const resyncAmazonProductMutation = gql`
 `;
 
 export const createAmazonProductBrowseNodeMutation = gql`
-  mutation createAmazonProductBrowseNode($input: AmazonProductBrowseNodeInput!) {
-    createAmazonProductBrowseNode(input: $input) {
+  mutation createAmazonProductBrowseNode($data: AmazonProductBrowseNodeInput!) {
+    createAmazonProductBrowseNode(data: $data) {
       id
       recommendedBrowseNodeId
     }
@@ -39,9 +39,9 @@ export const createAmazonProductBrowseNodeMutation = gql`
 export const updateAmazonProductBrowseNodeMutation = gql`
   mutation updateAmazonProductBrowseNode(
     $id: GlobalID!
-    $input: AmazonProductBrowseNodePartialInput!
+    $data: AmazonProductBrowseNodePartialInput!
   ) {
-    updateAmazonProductBrowseNode(id: $id, input: $input) {
+    updateAmazonProductBrowseNode(id: $id, data: $data) {
       id
       recommendedBrowseNodeId
     }
