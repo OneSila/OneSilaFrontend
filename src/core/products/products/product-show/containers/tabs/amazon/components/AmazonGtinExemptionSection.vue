@@ -89,8 +89,8 @@ const save = async () => {
 </script>
 
 <template>
-  <div class="p-4 border rounded">
-    <h4 class="font-semibold mb-1">{{ t('products.products.amazon.gtinExemption') }}</h4>
+  <div>
+    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.gtinExemption') }}</h4>
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.gtinExemptionDescription') }}</p>
     <div class="flex items-center gap-4">
       <Toggle v-model="value" :disabled="loading" />

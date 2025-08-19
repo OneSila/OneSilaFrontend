@@ -13,7 +13,6 @@ import { PrimaryButton } from '../../../../../../../../shared/components/atoms/b
 import { FieldValue } from '../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-value';
 import { ValueFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../../../../../../shared/utils/constants';
-import { Label } from '../../../../../../../../shared/components/atoms/label';
 import apolloClient from "../../../../../../../../../apollo-client";
 
 const props = defineProps<{ product: any; view: any }>();
@@ -107,9 +106,7 @@ const isSaveDisabled = computed(() => asin.value === lastSavedAsin.value);
 
 <template>
   <div>
-    <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-      {{ t('products.products.amazon.asin') }}
-    </Label>
+     <h4 class="font-semibold mb-2">{{ t('products.products.amazon.asin') }}</h4>
     <p class="text-xs text-gray-500 mb-2">
       {{ t('products.products.amazon.asinDescription') }}
     </p>
