@@ -131,23 +131,23 @@ const save = async () => {
 <template>
   <div class="p-4 border rounded">
     <LocalLoader :loading="loading" />
-    <div v-if="!loading" class="flex items-end gap-2">
-      <Selector
-        class="w-72"
-        :options="themeOptions"
-        v-model="selectedTheme"
-        label-by="name"
-        value-by="id"
-        :filterable="false"
-        :placeholder="t('shared.placeholders.select')"
-      />
-      <Button
-        class="btn btn-sm btn-outline-primary"
-        :disabled="!hasChanges || saving"
-        @click="save"
-      >
+    <Flex v-if="!loading" gap="2" middle>
+      <FlexCell class="min-w-96">
+        <Selector
+          class="w-72"
+          :options="themeOptions"
+          v-model="selectedTheme"
+          label-by="name"
+          value-by="id"
+          :filterable="false"
+          :placeholder="t('shared.placeholders.select')"
+        />
+      </FlexCell>
+      <FlexCell>
+        <Button class="btn btn-sm btn-primary" :disabled="!hasChanges || saving" @click="save">
         {{ t('shared.button.save') }}
       </Button>
-    </div>
+      </FlexCell>
+    </Flex>
   </div>
 </template>
