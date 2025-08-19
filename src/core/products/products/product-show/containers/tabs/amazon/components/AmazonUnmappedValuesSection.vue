@@ -69,14 +69,9 @@ const unmappedValues = computed(() => {
 </script>
 
 <template>
-  <div
-    v-if="unmappedValues.length"
-    class="p-4 border rounded bg-gray-50 text-sm space-y-2"
-  >
-    <div class="font-medium">
-      {{ t('dashboard.cards.amazon.unmappedSelectValues.title') }}
-    </div>
-    <p class="text-gray-500">
+  <div v-if="unmappedValues.length" class="text-sm">
+     <h4 class="font-semibold mb-2">{{ t('dashboard.cards.amazon.unmappedSelectValues.title') }}</h4>
+    <p class="text-xs text-gray-500 mb-2">
       {{ t('dashboard.cards.amazon.unmappedSelectValues.description') }}
     </p>
     <table class="w-full text-left">

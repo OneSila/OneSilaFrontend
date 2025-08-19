@@ -129,7 +129,9 @@ const save = async () => {
 </script>
 
 <template>
-  <div class="p-4 border rounded">
+  <div>
+    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.variationTheme') }}</h4>
+    <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.variationThemeDescription') }}</p>
     <LocalLoader :loading="loading" />
     <Flex v-if="!loading" gap="2" middle>
       <FlexCell class="min-w-96">

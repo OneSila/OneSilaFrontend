@@ -195,9 +195,9 @@ watch([
 </script>
 
 <template>
-  <div class="p-4 border rounded space-y-4">
-    <h4 class="font-semibold">{{ t('products.products.amazon.browseNode') }}</h4>
-    <p class="text-xs text-gray-500">
+  <div class="space-y-4">
+    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.browseNode') }}</h4>
+    <p class="text-xs text-gray-500 mb-2">
       {{ t('products.products.amazon.browseNodeDescription') }}
     </p>
 
