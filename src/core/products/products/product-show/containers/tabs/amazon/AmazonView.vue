@@ -294,7 +294,12 @@ const formatDate = (dateString?: string | null) => {
               <AmazonGtinExemptionSection class="mb-4" />
               <AmazonBrowseNodeSection class="mb-4" />
               <AmazonUnmappedValuesSection class="mb-4" />
-              <AmazonVariationThemeSection v-if="isConfigurable" class="mb-4" />
+              <AmazonVariationThemeSection
+                v-if="isConfigurable && selectedView"
+                class="mb-4"
+                :product="product"
+                :view="selectedView"
+              />
             </div>
           </div>
         </div>
