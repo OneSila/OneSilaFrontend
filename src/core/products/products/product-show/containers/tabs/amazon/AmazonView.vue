@@ -153,7 +153,7 @@ const formatDate = (dateString?: string | null) => {
           :views="views"
           :amazon-products="amazonProducts"
         />
-          <div class="flex-1 pl-4">
+          <div class="flex-1 p-6">
             <div v-if="selectedView">
               <AmazonStatusSection
                 class="mb-4"
@@ -185,16 +185,25 @@ const formatDate = (dateString?: string | null) => {
                 :product="product"
                 :view="selectedView"
               />
+
+              <div class="border-t my-4"></div>
+
               <AmazonGtinExemptionSection
                 class="mb-4"
                 :product-id="props.product.id"
                 :view-id="selectedView?.id"
               />
+
+              <div class="border-t my-4"></div>
+
               <AmazonUnmappedValuesSection
                 v-if="remoteProductId"
                 class="mb-4"
                 :remote-product-id="remoteProductId"
               />
+
+              <div v-if="remoteProductId" class="border-t my-4"></div>
+
               <AmazonBrowseNodeSection
                 class="mb-4"
                 :product-id="props.product.id"
@@ -202,6 +211,9 @@ const formatDate = (dateString?: string | null) => {
                 :sales-channel-view-id="selectedView?.id"
                 :marketplace-id="selectedView?.remoteId"
               />
+
+              <div class="border-t my-4"></div>
+
               <AmazonVariationThemeSection
                 v-if="isConfigurable && selectedView"
                 class="mb-4"

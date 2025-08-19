@@ -39,27 +39,17 @@ const formatDate = (dateString?: string | null) => {
 
 <template>
   <div>
-    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.status') }}</h4>
-    <p class="text-xs text-gray-500 mb-2">
-      {{ t('products.products.amazon.statusDescription') }}
-    </p>
-    <div class="flex flex-col sm:flex-row sm:items-start gap-2">
-      <div
-        v-if="selectedProduct"
-        class="flex flex-col gap-2 text-sm text-gray-500 flex-1"
-      >
-        <div>
-          <span class="font-medium">{{ t('shared.labels.lastSyncAt') }}:</span>
-          {{ formatDate(lastSyncAt) }}
-        </div>
-        <div>
-          <span class="font-medium">{{ t('shared.labels.progress') }}:</span>
-          <div class="w-48 mt-1">
-            <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
-          </div>
-        </div>
-      </div>
-      <div class="flex gap-2 sm:ml-auto">
+    <Flex between>
+      <FlexCell>
+          <h4 class="font-semibold mb-2">{{ t('products.products.amazon.status') }}</h4>
+          <p class="text-xs text-gray-500 mb-2">
+            {{ t('products.products.amazon.statusDescription') }}
+          </p>
+        <p v-if="remoteProductId == null">{{ t('products.products.amazon.noStatus') }}</p>
+
+      </FlexCell>
+      <FlexCell>
+        <div class="flex gap-2 sm:ml-auto">
         <ApolloMutation
           :mutation="resyncAmazonProductMutation"
           :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView?.id }, forceValidationOnly: false }"
@@ -97,6 +87,24 @@ const formatDate = (dateString?: string | null) => {
             </Button>
           </template>
         </ApolloMutation>
+      </div>
+      </FlexCell>
+    </Flex>
+    <div class="flex flex-col sm:flex-row sm:items-start gap-2">
+      <div
+        v-if="selectedProduct"
+        class="flex flex-col gap-2 text-sm text-gray-500 flex-1"
+      >
+        <div>
+          <span class="font-medium">{{ t('shared.labels.lastSyncAt') }}:</span>
+          {{ formatDate(lastSyncAt) }}
+        </div>
+        <div>
+          <span class="font-medium">{{ t('shared.labels.progress') }}:</span>
+          <div class="w-48 mt-1">
+            <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
+          </div>
+        </div>
       </div>
     </div>
   </div>

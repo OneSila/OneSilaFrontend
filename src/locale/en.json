@@ -971,6 +971,7 @@
         "otherIssuesDescription": "Issues already present in Amazon for this product.",
         "status": "Status",
         "statusDescription": "Synchronization status and available actions.",
+        "noStatus": "The product is not present yet on the marketplace!",
         "variationTheme": "Variation Theme",
         "variationThemeDescription": "Select the variation theme for this product.",
         "asin": "ASIN",
