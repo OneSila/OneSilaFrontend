@@ -9,6 +9,7 @@ interface SelectValue {
   id: string;
   remoteValue?: string | null;
   remoteName?: string | null;
+  amazonProperty?: { id: string; name?: string | null; code?: string | null } | null;
   localInstance?: { id: string } | null;
   salesChannel?: { id: string; ptrId: string } | null;
 }
@@ -78,23 +79,59 @@ const unmappedValues = computed(() => {
     <p class="text-gray-500">
       {{ t('dashboard.cards.amazon.unmappedSelectValues.description') }}
     </p>
-    <ul class="list-disc pl-5 space-y-1">
-      <li v-for="value in unmappedValues" :key="value.id">
-        <Link
-          class="text-primary hover:underline"
-          :path="{
-            name: 'integrations.amazonPropertySelectValues.edit',
-            params: { type: 'amazon', id: value.id },
-            query: {
-              integrationId: value.salesChannel?.ptrId,
-              salesChannelId: value.salesChannel?.id,
-            },
-          }"
-        >
-          {{ value.remoteName || value.remoteValue || value.id }}
-        </Link>
-      </li>
-    </ul>
+    <table class="w-full text-left">
+      <thead class="text-gray-500">
+        <tr>
+          <th class="font-normal py-1 px-2">
+            {{ t('integrations.show.propertySelectValues.labels.selectValue') }}
+          </th>
+          <th class="font-normal py-1 px-2">
+            {{ t('integrations.show.propertySelectValues.labels.amazonProperty') }}
+          </th>
+          <th class="font-normal py-1 px-2">
+            {{ t('integrations.show.properties.labels.code') }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="value in unmappedValues" :key="value.id" class="border-t">
+          <td class="py-1 px-2">
+            <Link
+              class="text-primary hover:underline"
+              :path="{
+                name: 'integrations.amazonPropertySelectValues.edit',
+                params: { type: 'amazon', id: value.id },
+                query: {
+                  integrationId: value.salesChannel?.ptrId,
+                  salesChannelId: value.salesChannel?.id,
+                },
+              }"
+            >
+              {{ value.remoteName || value.remoteValue || value.id }}
+            </Link>
+          </td>
+          <td class="py-1 px-2">
+            <Link
+              v-if="value.amazonProperty"
+              class="text-primary hover:underline"
+              :path="{
+                name: 'integrations.amazonProperties.edit',
+                params: { type: 'amazon', id: value.amazonProperty.id },
+                query: {
+                  integrationId: value.salesChannel?.ptrId,
+                  salesChannelId: value.salesChannel?.id,
+                },
+              }"
+            >
+              {{ value.amazonProperty.name || value.amazonProperty.code }}
+            </Link>
+          </td>
+          <td class="py-1 px-2">
+            {{ value.amazonProperty?.code }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
