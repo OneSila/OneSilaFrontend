@@ -655,6 +655,10 @@
         "inventoryMovements": "",
         "amazon": "Amazon"
       },
+      "amazon": {
+        "gtinExemption": "GTIN Exemption",
+        "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace."
+      },
       "inspector": {
         "labels": {
           "missingInfo": "Ontbrekende Informatie",
