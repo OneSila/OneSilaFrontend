@@ -10,12 +10,11 @@ interface SelectValue {
   remoteValue?: string | null;
   remoteName?: string | null;
   localInstance?: { id: string } | null;
+  salesChannel?: { id: string; ptrId: string } | null;
 }
 
 const props = defineProps<{
   remoteProductId: string | null;
-  id: string;
-  salesChannelId: string;
 }>();
 
 const { t } = useI18n();
@@ -85,11 +84,10 @@ const unmappedValues = computed(() => {
           class="text-primary hover:underline"
           :path="{
             name: 'integrations.amazonPropertySelectValues.edit',
-            params: {
-              type: 'amazon',
-              id: value.id,
-              integrationId: props.id,
-              salesChannelId: props.salesChannelId,
+            params: { type: 'amazon', id: value.id },
+            query: {
+              integrationId: value.salesChannel?.ptrId,
+              salesChannelId: value.salesChannel?.id,
             },
           }"
         >
