@@ -92,14 +92,10 @@ const save = async () => {
   <div class="p-4 border rounded">
     <h4 class="font-semibold mb-1">{{ t('products.products.amazon.gtinExemption') }}</h4>
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.gtinExemptionDescription') }}</p>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-4">
       <Toggle v-model="value" :disabled="loading" />
-      <PrimaryButton
-        class="btn btn-sm"
-        :disabled="saving || value === initialValue"
-        @click="save"
-      >
-        {{ t('shared.labels.save') }}
+      <PrimaryButton :disabled="saving || value === initialValue" @click="save">
+        {{ t('shared.button.save') }}
       </PrimaryButton>
     </div>
   </div>
