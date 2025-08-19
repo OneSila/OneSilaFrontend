@@ -663,7 +663,9 @@
         "asin": "ASIN",
         "asinPlaceholder": "Voer ASIN in",
         "asinSaved": "ASIN opgeslagen",
-        "asinDeleted": "ASIN verwijderd"
+        "asinDeleted": "ASIN verwijderd",
+        "gtinExemption": "GTIN Exemption",
+        "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace."
       },
       "inspector": {
         "labels": {

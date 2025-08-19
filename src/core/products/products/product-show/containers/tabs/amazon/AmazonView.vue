@@ -292,6 +292,12 @@ const formatDate = (dateString?: string | null) => {
                 :view="selectedView"
               />
               <AmazonGtinExemptionSection class="mb-4" />
+              <AmazonAsinSection class="mb-4" />
+              <AmazonGtinExemptionSection
+                class="mb-4"
+                :product-id="props.product.id"
+                :view-id="selectedView?.id"
+              />
               <AmazonBrowseNodeSection class="mb-4" />
               <AmazonUnmappedValuesSection
                 v-if="remoteProductId"
