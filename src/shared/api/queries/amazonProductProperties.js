@@ -15,6 +15,15 @@ export const amazonProductPropertiesQuery = gql`
             id
             remoteValue
             remoteName
+            amazonProperty {
+              id
+              name
+              code
+            }
+            salesChannel {
+              id
+              ptrId
+            }
             localInstance {
               id
             }
@@ -23,6 +32,15 @@ export const amazonProductPropertiesQuery = gql`
             id
             remoteValue
             remoteName
+            amazonProperty {
+              id
+              name
+              code
+            }
+            salesChannel {
+              id
+              ptrId
+            }
             localInstance {
               id
             }
