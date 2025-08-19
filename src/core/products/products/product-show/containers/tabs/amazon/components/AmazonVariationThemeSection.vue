@@ -95,7 +95,7 @@ const save = async () => {
           variables: { data: { id: recordId.value, theme: selectedTheme.value } },
         });
         originalTheme.value = selectedTheme.value;
-        Toast.success(t('shared.alerts.saveSuccess'));
+        Toast.success(t('products.products.amazon.variationThemeSaved'));
       } else {
         await apolloClient.mutate({
           mutation: deleteAmazonVariationThemeMutation,
@@ -103,7 +103,7 @@ const save = async () => {
         });
         recordId.value = null;
         originalTheme.value = null;
-        Toast.success(t('shared.alerts.deleteSuccess'));
+        Toast.success(t('products.products.amazon.variationThemeDeleted'));
       }
     } else if (selectedTheme.value && props.view) {
       const res = await apolloClient.mutate({
@@ -118,7 +118,7 @@ const save = async () => {
       });
       recordId.value = res.data?.createAmazonVariationTheme?.id || null;
       originalTheme.value = selectedTheme.value;
-      Toast.success(t('shared.alerts.saveSuccess'));
+      Toast.success(t('products.products.amazon.variationThemeSaved'));
     }
   } catch (error) {
     displayApolloError(error);
