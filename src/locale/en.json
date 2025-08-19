@@ -966,7 +966,7 @@
         "validationIssuesDescription": "Issues detected locally before sending the product to Amazon.",
         "otherIssues": "Remote Product Issues",
         "gtinExemption": "GTIN Exemption",
-        "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace."
+        "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace.",
         "otherIssuesDescription": "Issues already present in Amazon for this product.",
         "asin": "ASIN",
         "asinPlaceholder": "Enter ASIN",
