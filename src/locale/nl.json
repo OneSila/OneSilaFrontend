@@ -655,6 +655,16 @@
         "inventoryMovements": "",
         "amazon": "Amazon"
       },
+      "amazon": {
+        "validationIssues": "Validatieproblemen",
+        "validationIssuesDescription": "Problemen gedetecteerd voordat het product naar Amazon wordt gestuurd.",
+        "otherIssues": "Problemen met Amazon product",
+        "otherIssuesDescription": "Problemen die al aanwezig zijn in Amazon voor dit product.",
+        "asin": "ASIN",
+        "asinPlaceholder": "Voer ASIN in",
+        "asinSaved": "ASIN opgeslagen",
+        "asinDeleted": "ASIN verwijderd"
+      },
       "inspector": {
         "labels": {
           "missingInfo": "Ontbrekende Informatie",

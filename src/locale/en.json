@@ -965,7 +965,11 @@
         "validationIssues": "Validation Issues",
         "validationIssuesDescription": "Issues detected locally before sending the product to Amazon.",
         "otherIssues": "Remote Product Issues",
-        "otherIssuesDescription": "Issues already present in Amazon for this product."
+        "otherIssuesDescription": "Issues already present in Amazon for this product.",
+        "asin": "ASIN",
+        "asinPlaceholder": "Enter ASIN",
+        "asinSaved": "ASIN saved",
+        "asinDeleted": "ASIN deleted"
       },
       "inspector": {
         "errors": {
