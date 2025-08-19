@@ -288,7 +288,13 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonAsinSection class="mb-4" />
               <AmazonGtinExemptionSection class="mb-4" />
-              <AmazonBrowseNodeSection class="mb-4" />
+              <AmazonBrowseNodeSection
+                class="mb-4"
+                :product-id="props.product.id"
+                :sales-channel-id="selectedView?.salesChannel.id"
+                :sales-channel-view-id="selectedView?.id"
+                :marketplace-id="selectedView?.remoteId"
+              />
               <AmazonUnmappedValuesSection class="mb-4" />
               <AmazonVariationThemeSection v-if="isConfigurable" class="mb-4" />
             </div>

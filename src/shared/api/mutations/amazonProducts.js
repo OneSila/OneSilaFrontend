@@ -26,3 +26,32 @@ export const resyncAmazonProductMutation = gql`
     }
   }
 `;
+
+export const createAmazonProductBrowseNodeMutation = gql`
+  mutation createAmazonProductBrowseNode($input: AmazonProductBrowseNodeInput!) {
+    createAmazonProductBrowseNode(input: $input) {
+      id
+      recommendedBrowseNodeId
+    }
+  }
+`;
+
+export const updateAmazonProductBrowseNodeMutation = gql`
+  mutation updateAmazonProductBrowseNode(
+    $id: GlobalID!
+    $input: AmazonProductBrowseNodePartialInput!
+  ) {
+    updateAmazonProductBrowseNode(id: $id, input: $input) {
+      id
+      recommendedBrowseNodeId
+    }
+  }
+`;
+
+export const deleteAmazonProductBrowseNodeMutation = gql`
+  mutation deleteAmazonProductBrowseNode($id: GlobalID!) {
+    deleteAmazonProductBrowseNode(id: $id) {
+      id
+    }
+  }
+`;
