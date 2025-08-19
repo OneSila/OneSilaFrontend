@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import TabContentTemplate from '../TabContentTemplate.vue';
 import { Product } from '../../../../configs';
 import { Button } from '../../../../../../../shared/components/atoms/button';
@@ -26,6 +27,7 @@ import { ProductType } from '../../../../../../../shared/utils/constants';
 const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
 const emit = defineEmits(['refreshAmazonProducts']);
 const { t } = useI18n();
+const route = useRoute();
 
 interface AmazonProductIssue {
   id: string;
@@ -294,12 +296,12 @@ const formatDate = (dateString?: string | null) => {
               <AmazonGtinExemptionSection class="mb-4" />
               <AmazonBrowseNodeSection class="mb-4" />
               <AmazonUnmappedValuesSection
-                v-if="remoteProductId"
+                v-if="remoteProductId && selectedView"
                 class="mb-4"
                 :remote-product-id="remoteProductId"
+                :id="String(route.query.integrationId || '')"
+                :sales-channel-id="selectedView.salesChannel.id"
               />
-              <AmazonVariationThemeSection v-if="isConfigurable" class="mb-4" />
-              <AmazonUnmappedValuesSection class="mb-4" />
               <AmazonVariationThemeSection
                 v-if="isConfigurable && selectedView"
                 class="mb-4"
