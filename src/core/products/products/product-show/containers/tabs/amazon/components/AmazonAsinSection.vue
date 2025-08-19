@@ -107,10 +107,13 @@ const isSaveDisabled = computed(() => asin.value === lastSavedAsin.value);
 
 <template>
   <div>
-    <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
+    <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
       {{ t('products.products.amazon.asin') }}
     </Label>
-    <div v-if="errors.asin" class="text-danger text-small mt-1">
+    <p class="text-xs text-gray-500 mb-2">
+      {{ t('products.products.amazon.asinDescription') }}
+    </p>
+    <div v-if="errors.asin" class="text-danger text-small mb-2">
       {{ errors.asin }}
     </div>
     <Flex middle gap="2">
