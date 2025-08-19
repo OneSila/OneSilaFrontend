@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Toggle } from '../../../../../../../../shared/components/atoms/toggle';
-import { Button } from '../../../../../../../../shared/components/atoms/button';
+import { PrimaryButton } from '../../../../../../../../shared/components/atoms/button-primary';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
 import { amazonGtinExemptionsQuery } from '../../../../../../../../shared/api/queries/amazonGtinExemptions.js';
@@ -90,17 +90,17 @@ const save = async () => {
 
 <template>
   <div class="p-4 border rounded">
-    <div class="flex items-center justify-between">
-      <div>
-        <h4 class="font-semibold mb-1">{{ t('products.products.amazon.gtinExemption') }}</h4>
-        <p class="text-xs text-gray-500">{{ t('products.products.amazon.gtinExemptionDescription') }}</p>
-      </div>
+    <h4 class="font-semibold mb-1">{{ t('products.products.amazon.gtinExemption') }}</h4>
+    <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.gtinExemptionDescription') }}</p>
+    <div class="flex items-center gap-2">
       <Toggle v-model="value" :disabled="loading" />
-    </div>
-    <div v-if="value !== initialValue" class="mt-2 text-right">
-      <Button class="btn btn-sm btn-outline-primary" :disabled="saving" @click="save">
+      <PrimaryButton
+        class="btn btn-sm"
+        :disabled="saving || value === initialValue"
+        @click="save"
+      >
         {{ t('shared.labels.save') }}
-      </Button>
+      </PrimaryButton>
     </div>
   </div>
 </template>
