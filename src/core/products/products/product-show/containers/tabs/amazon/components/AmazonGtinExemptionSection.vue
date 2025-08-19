@@ -80,7 +80,7 @@ const save = async () => {
       exemptionId.value = data.createAmazonGtinExemption.id;
       initialValue.value = data.createAmazonGtinExemption.value;
     }
-    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+    Toast.success(t('products.products.amazon.gtinExemptionSaved'));
   } catch (error) {
     displayApolloError(error);
   }

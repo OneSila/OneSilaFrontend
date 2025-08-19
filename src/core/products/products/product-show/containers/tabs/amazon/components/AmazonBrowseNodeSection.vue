@@ -5,6 +5,8 @@ import apolloClient from '../../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
+import { Toast } from '../../../../../../../../shared/modules/toast';
+import { displayApolloError } from '../../../../../../../../shared/utils';
 import {
   amazonBrowseNodesQuery,
   amazonProductBrowseNodesQuery,
@@ -143,43 +145,53 @@ const selectNode = (node: BrowseNode) => {
 const saveSelection = async () => {
   const node = pendingNode.value;
   if (!node || !props.productId || !props.salesChannelId || !props.salesChannelViewId) return;
-  if (productBrowseNodeId.value) {
-    await apolloClient.mutate({
-      mutation: updateAmazonProductBrowseNodeMutation,
-      variables: {
-        data: {
-          id: productBrowseNodeId.value,
-          recommendedBrowseNodeId: node.remoteId,
+  try {
+    if (productBrowseNodeId.value) {
+      await apolloClient.mutate({
+        mutation: updateAmazonProductBrowseNodeMutation,
+        variables: {
+          data: {
+            id: productBrowseNodeId.value,
+            recommendedBrowseNodeId: node.remoteId,
+          },
         },
-      },
-    });
-  } else {
-    const { data } = await apolloClient.mutate({
-      mutation: createAmazonProductBrowseNodeMutation,
-      variables: {
-        data: {
-          product: { id: props.productId },
-          salesChannel: { id: props.salesChannelId },
-          salesChannelView: { id: props.salesChannelViewId },
-          recommendedBrowseNodeId: node.remoteId,
+      });
+    } else {
+      const { data } = await apolloClient.mutate({
+        mutation: createAmazonProductBrowseNodeMutation,
+        variables: {
+          data: {
+            product: { id: props.productId },
+            salesChannel: { id: props.salesChannelId },
+            salesChannelView: { id: props.salesChannelViewId },
+            recommendedBrowseNodeId: node.remoteId,
+          },
         },
-      },
-    });
-    productBrowseNodeId.value = data?.createAmazonProductBrowseNode?.id || null;
+      });
+      productBrowseNodeId.value = data?.createAmazonProductBrowseNode?.id || null;
+    }
+    await fetchSelectedNodeDetails(node.remoteId);
+    pendingNode.value = null;
+    Toast.success(t('products.products.amazon.browseNodeSaved'));
+  } catch (error) {
+    displayApolloError(error);
   }
-  await fetchSelectedNodeDetails(node.remoteId);
-  pendingNode.value = null;
 };
 
 const removeSelection = async () => {
   if (!productBrowseNodeId.value) return;
-  await apolloClient.mutate({
-    mutation: deleteAmazonProductBrowseNodeMutation,
-    variables: { data: { id: productBrowseNodeId.value } },
-  });
-  productBrowseNodeId.value = null;
-  selectedNodeDetails.value = null;
-  pendingNode.value = null;
+  try {
+    await apolloClient.mutate({
+      mutation: deleteAmazonProductBrowseNodeMutation,
+      variables: { data: { id: productBrowseNodeId.value } },
+    });
+    productBrowseNodeId.value = null;
+    selectedNodeDetails.value = null;
+    pendingNode.value = null;
+    Toast.success(t('products.products.amazon.browseNodeDeleted'));
+  } catch (error) {
+    displayApolloError(error);
+  }
 };
 
 const cancelSelection = () => {
