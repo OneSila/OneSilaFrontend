@@ -22,7 +22,6 @@ export const amazonProductPropertiesQuery = gql`
             }
             salesChannel {
               id
-              ptrId
             }
             localInstance {
               id
@@ -39,7 +38,6 @@ export const amazonProductPropertiesQuery = gql`
             }
             salesChannel {
               id
-              ptrId
             }
             localInstance {
               id

@@ -218,7 +218,7 @@ const removeSelection = async () => {
             class="btn btn-xs btn-outline-danger"
             @click="removeSelection"
           >
-            {{ t('shared.button.remove') }}
+            {{ t('shared.button.delete') }}
           </Button>
         </div>
       </div>

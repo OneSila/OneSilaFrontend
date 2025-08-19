@@ -97,13 +97,11 @@ const unmappedValues = computed(() => {
         <tr v-for="value in unmappedValues" :key="value.id" class="border-t">
           <td class="py-1 px-2">
             <Link
-              class="text-primary hover:underline"
               :path="{
                 name: 'integrations.amazonPropertySelectValues.edit',
                 params: { type: 'amazon', id: value.id },
                 query: {
-                  integrationId: value.salesChannel?.ptrId,
-                  salesChannelId: value.salesChannel?.id,
+                  integrationId: value.salesChannel?.id,
                 },
               }"
             >
@@ -113,13 +111,11 @@ const unmappedValues = computed(() => {
           <td class="py-1 px-2">
             <Link
               v-if="value.amazonProperty"
-              class="text-primary hover:underline"
               :path="{
                 name: 'integrations.amazonProperties.edit',
                 params: { type: 'amazon', id: value.amazonProperty.id },
                 query: {
-                  integrationId: value.salesChannel?.ptrId,
-                  salesChannelId: value.salesChannel?.id,
+                  integrationId: value.salesChannel?.id,
                 },
               }"
             >
