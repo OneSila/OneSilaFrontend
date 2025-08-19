@@ -3,7 +3,6 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Toggle } from '../../../../../../../../shared/components/atoms/toggle';
-import { PrimaryButton } from '../../../../../../../../shared/components/atoms/button-primary';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
 import { amazonGtinExemptionsQuery } from '../../../../../../../../shared/api/queries/amazonGtinExemptions.js';
@@ -11,6 +10,7 @@ import {
   createAmazonGtinExemptionMutation,
   updateAmazonGtinExemptionMutation,
 } from '../../../../../../../../shared/api/mutations/amazonGtinExemptions.js';
+import { Button } from "../../../../../../../../shared/components/atoms/button";
 
 const props = defineProps<{ productId?: string; viewId?: string }>();
 
@@ -94,9 +94,9 @@ const save = async () => {
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.gtinExemptionDescription') }}</p>
     <div class="flex items-center gap-4">
       <Toggle v-model="value" :disabled="loading" />
-      <PrimaryButton :disabled="saving || value === initialValue" @click="save">
+      <Button class="btn btn-sm btn-primary" :disabled="saving || value === initialValue" @click="save">
         {{ t('shared.button.save') }}
-      </PrimaryButton>
+      </Button>
     </div>
   </div>
 </template>

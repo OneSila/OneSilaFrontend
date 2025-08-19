@@ -195,13 +195,13 @@ watch([
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div>
     <h4 class="font-semibold mb-2">{{ t('products.products.amazon.browseNode') }}</h4>
     <p class="text-xs text-gray-500 mb-2">
       {{ t('products.products.amazon.browseNodeDescription') }}
     </p>
 
-    <div class="p-3 border rounded">
+    <div class="bg-blue-50 border rounded mt-4 p-6">
       <div v-if="displayedNode" class="mb-2">
         <div class="flex justify-between items-start">
           <div class="text-sm">
@@ -251,7 +251,7 @@ watch([
       </div>
     </div>
 
-    <div class="p-3 border rounded">
+    <div class="p-6 border rounded">
       <div class="mb-2 text-base font-semibold flex flex-wrap items-center gap-1 py-2">
         <span
           class="cursor-pointer hover:underline"
@@ -300,7 +300,7 @@ watch([
                 {{ t('shared.labels.selected') }}
               </Button>
               <Button
-                class="btn btn-sm btn-outline-danger"
+                class="btn btn-sm btn-outline-dark"
                 @click.stop="cancelSelection"
               >
                 {{ t('shared.button.cancel') }}

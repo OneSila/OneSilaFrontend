@@ -14,6 +14,7 @@ import { FieldValue } from '../../../../../../../../shared/components/organisms/
 import { ValueFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../../../../../../shared/utils/constants';
 import apolloClient from "../../../../../../../../../apollo-client";
+import {Button} from "../../../../../../../../shared/components/atoms/button";
 
 const props = defineProps<{ product: any; view: any }>();
 const { t } = useI18n();
@@ -118,9 +119,9 @@ const isSaveDisabled = computed(() => asin.value === lastSavedAsin.value);
         <FieldValue class="w-96" v-model="asin" :field="field()" />
       </FlexCell>
       <FlexCell>
-          <PrimaryButton :disabled="isSaveDisabled" @click="handleSave">
-            {{ t('shared.button.save') }}
-          </PrimaryButton>
+        <Button class="btn btn-sm btn-primary" :disabled="isSaveDisabled" @click="handleSave">
+          {{ t('shared.button.save') }}
+        </Button>
       </FlexCell>
     </Flex>
   </div>
