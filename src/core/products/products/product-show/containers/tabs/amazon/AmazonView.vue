@@ -7,7 +7,7 @@ import { LocalLoader } from '../../../../../../../shared/components/atoms/local-
 import AmazonMarketplaceTabs from './components/AmazonMarketplaceTabs.vue';
 import AmazonStatusSection from './components/AmazonStatusSection.vue';
 import AmazonIssuesSection from './components/AmazonIssuesSection.vue';
-import AmazonAsinSection from './components/AmazonAsinSection.vue';
+import AmazonExternalProductIdSection from './components/AmazonExternalProductIdSection.vue';
 import AmazonGtinExemptionSection from './components/AmazonGtinExemptionSection.vue';
 import AmazonBrowseNodeSection from './components/AmazonBrowseNodeSection.vue';
 import AmazonUnmappedValuesSection from './components/AmazonUnmappedValuesSection.vue';
@@ -180,7 +180,7 @@ const formatDate = (dateString?: string | null) => {
 
               <div class="border-t my-4"></div>
 
-              <AmazonAsinSection
+              <AmazonExternalProductIdSection
                 class="mb-4"
                 :product="product"
                 :view="selectedView"

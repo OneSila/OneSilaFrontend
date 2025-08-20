@@ -1,15 +1,15 @@
 import { gql } from 'graphql-tag';
 
-export const amazonMerchantAsinsQuery = gql`
-  query AmazonMerchantAsins(
+export const amazonExternalProductIdsQuery = gql`
+  query AmazonExternalProductIds(
     $first: Int
     $last: Int
     $after: String
     $before: String
-    $order: AmazonMerchantAsinOrder
-    $filter: AmazonMerchantAsinFilter
+    $order: AmazonExternalProductIdOrder
+    $filter: AmazonExternalProductIdFilter
   ) {
-    amazonMerchantAsins(
+    amazonExternalProductIds(
       first: $first
       last: $last
       after: $after
@@ -20,7 +20,9 @@ export const amazonMerchantAsinsQuery = gql`
       edges {
         node {
           id
-          asin
+          type
+          value
+          createdAsin
           product { id }
           view { id }
         }
