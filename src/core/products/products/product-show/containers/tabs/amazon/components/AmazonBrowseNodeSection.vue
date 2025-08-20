@@ -101,7 +101,7 @@ const fetchSelected = async () => {
   loadingSelected.value = true;
   const filter = {
     product: { id: { exact: props.productId } },
-    salesChannelView: { id: { exact: props.salesChannelViewId } },
+    view: { id: { exact: props.salesChannelViewId } },
   };
   const { data } = await apolloClient.query({
     query: amazonProductBrowseNodesQuery,
@@ -303,7 +303,7 @@ const saveSelection = async () => {
           data: {
             product: { id: props.productId },
             salesChannel: { id: props.salesChannelId },
-            salesChannelView: { id: props.salesChannelViewId },
+            view: { id: props.salesChannelViewId },
             recommendedBrowseNodeId: node.remoteId,
           },
         },
