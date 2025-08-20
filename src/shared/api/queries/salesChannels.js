@@ -185,7 +185,6 @@ export const getAmazonChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
-      listingOwner
       accessToken
       refreshTokenExpiration
       expirationDate

@@ -101,7 +101,6 @@ export interface WoocommerceChannelInfo extends SpecificChannelInfo {
 export interface AmazonChannelInfo extends SpecificChannelInfo {
   region: string | null;
   country: string | null;
-  listingOwner: boolean;
 }
 
 
@@ -143,7 +142,6 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   return {
     region: null,
     country: null,
-    listingOwner: false,
   };
 }
 
