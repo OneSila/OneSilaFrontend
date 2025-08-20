@@ -18,10 +18,12 @@ import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
 import { amazonProductsQuery } from "../../../../../../../shared/api/queries/amazonProducts.js";
 import apolloClient from "../../../../../../../../apollo-client";
+import { injectAuth } from "../../../../../../../shared/modules/auth";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const router = useRouter();
+const auth = injectAuth();
 
 const amazonProducts = ref<any[]>([]);
 
@@ -34,7 +36,9 @@ const fetchAmazonProducts = async () => {
   amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
 };
 
-onMounted(fetchAmazonProducts);
+if (auth.user.company?.hasAmazonIntegration) {
+  onMounted(fetchAmazonProducts);
+}
 
 const tabItems = computed(() => {
   const items = [
@@ -60,7 +64,9 @@ const tabItems = computed(() => {
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' }
   );
 
-  items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
+  if (auth.user.company?.hasAmazonIntegration) {
+    items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
+  }
 
   return items;
 });
@@ -104,7 +110,7 @@ const tabItems = computed(() => {
       <template v-slot:eanCodes>
         <ProductEanCodesList :product="product" />
       </template>
-      <template v-slot:amazon>
+      <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView
           :product="product"
           :amazon-products="amazonProducts"
