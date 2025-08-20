@@ -142,7 +142,7 @@ const fetchRecommendedTypes = async () => {
       first: codes.length,
       filter: {
         salesChannel: { id: { exact: props.salesChannelId } },
-        productTypeCode: { in: codes },
+        productTypeCode: { inList: codes },
       },
     },
     fetchPolicy: 'network-only',
@@ -374,7 +374,7 @@ watch([
                 <span v-else>{{ type.name }}</span>
                 <Button
                   v-if="!type.exists"
-                  class="btn btn-sm btn-outline-primary"
+                  class="btn btn- btn-outline-primary"
                   @click.stop="confirmCreateType(type)"
                 >
                   <Icon name="plus" />
