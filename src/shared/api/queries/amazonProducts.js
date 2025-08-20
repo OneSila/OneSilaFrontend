@@ -55,7 +55,7 @@ export const amazonProductBrowseNodesQuery = gql`
         node {
           id
           recommendedBrowseNodeId
-          salesChannelView {
+          view {
             id
           }
         }
