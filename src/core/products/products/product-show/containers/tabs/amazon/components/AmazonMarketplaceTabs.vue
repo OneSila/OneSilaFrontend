@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { IntegrationTypes } from '../../../../../../../integrations/integrations/integrations';
 
 const props = defineProps<{ views: any[]; amazonProducts: any[]; modelValue: string | null }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
+
+const { t } = useI18n();
 
 const select = (val: string) => emit('update:modelValue', val);
 
@@ -38,6 +41,12 @@ const groupedViews = computed(() => {
             :name="hasMarketplace(view) ? 'circle-check' : 'circle-xmark'"
             class="w-4 h-4"
             :class="hasMarketplace(view) ? 'text-green-500' : 'text-red-500'"
+          />
+          <Icon
+            v-if="view.isDefault"
+            name="crown"
+            class="w-4 h-4 text-yellow-400"
+            :title="t('products.products.amazon.defaultMarketplace')"
           />
           <div class="flex flex-col gap-1">
             <span>{{ view.name || view.remoteId }}</span>

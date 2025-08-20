@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Toggle } from '../../../../../../../../shared/components/atoms/toggle';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { amazonGtinExemptionsQuery } from '../../../../../../../../shared/api/queries/amazonGtinExemptions.js';
 import {
   createAmazonGtinExemptionMutation,
@@ -12,7 +13,7 @@ import {
 } from '../../../../../../../../shared/api/mutations/amazonGtinExemptions.js';
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 
-const props = defineProps<{ productId?: string; viewId?: string }>();
+const props = defineProps<{ productId?: string; viewId?: string; view?: any }>();
 
 const { t } = useI18n();
 
@@ -86,12 +87,25 @@ const save = async () => {
   }
   saving.value = false;
 };
+
+const showAlert = computed(
+  () => props.view && !props.view.isDefault && !loading.value && !exemptionId.value,
+);
 </script>
 
 <template>
   <div>
     <h4 class="font-semibold mb-2">{{ t('products.products.amazon.gtinExemption') }}</h4>
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.gtinExemptionDescription') }}</p>
+    <div
+      v-if="showAlert"
+      class="text-danger text-small blink-animation ml-1 mb-1"
+    >
+      <Icon size="sm" name="exclamation-circle" />
+      <span class="ml-1">
+        {{ t('products.products.amazon.defaultMarketplaceFallback') }}
+      </span>
+    </div>
     <div class="flex items-center gap-4">
       <Toggle v-model="value" :disabled="loading" />
       <Button class="btn btn-sm btn-primary" :disabled="saving || value === initialValue" @click="save">

@@ -36,6 +36,7 @@ const props = defineProps<{
   salesChannelId: string | null;
   salesChannelViewId: string | null;
   marketplaceId: string | null;
+  view?: any | null;
 }>();
 
 const { t } = useI18n();
@@ -47,6 +48,7 @@ const pathStack = ref<BrowseNode[]>([]);
 const selectedNodeDetails = ref<BrowseNode | null>(null);
 const pendingNode = ref<BrowseNode | null>(null);
 const productBrowseNodeId = ref<string | null>(null);
+const loadingSelected = ref(false);
 
 const displayedNode = computed(() => pendingNode.value || selectedNodeDetails.value);
 
@@ -96,6 +98,7 @@ const fetchSelected = async () => {
     productBrowseNodeId.value = null;
     return;
   }
+  loadingSelected.value = true;
   const filter = {
     product: { id: { exact: props.productId } },
     salesChannelView: { id: { exact: props.salesChannelViewId } },
@@ -114,6 +117,7 @@ const fetchSelected = async () => {
     selectedNodeDetails.value = null;
   }
   pendingNode.value = null;
+  loadingSelected.value = false;
 };
 
 const fetchSelectedNodeDetails = async (remoteId: string) => {
@@ -340,6 +344,11 @@ watch([
 ], () => {
   goToLevel(null);
 });
+
+const showAlert = computed(
+  () =>
+    props.view && !props.view.isDefault && !loadingSelected.value && !productBrowseNodeId.value,
+);
 </script>
 
 <template>
@@ -348,6 +357,15 @@ watch([
     <p class="text-xs text-gray-500 mb-2">
       {{ t('products.products.amazon.browseNodeDescription') }}
     </p>
+    <div
+      v-if="showAlert"
+      class="text-danger text-small blink-animation ml-1 mb-1"
+    >
+      <Icon size="sm" name="exclamation-circle" />
+      <span class="ml-1">
+        {{ t('products.products.amazon.defaultMarketplaceFallback') }}
+      </span>
+    </div>
 
     <div class="bg-blue-50 border rounded mt-4 p-6">
       <div v-if="displayedNode" class="mb-2">
