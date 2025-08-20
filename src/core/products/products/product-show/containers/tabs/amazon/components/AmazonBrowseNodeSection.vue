@@ -59,6 +59,13 @@ interface RecommendedType {
 
 const recommendedTypes = ref<RecommendedType[]>([]);
 
+const search = ref('');
+const filteredNodes = computed(() =>
+  nodes.value.filter((n) =>
+    n.name.toLowerCase().includes(search.value.toLowerCase()),
+  ),
+);
+
 const fetchNodes = async () => {
   if (!props.marketplaceId) return;
   loadingNodes.value = true;
@@ -147,8 +154,11 @@ const fetchRecommendedTypes = async () => {
     },
     fetchPolicy: 'network-only',
   });
-  const map = new Map(
-    (data?.amazonProductTypes?.edges || []).map((e: any) => [e.node.productTypeCode, e.node]),
+  const map = new Map<string, { id: string }>(
+    (data?.amazonProductTypes?.edges || []).map((e: any) => [
+      e.node.productTypeCode,
+      e.node as { id: string },
+    ]),
   );
   recommendedTypes.value = codes.map((code: string) => {
     const node = map.get(code);
@@ -171,7 +181,7 @@ interface SwalClasses {
   cancelButton?: string;
 }
 
-const defaultSwalOptions = {
+const defaultSwalOptions: SweetAlertOptions = {
   title: t('shared.alert.mutationAlert.title'),
   text: t('shared.alert.mutationAlert.text'),
   confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
@@ -200,7 +210,7 @@ const confirmAndMutate = async (
   const result = await swalWithBootstrapButtons.fire({
     ...defaultSwalOptions,
     ...swalOptions,
-  });
+  } as SweetAlertOptions);
 
   if (result.isConfirmed) {
     await mutate();
@@ -372,13 +382,13 @@ watch([
                   {{ type.name }}
                 </Link>
                 <span v-else>{{ type.name }}</span>
-                <Button
+                <div
                   v-if="!type.exists"
-                  class="btn btn- btn-outline-primary"
+                  class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
                   @click.stop="confirmCreateType(type)"
                 >
-                  <Icon name="plus" />
-                </Button>
+                  <Icon name="plus" class="w-3 text-gray-600" />
+                </div>
               </li>
             </ul>
           </div>
@@ -436,12 +446,19 @@ watch([
         </Button>
       </div>
 
+      <input
+        v-model="search"
+        type="text"
+        class="form-input w-full mb-2"
+        :placeholder="t('shared.button.search') + '...'"
+      />
+
       <div v-if="loadingNodes">
         <LocalLoader :loading="true" />
       </div>
       <ul v-else>
         <li
-          v-for="node in nodes"
+          v-for="node in filteredNodes"
           :key="node.remoteId"
           :class="[
             'flex justify-between items-center py-1 border-b last:border-b-0',
