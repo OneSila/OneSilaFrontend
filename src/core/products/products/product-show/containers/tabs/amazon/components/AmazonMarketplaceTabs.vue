@@ -42,14 +42,23 @@ const groupedViews = computed(() => {
             class="w-4 h-4"
             :class="hasMarketplace(view) ? 'text-green-500' : 'text-red-500'"
           />
-          <Icon
-            v-if="view.isDefault"
-            name="crown"
-            class="w-4 h-4 text-yellow-400"
-            :title="t('products.products.amazon.defaultMarketplace')"
-          />
           <div class="flex flex-col gap-1">
-            <span>{{ view.name || view.remoteId }}</span>
+            <FlexCell>
+              <Flex gap="2">
+                <FlexCell>
+                  <span>{{ view.name || view.remoteId }}</span>
+                </FlexCell>
+                <FlexCell>
+                  <Icon
+                  v-if="view.isDefault"
+                  name="crown"
+                  class="w-4 h-4 text-yellow-400"
+                  :title="t('products.products.amazon.defaultMarketplace')"
+                />
+                </FlexCell>
+              </Flex>
+            </FlexCell>
+
             <Link
               class="text-xs"
               :path="{

@@ -135,17 +135,20 @@ const showAlert = computed(
 
 <template>
   <div>
-    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.variationTheme') }}</h4>
+      <Flex gap="2">
+      <FlexCell>
+        <h4 class="font-semibold mb-2">{{ t('products.products.amazon.variationTheme') }}</h4>
+      </FlexCell>
+      <FlexCell>
+        <div v-if="showAlert" class="text-danger text-small blink-animation ml-1 mb-1">
+          <Icon size="sm" name="exclamation-circle"/>
+          <span class="ml-1">
+            {{ t('products.products.amazon.defaultMarketplaceFallback') }}
+          </span>
+        </div>
+      </FlexCell>
+    </Flex>
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.variationThemeDescription') }}</p>
-    <div
-      v-if="showAlert"
-      class="text-danger text-small blink-animation ml-1 mb-1"
-    >
-      <Icon size="sm" name="exclamation-circle" />
-      <span class="ml-1">
-        {{ t('products.products.amazon.defaultMarketplaceFallback') }}
-      </span>
-    </div>
     <LocalLoader :loading="loading" />
     <Flex v-if="!loading" gap="2" middle>
       <FlexCell class="min-w-96">

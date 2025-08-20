@@ -353,19 +353,22 @@ const showAlert = computed(
 
 <template>
   <div>
-    <h4 class="font-semibold mb-2">{{ t('products.products.amazon.browseNode') }}</h4>
+    <Flex gap="2">
+      <FlexCell>
+        <h4 class="font-semibold mb-2">{{ t('products.products.amazon.browseNode') }}</h4>
+      </FlexCell>
+      <FlexCell>
+        <div v-if="showAlert" class="text-danger text-small blink-animation ml-1 mb-1">
+          <Icon size="sm" name="exclamation-circle"/>
+          <span class="ml-1">
+            {{ t('products.products.amazon.defaultMarketplaceFallback') }}
+          </span>
+        </div>
+      </FlexCell>
+    </Flex>
     <p class="text-xs text-gray-500 mb-2">
       {{ t('products.products.amazon.browseNodeDescription') }}
     </p>
-    <div
-      v-if="showAlert"
-      class="text-danger text-small blink-animation ml-1 mb-1"
-    >
-      <Icon size="sm" name="exclamation-circle" />
-      <span class="ml-1">
-        {{ t('products.products.amazon.defaultMarketplaceFallback') }}
-      </span>
-    </div>
 
     <div class="bg-blue-50 border rounded mt-4 p-6">
       <div v-if="displayedNode" class="mb-2">
