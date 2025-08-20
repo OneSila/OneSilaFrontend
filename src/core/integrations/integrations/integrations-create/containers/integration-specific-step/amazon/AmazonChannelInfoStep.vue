@@ -3,7 +3,6 @@ import { defineProps, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Selector } from "../../../../../../../shared/components/atoms/selector";
-import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { AmazonChannelInfo, AmazonRegions, AmazonCountries } from '../../../../integrations';
 
 const props = defineProps<{
@@ -124,25 +123,6 @@ watch(
         </Flex>
       </FlexCell>
 
-      <FlexCell>
-        <Flex class="mt-4 gap-4" center>
-          <FlexCell center>
-            <Flex class="gap-2">
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.listingOwner') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <Toggle v-model="channelInfo.listingOwner" />
-              </FlexCell>
-            </Flex>
-            <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
-              <p>{{ t('integrations.salesChannel.helpText.listingOwner') }}</p>
-            </div>
-          </FlexCell>
-        </Flex>
-      </FlexCell>
     </Flex>
   </div>
 </template>
