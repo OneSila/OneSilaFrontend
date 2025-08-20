@@ -681,7 +681,10 @@
         "browseNodeDeleted": "Browse node deleted",
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
-        "recommendedProductTypes": "Recommended product types"
+        "recommendedProductTypes": "Recommended product types",
+        "createProductTypeTitle": "Create product type",
+        "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
+        "productTypeCreated": "Product type created"
       },
       "inspector": {
         "labels": {
