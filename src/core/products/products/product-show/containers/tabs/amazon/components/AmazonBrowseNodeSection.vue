@@ -223,10 +223,8 @@ const createType = async (type: RecommendedType) => {
     await apolloClient.mutate({
       mutation: createAndMapAmazonProductTypeMutation,
       variables: {
-        data: {
-          salesChannel: { id: props.salesChannelId },
-          productTypeCode: type.code,
-        },
+        salesChannel: { id: props.salesChannelId },
+        productTypeCode: type.code,
       },
     });
     Toast.success(t('products.products.amazon.productTypeCreated'));
@@ -251,11 +249,13 @@ watch([
 ], fetchSelected, { immediate: true });
 
 const goToChild = (node: BrowseNode) => {
+  search.value = ''
   pathStack.value.push(node);
   currentParentId.value = node.remoteId;
 };
 
 const goToLevel = (index: number | null) => {
+  search.value = ''
   if (index === null) {
     pathStack.value = [];
     currentParentId.value = null;
@@ -266,6 +266,7 @@ const goToLevel = (index: number | null) => {
 };
 
 const goBack = () => {
+  search.value = ''
   if (!pathStack.value.length) {
     goToLevel(null);
     return;

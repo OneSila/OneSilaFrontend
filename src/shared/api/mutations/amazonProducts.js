@@ -56,8 +56,8 @@ export const deleteAmazonProductBrowseNodeMutation = gql`
 `;
 
 export const createAndMapAmazonProductTypeMutation = gql`
-  mutation createAndMapAmazonProductType($data: AmazonProductTypeMappingInput!) {
-    createAndMapAmazonProductType(data: $data) {
+  mutation createAndMapAmazonProductType($productTypeCode: String!, $salesChannel: AmazonSalesChannelPartialInput!) {
+    createAndMapAmazonProductType(productTypeCode: $productTypeCode, salesChannel: $salesChannel) {
       id
       productTypeCode
     }
