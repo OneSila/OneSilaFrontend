@@ -5,17 +5,22 @@ import apolloClient from '../../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
+import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
+import Swal from 'sweetalert2';
+import { SweetAlertOptions } from 'sweetalert2';
 import {
   amazonBrowseNodesQuery,
   amazonProductBrowseNodesQuery,
 } from '../../../../../../../../shared/api/queries/amazonProducts.js';
+import { amazonProductTypesQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
 import {
   createAmazonProductBrowseNodeMutation,
   updateAmazonProductBrowseNodeMutation,
   deleteAmazonProductBrowseNodeMutation,
 } from '../../../../../../../../shared/api/mutations/amazonProducts.js';
+import { createAndMapAmazonProductTypeMutation } from '../../../../../../../../shared/api/mutations/amazonProducts.js';
 
 interface BrowseNode {
   id: string;
@@ -44,6 +49,15 @@ const pendingNode = ref<BrowseNode | null>(null);
 const productBrowseNodeId = ref<string | null>(null);
 
 const displayedNode = computed(() => pendingNode.value || selectedNodeDetails.value);
+
+interface RecommendedType {
+  code: string;
+  name: string;
+  exists: boolean;
+  id?: string;
+}
+
+const recommendedTypes = ref<RecommendedType[]>([]);
 
 const fetchNodes = async () => {
   if (!props.marketplaceId) return;
@@ -108,6 +122,117 @@ const fetchSelectedNodeDetails = async (remoteId: string) => {
   });
   selectedNodeDetails.value = data?.amazonBrowseNodes?.edges?.[0]?.node || null;
 };
+
+const formatTypeName = (code: string) =>
+  code
+    .toLowerCase()
+    .split('_')
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(' ');
+
+const fetchRecommendedTypes = async () => {
+  const codes = displayedNode.value?.productTypeDefinitions || [];
+  if (!props.salesChannelId || !codes.length) {
+    recommendedTypes.value = [];
+    return;
+  }
+  const { data } = await apolloClient.query({
+    query: amazonProductTypesQuery,
+    variables: {
+      first: codes.length,
+      filter: {
+        salesChannel: { id: { exact: props.salesChannelId } },
+        productTypeCode: { in: codes },
+      },
+    },
+    fetchPolicy: 'network-only',
+  });
+  const map = new Map(
+    (data?.amazonProductTypes?.edges || []).map((e: any) => [e.node.productTypeCode, e.node]),
+  );
+  recommendedTypes.value = codes.map((code: string) => {
+    const node = map.get(code);
+    return {
+      code,
+      name: formatTypeName(code),
+      exists: !!node,
+      id: node?.id,
+    } as RecommendedType;
+  });
+};
+
+watch([() => displayedNode.value, () => props.salesChannelId], fetchRecommendedTypes, {
+  immediate: true,
+});
+
+interface SwalClasses {
+  popup?: string;
+  confirmButton?: string;
+  cancelButton?: string;
+}
+
+const defaultSwalOptions = {
+  title: t('shared.alert.mutationAlert.title'),
+  text: t('shared.alert.mutationAlert.text'),
+  confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
+  cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
+  icon: 'warning',
+  showCancelButton: true,
+  reverseButtons: true,
+  padding: '2em',
+};
+
+const defaultSwalClasses: SwalClasses = {
+  popup: 'sweet-alerts',
+  confirmButton: 'btn btn-secondary',
+  cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3',
+};
+
+const confirmAndMutate = async (
+  mutate: () => Promise<void>,
+  swalOptions: SweetAlertOptions,
+) => {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: defaultSwalClasses,
+    buttonsStyling: false,
+  });
+
+  const result = await swalWithBootstrapButtons.fire({
+    ...defaultSwalOptions,
+    ...swalOptions,
+  });
+
+  if (result.isConfirmed) {
+    await mutate();
+  }
+};
+
+const createType = async (type: RecommendedType) => {
+  if (!props.salesChannelId) return;
+  try {
+    await apolloClient.mutate({
+      mutation: createAndMapAmazonProductTypeMutation,
+      variables: {
+        data: {
+          salesChannel: { id: props.salesChannelId },
+          productTypeCode: type.code,
+        },
+      },
+    });
+    Toast.success(t('products.products.amazon.productTypeCreated'));
+    await fetchRecommendedTypes();
+  } catch (error) {
+    displayApolloError(error);
+  }
+};
+
+const confirmCreateType = (type: RecommendedType) =>
+  confirmAndMutate(() => createType(type), {
+    title: t('products.products.amazon.createProductTypeTitle'),
+    text: t('products.products.amazon.createProductTypeConfirm', {
+      type: type.name,
+    }),
+  });
 
 watch([
   () => props.productId,
@@ -220,16 +345,40 @@ watch([
             {{ displayedNode.browsePathByName.join(' > ') }}
           </div>
           <div
-            v-if="displayedNode.productTypeDefinitions.length"
+            v-if="recommendedTypes.length"
             class="text-sm text-gray-500 ml-4 pl-4 border-l"
           >
             <div>{{ t('products.products.amazon.recommendedProductTypes') }}</div>
-            <ul class="list-disc ml-4">
+            <ul class="mt-1 space-y-1">
               <li
-                v-for="type in displayedNode.productTypeDefinitions"
-                :key="type"
+                v-for="type in recommendedTypes"
+                :key="type.code"
+                class="flex items-center gap-2"
               >
-                {{ type }}
+                <Icon
+                  :name="type.exists ? 'circle-check' : 'circle-xmark'"
+                  class="w-3"
+                  :class="type.exists ? 'text-green-500' : 'text-red-500'"
+                />
+                <Link
+                  v-if="type.exists && type.id"
+                  :path="{
+                    name: 'integrations.amazonProductTypes.edit',
+                    params: { type: 'amazon', id: type.id },
+                    query: { integrationId: props.salesChannelId },
+                  }"
+                  class="hover:underline"
+                >
+                  {{ type.name }}
+                </Link>
+                <span v-else>{{ type.name }}</span>
+                <Button
+                  v-if="!type.exists"
+                  class="btn btn-sm btn-outline-primary"
+                  @click.stop="confirmCreateType(type)"
+                >
+                  <Icon name="plus" />
+                </Button>
               </li>
             </ul>
           </div>

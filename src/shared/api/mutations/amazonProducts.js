@@ -54,3 +54,12 @@ export const deleteAmazonProductBrowseNodeMutation = gql`
     }
   }
 `;
+
+export const createAndMapAmazonProductTypeMutation = gql`
+  mutation createAndMapAmazonProductType($data: AmazonProductTypeMappingInput!) {
+    createAndMapAmazonProductType(data: $data) {
+      id
+      productTypeCode
+    }
+  }
+`;
