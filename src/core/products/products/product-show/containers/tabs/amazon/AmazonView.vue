@@ -192,6 +192,7 @@ const formatDate = (dateString?: string | null) => {
                 class="mb-4"
                 :product-id="props.product.id"
                 :view-id="selectedView?.id"
+                :view="selectedView"
               />
 
               <div class="border-t my-4"></div>
@@ -210,6 +211,7 @@ const formatDate = (dateString?: string | null) => {
                 :sales-channel-id="selectedView?.salesChannel.id"
                 :sales-channel-view-id="selectedView?.id"
                 :marketplace-id="selectedView?.remoteId"
+                :view="selectedView"
               />
 
               <div class="border-t my-4"></div>

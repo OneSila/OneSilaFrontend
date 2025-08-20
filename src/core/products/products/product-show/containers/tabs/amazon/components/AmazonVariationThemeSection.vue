@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { Selector } from '../../../../../../../../shared/components/atoms/selector';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
@@ -126,12 +127,25 @@ const save = async () => {
     saving.value = false;
   }
 };
+
+const showAlert = computed(
+  () => props.view && !props.view.isDefault && !loading.value && !recordId.value,
+);
 </script>
 
 <template>
   <div>
     <h4 class="font-semibold mb-2">{{ t('products.products.amazon.variationTheme') }}</h4>
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.variationThemeDescription') }}</p>
+    <div
+      v-if="showAlert"
+      class="text-danger text-small blink-animation ml-1 mb-1"
+    >
+      <Icon size="sm" name="exclamation-circle" />
+      <span class="ml-1">
+        {{ t('products.products.amazon.defaultMarketplaceFallback') }}
+      </span>
+    </div>
     <LocalLoader :loading="loading" />
     <Flex v-if="!loading" gap="2" middle>
       <FlexCell class="min-w-96">

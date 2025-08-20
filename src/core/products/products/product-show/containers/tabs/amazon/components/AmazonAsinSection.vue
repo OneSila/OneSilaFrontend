@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { amazonMerchantAsinsQuery } from '../../../../../../../../shared/api/queries/amazonMerchantAsins.js';
 import {
   createAmazonMerchantAsinMutation,
@@ -23,6 +24,8 @@ const asin = ref('');
 const asinId = ref<string | null>(null);
 const lastSavedAsin = ref('');
 const errors = ref<Record<string, string>>({});
+const loading = ref(false);
+const isMissing = ref(false);
 
 const field = (): ValueFormField => ({
   type: FieldType.Text,
@@ -33,6 +36,7 @@ const field = (): ValueFormField => ({
 
 const fetchAsin = async () => {
   if (!props.product?.id || !props.view?.id) return;
+  loading.value = true;
   const { data } = await apolloClient.query({
     query: amazonMerchantAsinsQuery,
     variables: {
@@ -47,6 +51,8 @@ const fetchAsin = async () => {
   asinId.value = node?.id || null;
   asin.value = node?.asin || '';
   lastSavedAsin.value = asin.value;
+  isMissing.value = !node;
+  loading.value = false;
 };
 
 watch(
@@ -103,6 +109,9 @@ const handleSave = async () => {
 };
 
 const isSaveDisabled = computed(() => asin.value === lastSavedAsin.value);
+const showAlert = computed(
+  () => !props.view?.isDefault && !loading.value && isMissing.value,
+);
 </script>
 
 <template>
@@ -111,6 +120,15 @@ const isSaveDisabled = computed(() => asin.value === lastSavedAsin.value);
     <p class="text-xs text-gray-500 mb-2">
       {{ t('products.products.amazon.asinDescription') }}
     </p>
+    <div
+      v-if="showAlert"
+      class="text-danger text-small blink-animation ml-1 mb-1"
+    >
+      <Icon size="sm" name="exclamation-circle" />
+      <span class="ml-1">
+        {{ t('products.products.amazon.defaultMarketplaceFallback') }}
+      </span>
+    </div>
     <div v-if="errors.asin" class="text-danger text-small mb-2">
       {{ errors.asin }}
     </div>

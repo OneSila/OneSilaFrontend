@@ -672,6 +672,8 @@
         "asinPlaceholder": "Voer ASIN in",
         "asinSaved": "ASIN opgeslagen",
         "asinDeleted": "ASIN verwijderd",
+        "defaultMarketplace": "Default marketplace",
+        "defaultMarketplaceFallback": "Value missing. The default marketplace value will be used.",
         "gtinExemption": "GTIN Exemption",
         "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace.",
         "gtinExemptionSaved": "GTIN Exemption saved",
