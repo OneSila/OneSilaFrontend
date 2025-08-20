@@ -24,7 +24,6 @@ const { t } = useI18n();
 const router = useRouter();
 
 const amazonProducts = ref<any[]>([]);
-const amazonProductsLoaded = ref(false);
 
 const fetchAmazonProducts = async () => {
   const { data } = await apolloClient.query({
@@ -33,7 +32,6 @@ const fetchAmazonProducts = async () => {
     fetchPolicy: 'network-only',
   });
   amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
-  amazonProductsLoaded.value = true;
 };
 
 onMounted(fetchAmazonProducts);
@@ -62,9 +60,7 @@ const tabItems = computed(() => {
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' }
   );
 
-  if (!amazonProductsLoaded.value || amazonProducts.value.length > 0) {
-    items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
-  }
+  items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
 
   return items;
 });
@@ -108,7 +104,7 @@ const tabItems = computed(() => {
       <template v-slot:eanCodes>
         <ProductEanCodesList :product="product" />
       </template>
-      <template v-if="amazonProducts.length" v-slot:amazon>
+      <template v-slot:amazon>
         <AmazonView
           :product="product"
           :amazon-products="amazonProducts"
