@@ -3,9 +3,15 @@ import { reactive, computed, ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
-import { ProductType } from '../../../../../../../../../shared/utils/constants'
-import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
+import { ProductType, PropertyTypes } from '../../../../../../../../../shared/utils/constants'
+import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
+import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
+import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
+import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
+import { DateInput } from "../../../../../../../../../shared/components/atoms/input-date";
+import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
 import { shortenText } from "../../../../../../../../../shared/utils";
+import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery } from '../../../../../../../../../shared/api/queries/properties.js'
 
@@ -94,6 +100,12 @@ const fetchProperties = async () => {
 
 onMounted(fetchProperties)
 
+const getPropertyType = (id: string) =>
+  properties.value.find((p) => p.id === id)?.type
+
+const showTextModal = ref(false)
+const showDescriptionModal = ref(false)
+
 const MIN_COLUMN_WIDTH = 100
 const startResize = (e: MouseEvent, key: string) => {
   const startX = e.pageX
@@ -175,7 +187,86 @@ const startResize = (e: MouseEvent, key: string) => {
                   />
                 </template>
                 <template v-else>
-                  <input type="text" class="w-full border p-1" />
+                  <select
+                    v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
+                    class="w-full border p-1"
+                    disabled
+                  ></select>
+                  <select
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
+                    class="w-full border p-1"
+                    multiple
+                    disabled
+                  ></select>
+                  <TextInput
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
+                    class="w-full"
+                    :model-value="null"
+                    number
+                    disabled
+                  />
+                  <TextInput
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
+                    class="w-full"
+                    :model-value="null"
+                    float
+                    disabled
+                  />
+                  <div
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
+                    class="relative cursor-pointer"
+                    @dblclick="showTextModal = true"
+                  >
+                    <TextInput
+                      class="w-full pointer-events-none"
+                      :model-value="null"
+                      disabled
+                    />
+                    <Icon
+                      name="maximize"
+                      class="absolute top-1 right-1 text-gray-400 cursor-pointer"
+                      @click.stop="showTextModal = true"
+                    />
+                  </div>
+                  <div
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
+                    class="relative cursor-pointer"
+                    @dblclick="showDescriptionModal = true"
+                  >
+                    <TextEditor
+                      :model-value="''"
+                      class="h-32 pointer-events-none"
+                      disabled
+                    />
+                    <Icon
+                      name="maximize"
+                      class="absolute top-1 right-1 text-gray-400 cursor-pointer"
+                      @click.stop="showDescriptionModal = true"
+                    />
+                  </div>
+                  <Toggle
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
+                    :model-value="false"
+                    class="pointer-events-none"
+                  />
+                  <div
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
+                    class="pointer-events-none"
+                  >
+                    <DateInput :model-value="null" />
+                  </div>
+                  <div
+                    v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
+                    class="pointer-events-none"
+                  >
+                    <DateTimeInput :model-value="null" />
+                  </div>
+                  <input
+                    v-else
+                    type="text"
+                    class="w-full border p-1"
+                    disabled
+                  />
                 </template>
               </td>
             </tr>
@@ -184,6 +275,16 @@ const startResize = (e: MouseEvent, key: string) => {
       </template>
     </ApolloQuery>
   </perfect-scrollbar>
+  <Modal v-model="showTextModal">
+    <div class="p-4">
+      <TextInput class="w-full" />
+    </div>
+  </Modal>
+  <Modal v-model="showDescriptionModal">
+    <div class="p-4">
+      <TextEditor class="h-32" />
+    </div>
+  </Modal>
 </template>
 
 <style scoped>
