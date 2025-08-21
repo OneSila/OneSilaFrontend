@@ -14,6 +14,7 @@ import { shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import apolloClient from '../../../../../../../../../../apollo-client'
@@ -38,6 +39,8 @@ const baseColumns = [
 
 const properties = ref<PropertyInfo[]>([])
 const variations = ref<any[]>([])
+const originalVariations = ref<any[]>([])
+const loading = ref(true)
 
 const columns = computed(() => [
   ...baseColumns,
@@ -164,10 +167,50 @@ const fetchVariations = async () => {
   )
 }
 
-onMounted(() => {
-  fetchProperties()
-  fetchVariations()
+onMounted(async () => {
+  loading.value = true
+  await Promise.all([fetchProperties(), fetchVariations()])
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  loading.value = false
 })
+
+const hasChanges = computed(() => {
+  if (originalVariations.value.length !== variations.value.length) return true
+  return variations.value.some((variation, index) => {
+    const original = originalVariations.value[index]
+    const keys = new Set([
+      ...Object.keys(variation.propertyValues || {}),
+      ...Object.keys(original?.propertyValues || {}),
+    ])
+    for (const key of keys) {
+      const current = variation.propertyValues[key] || {}
+      const orig = (original?.propertyValues || {})[key] || {}
+      if (current.valueInt !== orig.valueInt) return true
+      if (current.valueFloat !== orig.valueFloat) return true
+      if ((current.valueBoolean ?? null) !== (orig.valueBoolean ?? null)) return true
+      const currentSelectId = current.valueSelect?.id || null
+      const origSelectId = orig.valueSelect?.id || null
+      if (currentSelectId !== origSelectId) return true
+      const currentMultiIds = (current.valueMultiSelect || []).map((v: any) => v.id).sort()
+      const origMultiIds = (orig.valueMultiSelect || []).map((v: any) => v.id).sort()
+      if (currentMultiIds.length !== origMultiIds.length) return true
+      for (let i = 0; i < currentMultiIds.length; i++) {
+        if (currentMultiIds[i] !== origMultiIds[i]) return true
+      }
+      const currentText = current.translation?.valueText || ''
+      const origText = orig.translation?.valueText || ''
+      if (currentText !== origText) return true
+      const currentDesc = current.translation?.valueDescription || ''
+      const origDesc = orig.translation?.valueDescription || ''
+      if (currentDesc !== origDesc) return true
+    }
+    return false
+  })
+})
+
+const save = () => {
+  console.log('Save clicked')
+}
 
 const getPropertyType = (id: string) =>
   properties.value.find((p) => p.id === id)?.type
@@ -236,7 +279,15 @@ const startResize = (e: MouseEvent, key: string) => {
 </script>
 
 <template>
+  <Loader :loading="loading" />
   <div class="max-w-[1430px] min-w-0 max-h-[80vh] overflow-auto overflow-y-auto border border-gray-200 relative">
+    <Button
+      class="absolute top-2 right-2 btn btn-primary"
+      :disabled="!hasChanges"
+      @click="save"
+    >
+      {{ t('shared.button.save') }}
+    </Button>
     <table v-if="variations.length" class="min-w-max">
       <thead class="bg-gray-100 sticky top-0">
         <tr>
