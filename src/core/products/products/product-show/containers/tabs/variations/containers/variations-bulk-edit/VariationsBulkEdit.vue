@@ -115,7 +115,7 @@ const startResize = (e: MouseEvent, key: string) => {
 </script>
 
 <template>
-  <div class="overflow-auto max-h-96 border border-gray-200">
+  <perfect-scrollbar class="max-h-96 border border-gray-200 relative">
     <ApolloQuery
       :query="query"
       :variables="{ filter: { parent: { id: { exact: parentId } } }, first: 100 }"
@@ -183,7 +183,7 @@ const startResize = (e: MouseEvent, key: string) => {
         </table>
       </template>
     </ApolloQuery>
-  </div>
+  </perfect-scrollbar>
 </template>
 
 <style scoped>
