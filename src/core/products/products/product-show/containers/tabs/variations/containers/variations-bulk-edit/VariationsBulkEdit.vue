@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
 import { ProductType } from '../../../../../../../../../shared/utils/constants'
+import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
+import { shortenText } from "../../../../../../../../../shared/utils";
 
 const props = defineProps<{ product: Product }>()
 
@@ -97,7 +99,7 @@ const startResize = (e: MouseEvent, key: string) => {
               >
                 <template v-if="col.key === 'name'">
                   <span class="block truncate" :title="edge.node.variation.name">
-                    {{ edge.node.variation.name }}
+                    {{ shortenText(edge.node.variation.name, 32) }}
                   </span>
                 </template>
                 <template v-else-if="col.key === 'sku'">
