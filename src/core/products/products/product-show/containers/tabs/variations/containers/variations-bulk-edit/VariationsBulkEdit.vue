@@ -3,7 +3,7 @@ import { reactive, computed, ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
-import { ProductType, PropertyTypes } from '../../../../../../../../../shared/utils/constants'
+import { ProductType, PropertyTypes, FieldType } from '../../../../../../../../../shared/utils/constants'
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
@@ -12,8 +12,10 @@ import { DateInput } from "../../../../../../../../../shared/components/atoms/in
 import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
+import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import apolloClient from '../../../../../../../../../../apollo-client'
-import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery } from '../../../../../../../../../shared/api/queries/properties.js'
+import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
 
 interface PropertyInfo {
   id: string
@@ -33,6 +35,7 @@ const baseColumns = [
 ]
 
 const properties = ref<PropertyInfo[]>([])
+const variations = ref<any[]>([])
 
 const columns = computed(() => [
   ...baseColumns,
@@ -98,7 +101,72 @@ const fetchProperties = async () => {
   }))
 }
 
-onMounted(fetchProperties)
+const selectFields = computed<Record<string, QueryFormField>>(() => {
+  const fields: Record<string, QueryFormField> = {}
+  properties.value.forEach((p) => {
+    if ([PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(p.type)) {
+      fields[p.id] = {
+        type: FieldType.Query,
+        name: p.id,
+        labelBy: 'value',
+        valueBy: 'id',
+        query: propertySelectValuesQuerySimpleSelector,
+        dataKey: 'propertySelectValues',
+        isEdge: true,
+        queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
+        multiple: p.type === PropertyTypes.MULTISELECT,
+        removable: false,
+        disabled: true,
+      }
+    }
+  })
+  return fields
+})
+
+const fetchVariationProperties = async (variationId: string) => {
+  const { data } = await apolloClient.query({
+    query: productPropertiesQuery,
+    variables: { filter: { product: { id: { exact: variationId } } }, first: 100 },
+    fetchPolicy: 'network-only',
+  })
+  const edges = data?.productProperties?.edges ?? []
+  const propertyValues: Record<string, any> = {}
+  await Promise.all(
+    edges.map(async ({ node }: any) => {
+      let translation = null
+      if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(node.property.type)) {
+        const { data: tData } = await apolloClient.query({
+          query: productPropertyTextTranslationsQuery,
+          variables: { filter: { productProperty: { id: { exact: node.id } } } },
+          fetchPolicy: 'network-only',
+        })
+        translation = tData?.productPropertyTextTranslations?.edges?.[0]?.node || null
+      }
+      propertyValues[node.property.id] = { ...node, translation }
+    })
+  )
+  return propertyValues
+}
+
+const fetchVariations = async () => {
+  const { data } = await apolloClient.query({
+    query: query.value,
+    variables: { filter: { parent: { id: { exact: parentId.value } } }, first: 100 },
+    fetchPolicy: 'network-only',
+  })
+  const edges = data?.[queryKey.value]?.edges ?? []
+  variations.value = await Promise.all(
+    edges.map(async ({ node }: any) => ({
+      ...node,
+      propertyValues: await fetchVariationProperties(node.variation.id),
+    }))
+  )
+}
+
+onMounted(() => {
+  fetchProperties()
+  fetchVariations()
+})
 
 const getPropertyType = (id: string) =>
   properties.value.find((p) => p.id === id)?.type
@@ -128,152 +196,145 @@ const startResize = (e: MouseEvent, key: string) => {
 
 <template>
   <perfect-scrollbar class="max-h-96 overflow-auto border border-gray-200 relative">
-    <ApolloQuery
-      :query="query"
-      :variables="{ filter: { parent: { id: { exact: parentId } } }, first: 100 }"
-    >
-      <template v-slot="{ result: { data } }">
-        <table v-if="data && data[queryKey]" class="min-w-max">
-          <thead class="bg-gray-100 sticky top-0">
-            <tr>
-              <th
-                v-for="col in columns"
-                :key="col.key"
-                class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
-                :style="{ width: columnWidths[col.key] + 'px' }"
+    <table v-if="variations.length" class="min-w-max">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
+          <th
+            v-for="col in columns"
+            :key="col.key"
+            class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
+            :style="{ width: columnWidths[col.key] + 'px' }"
+          >
+            <div class="flex items-center h-full">
+              <span class="block truncate" :title="col.label">{{ col.label }}</span>
+              <span
+                class="resizer select-none"
+                @mousedown="(e) => startResize(e, col.key)"
+              />
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="item in variations"
+          :key="item.id"
+          class="border-t"
+        >
+          <td
+            v-for="col in columns"
+            :key="col.key"
+            class="px-2 py-1 border-r border-gray-200"
+            :style="{ width: columnWidths[col.key] + 'px' }"
+          >
+            <template v-if="col.key === 'name'">
+              <span class="block truncate" :title="item.variation.name">
+                {{ shortenText(item.variation.name, 32) }}
+              </span>
+            </template>
+            <template v-else-if="col.key === 'sku'">
+              <span class="block truncate" :title="item.variation.sku">
+                {{ item.variation.sku }}
+              </span>
+            </template>
+            <template v-else-if="col.key === 'active'">
+              <Icon
+                v-if="item.variation.active"
+                name="check-circle"
+                class="text-green-500"
+              />
+              <Icon
+                v-else
+                name="times-circle"
+                class="text-red-500"
+              />
+            </template>
+            <template v-else>
+              <FieldQuery
+                v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
+                :field="selectFields[col.key]"
+                :model-value="item.propertyValues[col.key]?.valueSelect?.id"
+              />
+              <FieldQuery
+                v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
+                :field="selectFields[col.key]"
+                :model-value="item.propertyValues[col.key]?.valueMultiSelect?.map((v) => v.id)"
+              />
+              <TextInput
+                v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
+                class="w-full"
+                :model-value="item.propertyValues[col.key]?.valueInt"
+                number
+                disabled
+              />
+              <TextInput
+                v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
+                class="w-full"
+                :model-value="item.propertyValues[col.key]?.valueFloat"
+                float
+                disabled
+              />
+              <div
+                v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
+                class="relative cursor-pointer"
+                @dblclick="showTextModal = true"
               >
-                <div class="flex items-center h-full">
-                  <span class="block truncate" :title="col.label">{{ col.label }}</span>
-                  <span
-                    class="resizer select-none"
-                    @mousedown="(e) => startResize(e, col.key)"
-                  />
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="edge in data[queryKey].edges"
-              :key="edge.node.id"
-              class="border-t"
-            >
-              <td
-                v-for="col in columns"
-                :key="col.key"
-                class="px-2 py-1 border-r border-gray-200"
-                :style="{ width: columnWidths[col.key] + 'px' }"
+                <TextInput
+                  class="w-full pointer-events-none"
+                  :model-value="item.propertyValues[col.key]?.translation?.valueText"
+                  disabled
+                />
+                <Icon
+                  name="maximize"
+                  class="absolute top-1 right-1 text-gray-400 cursor-pointer"
+                  @click.stop="showTextModal = true"
+                />
+              </div>
+              <div
+                v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
+                class="relative cursor-pointer"
+                @dblclick="showDescriptionModal = true"
               >
-                <template v-if="col.key === 'name'">
-                  <span class="block truncate" :title="edge.node.variation.name">
-                    {{ shortenText(edge.node.variation.name, 32) }}
-                  </span>
-                </template>
-                <template v-else-if="col.key === 'sku'">
-                  <span class="block truncate" :title="edge.node.variation.sku">
-                    {{ edge.node.variation.sku }}
-                  </span>
-                </template>
-                <template v-else-if="col.key === 'active'">
-                  <Icon
-                    v-if="edge.node.variation.active"
-                    name="check-circle"
-                    class="text-green-500"
-                  />
-                  <Icon
-                    v-else
-                    name="times-circle"
-                    class="text-red-500"
-                  />
-                </template>
-                <template v-else>
-                  <select
-                    v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
-                    class="w-full border p-1"
-                    disabled
-                  ></select>
-                  <select
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
-                    class="w-full border p-1"
-                    multiple
-                    disabled
-                  ></select>
-                  <TextInput
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
-                    class="w-full"
-                    :model-value="null"
-                    number
-                    disabled
-                  />
-                  <TextInput
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
-                    class="w-full"
-                    :model-value="null"
-                    float
-                    disabled
-                  />
-                  <div
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
-                    class="relative cursor-pointer"
-                    @dblclick="showTextModal = true"
-                  >
-                    <TextInput
-                      class="w-full pointer-events-none"
-                      :model-value="null"
-                      disabled
-                    />
-                    <Icon
-                      name="maximize"
-                      class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                      @click.stop="showTextModal = true"
-                    />
-                  </div>
-                  <div
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
-                    class="relative cursor-pointer"
-                    @dblclick="showDescriptionModal = true"
-                  >
-                    <TextEditor
-                      :model-value="''"
-                      class="h-32 pointer-events-none"
-                      disabled
-                    />
-                    <Icon
-                      name="maximize"
-                      class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                      @click.stop="showDescriptionModal = true"
-                    />
-                  </div>
-                  <Toggle
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
-                    :model-value="false"
-                    class="pointer-events-none"
-                  />
-                  <div
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
-                    class="pointer-events-none"
-                  >
-                    <DateInput :model-value="null" />
-                  </div>
-                  <div
-                    v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
-                    class="pointer-events-none"
-                  >
-                    <DateTimeInput :model-value="null" />
-                  </div>
-                  <input
-                    v-else
-                    type="text"
-                    class="w-full border p-1"
-                    disabled
-                  />
-                </template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </template>
-    </ApolloQuery>
+                <TextEditor
+                  :model-value="item.propertyValues[col.key]?.translation?.valueDescription || ''"
+                  class="h-32 pointer-events-none"
+                  disabled
+                />
+                <Icon
+                  name="maximize"
+                  class="absolute top-1 right-1 text-gray-400 cursor-pointer"
+                  @click.stop="showDescriptionModal = true"
+                />
+              </div>
+              <Toggle
+                v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
+                :model-value="item.propertyValues[col.key]?.valueBoolean || false"
+                class="pointer-events-none"
+              />
+              <div
+                v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
+                class="pointer-events-none"
+              >
+                <DateInput :model-value="item.propertyValues[col.key]?.valueDate" />
+              </div>
+              <div
+                v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
+                class="pointer-events-none"
+              >
+                <DateTimeInput :model-value="item.propertyValues[col.key]?.valueDatetime" />
+              </div>
+              <input
+                v-else
+                type="text"
+                class="w-full border p-1"
+                :value="item.propertyValues[col.key]?.valueInt || ''"
+                disabled
+              />
+            </template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </perfect-scrollbar>
   <Modal v-model="showTextModal">
     <div class="p-4">
