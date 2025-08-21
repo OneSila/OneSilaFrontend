@@ -116,7 +116,6 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
         multiple: p.type === PropertyTypes.MULTISELECT,
         removable: false,
-        disabled: true,
       }
     }
   })
@@ -265,14 +264,12 @@ const startResize = (e: MouseEvent, key: string) => {
                 class="w-full"
                 :model-value="item.propertyValues[col.key]?.valueInt"
                 number
-                disabled
               />
               <TextInput
                 v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
                 class="w-full"
                 :model-value="item.propertyValues[col.key]?.valueFloat"
                 float
-                disabled
               />
               <div
                 v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
@@ -309,7 +306,6 @@ const startResize = (e: MouseEvent, key: string) => {
               <Toggle
                 v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
                 :model-value="item.propertyValues[col.key]?.valueBoolean || false"
-                class="pointer-events-none"
               />
               <div
                 v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
