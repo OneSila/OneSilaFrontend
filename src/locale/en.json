@@ -1184,6 +1184,10 @@
       "duplicateModal": {
         "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
       },
+      "bulkEditModal": {
+        "textTitle": "Edit value",
+        "descriptionTitle": "Edit description"
+      },
       "duplicateSuccessfully": "Product was successfully duplicated!"
     }
   },

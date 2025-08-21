@@ -12,6 +12,7 @@ import { DateInput } from "../../../../../../../../../shared/components/atoms/in
 import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
+import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
@@ -380,22 +381,28 @@ const startResize = (e: MouseEvent, key: string) => {
     </table>
   </div>
   <Modal v-model="showTextModal">
-    <div class="p-4 space-y-4">
+    <Card class="modal-content w-1/2">
+      <h3 class="text-xl font-semibold text-center mb-4">
+        {{ t('products.products.bulkEditModal.textTitle') }}
+      </h3>
       <TextInput class="w-full" v-model="modalValue" />
-      <div class="flex justify-end gap-2">
-        <Button class="btn btn-primary" @click="saveModal">Edit</Button>
-        <Button class="btn btn-outline-dark" @click="cancelModal">Cancel</Button>
+      <div class="flex justify-end gap-4 mt-4">
+        <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+        <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
       </div>
-    </div>
+    </Card>
   </Modal>
   <Modal v-model="showDescriptionModal">
-    <div class="p-4 space-y-4">
-      <TextEditor class="h-32" v-model="modalValue" />
-      <div class="flex justify-end gap-2">
-        <Button class="btn btn-primary" @click="saveModal">Edit</Button>
-        <Button class="btn btn-outline-dark" @click="cancelModal">Cancel</Button>
+    <Card class="modal-content w-2/3">
+      <h3 class="text-xl font-semibold text-center mb-4">
+        {{ t('products.products.bulkEditModal.descriptionTitle') }}
+      </h3>
+      <TextEditor class="h-64" v-model="modalValue" />
+      <div class="flex justify-end gap-4 mt-4">
+        <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+        <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
       </div>
-    </div>
+    </Card>
   </Modal>
 </template>
 

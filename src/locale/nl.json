@@ -856,6 +856,10 @@
       "show": {
         "title": "Product"
       },
+      "bulkEditModal": {
+        "textTitle": "Waarde bewerken",
+        "descriptionTitle": "Beschrijving bewerken"
+      },
       "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
   },
