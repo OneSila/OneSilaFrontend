@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
 import { ProductType } from '../../../../../../../../../shared/utils/constants'
 import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
 import { shortenText } from "../../../../../../../../../shared/utils";
+import apolloClient from '../../../../../../../../../../apollo-client'
+import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery } from '../../../../../../../../../shared/api/queries/properties.js'
+
+interface PropertyInfo {
+  id: string
+  name: string
+  type: string
+  requireType: string
+}
 
 const props = defineProps<{ product: Product }>()
 
 const { t } = useI18n()
-
-const mockProperties = [
-  { key: 'prop1', label: 'Property 1' },
-  { key: 'prop2', label: 'Property 2' },
-  { key: 'prop3', label: 'Property 3' },
-  { key: 'prop4', label: 'Property 4' },
-  { key: 'prop5', label: 'Property 5' },
-]
 
 const baseColumns = [
   { key: 'name', label: t('shared.labels.name') },
@@ -25,10 +26,23 @@ const baseColumns = [
   { key: 'active', label: t('shared.labels.active') },
 ]
 
-const columns = [...baseColumns, ...mockProperties]
+const properties = ref<PropertyInfo[]>([])
+
+const columns = computed(() => [
+  ...baseColumns,
+  ...properties.value.map((p) => ({ key: p.id, label: p.name })),
+])
 
 const columnWidths = reactive<Record<string, number>>({})
-columns.forEach((col) => (columnWidths[col.key] = 150))
+watch(
+  columns,
+  (cols) => {
+    cols.forEach((col) => {
+      if (!columnWidths[col.key]) columnWidths[col.key] = 150
+    })
+  },
+  { immediate: true }
+)
 
 const isAlias = computed(() => props.product.type === ProductType.Alias)
 const parentId = computed(() => (isAlias.value ? props.product.aliasParentProduct.id : props.product.id))
@@ -40,13 +54,54 @@ const queryKey = computed(() =>
   parentType.value === ProductType.Bundle ? 'bundleVariations' : 'configurableVariations'
 )
 
+const fetchProperties = async () => {
+  const { data: typeData } = await apolloClient.query({
+    query: propertiesQuery,
+    variables: { filter: { isProductType: { exact: true } } },
+    fetchPolicy: 'network-only',
+  })
+  if (!typeData?.properties?.edges?.length) return
+  const typePropertyId = typeData.properties.edges[0].node.id
+
+  const { data: valueData } = await apolloClient.query({
+    query: productPropertiesQuery,
+    variables: {
+      filter: {
+        property: { id: { exact: typePropertyId } },
+        product: { id: { exact: parentId.value } },
+      },
+    },
+    fetchPolicy: 'network-only',
+  })
+  if (!valueData?.productProperties?.edges?.length) return
+  const productTypeValueId = valueData.productProperties.edges[0].node.valueSelect?.id
+  if (!productTypeValueId) return
+
+  const { data: ruleData } = await apolloClient.query({
+    query: productPropertiesRulesQuery,
+    variables: { filter: { productType: { id: { exact: productTypeValueId } } } },
+    fetchPolicy: 'network-only',
+  })
+  if (!ruleData?.productPropertiesRules?.edges?.length) return
+  const items = ruleData.productPropertiesRules.edges[0].node.items
+  properties.value = items.map((item: any) => ({
+    id: item.property.id,
+    name: item.property.name,
+    type: item.property.type,
+    requireType: item.type,
+  }))
+}
+
+onMounted(fetchProperties)
+
+const MIN_COLUMN_WIDTH = 100
 const startResize = (e: MouseEvent, key: string) => {
   const startX = e.pageX
   const startWidth = columnWidths[key]
 
   const onMouseMove = (event: MouseEvent) => {
     const delta = event.pageX - startX
-    columnWidths[key] = Math.max(50, startWidth + delta)
+    columnWidths[key] = Math.max(MIN_COLUMN_WIDTH, startWidth + delta)
   }
 
   const onMouseUp = () => {
@@ -72,11 +127,11 @@ const startResize = (e: MouseEvent, key: string) => {
               <th
                 v-for="col in columns"
                 :key="col.key"
-                class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative"
+                class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
                 :style="{ width: columnWidths[col.key] + 'px' }"
               >
                 <div class="flex items-center h-full">
-                  <span>{{ col.label }}</span>
+                  <span class="block truncate" :title="col.label">{{ col.label }}</span>
                   <span
                     class="resizer select-none"
                     @mousedown="(e) => startResize(e, col.key)"
@@ -94,7 +149,7 @@ const startResize = (e: MouseEvent, key: string) => {
               <td
                 v-for="col in columns"
                 :key="col.key"
-                class="px-2 py-1"
+                class="px-2 py-1 border-r border-gray-200"
                 :style="{ width: columnWidths[col.key] + 'px' }"
               >
                 <template v-if="col.key === 'name'">
@@ -139,5 +194,6 @@ const startResize = (e: MouseEvent, key: string) => {
   width: 4px;
   height: 100%;
   cursor: col-resize;
+  background-color: #e5e7eb;
 }
 </style>
