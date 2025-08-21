@@ -235,7 +235,7 @@ const startResize = (e: MouseEvent, key: string) => {
 </script>
 
 <template>
-  <perfect-scrollbar class="max-h-96 overflow-auto border border-gray-200 relative">
+  <div class="max-w-[1430px] min-w-0 max-h-[80vh] overflow-auto overflow-y-auto border border-gray-200 relative">
     <table v-if="variations.length" class="min-w-max">
       <thead class="bg-gray-100 sticky top-0">
         <tr>
@@ -336,11 +336,11 @@ const startResize = (e: MouseEvent, key: string) => {
                 class="relative cursor-pointer"
                 @dblclick="openDescriptionModal(index, col.key)"
               >
-                <div class="border border-gray-300 p-1 h-32 overflow-hidden">
+                <div class="border border-gray-300 p-1 h-16 overflow-hidden">
                   {{
                     shortenText(
                       item.propertyValues[col.key]?.translation?.valueDescription || '',
-                      64
+                      32
                     )
                   }}
                 </div>
@@ -378,7 +378,7 @@ const startResize = (e: MouseEvent, key: string) => {
         </tr>
       </tbody>
     </table>
-  </perfect-scrollbar>
+  </div>
   <Modal v-model="showTextModal">
     <div class="p-4 space-y-4">
       <TextInput class="w-full" v-model="modalValue" />
