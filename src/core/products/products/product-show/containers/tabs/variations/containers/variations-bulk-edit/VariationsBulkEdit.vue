@@ -12,6 +12,7 @@ import { DateInput } from "../../../../../../../../../shared/components/atoms/in
 import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import apolloClient from '../../../../../../../../../../apollo-client'
@@ -173,6 +174,46 @@ const getPropertyType = (id: string) =>
 const showTextModal = ref(false)
 const showDescriptionModal = ref(false)
 
+const selectedIndex = ref<number | null>(null)
+const selectedColKey = ref('')
+const modalValue = ref('')
+
+const openTextModal = (index: number, key: string) => {
+  selectedIndex.value = index
+  selectedColKey.value = key
+  modalValue.value =
+    variations.value[index].propertyValues[key]?.translation?.valueText || ''
+  showTextModal.value = true
+}
+
+const openDescriptionModal = (index: number, key: string) => {
+  selectedIndex.value = index
+  selectedColKey.value = key
+  modalValue.value =
+    variations.value[index].propertyValues[key]?.translation?.valueDescription || ''
+  showDescriptionModal.value = true
+}
+
+const cancelModal = () => {
+  showTextModal.value = false
+  showDescriptionModal.value = false
+}
+
+const saveModal = () => {
+  if (selectedIndex.value === null) return
+  const item = variations.value[selectedIndex.value]
+  const key = selectedColKey.value
+  if (!item.propertyValues[key]) item.propertyValues[key] = {}
+  if (!item.propertyValues[key].translation)
+    item.propertyValues[key].translation = {}
+  if (showTextModal.value) {
+    item.propertyValues[key].translation.valueText = modalValue.value
+  } else if (showDescriptionModal.value) {
+    item.propertyValues[key].translation.valueDescription = modalValue.value
+  }
+  cancelModal()
+}
+
 const MIN_COLUMN_WIDTH = 100
 const startResize = (e: MouseEvent, key: string) => {
   const startX = e.pageX
@@ -216,7 +257,7 @@ const startResize = (e: MouseEvent, key: string) => {
       </thead>
       <tbody>
         <tr
-          v-for="item in variations"
+          v-for="(item, index) in variations"
           :key="item.id"
           class="border-t"
         >
@@ -274,33 +315,39 @@ const startResize = (e: MouseEvent, key: string) => {
               <div
                 v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
                 class="relative cursor-pointer"
-                @dblclick="showTextModal = true"
+                @dblclick="openTextModal(index, col.key)"
               >
-                <TextInput
-                  class="w-full pointer-events-none"
-                  :model-value="item.propertyValues[col.key]?.translation?.valueText"
-                  disabled
-                />
+                <div class="border border-gray-300 p-1 h-8 overflow-hidden">
+                  {{
+                    shortenText(
+                      item.propertyValues[col.key]?.translation?.valueText || '',
+                      32
+                    )
+                  }}
+                </div>
                 <Icon
                   name="maximize"
                   class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                  @click.stop="showTextModal = true"
+                  @click.stop="openTextModal(index, col.key)"
                 />
               </div>
               <div
                 v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
                 class="relative cursor-pointer"
-                @dblclick="showDescriptionModal = true"
+                @dblclick="openDescriptionModal(index, col.key)"
               >
-                <TextEditor
-                  :model-value="item.propertyValues[col.key]?.translation?.valueDescription || ''"
-                  class="h-32 pointer-events-none"
-                  disabled
-                />
+                <div class="border border-gray-300 p-1 h-32 overflow-hidden">
+                  {{
+                    shortenText(
+                      item.propertyValues[col.key]?.translation?.valueDescription || '',
+                      64
+                    )
+                  }}
+                </div>
                 <Icon
                   name="maximize"
                   class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                  @click.stop="showDescriptionModal = true"
+                  @click.stop="openDescriptionModal(index, col.key)"
                 />
               </div>
               <Toggle
@@ -333,13 +380,21 @@ const startResize = (e: MouseEvent, key: string) => {
     </table>
   </perfect-scrollbar>
   <Modal v-model="showTextModal">
-    <div class="p-4">
-      <TextInput class="w-full" />
+    <div class="p-4 space-y-4">
+      <TextInput class="w-full" v-model="modalValue" />
+      <div class="flex justify-end gap-2">
+        <Button class="btn btn-primary" @click="saveModal">Edit</Button>
+        <Button class="btn btn-outline-dark" @click="cancelModal">Cancel</Button>
+      </div>
     </div>
   </Modal>
   <Modal v-model="showDescriptionModal">
-    <div class="p-4">
-      <TextEditor class="h-32" />
+    <div class="p-4 space-y-4">
+      <TextEditor class="h-32" v-model="modalValue" />
+      <div class="flex justify-end gap-2">
+        <Button class="btn btn-primary" @click="saveModal">Edit</Button>
+        <Button class="btn btn-outline-dark" @click="cancelModal">Cancel</Button>
+      </div>
     </div>
   </Modal>
 </template>
