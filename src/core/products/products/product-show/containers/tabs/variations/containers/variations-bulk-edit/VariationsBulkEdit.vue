@@ -175,9 +175,39 @@ onMounted(async () => {
   loading.value = false
 })
 
-const hasChanges = computed(() =>
-  !isEqual(toRaw(variations.value), originalVariations.value)
-)
+const hasChanges = computed(() => {
+  if (originalVariations.value.length !== variations.value.length) return true
+  return variations.value.some((variation, index) => {
+    const original = originalVariations.value[index]
+    const keys = new Set([
+      ...Object.keys(variation.propertyValues || {}),
+      ...Object.keys(original?.propertyValues || {}),
+    ])
+    for (const key of keys) {
+      const current = variation.propertyValues[key] || {}
+      const orig = (original?.propertyValues || {})[key] || {}
+      if (current.valueInt !== orig.valueInt) return true
+      if (current.valueFloat !== orig.valueFloat) return true
+      if ((current.valueBoolean ?? null) !== (orig.valueBoolean ?? null)) return true
+      const currentSelectId = current.valueSelect?.id || null
+      const origSelectId = orig.valueSelect?.id || null
+      if (currentSelectId !== origSelectId) return true
+      const currentMultiIds = (current.valueMultiSelect || []).map((v: any) => v.id).sort()
+      const origMultiIds = (orig.valueMultiSelect || []).map((v: any) => v.id).sort()
+      if (currentMultiIds.length !== origMultiIds.length) return true
+      for (let i = 0; i < currentMultiIds.length; i++) {
+        if (currentMultiIds[i] !== origMultiIds[i]) return true
+      }
+      const currentText = current.translation?.valueText || ''
+      const origText = orig.translation?.valueText || ''
+      if (currentText !== origText) return true
+      const currentDesc = current.translation?.valueDescription || ''
+      const origDesc = orig.translation?.valueDescription || ''
+      if (currentDesc !== origDesc) return true
+    }
+    return false
+  })
+})
 
 const save = () => {
   console.log('Save clicked')
@@ -252,20 +282,22 @@ const startResize = (e: MouseEvent, key: string) => {
 </script>
 
 <template>
-  <div class="max-w-[1430px] min-w-0 max-h-[80vh] overflow-auto overflow-y-auto border border-gray-200 relative">
+  <div class="">
     <div
       v-if="loading"
       class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75"
     >
       <LocalLoader :loading="loading" />
     </div>
-    <Button
-      class="absolute top-2 right-2 btn btn-primary"
-      :disabled="!hasChanges"
-      @click="save"
-    >
+    <Flex between class="mb-2">
+      <FlexCell grow></FlexCell>
+      <FlexCell>
+        <Button class="btn btn-primary" :disabled="!hasChanges" @click="save">
       {{ t('shared.button.save') }}
     </Button>
+      </FlexCell>
+    </Flex>
+
     <table v-if="variations.length" class="min-w-max">
       <thead class="bg-gray-100 sticky top-0">
         <tr>
