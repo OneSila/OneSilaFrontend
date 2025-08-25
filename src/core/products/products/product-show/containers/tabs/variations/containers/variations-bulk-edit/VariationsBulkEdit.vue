@@ -478,9 +478,9 @@ const startResize = (e: MouseEvent, key: string) => {
     >
       <LocalLoader :loading="loading" />
     </div>
-    <Flex between class="mb-2">
+    <Flex between middle gap="2" class="mb-2">
       <FlexCell grow></FlexCell>
-      <FlexCell v-if="language">
+      <FlexCell >
         <ApolloQuery :query="translationLanguagesQuery">
           <template v-slot="{ result: { data } }">
             <Selector
@@ -538,7 +538,7 @@ const startResize = (e: MouseEvent, key: string) => {
           <td
             v-for="col in columns"
             :key="col.key"
-            class="px-2 py-1 border-r border-gray-200 relative cursor-pointer"
+            class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
             :style="{ width: columnWidths[col.key] + 'px' }"
             @click="selectCell(index, col.key)"
           >
