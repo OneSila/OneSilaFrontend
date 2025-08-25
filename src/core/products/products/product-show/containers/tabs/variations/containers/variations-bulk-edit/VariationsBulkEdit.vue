@@ -42,11 +42,16 @@ const properties = ref<PropertyInfo[]>([])
 const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
+const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
 
 const columns = computed(() => [
   ...baseColumns,
   ...properties.value.map((p) => ({ key: p.id, label: p.name })),
 ])
+
+const selectCell = (rowIndex: number, colKey: string) => {
+  selectedCell.value = { row: rowIndex, col: colKey }
+}
 
 const columnWidths = reactive<Record<string, number>>({})
 watch(
@@ -438,7 +443,7 @@ const startResize = (e: MouseEvent, key: string) => {
       </FlexCell>
     </Flex>
 
-    <table v-if="variations.length" class="min-w-max">
+    <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
       <thead class="bg-gray-100 sticky top-0">
         <tr>
           <th
@@ -466,9 +471,14 @@ const startResize = (e: MouseEvent, key: string) => {
           <td
             v-for="col in columns"
             :key="col.key"
-            class="px-2 py-1 border-r border-gray-200"
+            class="px-2 py-1 border-r border-gray-200 relative cursor-pointer"
             :style="{ width: columnWidths[col.key] + 'px' }"
+            @click="selectCell(index, col.key)"
           >
+            <div
+              v-if="selectedCell.row === index && selectedCell.col === col.key"
+              class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
+            ></div>
             <template v-if="col.key === 'name'">
               <span class="block truncate" :title="item.variation.name">
                 {{ shortenText(item.variation.name, 32) }}
