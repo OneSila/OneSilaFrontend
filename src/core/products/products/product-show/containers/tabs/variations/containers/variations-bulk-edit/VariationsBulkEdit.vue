@@ -3,7 +3,7 @@ import { reactive, computed, ref, onMounted, watch, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
-import { ProductType, PropertyTypes, FieldType } from '../../../../../../../../../shared/utils/constants'
+import { ProductType, PropertyTypes, FieldType, ConfigTypes } from '../../../../../../../../../shared/utils/constants'
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
@@ -50,8 +50,24 @@ const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null
 
 const columns = computed(() => [
   ...baseColumns,
-  ...properties.value.map((p) => ({ key: p.id, label: p.name })),
+  ...properties.value.map((p) => ({ key: p.id, label: p.name, requireType: p.requireType })),
 ])
+
+const getIconColor = (requireType: string) => {
+  if (
+    [
+      ConfigTypes.REQUIRED,
+      ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+      ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+    ].includes(requireType as ConfigTypes)
+  ) {
+    return 'text-red-500'
+  }
+  if (requireType === ConfigTypes.OPTIONAL) {
+    return 'text-orange-400'
+  }
+  return 'text-gray-400'
+}
 
 const selectCell = (rowIndex: number, colKey: string) => {
   selectedCell.value = { row: rowIndex, col: colKey }
@@ -499,6 +515,11 @@ const startResize = (e: MouseEvent, key: string) => {
             :style="{ width: columnWidths[col.key] + 'px' }"
           >
             <div class="flex items-center h-full">
+              <Icon
+                v-if="col.requireType"
+                name="circle-dot"
+                :class="[getIconColor(col.requireType), 'mr-1']"
+              />
               <span class="block truncate" :title="col.label">{{ col.label }}</span>
               <span
                 class="resizer select-none"
