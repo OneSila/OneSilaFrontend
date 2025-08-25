@@ -18,6 +18,7 @@ import { LocalLoader } from "../../../../../../../../../shared/components/atoms/
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
 import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
@@ -55,6 +56,17 @@ const skipHistory = ref(false)
 const lastSnapshot = ref(JSON.stringify(variations.value))
 const canUndo = computed(() => history.value.length > 0)
 const canRedo = computed(() => redoStack.value.length > 0)
+
+const pageInfo = ref<any | null>(null)
+const limit = ref(20)
+const perPageOptions = [
+  { name: '10', value: 10 },
+  { name: '20', value: 20 },
+  { name: '50', value: 50 },
+  { name: '100', value: 100 },
+]
+const fetchPaginationData = ref<Record<string, any>>({})
+fetchPaginationData.value['first'] = limit.value
 
 const columns = computed(() => [
   ...baseColumns,
@@ -373,10 +385,14 @@ const fetchVariationProperties = async (variationId: string) => {
 const fetchVariations = async () => {
   const { data } = await apolloClient.query({
     query: query.value,
-    variables: { filter: { parent: { id: { exact: parentId.value } } }, first: 100 },
+    variables: {
+      filter: { parent: { id: { exact: parentId.value } } },
+      ...fetchPaginationData.value,
+    },
     fetchPolicy: 'network-only',
   })
   const edges = data?.[queryKey.value]?.edges ?? []
+  pageInfo.value = data?.[queryKey.value]?.pageInfo ?? null
   variations.value = await Promise.all(
     edges.map(async ({ node }: any) => ({
       ...node,
@@ -580,6 +596,49 @@ const clearHistory = () => {
   history.value = []
   redoStack.value = []
   lastSnapshot.value = JSON.stringify(toRaw(variations.value))
+}
+
+const setPaginationVariables = async (
+  firstVal: number | null = null,
+  lastVal: number | null = null,
+  beforeVal: string | null = null,
+  afterVal: string | null = null
+) => {
+  const fetchNewPaginationData: Record<string, any> = {}
+  if (firstVal) fetchNewPaginationData['first'] = firstVal
+  if (lastVal) fetchNewPaginationData['last'] = lastVal
+  if (beforeVal) fetchNewPaginationData['before'] = beforeVal
+  if (afterVal) fetchNewPaginationData['after'] = afterVal
+  fetchPaginationData.value = fetchNewPaginationData
+  skipHistory.value = true
+  await fetchVariations()
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+  clearHistory()
+  skipHistory.value = false
+}
+
+const handleQueryChanged = async (queryData) => {
+  const newQuery = queryData.query
+  const beforeValue = typeof newQuery.before === 'string' ? newQuery.before : null
+  const afterValue = typeof newQuery.after === 'string' ? newQuery.after : null
+  if (newQuery.before) {
+    await setPaginationVariables(null, limit.value, beforeValue, null)
+  }
+  if (newQuery.after) {
+    await setPaginationVariables(limit.value, null, null, afterValue)
+  }
+  if (newQuery.last === 'true') {
+    await setPaginationVariables(null, limit.value, null, null)
+  }
+  if (newQuery.first === 'true') {
+    await setPaginationVariables(limit.value, null, null, null)
+  }
+}
+
+const updateLimitPerPage = async (value: number) => {
+  limit.value = value
+  await setPaginationVariables(limit.value, null, null, null)
 }
 
 const hasChanges = computed(
@@ -966,6 +1025,26 @@ const startResize = (e: MouseEvent, key: string) => {
         </tr>
       </tbody>
     </table>
+  </div>
+  <div class="py-2 px-2 flex items-center space-x-2">
+    <Pagination
+      v-if="pageInfo"
+      :page-info="pageInfo"
+      :change-query-params="false"
+      @query-changed="handleQueryChanged"
+    />
+    <div v-if="pageInfo && (pageInfo.hasNextPage || pageInfo.hasPreviousPage)">
+      <Selector
+        :options="perPageOptions"
+        :model-value="limit"
+        :clearable="false"
+        dropdown-position="bottom"
+        value-by="value"
+        label-by="name"
+        :placeholder="t('pagination.perPage')"
+        @update:model-value="updateLimitPerPage"
+      />
+    </div>
   </div>
   <Modal v-model="showTextModal">
     <Card class="modal-content w-1/2">
