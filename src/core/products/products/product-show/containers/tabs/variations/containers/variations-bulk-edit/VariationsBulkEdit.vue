@@ -121,7 +121,7 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         isEdge: true,
         queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
         multiple: p.type === PropertyTypes.MULTISELECT,
-        removable: false,
+        removable: true,
       }
     }
   })
