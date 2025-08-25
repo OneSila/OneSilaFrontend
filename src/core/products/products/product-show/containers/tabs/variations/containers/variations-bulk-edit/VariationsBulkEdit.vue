@@ -16,9 +16,11 @@ import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
+import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
 import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
 
 interface PropertyInfo {
@@ -31,6 +33,8 @@ interface PropertyInfo {
 const props = defineProps<{ product: Product }>()
 
 const { t } = useI18n()
+
+const language = ref<string | null>(null)
 
 const baseColumns = [
   { key: 'name', label: t('shared.labels.name') },
@@ -142,10 +146,16 @@ const fetchVariationProperties = async (variationId: string) => {
       if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(node.property.type)) {
         const { data: tData } = await apolloClient.query({
           query: productPropertyTextTranslationsQuery,
-          variables: { filter: { productProperty: { id: { exact: node.id } } } },
+          variables: {
+            filter: {
+              productProperty: { id: { exact: node.id } },
+              language: { exact: language.value },
+            },
+          },
           fetchPolicy: 'network-only',
         })
-        translation = tData?.productPropertyTextTranslations?.edges?.[0]?.node || null
+        const tNode = tData?.productPropertyTextTranslations?.edges?.[0]?.node
+        translation = tNode ? { ...tNode } : { language: language.value }
       }
       propertyValues[node.property.id] = { ...node, translation }
     })
@@ -168,8 +178,23 @@ const fetchVariations = async () => {
   )
 }
 
+watch(language, async () => {
+  await fetchVariations()
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+})
+
+const fetchDefaultLanguage = async () => {
+  const { data } = await apolloClient.query({
+    query: translationLanguagesQuery,
+    fetchPolicy: 'network-only',
+  })
+  language.value = data?.translationLanguages?.defaultLanguage?.code || null
+}
+
 onMounted(async () => {
   loading.value = true
+  await fetchDefaultLanguage()
   await Promise.all([fetchProperties(), fetchVariations()])
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
@@ -211,10 +236,11 @@ const computeChanges = () => {
       const type = getPropertyType(key) || ''
       const current = variation.propertyValues[key]
       const orig = (original.propertyValues || {})[key]
+      const origExists = !!orig && !!orig.id
       const hasCurrent = !isPropEmpty(current, type)
-      const hasOriginal = !isPropEmpty(orig, type)
+      const hadValue = !isPropEmpty(orig, type)
 
-      if (!hasOriginal && hasCurrent) {
+      if (!origExists && hasCurrent) {
         const item: any = {
           productProperty: {
             product: { id: variation.variation.id },
@@ -245,9 +271,9 @@ const computeChanges = () => {
           item.translatedValue = current.translation.valueDescription
         }
         toCreate.value.push(item)
-      } else if (hasOriginal && !hasCurrent) {
+      } else if (origExists && hadValue && !hasCurrent) {
         toDelete.value.push(orig.id)
-      } else if (hasOriginal && hasCurrent) {
+      } else if (origExists && hasCurrent) {
         const diff: any = { id: orig.id }
         if (current.valueSelect?.id !== orig.valueSelect?.id)
           diff.valueSelect = current.valueSelect
@@ -361,7 +387,9 @@ const saveModal = () => {
   const key = selectedColKey.value
   if (!item.propertyValues[key]) item.propertyValues[key] = {}
   if (!item.propertyValues[key].translation)
-    item.propertyValues[key].translation = {}
+    item.propertyValues[key].translation = { language: language.value }
+  if (!item.propertyValues[key].translation.language)
+    item.propertyValues[key].translation.language = language.value
   if (showTextModal.value) {
     item.propertyValues[key].translation.valueText = modalValue.value
   } else if (showDescriptionModal.value) {
@@ -431,10 +459,28 @@ const startResize = (e: MouseEvent, key: string) => {
     </div>
     <Flex between class="mb-2">
       <FlexCell grow></FlexCell>
+      <FlexCell v-if="language">
+        <ApolloQuery :query="translationLanguagesQuery">
+          <template v-slot="{ result: { data } }">
+            <Selector
+              v-if="data"
+              v-model="language"
+              :options="data.translationLanguages.languages"
+              :placeholder="t('products.translation.placeholders.language')"
+              class="w-32 mr-2"
+              labelBy="name"
+              valueBy="code"
+              :removable="false"
+              mandatory
+              filterable
+            />
+          </template>
+        </ApolloQuery>
+      </FlexCell>
       <FlexCell>
         <Button class="btn btn-primary" :disabled="!hasChanges" @click="save">
-      {{ t('shared.button.save') }}
-    </Button>
+          {{ t('shared.button.save') }}
+        </Button>
       </FlexCell>
     </Flex>
 
