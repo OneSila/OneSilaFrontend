@@ -183,7 +183,7 @@ const handleKeydown = (e: KeyboardEvent) => {
         col,
         value: JSON.parse(JSON.stringify(value ?? null)),
       }
-      Toast.success('Copied')
+      Toast.success(t('products.products.alert.toast.copied'))
     }
     e.preventDefault()
   } else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
@@ -201,10 +201,10 @@ const handleKeydown = (e: KeyboardEvent) => {
               JSON.stringify(clipboard.value.value)
             )
           }
-          Toast.success('Pasted')
+          Toast.success(t('products.products.alert.toast.pasted'))
         }
       } else {
-        Toast.error('Cannot paste to different column')
+        Toast.error(t('products.products.alert.toast.pasteDifferentColumn'))
       }
     }
     e.preventDefault()
@@ -559,6 +559,7 @@ const undo = () => {
   const prev = history.value.pop()
   variations.value = JSON.parse(JSON.stringify(prev))
   skipHistory.value = false
+  Toast.info(t('products.products.alert.toast.undo'))
 }
 
 const redo = () => {
@@ -568,6 +569,7 @@ const redo = () => {
   const next = redoStack.value.pop()
   variations.value = JSON.parse(JSON.stringify(next))
   skipHistory.value = false
+  Toast.info(t('products.products.alert.toast.redo'))
 }
 
 const clearHistory = () => {
@@ -581,17 +583,20 @@ const hasChanges = computed(
 )
 
 const save = async () => {
-  if (toCreate.value.length)
+  const createdCount = toCreate.value.length
+  const updatedCount = toUpdate.value.length
+  const deletedCount = toDelete.value.length
+  if (createdCount)
     await apolloClient.mutate({
       mutation: bulkCreateProductPropertiesMutation,
       variables: { data: toCreate.value },
     })
-  if (toUpdate.value.length)
+  if (updatedCount)
     await apolloClient.mutate({
       mutation: bulkUpdateProductPropertiesMutation,
       variables: { data: toUpdate.value },
     })
-  if (toDelete.value.length)
+  if (deletedCount)
     await apolloClient.mutate({
       mutation: deleteProductPropertiesMutation,
       variables: { ids: toDelete.value },
@@ -599,6 +604,24 @@ const save = async () => {
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   clearHistory()
+  if (createdCount)
+    Toast.success(
+      t('products.products.alert.toast.createdProductProperties', {
+        count: createdCount,
+      })
+    )
+  if (updatedCount)
+    Toast.success(
+      t('products.products.alert.toast.updatedProductProperties', {
+        count: updatedCount,
+      })
+    )
+  if (deletedCount)
+    Toast.success(
+      t('products.products.alert.toast.deletedProductProperties', {
+        count: deletedCount,
+      })
+    )
 }
 
 defineExpose({ save, hasChanges })
