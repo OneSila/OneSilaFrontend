@@ -795,89 +795,87 @@ const startResize = (e: MouseEvent, key: string) => {
         </Button>
       </FlexCell>
     </Flex>
-    <div
-      v-if="variations.length"
-      class="overflow-y-auto max-h-96 table-responsive custom-table-scroll"
-    >
+
+    <div v-if="variations.length" class="table-responsive custom-table-scroll">
       <table class="min-w-max border border-gray-300 border-collapse select-none">
         <thead class="bg-gray-100 sticky top-0">
-          <tr>
-            <th
-              v-for="col in columns"
-              :key="col.key"
-              class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
-              :style="{ width: columnWidths[col.key] + 'px' }"
-            >
-              <div class="flex items-center h-full">
-                <Icon
-                  v-if="col.requireType"
-                  name="circle-dot"
-                  :class="[getIconColor(col.requireType), 'mr-1']"
-                />
-                <span class="block truncate" :title="col.label">{{ col.label }}</span>
-                <span
-                  class="resizer select-none"
-                  @mousedown="(e) => startResize(e, col.key)"
-                />
-              </div>
-            </th>
-          </tr>
+        <tr>
+          <th
+            v-for="col in columns"
+            :key="col.key"
+            class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
+            :style="{ width: columnWidths[col.key] + 'px' }"
+          >
+            <div class="flex items-center h-full">
+              <Icon
+                v-if="col.requireType"
+                name="circle-dot"
+                :class="[getIconColor(col.requireType), 'mr-1']"
+              />
+              <span class="block truncate" :title="col.label">{{ col.label }}</span>
+              <span
+                class="resizer select-none"
+                @mousedown="(e) => startResize(e, col.key)"
+              />
+            </div>
+          </th>
+        </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(item, index) in variations"
-            :key="item.id"
-            class="border-t"
+        <tr
+          v-for="(item, index) in variations"
+          :key="item.id"
+          class="border-t"
+        >
+          <td
+            v-for="col in columns"
+            :key="col.key"
+            class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
+            :class="{ 'bg-blue-100': isInDragRange(index, col.key) }"
+            :style="{ width: columnWidths[col.key] + 'px' }"
+            :data-row="index"
+            :data-col="col.key"
+            @click="selectCell(index, col.key)"
           >
-            <td
-              v-for="col in columns"
-              :key="col.key"
-              class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
-              :class="{ 'bg-blue-100': isInDragRange(index, col.key) }"
-              :style="{ width: columnWidths[col.key] + 'px' }"
-              :data-row="index"
-              :data-col="col.key"
-              @click="selectCell(index, col.key)"
+            <div
+              v-if="selectedCell.row === index && selectedCell.col === col.key"
+              class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
             >
               <div
-                v-if="selectedCell.row === index && selectedCell.col === col.key"
-                class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
-              >
-                <div
-                  v-if="!['name','sku','active'].includes(col.key)"
-                  class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
-                  @mousedown.stop="startDragFill(index, col.key)"
-                ></div>
-              </div>
-              <template v-if="col.key === 'name'">
-                <span class="block truncate" :title="item.variation.name">
-                  {{ shortenText(item.variation.name, 32) }}
-                </span>
-              </template>
-              <template v-else-if="col.key === 'sku'">
-                <span class="block truncate" :title="item.variation.sku">
-                  {{ item.variation.sku }}
-                </span>
-              </template>
-              <template v-else-if="col.key === 'active'">
-                <Icon
-                  v-if="item.variation.active"
-                  name="check-circle"
-                  class="text-green-500"
-                />
-                <Icon
-                  v-else
-                  name="times-circle"
-                  class="text-red-500"
-                />
-              </template>
-              <template v-else>
-                <FieldQuery
-                  v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
-                  :field="selectFields[col.key]"
-                  :model-value="item.propertyValues[col.key]?.valueSelect?.id"
-                  @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
-                />
+                v-if="!['name','sku','active'].includes(col.key)"
+                class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
+                @mousedown.stop="startDragFill(index, col.key)"
+              ></div>
+            </div>
+            <template v-if="col.key === 'name'">
+              <span class="block truncate" :title="item.variation.name">
+                {{ shortenText(item.variation.name, 32) }}
+              </span>
+            </template>
+            <template v-else-if="col.key === 'sku'">
+              <span class="block truncate" :title="item.variation.sku">
+                {{ item.variation.sku }}
+              </span>
+            </template>
+            <template v-else-if="col.key === 'active'">
+              <Icon
+                v-if="item.variation.active"
+                name="check-circle"
+                class="text-green-500"
+              />
+              <Icon
+                v-else
+                name="times-circle"
+                class="text-red-500"
+              />
+            </template>
+            <template v-else>
+              <FieldQuery
+                v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
+                :field="selectFields[col.key]"
+                :model-value="item.propertyValues[col.key]?.valueSelect?.id"
+                @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
+              />
               <FieldQuery
                 v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
                 :field="selectFields[col.key]"
