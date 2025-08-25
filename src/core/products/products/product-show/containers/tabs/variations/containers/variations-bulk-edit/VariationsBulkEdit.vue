@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, ref, onMounted, watch, toRaw } from 'vue'
+import { reactive, computed, ref, onMounted, watch, toRaw, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
@@ -72,6 +72,84 @@ const getIconColor = (requireType: string) => {
 const selectCell = (rowIndex: number, colKey: string) => {
   selectedCell.value = { row: rowIndex, col: colKey }
 }
+
+const dragState = reactive({
+  active: false,
+  startRow: null as number | null,
+  endRow: null as number | null,
+  col: '' as string,
+})
+
+const copyValue = (from: number, to: number, key: string) => {
+  const source = variations.value[from]
+  const target = variations.value[to]
+  if (!target.propertyValues) target.propertyValues = {}
+  target.propertyValues[key] = JSON.parse(
+    JSON.stringify(source.propertyValues[key] || {})
+  )
+}
+
+const startDragFill = (row: number, col: string) => {
+  if (['name', 'sku', 'active'].includes(col)) return
+  dragState.active = true
+  dragState.startRow = row
+  dragState.endRow = row
+  dragState.col = col
+  document.addEventListener('mousemove', onDragFill)
+  document.addEventListener('mouseup', endDragFill)
+}
+
+const onDragFill = (e: MouseEvent) => {
+  const cell = (e.target as HTMLElement).closest('td')
+  if (!cell) return
+  const rowAttr = cell.getAttribute('data-row')
+  const colAttr = cell.getAttribute('data-col')
+  if (colAttr === dragState.col && rowAttr) {
+    dragState.endRow = Number(rowAttr)
+  }
+}
+
+const endDragFill = () => {
+  document.removeEventListener('mousemove', onDragFill)
+  document.removeEventListener('mouseup', endDragFill)
+  if (
+    dragState.active &&
+    dragState.startRow !== null &&
+    dragState.endRow !== null &&
+    dragState.col
+  ) {
+    const start = dragState.startRow
+    const end = dragState.endRow
+    const [from, to] = start < end ? [start, end] : [end, start]
+    for (let i = from; i <= to; i++) {
+      if (i === start) continue
+      copyValue(start, i, dragState.col)
+    }
+  }
+  dragState.active = false
+  dragState.startRow = dragState.endRow = null
+  dragState.col = ''
+}
+
+const isInDragRange = (row: number, col: string) => {
+  if (
+    !dragState.active ||
+    dragState.col !== col ||
+    dragState.startRow === null ||
+    dragState.endRow === null
+  )
+    return false
+  const [from, to] =
+    dragState.startRow < dragState.endRow
+      ? [dragState.startRow, dragState.endRow]
+      : [dragState.endRow, dragState.startRow]
+  return row >= from && row <= to
+}
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousemove', onDragFill)
+  document.removeEventListener('mouseup', endDragFill)
+})
 
 const columnWidths = reactive<Record<string, number>>({})
 watch(
@@ -539,13 +617,22 @@ const startResize = (e: MouseEvent, key: string) => {
             v-for="col in columns"
             :key="col.key"
             class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
+            :class="{ 'bg-blue-100': isInDragRange(index, col.key) }"
             :style="{ width: columnWidths[col.key] + 'px' }"
+            :data-row="index"
+            :data-col="col.key"
             @click="selectCell(index, col.key)"
           >
             <div
               v-if="selectedCell.row === index && selectedCell.col === col.key"
               class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
-            ></div>
+            >
+              <div
+                v-if="!['name','sku','active'].includes(col.key)"
+                class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
+                @mousedown.stop="startDragFill(index, col.key)"
+              ></div>
+            </div>
             <template v-if="col.key === 'name'">
               <span class="block truncate" :title="item.variation.name">
                 {{ shortenText(item.variation.name, 32) }}
