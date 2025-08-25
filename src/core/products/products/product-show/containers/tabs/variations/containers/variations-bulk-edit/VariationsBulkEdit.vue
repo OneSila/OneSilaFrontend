@@ -659,7 +659,11 @@ const updateNumberValue = (
   prop[field] = value
 }
 
-const updateBooleanValue = (index: number, key: string, value: boolean) => {
+const updateBooleanValue = (
+  index: number,
+  key: string,
+  value: boolean | null
+) => {
   const prop = ensureProp(index, key)
   prop.valueBoolean = value
 }
@@ -874,7 +878,7 @@ const startResize = (e: MouseEvent, key: string) => {
               </div>
               <Toggle
                 v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
-                :model-value="item.propertyValues[col.key]?.valueBoolean || false"
+                :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
                 @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
               />
               <div
