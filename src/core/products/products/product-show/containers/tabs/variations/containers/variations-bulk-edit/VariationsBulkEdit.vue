@@ -22,6 +22,7 @@ import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
 import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
+import { Toast } from "../../../../../../../../../shared/modules/toast";
 
 interface PropertyInfo {
   id: string
@@ -47,6 +48,7 @@ const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
 const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
+const clipboard = ref<{ col: string; value: any } | null>(null)
 
 const columns = computed(() => [
   ...baseColumns,
@@ -146,9 +148,97 @@ const isInDragRange = (row: number, col: string) => {
   return row >= from && row <= to
 }
 
+const handleKeydown = (e: KeyboardEvent) => {
+  const target = e.target as HTMLElement
+  if (
+    ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
+    target.isContentEditable
+  )
+    return
+  const { row, col } = selectedCell.value
+  if (row === null || col === null) return
+
+  if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+    if (!['name', 'sku', 'active'].includes(col)) {
+      const value = variations.value[row]?.propertyValues?.[col]
+      clipboard.value = {
+        col,
+        value: JSON.parse(JSON.stringify(value ?? null)),
+      }
+      Toast.success('Copied')
+    }
+    e.preventDefault()
+  } else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
+    if (clipboard.value) {
+      if (clipboard.value.col === col) {
+        if (!['name', 'sku', 'active'].includes(col)) {
+          if (clipboard.value.value === null) {
+            if (variations.value[row].propertyValues) {
+              delete variations.value[row].propertyValues[col]
+            }
+          } else {
+            if (!variations.value[row].propertyValues)
+              variations.value[row].propertyValues = {}
+            variations.value[row].propertyValues[col] = JSON.parse(
+              JSON.stringify(clipboard.value.value)
+            )
+          }
+          Toast.success('Pasted')
+        }
+      } else {
+        Toast.error('Cannot paste to different column')
+      }
+    }
+    e.preventDefault()
+  } else if (
+    (e.key === 'Delete' || e.key === 'Backspace') &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.shiftKey &&
+    !e.altKey
+  ) {
+    if (!['name', 'sku', 'active'].includes(col)) {
+      if (variations.value[row].propertyValues) {
+        delete variations.value[row].propertyValues[col]
+      }
+    }
+    e.preventDefault()
+  } else if (!e.ctrlKey && !e.metaKey) {
+    switch (e.key) {
+      case 'ArrowUp':
+        if (row > 0) selectedCell.value.row = row - 1
+        e.preventDefault()
+        break
+      case 'ArrowDown':
+        if (row < variations.value.length - 1)
+          selectedCell.value.row = row + 1
+        e.preventDefault()
+        break
+      case 'ArrowLeft': {
+        const colIndex = columns.value.findIndex((c) => c.key === col)
+        if (colIndex > 0) selectedCell.value.col = columns.value[colIndex - 1].key
+        e.preventDefault()
+        break
+      }
+      case 'ArrowRight': {
+        const colIndex = columns.value.findIndex((c) => c.key === col)
+        if (colIndex < columns.value.length - 1)
+          selectedCell.value.col = columns.value[colIndex + 1].key
+        e.preventDefault()
+        break
+      }
+    }
+  }
+}
+
 onBeforeUnmount(() => {
   document.removeEventListener('mousemove', onDragFill)
   document.removeEventListener('mouseup', endDragFill)
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
 })
 
 const columnWidths = reactive<Record<string, number>>({})
