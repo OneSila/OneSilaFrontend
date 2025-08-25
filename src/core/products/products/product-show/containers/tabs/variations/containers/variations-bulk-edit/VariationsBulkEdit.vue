@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, ref, onMounted, watch, toRaw, onBeforeUnmount } from 'vue'
+import { reactive, computed, ref, onMounted, watch, toRaw, onBeforeUnmount, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
@@ -558,7 +558,9 @@ const undo = () => {
   redoStack.value.push(JSON.parse(JSON.stringify(variations.value)))
   const prev = history.value.pop()
   variations.value = JSON.parse(JSON.stringify(prev))
-  skipHistory.value = false
+  nextTick(() => {
+    skipHistory.value = false
+  })
   Toast.info(t('products.products.alert.toast.undo'))
 }
 
@@ -568,7 +570,9 @@ const redo = () => {
   history.value.push(JSON.parse(JSON.stringify(variations.value)))
   const next = redoStack.value.pop()
   variations.value = JSON.parse(JSON.stringify(next))
-  skipHistory.value = false
+  nextTick(() => {
+    skipHistory.value = false
+  })
   Toast.info(t('products.products.alert.toast.redo'))
 }
 
