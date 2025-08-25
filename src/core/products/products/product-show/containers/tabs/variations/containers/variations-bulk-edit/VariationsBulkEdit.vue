@@ -37,7 +37,7 @@ const { t } = useI18n()
 
 const language = ref<string | null>(null)
 
-const baseColumns = [
+const baseColumns: { key: string; label: string; requireType?: string }[] = [
   { key: 'name', label: t('shared.labels.name') },
   { key: 'sku', label: t('shared.labels.sku') },
   { key: 'active', label: t('shared.labels.active') },
@@ -49,6 +49,11 @@ const originalVariations = ref<any[]>([])
 const loading = ref(true)
 const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
 const clipboard = ref<{ col: string; value: any } | null>(null)
+const history = ref<any[]>([])
+const redoStack = ref<any[]>([])
+const skipHistory = ref(false)
+const canUndo = computed(() => history.value.length > 0)
+const canRedo = computed(() => redoStack.value.length > 0)
 
 const columns = computed(() => [
   ...baseColumns,
@@ -368,9 +373,12 @@ const fetchVariations = async () => {
 }
 
 watch(language, async () => {
+  skipHistory.value = true
   await fetchVariations()
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
+  clearHistory()
+  skipHistory.value = false
 })
 
 const fetchDefaultLanguage = async () => {
@@ -384,9 +392,12 @@ const fetchDefaultLanguage = async () => {
 onMounted(async () => {
   loading.value = true
   await fetchDefaultLanguage()
+  skipHistory.value = true
   await Promise.all([fetchProperties(), fetchVariations()])
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
+  clearHistory()
+  skipHistory.value = false
   loading.value = false
 })
 
@@ -514,7 +525,41 @@ const computeChanges = () => {
   })
 }
 
-watch(variations, computeChanges, { deep: true })
+watch(
+  variations,
+  (newVal, oldVal) => {
+    if (!skipHistory.value) {
+      history.value.push(JSON.parse(JSON.stringify(oldVal)))
+      if (history.value.length > 20) history.value.shift()
+      redoStack.value = []
+    }
+    computeChanges()
+  },
+  { deep: true }
+)
+
+const undo = () => {
+  if (!history.value.length) return
+  skipHistory.value = true
+  redoStack.value.push(JSON.parse(JSON.stringify(variations.value)))
+  const prev = history.value.pop()
+  variations.value = JSON.parse(JSON.stringify(prev))
+  skipHistory.value = false
+}
+
+const redo = () => {
+  if (!redoStack.value.length) return
+  skipHistory.value = true
+  history.value.push(JSON.parse(JSON.stringify(variations.value)))
+  const next = redoStack.value.pop()
+  variations.value = JSON.parse(JSON.stringify(next))
+  skipHistory.value = false
+}
+
+const clearHistory = () => {
+  history.value = []
+  redoStack.value = []
+}
 
 const hasChanges = computed(
   () => toCreate.value.length || toUpdate.value.length || toDelete.value.length
@@ -538,6 +583,7 @@ const save = async () => {
     })
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
+  clearHistory()
 }
 
 defineExpose({ save, hasChanges })
@@ -648,6 +694,22 @@ const startResize = (e: MouseEvent, key: string) => {
     </div>
     <Flex between middle gap="2" class="mb-2">
       <FlexCell grow></FlexCell>
+      <FlexCell class="flex">
+        <Button
+          class="btn btn-secondary"
+          :disabled="!canUndo"
+          @click="undo"
+        >
+          <Icon name="arrow-left" />
+        </Button>
+        <Button
+          class="btn btn-secondary ml-2"
+          :disabled="!canRedo"
+          @click="redo"
+        >
+          <Icon name="arrow-right" />
+        </Button>
+      </FlexCell>
       <FlexCell >
         <ApolloQuery :query="translationLanguagesQuery">
           <template v-slot="{ result: { data } }">
