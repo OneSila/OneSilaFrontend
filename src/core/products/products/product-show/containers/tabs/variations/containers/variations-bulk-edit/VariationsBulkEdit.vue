@@ -809,7 +809,7 @@ const startResize = (e: MouseEvent, key: string) => {
 </script>
 
 <template>
-  <div class="relative w-full overflow-x-hidden">
+  <div class="relative w-full max-w-full">
     <div
       v-if="loading"
       class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75"
@@ -858,7 +858,7 @@ const startResize = (e: MouseEvent, key: string) => {
         </Button>
       </FlexCell>
     </Flex>
-    <div class="overflow-x-auto w-full max-w-full">
+    <div class="overflow-x-auto w-full">
       <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
         <thead class="bg-gray-100 sticky top-0">
           <tr>
