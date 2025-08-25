@@ -15,11 +15,11 @@ import { Modal } from "../../../../../../../../../shared/components/atoms/modal"
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
-import isEqual from 'lodash/isEqual'
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
+import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
 
 interface PropertyInfo {
   id: string
@@ -172,51 +172,160 @@ onMounted(async () => {
   loading.value = true
   await Promise.all([fetchProperties(), fetchVariations()])
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
   loading.value = false
 })
 
-const hasChanges = computed(() => {
-  if (originalVariations.value.length !== variations.value.length) return true
-  return variations.value.some((variation, index) => {
-    const original = originalVariations.value[index]
-    const keys = new Set([
-      ...Object.keys(variation.propertyValues || {}),
-      ...Object.keys(original?.propertyValues || {}),
-    ])
-    for (const key of keys) {
-      const current = variation.propertyValues[key] || {}
-      const orig = (original?.propertyValues || {})[key] || {}
-      if (current.valueInt !== orig.valueInt) return true
-      if (current.valueFloat !== orig.valueFloat) return true
-      if ((current.valueBoolean ?? null) !== (orig.valueBoolean ?? null)) return true
-      const currentSelectId = current.valueSelect?.id || null
-      const origSelectId = orig.valueSelect?.id || null
-      if (currentSelectId !== origSelectId) return true
-      const currentMultiIds = (current.valueMultiSelect || []).map((v: any) => v.id).sort()
-      const origMultiIds = (orig.valueMultiSelect || []).map((v: any) => v.id).sort()
-      if (currentMultiIds.length !== origMultiIds.length) return true
-      for (let i = 0; i < currentMultiIds.length; i++) {
-        if (currentMultiIds[i] !== origMultiIds[i]) return true
-      }
-      const currentText = current.translation?.valueText || ''
-      const origText = orig.translation?.valueText || ''
-      if (currentText !== origText) return true
-      const currentDesc = current.translation?.valueDescription || ''
-      const origDesc = orig.translation?.valueDescription || ''
-      if (currentDesc !== origDesc) return true
-    }
-    return false
-  })
-})
-
-const save = () => {
-  console.log('Save clicked')
-}
-
-defineExpose({ save, hasChanges })
+const toCreate = ref<any[]>([])
+const toUpdate = ref<any[]>([])
+const toDelete = ref<string[]>([])
 
 const getPropertyType = (id: string) =>
   properties.value.find((p) => p.id === id)?.type
+
+const isPropEmpty = (prop: any, type: string) => {
+  if (!prop) return true
+  if (prop.valueSelect) return false
+  if (prop.valueMultiSelect && prop.valueMultiSelect.length) return false
+  if (prop.valueInt !== undefined) return false
+  if (prop.valueFloat !== undefined) return false
+  if (prop.valueBoolean !== undefined) return false
+  if (type === PropertyTypes.TEXT && prop.translation?.valueText) return false
+  if (type === PropertyTypes.DESCRIPTION && prop.translation?.valueDescription) return false
+  return true
+}
+
+const computeChanges = () => {
+  toCreate.value = []
+  toUpdate.value = []
+  toDelete.value = []
+
+  variations.value.forEach((variation, index) => {
+    const original = originalVariations.value[index] || {}
+    const keys = new Set([
+      ...Object.keys(variation.propertyValues || {}),
+      ...Object.keys(original.propertyValues || {}),
+    ])
+
+    keys.forEach((key) => {
+      const type = getPropertyType(key) || ''
+      const current = variation.propertyValues[key]
+      const orig = (original.propertyValues || {})[key]
+      const hasCurrent = !isPropEmpty(current, type)
+      const hasOriginal = !isPropEmpty(orig, type)
+
+      if (!hasOriginal && hasCurrent) {
+        const item: any = {
+          productProperty: {
+            product: { id: variation.variation.id },
+            property: { id: key },
+          },
+        }
+        if (current.valueSelect)
+          item.productProperty.valueSelect = { id: current.valueSelect.id }
+        if (current.valueMultiSelect && current.valueMultiSelect.length)
+          item.productProperty.valueMultiSelect = current.valueMultiSelect.map(
+            (v: any) => ({ id: v.id })
+          )
+        if (current.valueInt !== undefined)
+          item.productProperty.valueInt = current.valueInt
+        if (current.valueFloat !== undefined)
+          item.productProperty.valueFloat = current.valueFloat
+        if (current.valueBoolean !== undefined)
+          item.productProperty.valueBoolean = current.valueBoolean
+        if (type === PropertyTypes.TEXT && current.translation?.valueText) {
+          item.languageCode = current.translation.language
+          item.translatedValue = current.translation.valueText
+        }
+        if (
+          type === PropertyTypes.DESCRIPTION &&
+          current.translation?.valueDescription
+        ) {
+          item.languageCode = current.translation.language
+          item.translatedValue = current.translation.valueDescription
+        }
+        toCreate.value.push(item)
+      } else if (hasOriginal && !hasCurrent) {
+        toDelete.value.push(orig.id)
+      } else if (hasOriginal && hasCurrent) {
+        const diff: any = { id: orig.id }
+        if (current.valueSelect?.id !== orig.valueSelect?.id)
+          diff.valueSelect = current.valueSelect
+            ? { id: current.valueSelect.id }
+            : null
+        const curMulti = (current.valueMultiSelect || [])
+          .map((v: any) => v.id)
+          .sort()
+        const origMulti = (orig.valueMultiSelect || [])
+          .map((v: any) => v.id)
+          .sort()
+        if (
+          curMulti.length !== origMulti.length ||
+          curMulti.some((v: any, i: number) => v !== origMulti[i])
+        ) {
+          diff.valueMultiSelect = current.valueMultiSelect
+            ? current.valueMultiSelect.map((v: any) => ({ id: v.id }))
+            : []
+        }
+        if (current.valueInt !== orig.valueInt)
+          diff.valueInt = current.valueInt
+        if (current.valueFloat !== orig.valueFloat)
+          diff.valueFloat = current.valueFloat
+        if ((current.valueBoolean ?? null) !== (orig.valueBoolean ?? null))
+          diff.valueBoolean = current.valueBoolean
+        if (type === PropertyTypes.TEXT) {
+          const curText = current.translation?.valueText || ''
+          const origText = orig.translation?.valueText || ''
+          if (curText !== origText)
+            diff.translation = {
+              languageCode:
+                current.translation?.language || orig.translation?.language,
+              valueText: curText,
+            }
+        }
+        if (type === PropertyTypes.DESCRIPTION) {
+          const curDesc = current.translation?.valueDescription || ''
+          const origDesc = orig.translation?.valueDescription || ''
+          if (curDesc !== origDesc)
+            diff.translation = {
+              languageCode:
+                current.translation?.language || orig.translation?.language,
+              valueDescription: curDesc,
+            }
+        }
+        if (Object.keys(diff).length > 1) toUpdate.value.push(diff)
+      }
+    })
+  })
+}
+
+watch(variations, computeChanges, { deep: true })
+
+const hasChanges = computed(
+  () => toCreate.value.length || toUpdate.value.length || toDelete.value.length
+)
+
+const save = async () => {
+  if (toCreate.value.length)
+    await apolloClient.mutate({
+      mutation: bulkCreateProductPropertiesMutation,
+      variables: { data: toCreate.value },
+    })
+  if (toUpdate.value.length)
+    await apolloClient.mutate({
+      mutation: bulkUpdateProductPropertiesMutation,
+      variables: { data: toUpdate.value },
+    })
+  if (toDelete.value.length)
+    await apolloClient.mutate({
+      mutation: deleteProductPropertiesMutation,
+      variables: { ids: toDelete.value },
+    })
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+}
+
+defineExpose({ save, hasChanges })
 
 const showTextModal = ref(false)
 const showDescriptionModal = ref(false)
