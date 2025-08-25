@@ -38,9 +38,9 @@ const { t } = useI18n()
 const language = ref<string | null>(null)
 
 const baseColumns = [
-  { key: 'name', label: t('shared.labels.name') },
-  { key: 'sku', label: t('shared.labels.sku') },
-  { key: 'active', label: t('shared.labels.active') },
+  { key: 'name', label: t('shared.labels.name'), requireType: undefined },
+  { key: 'sku', label: t('shared.labels.sku'), requireType: undefined },
+  { key: 'active', label: t('shared.labels.active'), requireType: undefined },
 ]
 
 const properties = ref<PropertyInfo[]>([])
@@ -613,7 +613,11 @@ const updateNumberValue = (
   prop[field] = value
 }
 
-const updateBooleanValue = (index: number, key: string, value: boolean) => {
+const updateBooleanValue = (
+  index: number,
+  key: string,
+  value: boolean | null
+) => {
   const prop = ensureProp(index, key)
   prop.valueBoolean = value
 }
@@ -812,7 +816,7 @@ const startResize = (e: MouseEvent, key: string) => {
               </div>
               <Toggle
                 v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
-                :model-value="item.propertyValues[col.key]?.valueBoolean || false"
+                :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
                 @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
               />
               <div
