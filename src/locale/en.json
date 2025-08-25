@@ -935,11 +935,19 @@
         "sameProductType": "Same product type only"
       },
       "alert": {
-        "toast": {
-          "bulkDeleteSuccess": "Products deleted successfully.",
-          "bulkDeleteError": "Failed to delete products. Please try again."
-        }
-      },
+      "toast": {
+        "bulkDeleteSuccess": "Products deleted successfully.",
+        "bulkDeleteError": "Failed to delete products. Please try again.",
+        "copied": "Copied",
+        "pasted": "Pasted",
+        "pasteDifferentColumn": "Cannot paste to different column",
+        "undo": "Undid last change",
+        "redo": "Redid last change",
+        "createdProductProperties": "Created {count} product properties.",
+        "updatedProductProperties": "Updated {count} product properties.",
+        "deletedProductProperties": "Deleted {count} product properties."
+      }
+    },
       "tabs": {
         "content": "Content",
         "aliasProducts": "Alias Products",
