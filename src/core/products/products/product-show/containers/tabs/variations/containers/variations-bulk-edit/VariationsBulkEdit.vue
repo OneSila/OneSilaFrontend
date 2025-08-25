@@ -485,7 +485,7 @@ const computeChanges = () => {
         }
         toCreate.value.push(item)
       } else if (origExists && hadValue && !hasCurrent) {
-        toDelete.value.push(orig.id)
+        toDelete.value.push({id: orig.id})
       } else if (origExists && hasCurrent) {
         const diff: any = { id: orig.id }
         if (current.valueSelect?.id !== orig.valueSelect?.id)
@@ -573,7 +573,7 @@ const redo = () => {
 const clearHistory = () => {
   history.value = []
   redoStack.value = []
-  lastSnapshot.value = JSON.stringify(variations.value)
+  lastSnapshot.value = JSON.stringify(toRaw(variations.value))
 }
 
 const hasChanges = computed(
@@ -594,7 +594,7 @@ const save = async () => {
   if (toDelete.value.length)
     await apolloClient.mutate({
       mutation: deleteProductPropertiesMutation,
-      variables: { ids: toDelete.value },
+      variables: { data: toDelete.value },
     })
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
