@@ -52,6 +52,7 @@ const clipboard = ref<{ col: string; value: any } | null>(null)
 const history = ref<any[]>([])
 const redoStack = ref<any[]>([])
 const skipHistory = ref(false)
+const lastSnapshot = ref(JSON.stringify(variations.value))
 const canUndo = computed(() => history.value.length > 0)
 const canRedo = computed(() => redoStack.value.length > 0)
 
@@ -539,12 +540,13 @@ const computeChanges = () => {
 
 watch(
   variations,
-  (newVal, oldVal) => {
+  (newVal) => {
     if (!skipHistory.value) {
-      history.value.push(JSON.parse(JSON.stringify(oldVal)))
+      history.value.push(JSON.parse(lastSnapshot.value))
       if (history.value.length > 20) history.value.shift()
       redoStack.value = []
     }
+    lastSnapshot.value = JSON.stringify(toRaw(newVal))
     computeChanges()
   },
   { deep: true }
@@ -571,6 +573,7 @@ const redo = () => {
 const clearHistory = () => {
   history.value = []
   redoStack.value = []
+  lastSnapshot.value = JSON.stringify(variations.value)
 }
 
 const hasChanges = computed(
