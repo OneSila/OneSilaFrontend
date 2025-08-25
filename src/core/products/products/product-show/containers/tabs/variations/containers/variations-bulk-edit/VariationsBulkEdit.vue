@@ -416,7 +416,7 @@ onMounted(async () => {
 
 const toCreate = ref<any[]>([])
 const toUpdate = ref<any[]>([])
-const toDelete = ref<string[]>([])
+const toDelete = ref<object[]>([])
 
 const getPropertyType = (id: string) =>
   properties.value.find((p) => p.id === id)?.type
