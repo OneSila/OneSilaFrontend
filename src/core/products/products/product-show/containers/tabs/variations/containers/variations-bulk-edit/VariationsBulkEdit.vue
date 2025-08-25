@@ -91,9 +91,21 @@ const copyValue = (from: number, to: number, key: string) => {
   const source = variations.value[from]
   const target = variations.value[to]
   if (!target.propertyValues) target.propertyValues = {}
-  target.propertyValues[key] = JSON.parse(
-    JSON.stringify(source.propertyValues[key] || {})
-  )
+  const src = source.propertyValues?.[key]
+  if (
+    !src ||
+    (src.valueSelect == null &&
+      (!src.valueMultiSelect || !src.valueMultiSelect.length) &&
+      src.valueInt === undefined &&
+      src.valueFloat === undefined &&
+      src.valueBoolean === undefined &&
+      !src.translation?.valueText &&
+      !src.translation?.valueDescription)
+  ) {
+    delete target.propertyValues[key]
+  } else {
+    target.propertyValues[key] = JSON.parse(JSON.stringify(src))
+  }
 }
 
 const startDragFill = (row: number, col: string) => {
@@ -640,13 +652,23 @@ const ensureProp = (index: number, key: string) => {
 }
 
 const updateSelectValue = (index: number, key: string, value: any) => {
+  const item = variations.value[index]
+  if (!value) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
   const prop = ensureProp(index, key)
-  prop.valueSelect = value ? { id: value } : null
+  prop.valueSelect = { id: value }
 }
 
 const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
+  const item = variations.value[index]
+  if (!value || !value.length) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
   const prop = ensureProp(index, key)
-  prop.valueMultiSelect = value ? value.map((id) => ({ id })) : []
+  prop.valueMultiSelect = value.map((id) => ({ id }))
 }
 
 const updateNumberValue = (
