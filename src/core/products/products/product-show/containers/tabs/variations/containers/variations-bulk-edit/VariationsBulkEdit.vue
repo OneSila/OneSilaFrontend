@@ -604,24 +604,33 @@ const save = async () => {
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   clearHistory()
-  if (createdCount)
-    Toast.success(
+  const messages: any[] = []
+
+  if (createdCount) {
+    messages.push(
       t('products.products.alert.toast.createdProductProperties', {
         count: createdCount,
       })
     )
-  if (updatedCount)
-    Toast.success(
+  }
+  if (updatedCount) {
+    messages.push(
       t('products.products.alert.toast.updatedProductProperties', {
         count: updatedCount,
       })
     )
-  if (deletedCount)
-    Toast.success(
+  }
+  if (deletedCount) {
+    messages.push(
       t('products.products.alert.toast.deletedProductProperties', {
         count: deletedCount,
       })
     )
+  }
+
+  if (messages.length) {
+    Toast.success(messages.join('<br>'))
+  }
 }
 
 defineExpose({ save, hasChanges })
