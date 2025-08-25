@@ -261,6 +261,37 @@ const saveModal = () => {
   cancelModal()
 }
 
+const ensureProp = (index: number, key: string) => {
+  const item = variations.value[index]
+  if (!item.propertyValues[key]) item.propertyValues[key] = {}
+  return item.propertyValues[key]
+}
+
+const updateSelectValue = (index: number, key: string, value: any) => {
+  const prop = ensureProp(index, key)
+  prop.valueSelect = value ? { id: value } : null
+}
+
+const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
+  const prop = ensureProp(index, key)
+  prop.valueMultiSelect = value ? value.map((id) => ({ id })) : []
+}
+
+const updateNumberValue = (
+  index: number,
+  key: string,
+  field: 'valueInt' | 'valueFloat',
+  value: any
+) => {
+  const prop = ensureProp(index, key)
+  prop[field] = value
+}
+
+const updateBooleanValue = (index: number, key: string, value: boolean) => {
+  const prop = ensureProp(index, key)
+  prop.valueBoolean = value
+}
+
 const MIN_COLUMN_WIDTH = 100
 const startResize = (e: MouseEvent, key: string) => {
   const startX = e.pageX
@@ -356,23 +387,27 @@ const startResize = (e: MouseEvent, key: string) => {
                 v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
                 :field="selectFields[col.key]"
                 :model-value="item.propertyValues[col.key]?.valueSelect?.id"
+                @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
               />
               <FieldQuery
                 v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
                 :field="selectFields[col.key]"
                 :model-value="item.propertyValues[col.key]?.valueMultiSelect?.map((v) => v.id)"
+                @update:modelValue="(value) => updateMultiSelectValue(index, col.key, value)"
               />
               <TextInput
                 v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
                 class="w-full"
                 :model-value="item.propertyValues[col.key]?.valueInt"
                 number
+                @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueInt', value)"
               />
               <TextInput
                 v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
                 class="w-full"
                 :model-value="item.propertyValues[col.key]?.valueFloat"
                 float
+                @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueFloat', value)"
               />
               <div
                 v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
@@ -415,6 +450,7 @@ const startResize = (e: MouseEvent, key: string) => {
               <Toggle
                 v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
                 :model-value="item.propertyValues[col.key]?.valueBoolean || false"
+                @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
               />
               <div
                 v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
