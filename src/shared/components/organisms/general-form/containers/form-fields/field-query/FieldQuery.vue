@@ -165,7 +165,12 @@ function processAndCleanData(rawData: any) {
 
   cleanedData.value = [...newData, ...preservedItems];
 
-  if (!props.field.optional && cleanedData.value.length === 1 && (selectedValue.value === undefined || selectedValue.value === null)) {
+  if (
+    props.field.autocompleteIfOneResult !== false &&
+    !props.field.optional &&
+    cleanedData.value.length === 1 &&
+    (selectedValue.value === undefined || selectedValue.value === null)
+  ) {
     if (props.field.multiple) {
       updateValue([cleanedData.value[0][props.field.valueBy]]);
     } else {
