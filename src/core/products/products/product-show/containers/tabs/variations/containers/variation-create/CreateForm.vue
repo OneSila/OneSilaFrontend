@@ -84,8 +84,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
   </Flex>
   <Flex v-else gap="2">
     <FlexCell grow>
-      <Selector v-if="variations.length > 0"
-                v-model="form.variation"
+      <Selector v-model="form.variation"
                 :options="variations"
                 label-by="name"
                 value-by="id"
@@ -93,7 +92,7 @@ watch(() => props.variationIds, fetchData, { deep: true });
                 :removable="false"
                 :placeholder="t('shared.placeholders.product')"
                 filterable
-                class="mr-2 w-full"
+                class="min-w-96"
                 @searched="handleInput" />
     </FlexCell>
     <FlexCell v-if="product.type !== ProductType.Configurable">
