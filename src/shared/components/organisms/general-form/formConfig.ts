@@ -166,6 +166,8 @@ export interface QueryFormField extends BaseFormField {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+  autocompleteIfOneResult?: boolean;
+  isLiveUpdate?: boolean;
   createOnFlyConfig?: CreateOnTheFly;
   setDefaultKey?: string;
   defaultExpectedValue?: any; // if we have a default key but we don't give the value the default will be true

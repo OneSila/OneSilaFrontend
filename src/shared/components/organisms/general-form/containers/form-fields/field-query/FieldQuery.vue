@@ -25,7 +25,7 @@ const loading = ref(true);
 const rawDataRef: Ref<any> = ref([]);
 const cleanedData: Ref<any[]> = ref([]);
 const selectedValue = ref(props.modelValue);
-const isLiveUpdate = ref(true); // in order to be live updates this always have to be true
+const isLiveUpdate = ref(props.field.isLiveUpdate ?? true);
 
 
 const dropdownPosition = props.field.dropdownPosition || 'top';
@@ -38,6 +38,9 @@ const limit = props.field.limit || undefined;
 watch(() => props.modelValue, (value) => {
   if (value !== selectedValue.value) {
     selectedValue.value = value
+    if (value != null && selectedValue.value != null) {
+      ensureSelectedValuesArePresent();
+    }
   }
 }, { deep: true });
 
@@ -162,7 +165,12 @@ function processAndCleanData(rawData: any) {
 
   cleanedData.value = [...newData, ...preservedItems];
 
-  if (!props.field.optional && cleanedData.value.length === 1 && (selectedValue.value === undefined || selectedValue.value === null)) {
+  if (
+    props.field.autocompleteIfOneResult !== false &&
+    !props.field.optional &&
+    cleanedData.value.length === 1 &&
+    (selectedValue.value === undefined || selectedValue.value === null)
+  ) {
     if (props.field.multiple) {
       updateValue([cleanedData.value[0][props.field.valueBy]]);
     } else {

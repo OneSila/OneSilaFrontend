@@ -62,7 +62,8 @@ onMounted(fetchViews);
 
 watch(views, (newViews) => {
   if (!selectedViewId.value && newViews.length) {
-    selectedViewId.value = newViews[0].id;
+    const defaultView = newViews.find((v: any) => v.isDefault) || newViews[0];
+    selectedViewId.value = defaultView.id;
   }
 });
 

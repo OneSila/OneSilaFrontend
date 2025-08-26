@@ -636,6 +636,18 @@
         "dragAndDrop": "Versleep de items, of klik op ➕ om items toe te voegen",
         "noVariationsLeft": "Er zijn geen producten meer om toe te voegen"
       },
+      "alert": {
+        "toast": {
+          "copied": "Gekopieerd",
+          "pasted": "Geplakt",
+          "pasteDifferentColumn": "Kan niet plakken naar een andere kolom",
+          "undo": "Laatste wijziging ongedaan gemaakt",
+          "redo": "Laatste wijziging opnieuw toegepast",
+          "createdProductProperties": "{count} producteigenschappen aangemaakt.",
+          "updatedProductProperties": "{count} producteigenschappen bijgewerkt.",
+          "deletedProductProperties": "{count} producteigenschappen verwijderd."
+        }
+      },
       "tabs": {
         "content": "Inhoud",
         "variations": "Variaties",
@@ -855,6 +867,10 @@
       },
       "show": {
         "title": "Product"
+      },
+      "bulkEditModal": {
+        "textTitle": "Waarde bewerken",
+        "descriptionTitle": "Beschrijving bewerken"
       },
       "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }

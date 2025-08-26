@@ -22,7 +22,10 @@ const groupedViews = computed(() => {
     if (!groups[scId]) groups[scId] = [];
     groups[scId].push(view);
   });
-  return Object.entries(groups).map(([salesChannelId, views]) => ({ salesChannelId, views }));
+  return Object.entries(groups).map(([salesChannelId, views]) => ({
+    salesChannelId,
+    views: views.sort((a, b) => Number(b.isDefault) - Number(a.isDefault)),
+  }));
 });
 </script>
 
