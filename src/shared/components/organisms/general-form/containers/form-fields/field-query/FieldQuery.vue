@@ -25,7 +25,7 @@ const loading = ref(true);
 const rawDataRef: Ref<any> = ref([]);
 const cleanedData: Ref<any[]> = ref([]);
 const selectedValue = ref(props.modelValue);
-const isLiveUpdate = ref(true); // in order to be live updates this always have to be true
+const isLiveUpdate = ref(props.field.isLiveUpdate ?? true);
 
 
 const dropdownPosition = props.field.dropdownPosition || 'top';

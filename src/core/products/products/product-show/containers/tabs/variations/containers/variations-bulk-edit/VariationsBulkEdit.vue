@@ -377,6 +377,7 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
         multiple: p.type === PropertyTypes.MULTISELECT,
         removable: true,
+        isLiveUpdate: false,
       }
     }
   })
