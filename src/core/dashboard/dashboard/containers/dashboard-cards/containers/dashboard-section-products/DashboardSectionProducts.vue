@@ -7,15 +7,12 @@ import {Card} from "../../../../../../../shared/components/atoms/card";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import { useI18n } from 'vue-i18n';
 import { productsDashboardCardsQuery } from "../../../../../../../shared/api/queries/dashboardCards.js"
-import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
 
 const { t } = useI18n();
 
 const showCompletedProductsCards = ref(false);
 const allCardsCompleted = ref(true);
-const finshFetch = ref(false);
-const loading = ref(false);
 
 const productErrors = ref([
   // High importance errors
@@ -41,7 +38,6 @@ const productErrors = ref([
 ]);
 
 async function fetchErrorCounts() {
-  loading.value = true
   for (const error of productErrors.value) {
     try {
       const { data } = await apolloClient.query({
@@ -68,18 +64,16 @@ async function fetchErrorCounts() {
     }
   }
 
-  loading.value = false;
 }
 
 onMounted(async () =>  {
   await fetchErrorCounts();
-  finshFetch.value = true;
 });
 
 </script>
 
 <template>
-  <Card v-if="!loading" class="py-8">
+  <Card class="py-8">
       <Flex vertical class="py-6 gap-2">
         <FlexCell>
           <Flex between>
@@ -116,29 +110,28 @@ onMounted(async () =>  {
       </Flex>
 
       <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-          <DashboardCard
+          <Transition
             v-for="err in productErrors"
             :key="err.errorCode"
-            :counter="err.counter"
-            :title="t(`dashboard.cards.products.inspector.${err.errorCode}.title`)"
-            :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
-            :hide-on-complete="!showCompletedProductsCards"
-            :loading="err.loading"
-            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
-            :color="err.color"
-            :icon="err.icon"
-          />
+            enter-active-class="transition-all duration-200"
+            enter-from-class="opacity-0 blur-sm"
+            enter-to-class="opacity-100 blur-0"
+          >
+            <DashboardCard
+              v-if="!err.loading"
+              :counter="err.counter"
+              :title="t(`dashboard.cards.products.inspector.${err.errorCode}.title`)"
+              :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
+              :hide-on-complete="!showCompletedProductsCards"
+              :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
+              :color="err.color"
+              :icon="err.icon"
+            />
+          </Transition>
       </div>
       <p v-if="!showCompletedProductsCards && allCardsCompleted" class="text-lg text-green-600">
         {{ t('dashboard.cards.products.noIssuesMessage') }}
       </p>
   </Card>
-    <template v-else>
-      <Card v-if="!finshFetch">
-        <div class="flex justify-center items-center h-64">
-          <LocalLoader loading />
-        </div>
-     </Card>
-    </template>
 
 </template>
