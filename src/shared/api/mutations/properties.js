@@ -228,6 +228,14 @@ export const bulkCreateProductPropertiesMutation = gql`
   }
 `;
 
+export const bulkUpdateProductPropertiesMutation = gql`
+  mutation bulkUpdateProductProperties($data: [BulkProductPropertyPartialInput!]!) {
+    bulkUpdateProductProperties(productProperties: $data) {
+      id
+    }
+  }
+`;
+
 export const updateProductPropertyMutation = gql`
   mutation updateProductProperty($data: ProductPropertyPartialInput!) {
     updateProductProperty(data: $data) {
@@ -253,8 +261,8 @@ export const deleteProductPropertyMutation = gql`
 `;
 
 export const deleteProductPropertiesMutation = gql`
-  mutation deleteProductProperties($ids: [GlobalID!]!) {
-    deleteProductProperties(data: {ids: $ids}) {
+    mutation deleteProductProperties($data: [NodeInput!]!) {
+    deleteProductProperties(data: $data) {
       id
     }
   }

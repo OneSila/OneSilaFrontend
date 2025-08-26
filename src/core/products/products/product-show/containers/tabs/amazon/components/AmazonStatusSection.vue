@@ -56,6 +56,7 @@ const formatDate = (dateString?: string | null) => {
           @done="() => emit('resync-success')"
           @error="(e) => emit('error', e)"
         >
+
           <template #default="{ mutate, loading }">
             <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
               {{ t('shared.button.resync') }}
