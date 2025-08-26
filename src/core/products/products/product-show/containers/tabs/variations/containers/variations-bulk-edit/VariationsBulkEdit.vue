@@ -949,7 +949,7 @@ const startResize = (e: MouseEvent, key: string) => {
                   name="circle-dot"
                   :class="[getIconColor(col.requireType), 'mr-1']"
                 />
-                <span class="block truncate" :title="col.label">{{ col.label }}</span>
+                <span class="block truncate" :title="col.label"><strong>{{ col.label }}</strong></span>
                 <span
                   class="resizer select-none"
                   @mousedown="(e) => startResize(e, col.key)"
@@ -1045,39 +1045,45 @@ const startResize = (e: MouseEvent, key: string) => {
                   class="relative cursor-pointer"
                   @dblclick="openTextModal(index, col.key)"
                 >
-                  <div class="border border-gray-300 p-1 h-8 overflow-hidden">
-                    {{
-                      shortenText(
-                        item.propertyValues[col.key]?.translation?.valueText || '',
-                        32
-                      )
-                    }}
+                  <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
+                    <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                      {{
+                        shortenText(
+                          item.propertyValues[col.key]?.translation?.valueText || '',
+                          16
+                        )
+                      }}
+                    </div>
+                    <Icon
+                      name="maximize"
+                      class="text-gray-400 cursor-pointer flex-shrink-0"
+                      @click.stop="openTextModal(index, col.key)"
+                    />
                   </div>
-                  <Icon
-                    name="maximize"
-                    class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                    @click.stop="openTextModal(index, col.key)"
-                  />
                 </div>
+
                 <div
                   v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
                   class="relative cursor-pointer"
                   @dblclick="openDescriptionModal(index, col.key)"
                 >
-                  <div class="border border-gray-300 p-1 h-16 overflow-hidden">
-                    {{
-                      shortenText(
-                        item.propertyValues[col.key]?.translation?.valueDescription || '',
-                        32
-                      )
-                    }}
+                  <div class="border border-gray-300 p-1 h-16 flex justify-between">
+                    <div class="overflow-hidden break-words">
+                      {{
+                        shortenText(
+                          item.propertyValues[col.key]?.translation?.valueDescription || '',
+                          32
+                        )
+                      }}
+                    </div>
+                    <Icon
+                      name="maximize"
+                      class="text-gray-400 cursor-pointer flex-shrink-0 ml-1"
+                      @click.stop="openDescriptionModal(index, col.key)"
+                    />
                   </div>
-                  <Icon
-                    name="maximize"
-                    class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                    @click.stop="openDescriptionModal(index, col.key)"
-                  />
                 </div>
+
                 <Toggle
                   v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
                   :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
