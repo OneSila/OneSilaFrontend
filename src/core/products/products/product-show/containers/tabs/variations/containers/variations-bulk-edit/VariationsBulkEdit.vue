@@ -806,17 +806,18 @@ const startResize = (e: MouseEvent, key: string) => {
   document.addEventListener('mousemove', onMouseMove)
   document.addEventListener('mouseup', onMouseUp)
 }
+
 </script>
 
 <template>
-  <div class="">
+  <div class="relative w-full min-w-0">
     <div
       v-if="loading"
       class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75"
     >
       <LocalLoader :loading="loading" />
     </div>
-    <Flex between middle gap="2" class="mb-2">
+    <Flex between middle gap="2" class="mb-4">
       <FlexCell grow></FlexCell>
       <FlexCell class="flex">
         <Button
@@ -858,173 +859,174 @@ const startResize = (e: MouseEvent, key: string) => {
         </Button>
       </FlexCell>
     </Flex>
-
-    <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
-      <thead class="bg-gray-100 sticky top-0">
-        <tr>
-          <th
-            v-for="col in columns"
-            :key="col.key"
-            class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
-            :style="{ width: columnWidths[col.key] + 'px' }"
+    <div class="overflow-x-auto w-full max-w-full">
+      <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
+        <thead class="bg-gray-100 sticky top-0">
+          <tr>
+            <th
+              v-for="col in columns"
+              :key="col.key"
+              class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
+              :style="{ width: columnWidths[col.key] + 'px' }"
+            >
+              <div class="flex items-center h-full">
+                <Icon
+                  v-if="col.requireType"
+                  name="circle-dot"
+                  :class="[getIconColor(col.requireType), 'mr-1']"
+                />
+                <span class="block truncate" :title="col.label">{{ col.label }}</span>
+                <span
+                  class="resizer select-none"
+                  @mousedown="(e) => startResize(e, col.key)"
+                />
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(item, index) in variations"
+            :key="item.id"
+            class="border-t"
           >
-            <div class="flex items-center h-full">
-              <Icon
-                v-if="col.requireType"
-                name="circle-dot"
-                :class="[getIconColor(col.requireType), 'mr-1']"
-              />
-              <span class="block truncate" :title="col.label">{{ col.label }}</span>
-              <span
-                class="resizer select-none"
-                @mousedown="(e) => startResize(e, col.key)"
-              />
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(item, index) in variations"
-          :key="item.id"
-          class="border-t"
-        >
-          <td
-            v-for="col in columns"
-            :key="col.key"
-            class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
-            :class="{ 'bg-blue-100': isInDragRange(index, col.key) }"
-            :style="{ width: columnWidths[col.key] + 'px' }"
-            :data-row="index"
-            :data-col="col.key"
-            @click="selectCell(index, col.key)"
-          >
-            <div
-              v-if="selectedCell.row === index && selectedCell.col === col.key"
-              class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
+            <td
+              v-for="col in columns"
+              :key="col.key"
+              class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
+              :class="{ 'bg-blue-100': isInDragRange(index, col.key) }"
+              :style="{ width: columnWidths[col.key] + 'px' }"
+              :data-row="index"
+              :data-col="col.key"
+              @click="selectCell(index, col.key)"
             >
               <div
-                v-if="!['name','sku','active'].includes(col.key)"
-                class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
-                @mousedown.stop="startDragFill(index, col.key)"
-              ></div>
-            </div>
-            <template v-if="col.key === 'name'">
-              <span class="block truncate" :title="item.variation.name">
-                {{ shortenText(item.variation.name, 32) }}
-              </span>
-            </template>
-            <template v-else-if="col.key === 'sku'">
-              <span class="block truncate" :title="item.variation.sku">
-                {{ item.variation.sku }}
-              </span>
-            </template>
-            <template v-else-if="col.key === 'active'">
-              <Icon
-                v-if="item.variation.active"
-                name="check-circle"
-                class="text-green-500"
-              />
-              <Icon
-                v-else
-                name="times-circle"
-                class="text-red-500"
-              />
-            </template>
-            <template v-else>
-              <FieldQuery
-                v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
-                :field="selectFields[col.key]"
-                :model-value="item.propertyValues[col.key]?.valueSelect?.id"
-                @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
-              />
-              <FieldQuery
-                v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
-                :field="selectFields[col.key]"
-                :model-value="item.propertyValues[col.key]?.valueMultiSelect?.map((v) => v.id)"
-                @update:modelValue="(value) => updateMultiSelectValue(index, col.key, value)"
-              />
-              <TextInput
-                v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
-                class="w-full"
-                :model-value="item.propertyValues[col.key]?.valueInt"
-                number
-                @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueInt', value)"
-              />
-              <TextInput
-                v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
-                class="w-full"
-                :model-value="item.propertyValues[col.key]?.valueFloat"
-                float
-                @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueFloat', value)"
-              />
-              <div
-                v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
-                class="relative cursor-pointer"
-                @dblclick="openTextModal(index, col.key)"
+                v-if="selectedCell.row === index && selectedCell.col === col.key"
+                class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
               >
-                <div class="border border-gray-300 p-1 h-8 overflow-hidden">
-                  {{
-                    shortenText(
-                      item.propertyValues[col.key]?.translation?.valueText || '',
-                      32
-                    )
-                  }}
-                </div>
+                <div
+                  v-if="!['name','sku','active'].includes(col.key)"
+                  class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
+                  @mousedown.stop="startDragFill(index, col.key)"
+                ></div>
+              </div>
+              <template v-if="col.key === 'name'">
+                <span class="block truncate" :title="item.variation.name">
+                  {{ shortenText(item.variation.name, 32) }}
+                </span>
+              </template>
+              <template v-else-if="col.key === 'sku'">
+                <span class="block truncate" :title="item.variation.sku">
+                  {{ item.variation.sku }}
+                </span>
+              </template>
+              <template v-else-if="col.key === 'active'">
                 <Icon
-                  name="maximize"
-                  class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                  @click.stop="openTextModal(index, col.key)"
+                  v-if="item.variation.active"
+                  name="check-circle"
+                  class="text-green-500"
                 />
-              </div>
-              <div
-                v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
-                class="relative cursor-pointer"
-                @dblclick="openDescriptionModal(index, col.key)"
-              >
-                <div class="border border-gray-300 p-1 h-16 overflow-hidden">
-                  {{
-                    shortenText(
-                      item.propertyValues[col.key]?.translation?.valueDescription || '',
-                      32
-                    )
-                  }}
-                </div>
                 <Icon
-                  name="maximize"
-                  class="absolute top-1 right-1 text-gray-400 cursor-pointer"
-                  @click.stop="openDescriptionModal(index, col.key)"
+                  v-else
+                  name="times-circle"
+                  class="text-red-500"
                 />
-              </div>
-              <Toggle
-                v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
-                :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
-                @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
-              />
-              <div
-                v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
-                class="pointer-events-none"
-              >
-                <DateInput :model-value="item.propertyValues[col.key]?.valueDate" />
-              </div>
-              <div
-                v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
-                class="pointer-events-none"
-              >
-                <DateTimeInput :model-value="item.propertyValues[col.key]?.valueDatetime" />
-              </div>
-              <input
-                v-else
-                type="text"
-                class="w-full border p-1"
-                :value="item.propertyValues[col.key]?.valueInt || ''"
-                disabled
-              />
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              </template>
+              <template v-else>
+                <FieldQuery
+                  v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
+                  :field="selectFields[col.key]"
+                  :model-value="item.propertyValues[col.key]?.valueSelect?.id"
+                  @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
+                />
+                <FieldQuery
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
+                  :field="selectFields[col.key]"
+                  :model-value="item.propertyValues[col.key]?.valueMultiSelect?.map((v) => v.id)"
+                  @update:modelValue="(value) => updateMultiSelectValue(index, col.key, value)"
+                />
+                <TextInput
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
+                  class="w-full"
+                  :model-value="item.propertyValues[col.key]?.valueInt"
+                  number
+                  @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueInt', value)"
+                />
+                <TextInput
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
+                  class="w-full"
+                  :model-value="item.propertyValues[col.key]?.valueFloat"
+                  float
+                  @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueFloat', value)"
+                />
+                <div
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
+                  class="relative cursor-pointer"
+                  @dblclick="openTextModal(index, col.key)"
+                >
+                  <div class="border border-gray-300 p-1 h-8 overflow-hidden">
+                    {{
+                      shortenText(
+                        item.propertyValues[col.key]?.translation?.valueText || '',
+                        32
+                      )
+                    }}
+                  </div>
+                  <Icon
+                    name="maximize"
+                    class="absolute top-1 right-1 text-gray-400 cursor-pointer"
+                    @click.stop="openTextModal(index, col.key)"
+                  />
+                </div>
+                <div
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
+                  class="relative cursor-pointer"
+                  @dblclick="openDescriptionModal(index, col.key)"
+                >
+                  <div class="border border-gray-300 p-1 h-16 overflow-hidden">
+                    {{
+                      shortenText(
+                        item.propertyValues[col.key]?.translation?.valueDescription || '',
+                        32
+                      )
+                    }}
+                  </div>
+                  <Icon
+                    name="maximize"
+                    class="absolute top-1 right-1 text-gray-400 cursor-pointer"
+                    @click.stop="openDescriptionModal(index, col.key)"
+                  />
+                </div>
+                <Toggle
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
+                  :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
+                  @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
+                />
+                <div
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
+                  class="pointer-events-none"
+                >
+                  <DateInput :model-value="item.propertyValues[col.key]?.valueDate" />
+                </div>
+                <div
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
+                  class="pointer-events-none"
+                >
+                  <DateTimeInput :model-value="item.propertyValues[col.key]?.valueDatetime" />
+                </div>
+                <input
+                  v-else
+                  type="text"
+                  class="w-full border p-1"
+                  :value="item.propertyValues[col.key]?.valueInt || ''"
+                  disabled
+                />
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="py-2 px-2 flex items-center space-x-2">
     <Pagination
