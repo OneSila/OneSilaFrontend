@@ -24,6 +24,7 @@ import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, p
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
 import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
 import { Toast } from "../../../../../../../../../shared/modules/toast";
+import { format } from 'date-fns'
 
 interface PropertyInfo {
   id: string
@@ -112,6 +113,8 @@ const copyValue = (from: number, to: number, key: string) => {
       src.valueInt === undefined &&
       src.valueFloat === undefined &&
       src.valueBoolean === undefined &&
+      src.valueDate == null &&
+      src.valueDatetime == null &&
       !src.translation?.valueText &&
       !src.translation?.valueDescription)
   ) {
@@ -457,6 +460,8 @@ const isPropEmpty = (prop: any, type: string) => {
   if (prop.valueInt !== undefined) return false
   if (prop.valueFloat !== undefined) return false
   if (prop.valueBoolean !== undefined) return false
+  if (prop.valueDate != null) return false
+  if (prop.valueDatetime != null) return false
   if (type === PropertyTypes.TEXT && prop.translation?.valueText) return false
   if (type === PropertyTypes.DESCRIPTION && prop.translation?.valueDescription) return false
   return true
@@ -501,6 +506,15 @@ const computeChanges = () => {
           item.productProperty.valueFloat = current.valueFloat
         if (current.valueBoolean !== undefined)
           item.productProperty.valueBoolean = current.valueBoolean
+        if (current.valueDate != null)
+          item.productProperty.valueDate = format(
+            new Date(current.valueDate),
+            'yyyy-MM-dd'
+          )
+        if (current.valueDatetime != null)
+          item.productProperty.valueDatetime = new Date(
+            current.valueDatetime
+          ).toISOString()
         if (type === PropertyTypes.TEXT && current.translation?.valueText) {
           item.languageCode = current.translation.language
           item.translatedValue = current.translation.valueText
@@ -541,6 +555,16 @@ const computeChanges = () => {
           diff.valueFloat = current.valueFloat
         if ((current.valueBoolean ?? null) !== (orig.valueBoolean ?? null))
           diff.valueBoolean = current.valueBoolean
+        const curDate = current.valueDate
+          ? format(new Date(current.valueDate), 'yyyy-MM-dd')
+          : null
+        const origDate = orig.valueDate || null
+        if (curDate !== origDate) diff.valueDate = curDate
+        const curDatetime = current.valueDatetime
+          ? new Date(current.valueDatetime).toISOString()
+          : null
+        const origDatetime = orig.valueDatetime || null
+        if (curDatetime !== origDatetime) diff.valueDatetime = curDatetime
         if (type === PropertyTypes.TEXT) {
           const curText = current.translation?.valueText || ''
           const origText = orig.translation?.valueText || ''
@@ -801,6 +825,26 @@ const updateBooleanValue = (
   prop.valueBoolean = value
 }
 
+const updateDateValue = (index: number, key: string, value: any) => {
+  const item = variations.value[index]
+  if (!value) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
+  const prop = ensureProp(index, key)
+  prop.valueDate = value
+}
+
+const updateDateTimeValue = (index: number, key: string, value: any) => {
+  const item = variations.value[index]
+  if (!value) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
+  const prop = ensureProp(index, key)
+  prop.valueDatetime = value
+}
+
 const MIN_COLUMN_WIDTH = 100
 const startResize = (e: MouseEvent, key: string) => {
   const startX = e.pageX
@@ -1015,18 +1059,16 @@ const startResize = (e: MouseEvent, key: string) => {
                   :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
                   @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
                 />
-                <div
+                <DateInput
                   v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
-                  class="pointer-events-none"
-                >
-                  <DateInput :model-value="item.propertyValues[col.key]?.valueDate" />
-                </div>
-                <div
+                  :model-value="item.propertyValues[col.key]?.valueDate ?? null"
+                  @update:modelValue="(value) => updateDateValue(index, col.key, value)"
+                />
+                <DateTimeInput
                   v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
-                  class="pointer-events-none"
-                >
-                  <DateTimeInput :model-value="item.propertyValues[col.key]?.valueDatetime" />
-                </div>
+                  :model-value="item.propertyValues[col.key]?.valueDatetime ?? null"
+                  @update:modelValue="(value) => updateDateTimeValue(index, col.key, value)"
+                />
                 <input
                   v-else
                   type="text"
