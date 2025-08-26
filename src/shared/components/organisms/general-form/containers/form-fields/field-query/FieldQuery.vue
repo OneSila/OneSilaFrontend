@@ -38,6 +38,9 @@ const limit = props.field.limit || undefined;
 watch(() => props.modelValue, (value) => {
   if (value !== selectedValue.value) {
     selectedValue.value = value
+    if (value != null && selectedValue.value != null) {
+      ensureSelectedValuesArePresent();
+    }
   }
 }, { deep: true });
 
