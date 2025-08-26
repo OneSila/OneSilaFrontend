@@ -40,8 +40,8 @@ const { t } = useI18n()
 const language = ref<string | null>(null)
 
 const baseColumns: { key: string; label: string; requireType?: string }[] = [
-  { key: 'name', label: t('shared.labels.name') },
   { key: 'sku', label: t('shared.labels.sku') },
+  { key: 'name', label: t('shared.labels.name') },
   { key: 'active', label: t('shared.labels.active') },
 ]
 
@@ -941,7 +941,7 @@ const startResize = (e: MouseEvent, key: string) => {
               :key="col.key"
               class="px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
               :class="[col.key === 'active' ? 'text-center' : 'text-left', col.key === 'sku' ? 'sticky z-10 bg-gray-100' : '']"
-              :style="[{ width: columnWidths[col.key] + 'px' }, col.key === 'sku' ? { left: columnWidths['name'] + 'px' } : {}]"
+              :style="[{ width: columnWidths[col.key] + 'px' }, col.key === 'sku' ? { left: 0 } : {}]"
             >
               <div class="flex items-center h-full">
                 <Icon
@@ -975,7 +975,7 @@ const startResize = (e: MouseEvent, key: string) => {
               ]"
               :style="[
                 { width: columnWidths[col.key] + 'px' },
-                col.key === 'sku' ? { left: columnWidths['name'] + 'px' } : {}
+                col.key === 'sku' ? { left: 0 } : {}
               ]"
               :data-row="index"
               :data-col="col.key"
