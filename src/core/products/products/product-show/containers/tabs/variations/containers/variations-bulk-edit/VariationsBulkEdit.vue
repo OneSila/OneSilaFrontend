@@ -185,6 +185,19 @@ const handleKeydown = (e: KeyboardEvent) => {
     target.isContentEditable
   )
     return
+  if (e.ctrlKey) {
+    const key = e.key.toLowerCase()
+    if (key === 'z') {
+      undo()
+      e.preventDefault()
+      return
+    }
+    if (key === 'x') {
+      redo()
+      e.preventDefault()
+      return
+    }
+  }
   const { row, col } = selectedCell.value
   if (row === null || col === null) return
 
