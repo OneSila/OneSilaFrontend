@@ -807,32 +807,6 @@ const startResize = (e: MouseEvent, key: string) => {
   document.addEventListener('mouseup', onMouseUp)
 }
 
-const TABLE_WIDTH_RATIO = 0.65
-const maxTableWidth = ref('')
-const fullWidth = ref(window.innerWidth)
-
-const updateFullWidth = () => {
-  fullWidth.value = window.innerWidth
-}
-
-const updateMaxWidth = () => {
-  maxTableWidth.value = `${fullWidth.value * TABLE_WIDTH_RATIO}px`
-}
-
-let bodyObserver: ResizeObserver | null = null
-onMounted(() => {
-  updateMaxWidth()
-  window.addEventListener('resize', updateFullWidth)
-  bodyObserver = new ResizeObserver(() => updateFullWidth())
-  bodyObserver.observe(document.body)
-})
-
-watch(fullWidth, updateMaxWidth)
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateFullWidth)
-  bodyObserver?.disconnect()
-})
 </script>
 
 <template>
@@ -885,7 +859,7 @@ onBeforeUnmount(() => {
         </Button>
       </FlexCell>
     </Flex>
-    <div class="overflow-x-auto w-full" :style="{ maxWidth: maxTableWidth }">
+    <div class="overflow-x-auto w-full max-w-full">
       <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
         <thead class="bg-gray-100 sticky top-0">
           <tr>
