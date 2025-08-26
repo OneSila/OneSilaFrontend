@@ -158,7 +158,7 @@ const showAlert = computed(
           v-model="selectedTheme"
           label-by="name"
           value-by="id"
-          :filterable="false"
+          :filterable="true"
           :placeholder="t('shared.placeholders.select')"
         />
       </FlexCell>

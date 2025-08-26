@@ -25,6 +25,7 @@ import { translationLanguagesQuery } from '../../../../../../../../../shared/api
 import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { format } from 'date-fns'
+import {selectValueOnTheFlyConfig} from "../../../../../../../../properties/property-select-values/configs";
 
 interface PropertyInfo {
   id: string
@@ -378,6 +379,7 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         multiple: p.type === PropertyTypes.MULTISELECT,
         removable: true,
         autocompleteIfOneResult: false,
+        createOnFlyConfig: selectValueOnTheFlyConfig(t, p.id)
       }
     }
   })
