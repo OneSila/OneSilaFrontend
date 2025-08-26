@@ -810,14 +810,14 @@ const startResize = (e: MouseEvent, key: string) => {
 </script>
 
 <template>
-  <div class="relative w-full overflow-x-hidden">
+  <div class="relative w-full min-w-0">
     <div
       v-if="loading"
       class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75"
     >
       <LocalLoader :loading="loading" />
     </div>
-    <Flex between middle gap="2" class="mb-2">
+    <Flex between middle gap="2" class="mb-4">
       <FlexCell grow></FlexCell>
       <FlexCell class="flex">
         <Button

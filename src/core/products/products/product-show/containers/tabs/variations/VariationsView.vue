@@ -93,7 +93,7 @@ const getQueryKey = () => {
           </div>
         </div>
 
-        <div class="flex-1 pl-4">
+        <div class="flex-1 min-w-0 pl-4">
           <template v-if="mode === 'list'">
             <VariationsList
               :product="product"
