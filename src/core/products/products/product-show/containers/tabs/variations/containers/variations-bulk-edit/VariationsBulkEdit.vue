@@ -50,6 +50,7 @@ const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
 const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
+const tableWrapper = ref<HTMLElement | null>(null)
 const clipboard = ref<{ col: string; value: any } | null>(null)
 const history = ref<any[]>([])
 const redoStack = ref<any[]>([])
@@ -292,10 +293,25 @@ watch(
   columns,
   (cols) => {
     cols.forEach((col) => {
-      if (!columnWidths[col.key]) columnWidths[col.key] = 150
+      if (!columnWidths[col.key]) columnWidths[col.key] = col.key === 'active' ? 60 : 150
     })
   },
   { immediate: true }
+)
+
+watch(
+  selectedCell,
+  () => {
+    nextTick(() => {
+      if (selectedCell.value.row !== null && selectedCell.value.col) {
+        const cell = tableWrapper.value?.querySelector(
+          `td[data-row="${selectedCell.value.row}"][data-col="${selectedCell.value.col}"]`
+        ) as HTMLElement | null
+        cell?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      }
+    })
+  },
+  { deep: true }
 )
 
 const isAlias = computed(() => props.product.type === ProductType.Alias)
@@ -916,15 +932,16 @@ const startResize = (e: MouseEvent, key: string) => {
         </Button>
       </FlexCell>
     </Flex>
-    <div class="overflow-x-auto w-full max-w-full">
+    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full">
       <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
         <thead class="bg-gray-100 sticky top-0">
           <tr>
             <th
               v-for="col in columns"
               :key="col.key"
-              class="text-left px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
-              :style="{ width: columnWidths[col.key] + 'px' }"
+              class="px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
+              :class="[col.key === 'active' ? 'text-center' : 'text-left', col.key === 'sku' ? 'sticky z-10 bg-gray-100' : '']"
+              :style="[{ width: columnWidths[col.key] + 'px' }, col.key === 'sku' ? { left: columnWidths['name'] + 'px' } : {}]"
             >
               <div class="flex items-center h-full">
                 <Icon
@@ -951,8 +968,15 @@ const startResize = (e: MouseEvent, key: string) => {
               v-for="col in columns"
               :key="col.key"
               class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
-              :class="{ 'bg-blue-100': isInDragRange(index, col.key) }"
-              :style="{ width: columnWidths[col.key] + 'px' }"
+              :class="[
+                { 'bg-blue-100': isInDragRange(index, col.key) },
+                col.key === 'active' ? 'text-center px-2' : '',
+                col.key === 'sku' ? 'sticky z-10 bg-white' : ''
+              ]"
+              :style="[
+                { width: columnWidths[col.key] + 'px' },
+                col.key === 'sku' ? { left: columnWidths['name'] + 'px' } : {}
+              ]"
               :data-row="index"
               :data-col="col.key"
               @click="selectCell(index, col.key)"
