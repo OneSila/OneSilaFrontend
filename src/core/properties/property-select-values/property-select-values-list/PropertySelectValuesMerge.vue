@@ -3,6 +3,9 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '../../../../shared/components/atoms/button';
 import { Modal } from '../../../../shared/components/atoms/modal';
+import { Card } from '../../../../shared/components/atoms/card';
+import { Toggle } from '../../../../shared/components/atoms/toggle';
+import { Icon } from '../../../../shared/components/atoms/icon';
 import apolloClient from '../../../../../apollo-client';
 import { propertySelectValuesQuery, productPropertiesCountQuery } from '../../../../shared/api/queries/properties.js';
 import { mergePropertySelectValueMutation } from '../../../../shared/api/mutations/properties.js';
@@ -55,6 +58,10 @@ const fetchValues = async () => {
   }
 };
 
+const onToggle = (id: string, checked: boolean) => {
+  target.value = checked ? id : null;
+};
+
 const mergeValues = async () => {
   if (!target.value) return;
   const sources = values.value
@@ -76,30 +83,39 @@ const mergeValues = async () => {
 </script>
 
 <template>
-  <Button
+  <button
     type="button"
-    class="btn btn-secondary ltr:ml-3 rtl:mr-3"
+    class="inline-flex items-center rounded bg-gray-50 px-4 py-1 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 disabled:opacity-50"
     :disabled="selectedEntities.length <= 1"
     @click="openModal"
   >
+    <Icon name="code-merge" size="sm" class="mr-2 text-gray-600" />
     {{ t('properties.values.merge.button') }}
-  </Button>
+  </button>
 
   <Modal v-model="showModal" @closed="showModal = false">
-    <div class="p-4">
-      <h3 class="text-lg font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
-      <div v-for="val in values" :key="val.id" class="flex items-center mb-2">
-        <input type="radio" :value="val.id" v-model="target" class="mr-2" />
-        <span class="flex-1">{{ val.value }}</span>
-        <span class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: val.count }) }}</span>
+    <Card class="modal-content w-1/3">
+      <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
+      <p class="mb-4">{{ t('properties.values.merge.description') }}</p>
+      <div v-for="val in values" :key="val.id" class="flex items-center justify-between py-2">
+        <div>
+          <div>{{ val.value }}</div>
+          <div class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: val.count }) }}</div>
+        </div>
+        <Toggle
+          :model-value="target === val.id"
+          @update:model-value="onToggle(val.id, $event)"
+          :disabled="target !== null && target !== val.id"
+        />
       </div>
       <p class="text-sm text-red-600 mt-4">{{ t('properties.values.merge.warning') }}</p>
-      <div class="mt-4 text-right">
+      <div class="flex justify-end gap-4 mt-4">
+        <Button class="btn btn-outline-dark" @click="showModal = false">{{ t('shared.button.cancel') }}</Button>
         <Button type="button" class="btn btn-primary" @click="mergeValues">
           {{ t('properties.values.merge.confirm') }}
         </Button>
       </div>
-    </div>
+    </Card>
   </Modal>
 </template>
 

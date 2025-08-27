@@ -52,8 +52,17 @@ const clearSelection = () => {
          :fixed-filter-variables="{'isProductType': false }"
           >
       <template #bulkActions="{ selectedEntities }">
-        <AiBulkTranslator :type="'values'" :selected-entities="selectedEntities" @started="clearSelection" />
-        <PropertySelectValuesMerge :selected-entities="selectedEntities" @merged="clearSelection" />
+        <div class="flex items-center space-x-2">
+          <AiBulkTranslator
+            :type="'values'"
+            :selected-entities="selectedEntities"
+            @started="clearSelection"
+          />
+          <PropertySelectValuesMerge
+            :selected-entities="selectedEntities"
+            @merged="clearSelection"
+          />
+        </div>
       </template>
     </GeneralListing>
    </template>

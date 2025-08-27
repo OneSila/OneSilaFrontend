@@ -76,16 +76,16 @@ const onDataFetched = (data) => {
                    { path: { name: 'properties.values.show', params: { id: id } }, name: t('properties.values.show.title') }]" />
     </template>
 
-    <template v-slot:buttons>
-      <PropertySelectValueMerge :id="id" :property-id="propertyId" />
-    </template>
-
    <template v-slot:content>
       <Card>
         <Loader :loading="loading" />
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched">
+              <template #buttons>
+                <PropertySelectValueMerge :id="id" :property-id="propertyId" />
+              </template>
+            </GeneralShow>
           </template>
           <template v-slot:translations>
             <div class="w-full md:w-1/2 px-2 box-border" v-for="(field, index) in translatableFields" :key="field.language">

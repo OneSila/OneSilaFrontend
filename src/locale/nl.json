@@ -1835,8 +1835,11 @@
       "merge": {
         "button": "Samenvoegen",
         "title": "Waardes samenvoegen",
+        "description": "Selecteer de waarde die behouden blijft. De andere geselecteerde waardes worden hierin samengevoegd en verwijderd.",
         "selectTarget": "Kies doelwaarde",
+        "selectSource": "Selecteer waarde om samen te voegen",
         "counter": "Gebruikt in {count} producten",
+        "current": "Huidige waarde gebruikt in {count} producten",
         "warning": "Andere waardes worden verwijderd.",
         "confirm": "Samenvoegen",
         "success": "Waardes succesvol samengevoegd.",
