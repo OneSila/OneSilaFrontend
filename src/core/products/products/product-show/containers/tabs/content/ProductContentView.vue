@@ -361,6 +361,7 @@ const shortDescriptionToolbarOptions = [
           :translation-id="translationId"
           :product-id="product.id"
           :language-code="currentLanguage"
+          :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @initial-bullet-points="previewBulletPoints = [...$event]"
         />
       </div>

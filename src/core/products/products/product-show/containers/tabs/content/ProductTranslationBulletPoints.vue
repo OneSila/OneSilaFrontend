@@ -21,7 +21,7 @@ import {BULLET_POINT_SEPARATOR} from '../../../../../../../shared/utils/constant
 
 const {t} = useI18n();
 
-const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null }>();
+const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null; salesChannelId?: string }>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
   (e: 'initial-bullet-points', value: any[]): void;
@@ -180,6 +180,7 @@ defineExpose({save, fetchPoints});
                 toTranslate=""
                 fromLanguageCode="en"
                 :toLanguageCode="props.languageCode"
+                :sales-channel-id="props.salesChannelId"
                 @translated="handleTranslatedBulletPoints"
             />
           </FlexCell>
