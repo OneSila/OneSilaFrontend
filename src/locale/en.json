@@ -2205,6 +2205,16 @@
           "bulkDeleteSuccess": "Property values deleted successfully.",
           "bulkDeleteError": "Failed to delete property values. Please try again."
         }
+      },
+      "merge": {
+        "button": "Merge",
+        "title": "Merge Values",
+        "selectTarget": "Select target value",
+        "counter": "Used in {count} products",
+        "warning": "All other values will be deleted.",
+        "confirm": "Merge",
+        "success": "Property values merged successfully.",
+        "error": "Failed to merge property values."
       }
     },
     "rule": {

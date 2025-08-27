@@ -1831,6 +1831,16 @@
       },
       "placeholders": {
         "value": "Voeg Waarde toe"
+      },
+      "merge": {
+        "button": "Samenvoegen",
+        "title": "Waardes samenvoegen",
+        "selectTarget": "Kies doelwaarde",
+        "counter": "Gebruikt in {count} producten",
+        "warning": "Andere waardes worden verwijderd.",
+        "confirm": "Samenvoegen",
+        "success": "Waardes succesvol samengevoegd.",
+        "error": "Samenvoegen mislukt."
       }
     },
     "rule": {
