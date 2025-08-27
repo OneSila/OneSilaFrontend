@@ -60,11 +60,14 @@ const isFilled = (val: ProductPropertyValue) => {
   return false;
 };
 
+const productTypeValue = computed(() => values.value.find(v => v.property.isProductType));
+
 const sortedValues = computed(() => {
   const req: ProductPropertyValue[] = [];
   const opt: ProductPropertyValue[] = [];
   const filled: ProductPropertyValue[] = [];
   for (const v of values.value) {
+    if (v.property.isProductType) continue;
     if (isFilled(v)) {
       filled.push(v);
     } else if (requiredTypes.includes(v.property.requireType as ConfigTypes)) {
@@ -499,6 +502,19 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
+    <div v-if="productTypeValue">
+        <ValueInput
+          v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(productTypeValue.property.type)"
+          :product-id="product.id"
+          :rule-id="ruleId"
+          :value="productTypeValue"
+          @refetch="fetchRequiredAttributesValues"
+          @update-id="handleUpdatedId"
+          @update-value="handleValueUpdate"
+          @remove="handleRemove"
+        />
+        <hr class="my-4" />
+    </div>
     <div v-for="(val, index) in paginatedValues" :key="val.property.id">
         <ValueInput
           v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
