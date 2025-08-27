@@ -29,6 +29,7 @@ const isProductType = ref(false);
 const loading = ref(true);
 const translatableFields = ref<TranslatableField[]>([]);
 const propertyId = ref('');
+const currentLabel = ref('');
 
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
@@ -43,7 +44,8 @@ const onDataFetched = (data) => {
   const propId = data[showConfig.subscriptionKey].property.id;
   propertyId.value = propId;
   isProductType.value = data[showConfig.subscriptionKey].property.isProductType;
-    translatableFields.value = data[showConfig.subscriptionKey].propertyselectvaluetranslationSet;
+  translatableFields.value = data[showConfig.subscriptionKey].propertyselectvaluetranslationSet;
+  currentLabel.value = data[showConfig.subscriptionKey].value;
 
 
   if (!isProductType.value) {
@@ -83,7 +85,7 @@ const onDataFetched = (data) => {
           <template v-slot:general>
             <GeneralShow :config="showConfig" @data-fetched="onDataFetched">
               <template #buttons>
-                <PropertySelectValueMerge :id="id" :property-id="propertyId" />
+                <PropertySelectValueMerge :id="id" :property-id="propertyId" :current-label="currentLabel" />
               </template>
             </GeneralShow>
           </template>

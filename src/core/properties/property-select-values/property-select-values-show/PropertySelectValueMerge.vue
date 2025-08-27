@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '../../../../shared/components/atoms/button';
 import { Modal } from '../../../../shared/components/atoms/modal';
@@ -12,7 +12,7 @@ import { mergePropertySelectValueMutation } from '../../../../shared/api/mutatio
 import { Toast } from '../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../shared/utils';
 
-const props = defineProps<{ id: string; propertyId: string }>();
+const props = defineProps<{ id: string; propertyId: string; currentLabel: string }>();
 
 const { t } = useI18n();
 const showModal = ref(false);
@@ -95,14 +95,16 @@ const mergeValues = async () => {
 
 <template>
   <div>
-    <Button type="button" class="btn btn-secondary" @click="openModal">
+    <Button type="button" class="btn btn-sm btn-secondary" @click="openModal">
       {{ t('properties.values.merge.button') }}
     </Button>
 
     <Modal v-model="showModal" @closed="showModal = false">
-      <Card class="modal-content w-1/3">
+      <Card class="modal-content w-2/3">
         <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
-        <p class="mb-4">{{ t('properties.values.merge.current', { count: currentCount }) }}</p>
+        <p>{{ t('properties.values.merge.detailDescription', { value: props.currentLabel }) }}</p>
+        <p class="mb-4 text-sm text-gray-500">{{ t('properties.values.merge.current', { value: props.currentLabel, count: currentCount }) }}</p>
+        <hr class="my-4" />
         <div class="flex items-center gap-2 mb-4">
           <Selector
             v-model="selectedOption"

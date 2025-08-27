@@ -58,8 +58,8 @@ const fetchValues = async () => {
   }
 };
 
-const onToggle = (id: string, checked: boolean) => {
-  target.value = checked ? id : null;
+const onToggle = (id: string) => {
+  target.value = id;
 };
 
 const mergeValues = async () => {
@@ -85,16 +85,16 @@ const mergeValues = async () => {
 <template>
   <button
     type="button"
-    class="inline-flex items-center rounded bg-gray-50 px-4 py-1 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 disabled:opacity-50"
+    class="inline-flex items-center rounded bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-800 shadow-sm ring-1 ring-inset ring-blue-300 hover:bg-blue-100 disabled:opacity-50"
     :disabled="selectedEntities.length <= 1"
     @click="openModal"
   >
-    <Icon name="code-merge" size="sm" class="mr-2 text-gray-600" />
+    <Icon name="code-merge" size="sm" class="mr-2 text-blue-600" />
     {{ t('properties.values.merge.button') }}
   </button>
 
   <Modal v-model="showModal" @closed="showModal = false">
-    <Card class="modal-content w-1/3">
+    <Card class="modal-content w-2/3">
       <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
       <p class="mb-4">{{ t('properties.values.merge.description') }}</p>
       <div v-for="val in values" :key="val.id" class="flex items-center justify-between py-2">
@@ -104,8 +104,7 @@ const mergeValues = async () => {
         </div>
         <Toggle
           :model-value="target === val.id"
-          @update:model-value="onToggle(val.id, $event)"
-          :disabled="target !== null && target !== val.id"
+          @update:model-value="() => onToggle(val.id)"
         />
       </div>
       <p class="text-sm text-red-600 mt-4">{{ t('properties.values.merge.warning') }}</p>
