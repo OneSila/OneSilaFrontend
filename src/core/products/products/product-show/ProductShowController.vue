@@ -213,8 +213,8 @@ const handleDuplicate = async (sku: string | null, createAsAlias: boolean) => {
                             <Label semi-bold>{{ t('products.products.labels.aliasParentProduct') }}: </Label>
                           </FlexCell>
                           <FlexCell>
-                            <Link :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }">
-                              {{ getResultData(result, 'name', null, 'name') }}
+                            <Link :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }" :title="getResultData(result, 'name', null, 'name')">
+                              {{ shortenText(getResultData(result, 'name', null, 'name'), 64) }}
                             </Link>
                           </FlexCell>
                         </Flex>
