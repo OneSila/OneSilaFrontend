@@ -702,6 +702,7 @@ const hasChanges = computed(
 )
 
 const save = async () => {
+  skipHistory.value = true
   const createdCount = toCreate.value.length
   const updatedCount = toUpdate.value.length
   const deletedCount = toDelete.value.length
@@ -735,6 +736,8 @@ const save = async () => {
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   clearHistory()
+  await nextTick()
+  skipHistory.value = false
   const messages: any[] = []
 
   if (createdCount) {
