@@ -20,8 +20,8 @@ mutation generateProductAiContentMutation($data: ProductAiContentInput!) {
 `;
 
 export const generateAiTranslationMutation = gql`
-  mutation generateAiTranslationMutation($data: AITranslationInput!) {
-    generateAiTranslation(instance: $data) {
+  mutation generateAiTranslationMutation($data: AITranslationInput!, $salesChannel: SalesChannelPartialInput) {
+    generateAiTranslation(instance: $data, sales_channel: $salesChannel) {
       ... on AiContent {
         content
         points
