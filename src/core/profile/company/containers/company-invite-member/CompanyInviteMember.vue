@@ -48,7 +48,11 @@ const afterInvite = () => {
       <template v-slot="{ mutate, loading, error }">
         <div class="flex justify-end gap-4 mt-4">
           <Button class="btn btn-outline-dark" @click="emit('cancelClicked')">{{ t('shared.button.cancel') }}</Button>
-          <Button class="btn btn-primary" :disabled="loading" @click="mutate()">{{ t('shared.button.submit') }}</Button>
+          <Button
+            class="btn btn-primary"
+            :disabled="loading || !form.username || (!form.firstName && !form.lastName)"
+            @click="mutate()"
+          >{{ t('shared.button.submit') }}</Button>
         </div>
       </template>
     </ApolloMutation>
