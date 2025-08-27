@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch} from "vue";
+import {onMounted, ref, Ref, watch, computed} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -16,6 +16,7 @@ import {Loader} from "../../../../../../../shared/components/atoms/loader";
 import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
+import { Pagination } from "../../../../../../../shared/components/molecules/pagination";
 
 
 const {t} = useI18n();
@@ -26,6 +27,87 @@ const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
+
+const currentPage = ref(1);
+const limit = ref(10);
+const perPageOptions = [
+  { name: '10', value: 10 },
+  { name: '20', value: 20 },
+  { name: '50', value: 50 },
+  { name: '100', value: 100 },
+];
+
+const requiredTypes = [
+  ConfigTypes.REQUIRED,
+  ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+  ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+];
+
+const isFilled = (val: ProductPropertyValue) => {
+  if (val.valueBoolean !== undefined && val.valueBoolean !== null) return true;
+  if (val.valueInt !== null && val.valueInt !== undefined) return true;
+  if (val.valueFloat !== null && val.valueFloat !== undefined) return true;
+  if (val.valueDate != null) return true;
+  if (val.valueDateTime != null) return true;
+  if (val.valueSelect && val.valueSelect.id != null) return true;
+  if (val.valueMultiSelect && val.valueMultiSelect.length) return true;
+  if (
+    val.translation &&
+    ((val.translation.valueText && val.translation.valueText !== '') ||
+      (val.translation.valueDescription && val.translation.valueDescription !== ''))
+  )
+    return true;
+  return false;
+};
+
+const sortedValues = computed(() => {
+  const req: ProductPropertyValue[] = [];
+  const opt: ProductPropertyValue[] = [];
+  const filled: ProductPropertyValue[] = [];
+  for (const v of values.value) {
+    if (isFilled(v)) {
+      filled.push(v);
+    } else if (requiredTypes.includes(v.property.requireType as ConfigTypes)) {
+      req.push(v);
+    } else {
+      opt.push(v);
+    }
+  }
+  return [...req, ...opt, ...filled];
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(sortedValues.value.length / limit.value)));
+
+const paginatedValues = computed(() => {
+  const start = (currentPage.value - 1) * limit.value;
+  return sortedValues.value.slice(start, start + limit.value);
+});
+
+const pageInfo = computed(() => ({
+  startCursor: String(currentPage.value - 1),
+  endCursor: String(currentPage.value + 1),
+  hasPreviousPage: currentPage.value > 1,
+  hasNextPage: currentPage.value < totalPages.value,
+}));
+
+const handleQueryChanged = (queryData) => {
+  const q = queryData.query;
+  if (q.before) currentPage.value = parseInt(q.before, 10);
+  if (q.after) currentPage.value = parseInt(q.after, 10);
+  if (q.first === 'true') currentPage.value = 1;
+  if (q.last === 'true') currentPage.value = totalPages.value;
+};
+
+const updateLimitPerPage = (value: number) => {
+  limit.value = value;
+  currentPage.value = 1;
+};
+
+watch([sortedValues, limit], () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = totalPages.value;
+  }
+});
 
 
 const fetchProductTypeValue = async (productTypePropertyId) => {
@@ -417,7 +499,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
-    <div v-for="(val, index) in values" :key="val.property.id">
+    <div v-for="(val, index) in paginatedValues" :key="val.property.id">
         <ValueInput
           v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
           :product-id="product.id"
@@ -429,7 +511,26 @@ const handleValueUpdate = ({id, type, value, language}) => {
           @remove="handleRemove"
         />
     </div>
-</div>
+    </div>
+    <div class="py-2 px-2 flex items-center space-x-2" v-if="totalPages > 1">
+      <Pagination
+        :page-info="pageInfo"
+        :change-query-params="false"
+        @query-changed="handleQueryChanged"
+      />
+      <div>
+        <Selector
+          :options="perPageOptions"
+          :model-value="limit"
+          :clearable="false"
+          dropdown-position="bottom"
+          value-by="value"
+          label-by="name"
+          :placeholder="t('pagination.perPage')"
+          @update:model-value="updateLimitPerPage"
+        />
+      </div>
+    </div>
 
   </div>
 </template>
