@@ -33,6 +33,7 @@ const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const showDuplicateModal = ref(false);
+const isConfigurableProduct = ref(false);
 
 interface  ProductSubscriptionResult {
   product: {
@@ -54,6 +55,10 @@ interface  ProductSubscriptionResult {
     allowBackorder: boolean;
   };
 }
+
+const handleResultUpdated = (data) => {
+  isConfigurableProduct.value = data.product.type === ProductType.Configurable;
+};
 
 const getResultData = (result, field: string | null = null, vatRateField: string | null = null, aliasParentProductField: string | null = null) => {
   const r: ProductSubscriptionResult = result;
@@ -106,11 +111,11 @@ const redirectToList = (response) => {
   }
 }
 
-const handleDuplicate = async (sku: string | null) => {
+const handleDuplicate = async (sku: string | null, createAsAlias: boolean) => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: duplicateProductMutation,
-      variables: { product: {id: id.value}, sku },
+      variables: { product: {id: id.value}, sku, createAsAlias },
     });
 
     if (data && data.duplicateProduct) {
@@ -138,7 +143,7 @@ const handleDuplicate = async (sku: string | null) => {
     </template>
 
    <template v-slot:content>
-   <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef">
+   <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef" @result-updated="handleResultUpdated">
       <template v-slot:default="{ loading, error, result }">
         <template v-if="!loading && result">
           <Card>
@@ -244,6 +249,6 @@ const handleDuplicate = async (sku: string | null) => {
      </ApolloSubscription>
    </template>
   </GeneralTemplate>
-  <DuplicateProductModal v-model="showDuplicateModal" @duplicate="handleDuplicate" />
+  <DuplicateProductModal v-model="showDuplicateModal" :is-configurable="isConfigurableProduct" @duplicate="handleDuplicate" />
   </div>
 </template>

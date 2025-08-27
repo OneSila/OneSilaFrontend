@@ -1190,7 +1190,8 @@
         "title": "Product"
       },
       "duplicateModal": {
-        "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
+        "description": "Provide an SKU for the duplicated product or leave empty to auto generate.",
+        "createAsAlias": "Create as alias product?"
       },
       "bulkEditModal": {
         "textTitle": "Edit value",
