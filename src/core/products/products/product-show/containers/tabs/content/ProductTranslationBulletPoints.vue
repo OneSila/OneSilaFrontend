@@ -16,6 +16,8 @@ import {
 import { processGraphQLErrors } from '../../../../../../../shared/utils';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { AiBulletPointsGenerator } from '../../../../../../../shared/components/organisms/ai-bullet-points-generator';
+import { AiContentTranslator } from '../../../../../../../shared/components/organisms/ai-content-translator';
+import { BULLET_POINT_SEPARATOR } from '../../../../../../../shared/utils/constants';
 
 const { t } = useI18n();
 
@@ -33,6 +35,17 @@ const handleGeneratedBulletPoints = (list: any[]) => {
   bulletPoints.value = list.map((bp, idx) => ({
     id: null,
     text: bp.text,
+    sortOrder: idx,
+  }));
+};
+
+const handleTranslatedBulletPoints = (text: string) => {
+  const points = text
+    ? text.split(BULLET_POINT_SEPARATOR).filter((p) => p.trim())
+    : [];
+  bulletPoints.value = points.map((bp, idx) => ({
+    id: null,
+    text: bp,
     sortOrder: idx,
   }));
 };
@@ -152,6 +165,16 @@ defineExpose({ save, fetchPoints });
           :product-id="props.productId"
           :language-code="props.languageCode"
           @generated="handleGeneratedBulletPoints"
+        />
+      </FlexCell>
+      <FlexCell v-if="props.languageCode && props.languageCode !== 'en'">
+        <AiContentTranslator
+          :product="{ id: props.productId }"
+          productContentType="BULLET_POINTS"
+          toTranslate=""
+          fromLanguageCode="en"
+          :toLanguageCode="props.languageCode"
+          @translated="handleTranslatedBulletPoints"
         />
       </FlexCell>
       <FlexCell>
