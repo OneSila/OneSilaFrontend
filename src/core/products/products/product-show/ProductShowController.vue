@@ -130,6 +130,16 @@ const handleDuplicate = async (sku: string | null, createAsAlias: boolean) => {
   }
 };
 
+const copySkuToClipboard = async (sku: string) => {
+  try {
+    await navigator.clipboard.writeText(sku);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (err) {
+    console.error('Failed to copy:', err);
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
+};
+
 </script>
 
 <template>
@@ -165,6 +175,9 @@ const handleDuplicate = async (sku: string | null, createAsAlias: boolean) => {
                     <Flex>
                       <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
                       <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
+                      <Button class="ml-1" @click="copySkuToClipboard(getResultData(result, 'sku'))">
+                        <Icon name="clipboard" class="h-4 w-4" />
+                      </Button>
                     </Flex>
                     <Flex v-if="getResultData(result, null, 'name')">
                       <Label semi-bold>{{ t('products.products.labels.vatRate') }}:</Label>
