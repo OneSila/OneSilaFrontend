@@ -35,13 +35,11 @@ const mutationVariables = computed(() => {
     data.productContentType = props.productContentType;
   }
 
-  const variables: any = { data };
-
   if (props.salesChannelId) {
-    variables.salesChannel = { id: props.salesChannelId };
+    data.salesChannel = { id: props.salesChannelId };
   }
 
-  return variables;
+  return { data };
 });
 
 
