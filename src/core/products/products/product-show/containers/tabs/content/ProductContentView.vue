@@ -351,6 +351,7 @@ const shortDescriptionToolbarOptions = [
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
           :sales-channel-type="currentChannelType"
+          :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
         />
