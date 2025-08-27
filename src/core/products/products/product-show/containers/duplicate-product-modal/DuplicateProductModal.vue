@@ -5,19 +5,24 @@ import { Card } from "../../../../../../shared/components/atoms/card";
 import { Modal } from "../../../../../../shared/components/atoms/modal";
 import { TextInput } from "../../../../../../shared/components/atoms/input-text";
 import { Button } from "../../../../../../shared/components/atoms/button";
+import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 
-const props = defineProps<{ modelValue: boolean }>();
+const props = defineProps<{ modelValue: boolean; isConfigurable: boolean }>();
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'duplicate', sku: string | null): void;
+  (e: 'duplicate', sku: string | null, createAsAlias: boolean): void;
 }>();
 
 const { t } = useI18n();
 const localShowModal = ref(props.modelValue);
 const sku = ref('');
+const createAsAlias = ref(false);
 
 watch(() => props.modelValue, (val) => {
   localShowModal.value = val;
+  if (val) {
+    createAsAlias.value = false;
+  }
 });
 
 const closeModal = () => {
@@ -26,7 +31,7 @@ const closeModal = () => {
 };
 
 const submit = () => {
-  emit('duplicate', sku.value.trim() === '' ? null : sku.value.trim());
+  emit('duplicate', sku.value.trim() === '' ? null : sku.value.trim(), createAsAlias.value);
   closeModal();
 };
 
@@ -39,6 +44,9 @@ const submit = () => {
         <h3 class="text-xl font-semibold text-center mb-4">{{ t('shared.button.duplicate') }}</h3>
         <p class="mb-4">{{ t('products.products.duplicateModal.description') }}</p>
         <TextInput v-model="sku" :placeholder="t('products.products.labels.sku')" class="w-full" />
+        <Toggle v-if="!props.isConfigurable" v-model="createAsAlias" class="w-full mt-4">
+          {{ t('products.products.duplicateModal.createAsAlias') }}
+        </Toggle>
         <div class="flex justify-end gap-4 mt-4">
           <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
           <Button class="btn btn-primary" @click="submit">{{ t('shared.button.duplicate') }}</Button>
