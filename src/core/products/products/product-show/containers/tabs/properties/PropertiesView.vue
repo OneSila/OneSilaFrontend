@@ -16,7 +16,7 @@ import {Loader} from "../../../../../../../shared/components/atoms/loader";
 import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
-import { Pagination } from "../../../../../../../shared/components/molecules/pagination";
+import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 
 
 const {t} = useI18n();
@@ -31,10 +31,10 @@ const language: Ref<string | null> = ref(null);
 const currentPage = ref(1);
 const limit = ref(10);
 const perPageOptions = [
-  { name: '10', value: 10 },
-  { name: '20', value: 20 },
-  { name: '50', value: 50 },
-  { name: '100', value: 100 },
+  {name: '10', value: 10},
+  {name: '20', value: 20},
+  {name: '50', value: 50},
+  {name: '100', value: 100},
 ];
 
 const requiredTypes = [
@@ -52,9 +52,9 @@ const isFilled = (val: ProductPropertyValue) => {
   if (val.valueSelect && val.valueSelect.id != null) return true;
   if (val.valueMultiSelect && val.valueMultiSelect.length) return true;
   if (
-    val.translation &&
-    ((val.translation.valueText && val.translation.valueText !== '') ||
-      (val.translation.valueDescription && val.translation.valueDescription !== ''))
+      val.translation &&
+      ((val.translation.valueText && val.translation.valueText !== '') ||
+          (val.translation.valueDescription && val.translation.valueDescription !== ''))
   )
     return true;
   return false;
@@ -426,8 +426,6 @@ const requireTypes = [
 ];
 
 
-
-
 const handleValueUpdate = ({id, type, value, language}) => {
   const target = values.value.find(v => v.property.id === id);
   if (!target) return;
@@ -502,48 +500,49 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
-    <div v-if="productTypeValue">
+      <div v-if="productTypeValue">
         <ValueInput
-          v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(productTypeValue.property.type)"
-          :product-id="product.id"
-          :rule-id="ruleId"
-          :value="productTypeValue"
-          @refetch="fetchRequiredAttributesValues"
-          @update-id="handleUpdatedId"
-          @update-value="handleValueUpdate"
-          @remove="handleRemove"
+            v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(productTypeValue.property.type)"
+            :product-id="product.id"
+            :rule-id="ruleId"
+            :value="productTypeValue"
+            @refetch="fetchRequiredAttributesValues"
+            @update-id="handleUpdatedId"
+            @update-value="handleValueUpdate"
+            @remove="handleRemove"
         />
-        <hr class="my-4" />
-    </div>
-    <div v-for="(val, index) in paginatedValues" :key="val.property.id">
+        <hr class="my-4"/>
+      </div>
+      <div v-for="(val, index) in paginatedValues" :key="val.property.id">
         <ValueInput
-          v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
-          :product-id="product.id"
-          :rule-id="ruleId"
-          :value="val"
-          @refetch="fetchRequiredAttributesValues"
-          @update-id="handleUpdatedId"
-          @update-value="handleValueUpdate"
-          @remove="handleRemove"
+            v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+            :product-id="product.id"
+            :rule-id="ruleId"
+            :value="val"
+            @refetch="fetchRequiredAttributesValues"
+            @update-id="handleUpdatedId"
+            @update-value="handleValueUpdate"
+            @remove="handleRemove"
         />
+      </div>
     </div>
-    </div>
-    <div class="py-2 px-2 flex items-center space-x-2" v-if="totalPages > 1">
+    <hr class="my-4"/>
+    <div class="px-2 flex items-center space-x-2 mt-4" v-if="totalPages > 1">
       <Pagination
-        :page-info="pageInfo"
-        :change-query-params="false"
-        @query-changed="handleQueryChanged"
+          :page-info="pageInfo"
+          :change-query-params="false"
+          @query-changed="handleQueryChanged"
       />
       <div>
         <Selector
-          :options="perPageOptions"
-          :model-value="limit"
-          :clearable="false"
-          dropdown-position="bottom"
-          value-by="value"
-          label-by="name"
-          :placeholder="t('pagination.perPage')"
-          @update:model-value="updateLimitPerPage"
+            :options="perPageOptions"
+            :model-value="limit"
+            :clearable="false"
+            dropdown-position="bottom"
+            value-by="value"
+            label-by="name"
+            :placeholder="t('pagination.perPage')"
+            @update:model-value="updateLimitPerPage"
         />
       </div>
     </div>
