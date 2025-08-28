@@ -166,6 +166,14 @@ export const deletePropertySelectValuesMutation = gql`
   }
 `;
 
+export const mergePropertySelectValueMutation = gql`
+  mutation mergePropertySelectValue($sources: [PropertySelectValuePartialInput!]!, $target: PropertySelectValuePartialInput!) {
+    mergePropertySelectValue(sources: $sources, target: $target) {
+      id
+    }
+  }
+`;
+
 // Product Property Mutations
 export const createProductPropertyMutation = gql`
   mutation createProductProperty($data: ProductPropertyInput!) {

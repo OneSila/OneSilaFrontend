@@ -9,6 +9,7 @@ import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
+import PropertySelectValuesMerge from './PropertySelectValuesMerge.vue';
 
 const { t } = useI18n();
 
@@ -51,7 +52,17 @@ const clearSelection = () => {
          :fixed-filter-variables="{'isProductType': false }"
           >
       <template #bulkActions="{ selectedEntities }">
-        <AiBulkTranslator :type="'values'" :selected-entities="selectedEntities" @started="clearSelection" />
+        <div class="flex items-center space-x-2">
+          <AiBulkTranslator
+            :type="'values'"
+            :selected-entities="selectedEntities"
+            @started="clearSelection"
+          />
+          <PropertySelectValuesMerge
+            :selected-entities="selectedEntities"
+            @merged="clearSelection"
+          />
+        </div>
       </template>
     </GeneralListing>
    </template>

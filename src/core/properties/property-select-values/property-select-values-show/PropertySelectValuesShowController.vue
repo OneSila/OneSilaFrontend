@@ -14,6 +14,7 @@ import ProductList from "./containers/products-list/ProductsList.vue"
 import { Loader } from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
 import { TextInput } from "../../../../shared/components/atoms/input-text";
+import PropertySelectValueMerge from './PropertySelectValueMerge.vue';
 
 interface TranslatableField {
   language: string;
@@ -27,6 +28,8 @@ const tabItems = ref();
 const isProductType = ref(false);
 const loading = ref(true);
 const translatableFields = ref<TranslatableField[]>([]);
+const propertyId = ref('');
+const currentLabel = ref('');
 
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
@@ -38,9 +41,11 @@ tabItems.value = [
 const showConfig = showConfigConstructor(t, id.value);
 
 const onDataFetched = (data) => {
-  const propertyId = data[showConfig.subscriptionKey].property.id;
+  const propId = data[showConfig.subscriptionKey].property.id;
+  propertyId.value = propId;
   isProductType.value = data[showConfig.subscriptionKey].property.isProductType;
-    translatableFields.value = data[showConfig.subscriptionKey].propertyselectvaluetranslationSet;
+  translatableFields.value = data[showConfig.subscriptionKey].propertyselectvaluetranslationSet;
+  currentLabel.value = data[showConfig.subscriptionKey].value;
 
 
   if (!isProductType.value) {
@@ -50,13 +55,13 @@ const onDataFetched = (data) => {
     }
   }
 
-  if (propertyId) {
+  if (propId) {
     updateField(
         showConfig,
         'property',
         {
           clickable: true,
-          clickUrl: { name: 'properties.properties.show', params: { id: propertyId } },
+          clickUrl: { name: 'properties.properties.show', params: { id: propId } },
     });
   }
   loading.value = false;
@@ -65,7 +70,7 @@ const onDataFetched = (data) => {
 </script>
 
 <template>
-    <GeneralTemplate>
+  <GeneralTemplate>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
@@ -78,7 +83,11 @@ const onDataFetched = (data) => {
         <Loader :loading="loading" />
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched">
+              <template #buttons>
+                <PropertySelectValueMerge :id="id" :property-id="propertyId" :current-label="currentLabel" />
+              </template>
+            </GeneralShow>
           </template>
           <template v-slot:translations>
             <div class="w-full md:w-1/2 px-2 box-border" v-for="(field, index) in translatableFields" :key="field.language">
