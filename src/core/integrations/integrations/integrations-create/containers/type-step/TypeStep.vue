@@ -6,6 +6,7 @@ import magentoType from "../../../../../../assets/images/integration-types/magen
 import shopifyType from "../../../../../../assets/images/integration-types/shopify.png";
 import woocomerceType from "../../../../../../assets/images/integration-types/woo-commerce.jpg";
 import amazonType from "../../../../../../assets/images/integration-types/amazon.png";
+import webhooksType from "../../../../../../assets/images/integration-types/webhooks.webp";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
@@ -139,6 +140,7 @@ const closeModal = () => {
             </FlexCell>
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.webhookExample') }}</p>
+          <Image :source="webhooksType" alt="Webhooks" class="w-full mt-10 max-h-[35rem]" />
         </div>
       </template>
     </OptionSelector>
