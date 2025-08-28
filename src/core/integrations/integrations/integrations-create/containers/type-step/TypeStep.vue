@@ -12,7 +12,7 @@ import { Icon } from "../../../../../../shared/components/atoms/icon";
 import { Modal } from "../../../../../../shared/components/atoms/modal";
 import {Badge} from "../../../../../../shared/components/atoms/badge";
 import {Button} from "../../../../../../shared/components/atoms/button";
-import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard } from "./info-cards";
+import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard, WebhookInfoCard } from "./info-cards";
 
 const props = defineProps<{ type: IntegrationTypes }>();
 const emit = defineEmits<{ (e: 'update:type', value: IntegrationTypes): void }>();
@@ -38,7 +38,8 @@ const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
   { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') }
+  { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Webhook, disabled: false }
 ];
 
 const onModalOpen = () => {
@@ -53,6 +54,11 @@ const onShopifyModalOpen = () => {
 
 const onWoocommerceModalOpen = () => {
   infoComponent.value = WoocommerceInfoCard;
+  showInfoModal.value = true;
+};
+
+const onWebhookModalOpen = () => {
+  infoComponent.value = WebhookInfoCard;
   showInfoModal.value = true;
 };
 
@@ -120,6 +126,19 @@ const closeModal = () => {
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.woocommerceExample') }}</p>
           <Image :source="woocomerceType" alt="woocommerce" class="w-full max-h-[35rem]" />
+        </div>
+      </template>
+      <template #webhook>
+        <div>
+          <Flex gap="2">
+            <FlexCell center>
+              <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.webhookTitle') }}</h3>
+            </FlexCell>
+            <FlexCell center>
+              <Icon class="text-gray-500" @click.stop="onWebhookModalOpen" name="circle-info" size="lg" />
+            </FlexCell>
+          </Flex>
+          <p class="mb-4">{{ t('integrations.create.wizard.step1.webhookExample') }}</p>
         </div>
       </template>
     </OptionSelector>

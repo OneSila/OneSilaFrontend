@@ -3,6 +3,7 @@ export enum IntegrationTypes {
   Shopify = 'shopify',
   Woocommerce = 'woocommerce',
   Amazon = 'amazon',
+  Webhook = 'webhook',
   None = 'none',
 }
 
@@ -103,6 +104,19 @@ export interface AmazonChannelInfo extends SpecificChannelInfo {
   country: string | null;
 }
 
+export interface WebhookChannelInfo extends SpecificChannelInfo {
+  topic: string;
+  version: string;
+  url: string;
+  secret: string;
+  userAgent: string;
+  timeoutMs: number;
+  mode: string;
+  extraHeaders: Record<string, any>;
+  config: Record<string, any>;
+  retentionPolicy: string;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -145,6 +159,21 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   };
 }
 
+export function getWebhookDefaultFields(): WebhookChannelInfo {
+  return {
+    topic: '',
+    version: '',
+    url: '',
+    secret: '',
+    userAgent: 'OneSila-Webhook/1.0',
+    timeoutMs: 0,
+    mode: '',
+    extraHeaders: {},
+    config: {},
+    retentionPolicy: ''
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
@@ -155,6 +184,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getWoocommerceDefaultFields();
     case IntegrationTypes.Amazon:
       return getAmazonDefaultFields();
+    case IntegrationTypes.Webhook:
+      return getWebhookDefaultFields();
     default:
       return {};
   }

@@ -358,6 +358,7 @@
       "duplicate": "Duplicate",
       "deleteAll": "Delete all",
       "editAll": "Edit all",
+      "copy": "Copy",
       "change": "Change",
       "createAnyway": "Create anyway",
       "abort": "Abort"
@@ -2469,6 +2470,8 @@
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
+          "webhookTitle": "Webhook",
+          "webhookExample": "Send events to your application via HTTP",
           "magentoInfoModal": {
             "title": "How to connect your Magento store",
             "section": {
@@ -2555,6 +2558,10 @@
             "title": "Amazon Channel Details",
             "content": "Provide Amazon-specific configuration to connect your marketplace."
           },
+          "webhook": {
+            "title": "Webhook Settings",
+            "content": "Configure your webhook endpoint and options."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2583,7 +2590,14 @@
       "country": "Country",
       "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data",
-      "defaultUnits": "Default Units"
+      "defaultUnits": "Default Units",
+      "url": "URL",
+      "topic": "Topic",
+      "version": "Version",
+      "userAgent": "User Agent",
+      "timeoutMs": "Timeout (ms)",
+      "mode": "Mode",
+      "retentionPolicy": "Retention Policy"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",
@@ -2592,7 +2606,14 @@
       "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute",
-      "accessToken": "Enter Access Token"
+      "accessToken": "Enter Access Token",
+      "url": "https://example.com/webhook",
+      "topic": "products",
+      "version": "2025-08-01",
+      "userAgent": "OneSila-Webhook/1.0",
+      "timeoutMs": "3000",
+      "mode": "full",
+      "retentionPolicy": "6M"
     },
     "regions": {
       "northAmerica": "North America",
@@ -2688,6 +2709,26 @@
         },
         "issues": {
           "title": "Issues"
+        }
+      }
+    },
+    "webhook": {
+      "helpText": {
+        "url": "Endpoint that will receive webhook POST requests.",
+        "topic": "Event topic that triggers the webhook.",
+        "version": "Webhook payload version.",
+        "userAgent": "User-Agent header sent with requests.",
+        "timeoutMs": "Milliseconds to wait for a response before failing.",
+        "mode": "Use 'delta' for changes only or 'full' for the entire payload.",
+        "retentionPolicy": "How long webhook deliveries are retained."
+      },
+      "infoBlock": {
+        "payloadExample": "Payload structure example",
+        "signatureValidation": "Signature validation",
+        "languages": {
+          "python": "Python",
+          "node": "Node.js",
+          "php": "PHP"
         }
       }
     },
