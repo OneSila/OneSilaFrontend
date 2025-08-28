@@ -75,6 +75,10 @@ export interface DateFilter extends BaseFilter {
   type: FieldType.Date;
 }
 
+export interface DateRangeFilter extends BaseFilter {
+  type: FieldType.RangeDate;
+}
+
 export interface SliderFilter extends BaseFilter {
   type: FieldType.Slider;
 }
@@ -91,7 +95,7 @@ export interface OrderCriteria {
   type: OrderType;
 }
 
-export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | DateFilter | SliderFilter | CheckboxFilter;
+export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | DateFilter | DateRangeFilter | SliderFilter | CheckboxFilter;
 
 export interface SearchConfig {
   search: boolean;

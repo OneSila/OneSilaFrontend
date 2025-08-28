@@ -14,6 +14,7 @@ import { FilterQuery } from './containers/filter-query';
 import { FilterDate } from './containers/filter-date';
 import { FilterSlider } from './containers/filter-slider';
 import { FilterCheckbox } from './containers/filter-checkbox';
+import { FilterDateRange } from './containers/filter-date-range';
 
 const { t } = useI18n();
 
@@ -31,6 +32,7 @@ const getFilterComponent = (type) => {
     case FieldType.Choice: return FilterChoice;
     case FieldType.Query: return FilterQuery;
     case FieldType.Date: return FilterDate;
+    case FieldType.RangeDate: return FilterDateRange;
     case FieldType.Slider: return FilterSlider;
     case FieldType.Checkbox: return FilterCheckbox;
     default: return null;
