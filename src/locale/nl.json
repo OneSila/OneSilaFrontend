@@ -1942,7 +1942,24 @@
   },
   "webhooks": {
     "monitor": {
-      "title": "Monitor"
+      "title": "Monitor",
+      "timeRange": {
+        "live": "Live",
+        "last15m": "Laatste 15m",
+        "1h": "1u",
+        "6h": "6u",
+        "24h": "24u",
+        "custom": "Aangepast"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Actie",
+        "status": "Status",
+        "responseCode": "Responscode",
+        "subject": "Onderwerp"
+      },
+      "autoRefresh": "Auto-verversen",
+      "rpmCap": "RPM-limiet"
     }
   }
 }

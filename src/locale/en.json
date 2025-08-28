@@ -2829,7 +2829,24 @@
   },
   "webhooks": {
     "monitor": {
-      "title": "Monitor"
+      "title": "Monitor",
+      "timeRange": {
+        "live": "Live",
+        "last15m": "Last 15m",
+        "1h": "1h",
+        "6h": "6h",
+        "24h": "24h",
+        "custom": "Custom"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Action",
+        "status": "Status",
+        "responseCode": "Response Code",
+        "subject": "Subject"
+      },
+      "autoRefresh": "Auto-refresh",
+      "rpmCap": "RPM Cap"
     }
   }
 }
