@@ -132,5 +132,10 @@
         "variationThemeDeleted": "Variation theme deleted"
       }
     }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor"
+    }
   }
 }
