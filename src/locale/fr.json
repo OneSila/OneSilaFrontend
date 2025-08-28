@@ -135,7 +135,24 @@
   },
   "webhooks": {
     "monitor": {
-      "title": "Monitor"
+      "title": "Monitor",
+      "timeRange": {
+        "live": "En direct",
+        "last15m": "Dernières 15 min",
+        "1h": "1h",
+        "6h": "6h",
+        "24h": "24h",
+        "custom": "Personnalisé"
+      },
+      "filters": {
+        "title": "Filtres",
+        "action": "Action",
+        "status": "Statut",
+        "responseCode": "Code de réponse",
+        "subject": "Sujet"
+      },
+      "autoRefresh": "Rafraîchissement auto",
+      "rpmCap": "Limite RPM"
     }
   }
 }
