@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -34,6 +34,8 @@ import { DefaultUnitConfigurators } from "./containers/default-unit-configurator
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
+
+const WebhookMonitor = defineAsyncComponent(() => import('./containers/monitor/WebhookMonitor.vue'));
 
 const router = useRouter();
 const route = useRoute();
@@ -72,6 +74,8 @@ if (type.value !== IntegrationTypes.Webhook) {
   }
 
   tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+} else {
+  tabItems.value.push({ name: 'monitor', label: t('webhooks.monitor.title'), icon: 'wave-square' });
 }
 
 
@@ -235,6 +239,11 @@ const pullData = async () => {
               :is="getGeneralComponent()"
               :data="integrationData"
             />
+          </template>
+
+          <!-- Monitor Tab -->
+          <template #monitor>
+            <WebhookMonitor v-if="integrationId" :integration-id="integrationId" />
           </template>
 
           <!-- Products Tab -->

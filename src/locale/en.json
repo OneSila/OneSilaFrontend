@@ -2826,5 +2826,10 @@
         }
       }
     }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor"
+    }
   }
 }
