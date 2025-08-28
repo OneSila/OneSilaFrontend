@@ -99,17 +99,23 @@ export const getWebhookOutboxQuery = gql`
 `;
 
 export const webhookDeliveriesQuery = gql`
-  query WebhookDeliveries($first: Int, $last: Int, $after: String, $before: String, $order: WebhookDeliveryOrder, $filter: WebhookDeliveryFilter) {
-    webhookDeliveries(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+  query WebhookDeliveries(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $filter: WebhookDeliveryFilter
+  ) {
+    webhookDeliveries(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      filters: $filter
+    ) {
       edges {
         node {
           id
-          outbox {
-            id
-          }
-          webhookIntegration {
-            id
-          }
           status
           attempt
           responseCode
@@ -118,6 +124,26 @@ export const webhookDeliveriesQuery = gql`
           sentAt
           errorMessage
           errorTraceback
+          outbox {
+            id
+            topic
+            action
+            subjectType
+            subjectId
+            payload
+            webhookIntegration {
+              hostname
+            }
+          }
+          attempts(order: { number: DESC }) {
+            number
+            sentAt
+            responseCode
+            responseMs
+            responseBodySnippet
+            errorText
+            errorTraceback
+          }
         }
         cursor
       }
