@@ -2597,7 +2597,8 @@
       "userAgent": "User Agent",
       "timeoutMs": "Timeout (ms)",
       "mode": "Mode",
-      "retentionPolicy": "Retention Policy"
+      "retentionPolicy": "Retention Policy",
+      "secret": "Secret"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",
@@ -2730,6 +2731,9 @@
           "node": "Node.js",
           "php": "PHP"
         }
+      },
+      "buttons": {
+        "regenerateSecret": "Regenerate secret"
       }
     },
     "imports": {
