@@ -3,11 +3,42 @@ import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { TextInput } from '../../../../../../../shared/components/atoms/input-text';
 import { Label } from '../../../../../../../shared/components/atoms/label';
-import WebhookInfoBlock from './WebhookInfoBlock.vue';
-import type { WebhookChannelInfo } from '../../../integrations';
+import { Selector } from '../../../../../../../shared/components/atoms/selector';
+import type { WebhookChannelInfo } from '../../../../integrations';
 
 const props = defineProps<{ channelInfo: WebhookChannelInfo }>();
 const { t } = useI18n();
+
+const topicChoices = [
+  { id: 'product', text: t('integrations.webhook.choices.topic.product') },
+  { id: 'ean_code', text: t('integrations.webhook.choices.topic.ean_code') },
+  { id: 'price_list', text: t('integrations.webhook.choices.topic.price_list') },
+  { id: 'price_list_item', text: t('integrations.webhook.choices.topic.price_list_item') },
+  { id: 'media', text: t('integrations.webhook.choices.topic.media') },
+  { id: 'media_through', text: t('integrations.webhook.choices.topic.media_through') },
+  { id: 'property', text: t('integrations.webhook.choices.topic.property') },
+  { id: 'select_value', text: t('integrations.webhook.choices.topic.select_value') },
+  { id: 'property_rule', text: t('integrations.webhook.choices.topic.property_rule') },
+  { id: 'property_rule_item', text: t('integrations.webhook.choices.topic.property_rule_item') },
+  { id: 'product_property', text: t('integrations.webhook.choices.topic.product_property') },
+  { id: 'sales_channel_view_assign', text: t('integrations.webhook.choices.topic.sales_channel_view_assign') },
+  { id: 'all', text: t('integrations.webhook.choices.topic.all') },
+];
+
+const versionChoices = [
+  { id: '2025-08-01', text: t('integrations.webhook.choices.version.2025-08-01') },
+];
+
+const modeChoices = [
+  { id: 'full', text: t('integrations.webhook.choices.mode.full') },
+  { id: 'delta', text: t('integrations.webhook.choices.mode.delta') },
+];
+
+const retentionChoices = [
+  { id: '3m', text: t('integrations.webhook.choices.retentionPolicy.3m') },
+  { id: '6m', text: t('integrations.webhook.choices.retentionPolicy.6m') },
+  { id: '12m', text: t('integrations.webhook.choices.retentionPolicy.12m') },
+];
 </script>
 
 <template>
@@ -46,10 +77,14 @@ const { t } = useI18n();
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput
+                <Selector
                   class="w-96"
                   v-model="channelInfo.topic"
+                  :options="topicChoices"
+                  value-by="id"
+                  label-by="text"
                   :placeholder="t('integrations.placeholders.topic')"
+                  :removable="false"
                 />
               </FlexCell>
             </Flex>
@@ -67,10 +102,14 @@ const { t } = useI18n();
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput
+                <Selector
                   class="w-96"
                   v-model="channelInfo.version"
+                  :options="versionChoices"
+                  value-by="id"
+                  label-by="text"
                   :placeholder="t('integrations.placeholders.version')"
+                  :removable="false"
                 />
               </FlexCell>
             </Flex>
@@ -131,10 +170,14 @@ const { t } = useI18n();
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput
+                <Selector
                   class="w-96"
                   v-model="channelInfo.mode"
+                  :options="modeChoices"
+                  value-by="id"
+                  label-by="text"
                   :placeholder="t('integrations.placeholders.mode')"
+                  :removable="false"
                 />
               </FlexCell>
             </Flex>
@@ -152,10 +195,14 @@ const { t } = useI18n();
                 </Label>
               </FlexCell>
               <FlexCell>
-                <TextInput
+                <Selector
                   class="w-96"
                   v-model="channelInfo.retentionPolicy"
+                  :options="retentionChoices"
+                  value-by="id"
+                  label-by="text"
                   :placeholder="t('integrations.placeholders.retentionPolicy')"
+                  :removable="false"
                 />
               </FlexCell>
             </Flex>
@@ -166,6 +213,5 @@ const { t } = useI18n();
         </Flex>
       </FlexCell>
     </Flex>
-    <WebhookInfoBlock class="mt-8" />
   </div>
 </template>

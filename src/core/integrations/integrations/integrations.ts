@@ -166,7 +166,7 @@ export function getWebhookDefaultFields(): WebhookChannelInfo {
     url: '',
     secret: '',
     userAgent: 'OneSila-Webhook/1.0',
-    timeoutMs: 0,
+    timeoutMs: 10000,
     mode: '',
     extraHeaders: {},
     config: {},
