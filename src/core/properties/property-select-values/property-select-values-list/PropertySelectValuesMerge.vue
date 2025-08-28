@@ -97,6 +97,7 @@ const mergeValues = async () => {
     <Card class="modal-content w-2/3">
       <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
       <p class="mb-4">{{ t('properties.values.merge.description') }}</p>
+      <hr class="my-4">
       <div v-for="val in values" :key="val.id" class="flex items-center justify-between py-2">
         <div>
           <div>{{ val.value }}</div>

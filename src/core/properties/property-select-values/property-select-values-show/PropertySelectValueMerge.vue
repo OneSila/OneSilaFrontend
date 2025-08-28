@@ -95,7 +95,7 @@ const mergeValues = async () => {
 
 <template>
   <div>
-    <Button type="button" class="btn btn-sm btn-secondary" @click="openModal">
+    <Button type="button" class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm btn-secondary" @click="openModal">
       {{ t('properties.values.merge.button') }}
     </Button>
 
@@ -123,7 +123,7 @@ const mergeValues = async () => {
             <div>{{ src.label }}</div>
             <div class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: src.count }) }}</div>
           </div>
-          <Button class="btn btn-outline-dark" @click="removeSource(src.id)">
+          <Button class="btn btn-outline-danger" @click="removeSource(src.id)">
             <Icon name="trash" size="sm" />
           </Button>
         </div>
