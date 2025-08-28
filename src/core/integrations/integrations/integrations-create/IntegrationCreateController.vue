@@ -333,7 +333,7 @@ const handleFinish = async () => {
     // Flatten the form fields into a single object
     const dataInput = {
       ...form.generalInfo,
-      ...form.salesChannelInfo,
+      ...(selectedIntegrationType.value !== IntegrationTypes.Webhook ? form.salesChannelInfo : {}),
       ...specificChannelInfo.value
     };
 
