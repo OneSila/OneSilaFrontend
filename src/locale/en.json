@@ -2724,7 +2724,9 @@
         "retentionPolicy": "How long webhook deliveries are retained."
       },
       "infoBlock": {
+        "description": "Webhooks send POST requests to your endpoint when events occur. Use the examples below to configure your handler.",
         "payloadExample": "Payload structure example",
+        "curlExample": "cURL test request",
         "signatureValidation": "Signature validation",
         "languages": {
           "python": "Python",
