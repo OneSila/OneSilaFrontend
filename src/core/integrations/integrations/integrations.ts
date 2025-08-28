@@ -162,7 +162,7 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
 export function getWebhookDefaultFields(): WebhookChannelInfo {
   return {
     topic: '',
-    version: '',
+    version: '2025-08-01',
     url: '',
     secret: '',
     userAgent: 'OneSila-Webhook/1.0',
