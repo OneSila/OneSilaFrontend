@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { Label } from "../../../../../../../shared/components/atoms/label";
+import { Selector } from "../../../../../../../shared/components/atoms/selector";
 import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
 import { Button } from "../../../../../../../shared/components/atoms/button";
@@ -42,6 +43,37 @@ const submitContinueButtonRef = ref();
 
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' }
+];
+
+const topicChoices = [
+  { id: 'product', text: t('integrations.webhook.choices.topic.product') },
+  { id: 'ean_code', text: t('integrations.webhook.choices.topic.ean_code') },
+  { id: 'price_list', text: t('integrations.webhook.choices.topic.price_list') },
+  { id: 'price_list_item', text: t('integrations.webhook.choices.topic.price_list_item') },
+  { id: 'media', text: t('integrations.webhook.choices.topic.media') },
+  { id: 'media_through', text: t('integrations.webhook.choices.topic.media_through') },
+  { id: 'property', text: t('integrations.webhook.choices.topic.property') },
+  { id: 'select_value', text: t('integrations.webhook.choices.topic.select_value') },
+  { id: 'property_rule', text: t('integrations.webhook.choices.topic.property_rule') },
+  { id: 'property_rule_item', text: t('integrations.webhook.choices.topic.property_rule_item') },
+  { id: 'product_property', text: t('integrations.webhook.choices.topic.product_property') },
+  { id: 'sales_channel_view_assign', text: t('integrations.webhook.choices.topic.sales_channel_view_assign') },
+  { id: 'all', text: t('integrations.webhook.choices.topic.all') },
+];
+
+const versionChoices = [
+  { id: '2025-08-01', text: t('integrations.webhook.choices.version.2025-08-01') },
+];
+
+const modeChoices = [
+  { id: 'full', text: t('integrations.webhook.choices.mode.full') },
+  { id: 'delta', text: t('integrations.webhook.choices.mode.delta') },
+];
+
+const retentionChoices = [
+  { id: '3m', text: t('integrations.webhook.choices.retentionPolicy.3m') },
+  { id: '6m', text: t('integrations.webhook.choices.retentionPolicy.6m') },
+  { id: '12m', text: t('integrations.webhook.choices.retentionPolicy.12m') },
 ];
 
 watch(() => props.data, (newData) => {
@@ -125,7 +157,15 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.topic') }}
         </Label>
-        <TextInput v-model="formData.topic" :placeholder="t('integrations.placeholders.topic')" class="w-full" />
+        <Selector
+          v-model="formData.topic"
+          :options="topicChoices"
+          value-by="id"
+          label-by="text"
+          :placeholder="t('integrations.placeholders.topic')"
+          :removable="false"
+          class="w-full"
+        />
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.topic') }}</p>
         </div>
@@ -137,7 +177,15 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.version') }}
         </Label>
-        <TextInput v-model="formData.version" :placeholder="t('integrations.placeholders.version')" class="w-full" />
+        <Selector
+          v-model="formData.version"
+          :options="versionChoices"
+          value-by="id"
+          label-by="text"
+          :placeholder="t('integrations.placeholders.version')"
+          :removable="false"
+          class="w-full"
+        />
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.version') }}</p>
         </div>
@@ -167,7 +215,15 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.mode') }}
         </Label>
-        <TextInput v-model="formData.mode" :placeholder="t('integrations.placeholders.mode')" class="w-full" />
+        <Selector
+          v-model="formData.mode"
+          :options="modeChoices"
+          value-by="id"
+          label-by="text"
+          :placeholder="t('integrations.placeholders.mode')"
+          :removable="false"
+          class="w-full"
+        />
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.mode') }}</p>
         </div>
@@ -179,7 +235,15 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.retentionPolicy') }}
         </Label>
-        <TextInput v-model="formData.retentionPolicy" :placeholder="t('integrations.placeholders.retentionPolicy')" class="w-full" />
+        <Selector
+          v-model="formData.retentionPolicy"
+          :options="retentionChoices"
+          value-by="id"
+          label-by="text"
+          :placeholder="t('integrations.placeholders.retentionPolicy')"
+          :removable="false"
+          class="w-full"
+        />
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.retentionPolicy') }}</p>
         </div>
