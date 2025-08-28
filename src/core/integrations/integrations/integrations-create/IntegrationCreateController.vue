@@ -198,7 +198,9 @@ const allowNextStep = computed(() => {
     if (!hostname || hostname.trim() === '') {
       return false;
     }
-    if (selectedIntegrationType.value !== IntegrationTypes.Amazon) {
+
+    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook];
+    if (!excludedTypes.includes(selectedIntegrationType.value)) {
       // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
       const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
       if (!urlPattern.test(hostname)) {
