@@ -190,12 +190,12 @@
           "description": "Amazon product types that need mapping."
         },
         "unmappedLocalProductTypes": {
-          "title": "Unmapped Local Product Types",
-          "description": "Local product types that need mapping to Amazon."
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to Amazon."
         },
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
-          "description": "Amazon property values that need mapping in order to be imported locally."
+          "description": "Amazon property values that need mapping in order to be imported into OneSila."
         },
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
@@ -2402,21 +2402,21 @@
       "propertySelectValues": {
         "title": "Amazon Property Values",
         "labels": {
-          "remoteName": "Remote Name",
-          "remoteValue": "Remote Value",
+          "remoteName": "Amazon Name",
+          "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace",
-          "localProperty": "Local Property",
-          "selectValue": "Select Value",
+          "localProperty": "OneSila Property",
+          "selectValue": "OneSila Select Value",
           "translatedRemoteName": "Translated Name"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "marketplace": "Amazon marketplace for this value.",
-          "localProperty": "Local property that this Amazon property maps to.",
+          "localProperty": "OneSila property that this Amazon property maps to.",
           "remoteValue": "Value exactly as defined in Amazon.",
           "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the local value that matches this Amazon value.",
+          "selectValue": "Choose the OneSila value that matches this Amazon value.",
           "translatedRemoteName": "Translated name for this value."
         },
         "notMappedBanner": {
@@ -2433,15 +2433,15 @@
         "assignSuccess": "Values were successfully assigned"
       },
       "mapping": {
-        "mappedLocally": "Mapped Locally",
-        "mappedRemotely": "Mapped Remotely",
+        "mappedLocally": "Mapped in OneSila",
+        "mappedRemotely": "Mapped on Amazon",
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values"
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
-      "pullLocalRules": "Pull Local Rules",
+      "pullLocalRules": "Pull OneSila Rules",
       "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",
