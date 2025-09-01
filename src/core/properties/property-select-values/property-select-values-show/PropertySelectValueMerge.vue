@@ -45,11 +45,11 @@ const openModal = async () => {
 };
 
 const fetchOptions = async (searchValue: string | null = null) => {
-  const variables = { filter: { property: { id: { exact: props.propertyId } } }, search: null };
+  const variables = { filter: { property: { id: { exact: props.propertyId } } }, search: null } as any;
 
-    if (searchValue !== null && searchValue !== undefined) {
-      variables.filter.search = searchValue;
-    }
+  if (searchValue !== null && searchValue !== undefined) {
+    variables.filter.search = searchValue;
+  }
 
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuerySimpleSelector,
