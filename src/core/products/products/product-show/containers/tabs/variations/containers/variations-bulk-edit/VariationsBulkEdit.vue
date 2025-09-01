@@ -702,14 +702,27 @@ const hasChanges = computed(
 )
 
 const save = async () => {
+  skipHistory.value = true
   const createdCount = toCreate.value.length
   const updatedCount = toUpdate.value.length
   const deletedCount = toDelete.value.length
-  if (createdCount)
-    await apolloClient.mutate({
+  if (createdCount) {
+    const { data } = await apolloClient.mutate({
       mutation: bulkCreateProductPropertiesMutation,
       variables: { data: toCreate.value },
     })
+    const created = data?.bulkCreateProductProperties || []
+    created.forEach((pp: any) => {
+      const variation = variations.value.find(
+        (v: any) => v.variation.id === pp.product.id
+      )
+      if (!variation) return
+      if (!variation.propertyValues) variation.propertyValues = {}
+      if (!variation.propertyValues[pp.property.id])
+        variation.propertyValues[pp.property.id] = {}
+      variation.propertyValues[pp.property.id].id = pp.id
+    })
+  }
   if (updatedCount)
     await apolloClient.mutate({
       mutation: bulkUpdateProductPropertiesMutation,
@@ -723,6 +736,8 @@ const save = async () => {
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   clearHistory()
+  await nextTick()
+  skipHistory.value = false
   const messages: any[] = []
 
   if (createdCount) {

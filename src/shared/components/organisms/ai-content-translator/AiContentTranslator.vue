@@ -10,6 +10,7 @@ interface Props {
   toLanguageCode: string;
   product?: any;
   productContentType?: string;
+  salesChannelId?: string;
 }
 
 const props = defineProps<Props>();
@@ -32,6 +33,10 @@ const mutationVariables = computed(() => {
   }
   if (props.productContentType) {
     data.productContentType = props.productContentType;
+  }
+
+  if (props.salesChannelId) {
+    data.salesChannel = { id: props.salesChannelId };
   }
 
   return { data };

@@ -42,6 +42,10 @@ const props = defineProps({
     type: String as PropType<string | undefined>,
     default: undefined,
   },
+  salesChannelId: {
+    type: String as PropType<string | undefined>,
+    default: undefined,
+  },
 });
 
 const emit = defineEmits<{
@@ -64,6 +68,7 @@ const emit = defineEmits<{
             toTranslate=""
             fromLanguageCode="en"
             :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
             @translated="val => form.name = val"
           />
         </FlexCell>
@@ -96,6 +101,7 @@ const emit = defineEmits<{
             toTranslate=""
             fromLanguageCode="en"
             :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
             @translated="val => emit('shortDescription', val)"
           />
         </FlexCell>
@@ -131,6 +137,7 @@ const emit = defineEmits<{
             toTranslate=""
             fromLanguageCode="en"
             :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
             @translated="val => emit('description', val)"
           />
         </FlexCell>

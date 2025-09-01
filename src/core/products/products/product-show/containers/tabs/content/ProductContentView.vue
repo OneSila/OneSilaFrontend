@@ -351,6 +351,7 @@ const shortDescriptionToolbarOptions = [
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
           :sales-channel-type="currentChannelType"
+          :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
         />
@@ -360,6 +361,7 @@ const shortDescriptionToolbarOptions = [
           :translation-id="translationId"
           :product-id="product.id"
           :language-code="currentLanguage"
+          :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @initial-bullet-points="previewBulletPoints = [...$event]"
         />
       </div>

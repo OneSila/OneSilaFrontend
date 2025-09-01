@@ -190,12 +190,12 @@
           "description": "Amazon product types that need mapping."
         },
         "unmappedLocalProductTypes": {
-          "title": "Unmapped Local Product Types",
-          "description": "Local product types that need mapping to Amazon."
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to Amazon."
         },
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
-          "description": "Amazon property values that need mapping in order to be imported locally."
+          "description": "Amazon property values that need mapping in order to be imported into OneSila."
         },
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
@@ -1006,6 +1006,7 @@
         "browseNodeDeleted": "Browse node deleted",
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
+        "selectCurrentNode": "Select current",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
@@ -1190,7 +1191,8 @@
         "title": "Product"
       },
       "duplicateModal": {
-        "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
+        "description": "Provide an SKU for the duplicated product or leave empty to auto generate.",
+        "createAsAlias": "Create as alias product?"
       },
       "bulkEditModal": {
         "textTitle": "Edit value",
@@ -2204,6 +2206,20 @@
           "bulkDeleteSuccess": "Property values deleted successfully.",
           "bulkDeleteError": "Failed to delete property values. Please try again."
         }
+      },
+      "merge": {
+        "button": "Merge",
+        "title": "Merge Values",
+        "description": "Select the value to keep. Other selected values will be merged into it and deleted.",
+        "selectTarget": "Select target value",
+        "selectSource": "Select value to merge",
+        "counter": "Used in {count} products",
+        "detailDescription": "All selected values will be merged into \"{value}\" and deleted.",
+        "current": "Current value \"{value}\" used in {count} products",
+        "warning": "All other values will be deleted.",
+        "confirm": "Merge",
+        "success": "Property values merged successfully.",
+        "error": "Failed to merge property values."
       }
     },
     "rule": {
@@ -2387,21 +2403,21 @@
       "propertySelectValues": {
         "title": "Amazon Property Values",
         "labels": {
-          "remoteName": "Remote Name",
-          "remoteValue": "Remote Value",
+          "remoteName": "Amazon Name",
+          "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace",
-          "localProperty": "Local Property",
-          "selectValue": "Select Value",
+          "localProperty": "OneSila Property",
+          "selectValue": "OneSila Select Value",
           "translatedRemoteName": "Translated Name"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "marketplace": "Amazon marketplace for this value.",
-          "localProperty": "Local property that this Amazon property maps to.",
+          "localProperty": "OneSila property that this Amazon property maps to.",
           "remoteValue": "Value exactly as defined in Amazon.",
           "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the local value that matches this Amazon value.",
+          "selectValue": "Choose the OneSila value that matches this Amazon value.",
           "translatedRemoteName": "Translated name for this value."
         },
         "notMappedBanner": {
@@ -2418,15 +2434,15 @@
         "assignSuccess": "Values were successfully assigned"
       },
       "mapping": {
-        "mappedLocally": "Mapped Locally",
-        "mappedRemotely": "Mapped Remotely",
+        "mappedLocally": "Mapped in OneSila",
+        "mappedRemotely": "Mapped on Amazon",
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values"
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
-      "pullLocalRules": "Pull Local Rules",
+      "pullLocalRules": "Pull OneSila Rules",
       "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",

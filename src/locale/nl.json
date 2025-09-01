@@ -703,6 +703,7 @@
         "browseNodeDeleted": "Browse node deleted",
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
+        "selectCurrentNode": "Select current",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
@@ -871,6 +872,10 @@
       "bulkEditModal": {
         "textTitle": "Waarde bewerken",
         "descriptionTitle": "Beschrijving bewerken"
+      },
+      "duplicateModal": {
+        "description": "Geef een SKU op voor het gedupliceerde product of laat leeg om automatisch te genereren.",
+        "createAsAlias": "Als aliasproduct aanmaken?"
       },
       "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
@@ -1827,6 +1832,20 @@
       },
       "placeholders": {
         "value": "Voeg Waarde toe"
+      },
+      "merge": {
+        "button": "Samenvoegen",
+        "title": "Waardes samenvoegen",
+        "description": "Selecteer de waarde die behouden blijft. De andere geselecteerde waardes worden hierin samengevoegd en verwijderd.",
+        "selectTarget": "Kies doelwaarde",
+        "selectSource": "Selecteer waarde om samen te voegen",
+        "counter": "Gebruikt in {count} producten",
+        "detailDescription": "Alle geselecteerde waardes worden samengevoegd in \"{value}\" en de andere worden verwijderd.",
+        "current": "Huidige waarde \"{value}\" gebruikt in {count} producten",
+        "warning": "Andere waardes worden verwijderd.",
+        "confirm": "Samenvoegen",
+        "success": "Waardes succesvol samengevoegd.",
+        "error": "Samenvoegen mislukt."
       }
     },
     "rule": {

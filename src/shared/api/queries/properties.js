@@ -211,6 +211,14 @@ query ProductProperties($first: Int, $last: Int, $after: String, $before: String
         hasNextPage
         hasPreviousPage
       }
+  }
+  }
+`;
+
+export const productPropertiesCountQuery = gql`
+  query ProductPropertiesCount($filter: ProductPropertyFilter) {
+    productProperties(filters: $filter) {
+      totalCount
     }
   }
 `;
