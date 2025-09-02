@@ -2844,7 +2844,21 @@
         "action": "Action",
         "status": "Status",
         "responseCode": "Response Code",
-        "subject": "Subject"
+        "subject": "Subject",
+        "date": "Date"
+      },
+      "actions": {
+        "create": "Create",
+        "update": "Update",
+        "delete": "Delete"
+      },
+      "statuses": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "subjects": {
+        "order": "Order",
+        "product": "Product"
       },
       "autoRefresh": "Auto-refresh",
       "rpmCap": "RPM Cap"
