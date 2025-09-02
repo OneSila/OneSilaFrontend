@@ -163,8 +163,7 @@
         "status": "Statut",
         "httpCode": "Code HTTP",
         "latency": "Latence",
-        "attempt": "Tentative #",
-        "deliveryId": "ID de livraison"
+        "attempt": "Tentative #"
       }
     }
   }

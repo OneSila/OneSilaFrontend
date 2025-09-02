@@ -2883,8 +2883,7 @@
         "status": "Status",
         "httpCode": "HTTP code",
         "latency": "Latency",
-        "attempt": "Attempt #",
-        "deliveryId": "Delivery ID"
+        "attempt": "Attempt #"
       }
     }
   }
