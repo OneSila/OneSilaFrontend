@@ -23,6 +23,7 @@ interface Options {
 
 export function useLiveMonitor(options: Options = {}) {
   const events = ref<any[]>([]);
+  const pageInfo = ref<any | null>(null);
   const loading = ref(false);
   const error = ref<unknown>(null);
 
@@ -62,7 +63,8 @@ export function useLiveMonitor(options: Options = {}) {
           to: timeRange.value?.to,
         },
       });
-      const edges = data?.webhookDeliveryEvents?.edges || [];
+      const edges = data?.webhookDeliveries?.edges || [];
+      pageInfo.value = data?.webhookDeliveries?.pageInfo || null;
       const nodes = edges.map((e: any) => e.node);
       if (nodes.length > 0) {
         events.value = nodes;
@@ -139,6 +141,7 @@ export function useLiveMonitor(options: Options = {}) {
 
   return {
     events,
+    pageInfo,
     loading,
     error,
     filters,

@@ -153,7 +153,19 @@
         "subject": "Betreff"
       },
       "autoRefresh": "Autoaktualisierung",
-      "rpmCap": "RPM-Limit"
+      "rpmCap": "RPM-Limit",
+      "table": {
+        "time": "Zeit",
+        "topic": "Thema",
+        "action": "Aktion",
+        "subjectId": "Betreff-ID",
+        "integration": "Integration",
+        "status": "Status",
+        "httpCode": "HTTP-Code",
+        "latency": "Latenz",
+        "attempt": "Versuch #",
+        "deliveryId": "Delivery-ID"
+      }
     }
   }
 }
