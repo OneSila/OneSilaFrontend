@@ -2844,7 +2844,7 @@
         "action": "Action",
         "status": "Status",
         "responseCode": "Response Code",
-        "subject": "Subject",
+        "topic": "Topic",
         "date": "Date"
       },
       "actions": {
@@ -2853,12 +2853,25 @@
         "delete": "Delete"
       },
       "statuses": {
-        "success": "Success",
+        "pending": "Pending",
+        "sending": "Sending",
+        "delivered": "Delivered",
         "failed": "Failed"
       },
-      "subjects": {
-        "order": "Order",
-        "product": "Product"
+      "topics": {
+        "product": "Product",
+        "ean_code": "EAN Code",
+        "price_list": "Price List",
+        "price_list_item": "Price List Item",
+        "media": "Media",
+        "media_through": "Media Through",
+        "property": "Property",
+        "select_value": "Select Value",
+        "property_rule": "Property Rule",
+        "property_rule_item": "Property Rule Item",
+        "product_property": "Product Property",
+        "sales_channel_view_assign": "Sales Channel View Assign",
+        "all": "All"
       },
       "autoRefresh": "Auto-refresh",
       "rpmCap": "RPM Cap",
@@ -2867,7 +2880,6 @@
         "topic": "Topic",
         "action": "Action",
         "subjectId": "Subject ID",
-        "integration": "Integration",
         "status": "Status",
         "httpCode": "HTTP code",
         "latency": "Latency",

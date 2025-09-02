@@ -36,7 +36,9 @@ const actionOptions = [
 ];
 
 const statusOptions = [
-  { label: t('webhooks.monitor.statuses.success'), value: 'SUCCESS' },
+  { label: t('webhooks.monitor.statuses.pending'), value: 'PENDING' },
+  { label: t('webhooks.monitor.statuses.sending'), value: 'SENDING' },
+  { label: t('webhooks.monitor.statuses.delivered'), value: 'DELIVERED' },
   { label: t('webhooks.monitor.statuses.failed'), value: 'FAILED' },
 ];
 
@@ -46,16 +48,27 @@ const responseCodeOptions = [
   { label: '500', value: '500' },
 ];
 
-const subjectOptions = [
-  { label: t('webhooks.monitor.subjects.order'), value: 'ORDER' },
-  { label: t('webhooks.monitor.subjects.product'), value: 'PRODUCT' },
+const topicOptions = [
+  { label: t('webhooks.monitor.topics.product'), value: 'product' },
+  { label: t('webhooks.monitor.topics.ean_code'), value: 'ean_code' },
+  { label: t('webhooks.monitor.topics.price_list'), value: 'price_list' },
+  { label: t('webhooks.monitor.topics.price_list_item'), value: 'price_list_item' },
+  { label: t('webhooks.monitor.topics.media'), value: 'media' },
+  { label: t('webhooks.monitor.topics.media_through'), value: 'media_through' },
+  { label: t('webhooks.monitor.topics.property'), value: 'property' },
+  { label: t('webhooks.monitor.topics.select_value'), value: 'select_value' },
+  { label: t('webhooks.monitor.topics.property_rule'), value: 'property_rule' },
+  { label: t('webhooks.monitor.topics.property_rule_item'), value: 'property_rule_item' },
+  { label: t('webhooks.monitor.topics.product_property'), value: 'product_property' },
+  { label: t('webhooks.monitor.topics.sales_channel_view_assign'), value: 'sales_channel_view_assign' },
+  { label: t('webhooks.monitor.topics.all'), value: 'all' },
 ];
 
 const optionLabelMap = {
   action: Object.fromEntries(actionOptions.map((o) => [o.value, o.label])),
   status: Object.fromEntries(statusOptions.map((o) => [o.value, o.label])),
   responseCode: Object.fromEntries(responseCodeOptions.map((o) => [o.value, o.label])),
-  subject: Object.fromEntries(subjectOptions.map((o) => [o.value, o.label])),
+  topic: Object.fromEntries(topicOptions.map((o) => [o.value, o.label])),
 } as Record<string, Record<string, string>>;
 
 const searchConfig: SearchConfig = {
@@ -88,9 +101,9 @@ const searchConfig: SearchConfig = {
     },
     {
       type: FieldType.Choice,
-      name: 'subject',
-      label: t('webhooks.monitor.filters.subject'),
-      options: subjectOptions,
+      name: 'topic',
+      label: t('webhooks.monitor.filters.topic'),
+      options: topicOptions,
       labelBy: 'label',
       valueBy: 'value',
     },
@@ -131,7 +144,9 @@ const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems());
 const totalSize = computed(() => rowVirtualizer.value.getTotalSize());
 
 const statusBadgeMap = {
-  SUCCESS: { text: t('webhooks.monitor.statuses.success'), color: 'green' },
+  PENDING: { text: t('webhooks.monitor.statuses.pending'), color: 'gray' },
+  SENDING: { text: t('webhooks.monitor.statuses.sending'), color: 'blue' },
+  DELIVERED: { text: t('webhooks.monitor.statuses.delivered'), color: 'green' },
   FAILED: { text: t('webhooks.monitor.statuses.failed'), color: 'red' },
 };
 
@@ -196,7 +211,7 @@ watch(
   () => route.query,
   (query) => {
     const newFilters: Record<string, any> = { webhookIntegration: { id: { exact: props.integrationId } } };
-    ['action', 'status', 'responseCode', 'subject'].forEach((k) => {
+    ['action', 'status', 'responseCode', 'topic'].forEach((k) => {
       const v = query[k];
       if (typeof v === 'string' && v) {
         newFilters[k] = v;
@@ -226,7 +241,7 @@ watch(
 
 const filterChips = computed(() =>
   Object.entries(route.query)
-    .filter(([k]) => ['action', 'status', 'responseCode', 'subject', 'date'].includes(k))
+    .filter(([k]) => ['action', 'status', 'responseCode', 'topic', 'date'].includes(k))
     .map(([k, v]) => ({ key: k, value: optionLabelMap[k]?.[String(v)] || v }))
 );
 
@@ -334,9 +349,6 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
               {{ t('webhooks.monitor.table.subjectId') }}
             </th>
             <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-              {{ t('webhooks.monitor.table.integration') }}
-            </th>
-            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
               {{ t('webhooks.monitor.table.status') }}
             </th>
             <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
@@ -363,16 +375,13 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
               {{ formatTime(events[virtualRow.index].sentAt) }}
             </td>
             <td class="px-3 py-2 text-sm text-gray-500">
-              {{ events[virtualRow.index].outbox.topic }}
+              {{ optionLabelMap.topic[events[virtualRow.index].outbox.topic] || events[virtualRow.index].outbox.topic }}
             </td>
             <td class="px-3 py-2 text-sm text-gray-500">
               {{ optionLabelMap.action[events[virtualRow.index].outbox.action] }}
             </td>
             <td class="px-3 py-2 text-sm text-gray-500">
               {{ events[virtualRow.index].outbox.subjectId }}
-            </td>
-            <td class="px-3 py-2 text-sm text-gray-500">
-              {{ events[virtualRow.index].outbox.webhookIntegration?.hostname }}
             </td>
             <td class="px-3 py-2 text-sm text-gray-500">
               <Badge
