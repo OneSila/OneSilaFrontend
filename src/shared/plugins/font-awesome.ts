@@ -155,7 +155,8 @@ import {
   faUpDownLeftRight,
   faWeightHanging,
   faCommentDots,
-  faArrowRight
+  faArrowRight,
+  faWaveSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -311,6 +312,7 @@ library.add(faUpDownLeftRight as IconDefinition);
 library.add(faWeightHanging as IconDefinition);
 library.add(faCommentDots as IconDefinition);
 library.add(faArrowRight as IconDefinition);
+library.add(faWaveSquare as IconDefinition);
 
 
 export default {

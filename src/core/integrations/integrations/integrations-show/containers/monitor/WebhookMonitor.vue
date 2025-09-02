@@ -22,6 +22,9 @@ const props = defineProps<{
   integrationId: string;
 }>();
 
+const timeOptions = ['live', 'last15m', '1h', '6h', '24h'] as const;
+const selectedRange = ref('live');
+
 const actionOptions = [
   { label: t('webhooks.monitor.actions.create'), value: 'CREATE' },
   { label: t('webhooks.monitor.actions.update'), value: 'UPDATE' },
@@ -96,7 +99,7 @@ const {
   refresh,
   updateFilters,
   updateTimeRange,
-} = useLiveMonitor({ filters: { integrationId: props.integrationId } });
+} = useLiveMonitor({ filters: { webhookIntegration: { id: { exact: props.integrationId } } } });
 
 const rpm = ref<number | null>(null);
 
@@ -112,7 +115,7 @@ onMounted(async () => {
 watch(
   () => route.query,
   (query) => {
-    const newFilters: Record<string, any> = { integrationId: props.integrationId };
+    const newFilters: Record<string, any> = { webhookIntegration: { id: { exact: props.integrationId } } };
     ['action', 'status', 'responseCode', 'subject'].forEach((k) => {
       const v = query[k];
       if (typeof v === 'string' && v) {
@@ -146,9 +149,6 @@ const filterChips = computed(() =>
     .filter(([k]) => ['action', 'status', 'responseCode', 'subject', 'date'].includes(k))
     .map(([k, v]) => ({ key: k, value: optionLabelMap[k]?.[String(v)] || v }))
 );
-
-const timeOptions = ['live', 'last15m', '1h', '6h', '24h'] as const;
-const selectedRange = ref('live');
 
 const selectRange = (option: string) => {
   selectedRange.value = option;
@@ -207,7 +207,9 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       <div class="flex items-center gap-2">
         <Label>{{ t('webhooks.monitor.autoRefresh') }}</Label>
         <Toggle v-model="live" />
-        <Badge v-if="rpm !== null" :text="`${t('webhooks.monitor.rpmCap')}: ${rpmDisplay}`" color="gray" />
+        <div v-if="rpm !== null"  class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm">
+          <span>{{ t('webhooks.monitor.rpmCap') }}: {{ rpmDisplay }}</span>
+        </div>
       </div>
     </div>
 
@@ -222,11 +224,13 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       </Button>
     </div>
 
+    <hr>
+
     <div class="flex flex-wrap gap-2">
       <div
         v-for="chip in filterChips"
         :key="chip.key"
-        class="flex items-center bg-gray-100 rounded-full px-2 py-1 text-sm"
+        class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm"
       >
         <span>{{ t(`webhooks.monitor.filters.${chip.key}`) }}: {{ chip.value }}</span>
         <button class="ml-1" @click="removeFilter(chip.key)">×</button>

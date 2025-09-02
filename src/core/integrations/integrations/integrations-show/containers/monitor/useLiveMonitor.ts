@@ -1,6 +1,6 @@
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import apolloClient from '../../../../../../../apollo-client';
-import { webhookDeliveryEventsQuery } from '../../../../../../shared/api/queries/webhooks.js';
+import { webhookDeliveriesQuery } from '../../../../../../shared/api/queries/webhooks.js';
 
 interface TimeRange {
   from?: string;
@@ -53,7 +53,7 @@ export function useLiveMonitor(options: Options = {}) {
     loading.value = true;
     try {
       const { data } = await apolloClient.query({
-        query: webhookDeliveryEventsQuery,
+        query: webhookDeliveriesQuery,
         fetchPolicy: 'network-only',
         variables: {
           filter: filters.value,
