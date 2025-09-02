@@ -122,6 +122,7 @@ export const webhookDeliveriesQuery = gql`
           id
           status
           attempt
+          status
           responseCode
           responseMs
           responseBodySnippet
