@@ -1,27 +1,97 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Button } from '../../../../../../shared/components/atoms/button';
-import { Modal } from '../../../../../../shared/components/atoms/modal';
-import { Label } from '../../../../../../shared/components/atoms/label';
-import { TextInput } from '../../../../../../shared/components/atoms/input-text';
-import { RangeDateInput } from '../../../../../../shared/components/atoms/input-date-range';
 import { Badge } from '../../../../../../shared/components/atoms/badge';
 import { Title } from '../../../../../../shared/components/atoms/title';
+import { Label } from '../../../../../../shared/components/atoms/label';
+import { FilterManager } from '../../../../../../shared/components/molecules/filter-manager';
+import { FieldType } from '../../../../../../shared/utils/constants';
+import type { SearchConfig } from '../../../../../../shared/components/organisms/general-search/searchConfig';
 import apolloClient from '../../../../../../../apollo-client';
 import { getWebhookIntegrationQuery } from '../../../../../../shared/api/queries/webhooks.js';
 import { useLiveMonitor } from './useLiveMonitor';
 
 const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 
 const props = defineProps<{
   integrationId: string;
 }>();
 
+const actionOptions = [
+  { label: t('webhooks.monitor.actions.create'), value: 'CREATE' },
+  { label: t('webhooks.monitor.actions.update'), value: 'UPDATE' },
+  { label: t('webhooks.monitor.actions.delete'), value: 'DELETE' },
+];
+
+const statusOptions = [
+  { label: t('webhooks.monitor.statuses.success'), value: 'SUCCESS' },
+  { label: t('webhooks.monitor.statuses.failed'), value: 'FAILED' },
+];
+
+const responseCodeOptions = [
+  { label: '200', value: '200' },
+  { label: '400', value: '400' },
+  { label: '500', value: '500' },
+];
+
+const subjectOptions = [
+  { label: t('webhooks.monitor.subjects.order'), value: 'ORDER' },
+  { label: t('webhooks.monitor.subjects.product'), value: 'PRODUCT' },
+];
+
+const optionLabelMap = {
+  action: Object.fromEntries(actionOptions.map((o) => [o.value, o.label])),
+  status: Object.fromEntries(statusOptions.map((o) => [o.value, o.label])),
+  responseCode: Object.fromEntries(responseCodeOptions.map((o) => [o.value, o.label])),
+  subject: Object.fromEntries(subjectOptions.map((o) => [o.value, o.label])),
+} as Record<string, Record<string, string>>;
+
+const searchConfig: SearchConfig = {
+  search: false,
+  filters: [
+    { type: FieldType.RangeDate, name: 'date', label: t('webhooks.monitor.filters.date') },
+    {
+      type: FieldType.Choice,
+      name: 'action',
+      label: t('webhooks.monitor.filters.action'),
+      options: actionOptions,
+      labelBy: 'label',
+      valueBy: 'value',
+    },
+    {
+      type: FieldType.Choice,
+      name: 'status',
+      label: t('webhooks.monitor.filters.status'),
+      options: statusOptions,
+      labelBy: 'label',
+      valueBy: 'value',
+    },
+    {
+      type: FieldType.Choice,
+      name: 'responseCode',
+      label: t('webhooks.monitor.filters.responseCode'),
+      options: responseCodeOptions,
+      labelBy: 'label',
+      valueBy: 'value',
+    },
+    {
+      type: FieldType.Choice,
+      name: 'subject',
+      label: t('webhooks.monitor.filters.subject'),
+      options: subjectOptions,
+      labelBy: 'label',
+      valueBy: 'value',
+    },
+  ],
+  orders: [],
+};
+
 const {
-  filters,
-  timeRange,
   live,
   refresh,
   updateFilters,
@@ -39,58 +109,52 @@ onMounted(async () => {
   rpm.value = data?.webhookIntegration?.requestsPerMinute || null;
 });
 
-const filterForm = ref({
-  action: '',
-  status: '',
-  responseCode: '',
-  subject: '',
-});
-const showFilterModal = ref(false);
+watch(
+  () => route.query,
+  (query) => {
+    const newFilters: Record<string, any> = { integrationId: props.integrationId };
+    ['action', 'status', 'responseCode', 'subject'].forEach((k) => {
+      const v = query[k];
+      if (typeof v === 'string' && v) {
+        newFilters[k] = v;
+      }
+    });
+    updateFilters(newFilters);
 
-const applyFilters = () => {
-  const newFilters: Record<string, any> = { integrationId: props.integrationId };
-  Object.entries(filterForm.value).forEach(([k, v]) => {
-    if (v) {
-      newFilters[k] = v;
+    if (typeof query.date === 'string') {
+      const [from, to] = query.date.split(',');
+      if (from && to) {
+        updateTimeRange({
+          from: new Date(from).toISOString(),
+          to: new Date(to).toISOString(),
+        });
+        live.value = false;
+        selectedRange.value = 'custom';
+        return;
+      }
     }
-  });
-  updateFilters(newFilters);
-  showFilterModal.value = false;
-};
-
-const removeFilter = (key: string) => {
-  const newFilters: Record<string, any> = { ...filters.value };
-  delete newFilters[key];
-  updateFilters(newFilters);
-};
-
-const filterChips = computed(() =>
-  Object.entries(filters.value)
-    .filter(([k]) => k !== 'integrationId')
-    .map(([k, v]) => ({ key: k, value: v }))
+    if (selectedRange.value === 'custom') {
+      selectedRange.value = 'live';
+      updateTimeRange(null);
+    }
+  },
+  { immediate: true }
 );
 
-const timeOptions = ['live', 'last15m', '1h', '6h', '24h', 'custom'] as const;
-const selectedRange = ref('live');
+const filterChips = computed(() =>
+  Object.entries(route.query)
+    .filter(([k]) => ['action', 'status', 'responseCode', 'subject', 'date'].includes(k))
+    .map(([k, v]) => ({ key: k, value: optionLabelMap[k]?.[String(v)] || v }))
+);
 
-const showCustomModal = ref(false);
-const customRange = ref<any>(null);
-const applyCustomRange = () => {
-  if (customRange.value && customRange.value.length === 2) {
-    const [from, to] = customRange.value;
-    updateTimeRange({
-      from: new Date(from).toISOString(),
-      to: new Date(to).toISOString(),
-    });
-    live.value = false;
-    selectedRange.value = 'custom';
-    refresh();
-  }
-  showCustomModal.value = false;
-};
+const timeOptions = ['live', 'last15m', '1h', '6h', '24h'] as const;
+const selectedRange = ref('live');
 
 const selectRange = (option: string) => {
   selectedRange.value = option;
+  const newQuery = { ...route.query } as Record<string, any>;
+  delete newQuery.date;
+  router.replace({ query: newQuery });
   if (option === 'live') {
     live.value = true;
     updateTimeRange(null);
@@ -113,9 +177,6 @@ const selectRange = (option: string) => {
     case '24h':
       from = new Date(to.getTime() - 24 * 60 * 60 * 1000);
       break;
-    case 'custom':
-      showCustomModal.value = true;
-      return;
   }
   updateTimeRange({ from: from.toISOString(), to: to.toISOString() });
   refresh();
@@ -129,11 +190,18 @@ watch(live, (val) => {
   }
 });
 
+const removeFilter = (key: string) => {
+  const newQuery = { ...route.query } as Record<string, any>;
+  delete newQuery[key];
+  router.replace({ query: newQuery });
+};
+
 const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
 </script>
 
 <template>
   <div class="space-y-4">
+    <FilterManager :search-config="searchConfig" />
     <div class="flex items-center justify-between">
       <Title>{{ t('webhooks.monitor.title') }}</Title>
       <div class="flex items-center gap-2">
@@ -152,12 +220,6 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       >
         {{ t(`webhooks.monitor.timeRange.${opt}`) }}
       </Button>
-      <Button
-        :custom-class="'px-2 py-1 rounded text-sm bg-gray-100'"
-        @click="showFilterModal = true"
-      >
-        {{ t('webhooks.monitor.filters.title') }}
-      </Button>
     </div>
 
     <div class="flex flex-wrap gap-2">
@@ -170,49 +232,6 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
         <button class="ml-1" @click="removeFilter(chip.key)">×</button>
       </div>
     </div>
-
-    <Modal v-model="showFilterModal">
-      <div class="p-4 space-y-4">
-        <div>
-          <Label>{{ t('webhooks.monitor.filters.action') }}</Label>
-          <TextInput v-model="filterForm.action" class="w-full" />
-        </div>
-        <div>
-          <Label>{{ t('webhooks.monitor.filters.status') }}</Label>
-          <TextInput v-model="filterForm.status" class="w-full" />
-        </div>
-        <div>
-          <Label>{{ t('webhooks.monitor.filters.responseCode') }}</Label>
-          <TextInput v-model="filterForm.responseCode" class="w-full" />
-        </div>
-        <div>
-          <Label>{{ t('webhooks.monitor.filters.subject') }}</Label>
-          <TextInput v-model="filterForm.subject" class="w-full" />
-        </div>
-        <div class="flex justify-end">
-          <Button
-            @click="applyFilters"
-            :custom-class="'px-4 py-2 bg-primary text-white rounded'"
-          >
-            {{ t('shared.actions.save') }}
-          </Button>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal v-model="showCustomModal">
-      <div class="p-4 space-y-4">
-        <RangeDateInput v-model="customRange" :label="t('webhooks.monitor.timeRange.custom')" />
-        <div class="flex justify-end">
-          <Button
-            @click="applyCustomRange"
-            :custom-class="'px-4 py-2 bg-primary text-white rounded'"
-          >
-            {{ t('shared.actions.save') }}
-          </Button>
-        </div>
-      </div>
-    </Modal>
   </div>
 </template>
 
