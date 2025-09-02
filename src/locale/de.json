@@ -116,6 +116,7 @@
         "browseNodeDeleted": "Browse node deleted",
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
+        "selectCurrentNode": "Select current",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",

@@ -176,7 +176,7 @@ const copySkuToClipboard = async (sku: string) => {
                       <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
                       <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
                       <Button class="ml-1" @click="copySkuToClipboard(getResultData(result, 'sku'))">
-                        <Icon name="clipboard" class="h-4 w-4" />
+                        <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
                       </Button>
                     </Flex>
                     <Flex v-if="getResultData(result, null, 'name')">

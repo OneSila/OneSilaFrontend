@@ -278,6 +278,13 @@ const goBack = () => {
   const target = pathStack.value.length - 2;
   goToLevel(target >= 0 ? target : null);
 };
+
+const selectCurrent = () => {
+  const node = pathStack.value[pathStack.value.length - 1];
+  if (node) {
+    selectNode(node);
+  }
+};
 const selectNode = (node: BrowseNode) => {
   pendingNode.value = node;
 };
@@ -459,13 +466,17 @@ const showAlert = computed(
             >{{ crumb.name }}</span
           >
         </template>
-        <Button
-          v-if="pathStack.length"
-          class="btn btn-sm btn-outline-primary ml-auto"
-          @click="goBack"
-        >
-          {{ t('shared.button.back') }}
-        </Button>
+        <div v-if="pathStack.length" class="flex gap-1 ml-auto">
+          <Button
+            class="btn btn-sm btn-outline-primary"
+            @click="selectCurrent"
+          >
+            {{ t('products.products.amazon.selectCurrentNode') }}
+          </Button>
+          <Button class="btn btn-sm btn-outline-primary" @click="goBack">
+            {{ t('shared.button.back') }}
+          </Button>
+        </div>
       </div>
 
       <input

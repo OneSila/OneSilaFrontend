@@ -21,6 +21,10 @@ const clearSelection = () => {
   generalListingRef.value?.clearSelected?.()
 }
 
+const clearSelectionAndRefetch = (query) => {
+  generalListingRef.value?.clearSelected?.()
+  query.refetch();
+}
 
 </script>
 
@@ -51,7 +55,7 @@ const clearSelection = () => {
          :query-key="listingQueryKey"
          :fixed-filter-variables="{'isProductType': false }"
           >
-      <template #bulkActions="{ selectedEntities }">
+      <template #bulkActions="{ selectedEntities, query }">
         <div class="flex items-center space-x-2">
           <AiBulkTranslator
             :type="'values'"
@@ -60,7 +64,7 @@ const clearSelection = () => {
           />
           <PropertySelectValuesMerge
             :selected-entities="selectedEntities"
-            @merged="clearSelection"
+            @merged="clearSelectionAndRefetch(query)"
           />
         </div>
       </template>

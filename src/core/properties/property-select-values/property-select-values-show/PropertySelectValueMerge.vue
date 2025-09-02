@@ -11,6 +11,7 @@ import { propertySelectValuesQuerySimpleSelector, productPropertiesCountQuery } 
 import { mergePropertySelectValueMutation } from '../../../../shared/api/mutations/properties.js';
 import { Toast } from '../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../shared/utils';
+import debounce from "lodash.debounce";
 
 const props = defineProps<{ id: string; propertyId: string; currentLabel: string }>();
 
@@ -43,16 +44,26 @@ const openModal = async () => {
   showModal.value = true;
 };
 
-const fetchOptions = async () => {
+const fetchOptions = async (searchValue: string | null = null) => {
+  const variables = { filter: { property: { id: { exact: props.propertyId } } }, search: null } as any;
+
+  if (searchValue !== null && searchValue !== undefined) {
+    variables.filter.search = searchValue;
+  }
+
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuerySimpleSelector,
-    variables: { filter: { property: { id: { exact: props.propertyId } } } },
+    variables: variables,
     fetchPolicy: 'network-only',
   });
   const fetched =
     data?.propertySelectValues?.edges?.map((e: any) => ({ label: e.node.value, value: e.node.id })) || [];
   options.value = fetched.filter((opt) => opt.value !== props.id && !sources.value.find((s) => s.id === opt.value));
 };
+
+const handleInput = debounce(async (searchValue: string) => {
+  fetchOptions(searchValue);
+}, 500);
 
 onMounted(async () => {
   currentCount.value = await fetchCount(props.id);
@@ -112,6 +123,7 @@ const mergeValues = async () => {
             label-by="label"
             value-by="value"
             class="flex-1"
+            @searched="fetchOptions"
             :placeholder="t('properties.values.merge.selectSource')"
           />
           <Button class="btn btn-secondary" :disabled="!selectedOption" @click="addSource">
