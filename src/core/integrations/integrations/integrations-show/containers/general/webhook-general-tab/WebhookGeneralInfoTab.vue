@@ -252,20 +252,21 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.secret') }}
         </Label>
-        <div class="flex gap-2">
-          <input
-            type="password"
-            :value="formData.secret"
-            disabled
-            class="text-input border border-gray-300 shadow-sm rounded-md px-3 py-2 text-sm placeholder:italic focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 w-full"
-          />
-          <Button @click="copySecret" class="flex-shrink-0">
-            <Icon name="clipboard" class="h-5 w-5 text-gray-500" aria-hidden="true" />
-          </Button>
-          <Button @click="regenerateSecret" class="flex-shrink-0">
-            {{ t('integrations.webhook.buttons.regenerateSecret') }}
-          </Button>
-        </div>
+        <Flex gap="2" middle>
+          <FlexCell grow>
+            <TextInput v-model="formData.secret" secret disabled class="w-full" />
+          </FlexCell>
+          <FlexCell>
+            <Button @click="copySecret">
+              <Icon name="clipboard" class="h-5 w-5 text-gray-500" aria-hidden="true" />
+            </Button>
+          </FlexCell>
+          <FlexCell>
+            <Button @click="regenerateSecret">
+              {{ t('integrations.webhook.buttons.regenerateSecret') }}
+            </Button>
+          </FlexCell>
+        </Flex>
       </div>
     </div>
 
