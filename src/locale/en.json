@@ -2861,7 +2861,19 @@
         "product": "Product"
       },
       "autoRefresh": "Auto-refresh",
-      "rpmCap": "RPM Cap"
+      "rpmCap": "RPM Cap",
+      "table": {
+        "time": "Time",
+        "topic": "Topic",
+        "action": "Action",
+        "subjectId": "Subject ID",
+        "integration": "Integration",
+        "status": "Status",
+        "httpCode": "HTTP code",
+        "latency": "Latency",
+        "attempt": "Attempt #",
+        "deliveryId": "Delivery ID"
+      }
     }
   }
 }

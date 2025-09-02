@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+import { useVirtualizer } from '@tanstack/vue-virtual';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
@@ -8,10 +9,13 @@ import { Badge } from '../../../../../../shared/components/atoms/badge';
 import { Title } from '../../../../../../shared/components/atoms/title';
 import { Label } from '../../../../../../shared/components/atoms/label';
 import { FilterManager } from '../../../../../../shared/components/molecules/filter-manager';
+import { Pagination } from '../../../../../../shared/components/molecules/pagination';
 import { FieldType } from '../../../../../../shared/utils/constants';
 import type { SearchConfig } from '../../../../../../shared/components/organisms/general-search/searchConfig';
 import apolloClient from '../../../../../../../apollo-client';
 import { getWebhookIntegrationQuery } from '../../../../../../shared/api/queries/webhooks.js';
+import { Icon } from '../../../../../../shared/components/atoms/icon';
+import { Toast } from '../../../../../../shared/modules/toast';
 import { useLiveMonitor } from './useLiveMonitor';
 
 const { t } = useI18n();
@@ -95,11 +99,87 @@ const searchConfig: SearchConfig = {
 };
 
 const {
+  events,
+  pageInfo,
+  pagination,
   live,
   refresh,
   updateFilters,
   updateTimeRange,
 } = useLiveMonitor({ filters: { webhookIntegration: { id: { exact: props.integrationId } } } });
+
+const parentRef = ref<HTMLElement | null>(null);
+const rowVirtualizer = useVirtualizer({
+  count: events.value.length,
+  getScrollElement: () => parentRef.value,
+  estimateSize: () => 40,
+});
+
+watch(
+  () => events.value.length,
+  (len) => {
+    rowVirtualizer.value.setOptions({
+      ...rowVirtualizer.value.options,
+      count: len,
+      getScrollElement: () => parentRef.value,
+      estimateSize: () => 40,
+    });
+  }
+);
+
+const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems());
+const totalSize = computed(() => rowVirtualizer.value.getTotalSize());
+
+const statusBadgeMap = {
+  SUCCESS: { text: t('webhooks.monitor.statuses.success'), color: 'green' },
+  FAILED: { text: t('webhooks.monitor.statuses.failed'), color: 'red' },
+};
+
+const getResponseCodeColor = (code?: number | null) => {
+  if (!code) return 'gray';
+  if (code >= 200 && code < 300) return 'green';
+  if (code >= 400 && code < 500) return 'yellow';
+  if (code >= 500 && code < 600) return 'red';
+  return 'gray';
+};
+
+const copyDeliveryId = async (id: string) => {
+  try {
+    await navigator.clipboard.writeText(id);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch {
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
+};
+
+const formatTime = (iso: string) => new Date(iso).toLocaleString();
+
+const handlePageChange = ({ query }: { query: Record<string, any> }) => {
+  const before = typeof query.before === 'string' ? query.before : null;
+  const after = typeof query.after === 'string' ? query.after : null;
+  if (before) {
+    pagination.before = before;
+    delete pagination.after;
+    delete pagination.first;
+    pagination.last = 20;
+  } else if (after) {
+    pagination.after = after;
+    delete pagination.before;
+    delete pagination.last;
+    pagination.first = 20;
+  } else if (query.last === 'true') {
+    delete pagination.after;
+    delete pagination.before;
+    delete pagination.first;
+    pagination.last = 20;
+  } else if (query.first === 'true') {
+    delete pagination.after;
+    delete pagination.before;
+    delete pagination.last;
+    pagination.first = 20;
+  }
+  refresh();
+};
 
 const rpm = ref<number | null>(null);
 
@@ -236,6 +316,96 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
         <button class="ml-1" @click="removeFilter(chip.key)">×</button>
       </div>
     </div>
+
+    <div ref="parentRef" class="max-h-96 overflow-auto mt-4">
+      <table class="min-w-full divide-y divide-gray-300">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.time') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.topic') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.action') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.subjectId') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.integration') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.status') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.httpCode') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.latency') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.attempt') }}
+            </th>
+            <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+              {{ t('webhooks.monitor.table.deliveryId') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody :style="{ height: totalSize + 'px', position: 'relative' }" class="divide-y divide-gray-200 bg-white">
+          <tr
+            v-for="virtualRow in virtualRows"
+            :key="virtualRow.index"
+            :style="{ position: 'absolute', top: virtualRow.start + 'px', width: '100%' }"
+          >
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ formatTime(events[virtualRow.index].sentAt) }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ events[virtualRow.index].outbox.topic }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ optionLabelMap.action[events[virtualRow.index].outbox.action] }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ events[virtualRow.index].outbox.subjectId }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ events[virtualRow.index].outbox.webhookIntegration?.hostname }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              <Badge
+                :color="statusBadgeMap[events[virtualRow.index].status].color"
+                :text="statusBadgeMap[events[virtualRow.index].status].text"
+              />
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              <Badge
+                :color="getResponseCodeColor(events[virtualRow.index].responseCode)"
+                :text="events[virtualRow.index].responseCode"
+              />
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ events[virtualRow.index].responseMs }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              {{ events[virtualRow.index].attempt }}
+            </td>
+            <td class="px-3 py-2 text-sm text-gray-500">
+              <div class="flex items-center gap-1">
+                <span>{{ events[virtualRow.index].id }}</span>
+                <Button :custom-class="'p-1'" @click="copyDeliveryId(events[virtualRow.index].id)">
+                  <Icon name="clipboard" class="h-4 w-4 text-gray-500" />
+                </Button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <Pagination v-if="pageInfo" class="mt-4" :page-info="pageInfo" :change-query-params="false" @query-changed="handlePageChange" />
   </div>
 </template>
 

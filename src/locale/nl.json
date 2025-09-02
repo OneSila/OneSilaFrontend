@@ -1960,7 +1960,19 @@
         "subject": "Onderwerp"
       },
       "autoRefresh": "Auto-verversen",
-      "rpmCap": "RPM-limiet"
+      "rpmCap": "RPM-limiet",
+      "table": {
+        "time": "Tijd",
+        "topic": "Onderwerp",
+        "action": "Actie",
+        "subjectId": "Onderwerp-ID",
+        "integration": "Integratie",
+        "status": "Status",
+        "httpCode": "HTTP-code",
+        "latency": "Latentie",
+        "attempt": "Poging #",
+        "deliveryId": "Leverings-ID"
+      }
     }
   }
 }
