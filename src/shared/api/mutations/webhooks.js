@@ -4,6 +4,8 @@ export const createWebhookIntegrationMutation = gql`
   mutation createWebhookIntegration($data: WebhookIntegrationInput!) {
     createWebhookIntegration(data: $data) {
       id
+      hostname
+      active
       topic
       version
       url
@@ -24,6 +26,8 @@ export const createWebhookIntegrationsMutation = gql`
   mutation createWebhookIntegrations($data: [WebhookIntegrationInput!]!) {
     createWebhookIntegrations(data: $data) {
       id
+      hostname
+      active
       topic
       version
       url
@@ -44,6 +48,8 @@ export const updateWebhookIntegrationMutation = gql`
   mutation updateWebhookIntegration($data: WebhookIntegrationPartialInput!) {
     updateWebhookIntegration(data: $data) {
       id
+      hostname
+      active
       topic
       version
       url
@@ -64,6 +70,8 @@ export const regenerateWebhookIntegrationSecretMutation = gql`
   mutation regenerateWebhookIntegrationSecret($data: WebhookIntegrationPartialInput!) {
     regenerateWebhookIntegrationSecret(data: $data) {
       id
+      hostname
+      active
       topic
       version
       url

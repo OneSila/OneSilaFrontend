@@ -35,7 +35,21 @@ interface EditWebhookForm {
 
 const props = defineProps<{ data: EditWebhookForm }>();
 const { t } = useI18n();
-const formData = ref<EditWebhookForm>({ ...props.data });
+
+const removeTypename = (obj: any): any => {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => removeTypename(item));
+  } else if (obj && typeof obj === 'object') {
+    const { __typename, ...rest } = obj;
+    Object.keys(rest).forEach((key) => {
+      rest[key] = removeTypename(rest[key]);
+    });
+    return rest;
+  }
+  return obj;
+};
+
+const formData = ref<EditWebhookForm>(removeTypename(props.data));
 const fieldErrors = ref<Record<string, string>>({});
 const router = useRouter();
 const submitButtonRef = ref();
@@ -76,13 +90,17 @@ const retentionChoices = [
   { id: '12m', text: t('integrations.webhook.choices.retentionPolicy.12m') },
 ];
 
-watch(() => props.data, (newData) => {
-  formData.value = { ...newData };
-}, { deep: true });
+watch(
+  () => props.data,
+  (newData) => {
+    formData.value = removeTypename(newData);
+  },
+  { deep: true }
+);
 
 const cleanupAndMutate = async (mutate) => {
   fieldErrors.value = {};
-  await mutate({ variables: { data: formData.value } });
+  await mutate({ variables: { data: removeTypename(formData.value) } });
 };
 
 const handleError = (errors) => {
@@ -157,15 +175,17 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.topic') }}
         </Label>
-        <Selector
-          v-model="formData.topic"
-          :options="topicChoices"
-          value-by="id"
-          label-by="text"
-          :placeholder="t('integrations.placeholders.topic')"
-          :removable="false"
-          class="w-full"
-        />
+        <div>
+          <Selector
+            v-model="formData.topic"
+            :options="topicChoices"
+            value-by="id"
+            label-by="text"
+            :placeholder="t('integrations.placeholders.topic')"
+            :removable="false"
+            class="w-full"
+          />
+        </div>
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.topic') }}</p>
         </div>
@@ -177,15 +197,17 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.version') }}
         </Label>
-        <Selector
-          v-model="formData.version"
-          :options="versionChoices"
-          value-by="id"
-          label-by="text"
-          :placeholder="t('integrations.placeholders.version')"
-          :removable="false"
-          class="w-full"
-        />
+        <div>
+          <Selector
+            v-model="formData.version"
+            :options="versionChoices"
+            value-by="id"
+            label-by="text"
+            :placeholder="t('integrations.placeholders.version')"
+            :removable="false"
+            class="w-full"
+          />
+        </div>
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.version') }}</p>
         </div>
@@ -215,15 +237,17 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.mode') }}
         </Label>
-        <Selector
-          v-model="formData.mode"
-          :options="modeChoices"
-          value-by="id"
-          label-by="text"
-          :placeholder="t('integrations.placeholders.mode')"
-          :removable="false"
-          class="w-full"
-        />
+        <div>
+          <Selector
+            v-model="formData.mode"
+            :options="modeChoices"
+            value-by="id"
+            label-by="text"
+            :placeholder="t('integrations.placeholders.mode')"
+            :removable="false"
+            class="w-full"
+          />
+        </div>
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.mode') }}</p>
         </div>
@@ -235,15 +259,17 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.retentionPolicy') }}
         </Label>
-        <Selector
-          v-model="formData.retentionPolicy"
-          :options="retentionChoices"
-          value-by="id"
-          label-by="text"
-          :placeholder="t('integrations.placeholders.retentionPolicy')"
-          :removable="false"
-          class="w-full"
-        />
+        <div>
+          <Selector
+            v-model="formData.retentionPolicy"
+            :options="retentionChoices"
+            value-by="id"
+            label-by="text"
+            :placeholder="t('integrations.placeholders.retentionPolicy')"
+            :removable="false"
+            class="w-full"
+          />
+        </div>
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.retentionPolicy') }}</p>
         </div>
@@ -262,9 +288,9 @@ const regenerateSecret = async () => {
             </Button>
           </FlexCell>
           <FlexCell>
-            <Button @click="regenerateSecret">
+            <SecondaryButton @click="regenerateSecret">
               {{ t('integrations.webhook.buttons.regenerateSecret') }}
-            </Button>
+            </SecondaryButton>
           </FlexCell>
         </Flex>
       </div>

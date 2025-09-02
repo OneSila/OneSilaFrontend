@@ -6,6 +6,8 @@ export const webhookIntegrationsQuery = gql`
       edges {
         node {
           id
+          hostname
+          active
           topic
           version
           url
@@ -36,6 +38,8 @@ export const getWebhookIntegrationQuery = gql`
   query GetWebhookIntegration($id: GlobalID!) {
     webhookIntegration(id: $id) {
       id
+      hostname
+      active
       topic
       version
       url
