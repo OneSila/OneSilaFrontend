@@ -105,23 +105,25 @@ export const deleteWebhookIntegrationsMutation = gql`
 `;
 
 export const retryWebhookDeliveryMutation = gql`
-  mutation retryWebhookDelivery($data: WebhookDeliveryPartialInput!) {
-    retryWebhookDelivery(data: $data) {
-      id
-      outbox {
+  mutation retryWebhookDelivery($instance: WebhookDeliveryPartialInput!) {
+    retryWebhookDelivery(instance: $instance) {
+      delivery {
         id
+        outbox {
+          id
+        }
+        webhookIntegration {
+          id
+        }
+        status
+        attempt
+        responseCode
+        responseMs
+        responseBodySnippet
+        sentAt
+        errorMessage
+        errorTraceback
       }
-      webhookIntegration {
-        id
-      }
-      status
-      attempt
-      responseCode
-      responseMs
-      responseBodySnippet
-      sentAt
-      errorMessage
-      errorTraceback
     }
   }
 `;
