@@ -15,6 +15,7 @@ export const salesChannelSubscription = gql`
       }
       amazonImports {
         id
+        proxyId
         type
         status
         percentage
