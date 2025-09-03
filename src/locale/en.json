@@ -2772,6 +2772,17 @@
       }
     },
     "imports": {
+      "show": {
+        "title": "Import"
+      },
+      "labels": {
+        "createOnly": "Create only",
+        "updateOnly": "Update only",
+        "skipBrokenRecords": "Skip broken records",
+        "totalRecords": "Total records",
+        "processedRecords": "Processed records",
+        "errorTraceback": "Error traceback"
+      },
       "retry": {
         "success": "Retry import process success",
         "error": "Retry import process had an unexpected error"
@@ -2829,17 +2840,6 @@
           }
         }
       }
-    },
-    "show": {
-      "title": "Import"
-    },
-    "labels": {
-      "createOnly": "Create only",
-      "updateOnly": "Update only",
-      "skipBrokenRecords": "Skip broken records",
-      "totalRecords": "Total records",
-      "processedRecords": "Processed records",
-      "errorTraceback": "Error traceback"
     }
   },
   "webhooks": {
