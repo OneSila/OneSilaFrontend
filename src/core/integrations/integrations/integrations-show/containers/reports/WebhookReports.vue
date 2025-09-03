@@ -251,7 +251,6 @@ const deliveryOutcomeOptions = computed(() => ({
   chart: { type: 'area', stacked: true, toolbar: { show: false } },
   xaxis: { type: 'datetime' },
   colors: ['#22c55e', '#ef4444', '#f97316', '#3b82f6'],
-  title: { text: t('webhooks.reports.charts.deliveryOutcome') },
 }));
 
 const latencySeries = computed(() => {
@@ -271,7 +270,6 @@ const latencySeries = computed(() => {
 const latencyOptions = computed(() => ({
   chart: { type: 'line', toolbar: { show: false } },
   xaxis: { type: 'datetime' },
-  title: { text: t('webhooks.reports.charts.latency') },
 }));
 
 const topicsSeries = computed(() => {
@@ -303,7 +301,7 @@ const topicsOptions = computed(() => ({
     },
   },
   stroke: { width: [0, 3] },
-  plotOptions: { bar: { horizontal: true } },
+  plotOptions: { bar: { horizontal: false } },
   xaxis: { categories: seriesData.value ? seriesData.value.topicsBreakdown.map((b: any) => b.topic) : [] },
   yaxis: [
     { title: { text: t('webhooks.reports.kpis.deliveries') } },
@@ -315,7 +313,6 @@ const topicsOptions = computed(() => ({
     },
   ],
   tooltip: { shared: true, intersect: false },
-  title: { text: t('webhooks.reports.charts.topics') },
 }));
 
 const responseCodesSeries = computed(() => {
@@ -355,7 +352,6 @@ const responseCodesOptions = computed(() => {
     plotOptions: { bar: { distributed: true } },
     colors,
     xaxis: { categories },
-    title: { text: t('webhooks.reports.charts.responseCodes') },
   };
 });
 
@@ -396,7 +392,6 @@ const retriesOptions = computed(() => {
     plotOptions: { bar: { distributed: true } },
     colors,
     xaxis: { categories },
-    title: { text: t('webhooks.reports.charts.retries') },
   };
 });
 
@@ -421,11 +416,6 @@ const heatmapSeries = computed(() => {
 const heatmapOptions = computed(() => ({
   chart: { type: 'heatmap', toolbar: { show: false } },
   dataLabels: { enabled: false },
-  title: {
-    text: `${t('webhooks.reports.charts.heatmap')} - ${t(
-      `webhooks.reports.heatmap.metric.${heatmapMetric.value}`,
-    )}`,
-  },
 }));
 
 const topOffenders = computed(() => seriesData.value?.topOffenders || []);
@@ -435,7 +425,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
   <div class="space-y-4">
     <FilterManager :search-config="searchConfig" />
     <div>
-      <Title level="2">{{ t('integrations.show.tabs.reports') }}</Title>
+      <Title level="1">{{ t('integrations.show.tabs.reports') }}</Title>
       <p class="text-sm text-gray-600">{{ t('webhooks.reports.description') }}</p>
     </div>
     <hr />
@@ -468,59 +458,47 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
     </div>
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
     <hr class="my-4" />
-    <ApexChart
-      v-if="seriesData"
-      type="area"
-      height="300"
-      :options="deliveryOutcomeOptions"
-      :series="deliveryOutcomeSeries"
-    />
-    <hr class="my-4" v-if="seriesData" />
-    <ApexChart
-      v-if="seriesData"
-      type="line"
-      height="300"
-      :options="latencyOptions"
-      :series="latencySeries"
-      class="mt-4"
-    />
-    <hr class="my-4" v-if="seriesData" />
-    <div class="mt-2 text-sm text-gray-500">
-      <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
-      <ul class="list-disc ml-5">
-        <li>{{ t('webhooks.reports.charts.latencyLegend.p50') }}</li>
-        <li>{{ t('webhooks.reports.charts.latencyLegend.p95') }}</li>
-        <li>{{ t('webhooks.reports.charts.latencyLegend.p99') }}</li>
-      </ul>
+    <div v-if="seriesData">
+      <Title level="3">{{ t('webhooks.reports.charts.deliveryOutcome') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.deliveryOutcome') }}</p>
+      <ApexChart type="area" height="300" :options="deliveryOutcomeOptions" :series="deliveryOutcomeSeries" />
     </div>
-    <ApexChart
-      v-if="seriesData"
-      type="bar"
-      height="300"
-      :options="topicsOptions"
-      :series="topicsSeries"
-      class="mt-4"
-    />
     <hr class="my-4" v-if="seriesData" />
-    <ApexChart
-      v-if="seriesData"
-      type="bar"
-      height="300"
-      :options="responseCodesOptions"
-      :series="responseCodesSeries"
-      class="mt-4"
-    />
+    <div v-if="seriesData">
+      <Title level="3">{{ t('webhooks.reports.charts.latency') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.latency') }}</p>
+      <ApexChart type="line" height="300" :options="latencyOptions" :series="latencySeries" class="mt-4" />
+      <div class="mt-2 text-sm text-gray-500">
+        <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
+        <ul class="list-disc ml-5">
+          <li>{{ t('webhooks.reports.charts.latencyLegend.p50') }}</li>
+          <li>{{ t('webhooks.reports.charts.latencyLegend.p95') }}</li>
+          <li>{{ t('webhooks.reports.charts.latencyLegend.p99') }}</li>
+        </ul>
+      </div>
+    </div>
     <hr class="my-4" v-if="seriesData" />
-    <ApexChart
-      v-if="seriesData"
-      type="bar"
-      height="300"
-      :options="retriesOptions"
-      :series="retriesSeries"
-      class="mt-4"
-    />
+    <div v-if="seriesData">
+      <Title level="3">{{ t('webhooks.reports.charts.topics') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.topics') }}</p>
+      <ApexChart type="bar" height="300" :options="topicsOptions" :series="topicsSeries" class="mt-4" />
+    </div>
     <hr class="my-4" v-if="seriesData" />
-    <div class="mt-4">
+    <div v-if="seriesData">
+      <Title level="3">{{ t('webhooks.reports.charts.responseCodes') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.responseCodes') }}</p>
+      <ApexChart type="bar" height="300" :options="responseCodesOptions" :series="responseCodesSeries" class="mt-4" />
+    </div>
+    <hr class="my-4" v-if="seriesData" />
+    <div v-if="seriesData">
+      <Title level="3">{{ t('webhooks.reports.charts.retries') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.retries') }}</p>
+      <ApexChart type="bar" height="300" :options="retriesOptions" :series="retriesSeries" class="mt-4" />
+    </div>
+    <hr class="my-4" v-if="seriesData" />
+    <div v-if="seriesData" class="mt-4">
+      <Title level="3">{{ t('webhooks.reports.charts.heatmap') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.heatmap') }}</p>
       <div class="flex items-center gap-2 mb-2">
         <Button
           v-for="m in heatmapMetrics"
@@ -531,32 +509,27 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
           {{ t(`webhooks.reports.heatmap.metric.${m}`) }}
         </Button>
       </div>
-      <ApexChart
-        v-if="seriesData"
-        type="heatmap"
-        height="300"
-        :options="heatmapOptions"
-        :series="heatmapSeries"
-      />
+      <ApexChart type="heatmap" height="300" :options="heatmapOptions" :series="heatmapSeries" />
     </div>
-    <hr class="my-4" v-if="seriesData" />
-    <table
-      v-if="topOffenders.length"
-      class="mt-4 w-full text-sm border-collapse"
-    >
-      <thead>
-        <tr>
-          <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.failureRate') }}</th>
-          <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.latencyP95') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="o in topOffenders" :key="o.integrationId" class="odd:bg-gray-50">
-          <td class="p-2">{{ o.failureRate.toFixed(2) }}%</td>
-          <td class="p-2">{{ o.latencyP95 }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <hr class="my-4" v-if="topOffenders.length" />
+    <div v-if="topOffenders.length">
+      <Title level="3">{{ t('webhooks.reports.charts.topOffenders') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.topOffenders') }}</p>
+      <table class="mt-4 w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.failureRate') }}</th>
+            <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.latencyP95') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="o in topOffenders" :key="o.integrationId" class="odd:bg-gray-50">
+            <td class="p-2">{{ o.failureRate.toFixed(2) }}%</td>
+            <td class="p-2">{{ o.latencyP95 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 

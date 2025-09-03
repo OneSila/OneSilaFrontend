@@ -46,7 +46,7 @@ defineProps<Props>();
       </div>
     </div>
     <div>
-      <div v-if="loading">
+      <div v-if="loading && events.length === 0">
         <div v-for="n in 5" :key="n" class="grid grid-cols-8 border-b border-gray-200 bg-white">
           <div v-for="i in 8" :key="i" class="px-3 py-2">
             <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
@@ -76,7 +76,7 @@ defineProps<Props>();
             <Badge :color="statusBadgeMap[ev.status].color" :text="statusBadgeMap[ev.status].text" />
           </div>
           <div class="px-3 py-2 text-sm text-gray-500">
-            <Badge :color="getResponseCodeColor(ev.responseCode)" :text="ev.responseCode" />
+            <Badge :color="getResponseCodeColor(ev.responseCode)" :text="String(ev.responseCode)" />
           </div>
           <div class="px-3 py-2 text-sm text-gray-500">
             {{ ev.responseMs }}

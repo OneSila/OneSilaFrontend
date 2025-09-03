@@ -2834,6 +2834,7 @@
   "webhooks": {
     "monitor": {
       "title": "Monitor",
+      "description": "Real-time overview of webhook deliveries.",
       "timeRange": {
         "live": "Live",
         "last15m": "Last 15m",
@@ -2940,6 +2941,15 @@
     },
     "reports": {
       "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Distribution of delivery statuses over time.",
+        "latency": "Webhook latency percentiles over time.",
+        "topics": "Top topics by volume and success rate.",
+        "responseCodes": "HTTP response code distribution.",
+        "retries": "Deliveries grouped by retry attempts.",
+        "heatmap": "Failures or latency by weekday and hour.",
+        "topOffenders": "Integrations with highest failure rates and latency."
+      },
       "timeRange": {
         "today": "Today",
         "7d": "7d",
