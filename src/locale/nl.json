@@ -1947,6 +1947,7 @@
   "webhooks": {
     "monitor": {
       "title": "Monitor",
+      "description": "Realtime overzicht van webhook-leveringen.",
       "timeRange": {
         "live": "Live",
         "last15m": "Laatste 15m",
@@ -2014,6 +2015,15 @@
     },
     "reports": {
       "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Verdeling van leveringsstatussen in de tijd.",
+        "latency": "Webhook-latentiepercentielen in de tijd.",
+        "topics": "Toponderwerpen naar volume en succespercentage.",
+        "responseCodes": "Verdeling van HTTP-responscodes.",
+        "retries": "Leveringen gegroepeerd op aantal pogingen.",
+        "heatmap": "Fouten of latentie per weekdag en uur.",
+        "topOffenders": "Integraties met de hoogste foutpercentages en latentie."
+      },
       "timeRange": {
         "today": "Vandaag",
         "7d": "7 d",

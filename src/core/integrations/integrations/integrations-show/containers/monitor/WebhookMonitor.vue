@@ -421,8 +421,21 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
 <template>
   <div class="space-y-4">
     <FilterManager :search-config="searchConfig" />
+    <div>
+      <Title level="2">{{ t('webhooks.monitor.title') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.monitor.description') }}</p>
+    </div>
     <div class="flex items-center justify-between">
-      <Title>{{ t('webhooks.monitor.title') }}</Title>
+      <div class="flex items-center gap-2">
+        <Button
+          v-for="opt in timeOptions"
+          :key="opt"
+          :custom-class="`px-2 py-1 rounded text-sm ${selectedRange === opt ? 'bg-primary text-white' : 'bg-gray-100'}`"
+          @click="selectRange(opt)"
+        >
+          {{ t(`webhooks.monitor.timeRange.${opt}`) }}
+        </Button>
+      </div>
       <div class="flex items-center gap-2">
         <Label>{{ t('webhooks.monitor.autoRefresh') }}</Label>
         <Toggle v-model="live" />
@@ -432,18 +445,7 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       </div>
     </div>
 
-    <div class="flex items-center gap-2">
-      <Button
-        v-for="opt in timeOptions"
-        :key="opt"
-        :custom-class="`px-2 py-1 rounded text-sm ${selectedRange === opt ? 'bg-primary text-white' : 'bg-gray-100'}`"
-        @click="selectRange(opt)"
-      >
-        {{ t(`webhooks.monitor.timeRange.${opt}`) }}
-      </Button>
-    </div>
-
-    <hr>
+    <hr />
 
     <div class="flex flex-wrap gap-2">
       <div
@@ -458,6 +460,8 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
 
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
 
+    <hr class="my-4" />
+
     <EventTable
       :events="events"
       :loading="loading"
@@ -467,6 +471,8 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       :format-time="formatTime"
       :get-response-code-color="getResponseCodeColor"
     />
+
+    <hr class="my-4" />
 
     <EventDrawer
       :event="selectedEvent"
