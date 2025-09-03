@@ -140,6 +140,50 @@ const updateLimitPerPage = (value: number) => {
   router.push({ query: newQuery });
 };
 
+const filterChips = computed(() => {
+  const q = route.query as Record<string, any>;
+  const chips: { key: string; label: string; value: string; rawValue: string }[] = [];
+  props.searchConfig.filters?.forEach((filter: any) => {
+    const label = filter.label;
+    const param = q[filter.name];
+    if (param === undefined || param === null || param === '') {
+      return;
+    }
+    const map =
+      'options' in filter && filter.options
+        ? Object.fromEntries(
+            filter.options.map((o: any) => [o[filter.valueBy], o[filter.labelBy]])
+          )
+        : null;
+    if (Array.isArray(param)) {
+      param.forEach((v: any) => {
+        const display = map?.[String(v)] || String(v);
+        chips.push({ key: filter.name, label, value: display, rawValue: String(v) });
+      });
+    } else {
+      const display = map?.[String(param)] || String(param);
+      chips.push({ key: filter.name, label, value: display, rawValue: String(param) });
+    }
+  });
+  return chips;
+});
+
+const removeFilter = (key: string, value?: string) => {
+  const newQuery = { ...route.query } as Record<string, any>;
+  const current = newQuery[key];
+  if (Array.isArray(current) && value !== undefined) {
+    const updated = current.filter((v: any) => String(v) !== value);
+    if (updated.length > 0) {
+      newQuery[key] = updated;
+    } else {
+      delete newQuery[key];
+    }
+  } else {
+    delete newQuery[key];
+  }
+  router.replace({ query: newQuery });
+};
+
 // Helper: for a given item, return the first field that has addImage and an imageField.
 const getImageField = (item: any) => {
   for (const field of props.config.fields) {
@@ -236,6 +280,16 @@ defineExpose({
 
           <div v-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <div
+                v-for="chip in filterChips"
+                :key="chip.key + chip.rawValue"
+                class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm"
+              >
+                <span>{{ chip.label }}: {{ chip.value }}</span>
+                <button class="ml-1" @click="removeFilter(chip.key, chip.rawValue)">×</button>
+              </div>
+            </div>
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 
               <span class="text-sm font-semibold text-gray-900">
