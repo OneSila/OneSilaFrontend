@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { useVirtualizer } from '@tanstack/vue-virtual';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
@@ -119,27 +118,18 @@ const {
   updateTimeRange,
 } = useLiveMonitor({ filters: { webhookIntegration: { id: { exact: props.integrationId } } } });
 
-const parentRef = ref<HTMLElement | null>(null);
-const rowVirtualizer = useVirtualizer({
-  count: events.value.length,
-  getScrollElement: () => parentRef.value,
-  estimateSize: () => 40,
-});
+const selectedEvent = ref<any | null>(null);
+const activeTab = ref('overview');
+const drawerTabs = ['overview', 'attempts', 'payload', 'headers', 'replay'] as const;
 
-watch(
-  () => events.value.length,
-  (len) => {
-    rowVirtualizer.value.setOptions({
-      ...rowVirtualizer.value.options,
-      count: len,
-      getScrollElement: () => parentRef.value,
-      estimateSize: () => 40,
-    });
-  }
-);
+const openDrawer = (ev: any) => {
+  selectedEvent.value = ev;
+  activeTab.value = 'overview';
+};
 
-const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems());
-const totalSize = computed(() => rowVirtualizer.value.getTotalSize());
+const closeDrawer = () => {
+  selectedEvent.value = null;
+};
 
 const statusBadgeMap = {
   PENDING: { text: t('webhooks.monitor.statuses.pending'), color: 'gray' },
@@ -348,50 +338,106 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
           {{ t('webhooks.monitor.table.attempt') }}
         </div>
       </div>
-      <div ref="parentRef" class="max-h-96 overflow-auto">
-        <div :style="{ height: totalSize + 'px', position: 'relative' }">
+      <div class="max-h-96 overflow-auto">
+        <transition-group name="list" tag="div">
           <div
-            v-for="virtualRow in virtualRows"
-            :key="virtualRow.index"
-            :style="{ position: 'absolute', top: virtualRow.start + 'px', width: '100%' }"
-            class="grid grid-cols-8 border-b border-gray-200 bg-white"
+            v-for="ev in events"
+            :key="ev.outbox.id"
+            class="grid grid-cols-8 border-b border-gray-200 bg-white cursor-pointer"
+            @click="openDrawer(ev)"
           >
             <div class="px-3 py-2 text-sm text-gray-500">
-              {{ formatTime(events[virtualRow.index].sentAt) }}
+              {{ formatTime(ev.sentAt) }}
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              {{ optionLabelMap.topic[events[virtualRow.index].outbox.topic] || events[virtualRow.index].outbox.topic }}
+              {{ optionLabelMap.topic[ev.outbox.topic] || ev.outbox.topic }}
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              {{ optionLabelMap.action[events[virtualRow.index].outbox.action] }}
+              {{ optionLabelMap.action[ev.outbox.action] }}
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              {{ events[virtualRow.index].outbox.subjectId }}
+              {{ ev.outbox.subjectId }}
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              <Badge
-                :color="statusBadgeMap[events[virtualRow.index].status].color"
-                :text="statusBadgeMap[events[virtualRow.index].status].text"
-              />
+              <Badge :color="statusBadgeMap[ev.status].color" :text="statusBadgeMap[ev.status].text" />
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              <Badge
-                :color="getResponseCodeColor(events[virtualRow.index].responseCode)"
-                :text="events[virtualRow.index].responseCode"
-              />
+              <Badge :color="getResponseCodeColor(ev.responseCode)" :text="ev.responseCode" />
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              {{ events[virtualRow.index].responseMs }}
+              {{ ev.responseMs }}
             </div>
             <div class="px-3 py-2 text-sm text-gray-500">
-              {{ events[virtualRow.index].attempt }}
+              {{ ev.attempt }}
             </div>
+          </div>
+        </transition-group>
+      </div>
+    </div>
+
+    <transition name="fade">
+      <div v-if="selectedEvent" class="fixed inset-0 z-50 flex">
+        <div class="flex-1 bg-black/50" @click="closeDrawer"></div>
+        <div class="w-96 bg-white h-full overflow-y-auto p-4">
+          <div class="flex items-center justify-between mb-4">
+            <Title>{{ t('webhooks.monitor.title') }}</Title>
+            <button @click="closeDrawer">×</button>
+          </div>
+          <div class="flex items-center gap-2 mb-4">
+            <Button
+              v-for="tab in drawerTabs"
+              :key="tab"
+              :custom-class="`px-2 py-1 rounded text-sm ${activeTab === tab ? 'bg-primary text-white' : 'bg-gray-100'}`"
+              @click="activeTab = tab"
+            >
+              {{ t(`webhooks.monitor.drawer.tabs.${tab}`) }}
+            </Button>
+          </div>
+
+          <div v-if="activeTab === 'overview'" class="space-y-2 text-sm">
+            <div><strong>{{ t('webhooks.monitor.drawer.overview.status') }}:</strong> {{ selectedEvent.status }}</div>
+            <div><strong>{{ t('webhooks.monitor.drawer.overview.attemptCount') }}:</strong> {{ selectedEvent.attempt }}</div>
+            <div v-if="selectedEvent.errorMessage"><strong>{{ t('webhooks.monitor.drawer.overview.lastError') }}:</strong> {{ selectedEvent.errorMessage }}</div>
+            <div><strong>{{ t('webhooks.monitor.drawer.overview.idempotencyKey') }}:</strong> {{ selectedEvent.outbox.id }}</div>
+          </div>
+
+          <div v-else-if="activeTab === 'attempts'" class="space-y-2 text-sm">
+            <div v-for="att in selectedEvent.attempts" :key="att.number" class="border-b pb-2">
+              <div><strong>{{ t('webhooks.monitor.drawer.attempts.number') }}:</strong> {{ att.number }}</div>
+              <div><strong>{{ t('webhooks.monitor.drawer.attempts.responseCode') }}:</strong> {{ att.responseCode }}</div>
+              <div><strong>{{ t('webhooks.monitor.drawer.attempts.latency') }}:</strong> {{ att.responseMs }}</div>
+              <div v-if="att.errorText"><strong>{{ t('webhooks.monitor.drawer.attempts.error') }}:</strong> {{ att.errorText }}</div>
+            </div>
+          </div>
+
+          <div v-else-if="activeTab === 'payload'" class="text-sm">
+            <pre class="bg-gray-100 p-2 rounded overflow-auto">{{ JSON.stringify(selectedEvent.outbox.payload, null, 2) }}</pre>
+          </div>
+
+          <div v-else-if="activeTab === 'headers'" class="text-sm">
+            {{ t('webhooks.monitor.drawer.headers.placeholder') }}
+          </div>
+
+          <div v-else-if="activeTab === 'replay'" class="text-sm">
+            {{ t('webhooks.monitor.drawer.replay.placeholder') }}
           </div>
         </div>
       </div>
-    </div>
+    </transition>
 
     <Pagination v-if="pageInfo" class="mt-4" :page-info="pageInfo" :change-query-params="false" @query-changed="handlePageChange" />
   </div>
 </template>
+
+<style scoped>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>
 

@@ -2884,7 +2884,34 @@
         "httpCode": "HTTP code",
         "latency": "Latency",
         "attempt": "Attempt #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "overview": {
+          "status": "Status",
+          "attemptCount": "Attempt count",
+          "lastError": "Last error",
+          "idempotencyKey": "Idempotency key"
+        },
+        "attempts": {
+          "number": "Attempt",
+          "responseCode": "Response code",
+          "latency": "Latency",
+          "error": "Error"
+        },
+        "headers": {
+          "placeholder": "Headers placeholder"
+        },
+        "replay": {
+          "placeholder": "Replay placeholder"
+        }
       }
     }
   }
-}
+} 
