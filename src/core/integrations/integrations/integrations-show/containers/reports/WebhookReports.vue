@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { Button } from '../../../../../../shared/components/atoms/button';
@@ -21,11 +21,15 @@ const props = defineProps<{
 }>();
 
 const timeOptions = ['today', '7d', '30d'] as const;
+const heatmapMetrics = ['failures', 'latency'] as const;
 const selectedRange = ref<typeof timeOptions[number] | 'custom'>('today');
+const heatmapMetric = ref<typeof heatmapMetrics[number]>('failures');
 
 const stats = ref<any | null>(null);
 const seriesData = ref<any | null>(null);
 const statsLoading = ref(false);
+const autoRefresh = ref(false);
+let refreshHandle: number | null = null;
 
 const fetchStats = async () => {
   statsLoading.value = true;
@@ -91,6 +95,21 @@ const fetchStats = async () => {
 };
 
 watch([() => route.query, selectedRange], fetchStats, { immediate: true });
+
+watch(autoRefresh, (val) => {
+  if (val) {
+    refreshHandle = window.setInterval(fetchStats, 5000);
+  } else if (refreshHandle) {
+    clearInterval(refreshHandle);
+    refreshHandle = null;
+  }
+});
+
+onBeforeUnmount(() => {
+  if (refreshHandle) {
+    clearInterval(refreshHandle);
+  }
+});
 
 const selectRange = (opt: typeof timeOptions[number]) => {
   selectedRange.value = opt;
@@ -351,6 +370,36 @@ const retriesOptions = computed(() => ({
   xaxis: { categories: seriesData.value ? seriesData.value.retriesDistribution.map((b: any) => b.attempts.toString()) : [] },
   title: { text: t('webhooks.reports.charts.retries') },
 }));
+
+const heatmapSeries = computed(() => {
+  if (!seriesData.value) return [];
+  const metric = heatmapMetric.value === 'failures' ? 'failures' : 'medianLatency';
+  const map: Record<number, Record<number, number>> = {};
+  for (const e of seriesData.value.heatmap) {
+    if (!map[e.weekday]) map[e.weekday] = {};
+    const val = metric === 'failures' ? e.failures : e.medianLatency;
+    map[e.weekday][e.hour] = val;
+  }
+  return Array.from({ length: 7 }, (_v, i) => {
+    const wd = i + 1;
+    return {
+      name: t(`webhooks.reports.heatmap.weekdays.${wd}`),
+      data: Array.from({ length: 24 }, (_vv, h) => ({ x: h, y: map[wd]?.[h] || 0 })),
+    };
+  });
+});
+
+const heatmapOptions = computed(() => ({
+  chart: { type: 'heatmap', toolbar: { show: false } },
+  dataLabels: { enabled: false },
+  title: {
+    text: `${t('webhooks.reports.charts.heatmap')} - ${t(
+      `webhooks.reports.heatmap.metric.${heatmapMetric.value}`,
+    )}`,
+  },
+}));
+
+const topOffenders = computed(() => seriesData.value?.topOffenders || []);
 </script>
 
 <template>
@@ -369,6 +418,10 @@ const retriesOptions = computed(() => ({
       >
         {{ t(`webhooks.reports.timeRange.${opt}`) }}
       </Button>
+      <label class="flex items-center gap-1 text-sm ml-2">
+        <input type="checkbox" v-model="autoRefresh" />
+        {{ t('webhooks.monitor.autoRefresh') }}
+      </label>
     </div>
     <hr />
     <div class="flex flex-wrap gap-2">
@@ -421,6 +474,44 @@ const retriesOptions = computed(() => ({
       :series="retriesSeries"
       class="mt-4"
     />
+    <div class="mt-4">
+      <div class="flex items-center gap-2 mb-2">
+        <Button
+          v-for="m in heatmapMetrics"
+          :key="m"
+          :custom-class="`px-2 py-1 rounded text-sm ${heatmapMetric === m ? 'bg-primary text-white' : 'bg-gray-100'}`"
+          @click="heatmapMetric = m"
+        >
+          {{ t(`webhooks.reports.heatmap.metric.${m}`) }}
+        </Button>
+      </div>
+      <ApexChart
+        v-if="seriesData"
+        type="heatmap"
+        height="300"
+        :options="heatmapOptions"
+        :series="heatmapSeries"
+      />
+    </div>
+    <table
+      v-if="topOffenders.length"
+      class="mt-4 w-full text-sm border-collapse"
+    >
+      <thead>
+        <tr>
+          <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.integration') }}</th>
+          <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.failureRate') }}</th>
+          <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.latencyP95') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="o in topOffenders" :key="o.integrationId" class="odd:bg-gray-50">
+          <td class="p-2">{{ o.integrationHostname }}</td>
+          <td class="p-2">{{ o.failureRate.toFixed(2) }}%</td>
+          <td class="p-2">{{ o.latencyP95 }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 

@@ -2051,8 +2051,33 @@
         "topics": "Topics breakdown",
         "responseCodes": "Response codes distribution",
         "retries": "Retries distribution",
+        "heatmap": "Heatmap",
+        "topOffenders": "Top-veroorzakers",
         "p50": "p50",
         "p95": "p95"
+      }
+      ,
+      "heatmap": {
+        "metric": {
+          "failures": "Fouten",
+          "latency": "Median latentie"
+        },
+        "weekdays": {
+          "1": "Ma",
+          "2": "Di",
+          "3": "Wo",
+          "4": "Do",
+          "5": "Vr",
+          "6": "Za",
+          "7": "Zo"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Integratie",
+          "failureRate": "Fout %",
+          "latencyP95": "p95 latentie"
+        }
       }
     }
   }

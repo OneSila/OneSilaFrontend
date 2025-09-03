@@ -306,6 +306,18 @@ export const webhookReportsSeriesQuery = gql`
         attempts
         count
       }
+      heatmap {
+        weekday
+        hour
+        failures
+        medianLatency
+      }
+      topOffenders {
+        integrationId
+        integrationHostname
+        failureRate
+        latencyP95
+      }
     }
   }
 `;
