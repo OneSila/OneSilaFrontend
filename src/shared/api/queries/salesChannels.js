@@ -663,6 +663,24 @@ export const salesChannelImportsQuery = gql`
   }
 `;
 
+export const getSalesChannelImportQuery = gql`
+  query getSalesChannelImport($id: GlobalID!) {
+    salesChannelImport(id: $id) {
+      id
+      status
+      percentage
+      createdAt
+      name
+      createOnly
+      updateOnly
+      skipBrokenRecords
+      totalRecords
+      processedRecords
+      errorTraceback
+    }
+  }
+`;
+
 
 export const magentoRemoteAttributesQuery = gql`
   query MagentoRemoteAttributes($salesChannelId: ID!) {

@@ -2829,6 +2829,17 @@
           }
         }
       }
+    },
+    "show": {
+      "title": "Import"
+    },
+    "labels": {
+      "createOnly": "Create only",
+      "updateOnly": "Update only",
+      "skipBrokenRecords": "Skip broken records",
+      "totalRecords": "Total records",
+      "processedRecords": "Processed records",
+      "errorTraceback": "Error traceback"
     }
   },
   "webhooks": {
