@@ -1987,6 +1987,7 @@
           "replayButton": "Replay",
           "copyCurlButton": "Copy cURL",
           "confirm": "Replay this delivery?",
+          "confirmButtonText": "Yes, replay it!",
           "copied": "cURL command copied"
         }
       }

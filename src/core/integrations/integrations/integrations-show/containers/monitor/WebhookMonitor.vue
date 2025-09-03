@@ -230,7 +230,7 @@ const replaySelected = async () => {
   const defaultSwalOptions = {
     title: t('shared.alert.mutationAlert.title'),
     text: t('webhooks.monitor.drawer.replay.confirm'),
-    confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
+    confirmButtonText: t('webhooks.monitor.drawer.replay.confirmButtonText'),
     cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
     icon: 'warning',
     showCancelButton: true,
@@ -252,7 +252,7 @@ const replaySelected = async () => {
     mutation: retryWebhookDeliveryMutation,
     variables: { instance: { id: selectedEvent.value.id } },
   });
-  const updated = data?.retryWebhookDelivery?.delivery;
+  const updated = data?.retryWebhookDelivery;
   if (updated) {
     selectedEvent.value = updated;
     const idx = events.value.findIndex((e) => e.id === updated.id);
