@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import Swal, { SweetAlertOptions } from 'sweetalert2';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Button } from '../../../../../../shared/components/atoms/button';
 import { Badge } from '../../../../../../shared/components/atoms/badge';
@@ -149,28 +150,107 @@ const getResponseCodeColor = (code?: number | null) => {
 
 const formatTime = (iso: string) => new Date(iso).toLocaleString();
 
-const integrationHeaders = computed(() => {
-  const headers: { key: string; value: string }[] = [
-    { key: 'Content-Type', value: 'application/json' },
-  ];
-  const extra = integration.value?.extraHeaders || {};
-  Object.entries(extra).forEach(([key, value]) => {
-    headers.push({ key, value: String(value) });
-  });
-  if (integration.value?.secret) {
-    headers.push({ key: 'X-Webhook-Secret', value: t('webhooks.monitor.drawer.headers.redacted') });
+const integrationHeaders = ref<{ key: string; value: string }[]>([]);
+
+const arrayBufferToHex = (buffer: ArrayBuffer) =>
+  Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+
+const makeSignature = async (secret: string, timestamp: number, rawBody: string) => {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const payload = enc.encode(`${timestamp}.${rawBody}`);
+  const sig = await crypto.subtle.sign('HMAC', key, payload);
+  return arrayBufferToHex(sig);
+};
+
+const buildHeaders = async (
+  userAgent: string,
+  event: string,
+  action: string,
+  version: string,
+  deliveryId: string,
+  secret: string,
+  timestamp: number,
+  rawBody: string
+) => {
+  const signature = await makeSignature(secret, timestamp, rawBody);
+  return {
+    'User-Agent': userAgent,
+    'X-OneSila-Event': event,
+    'X-OneSila-Action': action,
+    'X-OneSila-Version': version,
+    'X-OneSila-Delivery': deliveryId,
+    'X-OneSila-Signature': `t=${timestamp},v1=${signature}`,
+  } as Record<string, string>;
+};
+
+const generateHeaders = async () => {
+  if (!selectedEvent.value || !integration.value) {
+    integrationHeaders.value = [];
+    return { rawBody: '', headers: {} as Record<string, string> };
   }
-  return headers;
+  const rawBody = JSON.stringify(selectedEvent.value.outbox.payload);
+  const timestamp = Math.floor(Date.now() / 1000);
+  const base = await buildHeaders(
+    integration.value.userAgent || '',
+    selectedEvent.value.outbox.topic,
+    selectedEvent.value.outbox.action,
+    integration.value.version || '',
+    String(selectedEvent.value.id),
+    integration.value.secret || '',
+    timestamp,
+    rawBody
+  );
+  const extra = integration.value.extraHeaders || {};
+  const all = {
+    'Content-Type': 'application/json',
+    ...base,
+    ...extra,
+  } as Record<string, string>;
+  integrationHeaders.value = Object.entries(all).map(([key, value]) => ({ key, value: String(value) }));
+  return { rawBody, headers: all };
+};
+
+watch([selectedEvent, integration], () => {
+  generateHeaders();
 });
 
 const replaySelected = async () => {
   if (!selectedEvent.value) return;
-  if (!confirm(t('webhooks.monitor.drawer.replay.confirm'))) return;
+  const defaultSwalOptions = {
+    title: t('shared.alert.mutationAlert.title'),
+    text: t('webhooks.monitor.drawer.replay.confirm'),
+    confirmButtonText: t('shared.alert.mutationAlert.confirmButtonText'),
+    cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
+    icon: 'warning',
+    showCancelButton: true,
+    reverseButtons: true,
+    padding: '2em',
+  };
+  const defaultSwalClasses = {
+    popup: 'sweet-alerts',
+    confirmButton: 'btn btn-secondary',
+    cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3',
+  };
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: defaultSwalClasses,
+    buttonsStyling: false,
+  });
+  const result = await swalWithBootstrapButtons.fire(defaultSwalOptions as SweetAlertOptions);
+  if (!result.isConfirmed) return;
   const { data } = await apolloClient.mutate({
     mutation: retryWebhookDeliveryMutation,
-    variables: { data: { id: selectedEvent.value.id } },
+    variables: { instance: { id: selectedEvent.value.id } },
   });
-  const updated = data?.retryWebhookDelivery;
+  const updated = data?.retryWebhookDelivery?.delivery;
   if (updated) {
     selectedEvent.value = updated;
     const idx = events.value.findIndex((e) => e.id === updated.id);
@@ -181,16 +261,23 @@ const replaySelected = async () => {
   }
 };
 
-const copyCurl = () => {
+const copyCurl = async () => {
   if (!selectedEvent.value || !integration.value) return;
   const url = integration.value.url || '';
-  const headersStr = integrationHeaders.value
-    .map((h) => `-H '${h.key}: ${h.value}'`)
+  const { rawBody, headers } = await generateHeaders();
+  const headersStr = Object.entries(headers)
+    .map(([k, v]) => `-H '${k}: ${v}'`)
     .join(' ');
-  const payload = JSON.stringify(selectedEvent.value.outbox.payload, null, 2).replace(/'/g, "'\\''");
+  const payload = rawBody.replace(/'/g, "'\\''");
   const cmd = `curl -X POST '${url}' ${headersStr} -d '${payload}'`;
   navigator.clipboard.writeText(cmd);
-  alert(t('webhooks.monitor.drawer.replay.copied'));
+  await Swal.fire({
+    title: t('webhooks.monitor.drawer.replay.copied'),
+    icon: 'success',
+    timer: 1500,
+    showConfirmButton: false,
+    customClass: { popup: 'sweet-alerts' },
+  });
 };
 
 const handlePageChange = ({ query }: { query: Record<string, any> }) => {
