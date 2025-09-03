@@ -2310,6 +2310,13 @@
   },
   "integrations": {
     "title": "Integrations",
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
     "show": {
       "title": "Integration",
       "tabs": {

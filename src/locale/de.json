@@ -137,6 +137,13 @@
     }
   },
   "integrations": {
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
     "show": {
       "tabs": {
         "reports": "Berichte"
