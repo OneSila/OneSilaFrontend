@@ -32,22 +32,6 @@ const fetchStats = async () => {
   try {
     const q = route.query as Record<string, any>;
     const integration = typeof q.integration === 'string' && q.integration ? q.integration : props.integrationId;
-    const filter: Record<string, any> = {
-      webhookIntegration: { id: { exact: integration } },
-    };
-    ['status', 'responseCode', 'attempt'].forEach((k) => {
-      const v = q[k];
-      if (typeof v === 'string' && v) {
-        filter[k] = { exact: v };
-      }
-    });
-    ['action', 'topic'].forEach((k) => {
-      const v = q[k];
-      if (typeof v === 'string' && v) {
-        filter.outbox = filter.outbox || {};
-        filter.outbox[k] = { exact: v };
-      }
-    });
     let from: Date | null = null;
     let to: Date | null = null;
     if (typeof q.date === 'string') {
@@ -68,19 +52,27 @@ const fetchStats = async () => {
         from = new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
       }
     }
-    if (from && to) {
-      filter.sentAt = { gte: from.toISOString(), lte: to.toISOString() };
-    }
+    const variables: Record<string, any> = {
+      integration: { id: integration },
+      timeFrom: from!.toISOString(),
+      timeTo: to!.toISOString(),
+    };
+    ['topic', 'action', 'status'].forEach((k) => {
+      const v = q[k];
+      if (typeof v === 'string' && v) {
+        variables[k] = v;
+      }
+    });
     const { data } = await apolloClient.query({
       query: webhookReportsKpiQuery,
       fetchPolicy: 'network-only',
-      variables: { filter },
+      variables,
     });
     stats.value = data?.webhookReportsKpi || null;
     const { data: seriesResp } = await apolloClient.query({
       query: webhookReportsSeriesQuery,
       fetchPolicy: 'network-only',
-      variables: { filter },
+      variables,
     });
     seriesData.value = seriesResp?.webhookReportsSeries || null;
   } catch {
