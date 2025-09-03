@@ -27,6 +27,8 @@ const props = defineProps<{
 
 const timeOptions = ['live', 'last15m', '1h', '6h', '24h'] as const;
 const selectedRange = ref('live');
+const rpm = ref<number | null>(null);
+const integration = ref<any | null>(null);
 
 const actionOptions = [
   { label: t('webhooks.monitor.actions.create'), value: 'CREATE' },
@@ -306,9 +308,6 @@ const handlePageChange = ({ query }: { query: Record<string, any> }) => {
   }
   refresh();
 };
-
-const rpm = ref<number | null>(null);
-const integration = ref<any | null>(null);
 
 onMounted(async () => {
   const { data } = await apolloClient.query({

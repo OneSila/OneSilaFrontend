@@ -107,7 +107,6 @@ export const deleteWebhookIntegrationsMutation = gql`
 export const retryWebhookDeliveryMutation = gql`
   mutation retryWebhookDelivery($instance: WebhookDeliveryPartialInput!) {
     retryWebhookDelivery(instance: $instance) {
-      delivery {
         id
         outbox {
           id
@@ -123,7 +122,6 @@ export const retryWebhookDeliveryMutation = gql`
         sentAt
         errorMessage
         errorTraceback
-      }
     }
   }
 `;
