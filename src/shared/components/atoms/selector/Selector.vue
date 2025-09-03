@@ -33,6 +33,7 @@ const emit = defineEmits<{
   (e: 'deselected', event): void;
   (e: 'searched', search, loading): void;
   (e: 'update:modelValue', event): void;
+  (e: 'label-selected', payload: { id: any; label: string }): void;
 }>();
 
 const { t } = useI18n();
@@ -165,6 +166,19 @@ const onModelValueUpdated = (value) => {
   }
 
   emit('update:modelValue', value);
+
+  const emitLabel = (v) => {
+    const label = getLabel(v);
+    if (label !== null) {
+      emit('label-selected', { id: v, label });
+    }
+  };
+
+  if (Array.isArray(value)) {
+    value.forEach(emitLabel);
+  } else {
+    emitLabel(value);
+  }
 };
 
 const handleKeydown = (event) => {
