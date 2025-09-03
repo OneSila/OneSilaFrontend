@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import { Link } from "../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../shared/components/atoms/button";
 import { ApolloSubscription } from "../../../../../../../shared/components/molecules/apollo-subscription";
@@ -17,6 +18,7 @@ import {Icon} from "../../../../../../../shared/components/atoms/icon";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const { t } = useI18n();
+const route = useRoute();
 
 const statusBadgeMap = getStatusBadgeMap(t);
 
@@ -80,7 +82,11 @@ const retryImport = async (importId: string) => {
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="importItem in (result as SalesChannelSubscriptionResult).salesChannel.amazonImports" :key="importItem.id" class="border-b dark:border-[#191e3a]">
-                <td class="p-2">{{ formatDate(importItem.createdAt) }}</td>
+                <td class="p-2">
+                  <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: importItem.id } }">
+                    {{ formatDate(importItem.createdAt) }}
+                  </Link>
+                </td>
                 <td class="p-2">{{ t(`integrations.imports.types.${importItem.type}`) }}</td>
                 <td class="p-2">
                   <Badge :color="statusBadgeMap[importItem.status]?.color" :text="statusBadgeMap[importItem.status]?.text" />
