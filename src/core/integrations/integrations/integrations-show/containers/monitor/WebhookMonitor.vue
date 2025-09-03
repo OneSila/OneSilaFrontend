@@ -459,6 +459,13 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
     </div>
 
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
+    <div class="mt-2 text-sm text-gray-500">
+      <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
+      <ul class="list-disc ml-5">
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p50') }}</li>
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p95') }}</li>
+      </ul>
+    </div>
 
     <hr class="my-4" />
 
