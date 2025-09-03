@@ -457,6 +457,14 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       </div>
     </div>
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
+    <div class="mt-2 text-sm text-gray-500">
+      <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
+      <ul class="list-disc ml-5">
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p50') }}</li>
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p95') }}</li>
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p99') }}</li>
+      </ul>
+    </div>
     <hr class="my-4" />
     <div v-if="seriesData">
       <Title level="3">{{ t('webhooks.reports.charts.deliveryOutcome') }}</Title>
@@ -468,14 +476,6 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       <Title level="3">{{ t('webhooks.reports.charts.latency') }}</Title>
       <p class="text-sm text-gray-600">{{ t('webhooks.reports.chartDescriptions.latency') }}</p>
       <ApexChart type="line" height="300" :options="latencyOptions" :series="latencySeries" class="mt-4" />
-      <div class="mt-2 text-sm text-gray-500">
-        <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
-        <ul class="list-disc ml-5">
-          <li>{{ t('webhooks.reports.charts.latencyLegend.p50') }}</li>
-          <li>{{ t('webhooks.reports.charts.latencyLegend.p95') }}</li>
-          <li>{{ t('webhooks.reports.charts.latencyLegend.p99') }}</li>
-        </ul>
-      </div>
     </div>
     <hr class="my-4" v-if="seriesData" />
     <div v-if="seriesData">
