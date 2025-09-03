@@ -120,6 +120,9 @@ const {
   refresh,
   updateFilters,
   updateTimeRange,
+  stats,
+  statsLoading,
+  loading,
 } = useLiveMonitor({ filters: { webhookIntegration: { id: { exact: props.integrationId } } } });
 
 const selectedEvent = ref<any | null>(null);
@@ -153,6 +156,16 @@ const getResponseCodeColor = (code?: number | null) => {
 const formatTime = (iso: string) => new Date(iso).toLocaleString();
 
 const integrationHeaders = ref<{ key: string; value: string }[]>([]);
+
+const kpis = [
+  { key: 'deliveries', format: (s: any) => s?.deliveries ?? 0 },
+  { key: 'delivered', format: (s: any) => s?.delivered ?? 0 },
+  { key: 'failed', format: (s: any) => s?.failed ?? 0 },
+  { key: 'successRate', format: (s: any) => `${(s?.successRate ?? 0).toFixed(1)}%` },
+  { key: 'latency', format: (s: any) => `${s?.medianLatency ?? 0} / ${s?.p95Latency ?? 0}` },
+  { key: 'rate429', format: (s: any) => `${(s?.rate429 ?? 0).toFixed(1)}%` },
+  { key: 'queueDepth', format: (s: any) => s?.queueDepth ?? 0 },
+];
 
 const arrayBufferToHex = (buffer: ArrayBuffer) =>
   Array.from(new Uint8Array(buffer))
@@ -451,6 +464,22 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       </div>
     </div>
 
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+      <div
+        v-for="kpi in kpis"
+        :key="kpi.key"
+        class="p-4 bg-gray-50 rounded"
+        :title="t(`webhooks.monitor.kpis.${kpi.key}Tooltip`)">
+        <div class="text-sm text-gray-500">
+          {{ t(`webhooks.monitor.kpis.${kpi.key}`) }}
+        </div>
+        <div v-if="!statsLoading" class="text-xl font-semibold">
+          {{ kpi.format(stats) }}
+        </div>
+        <div v-else class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    </div>
+
     <div class="mt-4">
       <div class="grid grid-cols-8 bg-gray-50 border-b border-gray-300">
         <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
@@ -479,7 +508,14 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
         </div>
       </div>
       <div class="max-h-96 overflow-auto">
-        <transition-group name="list" tag="div">
+        <div v-if="loading">
+          <div v-for="n in 5" :key="n" class="grid grid-cols-8 border-b border-gray-200 bg-white">
+            <div v-for="i in 8" :key="i" class="px-3 py-2">
+              <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+        <transition-group v-else name="list" tag="div">
           <div
             v-for="ev in events"
             :key="ev.outbox.id"
@@ -512,6 +548,9 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
             </div>
           </div>
         </transition-group>
+        <div v-if="!loading && events.length === 0" class="text-center py-4 text-sm text-gray-500">
+          {{ t('webhooks.monitor.empty') }}
+        </div>
       </div>
     </div>
 
