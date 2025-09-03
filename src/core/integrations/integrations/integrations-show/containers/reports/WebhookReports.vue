@@ -128,10 +128,6 @@ const topicOptions = [
   { label: t('webhooks.monitor.topics.all'), value: 'all' },
 ];
 
-const integrationOptions = [
-  { label: t('webhooks.monitor.topics.all'), value: 'all' },
-];
-
 const searchConfig: SearchConfig = {
   search: false,
   filters: [
@@ -153,14 +149,6 @@ const searchConfig: SearchConfig = {
       name: 'action',
       label: t('webhooks.monitor.filters.action'),
       options: actionOptions,
-      labelBy: 'label',
-      valueBy: 'value',
-    },
-    {
-      type: FieldType.Choice,
-      name: 'integration',
-      label: t('webhooks.reports.filters.integration'),
-      options: integrationOptions,
       labelBy: 'label',
       valueBy: 'value',
     },

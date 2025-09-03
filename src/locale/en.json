@@ -2966,7 +2966,7 @@
         "avgAttempts": "Avg attempts",
         "avgAttemptsTooltip": "Average attempts per delivery",
         "avgSolveMs": "Avg solve ms",
-        "avgSolveMsTooltip": "Average milliseconds to solve a request"
+        "avgSolveMsTooltip": "Average milliseconds to solve a request",
         "responseCodeBucket": "Response code bucket",
         "date": "Date"
       }
