@@ -41,22 +41,26 @@ const openModal = (record: any) => {
     </GeneralListing>
 
     <Modal v-model="showModal" @closed="showModal = false">
-      <Card>
+      <Card class="modal-content w-[800px] h-[600px] overflow-auto">
         <Tabs
           :tabs="[
+            { name: 'message', label: t('shared.labels.message'), alwaysRender: true },
             { name: 'data', label: t('shared.labels.data'), alwaysRender: true },
             { name: 'context', label: t('shared.labels.context'), alwaysRender: true },
             ...(modalRecord?.record.error ? [{ name: 'error', label: t('shared.labels.error'), alwaysRender: true }] : []),
           ]"
         >
+          <template #message>
+            <pre class="p-4 whitespace-pre-wrap overflow-auto">{{ modalRecord?.record.message }}</pre>
+          </template>
           <template #data>
-            <pre class="p-4 whitespace-pre-wrap">{{ JSON.stringify(modalRecord?.record.data, null, 2) }}</pre>
+            <pre class="p-4 whitespace-pre-wrap overflow-auto">{{ JSON.stringify(modalRecord?.record.data, null, 2) }}</pre>
           </template>
           <template #context>
-            <pre class="p-4 whitespace-pre-wrap">{{ JSON.stringify(modalRecord?.record.context, null, 2) }}</pre>
+            <pre class="p-4 whitespace-pre-wrap overflow-auto">{{ JSON.stringify(modalRecord?.record.context, null, 2) }}</pre>
           </template>
           <template v-if="modalRecord?.record.error" #error>
-            <pre class="p-4 whitespace-pre-wrap">{{ modalRecord?.record.error }}</pre>
+            <pre class="p-4 whitespace-pre-wrap overflow-auto">{{ modalRecord?.record.error }}</pre>
           </template>
         </Tabs>
       </Card>
