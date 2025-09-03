@@ -36,6 +36,7 @@ import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/muta
 import {Toast} from "../../../../shared/modules/toast";
 
 const WebhookMonitor = defineAsyncComponent(() => import('./containers/monitor/WebhookMonitor.vue'));
+const WebhookReports = defineAsyncComponent(() => import('./containers/reports/WebhookReports.vue'));
 
 const router = useRouter();
 const route = useRoute();
@@ -75,7 +76,10 @@ if (type.value !== IntegrationTypes.Webhook) {
 
   tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
 } else {
-  tabItems.value.push({ name: 'monitor', label: t('webhooks.monitor.title'), icon: 'wave-square' });
+  tabItems.value.push(
+    { name: 'monitor', label: t('webhooks.monitor.title'), icon: 'wave-square' },
+    { name: 'reports', label: t('integrations.show.tabs.reports'), icon: 'chart-simple' },
+  );
 }
 
 
@@ -244,6 +248,11 @@ const pullData = async () => {
           <!-- Monitor Tab -->
           <template #monitor>
             <WebhookMonitor v-if="integrationId" :integration-id="integrationId" />
+          </template>
+
+          <!-- Reports Tab -->
+          <template #reports>
+            <WebhookReports v-if="integrationId" :integration-id="integrationId" />
           </template>
 
           <!-- Products Tab -->

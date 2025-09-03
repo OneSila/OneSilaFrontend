@@ -1929,6 +1929,9 @@
           "store": "Winkel",
           "excludeStores": "Winkels uitsluiten"
         }
+      },
+      "tabs": {
+        "reports": "Rapporten"
       }
     }
   }
@@ -2007,6 +2010,18 @@
           "confirmButtonText": "Yes, replay it!",
           "copied": "cURL command copied"
         }
+      }
+    },
+    "reports": {
+      "timeRange": {
+        "today": "Vandaag",
+        "7d": "7 d",
+        "30d": "30 d",
+        "custom": "Aangepast"
+      },
+      "filters": {
+        "integration": "Integratie",
+        "responseCodeBucket": "Antwoordcode-bucket"
       }
     }
   }
