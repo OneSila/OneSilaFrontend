@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { useQuery } from '@vue/apollo-composable';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Card } from "../../../../../../../../shared/components/atoms/card";
 import { Tabs } from "../../../../../../../../shared/components/molecules/tabs";
@@ -11,13 +10,31 @@ import { Badge } from "../../../../../../../../shared/components/atoms/badge";
 import { getSalesChannelImportQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { getStatusBadgeMap } from "../../configs";
 import { IntegrationTypes } from "../../../../../integrations";
+import apolloClient from "../../../../../../../../../apollo-client";
 
 const route = useRoute();
 const { t } = useI18n();
 const id = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 
-const { result, loading } = useQuery(getSalesChannelImportQuery, { id: id.value });
+const result = ref(null);
+const loading = ref(false);
+
+const fetchImport = async () => {
+  try {
+    loading.value = true;
+    const { data } = await apolloClient.query({
+      query: getSalesChannelImportQuery,
+      variables: { id: id.value },
+      fetchPolicy: 'network-only'
+    });
+    result.value = data;
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(fetchImport);
 
 const statusBadgeMap = getStatusBadgeMap(t);
 
