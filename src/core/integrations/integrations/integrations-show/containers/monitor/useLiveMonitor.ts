@@ -53,14 +53,19 @@ export function useLiveMonitor(options: Options = {}) {
   const fetchEvents = async () => {
     loading.value = true;
     try {
+      const filter = { ...filters.value };
+      if (timeRange.value?.from && timeRange.value?.to) {
+        filter.sentAt = {
+          gte: timeRange.value.from,
+          lte: timeRange.value.to,
+        };
+      }
       const { data } = await apolloClient.query({
         query: webhookDeliveriesQuery,
         fetchPolicy: 'network-only',
         variables: {
-          filter: filters.value,
+          filter,
           ...pagination,
-          from: timeRange.value?.from,
-          to: timeRange.value?.to,
         },
       });
       const edges = data?.webhookDeliveries?.edges || [];

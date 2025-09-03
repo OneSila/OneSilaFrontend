@@ -13,6 +13,7 @@ import { FieldType } from '../../../../../../shared/utils/constants';
 import type { SearchConfig } from '../../../../../../shared/components/organisms/general-search/searchConfig';
 import apolloClient from '../../../../../../../apollo-client';
 import { getWebhookIntegrationQuery } from '../../../../../../shared/api/queries/webhooks.js';
+import { retryWebhookDeliveryMutation } from '../../../../../../shared/api/mutations/webhooks.js';
 import { useLiveMonitor } from './useLiveMonitor';
 
 const { t } = useI18n();
@@ -148,6 +149,50 @@ const getResponseCodeColor = (code?: number | null) => {
 
 const formatTime = (iso: string) => new Date(iso).toLocaleString();
 
+const integrationHeaders = computed(() => {
+  const headers: { key: string; value: string }[] = [
+    { key: 'Content-Type', value: 'application/json' },
+  ];
+  const extra = integration.value?.extraHeaders || {};
+  Object.entries(extra).forEach(([key, value]) => {
+    headers.push({ key, value: String(value) });
+  });
+  if (integration.value?.secret) {
+    headers.push({ key: 'X-Webhook-Secret', value: t('webhooks.monitor.drawer.headers.redacted') });
+  }
+  return headers;
+});
+
+const replaySelected = async () => {
+  if (!selectedEvent.value) return;
+  if (!confirm(t('webhooks.monitor.drawer.replay.confirm'))) return;
+  const { data } = await apolloClient.mutate({
+    mutation: retryWebhookDeliveryMutation,
+    variables: { data: { id: selectedEvent.value.id } },
+  });
+  const updated = data?.retryWebhookDelivery;
+  if (updated) {
+    selectedEvent.value = updated;
+    const idx = events.value.findIndex((e) => e.id === updated.id);
+    if (idx !== -1) {
+      events.value[idx] = updated;
+    }
+    refresh();
+  }
+};
+
+const copyCurl = () => {
+  if (!selectedEvent.value || !integration.value) return;
+  const url = integration.value.url || '';
+  const headersStr = integrationHeaders.value
+    .map((h) => `-H '${h.key}: ${h.value}'`)
+    .join(' ');
+  const payload = JSON.stringify(selectedEvent.value.outbox.payload, null, 2).replace(/'/g, "'\\''");
+  const cmd = `curl -X POST '${url}' ${headersStr} -d '${payload}'`;
+  navigator.clipboard.writeText(cmd);
+  alert(t('webhooks.monitor.drawer.replay.copied'));
+};
+
 const handlePageChange = ({ query }: { query: Record<string, any> }) => {
   const before = typeof query.before === 'string' ? query.before : null;
   const after = typeof query.after === 'string' ? query.after : null;
@@ -176,6 +221,7 @@ const handlePageChange = ({ query }: { query: Record<string, any> }) => {
 };
 
 const rpm = ref<number | null>(null);
+const integration = ref<any | null>(null);
 
 onMounted(async () => {
   const { data } = await apolloClient.query({
@@ -184,16 +230,24 @@ onMounted(async () => {
     fetchPolicy: 'network-only',
   });
   rpm.value = data?.webhookIntegration?.requestsPerMinute || null;
+  integration.value = data?.webhookIntegration || null;
 });
 
 watch(
   () => route.query,
   (query) => {
     const newFilters: Record<string, any> = { webhookIntegration: { id: { exact: props.integrationId } } };
-    ['action', 'status', 'responseCode', 'topic'].forEach((k) => {
+    ['status', 'responseCode'].forEach((k) => {
       const v = query[k];
       if (typeof v === 'string' && v) {
-        newFilters[k] = v;
+        newFilters[k] = { exact: v };
+      }
+    });
+    ['action', 'topic'].forEach((k) => {
+      const v = query[k];
+      if (typeof v === 'string' && v) {
+        newFilters.outbox = newFilters.outbox || {};
+        newFilters.outbox[k] = { exact: v };
       }
     });
     updateFilters(newFilters);
@@ -414,12 +468,19 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
             <pre class="bg-gray-100 p-2 rounded overflow-auto">{{ JSON.stringify(selectedEvent.outbox.payload, null, 2) }}</pre>
           </div>
 
-          <div v-else-if="activeTab === 'headers'" class="text-sm">
-            {{ t('webhooks.monitor.drawer.headers.placeholder') }}
+          <div v-else-if="activeTab === 'headers'" class="space-y-2 text-sm">
+            <div v-for="h in integrationHeaders" :key="h.key">
+              <strong>{{ h.key }}</strong>: {{ h.value }}
+            </div>
           </div>
 
-          <div v-else-if="activeTab === 'replay'" class="text-sm">
-            {{ t('webhooks.monitor.drawer.replay.placeholder') }}
+          <div v-else-if="activeTab === 'replay'" class="flex flex-col gap-2 text-sm">
+            <Button :custom-class="'bg-primary text-white px-2 py-1 rounded'" @click="replaySelected">
+              {{ t('webhooks.monitor.drawer.replay.replayButton') }}
+            </Button>
+            <Button :custom-class="'bg-gray-100 px-2 py-1 rounded'" @click="copyCurl">
+              {{ t('webhooks.monitor.drawer.replay.copyCurlButton') }}
+            </Button>
           </div>
         </div>
       </div>

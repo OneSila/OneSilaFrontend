@@ -1971,6 +1971,24 @@
         "httpCode": "HTTP-code",
         "latency": "Latentie",
         "attempt": "Poging #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "headers": {
+          "redacted": "[REDACTED]"
+        },
+        "replay": {
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "copied": "cURL command copied"
+        }
       }
     }
   }
