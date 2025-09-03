@@ -134,6 +134,13 @@
       }
     }
   },
+  "integrations": {
+    "show": {
+      "tabs": {
+        "reports": "Rapports"
+      }
+    }
+  },
   "webhooks": {
     "monitor": {
       "title": "Monitor",
@@ -200,6 +207,18 @@
           "confirmButtonText": "Yes, replay it!",
           "copied": "cURL command copied"
         }
+      }
+    },
+    "reports": {
+      "timeRange": {
+        "today": "Aujourd'hui",
+        "7d": "7 j",
+        "30d": "30 j",
+        "custom": "Personnalisé"
+      },
+      "filters": {
+        "integration": "Intégration",
+        "responseCodeBucket": "Groupe de code de réponse"
       }
     }
   }
