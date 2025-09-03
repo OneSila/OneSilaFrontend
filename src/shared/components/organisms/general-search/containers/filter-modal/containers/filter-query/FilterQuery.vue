@@ -86,7 +86,6 @@ const disabled = ref(props.filter.disabled === true);
   <div class="filter-item">
     <Label>{{ filter.label }}</Label>
         <Selector
-          v-if="!loading"
           class="h-9"
           v-model="selectedValue"
           :options="cleanedData"
@@ -100,16 +99,7 @@ const disabled = ref(props.filter.disabled === true);
           :removable="removable"
           :limit="limit"
           :disabled="disabled"
+          :is-loading="loading"
           @searched="handleInput" />
-      <Selector
-          v-else
-          class="h-9"
-          :modelValue="null"
-          :options="[]"
-          :label-by="filter.labelBy"
-          :value-by="filter.valueBy"
-          :removable="false"
-          :is-loading="true"
-          disabled />
   </div>
 </template>
