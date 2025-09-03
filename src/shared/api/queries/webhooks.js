@@ -253,8 +253,22 @@ export const webhookDeliveryStatsQuery = gql`
 `;
 
 export const webhookReportsKpiQuery = gql`
-  query WebhookReportsKpi($filter: WebhookDeliveryFilter) {
-    webhookReportsKpi(filters: $filter) {
+  query WebhookReportsKpi(
+    $integration: WebhookIntegrationPartialInput!
+    $timeFrom: DateTime!
+    $timeTo: DateTime!
+    $topic: String
+    $action: String
+    $status: String
+  ) {
+    webhookReportsKpi(
+      integration: $integration
+      timeFrom: $timeFrom
+      timeTo: $timeTo
+      topic: $topic
+      action: $action
+      status: $status
+    ) {
       deliveries
       delivered
       failed
@@ -271,8 +285,22 @@ export const webhookReportsKpiQuery = gql`
 `;
 
 export const webhookReportsSeriesQuery = gql`
-  query WebhookReportsSeries($filter: WebhookDeliveryFilter) {
-    webhookReportsSeries(filters: $filter) {
+  query WebhookReportsSeries(
+    $integration: WebhookIntegrationPartialInput!
+    $timeFrom: DateTime!
+    $timeTo: DateTime!
+    $topic: String
+    $action: String
+    $status: String
+  ) {
+    webhookReportsSeries(
+      integration: $integration
+      timeFrom: $timeFrom
+      timeTo: $timeTo
+      topic: $topic
+      action: $action
+      status: $status
+    ) {
       deliveryOutcomeBuckets {
         timestamp
         delivered
