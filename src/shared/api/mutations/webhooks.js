@@ -67,23 +67,25 @@ export const updateWebhookIntegrationMutation = gql`
 `;
 
 export const regenerateWebhookIntegrationSecretMutation = gql`
-  mutation regenerateWebhookIntegrationSecret($data: WebhookIntegrationPartialInput!) {
-    regenerateWebhookIntegrationSecret(data: $data) {
-      id
-      hostname
-      active
-      topic
-      version
-      url
-      secret
-      userAgent
-      timeoutMs
-      mode
-      extraHeaders
-      config
-      retentionPolicy
-      requestsPerMinute
-      maxRetries
+  mutation regenerateWebhookIntegrationSecret($instance: WebhookIntegrationPartialInput!) {
+    regenerateWebhookIntegrationSecret(instance: $instance) {
+      ... on WebhookIntegrationType {
+        id
+        hostname
+        active
+        topic
+        version
+        url
+        secret
+        userAgent
+        timeoutMs
+        mode
+        extraHeaders
+        config
+        retentionPolicy
+        requestsPerMinute
+        maxRetries
+      }
     }
   }
 `;

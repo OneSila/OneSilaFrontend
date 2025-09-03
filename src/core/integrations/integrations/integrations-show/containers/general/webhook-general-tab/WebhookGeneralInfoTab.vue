@@ -128,7 +128,7 @@ const regenerateSecret = async () => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: regenerateWebhookIntegrationSecretMutation,
-      variables: { data: { id: formData.value.id } }
+      variables: { instance: { id: formData.value.id } }
     });
     formData.value.secret = data?.regenerateWebhookIntegrationSecret?.secret || '';
     Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
