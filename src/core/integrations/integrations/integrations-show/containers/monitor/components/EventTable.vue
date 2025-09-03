@@ -53,7 +53,7 @@ defineProps<Props>();
           </div>
         </div>
       </div>
-      <transition-group v-else name="list" tag="div">
+      <div v-else>
         <div
           v-for="ev in events"
           :key="ev.outbox.id"
@@ -85,7 +85,7 @@ defineProps<Props>();
             {{ ev.attempt }}
           </div>
         </div>
-      </transition-group>
+      </div>
       <div v-if="!loading && events.length === 0" class="text-center py-4 text-sm text-gray-500">
         {{ t('webhooks.monitor.empty') }}
       </div>

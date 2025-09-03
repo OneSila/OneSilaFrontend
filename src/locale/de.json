@@ -210,6 +210,7 @@
       }
     },
     "reports": {
+      "description": "Detailed insights into webhook deliveries.",
       "timeRange": {
         "today": "Heute",
         "7d": "7d",

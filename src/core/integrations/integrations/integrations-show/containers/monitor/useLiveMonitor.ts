@@ -42,9 +42,9 @@ export function useLiveMonitor(options: Options = {}) {
       return null;
     }
     if (document.hidden) {
-      return 12000;
+      return 15000;
     }
-    return emptyPolls >= 3 ? 8000 : 4000;
+    return emptyPolls >= 3 ? 12000 : 6000;
   };
 
   const withJitter = (ms: number) => {

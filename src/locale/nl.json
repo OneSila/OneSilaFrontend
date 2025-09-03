@@ -2013,6 +2013,7 @@
       }
     },
     "reports": {
+      "description": "Detailed insights into webhook deliveries.",
       "timeRange": {
         "today": "Vandaag",
         "7d": "7 d",
