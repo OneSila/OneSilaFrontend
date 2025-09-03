@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { Button } from '../../../../../../shared/components/atoms/button';
 import { Title } from '../../../../../../shared/components/atoms/title';
+import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { FilterManager } from '../../../../../../shared/components/molecules/filter-manager';
 import { FieldType } from '../../../../../../shared/utils/constants';
 import type { SearchConfig } from '../../../../../../shared/components/organisms/general-search/searchConfig';
@@ -249,6 +250,7 @@ const deliveryOutcomeSeries = computed(() => {
 const deliveryOutcomeOptions = computed(() => ({
   chart: { type: 'area', stacked: true, toolbar: { show: false } },
   xaxis: { type: 'datetime' },
+  colors: ['#22c55e', '#ef4444', '#f97316', '#3b82f6'],
   title: { text: t('webhooks.reports.charts.deliveryOutcome') },
 }));
 
@@ -312,7 +314,7 @@ const topicsOptions = computed(() => ({
       labels: { formatter: (val: number) => `${val}%` },
     },
   ],
-  tooltip: { shared: true },
+  tooltip: { shared: true, intersect: false },
   title: { text: t('webhooks.reports.charts.topics') },
 }));
 
@@ -326,23 +328,36 @@ const responseCodesSeries = computed(() => {
   ];
 });
 
-const responseCodesOptions = computed(() => ({
-  chart: {
-    type: 'bar',
-    toolbar: { show: false },
-    events: {
-      dataPointSelection: (_e: any, _ctx: any, config: any) => {
-        const bucket = seriesData.value?.responseCodesBreakdown[config.dataPointIndex]?.codeBucket;
-        if (bucket) {
-          const mapping: Record<string, string> = { '2xx': '200', '4xx': '400', '429': '429', '5xx': '500' };
-          router.replace({ query: { ...route.query, responseCode: mapping[bucket] || bucket } });
-        }
+const responseCodesOptions = computed(() => {
+  const categories = seriesData.value
+    ? seriesData.value.responseCodesBreakdown.map((b: any) => b.codeBucket)
+    : [];
+  const colors = categories.map((bucket: string) => {
+    if (bucket.startsWith('2')) return '#22c55e';
+    if (bucket.startsWith('4')) return '#ef4444';
+    if (bucket.startsWith('5')) return '#f97316';
+    return '#3b82f6';
+  });
+  return {
+    chart: {
+      type: 'bar',
+      toolbar: { show: false },
+      events: {
+        dataPointSelection: (_e: any, _ctx: any, config: any) => {
+          const bucket = seriesData.value?.responseCodesBreakdown[config.dataPointIndex]?.codeBucket;
+          if (bucket) {
+            const mapping: Record<string, string> = { '2xx': '200', '4xx': '400', '429': '429', '5xx': '500' };
+            router.replace({ query: { ...route.query, responseCode: mapping[bucket] || bucket } });
+          }
+        },
       },
     },
-  },
-  xaxis: { categories: seriesData.value ? seriesData.value.responseCodesBreakdown.map((b: any) => b.codeBucket) : [] },
-  title: { text: t('webhooks.reports.charts.responseCodes') },
-}));
+    plotOptions: { bar: { distributed: true } },
+    colors,
+    xaxis: { categories },
+    title: { text: t('webhooks.reports.charts.responseCodes') },
+  };
+});
 
 const retriesSeries = computed(() => {
   if (!seriesData.value) return [];
@@ -354,22 +369,36 @@ const retriesSeries = computed(() => {
   ];
 });
 
-const retriesOptions = computed(() => ({
-  chart: {
-    type: 'bar',
-    toolbar: { show: false },
-    events: {
-      dataPointSelection: (_e: any, _ctx: any, config: any) => {
-        const attempts = seriesData.value?.retriesDistribution[config.dataPointIndex]?.attempts;
-        if (attempts !== undefined) {
-          router.replace({ query: { ...route.query, attempt: attempts.toString() } });
-        }
+const retriesOptions = computed(() => {
+  const categories = seriesData.value
+    ? seriesData.value.retriesDistribution.map((b: any) => b.attempts.toString())
+    : [];
+  const colors = categories.map((c: string) => {
+    const n = Number(c);
+    if (n === 1) return '#22c55e';
+    if (n === 2) return '#f97316';
+    if (n === 3) return '#ef4444';
+    return '#3b82f6';
+  });
+  return {
+    chart: {
+      type: 'bar',
+      toolbar: { show: false },
+      events: {
+        dataPointSelection: (_e: any, _ctx: any, config: any) => {
+          const attempts = seriesData.value?.retriesDistribution[config.dataPointIndex]?.attempts;
+          if (attempts !== undefined) {
+            router.replace({ query: { ...route.query, attempt: attempts.toString() } });
+          }
+        },
       },
     },
-  },
-  xaxis: { categories: seriesData.value ? seriesData.value.retriesDistribution.map((b: any) => b.attempts.toString()) : [] },
-  title: { text: t('webhooks.reports.charts.retries') },
-}));
+    plotOptions: { bar: { distributed: true } },
+    colors,
+    xaxis: { categories },
+    title: { text: t('webhooks.reports.charts.retries') },
+  };
+});
 
 const heatmapSeries = computed(() => {
   if (!seriesData.value) return [];
@@ -405,22 +434,25 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
 <template>
   <div class="space-y-4">
     <FilterManager :search-config="searchConfig" />
-    <div class="flex items-center justify-between">
-      <Title>{{ t('integrations.show.tabs.reports') }}</Title>
+    <div>
+      <Title level="2">{{ t('integrations.show.tabs.reports') }}</Title>
+      <p class="text-sm text-gray-600">{{ t('webhooks.reports.description') }}</p>
     </div>
-
-    <div class="flex items-center gap-2">
-      <Button
-        v-for="opt in timeOptions"
-        :key="opt"
-        :custom-class="`px-2 py-1 rounded text-sm ${selectedRange === opt ? 'bg-primary text-white' : 'bg-gray-100'}`"
-        @click="selectRange(opt)"
-      >
-        {{ t(`webhooks.reports.timeRange.${opt}`) }}
-      </Button>
-      <label class="flex items-center gap-1 text-sm ml-2">
-        <input type="checkbox" v-model="autoRefresh" />
+    <hr />
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <Button
+          v-for="opt in timeOptions"
+          :key="opt"
+          :custom-class="`px-2 py-1 rounded text-sm ${selectedRange === opt ? 'bg-primary text-white' : 'bg-gray-100'}`"
+          @click="selectRange(opt)"
+        >
+          {{ t(`webhooks.reports.timeRange.${opt}`) }}
+        </Button>
+      </div>
+      <label class="flex items-center gap-1 text-sm">
         {{ t('webhooks.monitor.autoRefresh') }}
+        <Toggle v-model="autoRefresh" />
       </label>
     </div>
     <hr />
@@ -435,6 +467,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       </div>
     </div>
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
+    <hr class="my-4" />
     <ApexChart
       v-if="seriesData"
       type="area"
@@ -442,6 +475,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       :options="deliveryOutcomeOptions"
       :series="deliveryOutcomeSeries"
     />
+    <hr class="my-4" v-if="seriesData" />
     <ApexChart
       v-if="seriesData"
       type="line"
@@ -450,6 +484,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       :series="latencySeries"
       class="mt-4"
     />
+    <hr class="my-4" v-if="seriesData" />
     <div class="mt-2 text-sm text-gray-500">
       <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
       <ul class="list-disc ml-5">
@@ -466,6 +501,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       :series="topicsSeries"
       class="mt-4"
     />
+    <hr class="my-4" v-if="seriesData" />
     <ApexChart
       v-if="seriesData"
       type="bar"
@@ -474,6 +510,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       :series="responseCodesSeries"
       class="mt-4"
     />
+    <hr class="my-4" v-if="seriesData" />
     <ApexChart
       v-if="seriesData"
       type="bar"
@@ -482,6 +519,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       :series="retriesSeries"
       class="mt-4"
     />
+    <hr class="my-4" v-if="seriesData" />
     <div class="mt-4">
       <div class="flex items-center gap-2 mb-2">
         <Button
@@ -501,6 +539,7 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
         :series="heatmapSeries"
       />
     </div>
+    <hr class="my-4" v-if="seriesData" />
     <table
       v-if="topOffenders.length"
       class="mt-4 w-full text-sm border-collapse"
