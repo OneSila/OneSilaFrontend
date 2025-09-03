@@ -2906,12 +2906,15 @@
           "error": "Error"
         },
         "headers": {
-          "placeholder": "Headers placeholder"
+          "redacted": "[REDACTED]"
         },
         "replay": {
-          "placeholder": "Replay placeholder"
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "copied": "cURL command copied"
         }
       }
     }
   }
-} 
+}
