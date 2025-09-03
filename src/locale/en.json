@@ -416,6 +416,9 @@
       "remoteCode": "Remote Code",
       "pending": "Pending Processing",
       "progress": "Progress",
+      "code": "Code",
+      "data": "Data",
+      "context": "Context",
       "new": "New",
       "beta": "BETA",
       "url": "URL",
@@ -2793,6 +2796,15 @@
         "schemaDescription": "Initial setup required to enable product imports.",
         "productsDescription": "Imports actual product data from Amazon.",
         "schemaRequired": "Please complete the schema import first."
+      },
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found"
+        }
       },
       "create": {
         "success": "Create import process success",

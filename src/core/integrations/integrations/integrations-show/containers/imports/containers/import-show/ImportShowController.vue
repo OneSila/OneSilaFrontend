@@ -7,6 +7,8 @@ import { Card } from "../../../../../../../../shared/components/atoms/card";
 import { Tabs } from "../../../../../../../../shared/components/molecules/tabs";
 import { DiscreteLoader } from "../../../../../../../../shared/components/atoms/discrete-loader";
 import { Badge } from "../../../../../../../../shared/components/atoms/badge";
+import { Breadcrumbs } from "../../../../../../../../shared/components/molecules/breadcrumbs";
+import AmazonImportBrokenRecordsListing from "./components/AmazonImportBrokenRecordsListing.vue";
 import { getSalesChannelImportQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { getStatusBadgeMap } from "../../configs";
 import { IntegrationTypes } from "../../../../../integrations";
@@ -16,8 +18,9 @@ const route = useRoute();
 const { t } = useI18n();
 const id = ref(String(route.params.id));
 const type = ref(String(route.params.type));
+const integrationId = ref('');
 
-const result = ref(null);
+const result = ref<any>(null);
 const loading = ref(false);
 
 const fetchImport = async () => {
@@ -29,6 +32,7 @@ const fetchImport = async () => {
       fetchPolicy: 'network-only'
     });
     result.value = data;
+    integrationId.value = data.salesChannelImport.salesChannel.integrationPtr.id;
   } finally {
     loading.value = false;
   }
@@ -61,52 +65,63 @@ const formatDate = (dateString: string) => {
 
 <template>
   <GeneralTemplate>
+    <template #breadcrumbs>
+      <Breadcrumbs
+        :links="[
+          { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
+          { path: { name: 'integrations.integrations.show', params: { id: integrationId, type: type }, query: { tab: 'imports' } }, name: t('integrations.show.title') },
+          { name: t('integrations.imports.show.title') }
+        ]"
+      />
+    </template>
     <template #content>
       <Card>
         <Tabs :tabs="tabItems">
           <template #general>
-            <div v-if="!loading && result?.salesChannelImport" class="p-4 space-y-2">
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('shared.labels.createdAt') }}</span>
-                <span>{{ formatDate(result.salesChannelImport.createdAt) }}</span>
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('shared.labels.status') }}</span>
-                <Badge :color="statusBadgeMap[result.salesChannelImport.status]?.color" :text="statusBadgeMap[result.salesChannelImport.status]?.text" />
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('shared.labels.progress') }}</span>
-                <span>{{ result.salesChannelImport.percentage }}%</span>
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.createOnly') }}</span>
-                <span>{{ result.salesChannelImport.createOnly ? t('shared.labels.yes') : t('shared.labels.no') }}</span>
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.updateOnly') }}</span>
-                <span>{{ result.salesChannelImport.updateOnly ? t('shared.labels.yes') : t('shared.labels.no') }}</span>
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.skipBrokenRecords') }}</span>
-                <span>{{ result.salesChannelImport.skipBrokenRecords ? t('shared.labels.yes') : t('shared.labels.no') }}</span>
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.totalRecords') }}</span>
-                <span>{{ result.salesChannelImport.totalRecords }}</span>
-              </div>
-              <div class="flex">
-                <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.processedRecords') }}</span>
-                <span>{{ result.salesChannelImport.processedRecords }}</span>
-              </div>
-              <div v-if="result.salesChannelImport.errorTraceback" class="flex">
-                <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.errorTraceback') }}</span>
-                <span class="whitespace-pre-wrap">{{ result.salesChannelImport.errorTraceback }}</span>
+            <div v-if="!loading && result?.salesChannelImport" class="p-4">
+              <div class="divide-y divide-gray-200">
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('shared.labels.createdAt') }}</span>
+                  <span>{{ formatDate(result.salesChannelImport.createdAt) }}</span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('shared.labels.status') }}</span>
+                  <Badge :color="statusBadgeMap[result.salesChannelImport.status]?.color" :text="statusBadgeMap[result.salesChannelImport.status]?.text" />
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('shared.labels.progress') }}</span>
+                  <span>{{ result.salesChannelImport.percentage }}%</span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.createOnly') }}</span>
+                  <span>{{ result.salesChannelImport.createOnly ? t('shared.labels.yes') : t('shared.labels.no') }}</span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.updateOnly') }}</span>
+                  <span>{{ result.salesChannelImport.updateOnly ? t('shared.labels.yes') : t('shared.labels.no') }}</span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.skipBrokenRecords') }}</span>
+                  <span>{{ result.salesChannelImport.skipBrokenRecords ? t('shared.labels.yes') : t('shared.labels.no') }}</span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.totalRecords') }}</span>
+                  <span>{{ result.salesChannelImport.totalRecords }}</span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.processedRecords') }}</span>
+                  <span>{{ result.salesChannelImport.processedRecords }}</span>
+                </div>
+                <div v-if="result.salesChannelImport.errorTraceback" class="flex items-center py-2">
+                  <span class="w-1/3 font-medium">{{ t('integrations.imports.labels.errorTraceback') }}</span>
+                  <span class="whitespace-pre-wrap">{{ result.salesChannelImport.errorTraceback }}</span>
+                </div>
               </div>
             </div>
             <DiscreteLoader v-else :loading="true" />
           </template>
           <template #issues v-if="type === IntegrationTypes.Amazon">
-            <div class="p-4">{{ t('shared.labels.comingSoon') }}</div>
+            <AmazonImportBrokenRecordsListing :import-id="id" />
           </template>
         </Tabs>
       </Card>

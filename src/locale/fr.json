@@ -24,6 +24,8 @@
       "manual": "Manuel",
       "generate": "Générer",
       "code": "Code",
+      "data": "Données",
+      "context": "Contexte",
       "noIssues": "Aucun problème",
       "active": "Active",
       "inactive": "Inactive"
@@ -138,6 +140,17 @@
     "show": {
       "tabs": {
         "reports": "Rapports"
+      }
+    },
+    "imports": {
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found"
+        }
       }
     }
   },

@@ -677,6 +677,45 @@ export const getSalesChannelImportQuery = gql`
       totalRecords
       processedRecords
       errorTraceback
+      salesChannel {
+        integrationPtr {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const amazonImportBrokenRecordsQuery = gql`
+  query AmazonImportBrokenRecords(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $filter: AmazonImportBrokenRecordFilter
+  ) {
+    amazonImportBrokenRecords(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          createdAt
+          record
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `;
