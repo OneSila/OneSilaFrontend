@@ -134,6 +134,21 @@ const topicOptions = [
   { label: t('webhooks.monitor.topics.all'), value: 'all' },
 ];
 
+const optionLabelMap = {
+  action: Object.fromEntries(actionOptions.map((o) => [o.value, o.label])),
+  status: Object.fromEntries(statusOptions.map((o) => [o.value, o.label])),
+  responseCode: Object.fromEntries(responseCodeOptions.map((o) => [o.value, o.label])),
+  topic: Object.fromEntries(topicOptions.map((o) => [o.value, o.label])),
+} as Record<string, Record<string, string>>;
+
+const filterLabelMap: Record<string, string> = {
+  action: 'webhooks.monitor.filters.action',
+  status: 'webhooks.monitor.filters.status',
+  responseCode: 'webhooks.reports.filters.responseCodeBucket',
+  topic: 'webhooks.monitor.filters.topic',
+  date: 'webhooks.reports.filters.date',
+};
+
 const searchConfig: SearchConfig = {
   search: false,
   filters: [
@@ -176,6 +191,18 @@ const searchConfig: SearchConfig = {
     },
   ],
   orders: [],
+};
+
+const filterChips = computed(() =>
+  Object.entries(route.query)
+    .filter(([k]) => ['action', 'status', 'responseCode', 'topic', 'date'].includes(k))
+    .map(([k, v]) => ({ key: k, value: optionLabelMap[k]?.[String(v)] || v }))
+);
+
+const removeFilter = (key: string) => {
+  const newQuery = { ...route.query } as Record<string, any>;
+  delete newQuery[key];
+  router.replace({ query: newQuery });
 };
 
 const deliveryOutcomeSeries = computed(() => {
@@ -342,6 +369,17 @@ const retriesOptions = computed(() => ({
       >
         {{ t(`webhooks.reports.timeRange.${opt}`) }}
       </Button>
+    </div>
+    <hr />
+    <div class="flex flex-wrap gap-2">
+      <div
+        v-for="chip in filterChips"
+        :key="chip.key"
+        class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm"
+      >
+        <span>{{ t(filterLabelMap[chip.key]) }}: {{ chip.value }}</span>
+        <button class="ml-1" @click="removeFilter(chip.key)">×</button>
+      </div>
     </div>
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
     <ApexChart
