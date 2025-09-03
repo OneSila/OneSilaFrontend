@@ -13,7 +13,7 @@ defineProps<{
   integrationId: string;
 }>();
 
-const timeOptions = ['today', '7d', '30d', 'custom'] as const;
+const timeOptions = ['today', '7d', '30d'] as const;
 const selectedRange = ref<typeof timeOptions[number]>('today');
 
 const selectRange = (opt: typeof timeOptions[number]) => {
@@ -23,6 +23,11 @@ const selectRange = (opt: typeof timeOptions[number]) => {
 const searchConfig: SearchConfig = {
   search: false,
   filters: [
+    {
+      type: FieldType.RangeDate,
+      name: 'date',
+      label: t('webhooks.reports.filters.date'),
+    },
     {
       type: FieldType.Choice,
       name: 'topic',

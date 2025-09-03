@@ -213,12 +213,12 @@
       "timeRange": {
         "today": "Heute",
         "7d": "7d",
-        "30d": "30d",
-        "custom": "Benutzerdefiniert"
+        "30d": "30d"
       },
       "filters": {
         "integration": "Integration",
-        "responseCodeBucket": "Antwortcode-Bereich"
+        "responseCodeBucket": "Antwortcode-Bereich",
+        "date": "Datum"
       }
     }
   }
