@@ -499,14 +499,12 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
     >
       <thead>
         <tr>
-          <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.integration') }}</th>
           <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.failureRate') }}</th>
           <th class="p-2 text-left">{{ t('webhooks.reports.topOffenders.columns.latencyP95') }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="o in topOffenders" :key="o.integrationId" class="odd:bg-gray-50">
-          <td class="p-2">{{ o.integrationHostname }}</td>
           <td class="p-2">{{ o.failureRate.toFixed(2) }}%</td>
           <td class="p-2">{{ o.latencyP95 }}</td>
         </tr>

@@ -45,7 +45,7 @@ defineProps<Props>();
         {{ t('webhooks.monitor.table.attempt') }}
       </div>
     </div>
-    <div class="max-h-96 overflow-auto">
+    <div>
       <div v-if="loading">
         <div v-for="n in 5" :key="n" class="grid grid-cols-8 border-b border-gray-200 bg-white">
           <div v-for="i in 8" :key="i" class="px-3 py-2">
