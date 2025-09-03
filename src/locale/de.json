@@ -239,6 +239,15 @@
         "avgAttemptsTooltip": "Average attempts per delivery",
         "avgSolveMs": "Avg solve ms",
         "avgSolveMsTooltip": "Average milliseconds to solve a request"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "p50": "p50",
+        "p95": "p95"
       }
     }
   }
