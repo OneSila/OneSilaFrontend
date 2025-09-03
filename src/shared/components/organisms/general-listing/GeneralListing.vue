@@ -303,7 +303,7 @@ defineExpose({
 
           <div v-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
-            <div class="flex flex-wrap gap-2 mb-4">
+            <div class="flex flex-wrap gap-2 mb-4 p-4">
               <div
                 v-for="chip in filterChips"
                 :key="chip.key + chip.rawValue"
