@@ -2942,12 +2942,12 @@
       "timeRange": {
         "today": "Today",
         "7d": "7d",
-        "30d": "30d",
-        "custom": "Custom"
+        "30d": "30d"
       },
       "filters": {
         "integration": "Integration",
-        "responseCodeBucket": "Response code bucket"
+        "responseCodeBucket": "Response code bucket",
+        "date": "Date"
       }
     }
   }
