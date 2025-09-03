@@ -1,6 +1,6 @@
 import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue';
 import apolloClient from '../../../../../../../apollo-client';
-import { webhookDeliveriesQuery } from '../../../../../../shared/api/queries/webhooks.js';
+import { webhookDeliveriesQuery, webhookDeliveryStatsQuery } from '../../../../../../shared/api/queries/webhooks.js';
 
 interface TimeRange {
   from?: string;
@@ -26,6 +26,8 @@ export function useLiveMonitor(options: Options = {}) {
   const pageInfo = ref<any | null>(null);
   const loading = ref(false);
   const error = ref<unknown>(null);
+  const stats = ref<any | null>(null);
+  const statsLoading = ref(false);
 
   const filters = ref(options.filters || {});
   const timeRange = ref<TimeRange | null>(options.timeRange || null);
@@ -92,6 +94,29 @@ export function useLiveMonitor(options: Options = {}) {
     }
   };
 
+  const fetchStats = async () => {
+    statsLoading.value = true;
+    try {
+      const filter = { ...filters.value };
+      if (timeRange.value?.from && timeRange.value?.to) {
+        filter.sentAt = {
+          gte: timeRange.value.from,
+          lte: timeRange.value.to,
+        };
+      }
+      const { data } = await apolloClient.query({
+        query: webhookDeliveryStatsQuery,
+        fetchPolicy: 'network-only',
+        variables: { filter },
+      });
+      stats.value = data?.webhookDeliveryStats || null;
+    } catch (e) {
+      stats.value = null;
+    } finally {
+      statsLoading.value = false;
+    }
+  };
+
   const schedule = () => {
     if (!live.value) {
       return;
@@ -118,12 +143,14 @@ export function useLiveMonitor(options: Options = {}) {
     filters.value = newFilters;
     events.value = [];
     refresh();
+    fetchStats();
   };
 
   const updateTimeRange = (range: TimeRange | null) => {
     timeRange.value = range;
     events.value = [];
     refresh();
+    fetchStats();
   };
 
   const stop = () => {
@@ -154,6 +181,7 @@ export function useLiveMonitor(options: Options = {}) {
     } else {
       fetchEvents();
     }
+    fetchStats();
     document.addEventListener('visibilitychange', visibilityHandler);
   });
 
@@ -174,6 +202,8 @@ export function useLiveMonitor(options: Options = {}) {
     refresh,
     updateFilters,
     updateTimeRange,
+    stats,
+    statsLoading,
   };
 }
 

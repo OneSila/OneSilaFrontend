@@ -233,3 +233,18 @@ export const getWebhookDeliveryAttemptQuery = gql`
   }
 `;
 
+export const webhookDeliveryStatsQuery = gql`
+  query WebhookDeliveryStats($filter: WebhookDeliveryFilter) {
+    webhookDeliveryStats(filters: $filter) {
+      deliveries
+      delivered
+      failed
+      successRate
+      medianLatency
+      p95Latency
+      rate429
+      queueDepth
+    }
+  }
+`;
+

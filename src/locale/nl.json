@@ -1961,6 +1961,23 @@
       },
       "autoRefresh": "Auto-verversen",
       "rpmCap": "RPM-limiet",
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (median / p95)",
+        "latencyTooltip": "Median and 95th percentile latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "queueDepth": "Queue depth",
+        "queueDepthTooltip": "Current depth of the webhook queue"
+      },
+      "empty": "No deliveries found",
       "table": {
         "time": "Tijd",
         "topic": "Onderwerp",
