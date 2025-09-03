@@ -143,6 +143,7 @@ export const webhookDeliveriesQuery = gql`
           attempts(order: { number: DESC }) {
             number
             sentAt
+            createdAt
             responseCode
             responseMs
             responseBodySnippet
@@ -179,6 +180,7 @@ export const getWebhookDeliveryQuery = gql`
       responseMs
       responseBodySnippet
       sentAt
+      createdAt
       errorMessage
       errorTraceback
     }
@@ -196,6 +198,7 @@ export const webhookDeliveryAttemptsQuery = gql`
           }
           number
           sentAt
+          createdAt
           responseCode
           responseMs
           responseBodySnippet
@@ -224,6 +227,7 @@ export const getWebhookDeliveryAttemptQuery = gql`
       }
       number
       sentAt
+      createdAt
       responseCode
       responseMs
       responseBodySnippet

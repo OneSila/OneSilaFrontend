@@ -4,6 +4,7 @@ import { Button } from '../../../../../../../shared/components/atoms/button';
 import { Title } from '../../../../../../../shared/components/atoms/title';
 
 const { t } = useI18n();
+const formatTime = (iso: string) => new Date(iso).toLocaleString();
 
 interface HeaderKV {
   key: string;
@@ -50,6 +51,7 @@ const emit = defineEmits(['close', 'update:activeTab', 'replay', 'copyCurl']);
 
         <div v-else-if="props.activeTab === 'attempts'" class="space-y-2 text-sm">
           <div v-for="att in event.attempts" :key="att.number" class="border-b pb-2">
+            <div><strong>{{ t('webhooks.monitor.drawer.attempts.createdAt') }}:</strong> {{ formatTime(att.createdAt) }}</div>
             <div><strong>{{ t('webhooks.monitor.drawer.attempts.number') }}:</strong> {{ att.number }}</div>
             <div><strong>{{ t('webhooks.monitor.drawer.attempts.responseCode') }}:</strong> {{ att.responseCode }}</div>
             <div><strong>{{ t('webhooks.monitor.drawer.attempts.latency') }}:</strong> {{ att.responseMs }}</div>

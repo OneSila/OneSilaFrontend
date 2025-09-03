@@ -2920,7 +2920,8 @@
           "number": "Attempt",
           "responseCode": "Response code",
           "latency": "Latency",
-          "error": "Error"
+          "error": "Error",
+          "createdAt": "Created at"
         },
         "headers": {
           "redacted": "[REDACTED]"
