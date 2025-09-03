@@ -9,6 +9,34 @@ import { QueryFilter } from '../../../../searchConfig';
 import apolloClient from "../../../../../../../../../apollo-client";
 import {DocumentNode} from "graphql";
 
+const STORAGE_KEY = 'filterLabelMap';
+const MAX_AGE = 24 * 60 * 60 * 1000;
+
+const pruneOldEntries = (map: Record<string, { label: string; timestamp: number }>) => {
+  const now = Date.now();
+  Object.keys(map).forEach((key) => {
+    if (!map[key].timestamp || now - map[key].timestamp > MAX_AGE) {
+      delete map[key];
+    }
+  });
+};
+
+const cacheLabel = (id: any, label: string) => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    pruneOldEntries(map);
+    map[id] = { label, timestamp: Date.now() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+  } catch (e) {
+    // ignore storage errors
+  }
+};
+
+const storeLabel = ({ id, label }: { id: any; label: string }) => {
+  cacheLabel(id, label);
+};
+
 const props = defineProps<{ filter: QueryFilter }>();
 const emit = defineEmits(['update-value']);
 const route = useRoute();
@@ -58,6 +86,24 @@ watchEffect(() => {
   emit('update-value', selectedValue.value);
 });
 
+watch([selectedValue, cleanedData], () => {
+  const values = Array.isArray(selectedValue.value)
+    ? selectedValue.value
+    : [selectedValue.value];
+  values.forEach((v) => {
+    const match = cleanedData.value.find((opt) => {
+      const optValue = props.filter.valueBy ? opt[props.filter.valueBy] : opt;
+      return optValue === v;
+    });
+    if (match) {
+      const label = props.filter.labelBy ? match[props.filter.labelBy] : match;
+      if (label) {
+        cacheLabel(v, label);
+      }
+    }
+  });
+});
+
 watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
 
 const handleInput = debounce(async (searchValue: string) => {
@@ -100,6 +146,7 @@ const disabled = ref(props.filter.disabled === true);
           :limit="limit"
           :disabled="disabled"
           :is-loading="loading"
-          @searched="handleInput" />
+          @searched="handleInput"
+          @label-selected="storeLabel" />
   </div>
 </template>

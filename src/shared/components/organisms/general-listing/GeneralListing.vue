@@ -143,6 +143,27 @@ const updateLimitPerPage = (value: number) => {
 const filterChips = computed(() => {
   const q = route.query as Record<string, any>;
   const chips: { key: string; label: string; value: string; rawValue: string }[] = [];
+  let stored: Record<string, { label: string; timestamp: number }> = {};
+  const raw = localStorage.getItem('filterLabelMap');
+  if (raw) {
+    try {
+      stored = JSON.parse(raw);
+      const now = Date.now();
+      const maxAge = 24 * 60 * 60 * 1000;
+      let changed = false;
+      Object.keys(stored).forEach((k) => {
+        if (!stored[k].timestamp || now - stored[k].timestamp > maxAge) {
+          delete stored[k];
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('filterLabelMap', JSON.stringify(stored));
+      }
+    } catch (e) {
+      stored = {};
+    }
+  }
   props.searchConfig.filters?.forEach((filter: any) => {
     const label = filter.label;
     const param = q[filter.name];
@@ -157,11 +178,13 @@ const filterChips = computed(() => {
         : null;
     if (Array.isArray(param)) {
       param.forEach((v: any) => {
-        const display = map?.[String(v)] || String(v);
+        const display =
+          map?.[String(v)] || stored[String(v)]?.label || String(v);
         chips.push({ key: filter.name, label, value: display, rawValue: String(v) });
       });
     } else {
-      const display = map?.[String(param)] || String(param);
+      const display =
+        map?.[String(param)] || stored[String(param)]?.label || String(param);
       chips.push({ key: filter.name, label, value: display, rawValue: String(param) });
     }
   });
