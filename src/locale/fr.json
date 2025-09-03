@@ -246,8 +246,33 @@
         "topics": "Topics breakdown",
         "responseCodes": "Response codes distribution",
         "retries": "Retries distribution",
+        "heatmap": "Carte thermique",
+        "topOffenders": "Principaux responsables",
         "p50": "p50",
         "p95": "p95"
+      }
+      ,
+      "heatmap": {
+        "metric": {
+          "failures": "Échecs",
+          "latency": "Latence médiane"
+        },
+        "weekdays": {
+          "1": "Lun",
+          "2": "Mar",
+          "3": "Mer",
+          "4": "Jeu",
+          "5": "Ven",
+          "6": "Sam",
+          "7": "Dim"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Intégration",
+          "failureRate": "% d'échec",
+          "latencyP95": "Latence p95"
+        }
       }
     }
   }
