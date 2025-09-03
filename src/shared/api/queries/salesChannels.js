@@ -678,9 +678,7 @@ export const getSalesChannelImportQuery = gql`
       processedRecords
       errorTraceback
       salesChannel {
-        integrationPtr {
-          id
-        }
+        id
       }
     }
   }

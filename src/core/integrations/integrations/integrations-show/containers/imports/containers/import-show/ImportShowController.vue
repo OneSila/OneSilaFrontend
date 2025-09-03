@@ -32,7 +32,7 @@ const fetchImport = async () => {
       fetchPolicy: 'network-only'
     });
     result.value = data;
-    integrationId.value = data.salesChannelImport.salesChannel.integrationPtr.id;
+    integrationId.value = data.salesChannelImport.salesChannel.id;
   } finally {
     loading.value = false;
   }
@@ -67,6 +67,7 @@ const formatDate = (dateString: string) => {
   <GeneralTemplate>
     <template #breadcrumbs>
       <Breadcrumbs
+        v-if="integrationId"
         :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
           { path: { name: 'integrations.integrations.show', params: { id: integrationId, type: type }, query: { tab: 'imports' } }, name: t('integrations.show.title') },
