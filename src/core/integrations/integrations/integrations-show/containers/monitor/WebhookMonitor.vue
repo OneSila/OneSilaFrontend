@@ -5,7 +5,6 @@ import { useRoute, useRouter } from 'vue-router';
 import Swal, { SweetAlertOptions } from 'sweetalert2';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Button } from '../../../../../../shared/components/atoms/button';
-import { Badge } from '../../../../../../shared/components/atoms/badge';
 import { Title } from '../../../../../../shared/components/atoms/title';
 import { Label } from '../../../../../../shared/components/atoms/label';
 import { FilterManager } from '../../../../../../shared/components/molecules/filter-manager';
@@ -16,6 +15,9 @@ import apolloClient from '../../../../../../../apollo-client';
 import { getWebhookIntegrationQuery } from '../../../../../../shared/api/queries/webhooks.js';
 import { retryWebhookDeliveryMutation } from '../../../../../../shared/api/mutations/webhooks.js';
 import { useLiveMonitor } from './useLiveMonitor';
+import KpiCards from './components/KpiCards.vue';
+import EventTable from './components/EventTable.vue';
+import EventDrawer from './components/EventDrawer.vue';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -156,16 +158,6 @@ const getResponseCodeColor = (code?: number | null) => {
 const formatTime = (iso: string) => new Date(iso).toLocaleString();
 
 const integrationHeaders = ref<{ key: string; value: string }[]>([]);
-
-const kpis = [
-  { key: 'deliveries', format: (s: any) => s?.deliveries ?? 0 },
-  { key: 'delivered', format: (s: any) => s?.delivered ?? 0 },
-  { key: 'failed', format: (s: any) => s?.failed ?? 0 },
-  { key: 'successRate', format: (s: any) => `${(s?.successRate ?? 0).toFixed(1)}%` },
-  { key: 'latency', format: (s: any) => `${s?.medianLatency ?? 0} / ${s?.p95Latency ?? 0}` },
-  { key: 'rate429', format: (s: any) => `${(s?.rate429 ?? 0).toFixed(1)}%` },
-  { key: 'queueDepth', format: (s: any) => s?.queueDepth ?? 0 },
-];
 
 const arrayBufferToHex = (buffer: ArrayBuffer) =>
   Array.from(new Uint8Array(buffer))
@@ -464,152 +456,28 @@ const rpmDisplay = computed(() => `${rpm.value ?? 0}/120`);
       </div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-      <div
-        v-for="kpi in kpis"
-        :key="kpi.key"
-        class="p-4 bg-gray-50 rounded"
-        :title="t(`webhooks.monitor.kpis.${kpi.key}Tooltip`)">
-        <div class="text-sm text-gray-500">
-          {{ t(`webhooks.monitor.kpis.${kpi.key}`) }}
-        </div>
-        <div v-if="!statsLoading" class="text-xl font-semibold">
-          {{ kpi.format(stats) }}
-        </div>
-        <div v-else class="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
-      </div>
-    </div>
+    <KpiCards :stats="stats" :stats-loading="statsLoading" />
 
-    <div class="mt-4">
-      <div class="grid grid-cols-8 bg-gray-50 border-b border-gray-300">
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.time') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.topic') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.action') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.subjectId') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.status') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.httpCode') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.latency') }}
-        </div>
-        <div class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
-          {{ t('webhooks.monitor.table.attempt') }}
-        </div>
-      </div>
-      <div class="max-h-96 overflow-auto">
-        <div v-if="loading">
-          <div v-for="n in 5" :key="n" class="grid grid-cols-8 border-b border-gray-200 bg-white">
-            <div v-for="i in 8" :key="i" class="px-3 py-2">
-              <div class="h-4 bg-gray-200 rounded animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-        <transition-group v-else name="list" tag="div">
-          <div
-            v-for="ev in events"
-            :key="ev.outbox.id"
-            class="grid grid-cols-8 border-b border-gray-200 bg-white cursor-pointer"
-            @click="openDrawer(ev)"
-          >
-            <div class="px-3 py-2 text-sm text-gray-500">
-              {{ formatTime(ev.sentAt) }}
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              {{ optionLabelMap.topic[ev.outbox.topic] || ev.outbox.topic }}
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              {{ optionLabelMap.action[ev.outbox.action] }}
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              {{ ev.outbox.subjectId }}
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              <Badge :color="statusBadgeMap[ev.status].color" :text="statusBadgeMap[ev.status].text" />
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              <Badge :color="getResponseCodeColor(ev.responseCode)" :text="ev.responseCode" />
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              {{ ev.responseMs }}
-            </div>
-            <div class="px-3 py-2 text-sm text-gray-500">
-              {{ ev.attempt }}
-            </div>
-          </div>
-        </transition-group>
-        <div v-if="!loading && events.length === 0" class="text-center py-4 text-sm text-gray-500">
-          {{ t('webhooks.monitor.empty') }}
-        </div>
-      </div>
-    </div>
+    <EventTable
+      :events="events"
+      :loading="loading"
+      :option-label-map="optionLabelMap"
+      :status-badge-map="statusBadgeMap"
+      :open-drawer="openDrawer"
+      :format-time="formatTime"
+      :get-response-code-color="getResponseCodeColor"
+    />
 
-    <transition name="fade">
-      <div v-if="selectedEvent" class="fixed inset-0 z-50 flex">
-        <div class="flex-1 bg-black/50" @click="closeDrawer"></div>
-        <div class="w-96 bg-white h-full overflow-y-auto p-4">
-          <div class="flex items-center justify-between mb-4">
-            <Title>{{ t('webhooks.monitor.title') }}</Title>
-            <button @click="closeDrawer">×</button>
-          </div>
-          <div class="flex items-center gap-2 mb-4">
-            <Button
-              v-for="tab in drawerTabs"
-              :key="tab"
-              :custom-class="`px-2 py-1 rounded text-sm ${activeTab === tab ? 'bg-primary text-white' : 'bg-gray-100'}`"
-              @click="activeTab = tab"
-            >
-              {{ t(`webhooks.monitor.drawer.tabs.${tab}`) }}
-            </Button>
-          </div>
-
-          <div v-if="activeTab === 'overview'" class="space-y-2 text-sm">
-            <div><strong>{{ t('webhooks.monitor.drawer.overview.status') }}:</strong> {{ selectedEvent.status }}</div>
-            <div><strong>{{ t('webhooks.monitor.drawer.overview.attemptCount') }}:</strong> {{ selectedEvent.attempt }}</div>
-            <div v-if="selectedEvent.errorMessage"><strong>{{ t('webhooks.monitor.drawer.overview.lastError') }}:</strong> {{ selectedEvent.errorMessage }}</div>
-            <div><strong>{{ t('webhooks.monitor.drawer.overview.idempotencyKey') }}:</strong> {{ selectedEvent.outbox.id }}</div>
-          </div>
-
-          <div v-else-if="activeTab === 'attempts'" class="space-y-2 text-sm">
-            <div v-for="att in selectedEvent.attempts" :key="att.number" class="border-b pb-2">
-              <div><strong>{{ t('webhooks.monitor.drawer.attempts.number') }}:</strong> {{ att.number }}</div>
-              <div><strong>{{ t('webhooks.monitor.drawer.attempts.responseCode') }}:</strong> {{ att.responseCode }}</div>
-              <div><strong>{{ t('webhooks.monitor.drawer.attempts.latency') }}:</strong> {{ att.responseMs }}</div>
-              <div v-if="att.errorText"><strong>{{ t('webhooks.monitor.drawer.attempts.error') }}:</strong> {{ att.errorText }}</div>
-            </div>
-          </div>
-
-          <div v-else-if="activeTab === 'payload'" class="text-sm">
-            <pre class="bg-gray-100 p-2 rounded overflow-auto">{{ JSON.stringify(selectedEvent.outbox.payload, null, 2) }}</pre>
-          </div>
-
-          <div v-else-if="activeTab === 'headers'" class="space-y-2 text-sm">
-            <div v-for="h in integrationHeaders" :key="h.key">
-              <strong>{{ h.key }}</strong>: {{ h.value }}
-            </div>
-          </div>
-
-          <div v-else-if="activeTab === 'replay'" class="flex flex-col gap-2 text-sm">
-            <Button :custom-class="'bg-primary text-white px-2 py-1 rounded'" @click="replaySelected">
-              {{ t('webhooks.monitor.drawer.replay.replayButton') }}
-            </Button>
-            <Button :custom-class="'bg-gray-100 px-2 py-1 rounded'" @click="copyCurl">
-              {{ t('webhooks.monitor.drawer.replay.copyCurlButton') }}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <EventDrawer
+      :event="selectedEvent"
+      :active-tab="activeTab"
+      :drawer-tabs="drawerTabs"
+      :integration-headers="integrationHeaders"
+      @close="closeDrawer"
+      @update:activeTab="activeTab = $event"
+      @replay="replaySelected"
+      @copyCurl="copyCurl"
+    />
 
     <Pagination v-if="pageInfo" class="mt-4" :page-info="pageInfo" :change-query-params="false" @query-changed="handlePageChange" />
   </div>
