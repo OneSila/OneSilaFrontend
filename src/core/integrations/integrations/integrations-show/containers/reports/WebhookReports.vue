@@ -450,6 +450,14 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
       :series="latencySeries"
       class="mt-4"
     />
+    <div class="mt-2 text-sm text-gray-500">
+      <p>{{ t('webhooks.reports.charts.latencyLegend.title') }}</p>
+      <ul class="list-disc ml-5">
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p50') }}</li>
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p95') }}</li>
+        <li>{{ t('webhooks.reports.charts.latencyLegend.p99') }}</li>
+      </ul>
+    </div>
     <ApexChart
       v-if="seriesData"
       type="bar"
