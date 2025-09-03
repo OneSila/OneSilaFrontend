@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { Badge } from '../../../../../../shared/components/atoms/badge';
+import { Badge } from '../../../../../../../shared/components/atoms/badge';
 
 const { t } = useI18n();
 

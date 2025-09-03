@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { Button } from '../../../../../../shared/components/atoms/button';
-import { Title } from '../../../../../../shared/components/atoms/title';
+import { Button } from '../../../../../../../shared/components/atoms/button';
+import { Title } from '../../../../../../../shared/components/atoms/title';
 
 const { t } = useI18n();
 
