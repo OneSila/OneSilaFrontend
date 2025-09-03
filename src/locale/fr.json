@@ -219,6 +219,26 @@
       "filters": {
         "integration": "Intégration",
         "responseCodeBucket": "Groupe de code de réponse"
+      },
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (p50 / p95 / p99)",
+        "latencyTooltip": "p50, p95, and p99 latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "rate5xx": "5xx %",
+        "rate5xxTooltip": "Percentage of HTTP 5xx responses",
+        "avgAttempts": "Avg attempts",
+        "avgAttemptsTooltip": "Average attempts per delivery",
+        "avgSolveMs": "Avg solve ms",
+        "avgSolveMsTooltip": "Average milliseconds to solve a request"
       }
     }
   }
