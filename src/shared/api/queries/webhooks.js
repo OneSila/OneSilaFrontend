@@ -252,3 +252,21 @@ export const webhookDeliveryStatsQuery = gql`
   }
 `;
 
+export const webhookReportsKpiQuery = gql`
+  query WebhookReportsKpi($filter: WebhookDeliveryFilter) {
+    webhookReportsKpi(filters: $filter) {
+      deliveries
+      delivered
+      failed
+      successRate
+      p50Latency
+      p95Latency
+      p99Latency
+      rate429
+      rate5xx
+      avgAttempts
+      avgSolveMs
+    }
+  }
+`;
+
