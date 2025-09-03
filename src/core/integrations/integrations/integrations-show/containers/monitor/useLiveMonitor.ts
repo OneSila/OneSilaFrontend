@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue';
 import apolloClient from '../../../../../../../apollo-client';
 import { webhookDeliveriesQuery } from '../../../../../../shared/api/queries/webhooks.js';
 
@@ -67,7 +67,15 @@ export function useLiveMonitor(options: Options = {}) {
       pageInfo.value = data?.webhookDeliveries?.pageInfo || null;
       const nodes = edges.map((e: any) => e.node);
       if (nodes.length > 0) {
-        events.value = nodes;
+        if (!live.value || events.value.length === 0) {
+          events.value = nodes;
+        } else {
+          const existing = new Set(events.value.map((e) => e.outbox?.id));
+          const fresh = nodes.filter((n: any) => !existing.has(n.outbox?.id));
+          if (fresh.length) {
+            events.value = [...fresh, ...events.value];
+          }
+        }
         emptyPolls = 0;
       } else {
         emptyPolls += 1;
@@ -103,11 +111,13 @@ export function useLiveMonitor(options: Options = {}) {
 
   const updateFilters = (newFilters: Record<string, any>) => {
     filters.value = newFilters;
+    events.value = [];
     refresh();
   };
 
   const updateTimeRange = (range: TimeRange | null) => {
     timeRange.value = range;
+    events.value = [];
     refresh();
   };
 
@@ -124,6 +134,14 @@ export function useLiveMonitor(options: Options = {}) {
       schedule();
     }
   };
+
+  watch(live, (val) => {
+    if (val) {
+      refresh();
+    } else {
+      stop();
+    }
+  });
 
   onMounted(() => {
     if (live.value) {
