@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { Button } from '../../../../../../shared/components/atoms/button';
@@ -8,7 +8,8 @@ import { FilterManager } from '../../../../../../shared/components/molecules/fil
 import { FieldType } from '../../../../../../shared/utils/constants';
 import type { SearchConfig } from '../../../../../../shared/components/organisms/general-search/searchConfig';
 import apolloClient from '../../../../../../../apollo-client';
-import { webhookReportsKpiQuery } from '../../../../../../shared/api/queries/webhooks.js';
+import { webhookReportsKpiQuery, webhookReportsSeriesQuery } from '../../../../../../shared/api/queries/webhooks.js';
+import ApexChart from 'vue3-apexcharts';
 import KpiCards from './components/KpiCards.vue';
 
 const { t } = useI18n();
@@ -20,9 +21,10 @@ const props = defineProps<{
 }>();
 
 const timeOptions = ['today', '7d', '30d'] as const;
-const selectedRange = ref<typeof timeOptions[number]>('today');
+const selectedRange = ref<typeof timeOptions[number] | 'custom'>('today');
 
 const stats = ref<any | null>(null);
+const seriesData = ref<any | null>(null);
 const statsLoading = ref(false);
 
 const fetchStats = async () => {
@@ -33,7 +35,7 @@ const fetchStats = async () => {
     const filter: Record<string, any> = {
       webhookIntegration: { id: { exact: integration } },
     };
-    ['status', 'responseCode'].forEach((k) => {
+    ['status', 'responseCode', 'attempt'].forEach((k) => {
       const v = q[k];
       if (typeof v === 'string' && v) {
         filter[k] = { exact: v };
@@ -75,8 +77,15 @@ const fetchStats = async () => {
       variables: { filter },
     });
     stats.value = data?.webhookReportsKpi || null;
+    const { data: seriesResp } = await apolloClient.query({
+      query: webhookReportsSeriesQuery,
+      fetchPolicy: 'network-only',
+      variables: { filter },
+    });
+    seriesData.value = seriesResp?.webhookReportsSeries || null;
   } catch {
     stats.value = null;
+    seriesData.value = null;
   } finally {
     statsLoading.value = false;
   }
@@ -86,11 +95,9 @@ watch([() => route.query, selectedRange], fetchStats, { immediate: true });
 
 const selectRange = (opt: typeof timeOptions[number]) => {
   selectedRange.value = opt;
-  if (opt !== 'custom') {
-    const newQuery = { ...route.query } as Record<string, any>;
-    delete newQuery.date;
-    router.replace({ query: newQuery });
-  }
+  const newQuery = { ...route.query } as Record<string, any>;
+  delete newQuery.date;
+  router.replace({ query: newQuery });
 };
 
 const actionOptions = [
@@ -171,6 +178,153 @@ const searchConfig: SearchConfig = {
   ],
   orders: [],
 };
+
+const deliveryOutcomeSeries = computed(() => {
+  if (!seriesData.value) return [];
+  return [
+    {
+      name: t('webhooks.monitor.statuses.delivered'),
+      data: seriesData.value.deliveryOutcomeBuckets.map((b: any) => [b.timestamp, b.delivered]),
+    },
+    {
+      name: t('webhooks.monitor.statuses.failed'),
+      data: seriesData.value.deliveryOutcomeBuckets.map((b: any) => [b.timestamp, b.failed]),
+    },
+    {
+      name: t('webhooks.monitor.statuses.pending'),
+      data: seriesData.value.deliveryOutcomeBuckets.map((b: any) => [b.timestamp, b.pending]),
+    },
+    {
+      name: t('webhooks.monitor.statuses.sending'),
+      data: seriesData.value.deliveryOutcomeBuckets.map((b: any) => [b.timestamp, b.sending]),
+    },
+  ];
+});
+
+const deliveryOutcomeOptions = computed(() => ({
+  chart: { type: 'area', stacked: true, toolbar: { show: false } },
+  xaxis: { type: 'datetime' },
+  title: { text: t('webhooks.reports.charts.deliveryOutcome') },
+}));
+
+const latencySeries = computed(() => {
+  if (!seriesData.value) return [];
+  return [
+    {
+      name: t('webhooks.reports.charts.p50'),
+      data: seriesData.value.latencyBuckets.map((b: any) => [b.timestamp, b.p50]),
+    },
+    {
+      name: t('webhooks.reports.charts.p95'),
+      data: seriesData.value.latencyBuckets.map((b: any) => [b.timestamp, b.p95]),
+    },
+  ];
+});
+
+const latencyOptions = computed(() => ({
+  chart: { type: 'line', toolbar: { show: false } },
+  xaxis: { type: 'datetime' },
+  title: { text: t('webhooks.reports.charts.latency') },
+}));
+
+const topicsSeries = computed(() => {
+  if (!seriesData.value) return [];
+  return [
+    {
+      name: t('webhooks.reports.kpis.deliveries'),
+      type: 'bar',
+      data: seriesData.value.topicsBreakdown.map((b: any) => b.deliveries),
+    },
+    {
+      name: t('webhooks.reports.kpis.successRate'),
+      type: 'line',
+      data: seriesData.value.topicsBreakdown.map((b: any) => b.successRate),
+    },
+  ];
+});
+
+const topicsOptions = computed(() => ({
+  chart: {
+    toolbar: { show: false },
+    events: {
+      dataPointSelection: (_e: any, _ctx: any, config: any) => {
+        const topic = seriesData.value?.topicsBreakdown[config.dataPointIndex]?.topic;
+        if (topic) {
+          router.replace({ query: { ...route.query, topic } });
+        }
+      },
+    },
+  },
+  stroke: { width: [0, 3] },
+  plotOptions: { bar: { horizontal: true } },
+  xaxis: { categories: seriesData.value ? seriesData.value.topicsBreakdown.map((b: any) => b.topic) : [] },
+  yaxis: [
+    { title: { text: t('webhooks.reports.kpis.deliveries') } },
+    {
+      opposite: true,
+      max: 100,
+      title: { text: t('webhooks.reports.kpis.successRate') },
+      labels: { formatter: (val: number) => `${val}%` },
+    },
+  ],
+  tooltip: { shared: true },
+  title: { text: t('webhooks.reports.charts.topics') },
+}));
+
+const responseCodesSeries = computed(() => {
+  if (!seriesData.value) return [];
+  return [
+    {
+      name: t('webhooks.reports.kpis.deliveries'),
+      data: seriesData.value.responseCodesBreakdown.map((b: any) => b.count),
+    },
+  ];
+});
+
+const responseCodesOptions = computed(() => ({
+  chart: {
+    type: 'bar',
+    toolbar: { show: false },
+    events: {
+      dataPointSelection: (_e: any, _ctx: any, config: any) => {
+        const bucket = seriesData.value?.responseCodesBreakdown[config.dataPointIndex]?.codeBucket;
+        if (bucket) {
+          const mapping: Record<string, string> = { '2xx': '200', '4xx': '400', '429': '429', '5xx': '500' };
+          router.replace({ query: { ...route.query, responseCode: mapping[bucket] || bucket } });
+        }
+      },
+    },
+  },
+  xaxis: { categories: seriesData.value ? seriesData.value.responseCodesBreakdown.map((b: any) => b.codeBucket) : [] },
+  title: { text: t('webhooks.reports.charts.responseCodes') },
+}));
+
+const retriesSeries = computed(() => {
+  if (!seriesData.value) return [];
+  return [
+    {
+      name: t('webhooks.reports.kpis.deliveries'),
+      data: seriesData.value.retriesDistribution.map((b: any) => b.count),
+    },
+  ];
+});
+
+const retriesOptions = computed(() => ({
+  chart: {
+    type: 'bar',
+    toolbar: { show: false },
+    events: {
+      dataPointSelection: (_e: any, _ctx: any, config: any) => {
+        const attempts = seriesData.value?.retriesDistribution[config.dataPointIndex]?.attempts;
+        if (attempts !== undefined) {
+          router.replace({ query: { ...route.query, attempt: attempts.toString() } });
+        }
+      },
+    },
+  },
+  xaxis: { categories: seriesData.value ? seriesData.value.retriesDistribution.map((b: any) => b.attempts.toString()) : [] },
+  title: { text: t('webhooks.reports.charts.retries') },
+}));
 </script>
 
 <template>
@@ -191,6 +345,45 @@ const searchConfig: SearchConfig = {
       </Button>
     </div>
     <KpiCards :stats="stats" :stats-loading="statsLoading" />
+    <ApexChart
+      v-if="seriesData"
+      type="area"
+      height="300"
+      :options="deliveryOutcomeOptions"
+      :series="deliveryOutcomeSeries"
+    />
+    <ApexChart
+      v-if="seriesData"
+      type="line"
+      height="300"
+      :options="latencyOptions"
+      :series="latencySeries"
+      class="mt-4"
+    />
+    <ApexChart
+      v-if="seriesData"
+      type="bar"
+      height="300"
+      :options="topicsOptions"
+      :series="topicsSeries"
+      class="mt-4"
+    />
+    <ApexChart
+      v-if="seriesData"
+      type="bar"
+      height="300"
+      :options="responseCodesOptions"
+      :series="responseCodesSeries"
+      class="mt-4"
+    />
+    <ApexChart
+      v-if="seriesData"
+      type="bar"
+      height="300"
+      :options="retriesOptions"
+      :series="retriesSeries"
+      class="mt-4"
+    />
   </div>
 </template>
 

@@ -270,3 +270,36 @@ export const webhookReportsKpiQuery = gql`
   }
 `;
 
+export const webhookReportsSeriesQuery = gql`
+  query WebhookReportsSeries($filter: WebhookDeliveryFilter) {
+    webhookReportsSeries(filters: $filter) {
+      deliveryOutcomeBuckets {
+        timestamp
+        delivered
+        failed
+        pending
+        sending
+      }
+      latencyBuckets {
+        timestamp
+        p50
+        p95
+      }
+      topicsBreakdown {
+        topic
+        deliveries
+        delivered
+        failed
+        successRate
+      }
+      responseCodesBreakdown {
+        codeBucket
+        count
+      }
+      retriesDistribution {
+        attempts
+        count
+      }
+    }
+  }
+`;

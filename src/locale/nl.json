@@ -2020,7 +2020,8 @@
       },
       "filters": {
         "integration": "Integratie",
-        "responseCodeBucket": "Antwoordcode-bucket"
+        "responseCodeBucket": "Antwoordcode-bucket",
+        "date": "Datum"
       },
       "kpis": {
         "deliveries": "Deliveries",
@@ -2043,6 +2044,15 @@
         "avgSolveMsTooltip": "Average milliseconds to solve a request",
         "responseCodeBucket": "Antwoordcode-bucket",
         "date": "Datum"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "p50": "p50",
+        "p95": "p95"
       }
     }
   }
