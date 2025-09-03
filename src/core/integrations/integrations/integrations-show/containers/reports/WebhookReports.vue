@@ -52,17 +52,24 @@ const fetchStats = async () => {
         from = new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
       }
     }
-    const variables: Record<string, any> = {
-      integration: { id: integration },
-      timeFrom: from!.toISOString(),
-      timeTo: to!.toISOString(),
+    const filter: Record<string, any> = {
+      webhookIntegration: { id: { exact: integration } },
+      sentAt: { gte: from!.toISOString(), lte: to!.toISOString() },
     };
-    ['topic', 'action', 'status'].forEach((k) => {
+    ['status', 'responseCode'].forEach((k) => {
       const v = q[k];
       if (typeof v === 'string' && v) {
-        variables[k] = v;
+        filter[k] = { exact: v };
       }
     });
+    ['topic', 'action'].forEach((k) => {
+      const v = q[k];
+      if (typeof v === 'string' && v) {
+        filter.outbox = filter.outbox || {};
+        filter.outbox[k] = { exact: v };
+      }
+    });
+    const variables = { filter };
     const { data } = await apolloClient.query({
       query: webhookReportsKpiQuery,
       fetchPolicy: 'network-only',
