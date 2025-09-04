@@ -53,7 +53,7 @@ const fetchData = async () => {
   const { data } = await apolloClient.query({
     query: productsQuery,
     variables: { filter },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
 
   if (data) {

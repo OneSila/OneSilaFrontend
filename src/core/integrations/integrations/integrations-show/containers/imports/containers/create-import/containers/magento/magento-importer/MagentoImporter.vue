@@ -104,7 +104,7 @@ const fetchIntegrationData = async () => {
     const { data } = await apolloClient.query({
       query: getMagentoChannelQuery,
       variables: { id: props.integrationId },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     const { __typename, integrationPtr, saleschannelPtr,  ...cleanData } = data['magentoChannel'];
     integrationData.value = cleanData;
@@ -125,7 +125,7 @@ const fetchAttributesData = async () => {
     const { data } = await apolloClient.query({
       query: magentoRemoteAttributesQuery,
       variables: { salesChannelId: props.integrationId },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
     });
     attributes.value = data.magentoRemoteAttributes;
   } catch (err) {
@@ -138,7 +138,7 @@ const fetchAttributeSetsData = async () => {
     const { data } = await apolloClient.query({
       query: magentoRemoteAttributeSetsQuery,
       variables: { salesChannelId: props.integrationId },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
     });
     attributeSets.value = data.magentoRemoteAttributeSets;
   } catch (err) {

@@ -66,7 +66,7 @@ const cleanedData = (rawData) => {
 
 const loadSalesChannels = async () => {
   try {
-    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'network-only' });
+    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
     salesChannels.value = data?.integrations.edges.map((e: any) => e.node) || [];
   } catch (e) {
     console.error('Failed to load sales channels', e);
@@ -87,7 +87,7 @@ const setFormAndMutation = async (language, channel) => {
       const { data } = await apolloClient.query({
         query: getProductContentByLanguageAndDefaultQuery,
         variables: { languageCode: language, productId: props.product.id },
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'cache-first'
       });
 
       if (data && data.productTranslations.edges.length === 1) {
@@ -120,7 +120,7 @@ const setFormAndMutation = async (language, channel) => {
           productId: props.product.id,
           salesChannelId: channel
         },
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'cache-first'
       });
 
       if (data && data.productTranslations.edges.length === 1) {
@@ -147,7 +147,7 @@ const setFormAndMutation = async (language, channel) => {
       const { data: def } = await apolloClient.query({
         query: getProductContentByLanguageAndDefaultQuery,
         variables: { languageCode: language, productId: props.product.id },
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'cache-first'
       });
       defaultPreviewContent.value = def?.productTranslations.edges[0]?.node || null;
     }
@@ -292,7 +292,7 @@ const shortDescriptionToolbarOptions = [
       </ApolloMutation>
     </FlexCell>
     <FlexCell>
-      <ApolloQuery :query="translationLanguagesQuery">
+      <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
         <template v-slot="{ result: { data } }">
           <Selector v-if="data"
                     v-model="currentLanguage"

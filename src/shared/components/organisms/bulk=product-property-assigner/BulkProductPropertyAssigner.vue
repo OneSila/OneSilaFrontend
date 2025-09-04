@@ -297,7 +297,7 @@ const onAssignSubmit = async () => {
           <Label class="block font-semibold text-sm text-gray-700 mb-1">
             {{ t('shared.labels.language') }}
           </Label>
-          <ApolloQuery :query="translationLanguagesQuery">
+          <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
             <template v-slot="{ result: { data } }">
               <Selector v-if="data" v-model="language" :options="data.translationLanguages.languages" labelBy="name"
                         valueBy="code" filterable/>

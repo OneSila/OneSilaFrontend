@@ -139,7 +139,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
         mappedLocally: false,
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const edges = data?.amazonProductTypes?.edges || [];
   let nextId: string | null = null;

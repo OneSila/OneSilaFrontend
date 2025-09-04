@@ -61,7 +61,7 @@ const fetchLogs = async () => {
   const {data} = await apolloClient.query({
     query,
     variables: {filter: {remoteProduct: {id: {exact: props.id }}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const logsData = props.integrationType === 'amazon' ? data?.amazonRemoteLogs : data?.remoteLogs;

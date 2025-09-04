@@ -84,7 +84,7 @@ onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getAmazonDefaultUnitConfiguratorQuery,
     variables: { id: configuratorId.value },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
 
   const cfg = data?.amazonDefaultUnitConfigurator;
@@ -136,7 +136,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
         mappedLocally: false,
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
 
   const edges = data?.amazonDefaultUnitConfigurators?.edges || [];

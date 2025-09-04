@@ -131,7 +131,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
 <template>
   <FilterManager :searchConfig="searchConfig">
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-      <ApolloQuery :query="listQuery"
+      <ApolloQuery :query="listQuery" fetch-policy="cache-and-network"
                    :variables="{filter: {...filterVariables, 'parent': {'id': {'exact': parentId}}},
                                 order:orderVariables,
                                 first: pagination.first,

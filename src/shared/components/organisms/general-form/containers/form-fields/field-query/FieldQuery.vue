@@ -82,7 +82,7 @@ async function ensureSelectedValuesArePresent() {
         [props.field.valueBy]: { inList: missingIds }
       }
     },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const newItems = props.field.isEdge
@@ -114,7 +114,7 @@ async function fetchData(searchValue: string | null | undefined = null, ensureSe
     const { data } = await apolloClient.query({
       query: props.field.query as unknown as DocumentNode,
       variables: variables,
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
 
     processAndCleanData(data[props.field.dataKey]);

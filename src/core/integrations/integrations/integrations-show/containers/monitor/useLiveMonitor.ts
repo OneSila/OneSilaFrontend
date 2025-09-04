@@ -64,7 +64,7 @@ export function useLiveMonitor(options: Options = {}) {
       }
       const { data } = await apolloClient.query({
         query: webhookDeliveriesQuery,
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
         variables: {
           filter,
           ...pagination,
@@ -106,7 +106,7 @@ export function useLiveMonitor(options: Options = {}) {
       }
       const { data } = await apolloClient.query({
         query: webhookDeliveryStatsQuery,
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
         variables: { filter },
       });
       stats.value = data?.webhookDeliveryStats || null;

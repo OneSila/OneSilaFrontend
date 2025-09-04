@@ -29,7 +29,7 @@ const fetchImport = async () => {
     const { data } = await apolloClient.query({
       query: getSalesChannelImportQuery,
       variables: { id: id.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     result.value = data;
     integrationId.value = data.salesChannelImport.salesChannel.id;

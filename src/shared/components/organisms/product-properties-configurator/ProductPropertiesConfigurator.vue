@@ -78,7 +78,7 @@ const fetchData = async () => {
   const {data} = await apolloClient.query({
     query: propertiesQuery,
     variables: variables,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.properties) {
@@ -270,7 +270,7 @@ const handleProductTypeUpdated = async (newVal) => {
     const {data} = await apolloClient.query({
       query: getPropertySelectValueQuery,
       variables: {id: newVal},
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     })
 
     if (data && data.propertySelectValue) {

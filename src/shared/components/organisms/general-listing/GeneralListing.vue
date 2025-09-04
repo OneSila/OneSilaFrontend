@@ -292,7 +292,7 @@ defineExpose({
   <FilterManager :searchConfig="searchConfig">
 
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-      <ApolloQuery :query="query"
+      <ApolloQuery :query="query" fetch-policy="cache-and-network"
                    :variables="{filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
                               order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                               first: pagination.first,

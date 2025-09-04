@@ -38,7 +38,7 @@ const refetchIfNecessary = (query, data) => {
         </div>
         <div class="flex items-center gap-2">
           <span class="p-0.5 bg-gray-600 rounded-full"></span>
-            <ApolloQuery :query="cntQuery">
+            <ApolloQuery :query="cntQuery" fetch-policy="cache-and-network">
               <template v-slot="{ result: { data }, query }">
                 <p v-if="data && refetchIfNecessary(query, data)" class="text-sm">{{ data.medias.totalCount }} {{ t('media.media.labels.files') }}</p>
               </template>

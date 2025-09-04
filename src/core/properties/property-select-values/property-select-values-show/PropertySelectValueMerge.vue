@@ -31,7 +31,7 @@ const fetchCount = async (id: string) => {
         OR: { valueMultiSelect: { id: { exact: id } } },
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   return data?.productProperties?.totalCount || 0;
 };
@@ -54,7 +54,7 @@ const fetchOptions = async (searchValue: string | null = null) => {
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuerySimpleSelector,
     variables: variables,
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const fetched =
     data?.propertySelectValues?.edges?.map((e: any) => ({ label: e.node.value, value: e.node.id })) || [];

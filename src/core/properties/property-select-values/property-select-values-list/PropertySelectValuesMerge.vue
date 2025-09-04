@@ -29,7 +29,7 @@ const fetchValues = async () => {
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuery,
     variables: { filter: { id: { inList: props.selectedEntities } } },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const edges = data?.propertySelectValues?.edges || [];
   const result = await Promise.all(
@@ -43,7 +43,7 @@ const fetchValues = async () => {
             OR: { valueMultiSelect: { id: { exact: id } } },
           },
         },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       });
       return {
         id,

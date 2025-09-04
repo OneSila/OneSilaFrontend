@@ -77,13 +77,13 @@ const fetchStats = async () => {
     const variables = { filter };
     const { data } = await apolloClient.query({
       query: webhookReportsKpiQuery,
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
       variables,
     });
     stats.value = data?.webhookReportsKpi || null;
     const { data: seriesResp } = await apolloClient.query({
       query: webhookReportsSeriesQuery,
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
       variables,
     });
     seriesData.value = seriesResp?.webhookReportsSeries || null;

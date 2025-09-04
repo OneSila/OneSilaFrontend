@@ -54,7 +54,7 @@ const fetchCurrentEanCode = async () => {
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
     variables: {filter: {product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.eanCodes && data.eanCodes.edges.length > 0) {
@@ -73,7 +73,7 @@ const fetchAvailableEanCode = async () => {
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
     variables: {filter: {internal: {exact: true}, alreadyUsed: {exact: false}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.eanCodes && data.eanCodes.edges.length > 0) {

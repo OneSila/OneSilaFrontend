@@ -125,7 +125,7 @@ const onUploaded = async (files: any[]) => {
           </div>
           <div>
             <Label>{{ t('profile.labels.timezone') }}</Label>
-            <ApolloQuery :query="timezonesQuery">
+            <ApolloQuery :query="timezonesQuery" fetch-policy="cache-and-network">
               <template v-slot="{ result: { data } }">
                 <Selector v-if="data" v-model="form.timezone" :options="data.timezones" :placeholder="t('auth.register.company.placeholders.selector.country')" filterable
                           labelBy="key" valueBy="key"/>
