@@ -489,6 +489,9 @@ export const salesChannelViewsQuerySelector = gql`
         node {
           id
           name
+          salesChannel {
+             id
+          }
         }
         cursor
       }
