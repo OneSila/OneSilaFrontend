@@ -38,6 +38,7 @@ const showDuplicateModal = ref(false);
 const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
 const checkingDuplicates = ref(false);
 const skippedCheck = ref(false);
+let duplicateCheckController: AbortController | null = null;
 const duplicateSteps = computed(() => [
   t('properties.duplicateModal.steps.step1'),
   t('properties.duplicateModal.steps.step2'),
@@ -168,34 +169,42 @@ const createProperty = async () => {
   }
 };
 
-const handleFinish = async () => {
-  try {
-    showDuplicateModal.value = true;
-    checkingDuplicates.value = true;
-    skippedCheck.value = false;
-    const { data } = await apolloClient.mutate({
+const handleFinish = () => {
+  showDuplicateModal.value = true;
+  checkingDuplicates.value = true;
+  skippedCheck.value = false;
+  duplicateCheckController = new AbortController();
+  apolloClient
+    .mutate({
       mutation: checkPropertyForDuplicatesMutation,
-      variables: { name: form.name }
+      variables: { name: form.name },
+      context: { fetchOptions: { signal: duplicateCheckController.signal } },
+    })
+    .then(({ data }) => {
+      if (skippedCheck.value) return;
+      checkingDuplicates.value = false;
+      if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
+        duplicateItems.value = data.checkPropertyForDuplicates.duplicates.map((p: any) => ({
+          label: p.name,
+          urlParam: { name: 'properties.properties.show', params: { id: p.id } }
+        }));
+        return;
+      }
+      showDuplicateModal.value = false;
+      createProperty();
+    })
+    .catch((err) => {
+      if ((err as any)?.name === 'AbortError') return;
+      const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
+      onError(graphqlError);
     });
-    if (skippedCheck.value) return;
-    checkingDuplicates.value = false;
-    if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
-      duplicateItems.value = data.checkPropertyForDuplicates.duplicates.map((p: any) => ({
-        label: p.name,
-        urlParam: { name: 'properties.properties.show', params: { id: p.id } }
-      }));
-      return;
-    }
-    showDuplicateModal.value = false;
-    await createProperty();
-  } catch (err) {
-    const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
-    onError(graphqlError);
-  }
-}
+};
 
 const createAnywayHandler = async () => {
   skippedCheck.value = true;
+  duplicateCheckController?.abort();
+  checkingDuplicates.value = false;
+  showDuplicateModal.value = false;
   await createProperty();
 };
 

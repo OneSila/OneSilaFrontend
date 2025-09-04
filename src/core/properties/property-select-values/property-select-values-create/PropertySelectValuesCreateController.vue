@@ -31,6 +31,7 @@ const showDuplicateModal = ref(false);
 const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
 const checkingDuplicates = ref(false);
 const skippedCheck = ref(false);
+let duplicateCheckController: AbortController | null = null;
 const duplicateSteps = computed(() => [
   t('properties.duplicateModal.steps.step1'),
   t('properties.duplicateModal.steps.step2'),
@@ -187,33 +188,38 @@ const createSelectValue = async () => {
   }
 };
 
-const checkDuplicatesAndCreate = async (editAfter = false) => {
+const checkDuplicatesAndCreate = (editAfter = false) => {
   continueEditing.value = editAfter;
   if (!formConfig.value) return;
-  try {
-    const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
-    const propertyId = cleanedData.property.id || cleanedData.property;
-    showDuplicateModal.value = true;
-    checkingDuplicates.value = true;
-    skippedCheck.value = false;
-    const { data } = await apolloClient.mutate({
+  const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
+  const propertyId = cleanedData.property.id || cleanedData.property;
+  showDuplicateModal.value = true;
+  checkingDuplicates.value = true;
+  skippedCheck.value = false;
+  duplicateCheckController = new AbortController();
+  apolloClient
+    .mutate({
       mutation: checkPropertySelectValueForDuplicatesMutation,
-      variables: { property: {id: propertyId}, value: cleanedData.value },
+      variables: { property: { id: propertyId }, value: cleanedData.value },
+      context: { fetchOptions: { signal: duplicateCheckController.signal } },
+    })
+    .then(({ data }) => {
+      if (skippedCheck.value) return;
+      checkingDuplicates.value = false;
+      if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
+        duplicateItems.value = data.checkPropertySelectValueForDuplicates.duplicates.map((p: any) => ({
+          label: p.value || p.id,
+          urlParam: { name: 'properties.values.show', params: { id: p.id } }
+        }));
+        return;
+      }
+      showDuplicateModal.value = false;
+      createSelectValue();
+    })
+    .catch((err) => {
+      if ((err as any)?.name === 'AbortError') return;
+      onError(err);
     });
-    if (skippedCheck.value) return;
-    checkingDuplicates.value = false;
-    if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
-      duplicateItems.value = data.checkPropertySelectValueForDuplicates.duplicates.map((p: any) => ({
-        label: p.value || p.id,
-        urlParam: { name: 'properties.values.show', params: { id: p.id } }
-      }));
-      return;
-    }
-    showDuplicateModal.value = false;
-    await createSelectValue();
-  } catch (err) {
-    onError(err);
-  }
 };
 
 const cancel = () => {
@@ -229,6 +235,9 @@ const save = () => checkDuplicatesAndCreate(false);
 
 const createAnywayHandler = async () => {
   skippedCheck.value = true;
+  duplicateCheckController?.abort();
+  checkingDuplicates.value = false;
+  showDuplicateModal.value = false;
   await createSelectValue();
 };
 
