@@ -2,7 +2,7 @@ import { Plugin } from 'vue';
 import { buildRouter } from '../modules/router';
 
 export default {
-  install(app) {
-    app.use(buildRouter());
+  async install(app) {
+    app.use(await buildRouter());
   },
 } as Plugin;
