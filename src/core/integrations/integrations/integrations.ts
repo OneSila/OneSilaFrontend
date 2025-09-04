@@ -108,7 +108,6 @@ export interface WebhookChannelInfo extends SpecificChannelInfo {
   topic: string;
   version: string;
   url: string;
-  secret: string;
   timeoutMs: number;
   mode: string;
   extraHeaders: Record<string, any>;
@@ -162,7 +161,6 @@ export function getWebhookDefaultFields(): WebhookChannelInfo {
     topic: '',
     version: '2025-08-01',
     url: '',
-    secret: '',
     timeoutMs: 10000,
     mode: '',
     extraHeaders: {},
