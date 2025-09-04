@@ -3,18 +3,61 @@ import { getInspectorStatusIconMap, Product, getProductTypeBadgeMap } from "../.
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { useI18n } from "vue-i18n";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { configurableVariationsQuery, bundleVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 import { shortenText } from "../../../../../../../../../shared/utils";
+import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
+import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
 
 const parents = ref<any[]>([]);
 const loading = ref(true);
+const currentPage = ref(1);
+const limit = ref(10);
+const perPageOptions = [
+  { name: '10', value: 10 },
+  { name: '20', value: 20 },
+  { name: '50', value: 50 },
+  { name: '100', value: 100 }
+];
+
+const totalPages = computed(() => Math.max(1, Math.ceil(parents.value.length / limit.value)));
+
+const paginatedParents = computed(() => {
+  const start = (currentPage.value - 1) * limit.value;
+  return parents.value.slice(start, start + limit.value);
+});
+
+const pageInfo = computed(() => ({
+  startCursor: String(currentPage.value - 1),
+  endCursor: String(currentPage.value + 1),
+  hasPreviousPage: currentPage.value > 1,
+  hasNextPage: currentPage.value < totalPages.value
+}));
+
+const handleQueryChanged = (queryData) => {
+  const q = queryData.query;
+  if (q.before) currentPage.value = parseInt(q.before, 10);
+  if (q.after) currentPage.value = parseInt(q.after, 10);
+  if (q.first === 'true') currentPage.value = 1;
+  if (q.last === 'true') currentPage.value = totalPages.value;
+};
+
+const updateLimitPerPage = (value: number) => {
+  limit.value = value;
+  currentPage.value = 1;
+};
+
+watch([parents, limit], () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = totalPages.value;
+  }
+});
 
 function iconColorClass(color?: string) {
   switch (color) {
@@ -95,7 +138,7 @@ onMounted(async () => {
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="parent in parents" :key="parent.id">
+          <tr v-for="parent in paginatedParents" :key="parent.id">
             <td>
               <Link :path="{ name: 'products.products.show', params: { id: parent.id } }">
                 <div class="flex gap-4 items-center">
@@ -135,6 +178,25 @@ onMounted(async () => {
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="px-2 flex items-center space-x-2 mt-4" v-if="totalPages > 1">
+      <Pagination
+        :page-info="pageInfo"
+        :change-query-params="false"
+        @query-changed="handleQueryChanged"
+      />
+      <div>
+        <Selector
+          :options="perPageOptions"
+          :model-value="limit"
+          :clearable="false"
+          dropdown-position="bottom"
+          value-by="value"
+          label-by="name"
+          :placeholder="t('pagination.perPage')"
+          @update:model-value="updateLimitPerPage"
+        />
+      </div>
     </div>
   </div>
 </template>
