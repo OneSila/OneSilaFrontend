@@ -1,18 +1,16 @@
 import * as VueRouter from 'vue-router';
 
-const routeModules = [
-  () => import('../../../core/dashboard/routes'),
-  () => import('../../../core/auth/routes'),
-  () => import('../../../core/profile/routes'),
-  () => import('../../../core/contacts/routes'),
-  () => import('../../../core/sales/routes'),
-  () => import('../../../core/inventory/routes'),
-  () => import('../../../core/products/routes'),
-  () => import('../../../core/integrations/routes'),
-  () => import('../../../core/settings/routes'),
-  () => import('../../../core/media/routes'),
-  () => import('../../../core/properties/routes'),
-];
+import { routes as dashboardRoutes } from '../../../core/dashboard/routes';
+import { routes as authRoutes } from '../../../core/auth/routes';
+import { routes as profileRoutes } from '../../../core/profile/routes';
+import { routes as contactsRoutes } from '../../../core/contacts/routes';
+import { routes as salesRoutes } from '../../../core/sales/routes';
+import { routes as inventoryRoutes } from '../../../core/inventory/routes';
+import { routes as productsRoutes } from '../../../core/products/routes';
+import { routes as integrationsRoutes } from '../../../core/integrations/routes';
+import { routes as settingsRoutes } from '../../../core/settings/routes';
+import { routes as mediaRoutes } from '../../../core/media/routes';
+import { routes as propertiesRoutes } from '../../../core/properties/routes';
 import { PUBLIC_ROUTES } from '../../utils/constants'
 import {detectAuth, isAuthenticated, hasCompany, isActive, removeAuth, isFinishedOnboarding, getOnboardingStatus, setPageLoader} from '../auth';
 import { Toast } from '../toast';
@@ -20,21 +18,7 @@ import { useAppStore } from '../../plugins/store';
 
 let router: VueRouter.Router;
 
-export async function buildRouter() {
-  const [
-    { routes: dashboardRoutes },
-    { routes: authRoutes },
-    { routes: profileRoutes },
-    { routes: contactsRoutes },
-    { routes: salesRoutes },
-    { routes: inventoryRoutes },
-    { routes: productsRoutes },
-    { routes: integrationsRoutes },
-    { routes: settingsRoutes },
-    { routes: mediaRoutes },
-    { routes: propertiesRoutes },
-  ] = await Promise.all(routeModules.map((load) => load()));
-
+export function buildRouter() {
   router = VueRouter.createRouter({
     history: VueRouter.createWebHistory(),
     routes: [
@@ -149,3 +133,4 @@ export function navigateBack(
 
   return router.replace(defaultPath || '/');
 }
+
