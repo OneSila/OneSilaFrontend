@@ -335,47 +335,52 @@ const handleRemove = (id) => {
 const fetchFieldTranslation = async (value: ProductPropertyValue) => {
 
   if (language.value == null) {
-    return
+    return null;
   }
 
-    const {data} = await apolloClient.query({
-      query: productPropertyTextTranslationsQuery,
-      variables: {
-        filter:
-            {
-              productProperty:
-                  {
-                    property: {id: {exact: value.property.id}},
-                    product: {id: {exact: props.product.id}}
-                  },
-              language: {exact: language.value}
-            }
-      },
-      fetchPolicy: 'network-only'
-    });
+  const {data} = await apolloClient.query({
+    query: productPropertyTextTranslationsQuery,
+    variables: {
+      filter: {
+        productProperty: {
+          property: {id: {exact: value.property.id}},
+          product: {id: {exact: props.product.id}}
+        },
+        language: {exact: language.value}
+      }
+    },
+    fetchPolicy: 'network-only'
+  });
 
   if (data && data.productPropertyTextTranslations && data.productPropertyTextTranslations.edges && data.productPropertyTextTranslations.edges.length == 1) {
-    value.translation.id = data.productPropertyTextTranslations.edges[0].node.id;
-    value.translation.valueText = data.productPropertyTextTranslations.edges[0].node.valueText;
-    value.translation.valueDescription = data.productPropertyTextTranslations.edges[0].node.valueDescription;
+    const node = data.productPropertyTextTranslations.edges[0].node;
+    return {
+      id: node.id,
+      valueText: node.valueText,
+      valueDescription: node.valueDescription,
+    };
   }
 
-  return null;
+  return {
+    id: undefined,
+    valueText: undefined,
+    valueDescription: undefined,
+  };
 };
 
 const populateTranslatableFields = async () => {
 
   if (language.value == null) {
-    return
+    return;
   }
 
   for (const value of values.value) {
     if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type)) {
-      value.translation.id = undefined;
-      value.translation.valueDescription = undefined;
-      value.translation.valueText = undefined;
-      await fetchFieldTranslation(value);
-      value.translation.language = language.value;
+      const translation = await fetchFieldTranslation(value);
+      value.translation = {
+        ...translation,
+        language: language.value,
+      };
     }
   }
 }
