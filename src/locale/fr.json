@@ -24,6 +24,8 @@
       "manual": "Manuel",
       "generate": "Générer",
       "code": "Code",
+      "data": "Données",
+      "context": "Contexte",
       "noIssues": "Aucun problème",
       "active": "Active",
       "inactive": "Inactive"
@@ -131,6 +133,194 @@
         "variationThemeDescription": "Sélectionnez les propriétés que vous souhaitez que les utilisateurs choisissent lors du choix du bon produit.",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted"
+      }
+    }
+  },
+  "integrations": {
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
+    "show": {
+      "tabs": {
+        "reports": "Rapports"
+      }
+    },
+    "imports": {
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found"
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor",
+      "description": "Vue en temps réel des livraisons de webhooks.",
+      "timeRange": {
+        "live": "En direct",
+        "last15m": "Dernières 15 min",
+        "1h": "1h",
+        "6h": "6h",
+        "24h": "24h",
+        "custom": "Personnalisé"
+      },
+      "filters": {
+        "title": "Filtres",
+        "action": "Action",
+        "status": "Statut",
+        "responseCode": "Code de réponse",
+        "subject": "Sujet"
+      },
+      "autoRefresh": "Rafraîchissement auto",
+      "rpmCap": "Limite RPM",
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (median / p95)",
+        "latencyTooltip": "Median and 95th percentile latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "queueDepth": "Queue depth",
+        "queueDepthTooltip": "Current depth of the webhook queue"
+      },
+      "empty": "No deliveries found",
+      "table": {
+        "time": "Temps",
+        "topic": "Sujet",
+        "action": "Action",
+        "subjectId": "ID sujet",
+        "integration": "Intégration",
+        "status": "Statut",
+        "httpCode": "Code HTTP",
+        "latency": "Latence",
+        "attempt": "Tentative #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "headers": {
+          "redacted": "[REDACTED]"
+        },
+        "replay": {
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "confirmButtonText": "Yes, replay it!",
+          "copied": "cURL command copied"
+        }
+      }
+    },
+    "reports": {
+      "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Répartition des statuts de livraison dans le temps.",
+        "latency": "Percentiles de latence des webhooks dans le temps.",
+        "topics": "Principaux sujets par volume et taux de réussite.",
+        "responseCodes": "Répartition des codes de réponse HTTP.",
+        "retries": "Livraisons regroupées par nombre de tentatives.",
+        "heatmap": "Échecs ou latence par jour et heure.",
+        "topOffenders": "Intégrations avec les taux d'échec et la latence les plus élevés."
+      },
+      "timeRange": {
+        "today": "Aujourd'hui",
+        "7d": "7 j",
+        "30d": "30 j"
+      },
+      "filters": {
+        "integration": "Intégration",
+        "date": "Date",
+        "responseCodeBucket": "Groupe de code de réponse"
+      },
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (p50 / p95 / p99)",
+        "latencyTooltip": "p50, p95, and p99 latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "rate5xx": "5xx %",
+        "rate5xxTooltip": "Percentage of HTTP 5xx responses",
+        "avgAttempts": "Avg attempts",
+        "avgAttemptsTooltip": "Average attempts per delivery",
+        "avgSolveMs": "Avg solve ms",
+        "avgSolveMsTooltip": "Average milliseconds to solve a request"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "heatmap": "Carte thermique",
+        "topOffenders": "Principaux responsables",
+        "p50": "p50",
+        "p95": "p95",
+        "latencyLegend": {
+          "title": "Latency percentiles:",
+          "p50": "p50 = median (half of deliveries are faster)",
+          "p95": "p95 = 95% are faster (only 1 in 20 slower)",
+          "p99": "p99 = 99% are faster (only 1 in 100 slower)"
+        }
+      }
+      ,
+      "heatmap": {
+        "metric": {
+          "failures": "Échecs",
+          "latency": "Latence médiane"
+        },
+        "weekdays": {
+          "1": "Lun",
+          "2": "Mar",
+          "3": "Mer",
+          "4": "Jeu",
+          "5": "Ven",
+          "6": "Sam",
+          "7": "Dim"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Intégration",
+          "failureRate": "% d'échec",
+          "latencyP95": "Latence p95"
+        }
+      }
+    }
+  },
+  "properties": {
+    "duplicateModal": {
+      "title": "Properties with Similar Names Found",
+      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
       }
     }
   }

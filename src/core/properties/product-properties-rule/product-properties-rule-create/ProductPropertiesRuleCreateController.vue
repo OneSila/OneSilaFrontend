@@ -99,7 +99,7 @@ const fetchProductType = async () => {
    const {data} = await apolloClient.query({
       query: getPropertySelectValueQuery,
       variables: { id: initialProductId.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     })
 
     if (data && data.propertySelectValue) {

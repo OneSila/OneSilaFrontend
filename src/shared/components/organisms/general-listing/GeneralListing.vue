@@ -17,6 +17,7 @@ import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../modules/toast";
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
+import { DocumentNode } from 'graphql';
 
 const { t } = useI18n();
 
@@ -140,6 +141,108 @@ const updateLimitPerPage = (value: number) => {
   router.push({ query: newQuery });
 };
 
+const labelRefresh = ref(0);
+
+async function fetchFilterLabel(filter: any, id: string, stored: Record<string, { label: string; timestamp: number }>) {
+  try {
+    const { data } = await apolloClient.query({
+      query: filter.query as unknown as DocumentNode,
+      variables: {
+        ...(filter.queryVariables || {}),
+        filter: {
+          [filter.valueBy]: { inList: [id] }
+        }
+      },
+      fetchPolicy: 'cache-first'
+    });
+    const result = filter.isEdge ? data[filter.dataKey]?.edges?.[0]?.node : data[filter.dataKey]?.[0];
+    const label = result?.[filter.labelBy];
+    if (label) {
+      stored[id] = { label, timestamp: Date.now() };
+      localStorage.setItem('filterLabelMap', JSON.stringify(stored));
+      labelRefresh.value++;
+    }
+  } catch (e) {
+    // ignore errors
+  }
+}
+
+const filterChips = computed(() => {
+  labelRefresh.value;
+  const q = route.query as Record<string, any>;
+  const chips: { key: string; label: string; value: string; rawValue: string }[] = [];
+  let stored: Record<string, { label: string; timestamp: number }> = {};
+  const raw = localStorage.getItem('filterLabelMap');
+  if (raw) {
+    try {
+      stored = JSON.parse(raw);
+      const now = Date.now();
+      const maxAge = 7 * 24 * 60 * 60 * 1000;
+      let changed = false;
+      Object.keys(stored).forEach((k) => {
+        if (!stored[k].timestamp || now - stored[k].timestamp > maxAge) {
+          delete stored[k];
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('filterLabelMap', JSON.stringify(stored));
+      }
+    } catch (e) {
+      stored = {};
+    }
+  }
+  props.searchConfig.filters?.forEach((filter: any) => {
+    const label = filter.label;
+    const param = q[filter.name];
+    if (param === undefined || param === null || param === '') {
+      return;
+    }
+    const map =
+      'options' in filter && filter.options
+        ? Object.fromEntries(
+            filter.options.map((o: any) => [o[filter.valueBy], o[filter.labelBy]])
+          )
+        : null;
+    if (Array.isArray(param)) {
+      param.forEach((v: any) => {
+        const key = String(v);
+        let display = map?.[key] || stored[key]?.label;
+        if (!display && 'query' in filter && filter.query) {
+          fetchFilterLabel(filter, key, stored);
+          display = key;
+        }
+        chips.push({ key: filter.name, label, value: display || key, rawValue: key });
+      });
+    } else {
+      const key = String(param);
+      let display = map?.[key] || stored[key]?.label;
+      if (!display && 'query' in filter && filter.query) {
+        fetchFilterLabel(filter, key, stored);
+        display = key;
+      }
+      chips.push({ key: filter.name, label, value: display || key, rawValue: key });
+    }
+  });
+  return chips;
+});
+
+const removeFilter = (key: string, value?: string) => {
+  const newQuery = { ...route.query } as Record<string, any>;
+  const current = newQuery[key];
+  if (Array.isArray(current) && value !== undefined) {
+    const updated = current.filter((v: any) => String(v) !== value);
+    if (updated.length > 0) {
+      newQuery[key] = updated;
+    } else {
+      delete newQuery[key];
+    }
+  } else {
+    delete newQuery[key];
+  }
+  router.replace({ query: newQuery });
+};
+
 // Helper: for a given item, return the first field that has addImage and an imageField.
 const getImageField = (item: any) => {
   for (const field of props.config.fields) {
@@ -225,7 +328,7 @@ defineExpose({
   <FilterManager :searchConfig="searchConfig">
 
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-      <ApolloQuery :query="query"
+      <ApolloQuery :query="query" fetch-policy="cache-and-network"
                    :variables="{filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
                               order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                               first: pagination.first,
@@ -236,6 +339,16 @@ defineExpose({
 
           <div v-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
+            <div class="flex flex-wrap gap-2 mb-4 p-4">
+              <div
+                v-for="chip in filterChips"
+                :key="chip.key + chip.rawValue"
+                class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm"
+              >
+                <span>{{ chip.label }}: {{ chip.value }}</span>
+                <button class="ml-1" @click="removeFilter(chip.key, chip.rawValue)">×</button>
+              </div>
+            </div>
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 
               <span class="text-sm font-semibold text-gray-900">

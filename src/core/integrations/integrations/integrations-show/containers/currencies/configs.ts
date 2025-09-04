@@ -2,7 +2,7 @@ import { FieldType } from "../../../../../../shared/utils/constants";
 import {getRemoteCurrencyQuery, remoteCurrenciesQuery} from "../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import {FormConfig, FormType} from '../../../../../../shared/components/organisms/general-form/formConfig';
-import {currenciesQuery} from "../../../../../../shared/api/queries/currencies.js";
+import {currenciesQuerySelector} from "../../../../../../shared/api/queries/currencies.js";
 import {currencyOnTheFlyConfig} from "../../../../../settings/currencies/configs";
 import {updateRemoteCurrencyMutation} from "../../../../../../shared/api/mutations/salesChannels.js";
 import {SearchConfig} from "../../../../../../shared/components/organisms/general-search/searchConfig";
@@ -39,7 +39,7 @@ export const currencyEditFormConfigConstructor = (
       label: t("shared.labels.currency"),
       labelBy: "isoCode",
       valueBy: "id",
-      query: currenciesQuery,
+      query: currenciesQuerySelector,
       dataKey: "currencies",
       isEdge: true,
       multiple: false,

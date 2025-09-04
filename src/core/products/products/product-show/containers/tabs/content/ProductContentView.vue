@@ -66,8 +66,10 @@ const cleanedData = (rawData) => {
 
 const loadSalesChannels = async () => {
   try {
-    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'network-only' });
-    salesChannels.value = data?.integrations.edges.map((e: any) => e.node) || [];
+    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
+    salesChannels.value = data?.integrations.edges
+      .map((e: any) => e.node)
+      .filter((c: any) => c.type !== IntegrationTypes.Webhook) || [];
   } catch (e) {
     console.error('Failed to load sales channels', e);
   }
@@ -292,7 +294,7 @@ const shortDescriptionToolbarOptions = [
       </ApolloMutation>
     </FlexCell>
     <FlexCell>
-      <ApolloQuery :query="translationLanguagesQuery">
+      <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
         <template v-slot="{ result: { data } }">
           <Selector v-if="data"
                     v-model="currentLanguage"

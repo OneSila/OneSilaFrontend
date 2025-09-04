@@ -9,7 +9,7 @@ import {SearchConfig} from "../../../shared/components/organisms/general-search/
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {
     getPropertySelectValueQuery,
-    propertiesQuery,
+    propertiesQuerySelector,
     propertySelectValuesQuery
 } from "../../../shared/api/queries/properties.js";
 import {
@@ -126,6 +126,7 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId, defaultValue:
             },
         ],
     },
+    isSelectValue: true,
       ...(defaultValue ? { defaults: { value: defaultValue } } : {}),
 })
 
@@ -161,7 +162,7 @@ export const editFormConfigConstructor = (
             label: t('properties.properties.show.title'),
             labelBy: 'name',
             valueBy: 'id',
-            query: propertiesQuery,
+            query: propertiesQuerySelector,
             queryVariables: {filter: {'type': {'exact': PropertyTypes.SELECT}}},
             dataKey: 'properties',
             isEdge: true,
@@ -194,7 +195,7 @@ const getPropertyField = (t, propertyId, type): FormField => {
             label: t('properties.properties.show.title'),
             labelBy: 'name',
             valueBy: 'id',
-            query: propertiesQuery,
+            query: propertiesQuerySelector,
             queryVariables: {filter: {'type': {'inList': [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]}}},
             dataKey: 'properties',
             isEdge: true,
@@ -216,7 +217,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
             label: t('properties.properties.show.title'),
             labelBy: 'name',
             valueBy: 'id',
-            query: propertiesQuery,
+            query: propertiesQuerySelector,
             queryVariables: {filter: {'type': {'inList': [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]}}},
             dataKey: 'properties',
             filterable: true,
@@ -287,7 +288,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     subscriptionKey: 'propertySelectValue',
     subscriptionVariables: {pk: id},
     backUrl: {name: 'properties.values.list'},
-    editUrl: {name: 'properties.values.edit', params: {id: id}},
+    editUrl: {name: 'properties.values.edit', params: {id: id}, query: {tab: 'translations'}},
     deleteMutation: deletePropertySelectValueMutation,
     deleteVariables: {id: id},
     deleteUrl: {name: 'properties.values.list'},

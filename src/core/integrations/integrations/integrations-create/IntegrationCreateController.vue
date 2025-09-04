@@ -6,7 +6,7 @@ import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs
 import { Wizard } from "../../../../shared/components/molecules/wizard";
 import { Icon } from "../../../../shared/components/atoms/icon";
 import { Modal } from "../../../../shared/components/atoms/modal";
-import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard } from "./containers/type-step/info-cards";
+import { MagentoInfoCard, WoocommerceInfoCard, ShopifyInfoCard, WebhookInfoCard } from "./containers/type-step/info-cards";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
 import {
@@ -16,12 +16,14 @@ import {
   getMagentoDefaultFields,
   getShopifyDefaultFields,
   getWoocommerceDefaultFields,
+  getWebhookDefaultFields,
   IntegrationCreateWizardForm,
   IntegrationTypes,
   AmazonChannelInfo,
   MagentoChannelInfo,
   ShopifyChannelInfo,
   WoocommerceChannelInfo,
+  WebhookChannelInfo,
 } from "../integrations";
 import { TypeStep } from "./containers/type-step";
 import { GeneralInfoStep } from "./containers/general-info-step";
@@ -30,6 +32,7 @@ import { MagentoChannelInfoStep } from "./containers/integration-specific-step/m
 import { ShopifyChannelInfoStep } from "./containers/integration-specific-step/shopify";
 import { WoocommerceChannelInfoStep } from "./containers/integration-specific-step/woocommerce";
 import { AmazonChannelInfoStep } from "./containers/integration-specific-step/amazon";
+import { WebhookChannelInfoStep } from "./containers/integration-specific-step/webhook";
 import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation,
@@ -38,6 +41,7 @@ import {
   getShopifyRedirectUrlMutation,
   getAmazonRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
+import { createWebhookIntegrationMutation } from "../../../../shared/api/mutations/webhookIntegrations.js";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import apolloClient from "../../../../../apollo-client";
@@ -74,7 +78,7 @@ const form = reactive<IntegrationCreateWizardForm>({
   }
 });
 
-const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | {}>({});
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | WebhookChannelInfo | {}>({});
 
 
 watch(selectedIntegrationType, (newType) => {
@@ -91,6 +95,8 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getWoocommerceDefaultFields());
   } else if (newType === IntegrationTypes.Amazon) {
     Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
+  } else if (newType === IntegrationTypes.Webhook) {
+    Object.assign(specificChannelInfo.value, getWebhookDefaultFields());
   } else {
     specificChannelInfo.value = {};
   }
@@ -114,18 +120,23 @@ const stepFourLabel = computed(() => {
     return t('integrations.create.wizard.step4.amazon.title');
   }
 
+  if (selectedIntegrationType.value === IntegrationTypes.Webhook) {
+    return t('integrations.create.wizard.step4.webhook.title');
+  }
+
   return t('integrations.create.wizard.step4.title');
 });
 
 const wizardSteps = computed(() => {
-  const baseSteps = [
+  const steps = [
     { title: t('integrations.create.wizard.step1.title'), name: 'typeStep' },
     { title: t('integrations.create.wizard.step2.title'), name: 'generalInfoStep' },
-    { title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' },
-    { title: stepFourLabel.value, name: 'specificChannelStep' },
   ];
-
-  return baseSteps;
+  if (selectedIntegrationType.value !== IntegrationTypes.Webhook) {
+    steps.push({ title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' });
+  }
+  steps.push({ title: stepFourLabel.value, name: 'specificChannelStep' });
+  return steps;
 });
 
 
@@ -140,6 +151,8 @@ const openInfoModal = () => {
     infoComponent.value = ShopifyInfoCard;
   } else if (selectedIntegrationType.value === IntegrationTypes.Woocommerce) {
     infoComponent.value = WoocommerceInfoCard;
+  } else if (selectedIntegrationType.value === IntegrationTypes.Webhook) {
+    infoComponent.value = WebhookInfoCard;
   } else {
     infoComponent.value = null;
   }
@@ -185,7 +198,9 @@ const allowNextStep = computed(() => {
     if (!hostname || hostname.trim() === '') {
       return false;
     }
-    if (selectedIntegrationType.value !== IntegrationTypes.Amazon) {
+
+    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook];
+    if (!excludedTypes.includes(selectedIntegrationType.value)) {
       // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
       const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
       if (!urlPattern.test(hostname)) {
@@ -231,6 +246,13 @@ const allowNextStep = computed(() => {
   return false;
 }
 
+  if (stepName === 'specificChannelStep' && selectedIntegrationType.value === IntegrationTypes.Webhook) {
+    const info = specificChannelInfo.value as WebhookChannelInfo;
+    if (!info.url || info.url.trim() === '' || !info.topic || info.topic.trim() === '') {
+      return false;
+    }
+  }
+
 
   return true;
 });
@@ -238,7 +260,8 @@ const allowNextStep = computed(() => {
 const hasInfoCard = computed(() =>
   selectedIntegrationType.value === IntegrationTypes.Magento ||
   selectedIntegrationType.value === IntegrationTypes.Woocommerce ||
-  selectedIntegrationType.value === IntegrationTypes.Shopify
+  selectedIntegrationType.value === IntegrationTypes.Shopify ||
+  selectedIntegrationType.value === IntegrationTypes.Webhook
 );
 
 const getIntegrationComponent = () => {
@@ -254,6 +277,9 @@ const getIntegrationComponent = () => {
   if (selectedIntegrationType.value === IntegrationTypes.Amazon) {
     return AmazonChannelInfoStep;
   }
+  if (selectedIntegrationType.value === IntegrationTypes.Webhook) {
+    return WebhookChannelInfoStep;
+  }
   return null;
 };
 
@@ -268,6 +294,8 @@ const getIntegrationMutation = () => {
       return createWoocommerceSalesChannelMutation;
     case IntegrationTypes.Amazon:
       return createAmazonSalesChannelMutation;
+    case IntegrationTypes.Webhook:
+      return createWebhookIntegrationMutation;
     default:
       return null;
   }
@@ -283,6 +311,8 @@ const getIntegrationMutationKey = () => {
       return 'createWoocommerceSalesChannel';
     case IntegrationTypes.Amazon:
       return 'createAmazonSalesChannel';
+    case IntegrationTypes.Webhook:
+      return 'createWebhookIntegration';
     default:
       return '';
   }
@@ -303,7 +333,7 @@ const handleFinish = async () => {
     // Flatten the form fields into a single object
     const dataInput = {
       ...form.generalInfo,
-      ...form.salesChannelInfo,
+      ...(selectedIntegrationType.value !== IntegrationTypes.Webhook ? form.salesChannelInfo : {}),
       ...specificChannelInfo.value
     };
 
@@ -472,7 +502,7 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
           <GeneralInfoStep
               :general-info="form.generalInfo"
               :integration-type="selectedIntegrationType"
-              :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify ? 120 : undefined"
+              :max-requests-per-minute="selectedIntegrationType === IntegrationTypes.Shopify || selectedIntegrationType === IntegrationTypes.Webhook ? 120 : undefined"
               :show-ssl="
                 selectedIntegrationType !== IntegrationTypes.Shopify &&
                 selectedIntegrationType !== IntegrationTypes.Amazon

@@ -36,7 +36,7 @@ const fetchValues = async (propertyId: string) => {
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuery,
     variables: { filter: { property: { id: { exact: propertyId } } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.propertySelectValues) {
@@ -59,7 +59,7 @@ const fetchData = async () => {
   const { data } = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: { filter: { productType: { id: { exact: props.productTypeId } } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges.length > 0) {

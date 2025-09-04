@@ -4,7 +4,7 @@ import { SearchConfig } from "../../../../../../shared/components/organisms/gene
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { deleteOrderItemMutation} from "../../../../../../shared/api/mutations/salesOrders.js";
 import { orderItemsQuery } from "../../../../../../shared/api/queries/salesOrders.js";
-import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../../../../shared/api/queries/products.js";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -33,7 +33,7 @@ export const baseFormConfigConstructor = (
       label:  t('shared.labels.product'),
       labelBy: 'name',
       valueBy: 'id',
-      query: productsQuery,
+      query: productsQuerySelector,
       queryVariables: productsId.length > 0
       ? {
           filter: {

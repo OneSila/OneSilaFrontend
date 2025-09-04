@@ -358,6 +358,7 @@
       "duplicate": "Duplicate",
       "deleteAll": "Delete all",
       "editAll": "Edit all",
+      "copy": "Copy",
       "change": "Change",
       "createAnyway": "Create anyway",
       "abort": "Abort"
@@ -415,6 +416,9 @@
       "remoteCode": "Remote Code",
       "pending": "Pending Processing",
       "progress": "Progress",
+      "code": "Code",
+      "data": "Data",
+      "context": "Context",
       "new": "New",
       "beta": "BETA",
       "url": "URL",
@@ -2179,7 +2183,12 @@
     },
     "duplicateModal": {
       "title": "Properties with Similar Names Found",
-      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property."
+      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
+      }
     },
     "values": {
       "title": "Select Values",
@@ -2306,8 +2315,18 @@
   },
   "integrations": {
     "title": "Integrations",
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
     "show": {
       "title": "Integration",
+      "tabs": {
+        "reports": "Reports"
+      },
       "amazon": {
         "title": "Amazon Integration"
       },
@@ -2470,6 +2489,8 @@
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
+          "webhookTitle": "Webhook",
+          "webhookExample": "Send events to your application via HTTP",
           "magentoInfoModal": {
             "title": "How to connect your Magento store",
             "section": {
@@ -2556,6 +2577,10 @@
             "title": "Amazon Channel Details",
             "content": "Provide Amazon-specific configuration to connect your marketplace."
           },
+          "webhook": {
+            "title": "Webhook Settings",
+            "content": "Configure your webhook endpoint and options."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2584,7 +2609,15 @@
       "country": "Country",
       "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data",
-      "defaultUnits": "Default Units"
+      "defaultUnits": "Default Units",
+      "url": "URL",
+      "topic": "Topic",
+      "version": "Version",
+      "userAgent": "User Agent",
+      "timeoutMs": "Timeout (ms)",
+      "mode": "Mode",
+      "retentionPolicy": "Retention Policy",
+      "secret": "Secret"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",
@@ -2593,7 +2626,14 @@
       "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute",
-      "accessToken": "Enter Access Token"
+      "accessToken": "Enter Access Token",
+      "url": "https://example.com/webhook",
+      "topic": "products",
+      "version": "2025-08-01",
+      "userAgent": "OneSila-Webhook/1.0",
+      "timeoutMs": "10000",
+      "mode": "Full",
+      "retentionPolicy": "6 Months"
     },
     "regions": {
       "northAmerica": "North America",
@@ -2692,7 +2732,72 @@
         }
       }
     },
+    "webhook": {
+      "helpText": {
+        "url": "Endpoint that will receive webhook POST requests.",
+        "topic": "Event topic that triggers the webhook.",
+        "version": "Webhook payload version.",
+        "userAgent": "User-Agent header sent with requests.",
+        "timeoutMs": "Milliseconds to wait for a response before failing.",
+        "mode": "Use 'delta' for changes only or 'full' for the entire payload.",
+        "retentionPolicy": "How long webhook deliveries are retained."
+      },
+      "choices": {
+        "topic": {
+          "product": "product",
+          "ean_code": "ean_code",
+          "price_list": "price_list",
+          "price_list_item": "price_list_item",
+          "media": "media",
+          "media_through": "media_through",
+          "property": "property",
+          "select_value": "select_value",
+          "property_rule": "property_rule",
+          "property_rule_item": "property_rule_item",
+          "product_property": "product_property",
+          "sales_channel_view_assign": "sales_channel_view_assign",
+          "all": "all"
+        },
+        "version": {
+          "2025-08-01": "2025-08-01"
+        },
+        "mode": {
+          "full": "Full",
+          "delta": "Delta"
+        },
+        "retentionPolicy": {
+          "3m": "3 Months",
+          "6m": "6 Months",
+          "12m": "12 Months"
+        }
+      },
+      "infoBlock": {
+        "description": "Webhooks send POST requests to your endpoint when events occur. Use the examples below to configure your handler.",
+        "payloadExample": "Payload structure example",
+        "curlExample": "cURL test request",
+        "signatureValidation": "Signature validation",
+        "languages": {
+          "python": "Python",
+          "node": "Node.js",
+          "php": "PHP"
+        }
+      },
+      "buttons": {
+        "regenerateSecret": "Regenerate secret"
+      }
+    },
     "imports": {
+      "show": {
+        "title": "Import"
+      },
+      "labels": {
+        "createOnly": "Create only",
+        "updateOnly": "Update only",
+        "skipBrokenRecords": "Skip broken records",
+        "totalRecords": "Total records",
+        "processedRecords": "Processed records",
+        "errorTraceback": "Error traceback"
+      },
       "retry": {
         "success": "Retry import process success",
         "error": "Retry import process had an unexpected error"
@@ -2703,6 +2808,15 @@
         "schemaDescription": "Initial setup required to enable product imports.",
         "productsDescription": "Imports actual product data from Amazon.",
         "schemaRequired": "Please complete the schema import first."
+      },
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found"
+        }
       },
       "create": {
         "success": "Create import process success",
@@ -2748,6 +2862,198 @@
               "startProcess": "Starting import process"
             }
           }
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor",
+      "description": "Real-time overview of webhook deliveries.",
+      "timeRange": {
+        "live": "Live",
+        "last15m": "Last 15m",
+        "1h": "1h",
+        "6h": "6h",
+        "24h": "24h",
+        "custom": "Custom"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Action",
+        "status": "Status",
+        "responseCode": "Response Code",
+        "topic": "Topic",
+        "date": "Date"
+      },
+      "actions": {
+        "create": "Create",
+        "update": "Update",
+        "delete": "Delete"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "sending": "Sending",
+        "delivered": "Delivered",
+        "failed": "Failed"
+      },
+      "topics": {
+        "product": "Product",
+        "ean_code": "EAN Code",
+        "price_list": "Price List",
+        "price_list_item": "Price List Item",
+        "media": "Media",
+        "media_through": "Media Through",
+        "property": "Property",
+        "select_value": "Select Value",
+        "property_rule": "Property Rule",
+        "property_rule_item": "Property Rule Item",
+        "product_property": "Product Property",
+        "sales_channel_view_assign": "Sales Channel View Assign",
+        "all": "All"
+      },
+      "autoRefresh": "Auto-refresh",
+      "rpmCap": "RPM Cap",
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (median / p95)",
+        "latencyTooltip": "Median and 95th percentile latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "queueDepth": "Queue depth",
+        "queueDepthTooltip": "Current depth of the webhook queue"
+      },
+      "empty": "No deliveries found",
+      "table": {
+        "time": "Time",
+        "topic": "Topic",
+        "action": "Action",
+        "subjectId": "Subject ID",
+        "status": "Status",
+        "httpCode": "HTTP code",
+        "latency": "Latency",
+        "attempt": "Attempt #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "overview": {
+          "status": "Status",
+          "attemptCount": "Attempt count",
+          "lastError": "Last error",
+          "idempotencyKey": "Idempotency key"
+        },
+        "attempts": {
+          "number": "Attempt",
+          "responseCode": "Response code",
+          "latency": "Latency",
+          "error": "Error",
+          "createdAt": "Created at"
+        },
+        "headers": {
+          "redacted": "[REDACTED]"
+        },
+        "replay": {
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "confirmButtonText": "Yes, replay it!",
+          "copied": "cURL command copied"
+        }
+      }
+    },
+    "reports": {
+      "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Distribution of delivery statuses over time.",
+        "latency": "Webhook latency percentiles over time.",
+        "topics": "Top topics by volume and success rate.",
+        "responseCodes": "HTTP response code distribution.",
+        "retries": "Deliveries grouped by retry attempts.",
+        "heatmap": "Failures or latency by weekday and hour.",
+        "topOffenders": "Integrations with highest failure rates and latency."
+      },
+      "timeRange": {
+        "today": "Today",
+        "7d": "7d",
+        "30d": "30d"
+      },
+      "filters": {
+        "integration": "Integration",
+        "responseCodeBucket": "Response code bucket",
+        "date": "Date"
+      },
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (p50 / p95 / p99)",
+        "latencyTooltip": "p50, p95, and p99 latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "rate5xx": "5xx %",
+        "rate5xxTooltip": "Percentage of HTTP 5xx responses",
+        "avgAttempts": "Avg attempts",
+        "avgAttemptsTooltip": "Average attempts per delivery",
+        "avgSolveMs": "Avg solve ms",
+        "avgSolveMsTooltip": "Average milliseconds to solve a request",
+        "responseCodeBucket": "Response code bucket",
+        "date": "Date"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "heatmap": "Heatmap",
+        "topOffenders": "Top offenders",
+        "p50": "p50",
+        "p95": "p95",
+        "latencyLegend": {
+          "title": "Latency percentiles:",
+          "p50": "p50 = median (half of deliveries are faster)",
+          "p95": "p95 = 95% are faster (only 1 in 20 slower)",
+          "p99": "p99 = 99% are faster (only 1 in 100 slower)"
+        }
+      },
+      "heatmap": {
+        "metric": {
+          "failures": "Failures",
+          "latency": "Median latency"
+        },
+        "weekdays": {
+          "1": "Mon",
+          "2": "Tue",
+          "3": "Wed",
+          "4": "Thu",
+          "5": "Fri",
+          "6": "Sat",
+          "7": "Sun"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Integration",
+          "failureRate": "Failure %",
+          "latencyP95": "p95 latency"
         }
       }
     }

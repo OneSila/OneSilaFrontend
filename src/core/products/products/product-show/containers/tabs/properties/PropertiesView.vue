@@ -8,7 +8,7 @@ import {
   getPropertySelectValueQuery,
   productPropertiesQuery,
   productPropertiesRulesQuery, productPropertyTextTranslationsQuery,
-  propertiesQuery
+  propertiesQuerySelector
 } from "../../../../../../../shared/api/queries/properties.js";
 import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
 import {ValueInput} from "./value-input";
@@ -119,7 +119,7 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {exact: productTypePropertyId}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
@@ -161,10 +161,10 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
 
 const setCurrentLanguage = async () => {
 
-  const {data} = await apolloClient.query({
-    query: translationLanguagesQuery,
-    fetchPolicy: 'network-only'
-  });
+    const {data} = await apolloClient.query({
+      query: translationLanguagesQuery,
+      fetchPolicy: 'cache-first'
+    });
 
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
     const defaultLanguage = data.translationLanguages.defaultLanguage;
@@ -178,7 +178,7 @@ const fetchPropertiesIds = async (productTypeValueId) => {
   const {data} = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   })
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
@@ -225,7 +225,7 @@ const setInitialValues = async (propertiesIds) => {
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productProperties && data.productProperties.edges) {
@@ -256,9 +256,9 @@ const setInitialValues = async (propertiesIds) => {
 const fetchRequiredProductType = async () => {
 
   const {data} = await apolloClient.query({
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     variables: {filter: {isProductType: {exact: true}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   })
 
   if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
@@ -335,47 +335,52 @@ const handleRemove = (id) => {
 const fetchFieldTranslation = async (value: ProductPropertyValue) => {
 
   if (language.value == null) {
-    return
+    return null;
   }
 
   const {data} = await apolloClient.query({
     query: productPropertyTextTranslationsQuery,
     variables: {
-      filter:
-          {
-            productProperty:
-                {
-                  property: {id: {exact: value.property.id}},
-                  product: {id: {exact: props.product.id}}
-                },
-            language: {exact: language.value}
-          }
+      filter: {
+        productProperty: {
+          property: {id: {exact: value.property.id}},
+          product: {id: {exact: props.product.id}}
+        },
+        language: {exact: language.value}
+      }
     },
     fetchPolicy: 'network-only'
   });
 
   if (data && data.productPropertyTextTranslations && data.productPropertyTextTranslations.edges && data.productPropertyTextTranslations.edges.length == 1) {
-    value.translation.id = data.productPropertyTextTranslations.edges[0].node.id;
-    value.translation.valueText = data.productPropertyTextTranslations.edges[0].node.valueText;
-    value.translation.valueDescription = data.productPropertyTextTranslations.edges[0].node.valueDescription;
+    const node = data.productPropertyTextTranslations.edges[0].node;
+    return {
+      id: node.id,
+      valueText: node.valueText,
+      valueDescription: node.valueDescription,
+    };
   }
 
-  return null;
+  return {
+    id: undefined,
+    valueText: undefined,
+    valueDescription: undefined,
+  };
 };
 
 const populateTranslatableFields = async () => {
 
   if (language.value == null) {
-    return
+    return;
   }
 
   for (const value of values.value) {
     if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type)) {
-      value.translation.id = undefined;
-      value.translation.valueDescription = undefined;
-      value.translation.valueText = undefined;
-      await fetchFieldTranslation(value);
-      value.translation.language = language.value;
+      const translation = await fetchFieldTranslation(value);
+      value.translation = {
+        ...translation,
+        language: language.value,
+      };
     }
   }
 }
@@ -482,7 +487,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
       <FlexCell v-if="language">
-        <ApolloQuery :query="translationLanguagesQuery">
+        <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
                       v-model="language"

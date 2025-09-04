@@ -3,6 +3,7 @@ export enum IntegrationTypes {
   Shopify = 'shopify',
   Woocommerce = 'woocommerce',
   Amazon = 'amazon',
+  Webhook = 'webhook',
   None = 'none',
 }
 
@@ -103,6 +104,16 @@ export interface AmazonChannelInfo extends SpecificChannelInfo {
   country: string | null;
 }
 
+export interface WebhookChannelInfo extends SpecificChannelInfo {
+  topic: string;
+  version: string;
+  url: string;
+  timeoutMs: number;
+  mode: string;
+  extraHeaders: Record<string, any>;
+  config: Record<string, any>;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -145,6 +156,18 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   };
 }
 
+export function getWebhookDefaultFields(): WebhookChannelInfo {
+  return {
+    topic: '',
+    version: '2025-08-01',
+    url: '',
+    timeoutMs: 10000,
+    mode: '',
+    extraHeaders: {},
+    config: {},
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
@@ -155,6 +178,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getWoocommerceDefaultFields();
     case IntegrationTypes.Amazon:
       return getAmazonDefaultFields();
+    case IntegrationTypes.Webhook:
+      return getWebhookDefaultFields();
     default:
       return {};
   }

@@ -40,7 +40,7 @@ const fetchImports = async () => {
           status: { exact: "success" },
         },
       },
-      fetchPolicy: "network-only",
+      fetchPolicy: "cache-first",
     });
     const edges = data?.amazonImportProcesses?.edges || [];
     hasFinishedSchema.value = edges.length > 0;

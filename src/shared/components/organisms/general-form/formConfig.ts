@@ -119,6 +119,7 @@ export interface IndividualFileFormField extends BaseFormField {
 export interface CreateOnTheFly {
   config: FormConfig;
   defaults?: Record<string, string>; // key will be filed name, value will be the default value
+  isSelectValue?: boolean;
 }
 
 export interface InlineItemsFormField extends BaseFormField {
@@ -166,6 +167,7 @@ export interface QueryFormField extends BaseFormField {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+  minSearchLength?: number;
   autocompleteIfOneResult?: boolean;
   isLiveUpdate?: boolean;
   createOnFlyConfig?: CreateOnTheFly;

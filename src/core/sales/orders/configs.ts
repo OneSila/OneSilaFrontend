@@ -4,12 +4,12 @@ import {OrderType, SearchConfig} from "../../../shared/components/organisms/gene
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {NestedTextField, ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {orderItemsQuery, ordersQuery} from "../../../shared/api/queries/salesOrders.js"
-import {companiesQuery, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
+import {companiesQuerySelector, companyInvoiceAddressesQuery, companyShippingAddressesQuery} from "../../../shared/api/queries/contacts.js";
 import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import { createOrderItemsMutation, updateOrderItemMutation, deleteOrderItemsMutation } from "../../../shared/api/mutations/salesOrders.js";
-import { productsQuery } from "../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../shared/api/queries/products.js";
 
 export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -129,7 +129,7 @@ const getCustomerField = (customerId, source, t): FormField => {
       label: t('contacts.people.labels.customer'),
       labelBy: 'name',
       valueBy: 'id',
-      query: companiesQuery,
+        query: companiesQuerySelector,
       queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
       dataKey: 'companies',
       isEdge: true,
@@ -206,7 +206,7 @@ export const baseFormConfigConstructor = (
       label: t('contacts.companies.labels.internalCompany'),
       labelBy: 'name',
       valueBy: 'id',
-      query: companiesQuery,
+        query: companiesQuerySelector,
       queryVariables: { filter: { 'isInternalCompany': { exact: true} }},
       dataKey: 'companies',
       isEdge: true,
@@ -297,7 +297,7 @@ export const baseFormConfigConstructor = (
           label: t('shared.labels.product'),
           labelBy: 'name',
           valueBy: 'id',
-          query: productsQuery,
+          query: productsQuerySelector,
           dataKey: 'products',
           isEdge: true,
           multiple: false,
@@ -364,7 +364,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
       label: t('contacts.people.labels.customer'),
       labelBy: 'name',
       valueBy: 'id',
-      query: companiesQuery,
+        query: companiesQuerySelector,
       queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
       dataKey: 'companies',
       filterable: true,

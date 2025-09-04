@@ -52,7 +52,7 @@ const fetchViews = async () => {
   loading.value = true;
   const { data } = await apolloClient.query({
     query: amazonChannelViewsQuery,
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   views.value = data.amazonChannelViews?.edges?.map((edge: any) => edge.node) || [];
   loading.value = false;

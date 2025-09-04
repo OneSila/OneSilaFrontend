@@ -15,7 +15,7 @@ onMounted(async () => {
   const {data} = await apolloClient.query({
     query: getAmazonProductTypeQuery,
     variables: {id: productTypeId},
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   productType.value = data?.amazonProductType || null;
   loading.value = false;

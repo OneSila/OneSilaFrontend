@@ -7,7 +7,7 @@ import {PrimaryButton} from "../../../../../../shared/components/atoms/button-pr
 import {FieldType, ProductType} from "../../../../../../shared/utils/constants";
 import {Label} from "../../../../../../shared/components/atoms/label";
 import {FieldQuery} from "../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import { propertiesQuery, propertySelectValuesQuery } from "../../../../../../shared/api/queries/properties.js";
+import { propertiesQuerySelector, propertySelectValuesQuery } from "../../../../../../shared/api/queries/properties.js";
 import apolloClient from "../../../../../../../apollo-client";
 import {Selector} from "../../../../../../shared/components/atoms/selector";
 import {QueryFormField} from "../../../../../../shared/components/organisms/general-form/formConfig";
@@ -27,7 +27,7 @@ const isGenerateDisabled = computed(() => {
 const fetchProductType = async () => {
 
     const {data} = await apolloClient.query({
-      query: propertiesQuery,
+      query: propertiesQuerySelector,
       variables: {filter: {isProductType: { exact: true } }}
     })
 

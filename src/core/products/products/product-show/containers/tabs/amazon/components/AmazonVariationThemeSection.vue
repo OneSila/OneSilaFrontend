@@ -39,7 +39,7 @@ const fetchOptions = async () => {
   const { data } = await apolloClient.query({
     query: amazonProductTypesQuery,
     variables: { filter: { localInstance: { id: { exact: productTypeRuleId.value } } } },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const node = data?.amazonProductTypes?.edges?.[0]?.node;
   const themes: string[] = node?.variationThemes || [];
@@ -61,7 +61,7 @@ const fetchCurrent = async () => {
         view: { id: { exact: props.view.id } },
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const node = data?.amazonVariationThemes?.edges?.[0]?.node;
   recordId.value = node?.id || null;

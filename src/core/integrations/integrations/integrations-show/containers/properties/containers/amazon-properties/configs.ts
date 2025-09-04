@@ -1,6 +1,6 @@
 import {FieldType, getPropertyTypeOptions} from "../../../../../../../../shared/utils/constants";
 import { amazonPropertiesQuery, getAmazonPropertyQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
-import { propertiesQuery } from "../../../../../../../../shared/api/queries/properties.js";
+import { propertiesQuerySelector } from "../../../../../../../../shared/api/queries/properties.js";
 import { updateAmazonPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { FormConfig, FormType } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
@@ -61,7 +61,7 @@ export const amazonPropertiesSearchConfigConstructor = (t: Function): SearchConf
       label: t('properties.properties.title'),
       labelBy: 'name',
       valueBy: 'id',
-      query: propertiesQuery,
+      query: propertiesQuerySelector,
       dataKey: 'properties',
       filterable: true,
       isEdge: true,

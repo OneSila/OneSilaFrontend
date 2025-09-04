@@ -10,7 +10,7 @@ import { salesPricesQuery } from "../../../../../../../shared/api/queries/salesP
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { createSalesPriceMutation, updateSalesPriceMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
 import { Toast } from "../../../../../../../shared/modules/toast";
-import { currenciesQuery } from "../../../../../../../shared/api/queries/currencies.js";
+import { currenciesQuerySelector } from "../../../../../../../shared/api/queries/currencies.js";
 import {TextInputPrepend} from "../../../../../../../shared/components/atoms/input-text-prepend";
 
 const { t } = useI18n();
@@ -30,7 +30,7 @@ const defaultCurrency = ref({ id: '', isoCode: '', symbol: '' });
 
 const getDefaultCurrency = async () => {
   const { data } = await apolloClient.query({
-    query: currenciesQuery,
+    query: currenciesQuerySelector,
     variables: { filter: { isDefaultCurrency: { exact: true } } },
   });
 
@@ -47,7 +47,7 @@ const loadPrices = async () => {
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
     variables: { filter: { product: {id: { exact: props.product.id }} }, order: { currency: { isoCode: 'ASC' } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   prices.value = data.salesPrices.edges.map(edge => ({

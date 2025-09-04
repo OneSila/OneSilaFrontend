@@ -89,7 +89,7 @@ const fetchData = async () => {
   const { data } = await apolloClient.query({
     query: minimalProductsQuery,
     variables: variables,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.products) {

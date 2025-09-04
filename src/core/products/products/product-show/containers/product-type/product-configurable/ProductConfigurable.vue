@@ -26,7 +26,7 @@ const fetchAmazonProducts = async () => {
   const { data } = await apolloClient.query({
     query: amazonProductsQuery,
     variables: { localInstance: props.product.id },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
 };

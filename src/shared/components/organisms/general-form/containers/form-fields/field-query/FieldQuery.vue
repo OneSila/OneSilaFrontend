@@ -15,6 +15,10 @@ const props = defineProps<{
   modelValue: any;
 }>();
 
+const limit = computed(() => props.field.limit ?? 20);
+const DEFAULT_MIN_SEARCH_LENGTH = 3;
+const minSearchLength = computed(() => props.field.minSearchLength ?? DEFAULT_MIN_SEARCH_LENGTH);
+
 onMounted(() => {
   fetchData(null, true);
 });
@@ -33,7 +37,6 @@ const mandatory = props.field.mandatory !== undefined ? props.field.mandatory : 
 const multiple = props.field.multiple || false;
 const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
-const limit = props.field.limit || undefined;
 
 watch(() => props.modelValue, (value) => {
   if (value !== selectedValue.value) {
@@ -82,7 +85,7 @@ async function ensureSelectedValuesArePresent() {
         [props.field.valueBy]: { inList: missingIds }
       }
     },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const newItems = props.field.isEdge
@@ -96,25 +99,27 @@ async function ensureSelectedValuesArePresent() {
 async function fetchData(searchValue: string | null | undefined = null, ensureSelected: boolean = false) {
   try {
     loading.value = true;
-    // Start with existing query variables or initialize if not set
-    const variables = { ...props.field.queryVariables };
+    // Start with existing query variables without mutating props
+    const variables: any = {
+      ...props.field.queryVariables,
+      filter: {
+        ...(props.field.queryVariables?.filter ?? {}),
+      },
+    };
 
-    // Initialize filter object if it doesn't exist
+    // Handle live updates and search values
     if (isLiveUpdate.value) {
-      if (!variables.filter) {
-        variables.filter = {};
-      }
-
-      // Add or update the search value in the filter object
-      if (searchValue !== null && searchValue !== undefined) {
+      if (searchValue) {
         variables.filter.search = searchValue;
+      } else {
+        delete variables.filter.search;
       }
     }
 
     const { data } = await apolloClient.query({
       query: props.field.query as unknown as DocumentNode,
       variables: variables,
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
 
     processAndCleanData(data[props.field.dataKey]);
@@ -227,12 +232,15 @@ if (props.field.multiple) {
 };
 
 const handleInput = debounce(async (searchValue: string) => {
-
-  if (isLiveUpdate.value
-  ) {
-    fetchData(searchValue);
+  if (!isLiveUpdate.value) {
+    return;
   }
 
+  if (searchValue.length >= minSearchLength.value) {
+    fetchData(searchValue);
+  } else if (!searchValue.length) {
+    fetchData();
+  }
 }, 500);
 
 const showAddEntry = computed(() => !!props.field.createOnFlyConfig);

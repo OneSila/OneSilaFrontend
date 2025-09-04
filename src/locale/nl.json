@@ -208,6 +208,9 @@
       "notes": "Notities",
       "currency": "Valuta's",
       "date": "Datum",
+      "code": "Code",
+      "data": "Data",
+      "context": "Context",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
       "email": "E-mail",
@@ -1814,7 +1817,12 @@
     },
     "duplicateModal": {
       "title": "Eigenschappen met gelijkaardige naam gevonden",
-      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan."
+      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
+      }
     },
     "values": {
       "title": "Selectie Waardes",
@@ -1929,15 +1937,190 @@
           "store": "Winkel",
           "excludeStores": "Winkels uitsluiten"
         }
+      },
+      "tabs": {
+        "reports": "Rapporten"
+      }
+    },
+    "imports": {
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found"
+        }
       }
     }
   }
 ,
   "integrations": {
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
     "salesChannel": {
       "labels": {
         "assignedToSalesChannelView": "Toegewezen aan winkel",
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+      }
+    }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor",
+      "description": "Realtime overzicht van webhook-leveringen.",
+      "timeRange": {
+        "live": "Live",
+        "last15m": "Laatste 15m",
+        "1h": "1u",
+        "6h": "6u",
+        "24h": "24u",
+        "custom": "Aangepast"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Actie",
+        "status": "Status",
+        "responseCode": "Responscode",
+        "subject": "Onderwerp"
+      },
+      "autoRefresh": "Auto-verversen",
+      "rpmCap": "RPM-limiet",
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (median / p95)",
+        "latencyTooltip": "Median and 95th percentile latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "queueDepth": "Queue depth",
+        "queueDepthTooltip": "Current depth of the webhook queue"
+      },
+      "empty": "No deliveries found",
+      "table": {
+        "time": "Tijd",
+        "topic": "Onderwerp",
+        "action": "Actie",
+        "subjectId": "Onderwerp-ID",
+        "integration": "Integratie",
+        "status": "Status",
+        "httpCode": "HTTP-code",
+        "latency": "Latentie",
+        "attempt": "Poging #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "headers": {
+          "redacted": "[REDACTED]"
+        },
+        "replay": {
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "confirmButtonText": "Yes, replay it!",
+          "copied": "cURL command copied"
+        }
+      }
+    },
+    "reports": {
+      "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Verdeling van leveringsstatussen in de tijd.",
+        "latency": "Webhook-latentiepercentielen in de tijd.",
+        "topics": "Toponderwerpen naar volume en succespercentage.",
+        "responseCodes": "Verdeling van HTTP-responscodes.",
+        "retries": "Leveringen gegroepeerd op aantal pogingen.",
+        "heatmap": "Fouten of latentie per weekdag en uur.",
+        "topOffenders": "Integraties met de hoogste foutpercentages en latentie."
+      },
+      "timeRange": {
+        "today": "Vandaag",
+        "7d": "7 d",
+        "30d": "30 d"
+      },
+      "filters": {
+        "integration": "Integratie",
+        "responseCodeBucket": "Antwoordcode-bucket",
+        "date": "Datum"
+      },
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (p50 / p95 / p99)",
+        "latencyTooltip": "p50, p95, and p99 latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "rate5xx": "5xx %",
+        "rate5xxTooltip": "Percentage of HTTP 5xx responses",
+        "avgAttempts": "Avg attempts",
+        "avgAttemptsTooltip": "Average attempts per delivery",
+        "avgSolveMs": "Avg solve ms",
+        "avgSolveMsTooltip": "Average milliseconds to solve a request",
+        "responseCodeBucket": "Antwoordcode-bucket",
+        "date": "Datum"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "heatmap": "Heatmap",
+        "topOffenders": "Top-veroorzakers",
+        "p50": "p50",
+        "p95": "p95",
+        "latencyLegend": {
+          "title": "Latency percentiles:",
+          "p50": "p50 = median (half of deliveries are faster)",
+          "p95": "p95 = 95% are faster (only 1 in 20 slower)",
+          "p99": "p99 = 99% are faster (only 1 in 100 slower)"
+        }
+      }
+      ,
+      "heatmap": {
+        "metric": {
+          "failures": "Fouten",
+          "latency": "Median latentie"
+        },
+        "weekdays": {
+          "1": "Ma",
+          "2": "Di",
+          "3": "Wo",
+          "4": "Do",
+          "5": "Vr",
+          "6": "Za",
+          "7": "Zo"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Integratie",
+          "failureRate": "Fout %",
+          "latencyP95": "p95 latentie"
+        }
       }
     }
   }

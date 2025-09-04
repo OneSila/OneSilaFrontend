@@ -4,7 +4,7 @@ import { SearchConfig } from "../../../shared/components/organisms/general-searc
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { ShowConfig } from "../../../shared/components/organisms/general-show/showConfig";
 import { hsCodesQuery } from "../../../shared/api/queries/hsCodes.js"
-import { productsQuery } from "../../../shared/api/queries/products.js"
+import { productsQuerySelector } from "../../../shared/api/queries/products.js"
 import { deleteHsCodeMutation } from "../../../shared/api/mutations/hsCodes.js";
 import { hsCodeSubscription } from "../../../shared/api/subscriptions/hsCodes.js";
 
@@ -39,7 +39,7 @@ const getProductField = (productId, t, type): FormField | null => {
         label:  t('shared.labels.product'),
         labelBy: 'name',
         valueBy: 'id',
-        query: productsQuery,
+        query: productsQuerySelector,
         dataKey: 'products',
         isEdge: true,
         multiple: true,

@@ -70,7 +70,7 @@ const fetchData = async () => {
   const { data } = await apolloClient.query({
     query: mediaProductThroughQuery,
     variables: { filter: { product: {id: {exact: props.product.id }} }},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data) {

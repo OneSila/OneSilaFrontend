@@ -326,7 +326,11 @@ const removePropertyValue = async () => {
     }
 }
 
-watch(props.value.translation, setTranslatedValues)
+watch(
+  () => props.value.translation,
+  setTranslatedValues,
+  { deep: true, immediate: true }
+)
 
 const hasValue = (val: ProductPropertyValue): boolean => {
   const propType = val.property.type;

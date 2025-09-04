@@ -2,7 +2,7 @@
 import {onMounted, ref, Ref, watch} from 'vue';
 import { useI18n } from "vue-i18n";
 import { Product } from "../../../../../../configs";
-import { salesChannelViewsQuery } from "../../../../../../../../../shared/api/queries/salesChannels.js";
+import { salesChannelViewsQuerySelector } from "../../../../../../../../../shared/api/queries/salesChannels.js";
 import { createSalesChannelViewAssignMutation } from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
@@ -31,9 +31,9 @@ const loading = ref(false);
 const fetchViews = async () => {
   loading.value = true;
   const { data } = await apolloClient.query({
-    query: salesChannelViewsQuery,
+    query: salesChannelViewsQuerySelector,
     variables: { filter: { salesChannel: { active: {exact: true} }, NOT: { id: { inList: props.viewsIds } } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data) {

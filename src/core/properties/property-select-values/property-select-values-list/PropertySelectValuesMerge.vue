@@ -6,6 +6,7 @@ import { Modal } from '../../../../shared/components/atoms/modal';
 import { Card } from '../../../../shared/components/atoms/card';
 import { Toggle } from '../../../../shared/components/atoms/toggle';
 import { Icon } from '../../../../shared/components/atoms/icon';
+import { LocalLoader } from '../../../../shared/components/atoms/local-loader';
 import apolloClient from '../../../../../apollo-client';
 import { propertySelectValuesQuery, productPropertiesCountQuery } from '../../../../shared/api/queries/properties.js';
 import { mergePropertySelectValueMutation } from '../../../../shared/api/mutations/properties.js';
@@ -19,42 +20,48 @@ const { t } = useI18n();
 const showModal = ref(false);
 const values = ref<{ id: string; value: string; count: number }[]>([]);
 const target = ref<string | null>(null);
+const loading = ref(false);
 
-const openModal = async () => {
-  await fetchValues();
+const openModal = () => {
   showModal.value = true;
+  void fetchValues();
 };
 
 const fetchValues = async () => {
-  const { data } = await apolloClient.query({
-    query: propertySelectValuesQuery,
-    variables: { filter: { id: { inList: props.selectedEntities } } },
-    fetchPolicy: 'network-only',
-  });
-  const edges = data?.propertySelectValues?.edges || [];
-  const result = await Promise.all(
-    edges.map(async (edge: any) => {
-      const id = edge.node.id;
-      const { data: countData } = await apolloClient.query({
-        query: productPropertiesCountQuery,
-        variables: {
-          filter: {
-            valueSelect: { id: { exact: id } },
-            OR: { valueMultiSelect: { id: { exact: id } } },
+  loading.value = true;
+  try {
+    const { data } = await apolloClient.query({
+      query: propertySelectValuesQuery,
+      variables: { filter: { id: { inList: props.selectedEntities } } },
+      fetchPolicy: 'cache-first',
+    });
+    const edges = data?.propertySelectValues?.edges || [];
+    const result = await Promise.all(
+      edges.map(async (edge: any) => {
+        const id = edge.node.id;
+        const { data: countData } = await apolloClient.query({
+          query: productPropertiesCountQuery,
+          variables: {
+            filter: {
+              valueSelect: { id: { exact: id } },
+              OR: { valueMultiSelect: { id: { exact: id } } },
+            },
           },
-        },
-        fetchPolicy: 'network-only',
-      });
-      return {
-        id,
-        value: edge.node.value,
-        count: countData?.productProperties?.totalCount || 0,
-      };
-    })
-  );
-  values.value = result;
-  if (result.length > 0) {
-    target.value = result.reduce((max, item) => (item.count > max.count ? item : max), result[0]).id;
+          fetchPolicy: 'cache-first',
+        });
+        return {
+          id,
+          value: edge.node.value,
+          count: countData?.productProperties?.totalCount || 0,
+        };
+      })
+    );
+    values.value = result;
+    if (result.length > 0) {
+      target.value = result.reduce((max, item) => (item.count > max.count ? item : max), result[0]).id;
+    }
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -95,26 +102,29 @@ const mergeValues = async () => {
 
   <Modal v-model="showModal" @closed="showModal = false">
     <Card class="modal-content w-2/3">
-      <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
-      <p class="mb-4">{{ t('properties.values.merge.description') }}</p>
-      <hr class="my-4">
-      <div v-for="val in values" :key="val.id" class="flex items-center justify-between py-2">
-        <div>
-          <div>{{ val.value }}</div>
-          <div class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: val.count }) }}</div>
+      <LocalLoader :loading="loading" />
+      <template v-if="!loading">
+        <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
+        <p class="mb-4">{{ t('properties.values.merge.description') }}</p>
+        <hr class="my-4">
+        <div v-for="val in values" :key="val.id" class="flex items-center justify-between py-2">
+          <div>
+            <div>{{ val.value }}</div>
+            <div class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: val.count }) }}</div>
+          </div>
+          <Toggle
+            :model-value="target === val.id"
+            @update:model-value="() => onToggle(val.id)"
+          />
         </div>
-        <Toggle
-          :model-value="target === val.id"
-          @update:model-value="() => onToggle(val.id)"
-        />
-      </div>
-      <p class="text-sm text-red-600 mt-4">{{ t('properties.values.merge.warning') }}</p>
-      <div class="flex justify-end gap-4 mt-4">
-        <Button class="btn btn-outline-dark" @click="showModal = false">{{ t('shared.button.cancel') }}</Button>
-        <Button type="button" class="btn btn-primary" @click="mergeValues">
-          {{ t('properties.values.merge.confirm') }}
-        </Button>
-      </div>
+        <p class="text-sm text-red-600 mt-4">{{ t('properties.values.merge.warning') }}</p>
+        <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-outline-dark" @click="showModal = false">{{ t('shared.button.cancel') }}</Button>
+          <Button type="button" class="btn btn-primary" @click="mergeValues">
+            {{ t('properties.values.merge.confirm') }}
+          </Button>
+        </div>
+      </template>
     </Card>
   </Modal>
 </template>

@@ -7,13 +7,31 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
       edges {
         node {
           id
-          sku
           name
           active
-          type
-          proxyId
           thumbnailUrl
           inspectorStatus
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const productsQuerySelector = gql`
+query Products($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
+    products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
         }
         cursor
       }
@@ -38,7 +56,6 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           name
           active
           type
-          proxyId
           thumbnailUrl
           percentageInspectorStatus {
             percentage
@@ -48,13 +65,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
               completed
             }
           }
-          vatRate {
-            id
-            name
-            rate
-          }
-          allowBackorder
-        
+
         }
         cursor
       }

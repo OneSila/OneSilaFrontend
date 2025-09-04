@@ -162,7 +162,7 @@ onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getAmazonPropertySelectValueQuery,
     variables: { id: valueId.value },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const valueData = data?.amazonPropertySelectValue;
@@ -185,7 +185,7 @@ onMounted(async () => {
     const { data: propData } = await apolloClient.query({
       query: getAmazonPropertyQuery,
       variables: { id: amazonPropertyId.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     propertyMapped.value = propData?.amazonProperty?.mappedLocally ?? true;
     localPropertyId.value = propData?.amazonProperty?.localInstance?.id || null;

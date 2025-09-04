@@ -1,5 +1,5 @@
 import { FieldType } from "../../../../../../shared/utils/constants";
-import { salesChannelViewAssignsQuery, salesChannelViewsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
+import { salesChannelViewAssignsQuery, salesChannelViewsQuerySelector } from "../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
 import { deleteSalesChannelViewAssignMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
@@ -21,7 +21,7 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
       label: t('integrations.show.products.labels.store'),
       labelBy: 'name',
       valueBy: 'id',
-      query: salesChannelViewsQuery,
+      query: salesChannelViewsQuerySelector,
       dataKey: 'salesChannelViews',
       isEdge: true,
       multiple: true,
@@ -39,7 +39,7 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
       label: t('integrations.show.products.labels.excludeStores'),
       labelBy: 'name',
       valueBy: 'id',
-      query: salesChannelViewsQuery,
+      query: salesChannelViewsQuerySelector,
       dataKey: 'salesChannelViews',
       isEdge: true,
       multiple: false,

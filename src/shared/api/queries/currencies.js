@@ -29,6 +29,27 @@ export const currenciesQuery = gql`
         hasNextPage
         hasPreviousPage
       }
+  }
+}
+`;
+
+export const currenciesQuerySelector = gql`
+  query Currencies($first: Int, $last: Int, $after: String, $before: String, $order: CurrencyOrder, $filter: CurrencyFilter) {
+    currencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          isoCode
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `;

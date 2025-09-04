@@ -6,6 +6,7 @@ import { Modal } from '../../../../shared/components/atoms/modal';
 import { Selector } from '../../../../shared/components/atoms/selector';
 import { Card } from '../../../../shared/components/atoms/card';
 import { Icon } from '../../../../shared/components/atoms/icon';
+import { LocalLoader } from '../../../../shared/components/atoms/local-loader';
 import apolloClient from '../../../../../apollo-client';
 import { propertySelectValuesQuerySimpleSelector, productPropertiesCountQuery } from '../../../../shared/api/queries/properties.js';
 import { mergePropertySelectValueMutation } from '../../../../shared/api/mutations/properties.js';
@@ -21,6 +22,7 @@ const selectedOption = ref<string | null>(null);
 const options = ref<{ label: string; value: string }[]>([]);
 const sources = ref<{ id: string; label: string; count: number }[]>([]);
 const currentCount = ref(0);
+const loading = ref(false);
 
 const fetchCount = async (id: string) => {
   const { data } = await apolloClient.query({
@@ -31,17 +33,26 @@ const fetchCount = async (id: string) => {
         OR: { valueMultiSelect: { id: { exact: id } } },
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   return data?.productProperties?.totalCount || 0;
 };
 
-const openModal = async () => {
-  await fetchOptions();
-  currentCount.value = await fetchCount(props.id);
+const openModal = () => {
+  showModal.value = true;
   selectedOption.value = null;
   sources.value = [];
-  showModal.value = true;
+  void loadData();
+};
+
+const loadData = async () => {
+  loading.value = true;
+  try {
+    await fetchOptions();
+    currentCount.value = await fetchCount(props.id);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const fetchOptions = async (searchValue: string | null = null) => {
@@ -54,7 +65,7 @@ const fetchOptions = async (searchValue: string | null = null) => {
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuerySimpleSelector,
     variables: variables,
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const fetched =
     data?.propertySelectValues?.edges?.map((e: any) => ({ label: e.node.value, value: e.node.id })) || [];
@@ -112,40 +123,43 @@ const mergeValues = async () => {
 
     <Modal v-model="showModal" @closed="showModal = false">
       <Card class="modal-content w-2/3">
-        <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
-        <p>{{ t('properties.values.merge.detailDescription', { value: props.currentLabel }) }}</p>
-        <p class="mb-4 text-sm text-gray-500">{{ t('properties.values.merge.current', { value: props.currentLabel, count: currentCount }) }}</p>
-        <hr class="my-4" />
-        <div class="flex items-center gap-2 mb-4">
-          <Selector
-            v-model="selectedOption"
-            :options="options"
-            label-by="label"
-            value-by="value"
-            class="flex-1"
-            @searched="fetchOptions"
-            :placeholder="t('properties.values.merge.selectSource')"
-          />
-          <Button class="btn btn-secondary" :disabled="!selectedOption" @click="addSource">
-            {{ t('shared.button.add') }}
-          </Button>
-        </div>
-        <div v-for="src in sources" :key="src.id" class="flex items-center justify-between mb-2">
-          <div>
-            <div>{{ src.label }}</div>
-            <div class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: src.count }) }}</div>
+        <LocalLoader :loading="loading" />
+        <template v-if="!loading">
+          <h3 class="text-xl font-semibold mb-4">{{ t('properties.values.merge.title') }}</h3>
+          <p>{{ t('properties.values.merge.detailDescription', { value: props.currentLabel }) }}</p>
+          <p class="mb-4 text-sm text-gray-500">{{ t('properties.values.merge.current', { value: props.currentLabel, count: currentCount }) }}</p>
+          <hr class="my-4" />
+          <div class="flex items-center gap-2 mb-4">
+            <Selector
+              v-model="selectedOption"
+              :options="options"
+              label-by="label"
+              value-by="value"
+              class="flex-1"
+              @searched="fetchOptions"
+              :placeholder="t('properties.values.merge.selectSource')"
+            />
+            <Button class="btn btn-secondary" :disabled="!selectedOption" @click="addSource">
+              {{ t('shared.button.add') }}
+            </Button>
           </div>
-          <Button class="btn btn-outline-danger" @click="removeSource(src.id)">
-            <Icon name="trash" size="sm" />
-          </Button>
-        </div>
-        <p class="text-sm text-red-600 mt-4">{{ t('properties.values.merge.warning') }}</p>
-        <div class="flex justify-end gap-4 mt-4">
-          <Button class="btn btn-outline-dark" @click="showModal = false">{{ t('shared.button.cancel') }}</Button>
-          <Button type="button" class="btn btn-primary" @click="mergeValues">
-            {{ t('properties.values.merge.confirm') }}
-          </Button>
-        </div>
+          <div v-for="src in sources" :key="src.id" class="flex items-center justify-between mb-2">
+            <div>
+              <div>{{ src.label }}</div>
+              <div class="text-sm text-gray-500">{{ t('properties.values.merge.counter', { count: src.count }) }}</div>
+            </div>
+            <Button class="btn btn-outline-danger" @click="removeSource(src.id)">
+              <Icon name="trash" size="sm" />
+            </Button>
+          </div>
+          <p class="text-sm text-red-600 mt-4">{{ t('properties.values.merge.warning') }}</p>
+          <div class="flex justify-end gap-4 mt-4">
+            <Button class="btn btn-outline-dark" @click="showModal = false">{{ t('shared.button.cancel') }}</Button>
+            <Button type="button" class="btn btn-primary" @click="mergeValues">
+              {{ t('properties.values.merge.confirm') }}
+            </Button>
+          </div>
+        </template>
       </Card>
     </Modal>
   </div>
