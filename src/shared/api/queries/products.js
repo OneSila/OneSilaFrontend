@@ -7,11 +7,8 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
       edges {
         node {
           id
-          sku
           name
           active
-          type
-          proxyId
           thumbnailUrl
           inspectorStatus
         }
@@ -59,7 +56,6 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
           name
           active
           type
-          proxyId
           thumbnailUrl
           percentageInspectorStatus {
             percentage
@@ -69,13 +65,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
               completed
             }
           }
-          vatRate {
-            id
-            name
-            rate
-          }
-          allowBackorder
-        
+
         }
         cursor
       }

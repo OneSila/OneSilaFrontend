@@ -9,7 +9,7 @@ import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
 import {orderSubscription} from "../../../shared/api/subscriptions/salesOrders.js";
 import {currencyOnTheFlyConfig} from "../../settings/currencies/configs";
 import { createOrderItemsMutation, updateOrderItemMutation, deleteOrderItemsMutation } from "../../../shared/api/mutations/salesOrders.js";
-import { productsQuery } from "../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../shared/api/queries/products.js";
 
 export const getStatusOptions = (t) => [
   { name: t('sales.orders.labels.status.choices.draft'), code: OrderStatus.DRAFT },
@@ -297,7 +297,7 @@ export const baseFormConfigConstructor = (
           label: t('shared.labels.product'),
           labelBy: 'name',
           valueBy: 'id',
-          query: productsQuery,
+          query: productsQuerySelector,
           dataKey: 'products',
           isEdge: true,
           multiple: false,
