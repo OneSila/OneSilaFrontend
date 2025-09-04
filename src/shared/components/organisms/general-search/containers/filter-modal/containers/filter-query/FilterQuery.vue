@@ -50,14 +50,17 @@ const selectedValue = ref(
 );
 
 const fetchData = async (searchValue: string | null = null) => {
-  const variables = { ...props.filter.queryVariables } as any;
+  const variables: any = {
+    ...props.filter.queryVariables,
+    filter: {
+      ...(props.filter.queryVariables?.filter ?? {}),
+    },
+  };
 
-  if (!variables.filter) {
-    variables.filter = {};
-  }
-
-  if (searchValue !== null && searchValue !== undefined) {
+  if (searchValue) {
     variables.filter.search = searchValue;
+  } else {
+    delete variables.filter.search;
   }
 
   try {
