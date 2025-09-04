@@ -1817,7 +1817,12 @@
     },
     "duplicateModal": {
       "title": "Eigenschappen met gelijkaardige naam gevonden",
-      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan."
+      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
+      }
     },
     "values": {
       "title": "Selectie Waardes",

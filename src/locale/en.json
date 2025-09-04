@@ -2183,7 +2183,12 @@
     },
     "duplicateModal": {
       "title": "Properties with Similar Names Found",
-      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property."
+      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
+      }
     },
     "values": {
       "title": "Select Values",
