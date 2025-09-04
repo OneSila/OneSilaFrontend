@@ -9,7 +9,7 @@ import {SearchConfig} from "../../../shared/components/organisms/general-search/
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {
     getPropertySelectValueQuery,
-    propertiesQuery,
+    propertiesQuerySelector,
     propertySelectValuesQuery
 } from "../../../shared/api/queries/properties.js";
 import {
@@ -161,7 +161,7 @@ export const editFormConfigConstructor = (
             label: t('properties.properties.show.title'),
             labelBy: 'name',
             valueBy: 'id',
-            query: propertiesQuery,
+            query: propertiesQuerySelector,
             queryVariables: {filter: {'type': {'exact': PropertyTypes.SELECT}}},
             dataKey: 'properties',
             isEdge: true,
@@ -194,7 +194,7 @@ const getPropertyField = (t, propertyId, type): FormField => {
             label: t('properties.properties.show.title'),
             labelBy: 'name',
             valueBy: 'id',
-            query: propertiesQuery,
+            query: propertiesQuerySelector,
             queryVariables: {filter: {'type': {'inList': [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]}}},
             dataKey: 'properties',
             isEdge: true,
@@ -216,7 +216,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
             label: t('properties.properties.show.title'),
             labelBy: 'name',
             valueBy: 'id',
-            query: propertiesQuery,
+            query: propertiesQuerySelector,
             queryVariables: {filter: {'type': {'inList': [PropertyTypes.SELECT, PropertyTypes.MULTISELECT]}}},
             dataKey: 'properties',
             filterable: true,

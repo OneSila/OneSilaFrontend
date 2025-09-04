@@ -25,6 +25,27 @@ query Properties($first: Int, $last: Int, $after: String, $before: String, $orde
         hasNextPage
         hasPreviousPage
       }
+  }
+}
+`;
+
+export const propertiesQuerySelector = gql`
+query Properties($first: Int, $last: Int, $after: String, $before: String, $order: PropertyOrder, $filter: PropertyFilter) {
+    properties(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `;

@@ -19,7 +19,7 @@ import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { cleanShopHostname } from "../../../../configs";
 import apolloClient from "../../../../../../../../apollo-client";
 import {FieldType, PropertyTypes} from "../../../../../../../shared/utils/constants";
-import {propertiesQuery} from "../../../../../../../shared/api/queries/properties";
+import {propertiesQuerySelector} from "../../../../../../../shared/api/queries/properties";
 import {QueryFormField} from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import {
   FieldQuery
@@ -140,7 +140,7 @@ const propertyField = computed(() => ({
     label: t('properties.properties.show.title'),
     labelBy: 'name',
     valueBy: 'id',
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     queryVariables: { filter: {'type': {'exact': PropertyTypes.SELECT }, 'isProductType': {'exact': false }} },
     dataKey: 'properties',
     isEdge: true,

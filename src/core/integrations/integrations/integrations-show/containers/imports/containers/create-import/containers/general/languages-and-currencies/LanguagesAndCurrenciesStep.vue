@@ -3,7 +3,7 @@ import { onMounted, ref, defineProps, computed, defineExpose, watch } from "vue"
 import { useI18n } from "vue-i18n";
 import { remoteLanguagesQuery, remoteCurrenciesQuery } from "../../../../../../../../../../../shared/api/queries/salesChannels.js";
 import {companyLanguagesQuery} from "../../../../../../../../../../../shared/api/queries/languages.js";
-import {currenciesQuery} from "../../../../../../../../../../../shared/api/queries/currencies.js";
+import {currenciesQuerySelector} from "../../../../../../../../../../../shared/api/queries/currencies.js";
 
 import {FieldType} from "../../../../../../../../../../../shared/utils/constants";
 import apolloClient from "../../../../../../../../../../../../apollo-client";
@@ -46,7 +46,7 @@ const currencyField = computed(() => ({
       label: t("shared.labels.currency"),
       labelBy: "isoCode",
       valueBy: "id",
-      query: currenciesQuery,
+      query: currenciesQuerySelector,
       dataKey: "currencies",
       isEdge: true,
       multiple: false,

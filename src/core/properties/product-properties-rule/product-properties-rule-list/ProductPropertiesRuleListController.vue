@@ -8,7 +8,7 @@ import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import apolloClient from "../../../../../apollo-client";
-import {propertiesQuery} from "../../../../shared/api/queries/properties.js";
+import {propertiesQuerySelector} from "../../../../shared/api/queries/properties.js";
 import { onMounted, ref} from "vue";
 
 const { t } = useI18n();
@@ -19,7 +19,7 @@ const listingConfig = listingConfigConstructor(t, true);
 
 const fetchProductType = async () => {
     const {data} = await apolloClient.query({
-      query: propertiesQuery,
+      query: propertiesQuerySelector,
       variables: {filter: {isProductType: { exact: true } }}
     })
 

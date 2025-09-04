@@ -7,7 +7,7 @@ import { Breadcrumbs } from "../../../../../../../../../shared/components/molecu
 import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import { amazonPropertyEditFormConfigConstructor } from "../configs";
 import { FieldType } from "../../../../../../../../../shared/utils/constants";
-import { propertiesQuery } from "../../../../../../../../../shared/api/queries/properties.js";
+import { propertiesQuerySelector } from "../../../../../../../../../shared/api/queries/properties.js";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Label } from "../../../../../../../../../shared/components/atoms/label";
@@ -119,7 +119,7 @@ const handleSetData = (data: any) => {
     help: t('integrations.show.properties.help.property'),
     labelBy: 'name',
     valueBy: 'id',
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     queryVariables: { filter: { type: { exact: propertyType } } },
     dataKey: 'properties',
     isEdge: true,

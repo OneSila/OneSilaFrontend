@@ -7,7 +7,7 @@ import {TextInput} from '../../atoms/input-text';
 import {Pagination} from '../../molecules/pagination';
 import debounce from 'lodash.debounce';
 import apolloClient from '../../../../../apollo-client';
-import {getPropertySelectValueQuery, propertiesQuery} from '../../../api/queries/properties.js';
+import {getPropertySelectValueQuery, propertiesQuerySelector} from '../../../api/queries/properties.js';
 import {AddPropertyModal} from "./containers/add-property-modal";
 import {Badge} from "../../atoms/badge";
 import {getPropertyTypeBadgeMap} from "../../../../core/properties/properties/configs";
@@ -76,7 +76,7 @@ const fetchData = async () => {
   };
 
   const {data} = await apolloClient.query({
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     variables: variables,
     fetchPolicy: 'cache-first'
   });

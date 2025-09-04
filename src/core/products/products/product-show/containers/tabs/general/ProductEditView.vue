@@ -12,7 +12,7 @@ import { Product, vatRateOnTheFlyConfig} from "../../../../configs";
 import { Toast} from "../../../../../../../shared/modules/toast";
 import {FieldValue} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
 import {PrimaryButton} from "../../../../../../../shared/components/atoms/button-primary";
-import {vatRatesQuery} from "../../../../../../../shared/api/queries/vatRates.js";
+import {vatRatesQuerySelector} from "../../../../../../../shared/api/queries/vatRates.js";
 import {FieldQuery} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {FieldCheckbox} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-checkbox";
 import {SecondaryButton} from "../../../../../../../shared/components/atoms/button-secondary";
@@ -56,7 +56,7 @@ const fields = {
     label: t('products.products.labels.vatRate'),
     labelBy: 'name',
     valueBy: 'id',
-    query: vatRatesQuery,
+    query: vatRatesQuerySelector,
     dataKey: 'vatRates',
     isEdge: true,
     multiple: false,

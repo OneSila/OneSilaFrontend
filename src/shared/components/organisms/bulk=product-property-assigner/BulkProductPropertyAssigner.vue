@@ -9,7 +9,7 @@ import {TextEditor} from '../../atoms/input-text-editor';
 import {Toggle} from '../../atoms/toggle';
 import {DateInput} from '../../atoms/input-date';
 import {format} from 'date-fns';
-import {propertiesQuery, propertySelectValuesQuerySimpleSelector} from '../../../api/queries/properties';
+import {propertiesQuery, propertiesQuerySelector, propertySelectValuesQuerySimpleSelector} from '../../../api/queries/properties';
 import {translationLanguagesQuery} from '../../../api/queries/languages';
 import apolloClient from "../../../../../apollo-client";
 import {FieldType, PropertyTypes} from "../../../utils/constants";
@@ -43,7 +43,7 @@ const propertyField = computed(() => ({
   label: t('properties.properties.show.title'),
   labelBy: 'name',
   valueBy: 'id',
-  query: propertiesQuery,
+  query: propertiesQuerySelector,
   queryVariables: {filter: {isProductType: {exact: false}}},
   dataKey: 'properties',
   isEdge: true,

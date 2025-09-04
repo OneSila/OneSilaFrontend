@@ -6,7 +6,7 @@ import { FieldType, ProductType } from "../../../../../../shared/utils/constants
 import { Label } from "../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 import { FieldQuery } from "../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../../../../shared/api/queries/products.js";
 import { QueryFormField } from "../../../../../../shared/components/organisms/general-form/formConfig";
 
 const props = defineProps<{ form: FormType, preselectedParentId?: string | null, disableParentSelector?: boolean }>();
@@ -18,7 +18,7 @@ const aliasParentProductField = computed<QueryFormField>(() => ({
   label: t('products.products.create.wizard.stepAlias.labels.aliasParent'),
   labelBy: 'name',
   valueBy: 'id',
-  query: productsQuery,
+  query: productsQuerySelector,
   dataKey: 'products',
   isEdge: true,
   multiple: false,

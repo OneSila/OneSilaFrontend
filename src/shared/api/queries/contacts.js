@@ -29,6 +29,27 @@ query Companies($first: Int, $last: Int, $after: String, $before: String, $order
 }
 `;
 
+export const companiesQuerySelector = gql`
+query Companies($first: Int, $last: Int, $after: String, $before: String, $order: CompanyOrder, $filter: CompanyFilter) {
+  companies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+    edges {
+      node {
+        id
+        name
+      }
+      cursor
+    }
+    totalCount
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+`;
+
 export const getCompanyQuery = gql`
 query getCompany ($id: GlobalID!) {
   company(id: $id) {
