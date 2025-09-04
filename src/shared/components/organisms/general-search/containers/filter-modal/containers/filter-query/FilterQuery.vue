@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref, watch, watchEffect, onMounted, Ref} from 'vue';
+import {ref, watch, watchEffect, onMounted, Ref, computed} from 'vue';
 import debounce from 'lodash.debounce';
 import { useRoute } from 'vue-router';
 import { Selector } from '../../../../../../atoms/selector';
@@ -38,6 +38,9 @@ const storeLabel = ({ id, label }: { id: any; label: string }) => {
 };
 
 const props = defineProps<{ filter: QueryFilter }>();
+const limit = computed(() => props.filter.limit ?? 20);
+const DEFAULT_MIN_SEARCH_LENGTH = 3;
+const minSearchLength = computed(() => props.filter.minSearchLength ?? DEFAULT_MIN_SEARCH_LENGTH);
 const emit = defineEmits(['update-value']);
 const route = useRoute();
 const cleanedData: Ref<any[]> = ref([]);
@@ -107,7 +110,11 @@ watch([selectedValue, cleanedData], () => {
 watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
 
 const handleInput = debounce(async (searchValue: string) => {
-  fetchData(searchValue);
+  if (searchValue.length >= minSearchLength.value) {
+    fetchData(searchValue);
+  } else if (!searchValue.length) {
+    fetchData();
+  }
 }, 500);
 
 const cleanData = (rawData) => {
@@ -123,7 +130,6 @@ const mandatory = ref(props.filter.mandatory !== undefined ? props.filter.mandat
 const multiple = ref(props.filter.multiple || false);
 const filterable = ref(props.filter.filterable || false);
 const removable = ref(props.filter.removable !== undefined ? props.filter.removable : true);
-const limit = ref(props.filter.limit || undefined);
 const disabled = ref(props.filter.disabled === true);
 
 </script>
