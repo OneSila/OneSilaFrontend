@@ -36,6 +36,12 @@ const isAmazonWizard = route.query.amazonWizard === '1';
 const amazonCreateValue = route.query.amazonCreateValue ? route.query.amazonCreateValue.toString() : null;
 const showDuplicateModal = ref(false);
 const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
+const checkingDuplicates = ref(false);
+const skippedCheck = ref(false);
+const duplicateSteps = computed(() => [
+  t('properties.duplicateModal.steps.step1'),
+  t('properties.duplicateModal.steps.step2'),
+]);
 
 interface PropertyForm {
   name: string,
@@ -164,26 +170,34 @@ const createProperty = async () => {
 
 const handleFinish = async () => {
   try {
+    showDuplicateModal.value = true;
+    checkingDuplicates.value = true;
+    skippedCheck.value = false;
     const { data } = await apolloClient.mutate({
       mutation: checkPropertyForDuplicatesMutation,
       variables: { name: form.name }
     });
-
+    if (skippedCheck.value) return;
+    checkingDuplicates.value = false;
     if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
       duplicateItems.value = data.checkPropertyForDuplicates.duplicates.map((p: any) => ({
         label: p.name,
         urlParam: { name: 'properties.properties.show', params: { id: p.id } }
       }));
-      showDuplicateModal.value = true;
       return;
     }
-
+    showDuplicateModal.value = false;
     await createProperty();
   } catch (err) {
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
     onError(graphqlError);
   }
 }
+
+const createAnywayHandler = async () => {
+  skippedCheck.value = true;
+  await createProperty();
+};
 
 
 const selectorPreviewExamples = [
@@ -406,7 +420,10 @@ const multiSelectorPreviewExamples = [
       :title="t('properties.duplicateModal.title')"
       :content="t('properties.duplicateModal.content')"
       :items="duplicateItems"
-      @create-anyway="createProperty"
+      :loading="checkingDuplicates"
+      modal-title="properties.duplicateModal.checkingTitle"
+      :steps="duplicateSteps"
+      @create-anyway="createAnywayHandler"
   />
   </div>
 </template>
