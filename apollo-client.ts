@@ -63,7 +63,57 @@ const splitLink = split(
 
 const combinedLink = ApolloLink.from([errorLink, splitLink]);
 
-const cache =  new InMemoryCache();
+const mergeById = (existing: any[] = [], incoming: any[], { readField }: any) => {
+  const merged = [...existing];
+  incoming.forEach((item) => {
+    const id = readField('id', item);
+    const index = merged.findIndex((i) => readField('id', i) === id);
+    if (index > -1) {
+      merged[index] = item;
+    } else {
+      merged.push(item);
+    }
+  });
+  return merged;
+};
+
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        propertySelectValues: {
+          keyArgs: false,
+          merge: mergeById,
+        },
+        properties: {
+          keyArgs: false,
+          merge: mergeById,
+        },
+        products: {
+          keyArgs: false,
+          merge: mergeById,
+        },
+        medias: {
+          keyArgs: false,
+          merge: mergeById,
+        },
+      },
+    },
+    PropertySelectValue: {
+      keyFields: ['id'],
+    },
+    Property: {
+      keyFields: ['id'],
+    },
+    Product: {
+      keyFields: ['id'],
+    },
+    Media: {
+      keyFields: ['id'],
+    },
+  },
+});
+
 const apolloClient = new ApolloClient({
   link: combinedLink,
   cache,
