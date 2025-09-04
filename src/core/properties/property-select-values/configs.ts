@@ -287,7 +287,7 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
     subscriptionKey: 'propertySelectValue',
     subscriptionVariables: {pk: id},
     backUrl: {name: 'properties.values.list'},
-    editUrl: {name: 'properties.values.edit', params: {id: id}},
+    editUrl: {name: 'properties.values.edit', params: {id: id}, query: {tab: 'translations'}},
     deleteMutation: deletePropertySelectValueMutation,
     deleteVariables: {id: id},
     deleteUrl: {name: 'properties.values.list'},
