@@ -398,16 +398,16 @@ const fetchVariationProperties = async (variationId: string) => {
     edges.map(async ({ node }: any) => {
       let translation = null
       if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(node.property.type)) {
-        const { data: tData } = await apolloClient.query({
-          query: productPropertyTextTranslationsQuery,
-          variables: {
-            filter: {
-              productProperty: { id: { exact: node.id } },
-              language: { exact: language.value },
+          const { data: tData } = await apolloClient.query({
+            query: productPropertyTextTranslationsQuery,
+            variables: {
+              filter: {
+                productProperty: { id: { exact: node.id } },
+                language: { exact: language.value },
+              },
             },
-          },
-          fetchPolicy: 'cache-first',
-        })
+            fetchPolicy: 'network-only',
+          })
         const tNode = tData?.productPropertyTextTranslations?.edges?.[0]?.node
         translation = tNode ? { ...tNode } : { language: language.value }
       }
@@ -446,10 +446,10 @@ watch(language, async () => {
 })
 
 const fetchDefaultLanguage = async () => {
-  const { data } = await apolloClient.query({
-    query: translationLanguagesQuery,
-    fetchPolicy: 'cache-first',
-  })
+    const { data } = await apolloClient.query({
+      query: translationLanguagesQuery,
+      fetchPolicy: 'cache-first',
+    })
   language.value = data?.translationLanguages?.defaultLanguage?.code || null
 }
 
