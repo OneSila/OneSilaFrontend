@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import { Product } from "../../../../../../configs";
 import { useI18n } from "vue-i18n";
 import { ProductType, variationTypes } from "../../../../../../../../../shared/utils/constants";
-import { productsQuery } from "../../../../../../../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../../../../../../../shared/api/queries/products.js";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import { VariationForm } from "./VariationCreate.vue";
@@ -51,7 +51,7 @@ const fetchData = async () => {
   }
 
   const { data } = await apolloClient.query({
-    query: productsQuery,
+    query: productsQuerySelector,
     variables: { filter },
     fetchPolicy: 'cache-first',
   });

@@ -3,7 +3,7 @@ import {FieldType, INVENTORY_MOVEMENTS_MODEL_CODES, ProductType} from '../../../
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { inventoriesQuery, inventoryLocationsQuery } from "../../../shared/api/queries/inventory.js"
-import {productsQuery} from "../../../shared/api/queries/products.js"
+import {productsQuerySelector} from "../../../shared/api/queries/products.js"
 import {createInventoryLocationMutation, deleteInventoryMutation} from "../../../shared/api/mutations/inventory.js";
 import {ShowConfig, ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import {baseFormConfigConstructor as baseStocklocationConfigConstructor } from '../inventory-location/configs'
@@ -39,7 +39,7 @@ export const getProductField = (productId, t): FormField => {
         label:  t('shared.labels.product'),
         labelBy: 'name',
         valueBy: 'id',
-        query: productsQuery,
+        query: productsQuerySelector,
         queryVariables: {"filter": {"id": {"exact": productId}}},
         dataKey: 'products',
         isEdge: true,
@@ -55,7 +55,7 @@ export const getProductField = (productId, t): FormField => {
         label:  t('shared.labels.product'),
         labelBy: 'name',
         valueBy: 'id',
-        query: productsQuery,
+        query: productsQuerySelector,
         dataKey: 'products',
         isEdge: true,
         multiple: false,

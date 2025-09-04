@@ -2,7 +2,7 @@ import { FieldType } from "../../../../../../shared/utils/constants";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
 import { FormConfig, FormType } from "../../../../../../shared/components/organisms/general-form/formConfig";
-import { salesPriceListsQuery } from "../../../../../../shared/api/queries/salesPrices.js";
+import { salesPriceListsQuerySelector } from "../../../../../../shared/api/queries/salesPrices.js";
 import { salesChannelIntegrationPricelistsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
 import {
   createSalesChannelIntegrationPricelistMutation,
@@ -39,7 +39,7 @@ export const priceListCreateFormConfigConstructor = (
       labelBy: 'name',
       valueBy: 'id',
       formMapIdentifier: 'id',
-      query: salesPriceListsQuery,
+      query: salesPriceListsQuerySelector,
       dataKey: 'salesPriceLists',
       isEdge: true,
       multiple: false,

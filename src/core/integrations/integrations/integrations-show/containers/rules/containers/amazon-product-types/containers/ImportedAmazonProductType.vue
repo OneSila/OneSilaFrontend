@@ -7,7 +7,7 @@ import GeneralTemplate from "../../../../../../../../../shared/templates/General
 import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
 import {Button} from "../../../../../../../../../shared/components/atoms/button";
 import {FieldQuery} from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import {salesChannelViewsQuery} from "../../../../../../../../../shared/api/queries/salesChannels.js";
+import {salesChannelViewsQuerySelector} from "../../../../../../../../../shared/api/queries/salesChannels.js";
 import {suggestAmazonProductTypeMutation, updateAmazonProductTypeMutation} from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import {listingQuery} from '../configs';
 import {Link} from "../../../../../../../../../shared/components/atoms/link";
@@ -45,7 +45,7 @@ const marketplaceField: QueryFormField = {
   label: t('integrations.show.propertySelectValues.labels.marketplace'),
   labelBy: 'name',
   valueBy: 'id',
-  query: salesChannelViewsQuery,
+  query: salesChannelViewsQuerySelector,
   dataKey: 'salesChannelViews',
   isEdge: true,
   multiple: false,

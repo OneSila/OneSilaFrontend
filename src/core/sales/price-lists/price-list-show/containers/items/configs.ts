@@ -4,7 +4,7 @@ import { SearchConfig } from "../../../../../../shared/components/organisms/gene
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { deleteSalesPriceListItemMutation} from "../../../../../../shared/api/mutations/salesPrices.js";
 import { salesPriceListItemsQuery } from "../../../../../../shared/api/queries/salesPrices.js";
-import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../../../../shared/api/queries/products.js";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -28,7 +28,7 @@ export const baseFormConfigConstructor = (
       label: t('shared.labels.product'),
       labelBy: 'name',
       valueBy: 'id',
-      query: productsQuery,
+      query: productsQuerySelector,
       dataKey: 'products',
       queryVariables:
         productsId.length > 0

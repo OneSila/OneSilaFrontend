@@ -1,5 +1,5 @@
 import { FieldType } from "../../../../../../../../shared/utils/constants";
-import { amazonDefaultUnitConfiguratorsQuery, salesChannelViewsQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import { amazonDefaultUnitConfiguratorsQuery, salesChannelViewsQuerySelector } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 
@@ -14,7 +14,7 @@ export const amazonDefaultUnitConfiguratorsSearchConfigConstructor = (t: Functio
       label: t('integrations.show.propertySelectValues.labels.marketplace'),
       labelBy: 'name',
       valueBy: 'id',
-      query: salesChannelViewsQuery,
+      query: salesChannelViewsQuerySelector,
       dataKey: 'salesChannelViews',
       filterable: true,
       isEdge: true,

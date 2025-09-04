@@ -20,7 +20,7 @@ import { Selector } from "../../../../../../../../../shared/components/atoms/sel
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
 import apolloClient from '../../../../../../../../../../apollo-client'
-import { propertiesQuery, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
+import { propertiesQuerySelector, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
 import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
 import { Toast } from "../../../../../../../../../shared/modules/toast";
@@ -327,7 +327,7 @@ const queryKey = computed(() =>
 
 const fetchProperties = async () => {
   const { data: typeData } = await apolloClient.query({
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     variables: { filter: { isProductType: { exact: true } } },
     fetchPolicy: 'cache-first',
   })

@@ -482,6 +482,27 @@ export const salesChannelViewsQuery = gql`
   }
 `;
 
+export const salesChannelViewsQuerySelector = gql`
+  query SalesChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelViewOrder, $filter: SalesChannelViewFilter) {
+    salesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getSalesChannelViewQuery = gql`
   query getSalesChannelView($id: GlobalID!) {
     salesChannelView(id: $id) {

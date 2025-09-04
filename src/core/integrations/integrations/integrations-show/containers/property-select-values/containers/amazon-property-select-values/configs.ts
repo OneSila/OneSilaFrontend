@@ -4,7 +4,7 @@ import {
   getAmazonPropertySelectValueQuery,
   amazonPropertiesQuery,
   amazonChannelsQuery,
-  salesChannelViewsQuery
+  salesChannelViewsQuerySelector
 } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertySelectValuesQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import { selectValueOnTheFlyConfig } from "../../../../../../../properties/property-select-values/configs";
@@ -62,7 +62,7 @@ export const amazonPropertySelectValuesSearchConfigConstructor = (t: Function, s
       label: t('integrations.show.propertySelectValues.labels.marketplace'),
       labelBy: 'name',
       valueBy: 'id',
-      query: salesChannelViewsQuery,
+      query: salesChannelViewsQuerySelector,
       dataKey: 'salesChannelViews',
       filterable: true,
       isEdge: true,

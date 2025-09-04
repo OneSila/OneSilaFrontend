@@ -88,6 +88,27 @@ export const salesPriceListsQuery = gql`
         hasNextPage
         hasPreviousPage
       }
+  }
+  }
+`;
+
+export const salesPriceListsQuerySelector = gql`
+  query SalesPriceLists($first: Int, $last: Int, $after: String, $before: String, $order: SalesPriceListOrder, $filter: SalesPriceListFilter) {
+    salesPriceLists(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `;

@@ -8,7 +8,7 @@ import { deleteCompanyMutation } from "../../../shared/api/mutations/contacts.js
 import { getCompanySubscription } from "../../../shared/api/subscriptions/contacts.js";
 import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
 import {currencyOnTheFlyConfig} from "../currencies/configs";
-import {currenciesQuery} from "../../../shared/api/queries/currencies.js";
+import {currenciesQuerySelector} from "../../../shared/api/queries/currencies.js";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -64,7 +64,7 @@ export const baseFormConfigConstructor = (
       label: t('shared.labels.currency'),
       labelBy: 'isoCode',
       valueBy: 'id',
-      query: currenciesQuery,
+      query: currenciesQuerySelector,
       dataKey: 'currencies',
       isEdge: true,
       multiple: false,
