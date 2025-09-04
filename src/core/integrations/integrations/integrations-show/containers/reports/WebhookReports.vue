@@ -75,17 +75,17 @@ const fetchStats = async () => {
       }
     });
     const variables = { filter };
-    const { data } = await apolloClient.query({
+    const { data } = await apolloClient.watchQuery({
       query: webhookReportsKpiQuery,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
       variables,
-    });
+    }).result();
     stats.value = data?.webhookReportsKpi || null;
-    const { data: seriesResp } = await apolloClient.query({
+    const { data: seriesResp } = await apolloClient.watchQuery({
       query: webhookReportsSeriesQuery,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
       variables,
-    });
+    }).result();
     seriesData.value = seriesResp?.webhookReportsSeries || null;
   } catch {
     stats.value = null;

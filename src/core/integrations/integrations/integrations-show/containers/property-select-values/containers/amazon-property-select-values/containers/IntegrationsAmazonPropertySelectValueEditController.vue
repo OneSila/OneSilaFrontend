@@ -254,7 +254,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       },
       order: { marketplace: { isDefault: 'DESC' } },
     },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'network-only',
   });
 
 
