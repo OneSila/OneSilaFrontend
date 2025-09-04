@@ -1,16 +1,19 @@
 <script setup lang="ts">
-const props = defineProps<{
-  path?: string | object;
-  inlineBlock?: boolean;
-  block?: boolean;
-  disabled?: boolean;
-  external?: boolean;
-  gutter?: string;
-  verticalGutter?: string;
-  horizontalGutter?: string;
-  target?: string;
-  selectable?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    path?: string | object;
+    inlineBlock?: boolean;
+    block?: boolean;
+    disabled?: boolean;
+    external?: boolean;
+    gutter?: string;
+    verticalGutter?: string;
+    horizontalGutter?: string;
+    target?: string;
+    selectable?: boolean;
+  }>(),
+  { external: false },
+);
 
 const onClicked = (event, navigationCallback) => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || props.target === '_blank') {
