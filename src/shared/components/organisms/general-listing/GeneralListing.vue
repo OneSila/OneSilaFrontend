@@ -17,6 +17,7 @@ import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../modules/toast";
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
+import { DocumentNode } from 'graphql';
 
 const { t } = useI18n();
 
@@ -140,7 +141,34 @@ const updateLimitPerPage = (value: number) => {
   router.push({ query: newQuery });
 };
 
+const labelRefresh = ref(0);
+
+async function fetchFilterLabel(filter: any, id: string, stored: Record<string, { label: string; timestamp: number }>) {
+  try {
+    const { data } = await apolloClient.query({
+      query: filter.query as unknown as DocumentNode,
+      variables: {
+        ...(filter.queryVariables || {}),
+        filter: {
+          [filter.valueBy]: { inList: [id] }
+        }
+      },
+      fetchPolicy: 'cache-first'
+    });
+    const result = filter.isEdge ? data[filter.dataKey]?.edges?.[0]?.node : data[filter.dataKey]?.[0];
+    const label = result?.[filter.labelBy];
+    if (label) {
+      stored[id] = { label, timestamp: Date.now() };
+      localStorage.setItem('filterLabelMap', JSON.stringify(stored));
+      labelRefresh.value++;
+    }
+  } catch (e) {
+    // ignore errors
+  }
+}
+
 const filterChips = computed(() => {
+  labelRefresh.value;
   const q = route.query as Record<string, any>;
   const chips: { key: string; label: string; value: string; rawValue: string }[] = [];
   let stored: Record<string, { label: string; timestamp: number }> = {};
@@ -149,7 +177,7 @@ const filterChips = computed(() => {
     try {
       stored = JSON.parse(raw);
       const now = Date.now();
-      const maxAge = 24 * 60 * 60 * 1000;
+      const maxAge = 7 * 24 * 60 * 60 * 1000;
       let changed = false;
       Object.keys(stored).forEach((k) => {
         if (!stored[k].timestamp || now - stored[k].timestamp > maxAge) {
@@ -178,14 +206,22 @@ const filterChips = computed(() => {
         : null;
     if (Array.isArray(param)) {
       param.forEach((v: any) => {
-        const display =
-          map?.[String(v)] || stored[String(v)]?.label || String(v);
-        chips.push({ key: filter.name, label, value: display, rawValue: String(v) });
+        const key = String(v);
+        let display = map?.[key] || stored[key]?.label;
+        if (!display && 'query' in filter && filter.query) {
+          fetchFilterLabel(filter, key, stored);
+          display = key;
+        }
+        chips.push({ key: filter.name, label, value: display || key, rawValue: key });
       });
     } else {
-      const display =
-        map?.[String(param)] || stored[String(param)]?.label || String(param);
-      chips.push({ key: filter.name, label, value: display, rawValue: String(param) });
+      const key = String(param);
+      let display = map?.[key] || stored[key]?.label;
+      if (!display && 'query' in filter && filter.query) {
+        fetchFilterLabel(filter, key, stored);
+        display = key;
+      }
+      chips.push({ key: filter.name, label, value: display || key, rawValue: key });
     }
   });
   return chips;
