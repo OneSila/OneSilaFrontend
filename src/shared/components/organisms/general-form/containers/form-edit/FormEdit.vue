@@ -7,6 +7,7 @@ import { FormConfig, HiddenFormField} from '../../formConfig';
 import { FieldType } from "../../../../../utils/constants";
 import {SubmitButtons} from "../submit-buttons";
 import { Toast } from "../../../../../modules/toast";
+import FormSkeleton from "../form-skeleton/FormSkeleton.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -104,11 +105,9 @@ watch(() => props.fieldsToClear, (fields) => {
       </template>
       <ApolloQuery v-else :query="config.query" :variables="config.queryVariables" class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
         <template v-slot="{ result: { loading, error, data } }">
-          <template v-if="data && !loading && initialFormUpdate(data)">
+          <FormSkeleton v-if="loading" />
+          <template v-else-if="data && initialFormUpdate(data)">
             <FormLayout :config="config" :form="form" :errors="errors"/>
-          </template>
-          <template>
-            <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
           </template>
         </template>
       </ApolloQuery>

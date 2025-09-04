@@ -9,6 +9,7 @@ import {Icon} from "../../atoms/icon";
 import {Label} from "../../atoms/label";
 import {FieldArray} from "./containers/field-array";
 import {FieldType} from "../../../utils/constants";
+import ShowSkeleton from "./ShowSkeleton.vue";
 
 const router = useRouter();
 const props = defineProps<{ config: ShowConfig;}>();
@@ -34,7 +35,8 @@ const updateData = (newData) => {
 <template>
   <ApolloSubscription :subscription="config.subscription" :variables="config.subscriptionVariables">
     <template v-slot:default="{ loading, error, result }">
-      <template v-if="!loading && result && updateData(result)">
+      <ShowSkeleton v-if="loading" />
+      <template v-else-if="result && updateData(result)">
         <div :class="computedStyle">
           <div class="overflow-hidden" :class="gridClass">
             <div v-if="config.title || config.description" class="px-4 py-6 sm:px-6">

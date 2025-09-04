@@ -17,6 +17,7 @@ import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../modules/toast";
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
+import GeneralListingSkeleton from "./GeneralListingSkeleton.vue";
 
 const { t } = useI18n();
 
@@ -301,7 +302,8 @@ defineExpose({
                               after: pagination.after }">
         <template v-slot="{ result: { loading, error, data }, query }">
 
-          <div v-if="data" class="mt-5 p-0 border-0 "
+          <GeneralListingSkeleton v-if="loading" />
+          <div v-else-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
             <div class="flex flex-wrap gap-2 mb-4 p-4">
               <div
