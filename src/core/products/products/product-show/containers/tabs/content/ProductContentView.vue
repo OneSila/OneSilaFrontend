@@ -87,7 +87,7 @@ const setFormAndMutation = async (language, channel) => {
       const { data } = await apolloClient.query({
         query: getProductContentByLanguageAndDefaultQuery,
         variables: { languageCode: language, productId: props.product.id },
-        fetchPolicy: 'cache-first'
+        fetchPolicy: 'network-only'
       });
 
       if (data && data.productTranslations.edges.length === 1) {
@@ -120,7 +120,7 @@ const setFormAndMutation = async (language, channel) => {
           productId: props.product.id,
           salesChannelId: channel
         },
-        fetchPolicy: 'cache-first'
+        fetchPolicy: 'network-only'
       });
 
       if (data && data.productTranslations.edges.length === 1) {
@@ -147,7 +147,7 @@ const setFormAndMutation = async (language, channel) => {
       const { data: def } = await apolloClient.query({
         query: getProductContentByLanguageAndDefaultQuery,
         variables: { languageCode: language, productId: props.product.id },
-        fetchPolicy: 'cache-first'
+        fetchPolicy: 'network-only'
       });
       defaultPreviewContent.value = def?.productTranslations.edges[0]?.node || null;
     }

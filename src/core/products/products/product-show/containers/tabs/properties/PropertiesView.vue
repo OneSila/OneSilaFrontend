@@ -161,10 +161,10 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
 
 const setCurrentLanguage = async () => {
 
-  const {data} = await apolloClient.query({
-    query: translationLanguagesQuery,
-    fetchPolicy: 'cache-first'
-  });
+    const {data} = await apolloClient.query({
+      query: translationLanguagesQuery,
+      fetchPolicy: 'cache-first'
+    });
 
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
     const defaultLanguage = data.translationLanguages.defaultLanguage;
@@ -338,21 +338,21 @@ const fetchFieldTranslation = async (value: ProductPropertyValue) => {
     return
   }
 
-  const {data} = await apolloClient.query({
-    query: productPropertyTextTranslationsQuery,
-    variables: {
-      filter:
-          {
-            productProperty:
-                {
-                  property: {id: {exact: value.property.id}},
-                  product: {id: {exact: props.product.id}}
-                },
-            language: {exact: language.value}
-          }
-    },
-    fetchPolicy: 'cache-first'
-  });
+    const {data} = await apolloClient.query({
+      query: productPropertyTextTranslationsQuery,
+      variables: {
+        filter:
+            {
+              productProperty:
+                  {
+                    property: {id: {exact: value.property.id}},
+                    product: {id: {exact: props.product.id}}
+                  },
+              language: {exact: language.value}
+            }
+      },
+      fetchPolicy: 'network-only'
+    });
 
   if (data && data.productPropertyTextTranslations && data.productPropertyTextTranslations.edges && data.productPropertyTextTranslations.edges.length == 1) {
     value.translation.id = data.productPropertyTextTranslations.edges[0].node.id;

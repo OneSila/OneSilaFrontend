@@ -109,7 +109,7 @@ const setValues = async () => {
   const {data: translationData} = await apolloClient.query({
     query: props.query,
     variables: props.variables,
-    fetchPolicy: 'cache-first'
+    fetchPolicy: 'network-only'
   });
 
   if (translationData && translationData[props.queryKey]) {
