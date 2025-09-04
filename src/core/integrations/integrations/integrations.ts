@@ -109,12 +109,10 @@ export interface WebhookChannelInfo extends SpecificChannelInfo {
   version: string;
   url: string;
   secret: string;
-  userAgent: string;
   timeoutMs: number;
   mode: string;
   extraHeaders: Record<string, any>;
   config: Record<string, any>;
-  retentionPolicy: string;
 }
 
 
@@ -165,12 +163,10 @@ export function getWebhookDefaultFields(): WebhookChannelInfo {
     version: '2025-08-01',
     url: '',
     secret: '',
-    userAgent: 'OneSila-Webhook/1.0',
     timeoutMs: 10000,
     mode: '',
     extraHeaders: {},
     config: {},
-    retentionPolicy: ''
   };
 }
 

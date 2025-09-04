@@ -34,11 +34,6 @@ const modeChoices = [
   { id: 'delta', text: t('integrations.webhook.choices.mode.delta') },
 ];
 
-const retentionChoices = [
-  { id: '3m', text: t('integrations.webhook.choices.retentionPolicy.3m') },
-  { id: '6m', text: t('integrations.webhook.choices.retentionPolicy.6m') },
-  { id: '12m', text: t('integrations.webhook.choices.retentionPolicy.12m') },
-];
 </script>
 
 <template>
@@ -123,27 +118,6 @@ const retentionChoices = [
             <Flex vertical class="gap-2">
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.userAgent') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <TextInput
-                  class="w-96"
-                  v-model="channelInfo.userAgent"
-                  :placeholder="t('integrations.placeholders.userAgent')"
-                />
-              </FlexCell>
-            </Flex>
-            <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
-              <p>{{ t('integrations.webhook.helpText.userAgent') }}</p>
-            </div>
-          </FlexCell>
-        </Flex>
-        <Flex class="mt-4 gap-4" center>
-          <FlexCell center>
-            <Flex vertical class="gap-2">
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
                   {{ t('integrations.labels.timeoutMs') }}
                 </Label>
               </FlexCell>
@@ -152,6 +126,7 @@ const retentionChoices = [
                   class="w-96"
                   v-model="channelInfo.timeoutMs"
                   :number="true"
+                  :max-number="10000"
                   :placeholder="t('integrations.placeholders.timeoutMs')"
                 />
               </FlexCell>
@@ -183,31 +158,6 @@ const retentionChoices = [
             </Flex>
             <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
               <p>{{ t('integrations.webhook.helpText.mode') }}</p>
-            </div>
-          </FlexCell>
-        </Flex>
-        <Flex class="mt-4 gap-4" center>
-          <FlexCell center>
-            <Flex vertical class="gap-2">
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.retentionPolicy') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <Selector
-                  class="w-96"
-                  v-model="channelInfo.retentionPolicy"
-                  :options="retentionChoices"
-                  value-by="id"
-                  label-by="text"
-                  :placeholder="t('integrations.placeholders.retentionPolicy')"
-                  :removable="false"
-                />
-              </FlexCell>
-            </Flex>
-            <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
-              <p>{{ t('integrations.webhook.helpText.retentionPolicy') }}</p>
             </div>
           </FlexCell>
         </Flex>

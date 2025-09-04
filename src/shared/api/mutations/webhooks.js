@@ -10,12 +10,10 @@ export const createWebhookIntegrationMutation = gql`
       version
       url
       secret
-      userAgent
       timeoutMs
       mode
       extraHeaders
       config
-      retentionPolicy
       requestsPerMinute
       maxRetries
     }
@@ -32,12 +30,10 @@ export const createWebhookIntegrationsMutation = gql`
       version
       url
       secret
-      userAgent
       timeoutMs
       mode
       extraHeaders
       config
-      retentionPolicy
       requestsPerMinute
       maxRetries
     }
@@ -54,12 +50,10 @@ export const updateWebhookIntegrationMutation = gql`
       version
       url
       secret
-      userAgent
       timeoutMs
       mode
       extraHeaders
       config
-      retentionPolicy
       requestsPerMinute
       maxRetries
     }
@@ -77,12 +71,10 @@ export const regenerateWebhookIntegrationSecretMutation = gql`
         version
         url
         secret
-        userAgent
         timeoutMs
         mode
         extraHeaders
         config
-        retentionPolicy
         requestsPerMinute
         maxRetries
       }
