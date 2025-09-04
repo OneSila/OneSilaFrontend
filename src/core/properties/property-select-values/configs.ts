@@ -126,6 +126,7 @@ export const selectValueOnTheFlyConfig = (t: Function, propertyId, defaultValue:
             },
         ],
     },
+    isSelectValue: true,
       ...(defaultValue ? { defaults: { value: defaultValue } } : {}),
 })
 
