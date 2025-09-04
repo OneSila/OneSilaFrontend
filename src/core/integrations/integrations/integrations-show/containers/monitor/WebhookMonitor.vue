@@ -207,7 +207,7 @@ const generateHeaders = async () => {
   const rawBody = JSON.stringify(selectedEvent.value.outbox.payload);
   const timestamp = Math.floor(Date.now() / 1000);
   const base = await buildHeaders(
-    integration.value.userAgent || '',
+    t('integrations.placeholders.userAgent'),
     selectedEvent.value.outbox.topic,
     selectedEvent.value.outbox.action,
     integration.value.version || '',

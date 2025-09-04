@@ -12,12 +12,10 @@ export const webhookIntegrationsQuery = gql`
           version
           url
           secret
-          userAgent
           timeoutMs
           mode
           extraHeaders
           config
-          retentionPolicy
           requestsPerMinute
           maxRetries
         }
@@ -44,12 +42,10 @@ export const getWebhookIntegrationQuery = gql`
       version
       url
       secret
-      userAgent
       timeoutMs
       mode
       extraHeaders
       config
-      retentionPolicy
       requestsPerMinute
       maxRetries
     }

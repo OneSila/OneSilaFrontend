@@ -27,10 +27,8 @@ interface EditWebhookForm {
   version: string;
   url: string;
   secret: string;
-  userAgent: string;
   timeoutMs: number;
   mode: string;
-  retentionPolicy: string;
 }
 
 const props = defineProps<{ data: EditWebhookForm }>();
@@ -84,11 +82,6 @@ const modeChoices = [
   { id: 'delta', text: t('integrations.webhook.choices.mode.delta') },
 ];
 
-const retentionChoices = [
-  { id: '3m', text: t('integrations.webhook.choices.retentionPolicy.3m') },
-  { id: '6m', text: t('integrations.webhook.choices.retentionPolicy.6m') },
-  { id: '12m', text: t('integrations.webhook.choices.retentionPolicy.12m') },
-];
 
 watch(
   () => props.data,
@@ -212,15 +205,6 @@ const regenerateSecret = async () => {
           <p>{{ t('integrations.webhook.helpText.version') }}</p>
         </div>
       </div>
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.userAgent') }}
-        </Label>
-        <TextInput v-model="formData.userAgent" :placeholder="t('integrations.placeholders.userAgent')" class="w-full" />
-        <div class="mt-1 text-sm leading-6 text-gray-400">
-          <p>{{ t('integrations.webhook.helpText.userAgent') }}</p>
-        </div>
-      </div>
     </div>
 
     <div class="grid grid-cols-12 gap-4">
@@ -228,7 +212,7 @@ const regenerateSecret = async () => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.timeoutMs') }}
         </Label>
-        <TextInput v-model="formData.timeoutMs" :number="true" :placeholder="t('integrations.placeholders.timeoutMs')" class="w-full" />
+        <TextInput v-model="formData.timeoutMs" :number="true" :max-number="10000" :placeholder="t('integrations.placeholders.timeoutMs')" class="w-full" />
         <div class="mt-1 text-sm leading-6 text-gray-400">
           <p>{{ t('integrations.webhook.helpText.timeoutMs') }}</p>
         </div>
@@ -255,25 +239,6 @@ const regenerateSecret = async () => {
     </div>
 
     <div class="grid grid-cols-12 gap-4">
-      <div class="md:col-span-6 col-span-12">
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-          {{ t('integrations.labels.retentionPolicy') }}
-        </Label>
-        <div>
-          <Selector
-            v-model="formData.retentionPolicy"
-            :options="retentionChoices"
-            value-by="id"
-            label-by="text"
-            :placeholder="t('integrations.placeholders.retentionPolicy')"
-            :removable="false"
-            class="w-full"
-          />
-        </div>
-        <div class="mt-1 text-sm leading-6 text-gray-400">
-          <p>{{ t('integrations.webhook.helpText.retentionPolicy') }}</p>
-        </div>
-      </div>
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.secret') }}
