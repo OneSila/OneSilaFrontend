@@ -10,7 +10,7 @@ import apolloClient from "../../../../../../../../../apollo-client";
 import {DocumentNode} from "graphql";
 
 const STORAGE_KEY = 'filterLabelMap';
-const MAX_AGE = 24 * 60 * 60 * 1000;
+const MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 const pruneOldEntries = (map: Record<string, { label: string; timestamp: number }>) => {
   const now = Date.now();
