@@ -99,18 +99,20 @@ async function ensureSelectedValuesArePresent() {
 async function fetchData(searchValue: string | null | undefined = null, ensureSelected: boolean = false) {
   try {
     loading.value = true;
-    // Start with existing query variables or initialize if not set
-    const variables = { ...props.field.queryVariables };
+    // Start with existing query variables without mutating props
+    const variables: any = {
+      ...props.field.queryVariables,
+      filter: {
+        ...(props.field.queryVariables?.filter ?? {}),
+      },
+    };
 
-    // Initialize filter object if it doesn't exist
+    // Handle live updates and search values
     if (isLiveUpdate.value) {
-      if (!variables.filter) {
-        variables.filter = {};
-      }
-
-      // Add or update the search value in the filter object
-      if (searchValue !== null && searchValue !== undefined) {
+      if (searchValue) {
         variables.filter.search = searchValue;
+      } else {
+        delete variables.filter.search;
       }
     }
 
