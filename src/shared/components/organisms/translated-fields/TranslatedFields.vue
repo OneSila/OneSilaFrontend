@@ -191,6 +191,10 @@ const saveMutations = async (continueEditing = false) => {
 
 onMounted(setValues);
 
+const updateValue = (index: number, newValue: string) => {
+  translatableFields.value[index].value = newValue;
+};
+
 const handleSave = () => saveMutations(false);
 const handleSaveAndContinue = () => saveMutations(true);
 
@@ -238,7 +242,8 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
               <div class="mt-2">
                 <TextInput
                     class="w-full"
-                    v-model="field.value"
+                    :model-value="field.value"
+                    @update:model-value="updateValue(index, $event)"
                     :prepend="field.flag"
                     :placeholder="field.placeholder"
                 />
