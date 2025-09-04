@@ -67,7 +67,9 @@ const cleanedData = (rawData) => {
 const loadSalesChannels = async () => {
   try {
     const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
-    salesChannels.value = data?.integrations.edges.map((e: any) => e.node) || [];
+    salesChannels.value = data?.integrations.edges
+      .map((e: any) => e.node)
+      .filter((c: any) => c.type !== IntegrationTypes.Webhook) || [];
   } catch (e) {
     console.error('Failed to load sales channels', e);
   }
