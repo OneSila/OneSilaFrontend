@@ -115,14 +115,13 @@ const setValues = async () => {
   if (translationData && translationData[props.queryKey]) {
     translationData[props.queryKey].edges.forEach(edge => {
       const translation = edge.node;
-      const field = translatableFields.value.find(f => f.language === translation.language);
-      if (field) {
+      translatableFields.value.filter(f => f.language === translation.language).forEach(field => {
         const value = translation[field.fieldName];
         field.value = value;
         field.initialValue = value;
         field.isCreate = false;
         field.id = translation.id;
-      }
+      });
     });
   }
 }
@@ -192,10 +191,6 @@ const saveMutations = async (continueEditing = false) => {
 
 onMounted(setValues);
 
-const updateValue = (index: number, newValue: string) => {
-  translatableFields.value[index].value = newValue;
-};
-
 const handleSave = () => saveMutations(false);
 const handleSaveAndContinue = () => saveMutations(true);
 
@@ -213,7 +208,7 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
         <div class="px-4 py-6 sm:p-8">
           <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-            <div class="col-span-full" v-for="(field, index) in translatableFields" :key="field.language">
+            <div class="col-span-full" v-for="(field, index) in translatableFields" :key="field.language + '-' + field.fieldName">
               <Flex>
                 <FlexCell center>
                   <Flex gap="4">
@@ -243,8 +238,7 @@ useShiftBackspaceKeyboardListener(() => router.push(props.backUrl));
               <div class="mt-2">
                 <TextInput
                     class="w-full"
-                    @update:model-value="updateValue(index, $event)"
-                    :model-value="field.value"
+                    v-model="field.value"
                     :prepend="field.flag"
                     :placeholder="field.placeholder"
                 />
