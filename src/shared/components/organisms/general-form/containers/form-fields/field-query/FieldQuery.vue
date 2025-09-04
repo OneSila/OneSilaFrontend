@@ -15,6 +15,10 @@ const props = defineProps<{
   modelValue: any;
 }>();
 
+const limit = computed(() => props.field.limit ?? 20);
+
+const MIN_SEARCH_LENGTH = 3;
+
 onMounted(() => {
   fetchData(null, true);
 });
@@ -33,7 +37,6 @@ const mandatory = props.field.mandatory !== undefined ? props.field.mandatory : 
 const multiple = props.field.multiple || false;
 const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
-const limit = props.field.limit || undefined;
 
 watch(() => props.modelValue, (value) => {
   if (value !== selectedValue.value) {
@@ -227,12 +230,15 @@ if (props.field.multiple) {
 };
 
 const handleInput = debounce(async (searchValue: string) => {
-
-  if (isLiveUpdate.value
-  ) {
-    fetchData(searchValue);
+  if (!isLiveUpdate.value) {
+    return;
   }
 
+  if (searchValue.length >= MIN_SEARCH_LENGTH) {
+    fetchData(searchValue);
+  } else if (!searchValue.length) {
+    fetchData();
+  }
 }, 500);
 
 const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
