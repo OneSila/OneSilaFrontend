@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { FieldValue } from "../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
@@ -238,6 +238,7 @@ const createAnywayHandler = async () => {
   duplicateCheckController?.abort();
   checkingDuplicates.value = false;
   showDuplicateModal.value = false;
+  await nextTick();
   await createSelectValue();
 };
 
