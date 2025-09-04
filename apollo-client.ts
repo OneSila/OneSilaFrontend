@@ -63,18 +63,25 @@ const splitLink = split(
 
 const combinedLink = ApolloLink.from([errorLink, splitLink]);
 
-const mergeById = (existing: any[] = [], incoming: any[], { readField }: any) => {
-  const merged = [...existing];
-  incoming.forEach((item) => {
-    const id = readField('id', item);
-    const index = merged.findIndex((i) => readField('id', i) === id);
+const mergeEdgesById = (
+  existing: { edges: any[] } = { edges: [] },
+  incoming: { edges: any[] },
+  { readField }: any,
+) => {
+  const merged = existing.edges ? [...existing.edges] : [];
+  incoming.edges.forEach((edge) => {
+    const id = readField('id', edge.node);
+    const index = merged.findIndex((e) => readField('id', e.node) === id);
     if (index > -1) {
-      merged[index] = item;
+      merged[index] = edge;
     } else {
-      merged.push(item);
+      merged.push(edge);
     }
   });
-  return merged;
+  return {
+    ...incoming,
+    edges: merged,
+  };
 };
 
 const cache = new InMemoryCache({
@@ -83,19 +90,19 @@ const cache = new InMemoryCache({
       fields: {
         propertySelectValues: {
           keyArgs: false,
-          merge: mergeById,
+          merge: mergeEdgesById,
         },
         properties: {
           keyArgs: false,
-          merge: mergeById,
+          merge: mergeEdgesById,
         },
         products: {
           keyArgs: false,
-          merge: mergeById,
+          merge: mergeEdgesById,
         },
         medias: {
           keyArgs: false,
-          merge: mergeById,
+          merge: mergeEdgesById,
         },
       },
     },
