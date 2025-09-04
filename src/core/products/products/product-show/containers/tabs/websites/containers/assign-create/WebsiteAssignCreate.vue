@@ -64,6 +64,7 @@ const handleCreateAssign = async () => {
     resetForm();
     Toast.success(t('shared.alert.toast.submitSuccessCreate'));
   } catch (error) {
+    console.error(error);
     Toast.error(t('shared.alert.toast.generalError'));
   }
 };
