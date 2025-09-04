@@ -86,7 +86,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
         mappedLocally: false,
       },
     },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'network-only',
   });
   const edges = data?.amazonProductTypes?.edges || [];
   let nextId: string | null = null;

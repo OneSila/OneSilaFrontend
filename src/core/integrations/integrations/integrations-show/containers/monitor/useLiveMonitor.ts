@@ -62,14 +62,14 @@ export function useLiveMonitor(options: Options = {}) {
           lte: timeRange.value.to,
         };
       }
-      const { data } = await apolloClient.query({
+      const { data } = await apolloClient.watchQuery({
         query: webhookDeliveriesQuery,
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'cache-and-network',
         variables: {
           filter,
           ...pagination,
         },
-      });
+      }).result();
       const edges = data?.webhookDeliveries?.edges || [];
       pageInfo.value = data?.webhookDeliveries?.pageInfo || null;
       const nodes = edges.map((e: any) => e.node);
@@ -104,11 +104,11 @@ export function useLiveMonitor(options: Options = {}) {
           lte: timeRange.value.to,
         };
       }
-      const { data } = await apolloClient.query({
+      const { data } = await apolloClient.watchQuery({
         query: webhookDeliveryStatsQuery,
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'cache-and-network',
         variables: { filter },
-      });
+      }).result();
       stats.value = data?.webhookDeliveryStats || null;
     } catch (e) {
       stats.value = null;
