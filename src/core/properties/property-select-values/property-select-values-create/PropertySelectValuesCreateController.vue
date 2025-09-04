@@ -31,6 +31,7 @@ const showDuplicateModal = ref(false);
 const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
 const checkingDuplicates = ref(false);
 const skippedCheck = ref(false);
+let duplicateCheckController: AbortController | null = null;
 const duplicateSteps = computed(() => [
   t('properties.duplicateModal.steps.step1'),
   t('properties.duplicateModal.steps.step2'),
@@ -196,9 +197,11 @@ const checkDuplicatesAndCreate = async (editAfter = false) => {
     showDuplicateModal.value = true;
     checkingDuplicates.value = true;
     skippedCheck.value = false;
+    duplicateCheckController = new AbortController();
     const { data } = await apolloClient.mutate({
       mutation: checkPropertySelectValueForDuplicatesMutation,
-      variables: { property: {id: propertyId}, value: cleanedData.value },
+      variables: { property: { id: propertyId }, value: cleanedData.value },
+      context: { fetchOptions: { signal: duplicateCheckController.signal } },
     });
     if (skippedCheck.value) return;
     checkingDuplicates.value = false;
@@ -212,6 +215,7 @@ const checkDuplicatesAndCreate = async (editAfter = false) => {
     showDuplicateModal.value = false;
     await createSelectValue();
   } catch (err) {
+    if ((err as any)?.name === 'AbortError') return;
     onError(err);
   }
 };
@@ -229,6 +233,9 @@ const save = () => checkDuplicatesAndCreate(false);
 
 const createAnywayHandler = async () => {
   skippedCheck.value = true;
+  duplicateCheckController?.abort();
+  checkingDuplicates.value = false;
+  showDuplicateModal.value = false;
   await createSelectValue();
 };
 
