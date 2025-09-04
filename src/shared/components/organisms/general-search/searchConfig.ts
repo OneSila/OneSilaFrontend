@@ -68,6 +68,7 @@ export interface QueryFilter extends BaseFilter {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+  minSearchLength?: number;
 }
 
 

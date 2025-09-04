@@ -39,6 +39,8 @@ const storeLabel = ({ id, label }: { id: any; label: string }) => {
 
 const props = defineProps<{ filter: QueryFilter }>();
 const limit = computed(() => props.filter.limit ?? 20);
+const DEFAULT_MIN_SEARCH_LENGTH = 3;
+const minSearchLength = computed(() => props.filter.minSearchLength ?? DEFAULT_MIN_SEARCH_LENGTH);
 const emit = defineEmits(['update-value']);
 const route = useRoute();
 const cleanedData: Ref<any[]> = ref([]);
@@ -107,10 +109,8 @@ watch([selectedValue, cleanedData], () => {
 
 watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
 
-const MIN_SEARCH_LENGTH = 3;
-
 const handleInput = debounce(async (searchValue: string) => {
-  if (searchValue.length >= MIN_SEARCH_LENGTH) {
+  if (searchValue.length >= minSearchLength.value) {
     fetchData(searchValue);
   } else if (!searchValue.length) {
     fetchData();

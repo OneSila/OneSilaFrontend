@@ -16,8 +16,8 @@ const props = defineProps<{
 }>();
 
 const limit = computed(() => props.field.limit ?? 20);
-
-const MIN_SEARCH_LENGTH = 3;
+const DEFAULT_MIN_SEARCH_LENGTH = 3;
+const minSearchLength = computed(() => props.field.minSearchLength ?? DEFAULT_MIN_SEARCH_LENGTH);
 
 onMounted(() => {
   fetchData(null, true);
@@ -234,7 +234,7 @@ const handleInput = debounce(async (searchValue: string) => {
     return;
   }
 
-  if (searchValue.length >= MIN_SEARCH_LENGTH) {
+  if (searchValue.length >= minSearchLength.value) {
     fetchData(searchValue);
   } else if (!searchValue.length) {
     fetchData();
