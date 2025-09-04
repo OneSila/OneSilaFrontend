@@ -205,9 +205,6 @@ const regenerateSecret = async () => {
           <p>{{ t('integrations.webhook.helpText.version') }}</p>
         </div>
       </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.timeoutMs') }}
@@ -217,6 +214,9 @@ const regenerateSecret = async () => {
           <p>{{ t('integrations.webhook.helpText.timeoutMs') }}</p>
         </div>
       </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.mode') }}
@@ -236,9 +236,6 @@ const regenerateSecret = async () => {
           <p>{{ t('integrations.webhook.helpText.mode') }}</p>
         </div>
       </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-4">
       <div class="md:col-span-6 col-span-12">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
           {{ t('integrations.labels.secret') }}
