@@ -25,7 +25,7 @@ const fetchFirstUnmapped = async () => {
         mappedLocally: false,
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const edges = data?.amazonProperties?.edges || [];
   canStartMapping.value = edges.length > 0;

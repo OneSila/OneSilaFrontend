@@ -119,7 +119,7 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {exact: productTypePropertyId}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
@@ -163,7 +163,7 @@ const setCurrentLanguage = async () => {
 
   const {data} = await apolloClient.query({
     query: translationLanguagesQuery,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
@@ -178,7 +178,7 @@ const fetchPropertiesIds = async (productTypeValueId) => {
   const {data} = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   })
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
@@ -225,7 +225,7 @@ const setInitialValues = async (propertiesIds) => {
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productProperties && data.productProperties.edges) {
@@ -258,7 +258,7 @@ const fetchRequiredProductType = async () => {
   const {data} = await apolloClient.query({
     query: propertiesQuery,
     variables: {filter: {isProductType: {exact: true}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   })
 
   if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
@@ -351,7 +351,7 @@ const fetchFieldTranslation = async (value: ProductPropertyValue) => {
             language: {exact: language.value}
           }
     },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productPropertyTextTranslations && data.productPropertyTextTranslations.edges && data.productPropertyTextTranslations.edges.length == 1) {
@@ -482,7 +482,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
       <FlexCell v-if="language">
-        <ApolloQuery :query="translationLanguagesQuery">
+        <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
                       v-model="language"

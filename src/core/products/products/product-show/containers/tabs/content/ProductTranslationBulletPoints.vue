@@ -60,7 +60,7 @@ const fetchPoints = async () => {
     const {data} = await apolloClient.query({
       query: productTranslationBulletPointsQuery,
       variables: {filter: {productTranslation: {id: {exact: props.translationId}}}},
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
     });
     bulletPoints.value =
         data?.productTranslationBulletPoints.edges.map((e: any) => ({...e.node})) || [];

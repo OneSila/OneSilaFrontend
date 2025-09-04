@@ -109,7 +109,7 @@ watch(
       const { data } = await apolloClient.query({
         query: getProductQuery,
         variables: { id: newVal },
-        fetchPolicy: 'network-only'
+        fetchPolicy: 'cache-first'
       });
 
       const product = data?.product;

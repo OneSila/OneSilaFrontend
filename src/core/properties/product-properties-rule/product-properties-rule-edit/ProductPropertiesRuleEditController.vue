@@ -79,7 +79,7 @@ const fetchData = async () => {
   const {data} = await apolloClient.query({
     query: getProductPropertiesRuleQuery,
     variables: {id: id.value.toString() },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   })
 
   if (data && data.productPropertiesRule) {

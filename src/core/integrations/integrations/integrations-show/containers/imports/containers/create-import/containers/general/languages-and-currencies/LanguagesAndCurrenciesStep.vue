@@ -65,12 +65,12 @@ const fetchData = async () => {
       apolloClient.query({
         query: remoteLanguagesQuery,
         variables: { filter: { salesChannel: { id: { exact: props.salesChannelId } } } },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       }),
       apolloClient.query({
         query: remoteCurrenciesQuery,
         variables: { filter: { salesChannel: { id: { exact: props.salesChannelId } } } },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       }),
     ]);
 

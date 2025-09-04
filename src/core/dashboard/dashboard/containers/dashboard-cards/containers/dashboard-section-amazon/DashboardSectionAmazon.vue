@@ -38,63 +38,66 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
+  const makeQuery = (options: any) =>
+    new Promise<any>((resolve) => {
+      const queryRef = apolloClient.watchQuery({ ...options, fetchPolicy: 'cache-and-network' });
+      queryRef.subscribe({
+        next: ({ data }) => resolve(data),
+        error: () => resolve(null),
+      });
+    });
+
   const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
-    apolloClient.query({
+    makeQuery({
       query: amazonPropertiesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonProductTypesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonProductTypesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedRemotely: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonPropertySelectValuesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonDefaultUnitConfiguratorsQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false  },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: dashboardAmazonProductsWithIssues,
       variables: {
         salesChannelId,
       },
-      fetchPolicy: 'network-only',
     }),
   ]);
 
   return {
-    properties: propRes.data?.amazonProperties?.totalCount || 0,
-    productTypes: typeRes.data?.amazonProductTypes?.totalCount || 0,
-    localProductTypes: localTypeRes.data?.amazonProductTypes?.totalCount || 0,
-    selectValues: valueRes.data?.amazonPropertySelectValues?.totalCount || 0,
-    unitConfigurators: unitRes.data?.amazonDefaultUnitConfigurators?.totalCount || 0,
-    productsWithIssues: issuesRes.data?.products?.totalCount || 0,
+    properties: propRes?.amazonProperties?.totalCount || 0,
+    productTypes: typeRes?.amazonProductTypes?.totalCount || 0,
+    localProductTypes: localTypeRes?.amazonProductTypes?.totalCount || 0,
+    selectValues: valueRes?.amazonPropertySelectValues?.totalCount || 0,
+    unitConfigurators: unitRes?.amazonDefaultUnitConfigurators?.totalCount || 0,
+    productsWithIssues: issuesRes?.products?.totalCount || 0,
   };
 };
 
@@ -106,29 +109,39 @@ const fetchAmazonIntegrations = async () => {
 
   loading.value = true;
 
-  const { data } = await apolloClient.query({
+  const queryRef = apolloClient.watchQuery({
     query: amazonChannelsQuery,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-and-network'
   });
 
-  const edges = data?.amazonChannels?.edges || [];
+  queryRef.subscribe({
+    next: async ({ data }) => {
+      integrations.value = [];
+      const edges = data?.amazonChannels?.edges || [];
 
-  for (const edge of edges) {
-    const channel = edge.node;
+      for (const edge of edges) {
+        const channel = edge.node;
 
-    if (channel?.saleschannelPtr?.id) {
-      const counts = await fetchCounts(channel.saleschannelPtr.id);
-      integrations.value.push({
-        integrationId: channel.id,
-        hostname: channel.hostname,
-        salesChannelId: channel.saleschannelPtr.id,
-        ...counts,
-      });
+        if (channel?.saleschannelPtr?.id) {
+          const counts = await fetchCounts(channel.saleschannelPtr.id);
+          integrations.value.push({
+            integrationId: channel.id,
+            hostname: channel.hostname,
+            salesChannelId: channel.saleschannelPtr.id,
+            ...counts,
+          });
+        }
+      }
+
+      loading.value = false;
+      finishedFetch.value = true;
+    },
+    error: (err) => {
+      console.error(err);
+      loading.value = false;
+      finishedFetch.value = true;
     }
-  }
-
-  loading.value = false;
-  finishedFetch.value = true;
+  });
 };
 
 

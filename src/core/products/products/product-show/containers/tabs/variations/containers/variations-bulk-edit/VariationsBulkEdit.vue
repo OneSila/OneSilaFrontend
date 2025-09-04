@@ -329,7 +329,7 @@ const fetchProperties = async () => {
   const { data: typeData } = await apolloClient.query({
     query: propertiesQuery,
     variables: { filter: { isProductType: { exact: true } } },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   })
   if (!typeData?.properties?.edges?.length) return
   const typePropertyId = typeData.properties.edges[0].node.id
@@ -342,7 +342,7 @@ const fetchProperties = async () => {
         product: { id: { exact: parentId.value } },
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   })
   if (!valueData?.productProperties?.edges?.length) return
   const productTypeValueId = valueData.productProperties.edges[0].node.valueSelect?.id
@@ -351,7 +351,7 @@ const fetchProperties = async () => {
   const { data: ruleData } = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: { filter: { productType: { id: { exact: productTypeValueId } } } },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   })
   if (!ruleData?.productPropertiesRules?.edges?.length) return
   const items = ruleData.productPropertiesRules.edges[0].node.items
@@ -390,7 +390,7 @@ const fetchVariationProperties = async (variationId: string) => {
   const { data } = await apolloClient.query({
     query: productPropertiesQuery,
     variables: { filter: { product: { id: { exact: variationId } } }, first: 100 },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   })
   const edges = data?.productProperties?.edges ?? []
   const propertyValues: Record<string, any> = {}
@@ -406,7 +406,7 @@ const fetchVariationProperties = async (variationId: string) => {
               language: { exact: language.value },
             },
           },
-          fetchPolicy: 'network-only',
+          fetchPolicy: 'cache-first',
         })
         const tNode = tData?.productPropertyTextTranslations?.edges?.[0]?.node
         translation = tNode ? { ...tNode } : { language: language.value }
@@ -424,7 +424,7 @@ const fetchVariations = async () => {
       filter: { parent: { id: { exact: parentId.value } } },
       ...fetchPaginationData.value,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   })
   const edges = data?.[queryKey.value]?.edges ?? []
   pageInfo.value = data?.[queryKey.value]?.pageInfo ?? null
@@ -448,7 +448,7 @@ watch(language, async () => {
 const fetchDefaultLanguage = async () => {
   const { data } = await apolloClient.query({
     query: translationLanguagesQuery,
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   })
   language.value = data?.translationLanguages?.defaultLanguage?.code || null
 }
@@ -927,7 +927,7 @@ const startResize = (e: MouseEvent, key: string) => {
         </Button>
       </FlexCell>
       <FlexCell >
-        <ApolloQuery :query="translationLanguagesQuery">
+        <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector
               v-if="data"

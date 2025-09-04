@@ -318,7 +318,7 @@ onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getWebhookIntegrationQuery,
     variables: { id: props.integrationId },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   rpm.value = data?.webhookIntegration?.requestsPerMinute || null;
   integration.value = data?.webhookIntegration || null;

@@ -80,7 +80,7 @@ const fetchNodes = async () => {
   const { data } = await apolloClient.query({
     query: amazonBrowseNodesQuery,
     variables: { filter },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   nodes.value = data?.amazonBrowseNodes?.edges?.map((e: any) => e.node) || [];
   loadingNodes.value = false;
@@ -106,7 +106,7 @@ const fetchSelected = async () => {
   const { data } = await apolloClient.query({
     query: amazonProductBrowseNodesQuery,
     variables: { filter },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const node = data?.amazonProductBrowseNodes?.edges?.[0]?.node;
   if (node) {
@@ -129,7 +129,7 @@ const fetchSelectedNodeDetails = async (remoteId: string) => {
   const { data } = await apolloClient.query({
     query: amazonBrowseNodesQuery,
     variables: { filter },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   selectedNodeDetails.value = data?.amazonBrowseNodes?.edges?.[0]?.node || null;
 };
@@ -156,7 +156,7 @@ const fetchRecommendedTypes = async () => {
         productTypeCode: { inList: codes },
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const map = new Map<string, { id: string }>(
     (data?.amazonProductTypes?.edges || []).map((e: any) => [

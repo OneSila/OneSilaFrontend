@@ -37,7 +37,7 @@ const createShopifySalesChannel = async (queryParams: Record<string, any>, hostn
       },
       first: 1,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
 
   const existing = data?.shopifyChannels?.edges?.[0]?.node;
@@ -110,7 +110,7 @@ const getFakeUserCredentials = async (identifier?: string) => {
   const {data} = await apolloClient.query({
     query: generateUserCredentialsQuery,
     variables: {identifier},
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
 
   if (!data?.generateUserCredentials) {

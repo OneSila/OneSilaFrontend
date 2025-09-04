@@ -38,7 +38,7 @@ const fetchConfigurableVariations = async () => {
       filter: { variation: { id: { exact: props.product.id } } },
       first: 100
     },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const edges = data?.configurableVariations?.edges || [];
@@ -52,7 +52,7 @@ const fetchBundleVariations = async () => {
       filter: { variation: { id: { exact: props.product.id } } },
       first: 100
     },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const edges = data?.bundleVariations?.edges || [];

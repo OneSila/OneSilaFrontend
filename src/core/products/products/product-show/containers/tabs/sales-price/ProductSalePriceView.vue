@@ -47,7 +47,7 @@ const loadPrices = async () => {
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
     variables: { filter: { product: {id: { exact: props.product.id }} }, order: { currency: { isoCode: 'ASC' } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   prices.value = data.salesPrices.edges.map(edge => ({

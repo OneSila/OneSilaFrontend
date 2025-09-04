@@ -30,7 +30,7 @@ const fetchExemption = async () => {
     const { data } = await apolloClient.query({
       query: amazonGtinExemptionsQuery,
       variables: { productId: props.productId, viewId: props.viewId },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
     });
     const node = data.amazonGtinExemptions?.edges?.[0]?.node;
     if (node) {

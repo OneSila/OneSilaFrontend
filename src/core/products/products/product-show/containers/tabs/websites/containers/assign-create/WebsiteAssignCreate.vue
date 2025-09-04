@@ -33,7 +33,7 @@ const fetchViews = async () => {
   const { data } = await apolloClient.query({
     query: salesChannelViewsQuery,
     variables: { filter: { salesChannel: { active: {exact: true} }, NOT: { id: { inList: props.viewsIds } } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data) {

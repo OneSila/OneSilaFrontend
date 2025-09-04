@@ -62,7 +62,7 @@ const fetchData = async (searchValue: string | null = null) => {
     const { data } = await apolloClient.query({
       query: props.filter.query as unknown as DocumentNode,
       variables: variables,
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     if (data && data[props.filter.dataKey]) {
       cleanedData.value = cleanData(data[props.filter.dataKey]);

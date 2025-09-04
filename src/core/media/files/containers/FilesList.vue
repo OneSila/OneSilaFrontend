@@ -142,7 +142,7 @@ const deleteAll = async (query) => {
     <div class="flex flex-col mt-2">
       <FilterManager :searchConfig="searchConfig">
         <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-          <ApolloQuery :query="listQuery"
+          <ApolloQuery :query="listQuery" fetch-policy="cache-and-network"
                        :variables="{
                          filter: {
                            ...filterVariables,

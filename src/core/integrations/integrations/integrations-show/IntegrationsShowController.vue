@@ -140,7 +140,7 @@ const fetchIntegrationData = async () => {
     const { data } = await apolloClient.query({
       query: getIntegrationQuery(),
       variables: { id: id.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     const rawData = data[getIntegrationQueryKey()];
 

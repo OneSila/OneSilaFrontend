@@ -30,7 +30,7 @@ const fetchProperties = async () => {
   const { data } = await apolloClient.query({
     query: amazonProductPropertiesQuery,
     variables: { remoteProductId: props.remoteProductId },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   properties.value =
     data?.amazonProductProperties?.edges?.map((e: any) => e.node) || [];

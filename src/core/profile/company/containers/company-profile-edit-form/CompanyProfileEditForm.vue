@@ -177,7 +177,7 @@ onMounted(async () => {
             {{ t('auth.register.company.placeholders.country') }}
             <span v-if="mandatory">*</span>
           </Label>
-          <ApolloQuery :query="countriesQuery">
+          <ApolloQuery :query="countriesQuery" fetch-policy="cache-and-network">
             <template v-slot="{ result: { data } }">
               <Selector
                 class="mt-2"

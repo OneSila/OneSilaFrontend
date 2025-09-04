@@ -66,7 +66,7 @@ const fetchExternalId = async () => {
         view: { id: { exact: props.view.id } },
       },
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-first',
   });
   const node = data?.amazonExternalProductIds?.edges?.[0]?.node;
   externalId.value = node?.id || null;
