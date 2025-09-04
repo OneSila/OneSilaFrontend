@@ -19,6 +19,7 @@ import { CancelButton } from "../../../../shared/components/atoms/button-cancel"
 import { DuplicateModal } from "../../../../shared/components/molecules/duplicate-modal";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
+import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../shared/modules/keyboard";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -213,6 +214,13 @@ const cancel = () => {
     router.push(formConfig.value.submitUrl);
   }
 };
+
+const saveAndContinue = () => checkDuplicatesAndCreate(true);
+const save = () => checkDuplicatesAndCreate(false);
+
+useShiftEnterKeyboardListener(saveAndContinue);
+useEnterKeyboardListener(save);
+useShiftBackspaceKeyboardListener(cancel);
 
 </script>
 
