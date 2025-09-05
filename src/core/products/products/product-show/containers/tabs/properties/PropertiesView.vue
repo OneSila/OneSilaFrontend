@@ -8,7 +8,7 @@ import {
   getPropertySelectValueQuery,
   productPropertiesQuery,
   productPropertiesRulesQuery, productPropertyTextTranslationsQuery,
-  propertiesQuerySelector
+  propertiesQuery
 } from "../../../../../../../shared/api/queries/properties.js";
 import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
 import {ValueInput} from "./value-input";
@@ -256,7 +256,7 @@ const setInitialValues = async (propertiesIds) => {
 const fetchRequiredProductType = async () => {
 
   const {data} = await apolloClient.query({
-    query: propertiesQuerySelector,
+    query: propertiesQuery,
     variables: {filter: {isProductType: {exact: true}}},
     fetchPolicy: 'cache-first'
   })
