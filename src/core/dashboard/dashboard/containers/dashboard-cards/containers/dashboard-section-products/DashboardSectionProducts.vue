@@ -42,40 +42,26 @@ const productErrors = ref([
 
 async function fetchErrorCounts() {
   loading.value = true;
-  const promises = productErrors.value.map((error) => {
-    return new Promise<void>((resolve) => {
-      try {
-        const queryRef = apolloClient.watchQuery({
-          query: productsDashboardCardsQuery,
-          variables: { errorCode: error.errorCode.toString() },
-          fetchPolicy: 'cache-and-network',
-        });
+  const promises = productErrors.value.map(async (error) => {
+    try {
+      const { data } = await apolloClient.query({
+        query: productsDashboardCardsQuery,
+        variables: { errorCode: error.errorCode.toString() },
+        fetchPolicy: 'cache-first',
+      });
 
-        queryRef.subscribe({
-          next: ({ data }) => {
-            error.counter = data?.products.totalCount || 0;
+      error.counter = data?.products.totalCount || 0;
 
-            if (error.counter !== 0 && allCardsCompleted.value) {
-              allCardsCompleted.value = false;
-            }
-
-            error.loading = false;
-            resolve();
-          },
-          error: (err) => {
-            console.error(`Error fetching data for error code ${error.errorCode}:`, err);
-            error.counter = 0;
-            error.loading = false;
-            resolve();
-          },
-        });
-      } catch (err) {
-        console.error(`Error fetching data for error code ${error.errorCode}:`, err);
-        error.counter = 0;
-        error.loading = false;
-        resolve();
+      if (error.counter !== 0 && allCardsCompleted.value) {
+        allCardsCompleted.value = false;
       }
-    });
+
+      error.loading = false;
+    } catch (err) {
+      console.error(`Error fetching data for error code ${error.errorCode}:`, err);
+      error.counter = 0;
+      error.loading = false;
+    }
   });
 
   await Promise.all(promises);
