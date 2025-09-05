@@ -175,6 +175,10 @@ const setCurrentLanguage = async () => {
 
 const fetchPropertiesIds = async (productTypeValueId) => {
 
+  if (productTypeValueId == null) {
+    return [];
+  }
+
   const {data} = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
