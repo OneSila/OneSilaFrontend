@@ -217,7 +217,11 @@ const filterChips = computed(() => {
           fetchFilterLabel(filter, key, stored);
           display = key;
         }
-        chips.push({ key: filter.name, label, value: display || key, rawValue: key });
+        let value = display || key;
+        if (filter.type === FieldType.Boolean) {
+          value = value === 'true' ? t('shared.labels.yes') : value === 'false' ? t('shared.labels.no') : value;
+        }
+        chips.push({ key: filter.name, label, value, rawValue: key });
       });
     } else {
       const key = String(param);
@@ -229,7 +233,11 @@ const filterChips = computed(() => {
         fetchFilterLabel(filter, key, stored);
         display = key;
       }
-      chips.push({ key: filter.name, label, value: display || key, rawValue: key });
+      let value = display || key;
+      if (filter.type === FieldType.Boolean) {
+        value = value === 'true' ? t('shared.labels.yes') : value === 'false' ? t('shared.labels.no') : value;
+      }
+      chips.push({ key: filter.name, label, value, rawValue: key });
     }
   });
   return chips;

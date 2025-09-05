@@ -28,7 +28,9 @@
       "context": "Contexte",
       "noIssues": "Aucun problème",
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "yes": "Oui",
+      "no": "Non"
     },
     "alert": {
       "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."
