@@ -121,36 +121,29 @@ const generalCards = ref([
 async function fetchGeneralCounts() {
   loading.value = true
 
-  const fetchPromises = generalCards.value.map((card) => {
-    return new Promise<void>((resolve) => {
-      const queryRef = apolloClient.watchQuery({
+  const fetchPromises = generalCards.value.map(async (card) => {
+    try {
+      const { data } = await apolloClient.query({
         query: card.query,
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'cache-first',
       });
 
-      queryRef.subscribe({
-        next: ({ data }) => {
-          if (data[card.key]) {
-            card.counter = data[card.key].totalCount;
-          } else {
-            card.counter = 0;
-          }
+      if (data[card.key]) {
+        card.counter = data[card.key].totalCount;
+      } else {
+        card.counter = 0;
+      }
 
-          if (card.counter !== 0 && hideGeneralSection.value) {
-            hideGeneralSection.value = false;
-          }
+      if (card.counter !== 0 && hideGeneralSection.value) {
+        hideGeneralSection.value = false;
+      }
 
-          card.loading = false;
-          resolve();
-        },
-        error: (err) => {
-          console.error(`Error fetching data for ${card.key}:`, err);
-          card.counter = 0;
-          card.loading = false;
-          resolve();
-        },
-      });
-    });
+      card.loading = false;
+    } catch (err) {
+      console.error(`Error fetching data for ${card.key}:`, err);
+      card.counter = 0;
+      card.loading = false;
+    }
   });
 
   await Promise.all(fetchPromises);

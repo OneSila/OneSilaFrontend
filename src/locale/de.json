@@ -28,7 +28,9 @@
       "context": "Kontext",
       "noIssues": "Keine Probleme",
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "yes": "Ja",
+      "no": "Nein"
     },
     "alert": {
       "noData": "Die Regel hat keine erforderlichen Konfiguratoreigenschaften, daher k\u00f6nnen keine Varianten generiert werden."
@@ -156,7 +158,8 @@
           "MISSING_DATA": "Missing data",
           "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
           "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
-          "UPDATE_ONLY_NOT_FOUND": "Update only not found"
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found",
+          "NAME_TOO_LONG": "Name too long"
         }
       }
     }

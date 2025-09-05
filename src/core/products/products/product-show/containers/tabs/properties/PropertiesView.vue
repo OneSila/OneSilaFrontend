@@ -113,13 +113,13 @@ watch([sortedValues, limit], () => {
 });
 
 
-const fetchProductTypeValue = async (productTypePropertyId) => {
+const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
   ruleId.value = null;
 
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {exact: productTypePropertyId}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'cache-first'
+    fetchPolicy: fetchPolicy
   });
 
   if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
@@ -159,11 +159,11 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
 };
 
 
-const setCurrentLanguage = async () => {
+const setCurrentLanguage = async (fetchPolicy) => {
 
     const {data} = await apolloClient.query({
       query: translationLanguagesQuery,
-      fetchPolicy: 'cache-first'
+      fetchPolicy: fetchPolicy
     });
 
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
@@ -173,12 +173,16 @@ const setCurrentLanguage = async () => {
 
 };
 
-const fetchPropertiesIds = async (productTypeValueId) => {
+const fetchPropertiesIds = async (productTypeValueId, fetchPolicy) => {
+
+  if (productTypeValueId == null) {
+    return [];
+  }
 
   const {data} = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
-    fetchPolicy: 'cache-first'
+    fetchPolicy: fetchPolicy
   })
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
@@ -210,7 +214,7 @@ const fetchPropertiesIds = async (productTypeValueId) => {
       propertyIds.push(item.property.id)
 
       if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(item.property.type) && language.value == null) {
-        await setCurrentLanguage();
+        await setCurrentLanguage(fetchPolicy);
       }
 
     }
@@ -221,11 +225,11 @@ const fetchPropertiesIds = async (productTypeValueId) => {
   return [];
 }
 
-const setInitialValues = async (propertiesIds) => {
+const setInitialValues = async (propertiesIds, fetchPolicy) => {
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'cache-first'
+    fetchPolicy: fetchPolicy
   });
 
   if (data && data.productProperties && data.productProperties.edges) {
@@ -253,12 +257,12 @@ const setInitialValues = async (propertiesIds) => {
 };
 
 
-const fetchRequiredProductType = async () => {
+const fetchRequiredProductType = async (fetchPolicy) => {
 
   const {data} = await apolloClient.query({
     query: propertiesQuery,
     variables: {filter: {isProductType: {exact: true}}},
-    fetchPolicy: 'cache-first'
+    fetchPolicy: fetchPolicy
   })
 
   if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
@@ -282,26 +286,27 @@ const fetchRequiredProductType = async () => {
   return null;
 }
 
-const fetchRequiredAttributes = async (productTypePropertyId) => {
+const fetchRequiredAttributes = async (productTypePropertyId, fetchPolicy) => {
 
-  const productTypeValueId = await fetchProductTypeValue(productTypePropertyId);
+  const productTypeValueId = await fetchProductTypeValue(productTypePropertyId, fetchPolicy);
 
   if (props.product.type == ProductType.Configurable) {
     lastSavedValues.value = values.value;
     return
   }
 
-  const propertyIds = await fetchPropertiesIds(productTypeValueId);
-  await setInitialValues(propertyIds);
+  const propertyIds = await fetchPropertiesIds(productTypeValueId, fetchPolicy);
+  await setInitialValues(propertyIds, fetchPolicy);
 
 }
 
-const fetchRequiredAttributesValues = async () => {
+const fetchRequiredAttributesValues = async (fetchPolicy = 'cache-first') => {
   loading.value = true
   values.value = [];
   language.value = null;
-  const productTypePropertyId = await fetchRequiredProductType();
-  await fetchRequiredAttributes(productTypePropertyId);
+  currentPage.value = 1;
+  const productTypePropertyId = await fetchRequiredProductType(fetchPolicy);
+  await fetchRequiredAttributes(productTypePropertyId, fetchPolicy);
   loading.value = false
 }
 
@@ -511,7 +516,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :product-id="product.id"
             :rule-id="ruleId"
             :value="productTypeValue"
-            @refetch="fetchRequiredAttributesValues"
+            @refetch="fetchRequiredAttributesValues('network-only')"
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
@@ -524,7 +529,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :product-id="product.id"
             :rule-id="ruleId"
             :value="val"
-            @refetch="fetchRequiredAttributesValues"
+            @refetch="fetchRequiredAttributesValues('network-only')"
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"

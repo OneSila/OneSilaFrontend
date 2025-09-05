@@ -9,6 +9,7 @@ const getCodeBadgeMap = (t: Function) => ({
   NO_MAPPED_PRODUCT_TYPE: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.NO_MAPPED_PRODUCT_TYPE') },
   PRODUCT_TYPE_MISMATCH: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.PRODUCT_TYPE_MISMATCH') },
   UPDATE_ONLY_NOT_FOUND: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.UPDATE_ONLY_NOT_FOUND') },
+  NAME_TOO_LONG: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.NAME_TOO_LONG') },
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
@@ -24,6 +25,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         { label: t('integrations.imports.brokenRecords.codes.NO_MAPPED_PRODUCT_TYPE'), value: 'NO_MAPPED_PRODUCT_TYPE' },
         { label: t('integrations.imports.brokenRecords.codes.PRODUCT_TYPE_MISMATCH'), value: 'PRODUCT_TYPE_MISMATCH' },
         { label: t('integrations.imports.brokenRecords.codes.UPDATE_ONLY_NOT_FOUND'), value: 'UPDATE_ONLY_NOT_FOUND' },
+        { label: t('integrations.imports.brokenRecords.codes.NAME_TOO_LONG'), value: 'NAME_TOO_LONG' },
       ],
       labelBy: 'label',
       valueBy: 'value',
