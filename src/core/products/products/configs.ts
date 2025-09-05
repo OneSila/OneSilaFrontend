@@ -203,6 +203,13 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
   search: true,
   orderKey: "sort",
   filters: [
+    {
+      type: FieldType.Text,
+      name: 'sku',
+      label: t('shared.labels.sku'),
+      placeholder: t('shared.placeholders.sku'),
+      addLookup: true,
+    },
      {
       type: FieldType.Query,
       name: 'vatRate',
