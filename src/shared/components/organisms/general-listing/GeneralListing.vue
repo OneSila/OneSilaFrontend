@@ -198,6 +198,8 @@ const filterChips = computed(() => {
     if (param === undefined || param === null || param === '') {
       return;
     }
+    const isStrictBoolean =
+      filter.type === FieldType.Boolean && filter.strict;
     const map =
       'options' in filter && filter.options
         ? Object.fromEntries(
@@ -207,6 +209,9 @@ const filterChips = computed(() => {
     if (Array.isArray(param)) {
       param.forEach((v: any) => {
         const key = String(v);
+        if (isStrictBoolean && key === 'all') {
+          return;
+        }
         let display = map?.[key] || stored[key]?.label;
         if (!display && 'query' in filter && filter.query) {
           fetchFilterLabel(filter, key, stored);
@@ -216,6 +221,9 @@ const filterChips = computed(() => {
       });
     } else {
       const key = String(param);
+      if (isStrictBoolean && key === 'all') {
+        return;
+      }
       let display = map?.[key] || stored[key]?.label;
       if (!display && 'query' in filter && filter.query) {
         fetchFilterLabel(filter, key, stored);
