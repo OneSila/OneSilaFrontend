@@ -198,6 +198,8 @@ const filterChips = computed(() => {
     if (param === undefined || param === null || param === '') {
       return;
     }
+    const isStrictBoolean =
+      filter.type === FieldType.Boolean && filter.strict;
     const map =
       'options' in filter && filter.options
         ? Object.fromEntries(
@@ -207,21 +209,35 @@ const filterChips = computed(() => {
     if (Array.isArray(param)) {
       param.forEach((v: any) => {
         const key = String(v);
+        if (isStrictBoolean && key === 'all') {
+          return;
+        }
         let display = map?.[key] || stored[key]?.label;
         if (!display && 'query' in filter && filter.query) {
           fetchFilterLabel(filter, key, stored);
           display = key;
         }
-        chips.push({ key: filter.name, label, value: display || key, rawValue: key });
+        let value = display || key;
+        if (filter.type === FieldType.Boolean) {
+          value = value === 'true' ? t('shared.labels.yes') : value === 'false' ? t('shared.labels.no') : value;
+        }
+        chips.push({ key: filter.name, label, value, rawValue: key });
       });
     } else {
       const key = String(param);
+      if (isStrictBoolean && key === 'all') {
+        return;
+      }
       let display = map?.[key] || stored[key]?.label;
       if (!display && 'query' in filter && filter.query) {
         fetchFilterLabel(filter, key, stored);
         display = key;
       }
-      chips.push({ key: filter.name, label, value: display || key, rawValue: key });
+      let value = display || key;
+      if (filter.type === FieldType.Boolean) {
+        value = value === 'true' ? t('shared.labels.yes') : value === 'false' ? t('shared.labels.no') : value;
+      }
+      chips.push({ key: filter.name, label, value, rawValue: key });
     }
   });
   return chips;
