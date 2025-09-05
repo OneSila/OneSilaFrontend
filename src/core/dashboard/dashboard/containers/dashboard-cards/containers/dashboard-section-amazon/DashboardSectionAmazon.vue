@@ -38,14 +38,11 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
-  const makeQuery = (options: any) =>
-    new Promise<any>((resolve) => {
-      const queryRef = apolloClient.watchQuery({ ...options, fetchPolicy: 'cache-and-network' });
-      queryRef.subscribe({
-        next: ({ data }) => resolve(data),
-        error: () => resolve(null),
-      });
-    });
+const makeQuery = (options: any) =>
+  apolloClient
+    .query({ ...options, fetchPolicy: 'cache-first' })
+    .then(({ data }) => data)
+    .catch(() => null);
 
   const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
     makeQuery({
@@ -109,39 +106,36 @@ const fetchAmazonIntegrations = async () => {
 
   loading.value = true;
 
-  const queryRef = apolloClient.watchQuery({
-    query: amazonChannelsQuery,
-    fetchPolicy: 'cache-and-network'
-  });
+  try {
+    const { data } = await apolloClient.query({
+      query: amazonChannelsQuery,
+      fetchPolicy: 'cache-first'
+    });
 
-  queryRef.subscribe({
-    next: async ({ data }) => {
-      integrations.value = [];
-      const edges = data?.amazonChannels?.edges || [];
+    integrations.value = [];
+    const edges = data?.amazonChannels?.edges || [];
 
-      for (const edge of edges) {
-        const channel = edge.node;
+    for (const edge of edges) {
+      const channel = edge.node;
 
-        if (channel?.saleschannelPtr?.id) {
-          const counts = await fetchCounts(channel.saleschannelPtr.id);
-          integrations.value.push({
-            integrationId: channel.id,
-            hostname: channel.hostname,
-            salesChannelId: channel.saleschannelPtr.id,
-            ...counts,
-          });
-        }
+      if (channel?.saleschannelPtr?.id) {
+        const counts = await fetchCounts(channel.saleschannelPtr.id);
+        integrations.value.push({
+          integrationId: channel.id,
+          hostname: channel.hostname,
+          salesChannelId: channel.saleschannelPtr.id,
+          ...counts,
+        });
       }
-
-      loading.value = false;
-      finishedFetch.value = true;
-    },
-    error: (err) => {
-      console.error(err);
-      loading.value = false;
-      finishedFetch.value = true;
     }
-  });
+
+    loading.value = false;
+    finishedFetch.value = true;
+  } catch (err) {
+    console.error(err);
+    loading.value = false;
+    finishedFetch.value = true;
+  }
 };
 
 
