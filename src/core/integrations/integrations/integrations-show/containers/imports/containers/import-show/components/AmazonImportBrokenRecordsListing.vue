@@ -43,6 +43,7 @@ const openModal = (record: any) => {
     <Modal v-model="showModal" @closed="showModal = false">
       <Card class="modal-content w-[800px] h-[600px] overflow-auto">
         <Tabs
+          tab-key="amazonImportIssuesModal"
           :tabs="[
             { name: 'message', label: t('shared.labels.message'), alwaysRender: true },
             { name: 'data', label: t('shared.labels.data'), alwaysRender: true },
