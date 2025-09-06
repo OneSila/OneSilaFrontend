@@ -17,9 +17,11 @@ const props = withDefaults(
     tabs: TabItem[];
     disabledTabs?: string[];
     transparent?: boolean;
+    tabKey?: string;
   }>(),
   {
     disabledTabs: () => ([] as string[]),
+    tabKey: 'tab',
   }
 );
 const emit = defineEmits(['tab-changed']);
@@ -28,14 +30,14 @@ const selectedTab = ref(props.tabs[0]?.name);
 const route = useRoute();
 const router = useRouter();
 
-watch(() => route.query.tab, (newTab) => {
+watch(() => route.query[props.tabKey], (newTab) => {
   if (newTab && props.tabs.some(tab => tab.name === newTab)) {
     selectedTab.value = newTab.toString();
   }
 });
 
 onMounted(() => {
-  const queryTab = route.query.tab;
+  const queryTab = route.query[props.tabKey];
   if (queryTab && props.tabs.some(tab => tab.name === queryTab)) {
     selectedTab.value = queryTab.toString();
   }
@@ -47,7 +49,7 @@ const isHighlighted = (tab: TabItem) => !isSelected(tab.name) && tab.danger;
 const changeTab = (index) => {
   const newTab = props.tabs[index].name;
   selectedTab.value = newTab;
-  router.push({ query: { tab: newTab } });
+  router.push({ query: { ...route.query, [props.tabKey]: newTab } });
   emit('tab-changed', newTab);
 };
 
