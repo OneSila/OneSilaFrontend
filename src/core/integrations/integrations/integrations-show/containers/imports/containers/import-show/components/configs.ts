@@ -10,6 +10,7 @@ const getCodeBadgeMap = (t: Function) => ({
   PRODUCT_TYPE_MISMATCH: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.PRODUCT_TYPE_MISMATCH') },
   UPDATE_ONLY_NOT_FOUND: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.UPDATE_ONLY_NOT_FOUND') },
   NAME_TOO_LONG: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.NAME_TOO_LONG') },
+  INVALID_VARIATION_THEME: { color: 'orange', text: t('integrations.imports.brokenRecords.codes.INVALID_VARIATION_THEME') },
 });
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
@@ -26,6 +27,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         { label: t('integrations.imports.brokenRecords.codes.PRODUCT_TYPE_MISMATCH'), value: 'PRODUCT_TYPE_MISMATCH' },
         { label: t('integrations.imports.brokenRecords.codes.UPDATE_ONLY_NOT_FOUND'), value: 'UPDATE_ONLY_NOT_FOUND' },
         { label: t('integrations.imports.brokenRecords.codes.NAME_TOO_LONG'), value: 'NAME_TOO_LONG' },
+        { label: t('integrations.imports.brokenRecords.codes.INVALID_VARIATION_THEME'), value: 'INVALID_VARIATION_THEME' },
       ],
       labelBy: 'label',
       valueBy: 'value',
