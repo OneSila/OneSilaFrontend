@@ -145,7 +145,7 @@ const addImageUrl = () => {
         <div class="mb-4">
           <h3 class="text-xl font-semibold leading-7 text-gray-900">{{ t('media.images.upload') }}</h3>
         </div>
-        <div class="flex border-b">
+        <div class="flex">
           <button
             class="mr-4 pb-2"
             :class="{ 'border-b-2 border-primary text-primary': activeTab === 'upload', 'opacity-50 cursor-not-allowed': images.length > 0 && activeTab !== 'upload' }"
@@ -161,6 +161,7 @@ const addImageUrl = () => {
             {{ t('media.images.tabs.urls') }}
           </button>
         </div>
+        <hr class="my-4">
         <DropZone v-if="activeTab === 'upload'" ref="dropZone" class="mt-2" :formats="['.jpg', '.png', '.jpeg']" @uploaded="onUploaded" />
         <div v-else class="mt-2 flex gap-2">
           <TextInput class="flex-1" v-model="urlInput" :placeholder="t('media.images.labels.imageUrl')" />
