@@ -8,7 +8,8 @@
       "duplicate": "Duplizieren",
       "resync": "Resync",
       "validate": "Validate",
-      "fetchIssues": "Fetch Issues"
+      "fetchIssues": "Fetch Issues",
+      "saveAll": "Alles speichern"
     },
     "colors": {
       "red": "Rot",
