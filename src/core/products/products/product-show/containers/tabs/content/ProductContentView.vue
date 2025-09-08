@@ -356,16 +356,19 @@ const shortDescriptionToolbarOptions = [
           :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
-        />
-        <ProductTranslationBulletPoints
-          v-if="fieldRules.bulletPoints"
-          ref="bulletPointsRef"
-          :translation-id="translationId"
-          :product-id="product.id"
-          :language-code="currentLanguage"
-          :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
-          @initial-bullet-points="previewBulletPoints = [...$event]"
-        />
+        >
+          <template #bullet-points>
+            <ProductTranslationBulletPoints
+              v-if="fieldRules.bulletPoints"
+              ref="bulletPointsRef"
+              :translation-id="translationId"
+              :product-id="product.id"
+              :language-code="currentLanguage"
+              :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
+              @initial-bullet-points="previewBulletPoints = [...$event]"
+            />
+          </template>
+        </ProductContentForm>
       </div>
     </div>
 
