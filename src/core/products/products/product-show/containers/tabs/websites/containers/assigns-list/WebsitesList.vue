@@ -16,6 +16,7 @@ import { LogsInfoModal } from "../logs-info-modal";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
+const emit = defineEmits(['assign-deleted']);
 const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
 const infoIntegrationType = ref<string | undefined>(undefined);
@@ -98,6 +99,7 @@ const issuesModalClosed = () => {
                 <ApolloAlertMutation
                   :mutation="deleteSalesChannelViewAssignMutation"
                   :mutation-variables="{ id: item.id }"
+                  @done="emit('assign-deleted')"
                 >
                   <template v-slot="{ loading, confirmAndMutate }">
                     <Button :disabled="loading" class="btn btn-sm btn-outline-danger" @click="confirmAndMutate">

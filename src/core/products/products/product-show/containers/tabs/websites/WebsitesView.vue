@@ -10,7 +10,7 @@ import {computed, Ref, ref, watch} from "vue";
 const { t } = useI18n();
 
 const props = defineProps<{ product: Product }>();
-const emit = defineEmits(['assign-added']);
+const emit = defineEmits(['assign-added', 'assign-deleted']);
 const ids: Ref<string[]> = ref([]);
 
 
@@ -31,7 +31,7 @@ watch(
 <template>
   <TabContentTemplate>
     <template v-slot:content>
-      <WebsitesList :product="product" />
+      <WebsitesList :product="product" @assign-deleted="emit('assign-deleted')" />
 
       <div class="mt-2">
         <WebsiteAssignCreate :product="product" :views-ids="ids" @assign-added="emit('assign-added')" />
