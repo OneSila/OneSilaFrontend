@@ -131,6 +131,11 @@ const switchTab = (tab: 'upload' | 'urls') => {
 
 const addImageUrl = () => {
   if (urlInput.value) {
+    const isValid = /(\.jpg|\.jpeg|\.png|\.webp)(\?.*)?$/i.test(urlInput.value)
+    if (!isValid) {
+      Toast.error(t('media.images.alert.toast.invalidUrl'))
+      return
+    }
     images.value.push({ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK })
     urlInput.value = ''
   }

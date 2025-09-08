@@ -323,6 +323,11 @@
       "tabs": {
         "upload": "Téléverser",
         "urls": "URLs"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Veuillez saisir une URL d'image valide (jpg, jpeg, png, webp)."
+        }
       }
     }
   },
