@@ -31,7 +31,8 @@ const language: Ref<string | null> = ref(null);
 const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
 const hasUnsavedChanges = computed(() => valueInputs.value.some(v => v?.hasChanges));
 const saveAll = async () => {
-  for (const v of valueInputs.value) {
+  const inputs = [...valueInputs.value];
+  for (const v of inputs) {
     if (v?.hasChanges) {
       await v.saveChanges();
     }
