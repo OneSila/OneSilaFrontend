@@ -503,6 +503,9 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
       <FlexCell class="flex items-center space-x-2">
+        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
+          {{ t('shared.button.saveAll') }}
+        </Button>
         <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
@@ -517,9 +520,6 @@ const handleValueUpdate = ({id, type, value, language}) => {
                       filterable/>
           </template>
         </ApolloQuery>
-        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
-          {{ t('shared.button.saveAll') }}
-        </Button>
       </FlexCell>
     </Flex>
     <Loader :loading="loading"/>
