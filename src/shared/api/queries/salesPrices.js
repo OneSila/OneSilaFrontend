@@ -186,12 +186,6 @@ export const getSalesPriceListQuery = gql`
       autoUpdatePrices
       startDate
       endDate
-      salespricelistitemSet {
-        id
-        product {
-          id
-        }
-      }
     }
   }
 `;
