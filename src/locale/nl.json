@@ -660,15 +660,12 @@
         "price": "Prijzen",
         "prices": "Prijzen",
         "priceLists": "Prijslijsten",
-        "inventory": "Voorraad",
         "supplierProducts": "Producten Leveranciers",
-        "saleOrders": "Verkopen",
         "purchasingOrders": "Aankopen",
         "properties": "Eigenschappen",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "inventoryMovements": "",
         "amazon": "Amazon"
       },
       "amazon": {

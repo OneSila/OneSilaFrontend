@@ -50,11 +50,11 @@ const setDefaultValues = async () => {
   hasAvailableEanCodes.value = false;
 }
 
-const fetchCurrentEanCode = async () => {
+const fetchCurrentEanCode = async (policy = 'cache-first') => {
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
     variables: {filter: {product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'cache-first'
+    fetchPolicy: policy
   });
 
   if (data && data.eanCodes && data.eanCodes.edges.length > 0) {
@@ -64,7 +64,7 @@ const fetchCurrentEanCode = async () => {
   }
 }
 
-const fetchAvailableEanCode = async () => {
+const fetchAvailableEanCode = async (policy = 'cache-first') => {
 
   if (eanCode.value.id) {
     return
@@ -73,7 +73,7 @@ const fetchAvailableEanCode = async () => {
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
     variables: {filter: {internal: {exact: true}, alreadyUsed: {exact: false}}},
-    fetchPolicy: 'cache-first'
+    fetchPolicy: policy
   });
 
   if (data && data.eanCodes && data.eanCodes.edges.length > 0) {
@@ -81,10 +81,10 @@ const fetchAvailableEanCode = async () => {
   }
 }
 
-const fetchNeededData = async () => {
+const fetchNeededData = async (policy = 'cache-first') => {
   await setDefaultValues();
-  await fetchCurrentEanCode();
-  await fetchAvailableEanCode();
+  await fetchCurrentEanCode(policy);
+  await fetchAvailableEanCode(policy);
 }
 
 const copyUrlToClipboard = async () => {
@@ -97,7 +97,7 @@ const copyUrlToClipboard = async () => {
   }
 };
 
-onMounted(fetchNeededData)
+onMounted(() => fetchNeededData())
 
 const handleAssign = async () => {
   const inputData = {
@@ -113,7 +113,7 @@ const handleAssign = async () => {
     Toast.success(t('products.eanCodes.assignSuccessfully'));
   }
 
-  await fetchNeededData();
+  await fetchNeededData('network-only');
 }
 
 const handleRelease = async () => {
@@ -130,7 +130,7 @@ const handleRelease = async () => {
     Toast.success(t('products.eanCodes.releaseSuccessfully'));
   }
 
-  await fetchNeededData();
+  await fetchNeededData('network-only');
 }
 
 
@@ -211,7 +211,7 @@ const handleRelease = async () => {
         <!-- EAN Code Input -->
         <FlexCell v-if="inputNeeded">
           <div class="border border-gray-300 p-3 pb-6 rounded-lg">
-            <ProductEanCodeInput :product="product" :initial-ean-code="eanCode" @ean-updated="fetchNeededData"/>
+            <ProductEanCodeInput :product="product" :initial-ean-code="eanCode" @ean-updated="() => fetchNeededData('network-only')"/>
           </div>
         </FlexCell>
 

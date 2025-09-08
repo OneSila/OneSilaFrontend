@@ -123,7 +123,6 @@ const tabMap: Record<number, string> = {
   111: 'properties',
   112: 'properties',
   113: 'price',
-  114: 'inventory',
   115: 'general',
   116: 'priceLists',
   117: 'variations',
