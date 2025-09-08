@@ -114,6 +114,14 @@
           "124": {
             "title": "Configurable Product Missing Rule Configuration",
             "description": "Define at least one configurator required item for these configurable products."
+          },
+          "125": {
+            "title": "Products with Amazon Validation Issues",
+            "description": "Review Amazon validation issues for these products in the Amazon tab."
+          },
+          "126": {
+            "title": "Products with Amazon Remote Issues",
+            "description": "Check the Amazon tab for remote issues reported by Amazon and resolve them."
           }
         }
       },
@@ -1039,7 +1047,9 @@
           "121": "Some Variations are incomplete",
           "122": "Some Bill of materials are incomplete",
           "123": "Some variations are duplicates",
-          "124": "Product type rule is not configured for a configurable product"
+          "124": "Product type rule is not configured for a configurable product",
+          "125": "Product has Amazon validation issues",
+          "126": "Product on Amazon has remote issues"
         },
         "help": {
           "101": "add at least one image to the product",
@@ -1065,7 +1075,9 @@
           "121": "resolve missing mandatory information in the variations",
           "122": "resolve missing mandatory information in the bills of materials",
           "123": "ensure all variations have a different configuration on their configurable properties",
-          "124": "define at least one configurator required item on the product type rule"
+          "124": "define at least one configurator required item on the product type rule",
+          "125": "Review the Amazon tab for validation issues and resolve them",
+          "126": "Check the Amazon tab for remote issues reported by Amazon"
         },
         "labels": {
           "missingInfo": "Missing Information",

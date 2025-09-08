@@ -59,6 +59,8 @@ export const getInspectorErrors = (t) => [
   { code: "122", name: t(`dashboard.cards.products.inspector.122.title`) },
   { code: "123", name: t(`dashboard.cards.products.inspector.123.title`) },
   { code: "124", name: t(`dashboard.cards.products.inspector.124.title`) },
+  { code: "125", name: t(`dashboard.cards.products.inspector.125.title`) },
+  { code: "126", name: t(`dashboard.cards.products.inspector.126.title`) },
 ];
 
 
