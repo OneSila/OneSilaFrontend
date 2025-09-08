@@ -26,7 +26,7 @@ onMounted(async () => {
 
   const { data: itemsData } = await apolloClient.query({
     query: salesPriceListItemsProductIdsQuery,
-    variables: { filter: { salespricelist: { id: { exact: priceListId.value.toString() } } }, first: 1000 }
+    variables: { filter: { salespricelist: { id: { exact: priceListId.value.toString() } } } }
   });
 
   if (itemsData && itemsData.salesPriceListItems) {
