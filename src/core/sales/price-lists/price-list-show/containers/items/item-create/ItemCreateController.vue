@@ -2,19 +2,20 @@
 
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import { FormConfig, FormType } from '../../../../../../../shared/components/organisms/general-form/formConfig';
-import { createSalesPriceListItemMutation } from "../../../../../../../shared/api/mutations/salesPrices.js"
+import { filterAndExtractIds, FormConfig, FormType } from '../../../../../../../shared/components/organisms/general-form/formConfig';
+import { createSalesPriceListItemMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
 import { ref, onMounted, Ref} from "vue";
 import { useRoute } from "vue-router";
 import { baseFormConfigConstructor} from "../configs";
 import apolloClient from "../../../../../../../../apollo-client";
-import { getSalesPriceListQuery } from "../../../../../../../shared/api/queries/salesPrices.js";
+import { getSalesPriceListQuery, salesPriceListItemsProductIdsQuery } from "../../../../../../../shared/api/queries/salesPrices.js";
 
 const route = useRoute();
 const { t } = useI18n();
 const priceListId = ref(route.params.priceListId);
+const productIds = ref([]);
 const formConfig: Ref<any | null> = ref(null);
 
 onMounted(async () => {
@@ -22,6 +23,15 @@ onMounted(async () => {
     query: getSalesPriceListQuery,
     variables: { id: priceListId.value.toString() }
   });
+
+  const { data: itemsData } = await apolloClient.query({
+    query: salesPriceListItemsProductIdsQuery,
+    variables: { filter: { salespricelist: { id: { exact: priceListId.value.toString() } } }, first: 1000 }
+  });
+
+  if (itemsData && itemsData.salesPriceListItems) {
+    productIds.value = filterAndExtractIds(itemsData.salesPriceListItems.edges, ['node', 'product', 'id']);
+  }
 
   if (data && data.salesPriceList) {
     const autoUpdatePrices = data.salesPriceList.autoUpdatePrices;
@@ -33,6 +43,7 @@ onMounted(async () => {
         createSalesPriceListItemMutation,
         'createSalesPriceListItem',
         priceListId.value.toString(),
+        productIds.value,
         autoUpdatePrices,
         data.salesPriceList.currency.symbol
       ),

@@ -149,6 +149,21 @@ export const salesPriceListItemsQuery = gql`
   }
 `;
 
+export const salesPriceListItemsProductIdsQuery = gql`
+  query SalesPriceListItemProductIds($filter: SalesPriceListItemFilter, $first: Int) {
+    salesPriceListItems(first: $first, filters: $filter) {
+      edges {
+        node {
+          id
+          product {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const getSalesPriceQuery = gql`
   query getSalesPrice($id: GlobalID!) {
     salesPrice(id: $id) {
