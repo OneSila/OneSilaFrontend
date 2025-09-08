@@ -1485,6 +1485,10 @@
     "images": {
       "title": "Afbeeldingen",
       "upload": "Upload nieuwe afbeeldingen",
+      "tabs": {
+        "upload": "Uploaden",
+        "urls": "URL's"
+      },
       "create": {
         "successfullyCreated": "Afbeeldingen opgeslagen!"
       },

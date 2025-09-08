@@ -318,6 +318,14 @@
       }
     }
   },
+  "media": {
+    "images": {
+      "tabs": {
+        "upload": "Hochladen",
+        "urls": "URLs"
+      }
+    }
+  },
   "properties": {
     "duplicateModal": {
       "title": "Properties with Similar Names Found",

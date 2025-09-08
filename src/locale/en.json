@@ -1835,6 +1835,10 @@
     "images": {
       "title": "Images",
       "upload": "Upload New Images",
+      "tabs": {
+        "upload": "Upload",
+        "urls": "URLs"
+      },
       "create": {
         "successfullyCreated": "Images were successfully uploaded!"
       },
