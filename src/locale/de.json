@@ -323,6 +323,11 @@
       "tabs": {
         "upload": "Hochladen",
         "urls": "URLs"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Bitte geben Sie eine gültige Bild-URL ein (jpg, jpeg, png, webp)."
+        }
       }
     }
   },

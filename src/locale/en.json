@@ -1863,7 +1863,8 @@
       "alert": {
         "toast": {
           "bulkDeleteSuccess": "Images deleted successfully.",
-          "bulkDeleteError": "Failed to delete images."
+          "bulkDeleteError": "Failed to delete images.",
+          "invalidUrl": "Please enter a valid image URL (jpg, jpeg, png, webp)."
         }
       }
     },

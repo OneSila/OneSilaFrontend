@@ -1509,6 +1509,11 @@
       },
       "placeholders": {
         "imageType": "Afbeeldingstype"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Voer een geldige afbeeldings-URL in (jpg, jpeg, png, webp)."
+        }
       }
     },
     "videos": {
