@@ -97,7 +97,7 @@ const tabItems = computed(() => {
         <AliasProductsView :product="product" />
       </template>
       <template v-slot:websites>
-        <WebsitesView :product="product" />
+        <WebsitesView :product="product" @assign-added="fetchAmazonProducts" />
       </template>
       <template v-slot:properties>
         <PropertiesView :product="product" />

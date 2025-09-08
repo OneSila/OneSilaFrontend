@@ -88,7 +88,7 @@ const tabItems = computed(() => {
         <VariationsView :product="product" />
       </template>
       <template v-slot:websites>
-        <WebsitesView :product="product" />
+        <WebsitesView :product="product" @assign-added="fetchAmazonProducts" />
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView

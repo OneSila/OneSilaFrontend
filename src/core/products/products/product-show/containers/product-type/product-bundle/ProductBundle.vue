@@ -99,7 +99,7 @@ const tabItems = computed(() => {
         <ProductSalePriceView :product="product" />
       </template>
       <template v-slot:websites>
-        <WebsitesView :product="product" />
+        <WebsitesView :product="product" @assign-added="fetchAmazonProducts" />
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList :product="product" />
