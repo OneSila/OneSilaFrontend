@@ -35,6 +35,7 @@ onMounted(async () => {
       updateSalesPriceListItemMutation,
       'updateSalesPriceListItem',
       priceListId.value.toString(),
+      [],
       autoUpdatePrice,
       data.salesPriceList.currency.symbol
     );
