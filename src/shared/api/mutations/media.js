@@ -64,6 +64,15 @@ export const createImagesMutation = gql`
   }
 `;
 
+export const uploadImagesFromUrlsMutation = gql`
+  mutation uploadImagesFromUrls($urls: [ImageUrlInput!]!) {
+    uploadImagesFromUrls(urls: $urls) {
+      id
+      imageWebUrl
+    }
+  }
+`;
+
 export const updateImageMutation = gql`
   mutation updateImage($data: ImagePartialInput!) {
     updateImage(data: $data) {
