@@ -80,6 +80,10 @@ const emit = defineEmits<{
       </div>
     </FlexCell>
 
+    <FlexCell v-if="$slots['bullet-points']">
+      <slot name="bullet-points"></slot>
+    </FlexCell>
+
     <FlexCell v-if="showShortDescription">
       <Flex class="gap-4">
         <FlexCell center>
