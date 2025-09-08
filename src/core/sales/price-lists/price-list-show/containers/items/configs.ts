@@ -12,8 +12,8 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   salesPriceListId: string,
-  autoUpdatePrice: boolean = false,
   productsId: string[] = [],
+  autoUpdatePrice: boolean = false,
   currency: string | undefined = undefined
 ): FormConfig => {
   let fields: FormField[] = [
@@ -30,10 +30,13 @@ export const baseFormConfigConstructor = (
       valueBy: 'id',
       query: productsQuerySelector,
       dataKey: 'products',
-      queryVariables:
-        productsId.length > 0
-          ? { filter: { NOT: { id: { inList: productsId } } } }
-          : undefined,
+      queryVariables: productsId.length > 0
+        ? {
+            filter: {
+              NOT: { id: { inList: productsId } }
+            }
+          }
+        : undefined,
       isEdge: true,
       multiple: false,
       filterable: true,

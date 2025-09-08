@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from "vue-router";
 import { Ref, ref, onMounted } from "vue";
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
-import {filterAndExtractIds, FormConfig, FormType} from "../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormConfig, FormType} from "../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
@@ -18,7 +18,6 @@ const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const priceListId = ref(route.params.priceListId);
-const productIds = ref([]);
 const formConfig: Ref<any| null> = ref(null);
 
 onMounted(async () => {
@@ -28,15 +27,7 @@ onMounted(async () => {
   });
 
   if (data && data.salesPriceList) {
-    const autoUpdatePrice = data.salesPriceList.autoUpdate;
-
-    productIds.value = filterAndExtractIds(
-      data.salesPriceList.salespricelistitemSet,
-      ['product', 'id'],
-      ['id'],
-      id.value.toString()
-    );
-
+    const autoUpdatePrice = data.salesPriceList.autoUpdatePrices;
 
     const baseForm = baseFormConfigConstructor(
       t,
@@ -44,8 +35,8 @@ onMounted(async () => {
       updateSalesPriceListItemMutation,
       'updateSalesPriceListItem',
       priceListId.value.toString(),
+      [],
       autoUpdatePrice,
-      productIds.value,
       data.salesPriceList.currency.symbol
     );
 
