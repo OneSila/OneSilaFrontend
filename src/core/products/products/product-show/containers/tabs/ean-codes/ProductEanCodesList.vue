@@ -21,6 +21,7 @@ import {
   releaseEanCodeMutation
 } from "../../../../../../../shared/api/mutations/eanCodes.js";
 import ProductEanCodeInput from "./ProductEanCodeInput.vue";
+import type { FetchPolicy } from "@apollo/client";
 
 const {t} = useI18n();
 
@@ -50,7 +51,7 @@ const setDefaultValues = async () => {
   hasAvailableEanCodes.value = false;
 }
 
-const fetchCurrentEanCode = async (policy = 'cache-first') => {
+const fetchCurrentEanCode = async (policy: FetchPolicy = 'cache-first') => {
   const {data} = await apolloClient.query({
     query: eanCodesQuery,
     variables: {filter: {product: {id: {exact: props.product.id}}}},
@@ -64,7 +65,7 @@ const fetchCurrentEanCode = async (policy = 'cache-first') => {
   }
 }
 
-const fetchAvailableEanCode = async (policy = 'cache-first') => {
+const fetchAvailableEanCode = async (policy: FetchPolicy = 'cache-first') => {
 
   if (eanCode.value.id) {
     return
@@ -81,7 +82,7 @@ const fetchAvailableEanCode = async (policy = 'cache-first') => {
   }
 }
 
-const fetchNeededData = async (policy = 'cache-first') => {
+const fetchNeededData = async (policy: FetchPolicy = 'cache-first') => {
   await setDefaultValues();
   await fetchCurrentEanCode(policy);
   await fetchAvailableEanCode(policy);

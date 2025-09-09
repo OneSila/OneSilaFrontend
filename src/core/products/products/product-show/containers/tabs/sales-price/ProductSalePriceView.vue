@@ -12,6 +12,7 @@ import { createSalesPriceMutation, updateSalesPriceMutation } from "../../../../
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { currenciesQuerySelector } from "../../../../../../../shared/api/queries/currencies.js";
 import {TextInputPrepend} from "../../../../../../../shared/components/atoms/input-text-prepend";
+import type { FetchPolicy } from "@apollo/client";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -28,7 +29,7 @@ const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
 const defaultCurrency = ref({ id: '', isoCode: '', symbol: '' });
 
-const getDefaultCurrency = async (policy = 'cache-first') => {
+const getDefaultCurrency = async (policy: FetchPolicy = 'cache-first') => {
   const { data } = await apolloClient.query({
     query: currenciesQuerySelector,
     variables: { filter: { isDefaultCurrency: { exact: true } } },
@@ -39,7 +40,7 @@ const getDefaultCurrency = async (policy = 'cache-first') => {
 }
 
 
-const loadPrices = async (policy = 'cache-first') => {
+const loadPrices = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
 
   // Fetch the default currency first

@@ -15,6 +15,7 @@ import { VueDraggableNext } from 'vue-draggable-next';
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {Toggle} from "../../../../../../../../../shared/components/atoms/toggle";
 import {VideoListingPreview} from "../../../../../../../../media/videos/videos-list/containers/video-listing-preview";
+import type { FetchPolicy } from "@apollo/client";
 
 type Media = {
   id: string;
@@ -65,7 +66,7 @@ const extractNodes = (data) => {
 };
 
 
-const fetchData = async (policy = 'cache-first') => {
+const fetchData = async (policy: FetchPolicy = 'cache-first') => {
 
   const { data } = await apolloClient.query({
     query: mediaProductThroughQuery,
