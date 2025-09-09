@@ -18,6 +18,15 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const isMobile = ref(false);
+const container = ref<HTMLElement | null>(null);
+const highlightRow = () => {
+  const row = container.value?.closest('tr');
+  row?.classList.add('bg-indigo-50');
+};
+const unhighlightRow = () => {
+  const row = container.value?.closest('tr');
+  row?.classList.remove('bg-indigo-50');
+};
 const updateIsMobile = () => {
   isMobile.value = window.innerWidth <= 768;
 };
@@ -68,10 +77,10 @@ const barColor = computed(() => {
 </script>
 
 <template>
-  <div :class="field.customCssClass" :style="field.customCss">
-    <Popover position="middle" :hover="!isMobile">
+  <div ref="container" :class="field.customCssClass" :style="field.customCss">
+    <Popover position="bottom" :hover="!isMobile" @hidden="unhighlightRow">
       <template #trigger>
-        <div>
+        <div @mouseover="highlightRow" @click="highlightRow">
           <div class="w-20 mb-1">
             <span :class="[labelColor, 'text-sm', 'font-medium', 'block sm:hidden']">
               {{ Math.floor(modelValue?.percentage ?? 0) }}%
