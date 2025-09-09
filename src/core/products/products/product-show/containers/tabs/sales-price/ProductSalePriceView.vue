@@ -12,6 +12,7 @@ import { createSalesPriceMutation, updateSalesPriceMutation } from "../../../../
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { currenciesQuerySelector } from "../../../../../../../shared/api/queries/currencies.js";
 import {TextInputPrepend} from "../../../../../../../shared/components/atoms/input-text-prepend";
+import type { FetchPolicy } from "@apollo/client";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -28,26 +29,27 @@ const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
 const defaultCurrency = ref({ id: '', isoCode: '', symbol: '' });
 
-const getDefaultCurrency = async () => {
+const getDefaultCurrency = async (policy: FetchPolicy = 'cache-first') => {
   const { data } = await apolloClient.query({
     query: currenciesQuerySelector,
     variables: { filter: { isDefaultCurrency: { exact: true } } },
+    fetchPolicy: policy,
   });
 
   defaultCurrency.value = data.currencies.edges[0].node;
 }
 
 
-const loadPrices = async () => {
+const loadPrices = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
 
   // Fetch the default currency first
-  await getDefaultCurrency();
+  await getDefaultCurrency(policy);
 
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
     variables: { filter: { product: {id: { exact: props.product.id }} }, order: { currency: { isoCode: 'ASC' } } },
-    fetchPolicy: 'cache-first'
+    fetchPolicy: policy
   });
 
   prices.value = data.salesPrices.edges.map(edge => ({
@@ -165,7 +167,7 @@ const savePrices = async () => {
     }
 
   } finally {
-    await loadPrices();
+    await loadPrices('network-only');
     loading.value = false;
   }
 }

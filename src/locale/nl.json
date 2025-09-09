@@ -160,6 +160,7 @@
       "invite": "Uitnodigen",
       "search": "Zoeken",
       "save": "Opslaan",
+      "saveAll": "Alles opslaan",
       "back": "Terug",
       "next": "Volgende",
       "finish": "Afwerken",
@@ -660,15 +661,12 @@
         "price": "Prijzen",
         "prices": "Prijzen",
         "priceLists": "Prijslijsten",
-        "inventory": "Voorraad",
         "supplierProducts": "Producten Leveranciers",
-        "saleOrders": "Verkopen",
         "purchasingOrders": "Aankopen",
         "properties": "Eigenschappen",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "inventoryMovements": "",
         "amazon": "Amazon"
       },
       "amazon": {
@@ -1487,6 +1485,10 @@
     "images": {
       "title": "Afbeeldingen",
       "upload": "Upload nieuwe afbeeldingen",
+      "tabs": {
+        "upload": "Uploaden",
+        "urls": "URL's"
+      },
       "create": {
         "successfullyCreated": "Afbeeldingen opgeslagen!"
       },
@@ -1507,6 +1509,11 @@
       },
       "placeholders": {
         "imageType": "Afbeeldingstype"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Voer een geldige afbeeldings-URL in (jpg, jpeg, png, webp)."
+        }
       }
     },
     "videos": {

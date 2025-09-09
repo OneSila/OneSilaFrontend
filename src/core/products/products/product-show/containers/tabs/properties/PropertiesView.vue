@@ -17,6 +17,7 @@ import {translationLanguagesQuery} from "../../../../../../../shared/api/queries
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
+import {Button} from "../../../../../../../shared/components/atoms/button";
 
 
 const {t} = useI18n();
@@ -27,6 +28,16 @@ const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
+const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
+const hasUnsavedChanges = computed(() => valueInputs.value.some(v => v?.hasChanges));
+const saveAll = async () => {
+  const inputs = [...valueInputs.value];
+  for (const v of inputs) {
+    if (v?.hasChanges) {
+      await v.saveChanges();
+    }
+  }
+};
 
 const currentPage = ref(1);
 const limit = ref(10);
@@ -491,8 +502,11 @@ const handleValueUpdate = ({id, type, value, language}) => {
           </div>
         </div>
       </FlexCell>
-      <FlexCell v-if="language">
-        <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
+      <FlexCell class="flex items-center space-x-2">
+        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
+          {{ t('shared.button.saveAll') }}
+        </Button>
+        <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
                       v-model="language"
@@ -520,6 +534,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
+            ref="valueInputs"
         />
         <hr class="my-4"/>
       </div>
@@ -533,6 +548,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
+            ref="valueInputs"
         />
       </div>
     </div>

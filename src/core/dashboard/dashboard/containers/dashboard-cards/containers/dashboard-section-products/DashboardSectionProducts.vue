@@ -28,6 +28,8 @@ const productErrors = ref([
   { errorCode: 111, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 117, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 124, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 125, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 126, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
 
   // Medium importance errors
   { errorCode: 109, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },

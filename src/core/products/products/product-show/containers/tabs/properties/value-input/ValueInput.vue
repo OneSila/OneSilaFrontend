@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref, onMounted, watch, Ref} from 'vue';
+import {ref, onMounted, watch, Ref, computed} from 'vue';
 import {ProductPropertyValue} from "../../../../../configs";
 import {ConfigTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
@@ -36,6 +36,7 @@ const val: Ref<any> = ref(null);
 const lastSavedVal: Ref<any> = ref(null);
 const lastSavedLanguage: Ref<any> = ref(null);
 const saving = ref(false);
+const hasChanges = computed(() => val.value !== lastSavedVal.value);
 
 const createInputData = () => {
   const inputData: any = {
@@ -372,6 +373,8 @@ const getTooltip = (requireType) => {
       return '';
   }
 }
+
+defineExpose({ saveChanges, hasChanges });
 
 </script>
 

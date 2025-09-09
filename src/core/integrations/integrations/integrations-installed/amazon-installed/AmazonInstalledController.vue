@@ -68,7 +68,7 @@ onMounted(async () => {
             <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
               ✅ {{ t('integrations.salesChannel.amazon.installed.success') }}
             </div>
-            <Link class="mt-2" :path="{ name: 'integrations.integrations.show', params: { id, type: IntegrationTypes.Shopify } }">
+            <Link class="mt-2" :path="{ name: 'integrations.integrations.show', params: { id, type: IntegrationTypes.Amazon } }">
               <Button
                 type="button"
                 class="button rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm btn-info"

@@ -8,7 +8,8 @@
       "duplicate": "Duplizieren",
       "resync": "Resync",
       "validate": "Validate",
-      "fetchIssues": "Fetch Issues"
+      "fetchIssues": "Fetch Issues",
+      "saveAll": "Alles speichern"
     },
     "colors": {
       "red": "Rot",
@@ -313,6 +314,19 @@
           "integration": "Integration",
           "failureRate": "Fehler %",
           "latencyP95": "p95 Latenz"
+        }
+      }
+    }
+  },
+  "media": {
+    "images": {
+      "tabs": {
+        "upload": "Hochladen",
+        "urls": "URLs"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Bitte geben Sie eine gültige Bild-URL ein (jpg, jpeg, png, webp)."
         }
       }
     }

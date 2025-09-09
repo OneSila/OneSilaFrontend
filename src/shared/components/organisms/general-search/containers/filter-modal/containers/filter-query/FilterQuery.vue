@@ -49,7 +49,45 @@ const selectedValue = ref(
   props.filter.default !== undefined ? props.filter.default : null
 );
 
-const fetchData = async (searchValue: string | null = null) => {
+async function ensureSelectedValuesArePresent(dataset: any[] = cleanedData.value) {
+  if (!props.filter.valueBy || !selectedValue.value) return [];
+
+  const extractId = (item: any): string | number | undefined => {
+    return typeof item === 'object' && item !== null
+      ? item[props.filter.valueBy!]
+      : item;
+  };
+
+  const selectedIds: (string | number | undefined)[] = Array.isArray(selectedValue.value)
+    ? selectedValue.value.map(extractId).filter(Boolean)
+    : [extractId(selectedValue.value)].filter(Boolean);
+
+  const currentIds = dataset.map(item => item[props.filter.valueBy!]);
+
+  const missingIds = selectedIds.filter(id => !currentIds.includes(id));
+  if (missingIds.length === 0) return [];
+
+  const { data } = await apolloClient.query({
+    query: props.filter.query as unknown as DocumentNode,
+    variables: {
+      filter: {
+        [props.filter.valueBy]: { inList: missingIds }
+      }
+    },
+    fetchPolicy: 'cache-first'
+  });
+
+  const newItems = props.filter.isEdge
+    ? data[props.filter.dataKey]?.edges?.map((e: any) => e.node) ?? []
+    : data[props.filter.dataKey] ?? [];
+
+  if (dataset === cleanedData.value) {
+    cleanedData.value = [...cleanedData.value, ...newItems];
+  }
+  return newItems;
+}
+
+const fetchData = async (searchValue: string | null = null, ensureSelected: boolean = false) => {
   const variables: any = {
     ...props.filter.queryVariables,
     filter: {
@@ -70,9 +108,15 @@ const fetchData = async (searchValue: string | null = null) => {
       variables: variables,
       fetchPolicy: 'cache-first'
     });
+    let newData: any[] = [];
     if (data && data[props.filter.dataKey]) {
-      cleanedData.value = cleanData(data[props.filter.dataKey]);
+      newData = cleanData(data[props.filter.dataKey]);
     }
+    if (ensureSelected) {
+      const extra = await ensureSelectedValuesArePresent(newData);
+      newData = [...newData, ...extra];
+    }
+    cleanedData.value = newData;
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -80,17 +124,22 @@ const fetchData = async (searchValue: string | null = null) => {
   }
 };
 
-onMounted(fetchData);
+onMounted(() => fetchData(null, true));
 
-watch(() => route.query[props.filter.name], (newValue) => {
+watch(() => route.query[props.filter.name], async (newValue) => {
   if (newValue !== undefined) {
     selectedValue.value = newValue;
+    await ensureSelectedValuesArePresent();
   }
 }, { immediate: true });
 
 watchEffect(() => {
   emit('update-value', selectedValue.value);
 });
+
+watch(selectedValue, async () => {
+  await ensureSelectedValuesArePresent();
+}, { deep: true });
 
 watch([selectedValue, cleanedData], () => {
   const values = Array.isArray(selectedValue.value)
@@ -114,9 +163,9 @@ watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
 
 const handleInput = debounce(async (searchValue: string) => {
   if (searchValue.length >= minSearchLength.value) {
-    fetchData(searchValue);
+    fetchData(searchValue, true);
   } else if (!searchValue.length) {
-    fetchData();
+    fetchData(null, true);
   }
 }, 500);
 

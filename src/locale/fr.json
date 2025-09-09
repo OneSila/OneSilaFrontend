@@ -8,7 +8,8 @@
       "duplicate": "Dupliquer",
       "resync": "Resync",
       "validate": "Validate",
-      "fetchIssues": "Fetch Issues"
+      "fetchIssues": "Fetch Issues",
+      "saveAll": "Tout enregistrer"
     },
     "colors": {
       "red": "Rouge",
@@ -313,6 +314,19 @@
           "integration": "Intégration",
           "failureRate": "% d'échec",
           "latencyP95": "Latence p95"
+        }
+      }
+    }
+  },
+  "media": {
+    "images": {
+      "tabs": {
+        "upload": "Téléverser",
+        "urls": "URLs"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Veuillez saisir une URL d'image valide (jpg, jpeg, png, webp)."
         }
       }
     }

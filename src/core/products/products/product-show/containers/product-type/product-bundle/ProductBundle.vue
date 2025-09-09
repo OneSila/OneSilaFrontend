@@ -18,6 +18,7 @@ import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
 import { amazonProductsQuery } from "../../../../../../../shared/api/queries/amazonProducts.js";
 import apolloClient from "../../../../../../../../apollo-client";
+import type { FetchPolicy } from "@apollo/client";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 
 const props = defineProps<{ product: Product }>();
@@ -27,17 +28,17 @@ const auth = injectAuth();
 
 const amazonProducts = ref<any[]>([]);
 
-const fetchAmazonProducts = async () => {
+const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'cache-first') => {
   const { data } = await apolloClient.query({
     query: amazonProductsQuery,
     variables: { localInstance: props.product.id },
-    fetchPolicy: 'cache-first',
+    fetchPolicy,
   });
   amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
 };
 
 if (auth.user.company?.hasAmazonIntegration) {
-  onMounted(fetchAmazonProducts);
+  onMounted(() => fetchAmazonProducts());
 }
 
 const tabItems = computed(() => {
@@ -99,7 +100,11 @@ const tabItems = computed(() => {
         <ProductSalePriceView :product="product" />
       </template>
       <template v-slot:websites>
-        <WebsitesView :product="product" />
+        <WebsitesView
+          :product="product"
+          @assign-added="fetchAmazonProducts('network-only')"
+          @assign-deleted="fetchAmazonProducts('network-only')"
+        />
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList :product="product" />
@@ -114,7 +119,7 @@ const tabItems = computed(() => {
         <AmazonView
           :product="product"
           :amazon-products="amazonProducts"
-          @refresh-amazon-products="fetchAmazonProducts"
+          @refresh-amazon-products="fetchAmazonProducts('network-only')"
         />
       </template>
     </Tabs>

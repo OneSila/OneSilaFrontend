@@ -159,7 +159,7 @@ defineExpose({save, fetchPoints});
 </script>
 
 <template>
-  <div class="mt-4">
+  <div class="my-4">
     <Flex gap="4" middle between>
       <FlexCell>
         <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
