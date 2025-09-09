@@ -131,6 +131,10 @@ watchEffect(() => {
   emit('update-value', selectedValue.value);
 });
 
+watch(selectedValue, async () => {
+  await ensureSelectedValuesArePresent();
+}, { deep: true });
+
 watch([selectedValue, cleanedData], () => {
   const values = Array.isArray(selectedValue.value)
     ? selectedValue.value
