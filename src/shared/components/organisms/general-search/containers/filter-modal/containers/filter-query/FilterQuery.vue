@@ -49,8 +49,8 @@ const selectedValue = ref(
   props.filter.default !== undefined ? props.filter.default : null
 );
 
-async function ensureSelectedValuesArePresent() {
-  if (!props.filter.valueBy || !selectedValue.value) return;
+async function ensureSelectedValuesArePresent(dataset: any[] = cleanedData.value) {
+  if (!props.filter.valueBy || !selectedValue.value) return [];
 
   const extractId = (item: any): string | number | undefined => {
     return typeof item === 'object' && item !== null
@@ -62,10 +62,10 @@ async function ensureSelectedValuesArePresent() {
     ? selectedValue.value.map(extractId).filter(Boolean)
     : [extractId(selectedValue.value)].filter(Boolean);
 
-  const currentIds = cleanedData.value.map(item => item[props.filter.valueBy!]);
+  const currentIds = dataset.map(item => item[props.filter.valueBy!]);
 
   const missingIds = selectedIds.filter(id => !currentIds.includes(id));
-  if (missingIds.length === 0) return;
+  if (missingIds.length === 0) return [];
 
   const { data } = await apolloClient.query({
     query: props.filter.query as unknown as DocumentNode,
@@ -81,7 +81,10 @@ async function ensureSelectedValuesArePresent() {
     ? data[props.filter.dataKey]?.edges?.map((e: any) => e.node) ?? []
     : data[props.filter.dataKey] ?? [];
 
-  cleanedData.value = [...cleanedData.value, ...newItems];
+  if (dataset === cleanedData.value) {
+    cleanedData.value = [...cleanedData.value, ...newItems];
+  }
+  return newItems;
 }
 
 const fetchData = async (searchValue: string | null = null, ensureSelected: boolean = false) => {
@@ -105,12 +108,15 @@ const fetchData = async (searchValue: string | null = null, ensureSelected: bool
       variables: variables,
       fetchPolicy: 'cache-first'
     });
+    let newData: any[] = [];
     if (data && data[props.filter.dataKey]) {
-      cleanedData.value = cleanData(data[props.filter.dataKey]);
+      newData = cleanData(data[props.filter.dataKey]);
     }
     if (ensureSelected) {
-      await ensureSelectedValuesArePresent();
+      const extra = await ensureSelectedValuesArePresent(newData);
+      newData = [...newData, ...extra];
     }
+    cleanedData.value = newData;
     loading.value = false;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -157,9 +163,9 @@ watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
 
 const handleInput = debounce(async (searchValue: string) => {
   if (searchValue.length >= minSearchLength.value) {
-    fetchData(searchValue);
+    fetchData(searchValue, true);
   } else if (!searchValue.length) {
-    fetchData();
+    fetchData(null, true);
   }
 }, 500);
 
