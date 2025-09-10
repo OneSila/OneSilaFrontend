@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch, computed} from "vue";
+import {onMounted, ref, Ref, watch, computed, onBeforeUpdate} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -29,6 +29,14 @@ const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
 const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
+const setValueInputRef = (el: InstanceType<typeof ValueInput> | null) => {
+  if (el) {
+    valueInputs.value.push(el);
+  }
+};
+onBeforeUpdate(() => {
+  valueInputs.value = [];
+});
 const hasUnsavedChanges = computed(() => valueInputs.value.some(v => v?.hasChanges));
 const saveAll = async () => {
   const inputs = [...valueInputs.value];
@@ -536,7 +544,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
-            ref="valueInputs"
+            :ref="setValueInputRef"
         />
         <hr class="my-4"/>
       </div>
@@ -550,7 +558,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
-            ref="valueInputs"
+            :ref="setValueInputRef"
         />
       </div>
     </div>
