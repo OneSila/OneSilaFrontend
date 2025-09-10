@@ -678,6 +678,7 @@
         "statusDescription": "Synchronization status and available actions.",
         "variationTheme": "Amazon-variatiethema",
         "variationThemeDescription": "Selecteer welke veldeigenschappen je wilt dat mensen kiezen bij het selecteren van het juiste product.",
+        "variationThemePlaceholder": "Selecteer variatiethema",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted",
         "asin": "ASIN",

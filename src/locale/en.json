@@ -996,6 +996,7 @@
         "noStatus": "The product is not present yet on the marketplace!",
         "variationTheme": "Amazon Variation Theme",
         "variationThemeDescription": "Select which fields properties you want people to select when choosing the right product.",
+        "variationThemePlaceholder": "Select variation theme",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted",
         "asin": "ASIN",

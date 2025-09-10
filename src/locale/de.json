@@ -134,6 +134,7 @@
         "statusDescription": "Synchronization status and available actions.",
         "variationTheme": "Amazon-Variationsthema",
         "variationThemeDescription": "Wählen Sie aus, welche Feldeigenschaften Nutzer auswählen sollen, wenn sie das richtige Produkt wählen.",
+        "variationThemePlaceholder": "Variationsthema auswählen",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted"
       }

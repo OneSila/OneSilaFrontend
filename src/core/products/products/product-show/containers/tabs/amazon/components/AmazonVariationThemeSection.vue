@@ -163,7 +163,7 @@ defineExpose({ hasUnsavedChanges });
           label-by="name"
           value-by="id"
           :filterable="true"
-          :placeholder="t('shared.placeholders.select')"
+          :placeholder="t('products.products.amazon.variationThemePlaceholder')"
         />
       </FlexCell>
       <FlexCell>

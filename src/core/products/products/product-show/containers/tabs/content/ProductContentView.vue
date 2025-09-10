@@ -201,7 +201,7 @@ const handleLanguageSelection = async (newLanguage) => {
 const handleSalesChannelSelection = async (newChannel) => {
 
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
-    const confirmChange = confirm(t('products.translation.confirmLanguageChange'));
+    const confirmChange = confirm(t('products.products.messages.unsavedChanges'));
     if (!confirmChange) {
       currentSalesChannel.value = oldChannel.value;
       return;

@@ -123,6 +123,16 @@ const hasUnsavedChanges = computed(
 
 defineExpose({ hasUnsavedChanges });
 
+const handleMarketplaceSelection = (newId: string) => {
+  if (hasUnsavedChanges.value) {
+    const confirmChange = confirm(t('products.products.messages.unsavedChanges'));
+    if (!confirmChange) {
+      return;
+    }
+  }
+  selectedViewId.value = newId;
+};
+
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
   emit('refreshAmazonProducts');
@@ -166,9 +176,10 @@ const formatDate = (dateString?: string | null) => {
       <div v-if="!loading && views.length" class="flex">
         <AmazonMarketplaceTabs
           class="w-72"
-          v-model="selectedViewId"
+          :model-value="selectedViewId"
           :views="views"
           :amazon-products="amazonProducts"
+          @update:modelValue="handleMarketplaceSelection"
         />
           <div class="flex-1 p-6">
             <div v-if="selectedView">
