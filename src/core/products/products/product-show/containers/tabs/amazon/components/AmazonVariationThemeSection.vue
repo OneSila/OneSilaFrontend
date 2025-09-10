@@ -131,6 +131,10 @@ const save = async () => {
 const showAlert = computed(
   () => props.view && !props.view.isDefault && !loading.value && !recordId.value,
 );
+
+const hasUnsavedChanges = computed(() => hasChanges.value);
+
+defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>
