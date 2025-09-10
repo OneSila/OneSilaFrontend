@@ -239,12 +239,12 @@ const deleteAll = async (query) => {
                     <template v-if="item.node.type === TYPE_IMAGE">
                       <Button v-if="assignImages" @click="assignMedia(item.node)">
                         <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center">
-                          <Image :source="item.node.onesilaThumbnailUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
+                          <Image :source="item.node.imageWebUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
                         </div>
                       </Button>
                       <Link v-else :path="getPath(item.node)">
                         <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center">
-                          <Image :source="item.node.onesilaThumbnailUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
+                          <Image :source="item.node.imageWebUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
                         </div>
                       </Link>
                     </template>
