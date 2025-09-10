@@ -270,6 +270,14 @@ const handleError = (errors) => {
   }
 }
 
+const hasUnsavedChanges = computed(() => {
+  const formChanged = JSON.stringify(form) !== JSON.stringify(initialForm.value);
+  const bulletsChanged = bulletPointsRef.value?.hasChanges;
+  return formChanged || bulletsChanged;
+});
+
+defineExpose({ hasUnsavedChanges });
+
 const shortDescriptionToolbarOptions = [
   ['bold', 'underline'],
   [{ list: 'bullet' }],

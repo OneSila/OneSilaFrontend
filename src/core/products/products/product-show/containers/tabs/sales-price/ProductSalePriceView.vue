@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { onMounted, ref, Ref } from "vue";
+import { onMounted, ref, Ref, computed } from "vue";
 import { useI18n } from 'vue-i18n';
 import { Product } from "../../../../configs";
 import { Button } from "../../../../../../../shared/components/atoms/button";
@@ -173,6 +173,10 @@ const savePrices = async () => {
 }
 
 onMounted(loadPrices);
+
+const hasUnsavedChanges = computed(() => JSON.stringify(prices.value) !== JSON.stringify(initialPrices.value));
+
+defineExpose({ hasUnsavedChanges });
 
 </script>
 
