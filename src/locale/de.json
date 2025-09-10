@@ -83,6 +83,11 @@
   }
   ,
   "products": {
+    "translation": {
+      "messages": {
+        "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
+      }
+    },
     "products": {
       "create": {
         "wizard": {

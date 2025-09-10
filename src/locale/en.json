@@ -939,6 +939,9 @@
       },
       "warning": {
         "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
+      },
+      "messages": {
+        "noSourceText": "There is no source text to translate."
       }
     },
     "products": {
