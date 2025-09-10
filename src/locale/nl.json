@@ -793,7 +793,8 @@
         "productionTime": "Productie tijd",
         "forSale": "Verkoopbaar",
         "allowBackorder": "Backorder toestaan",
-        "inspectorStatus": ""
+        "inspectorStatus": "",
+        "configuratorValue": ""
       },
       "placeholders": {
         "vatRate": "Voeg BTW Tarief toe",
