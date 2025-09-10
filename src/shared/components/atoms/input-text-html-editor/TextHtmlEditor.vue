@@ -18,6 +18,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const content = ref(props.modelValue || '');
+const invalidHtml = ref(false);
 
 const defaultToolbarOptions = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -33,18 +34,29 @@ const editorOptions = computed(() => ({
   modules: {
     toolbar: finalToolbarOptions.value,
     clipboard: {
-      allowed: { tags: ['ul', 'ol', 'li'] },
+      allowed: { tags: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li'] },
     },
   },
 }));
 
-watch(() => props.modelValue, (newVal) => {
-  content.value = newVal || '';
+const validateHtml = (value: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(value, 'text/html');
+  invalidHtml.value = doc.querySelector('parsererror') !== null;
+};
 
-});
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    content.value = newVal || '';
+    validateHtml(content.value);
+  },
+  { immediate: true }
+);
 
 watch(content, (newVal) => {
   emit('update:modelValue', newVal);
+  validateHtml(newVal);
 });
 
 </script>
@@ -59,6 +71,9 @@ watch(content, (newVal) => {
       :read-only="disabled || aiGenerating"
       style="min-height: 250px;"
     />
+      <p v-if="invalidHtml" class="mt-2 text-sm text-red-600">
+        {{ t('shared.components.atoms.textHtmlEditor.invalidHtml') }}
+      </p>
 </template>
 
 <style scoped>
@@ -67,6 +82,11 @@ watch(content, (newVal) => {
   content: "• " !important;
   left: -1.5rem;
   color: inherit;
+}
+
+:deep(ul) {
+  list-style: disc;
+  margin-left: 1.5rem;
 }
 
 </style>
