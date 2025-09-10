@@ -1114,6 +1114,7 @@
         "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
         "inspectorStatus": "Content Quality",
+        "configuratorValue": "Configurator Value",
         "aliasParentProduct": "Alias Target"
       },
       "placeholders": {

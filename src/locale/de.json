@@ -96,6 +96,9 @@
       "tabs": {
         "amazon": "Amazon"
       },
+      "labels": {
+        "configuratorValue": ""
+      },
       "amazon": {
         "asin": "ASIN",
         "asinDescription": "Provide the Amazon Standard Identification Number for this product.",
