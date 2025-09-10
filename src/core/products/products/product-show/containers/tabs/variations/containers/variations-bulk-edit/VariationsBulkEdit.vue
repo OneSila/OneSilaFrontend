@@ -701,6 +701,8 @@ const hasChanges = computed(
   () => toCreate.value.length || toUpdate.value.length || toDelete.value.length
 )
 
+const hasUnsavedChanges = hasChanges
+
 const save = async () => {
   skipHistory.value = true
   const createdCount = toCreate.value.length
@@ -767,7 +769,7 @@ const save = async () => {
   }
 }
 
-defineExpose({ save, hasChanges })
+defineExpose({ save, hasUnsavedChanges })
 
 const showTextModal = ref(false)
 const showDescriptionModal = ref(false)

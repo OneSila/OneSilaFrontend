@@ -46,12 +46,16 @@ const generalRef = ref<InstanceType<typeof ProductEditView> | null>(null);
 const contentRef = ref<InstanceType<typeof ProductContentView> | null>(null);
 const priceRef = ref<InstanceType<typeof ProductSalePriceView> | null>(null);
 const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
+const variationsRef = ref<InstanceType<typeof VariationsView> | null>(null);
+const eanCodesRef = ref<InstanceType<typeof ProductEanCodesList> | null>(null);
 
 const tabRefs: Record<string, any> = {
   general: generalRef,
   productContent: contentRef,
   price: priceRef,
   properties: propertiesRef,
+  variations: variationsRef,
+  eanCodes: eanCodesRef,
 };
 
 const beforeTabChange = async (newTab: string, oldTab: string) => {
@@ -113,7 +117,7 @@ const tabItems = computed(() => {
         <ProductContentView ref="contentRef" :product="product" />
       </template>
       <template v-slot:variations>
-        <VariationsView :product="product" />
+        <VariationsView ref="variationsRef" :product="product" />
       </template>
       <template v-slot:media>
         <MediaView :product="product" />
@@ -141,7 +145,7 @@ const tabItems = computed(() => {
 <!--        <ProductHsCodesList :product="product" />-->
 <!--      </template>-->
       <template v-slot:eanCodes>
-        <ProductEanCodesList :product="product" />
+        <ProductEanCodesList ref="eanCodesRef" :product="product" />
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView

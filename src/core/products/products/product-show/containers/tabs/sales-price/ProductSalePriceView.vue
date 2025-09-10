@@ -19,8 +19,8 @@ const props = defineProps<{ product: Product }>();
 const loading = ref(false);
 interface Price {
   id: string;
-  price: string | number | null;
-  rrp: string | number | null;
+  price: string | null;
+  rrp: string | null;
   currency: string;
   symbol: string;
   readonly: boolean;
@@ -54,14 +54,12 @@ const loadPrices = async (policy: FetchPolicy = 'cache-first') => {
 
   prices.value = data.salesPrices.edges.map(edge => ({
     id: edge.node.id,
-    price: edge.node.price,
-    rrp: edge.node.rrp,
+    price: edge.node.price?.toString() || '',
+    rrp: edge.node.rrp?.toString() || '',
     currency: edge.node.currency.isoCode,
     symbol: edge.node.currency.symbol,
     readonly: !edge.node.currency.isDefaultCurrency && !!edge.node.currency.inheritsFrom,
   }));
-
-  initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
   const defaultCurrencyPrice = prices.value.find(price => price.currency === defaultCurrency.value.isoCode);
 
@@ -69,13 +67,15 @@ const loadPrices = async (policy: FetchPolicy = 'cache-first') => {
 
     prices.value.unshift({
       id: '',
-      price: null,
-      rrp: null,
+      price: '',
+      rrp: '',
       currency: defaultCurrency.value.isoCode,
       symbol: defaultCurrency.value.symbol,
-      readonly: false,
-    });
-  }
+    readonly: false,
+  });
+}
+
+  initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
   loading.value = false;
 };
@@ -117,8 +117,8 @@ const createPrice = async (price) => {
       mutation: createSalesPriceMutation,
       variables: {
         data: {
-          price: price.price,
-          rrp: price.rrp,
+          price: parseFloat(price.price),
+          rrp: price.rrp === '' ? null : parseFloat(price.rrp),
           product: { id: props.product.id },
           currency: { id: defaultCurrency.value.id }
         }
@@ -135,8 +135,8 @@ const editPrice = async (price) => {
   if (JSON.stringify(price) !== JSON.stringify(originalPrice)) {
     const priceData = {
       id: price.id,
-      price: price.price,
-      rrp: price.rrp == '' ? null : price.rrp
+      price: parseFloat(price.price),
+      rrp: price.rrp === '' ? null : parseFloat(price.rrp)
     };
     const { data } = await apolloClient.mutate({
       mutation: updateSalesPriceMutation,

@@ -40,11 +40,13 @@ if (auth.user.company?.hasAmazonIntegration) {
 const generalRef = ref<InstanceType<typeof ProductEditView> | null>(null);
 const contentRef = ref<InstanceType<typeof ProductContentView> | null>(null);
 const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
+const variationsRef = ref<InstanceType<typeof VariationsView> | null>(null);
 
 const tabRefs: Record<string, any> = {
   general: generalRef,
   productContent: contentRef,
   properties: propertiesRef,
+  variations: variationsRef,
 };
 
 const beforeTabChange = async (newTab: string, oldTab: string) => {
@@ -112,7 +114,7 @@ const tabItems = computed(() => {
         <AliasProductsView :product="product" />
       </template>
       <template v-slot:variations>
-        <VariationsView :product="product" />
+        <VariationsView ref="variationsRef" :product="product" />
       </template>
       <template v-slot:websites>
         <WebsitesView
