@@ -4,7 +4,7 @@ import {ref, onMounted, watch, Ref, computed} from 'vue';
 import {ProductPropertyValue} from "../../../../../configs";
 import {ConfigTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import {propertySelectValuesQuerySimpleSelector} from "../../../../../../../../shared/api/queries/properties.js";
+import {propertySelectValuesQuerySimpleSelector, productPropertyTextTranslationsQuery} from "../../../../../../../../shared/api/queries/properties.js";
 import {TextInput} from "../../../../../../../../shared/components/atoms/input-text";
 import {TextEditor} from "../../../../../../../../shared/components/atoms/input-text-editor";
 import {Toggle} from "../../../../../../../../shared/components/atoms/toggle";
@@ -24,6 +24,7 @@ import {Icon} from "../../../../../../../../shared/components/atoms/icon";
 import {Button} from "../../../../../../../../shared/components/atoms/button";
 import {selectValueOnTheFlyConfig} from "../../../../../../../properties/property-select-values/configs";
 import {Link} from "../../../../../../../../shared/components/atoms/link";
+import { AiContentTranslator } from "../../../../../../../../shared/components/organisms/ai-content-translator";
 
 const { t } = useI18n();
 
@@ -37,6 +38,54 @@ const lastSavedVal: Ref<any> = ref(null);
 const lastSavedLanguage: Ref<any> = ref(null);
 const saving = ref(false);
 const hasChanges = computed(() => val.value !== lastSavedVal.value);
+
+const sourceText = ref<string | null>(null);
+const showTranslator = computed(() =>
+  [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type) &&
+  props.value.translation.language &&
+  props.value.translation.language !== 'en' &&
+  (!val.value || val.value === '') &&
+  val.value === lastSavedVal.value
+);
+
+const fetchSourceText = async () => {
+  const { data } = await apolloClient.query({
+    query: productPropertyTextTranslationsQuery,
+    variables: {
+      filter: {
+        productProperty: {
+          property: { id: { exact: props.value.property.id } },
+          product: { id: { exact: props.productId } }
+        },
+        language: { exact: 'en' }
+      }
+    },
+    fetchPolicy: 'network-only'
+  });
+
+  if (data && data.productPropertyTextTranslations && data.productPropertyTextTranslations.edges && data.productPropertyTextTranslations.edges.length === 1) {
+    const node = data.productPropertyTextTranslations.edges[0].node;
+    return props.value.property.type === PropertyTypes.TEXT ? node.valueText || '' : node.valueDescription || '';
+  }
+
+  return '';
+};
+
+watch(showTranslator, async (val) => {
+  if (val) {
+    sourceText.value = await fetchSourceText();
+  } else {
+    sourceText.value = null;
+  }
+});
+
+const handleTranslated = (text: string) => {
+  val.value = text;
+};
+
+const showNoSourceToast = () => {
+  Toast.error(t('products.translation.messages.noSourceText'));
+};
 
 const createInputData = () => {
   const inputData: any = {
@@ -403,7 +452,21 @@ defineExpose({ saveChanges, hasChanges });
             </label>
           </FlexCell>
           <FlexCell center>
-              <template v-if="[PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type) && value.translation.language && flagMapping.hasOwnProperty(value.translation.language) && val == lastSavedVal">
+              <template v-if="showTranslator">
+                <AiContentTranslator
+                  v-if="sourceText"
+                  :product="{ id: productId }"
+                  :to-translate="sourceText"
+                  from-language-code="en"
+                  :to-language-code="value.translation.language"
+                  @translated="handleTranslated"
+                />
+                <Button v-else class="btn btn-sm btn-outline-success" @click="showNoSourceToast">
+                  {{ t('shared.button.translate') }}
+                </Button>
+              </template>
+
+              <template v-else-if="[PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type) && value.translation.language && flagMapping.hasOwnProperty(value.translation.language) && val == lastSavedVal">
                 <span>{{ flagMapping[value.translation.language] }}</span>
               </template>
 
