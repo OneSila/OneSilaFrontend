@@ -338,6 +338,11 @@
           "invalidUrl": "Bitte geben Sie eine gültige Bild-URL ein (jpg, jpeg, png, webp)."
         }
       }
+    },
+    "media": {
+      "labels": {
+        "fileThumbnail": "Datei-Miniaturansicht"
+      }
     }
   },
   "properties": {

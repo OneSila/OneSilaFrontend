@@ -1836,7 +1836,8 @@
         "files": "Files",
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add from existing media",
-        "images": "Images"
+        "images": "Images",
+        "fileThumbnail": "File thumbnail"
       },
       "alert": {
         "toast": {
