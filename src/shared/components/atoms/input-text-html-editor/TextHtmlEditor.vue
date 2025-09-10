@@ -29,6 +29,15 @@ const defaultToolbarOptions = [
 
 const finalToolbarOptions = computed(() => props.toolbarOptions || defaultToolbarOptions);
 
+const editorOptions = computed(() => ({
+  modules: {
+    toolbar: finalToolbarOptions.value,
+    clipboard: {
+      allowed: { tags: ['ul', 'ol', 'li'] },
+    },
+  },
+}));
+
 watch(() => props.modelValue, (newVal) => {
   content.value = newVal || '';
 
@@ -45,7 +54,7 @@ watch(content, (newVal) => {
       v-model:content="content"
       contentType="html"
       theme="snow"
-      :toolbar="finalToolbarOptions"
+      :options="editorOptions"
       :placeholder="placeholder || 'Type here...'"
       :read-only="disabled || aiGenerating"
       style="min-height: 250px;"
