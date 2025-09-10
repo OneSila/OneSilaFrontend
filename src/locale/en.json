@@ -2513,6 +2513,10 @@
           "webhookExample": "Send events to your application via HTTP",
           "magentoInfoModal": {
             "title": "How to connect your Magento store",
+            "tabs": {
+              "instructions": "Instructions",
+              "video": "Video"
+            },
             "section": {
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
