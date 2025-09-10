@@ -28,9 +28,10 @@ import { AiContentTranslator } from "../../../../../../../../shared/components/o
 
 const { t } = useI18n();
 
-
-const props = defineProps<{ productId: string; value: ProductPropertyValue, ruleId?: string | null }>();
+const props = defineProps<{ productId: string; value: ProductPropertyValue, ruleId?: string | null, companyLanguage?: string | null }>();
 const emit = defineEmits(['refetch', 'update-id', 'remove', 'update-value']);
+
+const companyLanguage = computed(() => props.companyLanguage);
 
 const field: Ref<QueryFormField| null> = ref(null);
 const val: Ref<any> = ref(null);
@@ -39,11 +40,12 @@ const lastSavedLanguage: Ref<any> = ref(null);
 const saving = ref(false);
 const hasChanges = computed(() => val.value !== lastSavedVal.value);
 
-const sourceText = ref<string | null>(null);
+const sourceText = ref('');
 const showTranslator = computed(() =>
   [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(props.value.property.type) &&
   props.value.translation.language &&
-  props.value.translation.language !== 'en' &&
+  companyLanguage.value &&
+  props.value.translation.language !== companyLanguage.value &&
   (!val.value || val.value === '') &&
   val.value === lastSavedVal.value
 );
@@ -57,7 +59,7 @@ const fetchSourceText = async () => {
           property: { id: { exact: props.value.property.id } },
           product: { id: { exact: props.productId } }
         },
-        language: { exact: 'en' }
+        language: { exact: companyLanguage.value }
       }
     },
     fetchPolicy: 'network-only'
@@ -71,13 +73,15 @@ const fetchSourceText = async () => {
   return '';
 };
 
-watch(showTranslator, async (val) => {
-  if (val) {
-    sourceText.value = await fetchSourceText();
-  } else {
-    sourceText.value = null;
+const prepareTranslation = async () => {
+  const text = await fetchSourceText();
+  if (!text) {
+    showNoSourceToast();
+    return false;
   }
-});
+  sourceText.value = text;
+  return true;
+};
 
 const handleTranslated = (text: string) => {
   val.value = text;
@@ -453,17 +457,17 @@ defineExpose({ saveChanges, hasChanges });
           </FlexCell>
           <FlexCell center>
               <template v-if="showTranslator">
+                <span v-if="value.translation.language && flagMapping.hasOwnProperty(value.translation.language)">
+                  {{ flagMapping[value.translation.language] }}
+                </span>
                 <AiContentTranslator
-                  v-if="sourceText"
                   :product="{ id: productId }"
                   :to-translate="sourceText"
-                  from-language-code="en"
-                  :to-language-code="value.translation.language"
+                  :from-language-code="companyLanguage!"
+                  :to-language-code="value.translation.language!"
+                  :before-start="prepareTranslation"
                   @translated="handleTranslated"
                 />
-                <Button v-else class="btn btn-sm btn-outline-success" @click="showNoSourceToast">
-                  {{ t('shared.button.translate') }}
-                </Button>
               </template>
 
               <template v-else-if="[PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type) && value.translation.language && flagMapping.hasOwnProperty(value.translation.language) && val == lastSavedVal">

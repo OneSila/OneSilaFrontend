@@ -28,8 +28,9 @@ const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
+const companyLanguage: Ref<string | null> = ref(null);
 const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
-const setValueInputRef = (el: InstanceType<typeof ValueInput> | null) => {
+const setValueInputRef = (el: any) => {
   if (el) {
     valueInputs.value.push(el);
   }
@@ -190,6 +191,7 @@ const setCurrentLanguage = async (fetchPolicy) => {
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
     const defaultLanguage = data.translationLanguages.defaultLanguage;
     language.value = defaultLanguage.code;
+    companyLanguage.value = defaultLanguage.code;
   }
 
 };
@@ -325,6 +327,7 @@ const fetchRequiredAttributesValues = async (fetchPolicy = 'cache-first') => {
   loading.value = true
   values.value = [];
   language.value = null;
+  companyLanguage.value = null;
   currentPage.value = 1;
   const productTypePropertyId = await fetchRequiredProductType(fetchPolicy);
   await fetchRequiredAttributes(productTypePropertyId, fetchPolicy);
@@ -540,6 +543,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :product-id="product.id"
             :rule-id="ruleId"
             :value="productTypeValue"
+            :company-language="companyLanguage"
             @refetch="fetchRequiredAttributesValues('network-only')"
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
@@ -554,6 +558,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :product-id="product.id"
             :rule-id="ruleId"
             :value="val"
+            :company-language="companyLanguage"
             @refetch="fetchRequiredAttributesValues('network-only')"
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
