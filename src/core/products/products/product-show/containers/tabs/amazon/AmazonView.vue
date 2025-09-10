@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue';
+import { computed, ref, onMounted, watch, unref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TabContentTemplate from '../TabContentTemplate.vue';
 import { Product } from '../../../../configs';
@@ -114,10 +114,10 @@ const variationThemeRef = ref<InstanceType<typeof AmazonVariationThemeSection> |
 
 const hasUnsavedChanges = computed(
   () =>
-    externalIdRef.value?.hasUnsavedChanges ||
-    gtinExemptionRef.value?.hasUnsavedChanges ||
-    browseNodeRef.value?.hasUnsavedChanges ||
-    variationThemeRef.value?.hasUnsavedChanges ||
+    unref(externalIdRef.value?.hasUnsavedChanges) ||
+    unref(gtinExemptionRef.value?.hasUnsavedChanges) ||
+    unref(browseNodeRef.value?.hasUnsavedChanges) ||
+    unref(variationThemeRef.value?.hasUnsavedChanges) ||
     false,
 );
 

@@ -48,6 +48,7 @@ const priceRef = ref<InstanceType<typeof ProductSalePriceView> | null>(null);
 const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
 const variationsRef = ref<InstanceType<typeof VariationsView> | null>(null);
 const eanCodesRef = ref<InstanceType<typeof ProductEanCodesList> | null>(null);
+const amazonRef = ref<InstanceType<typeof AmazonView> | null>(null);
 
 const tabRefs: Record<string, any> = {
   general: generalRef,
@@ -56,6 +57,7 @@ const tabRefs: Record<string, any> = {
   properties: propertiesRef,
   variations: variationsRef,
   eanCodes: eanCodesRef,
+  amazon: amazonRef,
 };
 
 const beforeTabChange = async (newTab: string, oldTab: string) => {
@@ -149,6 +151,7 @@ const tabItems = computed(() => {
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView
+          ref="amazonRef"
           :product="product"
           :amazon-products="amazonProducts"
           @refresh-amazon-products="fetchAmazonProducts('network-only')"
