@@ -39,6 +39,8 @@ const saveAll = async () => {
   }
 };
 
+defineExpose({ hasUnsavedChanges });
+
 const currentPage = ref(1);
 const limit = ref(10);
 const perPageOptions = [

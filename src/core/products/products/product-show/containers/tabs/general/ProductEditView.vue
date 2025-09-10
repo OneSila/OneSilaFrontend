@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, reactive, ref} from 'vue';
+import {onMounted, reactive, ref, computed} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField, FormType,
@@ -33,6 +33,8 @@ const form = reactive({
   },
   allowBackorder: props.product.allowBackorder,
 });
+
+const initialForm = ref({ ...form });
 
 const router = useRouter();
 
@@ -89,6 +91,12 @@ const getCleanData = (data) => {
 
   return cleanedData;
 };
+
+const hasUnsavedChanges = computed(() => {
+  return JSON.stringify(getCleanData(form)) !== JSON.stringify(initialForm.value);
+});
+
+defineExpose({ hasUnsavedChanges });
 
 const handleSubmit = async (overrideData = {}) => {
   const dataToSubmit = getCleanData({ ...form, ...overrideData });
