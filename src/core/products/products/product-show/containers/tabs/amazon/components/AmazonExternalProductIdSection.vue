@@ -145,6 +145,10 @@ const isSaveDisabled = computed(
 const showAlert = computed(
   () => !props.view?.isDefault && !loading.value && isMissing.value,
 );
+
+const hasUnsavedChanges = computed(() => !isSaveDisabled.value);
+
+defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>

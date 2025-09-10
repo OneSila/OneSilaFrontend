@@ -91,6 +91,10 @@ const save = async () => {
 const showAlert = computed(
   () => props.view && !props.view.isDefault && !loading.value && !exemptionId.value,
 );
+
+const hasUnsavedChanges = computed(() => value.value !== initialValue.value);
+
+defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>

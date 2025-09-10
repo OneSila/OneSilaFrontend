@@ -356,6 +356,10 @@ const showAlert = computed(
   () =>
     props.view && !props.view.isDefault && !loadingSelected.value && !productBrowseNodeId.value,
 );
+
+const hasUnsavedChanges = computed(() => pendingNode.value !== null);
+
+defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>

@@ -107,6 +107,22 @@ const otherIssues = computed(() => {
 });
 const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
 
+const externalIdRef = ref<InstanceType<typeof AmazonExternalProductIdSection> | null>(null);
+const gtinExemptionRef = ref<InstanceType<typeof AmazonGtinExemptionSection> | null>(null);
+const browseNodeRef = ref<InstanceType<typeof AmazonBrowseNodeSection> | null>(null);
+const variationThemeRef = ref<InstanceType<typeof AmazonVariationThemeSection> | null>(null);
+
+const hasUnsavedChanges = computed(
+  () =>
+    externalIdRef.value?.hasUnsavedChanges ||
+    gtinExemptionRef.value?.hasUnsavedChanges ||
+    browseNodeRef.value?.hasUnsavedChanges ||
+    variationThemeRef.value?.hasUnsavedChanges ||
+    false,
+);
+
+defineExpose({ hasUnsavedChanges });
+
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
   emit('refreshAmazonProducts');
@@ -183,6 +199,7 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonExternalProductIdSection
                 class="mb-4"
+                ref="externalIdRef"
                 :product="product"
                 :view="selectedView"
               />
@@ -191,6 +208,7 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonGtinExemptionSection
                 class="mb-4"
+                ref="gtinExemptionRef"
                 :product-id="props.product.id"
                 :view-id="selectedView?.id"
                 :view="selectedView"
@@ -208,6 +226,7 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonBrowseNodeSection
                 class="mb-4"
+                ref="browseNodeRef"
                 :product-id="props.product.id"
                 :sales-channel-id="selectedView?.salesChannel.id"
                 :sales-channel-view-id="selectedView?.id"
@@ -220,6 +239,7 @@ const formatDate = (dateString?: string | null) => {
               <AmazonVariationThemeSection
                 v-if="isConfigurable && selectedView"
                 class="mb-4"
+                ref="variationThemeRef"
                 :product="product"
                 :view="selectedView"
               />
