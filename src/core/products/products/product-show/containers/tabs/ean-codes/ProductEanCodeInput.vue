@@ -188,6 +188,10 @@ const handleSave = async () => {
 
 const isSaveDisabled = computed(() => lastSavedEanCode.value === eanCode.value.ean);
 
+const hasUnsavedChanges = computed(() => lastSavedEanCode.value !== eanCode.value.ean);
+
+defineExpose({ hasUnsavedChanges });
+
 </script>
 
 <template>

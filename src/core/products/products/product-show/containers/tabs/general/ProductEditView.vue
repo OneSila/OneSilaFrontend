@@ -34,8 +34,6 @@ const form = reactive({
   allowBackorder: props.product.allowBackorder,
 });
 
-const initialForm = ref({ ...form });
-
 const router = useRouter();
 
 const fields = {
@@ -92,6 +90,8 @@ const getCleanData = (data) => {
   return cleanedData;
 };
 
+const initialForm = ref(JSON.parse(JSON.stringify(getCleanData(form))));
+
 const hasUnsavedChanges = computed(() => {
   return JSON.stringify(getCleanData(form)) !== JSON.stringify(initialForm.value);
 });
@@ -117,6 +117,8 @@ const handleSubmit = async (overrideData = {}) => {
       if (data.updateProduct.vatRate && data.updateProduct.vatRate.id) {
         form.vatRate.id = data.updateProduct.vatRate.id
       }
+
+      initialForm.value = JSON.parse(JSON.stringify(getCleanData(form)));
 
       Toast.success(t('products.products.edit.updateSuccessfully'));
     }
