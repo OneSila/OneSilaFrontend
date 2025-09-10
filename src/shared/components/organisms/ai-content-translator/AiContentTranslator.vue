@@ -11,6 +11,7 @@ interface Props {
   product?: any;
   productContentType?: string;
   salesChannelId?: string;
+  beforeStart?: () => Promise<boolean> | boolean;
 }
 
 const props = defineProps<Props>();
@@ -62,6 +63,7 @@ const steps = computed(() => [
     modal-title="shared.components.organisms.aiContentTranslator.title"
     successToastKey="shared.components.organisms.aiContentTranslator.success"
     btn-class="btn-outline-success"
+    :before-start="props.beforeStart"
     @processed="text => emit('translated', text)"
   />
 </template>
