@@ -34,7 +34,7 @@ const editorOptions = computed(() => ({
   modules: {
     toolbar: finalToolbarOptions.value,
     clipboard: {
-      allowed: { tags: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li'] },
+      allowed: { tags: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'div'] },
     },
   },
 }));
@@ -42,7 +42,8 @@ const editorOptions = computed(() => ({
 const validateHtml = (value: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(value, 'text/html');
-  invalidHtml.value = doc.querySelector('parsererror') !== null;
+  const parsed = doc.body.innerHTML.trim();
+  invalidHtml.value = parsed !== value.trim();
 };
 
 watch(
@@ -62,6 +63,7 @@ watch(content, (newVal) => {
 </script>
 
 <template>
+  <div v-bind="$attrs">
     <QuillEditor
       v-model:content="content"
       contentType="html"
@@ -71,9 +73,10 @@ watch(content, (newVal) => {
       :read-only="disabled || aiGenerating"
       style="min-height: 250px;"
     />
-      <p v-if="invalidHtml" class="mt-2 text-sm text-red-600">
-        {{ t('shared.components.atoms.textHtmlEditor.invalidHtml') }}
-      </p>
+    <p v-if="invalidHtml" class="mt-2 text-sm text-red-600">
+      {{ t('shared.components.atoms.textHtmlEditor.invalidHtml') }}
+    </p>
+  </div>
 </template>
 
 <style scoped>
@@ -82,6 +85,11 @@ watch(content, (newVal) => {
   content: "• " !important;
   left: -1.5rem;
   color: inherit;
+}
+
+:deep(ol) {
+  list-style: none;
+  margin-left: 1.5rem;
 }
 
 :deep(ul) {

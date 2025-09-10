@@ -97,7 +97,7 @@ const previewUrl = computed(() => {
       </div>
       <div class="w-2/3">
         <div v-if="fieldRules.shortDescription"
-          class="min-h-16 text-gray-700"
+          class="min-h-16 text-gray-700 prose prose-sm"
           :class="{ 'opacity-50 italic': !props.content?.shortDescription && props.defaultContent }"
           v-html="finalPreview.shortDescription"
         />
@@ -139,6 +139,16 @@ const previewUrl = computed(() => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #c0c0c0;
+}
+
+:deep(ol > li[data-list="bullet"]::before) {
+  content: "•";
+  color: inherit;
+}
+
+:deep(ol) {
+  list-style: none;
+  margin-left: 1.5rem;
 }
 
 </style>
