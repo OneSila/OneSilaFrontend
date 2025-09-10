@@ -333,6 +333,11 @@
           "invalidUrl": "Veuillez saisir une URL d'image valide (jpg, jpeg, png, webp)."
         }
       }
+    },
+    "media": {
+      "labels": {
+        "fileThumbnail": "Vignette du fichier"
+      }
     }
   },
   "properties": {

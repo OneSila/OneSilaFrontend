@@ -1486,7 +1486,8 @@
         "files": "Bestanden",
         "recentFiles": "Recente Bestanden",
         "addExistingFiles": "Toevoegen van bestaande media",
-        "images": ""
+        "images": "",
+        "fileThumbnail": "Bestandsminiatuur"
       }
     },
     "images": {
