@@ -301,6 +301,11 @@
           "label": "Selecteer alles"
         }
       },
+      "atoms": {
+        "textHtmlEditor": {
+          "invalidHtml": "Bevat ongeldige HTML"
+        }
+      },
       "organisms": {
         "imageAssigner": {
           "addButton": {
