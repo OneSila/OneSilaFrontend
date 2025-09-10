@@ -12,6 +12,7 @@ const tabItems = ref([
   { name: 'video', label: t('integrations.create.wizard.step1.magentoInfoModal.tabs.video') },
 ]);
 const close = () => emit('close');
+
 </script>
 
 <template>
@@ -72,7 +73,6 @@ const close = () => emit('close');
           <div style="padding:56.25% 0 0 0;position:relative;">
             <iframe src="https://player.vimeo.com/video/1073931917?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="integrating OneSila with Magento"></iframe>
           </div>
-          <script src="https://player.vimeo.com/api/player.js"></script>
         </div>
       </template>
     </Tabs>

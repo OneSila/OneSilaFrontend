@@ -457,9 +457,6 @@ defineExpose({ saveChanges, hasChanges });
           </FlexCell>
           <FlexCell center>
               <template v-if="showTranslator">
-                <span v-if="value.translation.language && flagMapping.hasOwnProperty(value.translation.language)">
-                  {{ flagMapping[value.translation.language] }}
-                </span>
                 <AiContentTranslator
                   :product="{ id: productId }"
                   :to-translate="sourceText"
