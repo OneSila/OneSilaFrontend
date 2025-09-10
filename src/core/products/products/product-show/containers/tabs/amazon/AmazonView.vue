@@ -21,6 +21,7 @@ import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../apollo-client';
 import { ProductType } from '../../../../../../../shared/utils/constants';
+import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
 const emit = defineEmits(['refreshAmazonProducts']);
@@ -123,10 +124,16 @@ const hasUnsavedChanges = computed(
 
 defineExpose({ hasUnsavedChanges });
 
-const handleMarketplaceSelection = (newId: string) => {
+const handleMarketplaceSelection = async (newId: string) => {
   if (hasUnsavedChanges.value) {
-    const confirmChange = confirm(t('products.products.messages.unsavedChanges'));
-    if (!confirmChange) {
+    const res = await Swal.fire({
+      icon: 'warning',
+      text: t('products.products.messages.unsavedChanges'),
+      showCancelButton: true,
+      confirmButtonText: t('shared.button.change'),
+      cancelButtonText: t('shared.button.cancel'),
+    });
+    if (!res.isConfirmed) {
       return;
     }
   }
