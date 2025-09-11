@@ -55,7 +55,9 @@ const valueField = (): ValueFormField => ({
   placeholder: t('products.products.amazon.externalProductIdPlaceholder'),
 });
 
-const fetchExternalId = async () => {
+const fetchExternalId = async (
+  fetchPolicy: 'cache-first' | 'network-only' = 'cache-first',
+) => {
   if (!props.product?.id || !props.view?.id) return;
   loading.value = true;
   const { data } = await apolloClient.query({
@@ -66,7 +68,7 @@ const fetchExternalId = async () => {
         view: { id: { exact: props.view.id } },
       },
     },
-    fetchPolicy: 'cache-first',
+    fetchPolicy,
   });
   const node = data?.amazonExternalProductIds?.edges?.[0]?.node;
   externalId.value = node?.id || null;
@@ -108,6 +110,7 @@ const handleSave = async () => {
         createdAsin.value = '';
         lastSavedType.value = 'ASIN';
         lastSavedValue.value = '';
+        await fetchExternalId('network-only');
       }
       return;
     }
@@ -133,7 +136,7 @@ const handleSave = async () => {
     Toast.success(t('products.products.amazon.externalProductIdSaved'));
     lastSavedType.value = type.value;
     lastSavedValue.value = trimmed;
-    fetchExternalId();
+    await fetchExternalId('network-only');
   } catch (err) {
     errors.value = processGraphQLErrors(err, t);
   }
@@ -145,6 +148,10 @@ const isSaveDisabled = computed(
 const showAlert = computed(
   () => !props.view?.isDefault && !loading.value && isMissing.value,
 );
+
+const hasUnsavedChanges = computed(() => !isSaveDisabled.value);
+
+defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>

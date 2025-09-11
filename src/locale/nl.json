@@ -301,6 +301,11 @@
           "label": "Selecteer alles"
         }
       },
+      "atoms": {
+        "textHtmlEditor": {
+          "invalidHtml": "Bevat ongeldige HTML"
+        }
+      },
       "organisms": {
         "imageAssigner": {
           "addButton": {
@@ -678,6 +683,7 @@
         "statusDescription": "Synchronization status and available actions.",
         "variationTheme": "Amazon-variatiethema",
         "variationThemeDescription": "Selecteer welke veldeigenschappen je wilt dat mensen kiezen bij het selecteren van het juiste product.",
+        "variationThemePlaceholder": "Selecteer variatiethema",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted",
         "asin": "ASIN",
@@ -792,7 +798,8 @@
         "productionTime": "Productie tijd",
         "forSale": "Verkoopbaar",
         "allowBackorder": "Backorder toestaan",
-        "inspectorStatus": ""
+        "inspectorStatus": "",
+        "configuratorValue": ""
       },
       "placeholders": {
         "vatRate": "Voeg BTW Tarief toe",
@@ -1479,7 +1486,8 @@
         "files": "Bestanden",
         "recentFiles": "Recente Bestanden",
         "addExistingFiles": "Toevoegen van bestaande media",
-        "images": ""
+        "images": "",
+        "fileThumbnail": "Bestandsminiatuur"
       }
     },
     "images": {

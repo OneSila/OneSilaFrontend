@@ -83,6 +83,11 @@
   }
   ,
   "products": {
+    "translation": {
+      "messages": {
+        "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
+      }
+    },
     "products": {
       "create": {
         "wizard": {
@@ -95,6 +100,9 @@
       },
       "tabs": {
         "amazon": "Amazon"
+      },
+      "labels": {
+        "configuratorValue": ""
       },
       "amazon": {
         "asin": "ASIN",
@@ -134,6 +142,7 @@
         "statusDescription": "Synchronization status and available actions.",
         "variationTheme": "Amazon-Variationsthema",
         "variationThemeDescription": "Wählen Sie aus, welche Feldeigenschaften Nutzer auswählen sollen, wenn sie das richtige Produkt wählen.",
+        "variationThemePlaceholder": "Variationsthema auswählen",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted"
       }
@@ -328,6 +337,11 @@
         "toast": {
           "invalidUrl": "Bitte geben Sie eine gültige Bild-URL ein (jpg, jpeg, png, webp)."
         }
+      }
+    },
+    "media": {
+      "labels": {
+        "fileThumbnail": "Datei-Miniaturansicht"
       }
     }
   },

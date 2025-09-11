@@ -44,6 +44,11 @@ const inputNeeded = computed(() => !eanCode.value.id || eanCode.value.internal =
 const showEanCode = computed(() => eanCode.value.id && eanCode.value.internal);
 const showDivider = computed(() => assignNeeded.value && inputNeeded.value);
 
+const inputRef = ref<InstanceType<typeof ProductEanCodeInput> | null>(null);
+const hasUnsavedChanges = computed(() => inputRef.value?.hasUnsavedChanges ?? false);
+
+defineExpose({ hasUnsavedChanges });
+
 const setDefaultValues = async () => {
   eanCode.value.id = null;
   eanCode.value.ean = '';
@@ -212,7 +217,7 @@ const handleRelease = async () => {
         <!-- EAN Code Input -->
         <FlexCell v-if="inputNeeded">
           <div class="border border-gray-300 p-3 pb-6 rounded-lg">
-            <ProductEanCodeInput :product="product" :initial-ean-code="eanCode" @ean-updated="() => fetchNeededData('network-only')"/>
+            <ProductEanCodeInput ref="inputRef" :product="product" :initial-ean-code="eanCode" @ean-updated="() => fetchNeededData('network-only')"/>
           </div>
         </FlexCell>
 

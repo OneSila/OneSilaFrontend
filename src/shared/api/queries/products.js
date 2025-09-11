@@ -261,6 +261,7 @@ export const configurableVariationsQuery = gql`
             thumbnailUrl
             inspectorStatus
           }
+          configuratorValue
         }
         cursor
       }

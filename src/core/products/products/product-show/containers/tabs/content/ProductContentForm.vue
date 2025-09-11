@@ -23,7 +23,7 @@ const props = defineProps({
     required: true,
   },
   currentLanguage: {
-    type: String as PropType<string | null>,
+    type: [String, null] as unknown as PropType<string | null>,
     required: true,
   },
   shortDescriptionToolbarOptions: {

@@ -131,6 +131,10 @@ const save = async () => {
 const showAlert = computed(
   () => props.view && !props.view.isDefault && !loading.value && !recordId.value,
 );
+
+const hasUnsavedChanges = computed(() => hasChanges.value);
+
+defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>
@@ -159,7 +163,7 @@ const showAlert = computed(
           label-by="name"
           value-by="id"
           :filterable="true"
-          :placeholder="t('shared.placeholders.select')"
+          :placeholder="t('products.products.amazon.variationThemePlaceholder')"
         />
       </FlexCell>
       <FlexCell>

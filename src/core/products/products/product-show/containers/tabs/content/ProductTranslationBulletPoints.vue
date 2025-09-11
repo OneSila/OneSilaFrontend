@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch, onMounted} from 'vue';
+import {ref, watch, onMounted, computed} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {TextInput} from '../../../../../../../shared/components/atoms/input-text';
 import {Button} from '../../../../../../../shared/components/atoms/button';
@@ -154,8 +154,9 @@ const save = async (newTranslationId?: string) => {
     return [];
   }
 };
+const hasChanges = computed(() => JSON.stringify(bulletPoints.value) !== JSON.stringify(initialBulletPoints.value));
 
-defineExpose({save, fetchPoints});
+defineExpose({save, fetchPoints, hasChanges});
 </script>
 
 <template>

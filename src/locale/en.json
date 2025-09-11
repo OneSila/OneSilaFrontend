@@ -507,6 +507,11 @@
           "label": "Deselect All"
         }
       },
+      "atoms": {
+        "textHtmlEditor": {
+          "invalidHtml": "Contains broken HTML"
+        }
+      },
       "organisms": {
         "bulkProductPropertyAssigner": {
           "title": "To assign to {count} product(s)",
@@ -939,6 +944,9 @@
       },
       "warning": {
         "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
+      },
+      "messages": {
+        "noSourceText": "There is no source text to translate."
       }
     },
     "products": {
@@ -961,6 +969,9 @@
         "deletedProductProperties": "Deleted {count} product properties."
       }
     },
+      "messages": {
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave this tab?"
+      },
       "tabs": {
         "content": "Content",
         "aliasProducts": "Alias Products",
@@ -993,6 +1004,7 @@
         "noStatus": "The product is not present yet on the marketplace!",
         "variationTheme": "Amazon Variation Theme",
         "variationThemeDescription": "Select which fields properties you want people to select when choosing the right product.",
+        "variationThemePlaceholder": "Select variation theme",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted",
         "asin": "ASIN",
@@ -1110,6 +1122,7 @@
         "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
         "inspectorStatus": "Content Quality",
+        "configuratorValue": "Configurator Value",
         "aliasParentProduct": "Alias Target"
       },
       "placeholders": {
@@ -1823,7 +1836,8 @@
         "files": "Files",
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add from existing media",
-        "images": "Images"
+        "images": "Images",
+        "fileThumbnail": "File thumbnail"
       },
       "alert": {
         "toast": {
@@ -2508,6 +2522,10 @@
           "webhookExample": "Send events to your application via HTTP",
           "magentoInfoModal": {
             "title": "How to connect your Magento store",
+            "tabs": {
+              "instructions": "Instructions",
+              "video": "Video"
+            },
             "section": {
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",

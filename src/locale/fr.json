@@ -96,6 +96,9 @@
       "tabs": {
         "amazon": "Amazon"
       },
+      "labels": {
+        "configuratorValue": ""
+      },
       "amazon": {
         "asin": "ASIN",
         "asinDescription": "Provide the Amazon Standard Identification Number for this product.",
@@ -134,6 +137,7 @@
         "statusDescription": "Synchronization status and available actions.",
         "variationTheme": "Thème de variation Amazon",
         "variationThemeDescription": "Sélectionnez les propriétés que vous souhaitez que les utilisateurs choisissent lors du choix du bon produit.",
+        "variationThemePlaceholder": "Sélectionner un thème de variation",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted"
       }
@@ -328,6 +332,11 @@
         "toast": {
           "invalidUrl": "Veuillez saisir une URL d'image valide (jpg, jpeg, png, webp)."
         }
+      }
+    },
+    "media": {
+      "labels": {
+        "fileThumbnail": "Vignette du fichier"
       }
     }
   },

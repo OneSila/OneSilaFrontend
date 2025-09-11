@@ -146,6 +146,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                 <tr>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.name') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.sku') }}</th>
+                  <th v-if="parentType == ProductType.Configurable" scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.configuratorValue') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.active') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ t('products.products.labels.inspectorStatus') }}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900" v-if="parentType != ProductType.Configurable">{{ t('shared.labels.quantity') }}</th>
@@ -173,6 +174,9 @@ const handleQuantityChanged = debounce(async (event, id) => {
                   </td>
                   <td>
                     {{ item.node.variation.sku }}
+                  </td>
+                  <td v-if="parentType == ProductType.Configurable">
+                    {{ item.node.configuratorValue }}
                   </td>
                   <td>
                     <Icon v-if="item.node.variation.active" name="check-circle" class="ml-2 text-green-500" />

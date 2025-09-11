@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue';
+import { computed, ref, onMounted, watch, unref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import TabContentTemplate from '../TabContentTemplate.vue';
 import { Product } from '../../../../configs';
@@ -21,6 +21,7 @@ import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../apollo-client';
 import { ProductType } from '../../../../../../../shared/utils/constants';
+import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
 const emit = defineEmits(['refreshAmazonProducts']);
@@ -107,6 +108,38 @@ const otherIssues = computed(() => {
 });
 const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
 
+const externalIdRef = ref<InstanceType<typeof AmazonExternalProductIdSection> | null>(null);
+const gtinExemptionRef = ref<InstanceType<typeof AmazonGtinExemptionSection> | null>(null);
+const browseNodeRef = ref<InstanceType<typeof AmazonBrowseNodeSection> | null>(null);
+const variationThemeRef = ref<InstanceType<typeof AmazonVariationThemeSection> | null>(null);
+
+const hasUnsavedChanges = computed(
+  () =>
+    unref(externalIdRef.value?.hasUnsavedChanges) ||
+    unref(gtinExemptionRef.value?.hasUnsavedChanges) ||
+    unref(browseNodeRef.value?.hasUnsavedChanges) ||
+    unref(variationThemeRef.value?.hasUnsavedChanges) ||
+    false,
+);
+
+defineExpose({ hasUnsavedChanges });
+
+const handleMarketplaceSelection = async (newId: string) => {
+  if (hasUnsavedChanges.value) {
+    const res = await Swal.fire({
+      icon: 'warning',
+      text: t('products.products.messages.unsavedChanges'),
+      showCancelButton: true,
+      confirmButtonText: t('shared.button.change'),
+      cancelButtonText: t('shared.button.cancel'),
+    });
+    if (!res.isConfirmed) {
+      return;
+    }
+  }
+  selectedViewId.value = newId;
+};
+
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
   emit('refreshAmazonProducts');
@@ -150,9 +183,10 @@ const formatDate = (dateString?: string | null) => {
       <div v-if="!loading && views.length" class="flex">
         <AmazonMarketplaceTabs
           class="w-72"
-          v-model="selectedViewId"
+          :model-value="selectedViewId"
           :views="views"
           :amazon-products="amazonProducts"
+          @update:modelValue="handleMarketplaceSelection"
         />
           <div class="flex-1 p-6">
             <div v-if="selectedView">
@@ -183,6 +217,7 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonExternalProductIdSection
                 class="mb-4"
+                ref="externalIdRef"
                 :product="product"
                 :view="selectedView"
               />
@@ -191,6 +226,7 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonGtinExemptionSection
                 class="mb-4"
+                ref="gtinExemptionRef"
                 :product-id="props.product.id"
                 :view-id="selectedView?.id"
                 :view="selectedView"
@@ -208,6 +244,7 @@ const formatDate = (dateString?: string | null) => {
 
               <AmazonBrowseNodeSection
                 class="mb-4"
+                ref="browseNodeRef"
                 :product-id="props.product.id"
                 :sales-channel-id="selectedView?.salesChannel.id"
                 :sales-channel-view-id="selectedView?.id"
@@ -220,6 +257,7 @@ const formatDate = (dateString?: string | null) => {
               <AmazonVariationThemeSection
                 v-if="isConfigurable && selectedView"
                 class="mb-4"
+                ref="variationThemeRef"
                 :product="product"
                 :view="selectedView"
               />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, reactive, ref} from 'vue';
+import {onMounted, reactive, ref, computed} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField, FormType,
@@ -90,6 +90,14 @@ const getCleanData = (data) => {
   return cleanedData;
 };
 
+const initialForm = ref(JSON.parse(JSON.stringify(getCleanData(form))));
+
+const hasUnsavedChanges = computed(() => {
+  return JSON.stringify(getCleanData(form)) !== JSON.stringify(initialForm.value);
+});
+
+defineExpose({ hasUnsavedChanges });
+
 const handleSubmit = async (overrideData = {}) => {
   const dataToSubmit = getCleanData({ ...form, ...overrideData });
 
@@ -109,6 +117,8 @@ const handleSubmit = async (overrideData = {}) => {
       if (data.updateProduct.vatRate && data.updateProduct.vatRate.id) {
         form.vatRate.id = data.updateProduct.vatRate.id
       }
+
+      initialForm.value = JSON.parse(JSON.stringify(getCleanData(form)));
 
       Toast.success(t('products.products.edit.updateSuccessfully'));
     }

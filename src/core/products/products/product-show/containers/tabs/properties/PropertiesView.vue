@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch, computed} from "vue";
+import {onMounted, ref, Ref, watch, computed, onBeforeUpdate} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -28,7 +28,16 @@ const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
+const companyLanguage: Ref<string | null> = ref(null);
 const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
+const setValueInputRef = (el: any) => {
+  if (el) {
+    valueInputs.value.push(el);
+  }
+};
+onBeforeUpdate(() => {
+  valueInputs.value = [];
+});
 const hasUnsavedChanges = computed(() => valueInputs.value.some(v => v?.hasChanges));
 const saveAll = async () => {
   const inputs = [...valueInputs.value];
@@ -38,6 +47,8 @@ const saveAll = async () => {
     }
   }
 };
+
+defineExpose({ hasUnsavedChanges });
 
 const currentPage = ref(1);
 const limit = ref(10);
@@ -180,6 +191,7 @@ const setCurrentLanguage = async (fetchPolicy) => {
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
     const defaultLanguage = data.translationLanguages.defaultLanguage;
     language.value = defaultLanguage.code;
+    companyLanguage.value = defaultLanguage.code;
   }
 
 };
@@ -315,6 +327,7 @@ const fetchRequiredAttributesValues = async (fetchPolicy = 'cache-first') => {
   loading.value = true
   values.value = [];
   language.value = null;
+  companyLanguage.value = null;
   currentPage.value = 1;
   const productTypePropertyId = await fetchRequiredProductType(fetchPolicy);
   await fetchRequiredAttributes(productTypePropertyId, fetchPolicy);
@@ -530,11 +543,12 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :product-id="product.id"
             :rule-id="ruleId"
             :value="productTypeValue"
+            :company-language="companyLanguage"
             @refetch="fetchRequiredAttributesValues('network-only')"
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
-            ref="valueInputs"
+            :ref="setValueInputRef"
         />
         <hr class="my-4"/>
       </div>
@@ -544,11 +558,12 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :product-id="product.id"
             :rule-id="ruleId"
             :value="val"
+            :company-language="companyLanguage"
             @refetch="fetchRequiredAttributesValues('network-only')"
             @update-id="handleUpdatedId"
             @update-value="handleValueUpdate"
             @remove="handleRemove"
-            ref="valueInputs"
+            :ref="setValueInputRef"
         />
       </div>
     </div>

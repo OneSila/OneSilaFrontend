@@ -201,7 +201,7 @@ const handleLanguageSelection = async (newLanguage) => {
 const handleSalesChannelSelection = async (newChannel) => {
 
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
-    const confirmChange = confirm(t('products.translation.confirmLanguageChange'));
+    const confirmChange = confirm(t('products.products.messages.unsavedChanges'));
     if (!confirmChange) {
       currentSalesChannel.value = oldChannel.value;
       return;
@@ -269,6 +269,14 @@ const handleError = (errors) => {
     Toast.error(validationErrors['__all__']);
   }
 }
+
+const hasUnsavedChanges = computed(() => {
+  const formChanged = JSON.stringify(form) !== JSON.stringify(initialForm.value);
+  const bulletsChanged = bulletPointsRef.value?.hasChanges;
+  return formChanged || bulletsChanged;
+});
+
+defineExpose({ hasUnsavedChanges });
 
 const shortDescriptionToolbarOptions = [
   ['bold', 'underline'],

@@ -16,6 +16,7 @@ import { amazonProductsQuery } from "../../../../../../../shared/api/queries/ama
 import apolloClient from "../../../../../../../../apollo-client";
 import type { FetchPolicy } from "@apollo/client";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
+import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -35,6 +36,35 @@ const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'cache-first') => 
 if (auth.user.company?.hasAmazonIntegration) {
   onMounted(() => fetchAmazonProducts());
 }
+
+const generalRef = ref<InstanceType<typeof ProductEditView> | null>(null);
+const contentRef = ref<InstanceType<typeof ProductContentView> | null>(null);
+const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
+const variationsRef = ref<InstanceType<typeof VariationsView> | null>(null);
+const amazonRef = ref<InstanceType<typeof AmazonView> | null>(null);
+
+const tabRefs: Record<string, any> = {
+  general: generalRef,
+  productContent: contentRef,
+  properties: propertiesRef,
+  variations: variationsRef,
+  amazon: amazonRef,
+};
+
+const beforeTabChange = async (newTab: string, oldTab: string) => {
+  const current = tabRefs[oldTab];
+  if (current?.value?.hasUnsavedChanges) {
+    const res = await Swal.fire({
+      icon: 'warning',
+      text: t('products.products.messages.unsavedChanges'),
+      showCancelButton: true,
+      confirmButtonText: t('shared.button.change'),
+      cancelButtonText: t('shared.button.cancel'),
+    });
+    return res.isConfirmed;
+  }
+  return true;
+};
 
 const tabItems = computed(() => {
   const items = [
@@ -69,24 +99,24 @@ const tabItems = computed(() => {
 
 <template>
   <div>
-    <Tabs :tabs="tabItems">
+    <Tabs :tabs="tabItems" :before-change="beforeTabChange">
       <template v-slot:general>
-        <ProductEditView :product="product" />
+        <ProductEditView ref="generalRef" :product="product" />
       </template>
       <template v-slot:productContent>
-        <ProductContentView :product="product" />
+        <ProductContentView ref="contentRef" :product="product" />
       </template>
       <template v-slot:media>
         <MediaView :product="product" />
       </template>
       <template v-slot:properties>
-        <PropertiesView :product="product" />
+        <PropertiesView ref="propertiesRef" :product="product" />
       </template>
       <template v-if="product.aliasProducts.length" v-slot:aliasProducts>
         <AliasProductsView :product="product" />
       </template>
       <template v-slot:variations>
-        <VariationsView :product="product" />
+        <VariationsView ref="variationsRef" :product="product" />
       </template>
       <template v-slot:websites>
         <WebsitesView
@@ -97,6 +127,7 @@ const tabItems = computed(() => {
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView
+          ref="amazonRef"
           :product="product"
           :amazon-products="amazonProducts"
           @refresh-amazon-products="fetchAmazonProducts('network-only')"
