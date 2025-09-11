@@ -8,6 +8,7 @@ import { Selector } from "../../../../../../../../../shared/components/atoms/sel
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {PrimaryButton} from "../../../../../../../../../shared/components/atoms/button-primary";
+import {displayApolloError, processGraphQLErrors} from "../../../../../../../../../shared/utils";
 
 const { t } = useI18n();
 
@@ -64,8 +65,10 @@ const handleCreateAssign = async () => {
     resetForm();
     Toast.success(t('shared.alert.toast.submitSuccessCreate'));
   } catch (error) {
-    console.error(error);
-    Toast.error(t('shared.alert.toast.generalError'));
+      const errors = processGraphQLErrors(error, t);
+      if (errors['__all__']) {
+        Toast.error(errors['__all__']);
+      }
   }
 };
 
