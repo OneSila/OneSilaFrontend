@@ -67,10 +67,10 @@ const beforeTabChange = async (newTab: string, oldTab: string) => {
       icon: 'warning',
       text: t('products.products.messages.unsavedChanges'),
       showCancelButton: true,
-      confirmButtonText: t('shared.button.change'),
-      cancelButtonText: t('shared.button.cancel'),
+      confirmButtonText: t('shared.button.cancel'),
+      cancelButtonText: t('shared.button.leaveTab'),
     });
-    return res.isConfirmed;
+    return res.dismiss === Swal.DismissReason.cancel;
   }
   return true;
 };

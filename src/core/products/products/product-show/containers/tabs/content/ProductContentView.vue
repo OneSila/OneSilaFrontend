@@ -8,7 +8,7 @@ import { getProductContentByLanguageAndChannelQuery, getProductContentByLanguage
 import { createProductTranslationMutation, updateProductTranslationMutation } from "../../../../../../../shared/api/mutations/products.js";
 import { integrationsQuery } from "../../../../../../../shared/api/queries/integrations.js";
 import { Selector} from "../../../../../../../shared/components/atoms/selector";
-import { reactive, watch, ref, onMounted, computed } from "vue";
+import { reactive, watch, ref, onMounted, computed, nextTick } from "vue";
 import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
@@ -110,7 +110,6 @@ const setFormAndMutation = async (language, channel) => {
         mutation.value = createProductTranslationMutation;
         previewContent.value = null;
       }
-      initialForm.value = { ...form };
       defaultPreviewContent.value = null;
 
     } else {
@@ -143,7 +142,6 @@ const setFormAndMutation = async (language, channel) => {
         mutation.value = createProductTranslationMutation;
         previewContent.value = null;
       }
-      initialForm.value = { ...form };
 
       // Fetch default translation for preview/fallback
       const { data: def } = await apolloClient.query({
@@ -161,6 +159,8 @@ const setFormAndMutation = async (language, channel) => {
     previewBulletPoints.value = await bulletPointsRef.value.fetchPoints();
   }
 
+  await nextTick();
+  initialForm.value = { ...form };
 };
 
 

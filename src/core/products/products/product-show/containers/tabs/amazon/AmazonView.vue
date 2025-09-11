@@ -130,10 +130,10 @@ const handleMarketplaceSelection = async (newId: string) => {
       icon: 'warning',
       text: t('products.products.messages.unsavedChanges'),
       showCancelButton: true,
-      confirmButtonText: t('shared.button.change'),
-      cancelButtonText: t('shared.button.cancel'),
+      confirmButtonText: t('shared.button.cancel'),
+      cancelButtonText: t('shared.button.leaveTab'),
     });
-    if (!res.isConfirmed) {
+    if (res.dismiss !== Swal.DismissReason.cancel) {
       return;
     }
   }
