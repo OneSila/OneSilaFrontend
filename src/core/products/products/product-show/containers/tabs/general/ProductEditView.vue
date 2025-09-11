@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, reactive, ref, computed} from 'vue';
+import {onMounted, reactive, ref, computed, nextTick} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField, FormType,
@@ -90,7 +90,11 @@ const getCleanData = (data) => {
   return cleanedData;
 };
 
-const initialForm = ref(JSON.parse(JSON.stringify(getCleanData(form))));
+const initialForm = ref({});
+onMounted(async () => {
+  await nextTick();
+  initialForm.value = JSON.parse(JSON.stringify(getCleanData(form)));
+});
 
 const hasUnsavedChanges = computed(() => {
   return JSON.stringify(getCleanData(form)) !== JSON.stringify(initialForm.value);
