@@ -9,6 +9,7 @@ import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { TextInput } from "../../../../../../shared/components/atoms/input-text";
+import { LocalLoader } from "../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../apollo-client";
 import { createImagesMutation, createMediaProductThroughMutation, uploadImagesFromUrlsMutation } from "../../../../../../shared/api/mutations/media.js"
 import { Toast } from "../../../../../../shared/modules/toast";
@@ -38,6 +39,7 @@ const images: Ref<ShowImage[]> = ref([])
 const dropZone: Ref<any> = ref(null)
 const urlInput = ref('')
 const activeTab = ref<'upload' | 'urls'>('upload')
+const isSubmitting = ref(false)
 
 const imageTypeOptions = [
   { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
@@ -76,50 +78,58 @@ const updateImageType = (index, type) => {
 };
 
 const submitImages = async () => {
-  let mutation = createImagesMutation
-  let variables: any = {}
-  let dataKey = 'createImages'
-
-  if (activeTab.value === 'upload') {
-    variables.data = images.value.map(image => ({ image: image.file, imageType: image.type }))
-  } else {
-    mutation = uploadImagesFromUrlsMutation
-    dataKey = 'uploadImagesFromUrls'
-    variables.urls = images.value.map(image => ({ url: image.url, type: image.type }))
+  if (isSubmitting.value) {
+    return
   }
+  isSubmitting.value = true
+  try {
+    let mutation = createImagesMutation
+    let variables: any = {}
+    let dataKey = 'createImages'
 
-  const { data } = await apolloClient.mutate({
-    mutation,
-    variables
-  })
-
-  const createdImages = data && data[dataKey]
-
-  if (createdImages) {
-    if (props.productId) {
-      for (const image of createdImages) {
-        const variables = {
-          product: { id: props.productId },
-          media: { id: image.id },
-        }
-        try {
-          await apolloClient.mutate({
-            mutation: createMediaProductThroughMutation,
-            variables: { data: variables }
-          })
-          Toast.success(t('media.images.create.successfullyCreated'))
-        } catch (error) {
-          const validationErrors = processGraphQLErrors(error, t)
-          if (validationErrors['__all__']) {
-            Toast.error(validationErrors['__all__'])
-          }
-          console.error('Failed to link video and product:', error)
-        }
-      }
+    if (activeTab.value === 'upload') {
+      variables.data = images.value.map(image => ({ image: image.file, imageType: image.type }))
+    } else {
+      mutation = uploadImagesFromUrlsMutation
+      dataKey = 'uploadImagesFromUrls'
+      variables.urls = images.value.map(image => ({ url: image.url, type: image.type }))
     }
 
-    emit('entries-created')
-    closeModal()
+    const { data } = await apolloClient.mutate({
+      mutation,
+      variables
+    })
+
+    const createdImages = data && data[dataKey]
+
+    if (createdImages) {
+      if (props.productId) {
+        for (const image of createdImages) {
+          const variables = {
+            product: { id: props.productId },
+            media: { id: image.id },
+          }
+          try {
+            await apolloClient.mutate({
+              mutation: createMediaProductThroughMutation,
+              variables: { data: variables }
+            })
+            Toast.success(t('media.images.create.successfullyCreated'))
+          } catch (error) {
+            const validationErrors = processGraphQLErrors(error, t)
+            if (validationErrors['__all__']) {
+              Toast.error(validationErrors['__all__'])
+            }
+            console.error('Failed to link video and product:', error)
+          }
+        }
+      }
+
+      emit('entries-created')
+      closeModal()
+    }
+  } finally {
+    isSubmitting.value = false
   }
 };
 
@@ -146,7 +156,10 @@ const addImageUrl = () => {
 <template>
   <div>
     <Modal v-model="localShowModal" @closed="closeModal">
-      <Card class="modal-content w-2/3">
+      <Card class="modal-content w-2/3 relative">
+        <div v-if="isSubmitting" class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75">
+          <LocalLoader :loading="isSubmitting" />
+        </div>
         <div class="mb-4">
           <h3 class="text-xl font-semibold leading-7 text-gray-900">{{ t('media.images.upload') }}</h3>
         </div>
@@ -209,7 +222,7 @@ const addImageUrl = () => {
 
         <div class="flex justify-end gap-4 mt-4">
           <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
-          <Button class="btn btn-primary" :disabled="images.length === 0" @click="submitImages">{{ t('shared.button.submit') }}</Button>
+          <Button class="btn btn-primary" :disabled="images.length === 0 || isSubmitting" :loading="isSubmitting" @click="submitImages">{{ t('shared.button.submit') }}</Button>
         </div>
       </Card>
     </Modal>
