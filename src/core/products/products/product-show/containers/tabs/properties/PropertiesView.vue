@@ -547,10 +547,26 @@ const handleValueUpdate = ({id, type, value, language}) => {
           </div>
         </div>
       </FlexCell>
-      <FlexCell class="flex items-center space-x-2">
+    </Flex>
+    <Flex center gap="2" class="my-2">
+      <FlexCell grow>
+        <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" />
+      </FlexCell>
+      <FlexCell  v-for="type in requireTypes" :key="type.value" :title="type.label">
+        <button @click="toggleFilter(type.value)"
+            class="w-10 h-10 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
+            :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'"
+        >
+          <Icon name="circle-dot" :class="getIconColor(type.value)"/>
+        </button>
+      </FlexCell>
+
+      <FlexCell>
         <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
           {{ t('shared.button.saveAll') }}
         </Button>
+      </FlexCell>
+      <FlexCell>
         <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
@@ -567,21 +583,6 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </ApolloQuery>
       </FlexCell>
     </Flex>
-    <div class="my-2 flex items-center space-x-2">
-      <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" class="flex-grow" />
-      <div class="flex space-x-2">
-        <button
-            v-for="type in requireTypes"
-            :key="type.value"
-            :title="type.label"
-            @click="toggleFilter(type.value)"
-            class="w-10 h-10 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
-            :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'"
-        >
-          <Icon name="circle-dot" :class="getIconColor(type.value)"/>
-        </button>
-      </div>
-    </div>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
       <div v-if="productTypeValue">
