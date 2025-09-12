@@ -558,6 +558,16 @@ const handleValueUpdate = ({id, type, value, language}) => {
       <FlexCell grow>
         <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" />
       </FlexCell>
+      <FlexCell>
+                <Selector
+            v-model="selectedPropertyTypes"
+            :options="propertyTypeOptions"
+            multiple
+            :placeholder="t('products.products.properties.typePlaceholder')"
+            class="w-48 h-12"
+            labelBy="name"
+            valueBy="code"/>
+      </FlexCell>
       <FlexCell class="flex flex-col items-center gap-2">
         <div class="flex gap-2">
           <button v-for="type in requireTypes" :key="type.value" :title="type.label" @click="toggleFilter(type.value)"
@@ -566,14 +576,6 @@ const handleValueUpdate = ({id, type, value, language}) => {
             <Icon name="circle-dot" :class="getIconColor(type.value)"/>
           </button>
         </div>
-        <Selector
-            v-model="selectedPropertyTypes"
-            :options="propertyTypeOptions"
-            multiple
-            :placeholder="t('products.products.properties.typePlaceholder')"
-            class="w-48 h-12"
-            labelBy="name"
-            valueBy="code"/>
       </FlexCell>
       <FlexCell>
         <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
