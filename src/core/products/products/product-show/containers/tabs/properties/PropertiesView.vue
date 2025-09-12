@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch, computed, onBeforeUpdate} from "vue";
+import {onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -18,7 +18,7 @@ import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 import {Button} from "../../../../../../../shared/components/atoms/button";
-import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
+import {SearchInput} from "../../../../../../../shared/components/molecules/search-input";
 
 
 const {t} = useI18n();
@@ -61,6 +61,11 @@ const perPageOptions = [
 ];
 
 const searchQuery = ref('');
+const filters = reactive({
+  [ConfigTypes.REQUIRED]: true,
+  [ConfigTypes.OPTIONAL]: true,
+  FILLED: true,
+});
 
 const requiredTypes = [
   ConfigTypes.REQUIRED,
@@ -87,6 +92,10 @@ const isFilled = (val: ProductPropertyValue) => {
 
 const productTypeValue = computed(() => values.value.find(v => v.property.isProductType));
 
+const toggleFilter = (type: string) => {
+  filters[type] = !filters[type];
+};
+
 const sortedValues = computed(() => {
   const req: ProductPropertyValue[] = [];
   const opt: ProductPropertyValue[] = [];
@@ -105,10 +114,16 @@ const sortedValues = computed(() => {
 });
 
 const filteredValues = computed(() => {
-  if (!searchQuery.value) return sortedValues.value;
-  return sortedValues.value.filter(v =>
-      v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+  return sortedValues.value.filter(v => {
+    const type = isFilled(v)
+        ? 'FILLED'
+        : requiredTypes.includes(v.property.requireType as ConfigTypes)
+            ? ConfigTypes.REQUIRED
+            : ConfigTypes.OPTIONAL;
+    if (!filters[type]) return false;
+    if (!searchQuery.value) return true;
+    return v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
 });
 
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredValues.value.length / limit.value)));
@@ -147,6 +162,9 @@ watch([filteredValues, limit], () => {
 watch(searchQuery, () => {
   currentPage.value = 1;
 });
+watch(filters, () => {
+  currentPage.value = 1;
+}, {deep: true});
 
 
 const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
@@ -549,8 +567,20 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </ApolloQuery>
       </FlexCell>
     </Flex>
-    <div class="mb-2">
-      <TextInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" />
+    <div class="mb-2 flex items-center space-x-2">
+      <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" class="flex-grow" />
+      <div class="flex space-x-2">
+        <button
+            v-for="type in requireTypes"
+            :key="type.value"
+            :title="type.label"
+            @click="toggleFilter(type.value)"
+            class="w-8 h-8 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
+            :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'"
+        >
+          <Icon name="circle-dot" :class="getIconColor(type.value)"/>
+        </button>
+      </div>
     </div>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
