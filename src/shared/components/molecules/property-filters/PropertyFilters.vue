@@ -96,7 +96,7 @@ const getIconColor = (requireType: string) => {
           :title="type.label"
           @click="toggleFilter(type.value)"
           class="w-9 h-9 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
-          :class="localFilters.value[type.value] ? 'border-blue-500' : 'border-transparent'"
+          :class="localFilters[type.value] ? 'border-blue-500' : 'border-transparent'"
         >
           <Icon name="circle-dot" :class="getIconColor(type.value)" />
         </button>

@@ -549,7 +549,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
     </Flex>
-    <Flex center gap="2" class="my-4 items-start">
+    <Flex v-if="product.type !== ProductType.Configurable" center gap="2" class="my-4 items-start">
       <FlexCell grow>
         <PropertyFilters
             v-model:search-query="searchQuery"
@@ -582,7 +582,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
-      <div v-if="productTypeValue && product.type !== ProductType.Configurable">
+      <div v-if="productTypeValue">
         <ValueInput
             v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(productTypeValue.property.type)"
             :product-id="product.id"
