@@ -14,8 +14,9 @@ const props = withDefaults(
     routeKey?: string;
     debounce?: number;
     loading?: boolean;
+    size?: 'sm' | 'md';
   }>(),
-  { routeKey: "search", debounce: 600, loading: false }
+  { routeKey: "search", debounce: 600, loading: false, size: 'md' }
 );
 
 const { t } = useI18n();
@@ -25,6 +26,7 @@ const input = ref<HTMLInputElement | null>(null);
 const emit = defineEmits(["update:modelValue"]);
 const inputValue = ref((props.modelValue || "").slice(0, 100));
 const loading = computed(() => props.loading);
+const sizeClass = computed(() => (props.size === 'sm' ? 'h-9' : 'h-12'));
 
 watch(() => props.modelValue, (newValue) => {
   if (newValue === null) {
@@ -65,7 +67,7 @@ const onInput = () => {
 
 <template>
   <div class="w-full" :class="disabled ? 'bg-gray-100' : 'bg-white'">
-    <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg  overflow-hidden border-2 border-gray100">
+    <div :class="['relative flex items-center w-full rounded-lg focus-within:shadow-lg  overflow-hidden border-2 border-gray100', sizeClass]">
       <div class="grid place-items-center h-full w-12 text-gray-300">
         <Icon v-if="!loading" name="search" class="h-6 w-6" />
         <div v-else class="loader-mini"></div>

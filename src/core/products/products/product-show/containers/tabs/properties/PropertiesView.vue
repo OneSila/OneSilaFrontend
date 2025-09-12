@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch, computed, onBeforeUpdate} from "vue";
+import {onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -18,6 +18,7 @@ import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 import {Button} from "../../../../../../../shared/components/atoms/button";
+import {SearchInput} from "../../../../../../../shared/components/molecules/search-input";
 
 
 const {t} = useI18n();
@@ -59,6 +60,13 @@ const perPageOptions = [
   {name: '100', value: 100},
 ];
 
+const searchQuery = ref('');
+const filters = reactive({
+  [ConfigTypes.REQUIRED]: true,
+  [ConfigTypes.OPTIONAL]: true,
+  FILLED: true,
+});
+
 const requiredTypes = [
   ConfigTypes.REQUIRED,
   ConfigTypes.REQUIRED_IN_CONFIGURATOR,
@@ -84,6 +92,10 @@ const isFilled = (val: ProductPropertyValue) => {
 
 const productTypeValue = computed(() => values.value.find(v => v.property.isProductType));
 
+const toggleFilter = (type: string) => {
+  filters[type] = !filters[type];
+};
+
 const sortedValues = computed(() => {
   const req: ProductPropertyValue[] = [];
   const opt: ProductPropertyValue[] = [];
@@ -101,11 +113,24 @@ const sortedValues = computed(() => {
   return [...req, ...opt, ...filled];
 });
 
-const totalPages = computed(() => Math.max(1, Math.ceil(sortedValues.value.length / limit.value)));
+const filteredValues = computed(() => {
+  return sortedValues.value.filter(v => {
+    const type = isFilled(v)
+        ? 'FILLED'
+        : requiredTypes.includes(v.property.requireType as ConfigTypes)
+            ? ConfigTypes.REQUIRED
+            : ConfigTypes.OPTIONAL;
+    if (!filters[type]) return false;
+    if (!searchQuery.value) return true;
+    return v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredValues.value.length / limit.value)));
 
 const paginatedValues = computed(() => {
   const start = (currentPage.value - 1) * limit.value;
-  return sortedValues.value.slice(start, start + limit.value);
+  return filteredValues.value.slice(start, start + limit.value);
 });
 
 const pageInfo = computed(() => ({
@@ -128,11 +153,18 @@ const updateLimitPerPage = (value: number) => {
   currentPage.value = 1;
 };
 
-watch([sortedValues, limit], () => {
+watch([filteredValues, limit], () => {
   if (currentPage.value > totalPages.value) {
     currentPage.value = totalPages.value;
   }
 });
+
+watch(searchQuery, () => {
+  currentPage.value = 1;
+});
+watch(filters, () => {
+  currentPage.value = 1;
+}, {deep: true});
 
 
 const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
@@ -505,36 +537,45 @@ const handleValueUpdate = ({id, type, value, language}) => {
 
 <template>
   <div>
-    <Flex between class="mb-2">
-      <FlexCell grow center>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 ml-2 mb-4">
-          <div v-for="(type, index) in requireTypes" :key="index" class="flex items-center space-x-2"
-               :title="getExtendedTooltip(type.value)">
-            <Icon name="circle-dot" :class="getIconColor(type.value)"/>
-            <span>{{ type.label }}</span>
-          </div>
-        </div>
-      </FlexCell>
-      <FlexCell class="flex items-center space-x-2">
-        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
-          {{ t('shared.button.saveAll') }}
-        </Button>
-        <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
-          <template v-slot="{ result: { data } }">
-            <Selector v-if="data"
-                      v-model="language"
-                      :options="data.translationLanguages.languages"
-                      :removable="false"
-                      :placeholder="t('products.translation.placeholders.language')"
-                      class="w-32"
-                      labelBy="name"
-                      valueBy="code"
-                      mandatory
-                      filterable/>
-          </template>
-        </ApolloQuery>
-      </FlexCell>
-    </Flex>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 ml-2 mb-4">
+      <div v-for="(type, index) in requireTypes" :key="index" class="flex items-center space-x-2"
+           :title="getExtendedTooltip(type.value)">
+        <Icon name="circle-dot" :class="getIconColor(type.value)"/>
+        <span>{{ type.label }}</span>
+      </div>
+    </div>
+    <div class="mb-2 flex items-center space-x-2">
+      <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" size="sm" class="flex-grow" />
+      <div class="flex space-x-2">
+        <button
+            v-for="type in requireTypes"
+            :key="type.value"
+            :title="type.label"
+            @click="toggleFilter(type.value)"
+            class="w-9 h-9 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
+            :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'"
+        >
+          <Icon name="circle-dot" :class="getIconColor(type.value)"/>
+        </button>
+      </div>
+      <Button class="btn btn-primary h-9" :disabled="!hasUnsavedChanges" @click="saveAll">
+        {{ t('shared.button.saveAll') }}
+      </Button>
+      <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
+        <template v-slot="{ result: { data } }">
+          <Selector v-if="data"
+                    v-model="language"
+                    :options="data.translationLanguages.languages"
+                    :removable="false"
+                    :placeholder="t('products.translation.placeholders.language')"
+                    class="w-32 h-9"
+                    labelBy="name"
+                    valueBy="code"
+                    mandatory
+                    filterable/>
+        </template>
+      </ApolloQuery>
+    </div>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
       <div v-if="productTypeValue">
