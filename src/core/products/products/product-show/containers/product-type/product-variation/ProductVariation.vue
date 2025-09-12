@@ -2,7 +2,7 @@
 
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {computed, ref, onMounted} from "vue";
+import {computed, ref} from "vue";
 import {Tabs} from "../../../../../../../shared/components/molecules/tabs";
 import {Product} from "../../../../configs"
 import ProductEditView from "../../tabs/general/ProductEditView.vue";
@@ -16,9 +16,6 @@ import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 import ParentsView from "../../tabs/parents/ParentsView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
-import { amazonProductsQuery } from "../../../../../../../shared/api/queries/amazonProducts.js";
-import apolloClient from "../../../../../../../../apollo-client";
-import type { FetchPolicy } from "@apollo/client";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 import Swal from 'sweetalert2';
 
@@ -27,20 +24,6 @@ const { t } = useI18n();
 const router = useRouter();
 const auth = injectAuth();
 
-const amazonProducts = ref<any[]>([]);
-
-const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'cache-first') => {
-  const { data } = await apolloClient.query({
-    query: amazonProductsQuery,
-    variables: { localInstance: props.product.id },
-    fetchPolicy,
-  });
-  amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
-};
-
-if (auth.user.company?.hasAmazonIntegration) {
-  onMounted(() => fetchAmazonProducts());
-}
 
 const generalRef = ref<InstanceType<typeof ProductEditView> | null>(null);
 const contentRef = ref<InstanceType<typeof ProductContentView> | null>(null);
@@ -132,8 +115,8 @@ const tabItems = computed(() => {
       <template v-slot:websites>
         <WebsitesView
           :product="product"
-          @assign-added="fetchAmazonProducts('network-only')"
-          @assign-deleted="fetchAmazonProducts('network-only')"
+          @assign-added="amazonRef?.fetchAmazonProducts('network-only')"
+          @assign-deleted="amazonRef?.fetchAmazonProducts('network-only')"
         />
       </template>
       <template v-slot:properties>
@@ -152,8 +135,6 @@ const tabItems = computed(() => {
         <AmazonView
           ref="amazonRef"
           :product="product"
-          :amazon-products="amazonProducts"
-          @refresh-amazon-products="fetchAmazonProducts('network-only')"
         />
       </template>
     </Tabs>
