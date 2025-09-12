@@ -10,7 +10,7 @@ import {
   productPropertiesRulesQuery, productPropertyTextTranslationsQuery,
   propertiesQuery
 } from "../../../../../../../shared/api/queries/properties.js";
-import {ConfigTypes, ProductType, PropertyTypes, getPropertyTypeOptions} from "../../../../../../../shared/utils/constants";
+import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
 import {ValueInput} from "./value-input";
 import {Loader} from "../../../../../../../shared/components/atoms/loader";
 import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
@@ -18,7 +18,7 @@ import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 import {Button} from "../../../../../../../shared/components/atoms/button";
-import {SearchInput} from "../../../../../../../shared/components/molecules/search-input";
+import {PropertyFilters} from "../../../../../../../shared/components/molecules/property-filters";
 
 
 const {t} = useI18n();
@@ -67,7 +67,6 @@ const filters = reactive({
   FILLED: true,
 });
 const selectedPropertyTypes = ref<string[]>([]);
-const propertyTypeOptions = computed(() => getPropertyTypeOptions(t));
 
 const requiredTypes = [
   ConfigTypes.REQUIRED,
@@ -93,10 +92,6 @@ const isFilled = (val: ProductPropertyValue) => {
 };
 
 const productTypeValue = computed(() => values.value.find(v => v.property.isProductType));
-
-const toggleFilter = (type: string) => {
-  filters[type] = !filters[type];
-};
 
 const sortedValues = computed(() => {
   const req: ProductPropertyValue[] = [];
@@ -556,26 +551,11 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Flex center gap="2" class="my-2 items-start">
       <FlexCell grow>
-        <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" />
-      </FlexCell>
-      <FlexCell>
-                <Selector
-            v-model="selectedPropertyTypes"
-            :options="propertyTypeOptions"
-            multiple
-            :placeholder="t('products.products.properties.typePlaceholder')"
-            class="w-48 h-12"
-            labelBy="name"
-            valueBy="code"/>
-      </FlexCell>
-      <FlexCell class="flex flex-col items-center gap-2">
-        <div class="flex gap-2">
-          <button v-for="type in requireTypes" :key="type.value" :title="type.label" @click="toggleFilter(type.value)"
-              class="w-12 h-12 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
-              :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'">
-            <Icon name="circle-dot" :class="getIconColor(type.value)"/>
-          </button>
-        </div>
+        <PropertyFilters
+            v-model:search-query="searchQuery"
+            v-model:selected-property-types="selectedPropertyTypes"
+            v-model:filters="filters"
+        />
       </FlexCell>
       <FlexCell>
         <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
