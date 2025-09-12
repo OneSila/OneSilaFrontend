@@ -80,7 +80,7 @@ const getIconColor = (requireType: string) => {
         :options="propertyTypeOptions"
         multiple
         :placeholder="t('products.products.properties.typePlaceholder')"
-        class="w-48"
+        class="min-w-48"
         labelBy="name"
         valueBy="code"
       />
