@@ -10,7 +10,7 @@ import {
   productPropertiesRulesQuery, productPropertyTextTranslationsQuery,
   propertiesQuery
 } from "../../../../../../../shared/api/queries/properties.js";
-import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
+import {ConfigTypes, ProductType, PropertyTypes, getPropertyTypeOptions} from "../../../../../../../shared/utils/constants";
 import {ValueInput} from "./value-input";
 import {Loader} from "../../../../../../../shared/components/atoms/loader";
 import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
@@ -66,6 +66,8 @@ const filters = reactive({
   [ConfigTypes.OPTIONAL]: true,
   FILLED: true,
 });
+const selectedPropertyTypes = ref<string[]>([]);
+const propertyTypeOptions = computed(() => getPropertyTypeOptions(t));
 
 const requiredTypes = [
   ConfigTypes.REQUIRED,
@@ -121,6 +123,7 @@ const filteredValues = computed(() => {
             ? ConfigTypes.REQUIRED
             : ConfigTypes.OPTIONAL;
     if (!filters[type]) return false;
+    if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(v.property.type)) return false;
     if (!searchQuery.value) return true;
     return v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase());
   });
@@ -165,6 +168,9 @@ watch(searchQuery, () => {
 watch(filters, () => {
   currentPage.value = 1;
 }, {deep: true});
+watch(selectedPropertyTypes, () => {
+  currentPage.value = 1;
+});
 
 
 const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
@@ -548,23 +554,26 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
     </Flex>
-    <Flex center gap="2" class="my-2">
+    <Flex center gap="2" class="my-2 items-start">
       <FlexCell grow>
         <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" />
       </FlexCell>
-      <FlexCell  v-for="type in requireTypes" :key="type.value" :title="type.label">
-        <button @click="toggleFilter(type.value)"
-            class="w-10 h-10 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
-            :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'"
-        >
-          <Icon name="circle-dot" :class="getIconColor(type.value)"/>
-        </button>
-      </FlexCell>
-
-      <FlexCell>
-        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
-          {{ t('shared.button.saveAll') }}
-        </Button>
+      <FlexCell class="flex flex-col items-center gap-2">
+        <div class="flex gap-2">
+          <button v-for="type in requireTypes" :key="type.value" :title="type.label" @click="toggleFilter(type.value)"
+              class="w-12 h-12 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
+              :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'">
+            <Icon name="circle-dot" :class="getIconColor(type.value)"/>
+          </button>
+        </div>
+        <Selector
+            v-model="selectedPropertyTypes"
+            :options="propertyTypeOptions"
+            multiple
+            :placeholder="t('products.products.properties.typePlaceholder')"
+            class="w-48 h-12"
+            labelBy="name"
+            valueBy="code"/>
       </FlexCell>
       <FlexCell>
         <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
@@ -574,13 +583,18 @@ const handleValueUpdate = ({id, type, value, language}) => {
                       :options="data.translationLanguages.languages"
                       :removable="false"
                       :placeholder="t('products.translation.placeholders.language')"
-                      class="w-32"
+                      class="w-32 h-12"
                       labelBy="name"
                       valueBy="code"
                       mandatory
                       filterable/>
           </template>
         </ApolloQuery>
+      </FlexCell>
+      <FlexCell>
+        <Button class="btn btn-primary h-12" :disabled="!hasUnsavedChanges" @click="saveAll">
+          {{ t('shared.button.saveAll') }}
+        </Button>
       </FlexCell>
     </Flex>
     <Loader :loading="loading"/>
