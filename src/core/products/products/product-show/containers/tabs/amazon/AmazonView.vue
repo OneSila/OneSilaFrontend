@@ -13,6 +13,7 @@ import AmazonBrowseNodeSection from './components/AmazonBrowseNodeSection.vue';
 import AmazonUnmappedValuesSection from './components/AmazonUnmappedValuesSection.vue';
 import AmazonVariationThemeSection from './components/AmazonVariationThemeSection.vue';
 import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
+import { amazonProductsQuery } from '../../../../../../../shared/api/queries/amazonProducts.js';
 import {
   resyncAmazonProductMutation,
   refreshAmazonProductIssuesMutation,
@@ -20,12 +21,26 @@ import {
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../apollo-client';
+import type { FetchPolicy } from '@apollo/client';
 import { ProductType } from '../../../../../../../shared/utils/constants';
 import Swal from 'sweetalert2';
 
-const props = defineProps<{ product: Product; amazonProducts: AmazonProduct[] }>();
-const emit = defineEmits(['refreshAmazonProducts']);
+const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
+
+const amazonProducts = ref<AmazonProduct[]>([]);
+const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'cache-first') => {
+  const { data } = await apolloClient.query({
+    query: amazonProductsQuery,
+    variables: { localInstance: props.product.id },
+    fetchPolicy,
+  });
+  amazonProducts.value = data.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
+};
+
+onMounted(() => {
+  fetchAmazonProducts();
+});
 
 interface AmazonProductIssue {
   id: string;
@@ -75,7 +90,7 @@ const selectedView = computed(() =>
 const selectedProduct = computed(() => {
   if (!selectedView.value) return null;
   return (
-    props.amazonProducts.find((product: AmazonProduct) =>
+    amazonProducts.value.find((product: AmazonProduct) =>
       product.createdMarketplaces.includes(selectedView.value.remoteId),
     ) || null
   );
@@ -122,7 +137,7 @@ const hasUnsavedChanges = computed(
     false,
 );
 
-defineExpose({ hasUnsavedChanges });
+defineExpose({ hasUnsavedChanges, fetchAmazonProducts });
 
 const handleMarketplaceSelection = async (newId: string) => {
   if (hasUnsavedChanges.value) {
@@ -142,19 +157,19 @@ const handleMarketplaceSelection = async (newId: string) => {
 
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
-  emit('refreshAmazonProducts');
+  fetchAmazonProducts('network-only');
   fetchViews();
 };
 
 const onValidateSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.validateSuccess'));
-  emit('refreshAmazonProducts');
+  fetchAmazonProducts('network-only');
   fetchViews();
 };
 
 const onFetchIssuesSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.fetchIssuesSuccess'));
-  emit('refreshAmazonProducts');
+  fetchAmazonProducts('network-only');
   fetchViews();
 };
 
