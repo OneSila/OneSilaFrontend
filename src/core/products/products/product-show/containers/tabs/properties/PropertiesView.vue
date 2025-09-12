@@ -61,7 +61,7 @@ const perPageOptions = [
 ];
 
 const searchQuery = ref('');
-const filters = reactive({
+const filters = ref<Record<string, boolean>>({
   [ConfigTypes.REQUIRED]: true,
   [ConfigTypes.OPTIONAL]: true,
   FILLED: true,
@@ -117,7 +117,7 @@ const filteredValues = computed(() => {
         : requiredTypes.includes(v.property.requireType as ConfigTypes)
             ? ConfigTypes.REQUIRED
             : ConfigTypes.OPTIONAL;
-    if (!filters[type]) return false;
+    if (!filters.value[type]) return false;
     if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(v.property.type)) return false;
     if (!searchQuery.value) return true;
     return v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase());
@@ -582,7 +582,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
-      <div v-if="productTypeValue">
+      <div v-if="productTypeValue && product.type !== ProductType.Configurable">
         <ValueInput
             v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(productTypeValue.property.type)"
             :product-id="product.id"

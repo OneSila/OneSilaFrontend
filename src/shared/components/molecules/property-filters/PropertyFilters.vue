@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Selector } from '../../atoms/selector';
 import { Icon } from '../../atoms/icon';
@@ -22,17 +22,20 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const localSearch = ref(props.searchQuery);
-watch(() => props.searchQuery, val => { localSearch.value = val; });
-watch(localSearch, val => emit('update:searchQuery', val));
+const localSearch = computed({
+  get: () => props.searchQuery,
+  set: val => emit('update:searchQuery', val),
+});
 
-const localSelectedTypes = ref<string[]>([...props.selectedPropertyTypes]);
-watch(() => props.selectedPropertyTypes, val => { localSelectedTypes.value = [...val]; });
-watch(localSelectedTypes, val => emit('update:selectedPropertyTypes', val));
+const localSelectedTypes = computed<string[]>({
+  get: () => props.selectedPropertyTypes,
+  set: val => emit('update:selectedPropertyTypes', val),
+});
 
-const localFilters = reactive({ ...props.filters });
-watch(() => props.filters, val => { Object.assign(localFilters, val); });
-watch(localFilters, val => emit('update:filters', val), { deep: true });
+const localFilters = computed<Record<string, boolean>>({
+  get: () => props.filters,
+  set: val => emit('update:filters', val),
+});
 
 const requireTypes = computed(() => {
   const types = [
@@ -48,7 +51,7 @@ const requireTypes = computed(() => {
 const propertyTypeOptions = computed(() => getPropertyTypeOptions(t));
 
 const toggleFilter = (type: string) => {
-  localFilters[type] = !localFilters[type];
+  localFilters.value = { ...localFilters.value, [type]: !localFilters.value[type] };
 };
 
 const getIconColor = (requireType: string) => {
@@ -93,7 +96,7 @@ const getIconColor = (requireType: string) => {
           :title="type.label"
           @click="toggleFilter(type.value)"
           class="w-9 h-9 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
-          :class="localFilters[type.value] ? 'border-blue-500' : 'border-transparent'"
+          :class="localFilters.value[type.value] ? 'border-blue-500' : 'border-transparent'"
         >
           <Icon name="circle-dot" :class="getIconColor(type.value)" />
         </button>
