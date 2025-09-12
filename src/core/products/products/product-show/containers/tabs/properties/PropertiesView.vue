@@ -549,7 +549,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
     </Flex>
-    <Flex center gap="2" class="my-2 items-start">
+    <Flex center gap="2" class="my-4 items-start">
       <FlexCell grow>
         <PropertyFilters
             v-model:search-query="searchQuery"
@@ -566,7 +566,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
                       :options="data.translationLanguages.languages"
                       :removable="false"
                       :placeholder="t('products.translation.placeholders.language')"
-                      class="w-32 h-12"
+                      class="w-32"
                       labelBy="name"
                       valueBy="code"
                       mandatory
@@ -575,7 +575,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </ApolloQuery>
       </FlexCell>
       <FlexCell>
-        <Button class="btn btn-primary h-12" :disabled="!hasUnsavedChanges" @click="saveAll">
+        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
           {{ t('shared.button.saveAll') }}
         </Button>
       </FlexCell>
