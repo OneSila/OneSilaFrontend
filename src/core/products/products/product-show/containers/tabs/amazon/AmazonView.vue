@@ -29,7 +29,7 @@ const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 
 const amazonProducts = ref<AmazonProduct[]>([]);
-const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'cache-first') => {
+const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'network-only') => {
   const { data } = await apolloClient.query({
     query: amazonProductsQuery,
     variables: { localInstance: props.product.id },
