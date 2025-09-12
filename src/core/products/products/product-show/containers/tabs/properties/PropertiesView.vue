@@ -567,7 +567,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </ApolloQuery>
       </FlexCell>
     </Flex>
-    <div class="mb-2 flex items-center space-x-2">
+    <div class="my-2 flex items-center space-x-2">
       <SearchInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" class="flex-grow" />
       <div class="flex space-x-2">
         <button
@@ -575,7 +575,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             :key="type.value"
             :title="type.label"
             @click="toggleFilter(type.value)"
-            class="w-8 h-8 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
+            class="w-10 h-10 flex items-center justify-center rounded border cursor-pointer hover:border-blue-500"
             :class="filters[type.value] ? 'border-blue-500' : 'border-transparent'"
         >
           <Icon name="circle-dot" :class="getIconColor(type.value)"/>
