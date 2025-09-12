@@ -26,5 +26,6 @@ export const FIELD_RULES: Record<string, ContentFieldRules> = {
 
 export function getContentFieldRules(type?: string): ContentFieldRules {
   if (!type) return FIELD_RULES.default;
-  return FIELD_RULES[type] || FIELD_RULES.default;
+  const normalized = type.toLowerCase();
+  return FIELD_RULES[normalized] || FIELD_RULES.default;
 }
