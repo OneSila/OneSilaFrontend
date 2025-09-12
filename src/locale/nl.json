@@ -675,6 +675,9 @@
         "websites": "Verkoopskanalen",
         "amazon": "Amazon"
       },
+      "properties": {
+        "searchPlaceholder": "Zoek eigenschappen"
+      },
       "amazon": {
         "validationIssues": "Gedetecteerde validatieproblemen",
         "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",

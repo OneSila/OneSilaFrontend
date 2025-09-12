@@ -18,6 +18,7 @@ import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 import {Button} from "../../../../../../../shared/components/atoms/button";
+import {TextInput} from "../../../../../../../shared/components/atoms/input-text";
 
 
 const {t} = useI18n();
@@ -58,6 +59,8 @@ const perPageOptions = [
   {name: '50', value: 50},
   {name: '100', value: 100},
 ];
+
+const searchQuery = ref('');
 
 const requiredTypes = [
   ConfigTypes.REQUIRED,
@@ -101,11 +104,18 @@ const sortedValues = computed(() => {
   return [...req, ...opt, ...filled];
 });
 
-const totalPages = computed(() => Math.max(1, Math.ceil(sortedValues.value.length / limit.value)));
+const filteredValues = computed(() => {
+  if (!searchQuery.value) return sortedValues.value;
+  return sortedValues.value.filter(v =>
+      v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredValues.value.length / limit.value)));
 
 const paginatedValues = computed(() => {
   const start = (currentPage.value - 1) * limit.value;
-  return sortedValues.value.slice(start, start + limit.value);
+  return filteredValues.value.slice(start, start + limit.value);
 });
 
 const pageInfo = computed(() => ({
@@ -128,10 +138,14 @@ const updateLimitPerPage = (value: number) => {
   currentPage.value = 1;
 };
 
-watch([sortedValues, limit], () => {
+watch([filteredValues, limit], () => {
   if (currentPage.value > totalPages.value) {
     currentPage.value = totalPages.value;
   }
+});
+
+watch(searchQuery, () => {
+  currentPage.value = 1;
 });
 
 
@@ -535,6 +549,9 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </ApolloQuery>
       </FlexCell>
     </Flex>
+    <div class="mb-2">
+      <TextInput v-model="searchQuery" :placeholder="t('products.products.properties.searchPlaceholder')" />
+    </div>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
       <div v-if="productTypeValue">
