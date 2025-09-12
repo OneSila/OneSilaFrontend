@@ -42,10 +42,9 @@ const { t } = useI18n()
 const language = ref<string | null>(null)
 
 const searchQuery = ref('')
-const filters = reactive({
+const filters = ref<Record<string, boolean>>({
   [ConfigTypes.REQUIRED]: true,
   [ConfigTypes.OPTIONAL]: true,
-  FILLED: true,
 })
 const selectedPropertyTypes = ref<string[]>([])
 
@@ -89,7 +88,7 @@ const filteredProperties = computed(() => {
     ].includes(p.requireType as ConfigTypes)
       ? ConfigTypes.REQUIRED
       : ConfigTypes.OPTIONAL
-    if (!filters[type]) return false
+    if (!filters.value[type]) return false
     if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(p.type)) return false
     if (!searchQuery.value) return true
     return p.name.toLowerCase().includes(searchQuery.value.toLowerCase())

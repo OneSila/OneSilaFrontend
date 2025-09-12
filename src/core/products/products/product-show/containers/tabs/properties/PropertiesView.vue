@@ -555,6 +555,7 @@ const handleValueUpdate = ({id, type, value, language}) => {
             v-model:search-query="searchQuery"
             v-model:selected-property-types="selectedPropertyTypes"
             v-model:filters="filters"
+            add-filled
         />
       </FlexCell>
       <FlexCell>
