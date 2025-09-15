@@ -160,6 +160,7 @@
       "invite": "Uitnodigen",
       "search": "Zoeken",
       "save": "Opslaan",
+      "saveAll": "Alles opslaan",
       "back": "Terug",
       "next": "Volgende",
       "finish": "Afwerken",
@@ -173,14 +174,19 @@
       "download": "Downloaden",
       "uploadNew": "Uploaden",
       "create": "Aanmaken",
+      "select": "Selecteer",
       "skip": "Overslaan",
       "generate": "Genereren",
       "duplicate": "Dupliceren",
       "change": "Wijzig",
+      "leaveTab": "Tab verlaten",
       "fix": "Fixen",
       "downloadConfirmation": "",
       "createAnyway": "Toch aanmaken",
-      "abort": "Afbreken"
+      "abort": "Afbreken",
+      "resync": "Resync",
+      "validate": "Validate",
+      "fetchIssues": "Fetch Issues"
     },
     "colors": {
       "red": "Rood",
@@ -195,6 +201,7 @@
       "or": "Of",
       "name": "Naam",
       "active": "Actief",
+      "inactive": "Inactive",
       "actions": "Acties",
       "shortDescription": "Korte Omschrijving",
       "quantity": "Hoeveelheid",
@@ -203,6 +210,9 @@
       "notes": "Notities",
       "currency": "Valuta's",
       "date": "Datum",
+      "code": "Code",
+      "data": "Data",
+      "context": "Context",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
       "email": "E-mail",
@@ -223,11 +233,15 @@
       "preview": "Preview",
       "discount": "Korting",
       "discountPrice": "",
+      "lastSyncAt": "Last synced at",
+      "fetchedAt": "Fetched at",
       "message": "Bericht",
       "severity": "Ernst",
       "validationIssue": "Validatiefout",
       "manual": "Handmatig",
-      "generate": "Genereren"
+      "generate": "Genereren",
+      "code": "Code",
+      "noIssues": "Geen problemen"
     },
     "alert": {
       "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
@@ -286,6 +300,11 @@
         },
         "selectAllCheckbox": {
           "label": "Selecteer alles"
+        }
+      },
+      "atoms": {
+        "textHtmlEditor": {
+          "invalidHtml": "Bevat ongeldige HTML"
         }
       },
       "organisms": {
@@ -627,6 +646,18 @@
         "dragAndDrop": "Versleep de items, of klik op ➕ om items toe te voegen",
         "noVariationsLeft": "Er zijn geen producten meer om toe te voegen"
       },
+      "alert": {
+        "toast": {
+          "copied": "Gekopieerd",
+          "pasted": "Geplakt",
+          "pasteDifferentColumn": "Kan niet plakken naar een andere kolom",
+          "undo": "Laatste wijziging ongedaan gemaakt",
+          "redo": "Laatste wijziging opnieuw toegepast",
+          "createdProductProperties": "{count} producteigenschappen aangemaakt.",
+          "updatedProductProperties": "{count} producteigenschappen bijgewerkt.",
+          "deletedProductProperties": "{count} producteigenschappen verwijderd."
+        }
+      },
       "tabs": {
         "content": "Inhoud",
         "variations": "Variaties",
@@ -636,15 +667,59 @@
         "price": "Prijzen",
         "prices": "Prijzen",
         "priceLists": "Prijslijsten",
-        "inventory": "Voorraad",
         "supplierProducts": "Producten Leveranciers",
-        "saleOrders": "Verkopen",
         "purchasingOrders": "Aankopen",
         "properties": "Eigenschappen",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "inventoryMovements": ""
+        "amazon": "Amazon"
+      },
+        "properties": {
+          "searchPlaceholder": "Zoek eigenschappen",
+          "typePlaceholder": "Filter op type"
+        },
+      "amazon": {
+        "validationIssues": "Gedetecteerde validatieproblemen",
+        "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",
+        "otherIssues": "Amazon-productproblemen",
+        "otherIssuesDescription": "Problemen die door Amazon worden gemeld nadat je een product hebt gemaakt of bijgewerkt. Deze verschijnen vaak pas na 15 tot 45 minuten, omdat Amazon ze verwerkt nadat je je wijzigingen hebt gepubliceerd.",
+        "status": "Status",
+        "statusDescription": "Synchronization status and available actions.",
+        "variationTheme": "Amazon-variatiethema",
+        "variationThemeDescription": "Selecteer welke veldeigenschappen je wilt dat mensen kiezen bij het selecteren van het juiste product.",
+        "variationThemePlaceholder": "Selecteer variatiethema",
+        "variationThemeSaved": "Variation theme saved",
+        "variationThemeDeleted": "Variation theme deleted",
+        "asin": "ASIN",
+        "asinDescription": "Voer het Amazon Standard Identification Number (ASIN) voor dit product in.",
+        "asinPlaceholder": "Voer ASIN in",
+        "asinSaved": "ASIN opgeslagen",
+        "asinDeleted": "ASIN verwijderd",
+        "externalProductId": "External product ID",
+        "externalProductIdDescription": "Provide the product identifier for this marketplace. If left empty, the system will use the product's EAN code.",
+        "externalProductIdPlaceholder": "Enter identifier",
+        "externalProductIdSaved": "Identifier saved",
+        "externalProductIdDeleted": "Identifier deleted",
+        "identifierType": "Type",
+        "identifierValue": "Value",
+        "createdAsin": "Created ASIN",
+        "defaultMarketplace": "Default marketplace",
+        "defaultMarketplaceFallback": "Value missing. The default marketplace value will be used.",
+        "gtinExemption": "GTIN Exemption",
+        "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace.",
+        "gtinExemptionSaved": "GTIN Exemption saved",
+        "browseNode": "Browse node",
+        "browseNodeDescription": "Select the browse node for this product.",
+        "browseNodeSaved": "Browse node saved",
+        "browseNodeDeleted": "Browse node deleted",
+        "noBrowseNodeSelected": "No browse node selected",
+        "browseNodeRoot": "Root",
+        "selectCurrentNode": "Select current",
+        "recommendedProductTypes": "Recommended product types",
+        "createProductTypeTitle": "Create product type",
+        "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
+        "productTypeCreated": "Product type created"
       },
       "inspector": {
         "labels": {
@@ -728,7 +803,8 @@
         "productionTime": "Productie tijd",
         "forSale": "Verkoopbaar",
         "allowBackorder": "Backorder toestaan",
-        "inspectorStatus": ""
+        "inspectorStatus": "",
+        "configuratorValue": ""
       },
       "placeholders": {
         "vatRate": "Voeg BTW Tarief toe",
@@ -805,6 +881,14 @@
       },
       "show": {
         "title": "Product"
+      },
+      "bulkEditModal": {
+        "textTitle": "Waarde bewerken",
+        "descriptionTitle": "Beschrijving bewerken"
+      },
+      "duplicateModal": {
+        "description": "Geef een SKU op voor het gedupliceerde product of laat leeg om automatisch te genereren.",
+        "createAsAlias": "Als aliasproduct aanmaken?"
       },
       "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
@@ -1407,12 +1491,17 @@
         "files": "Bestanden",
         "recentFiles": "Recente Bestanden",
         "addExistingFiles": "Toevoegen van bestaande media",
-        "images": ""
+        "images": "",
+        "fileThumbnail": "Bestandsminiatuur"
       }
     },
     "images": {
       "title": "Afbeeldingen",
       "upload": "Upload nieuwe afbeeldingen",
+      "tabs": {
+        "upload": "Uploaden",
+        "urls": "URL's"
+      },
       "create": {
         "successfullyCreated": "Afbeeldingen opgeslagen!"
       },
@@ -1433,6 +1522,11 @@
       },
       "placeholders": {
         "imageType": "Afbeeldingstype"
+      },
+      "alert": {
+        "toast": {
+          "invalidUrl": "Voer een geldige afbeeldings-URL in (jpg, jpeg, png, webp)."
+        }
       }
     },
     "videos": {
@@ -1743,7 +1837,12 @@
     },
     "duplicateModal": {
       "title": "Eigenschappen met gelijkaardige naam gevonden",
-      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan."
+      "content": "Selecteer een bestaande eigenschap of maak toch een nieuwe aan.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
+      }
     },
     "values": {
       "title": "Selectie Waardes",
@@ -1761,6 +1860,20 @@
       },
       "placeholders": {
         "value": "Voeg Waarde toe"
+      },
+      "merge": {
+        "button": "Samenvoegen",
+        "title": "Waardes samenvoegen",
+        "description": "Selecteer de waarde die behouden blijft. De andere geselecteerde waardes worden hierin samengevoegd en verwijderd.",
+        "selectTarget": "Kies doelwaarde",
+        "selectSource": "Selecteer waarde om samen te voegen",
+        "counter": "Gebruikt in {count} producten",
+        "detailDescription": "Alle geselecteerde waardes worden samengevoegd in \"{value}\" en de andere worden verwijderd.",
+        "current": "Huidige waarde \"{value}\" gebruikt in {count} producten",
+        "warning": "Andere waardes worden verwijderd.",
+        "confirm": "Samenvoegen",
+        "success": "Waardes succesvol samengevoegd.",
+        "error": "Samenvoegen mislukt."
       }
     },
     "rule": {
@@ -1834,6 +1947,202 @@
         },
         "helpText": "De Verplicht- en Optioneel in Configurator zijn enkel relevant voor Configureerbare Producten.  Op andere product-types worden ze gezien als verplicht.",
         "title": "Hoe moet deze eigenschap zich gedragen op het product-type?"
+      }
+    }
+  },
+  "integrations": {
+    "show": {
+      "products": {
+        "labels": {
+          "store": "Winkel",
+          "excludeStores": "Winkels uitsluiten"
+        }
+      },
+      "tabs": {
+        "reports": "Rapporten"
+      }
+    },
+    "imports": {
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found",
+          "NAME_TOO_LONG": "Name too long",
+          "INVALID_VARIATION_THEME": "Invalid variation theme"
+        }
+      }
+    }
+  }
+,
+  "integrations": {
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
+    "salesChannel": {
+      "labels": {
+        "assignedToSalesChannelView": "Toegewezen aan winkel",
+        "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+      }
+    }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor",
+      "description": "Realtime overzicht van webhook-leveringen.",
+      "timeRange": {
+        "live": "Live",
+        "last15m": "Laatste 15m",
+        "1h": "1u",
+        "6h": "6u",
+        "24h": "24u",
+        "custom": "Aangepast"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Actie",
+        "status": "Status",
+        "responseCode": "Responscode",
+        "subject": "Onderwerp"
+      },
+      "autoRefresh": "Auto-verversen",
+      "rpmCap": "RPM-limiet",
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (median / p95)",
+        "latencyTooltip": "Median and 95th percentile latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "queueDepth": "Queue depth",
+        "queueDepthTooltip": "Current depth of the webhook queue"
+      },
+      "empty": "No deliveries found",
+      "table": {
+        "time": "Tijd",
+        "topic": "Onderwerp",
+        "action": "Actie",
+        "subjectId": "Onderwerp-ID",
+        "integration": "Integratie",
+        "status": "Status",
+        "httpCode": "HTTP-code",
+        "latency": "Latentie",
+        "attempt": "Poging #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "headers": {
+          "redacted": "[REDACTED]"
+        },
+        "replay": {
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "confirmButtonText": "Yes, replay it!",
+          "copied": "cURL command copied"
+        }
+      }
+    },
+    "reports": {
+      "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Verdeling van leveringsstatussen in de tijd.",
+        "latency": "Webhook-latentiepercentielen in de tijd.",
+        "topics": "Toponderwerpen naar volume en succespercentage.",
+        "responseCodes": "Verdeling van HTTP-responscodes.",
+        "retries": "Leveringen gegroepeerd op aantal pogingen.",
+        "heatmap": "Fouten of latentie per weekdag en uur.",
+        "topOffenders": "Integraties met de hoogste foutpercentages en latentie."
+      },
+      "timeRange": {
+        "today": "Vandaag",
+        "7d": "7 d",
+        "30d": "30 d"
+      },
+      "filters": {
+        "integration": "Integratie",
+        "responseCodeBucket": "Antwoordcode-bucket",
+        "date": "Datum"
+      },
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (p50 / p95 / p99)",
+        "latencyTooltip": "p50, p95, and p99 latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "rate5xx": "5xx %",
+        "rate5xxTooltip": "Percentage of HTTP 5xx responses",
+        "avgAttempts": "Avg attempts",
+        "avgAttemptsTooltip": "Average attempts per delivery",
+        "avgSolveMs": "Avg solve ms",
+        "avgSolveMsTooltip": "Average milliseconds to solve a request",
+        "responseCodeBucket": "Antwoordcode-bucket",
+        "date": "Datum"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "heatmap": "Heatmap",
+        "topOffenders": "Top-veroorzakers",
+        "p50": "p50",
+        "p95": "p95",
+        "latencyLegend": {
+          "title": "Latency percentiles:",
+          "p50": "p50 = median (half of deliveries are faster)",
+          "p95": "p95 = 95% are faster (only 1 in 20 slower)",
+          "p99": "p99 = 99% are faster (only 1 in 100 slower)"
+        }
+      }
+      ,
+      "heatmap": {
+        "metric": {
+          "failures": "Fouten",
+          "latency": "Median latentie"
+        },
+        "weekdays": {
+          "1": "Ma",
+          "2": "Di",
+          "3": "Wo",
+          "4": "Do",
+          "5": "Vr",
+          "6": "Za",
+          "7": "Zo"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Integratie",
+          "failureRate": "Fout %",
+          "latencyP95": "p95 latentie"
+        }
       }
     }
   }

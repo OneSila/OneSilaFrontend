@@ -33,7 +33,6 @@ interface EditAmazonForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
-  listingOwner: boolean;
   accessToken?: string;
   expirationDate?: string;
   region: string | null;
@@ -204,18 +203,6 @@ useShiftBackspaceKeyboardListener(goBack);
         </Flex>
       </div>
 
-      <div class="md:col-span-2 col-span-6">
-        <Flex class="mt-8" gap="2">
-          <FlexCell>
-            <Label class="font-semibold text-sm text-gray-900 mb-1">
-              {{ t('integrations.labels.listingOwner') }}
-            </Label>
-          </FlexCell>
-          <FlexCell>
-            <Toggle v-model="formData.listingOwner" />
-          </FlexCell>
-        </Flex>
-      </div>
     </div>
 
     <div class="grid grid-cols-12 gap-4">

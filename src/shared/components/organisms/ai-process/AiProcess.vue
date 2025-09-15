@@ -17,6 +17,7 @@ const props = withDefaults(
     btnClass?: string;
     label?: string;
     small?: boolean;
+    beforeStart?: () => Promise<boolean> | boolean;
   }>(),
   {
     btnClass: 'btn-outline-primary',
@@ -100,7 +101,13 @@ const onError = (error: any) => {
   }
 };
 
-const handleClick = (mutate: Function) => {
+const handleClick = async (mutate: Function) => {
+  if (props.beforeStart) {
+    const proceed = await props.beforeStart();
+    if (proceed === false) {
+      return;
+    }
+  }
   startSimulatedProgress();
   mutate();
 };

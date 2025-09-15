@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { FieldValue } from "../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
@@ -19,6 +19,7 @@ import { CancelButton } from "../../../../shared/components/atoms/button-cancel"
 import { DuplicateModal } from "../../../../shared/components/molecules/duplicate-modal";
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
+import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../shared/modules/keyboard";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -28,6 +29,13 @@ const fields = reactive<Record<string, any>>({});
 const form = reactive<Record<string, any>>({});
 const showDuplicateModal = ref(false);
 const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
+const checkingDuplicates = ref(false);
+const skippedCheck = ref(false);
+let duplicateCheckController: AbortController | null = null;
+const duplicateSteps = computed(() => [
+  t('properties.duplicateModal.steps.step1'),
+  t('properties.duplicateModal.steps.step2'),
+]);
 const continueEditing = ref(false);
 const defaultValue = route.query.value ? route.query.value.toString() : '';
 
@@ -180,30 +188,38 @@ const createSelectValue = async () => {
   }
 };
 
-const checkDuplicatesAndCreate = async (editAfter = false) => {
+const checkDuplicatesAndCreate = (editAfter = false) => {
   continueEditing.value = editAfter;
   if (!formConfig.value) return;
-  try {
-    const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
-    const propertyId = cleanedData.property.id || cleanedData.property;
-    const { data } = await apolloClient.mutate({
+  const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
+  const propertyId = cleanedData.property.id || cleanedData.property;
+  showDuplicateModal.value = true;
+  checkingDuplicates.value = true;
+  skippedCheck.value = false;
+  duplicateCheckController = new AbortController();
+  apolloClient
+    .mutate({
       mutation: checkPropertySelectValueForDuplicatesMutation,
-      variables: { property: {id: propertyId}, value: cleanedData.value },
+      variables: { property: { id: propertyId }, value: cleanedData.value },
+      context: { fetchOptions: { signal: duplicateCheckController.signal } },
+    })
+    .then(({ data }) => {
+      if (skippedCheck.value) return;
+      checkingDuplicates.value = false;
+      if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
+        duplicateItems.value = data.checkPropertySelectValueForDuplicates.duplicates.map((p: any) => ({
+          label: p.value || p.id,
+          urlParam: { name: 'properties.values.show', params: { id: p.id } }
+        }));
+        return;
+      }
+      showDuplicateModal.value = false;
+      createSelectValue();
+    })
+    .catch((err) => {
+      if ((err as any)?.name === 'AbortError') return;
+      onError(err);
     });
-
-    if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
-      duplicateItems.value = data.checkPropertySelectValueForDuplicates.duplicates.map((p: any) => ({
-        label: p.value || p.id,
-        urlParam: { name: 'properties.values.show', params: { id: p.id } }
-      }));
-      showDuplicateModal.value = true;
-      return;
-    }
-
-    await createSelectValue();
-  } catch (err) {
-    onError(err);
-  }
 };
 
 const cancel = () => {
@@ -213,6 +229,21 @@ const cancel = () => {
     router.push(formConfig.value.submitUrl);
   }
 };
+
+const saveAndContinue = () => checkDuplicatesAndCreate(true);
+const save = () => checkDuplicatesAndCreate(false);
+
+const createAnywayHandler = async () => {
+  skippedCheck.value = true;
+  duplicateCheckController?.abort();
+  checkingDuplicates.value = false;
+  showDuplicateModal.value = false;
+  await createSelectValue();
+};
+
+useShiftEnterKeyboardListener(saveAndContinue);
+useEnterKeyboardListener(save);
+useShiftBackspaceKeyboardListener(cancel);
 
 </script>
 
@@ -267,6 +298,9 @@ const cancel = () => {
     :title="t('properties.duplicateModal.title')"
     :content="t('properties.duplicateModal.content')"
     :items="duplicateItems"
-    @create-anyway="createSelectValue"
+    :loading="checkingDuplicates"
+    modal-title="properties.duplicateModal.checkingTitle"
+    :steps="duplicateSteps"
+    @create-anyway="createAnywayHandler"
   />
 </template>

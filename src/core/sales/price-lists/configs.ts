@@ -3,8 +3,8 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
-import {companiesQuery} from "../../../shared/api/queries/contacts.js";
-import { currenciesQuery } from "../../../shared/api/queries/currencies.js";
+import {companiesQuerySelector} from "../../../shared/api/queries/contacts.js";
+import { currenciesQuerySelector } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
 import {
@@ -49,7 +49,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
         label: t('sales.customers.title'),
         labelBy: 'name',
         valueBy: 'id',
-        query: companiesQuery,
+        query: companiesQuerySelector,
         queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
         dataKey: 'companies',
         isEdge: true,
@@ -85,7 +85,7 @@ export const getFields = (customerId, t, type, showPcnt: boolean = true): FormFi
       label: t('shared.labels.currency'),
       labelBy: 'isoCode',
       valueBy: 'id',
-      query: currenciesQuery,
+      query: currenciesQuerySelector,
       dataKey: 'currencies',
       isEdge: true,
       multiple: false,
@@ -213,7 +213,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
     },
     {
       type: FieldType.Query,
-      query: currenciesQuery,
+      query: currenciesQuerySelector,
       dataKey: 'currencies',
       name: 'currency',
       label: t('shared.labels.currency'),
@@ -330,15 +330,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       type: FieldType.Boolean,
       label: t('sales.priceLists.labels.autoUpdatePrices'),
       showLabel: true,
-    },
-    {
-      type: FieldType.Array,
-      name: 'customers',
-      label: t('sales.customers.title'),
-      clickable: false,
-      clickIdentifiers: [{id: ['id']}],
-      keys: ['name'],
-      showLabel: true
     }
   ]
 });

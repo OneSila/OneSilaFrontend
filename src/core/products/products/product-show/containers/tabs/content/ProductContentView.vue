@@ -8,7 +8,7 @@ import { getProductContentByLanguageAndChannelQuery, getProductContentByLanguage
 import { createProductTranslationMutation, updateProductTranslationMutation } from "../../../../../../../shared/api/mutations/products.js";
 import { integrationsQuery } from "../../../../../../../shared/api/queries/integrations.js";
 import { Selector} from "../../../../../../../shared/components/atoms/selector";
-import { reactive, watch, ref, onMounted, computed } from "vue";
+import { reactive, watch, ref, onMounted, computed, nextTick } from "vue";
 import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
@@ -66,8 +66,10 @@ const cleanedData = (rawData) => {
 
 const loadSalesChannels = async () => {
   try {
-    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'network-only' });
-    salesChannels.value = data?.integrations.edges.map((e: any) => e.node) || [];
+    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
+    salesChannels.value = data?.integrations.edges
+      .map((e: any) => e.node)
+      .filter((c: any) => c.type !== IntegrationTypes.Webhook) || [];
   } catch (e) {
     console.error('Failed to load sales channels', e);
   }
@@ -108,7 +110,6 @@ const setFormAndMutation = async (language, channel) => {
         mutation.value = createProductTranslationMutation;
         previewContent.value = null;
       }
-      initialForm.value = { ...form };
       defaultPreviewContent.value = null;
 
     } else {
@@ -141,7 +142,6 @@ const setFormAndMutation = async (language, channel) => {
         mutation.value = createProductTranslationMutation;
         previewContent.value = null;
       }
-      initialForm.value = { ...form };
 
       // Fetch default translation for preview/fallback
       const { data: def } = await apolloClient.query({
@@ -159,6 +159,8 @@ const setFormAndMutation = async (language, channel) => {
     previewBulletPoints.value = await bulletPointsRef.value.fetchPoints();
   }
 
+  await nextTick();
+  initialForm.value = { ...form };
 };
 
 
@@ -199,7 +201,7 @@ const handleLanguageSelection = async (newLanguage) => {
 const handleSalesChannelSelection = async (newChannel) => {
 
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
-    const confirmChange = confirm(t('products.translation.confirmLanguageChange'));
+    const confirmChange = confirm(t('products.products.messages.unsavedChanges'));
     if (!confirmChange) {
       currentSalesChannel.value = oldChannel.value;
       return;
@@ -268,6 +270,14 @@ const handleError = (errors) => {
   }
 }
 
+const hasUnsavedChanges = computed(() => {
+  const formChanged = JSON.stringify(form) !== JSON.stringify(initialForm.value);
+  const bulletsChanged = bulletPointsRef.value?.hasChanges;
+  return formChanged || bulletsChanged;
+});
+
+defineExpose({ hasUnsavedChanges });
+
 const shortDescriptionToolbarOptions = [
   ['bold', 'underline'],
   [{ list: 'bullet' }],
@@ -292,7 +302,7 @@ const shortDescriptionToolbarOptions = [
       </ApolloMutation>
     </FlexCell>
     <FlexCell>
-      <ApolloQuery :query="translationLanguagesQuery">
+      <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
         <template v-slot="{ result: { data } }">
           <Selector v-if="data"
                     v-model="currentLanguage"
@@ -351,17 +361,22 @@ const shortDescriptionToolbarOptions = [
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
           :sales-channel-type="currentChannelType"
+          :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
-        />
-        <ProductTranslationBulletPoints
-          v-if="fieldRules.bulletPoints"
-          ref="bulletPointsRef"
-          :translation-id="translationId"
-          :product-id="product.id"
-          :language-code="currentLanguage"
-          @initial-bullet-points="previewBulletPoints = [...$event]"
-        />
+        >
+          <template #bullet-points>
+            <ProductTranslationBulletPoints
+              v-if="fieldRules.bulletPoints"
+              ref="bulletPointsRef"
+              :translation-id="translationId"
+              :product-id="product.id"
+              :language-code="currentLanguage"
+              :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
+              @initial-bullet-points="previewBulletPoints = [...$event]"
+            />
+          </template>
+        </ProductContentForm>
       </div>
     </div>
 

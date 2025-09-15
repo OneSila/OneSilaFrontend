@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 const props = defineProps<{
   path?: string | object;
   inlineBlock?: boolean;
@@ -11,6 +13,16 @@ const props = defineProps<{
   target?: string;
   selectable?: boolean;
 }>();
+
+const externalHref = computed(() => {
+  if (props.external && typeof props.path === 'string') {
+    if (!props.path.startsWith('http://') && !props.path.startsWith('https://')) {
+      return `https://${props.path}`;
+    }
+  }
+
+  return props.path;
+});
 
 const onClicked = (event, navigationCallback) => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || props.target === '_blank') {
@@ -49,7 +61,7 @@ const onClicked = (event, navigationCallback) => {
       v-if="external && !disabled"
       class="hover:text-gray-600"
       target="_blank"
-      :href="String(path)"
+      :href="String(externalHref)"
     >
       <slot />
     </a>

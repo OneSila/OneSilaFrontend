@@ -1,20 +1,30 @@
 <script setup lang="ts">
-
-import {ref} from 'vue';
-import {Product} from "../../../../configs";
-import {useI18n} from "vue-i18n";
+import { ref, computed } from 'vue';
+import { Product } from "../../../../configs";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import { SearchConfig } from "../../../../../../../shared/components/organisms/general-search/searchConfig";
-import {  bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../shared/api/queries/products.js";
+import { bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../shared/api/queries/products.js";
 import { ProductType } from "../../../../../../../shared/utils/constants";
+import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import VariationsList from "./containers/variations-list/VariationsList.vue";
 import VariationCreate from "./containers/variation-create/VariationCreate.vue";
+import VariationsBulkEdit from "./containers/variations-bulk-edit/VariationsBulkEdit.vue";
+import { useI18n } from 'vue-i18n';
+import Swal from 'sweetalert2';
 
-const { t } = useI18n();
 
 const props = defineProps<{ product: Product }>();
+const { t } = useI18n();
 const ids = ref([]);
 const refetchNeeded = ref(false);
+const mode = ref<'list' | 'edit'>('list');
+const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
+const hasUnsavedChanges = computed(() => bulkEditRef.value?.hasUnsavedChanges ?? false);
+
+const tabs: { key: 'list' | 'edit'; label: string; icon: string }[] = [
+  { key: 'list', label: 'List', icon: 'list' },
+  { key: 'edit', label: 'Edit', icon: 'pen-to-square' },
+];
 
 const searchConfig: SearchConfig = {
   search: true,
@@ -69,22 +79,62 @@ const getQueryKey = () => {
   }
 };
 
+const changeMode = async (newMode: 'list' | 'edit') => {
+  if (mode.value === 'edit' && newMode !== 'edit' && hasUnsavedChanges.value) {
+    const res = await Swal.fire({
+      icon: 'warning',
+      text: t('products.products.messages.unsavedChanges'),
+      showCancelButton: true,
+      confirmButtonText: t('shared.button.cancel'),
+      cancelButtonText: t('shared.button.leaveTab'),
+    });
+    if (res.dismiss !== Swal.DismissReason.cancel) {
+      return;
+    }
+  }
+  mode.value = newMode;
+};
+
+defineExpose({ hasUnsavedChanges });
+
 </script>
 
 <template>
   <TabContentTemplate>
-
     <template v-slot:content>
-      <VariationsList :product="product"
-                      :query-key="getQueryKey()"
-                      :list-query="getQuery()"
-                      :search-config="searchConfig"
-                      :refetch-needed="refetchNeeded"
-                      @refetched="handleRefeched"
-                      @update-ids="getIds" />
+      <div class="flex">
+        <div class="w-24 border-r border-gray-200 pr-4 space-y-2">
+          <div
+            v-for="tab in tabs"
+            :key="tab.key"
+            class="cursor-pointer flex items-center gap-2 p-2 rounded-md"
+            :class="{ 'bg-primary text-white': mode === tab.key }"
+            @click="changeMode(tab.key)"
+          >
+            <Icon :name="tab.icon" class="w-4 h-4" />
+            <span>{{ tab.label }}</span>
+          </div>
+        </div>
 
-      <div v-if="product.type !== ProductType.Alias" class="mt-2">
-        <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
+        <div class="flex-1 min-w-0 pl-4">
+          <template v-if="mode === 'list'">
+            <VariationsList
+              :product="product"
+              :query-key="getQueryKey()"
+              :list-query="getQuery()"
+              :search-config="searchConfig"
+              :refetch-needed="refetchNeeded"
+              @refetched="handleRefeched"
+              @update-ids="getIds"
+            />
+            <div v-if="product.type !== ProductType.Alias" class="mt-2">
+              <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
+            </div>
+          </template>
+          <template v-else>
+            <VariationsBulkEdit ref="bulkEditRef" :product="product" />
+          </template>
+        </div>
       </div>
     </template>
   </TabContentTemplate>

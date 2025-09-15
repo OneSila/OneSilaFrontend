@@ -1,5 +1,6 @@
 export const PUBLIC_ROUTES = ['auth.login', 'auth.register', 'auth.register.company', 'auth.recover', 'auth.recover.token', 'auth.accept.invite.token'];
 export  const DEFAULT_LANGUAGE = {"code": "en", "name": "English"}
+export const BULLET_POINT_SEPARATOR = "__BULLET_SEPARATOR__";
 
 export  interface Url {
   name: string;
@@ -36,7 +37,8 @@ export enum ConfigTypes {
   REQUIRED_IN_CONFIGURATOR = 'REQUIRED_IN_CONFIGURATOR',
   OPTIONAL_IN_CONFIGURATOR = 'OPTIONAL_IN_CONFIGURATOR',
   REQUIRED = 'REQUIRED',
-  OPTIONAL = 'OPTIONAL'
+  OPTIONAL = 'OPTIONAL',
+  FILLED = 'FILLED'
 }
 
 export const InspectorStatus = {

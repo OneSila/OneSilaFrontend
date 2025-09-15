@@ -2,7 +2,7 @@ import {CreateOnTheFly, FormConfig, FormField, FormType} from '../../../shared/c
 import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
-import {currenciesQuery, publicCurrenciesQuery} from "../../../shared/api/queries/currencies.js"
+import {currenciesQuery, currenciesQuerySelector, publicCurrenciesQuery} from "../../../shared/api/queries/currencies.js"
 import {createCurrencyMutation, deleteCurrencyMutation} from "../../../shared/api/mutations/currencies.js";
 
 export const getCurrencyFields = (t, isEdit: boolean = false): FormField[] => {
@@ -76,7 +76,7 @@ export const getNonDefaultFields = (t): FormField[] => {
       label:  t('settings.currencies.labels.inheritsFrom'),
       labelBy: 'name',
       valueBy: 'id',
-      query: currenciesQuery,
+      query: currenciesQuerySelector,
       dataKey: 'currencies',
       isEdge: true,
       multiple: false,

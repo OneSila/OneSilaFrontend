@@ -86,7 +86,7 @@ const setValues = async () => {
 
   const {data} = await apolloClient.query({
     query: translationLanguagesQuery,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data?.translationLanguages?.languages?.length) {

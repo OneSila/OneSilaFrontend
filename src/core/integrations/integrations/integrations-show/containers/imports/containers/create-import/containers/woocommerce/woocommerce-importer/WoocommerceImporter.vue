@@ -69,7 +69,7 @@ const fetchIntegrationData = async () => {
     const { data } = await apolloClient.query({
       query: getWoocommerceChannelQuery,
       variables: { id: props.integrationId },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     const { __typename, integrationPtr, saleschannelPtr,  ...cleanData } = data['woocommerceChannel'];
 

@@ -2,7 +2,7 @@ import { gql } from 'graphql-tag';
 
 export const productsDashboardCardsQuery = gql`
   query ProductsDashboardCards($errorCode: String!) {
-    products(filters: { inspectorNotSuccessfullyCodeError: $errorCode }) {
+    products(filters: { inspectorNotSuccessfullyCodeError: $errorCode, active: { exact: true } }) {
       totalCount
     }
   }
@@ -50,7 +50,7 @@ export const dashboardNotMatchingSalesPricesList = gql`
 
 export const dashboardAmazonProductsWithIssues = gql`
   query DashboardAmazonProductsWithIssues($salesChannelId: String) {
-    products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId }) {
+    products(filters: { amazonProductsWithIssuesForSalesChannel: $salesChannelId, active: { exact: true } }) {
       totalCount
     }
   }
@@ -83,6 +83,38 @@ export const dashboardPropertySelectValuesMissingMainTranslations = gql`
 export const dashboardPropertySelectValuesMissingTranslations = gql`
   query DashboardPropertySelectValuesMissingTranslations {
     propertySelectValues(filters: { missingTranslations: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertiesUsedInProductsMissingMainTranslations = gql`
+  query DashboardPropertiesUsedInProductsMissingMainTranslations {
+    properties(filters: { missingMainTranslation: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertiesUsedInProductsMissingTranslations = gql`
+  query DashboardPropertiesUsedInProductsMissingTranslations {
+    properties(filters: { missingTranslations: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesUsedInProductsMissingMainTranslations = gql`
+  query DashboardPropertySelectValuesUsedInProductsMissingMainTranslations {
+    propertySelectValues(filters: { missingMainTranslation: true, usedInProducts: true }) {
+      totalCount
+    }
+  }
+`;
+
+export const dashboardPropertySelectValuesUsedInProductsMissingTranslations = gql`
+  query DashboardPropertySelectValuesUsedInProductsMissingTranslations {
+    propertySelectValues(filters: { missingTranslations: true, usedInProducts: true }) {
       totalCount
     }
   }

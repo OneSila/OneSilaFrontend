@@ -24,7 +24,7 @@ const fetchFilterIds = async () => {
         valueSelect: { id: {exact: props.id} },
         OR: { valueMultiSelect: { id: {exact: props.id }} }
     }},
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productProperties && data.productProperties.edges) {

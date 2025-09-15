@@ -22,7 +22,7 @@ const fetchFilterIds = async () => {
     const { data } = await apolloClient.query({
       query: productPropertiesRuleItemsQuery,
       variables: { filter: { property: { id: { exact: props.id }} }},
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
 
     if (data && data.productPropertiesRuleItems && data.productPropertiesRuleItems.edges) {

@@ -14,6 +14,7 @@ import { FilterQuery } from './containers/filter-query';
 import { FilterDate } from './containers/filter-date';
 import { FilterSlider } from './containers/filter-slider';
 import { FilterCheckbox } from './containers/filter-checkbox';
+import { FilterDateRange } from './containers/filter-date-range';
 
 const { t } = useI18n();
 
@@ -31,6 +32,7 @@ const getFilterComponent = (type) => {
     case FieldType.Choice: return FilterChoice;
     case FieldType.Query: return FilterQuery;
     case FieldType.Date: return FilterDate;
+    case FieldType.RangeDate: return FilterDateRange;
     case FieldType.Slider: return FilterSlider;
     case FieldType.Checkbox: return FilterCheckbox;
     default: return null;
@@ -38,7 +40,8 @@ const getFilterComponent = (type) => {
 };
 
 const gridClass = computed(() => {
-  return `grid grid-cols-1 ${props.cols === 2 ? 'md:grid-cols-2' : ''} gap-4`;});
+  return 'grid grid-cols-1 md:grid-cols-2 gap-4';
+});
 
 const cancel = () => {
   emit('cancel-clicked');
@@ -51,7 +54,7 @@ const submit = () => {
 </script>
 
 <template>
-  <Card class="w-1/2">
+  <Card class="w-full md:w-4/5 lg:w-3/4 max-h-[80vh] overflow-y-auto">
     <div :class="gridClass">
       <component
         v-for="filter in filters"

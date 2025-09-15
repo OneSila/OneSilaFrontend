@@ -102,7 +102,7 @@ watch(() => props.fieldsToClear, (fields) => {
           <FormLayout v-if="initialFormUpdate(config.queryData)" :config="config" :form="form" :errors="errors" />
         </div>
       </template>
-      <ApolloQuery v-else :query="config.query" :variables="config.queryVariables" class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+      <ApolloQuery v-else :query="config.query" :variables="config.queryVariables" fetch-policy="cache-and-network" class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
         <template v-slot="{ result: { loading, error, data } }">
           <template v-if="data && !loading && initialFormUpdate(data)">
             <FormLayout :config="config" :form="form" :errors="errors"/>
@@ -112,6 +112,8 @@ watch(() => props.fieldsToClear, (fields) => {
           </template>
         </template>
       </ApolloQuery>
+      <slot name="additional-fields" />
+
   </div>
   <SubmitButtons
     v-if="!config.hideButtons"

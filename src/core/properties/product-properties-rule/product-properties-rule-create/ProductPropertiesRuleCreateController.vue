@@ -40,11 +40,6 @@ const saveMutations = async (continueEditing = false) => {
   const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.OPTIONAL_IN_CONFIGURATOR);
   const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
 
-  if (hasOptionalInConfigurator && !hasRequiredInConfigurator) {
-    Toast.error(t('properties.rule.error.optionalWithoutRequired'));
-    return;
-  }
-
   // Prepare data for the mutation
   const inputData = {
     productType: { id: updatedProductType.value },
@@ -104,7 +99,7 @@ const fetchProductType = async () => {
    const {data} = await apolloClient.query({
       query: getPropertySelectValueQuery,
       variables: { id: initialProductId.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     })
 
     if (data && data.propertySelectValue) {

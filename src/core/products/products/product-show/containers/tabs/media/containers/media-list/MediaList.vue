@@ -15,11 +15,12 @@ import { VueDraggableNext } from 'vue-draggable-next';
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {Toggle} from "../../../../../../../../../shared/components/atoms/toggle";
 import {VideoListingPreview} from "../../../../../../../../media/videos/videos-list/containers/video-listing-preview";
+import type { FetchPolicy } from "@apollo/client";
 
 type Media = {
   id: string;
   type: string;
-  onesilaThumbnailUrl: string;
+  imageWebUrl: string;
   videoUrl: string;
   updatedAt: Date;
   owner: {
@@ -65,12 +66,12 @@ const extractNodes = (data) => {
 };
 
 
-const fetchData = async () => {
+const fetchData = async (policy: FetchPolicy = 'cache-first') => {
 
   const { data } = await apolloClient.query({
     query: mediaProductThroughQuery,
     variables: { filter: { product: {id: {exact: props.product.id }} }},
-    fetchPolicy: 'network-only'
+    fetchPolicy: policy
   });
 
   if (data) {
@@ -90,13 +91,13 @@ const fetchData = async () => {
 
 watch(() => props.refetchNeeded, (newValue, oldValue) => {
   if (newValue) {
-    fetchData();
+    fetchData('network-only');
     emit('refetched');
   }
 });
 
 const handleDeleteSuccess = () => {
-  fetchData();
+  fetchData('network-only');
 }
 const handleEnd = async (event) => {
     const maxIndexToUpdate = Math.max(event.oldIndex, event.newIndex);
@@ -114,7 +115,7 @@ const handleEnd = async (event) => {
     });
 
     const results = await Promise.allSettled(updatePromises);
-    fetchData();
+    fetchData('network-only');
 };
 
 const handleMainImageChange = async (changedItem: Item) => {
@@ -129,7 +130,7 @@ const handleMainImageChange = async (changedItem: Item) => {
     }
   });
 
-  fetchData();
+  fetchData('network-only');
 };
 
 
@@ -214,7 +215,9 @@ const handleMainImageChange = async (changedItem: Item) => {
             <div v-for="item in items" :key="item.media.id" class="file-entry relative">
                 <template v-if="item.media.type === TYPE_IMAGE">
                   <Link :path="getPath(item.media)">
-                    <Image :source="item.media.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md"/>
+                    <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center">
+                      <Image :source="item.media.imageWebUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
+                    </div>
                   </Link>
                 </template>
                 <template v-else-if="item.media.type === TYPE_VIDEO">

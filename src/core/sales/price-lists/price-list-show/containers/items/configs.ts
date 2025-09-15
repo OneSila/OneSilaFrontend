@@ -4,7 +4,7 @@ import { SearchConfig } from "../../../../../../shared/components/organisms/gene
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { deleteSalesPriceListItemMutation} from "../../../../../../shared/api/mutations/salesPrices.js";
 import { salesPriceListItemsQuery } from "../../../../../../shared/api/queries/salesPrices.js";
-import { productsQuery } from "../../../../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../../../../shared/api/queries/products.js";
 
 export const baseFormConfigConstructor = (
   t: Function,
@@ -12,8 +12,8 @@ export const baseFormConfigConstructor = (
   mutation: any,
   mutationKey: string,
   salesPriceListId: string,
-  autoUpdatePrice: boolean = false,
   productsId: string[] = [],
+  autoUpdatePrice: boolean = false,
   currency: string | undefined = undefined
 ): FormConfig => {
   let fields: FormField[] = [
@@ -28,12 +28,15 @@ export const baseFormConfigConstructor = (
       label: t('shared.labels.product'),
       labelBy: 'name',
       valueBy: 'id',
-      query: productsQuery,
+      query: productsQuerySelector,
       dataKey: 'products',
-      queryVariables:
-        productsId.length > 0
-          ? { filter: { NOT: { id: { inList: productsId } } } }
-          : undefined,
+      queryVariables: productsId.length > 0
+        ? {
+            filter: {
+              NOT: { id: { inList: productsId } }
+            }
+          }
+        : undefined,
       isEdge: true,
       multiple: false,
       filterable: true,

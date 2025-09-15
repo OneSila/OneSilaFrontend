@@ -4,6 +4,7 @@ export enum IntegrationTypes {
   Woocommerce = 'woocommerce',
   Amazon = 'amazon',
   Ebay = 'ebay',
+  Webhook = 'webhook',
   None = 'none',
 }
 
@@ -102,7 +103,16 @@ export interface WoocommerceChannelInfo extends SpecificChannelInfo {
 export interface AmazonChannelInfo extends SpecificChannelInfo {
   region: string | null;
   country: string | null;
-  listingOwner: boolean;
+}
+
+export interface WebhookChannelInfo extends SpecificChannelInfo {
+  topic: string;
+  version: string;
+  url: string;
+  timeoutMs: number;
+  mode: string;
+  extraHeaders: Record<string, any>;
+  config: Record<string, any>;
 }
 
 export interface EbayChannelInfo extends SpecificChannelInfo {
@@ -150,7 +160,18 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   return {
     region: null,
     country: null,
-    listingOwner: false,
+  };
+}
+
+export function getWebhookDefaultFields(): WebhookChannelInfo {
+  return {
+    topic: '',
+    version: '2025-08-01',
+    url: '',
+    timeoutMs: 10000,
+    mode: '',
+    extraHeaders: {},
+    config: {},
   };
 }
 
@@ -166,6 +187,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getAmazonDefaultFields();
     case IntegrationTypes.Ebay:
       return getEbayDefaultFields();
+    case IntegrationTypes.Webhook:
+      return getWebhookDefaultFields();
     default:
       return {};
   }

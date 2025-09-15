@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive, computed } from 'vue';
+import { onMounted, ref, reactive, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
@@ -19,6 +19,8 @@ import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { checkPropertySelectValueForDuplicatesMutation } from "../../../../../../../../../shared/api/mutations/properties.js";
+import debounce from 'lodash.debounce';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -54,18 +56,21 @@ const form = reactive({
   marketplace: '',
   remoteValue: '',
   remoteName: '',
+  translatedRemoteName: '',
   localInstance: { id: route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null },
 });
-
-console.log(form)
 
 const updatableForm = computed(() => ({
   id: form.id,
   remoteName: form.remoteName,
+  translatedRemoteName: form.translatedRemoteName,
   localInstance: { id: form.localInstance.id },
 }));
 
 const localInstanceField = ref<QueryFormField | null>(null);
+
+const recommendations = ref<{ id: string; value: string }[]>([]);
+const loadingRecommendations = ref(false);
 
 const amazonPropertyEditPath = computed(() =>
   amazonPropertyId.value
@@ -100,17 +105,64 @@ const generateValuePath = computed(() =>
         query: {
           propertyId: localPropertyId.value,
           amazonSelectValueId: `${valueId.value}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
-          value: form.remoteName,
+          value: form.translatedRemoteName || form.remoteName,
         },
       }
     : null
 );
 
+const fetchRecommendations = async () => {
+  if (!localPropertyId.value) return;
+  const searchValue = form.translatedRemoteName || form.remoteName;
+  if (!searchValue) {
+    recommendations.value = [];
+    return;
+  }
+  try {
+    loadingRecommendations.value = true;
+    const { data } = await apolloClient.mutate({
+      mutation: checkPropertySelectValueForDuplicatesMutation,
+      variables: { property: { id: localPropertyId.value }, value: searchValue },
+    });
+    if (data && data.checkPropertySelectValueForDuplicates && data.checkPropertySelectValueForDuplicates.duplicateFound) {
+      recommendations.value = data.checkPropertySelectValueForDuplicates.duplicates
+        .filter((p: any) => p.id !== form.localInstance.id)
+        .map((p: any) => ({
+          id: p.id,
+          value: p.value || p.id,
+        }));
+    } else {
+      recommendations.value = [];
+    }
+  } finally {
+    loadingRecommendations.value = false;
+  }
+};
+
+const debouncedFetchRecommendations = debounce(fetchRecommendations, 500);
+
+watch(() => [form.remoteName, form.translatedRemoteName], () => {
+  debouncedFetchRecommendations();
+});
+
+watch(localPropertyId, () => {
+  debouncedFetchRecommendations();
+});
+
+watch(() => form.localInstance.id, () => {
+  recommendations.value = recommendations.value.filter(r => r.id !== form.localInstance.id);
+});
+
+const selectRecommendation = (id: string) => {
+  form.localInstance.id = id;
+  recommendations.value = recommendations.value.filter(r => r.id !== id);
+};
+
 onMounted(async () => {
   const { data } = await apolloClient.query({
     query: getAmazonPropertySelectValueQuery,
     variables: { id: valueId.value },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   const valueData = data?.amazonPropertySelectValue;
@@ -122,6 +174,7 @@ onMounted(async () => {
   form.marketplace = valueData?.marketplace?.name || '';
   form.remoteValue = valueData?.remoteValue || '';
   form.remoteName = valueData?.remoteName || '';
+  form.translatedRemoteName = valueData?.translatedRemoteName || '';
 
   if (valueData?.localInstance?.id) {
       form.localInstance.id = valueData?.localInstance?.id;
@@ -132,7 +185,7 @@ onMounted(async () => {
     const { data: propData } = await apolloClient.query({
       query: getAmazonPropertyQuery,
       variables: { id: amazonPropertyId.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
     propertyMapped.value = propData?.amazonProperty?.mappedLocally ?? true;
     localPropertyId.value = propData?.amazonProperty?.localInstance?.id || null;
@@ -156,6 +209,8 @@ onMounted(async () => {
       }
     }
   }
+
+  await fetchRecommendations();
 
   if (!isWizard) return;
 
@@ -197,6 +252,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
         salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: false,
       },
+      order: { marketplace: { isDefault: 'DESC' } },
     },
     fetchPolicy: 'network-only',
   });
@@ -291,6 +347,19 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                     </FlexCell>
                   </Flex>
                 </div>
+                <div class="col-span-full">
+                  <Flex vertical>
+                    <FlexCell>
+                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.translatedRemoteName') }}</Label>
+                    </FlexCell>
+                    <FlexCell>
+                      <TextInput v-model="form.translatedRemoteName" class="w-full" />
+                    </FlexCell>
+                    <FlexCell>
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.translatedRemoteName') }}</p>
+                    </FlexCell>
+                  </Flex>
+                </div>
                 <div v-if="!propertyMapped" class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                   <span class="font-medium flex items-center gap-1">
                     ⚠️ {{ t('integrations.show.propertySelectValues.notMappedBanner.title') }}
@@ -311,6 +380,27 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t('integrations.show.propertySelectValues.help.selectValue') }}</p>
                     </FlexCell>
                   </Flex>
+                  <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+                    <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
+                    <div v-if="loadingRecommendations" class="flex items-center gap-2">
+                      <div class="loader-mini"></div>
+                      <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
+                    </div>
+                    <div v-else>
+                      <div v-if="recommendations.length" class="flex flex-wrap gap-2">
+                        <button
+                          v-for="item in recommendations"
+                          :key="item.id"
+                          type="button"
+                          class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
+                          @click="selectRecommendation(item.id)"
+                        >
+                          {{ item.value }}
+                        </button>
+                      </div>
+                      <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -329,3 +419,38 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
       </template>
     </GeneralTemplate>
 </template>
+
+<style scoped>
+.loader-mini {
+  width: 24px;
+  aspect-ratio: 1;
+  display: grid;
+}
+
+.loader-mini::before,
+.loader-mini::after {
+  content: "";
+  grid-area: 1/1;
+  --c: no-repeat radial-gradient(farthest-side, currentColor 92%, #0000);
+  background:
+    var(--c) 50% 0,
+    var(--c) 50% 100%,
+    var(--c) 100% 50%,
+    var(--c) 0 50%;
+  background-size: 5px 5px;
+  animation: l2 1s infinite;
+}
+
+.loader-mini::after {
+  margin: 2px;
+  filter: hue-rotate(45deg);
+  background-size: 3px 3px;
+  animation-direction: reverse;
+}
+
+@keyframes l2 {
+  100% {
+    transform: rotate(0.5turn);
+  }
+}
+</style>

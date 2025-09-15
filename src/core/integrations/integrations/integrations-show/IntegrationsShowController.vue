@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -15,10 +15,12 @@ import {
   getAmazonChannelQuery,
   getEbayChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
+import { getWebhookIntegrationQuery } from "../../../../shared/api/queries/webhookIntegrations.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
 import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab";
 import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
 import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
+import { WebhookGeneralInfoTab } from "./containers/general/webhook-general-tab";
 import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
@@ -26,6 +28,7 @@ import { Products } from "./containers/products";
 import { Stores } from "./containers/stores";
 import { Languages } from "./containers/languages";
 import { Currencies } from "./containers/currencies";
+import { PriceLists } from "./containers/price-lists";
 import { Rules } from "./containers/rules";
 import { Properties } from "./containers/properties";
 import { PropertySelectValues } from "./containers/property-select-values";
@@ -33,6 +36,9 @@ import { DefaultUnitConfigurators } from "./containers/default-unit-configurator
 import { Imports } from "./containers/imports";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
+
+const WebhookMonitor = defineAsyncComponent(() => import('./containers/monitor/WebhookMonitor.vue'));
+const WebhookReports = defineAsyncComponent(() => import('./containers/reports/WebhookReports.vue'));
 
 const router = useRouter();
 const route = useRoute();
@@ -49,23 +55,34 @@ const integrationData = ref<any>(null);
 
 
 const tabItems = ref([
-  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-  { name: 'products', label: t('products.title'), icon: 'box' },
-  { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
-  { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
-  { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
+  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' }
 ]);
 
-if (type.value === IntegrationTypes.Amazon) {
+if (type.value !== IntegrationTypes.Webhook) {
   tabItems.value.push(
-    { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
-    { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
-    { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
-    { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' }
+    { name: 'products', label: t('products.title'), icon: 'box' },
+    { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
+    { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
+    { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
+    { name: 'priceLists', label: t('sales.priceLists.title'), icon: 'money-bill' },
+  );
+
+  if (type.value === IntegrationTypes.Amazon) {
+    tabItems.value.push(
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+      { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
+      { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
+      { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' }
+    );
+  }
+
+  tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+} else {
+  tabItems.value.push(
+    { name: 'monitor', label: t('webhooks.monitor.title'), icon: 'wave-square' },
+    { name: 'reports', label: t('integrations.show.tabs.reports'), icon: 'chart-simple' },
   );
 }
-
-tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
 
 
 const getIntegrationQuery = () => {
@@ -80,6 +97,8 @@ const getIntegrationQuery = () => {
       return getAmazonChannelQuery;
     case IntegrationTypes.Ebay:
       return getEbayChannelQuery;
+    case IntegrationTypes.Webhook:
+      return getWebhookIntegrationQuery;
     default:
       return getSalesChannelQuery;
   }
@@ -95,6 +114,8 @@ const getIntegrationQueryKey = () => {
       return "woocommerceChannel";
     case IntegrationTypes.Amazon:
       return "amazonChannel";
+    case IntegrationTypes.Webhook:
+      return "webhookIntegration";
     case IntegrationTypes.Ebay:
       return "ebayChannel";
     default:
@@ -112,6 +133,8 @@ const getGeneralComponent = () => {
       return WoocommerceGeneralInfoTab;
     case IntegrationTypes.Amazon:
       return AmazonGeneralInfoTab;
+    case IntegrationTypes.Webhook:
+      return WebhookGeneralInfoTab;
     case IntegrationTypes.Ebay:
       return EbayGeneralInfoTab;
     default:
@@ -125,23 +148,32 @@ const fetchIntegrationData = async () => {
     const { data } = await apolloClient.query({
       query: getIntegrationQuery(),
       variables: { id: id.value },
-      fetchPolicy: 'network-only'
+      fetchPolicy: 'cache-first'
     });
-    const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = data[getIntegrationQueryKey()];
+    const rawData = data[getIntegrationQueryKey()];
 
-    if (type.value == IntegrationTypes.Shopify) {
-      if (cleanData.vendorProperty && typeof cleanData.vendorProperty === 'object') {
-        const { __typename: _ignored, ...vendorWithoutTypename } = cleanData.vendorProperty;
-        cleanData.vendorProperty = vendorWithoutTypename;
-      } else {
-        cleanData.vendorProperty = { id: null };
+    if (type.value === IntegrationTypes.Webhook) {
+      integrationData.value = { ...rawData };
+      integrationId.value = rawData.id;
+      salesChannelId.value = null;
+      firstImportCompleteRef.value = true;
+    } else {
+      const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = rawData;
+
+      if (type.value == IntegrationTypes.Shopify) {
+        if (cleanData.vendorProperty && typeof cleanData.vendorProperty === 'object') {
+          const { __typename: _ignored, ...vendorWithoutTypename } = cleanData.vendorProperty;
+          cleanData.vendorProperty = vendorWithoutTypename;
+        } else {
+          cleanData.vendorProperty = { id: null };
+        }
       }
-    }
 
-    integrationData.value = cleanData;
-    salesChannelId.value = saleschannelPtr.id
-    integrationId.value = integrationPtr.id
-    firstImportCompleteRef.value = firstImportComplete
+      integrationData.value = cleanData;
+      salesChannelId.value = saleschannelPtr.id
+      integrationId.value = integrationPtr.id
+      firstImportCompleteRef.value = firstImportComplete
+    }
   } catch (error) {
     console.error("Error fetching integration data:", error);
   } finally {
@@ -221,6 +253,16 @@ const pullData = async () => {
             />
           </template>
 
+          <!-- Monitor Tab -->
+          <template #monitor>
+            <WebhookMonitor v-if="integrationId" :integration-id="integrationId" />
+          </template>
+
+          <!-- Reports Tab -->
+          <template #reports>
+            <WebhookReports v-if="integrationId" :integration-id="integrationId" />
+          </template>
+
           <!-- Products Tab -->
           <template #products>
             <Products v-if="salesChannelId" :sales-channel-id="salesChannelId" />
@@ -239,6 +281,11 @@ const pullData = async () => {
           <!-- Currencies Tab -->
           <template #currencies>
             <Currencies v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" @pull-data="pullData()" />
+          </template>
+
+          <!-- Price Lists Tab -->
+          <template #priceLists>
+            <PriceLists v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" />
           </template>
 
           <!-- Imports Tab -->

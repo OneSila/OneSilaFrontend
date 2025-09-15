@@ -79,7 +79,7 @@ const fetchData = async () => {
   const {data} = await apolloClient.query({
     query: getProductPropertiesRuleQuery,
     variables: {id: id.value.toString() },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   })
 
   if (data && data.productPropertiesRule) {
@@ -120,11 +120,6 @@ const saveMutations = async (continueEditing = false) => {
 
   const hasOptionalInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.OPTIONAL_IN_CONFIGURATOR);
   const hasRequiredInConfigurator = updatedAddedProperties.value.some(property => property.configType === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
-
-  if (hasOptionalInConfigurator && !hasRequiredInConfigurator) {
-    Toast.error(t('properties.rule.error.optionalWithoutRequired'));
-    return;
-  }
 
   const success = await updateOrCreateItems();
 

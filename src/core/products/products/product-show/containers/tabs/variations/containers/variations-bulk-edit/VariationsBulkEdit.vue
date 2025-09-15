@@ -1,0 +1,1222 @@
+<script setup lang="ts">
+import { reactive, computed, ref, onMounted, watch, toRaw, onBeforeUnmount, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { Product } from '../../../../../../configs'
+import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
+import { ProductType, PropertyTypes, FieldType, ConfigTypes } from '../../../../../../../../../shared/utils/constants'
+import { PropertyFilters } from '../../../../../../../../../shared/components/molecules/property-filters'
+import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
+import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
+import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
+import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
+import { DateInput } from "../../../../../../../../../shared/components/atoms/input-date";
+import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
+import { shortenText } from "../../../../../../../../../shared/utils";
+import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
+import { Card } from "../../../../../../../../../shared/components/atoms/card";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
+import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
+import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
+import apolloClient from '../../../../../../../../../../apollo-client'
+import { propertiesQuerySelector, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
+import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
+import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
+import { Toast } from "../../../../../../../../../shared/modules/toast";
+import { format } from 'date-fns'
+import {selectValueOnTheFlyConfig} from "../../../../../../../../properties/property-select-values/configs";
+
+interface PropertyInfo {
+  id: string
+  name: string
+  type: string
+  requireType: string
+}
+
+const props = defineProps<{ product: Product }>()
+
+const { t } = useI18n()
+
+const language = ref<string | null>(null)
+
+const searchQuery = ref('')
+const filters = ref<Record<string, boolean>>({
+  [ConfigTypes.REQUIRED]: true,
+  [ConfigTypes.OPTIONAL]: true,
+})
+const selectedPropertyTypes = ref<string[]>([])
+
+const baseColumns: { key: string; label: string; requireType?: string }[] = [
+  { key: 'sku', label: t('shared.labels.sku') },
+  { key: 'name', label: t('shared.labels.name') },
+  { key: 'active', label: t('shared.labels.active') },
+]
+
+const properties = ref<PropertyInfo[]>([])
+const variations = ref<any[]>([])
+const originalVariations = ref<any[]>([])
+const loading = ref(true)
+const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
+const tableWrapper = ref<HTMLElement | null>(null)
+const clipboard = ref<{ col: string; value: any } | null>(null)
+const history = ref<any[]>([])
+const redoStack = ref<any[]>([])
+const skipHistory = ref(false)
+const lastSnapshot = ref(JSON.stringify(variations.value))
+const canUndo = computed(() => history.value.length > 0)
+const canRedo = computed(() => redoStack.value.length > 0)
+
+const pageInfo = ref<any | null>(null)
+const limit = ref(20)
+const perPageOptions = [
+  { name: '10', value: 10 },
+  { name: '20', value: 20 },
+  { name: '50', value: 50 },
+  { name: '100', value: 100 },
+]
+const fetchPaginationData = ref<Record<string, any>>({})
+fetchPaginationData.value['first'] = limit.value
+
+const filteredProperties = computed(() => {
+  return properties.value.filter((p) => {
+    const type = [
+      ConfigTypes.REQUIRED,
+      ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+      ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+    ].includes(p.requireType as ConfigTypes)
+      ? ConfigTypes.REQUIRED
+      : ConfigTypes.OPTIONAL
+    if (!filters.value[type]) return false
+    if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(p.type)) return false
+    if (!searchQuery.value) return true
+    return p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  })
+})
+
+const columns = computed(() => [
+  ...baseColumns,
+  ...filteredProperties.value.map((p) => ({ key: p.id, label: p.name, requireType: p.requireType })),
+])
+
+const getIconColor = (requireType: string) => {
+  if (
+    [
+      ConfigTypes.REQUIRED,
+      ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+      ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+    ].includes(requireType as ConfigTypes)
+  ) {
+    return 'text-red-500'
+  }
+  if (requireType === ConfigTypes.OPTIONAL) {
+    return 'text-orange-400'
+  }
+  return 'text-gray-400'
+}
+
+const selectCell = (rowIndex: number, colKey: string) => {
+  selectedCell.value = { row: rowIndex, col: colKey }
+}
+
+const dragState = reactive({
+  active: false,
+  startRow: null as number | null,
+  endRow: null as number | null,
+  col: '' as string,
+})
+
+const copyValue = (from: number, to: number, key: string) => {
+  const source = variations.value[from]
+  const target = variations.value[to]
+  if (!target.propertyValues) target.propertyValues = {}
+  const src = source.propertyValues?.[key]
+  if (
+    !src ||
+    (src.valueSelect == null &&
+      (!src.valueMultiSelect || !src.valueMultiSelect.length) &&
+      src.valueInt === undefined &&
+      src.valueFloat === undefined &&
+      src.valueBoolean === undefined &&
+      src.valueDate == null &&
+      src.valueDatetime == null &&
+      !src.translation?.valueText &&
+      !src.translation?.valueDescription)
+  ) {
+    delete target.propertyValues[key]
+  } else {
+    target.propertyValues[key] = JSON.parse(JSON.stringify(src))
+  }
+}
+
+const startDragFill = (row: number, col: string) => {
+  if (['name', 'sku', 'active'].includes(col)) return
+  dragState.active = true
+  dragState.startRow = row
+  dragState.endRow = row
+  dragState.col = col
+  document.addEventListener('mousemove', onDragFill)
+  document.addEventListener('mouseup', endDragFill)
+}
+
+const onDragFill = (e: MouseEvent) => {
+  const cell = (e.target as HTMLElement).closest('td')
+  if (!cell) return
+  const rowAttr = cell.getAttribute('data-row')
+  const colAttr = cell.getAttribute('data-col')
+  if (colAttr === dragState.col && rowAttr) {
+    dragState.endRow = Number(rowAttr)
+  }
+}
+
+const endDragFill = () => {
+  document.removeEventListener('mousemove', onDragFill)
+  document.removeEventListener('mouseup', endDragFill)
+  if (
+    dragState.active &&
+    dragState.startRow !== null &&
+    dragState.endRow !== null &&
+    dragState.col
+  ) {
+    const start = dragState.startRow
+    const end = dragState.endRow
+    const [from, to] = start < end ? [start, end] : [end, start]
+    for (let i = from; i <= to; i++) {
+      if (i === start) continue
+      copyValue(start, i, dragState.col)
+    }
+  }
+  dragState.active = false
+  dragState.startRow = dragState.endRow = null
+  dragState.col = ''
+}
+
+const isInDragRange = (row: number, col: string) => {
+  if (
+    !dragState.active ||
+    dragState.col !== col ||
+    dragState.startRow === null ||
+    dragState.endRow === null
+  )
+    return false
+  const [from, to] =
+    dragState.startRow < dragState.endRow
+      ? [dragState.startRow, dragState.endRow]
+      : [dragState.endRow, dragState.startRow]
+  return row >= from && row <= to
+}
+
+const handleKeydown = (e: KeyboardEvent) => {
+  const target = e.target as HTMLElement
+  if (
+    ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
+    target.isContentEditable
+  )
+    return
+  if (e.ctrlKey) {
+    const key = e.key.toLowerCase()
+    if (key === 'z') {
+      undo()
+      e.preventDefault()
+      return
+    }
+    if (key === 'x') {
+      redo()
+      e.preventDefault()
+      return
+    }
+  }
+  const { row, col } = selectedCell.value
+  if (row === null || col === null) return
+
+  if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+    if (!['name', 'sku', 'active'].includes(col)) {
+      const value = variations.value[row]?.propertyValues?.[col]
+      clipboard.value = {
+        col,
+        value: JSON.parse(JSON.stringify(value ?? null)),
+      }
+      Toast.success(t('products.products.alert.toast.copied'))
+    }
+    e.preventDefault()
+  } else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
+    if (clipboard.value) {
+      if (clipboard.value.col === col) {
+        if (!['name', 'sku', 'active'].includes(col)) {
+          if (clipboard.value.value === null) {
+            if (variations.value[row].propertyValues) {
+              delete variations.value[row].propertyValues[col]
+            }
+          } else {
+            if (!variations.value[row].propertyValues)
+              variations.value[row].propertyValues = {}
+            variations.value[row].propertyValues[col] = JSON.parse(
+              JSON.stringify(clipboard.value.value)
+            )
+          }
+          Toast.success(t('products.products.alert.toast.pasted'))
+        }
+      } else {
+        Toast.error(t('products.products.alert.toast.pasteDifferentColumn'))
+      }
+    }
+    e.preventDefault()
+  } else if (
+    (e.key === 'Delete' || e.key === 'Backspace') &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.shiftKey &&
+    !e.altKey
+  ) {
+    if (!['name', 'sku', 'active'].includes(col)) {
+      if (variations.value[row].propertyValues) {
+        delete variations.value[row].propertyValues[col]
+      }
+    }
+    e.preventDefault()
+  } else if (!e.ctrlKey && !e.metaKey) {
+    switch (e.key) {
+      case 'ArrowUp':
+        if (row > 0) selectedCell.value.row = row - 1
+        e.preventDefault()
+        break
+      case 'ArrowDown':
+        if (row < variations.value.length - 1)
+          selectedCell.value.row = row + 1
+        e.preventDefault()
+        break
+      case 'ArrowLeft': {
+        const colIndex = columns.value.findIndex((c) => c.key === col)
+        if (colIndex > 0) selectedCell.value.col = columns.value[colIndex - 1].key
+        e.preventDefault()
+        break
+      }
+      case 'ArrowRight': {
+        const colIndex = columns.value.findIndex((c) => c.key === col)
+        if (colIndex < columns.value.length - 1)
+          selectedCell.value.col = columns.value[colIndex + 1].key
+        e.preventDefault()
+        break
+      }
+    }
+  }
+}
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousemove', onDragFill)
+  document.removeEventListener('mouseup', endDragFill)
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+const columnWidths = reactive<Record<string, number>>({})
+watch(
+  columns,
+  (cols) => {
+    cols.forEach((col) => {
+      if (!columnWidths[col.key]) columnWidths[col.key] = col.key === 'active' ? 60 : 150
+    })
+  },
+  { immediate: true }
+)
+
+watch(
+  selectedCell,
+  () => {
+    nextTick(() => {
+      if (selectedCell.value.row !== null && selectedCell.value.col) {
+        const cell = tableWrapper.value?.querySelector(
+          `td[data-row="${selectedCell.value.row}"][data-col="${selectedCell.value.col}"]`
+        ) as HTMLElement | null
+        cell?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      }
+    })
+  },
+  { deep: true }
+)
+
+const isAlias = computed(() => props.product.type === ProductType.Alias)
+const parentId = computed(() => (isAlias.value ? props.product.aliasParentProduct.id : props.product.id))
+const parentType = computed(() => (isAlias.value ? props.product.aliasParentProduct.type : props.product.type))
+const query = computed(() =>
+  parentType.value === ProductType.Bundle ? bundleVariationsQuery : configurableVariationsQuery
+)
+const queryKey = computed(() =>
+  parentType.value === ProductType.Bundle ? 'bundleVariations' : 'configurableVariations'
+)
+
+const fetchProperties = async () => {
+  const { data: typeData } = await apolloClient.query({
+    query: propertiesQuerySelector,
+    variables: { filter: { isProductType: { exact: true } } },
+    fetchPolicy: 'cache-first',
+  })
+  if (!typeData?.properties?.edges?.length) return
+  const typePropertyId = typeData.properties.edges[0].node.id
+
+  const { data: valueData } = await apolloClient.query({
+    query: productPropertiesQuery,
+    variables: {
+      filter: {
+        property: { id: { exact: typePropertyId } },
+        product: { id: { exact: parentId.value } },
+      },
+    },
+    fetchPolicy: 'cache-first',
+  })
+  if (!valueData?.productProperties?.edges?.length) return
+  const productTypeValueId = valueData.productProperties.edges[0].node.valueSelect?.id
+  if (!productTypeValueId) return
+
+  const { data: ruleData } = await apolloClient.query({
+    query: productPropertiesRulesQuery,
+    variables: { filter: { productType: { id: { exact: productTypeValueId } } } },
+    fetchPolicy: 'cache-first',
+  })
+  if (!ruleData?.productPropertiesRules?.edges?.length) return
+  const items = ruleData.productPropertiesRules.edges[0].node.items
+  properties.value = items.map((item: any) => ({
+    id: item.property.id,
+    name: item.property.name,
+    type: item.property.type,
+    requireType: item.type,
+  }))
+}
+
+const selectFields = computed<Record<string, QueryFormField>>(() => {
+  const fields: Record<string, QueryFormField> = {}
+  properties.value.forEach((p) => {
+    if ([PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(p.type)) {
+      fields[p.id] = {
+        type: FieldType.Query,
+        name: p.id,
+        labelBy: 'value',
+        valueBy: 'id',
+        query: propertySelectValuesQuerySimpleSelector,
+        dataKey: 'propertySelectValues',
+        isEdge: true,
+        queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
+        multiple: p.type === PropertyTypes.MULTISELECT,
+        removable: true,
+        autocompleteIfOneResult: false,
+        createOnFlyConfig: selectValueOnTheFlyConfig(t, p.id)
+      }
+    }
+  })
+  return fields
+})
+
+const fetchVariationProperties = async (variationId: string) => {
+  const { data } = await apolloClient.query({
+    query: productPropertiesQuery,
+    variables: { filter: { product: { id: { exact: variationId } } }, first: 100 },
+    fetchPolicy: 'cache-first',
+  })
+  const edges = data?.productProperties?.edges ?? []
+  const propertyValues: Record<string, any> = {}
+  await Promise.all(
+    edges.map(async ({ node }: any) => {
+      let translation = null
+      if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(node.property.type)) {
+          const { data: tData } = await apolloClient.query({
+            query: productPropertyTextTranslationsQuery,
+            variables: {
+              filter: {
+                productProperty: { id: { exact: node.id } },
+                language: { exact: language.value },
+              },
+            },
+            fetchPolicy: 'network-only',
+          })
+        const tNode = tData?.productPropertyTextTranslations?.edges?.[0]?.node
+        translation = tNode ? { ...tNode } : { language: language.value }
+      }
+      propertyValues[node.property.id] = { ...node, translation }
+    })
+  )
+  return propertyValues
+}
+
+const fetchVariations = async () => {
+  const { data } = await apolloClient.query({
+    query: query.value,
+    variables: {
+      filter: { parent: { id: { exact: parentId.value } } },
+      ...fetchPaginationData.value,
+    },
+    fetchPolicy: 'cache-first',
+  })
+  const edges = data?.[queryKey.value]?.edges ?? []
+  pageInfo.value = data?.[queryKey.value]?.pageInfo ?? null
+  variations.value = await Promise.all(
+    edges.map(async ({ node }: any) => ({
+      ...node,
+      propertyValues: await fetchVariationProperties(node.variation.id),
+    }))
+  )
+}
+
+watch(language, async () => {
+  skipHistory.value = true
+  await fetchVariations()
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+  clearHistory()
+  skipHistory.value = false
+})
+
+const fetchDefaultLanguage = async () => {
+    const { data } = await apolloClient.query({
+      query: translationLanguagesQuery,
+      fetchPolicy: 'cache-first',
+    })
+  language.value = data?.translationLanguages?.defaultLanguage?.code || null
+}
+
+onMounted(async () => {
+  loading.value = true
+  await fetchDefaultLanguage()
+  skipHistory.value = true
+  await Promise.all([fetchProperties(), fetchVariations()])
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+  clearHistory()
+  skipHistory.value = false
+  loading.value = false
+})
+
+const toCreate = ref<any[]>([])
+const toUpdate = ref<any[]>([])
+const toDelete = ref<object[]>([])
+
+const getPropertyType = (id: string) =>
+  properties.value.find((p) => p.id === id)?.type
+
+const isPropEmpty = (prop: any, type: string) => {
+  if (!prop) return true
+  if (prop.valueSelect) return false
+  if (prop.valueMultiSelect && prop.valueMultiSelect.length) return false
+  if (prop.valueInt !== undefined) return false
+  if (prop.valueFloat !== undefined) return false
+  if (prop.valueBoolean !== undefined) return false
+  if (prop.valueDate != null) return false
+  if (prop.valueDatetime != null) return false
+  if (type === PropertyTypes.TEXT && prop.translation?.valueText) return false
+  if (type === PropertyTypes.DESCRIPTION && prop.translation?.valueDescription) return false
+  return true
+}
+
+const computeChanges = () => {
+  toCreate.value = []
+  toUpdate.value = []
+  toDelete.value = []
+
+  variations.value.forEach((variation, index) => {
+    const original = originalVariations.value[index] || {}
+    const keys = new Set([
+      ...Object.keys(variation.propertyValues || {}),
+      ...Object.keys(original.propertyValues || {}),
+    ])
+
+    keys.forEach((key) => {
+      const type = getPropertyType(key) || ''
+      const current = variation.propertyValues[key]
+      const orig = (original.propertyValues || {})[key]
+      const origExists = !!orig && !!orig.id
+      const hasCurrent = !isPropEmpty(current, type)
+      const hadValue = !isPropEmpty(orig, type)
+
+      if (!origExists && hasCurrent) {
+        const item: any = {
+          productProperty: {
+            product: { id: variation.variation.id },
+            property: { id: key },
+          },
+        }
+        if (current.valueSelect)
+          item.productProperty.valueSelect = { id: current.valueSelect.id }
+        if (current.valueMultiSelect && current.valueMultiSelect.length)
+          item.productProperty.valueMultiSelect = current.valueMultiSelect.map(
+            (v: any) => ({ id: v.id })
+          )
+        if (current.valueInt !== undefined)
+          item.productProperty.valueInt = current.valueInt
+        if (current.valueFloat !== undefined)
+          item.productProperty.valueFloat = current.valueFloat
+        if (current.valueBoolean !== undefined)
+          item.productProperty.valueBoolean = current.valueBoolean
+        if (current.valueDate != null)
+          item.productProperty.valueDate = format(
+            new Date(current.valueDate),
+            'yyyy-MM-dd'
+          )
+        if (current.valueDatetime != null)
+          item.productProperty.valueDatetime = new Date(
+            current.valueDatetime
+          ).toISOString()
+        if (type === PropertyTypes.TEXT && current.translation?.valueText) {
+          item.languageCode = current.translation.language
+          item.translatedValue = current.translation.valueText
+        }
+        if (
+          type === PropertyTypes.DESCRIPTION &&
+          current.translation?.valueDescription
+        ) {
+          item.languageCode = current.translation.language
+          item.translatedValue = current.translation.valueDescription
+        }
+        toCreate.value.push(item)
+      } else if (origExists && hadValue && !hasCurrent) {
+        toDelete.value.push({id: orig.id})
+      } else if (origExists && hasCurrent) {
+        const diff: any = { id: orig.id }
+        if (current.valueSelect?.id !== orig.valueSelect?.id)
+          diff.valueSelect = current.valueSelect
+            ? { id: current.valueSelect.id }
+            : null
+        const curMulti = (current.valueMultiSelect || [])
+          .map((v: any) => v.id)
+          .sort()
+        const origMulti = (orig.valueMultiSelect || [])
+          .map((v: any) => v.id)
+          .sort()
+        if (
+          curMulti.length !== origMulti.length ||
+          curMulti.some((v: any, i: number) => v !== origMulti[i])
+        ) {
+          diff.valueMultiSelect = current.valueMultiSelect
+            ? current.valueMultiSelect.map((v: any) => ({ id: v.id }))
+            : []
+        }
+        if (current.valueInt !== orig.valueInt)
+          diff.valueInt = current.valueInt
+        if (current.valueFloat !== orig.valueFloat)
+          diff.valueFloat = current.valueFloat
+        if ((current.valueBoolean ?? null) !== (orig.valueBoolean ?? null))
+          diff.valueBoolean = current.valueBoolean
+        const curDate = current.valueDate
+          ? format(new Date(current.valueDate), 'yyyy-MM-dd')
+          : null
+        const origDate = orig.valueDate || null
+        if (curDate !== origDate) diff.valueDate = curDate
+        const curDatetime = current.valueDatetime
+          ? new Date(current.valueDatetime).toISOString()
+          : null
+        const origDatetime = orig.valueDatetime || null
+        if (curDatetime !== origDatetime) diff.valueDatetime = curDatetime
+        if (type === PropertyTypes.TEXT) {
+          const curText = current.translation?.valueText || ''
+          const origText = orig.translation?.valueText || ''
+          if (curText !== origText)
+            diff.translation = {
+              languageCode:
+                current.translation?.language || orig.translation?.language,
+              valueText: curText,
+            }
+        }
+        if (type === PropertyTypes.DESCRIPTION) {
+          const curDesc = current.translation?.valueDescription || ''
+          const origDesc = orig.translation?.valueDescription || ''
+          if (curDesc !== origDesc)
+            diff.translation = {
+              languageCode:
+                current.translation?.language || orig.translation?.language,
+              valueDescription: curDesc,
+            }
+        }
+        if (Object.keys(diff).length > 1) toUpdate.value.push(diff)
+      }
+    })
+  })
+}
+
+watch(
+  variations,
+  (newVal) => {
+    if (!skipHistory.value) {
+      history.value.push(JSON.parse(lastSnapshot.value))
+      if (history.value.length > 20) history.value.shift()
+      redoStack.value = []
+    }
+    lastSnapshot.value = JSON.stringify(toRaw(newVal))
+    computeChanges()
+  },
+  { deep: true }
+)
+
+const undo = () => {
+  if (!history.value.length) return
+  skipHistory.value = true
+  redoStack.value.push(JSON.parse(JSON.stringify(variations.value)))
+  const prev = history.value.pop()
+  variations.value = JSON.parse(JSON.stringify(prev))
+  nextTick(() => {
+    skipHistory.value = false
+  })
+  Toast.info(t('products.products.alert.toast.undo'))
+}
+
+const redo = () => {
+  if (!redoStack.value.length) return
+  skipHistory.value = true
+  history.value.push(JSON.parse(JSON.stringify(variations.value)))
+  const next = redoStack.value.pop()
+  variations.value = JSON.parse(JSON.stringify(next))
+  nextTick(() => {
+    skipHistory.value = false
+  })
+  Toast.info(t('products.products.alert.toast.redo'))
+}
+
+const clearHistory = () => {
+  history.value = []
+  redoStack.value = []
+  lastSnapshot.value = JSON.stringify(toRaw(variations.value))
+}
+
+const setPaginationVariables = async (
+  firstVal: number | null = null,
+  lastVal: number | null = null,
+  beforeVal: string | null = null,
+  afterVal: string | null = null
+) => {
+  const fetchNewPaginationData: Record<string, any> = {}
+  if (firstVal) fetchNewPaginationData['first'] = firstVal
+  if (lastVal) fetchNewPaginationData['last'] = lastVal
+  if (beforeVal) fetchNewPaginationData['before'] = beforeVal
+  if (afterVal) fetchNewPaginationData['after'] = afterVal
+  fetchPaginationData.value = fetchNewPaginationData
+  skipHistory.value = true
+  await fetchVariations()
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+  clearHistory()
+  skipHistory.value = false
+}
+
+const handleQueryChanged = async (queryData) => {
+  const newQuery = queryData.query
+  const beforeValue = typeof newQuery.before === 'string' ? newQuery.before : null
+  const afterValue = typeof newQuery.after === 'string' ? newQuery.after : null
+  if (newQuery.before) {
+    await setPaginationVariables(null, limit.value, beforeValue, null)
+  }
+  if (newQuery.after) {
+    await setPaginationVariables(limit.value, null, null, afterValue)
+  }
+  if (newQuery.last === 'true') {
+    await setPaginationVariables(null, limit.value, null, null)
+  }
+  if (newQuery.first === 'true') {
+    await setPaginationVariables(limit.value, null, null, null)
+  }
+}
+
+const updateLimitPerPage = async (value: number) => {
+  limit.value = value
+  await setPaginationVariables(limit.value, null, null, null)
+}
+
+const hasChanges = computed(
+  () => toCreate.value.length || toUpdate.value.length || toDelete.value.length
+)
+
+const hasUnsavedChanges = hasChanges
+
+const save = async () => {
+  skipHistory.value = true
+  const createdCount = toCreate.value.length
+  const updatedCount = toUpdate.value.length
+  const deletedCount = toDelete.value.length
+  if (createdCount) {
+    const { data } = await apolloClient.mutate({
+      mutation: bulkCreateProductPropertiesMutation,
+      variables: { data: toCreate.value },
+    })
+    const created = data?.bulkCreateProductProperties || []
+    created.forEach((pp: any) => {
+      const variation = variations.value.find(
+        (v: any) => v.variation.id === pp.product.id
+      )
+      if (!variation) return
+      if (!variation.propertyValues) variation.propertyValues = {}
+      if (!variation.propertyValues[pp.property.id])
+        variation.propertyValues[pp.property.id] = {}
+      variation.propertyValues[pp.property.id].id = pp.id
+    })
+  }
+  if (updatedCount)
+    await apolloClient.mutate({
+      mutation: bulkUpdateProductPropertiesMutation,
+      variables: { data: toUpdate.value },
+    })
+  if (deletedCount)
+    await apolloClient.mutate({
+      mutation: deleteProductPropertiesMutation,
+      variables: { data: toDelete.value },
+    })
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+  clearHistory()
+  await nextTick()
+  skipHistory.value = false
+  const messages: any[] = []
+
+  if (createdCount) {
+    messages.push(
+      t('products.products.alert.toast.createdProductProperties', {
+        count: createdCount,
+      })
+    )
+  }
+  if (updatedCount) {
+    messages.push(
+      t('products.products.alert.toast.updatedProductProperties', {
+        count: updatedCount,
+      })
+    )
+  }
+  if (deletedCount) {
+    messages.push(
+      t('products.products.alert.toast.deletedProductProperties', {
+        count: deletedCount,
+      })
+    )
+  }
+
+  if (messages.length) {
+    Toast.success(messages.join('<br>'))
+  }
+}
+
+defineExpose({ save, hasUnsavedChanges })
+
+const showTextModal = ref(false)
+const showDescriptionModal = ref(false)
+
+const selectedIndex = ref<number | null>(null)
+const selectedColKey = ref('')
+const modalValue = ref('')
+
+const openTextModal = (index: number, key: string) => {
+  selectedIndex.value = index
+  selectedColKey.value = key
+  modalValue.value =
+    variations.value[index].propertyValues[key]?.translation?.valueText || ''
+  showTextModal.value = true
+}
+
+const openDescriptionModal = (index: number, key: string) => {
+  selectedIndex.value = index
+  selectedColKey.value = key
+  modalValue.value =
+    variations.value[index].propertyValues[key]?.translation?.valueDescription || ''
+  showDescriptionModal.value = true
+}
+
+const cancelModal = () => {
+  showTextModal.value = false
+  showDescriptionModal.value = false
+}
+
+const saveModal = () => {
+  if (selectedIndex.value === null) return
+  const item = variations.value[selectedIndex.value]
+  const key = selectedColKey.value
+  if (!item.propertyValues[key]) item.propertyValues[key] = {}
+  if (!item.propertyValues[key].translation)
+    item.propertyValues[key].translation = { language: language.value }
+  if (!item.propertyValues[key].translation.language)
+    item.propertyValues[key].translation.language = language.value
+  if (showTextModal.value) {
+    item.propertyValues[key].translation.valueText = modalValue.value
+  } else if (showDescriptionModal.value) {
+    item.propertyValues[key].translation.valueDescription = modalValue.value
+  }
+  cancelModal()
+}
+
+const ensureProp = (index: number, key: string) => {
+  const item = variations.value[index]
+  if (!item.propertyValues[key]) item.propertyValues[key] = {}
+  return item.propertyValues[key]
+}
+
+const updateSelectValue = (index: number, key: string, value: any) => {
+  const item = variations.value[index]
+  if (!value) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
+  const prop = ensureProp(index, key)
+  prop.valueSelect = { id: value }
+}
+
+const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
+  const item = variations.value[index]
+  if (!value || !value.length) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
+  const prop = ensureProp(index, key)
+  prop.valueMultiSelect = value.map((id) => ({ id }))
+}
+
+const updateNumberValue = (
+  index: number,
+  key: string,
+  field: 'valueInt' | 'valueFloat',
+  value: any
+) => {
+  const prop = ensureProp(index, key)
+  prop[field] = value
+}
+
+const updateBooleanValue = (
+  index: number,
+  key: string,
+  value: boolean | null
+) => {
+  const prop = ensureProp(index, key)
+  prop.valueBoolean = value
+}
+
+const updateDateValue = (index: number, key: string, value: any) => {
+  const item = variations.value[index]
+  if (!value) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
+  const prop = ensureProp(index, key)
+  prop.valueDate = value
+}
+
+const updateDateTimeValue = (index: number, key: string, value: any) => {
+  const item = variations.value[index]
+  if (!value) {
+    if (item.propertyValues[key]) delete item.propertyValues[key]
+    return
+  }
+  const prop = ensureProp(index, key)
+  prop.valueDatetime = value
+}
+
+const MIN_COLUMN_WIDTH = 100
+const startResize = (e: MouseEvent, key: string) => {
+  const startX = e.pageX
+  const startWidth = columnWidths[key]
+
+  const onMouseMove = (event: MouseEvent) => {
+    const delta = event.pageX - startX
+    columnWidths[key] = Math.max(MIN_COLUMN_WIDTH, startWidth + delta)
+  }
+
+  const onMouseUp = () => {
+    document.removeEventListener('mousemove', onMouseMove)
+    document.removeEventListener('mouseup', onMouseUp)
+  }
+
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
+
+</script>
+
+<template>
+  <div class="relative w-full min-w-0">
+    <div
+      v-if="loading"
+      class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75"
+    >
+      <LocalLoader :loading="loading" />
+    </div>
+    <Flex between middle gap="2" class="mb-4">
+      <FlexCell grow>
+        <PropertyFilters
+          v-model:search-query="searchQuery"
+          v-model:selected-property-types="selectedPropertyTypes"
+          v-model:filters="filters"
+        />
+      </FlexCell>
+      <FlexCell class="flex">
+        <Button
+          class="btn btn-secondary"
+          :disabled="!canUndo"
+          @click="undo"
+        >
+          <Icon name="arrow-left" />
+        </Button>
+        <Button
+          class="btn btn-secondary ml-2"
+          :disabled="!canRedo"
+          @click="redo"
+        >
+          <Icon name="arrow-right" />
+        </Button>
+      </FlexCell>
+      <FlexCell>
+        <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
+          <template v-slot="{ result: { data } }">
+            <Selector
+              v-if="data"
+              v-model="language"
+              :options="data.translationLanguages.languages"
+              :placeholder="t('products.translation.placeholders.language')"
+              class="w-32 mr-2"
+              labelBy="name"
+              valueBy="code"
+              :removable="false"
+              mandatory
+              filterable
+            />
+          </template>
+        </ApolloQuery>
+      </FlexCell>
+      <FlexCell>
+        <Button class="btn btn-primary" :disabled="!hasChanges" @click="save">
+          {{ t('shared.button.save') }}
+        </Button>
+      </FlexCell>
+    </Flex>
+    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full">
+      <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
+        <thead class="bg-gray-100 sticky top-0">
+          <tr>
+            <th
+              v-for="col in columns"
+              :key="col.key"
+              class="px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
+              :class="[col.key === 'active' ? 'text-center' : 'text-left', col.key === 'sku' ? 'sticky z-10 bg-gray-100' : '']"
+              :style="[{ width: columnWidths[col.key] + 'px' }, col.key === 'sku' ? { left: 0 } : {}]"
+            >
+              <div class="flex items-center h-full">
+                <Icon
+                  v-if="col.requireType"
+                  name="circle-dot"
+                  :class="[getIconColor(col.requireType), 'mr-1']"
+                />
+                <span class="block truncate" :title="col.label"><strong>{{ col.label }}</strong></span>
+                <span
+                  class="resizer select-none"
+                  @mousedown="(e) => startResize(e, col.key)"
+                />
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(item, index) in variations"
+            :key="item.id"
+            class="border-t"
+          >
+            <td
+              v-for="col in columns"
+              :key="col.key"
+              class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
+              :class="[
+                { 'bg-blue-100': isInDragRange(index, col.key) },
+                col.key === 'active' ? 'text-center px-2' : '',
+                col.key === 'sku' ? 'sticky z-10 bg-white' : ''
+              ]"
+              :style="[
+                { width: columnWidths[col.key] + 'px' },
+                col.key === 'sku' ? { left: 0 } : {}
+              ]"
+              :data-row="index"
+              :data-col="col.key"
+              @click="selectCell(index, col.key)"
+            >
+              <div
+                v-if="selectedCell.row === index && selectedCell.col === col.key"
+                class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
+              >
+                <div
+                  v-if="!['name','sku','active'].includes(col.key)"
+                  class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
+                  @mousedown.stop="startDragFill(index, col.key)"
+                ></div>
+              </div>
+              <template v-if="col.key === 'name'">
+                <span class="block truncate" :title="item.variation.name">
+                  {{ shortenText(item.variation.name, 32) }}
+                </span>
+              </template>
+              <template v-else-if="col.key === 'sku'">
+                <span class="block truncate" :title="item.variation.sku">
+                  {{ item.variation.sku }}
+                </span>
+              </template>
+              <template v-else-if="col.key === 'active'">
+                <Icon
+                  v-if="item.variation.active"
+                  name="check-circle"
+                  class="text-green-500"
+                />
+                <Icon
+                  v-else
+                  name="times-circle"
+                  class="text-red-500"
+                />
+              </template>
+              <template v-else>
+                <FieldQuery
+                  v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
+                  :field="selectFields[col.key]"
+                  :model-value="item.propertyValues[col.key]?.valueSelect?.id"
+                  @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
+                />
+                <FieldQuery
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
+                  :field="selectFields[col.key]"
+                  :model-value="item.propertyValues[col.key]?.valueMultiSelect?.map((v) => v.id)"
+                  @update:modelValue="(value) => updateMultiSelectValue(index, col.key, value)"
+                />
+                <TextInput
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
+                  class="w-full"
+                  :model-value="item.propertyValues[col.key]?.valueInt"
+                  number
+                  @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueInt', value)"
+                />
+                <TextInput
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
+                  class="w-full"
+                  :model-value="item.propertyValues[col.key]?.valueFloat"
+                  float
+                  @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueFloat', value)"
+                />
+                <div
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
+                  class="relative cursor-pointer"
+                  @dblclick="openTextModal(index, col.key)"
+                >
+                  <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
+                    <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                      {{
+                        shortenText(
+                          item.propertyValues[col.key]?.translation?.valueText || '',
+                          16
+                        )
+                      }}
+                    </div>
+                    <Icon
+                      name="maximize"
+                      class="text-gray-400 cursor-pointer flex-shrink-0"
+                      @click.stop="openTextModal(index, col.key)"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
+                  class="relative cursor-pointer"
+                  @dblclick="openDescriptionModal(index, col.key)"
+                >
+                  <div class="border border-gray-300 p-1 h-16 flex justify-between">
+                    <div class="overflow-hidden break-words">
+                      {{
+                        shortenText(
+                          item.propertyValues[col.key]?.translation?.valueDescription || '',
+                          32
+                        )
+                      }}
+                    </div>
+                    <Icon
+                      name="maximize"
+                      class="text-gray-400 cursor-pointer flex-shrink-0 ml-1"
+                      @click.stop="openDescriptionModal(index, col.key)"
+                    />
+                  </div>
+                </div>
+
+                <Toggle
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
+                  :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
+                  @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
+                />
+                <DateInput
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
+                  :model-value="item.propertyValues[col.key]?.valueDate ?? null"
+                  @update:modelValue="(value) => updateDateValue(index, col.key, value)"
+                />
+                <DateTimeInput
+                  v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
+                  :model-value="item.propertyValues[col.key]?.valueDatetime ?? null"
+                  @update:modelValue="(value) => updateDateTimeValue(index, col.key, value)"
+                />
+                <input
+                  v-else
+                  type="text"
+                  class="w-full border p-1"
+                  :value="item.propertyValues[col.key]?.valueInt || ''"
+                  disabled
+                />
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="py-2 px-2 flex items-center space-x-2">
+    <Pagination
+      v-if="pageInfo"
+      :page-info="pageInfo"
+      :change-query-params="false"
+      @query-changed="handleQueryChanged"
+    />
+    <div v-if="pageInfo && (pageInfo.hasNextPage || pageInfo.hasPreviousPage)">
+      <Selector
+        :options="perPageOptions"
+        :model-value="limit"
+        :clearable="false"
+        dropdown-position="bottom"
+        value-by="value"
+        label-by="name"
+        :placeholder="t('pagination.perPage')"
+        @update:model-value="updateLimitPerPage"
+      />
+    </div>
+  </div>
+  <Modal v-model="showTextModal">
+    <Card class="modal-content w-1/2">
+      <h3 class="text-xl font-semibold text-center mb-4">
+        {{ t('products.products.bulkEditModal.textTitle') }}
+      </h3>
+      <TextInput class="w-full" v-model="modalValue" />
+      <div class="flex justify-end gap-4 mt-4">
+        <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+        <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
+      </div>
+    </Card>
+  </Modal>
+  <Modal v-model="showDescriptionModal">
+    <Card class="modal-content w-2/3">
+      <h3 class="text-xl font-semibold text-center mb-4">
+        {{ t('products.products.bulkEditModal.descriptionTitle') }}
+      </h3>
+      <TextEditor class="h-64" v-model="modalValue" />
+      <div class="flex justify-end gap-4 mt-4">
+        <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+        <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
+      </div>
+    </Card>
+  </Modal>
+</template>
+
+<style scoped>
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: #e5e7eb;
+}
+</style>

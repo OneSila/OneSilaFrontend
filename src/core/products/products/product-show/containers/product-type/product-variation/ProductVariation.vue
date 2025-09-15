@@ -15,10 +15,46 @@ import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 import ParentsView from "../../tabs/parents/ParentsView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
+import AmazonView from "../../tabs/amazon/AmazonView.vue";
+import { injectAuth } from "../../../../../../../shared/modules/auth";
+import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const router = useRouter();
+const auth = injectAuth();
+
+
+const generalRef = ref<InstanceType<typeof ProductEditView> | null>(null);
+const contentRef = ref<InstanceType<typeof ProductContentView> | null>(null);
+const priceRef = ref<InstanceType<typeof ProductSalePriceView> | null>(null);
+const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
+const eanCodesRef = ref<InstanceType<typeof ProductEanCodesList> | null>(null);
+const amazonRef = ref<InstanceType<typeof AmazonView> | null>(null);
+
+const tabRefs: Record<string, any> = {
+  general: generalRef,
+  productContent: contentRef,
+  price: priceRef,
+  properties: propertiesRef,
+  eanCodes: eanCodesRef,
+  amazon: amazonRef,
+};
+
+const beforeTabChange = async (newTab: string, oldTab: string) => {
+  const current = tabRefs[oldTab];
+  if (current?.value?.hasUnsavedChanges) {
+    const res = await Swal.fire({
+      icon: 'warning',
+      text: t('products.products.messages.unsavedChanges'),
+      showCancelButton: true,
+      confirmButtonText: t('shared.button.cancel'),
+      cancelButtonText: t('shared.button.leaveTab'),
+    });
+    return res.dismiss === Swal.DismissReason.cancel;
+  }
+  return true;
+};
 
 const tabItems = computed(() => {
   const items = [
@@ -42,13 +78,16 @@ const tabItems = computed(() => {
     });
   }
 
-
   items.push(
     { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
     { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   );
+
+  if (auth.user.company?.hasAmazonIntegration) {
+    items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
+  }
 
   return items;
 });
@@ -57,12 +96,12 @@ const tabItems = computed(() => {
 
 <template>
   <div>
-    <Tabs :tabs="tabItems">
+    <Tabs :tabs="tabItems" :before-change="beforeTabChange">
       <template v-slot:general>
-        <ProductEditView :product="product" />
+        <ProductEditView ref="generalRef" :product="product" />
       </template>
       <template v-slot:productContent>
-        <ProductContentView :product="product" />
+        <ProductContentView ref="contentRef" :product="product" />
       </template>
       <template v-slot:media>
         <MediaView :product="product" />
@@ -74,19 +113,29 @@ const tabItems = computed(() => {
         <AliasProductsView :product="product" />
       </template>
       <template v-slot:websites>
-        <WebsitesView :product="product" />
+        <WebsitesView
+          :product="product"
+          @assign-added="amazonRef?.fetchAmazonProducts('network-only')"
+          @assign-deleted="amazonRef?.fetchAmazonProducts('network-only')"
+        />
       </template>
       <template v-slot:properties>
-        <PropertiesView :product="product" />
+        <PropertiesView ref="propertiesRef" :product="product" />
       </template>
       <template v-slot:price>
-        <ProductSalePriceView :product="product" />
+        <ProductSalePriceView ref="priceRef" :product="product" />
       </template>
       <template v-slot:priceLists>
         <SalesPricelistList :product="product" />
       </template>
       <template v-slot:eanCodes>
-        <ProductEanCodesList :product="product" />
+        <ProductEanCodesList ref="eanCodesRef" :product="product" />
+      </template>
+      <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
+        <AmazonView
+          ref="amazonRef"
+          :product="product"
+        />
       </template>
     </Tabs>
   </div>

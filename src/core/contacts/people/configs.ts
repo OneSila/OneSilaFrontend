@@ -3,7 +3,7 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { ShowConfig, ShowField } from '../../../shared/components/organisms/general-show/showConfig';
-import {companiesQuery, companyAddressesQuery, peopleQuery} from "../../../shared/api/queries/contacts.js"
+import {companiesQuerySelector, companyAddressesQuery, peopleQuery} from "../../../shared/api/queries/contacts.js"
 import { createCompanyMutation, deletePersonMutation } from "../../../shared/api/mutations/contacts.js";
 import { customerLanguagesQuery } from "../../../shared/api/queries/languages.js";
 import { baseFormConfigConstructor as baseCompanyConfigConstructor } from '../companies/configs'
@@ -48,7 +48,7 @@ const getCompanyField = (companyId, t): FormField => {
       label: t('contacts.people.labels.company'),
       labelBy: 'name',
       valueBy: 'id',
-      query: companiesQuery,
+        query: companiesQuerySelector,
       dataKey: 'companies',
       isEdge: true,
       multiple: false,
@@ -135,7 +135,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
   filters: [
     {
       type: FieldType.Query,
-      query: companiesQuery,
+        query: companiesQuerySelector,
       label: t('contacts.people.labels.company'),
       name: 'company',
       labelBy: "name",

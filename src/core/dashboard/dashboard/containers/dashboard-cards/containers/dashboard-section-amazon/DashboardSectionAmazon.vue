@@ -38,63 +38,63 @@ const loading = ref(false);
 const finishedFetch = ref(false);
 
 const fetchCounts = async (salesChannelId: string) => {
+const makeQuery = (options: any) =>
+  apolloClient
+    .query({ ...options, fetchPolicy: 'cache-first' })
+    .then(({ data }) => data)
+    .catch(() => null);
+
   const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
-    apolloClient.query({
+    makeQuery({
       query: amazonPropertiesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonProductTypesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonProductTypesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedRemotely: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonPropertySelectValuesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: amazonDefaultUnitConfiguratorsQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false  },
       },
-      fetchPolicy: 'network-only',
     }),
-    apolloClient.query({
+    makeQuery({
       query: dashboardAmazonProductsWithIssues,
       variables: {
         salesChannelId,
       },
-      fetchPolicy: 'network-only',
     }),
   ]);
 
   return {
-    properties: propRes.data?.amazonProperties?.totalCount || 0,
-    productTypes: typeRes.data?.amazonProductTypes?.totalCount || 0,
-    localProductTypes: localTypeRes.data?.amazonProductTypes?.totalCount || 0,
-    selectValues: valueRes.data?.amazonPropertySelectValues?.totalCount || 0,
-    unitConfigurators: unitRes.data?.amazonDefaultUnitConfigurators?.totalCount || 0,
-    productsWithIssues: issuesRes.data?.products?.totalCount || 0,
+    properties: propRes?.amazonProperties?.totalCount || 0,
+    productTypes: typeRes?.amazonProductTypes?.totalCount || 0,
+    localProductTypes: localTypeRes?.amazonProductTypes?.totalCount || 0,
+    selectValues: valueRes?.amazonPropertySelectValues?.totalCount || 0,
+    unitConfigurators: unitRes?.amazonDefaultUnitConfigurators?.totalCount || 0,
+    productsWithIssues: issuesRes?.products?.totalCount || 0,
   };
 };
 
@@ -106,29 +106,36 @@ const fetchAmazonIntegrations = async () => {
 
   loading.value = true;
 
-  const { data } = await apolloClient.query({
-    query: amazonChannelsQuery,
-    fetchPolicy: 'network-only'
-  });
+  try {
+    const { data } = await apolloClient.query({
+      query: amazonChannelsQuery,
+      fetchPolicy: 'cache-first'
+    });
 
-  const edges = data?.amazonChannels?.edges || [];
+    integrations.value = [];
+    const edges = data?.amazonChannels?.edges || [];
 
-  for (const edge of edges) {
-    const channel = edge.node;
+    for (const edge of edges) {
+      const channel = edge.node;
 
-    if (channel?.saleschannelPtr?.id) {
-      const counts = await fetchCounts(channel.saleschannelPtr.id);
-      integrations.value.push({
-        integrationId: channel.id,
-        hostname: channel.hostname,
-        salesChannelId: channel.saleschannelPtr.id,
-        ...counts,
-      });
+      if (channel?.saleschannelPtr?.id) {
+        const counts = await fetchCounts(channel.saleschannelPtr.id);
+        integrations.value.push({
+          integrationId: channel.id,
+          hostname: channel.hostname,
+          salesChannelId: channel.saleschannelPtr.id,
+          ...counts,
+        });
+      }
     }
-  }
 
-  loading.value = false;
-  finishedFetch.value = true;
+    loading.value = false;
+    finishedFetch.value = true;
+  } catch (err) {
+    console.error(err);
+    loading.value = false;
+    finishedFetch.value = true;
+  }
 };
 
 
@@ -224,7 +231,7 @@ onMounted(fetchAmazonIntegrations);
           :description="t('dashboard.cards.amazon.productsWithIssues.description')"
           :hide-on-complete="!showCompletedAmazonCards"
           color="red"
-          :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId } }"
+          :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId, active: true } }"
         />
       </div>
     </Card>

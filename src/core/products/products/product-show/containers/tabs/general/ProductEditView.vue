@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, reactive, ref} from 'vue';
+import {onMounted, reactive, ref, computed, nextTick} from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField, FormType,
@@ -12,7 +12,7 @@ import { Product, vatRateOnTheFlyConfig} from "../../../../configs";
 import { Toast} from "../../../../../../../shared/modules/toast";
 import {FieldValue} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-value";
 import {PrimaryButton} from "../../../../../../../shared/components/atoms/button-primary";
-import {vatRatesQuery} from "../../../../../../../shared/api/queries/vatRates.js";
+import {vatRatesQuerySelector} from "../../../../../../../shared/api/queries/vatRates.js";
 import {FieldQuery} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import {FieldCheckbox} from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-checkbox";
 import {SecondaryButton} from "../../../../../../../shared/components/atoms/button-secondary";
@@ -56,7 +56,7 @@ const fields = {
     label: t('products.products.labels.vatRate'),
     labelBy: 'name',
     valueBy: 'id',
-    query: vatRatesQuery,
+    query: vatRatesQuerySelector,
     dataKey: 'vatRates',
     isEdge: true,
     multiple: false,
@@ -90,6 +90,18 @@ const getCleanData = (data) => {
   return cleanedData;
 };
 
+const initialForm = ref({});
+onMounted(async () => {
+  await nextTick();
+  initialForm.value = JSON.parse(JSON.stringify(getCleanData(form)));
+});
+
+const hasUnsavedChanges = computed(() => {
+  return JSON.stringify(getCleanData(form)) !== JSON.stringify(initialForm.value);
+});
+
+defineExpose({ hasUnsavedChanges });
+
 const handleSubmit = async (overrideData = {}) => {
   const dataToSubmit = getCleanData({ ...form, ...overrideData });
 
@@ -109,6 +121,8 @@ const handleSubmit = async (overrideData = {}) => {
       if (data.updateProduct.vatRate && data.updateProduct.vatRate.id) {
         form.vatRate.id = data.updateProduct.vatRate.id
       }
+
+      initialForm.value = JSON.parse(JSON.stringify(getCleanData(form)));
 
       Toast.success(t('products.products.edit.updateSuccessfully'));
     }

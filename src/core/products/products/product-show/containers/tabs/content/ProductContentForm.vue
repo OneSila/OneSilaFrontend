@@ -23,7 +23,7 @@ const props = defineProps({
     required: true,
   },
   currentLanguage: {
-    type: String as PropType<string | null>,
+    type: [String, null] as unknown as PropType<string | null>,
     required: true,
   },
   shortDescriptionToolbarOptions: {
@@ -39,6 +39,10 @@ const props = defineProps({
     default: true,
   },
   salesChannelType: {
+    type: String as PropType<string | undefined>,
+    default: undefined,
+  },
+  salesChannelId: {
     type: String as PropType<string | undefined>,
     default: undefined,
   },
@@ -64,6 +68,7 @@ const emit = defineEmits<{
             toTranslate=""
             fromLanguageCode="en"
             :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
             @translated="val => form.name = val"
           />
         </FlexCell>
@@ -73,6 +78,10 @@ const emit = defineEmits<{
       <div class="mb-1 text-sm leading-6">
         <p class="text-red-500" v-if="fieldErrors['name']">{{ fieldErrors['name'] }}</p>
       </div>
+    </FlexCell>
+
+    <FlexCell v-if="$slots['bullet-points']">
+      <slot name="bullet-points"></slot>
     </FlexCell>
 
     <FlexCell v-if="showShortDescription">
@@ -96,6 +105,7 @@ const emit = defineEmits<{
             toTranslate=""
             fromLanguageCode="en"
             :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
             @translated="val => emit('shortDescription', val)"
           />
         </FlexCell>
@@ -131,6 +141,7 @@ const emit = defineEmits<{
             toTranslate=""
             fromLanguageCode="en"
             :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
             @translated="val => emit('description', val)"
           />
         </FlexCell>

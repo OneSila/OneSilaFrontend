@@ -10,6 +10,8 @@ interface Props {
   toLanguageCode: string;
   product?: any;
   productContentType?: string;
+  salesChannelId?: string;
+  beforeStart?: () => Promise<boolean> | boolean;
 }
 
 const props = defineProps<Props>();
@@ -32,6 +34,10 @@ const mutationVariables = computed(() => {
   }
   if (props.productContentType) {
     data.productContentType = props.productContentType;
+  }
+
+  if (props.salesChannelId) {
+    data.salesChannel = { id: props.salesChannelId };
   }
 
   return { data };
@@ -57,6 +63,7 @@ const steps = computed(() => [
     modal-title="shared.components.organisms.aiContentTranslator.title"
     successToastKey="shared.components.organisms.aiContentTranslator.success"
     btn-class="btn-outline-success"
+    :before-start="props.beforeStart"
     @processed="text => emit('translated', text)"
   />
 </template>

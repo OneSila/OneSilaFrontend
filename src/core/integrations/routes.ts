@@ -37,6 +37,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/currencies/containers/IntegrationsCurrencyEditController.vue'),
   },
   {
+    path: '/integrations/:type/price-list/:integrationId/create',
+    name: 'integrations.priceLists.create',
+    meta: { title: 'sales.priceLists.create.title' },
+    component: () => import('./integrations/integrations-show/containers/price-lists/containers/IntegrationsPriceListCreateController.vue'),
+  },
+  {
     path: '/integrations/:type/product-type/:id',
     name: 'integrations.amazonProductTypes.edit',
     meta: { title: 'integrations.show.productRules.title' },
@@ -65,6 +71,12 @@ export const routes = [
     name: 'integrations.imports.create',
     meta: { title: 'integrations.imports.create.title' },
     component: () => import('./integrations/integrations-show/containers/imports/containers/create-import/ImportCreateController.vue'),
+  },
+  {
+    path: '/integrations/:type/import-process/:id',
+    name: 'integrations.imports.show',
+    meta: { title: 'integrations.imports.show.title' },
+    component: () => import('./integrations/integrations-show/containers/imports/containers/import-show/ImportShowController.vue'),
   },
   // temporary commented since we no longer to oAuth
   // {

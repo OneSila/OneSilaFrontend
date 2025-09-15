@@ -9,12 +9,12 @@ import { FieldType, InspectorStatus, InspectorStatusType, ProductType, Url } fro
 import { OrderType, SearchConfig, SearchFilter } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import { productsQuery } from "../../../shared/api/queries/products.js"
-import { vatRatesQuery } from "../../../shared/api/queries/vatRates.js";
+import { vatRatesQuerySelector } from "../../../shared/api/queries/vatRates.js";
 import { createVatRateMutation } from "../../../shared/api/mutations/vatRates.js";
 import { baseFormConfigConstructor as baseVatRateConfigConstructor } from '../../settings/vat-rates/configs'
 import { Badge, Icon } from "../../../shared/components/organisms/general-show/showConfig";
 import { propertySelectValuesQuerySelector } from "../../../shared/api/queries/properties.js";
-import { amazonChannelsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
+import { amazonChannelsQuerySelector, salesChannelViewsQuerySelector } from "../../../shared/api/queries/salesChannels.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
@@ -59,6 +59,8 @@ export const getInspectorErrors = (t) => [
   { code: "122", name: t(`dashboard.cards.products.inspector.122.title`) },
   { code: "123", name: t(`dashboard.cards.products.inspector.123.title`) },
   { code: "124", name: t(`dashboard.cards.products.inspector.124.title`) },
+  { code: "125", name: t(`dashboard.cards.products.inspector.125.title`) },
+  { code: "126", name: t(`dashboard.cards.products.inspector.126.title`) },
 ];
 
 
@@ -130,7 +132,7 @@ export const getVatRateField = (t): QueryFormField => {
       label: t('products.products.labels.vatRate'),
       labelBy: 'name',
       valueBy: 'id',
-      query: vatRatesQuery,
+        query: vatRatesQuerySelector,
       dataKey: 'vatRates',
       isEdge: true,
       multiple: false,
@@ -162,7 +164,7 @@ const getFields = (type, t): FormField[] => {
       label: t('products.products.labels.vatRate'),
       labelBy: 'name',
       valueBy: 'id',
-      query: vatRatesQuery,
+        query: vatRatesQuerySelector,
       dataKey: 'vatRates',
       isEdge: true,
       multiple: false,
@@ -203,10 +205,17 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
   search: true,
   orderKey: "sort",
   filters: [
+    {
+      type: FieldType.Text,
+      name: 'sku',
+      label: t('shared.labels.sku'),
+      placeholder: t('shared.placeholders.sku'),
+      addLookup: true,
+    },
      {
       type: FieldType.Query,
       name: 'vatRate',
-      query: vatRatesQuery,
+        query: vatRatesQuerySelector,
       label: t('products.products.labels.vatRate'),
       labelBy: "name",
       valueBy: "id",
@@ -225,6 +234,32 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       labelBy: "fullValueName",
       valueBy: "id",
       dataKey: "propertySelectValues",
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+    },
+    {
+      type: FieldType.Query,
+      name: 'assignedToSalesChannelViewId',
+      query: salesChannelViewsQuerySelector,
+      label: t('integrations.salesChannel.labels.assignedToSalesChannelView'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'salesChannelViews',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+    },
+    {
+      type: FieldType.Query,
+      name: 'notAssignedToSalesChannelViewId',
+      query: salesChannelViewsQuerySelector,
+      label: t('integrations.salesChannel.labels.notAssignedToSalesChannelView'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'salesChannelViews',
       filterable: true,
       multiple: false,
       isEdge: true,
@@ -416,7 +451,6 @@ export interface SalesChannelViewAssign {
   remoteUrl: string;
   remoteProductPercentage: number;
   integrationType: string;
-  formattedIssues?: { message?: string | null; severity?: string | null }[];
   product: SalesChannelViewAssignProduct;
   salesChannelView: SalesChannelView;
   remoteProduct: RemoteProduct;

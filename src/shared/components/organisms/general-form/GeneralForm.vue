@@ -51,11 +51,17 @@ watch(() => props.config, (newConfig) => {
           <template #additional-button>
             <slot name="additional-button" />
           </template>
+          <template #additional-fields>
+            <slot name="additional-fields" />
+          </template>
         </FormCreate>
 
         <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @submit="emit('submit')"  @set-data="handleSetData" @form-updated="handleFormUpdate" >
             <template #additional-button>
               <slot name="additional-button" />
+            </template>
+            <template #additional-fields>
+              <slot name="additional-fields" />
             </template>
         </FormEdit>
       </div>

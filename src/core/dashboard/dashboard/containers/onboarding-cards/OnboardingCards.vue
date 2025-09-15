@@ -2,7 +2,7 @@
 import { defineEmits, defineProps, onMounted, ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { OnboardingCard } from './../onboarding-card';
-import { productsQuery } from "../../../../../shared/api/queries/products.js";
+import { productsQuerySelector } from "../../../../../shared/api/queries/products.js";
 import { membersQuery } from "../../../../../shared/api/queries/me.js";
 import { Card } from "../../../../../shared/components/atoms/card";
 import {VOnboardingWrapper, useVOnboarding, StepEntity} from 'v-onboarding';
@@ -57,7 +57,7 @@ const fetchProductType = async () => {
 
 const fetchLastCreatedProduct = async () => {
   const { data } = await apolloClient.query({
-    query: productsQuery,
+    query: productsQuerySelector,
     variables: {
       filter: { excludeDemoData: true, type: { exact: ProductType.Simple } },
       order: { createdAt: OrderType.DESC },
@@ -117,7 +117,7 @@ const cards = computed((): OnboardingCardObject[] => [
     key: 'product',
     title: t('dashboard.onboarding.cards.product.title'),
     path: 'products.products.create',
-    query: productsQuery,
+    query: productsQuerySelector,
     variables: productsFilter,
     dependencies: ['createProductType']
   },

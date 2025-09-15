@@ -36,7 +36,7 @@
             "description": "Activate all items in these bundle products."
           },
           "105": {
-            "title": "Products Missing Required Variations",
+            "title": "Products Missing Variations",
             "description": "Add required variations to these configurable products."
           },
           "106": {
@@ -56,8 +56,8 @@
             "description": "Provide EAN codes for these products."
           },
           "110": {
-            "title": "Products Missing Required Product Type Properties",
-            "description": "Assign required product type properties to these products."
+            "title": "Product Type Missing",
+            "description": "Assign a product type to these products."
           },
           "111": {
             "title": "Products Missing Required Properties",
@@ -84,7 +84,7 @@
             "description": "Add override prices to manual price list prices where auto-update is disabled."
           },
           "117": {
-            "title": "Variations with Different Product Types",
+            "title": "Variation Product Type Mismatch",
             "description": "Ensure all variations have the same product type."
           },
           "118": {
@@ -112,8 +112,16 @@
             "description": "Ensure variations in these configurable products have unique required properties."
           },
           "124": {
-            "title": "Configurable Products with No Applicable Configurator Rules",
+            "title": "Configurable Product Missing Rule Configuration",
             "description": "Define at least one configurator required item for these configurable products."
+          },
+          "125": {
+            "title": "Products with Amazon Validation Issues",
+            "description": "Review Amazon validation issues for these products in the Amazon tab."
+          },
+          "126": {
+            "title": "Products with Amazon Remote Issues",
+            "description": "Check the Amazon tab for remote issues reported by Amazon and resolve them."
           }
         }
       },
@@ -136,7 +144,7 @@
       "general": {
         "title": "General cards",
         "description": "Improve your data quality by resolving the following issues.",
-        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. \uD83C\uDFAF You're all set for now!",
+        "noIssuesMessage": "✅ Everything is in order! No outstanding tasks. 🎯 You're all set for now!",
         "missingLeadTime": {
           "title": "Addresses Missing Lead Time",
           "description": "Some addresses do not have a lead time set. This may affect delivery estimates and logistics planning. Please review and update the lead times for these addresses."
@@ -154,12 +162,28 @@
           "description": "These properties are not translated into all required languages."
         },
         "propertySelectValuesMissingMainTranslation": {
-          "title": "Select Values Missing Main Translation",
+          "title": "Select Values Missing Main Language",
           "description": "Some select values lack translations for your company's main language."
         },
         "propertySelectValuesMissingTranslations": {
           "title": "Select Values Missing Translations",
           "description": "Some select values are missing translations for all required languages."
+        },
+        "propertiesUsedInProductsMissingMainTranslation": {
+          "title": "Properties Used in Products Missing Main Translation",
+          "description": "These properties are used in products and lack translations for your company's main language."
+        },
+        "propertiesUsedInProductsMissingTranslations": {
+          "title": "Properties Used in Products Missing Translations",
+          "description": "These properties are used in products and are not translated into all required languages."
+        },
+        "propertySelectValuesUsedInProductsMissingMainTranslation": {
+          "title": "Select Values Used in Products Missing Main Language",
+          "description": "Some select values used in products lack translations for your company's main language."
+        },
+        "propertySelectValuesUsedInProductsMissingTranslations": {
+          "title": "Select Values Used in Products Missing Translations",
+          "description": "Some select values used in products are missing translations for all required languages."
         }
       },
       "amazon": {
@@ -174,12 +198,12 @@
           "description": "Amazon product types that need mapping."
         },
         "unmappedLocalProductTypes": {
-          "title": "Unmapped Local Product Types",
-          "description": "Local product types that need mapping to Amazon."
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to Amazon."
         },
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
-          "description": "Amazon property values that need mapping."
+          "description": "Amazon property values that need mapping in order to be imported into OneSila."
         },
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
@@ -301,8 +325,8 @@
         "tooLongError": "{fieldName} is too long. Reduce to maximum {max} characters!",
         "clipboardFail": "Failed to copy to clipboard.",
         "errorOccurred": "An error occurred.",
-      "bulkDeleteSuccess": "Items deleted successfully.",
-      "bulkDeleteError": "An error occurred while deleting items."
+        "bulkDeleteSuccess": "Items deleted successfully.",
+        "bulkDeleteError": "An error occurred while deleting items."
       },
       "noData": "The rule has no required in configurator properties, therefore we can't generate variation based on that"
     },
@@ -314,6 +338,7 @@
       "invite": "Invite",
       "search": "Search",
       "save": "Save",
+      "saveAll": "Save all",
       "details": "Details",
       "fix": "Fix",
       "back": "Back",
@@ -328,17 +353,23 @@
       "retry": "Retry",
       "refresh": "Refresh",
       "add": "Add",
+      "resync": "Resync",
+      "validate": "Validate",
+      "fetchIssues": "Fetch Issues",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
       "create": "Create",
+      "select": "Select",
       "skip": "Skip",
       "generate": "Generate",
       "translate": "Translate",
       "duplicate": "Duplicate",
       "deleteAll": "Delete all",
       "editAll": "Edit all",
+      "copy": "Copy",
       "change": "Change",
+      "leaveTab": "Leave tab",
       "createAnyway": "Create anyway",
       "abort": "Abort"
     },
@@ -355,6 +386,7 @@
       "or": "Or",
       "name": "Name",
       "active": "Active",
+      "inactive": "Inactive",
       "actions": "Actions",
       "selected": "Selected",
       "shortDescription": "Short description",
@@ -394,6 +426,9 @@
       "remoteCode": "Remote Code",
       "pending": "Pending Processing",
       "progress": "Progress",
+      "code": "Code",
+      "data": "Data",
+      "context": "Context",
       "new": "New",
       "beta": "BETA",
       "url": "URL",
@@ -401,9 +436,13 @@
       "submissionId": "Submission ID",
       "processingStatus": "Processing Status",
       "issues": "Issues",
+      "lastSyncAt": "Last synced at",
+      "fetchedAt": "Fetched at",
       "message": "Message",
       "severity": "Severity",
       "validationIssue": "Validation Issue",
+      "code": "Code",
+      "noIssues": "No Issues",
       "manual": "Manual",
       "generate": "Generate"
     },
@@ -467,6 +506,11 @@
         },
         "deselectAllCheckbox": {
           "label": "Deselect All"
+        }
+      },
+      "atoms": {
+        "textHtmlEditor": {
+          "invalidHtml": "Contains broken HTML"
         }
       },
       "organisms": {
@@ -901,6 +945,9 @@
       },
       "warning": {
         "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
+      },
+      "messages": {
+        "noSourceText": "There is no source text to translate."
       }
     },
     "products": {
@@ -912,8 +959,19 @@
       "alert": {
         "toast": {
           "bulkDeleteSuccess": "Products deleted successfully.",
-          "bulkDeleteError": "Failed to delete products. Please try again."
+          "bulkDeleteError": "Failed to delete products. Please try again.",
+          "copied": "Copied",
+          "pasted": "Pasted",
+          "pasteDifferentColumn": "Cannot paste to different column",
+          "undo": "Undid last change",
+          "redo": "Redid last change",
+          "createdProductProperties": "Created {count} product properties.",
+          "updatedProductProperties": "Updated {count} product properties.",
+          "deletedProductProperties": "Deleted {count} product properties."
         }
+    },
+      "messages": {
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave this tab?"
       },
       "tabs": {
         "content": "Content",
@@ -926,15 +984,60 @@
         "price": "Price",
         "prices": "Prices",
         "priceLists": "Price Lists",
-        "inventory": "Inventory",
-        "inventoryMovements": "Inventory Movements",
         "websites": "Channels",
+        "amazon": "Amazon",
         "supplierProducts": "Supplier Products",
-        "saleOrders": "Sale Orders",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
+      },
+        "properties": {
+          "searchPlaceholder": "Search properties",
+          "typePlaceholder": "Filter by type"
+        },
+      "amazon": {
+        "validationIssues": "Detected Validation Issues",
+        "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
+        "otherIssues": "Amazon Product Issues",
+        "gtinExemption": "GTIN Exemption",
+        "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace.",
+        "gtinExemptionSaved": "GTIN Exemption saved",
+        "otherIssuesDescription": "Issues raised by Amazon after you create/update a product. These often take 15 to 45 minutes to appear as Amazon will process these after you publish your changes.",
+        "status": "Status",
+        "statusDescription": "Synchronization status and available actions.",
+        "noStatus": "The product is not present yet on the marketplace!",
+        "variationTheme": "Amazon Variation Theme",
+        "variationThemeDescription": "Select which fields properties you want people to select when choosing the right product.",
+        "variationThemePlaceholder": "Select variation theme",
+        "variationThemeSaved": "Variation theme saved",
+        "variationThemeDeleted": "Variation theme deleted",
+        "asin": "ASIN",
+        "asinDescription": "Provide the Amazon Standard Identification Number for this product.",
+        "asinPlaceholder": "Enter ASIN",
+        "asinSaved": "ASIN saved",
+        "asinDeleted": "ASIN deleted",
+        "externalProductId": "External product ID",
+        "externalProductIdDescription": "Provide the product identifier for this marketplace. If left empty, the system will use the product's EAN code.",
+        "externalProductIdPlaceholder": "Enter identifier",
+        "externalProductIdSaved": "Identifier saved",
+        "externalProductIdDeleted": "Identifier deleted",
+        "identifierType": "Type",
+        "identifierValue": "Value",
+        "createdAsin": "Created ASIN",
+        "defaultMarketplace": "Default marketplace",
+        "defaultMarketplaceFallback": "Value missing. The default marketplace value will be used.",
+        "browseNode": "Browse node",
+        "browseNodeDescription": "Select the browse node for this product.",
+        "browseNodeSaved": "Browse node saved",
+        "browseNodeDeleted": "Browse node deleted",
+        "noBrowseNodeSelected": "No browse node selected",
+        "browseNodeRoot": "Root",
+        "selectCurrentNode": "Select current",
+        "recommendedProductTypes": "Recommended product types",
+        "createProductTypeTitle": "Create product type",
+        "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
+        "productTypeCreated": "Product type created"
       },
       "inspector": {
         "errors": {
@@ -961,7 +1064,9 @@
           "121": "Some Variations are incomplete",
           "122": "Some Bill of materials are incomplete",
           "123": "Some variations are duplicates",
-          "124": "Product type rule is not configured for a configurable product"
+          "124": "Product type rule is not configured for a configurable product",
+          "125": "Product has Amazon validation issues",
+          "126": "Product on Amazon has remote issues"
         },
         "help": {
           "101": "add at least one image to the product",
@@ -987,7 +1092,9 @@
           "121": "resolve missing mandatory information in the variations",
           "122": "resolve missing mandatory information in the bills of materials",
           "123": "ensure all variations have a different configuration on their configurable properties",
-          "124": "define at least one configurator required item on the product type rule"
+          "124": "define at least one configurator required item on the product type rule",
+          "125": "Review the Amazon tab for validation issues and resolve them",
+          "126": "Check the Amazon tab for remote issues reported by Amazon"
         },
         "labels": {
           "missingInfo": "Missing Information",
@@ -1020,6 +1127,7 @@
         "inspectorErrors": "Product Inspector Error",
         "allowBackorder": "Allow Backorder",
         "inspectorStatus": "Content Quality",
+        "configuratorValue": "Configurator Value",
         "aliasParentProduct": "Alias Target"
       },
       "placeholders": {
@@ -1085,12 +1193,12 @@
             }
           },
           "stepFour": {
-          "configurable": {
-            "title": "Variations",
-            "selectVariations": "Please select the variations:",
-            "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
-            "generateTitle": "Generate variations"
-          },
+            "configurable": {
+              "title": "Variations",
+              "selectVariations": "Please select the variations:",
+              "generateDescription": "Choose property values below. Variations for all selected values will be generated automatically.",
+              "generateTitle": "Generate variations"
+            },
             "simple": {
               "title": "Buying",
               "whereBuy": "Where do you buy it?",
@@ -1115,7 +1223,12 @@
         "title": "Product"
       },
       "duplicateModal": {
-        "description": "Provide an SKU for the duplicated product or leave empty to auto generate."
+        "description": "Provide an SKU for the duplicated product or leave empty to auto generate.",
+        "createAsAlias": "Create as alias product?"
+      },
+      "bulkEditModal": {
+        "textTitle": "Edit value",
+        "descriptionTitle": "Edit description"
       },
       "duplicateSuccessfully": "Product was successfully duplicated!"
     }
@@ -1553,7 +1666,7 @@
         }
       },
       "create": {
-        "title": "Create Price List"
+        "title": "Add Price List"
       },
       "show": {
         "title": "Price List"
@@ -1660,7 +1773,6 @@
       },
       "alert": {
         "prices": {
-          "successfullyUpdated": "Successfully updated the prices!",
           "successfullyUpdated": "Prices Updated"
         }
       },
@@ -1729,7 +1841,8 @@
         "files": "Files",
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add from existing media",
-        "images": "Images"
+        "images": "Images",
+        "fileThumbnail": "File thumbnail"
       },
       "alert": {
         "toast": {
@@ -1741,6 +1854,10 @@
     "images": {
       "title": "Images",
       "upload": "Upload New Images",
+      "tabs": {
+        "upload": "Upload",
+        "urls": "URLs"
+      },
       "create": {
         "successfullyCreated": "Images were successfully uploaded!"
       },
@@ -1765,7 +1882,8 @@
       "alert": {
         "toast": {
           "bulkDeleteSuccess": "Images deleted successfully.",
-          "bulkDeleteError": "Failed to delete images."
+          "bulkDeleteError": "Failed to delete images.",
+          "invalidUrl": "Please enter a valid image URL (jpg, jpeg, png, webp)."
         }
       }
     },
@@ -1942,7 +2060,6 @@
           "text": "This will create demo data in your account. Do you want to proceed?",
           "confirmButtonText": "Create Demo Data"
         },
-        "successfullyCreated": "Demo data will be added momentarily.",
         "successfullyCreated": "Demo data will be added momentarily."
       },
       "delete": {
@@ -1953,7 +2070,6 @@
           "text": "This will delete all demo data from your account. Do you want to proceed?",
           "confirmButtonText": "Delete Demo Data"
         },
-        "successfullyDelete": "Demo data will be removed momentarily.",
         "successfullyDelete": "Demo data will be removed momentarily."
       }
     },
@@ -2071,7 +2187,8 @@
         "internalName": "Internal Name",
         "valueValidator": "Value Validator",
         "missingMainTranslation": "Missing Main Translation",
-        "missingTranslations": "Missing Translations"
+        "missingTranslations": "Missing Translations",
+        "usedInProducts": "Used In Products"
       },
       "placeholders": {
         "internalName": "Enter internal name",
@@ -2095,12 +2212,17 @@
         "date": "Date",
         "datetime": "Date and Time",
         "select": "Single Select",
-      "multiselect": "Multiselect"
+        "multiselect": "Multiselect"
       }
     },
     "duplicateModal": {
       "title": "Properties with Similar Names Found",
-      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property."
+      "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property.",
+      "checkingTitle": "Checking for duplicates",
+      "steps": {
+        "step1": "Preparing duplicate check",
+        "step2": "Searching for duplicates"
+      }
     },
     "values": {
       "title": "Select Values",
@@ -2116,7 +2238,8 @@
       "labels": {
         "value": "Value",
         "missingMainTranslation": "Missing Main Translation",
-        "missingTranslations": "Missing Translations"
+        "missingTranslations": "Missing Translations",
+        "usedInProducts": "Used In Products"
       },
       "placeholders": {
         "value": "Enter value"
@@ -2126,6 +2249,20 @@
           "bulkDeleteSuccess": "Property values deleted successfully.",
           "bulkDeleteError": "Failed to delete property values. Please try again."
         }
+      },
+      "merge": {
+        "button": "Merge",
+        "title": "Merge Values",
+        "description": "Select the value to keep. Other selected values will be merged into it and deleted.",
+        "selectTarget": "Select target value",
+        "selectSource": "Select value to merge",
+        "counter": "Used in {count} products",
+        "detailDescription": "All selected values will be merged into \"{value}\" and deleted.",
+        "current": "Current value \"{value}\" used in {count} products",
+        "warning": "All other values will be deleted.",
+        "confirm": "Merge",
+        "success": "Property values merged successfully.",
+        "error": "Failed to merge property values."
       }
     },
     "rule": {
@@ -2212,8 +2349,18 @@
   },
   "integrations": {
     "title": "Integrations",
+    "integrationTypes": {
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "Woocommerce",
+      "amazon": "Amazon",
+      "webhook": "Webhook"
+    },
     "show": {
       "title": "Integration",
+      "tabs": {
+        "reports": "Reports"
+      },
       "amazon": {
         "title": "Amazon Integration"
       },
@@ -2259,6 +2406,20 @@
           "remoteCode": "Remote Currency Code"
         }
       },
+      "priceLists": {
+        "helpSection": {
+          "rules": {
+            "header": "How price lists work",
+            "content": "Think of price lists like calendars for your prices. When you add price lists to a sales channel, we first look for a list whose dates include today. If we can't find one, we use the list without dates, the default. If there is no default, we use the base price in that currency. Each sales channel can only have one default list and its dated lists cannot overlap."
+          }
+        }
+      },
+      "products": {
+        "labels": {
+          "store": "Store",
+          "excludeStores": "Exclude Stores"
+        }
+      },
       "productRules": {
         "title": "Amazon Rules",
         "labels": {
@@ -2299,39 +2460,46 @@
       "propertySelectValues": {
         "title": "Amazon Property Values",
         "labels": {
-          "remoteName": "Remote Name",
-          "remoteValue": "Remote Value",
+          "remoteName": "Amazon Name",
+          "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
           "marketplace": "Marketplace",
-          "localProperty": "Local Property",
-          "selectValue": "Select Value"
+          "localProperty": "OneSila Property",
+          "selectValue": "OneSila Select Value",
+          "translatedRemoteName": "Translated Name"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "marketplace": "Amazon marketplace for this value.",
-          "localProperty": "Local property that this Amazon property maps to.",
+          "localProperty": "OneSila property that this Amazon property maps to.",
           "remoteValue": "Value exactly as defined in Amazon.",
           "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the local value that matches this Amazon value."
+          "selectValue": "Choose the OneSila value that matches this Amazon value.",
+          "translatedRemoteName": "Translated name for this value."
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",
           "content": "Map the Amazon property first before mapping values."
+        },
+        "recommendation": {
+          "title": "Recommendations",
+          "searching": "Searching for suggestions...",
+          "none": "No suggestion found"
         },
         "bulkAssign": "Assign Select Value",
         "bulkAssignTitle": "Assign to {count} value(s)",
         "assignSuccess": "Values were successfully assigned"
       },
       "mapping": {
-        "mappedLocally": "Mapped Locally",
-        "mappedRemotely": "Mapped Remotely",
+        "mappedLocally": "Mapped in OneSila",
+        "mappedRemotely": "Mapped on Amazon",
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values"
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",
-      "pullLocalRules": "Pull Local Rules",
+      "pullLocalRules": "Pull OneSila Rules",
       "generatePropertySelectValue": "Generate Select Value",
       "mapProperty": "Map Property",
       "mapProductType": "Map Product Type",
@@ -2361,8 +2529,14 @@
           "ebayExample": "Ebay integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
+          "webhookTitle": "Webhook",
+          "webhookExample": "Send events to your application via HTTP",
           "magentoInfoModal": {
             "title": "How to connect your Magento store",
+            "tabs": {
+              "instructions": "Instructions",
+              "video": "Video"
+            },
             "section": {
               "integrationTitle": "Create an integration in Magento",
               "integrationDescription": "Before connecting your store, make sure to create and activate an integration in your Magento Admin Panel.",
@@ -2447,6 +2621,10 @@
             "title": "Amazon Channel Details",
             "content": "Provide Amazon-specific configuration to connect your marketplace."
           },
+          "webhook": {
+            "title": "Webhook Settings",
+            "content": "Configure your webhook endpoint and options."
+          },
           "ebay": {
             "title": "Ebay Channel Details",
             "content": "Provide Ebay-specific configuration to connect your marketplace."
@@ -2461,7 +2639,6 @@
       "syncEanCodes": "Sync EAN Codes",
       "syncPrices": "Sync Prices",
       "importOrders": "Import Orders",
-      "listingOwner": "Listing Owner",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "successfullyConnected": "Connected",
@@ -2480,7 +2657,15 @@
       "country": "Country",
       "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data",
-      "defaultUnits": "Default Units"
+      "defaultUnits": "Default Units",
+      "url": "URL",
+      "topic": "Topic",
+      "version": "Version",
+      "userAgent": "User Agent",
+      "timeoutMs": "Timeout (ms)",
+      "mode": "Mode",
+      "retentionPolicy": "Retention Policy",
+      "secret": "Secret"
     },
     "placeholders": {
       "hostApiUsername": "Enter API Username",
@@ -2489,7 +2674,14 @@
       "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
       "eanCodeAttribute": "Enter EAN code attribute",
-      "accessToken": "Enter Access Token"
+      "accessToken": "Enter Access Token",
+      "url": "https://example.com/webhook",
+      "topic": "products",
+      "version": "2025-08-01",
+      "userAgent": "OneSila-Webhook/1.0",
+      "timeoutMs": "10000",
+      "mode": "Full",
+      "retentionPolicy": "6 Months"
     },
     "regions": {
       "northAmerica": "North America",
@@ -2561,6 +2753,10 @@
           "productsWithIssuesForSalesChannel": "Products With Amazon Issues For"
         }
       },
+      "labels": {
+        "assignedToSalesChannelView": "Assigned To Store",
+        "notAssignedToSalesChannelView": "Not Assigned To Store"
+      },
       "ebay": {
         "installed": {
           "title": "Ebay Connected",
@@ -2571,7 +2767,9 @@
         }
       },
       "toast": {
-        "resyncSuccess": "The product resync process has begun. Please come later to see the results."
+        "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
+        "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
+        "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },
       "helpText": {
         "useConfigurableName": "If enabled, the system will always use the configurable (parent) product's name for variations.",
@@ -2579,7 +2777,6 @@
         "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
         "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
-        "listingOwner": "Enable if you are the owner of the product listings.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
@@ -2597,7 +2794,72 @@
         }
       }
     },
+    "webhook": {
+      "helpText": {
+        "url": "Endpoint that will receive webhook POST requests.",
+        "topic": "Event topic that triggers the webhook.",
+        "version": "Webhook payload version.",
+        "userAgent": "User-Agent header sent with requests.",
+        "timeoutMs": "Milliseconds to wait for a response before failing.",
+        "mode": "Use 'delta' for changes only or 'full' for the entire payload.",
+        "retentionPolicy": "How long webhook deliveries are retained."
+      },
+      "choices": {
+        "topic": {
+          "product": "product",
+          "ean_code": "ean_code",
+          "price_list": "price_list",
+          "price_list_item": "price_list_item",
+          "media": "media",
+          "media_through": "media_through",
+          "property": "property",
+          "select_value": "select_value",
+          "property_rule": "property_rule",
+          "property_rule_item": "property_rule_item",
+          "product_property": "product_property",
+          "sales_channel_view_assign": "sales_channel_view_assign",
+          "all": "all"
+        },
+        "version": {
+          "2025-08-01": "2025-08-01"
+        },
+        "mode": {
+          "full": "Full",
+          "delta": "Delta"
+        },
+        "retentionPolicy": {
+          "3m": "3 Months",
+          "6m": "6 Months",
+          "12m": "12 Months"
+        }
+      },
+      "infoBlock": {
+        "description": "Webhooks send POST requests to your endpoint when events occur. Use the examples below to configure your handler.",
+        "payloadExample": "Payload structure example",
+        "curlExample": "cURL test request",
+        "signatureValidation": "Signature validation",
+        "languages": {
+          "python": "Python",
+          "node": "Node.js",
+          "php": "PHP"
+        }
+      },
+      "buttons": {
+        "regenerateSecret": "Regenerate secret"
+      }
+    },
     "imports": {
+      "show": {
+        "title": "Import"
+      },
+      "labels": {
+        "createOnly": "Create only",
+        "updateOnly": "Update only",
+        "skipBrokenRecords": "Skip broken records",
+        "totalRecords": "Total records",
+        "processedRecords": "Processed records",
+        "errorTraceback": "Error traceback"
+      },
       "retry": {
         "success": "Retry import process success",
         "error": "Retry import process had an unexpected error"
@@ -2608,6 +2870,17 @@
         "schemaDescription": "Initial setup required to enable product imports.",
         "productsDescription": "Imports actual product data from Amazon.",
         "schemaRequired": "Please complete the schema import first."
+      },
+      "brokenRecords": {
+        "codes": {
+          "BROKEN_IMPORT_PROCESS": "Broken import process",
+          "MISSING_DATA": "Missing data",
+          "NO_MAPPED_PRODUCT_TYPE": "No mapped product type",
+          "PRODUCT_TYPE_MISMATCH": "Product type mismatch",
+          "UPDATE_ONLY_NOT_FOUND": "Update only not found",
+          "NAME_TOO_LONG": "Name too long",
+          "INVALID_VARIATION_THEME": "Invalid variation theme"
+        }
       },
       "create": {
         "success": "Create import process success",
@@ -2653,6 +2926,198 @@
               "startProcess": "Starting import process"
             }
           }
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "monitor": {
+      "title": "Monitor",
+      "description": "Real-time overview of webhook deliveries.",
+      "timeRange": {
+        "live": "Live",
+        "last15m": "Last 15m",
+        "1h": "1h",
+        "6h": "6h",
+        "24h": "24h",
+        "custom": "Custom"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Action",
+        "status": "Status",
+        "responseCode": "Response Code",
+        "topic": "Topic",
+        "date": "Date"
+      },
+      "actions": {
+        "create": "Create",
+        "update": "Update",
+        "delete": "Delete"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "sending": "Sending",
+        "delivered": "Delivered",
+        "failed": "Failed"
+      },
+      "topics": {
+        "product": "Product",
+        "ean_code": "EAN Code",
+        "price_list": "Price List",
+        "price_list_item": "Price List Item",
+        "media": "Media",
+        "media_through": "Media Through",
+        "property": "Property",
+        "select_value": "Select Value",
+        "property_rule": "Property Rule",
+        "property_rule_item": "Property Rule Item",
+        "product_property": "Product Property",
+        "sales_channel_view_assign": "Sales Channel View Assign",
+        "all": "All"
+      },
+      "autoRefresh": "Auto-refresh",
+      "rpmCap": "RPM Cap",
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (median / p95)",
+        "latencyTooltip": "Median and 95th percentile latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "queueDepth": "Queue depth",
+        "queueDepthTooltip": "Current depth of the webhook queue"
+      },
+      "empty": "No deliveries found",
+      "table": {
+        "time": "Time",
+        "topic": "Topic",
+        "action": "Action",
+        "subjectId": "Subject ID",
+        "status": "Status",
+        "httpCode": "HTTP code",
+        "latency": "Latency",
+        "attempt": "Attempt #"
+      },
+      "drawer": {
+        "tabs": {
+          "overview": "Overview",
+          "attempts": "Attempts",
+          "payload": "Payload",
+          "headers": "Headers",
+          "replay": "Replay/cURL"
+        },
+        "overview": {
+          "status": "Status",
+          "attemptCount": "Attempt count",
+          "lastError": "Last error",
+          "idempotencyKey": "Idempotency key"
+        },
+        "attempts": {
+          "number": "Attempt",
+          "responseCode": "Response code",
+          "latency": "Latency",
+          "error": "Error",
+          "createdAt": "Created at"
+        },
+        "headers": {
+          "redacted": "[REDACTED]"
+        },
+        "replay": {
+          "replayButton": "Replay",
+          "copyCurlButton": "Copy cURL",
+          "confirm": "Replay this delivery?",
+          "confirmButtonText": "Yes, replay it!",
+          "copied": "cURL command copied"
+        }
+      }
+    },
+    "reports": {
+      "description": "Detailed insights into webhook deliveries.",
+      "chartDescriptions": {
+        "deliveryOutcome": "Distribution of delivery statuses over time.",
+        "latency": "Webhook latency percentiles over time.",
+        "topics": "Top topics by volume and success rate.",
+        "responseCodes": "HTTP response code distribution.",
+        "retries": "Deliveries grouped by retry attempts.",
+        "heatmap": "Failures or latency by weekday and hour.",
+        "topOffenders": "Integrations with highest failure rates and latency."
+      },
+      "timeRange": {
+        "today": "Today",
+        "7d": "7d",
+        "30d": "30d"
+      },
+      "filters": {
+        "integration": "Integration",
+        "responseCodeBucket": "Response code bucket",
+        "date": "Date"
+      },
+      "kpis": {
+        "deliveries": "Deliveries",
+        "deliveriesTooltip": "Total deliveries",
+        "delivered": "Delivered",
+        "deliveredTooltip": "Successfully delivered",
+        "failed": "Failed",
+        "failedTooltip": "Failed deliveries",
+        "successRate": "Success %",
+        "successRateTooltip": "Percentage of successful deliveries",
+        "latency": "Latency ms (p50 / p95 / p99)",
+        "latencyTooltip": "p50, p95, and p99 latency in milliseconds",
+        "rate429": "429 %",
+        "rate429Tooltip": "Percentage of HTTP 429 responses",
+        "rate5xx": "5xx %",
+        "rate5xxTooltip": "Percentage of HTTP 5xx responses",
+        "avgAttempts": "Avg attempts",
+        "avgAttemptsTooltip": "Average attempts per delivery",
+        "avgSolveMs": "Avg solve ms",
+        "avgSolveMsTooltip": "Average milliseconds to solve a request",
+        "responseCodeBucket": "Response code bucket",
+        "date": "Date"
+      },
+      "charts": {
+        "deliveryOutcome": "Delivery outcome over time",
+        "latency": "Latency over time",
+        "topics": "Topics breakdown",
+        "responseCodes": "Response codes distribution",
+        "retries": "Retries distribution",
+        "heatmap": "Heatmap",
+        "topOffenders": "Top offenders",
+        "p50": "p50",
+        "p95": "p95",
+        "latencyLegend": {
+          "title": "Latency percentiles:",
+          "p50": "p50 = median (half of deliveries are faster)",
+          "p95": "p95 = 95% are faster (only 1 in 20 slower)",
+          "p99": "p99 = 99% are faster (only 1 in 100 slower)"
+        }
+      },
+      "heatmap": {
+        "metric": {
+          "failures": "Failures",
+          "latency": "Median latency"
+        },
+        "weekdays": {
+          "1": "Mon",
+          "2": "Tue",
+          "3": "Wed",
+          "4": "Thu",
+          "5": "Fri",
+          "6": "Sat",
+          "7": "Sun"
+        }
+      },
+      "topOffenders": {
+        "columns": {
+          "integration": "Integration",
+          "failureRate": "Failure %",
+          "latencyP95": "p95 latency"
         }
       }
     }

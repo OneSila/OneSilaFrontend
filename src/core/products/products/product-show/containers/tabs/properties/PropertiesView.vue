@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch} from "vue";
+import {onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -16,6 +16,9 @@ import {Loader} from "../../../../../../../shared/components/atoms/loader";
 import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
 import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
+import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
+import {Button} from "../../../../../../../shared/components/atoms/button";
+import {PropertyFilters} from "../../../../../../../shared/components/molecules/property-filters";
 
 
 const {t} = useI18n();
@@ -26,15 +29,152 @@ const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
 const loading = ref(false);
 const language: Ref<string | null> = ref(null);
+const companyLanguage: Ref<string | null> = ref(null);
+const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
+const setValueInputRef = (el: any) => {
+  if (el) {
+    valueInputs.value.push(el);
+  }
+};
+onBeforeUpdate(() => {
+  valueInputs.value = [];
+});
+const hasUnsavedChanges = computed(() => valueInputs.value.some(v => v?.hasChanges));
+const saveAll = async () => {
+  const inputs = [...valueInputs.value];
+  for (const v of inputs) {
+    if (v?.hasChanges) {
+      await v.saveChanges();
+    }
+  }
+};
+
+defineExpose({ hasUnsavedChanges });
+
+const currentPage = ref(1);
+const limit = ref(10);
+const perPageOptions = [
+  {name: '10', value: 10},
+  {name: '20', value: 20},
+  {name: '50', value: 50},
+  {name: '100', value: 100},
+];
+
+const searchQuery = ref('');
+const filters = ref<Record<string, boolean>>({
+  [ConfigTypes.REQUIRED]: true,
+  [ConfigTypes.OPTIONAL]: true,
+  [ConfigTypes.FILLED]: true,
+});
+const selectedPropertyTypes = ref<string[]>([]);
+
+const requiredTypes = [
+  ConfigTypes.REQUIRED,
+  ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+  ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+];
+
+const isFilled = (val: ProductPropertyValue) => {
+  if (val.valueBoolean !== undefined && val.valueBoolean !== null) return true;
+  if (val.valueInt !== null && val.valueInt !== undefined) return true;
+  if (val.valueFloat !== null && val.valueFloat !== undefined) return true;
+  if (val.valueDate != null) return true;
+  if (val.valueDateTime != null) return true;
+  if (val.valueSelect && val.valueSelect.id != null) return true;
+  if (val.valueMultiSelect && val.valueMultiSelect.length) return true;
+  if (
+      val.translation &&
+      ((val.translation.valueText && val.translation.valueText !== '') ||
+          (val.translation.valueDescription && val.translation.valueDescription !== ''))
+  )
+    return true;
+  return false;
+};
+
+const productTypeValue = computed(() => values.value.find(v => v.property.isProductType));
+
+const sortedValues = computed(() => {
+  const req: ProductPropertyValue[] = [];
+  const opt: ProductPropertyValue[] = [];
+  const filled: ProductPropertyValue[] = [];
+  for (const v of values.value) {
+    if (v.property.isProductType) continue;
+    if (isFilled(v)) {
+      filled.push(v);
+    } else if (requiredTypes.includes(v.property.requireType as ConfigTypes)) {
+      req.push(v);
+    } else {
+      opt.push(v);
+    }
+  }
+  return [...req, ...opt, ...filled];
+});
+
+const filteredValues = computed(() => {
+  return sortedValues.value.filter(v => {
+    const type = isFilled(v)
+        ? ConfigTypes.FILLED
+        : requiredTypes.includes(v.property.requireType as ConfigTypes)
+            ? ConfigTypes.REQUIRED
+            : ConfigTypes.OPTIONAL;
+    if (!filters.value[type]) return false;
+    if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(v.property.type)) return false;
+    if (!searchQuery.value) return true;
+    return v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredValues.value.length / limit.value)));
+
+const paginatedValues = computed(() => {
+  const start = (currentPage.value - 1) * limit.value;
+  return filteredValues.value.slice(start, start + limit.value);
+});
+
+const pageInfo = computed(() => ({
+  startCursor: String(currentPage.value - 1),
+  endCursor: String(currentPage.value + 1),
+  hasPreviousPage: currentPage.value > 1,
+  hasNextPage: currentPage.value < totalPages.value,
+}));
+
+const handleQueryChanged = (queryData) => {
+  const q = queryData.query;
+  if (q.before) currentPage.value = parseInt(q.before, 10);
+  if (q.after) currentPage.value = parseInt(q.after, 10);
+  if (q.first === 'true') currentPage.value = 1;
+  if (q.last === 'true') currentPage.value = totalPages.value;
+};
+
+const updateLimitPerPage = (value: number) => {
+  limit.value = value;
+  currentPage.value = 1;
+};
+
+watch([filteredValues, limit], () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = totalPages.value;
+  }
+});
+
+watch(searchQuery, () => {
+  currentPage.value = 1;
+});
+watch(filters, () => {
+  currentPage.value = 1;
+}, {deep: true});
+watch(selectedPropertyTypes, () => {
+  currentPage.value = 1;
+});
 
 
-const fetchProductTypeValue = async (productTypePropertyId) => {
+const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
   ruleId.value = null;
 
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {exact: productTypePropertyId}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: fetchPolicy
   });
 
   if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
@@ -74,26 +214,31 @@ const fetchProductTypeValue = async (productTypePropertyId) => {
 };
 
 
-const setCurrentLanguage = async () => {
+const setCurrentLanguage = async (fetchPolicy) => {
 
-  const {data} = await apolloClient.query({
-    query: translationLanguagesQuery,
-    fetchPolicy: 'network-only'
-  });
+    const {data} = await apolloClient.query({
+      query: translationLanguagesQuery,
+      fetchPolicy: fetchPolicy
+    });
 
   if (data && data.translationLanguages && data.translationLanguages.defaultLanguage) {
     const defaultLanguage = data.translationLanguages.defaultLanguage;
     language.value = defaultLanguage.code;
+    companyLanguage.value = defaultLanguage.code;
   }
 
 };
 
-const fetchPropertiesIds = async (productTypeValueId) => {
+const fetchPropertiesIds = async (productTypeValueId, fetchPolicy) => {
+
+  if (productTypeValueId == null) {
+    return [];
+  }
 
   const {data} = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: fetchPolicy
   })
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
@@ -125,7 +270,7 @@ const fetchPropertiesIds = async (productTypeValueId) => {
       propertyIds.push(item.property.id)
 
       if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(item.property.type) && language.value == null) {
-        await setCurrentLanguage();
+        await setCurrentLanguage(fetchPolicy);
       }
 
     }
@@ -136,11 +281,11 @@ const fetchPropertiesIds = async (productTypeValueId) => {
   return [];
 }
 
-const setInitialValues = async (propertiesIds) => {
+const setInitialValues = async (propertiesIds, fetchPolicy) => {
   const {data} = await apolloClient.query({
     query: productPropertiesQuery,
     variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: fetchPolicy
   });
 
   if (data && data.productProperties && data.productProperties.edges) {
@@ -168,12 +313,12 @@ const setInitialValues = async (propertiesIds) => {
 };
 
 
-const fetchRequiredProductType = async () => {
+const fetchRequiredProductType = async (fetchPolicy) => {
 
   const {data} = await apolloClient.query({
     query: propertiesQuery,
     variables: {filter: {isProductType: {exact: true}}},
-    fetchPolicy: 'network-only'
+    fetchPolicy: fetchPolicy
   })
 
   if (data && data.properties && data.properties.edges && data.properties.edges.length == 1) {
@@ -197,26 +342,28 @@ const fetchRequiredProductType = async () => {
   return null;
 }
 
-const fetchRequiredAttributes = async (productTypePropertyId) => {
+const fetchRequiredAttributes = async (productTypePropertyId, fetchPolicy) => {
 
-  const productTypeValueId = await fetchProductTypeValue(productTypePropertyId);
+  const productTypeValueId = await fetchProductTypeValue(productTypePropertyId, fetchPolicy);
 
   if (props.product.type == ProductType.Configurable) {
     lastSavedValues.value = values.value;
     return
   }
 
-  const propertyIds = await fetchPropertiesIds(productTypeValueId);
-  await setInitialValues(propertyIds);
+  const propertyIds = await fetchPropertiesIds(productTypeValueId, fetchPolicy);
+  await setInitialValues(propertyIds, fetchPolicy);
 
 }
 
-const fetchRequiredAttributesValues = async () => {
+const fetchRequiredAttributesValues = async (fetchPolicy = 'cache-first') => {
   loading.value = true
   values.value = [];
   language.value = null;
-  const productTypePropertyId = await fetchRequiredProductType();
-  await fetchRequiredAttributes(productTypePropertyId);
+  companyLanguage.value = null;
+  currentPage.value = 1;
+  const productTypePropertyId = await fetchRequiredProductType(fetchPolicy);
+  await fetchRequiredAttributes(productTypePropertyId, fetchPolicy);
   loading.value = false
 }
 
@@ -250,47 +397,52 @@ const handleRemove = (id) => {
 const fetchFieldTranslation = async (value: ProductPropertyValue) => {
 
   if (language.value == null) {
-    return
+    return null;
   }
 
   const {data} = await apolloClient.query({
     query: productPropertyTextTranslationsQuery,
     variables: {
-      filter:
-          {
-            productProperty:
-                {
-                  property: {id: {exact: value.property.id}},
-                  product: {id: {exact: props.product.id}}
-                },
-            language: {exact: language.value}
-          }
+      filter: {
+        productProperty: {
+          property: {id: {exact: value.property.id}},
+          product: {id: {exact: props.product.id}}
+        },
+        language: {exact: language.value}
+      }
     },
     fetchPolicy: 'network-only'
   });
 
   if (data && data.productPropertyTextTranslations && data.productPropertyTextTranslations.edges && data.productPropertyTextTranslations.edges.length == 1) {
-    value.translation.id = data.productPropertyTextTranslations.edges[0].node.id;
-    value.translation.valueText = data.productPropertyTextTranslations.edges[0].node.valueText;
-    value.translation.valueDescription = data.productPropertyTextTranslations.edges[0].node.valueDescription;
+    const node = data.productPropertyTextTranslations.edges[0].node;
+    return {
+      id: node.id,
+      valueText: node.valueText,
+      valueDescription: node.valueDescription,
+    };
   }
 
-  return null;
+  return {
+    id: undefined,
+    valueText: undefined,
+    valueDescription: undefined,
+  };
 };
 
 const populateTranslatableFields = async () => {
 
   if (language.value == null) {
-    return
+    return;
   }
 
   for (const value of values.value) {
     if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(value.property.type)) {
-      value.translation.id = undefined;
-      value.translation.valueDescription = undefined;
-      value.translation.valueText = undefined;
-      await fetchFieldTranslation(value);
-      value.translation.language = language.value;
+      const translation = await fetchFieldTranslation(value);
+      value.translation = {
+        ...translation,
+        language: language.value,
+      };
     }
   }
 }
@@ -326,7 +478,7 @@ const getExtendedTooltip = (metaType: string): string => {
       return t('properties.rule.configTypes.required.example');
     case 'OPTIONAL':
       return t('properties.rule.configTypes.optional.example');
-    case 'FILLED':
+    case ConfigTypes.FILLED:
       return t('properties.rule.configTypes.filled.example');
     default:
       return '';
@@ -337,10 +489,8 @@ const getExtendedTooltip = (metaType: string): string => {
 const requireTypes = [
   {value: ConfigTypes.REQUIRED, label: t('properties.rule.configTypes.required.title')},
   {value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title')},
-  {value: 'FILLED', label: t('properties.rule.configTypes.filled.title')}
+  {value: ConfigTypes.FILLED, label: t('properties.rule.configTypes.filled.title')}
 ];
-
-
 
 
 const handleValueUpdate = ({id, type, value, language}) => {
@@ -398,8 +548,18 @@ const handleValueUpdate = ({id, type, value, language}) => {
           </div>
         </div>
       </FlexCell>
-      <FlexCell v-if="language">
-        <ApolloQuery :query="translationLanguagesQuery">
+    </Flex>
+    <Flex v-if="product.type !== ProductType.Configurable" center gap="2" class="my-4 items-start">
+      <FlexCell grow>
+        <PropertyFilters
+            v-model:search-query="searchQuery"
+            v-model:selected-property-types="selectedPropertyTypes"
+            v-model:filters="filters"
+            add-filled
+        />
+      </FlexCell>
+      <FlexCell>
+        <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
                       v-model="language"
@@ -414,22 +574,64 @@ const handleValueUpdate = ({id, type, value, language}) => {
           </template>
         </ApolloQuery>
       </FlexCell>
+      <FlexCell>
+        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
+          {{ t('shared.button.saveAll') }}
+        </Button>
+      </FlexCell>
     </Flex>
     <Loader :loading="loading"/>
     <div class="mt-4 space-y-6">
-    <div v-for="(val, index) in values" :key="val.property.id">
+      <div v-if="productTypeValue">
         <ValueInput
-          v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
-          :product-id="product.id"
-          :rule-id="ruleId"
-          :value="val"
-          @refetch="fetchRequiredAttributesValues"
-          @update-id="handleUpdatedId"
-          @update-value="handleValueUpdate"
-          @remove="handleRemove"
+            v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(productTypeValue.property.type)"
+            :product-id="product.id"
+            :rule-id="ruleId"
+            :value="productTypeValue"
+            :company-language="companyLanguage"
+            @refetch="fetchRequiredAttributesValues('network-only')"
+            @update-id="handleUpdatedId"
+            @update-value="handleValueUpdate"
+            @remove="handleRemove"
+            :ref="setValueInputRef"
         />
+        <hr class="my-4"/>
+      </div>
+      <div v-for="(val, index) in paginatedValues" :key="val.property.id">
+        <ValueInput
+            v-if="!loading || [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(val.property.type)"
+            :product-id="product.id"
+            :rule-id="ruleId"
+            :value="val"
+            :company-language="companyLanguage"
+            @refetch="fetchRequiredAttributesValues('network-only')"
+            @update-id="handleUpdatedId"
+            @update-value="handleValueUpdate"
+            @remove="handleRemove"
+            :ref="setValueInputRef"
+        />
+      </div>
     </div>
-</div>
+    <hr class="my-4"/>
+    <div class="px-2 flex items-center space-x-2 mt-4" v-if="totalPages > 1">
+      <Pagination
+          :page-info="pageInfo"
+          :change-query-params="false"
+          @query-changed="handleQueryChanged"
+      />
+      <div>
+        <Selector
+            :options="perPageOptions"
+            :model-value="limit"
+            :clearable="false"
+            dropdown-position="bottom"
+            value-by="value"
+            label-by="name"
+            :placeholder="t('pagination.perPage')"
+            @update:model-value="updateLimitPerPage"
+        />
+      </div>
+    </div>
 
   </div>
 </template>

@@ -5,7 +5,7 @@ import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Label } from '../../../../../../../../shared/components/atoms/label';
 import { FieldQuery } from '../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
-import { propertiesQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../shared/api/queries/properties';
+import { propertiesQuerySelector, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../shared/api/queries/properties';
 import apolloClient from '../../../../../../../../../apollo-client';
 import {FieldType, PropertyTypes} from '../../../../../../../../shared/utils/constants';
 import { QueryFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
@@ -31,7 +31,7 @@ const propertyField = {
   label: t('properties.properties.show.title'),
   labelBy: 'name',
   valueBy: 'id',
-  query: propertiesQuery,
+  query: propertiesQuerySelector,
   queryVariables: { filter: { isProductType: { exact: false }, type: {exact: PropertyTypes.SELECT} } },
   dataKey: 'properties',
   isEdge: true,
@@ -46,7 +46,7 @@ watch(selectedProperty, async (newPropId) => {
   if (!newPropId) return;
 
   const { data } = await apolloClient.query({
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     variables: { filter: { id: { exact: newPropId } } },
   });
 

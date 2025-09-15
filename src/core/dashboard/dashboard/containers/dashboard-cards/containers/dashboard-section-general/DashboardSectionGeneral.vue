@@ -11,6 +11,10 @@ import {
   dashboardPropertiesMissingTranslations,
   dashboardPropertySelectValuesMissingMainTranslations,
   dashboardPropertySelectValuesMissingTranslations,
+  dashboardPropertiesUsedInProductsMissingMainTranslations,
+  dashboardPropertiesUsedInProductsMissingTranslations,
+  dashboardPropertySelectValuesUsedInProductsMissingMainTranslations,
+  dashboardPropertySelectValuesUsedInProductsMissingTranslations,
 } from "../../../../../../../shared/api/queries/dashboardCards.js"
 import { LocalLoader } from "../../../../../../../shared/components/atoms/local-loader";
 import apolloClient from "../../../../../../../../apollo-client";
@@ -23,13 +27,57 @@ const finshFetch = ref(false);
 const loading = ref(false);
 
 const generalCards = ref([
+  // {
+  //   key: 'properties',
+  //   query: dashboardPropertiesUsedInProductsMissingMainTranslations,
+  //   title: t('dashboard.cards.general.propertiesUsedInProductsMissingMainTranslation.title'),
+  //   description: t('dashboard.cards.general.propertiesUsedInProductsMissingMainTranslation.description'),
+  //   icon: 'language',
+  //   color: 'red',
+  //   counter: 0,
+  //   loading: true,
+  //   url: { name: 'properties.properties.list', query: { missingMainTranslation: true, usedInProducts: true } },
+  // },
+  // {
+  //   key: 'properties',
+  //   query: dashboardPropertiesUsedInProductsMissingTranslations,
+  //   title: t('dashboard.cards.general.propertiesUsedInProductsMissingTranslations.title'),
+  //   description: t('dashboard.cards.general.propertiesUsedInProductsMissingTranslations.description'),
+  //   icon: 'language',
+  //   color: 'red',
+  //   counter: 0,
+  //   loading: true,
+  //   url: { name: 'properties.properties.list', query: { missingTranslations: true, usedInProducts: true } },
+  // },
+  // {
+  //   key: 'propertySelectValues',
+  //   query: dashboardPropertySelectValuesUsedInProductsMissingMainTranslations,
+  //   title: t('dashboard.cards.general.propertySelectValuesUsedInProductsMissingMainTranslation.title'),
+  //   description: t('dashboard.cards.general.propertySelectValuesUsedInProductsMissingMainTranslation.description'),
+  //   icon: 'language',
+  //   color: 'red',
+  //   counter: 0,
+  //   loading: true,
+  //   url: { name: 'properties.values.list', query: { missingMainTranslation: true, usedInProducts: true } },
+  // },
+  // {
+  //   key: 'propertySelectValues',
+  //   query: dashboardPropertySelectValuesUsedInProductsMissingTranslations,
+  //   title: t('dashboard.cards.general.propertySelectValuesUsedInProductsMissingTranslations.title'),
+  //   description: t('dashboard.cards.general.propertySelectValuesUsedInProductsMissingTranslations.description'),
+  //   icon: 'language',
+  //   color: 'red',
+  //   counter: 0,
+  //   loading: true,
+  //   url: { name: 'properties.values.list', query: { missingTranslations: true, usedInProducts: true } },
+  // },
   {
     key: 'properties',
     query: dashboardPropertiesMissingMainTranslations,
     title: t('dashboard.cards.general.propertiesMissingMainTranslation.title'),
     description: t('dashboard.cards.general.propertiesMissingMainTranslation.description'),
     icon: 'language',
-    color: 'red',
+    color: 'yellow',
     counter: 0,
     loading: true,
     url: { name: 'properties.properties.list', query: { missingMainTranslation: true } },
@@ -40,7 +88,7 @@ const generalCards = ref([
     title: t('dashboard.cards.general.propertiesMissingTranslations.title'),
     description: t('dashboard.cards.general.propertiesMissingTranslations.description'),
     icon: 'language',
-    color: 'orange',
+    color: 'yellow',
     counter: 0,
     loading: true,
     url: { name: 'properties.properties.list', query: { missingTranslations: true } },
@@ -51,7 +99,7 @@ const generalCards = ref([
     title: t('dashboard.cards.general.propertySelectValuesMissingMainTranslation.title'),
     description: t('dashboard.cards.general.propertySelectValuesMissingMainTranslation.description'),
     icon: 'language',
-    color: 'red',
+    color: 'yellow',
     counter: 0,
     loading: true,
     url: { name: 'properties.values.list', query: { missingMainTranslation: true } },
@@ -62,7 +110,7 @@ const generalCards = ref([
     title: t('dashboard.cards.general.propertySelectValuesMissingTranslations.title'),
     description: t('dashboard.cards.general.propertySelectValuesMissingTranslations.description'),
     icon: 'language',
-    color: 'orange',
+    color: 'yellow',
     counter: 0,
     loading: true,
     url: { name: 'properties.values.list', query: { missingTranslations: true } },
@@ -77,7 +125,7 @@ async function fetchGeneralCounts() {
     try {
       const { data } = await apolloClient.query({
         query: card.query,
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       });
 
       if (data[card.key]) {
@@ -89,17 +137,17 @@ async function fetchGeneralCounts() {
       if (card.counter !== 0 && hideGeneralSection.value) {
         hideGeneralSection.value = false;
       }
+
+      card.loading = false;
     } catch (err) {
       console.error(`Error fetching data for ${card.key}:`, err);
       card.counter = 0;
-    } finally {
       card.loading = false;
     }
   });
 
   await Promise.all(fetchPromises);
   loading.value = false;
-
 }
 
 

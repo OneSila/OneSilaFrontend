@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import {computed, ref} from 'vue';
+import {computed, ref, watch} from 'vue';
 import { Card } from '../../../../shared/components/atoms/card';
 import { Icon } from '../../../../shared/components/atoms/icon';
 import { Image } from "../../../../shared/components/atoms/image";
@@ -8,6 +8,8 @@ import { Link } from "../../../../shared/components/atoms/link";
 import { Button } from "../../../../shared/components/atoms/button";
 import { FilterManager } from "../../../../shared/components/molecules/filter-manager";
 import { Pagination } from "../../../../shared/components/molecules/pagination";
+import { SearchInput } from "../../../../shared/components/molecules/search-input";
+import { defaultSearchConfigVals } from "../../../../shared/components/organisms/general-search/searchConfig";
 import {useI18n} from "vue-i18n";
 import ActionsDropdown from "./ActionsDropdown.vue";
 import { formatDate, getFileName, getFileSize, getId, getPath, TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO} from "../media";
@@ -58,6 +60,59 @@ const updateSelectAll = (value: boolean, items: any[]) => {
     selectedEntities.value = [];
   }
 };
+
+
+const limit = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
+const localSearch = ref('');
+const firstLocal = ref(limit);
+const lastLocal = ref<number | null>(null);
+const beforeLocal = ref<string | null>(null);
+const afterLocal = ref<string | null>(null);
+
+const handleLocalPagination = (nQ) => {
+  if (!props.assignImages) return;
+  const query = nQ.query;
+  if (query.before) {
+    firstLocal.value = null;
+    lastLocal.value = limit;
+    beforeLocal.value = query.before as string;
+    afterLocal.value = null;
+  } else if (query.after) {
+    firstLocal.value = limit;
+    lastLocal.value = null;
+    beforeLocal.value = null;
+    afterLocal.value = query.after as string;
+  } else if (query.last === 'true') {
+    firstLocal.value = null;
+    lastLocal.value = limit;
+    beforeLocal.value = null;
+    afterLocal.value = null;
+  } else if (query.first === 'true') {
+    firstLocal.value = limit;
+    lastLocal.value = null;
+    beforeLocal.value = null;
+    afterLocal.value = null;
+  }
+};
+
+watch(localSearch, () => {
+  firstLocal.value = limit;
+  lastLocal.value = null;
+  beforeLocal.value = null;
+  afterLocal.value = null;
+});
+
+const localVariables = computed(() => ({
+  filter: {
+    ...(localSearch.value ? { search: localSearch.value } : {}),
+    ...(props.ids && props.ids.length > 0 ? { NOT: { id: { inList: props.ids } } } : {})
+  },
+  order: {},
+  first: firstLocal.value,
+  last: lastLocal.value,
+  before: beforeLocal.value,
+  after: afterLocal.value
+}));
 
 
 const refetchIfNecessary = (query, data, force = false) => {
@@ -137,13 +192,17 @@ const deleteAll = async (query) => {
       </div>
     </div>
 
+    <div v-if="assignImages" class="px-4 mb-2">
+      <SearchInput v-model="localSearch" :updateRoute="false" />
+    </div>
+
     <hr />
 
     <div class="flex flex-col mt-2">
       <FilterManager :searchConfig="searchConfig">
         <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
-          <ApolloQuery :query="listQuery"
-                       :variables="{
+          <ApolloQuery :query="listQuery" fetch-policy="cache-and-network"
+                       :variables="assignImages ? localVariables : {
                          filter: {
                            ...filterVariables,
                            ...(ids && ids.length > 0 ? { NOT: { id: { inList: ids } } } : {})
@@ -238,10 +297,14 @@ const deleteAll = async (query) => {
 
                     <template v-if="item.node.type === TYPE_IMAGE">
                       <Button v-if="assignImages" @click="assignMedia(item.node)">
-                        <Image :source="item.node.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md" />
+                        <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center">
+                          <Image :source="item.node.imageWebUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
+                        </div>
                       </Button>
                       <Link v-else :path="getPath(item.node)">
-                        <Image :source="item.node.onesilaThumbnailUrl" alt="File thumbnail" class="h-48 w-56 rounded-md" />
+                        <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center">
+                          <Image :source="item.node.imageWebUrl" :alt="t('media.media.labels.fileThumbnail')" class="w-full h-full object-contain" />
+                        </div>
                       </Link>
                     </template>
 
@@ -282,7 +345,7 @@ const deleteAll = async (query) => {
                 <div class="mt-4">
                   <hr />
                   <div class="mt-2">
-                    <Pagination :page-info="data[queryKey].pageInfo" />
+                    <Pagination :page-info="data[queryKey].pageInfo" :change-query-params="!assignImages" @query-changed="handleLocalPagination" />
                   </div>
                 </div>
               </div>

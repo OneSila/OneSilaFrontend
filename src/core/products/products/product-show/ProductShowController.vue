@@ -33,6 +33,7 @@ const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const showDuplicateModal = ref(false);
+const isConfigurableProduct = ref(false);
 
 interface  ProductSubscriptionResult {
   product: {
@@ -54,6 +55,10 @@ interface  ProductSubscriptionResult {
     allowBackorder: boolean;
   };
 }
+
+const handleResultUpdated = (data) => {
+  isConfigurableProduct.value = data.product.type === ProductType.Configurable;
+};
 
 const getResultData = (result, field: string | null = null, vatRateField: string | null = null, aliasParentProductField: string | null = null) => {
   const r: ProductSubscriptionResult = result;
@@ -106,11 +111,11 @@ const redirectToList = (response) => {
   }
 }
 
-const handleDuplicate = async (sku: string | null) => {
+const handleDuplicate = async (sku: string | null, createAsAlias: boolean) => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: duplicateProductMutation,
-      variables: { product: {id: id.value}, sku },
+      variables: { product: {id: id.value}, sku, createAsAlias },
     });
 
     if (data && data.duplicateProduct) {
@@ -122,6 +127,16 @@ const handleDuplicate = async (sku: string | null) => {
     if (validationErrors['__all__']) {
       Toast.error(validationErrors['__all__']);
     }
+  }
+};
+
+const copySkuToClipboard = async (sku: string) => {
+  try {
+    await navigator.clipboard.writeText(sku);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (err) {
+    console.error('Failed to copy:', err);
+    Toast.error(t('shared.alert.toast.clipboardFail'));
   }
 };
 
@@ -138,19 +153,19 @@ const handleDuplicate = async (sku: string | null) => {
     </template>
 
    <template v-slot:content>
-   <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef">
+   <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef" @result-updated="handleResultUpdated">
       <template v-slot:default="{ loading, error, result }">
         <template v-if="!loading && result">
           <Card>
             <div class="grid xl:grid-cols-2 gap-8 mb-6">
-              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none sm:max-h-48 max-h-none">
+              <div class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <div class="p-5 flex items-center sm:items-center flex-col sm:flex-row">
                   <Link v-if="getResultData(result, 'thumbnailUrl')" :path="{ name: 'products.products.show', params: { id: id }, query: { ...route.query, tab: 'media' } }">
-                    <div class="mb-5 w-20 h-20 overflow-hidden">
-                      <Image class="w-20 h-20 rounded-md overflow-hidden object-cover" :source="getResultData(result, 'thumbnailUrl')" />
+                    <div class="mb-5 w-20 h-20">
+                      <Image class="w-20 h-20 rounded-md object-contain" :source="getResultData(result, 'thumbnailUrl')" />
                     </div>
                   </Link>
-                  <div v-else class="mb-5 w-20 h-20 overflow-hidden rounded-md bg-gray-300 flex justify-center items-center">
+                  <div v-else class="mb-5 w-20 h-20 rounded-md bg-gray-300 flex justify-center items-center">
                     <Icon class="text-white" size="xl" name="question" />
                   </div>
                   <div class="flex-1 ltr:sm:pl-5 rtl:sm:pr-5 text-left">
@@ -160,6 +175,9 @@ const handleDuplicate = async (sku: string | null) => {
                     <Flex>
                       <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
                       <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
+                      <Button class="ml-1" @click="copySkuToClipboard(getResultData(result, 'sku'))">
+                        <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
+                      </Button>
                     </Flex>
                     <Flex v-if="getResultData(result, null, 'name')">
                       <Label semi-bold>{{ t('products.products.labels.vatRate') }}:</Label>
@@ -208,8 +226,8 @@ const handleDuplicate = async (sku: string | null) => {
                             <Label semi-bold>{{ t('products.products.labels.aliasParentProduct') }}: </Label>
                           </FlexCell>
                           <FlexCell>
-                            <Link :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }">
-                              {{ getResultData(result, 'name', null, 'name') }}
+                            <Link :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }" :title="getResultData(result, 'name', null, 'name')">
+                              {{ shortenText(getResultData(result, 'name', null, 'name'), 64) }}
                             </Link>
                           </FlexCell>
                         </Flex>
@@ -244,6 +262,6 @@ const handleDuplicate = async (sku: string | null) => {
      </ApolloSubscription>
    </template>
   </GeneralTemplate>
-  <DuplicateProductModal v-model="showDuplicateModal" @duplicate="handleDuplicate" />
+  <DuplicateProductModal v-model="showDuplicateModal" :is-configurable="isConfigurableProduct" @duplicate="handleDuplicate" />
   </div>
 </template>

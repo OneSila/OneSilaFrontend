@@ -123,7 +123,6 @@ const tabMap: Record<number, string> = {
   111: 'properties',
   112: 'properties',
   113: 'price',
-  114: 'inventory',
   115: 'general',
   116: 'priceLists',
   117: 'variations',
@@ -133,6 +132,8 @@ const tabMap: Record<number, string> = {
   122: 'variations',
   123: 'variations',
   124: 'properties',
+  125: 'amazon',
+  126: 'amazon',
 };
 
 function setTab(tabName: string) {

@@ -73,7 +73,7 @@ useEnterKeyboardListener(onSubmit);
     <div class="mb-2">
       <Label class="font-semibold text-md">{{ t('auth.register.company.labels.country') }}</Label>
       <div class="mt-2">
-        <ApolloQuery :query="countriesQuery">
+        <ApolloQuery :query="countriesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
               <Selector v-if="data" v-model="form.country" :options="data.countries" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.country')" filterable />
           </template>
@@ -84,7 +84,7 @@ useEnterKeyboardListener(onSubmit);
     <div>
     <Label class="font-semibold text-md">{{ t('auth.register.company.labels.language') }}</Label>
     <div class="mt-1">
-      <ApolloQuery :query="languagesQuery">
+      <ApolloQuery :query="languagesQuery" fetch-policy="cache-and-network">
         <template v-slot="{ result: { data } }">
             <Selector v-if="data" v-model="form.language" :options="data.languages" labelBy="name" valueBy="code" :placeholder="t('auth.register.company.placeholders.selector.language')" filterable />
             <div class="mt-1 text-sm leading-6 text-gray-400">

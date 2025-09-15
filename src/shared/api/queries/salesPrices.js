@@ -78,10 +78,27 @@ export const salesPriceListsQuery = gql`
           }
           vatIncluded
           autoUpdatePrices
-          customers {
-            id
-            name
-          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+  }
+  }
+`;
+
+export const salesPriceListsQuerySelector = gql`
+  query SalesPriceLists($first: Int, $last: Int, $after: String, $before: String, $order: SalesPriceListOrder, $filter: SalesPriceListFilter) {
+    salesPriceLists(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
         }
         cursor
       }
@@ -132,6 +149,21 @@ export const salesPriceListItemsQuery = gql`
   }
 `;
 
+export const salesPriceListItemsProductIdsQuery = gql`
+  query SalesPriceListItemProductIds($filter: SalesPriceListItemFilter, $first: Int) {
+    salesPriceListItems(first: $first, filters: $filter) {
+      edges {
+        node {
+          id
+          product {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const getSalesPriceQuery = gql`
   query getSalesPrice($id: GlobalID!) {
     salesPrice(id: $id) {
@@ -169,16 +201,6 @@ export const getSalesPriceListQuery = gql`
       autoUpdatePrices
       startDate
       endDate
-      customers {
-        id
-        name
-      }
-      salespricelistitemSet {
-        id
-        product {
-          id
-        }
-      }
     }
   }
 `;

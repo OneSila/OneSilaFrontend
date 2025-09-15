@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { onMounted, ref, Ref } from "vue";
+import { onMounted, ref, Ref, computed } from "vue";
 import { useI18n } from 'vue-i18n';
 import { Product } from "../../../../configs";
 import { Button } from "../../../../../../../shared/components/atoms/button";
@@ -10,16 +10,17 @@ import { salesPricesQuery } from "../../../../../../../shared/api/queries/salesP
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { createSalesPriceMutation, updateSalesPriceMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
 import { Toast } from "../../../../../../../shared/modules/toast";
-import { currenciesQuery } from "../../../../../../../shared/api/queries/currencies.js";
+import { currenciesQuerySelector } from "../../../../../../../shared/api/queries/currencies.js";
 import {TextInputPrepend} from "../../../../../../../shared/components/atoms/input-text-prepend";
+import type { FetchPolicy } from "@apollo/client";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
 const loading = ref(false);
 interface Price {
   id: string;
-  price: string | number | null;
-  rrp: string | number | null;
+  price: string | null;
+  rrp: string | null;
   currency: string;
   symbol: string;
   readonly: boolean;
@@ -28,38 +29,37 @@ const prices: Ref<Price[]> = ref([]);
 const initialPrices: Ref<Price[]> = ref([]);
 const defaultCurrency = ref({ id: '', isoCode: '', symbol: '' });
 
-const getDefaultCurrency = async () => {
+const getDefaultCurrency = async (policy: FetchPolicy = 'cache-first') => {
   const { data } = await apolloClient.query({
-    query: currenciesQuery,
+    query: currenciesQuerySelector,
     variables: { filter: { isDefaultCurrency: { exact: true } } },
+    fetchPolicy: policy,
   });
 
   defaultCurrency.value = data.currencies.edges[0].node;
 }
 
 
-const loadPrices = async () => {
+const loadPrices = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
 
   // Fetch the default currency first
-  await getDefaultCurrency();
+  await getDefaultCurrency(policy);
 
   const { data } = await apolloClient.query({
     query: salesPricesQuery,
     variables: { filter: { product: {id: { exact: props.product.id }} }, order: { currency: { isoCode: 'ASC' } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: policy
   });
 
   prices.value = data.salesPrices.edges.map(edge => ({
     id: edge.node.id,
-    price: edge.node.price,
-    rrp: edge.node.rrp,
+    price: edge.node.price?.toString() || '',
+    rrp: edge.node.rrp?.toString() || '',
     currency: edge.node.currency.isoCode,
     symbol: edge.node.currency.symbol,
     readonly: !edge.node.currency.isDefaultCurrency && !!edge.node.currency.inheritsFrom,
   }));
-
-  initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
   const defaultCurrencyPrice = prices.value.find(price => price.currency === defaultCurrency.value.isoCode);
 
@@ -67,13 +67,15 @@ const loadPrices = async () => {
 
     prices.value.unshift({
       id: '',
-      price: null,
-      rrp: null,
+      price: '',
+      rrp: '',
       currency: defaultCurrency.value.isoCode,
       symbol: defaultCurrency.value.symbol,
-      readonly: false,
-    });
-  }
+    readonly: false,
+  });
+}
+
+  initialPrices.value = JSON.parse(JSON.stringify(prices.value));
 
   loading.value = false;
 };
@@ -115,8 +117,8 @@ const createPrice = async (price) => {
       mutation: createSalesPriceMutation,
       variables: {
         data: {
-          price: price.price,
-          rrp: price.rrp,
+          price: parseFloat(price.price),
+          rrp: price.rrp === '' ? null : parseFloat(price.rrp),
           product: { id: props.product.id },
           currency: { id: defaultCurrency.value.id }
         }
@@ -133,8 +135,8 @@ const editPrice = async (price) => {
   if (JSON.stringify(price) !== JSON.stringify(originalPrice)) {
     const priceData = {
       id: price.id,
-      price: price.price,
-      rrp: price.rrp == '' ? null : price.rrp
+      price: parseFloat(price.price),
+      rrp: price.rrp === '' ? null : parseFloat(price.rrp)
     };
     const { data } = await apolloClient.mutate({
       mutation: updateSalesPriceMutation,
@@ -165,12 +167,16 @@ const savePrices = async () => {
     }
 
   } finally {
-    await loadPrices();
+    await loadPrices('network-only');
     loading.value = false;
   }
 }
 
 onMounted(loadPrices);
+
+const hasUnsavedChanges = computed(() => JSON.stringify(prices.value) !== JSON.stringify(initialPrices.value));
+
+defineExpose({ hasUnsavedChanges });
 
 </script>
 

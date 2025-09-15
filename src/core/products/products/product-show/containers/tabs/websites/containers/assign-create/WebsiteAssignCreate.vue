@@ -2,12 +2,13 @@
 import {onMounted, ref, Ref, watch} from 'vue';
 import { useI18n } from "vue-i18n";
 import { Product } from "../../../../../../configs";
-import { salesChannelViewsQuery } from "../../../../../../../../../shared/api/queries/salesChannels.js";
+import { salesChannelViewsQuerySelector } from "../../../../../../../../../shared/api/queries/salesChannels.js";
 import { createSalesChannelViewAssignMutation } from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {PrimaryButton} from "../../../../../../../../../shared/components/atoms/button-primary";
+import {displayApolloError, processGraphQLErrors} from "../../../../../../../../../shared/utils";
 
 const { t } = useI18n();
 
@@ -31,9 +32,9 @@ const loading = ref(false);
 const fetchViews = async () => {
   loading.value = true;
   const { data } = await apolloClient.query({
-    query: salesChannelViewsQuery,
+    query: salesChannelViewsQuerySelector,
     variables: { filter: { salesChannel: { active: {exact: true} }, NOT: { id: { inList: props.viewsIds } } } },
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data) {
@@ -64,7 +65,10 @@ const handleCreateAssign = async () => {
     resetForm();
     Toast.success(t('shared.alert.toast.submitSuccessCreate'));
   } catch (error) {
-    Toast.error(t('shared.alert.toast.generalError'));
+      const errors = processGraphQLErrors(error, t);
+      if (errors['__all__']) {
+        Toast.error(errors['__all__']);
+      }
   }
 };
 

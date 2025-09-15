@@ -166,6 +166,14 @@ export const deletePropertySelectValuesMutation = gql`
   }
 `;
 
+export const mergePropertySelectValueMutation = gql`
+  mutation mergePropertySelectValue($sources: [PropertySelectValuePartialInput!]!, $target: PropertySelectValuePartialInput!) {
+    mergePropertySelectValue(sources: $sources, target: $target) {
+      id
+    }
+  }
+`;
+
 // Product Property Mutations
 export const createProductPropertyMutation = gql`
   mutation createProductProperty($data: ProductPropertyInput!) {
@@ -228,6 +236,14 @@ export const bulkCreateProductPropertiesMutation = gql`
   }
 `;
 
+export const bulkUpdateProductPropertiesMutation = gql`
+  mutation bulkUpdateProductProperties($data: [BulkProductPropertyPartialInput!]!) {
+    bulkUpdateProductProperties(productProperties: $data) {
+      id
+    }
+  }
+`;
+
 export const updateProductPropertyMutation = gql`
   mutation updateProductProperty($data: ProductPropertyPartialInput!) {
     updateProductProperty(data: $data) {
@@ -253,8 +269,8 @@ export const deleteProductPropertyMutation = gql`
 `;
 
 export const deleteProductPropertiesMutation = gql`
-  mutation deleteProductProperties($ids: [GlobalID!]!) {
-    deleteProductProperties(data: {ids: $ids}) {
+    mutation deleteProductProperties($data: [NodeInput!]!) {
+    deleteProductProperties(data: $data) {
       id
     }
   }

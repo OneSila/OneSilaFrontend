@@ -76,10 +76,6 @@ const submitImages = async (type) => {
               <div>
                 <h3 class="text-lg font-bold">{{ t('properties.rule.configTypes.optionalInConfigurator.title') }}</h3>
                 <p>{{ t('properties.rule.configTypes.optionalInConfigurator.example') }}</p>
-                <div v-if="!allowOptional" class="text-danger text-small blink-animation mt-1">
-                  <Icon size="sm" name="exclamation-circle" />
-                  <span class="ml-1">{{ t('properties.rule.error.noRequiredInConfigurator')  }}</span>
-                </div>
               </div>
             </template>
 

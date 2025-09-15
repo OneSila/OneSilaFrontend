@@ -37,7 +37,7 @@ const setField = async () => {
   let ids: string[] = []
   const {data} = await apolloClient.query({
     query: productPropertiesRulesQuery,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'cache-first'
   });
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges.length > 0) {

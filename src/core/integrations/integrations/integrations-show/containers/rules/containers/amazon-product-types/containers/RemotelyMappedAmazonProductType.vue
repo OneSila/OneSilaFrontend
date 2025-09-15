@@ -10,7 +10,7 @@ import {amazonProductTypeEditFormConfigConstructor, listingQuery} from "../confi
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {
   productPropertiesRulesQuery,
-  propertiesQuery
+  propertiesQuerySelector
 } from "../../../../../../../../../shared/api/queries/properties.js";
 import {Link} from "../../../../../../../../../shared/components/atoms/link";
 import {Button} from "../../../../../../../../../shared/components/atoms/button";
@@ -102,7 +102,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 
 const fetchProductType = async () => {
   const {data} = await apolloClient.query({
-    query: propertiesQuery,
+    query: propertiesQuerySelector,
     variables: {filter: {isProductType: {exact: true}}}
   })
 

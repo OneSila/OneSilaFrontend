@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
 import { Icon } from "../../atoms/icon";
-import { onMounted, ref,watch } from 'vue';
-import { useRoute,useRouter } from 'vue-router';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 interface TabItem {
   name: string;
@@ -17,9 +17,12 @@ const props = withDefaults(
     tabs: TabItem[];
     disabledTabs?: string[];
     transparent?: boolean;
+    tabKey?: string;
+    beforeChange?: (newTab: string, oldTab: string) => Promise<boolean> | boolean;
   }>(),
   {
     disabledTabs: () => ([] as string[]),
+    tabKey: 'tab',
   }
 );
 const emit = defineEmits(['tab-changed']);
@@ -28,14 +31,14 @@ const selectedTab = ref(props.tabs[0]?.name);
 const route = useRoute();
 const router = useRouter();
 
-watch(() => route.query.tab, (newTab) => {
+watch(() => route.query[props.tabKey], (newTab) => {
   if (newTab && props.tabs.some(tab => tab.name === newTab)) {
     selectedTab.value = newTab.toString();
   }
 });
 
 onMounted(() => {
-  const queryTab = route.query.tab;
+  const queryTab = route.query[props.tabKey];
   if (queryTab && props.tabs.some(tab => tab.name === queryTab)) {
     selectedTab.value = queryTab.toString();
   }
@@ -44,10 +47,18 @@ const isSelected = (tab) => tab === selectedTab.value;
 const isDisabled = (tab) => props.disabledTabs.includes(tab);
 const isHighlighted = (tab: TabItem) => !isSelected(tab.name) && tab.danger;
 
-const changeTab = (index) => {
+const changeTab = async (index) => {
   const newTab = props.tabs[index].name;
+  const oldTab = selectedTab.value;
+  if (props.beforeChange) {
+    const proceed = await props.beforeChange(newTab, oldTab);
+    if (!proceed) {
+      selectedTab.value = oldTab;
+      return;
+    }
+  }
   selectedTab.value = newTab;
-  router.push({ query: { tab: newTab } });
+  router.push({ query: { ...route.query, [props.tabKey]: newTab } });
   emit('tab-changed', newTab);
 };
 

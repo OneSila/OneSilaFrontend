@@ -27,9 +27,9 @@ const productErrors = ref([
   { errorCode: 110, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 111, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 117, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
-  { errorCode: 120, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
-  { errorCode: 121, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
   { errorCode: 124, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 125, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
+  { errorCode: 126, importance: 'high', icon: 'exclamation-triangle', color: 'red', counter: 0, loading: true  },
 
   // Medium importance errors
   { errorCode: 109, importance: 'medium', icon: 'exclamation-circle', color: 'orange', counter: 0, loading: true  },
@@ -43,33 +43,30 @@ const productErrors = ref([
 ]);
 
 async function fetchErrorCounts() {
-  loading.value = true
-  for (const error of productErrors.value) {
+  loading.value = true;
+  const promises = productErrors.value.map(async (error) => {
     try {
       const { data } = await apolloClient.query({
         query: productsDashboardCardsQuery,
         variables: { errorCode: error.errorCode.toString() },
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       });
 
-      if (data) {
-        error.counter = data.products.totalCount;
-      } else {
-        error.counter = 0;
-      }
+      error.counter = data?.products.totalCount || 0;
 
       if (error.counter !== 0 && allCardsCompleted.value) {
         allCardsCompleted.value = false;
       }
 
+      error.loading = false;
     } catch (err) {
       console.error(`Error fetching data for error code ${error.errorCode}:`, err);
       error.counter = 0;
-    } finally {
       error.loading = false;
     }
-  }
+  });
 
+  await Promise.all(promises);
   loading.value = false;
 }
 
@@ -126,7 +123,7 @@ onMounted(async () =>  {
             :description="t(`dashboard.cards.products.inspector.${err.errorCode}.description`)"
             :hide-on-complete="!showCompletedProductsCards"
             :loading="err.loading"
-            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode } }"
+            :url="{ name: 'products.products.list', query: {inspectorNotSuccessfullyCodeError: err.errorCode , active: true} }"
             :color="err.color"
             :icon="err.icon"
           />

@@ -4,7 +4,7 @@ import { SearchConfig } from "../../../shared/components/organisms/general-searc
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {ShowField} from "../../../shared/components/organisms/general-show/showConfig";
 import { eanCodesQuery } from "../../../shared/api/queries/eanCodes.js"
-import { productsQuery } from "../../../shared/api/queries/products.js"
+import { productsQuerySelector } from "../../../shared/api/queries/products.js"
 import {
     deleteEanCodeMutation,
     deleteEanCodesMutation,
@@ -66,7 +66,7 @@ export const baseFormConfigConstructor = (
         label:  t('shared.labels.product'),
         labelBy: 'name',
         valueBy: 'id',
-        query: productsQuery,
+        query: productsQuerySelector,
         dataKey: 'products',
         isEdge: true,
         multiple: false,

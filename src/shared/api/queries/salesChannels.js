@@ -185,7 +185,6 @@ export const getAmazonChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
-      listingOwner
       accessToken
       refreshTokenExpiration
       expirationDate
@@ -399,9 +398,10 @@ export const salesChannelIntegrationPricelistsQuery = gql`
       edges {
         node {
           id
-          name
-          active
-          multiTenantCompany {
+          salesChannel {
+            id
+          }
+          priceList {
             id
             name
           }
@@ -423,9 +423,10 @@ export const getSalesChannelIntegrationPricelistQuery = gql`
   query getSalesChannelIntegrationPricelist($id: GlobalID!) {
     salesChannelIntegrationPricelist(id: $id) {
       id
-      name
-      active
-      multiTenantCompany {
+      salesChannel {
+        id
+      }
+      priceList {
         id
         name
       }
@@ -446,6 +447,7 @@ export const salesChannelViewAssignsQuery = gql`
           product {
             id
             name
+            sku
             active
             type
           }
@@ -587,6 +589,30 @@ export const salesChannelViewsQuery = gql`
   }
 `;
 
+export const salesChannelViewsQuerySelector = gql`
+  query SalesChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelViewOrder, $filter: SalesChannelViewFilter) {
+    salesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          salesChannel {
+             id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getSalesChannelViewQuery = gql`
   query getSalesChannelView($id: GlobalID!) {
     salesChannelView(id: $id) {
@@ -607,11 +633,13 @@ export const amazonChannelViewsQuery = gql`
       edges {
         node {
           id
+          remoteId
           name
           active
           isDefault
           salesChannel {
             id
+            hostname
           }
         }
         cursor
@@ -637,6 +665,7 @@ export const getAmazonChannelViewQuery = gql`
       isDefault
       salesChannel {
         id
+        hostname
       }
     }
   }
@@ -758,6 +787,61 @@ export const salesChannelImportsQuery = gql`
       pageInfo {
         startCursor
         endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getSalesChannelImportQuery = gql`
+  query getSalesChannelImport($id: GlobalID!) {
+    salesChannelImport(id: $id) {
+      id
+      status
+      percentage
+      createdAt
+      name
+      createOnly
+      updateOnly
+      skipBrokenRecords
+      totalRecords
+      processedRecords
+      errorTraceback
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const amazonImportBrokenRecordsQuery = gql`
+  query AmazonImportBrokenRecords(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $filter: AmazonImportBrokenRecordFilter
+  ) {
+    amazonImportBrokenRecords(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          createdAt
+          record
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
         hasNextPage
         hasPreviousPage
       }
@@ -918,6 +1002,7 @@ export const getAmazonPropertySelectValueQuery = gql`
       }
       remoteValue
       remoteName
+      translatedRemoteName
       localInstance {
         id
         value
@@ -959,6 +1044,7 @@ export const amazonProductTypesQuery = gql`
               value
             }
           }
+          variationThemes
         }
         cursor
       }
@@ -1002,9 +1088,11 @@ export const getAmazonProductTypeQuery = gql`
         }
         remoteType
       }
+      variationThemes
     }
   }
-`;export const amazonImportProcessesQuery = gql`
+`;
+export const amazonImportProcessesQuery = gql`
   query AmazonImportProcesses(
     $first: Int,
     $last: Int,

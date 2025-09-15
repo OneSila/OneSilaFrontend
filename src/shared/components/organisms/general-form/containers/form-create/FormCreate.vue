@@ -80,6 +80,7 @@ watch(() => props.fieldsToClear, (fields) => {
     <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
       <FormLayout :config="config" :form="form" :errors="outsideErrors !== null && outsideErrors !== undefined ? outsideErrors : errors" />
     </div>
+    <slot name="additional-fields" />
   </div>
   <SubmitButtons v-if="!config.hideButtons" :form="form" :config="config" @submit="emit('submit')" @update-errors="handleUpdateErrors" >
     <template #additional-button>
