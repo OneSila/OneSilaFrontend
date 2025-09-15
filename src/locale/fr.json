@@ -96,6 +96,10 @@
       "tabs": {
         "amazon": "Amazon"
       },
+        "properties": {
+          "searchPlaceholder": "Rechercher des propriétés",
+          "typePlaceholder": "Filtrer par type"
+        },
       "labels": {
         "configuratorValue": ""
       },

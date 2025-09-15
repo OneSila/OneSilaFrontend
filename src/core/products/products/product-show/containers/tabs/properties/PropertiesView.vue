@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch, computed, onBeforeUpdate} from "vue";
+import {onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive} from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,
@@ -18,6 +18,7 @@ import {Selector} from "../../../../../../../shared/components/atoms/selector";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 import {Button} from "../../../../../../../shared/components/atoms/button";
+import {PropertyFilters} from "../../../../../../../shared/components/molecules/property-filters";
 
 
 const {t} = useI18n();
@@ -58,6 +59,14 @@ const perPageOptions = [
   {name: '50', value: 50},
   {name: '100', value: 100},
 ];
+
+const searchQuery = ref('');
+const filters = ref<Record<string, boolean>>({
+  [ConfigTypes.REQUIRED]: true,
+  [ConfigTypes.OPTIONAL]: true,
+  [ConfigTypes.FILLED]: true,
+});
+const selectedPropertyTypes = ref<string[]>([]);
 
 const requiredTypes = [
   ConfigTypes.REQUIRED,
@@ -101,11 +110,25 @@ const sortedValues = computed(() => {
   return [...req, ...opt, ...filled];
 });
 
-const totalPages = computed(() => Math.max(1, Math.ceil(sortedValues.value.length / limit.value)));
+const filteredValues = computed(() => {
+  return sortedValues.value.filter(v => {
+    const type = isFilled(v)
+        ? ConfigTypes.FILLED
+        : requiredTypes.includes(v.property.requireType as ConfigTypes)
+            ? ConfigTypes.REQUIRED
+            : ConfigTypes.OPTIONAL;
+    if (!filters.value[type]) return false;
+    if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(v.property.type)) return false;
+    if (!searchQuery.value) return true;
+    return v.property.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+  });
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredValues.value.length / limit.value)));
 
 const paginatedValues = computed(() => {
   const start = (currentPage.value - 1) * limit.value;
-  return sortedValues.value.slice(start, start + limit.value);
+  return filteredValues.value.slice(start, start + limit.value);
 });
 
 const pageInfo = computed(() => ({
@@ -128,10 +151,20 @@ const updateLimitPerPage = (value: number) => {
   currentPage.value = 1;
 };
 
-watch([sortedValues, limit], () => {
+watch([filteredValues, limit], () => {
   if (currentPage.value > totalPages.value) {
     currentPage.value = totalPages.value;
   }
+});
+
+watch(searchQuery, () => {
+  currentPage.value = 1;
+});
+watch(filters, () => {
+  currentPage.value = 1;
+}, {deep: true});
+watch(selectedPropertyTypes, () => {
+  currentPage.value = 1;
 });
 
 
@@ -445,7 +478,7 @@ const getExtendedTooltip = (metaType: string): string => {
       return t('properties.rule.configTypes.required.example');
     case 'OPTIONAL':
       return t('properties.rule.configTypes.optional.example');
-    case 'FILLED':
+    case ConfigTypes.FILLED:
       return t('properties.rule.configTypes.filled.example');
     default:
       return '';
@@ -456,7 +489,7 @@ const getExtendedTooltip = (metaType: string): string => {
 const requireTypes = [
   {value: ConfigTypes.REQUIRED, label: t('properties.rule.configTypes.required.title')},
   {value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title')},
-  {value: 'FILLED', label: t('properties.rule.configTypes.filled.title')}
+  {value: ConfigTypes.FILLED, label: t('properties.rule.configTypes.filled.title')}
 ];
 
 
@@ -515,10 +548,17 @@ const handleValueUpdate = ({id, type, value, language}) => {
           </div>
         </div>
       </FlexCell>
-      <FlexCell class="flex items-center space-x-2">
-        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
-          {{ t('shared.button.saveAll') }}
-        </Button>
+    </Flex>
+    <Flex v-if="product.type !== ProductType.Configurable" center gap="2" class="my-4 items-start">
+      <FlexCell grow>
+        <PropertyFilters
+            v-model:search-query="searchQuery"
+            v-model:selected-property-types="selectedPropertyTypes"
+            v-model:filters="filters"
+            add-filled
+        />
+      </FlexCell>
+      <FlexCell>
         <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector v-if="data"
@@ -533,6 +573,11 @@ const handleValueUpdate = ({id, type, value, language}) => {
                       filterable/>
           </template>
         </ApolloQuery>
+      </FlexCell>
+      <FlexCell>
+        <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">
+          {{ t('shared.button.saveAll') }}
+        </Button>
       </FlexCell>
     </Flex>
     <Loader :loading="loading"/>

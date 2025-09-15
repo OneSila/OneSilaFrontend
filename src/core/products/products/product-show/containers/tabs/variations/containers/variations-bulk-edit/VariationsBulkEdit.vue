@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
 import { ProductType, PropertyTypes, FieldType, ConfigTypes } from '../../../../../../../../../shared/utils/constants'
+import { PropertyFilters } from '../../../../../../../../../shared/components/molecules/property-filters'
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
@@ -40,6 +41,13 @@ const { t } = useI18n()
 
 const language = ref<string | null>(null)
 
+const searchQuery = ref('')
+const filters = ref<Record<string, boolean>>({
+  [ConfigTypes.REQUIRED]: true,
+  [ConfigTypes.OPTIONAL]: true,
+})
+const selectedPropertyTypes = ref<string[]>([])
+
 const baseColumns: { key: string; label: string; requireType?: string }[] = [
   { key: 'sku', label: t('shared.labels.sku') },
   { key: 'name', label: t('shared.labels.name') },
@@ -71,9 +79,25 @@ const perPageOptions = [
 const fetchPaginationData = ref<Record<string, any>>({})
 fetchPaginationData.value['first'] = limit.value
 
+const filteredProperties = computed(() => {
+  return properties.value.filter((p) => {
+    const type = [
+      ConfigTypes.REQUIRED,
+      ConfigTypes.REQUIRED_IN_CONFIGURATOR,
+      ConfigTypes.OPTIONAL_IN_CONFIGURATOR,
+    ].includes(p.requireType as ConfigTypes)
+      ? ConfigTypes.REQUIRED
+      : ConfigTypes.OPTIONAL
+    if (!filters.value[type]) return false
+    if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(p.type)) return false
+    if (!searchQuery.value) return true
+    return p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  })
+})
+
 const columns = computed(() => [
   ...baseColumns,
-  ...properties.value.map((p) => ({ key: p.id, label: p.name, requireType: p.requireType })),
+  ...filteredProperties.value.map((p) => ({ key: p.id, label: p.name, requireType: p.requireType })),
 ])
 
 const getIconColor = (requireType: string) => {
@@ -911,7 +935,13 @@ const startResize = (e: MouseEvent, key: string) => {
       <LocalLoader :loading="loading" />
     </div>
     <Flex between middle gap="2" class="mb-4">
-      <FlexCell grow></FlexCell>
+      <FlexCell grow>
+        <PropertyFilters
+          v-model:search-query="searchQuery"
+          v-model:selected-property-types="selectedPropertyTypes"
+          v-model:filters="filters"
+        />
+      </FlexCell>
       <FlexCell class="flex">
         <Button
           class="btn btn-secondary"
@@ -928,7 +958,7 @@ const startResize = (e: MouseEvent, key: string) => {
           <Icon name="arrow-right" />
         </Button>
       </FlexCell>
-      <FlexCell >
+      <FlexCell>
         <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector

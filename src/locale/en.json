@@ -992,6 +992,10 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
       },
+        "properties": {
+          "searchPlaceholder": "Search properties",
+          "typePlaceholder": "Filter by type"
+        },
       "amazon": {
         "validationIssues": "Detected Validation Issues",
         "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
