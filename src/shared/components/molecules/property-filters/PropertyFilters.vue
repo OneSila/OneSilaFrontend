@@ -43,7 +43,7 @@ const requireTypes = computed(() => {
     { value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title') },
   ];
   if (props.addFilled) {
-    types.push({ value: 'FILLED', label: t('properties.rule.configTypes.filled.title') });
+    types.push({ value: ConfigTypes.FILLED, label: t('properties.rule.configTypes.filled.title') });
   }
   return types;
 });

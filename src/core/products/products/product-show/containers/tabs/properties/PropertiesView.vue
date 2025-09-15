@@ -64,7 +64,7 @@ const searchQuery = ref('');
 const filters = ref<Record<string, boolean>>({
   [ConfigTypes.REQUIRED]: true,
   [ConfigTypes.OPTIONAL]: true,
-  FILLED: true,
+  [ConfigTypes.FILLED]: true,
 });
 const selectedPropertyTypes = ref<string[]>([]);
 
@@ -113,7 +113,7 @@ const sortedValues = computed(() => {
 const filteredValues = computed(() => {
   return sortedValues.value.filter(v => {
     const type = isFilled(v)
-        ? 'FILLED'
+        ? ConfigTypes.FILLED
         : requiredTypes.includes(v.property.requireType as ConfigTypes)
             ? ConfigTypes.REQUIRED
             : ConfigTypes.OPTIONAL;
@@ -478,7 +478,7 @@ const getExtendedTooltip = (metaType: string): string => {
       return t('properties.rule.configTypes.required.example');
     case 'OPTIONAL':
       return t('properties.rule.configTypes.optional.example');
-    case 'FILLED':
+    case ConfigTypes.FILLED:
       return t('properties.rule.configTypes.filled.example');
     default:
       return '';
@@ -489,7 +489,7 @@ const getExtendedTooltip = (metaType: string): string => {
 const requireTypes = [
   {value: ConfigTypes.REQUIRED, label: t('properties.rule.configTypes.required.title')},
   {value: ConfigTypes.OPTIONAL, label: t('properties.rule.configTypes.optional.title')},
-  {value: 'FILLED', label: t('properties.rule.configTypes.filled.title')}
+  {value: ConfigTypes.FILLED, label: t('properties.rule.configTypes.filled.title')}
 ];
 
 
