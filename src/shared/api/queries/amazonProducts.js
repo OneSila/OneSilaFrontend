@@ -9,6 +9,14 @@ export const amazonProductsQuery = gql`
           createdMarketplaces
           lastSyncAt
           syncingCurrentPercentage
+          remoteParentProduct {
+            id
+            localInstance {
+              id
+              name
+              sku
+            }
+          }
           issues {
             id
             createdAt
