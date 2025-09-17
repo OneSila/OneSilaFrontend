@@ -51,12 +51,24 @@ const formatDate = (dateString?: string | null) => {
       <FlexCell>
         <div class="flex gap-2 sm:ml-auto">
         <ApolloMutation
+          v-if="remoteProductId"
           :mutation="resyncAmazonProductMutation"
-          :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView?.id }, forceValidationOnly: false }"
+          :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView?.id }, forceValidationOnly: false, forceFullUpdate: true }"
           @done="() => emit('resync-success')"
           @error="(e) => emit('error', e)"
         >
-
+          <template #default="{ mutate, loading }">
+            <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+              {{ t('shared.button.fullUpdate') }}
+            </Button>
+          </template>
+        </ApolloMutation>
+        <ApolloMutation
+          :mutation="resyncAmazonProductMutation"
+          :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView?.id }, forceValidationOnly: false, forceFullUpdate: false }"
+          @done="() => emit('resync-success')"
+          @error="(e) => emit('error', e)"
+        >
           <template #default="{ mutate, loading }">
             <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
               {{ t('shared.button.resync') }}
@@ -64,8 +76,9 @@ const formatDate = (dateString?: string | null) => {
           </template>
         </ApolloMutation>
         <ApolloMutation
+          v-if="remoteProductId"
           :mutation="resyncAmazonProductMutation"
-          :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView?.id }, forceValidationOnly: true }"
+          :variables="{ remoteProduct: { id: remoteProductId }, view: { id: selectedView?.id }, forceValidationOnly: true, forceFullUpdate: false }"
           @done="() => emit('validate-success')"
           @error="(e) => emit('error', e)"
         >

@@ -7,6 +7,7 @@
       "select": "Sélectionner",
       "duplicate": "Dupliquer",
       "resync": "Resync",
+      "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "saveAll": "Tout enregistrer"

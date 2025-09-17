@@ -185,6 +185,7 @@
       "createAnyway": "Toch aanmaken",
       "abort": "Afbreken",
       "resync": "Resync",
+      "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues"
     },
