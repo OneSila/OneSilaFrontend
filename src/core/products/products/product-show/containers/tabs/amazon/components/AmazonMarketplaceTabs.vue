@@ -16,6 +16,22 @@ const MARKETPLACE_KEY_SEPARATOR = '::';
 const createMarketplaceKey = (viewId: string, productId?: string | null) =>
   `${viewId}${MARKETPLACE_KEY_SEPARATOR}${productId ?? ''}`;
 
+const doesProductMatchView = (product: any, view: any) => {
+  if (!view || !product?.createdMarketplaces?.length) return false;
+  const identifiers = [view.remoteId, view.id].filter(Boolean);
+
+  return product.createdMarketplaces.some((marketplaceId: string) => {
+    if (!marketplaceId) return false;
+
+    const [marketplaceViewId] = marketplaceId.split(MARKETPLACE_KEY_SEPARATOR);
+
+    return (
+      identifiers.includes(marketplaceId) ||
+      identifiers.includes(marketplaceViewId)
+    );
+  });
+};
+
 const groupedViews = computed(() => {
   const groups: Record<string, any[]> = {};
   props.views.forEach((view: any) => {
@@ -23,7 +39,7 @@ const groupedViews = computed(() => {
     if (!groups[scId]) groups[scId] = [];
 
     const matchingProducts = props.amazonProducts.filter((product: any) =>
-      product.createdMarketplaces.includes(view.remoteId),
+      doesProductMatchView(product, view),
     );
 
     if (matchingProducts.length) {

@@ -32,6 +32,22 @@ const MARKETPLACE_KEY_SEPARATOR = '::';
 const createMarketplaceKey = (viewId: string, productId?: string | null) =>
   `${viewId}${MARKETPLACE_KEY_SEPARATOR}${productId ?? ''}`;
 
+const doesProductMatchView = (product: AmazonProduct, view: any) => {
+  if (!view || !product?.createdMarketplaces?.length) return false;
+  const identifiers = [view.remoteId, view.id].filter(Boolean);
+
+  return product.createdMarketplaces.some((marketplaceId) => {
+    if (!marketplaceId) return false;
+
+    const [marketplaceViewId] = marketplaceId.split(MARKETPLACE_KEY_SEPARATOR);
+
+    return (
+      identifiers.includes(marketplaceId) ||
+      identifiers.includes(marketplaceViewId)
+    );
+  });
+};
+
 const amazonProducts = ref<AmazonProduct[]>([]);
 const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'network-only') => {
   const { data } = await apolloClient.query({
@@ -86,7 +102,7 @@ const marketplaceEntries = computed<MarketplaceEntry[]>(() => {
   const entries: MarketplaceEntry[] = [];
   views.value.forEach((view: any) => {
     const matchingProducts = amazonProducts.value.filter((product: AmazonProduct) =>
-      product.createdMarketplaces.includes(view.remoteId),
+      doesProductMatchView(product, view),
     );
 
     if (matchingProducts.length) {
@@ -164,7 +180,7 @@ const selectedProduct = computed(() => {
 
   return (
     amazonProducts.value.find((product: AmazonProduct) =>
-      product.createdMarketplaces.includes(selectedView.value.remoteId),
+      doesProductMatchView(product, selectedView.value),
     ) || null
   );
 });
