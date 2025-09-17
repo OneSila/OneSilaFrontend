@@ -354,6 +354,7 @@
       "refresh": "Refresh",
       "add": "Add",
       "resync": "Resync",
+      "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "download": "Download",
