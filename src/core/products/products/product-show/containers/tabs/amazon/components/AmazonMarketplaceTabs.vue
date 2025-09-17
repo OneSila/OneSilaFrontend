@@ -12,19 +12,41 @@ const { t } = useI18n();
 
 const select = (val: string) => emit('update:modelValue', val);
 
-const hasMarketplace = (view: any) =>
-  props.amazonProducts.some((p: any) => p.createdMarketplaces.includes(view.remoteId));
+const MARKETPLACE_KEY_SEPARATOR = '::';
+const createMarketplaceKey = (viewId: string, productId?: string | null) =>
+  `${viewId}${MARKETPLACE_KEY_SEPARATOR}${productId ?? ''}`;
 
 const groupedViews = computed(() => {
   const groups: Record<string, any[]> = {};
   props.views.forEach((view: any) => {
     const scId = view.salesChannel?.id || 'unknown';
     if (!groups[scId]) groups[scId] = [];
-    groups[scId].push(view);
+
+    const matchingProducts = props.amazonProducts.filter((product: any) =>
+      product.createdMarketplaces.includes(view.remoteId),
+    );
+
+    if (matchingProducts.length) {
+      matchingProducts.forEach((product: any) => {
+        groups[scId].push({
+          key: createMarketplaceKey(view.id, product.id),
+          view,
+          product,
+        });
+      });
+    } else {
+      groups[scId].push({
+        key: createMarketplaceKey(view.id, null),
+        view,
+        product: null,
+      });
+    }
   });
-  return Object.entries(groups).map(([salesChannelId, views]) => ({
+  return Object.entries(groups).map(([salesChannelId, entries]) => ({
     salesChannelId,
-    views: views.sort((a, b) => Number(b.isDefault) - Number(a.isDefault)),
+    entries: entries.sort(
+      (a: any, b: any) => Number(b.view.isDefault) - Number(a.view.isDefault),
+    ),
   }));
 });
 </script>
@@ -34,30 +56,30 @@ const groupedViews = computed(() => {
     <div class="max-h-[660px] overflow-y-auto">
       <div v-for="group in groupedViews" :key="group.salesChannelId" class="mb-4 space-y-2">
         <div
-          v-for="view in group.views"
-          :key="view.id"
+          v-for="entry in group.entries"
+          :key="entry.key"
           class="cursor-pointer flex items-center gap-3 p-3 border rounded-md"
-          :class="{ 'bg-primary text-white': modelValue === view.id }"
-          @click="select(view.id)"
+          :class="{ 'bg-primary text-white': modelValue === entry.key }"
+          @click="select(entry.key)"
         >
           <Icon
-            :name="hasMarketplace(view) ? 'circle-check' : 'circle-xmark'"
+            :name="entry.product ? 'circle-check' : 'circle-xmark'"
             class="w-4 h-4"
-            :class="hasMarketplace(view) ? 'text-green-500' : 'text-red-500'"
+            :class="entry.product ? 'text-green-500' : 'text-red-500'"
           />
           <div class="flex flex-col gap-1">
             <FlexCell>
               <Flex gap="2">
                 <FlexCell>
-                  <span>{{ view.name || view.remoteId }}</span>
+                  <span>{{ entry.view.name || entry.view.remoteId }}</span>
                 </FlexCell>
                 <FlexCell>
                   <Icon
-                  v-if="view.isDefault"
-                  name="crown"
-                  class="w-4 h-4 text-yellow-400"
-                  :title="t('products.products.amazon.defaultMarketplace')"
-                />
+                    v-if="entry.view.isDefault"
+                    name="crown"
+                    class="w-4 h-4 text-yellow-400"
+                    :title="t('products.products.amazon.defaultMarketplace')"
+                  />
                 </FlexCell>
               </Flex>
             </FlexCell>
@@ -66,11 +88,30 @@ const groupedViews = computed(() => {
               class="text-xs"
               :path="{
                 name: 'integrations.integrations.show',
-                params: { type: IntegrationTypes.Amazon, id: view.salesChannel.id },
+                params: { type: IntegrationTypes.Amazon, id: entry.view.salesChannel.id },
               }"
             >
-              ({{ view.salesChannel.hostname }})
+              ({{ entry.view.salesChannel.hostname }})
             </Link>
+            <div
+              v-if="entry.product?.remoteParentProduct?.localInstance?.id"
+              class="text-xs text-gray-500"
+            >
+              {{ t('products.products.amazon.parentProductLabel') }}
+              <Link
+                class="text-xs ml-1"
+                :path="{
+                  name: 'products.products.show',
+                  params: { id: entry.product.remoteParentProduct.localInstance.id },
+                }"
+              >
+                {{
+                  entry.product.remoteParentProduct.localInstance.sku ||
+                  entry.product.remoteParentProduct.localInstance.name ||
+                  entry.product.remoteParentProduct.localInstance.id
+                }}
+              </Link>
+            </div>
           </div>
         </div>
         <div class="h-px bg-gray-200"></div>
