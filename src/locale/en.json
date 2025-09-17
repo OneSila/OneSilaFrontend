@@ -1028,6 +1028,7 @@
         "createdAsin": "Created ASIN",
         "defaultMarketplace": "Default marketplace",
         "defaultMarketplaceFallback": "Value missing. The default marketplace value will be used.",
+        "parentProductLabel": "Parent Product:",
         "browseNode": "Browse node",
         "browseNodeDescription": "Select the browse node for this product.",
         "browseNodeSaved": "Browse node saved",

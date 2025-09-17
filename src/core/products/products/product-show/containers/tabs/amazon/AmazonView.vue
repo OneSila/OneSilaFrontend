@@ -28,6 +28,26 @@ import Swal from 'sweetalert2';
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 
+const MARKETPLACE_KEY_SEPARATOR = '::';
+const createMarketplaceKey = (viewId: string, productId?: string | null) =>
+  `${viewId}${MARKETPLACE_KEY_SEPARATOR}${productId ?? ''}`;
+
+const doesProductMatchView = (product: AmazonProduct, view: any) => {
+  if (!view || !product?.createdMarketplaces?.length) return false;
+  const identifiers = [view.remoteId, view.id].filter(Boolean);
+
+  return product.createdMarketplaces.some((marketplaceId) => {
+    if (!marketplaceId) return false;
+
+    const [marketplaceViewId] = marketplaceId.split(MARKETPLACE_KEY_SEPARATOR);
+
+    return (
+      identifiers.includes(marketplaceId) ||
+      identifiers.includes(marketplaceViewId)
+    );
+  });
+};
+
 const amazonProducts = ref<AmazonProduct[]>([]);
 const fetchAmazonProducts = async (fetchPolicy: FetchPolicy = 'network-only') => {
   const { data } = await apolloClient.query({
@@ -58,11 +78,52 @@ interface AmazonProduct {
   lastSyncAt?: string | null;
   syncingCurrentPercentage?: number | null;
   issues: AmazonProductIssue[];
+  remoteParentProduct?: {
+    id: string;
+    localInstance?: {
+      id: string;
+      name?: string | null;
+      sku?: string | null;
+    } | null;
+  } | null;
 }
 
 const views = ref<any[]>([]);
 const loading = ref(false);
-const selectedViewId = ref<string | null>(null);
+const selectedMarketplaceKey = ref<string | null>(null);
+
+interface MarketplaceEntry {
+  key: string;
+  viewId: string;
+  productId: string | null;
+}
+
+const marketplaceEntries = computed<MarketplaceEntry[]>(() => {
+  const entries: MarketplaceEntry[] = [];
+  views.value.forEach((view: any) => {
+    const matchingProducts = amazonProducts.value.filter((product: AmazonProduct) =>
+      doesProductMatchView(product, view),
+    );
+
+    if (matchingProducts.length) {
+      matchingProducts.forEach((product) => {
+        entries.push({
+          key: createMarketplaceKey(view.id, product.id),
+          viewId: view.id,
+          productId: product.id,
+        });
+      });
+    } else {
+      entries.push({
+        key: createMarketplaceKey(view.id, null),
+        viewId: view.id,
+        productId: null,
+      });
+    }
+  });
+
+  return entries;
+});
 
 const fetchViews = async () => {
   loading.value = true;
@@ -76,22 +137,50 @@ const fetchViews = async () => {
 
 onMounted(fetchViews);
 
-watch(views, (newViews) => {
-  if (!selectedViewId.value && newViews.length) {
-    const defaultView = newViews.find((v: any) => v.isDefault) || newViews[0];
-    selectedViewId.value = defaultView.id;
-  }
-});
+watch(
+  marketplaceEntries,
+  (entries) => {
+    if (!entries.length) {
+      selectedMarketplaceKey.value = null;
+      return;
+    }
+
+    if (
+      selectedMarketplaceKey.value &&
+      entries.some((entry) => entry.key === selectedMarketplaceKey.value)
+    ) {
+      return;
+    }
+
+    const defaultEntry =
+      entries.find((entry) => {
+        const view = views.value.find((v: any) => v.id === entry.viewId);
+        return view?.isDefault;
+      }) || entries[0];
+
+    selectedMarketplaceKey.value = defaultEntry.key;
+  },
+  { immediate: true },
+);
 
 const selectedView = computed(() =>
-  views.value.find((v: any) => v.id === selectedViewId.value),
+  views.value.find(
+    (v: any) => v.id === selectedMarketplaceKey.value?.split(MARKETPLACE_KEY_SEPARATOR)[0],
+  ),
 );
 
 const selectedProduct = computed(() => {
   if (!selectedView.value) return null;
+  if (!selectedMarketplaceKey.value) return null;
+  const [, productId] = selectedMarketplaceKey.value.split(MARKETPLACE_KEY_SEPARATOR);
+
+  if (productId) {
+    return amazonProducts.value.find((product: AmazonProduct) => product.id === productId) || null;
+  }
+
   return (
     amazonProducts.value.find((product: AmazonProduct) =>
-      product.createdMarketplaces.includes(selectedView.value.remoteId),
+      doesProductMatchView(product, selectedView.value),
     ) || null
   );
 });
@@ -139,7 +228,7 @@ const hasUnsavedChanges = computed(
 
 defineExpose({ hasUnsavedChanges, fetchAmazonProducts });
 
-const handleMarketplaceSelection = async (newId: string) => {
+const handleMarketplaceSelection = async (newKey: string) => {
   if (hasUnsavedChanges.value) {
     const res = await Swal.fire({
       icon: 'warning',
@@ -152,7 +241,7 @@ const handleMarketplaceSelection = async (newId: string) => {
       return;
     }
   }
-  selectedViewId.value = newId;
+  selectedMarketplaceKey.value = newKey;
 };
 
 const onResyncSuccess = () => {
@@ -198,7 +287,7 @@ const formatDate = (dateString?: string | null) => {
       <div v-if="!loading && views.length" class="flex">
         <AmazonMarketplaceTabs
           class="w-72"
-          :model-value="selectedViewId"
+          :model-value="selectedMarketplaceKey"
           :views="views"
           :amazon-products="amazonProducts"
           @update:modelValue="handleMarketplaceSelection"
