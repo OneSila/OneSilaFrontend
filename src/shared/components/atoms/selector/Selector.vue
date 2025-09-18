@@ -41,6 +41,20 @@ const { t } = useI18n();
 const selectorRef: Ref<any> = ref(null);
 const dropdownOptions: Ref<any[]> = ref(props.options);
 
+const cloneOptions = (options: any): any[] => {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options.map((option) => {
+    if (option && typeof option === 'object' && !Array.isArray(option)) {
+      return { ...option };
+    }
+
+    return option;
+  });
+};
+
 const calculatePosition = (dropdownList, component, { width }) => {
   dropdownList.style.width = width;
 
@@ -68,7 +82,8 @@ const calculatePosition = (dropdownList, component, { width }) => {
 };
 
 watchEffect(() => {
-  dropdownOptions.value = [...props.options];
+  const baseOptions = cloneOptions(props.options);
+  dropdownOptions.value = [...baseOptions];
 
   if (props.showAddEntry && props.valueBy && props.labelBy) {
     const valueBy = props.valueBy;
@@ -109,7 +124,8 @@ watchEffect(() => {
       dropdownOptions.value
     }
   } else if (selectorRef.value && !selectorRef.value.search && props.limit) {
-    const selectedOptions = props.options.filter((option) => {
+    const baseOptions = cloneOptions(props.options);
+    const selectedOptions = baseOptions.filter((option) => {
       const optionValue = props.valueBy ? option[props.valueBy] : option;
 
       return Array.isArray(props.modelValue)
@@ -117,7 +133,7 @@ watchEffect(() => {
         : optionValue === props.modelValue;
     });
 
-    const limitedOptions = props.options.slice(0, props.limit);
+    const limitedOptions = baseOptions.slice(0, props.limit);
 
     const missingSelectedOptions = selectedOptions.filter((selectedOption) => {
       const selectedOptionValue = props.valueBy
@@ -133,11 +149,11 @@ watchEffect(() => {
       });
     });
 
-    dropdownOptions.value = props.options
+    dropdownOptions.value = baseOptions
       .slice(0, props.limit)
       .concat(missingSelectedOptions);
   } else {
-    dropdownOptions.value = props.options;
+    dropdownOptions.value = cloneOptions(props.options);
   }
 });
 
