@@ -333,9 +333,7 @@ export const updateEbaySalesChannelViewMutation = gql`
       merchantLocationKey
       merchantLocationChoices
       lengthUnit
-      lengthUnitChoices
       weightUnit
-      weightUnitChoices
       isDefault
     }
   }
