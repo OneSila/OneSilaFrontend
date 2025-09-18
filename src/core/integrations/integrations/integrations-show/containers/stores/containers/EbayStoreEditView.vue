@@ -6,7 +6,6 @@ import { Label } from "../../../../../../../shared/components/atoms/label";
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { Selector } from "../../../../../../../shared/components/atoms/selector";
 import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
-import { Flex, FlexCell } from "../../../../../../../shared/components/layouts/flex";
 import { PrimaryButton } from "../../../../../../../shared/components/atoms/button-primary";
 import { SecondaryButton } from "../../../../../../../shared/components/atoms/button-secondary";
 import { CancelButton } from "../../../../../../../shared/components/atoms/button-cancel";
@@ -96,6 +95,22 @@ const defaultWeightUnitOptions = computed<EbayChoiceOption[]>(() => [
 const lengthUnitOptions = defaultLengthUnitOptions;
 
 const weightUnitOptions = defaultWeightUnitOptions;
+
+const fulfillmentPolicyOptions = computed(() =>
+  formData.value?.fulfillmentPolicyChoices ?? [],
+);
+
+const paymentPolicyOptions = computed(() =>
+  formData.value?.paymentPolicyChoices ?? [],
+);
+
+const returnPolicyOptions = computed(() =>
+  formData.value?.returnPolicyChoices ?? [],
+);
+
+const merchantLocationOptions = computed(() =>
+  formData.value?.merchantLocationChoices ?? [],
+);
 
 const goBack = () => {
   router.push(storesRoute.value);
@@ -221,127 +236,115 @@ watch(() => props.storeId, (newId, oldId) => {
     </div>
 
     <div v-else-if="formData" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-      <div class="px-4 py-6 sm:p-8 space-y-8">
-        <div class="grid grid-cols-12 gap-4">
-          <div class="md:col-span-6 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('shared.labels.name') }}
-            </Label>
-            <TextInput v-model="formData.name" :placeholder="t('shared.placeholders.name')" class="w-full" />
-            <p v-if="fieldErrors.name" class="mt-1 text-sm text-red-500">{{ fieldErrors.name }}</p>
-          </div>
-
-          <div class="md:col-span-6 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('shared.labels.url') }}
-            </Label>
-            <TextInput v-model="formData.url" class="w-full" />
-            <p v-if="fieldErrors.url" class="mt-1 text-sm text-red-500">{{ fieldErrors.url }}</p>
-          </div>
+      <div class="px-4 py-6 sm:p-8 space-y-6">
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('shared.labels.name') }}
+          </Label>
+          <TextInput v-model="formData.name" :placeholder="t('shared.placeholders.name')" class="w-full" />
+          <p v-if="fieldErrors.name" class="mt-1 text-sm text-red-500">{{ fieldErrors.name }}</p>
         </div>
 
-        <div class="grid grid-cols-12 gap-4">
-          <div class="md:col-span-4 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('integrations.labels.fulfillmentPolicy') }}
-            </Label>
-            <Selector
-              v-model="formData.fulfillmentPolicyId"
-              :options="formData.fulfillmentPolicyChoices || []"
-              label-by="label"
-              value-by="value"
-              :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
-            />
-            <p v-if="fieldErrors.fulfillmentPolicyId" class="mt-1 text-sm text-red-500">{{ fieldErrors.fulfillmentPolicyId }}</p>
-          </div>
-
-          <div class="md:col-span-4 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('integrations.labels.paymentPolicy') }}
-            </Label>
-            <Selector
-              v-model="formData.paymentPolicyId"
-              :options="formData.paymentPolicyChoices || []"
-              label-by="label"
-              value-by="value"
-              :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
-            />
-            <p v-if="fieldErrors.paymentPolicyId" class="mt-1 text-sm text-red-500">{{ fieldErrors.paymentPolicyId }}</p>
-          </div>
-
-          <div class="md:col-span-4 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('integrations.labels.returnPolicy') }}
-            </Label>
-            <Selector
-              v-model="formData.returnPolicyId"
-              :options="formData.returnPolicyChoices || []"
-              label-by="label"
-              value-by="value"
-              :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
-            />
-            <p v-if="fieldErrors.returnPolicyId" class="mt-1 text-sm text-red-500">{{ fieldErrors.returnPolicyId }}</p>
-          </div>
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('shared.labels.url') }}
+          </Label>
+          <TextInput v-model="formData.url" class="w-full" />
+          <p v-if="fieldErrors.url" class="mt-1 text-sm text-red-500">{{ fieldErrors.url }}</p>
         </div>
 
-        <div class="grid grid-cols-12 gap-4">
-          <div class="md:col-span-4 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('integrations.labels.merchantLocation') }}
+        <div>
+          <div class="flex items-center justify-between">
+            <Label class="font-semibold text-sm text-gray-900">
+              {{ t('integrations.labels.isDefaultMarketplace') }}
             </Label>
-            <Selector
-              v-model="formData.merchantLocationKey"
-              :options="formData.merchantLocationChoices || []"
-              label-by="label"
-              value-by="value"
-              :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
-            />
-            <p v-if="fieldErrors.merchantLocationKey" class="mt-1 text-sm text-red-500">{{ fieldErrors.merchantLocationKey }}</p>
+            <Toggle v-model="formData.isDefault" />
           </div>
-
-          <div class="md:col-span-4 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('integrations.labels.lengthUnit') }}
-            </Label>
-            <Selector
-              v-model="formData.lengthUnit"
-              :options="lengthUnitOptions"
-              label-by="label"
-              value-by="value"
-              :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
-            />
-            <p v-if="fieldErrors.lengthUnit" class="mt-1 text-sm text-red-500">{{ fieldErrors.lengthUnit }}</p>
-          </div>
-
-          <div class="md:col-span-4 col-span-12">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-              {{ t('integrations.labels.weightUnit') }}
-            </Label>
-            <Selector
-              v-model="formData.weightUnit"
-              :options="weightUnitOptions"
-              label-by="label"
-              value-by="value"
-              :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
-            />
-            <p v-if="fieldErrors.weightUnit" class="mt-1 text-sm text-red-500">{{ fieldErrors.weightUnit }}</p>
-          </div>
+          <p v-if="fieldErrors.isDefault" class="mt-1 text-sm text-red-500">{{ fieldErrors.isDefault }}</p>
         </div>
 
-        <div class="grid grid-cols-12 gap-4">
-          <div class="md:col-span-4 col-span-12">
-            <Flex class="mt-8" gap="2">
-              <FlexCell>
-                <Label class="font-semibold text-sm text-gray-900 mb-1">
-                  {{ t('integrations.labels.isDefaultMarketplace') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <Toggle v-model="formData.isDefault" />
-              </FlexCell>
-            </Flex>
-            <p v-if="fieldErrors.isDefault" class="mt-1 text-sm text-red-500">{{ fieldErrors.isDefault }}</p>
-          </div>
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.labels.fulfillmentPolicy') }}
+          </Label>
+          <Selector
+            v-model="formData.fulfillmentPolicyId"
+            :options="fulfillmentPolicyOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
+          />
+          <p v-if="fieldErrors.fulfillmentPolicyId" class="mt-1 text-sm text-red-500">{{ fieldErrors.fulfillmentPolicyId }}</p>
+        </div>
+
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.labels.paymentPolicy') }}
+          </Label>
+          <Selector
+            v-model="formData.paymentPolicyId"
+            :options="paymentPolicyOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
+          />
+          <p v-if="fieldErrors.paymentPolicyId" class="mt-1 text-sm text-red-500">{{ fieldErrors.paymentPolicyId }}</p>
+        </div>
+
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.labels.returnPolicy') }}
+          </Label>
+          <Selector
+            v-model="formData.returnPolicyId"
+            :options="returnPolicyOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
+          />
+          <p v-if="fieldErrors.returnPolicyId" class="mt-1 text-sm text-red-500">{{ fieldErrors.returnPolicyId }}</p>
+        </div>
+
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.labels.merchantLocation') }}
+          </Label>
+          <Selector
+            v-model="formData.merchantLocationKey"
+            :options="merchantLocationOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
+          />
+          <p v-if="fieldErrors.merchantLocationKey" class="mt-1 text-sm text-red-500">{{ fieldErrors.merchantLocationKey }}</p>
+        </div>
+
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.labels.lengthUnit') }}
+          </Label>
+          <Selector
+            v-model="formData.lengthUnit"
+            :options="lengthUnitOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
+          />
+          <p v-if="fieldErrors.lengthUnit" class="mt-1 text-sm text-red-500">{{ fieldErrors.lengthUnit }}</p>
+        </div>
+
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.labels.weightUnit') }}
+          </Label>
+          <Selector
+            v-model="formData.weightUnit"
+            :options="weightUnitOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.components.molecules.selector.defaultPlaceholder')"
+          />
+          <p v-if="fieldErrors.weightUnit" class="mt-1 text-sm text-red-500">{{ fieldErrors.weightUnit }}</p>
         </div>
       </div>
 

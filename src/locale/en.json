@@ -2722,6 +2722,11 @@
       "australia": "Australia",
       "japan": "Japan"
     },
+    "amazon": {
+      "installed": {
+        "title": "Amazon Connected"
+      }
+    },
     "ebay": {
       "lengthUnits": {
         "centimeter": "Centimeter",
@@ -2734,14 +2739,7 @@
         "kilogram": "Kilogram",
         "ounce": "Ounce",
         "pound": "Pound"
-      }
-    },
-    "amazon": {
-      "installed": {
-        "title": "Amazon Connected"
-      }
-    },
-    "ebay": {
+      },
       "installed": {
         "title": "Ebay Connected"
       }
