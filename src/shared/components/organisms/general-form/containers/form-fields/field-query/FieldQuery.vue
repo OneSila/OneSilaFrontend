@@ -247,12 +247,19 @@ const debouncedFetchSlow = debounce(async (searchValue: string) => {
   }
 }, 1000);
 
+const getSanitizedLength = (searchValue: string) => {
+  return searchValue.replace(/["']/g, '').trim().length;
+};
+
 const handleInput = (searchValue: string) => {
   if (!isLiveUpdate.value) {
     return;
   }
 
-  if (searchValue.length < minSearchLength.value) {
+  const sanitizedLength = getSanitizedLength(searchValue);
+  const bypassMinLength = sanitizedLength > 0 && (searchValue.includes('"') || searchValue.includes("'"));
+
+  if (sanitizedLength < minSearchLength.value && !bypassMinLength) {
     debouncedFetchFast.cancel();
     debouncedFetchSlow(searchValue);
   } else {
