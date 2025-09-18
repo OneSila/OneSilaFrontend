@@ -41,18 +41,30 @@ const { t } = useI18n();
 const selectorRef: Ref<any> = ref(null);
 const dropdownOptions: Ref<any[]> = ref(props.options);
 
-const cloneOptions = (options: any): any[] => {
-  if (!Array.isArray(options)) {
-    return [];
+const sanitizeSearchTerm = (term: string | undefined): string => {
+  if (!term) {
+    return '';
   }
 
-  return options.map((option) => {
-    if (option && typeof option === 'object' && !Array.isArray(option)) {
-      return { ...option };
-    }
+  return term
+    .replace(/["']/g, '')
+    .toLocaleLowerCase()
+    .trim();
+};
 
-    return option;
-  });
+const filterBy = (_option: any, label: any, search: string | undefined) => {
+  if (typeof label === 'number') {
+    label = label.toString();
+  }
+
+  const normalizedLabel = (label ?? '').toString().toLocaleLowerCase();
+  const normalizedSearch = sanitizeSearchTerm(search);
+
+  if (!normalizedSearch) {
+    return true;
+  }
+
+  return normalizedLabel.includes(normalizedSearch);
 };
 
 const calculatePosition = (dropdownList, component, { width }) => {
@@ -82,8 +94,7 @@ const calculatePosition = (dropdownList, component, { width }) => {
 };
 
 watchEffect(() => {
-  const baseOptions = cloneOptions(props.options);
-  dropdownOptions.value = [...baseOptions];
+  dropdownOptions.value = [...props.options];
 
   if (props.showAddEntry && props.valueBy && props.labelBy) {
     const valueBy = props.valueBy;
@@ -124,8 +135,7 @@ watchEffect(() => {
       dropdownOptions.value
     }
   } else if (selectorRef.value && !selectorRef.value.search && props.limit) {
-    const baseOptions = cloneOptions(props.options);
-    const selectedOptions = baseOptions.filter((option) => {
+    const selectedOptions = props.options.filter((option) => {
       const optionValue = props.valueBy ? option[props.valueBy] : option;
 
       return Array.isArray(props.modelValue)
@@ -133,7 +143,7 @@ watchEffect(() => {
         : optionValue === props.modelValue;
     });
 
-    const limitedOptions = baseOptions.slice(0, props.limit);
+    const limitedOptions = props.options.slice(0, props.limit);
 
     const missingSelectedOptions = selectedOptions.filter((selectedOption) => {
       const selectedOptionValue = props.valueBy
@@ -149,11 +159,11 @@ watchEffect(() => {
       });
     });
 
-    dropdownOptions.value = baseOptions
+    dropdownOptions.value = props.options
       .slice(0, props.limit)
       .concat(missingSelectedOptions);
   } else {
-    dropdownOptions.value = cloneOptions(props.options);
+    dropdownOptions.value = props.options;
   }
 });
 
@@ -253,6 +263,7 @@ const getLabel = (option: any): string | null => {
     :calculate-position="calculatePosition"
     :multiple="multiple"
     :filterable="filterable"
+    :filter-by="filterBy"
     :clearable="removable"
     :loading="isLoading"
     close-on-select
