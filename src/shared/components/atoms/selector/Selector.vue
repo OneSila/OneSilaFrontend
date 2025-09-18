@@ -41,6 +41,32 @@ const { t } = useI18n();
 const selectorRef: Ref<any> = ref(null);
 const dropdownOptions: Ref<any[]> = ref(props.options);
 
+const sanitizeSearchTerm = (term: string | undefined): string => {
+  if (!term) {
+    return '';
+  }
+
+  return term
+    .replace(/["']/g, '')
+    .toLocaleLowerCase()
+    .trim();
+};
+
+const filterBy = (_option: any, label: any, search: string | undefined) => {
+  if (typeof label === 'number') {
+    label = label.toString();
+  }
+
+  const normalizedLabel = (label ?? '').toString().toLocaleLowerCase();
+  const normalizedSearch = sanitizeSearchTerm(search);
+
+  if (!normalizedSearch) {
+    return true;
+  }
+
+  return normalizedLabel.includes(normalizedSearch);
+};
+
 const calculatePosition = (dropdownList, component, { width }) => {
   dropdownList.style.width = width;
 
@@ -237,6 +263,7 @@ const getLabel = (option: any): string | null => {
     :calculate-position="calculatePosition"
     :multiple="multiple"
     :filterable="filterable"
+    :filter-by="filterBy"
     :clearable="removable"
     :loading="isLoading"
     close-on-select

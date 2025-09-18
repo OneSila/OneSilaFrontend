@@ -161,13 +161,31 @@ watch([selectedValue, cleanedData], () => {
 
 watch(() => props.filter.queryVariables, () => fetchData(), { deep: true });
 
-const handleInput = debounce(async (searchValue: string) => {
-  if (searchValue.length >= minSearchLength.value) {
-    fetchData(searchValue, true);
-  } else if (!searchValue.length) {
+const debouncedFetchFast = debounce(async (searchValue: string) => {
+  if (!searchValue.length) {
     fetchData(null, true);
+  } else {
+    fetchData(searchValue, true);
   }
 }, 500);
+
+const debouncedFetchSlow = debounce(async (searchValue: string) => {
+  if (!searchValue.length) {
+    fetchData(null, true);
+  } else {
+    fetchData(searchValue, true);
+  }
+}, 1000);
+
+const handleInput = (searchValue: string) => {
+  if (searchValue.length < minSearchLength.value) {
+    debouncedFetchFast.cancel();
+    debouncedFetchSlow(searchValue);
+  } else {
+    debouncedFetchSlow.cancel();
+    debouncedFetchFast(searchValue);
+  }
+};
 
 const cleanData = (rawData) => {
   if (props.filter.isEdge && rawData?.edges) {

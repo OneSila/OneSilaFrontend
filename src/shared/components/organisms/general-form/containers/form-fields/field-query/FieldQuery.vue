@@ -231,17 +231,42 @@ if (props.field.multiple) {
   showCreateOnFlyModal.value = false;
 };
 
-const handleInput = debounce(async (searchValue: string) => {
+const debouncedFetchFast = debounce(async (searchValue: string) => {
+  if (!searchValue.length) {
+    fetchData();
+  } else {
+    fetchData(searchValue);
+  }
+}, 500);
+
+const debouncedFetchSlow = debounce(async (searchValue: string) => {
+  if (!searchValue.length) {
+    fetchData();
+  } else {
+    fetchData(searchValue);
+  }
+}, 1000);
+
+const getSanitizedLength = (searchValue: string) => {
+  return searchValue.replace(/["']/g, '').trim().length;
+};
+
+const handleInput = (searchValue: string) => {
   if (!isLiveUpdate.value) {
     return;
   }
 
-  if (searchValue.length >= minSearchLength.value) {
-    fetchData(searchValue);
-  } else if (!searchValue.length) {
-    fetchData();
+  const sanitizedLength = getSanitizedLength(searchValue);
+  const bypassMinLength = sanitizedLength > 0 && (searchValue.includes('"') || searchValue.includes("'"));
+
+  if (sanitizedLength < minSearchLength.value && !bypassMinLength) {
+    debouncedFetchFast.cancel();
+    debouncedFetchSlow(searchValue);
+  } else {
+    debouncedFetchSlow.cancel();
+    debouncedFetchFast(searchValue);
   }
-}, 500);
+};
 
 const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
 

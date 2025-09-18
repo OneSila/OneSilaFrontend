@@ -16,11 +16,13 @@ export const resyncAmazonProductMutation = gql`
     $remoteProduct: AmazonProductPartialInput!
     $view: AmazonSalesChannelViewPartialInput!
     $forceValidationOnly: Boolean!
+    $forceFullUpdate: Boolean!
   ) {
     resyncAmazonProduct(
       remoteProduct: $remoteProduct
       view: $view
       forceValidationOnly: $forceValidationOnly
+      forceFullUpdate: $forceFullUpdate
     ) {
       id
     }
