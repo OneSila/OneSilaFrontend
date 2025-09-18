@@ -1986,10 +1986,33 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "labels": {
+      "fulfillmentPolicy": "Verzendbeleid",
+      "paymentPolicy": "Betaalbeleid",
+      "returnPolicy": "Retourbeleid",
+      "merchantLocation": "Voorraadlocatie",
+      "lengthUnit": "Lengte-eenheid",
+      "weightUnit": "Gewichtseenheid",
+      "isDefaultMarketplace": "Standaardmarktplaats"
+    },
     "salesChannel": {
       "labels": {
         "assignedToSalesChannelView": "Toegewezen aan winkel",
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+      }
+    },
+    "ebay": {
+      "lengthUnits": {
+        "centimeter": "Centimeter",
+        "meter": "Meter",
+        "inch": "Inch",
+        "foot": "Voet"
+      },
+      "weightUnits": {
+        "gram": "Gram",
+        "kilogram": "Kilogram",
+        "ounce": "Ons",
+        "pound": "Pond"
       }
     }
   },

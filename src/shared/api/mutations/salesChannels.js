@@ -318,6 +318,29 @@ export const updateAmazonSalesChannelViewMutation = gql`
   }
 `;
 
+export const updateEbaySalesChannelViewMutation = gql`
+  mutation updateEbaySalesChannelView($data: EbaySalesChannelViewPartialInput!) {
+    updateEbaySalesChannelView(data: $data) {
+      id
+      name
+      url
+      fulfillmentPolicyId
+      fulfillmentPolicyChoices
+      paymentPolicyId
+      paymentPolicyChoices
+      returnPolicyId
+      returnPolicyChoices
+      merchantLocationKey
+      merchantLocationChoices
+      lengthUnit
+      lengthUnitChoices
+      weightUnit
+      weightUnitChoices
+      isDefault
+    }
+  }
+`;
+
 export const updateRemoteLanguageMutation = gql`
   mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
     updateRemoteLanguage(data: $data) {

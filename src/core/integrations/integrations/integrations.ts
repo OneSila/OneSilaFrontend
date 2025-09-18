@@ -163,6 +163,14 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   };
 }
 
+export function getEbayDefaultFields(): EbayChannelInfo {
+  return {
+    region: null,
+    country: null,
+    listingOwner: false,
+  };
+}
+
 export function getWebhookDefaultFields(): WebhookChannelInfo {
   return {
     topic: '',

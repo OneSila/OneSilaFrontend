@@ -156,6 +156,15 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "labels": {
+      "fulfillmentPolicy": "Politique d'expédition",
+      "paymentPolicy": "Politique de paiement",
+      "returnPolicy": "Politique de retour",
+      "merchantLocation": "Lieu d'inventaire",
+      "lengthUnit": "Unité de longueur",
+      "weightUnit": "Unité de poids",
+      "isDefaultMarketplace": "Marketplace par défaut"
+    },
     "show": {
       "tabs": {
         "reports": "Rapports"
@@ -173,7 +182,21 @@
           "INVALID_VARIATION_THEME": "Invalid variation theme"
         }
       }
-    }
+    },
+    "ebay": {
+        "lengthUnits": {
+          "centimeter": "Centimètre",
+          "meter": "Mètre",
+          "inch": "Pouce",
+          "foot": "Pied"
+        },
+        "weightUnits": {
+          "gram": "Gramme",
+          "kilogram": "Kilogramme",
+          "ounce": "Once",
+          "pound": "Livre"
+        }
+      }
   },
   "webhooks": {
     "monitor": {
