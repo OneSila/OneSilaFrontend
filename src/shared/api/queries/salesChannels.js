@@ -296,19 +296,6 @@ export const getEbayChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
-      fulfillmentPolicyId
-      fulfillmentPolicyChoices
-      paymentPolicyId
-      paymentPolicyChoices
-      returnPolicyId
-      returnPolicyChoices
-      merchantLocationKey
-      merchantLocationChoices
-      lengthUnit
-      lengthUnitChoices
-      weightUnit
-      weightUnitChoices
-      isDefault
       firstImportComplete
       isImporting
       accessToken
@@ -699,9 +686,7 @@ export const getEbaySalesChannelViewQuery = gql`
       merchantLocationKey
       merchantLocationChoices
       lengthUnit
-      lengthUnitChoices
       weightUnit
-      weightUnitChoices
       isDefault
     }
   }
