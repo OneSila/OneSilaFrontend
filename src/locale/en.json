@@ -2657,6 +2657,13 @@
       "accessToken": "Access Token",
       "region": "Region",
       "country": "Country",
+      "fulfillmentPolicy": "Fulfillment policy",
+      "paymentPolicy": "Payment policy",
+      "returnPolicy": "Return policy",
+      "merchantLocation": "Inventory location",
+      "lengthUnit": "Length unit",
+      "weightUnit": "Weight unit",
+      "isDefaultMarketplace": "Default marketplace",
       "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data",
       "defaultUnits": "Default Units",
@@ -2714,6 +2721,20 @@
       "singapore": "Singapore",
       "australia": "Australia",
       "japan": "Japan"
+    },
+    "ebay": {
+      "lengthUnits": {
+        "centimeter": "Centimeter",
+        "meter": "Meter",
+        "inch": "Inch",
+        "foot": "Foot"
+      },
+      "weightUnits": {
+        "gram": "Gram",
+        "kilogram": "Kilogram",
+        "ounce": "Ounce",
+        "pound": "Pound"
+      }
     },
     "amazon": {
       "installed": {
