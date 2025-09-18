@@ -35,9 +35,7 @@ interface EbayStoreForm {
   merchantLocationKey: string | null;
   merchantLocationChoices?: EbayChoiceOption[];
   lengthUnit: string | null;
-  lengthUnitChoices?: EbayChoiceOption[];
   weightUnit: string | null;
-  weightUnitChoices?: EbayChoiceOption[];
   isDefault: boolean;
 }
 
@@ -77,9 +75,7 @@ const withDefaults = (data: any): EbayStoreForm => ({
   merchantLocationKey: data.merchantLocationKey ?? null,
   merchantLocationChoices: data.merchantLocationChoices ?? [],
   lengthUnit: data.lengthUnit ?? null,
-  lengthUnitChoices: data.lengthUnitChoices ?? [],
   weightUnit: data.weightUnit ?? null,
-  weightUnitChoices: data.weightUnitChoices ?? [],
   isDefault: data.isDefault ?? false,
 });
 
@@ -87,7 +83,7 @@ const defaultLengthUnitOptions = computed<EbayChoiceOption[]>(() => [
   { value: 'CENTIMETER', label: t('integrations.ebay.lengthUnits.centimeter') },
   { value: 'METER', label: t('integrations.ebay.lengthUnits.meter') },
   { value: 'INCH', label: t('integrations.ebay.lengthUnits.inch') },
-  { value: 'FOOT', label: t('integrations.ebay.lengthUnits.foot') },
+  { value: 'FEET', label: t('integrations.ebay.lengthUnits.foot') },
 ]);
 
 const defaultWeightUnitOptions = computed<EbayChoiceOption[]>(() => [
@@ -97,15 +93,9 @@ const defaultWeightUnitOptions = computed<EbayChoiceOption[]>(() => [
   { value: 'POUND', label: t('integrations.ebay.weightUnits.pound') },
 ]);
 
-const lengthUnitOptions = computed(() => {
-  const choices = formData.value?.lengthUnitChoices ?? [];
-  return choices.length ? choices : defaultLengthUnitOptions.value;
-});
+const lengthUnitOptions = defaultLengthUnitOptions;
 
-const weightUnitOptions = computed(() => {
-  const choices = formData.value?.weightUnitChoices ?? [];
-  return choices.length ? choices : defaultWeightUnitOptions.value;
-});
+const weightUnitOptions = defaultWeightUnitOptions;
 
 const goBack = () => {
   router.push(storesRoute.value);
@@ -163,8 +153,6 @@ const buildPayload = () => {
     paymentPolicyChoices,
     returnPolicyChoices,
     merchantLocationChoices,
-    lengthUnitChoices,
-    weightUnitChoices,
     ...payload
   } = formData.value;
 
