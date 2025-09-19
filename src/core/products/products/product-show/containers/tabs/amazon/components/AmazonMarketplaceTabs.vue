@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { IntegrationTypes } from '../../../../../../../integrations/integrations/integrations';
+import {shortenText} from "../../../../../../../../shared/utils";
 
 const props = defineProps<{ views: any[]; amazonProducts: any[]; modelValue: string | null }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -111,8 +112,9 @@ const groupedViews = computed(() => {
             </Link>
             <div
               v-if="entry.product?.remoteParentProduct?.localInstance?.id"
-              class="text-xs text-gray-500"
+              class="text-xs"
             >
+              <hr class="my-2">
               {{ t('products.products.amazon.parentProductLabel') }}
               <Link
                 class="text-xs ml-1"
@@ -122,9 +124,7 @@ const groupedViews = computed(() => {
                 }"
               >
                 {{
-                  entry.product.remoteParentProduct.localInstance.sku ||
-                  entry.product.remoteParentProduct.localInstance.name ||
-                  entry.product.remoteParentProduct.localInstance.id
+                  shortenText(entry.product.remoteParentProduct.localInstance.sku, 15)
                 }}
               </Link>
             </div>
