@@ -1174,10 +1174,12 @@
             "labels": {
               "aliasParent": "Clone from product (alias target)",
               "copyImages": "Copy images from original product",
+              "copyContent": "Copy content from original product",
               "copyProperties": "Copy properties from original product"
             },
             "helpText": {
               "copyImages": "If enabled, all images from the original product will be copied to this alias product.",
+              "copyContent": "If enabled, default content from the original product will be copied to this alias product.",
               "copyProperties": "If enabled, product attributes (e.g. color, material) from the original product will be cloned."
             }
           },
