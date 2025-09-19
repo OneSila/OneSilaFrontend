@@ -74,6 +74,8 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
       { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' }
     );
+  } else if (type.value === IntegrationTypes.Ebay) {
+    tabItems.value.push({ name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' });
   }
 
   tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });

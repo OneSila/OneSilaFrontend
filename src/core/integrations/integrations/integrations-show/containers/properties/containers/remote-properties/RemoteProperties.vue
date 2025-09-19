@@ -2,12 +2,12 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter, type RouteLocationRaw } from 'vue-router';
-import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
-import { GeneralListing } from "../../../../../../../shared/components/organisms/general-listing";
-import { Button } from "../../../../../../../shared/components/atoms/button";
-import apolloClient from "../../../../../../../../apollo-client";
-import type { ListingConfig } from "../../../../../../../shared/components/organisms/general-listing/listingConfig";
-import type { SearchConfig } from "../../../../../../../shared/components/organisms/general-search/searchConfig";
+import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
+import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
+import { Button } from "../../../../../../../../shared/components/atoms/button";
+import apolloClient from "../../../../../../../../../apollo-client";
+import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
+import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 
 type RouteBuilderContext = {
   id: string;

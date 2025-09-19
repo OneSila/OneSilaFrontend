@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import RemotePropertiesContainer from "../../components/RemotePropertiesContainer.vue";
+import RemoteProperties from "../remote-properties/RemoteProperties.vue";
 import { ebayPropertiesSearchConfigConstructor, ebayPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
@@ -19,7 +19,7 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
 </script>
 
 <template>
-  <RemotePropertiesContainer
+  <RemoteProperties
     :id="id"
     :sales-channel-id="salesChannelId"
     :search-config="searchConfig"
