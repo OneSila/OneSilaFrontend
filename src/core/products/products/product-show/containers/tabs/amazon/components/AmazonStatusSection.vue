@@ -12,10 +12,13 @@ const props = defineProps<{
   selectedView: any | null;
   resyncAmazonProductMutation: any;
   refreshAmazonProductIssuesMutation: any;
+  refreshAmazonProductFromRemoteMutation: any;
+  productId: string;
 }>();
 
 const emit = defineEmits<{
   (e: 'resync-success'): void;
+  (e: 'import-success'): void;
   (e: 'validate-success'): void;
   (e: 'fetch-issues-success'): void;
   (e: 'error', err: unknown): void;
@@ -50,6 +53,18 @@ const formatDate = (dateString?: string | null) => {
       </FlexCell>
       <FlexCell>
         <div class="flex gap-2 sm:ml-auto">
+        <ApolloMutation
+          :mutation="refreshAmazonProductFromRemoteMutation"
+          :variables="{ product: { id: productId }, view: { id: selectedView?.id } }"
+          @done="() => emit('import-success')"
+          @error="(e) => emit('error', e)"
+        >
+          <template #default="{ mutate, loading }">
+            <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+              {{ t('shared.button.import') }}
+            </Button>
+          </template>
+        </ApolloMutation>
         <ApolloMutation
           v-if="remoteProductId"
           :mutation="resyncAmazonProductMutation"

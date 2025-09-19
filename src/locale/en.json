@@ -357,6 +357,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "import": "Import",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
@@ -2748,6 +2749,7 @@
       },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
+        "importSuccess": "The product import process has begun. Please come later to see the results.",
         "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
         "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },

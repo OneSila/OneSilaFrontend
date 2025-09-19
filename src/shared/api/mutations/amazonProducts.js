@@ -29,6 +29,17 @@ export const resyncAmazonProductMutation = gql`
   }
 `;
 
+export const refreshAmazonProductFromRemoteMutation = gql`
+  mutation refreshAmazonProductFromRemote(
+    $product: ProductPartialInput!
+    $view: AmazonSalesChannelViewPartialInput!
+  ) {
+    refreshAmazonProductFromRemote(product: $product, view: $view) {
+      id
+    }
+  }
+`;
+
 export const createAmazonProductBrowseNodeMutation = gql`
   mutation createAmazonProductBrowseNode($data: AmazonProductBrowseNodeInput!) {
     createAmazonProductBrowseNode(data: $data) {
