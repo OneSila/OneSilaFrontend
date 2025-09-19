@@ -187,7 +187,8 @@
       "resync": "Resync",
       "fullUpdate": "Full Update",
       "validate": "Validate",
-      "fetchIssues": "Fetch Issues"
+      "fetchIssues": "Fetch Issues",
+      "import": "Import"
     },
     "colors": {
       "red": "Rood",

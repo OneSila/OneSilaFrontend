@@ -10,6 +10,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "import": "Import",
       "saveAll": "Tout enregistrer"
     },
     "colors": {

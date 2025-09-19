@@ -17,6 +17,7 @@ import { amazonProductsQuery } from '../../../../../../../shared/api/queries/ama
 import {
   resyncAmazonProductMutation,
   refreshAmazonProductIssuesMutation,
+  refreshAmazonProductFromRemoteMutation,
 } from '../../../../../../../shared/api/mutations/amazonProducts.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
@@ -250,6 +251,12 @@ const onResyncSuccess = () => {
   fetchViews();
 };
 
+const onImportSuccess = () => {
+  Toast.success(t('integrations.salesChannel.toast.importSuccess'));
+  fetchAmazonProducts('network-only');
+  fetchViews();
+};
+
 const onValidateSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.validateSuccess'));
   fetchAmazonProducts('network-only');
@@ -303,7 +310,10 @@ const formatDate = (dateString?: string | null) => {
                 :selected-view="selectedView"
                 :resync-amazon-product-mutation="resyncAmazonProductMutation"
                 :refresh-amazon-product-issues-mutation="refreshAmazonProductIssuesMutation"
+                :refresh-amazon-product-from-remote-mutation="refreshAmazonProductFromRemoteMutation"
+                :product-id="props.product.id"
                 @resync-success="onResyncSuccess"
+                @import-success="onImportSuccess"
                 @validate-success="onValidateSuccess"
                 @fetch-issues-success="onFetchIssuesSuccess"
                 @error="onError"
