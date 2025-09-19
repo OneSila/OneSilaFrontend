@@ -59,8 +59,7 @@ export const ebayPropertiesListingConfigConstructor = (t: Function, specificInte
     t('integrations.show.propertySelectValues.labels.marketplace'),
   ],
   fields: [
-    { name: 'name', type: FieldType.Text },
-    { name: 'code', type: FieldType.Text },
+    { name: 'localizedName', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
     {
       name: 'localInstance',

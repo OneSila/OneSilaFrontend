@@ -986,8 +986,7 @@ export const ebayPropertiesQuery = gql`
           id
           mappedLocally
           mappedRemotely
-          code
-          name
+          localizedName
           type
           allowsUnmappedValues
           marketplace {
@@ -1018,8 +1017,7 @@ export const getAmazonPropertyQuery = gql`
       id
       mappedLocally
       mappedRemotely
-      code
-      name
+      localizedName
       type
       allowsUnmappedValues
       localInstance {
