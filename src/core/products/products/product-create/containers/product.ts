@@ -3,6 +3,7 @@ export interface FormType {
   sku: string;
   name: string;
   aliasCopyImages: boolean;
+  aliasCopyContent: boolean;
   aliasCopyProductProperties: boolean;
   vatRate: {
     id: string | null;

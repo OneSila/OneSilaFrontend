@@ -86,6 +86,24 @@ onMounted(() => {
         <Flex class="gap-2">
           <FlexCell>
             <Label class="font-semibold block text-sm leading-6 text-gray-900">
+              {{ t('products.products.create.wizard.stepAlias.labels.copyContent') }}
+            </Label>
+          </FlexCell>
+          <FlexCell>
+            <Toggle v-model="form.aliasCopyContent" />
+          </FlexCell>
+        </Flex>
+        <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
+          <p>{{ t('products.products.create.wizard.stepAlias.helpText.copyContent') }}</p>
+        </div>
+      </FlexCell>
+    </Flex>
+
+    <Flex class="mt-4 gap-4" center>
+      <FlexCell center>
+        <Flex class="gap-2">
+          <FlexCell>
+            <Label class="font-semibold block text-sm leading-6 text-gray-900">
               {{ t('products.products.create.wizard.stepAlias.labels.copyProperties') }}
             </Label>
           </FlexCell>
