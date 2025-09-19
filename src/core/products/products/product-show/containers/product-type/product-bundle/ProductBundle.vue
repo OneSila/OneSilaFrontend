@@ -14,6 +14,7 @@ import MediaView from "../../tabs/media/MediaView.vue";
 import ProductSalePriceView from "../../tabs/sales-price/ProductSalePriceView.vue";
 import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
+import ParentsView from "../../tabs/parents/ParentsView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
@@ -67,6 +68,14 @@ const tabItems = computed(() => {
     { name: 'properties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
   ];
 
+  if (props.product.hasParents) {
+    items.push({
+      name: 'parents',
+      label: t('products.products.tabs.parents'),
+      icon: 'sitemap',
+    });
+  }
+
   if (props.product.aliasProducts?.length > 0) {
     items.push({
       name: 'aliasProducts',
@@ -106,6 +115,9 @@ const tabItems = computed(() => {
       </template>
       <template v-slot:media>
         <MediaView :product="product" />
+      </template>
+      <template v-if="product.hasParents" v-slot:parents>
+        <ParentsView :product="product" />
       </template>
       <template v-slot:properties>
         <PropertiesView ref="propertiesRef" :product="product" />
