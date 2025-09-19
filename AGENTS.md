@@ -39,6 +39,7 @@ These instructions apply to the entire repository. Always read and follow them b
 - Style components with Tailwind CSS classes; avoid inline styles and hardcoded colors.
 - Use the theme and layout configuration files (`theme.config.ts`, `app-setting.ts`, etc.) instead of custom global styles.
 - Provide responsive layouts and clear interaction feedback (loading states, disabled states, tooltips as needed).
+- When importing named exports, include spaces inside curly braces (e.g., `import { useI18n } from 'vue-i18n';`).
 
 ## Performance & Security
 - Do not hardcode API endpoints or secrets. Use environment variables such as `VITE_APP_API_GRAPHQL_URL`.
