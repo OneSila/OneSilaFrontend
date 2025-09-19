@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import RemotePropertiesContainer from "../../components/RemotePropertiesContainer.vue";
-import { amazonPropertiesSearchConfigConstructor, amazonPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
+import { ebayPropertiesSearchConfigConstructor, ebayPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
-const searchConfig = amazonPropertiesSearchConfigConstructor(t);
-const listingConfig = amazonPropertiesListingConfigConstructor(t, props.id);
+const searchConfig = computed(() => ebayPropertiesSearchConfigConstructor(t, props.salesChannelId));
+const listingConfig = ebayPropertiesListingConfigConstructor(t, props.id);
 
 const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
-  name: 'integrations.amazonProperties.edit',
-  params: { type: 'amazon', id },
+  name: 'integrations.ebayProperties.edit',
+  params: { type: 'ebay', id },
   query: { integrationId, salesChannelId, wizard: '1' },
 });
 </script>
