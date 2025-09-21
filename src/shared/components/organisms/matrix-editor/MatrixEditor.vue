@@ -7,9 +7,11 @@ import { Icon } from '../../atoms/icon'
 import { LocalLoader } from '../../atoms/local-loader'
 import { Toast } from '../../../modules/toast'
 import type { MatrixColumn, MatrixEditorExpose } from './types'
+import { PropertyTypes } from '../../../utils/constants'
 
 interface ClipboardValue {
   column: string
+  columnType?: string
   value: any
 }
 
@@ -41,12 +43,14 @@ const { t } = useI18n()
 
 const tableWrapper = ref<HTMLElement | null>(null)
 const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
+const selectedRange = ref<{ row: number | null; columns: string[] }>({ row: null, columns: [] })
+const selectionAnchor = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
 const clipboard = ref<ClipboardValue | null>(null)
 const dragState = reactive({
   active: false,
   startRow: null as number | null,
   endRow: null as number | null,
-  col: '' as string,
+  cols: [] as string[],
 })
 const history = ref<any[]>([])
 const redoStack = ref<any[]>([])
@@ -104,7 +108,60 @@ watch(
   { deep: true }
 )
 
-const selectCell = (rowIndex: number, columnKey: string) => {
+const getColumnIndex = (columnKey: string) =>
+  props.columns.findIndex((column) => column.key === columnKey)
+
+const sortColumnsByIndex = (columns: string[]) =>
+  [...columns].sort((a, b) => getColumnIndex(a) - getColumnIndex(b))
+
+const getColumnType = (columnKey: string) =>
+  props.columns.find((column) => column.key === columnKey)?.valueType
+
+const getColumnsForOperation = (rowIndex: number, columnKey: string) => {
+  if (
+    selectedRange.value.row === rowIndex &&
+    selectedRange.value.columns.includes(columnKey)
+  ) {
+    return selectedRange.value.columns
+  }
+  return [columnKey]
+}
+
+const isCellSelected = (rowIndex: number, columnKey: string) =>
+  selectedRange.value.row === rowIndex &&
+  selectedRange.value.columns.includes(columnKey)
+
+const isActiveCell = (rowIndex: number, columnKey: string) =>
+  selectedCell.value.row === rowIndex && selectedCell.value.col === columnKey
+
+const isDragHandleCell = (rowIndex: number, columnKey: string) => {
+  if (!isEditableColumn(columnKey)) return false
+  if (selectedRange.value.row === rowIndex && selectedRange.value.columns.length) {
+    const ordered = sortColumnsByIndex(selectedRange.value.columns)
+    return ordered[ordered.length - 1] === columnKey
+  }
+  return isActiveCell(rowIndex, columnKey)
+}
+
+const selectCell = (rowIndex: number, columnKey: string, event?: MouseEvent) => {
+  const colIndex = getColumnIndex(columnKey)
+  if (colIndex === -1) return
+
+  if (
+    event?.shiftKey &&
+    selectionAnchor.value.row === rowIndex &&
+    selectionAnchor.value.col &&
+    getColumnIndex(selectionAnchor.value.col) !== -1
+  ) {
+    const anchorIndex = getColumnIndex(selectionAnchor.value.col)
+    const [start, end] = anchorIndex < colIndex ? [anchorIndex, colIndex] : [colIndex, anchorIndex]
+    const keys = props.columns.slice(start, end + 1).map((column) => column.key)
+    selectedRange.value = { row: rowIndex, columns: sortColumnsByIndex(keys) }
+  } else {
+    selectedRange.value = { row: rowIndex, columns: [columnKey] }
+    selectionAnchor.value = { row: rowIndex, col: columnKey }
+  }
+
   selectedCell.value = { row: rowIndex, col: columnKey }
 }
 
@@ -115,10 +172,14 @@ const isEditableColumn = (columnKey: string) => {
 
 const startDragFill = (row: number, col: string) => {
   if (!isEditableColumn(col)) return
+  const columns = getColumnsForOperation(row, col).filter((columnKey) =>
+    isEditableColumn(columnKey)
+  )
+  if (!columns.length) return
   dragState.active = true
   dragState.startRow = row
   dragState.endRow = row
-  dragState.col = col
+  dragState.cols = sortColumnsByIndex(columns)
   document.addEventListener('mousemove', onDragFill)
   document.addEventListener('mouseup', endDragFill)
 }
@@ -128,7 +189,7 @@ const onDragFill = (event: MouseEvent) => {
   if (!cell) return
   const rowAttr = cell.getAttribute('data-row')
   const colAttr = cell.getAttribute('data-col')
-  if (colAttr === dragState.col && rowAttr) {
+  if (colAttr && dragState.cols.includes(colAttr) && rowAttr) {
     dragState.endRow = Number(rowAttr)
   }
 }
@@ -140,25 +201,29 @@ const endDragFill = () => {
     dragState.active &&
     dragState.startRow !== null &&
     dragState.endRow !== null &&
-    dragState.col
+    dragState.cols.length
   ) {
     const start = dragState.startRow
     const end = dragState.endRow
     const [from, to] = start < end ? [start, end] : [end, start]
     for (let index = from; index <= to; index++) {
       if (index === start) continue
-      props.cloneCellValue(start, index, dragState.col)
+      dragState.cols.forEach((columnKey) => {
+        if (isEditableColumn(columnKey)) {
+          props.cloneCellValue(start, index, columnKey)
+        }
+      })
     }
   }
   dragState.active = false
   dragState.startRow = dragState.endRow = null
-  dragState.col = ''
+  dragState.cols = []
 }
 
 const isInDragRange = (row: number, col: string) => {
   if (
     !dragState.active ||
-    dragState.col !== col ||
+    !dragState.cols.includes(col) ||
     dragState.startRow === null ||
     dragState.endRow === null
   )
@@ -178,7 +243,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   )
     return
 
-  if (event.ctrlKey) {
+  if (event.ctrlKey || event.metaKey) {
     const key = event.key.toLowerCase()
     if (key === 'z') {
       undo()
@@ -196,29 +261,49 @@ const handleKeydown = (event: KeyboardEvent) => {
   if (row === null || col === null) return
   if (!rows.value[row]) return
 
-  if (event.ctrlKey && event.key.toLowerCase() === 'c') {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c') {
     if (isEditableColumn(col)) {
       const value = props.getCellValue(row, col)
       clipboard.value = {
         column: col,
+        columnType: getColumnType(col),
         value: JSON.parse(JSON.stringify(value ?? null)),
       }
       Toast.success(t('products.products.alert.toast.copied'))
     }
     event.preventDefault()
-  } else if (event.ctrlKey && event.key.toLowerCase() === 'v') {
+  } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v') {
     if (clipboard.value) {
-      if (clipboard.value.column === col) {
-        if (isEditableColumn(col)) {
-          if (clipboard.value.value === null) {
-            props.clearCellValue(row, col)
-          } else {
-            props.setCellValue(row, col, JSON.parse(JSON.stringify(clipboard.value.value)))
-          }
-          Toast.success(t('products.products.alert.toast.pasted'))
-        }
+      const columns = getColumnsForOperation(row, col).filter((columnKey) =>
+        isEditableColumn(columnKey)
+      )
+      if (!columns.length) {
+        event.preventDefault()
+        return
+      }
+      const invalidColumn = columns.find((columnKey) =>
+        !canPasteToColumn(clipboard.value!, columnKey)
+      )
+      if (invalidColumn) {
+        Toast.error(t('products.products.alert.toast.pasteIncompatibleColumn'))
       } else {
-        Toast.error(t('products.products.alert.toast.pasteDifferentColumn'))
+        columns.forEach((columnKey) => {
+          if (clipboard.value?.value === null) {
+            props.clearCellValue(row, columnKey)
+            return
+          }
+          const transformed = transformClipboardValue(
+            clipboard.value?.value,
+            clipboard.value?.columnType,
+            getColumnType(columnKey)
+          )
+          if (transformed === null) {
+            props.clearCellValue(row, columnKey)
+          } else if (transformed !== undefined) {
+            props.setCellValue(row, columnKey, JSON.parse(JSON.stringify(transformed)))
+          }
+        })
+        Toast.success(t('products.products.alert.toast.pasted'))
       }
     }
     event.preventDefault()
@@ -229,35 +314,139 @@ const handleKeydown = (event: KeyboardEvent) => {
     !event.shiftKey &&
     !event.altKey
   ) {
-    if (isEditableColumn(col)) {
-      props.clearCellValue(row, col)
+    const columns = getColumnsForOperation(row, col).filter((columnKey) =>
+      isEditableColumn(columnKey)
+    )
+    if (columns.length) {
+      columns.forEach((columnKey) => props.clearCellValue(row, columnKey))
     }
     event.preventDefault()
   } else if (!event.ctrlKey && !event.metaKey) {
     switch (event.key) {
       case 'ArrowUp':
-        if (row > 0) selectedCell.value.row = row - 1
+        if (row > 0) {
+          const nextRow = row - 1
+          selectedCell.value.row = nextRow
+          if (selectedCell.value.col) {
+            const key = selectedCell.value.col
+            selectedRange.value = { row: nextRow, columns: [key] }
+            selectionAnchor.value = { row: nextRow, col: key }
+          }
+        }
         event.preventDefault()
         break
       case 'ArrowDown':
-        if (row < rows.value.length - 1) selectedCell.value.row = row + 1
+        if (row < rows.value.length - 1) {
+          const nextRow = row + 1
+          selectedCell.value.row = nextRow
+          if (selectedCell.value.col) {
+            const key = selectedCell.value.col
+            selectedRange.value = { row: nextRow, columns: [key] }
+            selectionAnchor.value = { row: nextRow, col: key }
+          }
+        }
         event.preventDefault()
         break
       case 'ArrowLeft': {
         const colIndex = props.columns.findIndex((column) => column.key === col)
-        if (colIndex > 0) selectedCell.value.col = props.columns[colIndex - 1].key
+        if (colIndex > 0) {
+          const key = props.columns[colIndex - 1].key
+          selectedCell.value.col = key
+          selectedRange.value = { row, columns: [key] }
+          selectionAnchor.value = { row, col: key }
+        }
         event.preventDefault()
         break
       }
       case 'ArrowRight': {
         const colIndex = props.columns.findIndex((column) => column.key === col)
-        if (colIndex < props.columns.length - 1)
-          selectedCell.value.col = props.columns[colIndex + 1].key
+        if (colIndex < props.columns.length - 1) {
+          const key = props.columns[colIndex + 1].key
+          selectedCell.value.col = key
+          selectedRange.value = { row, columns: [key] }
+          selectionAnchor.value = { row, col: key }
+        }
         event.preventDefault()
         break
       }
     }
   }
+}
+
+const canPasteToColumn = (clipboardValue: ClipboardValue, targetColumn: string) => {
+  if (!isEditableColumn(targetColumn)) return false
+  const fromType = clipboardValue.columnType
+  const toType = getColumnType(targetColumn)
+  return canPasteBetweenTypes(fromType, toType)
+}
+
+const canPasteBetweenTypes = (
+  fromType?: string,
+  toType?: string
+) => {
+  if (!fromType && !toType) return true
+  if (!fromType || !toType) return false
+  if (fromType === toType) return true
+  const from = fromType.toUpperCase()
+  const to = toType.toUpperCase()
+  if (from === PropertyTypes.INT && to === PropertyTypes.FLOAT) return true
+  if (from === PropertyTypes.TEXT && to === PropertyTypes.DESCRIPTION) return true
+  if (from === PropertyTypes.DATE && to === PropertyTypes.DATETIME) return true
+  if (from === PropertyTypes.DATETIME && to === PropertyTypes.DATE) return true
+  return false
+}
+
+const transformClipboardValue = (
+  value: any,
+  fromType?: string,
+  toType?: string
+) => {
+  if (!fromType && !toType) return value
+  if (!fromType || !toType) return undefined
+  const from = fromType.toUpperCase()
+  const to = toType.toUpperCase()
+
+  if (from === to) return value
+
+  if (from === PropertyTypes.INT && to === PropertyTypes.FLOAT) {
+    const intValue = value?.valueInt
+    if (intValue === undefined || intValue === null || intValue === '') return null
+    return { valueFloat: Number(intValue) }
+  }
+
+  if (from === PropertyTypes.TEXT && to === PropertyTypes.DESCRIPTION) {
+    const translation = value?.translation
+    if (!translation || !('valueText' in translation)) return undefined
+    const nextTranslation: Record<string, any> = { ...translation }
+    nextTranslation.valueDescription = translation.valueText ?? ''
+    delete nextTranslation.valueText
+    return { translation: nextTranslation }
+  }
+
+  if (from === PropertyTypes.DATE && to === PropertyTypes.DATETIME) {
+    const dateValue = value?.valueDate
+    if (!dateValue) return null
+    const date = new Date(dateValue)
+    if (Number.isNaN(date.getTime())) {
+      return { valueDatetime: dateValue }
+    }
+    return { valueDatetime: date }
+  }
+
+  if (from === PropertyTypes.DATETIME && to === PropertyTypes.DATE) {
+    const datetimeValue = value?.valueDatetime
+    if (!datetimeValue) return null
+    const date = new Date(datetimeValue)
+    if (Number.isNaN(date.getTime())) return undefined
+    const normalized = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
+    return { valueDate: normalized }
+  }
+
+  return undefined
 }
 
 watch(
@@ -404,9 +593,18 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
               :key="column.key"
               class="px-4 py-1 border-r border-gray-200 relative cursor-pointer"
               :class="[
-                { 'bg-blue-100': isInDragRange(rowIndex, column.key) },
+                {
+                  'bg-blue-100': isInDragRange(rowIndex, column.key),
+                  'bg-blue-50':
+                    isCellSelected(rowIndex, column.key) && !isInDragRange(rowIndex, column.key),
+                },
                 column.key === 'active' ? 'text-center px-2' : '',
-                column.sticky ? 'sticky z-10 bg-white' : '',
+                column.sticky ? 'sticky z-10' : '',
+                column.sticky &&
+                !isCellSelected(rowIndex, column.key) &&
+                !isInDragRange(rowIndex, column.key)
+                  ? 'bg-white'
+                  : '',
               ]"
               :style="[
                 { width: (columnWidths[column.key] ?? getDefaultColumnWidth(column)) + 'px' },
@@ -414,24 +612,23 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
               ]"
               :data-row="rowIndex"
               :data-col="column.key"
-              @click="selectCell(rowIndex, column.key)"
+              @click="(event) => selectCell(rowIndex, column.key, event)"
             >
               <div
-                v-if="selectedCell.row === rowIndex && selectedCell.col === column.key"
+                v-if="isActiveCell(rowIndex, column.key)"
                 class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
-              >
-                <div
-                  v-if="isEditableColumn(column.key)"
-                  class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
-                  @mousedown.stop="startDragFill(rowIndex, column.key)"
-                />
-              </div>
+              />
+              <div
+                v-if="isDragHandleCell(rowIndex, column.key)"
+                class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
+                @mousedown.stop="startDragFill(rowIndex, column.key)"
+              />
               <slot
                 name="cell"
                 :row="row"
                 :column="column"
                 :row-index="rowIndex"
-                :is-selected="selectedCell.row === rowIndex && selectedCell.col === column.key"
+                :is-selected="isCellSelected(rowIndex, column.key)"
               >
                 <span class="block truncate">
                   {{ getValue(rowIndex, column.key) ?? '' }}

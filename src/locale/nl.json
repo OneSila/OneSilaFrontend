@@ -653,6 +653,7 @@
           "copied": "Gekopieerd",
           "pasted": "Geplakt",
           "pasteDifferentColumn": "Kan niet plakken naar een andere kolom",
+          "pasteIncompatibleColumn": "Kan niet plakken in kolom met incompatibel type",
           "undo": "Laatste wijziging ongedaan gemaakt",
           "redo": "Laatste wijziging opnieuw toegepast",
           "createdProductProperties": "{count} producteigenschappen aangemaakt.",
