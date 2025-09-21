@@ -7,6 +7,7 @@ import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../.
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { currenciesQuery } from "../../../../../../../../../shared/api/queries/currencies.js";
 import { bundleVariationsWithPricesQuery, configurableVariationsWithPricesQuery } from "../../../../../../../../../shared/api/queries/products.js";
@@ -374,7 +375,13 @@ const save = async () => {
     }
   } catch (error) {
     console.error('Failed to save variation prices', error);
-    Toast.error(t('shared.messages.somethingWentWrong'));
+    const validationErrors = processGraphQLErrors(error, t);
+    const messages = Object.values(validationErrors).filter(Boolean);
+    if (messages.length) {
+      Toast.error(messages.join('<br>'));
+    } else {
+      Toast.error(t('shared.messages.somethingWentWrong'));
+    }
   } finally {
     saving.value = false;
   }
