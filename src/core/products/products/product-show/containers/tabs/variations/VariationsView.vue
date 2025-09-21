@@ -9,6 +9,7 @@ import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import VariationsList from "./containers/variations-list/VariationsList.vue";
 import VariationCreate from "./containers/variation-create/VariationCreate.vue";
 import VariationsBulkEdit from "./containers/variations-bulk-edit/VariationsBulkEdit.vue";
+import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 
@@ -17,14 +18,30 @@ const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-const mode = ref<'list' | 'edit'>('list');
+type Mode = 'list' | 'editProperties' | 'editPrices';
+const mode = ref<Mode>('list');
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
-const hasUnsavedChanges = computed(() => bulkEditRef.value?.hasUnsavedChanges ?? false);
+const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
 
-const tabs: { key: 'list' | 'edit'; label: string; icon: string }[] = [
-  { key: 'list', label: 'List', icon: 'list' },
-  { key: 'edit', label: 'Edit', icon: 'pen-to-square' },
-];
+const getUnsavedChangesForMode = (currentMode: Mode) => {
+  if (currentMode === 'editProperties') {
+    return bulkEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editPrices') {
+    return priceEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  return false;
+};
+
+const hasUnsavedChanges = computed(
+  () => (bulkEditRef.value?.hasUnsavedChanges ?? false) || (priceEditRef.value?.hasUnsavedChanges ?? false)
+);
+
+const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
+  { key: 'list', label: t('products.products.variations.tabs.list'), icon: 'list' },
+  { key: 'editProperties', label: t('products.products.variations.tabs.editProperties'), icon: 'pen-to-square' },
+  { key: 'editPrices', label: t('products.products.variations.tabs.editPrices'), icon: 'coins' },
+]);
 
 const searchConfig: SearchConfig = {
   search: true,
@@ -79,8 +96,8 @@ const getQueryKey = () => {
   }
 };
 
-const changeMode = async (newMode: 'list' | 'edit') => {
-  if (mode.value === 'edit' && newMode !== 'edit' && hasUnsavedChanges.value) {
+const changeMode = async (newMode: Mode) => {
+  if (mode.value !== newMode && getUnsavedChangesForMode(mode.value)) {
     const res = await Swal.fire({
       icon: 'warning',
       text: t('products.products.messages.unsavedChanges'),
@@ -131,8 +148,11 @@ defineExpose({ hasUnsavedChanges });
               <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
             </div>
           </template>
-          <template v-else>
+          <template v-else-if="mode === 'editProperties'">
             <VariationsBulkEdit ref="bulkEditRef" :product="product" />
+          </template>
+          <template v-else>
+            <VariationsPricesBulkEdit ref="priceEditRef" :product="product" />
           </template>
         </div>
       </div>
