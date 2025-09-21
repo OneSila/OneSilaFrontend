@@ -345,7 +345,7 @@ const computeChanges = () => {
 
     keys.forEach((key) => {
       const type = getPropertyType(key) || ''
-      const current = variation.propertyValues[key]
+      const current = variation.propertyValues?.[key]
       const orig = (original.propertyValues || {})[key]
       const origExists = !!orig && !!orig.id
       const hasCurrent = !isPropEmpty(current, type)
@@ -508,7 +508,8 @@ const updateLimitPerPage = async (value: number) => {
 }
 
 const hasChanges = computed(
-  () => toCreate.value.length || toUpdate.value.length || toDelete.value.length
+  () =>
+    Boolean(toCreate.value.length || toUpdate.value.length || toDelete.value.length)
 )
 
 const hasUnsavedChanges = hasChanges
@@ -591,16 +592,16 @@ const modalValue = ref('')
 const openTextModal = (index: number, key: string) => {
   selectedIndex.value = index
   selectedColKey.value = key
-  modalValue.value =
-    variations.value[index].propertyValues[key]?.translation?.valueText || ''
+  const propertyValue = variations.value[index]?.propertyValues?.[key]
+  modalValue.value = propertyValue?.translation?.valueText ?? ''
   showTextModal.value = true
 }
 
 const openDescriptionModal = (index: number, key: string) => {
   selectedIndex.value = index
   selectedColKey.value = key
-  modalValue.value =
-    variations.value[index].propertyValues[key]?.translation?.valueDescription || ''
+  const propertyValue = variations.value[index]?.propertyValues?.[key]
+  modalValue.value = propertyValue?.translation?.valueDescription ?? ''
   showDescriptionModal.value = true
 }
 
@@ -613,6 +614,7 @@ const saveModal = () => {
   if (selectedIndex.value === null) return
   const item = variations.value[selectedIndex.value]
   const key = selectedColKey.value
+  if (!item.propertyValues) item.propertyValues = {}
   if (!item.propertyValues[key]) item.propertyValues[key] = {}
   if (!item.propertyValues[key].translation)
     item.propertyValues[key].translation = { language: language.value }
@@ -628,6 +630,7 @@ const saveModal = () => {
 
 const ensureProp = (index: number, key: string) => {
   const item = variations.value[index]
+  if (!item.propertyValues) item.propertyValues = {}
   if (!item.propertyValues[key]) item.propertyValues[key] = {}
   return item.propertyValues[key]
 }
@@ -635,7 +638,7 @@ const ensureProp = (index: number, key: string) => {
 const updateSelectValue = (index: number, key: string, value: any) => {
   const item = variations.value[index]
   if (!value) {
-    if (item.propertyValues[key]) delete item.propertyValues[key]
+    if (item.propertyValues?.[key]) delete item.propertyValues[key]
     return
   }
   const prop = ensureProp(index, key)
@@ -645,7 +648,7 @@ const updateSelectValue = (index: number, key: string, value: any) => {
 const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
   const item = variations.value[index]
   if (!value || !value.length) {
-    if (item.propertyValues[key]) delete item.propertyValues[key]
+    if (item.propertyValues?.[key]) delete item.propertyValues[key]
     return
   }
   const prop = ensureProp(index, key)
@@ -674,7 +677,7 @@ const updateBooleanValue = (
 const updateDateValue = (index: number, key: string, value: any) => {
   const item = variations.value[index]
   if (!value) {
-    if (item.propertyValues[key]) delete item.propertyValues[key]
+    if (item.propertyValues?.[key]) delete item.propertyValues[key]
     return
   }
   const prop = ensureProp(index, key)
@@ -684,36 +687,17 @@ const updateDateValue = (index: number, key: string, value: any) => {
 const updateDateTimeValue = (index: number, key: string, value: any) => {
   const item = variations.value[index]
   if (!value) {
-    if (item.propertyValues[key]) delete item.propertyValues[key]
+    if (item.propertyValues?.[key]) delete item.propertyValues[key]
     return
   }
   const prop = ensureProp(index, key)
   prop.valueDatetime = value
 }
 
-const MIN_COLUMN_WIDTH = 100
-const startResize = (e: MouseEvent, key: string) => {
-  const startX = e.pageX
-  const startWidth = columnWidths[key]
-
-  const onMouseMove = (event: MouseEvent) => {
-    const delta = event.pageX - startX
-    columnWidths[key] = Math.max(MIN_COLUMN_WIDTH, startWidth + delta)
-  }
-
-  const onMouseUp = () => {
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
-
 </script>
 
 <template>
-  <div class="relative w-full min-w-0">
+  <div class="relative w-full min-w-0 variations-bulk-edit">
     <MatrixEditor
       ref="matrixRef"
       v-model:rows="variations"
@@ -917,3 +901,10 @@ const startResize = (e: MouseEvent, key: string) => {
     </Modal>
   </div>
 </template>
+
+<style>
+.variations-bulk-edit .dp__menu,
+.variations-bulk-edit .dp__outer_menu_wrap {
+  z-index: 50 !important;
+}
+</style>
