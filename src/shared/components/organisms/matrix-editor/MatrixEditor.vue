@@ -45,6 +45,13 @@ const tableWrapper = ref<HTMLElement | null>(null)
 const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
 const selectedRange = ref<{ row: number | null; columns: string[] }>({ row: null, columns: [] })
 const selectionAnchor = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
+const selectionDrag = reactive<{ active: boolean; row: number | null; startCol: string | null }>(
+  {
+    active: false,
+    row: null,
+    startCol: null,
+  }
+)
 const clipboard = ref<ClipboardValue | null>(null)
 const dragState = reactive({
   active: false,
@@ -163,6 +170,52 @@ const selectCell = (rowIndex: number, columnKey: string, event?: MouseEvent) => 
   }
 
   selectedCell.value = { row: rowIndex, col: columnKey }
+}
+
+const isInteractiveElement = (element: EventTarget | null) => {
+  if (!element || !(element instanceof HTMLElement)) return false
+  const interactiveSelector = 'input,textarea,select,button,[contenteditable="true"]'
+  return !!element.closest(interactiveSelector)
+}
+
+const beginSelectionDrag = (rowIndex: number, columnKey: string, event: MouseEvent) => {
+  if (event.button !== 0 || event.shiftKey) return
+  if (isInteractiveElement(event.target)) return
+
+  selectionDrag.active = true
+  selectionDrag.row = rowIndex
+  selectionDrag.startCol = columnKey
+  selectedCell.value = { row: rowIndex, col: columnKey }
+  selectedRange.value = { row: rowIndex, columns: [columnKey] }
+  selectionAnchor.value = { row: rowIndex, col: columnKey }
+  document.addEventListener('mouseup', stopSelectionDrag)
+}
+
+const extendSelectionDrag = (rowIndex: number, columnKey: string, event: MouseEvent) => {
+  if (!selectionDrag.active || selectionDrag.row !== rowIndex) return
+  if (event.buttons === 0) {
+    stopSelectionDrag()
+    return
+  }
+  const startCol = selectionDrag.startCol
+  if (!startCol) return
+  const startIndex = getColumnIndex(startCol)
+  const currentIndex = getColumnIndex(columnKey)
+  if (startIndex === -1 || currentIndex === -1) return
+
+  const [from, to] = startIndex <= currentIndex ? [startIndex, currentIndex] : [currentIndex, startIndex]
+  const keys = props.columns.slice(from, to + 1).map((column) => column.key)
+  selectedRange.value = { row: rowIndex, columns: sortColumnsByIndex(keys) }
+  selectionAnchor.value = { row: rowIndex, col: startCol }
+  event.preventDefault()
+}
+
+const stopSelectionDrag = () => {
+  if (!selectionDrag.active) return
+  selectionDrag.active = false
+  selectionDrag.row = null
+  selectionDrag.startCol = null
+  document.removeEventListener('mouseup', stopSelectionDrag)
 }
 
 const isEditableColumn = (columnKey: string) => {
@@ -386,9 +439,11 @@ const canPasteBetweenTypes = (
 ) => {
   if (!fromType && !toType) return true
   if (!fromType || !toType) return false
-  if (fromType === toType) return true
   const from = fromType.toUpperCase()
   const to = toType.toUpperCase()
+  if (from === PropertyTypes.SELECT || from === PropertyTypes.MULTISELECT) return false
+  if (to === PropertyTypes.SELECT || to === PropertyTypes.MULTISELECT) return false
+  if (from === to) return true
   if (from === PropertyTypes.INT && to === PropertyTypes.FLOAT) return true
   if (from === PropertyTypes.TEXT && to === PropertyTypes.DESCRIPTION) return true
   if (from === PropertyTypes.DATE && to === PropertyTypes.DATETIME) return true
@@ -472,6 +527,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown)
   document.removeEventListener('mousemove', onDragFill)
   document.removeEventListener('mouseup', endDragFill)
+  document.removeEventListener('mouseup', stopSelectionDrag)
 })
 
 const MIN_COLUMN_WIDTH = 100
@@ -612,6 +668,8 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
               ]"
               :data-row="rowIndex"
               :data-col="column.key"
+              @mousedown="(event) => beginSelectionDrag(rowIndex, column.key, event)"
+              @mouseenter="(event) => extendSelectionDrag(rowIndex, column.key, event)"
               @click="(event) => selectCell(rowIndex, column.key, event)"
             >
               <div
