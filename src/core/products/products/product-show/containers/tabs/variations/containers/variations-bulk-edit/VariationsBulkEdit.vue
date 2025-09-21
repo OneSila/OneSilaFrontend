@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, ref, onMounted, watch, toRaw, onBeforeUnmount, nextTick } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
 import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
@@ -15,11 +15,12 @@ import { shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
-import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
+import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
+import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
 import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuerySelector, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
@@ -48,25 +49,19 @@ const filters = ref<Record<string, boolean>>({
 })
 const selectedPropertyTypes = ref<string[]>([])
 
-const baseColumns: { key: string; label: string; requireType?: string }[] = [
-  { key: 'sku', label: t('shared.labels.sku') },
-  { key: 'name', label: t('shared.labels.name') },
-  { key: 'active', label: t('shared.labels.active') },
-]
+const baseColumns = computed<MatrixColumn[]>(() => [
+  { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
+  { key: 'name', label: t('shared.labels.name'), editable: false },
+  { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 60 },
+])
 
 const properties = ref<PropertyInfo[]>([])
 const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
-const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
-const tableWrapper = ref<HTMLElement | null>(null)
-const clipboard = ref<{ col: string; value: any } | null>(null)
-const history = ref<any[]>([])
-const redoStack = ref<any[]>([])
 const skipHistory = ref(false)
-const lastSnapshot = ref(JSON.stringify(variations.value))
-const canUndo = computed(() => history.value.length > 0)
-const canRedo = computed(() => redoStack.value.length > 0)
+const matrixRef = ref<MatrixEditorExpose | null>(null)
+const readOnlyColumns = new Set(['sku', 'name', 'active'])
 
 const pageInfo = ref<any | null>(null)
 const limit = ref(20)
@@ -95,9 +90,15 @@ const filteredProperties = computed(() => {
   })
 })
 
-const columns = computed(() => [
-  ...baseColumns,
-  ...filteredProperties.value.map((p) => ({ key: p.id, label: p.name, requireType: p.requireType })),
+const columns = computed<MatrixColumn[]>(() => [
+  ...baseColumns.value,
+  ...filteredProperties.value.map((p) => ({
+    key: p.id,
+    label: p.name,
+    requireType: p.requireType,
+    editable: true,
+    iconColorClass: getIconColor(p.requireType),
+  })),
 ])
 
 const getIconColor = (requireType: string) => {
@@ -115,229 +116,52 @@ const getIconColor = (requireType: string) => {
   }
   return 'text-gray-400'
 }
+const getPropertyType = (id: string) =>
+  properties.value.find((property) => property.id === id)?.type
 
-const selectCell = (rowIndex: number, colKey: string) => {
-  selectedCell.value = { row: rowIndex, col: colKey }
+const isEditableColumn = (key: string) => !readOnlyColumns.has(key)
+
+const getMatrixCellValue = (rowIndex: number, key: string) => {
+  if (!isEditableColumn(key)) return null
+  const row = variations.value[rowIndex]
+  if (!row) return null
+  const value = row.propertyValues?.[key]
+  return value ? JSON.parse(JSON.stringify(value)) : null
 }
 
-const dragState = reactive({
-  active: false,
-  startRow: null as number | null,
-  endRow: null as number | null,
-  col: '' as string,
-})
+const setMatrixCellValue = (rowIndex: number, key: string, value: any) => {
+  if (!isEditableColumn(key)) return
+  const row = variations.value[rowIndex]
+  if (!row) return
+  if (!value) {
+    if (row.propertyValues) delete row.propertyValues[key]
+    return
+  }
+  if (!row.propertyValues) row.propertyValues = {}
+  row.propertyValues[key] = JSON.parse(JSON.stringify(value))
+}
 
-const copyValue = (from: number, to: number, key: string) => {
+const cloneMatrixCellValue = (from: number, to: number, key: string) => {
+  if (!isEditableColumn(key)) return
   const source = variations.value[from]
   const target = variations.value[to]
+  if (!source || !target) return
   if (!target.propertyValues) target.propertyValues = {}
-  const src = source.propertyValues?.[key]
-  if (
-    !src ||
-    (src.valueSelect == null &&
-      (!src.valueMultiSelect || !src.valueMultiSelect.length) &&
-      src.valueInt === undefined &&
-      src.valueFloat === undefined &&
-      src.valueBoolean === undefined &&
-      src.valueDate == null &&
-      src.valueDatetime == null &&
-      !src.translation?.valueText &&
-      !src.translation?.valueDescription)
-  ) {
-    delete target.propertyValues[key]
-  } else {
-    target.propertyValues[key] = JSON.parse(JSON.stringify(src))
-  }
-}
-
-const startDragFill = (row: number, col: string) => {
-  if (['name', 'sku', 'active'].includes(col)) return
-  dragState.active = true
-  dragState.startRow = row
-  dragState.endRow = row
-  dragState.col = col
-  document.addEventListener('mousemove', onDragFill)
-  document.addEventListener('mouseup', endDragFill)
-}
-
-const onDragFill = (e: MouseEvent) => {
-  const cell = (e.target as HTMLElement).closest('td')
-  if (!cell) return
-  const rowAttr = cell.getAttribute('data-row')
-  const colAttr = cell.getAttribute('data-col')
-  if (colAttr === dragState.col && rowAttr) {
-    dragState.endRow = Number(rowAttr)
-  }
-}
-
-const endDragFill = () => {
-  document.removeEventListener('mousemove', onDragFill)
-  document.removeEventListener('mouseup', endDragFill)
-  if (
-    dragState.active &&
-    dragState.startRow !== null &&
-    dragState.endRow !== null &&
-    dragState.col
-  ) {
-    const start = dragState.startRow
-    const end = dragState.endRow
-    const [from, to] = start < end ? [start, end] : [end, start]
-    for (let i = from; i <= to; i++) {
-      if (i === start) continue
-      copyValue(start, i, dragState.col)
-    }
-  }
-  dragState.active = false
-  dragState.startRow = dragState.endRow = null
-  dragState.col = ''
-}
-
-const isInDragRange = (row: number, col: string) => {
-  if (
-    !dragState.active ||
-    dragState.col !== col ||
-    dragState.startRow === null ||
-    dragState.endRow === null
-  )
-    return false
-  const [from, to] =
-    dragState.startRow < dragState.endRow
-      ? [dragState.startRow, dragState.endRow]
-      : [dragState.endRow, dragState.startRow]
-  return row >= from && row <= to
-}
-
-const handleKeydown = (e: KeyboardEvent) => {
-  const target = e.target as HTMLElement
-  if (
-    ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
-    target.isContentEditable
-  )
+  const type = getPropertyType(key)
+  const value = source.propertyValues?.[key]
+  if (!type || !value || isPropEmpty(value, type)) {
+    if (target.propertyValues) delete target.propertyValues[key]
     return
-  if (e.ctrlKey) {
-    const key = e.key.toLowerCase()
-    if (key === 'z') {
-      undo()
-      e.preventDefault()
-      return
-    }
-    if (key === 'x') {
-      redo()
-      e.preventDefault()
-      return
-    }
   }
-  const { row, col } = selectedCell.value
-  if (row === null || col === null) return
-
-  if (e.ctrlKey && e.key.toLowerCase() === 'c') {
-    if (!['name', 'sku', 'active'].includes(col)) {
-      const value = variations.value[row]?.propertyValues?.[col]
-      clipboard.value = {
-        col,
-        value: JSON.parse(JSON.stringify(value ?? null)),
-      }
-      Toast.success(t('products.products.alert.toast.copied'))
-    }
-    e.preventDefault()
-  } else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
-    if (clipboard.value) {
-      if (clipboard.value.col === col) {
-        if (!['name', 'sku', 'active'].includes(col)) {
-          if (clipboard.value.value === null) {
-            if (variations.value[row].propertyValues) {
-              delete variations.value[row].propertyValues[col]
-            }
-          } else {
-            if (!variations.value[row].propertyValues)
-              variations.value[row].propertyValues = {}
-            variations.value[row].propertyValues[col] = JSON.parse(
-              JSON.stringify(clipboard.value.value)
-            )
-          }
-          Toast.success(t('products.products.alert.toast.pasted'))
-        }
-      } else {
-        Toast.error(t('products.products.alert.toast.pasteDifferentColumn'))
-      }
-    }
-    e.preventDefault()
-  } else if (
-    (e.key === 'Delete' || e.key === 'Backspace') &&
-    !e.ctrlKey &&
-    !e.metaKey &&
-    !e.shiftKey &&
-    !e.altKey
-  ) {
-    if (!['name', 'sku', 'active'].includes(col)) {
-      if (variations.value[row].propertyValues) {
-        delete variations.value[row].propertyValues[col]
-      }
-    }
-    e.preventDefault()
-  } else if (!e.ctrlKey && !e.metaKey) {
-    switch (e.key) {
-      case 'ArrowUp':
-        if (row > 0) selectedCell.value.row = row - 1
-        e.preventDefault()
-        break
-      case 'ArrowDown':
-        if (row < variations.value.length - 1)
-          selectedCell.value.row = row + 1
-        e.preventDefault()
-        break
-      case 'ArrowLeft': {
-        const colIndex = columns.value.findIndex((c) => c.key === col)
-        if (colIndex > 0) selectedCell.value.col = columns.value[colIndex - 1].key
-        e.preventDefault()
-        break
-      }
-      case 'ArrowRight': {
-        const colIndex = columns.value.findIndex((c) => c.key === col)
-        if (colIndex < columns.value.length - 1)
-          selectedCell.value.col = columns.value[colIndex + 1].key
-        e.preventDefault()
-        break
-      }
-    }
-  }
+  target.propertyValues[key] = JSON.parse(JSON.stringify(value))
 }
 
-onBeforeUnmount(() => {
-  document.removeEventListener('mousemove', onDragFill)
-  document.removeEventListener('mouseup', endDragFill)
-  window.removeEventListener('keydown', handleKeydown)
-})
-
-onMounted(() => {
-  window.addEventListener('keydown', handleKeydown)
-})
-
-const columnWidths = reactive<Record<string, number>>({})
-watch(
-  columns,
-  (cols) => {
-    cols.forEach((col) => {
-      if (!columnWidths[col.key]) columnWidths[col.key] = col.key === 'active' ? 60 : 150
-    })
-  },
-  { immediate: true }
-)
-
-watch(
-  selectedCell,
-  () => {
-    nextTick(() => {
-      if (selectedCell.value.row !== null && selectedCell.value.col) {
-        const cell = tableWrapper.value?.querySelector(
-          `td[data-row="${selectedCell.value.row}"][data-col="${selectedCell.value.col}"]`
-        ) as HTMLElement | null
-        cell?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      }
-    })
-  },
-  { deep: true }
-)
+const clearMatrixCellValue = (rowIndex: number, key: string) => {
+  if (!isEditableColumn(key)) return
+  const row = variations.value[rowIndex]
+  if (!row || !row.propertyValues) return
+  delete row.propertyValues[key]
+}
 
 const isAlias = computed(() => props.product.type === ProductType.Alias)
 const parentId = computed(() => (isAlias.value ? props.product.aliasParentProduct.id : props.product.id))
@@ -465,7 +289,7 @@ watch(language, async () => {
   await fetchVariations()
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
-  clearHistory()
+  matrixRef.value?.resetHistory(variations.value)
   skipHistory.value = false
 })
 
@@ -484,7 +308,7 @@ onMounted(async () => {
   await Promise.all([fetchProperties(), fetchVariations()])
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
-  clearHistory()
+  matrixRef.value?.resetHistory(variations.value)
   skipHistory.value = false
   loading.value = false
 })
@@ -492,9 +316,6 @@ onMounted(async () => {
 const toCreate = ref<any[]>([])
 const toUpdate = ref<any[]>([])
 const toDelete = ref<object[]>([])
-
-const getPropertyType = (id: string) =>
-  properties.value.find((p) => p.id === id)?.type
 
 const isPropEmpty = (prop: any, type: string) => {
   if (!prop) return true
@@ -636,47 +457,12 @@ const computeChanges = () => {
 
 watch(
   variations,
-  (newVal) => {
-    if (!skipHistory.value) {
-      history.value.push(JSON.parse(lastSnapshot.value))
-      if (history.value.length > 20) history.value.shift()
-      redoStack.value = []
-    }
-    lastSnapshot.value = JSON.stringify(toRaw(newVal))
+  () => {
+    if (skipHistory.value) return
     computeChanges()
   },
   { deep: true }
 )
-
-const undo = () => {
-  if (!history.value.length) return
-  skipHistory.value = true
-  redoStack.value.push(JSON.parse(JSON.stringify(variations.value)))
-  const prev = history.value.pop()
-  variations.value = JSON.parse(JSON.stringify(prev))
-  nextTick(() => {
-    skipHistory.value = false
-  })
-  Toast.info(t('products.products.alert.toast.undo'))
-}
-
-const redo = () => {
-  if (!redoStack.value.length) return
-  skipHistory.value = true
-  history.value.push(JSON.parse(JSON.stringify(variations.value)))
-  const next = redoStack.value.pop()
-  variations.value = JSON.parse(JSON.stringify(next))
-  nextTick(() => {
-    skipHistory.value = false
-  })
-  Toast.info(t('products.products.alert.toast.redo'))
-}
-
-const clearHistory = () => {
-  history.value = []
-  redoStack.value = []
-  lastSnapshot.value = JSON.stringify(toRaw(variations.value))
-}
 
 const setPaginationVariables = async (
   firstVal: number | null = null,
@@ -694,7 +480,7 @@ const setPaginationVariables = async (
   await fetchVariations()
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
-  clearHistory()
+  matrixRef.value?.resetHistory(variations.value)
   skipHistory.value = false
 }
 
@@ -761,7 +547,7 @@ const save = async () => {
     })
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
-  clearHistory()
+  matrixRef.value?.resetHistory(variations.value)
   await nextTick()
   skipHistory.value = false
   const messages: any[] = []
@@ -928,37 +714,27 @@ const startResize = (e: MouseEvent, key: string) => {
 
 <template>
   <div class="relative w-full min-w-0">
-    <div
-      v-if="loading"
-      class="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-75"
+    <MatrixEditor
+      ref="matrixRef"
+      v-model:rows="variations"
+      :columns="columns"
+      :loading="loading"
+      :has-changes="hasChanges"
+      row-key="id"
+      :get-cell-value="getMatrixCellValue"
+      :set-cell-value="setMatrixCellValue"
+      :clone-cell-value="cloneMatrixCellValue"
+      :clear-cell-value="clearMatrixCellValue"
+      @save="save"
     >
-      <LocalLoader :loading="loading" />
-    </div>
-    <Flex between middle gap="2" class="mb-4">
-      <FlexCell grow>
+      <template #filters>
         <PropertyFilters
           v-model:search-query="searchQuery"
           v-model:selected-property-types="selectedPropertyTypes"
           v-model:filters="filters"
         />
-      </FlexCell>
-      <FlexCell class="flex">
-        <Button
-          class="btn btn-secondary"
-          :disabled="!canUndo"
-          @click="undo"
-        >
-          <Icon name="arrow-left" />
-        </Button>
-        <Button
-          class="btn btn-secondary ml-2"
-          :disabled="!canRedo"
-          @click="redo"
-        >
-          <Icon name="arrow-right" />
-        </Button>
-      </FlexCell>
-      <FlexCell>
+      </template>
+      <template #toolbar-right>
         <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
           <template v-slot="{ result: { data } }">
             <Selector
@@ -975,248 +751,169 @@ const startResize = (e: MouseEvent, key: string) => {
             />
           </template>
         </ApolloQuery>
-      </FlexCell>
-      <FlexCell>
-        <Button class="btn btn-primary" :disabled="!hasChanges" @click="save">
-          {{ t('shared.button.save') }}
-        </Button>
-      </FlexCell>
-    </Flex>
-    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full">
-      <table v-if="variations.length" class="min-w-max border border-gray-300 border-collapse select-none">
-        <thead class="bg-gray-100 sticky top-0">
-          <tr>
-            <th
-              v-for="col in columns"
-              :key="col.key"
-              class="px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
-              :class="[col.key === 'active' ? 'text-center' : 'text-left', col.key === 'sku' ? 'sticky z-10 bg-gray-100' : '']"
-              :style="[{ width: columnWidths[col.key] + 'px' }, col.key === 'sku' ? { left: 0 } : {}]"
-            >
-              <div class="flex items-center h-full">
-                <Icon
-                  v-if="col.requireType"
-                  name="circle-dot"
-                  :class="[getIconColor(col.requireType), 'mr-1']"
-                />
-                <span class="block truncate" :title="col.label"><strong>{{ col.label }}</strong></span>
-                <span
-                  class="resizer select-none"
-                  @mousedown="(e) => startResize(e, col.key)"
-                />
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(item, index) in variations"
-            :key="item.id"
-            class="border-t"
+      </template>
+      <template #cell="{ row, column, rowIndex }">
+        <template v-if="column.key === 'name'">
+          <span class="block truncate" :title="row.variation.name">
+            {{ shortenText(row.variation.name, 32) }}
+          </span>
+        </template>
+        <template v-else-if="column.key === 'sku'">
+          <span class="block truncate" :title="row.variation.sku">
+            {{ row.variation.sku }}
+          </span>
+        </template>
+        <template v-else-if="column.key === 'active'">
+          <Icon
+            v-if="row.variation.active"
+            name="check-circle"
+            class="text-green-500"
+          />
+          <Icon
+            v-else
+            name="times-circle"
+            class="text-red-500"
+          />
+        </template>
+        <template v-else>
+          <FieldQuery
+            v-if="getPropertyType(column.key) === PropertyTypes.SELECT"
+            :field="selectFields[column.key]"
+            :model-value="row.propertyValues[column.key]?.valueSelect?.id"
+            @update:modelValue="(value) => updateSelectValue(rowIndex, column.key, value)"
+          />
+          <FieldQuery
+            v-else-if="getPropertyType(column.key) === PropertyTypes.MULTISELECT"
+            :field="selectFields[column.key]"
+            :model-value="row.propertyValues[column.key]?.valueMultiSelect?.map((v) => v.id)"
+            @update:modelValue="(value) => updateMultiSelectValue(rowIndex, column.key, value)"
+          />
+          <TextInput
+            v-else-if="getPropertyType(column.key) === PropertyTypes.INT"
+            class="w-full"
+            :model-value="row.propertyValues[column.key]?.valueInt"
+            number
+            @update:modelValue="(value) => updateNumberValue(rowIndex, column.key, 'valueInt', value)"
+          />
+          <TextInput
+            v-else-if="getPropertyType(column.key) === PropertyTypes.FLOAT"
+            class="w-full"
+            :model-value="row.propertyValues[column.key]?.valueFloat"
+            float
+            @update:modelValue="(value) => updateNumberValue(rowIndex, column.key, 'valueFloat', value)"
+          />
+          <div
+            v-else-if="getPropertyType(column.key) === PropertyTypes.TEXT"
+            class="relative cursor-pointer"
+            @dblclick="openTextModal(rowIndex, column.key)"
           >
-            <td
-              v-for="col in columns"
-              :key="col.key"
-              class="px-4 py-2 py-1 border-r border-gray-200 relative cursor-pointer"
-              :class="[
-                { 'bg-blue-100': isInDragRange(index, col.key) },
-                col.key === 'active' ? 'text-center px-2' : '',
-                col.key === 'sku' ? 'sticky z-10 bg-white' : ''
-              ]"
-              :style="[
-                { width: columnWidths[col.key] + 'px' },
-                col.key === 'sku' ? { left: 0 } : {}
-              ]"
-              :data-row="index"
-              :data-col="col.key"
-              @click="selectCell(index, col.key)"
-            >
-              <div
-                v-if="selectedCell.row === index && selectedCell.col === col.key"
-                class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
-              >
-                <div
-                  v-if="!['name','sku','active'].includes(col.key)"
-                  class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
-                  @mousedown.stop="startDragFill(index, col.key)"
-                ></div>
+            <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
+              <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                {{
+                  shortenText(
+                    row.propertyValues[column.key]?.translation?.valueText || '',
+                    16
+                  )
+                }}
               </div>
-              <template v-if="col.key === 'name'">
-                <span class="block truncate" :title="item.variation.name">
-                  {{ shortenText(item.variation.name, 32) }}
-                </span>
-              </template>
-              <template v-else-if="col.key === 'sku'">
-                <span class="block truncate" :title="item.variation.sku">
-                  {{ item.variation.sku }}
-                </span>
-              </template>
-              <template v-else-if="col.key === 'active'">
-                <Icon
-                  v-if="item.variation.active"
-                  name="check-circle"
-                  class="text-green-500"
-                />
-                <Icon
-                  v-else
-                  name="times-circle"
-                  class="text-red-500"
-                />
-              </template>
-              <template v-else>
-                <FieldQuery
-                  v-if="getPropertyType(col.key) === PropertyTypes.SELECT"
-                  :field="selectFields[col.key]"
-                  :model-value="item.propertyValues[col.key]?.valueSelect?.id"
-                  @update:modelValue="(value) => updateSelectValue(index, col.key, value)"
-                />
-                <FieldQuery
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.MULTISELECT"
-                  :field="selectFields[col.key]"
-                  :model-value="item.propertyValues[col.key]?.valueMultiSelect?.map((v) => v.id)"
-                  @update:modelValue="(value) => updateMultiSelectValue(index, col.key, value)"
-                />
-                <TextInput
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.INT"
-                  class="w-full"
-                  :model-value="item.propertyValues[col.key]?.valueInt"
-                  number
-                  @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueInt', value)"
-                />
-                <TextInput
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.FLOAT"
-                  class="w-full"
-                  :model-value="item.propertyValues[col.key]?.valueFloat"
-                  float
-                  @update:modelValue="(value) => updateNumberValue(index, col.key, 'valueFloat', value)"
-                />
-                <div
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.TEXT"
-                  class="relative cursor-pointer"
-                  @dblclick="openTextModal(index, col.key)"
-                >
-                  <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
-                    <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
-                      {{
-                        shortenText(
-                          item.propertyValues[col.key]?.translation?.valueText || '',
-                          16
-                        )
-                      }}
-                    </div>
-                    <Icon
-                      name="maximize"
-                      class="text-gray-400 cursor-pointer flex-shrink-0"
-                      @click.stop="openTextModal(index, col.key)"
-                    />
-                  </div>
-                </div>
+              <Icon
+                name="maximize"
+                class="text-gray-400 cursor-pointer flex-shrink-0"
+                @click.stop="openTextModal(rowIndex, column.key)"
+              />
+            </div>
+          </div>
 
-                <div
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.DESCRIPTION"
-                  class="relative cursor-pointer"
-                  @dblclick="openDescriptionModal(index, col.key)"
-                >
-                  <div class="border border-gray-300 p-1 h-16 flex justify-between">
-                    <div class="overflow-hidden break-words">
-                      {{
-                        shortenText(
-                          item.propertyValues[col.key]?.translation?.valueDescription || '',
-                          32
-                        )
-                      }}
-                    </div>
-                    <Icon
-                      name="maximize"
-                      class="text-gray-400 cursor-pointer flex-shrink-0 ml-1"
-                      @click.stop="openDescriptionModal(index, col.key)"
-                    />
-                  </div>
-                </div>
+          <div
+            v-else-if="getPropertyType(column.key) === PropertyTypes.DESCRIPTION"
+            class="relative cursor-pointer"
+            @dblclick="openDescriptionModal(rowIndex, column.key)"
+          >
+            <div class="border border-gray-300 p-1 h-16 flex justify-between">
+              <div class="overflow-hidden break-words">
+                {{
+                  shortenText(
+                    row.propertyValues[column.key]?.translation?.valueDescription || '',
+                    32
+                  )
+                }}
+              </div>
+              <Icon
+                name="maximize"
+                class="text-gray-400 cursor-pointer flex-shrink-0 ml-1"
+                @click.stop="openDescriptionModal(rowIndex, column.key)"
+              />
+            </div>
+          </div>
 
-                <Toggle
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.BOOLEAN"
-                  :model-value="item.propertyValues[col.key]?.valueBoolean ?? null"
-                  @update:modelValue="(value) => updateBooleanValue(index, col.key, value)"
-                />
-                <DateInput
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.DATE"
-                  :model-value="item.propertyValues[col.key]?.valueDate ?? null"
-                  @update:modelValue="(value) => updateDateValue(index, col.key, value)"
-                />
-                <DateTimeInput
-                  v-else-if="getPropertyType(col.key) === PropertyTypes.DATETIME"
-                  :model-value="item.propertyValues[col.key]?.valueDatetime ?? null"
-                  @update:modelValue="(value) => updateDateTimeValue(index, col.key, value)"
-                />
-                <input
-                  v-else
-                  type="text"
-                  class="w-full border p-1"
-                  :value="item.propertyValues[col.key]?.valueInt || ''"
-                  disabled
-                />
-              </template>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="py-2 px-2 flex items-center space-x-2">
-    <Pagination
-      v-if="pageInfo"
-      :page-info="pageInfo"
-      :change-query-params="false"
-      @query-changed="handleQueryChanged"
-    />
-    <div v-if="pageInfo && (pageInfo.hasNextPage || pageInfo.hasPreviousPage)">
-      <Selector
-        :options="perPageOptions"
-        :model-value="limit"
-        :clearable="false"
-        dropdown-position="bottom"
-        value-by="value"
-        label-by="name"
-        :placeholder="t('pagination.perPage')"
-        @update:model-value="updateLimitPerPage"
+          <Toggle
+            v-else-if="getPropertyType(column.key) === PropertyTypes.BOOLEAN"
+            :model-value="row.propertyValues[column.key]?.valueBoolean ?? null"
+            @update:modelValue="(value) => updateBooleanValue(rowIndex, column.key, value)"
+          />
+          <DateInput
+            v-else-if="getPropertyType(column.key) === PropertyTypes.DATE"
+            :model-value="row.propertyValues[column.key]?.valueDate ?? null"
+            @update:modelValue="(value) => updateDateValue(rowIndex, column.key, value)"
+          />
+          <DateTimeInput
+            v-else-if="getPropertyType(column.key) === PropertyTypes.DATETIME"
+            :model-value="row.propertyValues[column.key]?.valueDatetime ?? null"
+            @update:modelValue="(value) => updateDateTimeValue(rowIndex, column.key, value)"
+          />
+          <input
+            v-else
+            type="text"
+            class="w-full border p-1"
+            :value="row.propertyValues[column.key]?.valueInt || ''"
+            disabled
+          />
+        </template>
+      </template>
+    </MatrixEditor>
+    <div class="py-2 px-2 flex items-center space-x-2">
+      <Pagination
+        v-if="pageInfo"
+        :page-info="pageInfo"
+        :change-query-params="false"
+        @query-changed="handleQueryChanged"
       />
+      <div v-if="pageInfo && (pageInfo.hasNextPage || pageInfo.hasPreviousPage)">
+        <Selector
+          :options="perPageOptions"
+          :model-value="limit"
+          :clearable="false"
+          dropdown-position="bottom"
+          value-by="value"
+          label-by="name"
+          :placeholder="t('pagination.perPage')"
+          @update:model-value="updateLimitPerPage"
+        />
+      </div>
     </div>
+    <Modal v-model="showTextModal">
+      <Card class="modal-content w-1/2">
+        <h3 class="text-xl font-semibold text-center mb-4">
+          {{ t('products.products.bulkEditModal.textTitle') }}
+        </h3>
+        <TextInput class="w-full" v-model="modalValue" />
+        <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+          <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
+        </div>
+      </Card>
+    </Modal>
+    <Modal v-model="showDescriptionModal">
+      <Card class="modal-content w-2/3">
+        <h3 class="text-xl font-semibold text-center mb-4">
+          {{ t('products.products.bulkEditModal.descriptionTitle') }}
+        </h3>
+        <TextEditor class="h-64" v-model="modalValue" />
+        <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+          <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
+        </div>
+      </Card>
+    </Modal>
   </div>
-  <Modal v-model="showTextModal">
-    <Card class="modal-content w-1/2">
-      <h3 class="text-xl font-semibold text-center mb-4">
-        {{ t('products.products.bulkEditModal.textTitle') }}
-      </h3>
-      <TextInput class="w-full" v-model="modalValue" />
-      <div class="flex justify-end gap-4 mt-4">
-        <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
-        <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
-      </div>
-    </Card>
-  </Modal>
-  <Modal v-model="showDescriptionModal">
-    <Card class="modal-content w-2/3">
-      <h3 class="text-xl font-semibold text-center mb-4">
-        {{ t('products.products.bulkEditModal.descriptionTitle') }}
-      </h3>
-      <TextEditor class="h-64" v-model="modalValue" />
-      <div class="flex justify-end gap-4 mt-4">
-        <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
-        <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
-      </div>
-    </Card>
-  </Modal>
 </template>
-
-<style scoped>
-.resizer {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  cursor: col-resize;
-  background-color: #e5e7eb;
-}
-</style>
