@@ -52,6 +52,11 @@ const selectionDrag = reactive<{ active: boolean; row: number | null; startCol: 
     startCol: null,
   }
 )
+const SELECTION_SCROLL_EDGE_THRESHOLD = 40
+const SELECTION_SCROLL_STEP = 30
+let selectionAutoScrollFrame: number | null = null
+let selectionAutoScrollDirection: -1 | 0 | 1 = 0
+let lastPointerPosition: { x: number; y: number } | null = null
 const clipboard = ref<ClipboardValue | null>(null)
 const dragState = reactive({
   active: false,
@@ -188,7 +193,9 @@ const beginSelectionDrag = (rowIndex: number, columnKey: string, event: MouseEve
   selectedCell.value = { row: rowIndex, col: columnKey }
   selectedRange.value = { row: rowIndex, columns: [columnKey] }
   selectionAnchor.value = { row: rowIndex, col: columnKey }
+  lastPointerPosition = { x: event.clientX, y: event.clientY }
   document.addEventListener('mouseup', stopSelectionDrag)
+  document.addEventListener('mousemove', onSelectionDragMove)
 }
 
 const extendSelectionDrag = (rowIndex: number, columnKey: string, event: MouseEvent) => {
@@ -197,16 +204,9 @@ const extendSelectionDrag = (rowIndex: number, columnKey: string, event: MouseEv
     stopSelectionDrag()
     return
   }
-  const startCol = selectionDrag.startCol
-  if (!startCol) return
-  const startIndex = getColumnIndex(startCol)
-  const currentIndex = getColumnIndex(columnKey)
-  if (startIndex === -1 || currentIndex === -1) return
-
-  const [from, to] = startIndex <= currentIndex ? [startIndex, currentIndex] : [currentIndex, startIndex]
-  const keys = props.columns.slice(from, to + 1).map((column) => column.key)
-  selectedRange.value = { row: rowIndex, columns: sortColumnsByIndex(keys) }
-  selectionAnchor.value = { row: rowIndex, col: startCol }
+  lastPointerPosition = { x: event.clientX, y: event.clientY }
+  updateSelectionDrag(columnKey)
+  handleSelectionAutoScroll(event)
   event.preventDefault()
 }
 
@@ -216,6 +216,96 @@ const stopSelectionDrag = () => {
   selectionDrag.row = null
   selectionDrag.startCol = null
   document.removeEventListener('mouseup', stopSelectionDrag)
+  document.removeEventListener('mousemove', onSelectionDragMove)
+  stopSelectionAutoScroll()
+}
+
+const updateSelectionDrag = (columnKey: string) => {
+  if (!selectionDrag.active || selectionDrag.row === null) return
+  const startCol = selectionDrag.startCol
+  if (!startCol) return
+  const startIndex = getColumnIndex(startCol)
+  const currentIndex = getColumnIndex(columnKey)
+  if (startIndex === -1 || currentIndex === -1) return
+
+  const [from, to] = startIndex <= currentIndex ? [startIndex, currentIndex] : [currentIndex, startIndex]
+  const keys = props.columns.slice(from, to + 1).map((column) => column.key)
+  selectedRange.value = { row: selectionDrag.row, columns: sortColumnsByIndex(keys) }
+  selectionAnchor.value = { row: selectionDrag.row, col: startCol }
+}
+
+const handleSelectionAutoScroll = (event: MouseEvent) => {
+  const wrapper = tableWrapper.value
+  if (!wrapper) return
+  const rect = wrapper.getBoundingClientRect()
+  if (event.clientX > rect.right - SELECTION_SCROLL_EDGE_THRESHOLD) {
+    startSelectionAutoScroll(1)
+  } else if (event.clientX < rect.left + SELECTION_SCROLL_EDGE_THRESHOLD) {
+    startSelectionAutoScroll(-1)
+  } else {
+    stopSelectionAutoScroll()
+  }
+}
+
+const startSelectionAutoScroll = (direction: -1 | 1) => {
+  if (selectionAutoScrollDirection === direction && selectionAutoScrollFrame !== null) return
+  stopSelectionAutoScroll()
+  selectionAutoScrollDirection = direction
+  const step = () => {
+    if (!selectionDrag.active || !tableWrapper.value) {
+      stopSelectionAutoScroll()
+      return
+    }
+    const wrapper = tableWrapper.value
+    const previous = wrapper.scrollLeft
+    const maxScroll = wrapper.scrollWidth - wrapper.clientWidth
+    if (direction === 1) {
+      wrapper.scrollLeft = Math.min(maxScroll, previous + SELECTION_SCROLL_STEP)
+    } else {
+      wrapper.scrollLeft = Math.max(0, previous - SELECTION_SCROLL_STEP)
+    }
+    if (wrapper.scrollLeft === previous) {
+      stopSelectionAutoScroll()
+      return
+    }
+    if (lastPointerPosition) {
+      updateSelectionFromPoint(lastPointerPosition.x, lastPointerPosition.y)
+    }
+    selectionAutoScrollFrame = window.requestAnimationFrame(step)
+  }
+  selectionAutoScrollFrame = window.requestAnimationFrame(step)
+}
+
+const stopSelectionAutoScroll = () => {
+  if (selectionAutoScrollFrame !== null) {
+    cancelAnimationFrame(selectionAutoScrollFrame)
+    selectionAutoScrollFrame = null
+  }
+  selectionAutoScrollDirection = 0
+}
+
+const updateSelectionFromPoint = (x: number, y: number) => {
+  if (!selectionDrag.active || selectionDrag.row === null) return
+  const element = document.elementFromPoint(x, y) as HTMLElement | null
+  const cell = element?.closest('td[data-row][data-col]') as HTMLElement | null
+  if (!cell) return
+  const rowAttr = cell.getAttribute('data-row')
+  const colAttr = cell.getAttribute('data-col')
+  if (rowAttr && colAttr && Number(rowAttr) === selectionDrag.row) {
+    updateSelectionDrag(colAttr)
+  }
+}
+
+const onSelectionDragMove = (event: MouseEvent) => {
+  if (!selectionDrag.active) return
+  if (event.buttons === 0) {
+    stopSelectionDrag()
+    return
+  }
+  lastPointerPosition = { x: event.clientX, y: event.clientY }
+  handleSelectionAutoScroll(event)
+  updateSelectionFromPoint(event.clientX, event.clientY)
+  event.preventDefault()
 }
 
 const isEditableColumn = (columnKey: string) => {
@@ -528,6 +618,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('mousemove', onDragFill)
   document.removeEventListener('mouseup', endDragFill)
   document.removeEventListener('mouseup', stopSelectionDrag)
+  document.removeEventListener('mousemove', onSelectionDragMove)
+  stopSelectionAutoScroll()
 })
 
 const MIN_COLUMN_WIDTH = 100
