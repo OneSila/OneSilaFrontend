@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { gql } from 'graphql-tag';
 import type { FetchPolicy } from '@apollo/client';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
@@ -10,6 +9,7 @@ import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { currenciesQuery } from "../../../../../../../../../shared/api/queries/currencies.js";
+import { bundleVariationsWithPricesQuery, configurableVariationsWithPricesQuery } from "../../../../../../../../../shared/api/queries/products.js";
 import { createSalesPricesMutation, updateSalesPriceMutation } from "../../../../../../../../../shared/api/mutations/salesPrices.js";
 import { Product } from "../../../../configs";
 import { ProductType } from "../../../../../../../../../shared/utils/constants";
@@ -98,68 +98,6 @@ const hasChanges = computed(
 );
 
 const hasUnsavedChanges = hasChanges;
-
-const configurableVariationsWithPricesQuery = gql`
-  query ConfigurableVariationsWithPrices($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
-    configurableVariations(first: $first, after: $after, filters: $filter) {
-      edges {
-        node {
-          id
-          variation {
-            id
-            sku
-            name
-            active
-            salespriceSet {
-              id
-              price
-              rrp
-              currency {
-                id
-                isoCode
-              }
-            }
-          }
-        }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-      }
-    }
-  }
-`;
-
-const bundleVariationsWithPricesQuery = gql`
-  query BundleVariationsWithPrices($first: Int, $after: String, $filter: BundleVariationFilter) {
-    bundleVariations(first: $first, after: $after, filters: $filter) {
-      edges {
-        node {
-          id
-          variation {
-            id
-            sku
-            name
-            active
-            salespriceSet {
-              id
-              price
-              rrp
-              currency {
-                id
-                isoCode
-              }
-            }
-          }
-        }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-      }
-    }
-  }
-`;
 
 const parsePriceColumnKey = (key: string): ParsedPriceColumn | null => {
   const [isoCode, field] = key.split(PRICE_COLUMN_SEPARATOR);
