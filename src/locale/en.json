@@ -997,9 +997,7 @@
       },
       "variations": {
         "tabs": {
-          "list": "List",
-          "editProperties": "Edit Properties",
-          "editPrices": "Prices"
+          "list": "List"
         },
         "prices": {
           "columns": {

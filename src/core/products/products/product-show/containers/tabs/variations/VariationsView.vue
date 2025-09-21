@@ -39,8 +39,8 @@ const hasUnsavedChanges = computed(
 
 const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
   { key: 'list', label: t('products.products.variations.tabs.list'), icon: 'list' },
-  { key: 'editProperties', label: t('products.products.variations.tabs.editProperties'), icon: 'pen-to-square' },
-  { key: 'editPrices', label: t('products.products.variations.tabs.editPrices'), icon: 'coins' },
+  { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+  { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
 ]);
 
 const searchConfig: SearchConfig = {
@@ -120,7 +120,7 @@ defineExpose({ hasUnsavedChanges });
   <TabContentTemplate>
     <template v-slot:content>
       <div class="flex">
-        <div class="w-24 border-r border-gray-200 pr-4 space-y-2">
+        <div class="w-36 border-r border-gray-200 pr-4 space-y-2">
           <div
             v-for="tab in tabs"
             :key="tab.key"
