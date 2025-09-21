@@ -995,6 +995,23 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
       },
+      "variations": {
+        "tabs": {
+          "list": "List",
+          "editProperties": "Edit Properties",
+          "editPrices": "Prices"
+        },
+        "prices": {
+          "columns": {
+            "rrp": "RRP ({currency})",
+            "price": "Price ({currency})"
+          },
+          "toast": {
+            "created": "Created {count} sales prices.",
+            "updated": "Updated {count} sales prices."
+          }
+        }
+      },
         "properties": {
           "searchPlaceholder": "Search properties",
           "typePlaceholder": "Filter by type"

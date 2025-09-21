@@ -678,6 +678,23 @@
         "websites": "Verkoopskanalen",
         "amazon": "Amazon"
       },
+      "variations": {
+        "tabs": {
+          "list": "Lijst",
+          "editProperties": "Eigenschappen bewerken",
+          "editPrices": "Prijzen"
+        },
+        "prices": {
+          "columns": {
+            "rrp": "Adviesprijs ({currency})",
+            "price": "Prijs ({currency})"
+          },
+          "toast": {
+            "created": "{count} verkoopprijzen aangemaakt.",
+            "updated": "{count} verkoopprijzen bijgewerkt."
+          }
+        }
+      },
         "properties": {
           "searchPlaceholder": "Zoek eigenschappen",
           "typePlaceholder": "Filter op type"
