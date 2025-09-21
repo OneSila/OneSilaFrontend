@@ -6,6 +6,7 @@ export interface MatrixColumn {
   editable?: boolean
   iconColorClass?: string
   initialWidth?: number
+  valueType?: string
 }
 
 export interface MatrixEditorExpose {

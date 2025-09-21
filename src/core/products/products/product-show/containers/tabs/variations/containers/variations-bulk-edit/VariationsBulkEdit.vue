@@ -98,6 +98,7 @@ const columns = computed<MatrixColumn[]>(() => [
     requireType: p.requireType,
     editable: true,
     iconColorClass: getIconColor(p.requireType),
+    valueType: p.type,
   })),
 ])
 
