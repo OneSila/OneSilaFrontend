@@ -7,7 +7,7 @@ import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../.
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
-import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
+import { processGraphQLErrors, shortenText } from "../../../../../../../../../shared/utils";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { currenciesQuery } from "../../../../../../../../../shared/api/queries/currencies.js";
 import { bundleVariationsWithPricesQuery, configurableVariationsWithPricesQuery } from "../../../../../../../../../shared/api/queries/products.js";
@@ -163,8 +163,17 @@ const setPriceValue = (rowIndex: number, columnKey: string, rawValue: any) => {
   if (!row) return;
   const entry = ensurePriceEntry(row, parsed.isoCode);
   if (!entry) return;
-  const value = rawValue === null || rawValue === undefined ? '' : String(rawValue);
-  entry[parsed.field] = value;
+  let value = rawValue;
+  if (value === null || value === undefined || value === '') {
+    entry[parsed.field] = '';
+    return;
+  }
+  const numericValue = Number(value);
+  if (Number.isNaN(numericValue) || numericValue < 0) {
+    entry[parsed.field] = '';
+    return;
+  }
+  entry[parsed.field] = value.toString();
 };
 
 const updatePriceFromInput = (rowIndex: number, columnKey: string, value: string | number | null) => {
@@ -412,7 +421,7 @@ defineExpose({ save, hasUnsavedChanges });
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
           <span class="block truncate" :title="row.variation.name">
-            {{ row.variation.name }}
+            {{ shortenText(row.variation.name, 32) }}
           </span>
         </template>
         <template v-else-if="column.key === 'sku'">
