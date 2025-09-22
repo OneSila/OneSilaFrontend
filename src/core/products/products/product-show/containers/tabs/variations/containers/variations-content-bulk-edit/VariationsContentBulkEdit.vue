@@ -13,11 +13,14 @@ import { Modal } from '../../../../../../../../../shared/components/atoms/modal'
 import { Card } from '../../../../../../../../../shared/components/atoms/card';
 import MatrixEditor from '../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue';
 import type { MatrixColumn, MatrixEditorExpose } from '../../../../../../../../../shared/components/organisms/matrix-editor/types';
+import { AiContentGenerator } from '../../../../../../../../../shared/components/organisms/ai-content-generator';
+import { AiContentTranslator } from '../../../../../../../../../shared/components/organisms/ai-content-translator';
+import { AiBulletPointsGenerator } from '../../../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 import ProductContentPreview from '../../../content/ProductContentPreview.vue';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { shortenText } from '../../../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../../../apollo-client';
-import { ProductType } from '../../../../../../../../../shared/utils/constants';
+import { BULLET_POINT_SEPARATOR, ProductType } from '../../../../../../../../../shared/utils/constants';
 import {
   bundleVariationsQuery,
   configurableVariationsQuery,
@@ -78,6 +81,7 @@ const originalVariations = ref<VariationContentRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const languages = ref<any[]>([]);
+const defaultLanguageCode = ref<string | null>(null);
 const language = ref<string | null>(null);
 const previousLanguage = ref<string | null>(null);
 const salesChannels = ref<any[]>([]);
@@ -97,6 +101,8 @@ const hoverPreview = reactive({
   placement: 'above' as 'above' | 'below',
 });
 
+const aiMenuState = ref<{ rowIndex: number; key: string } | null>(null);
+
 const htmlModal = reactive({
   visible: false,
   rowIndex: -1,
@@ -110,6 +116,86 @@ const textModal = reactive({
   key: '' as string,
   value: '',
 });
+
+const toggleAiMenu = (rowIndex: number, key: string) => {
+  if (aiMenuState.value && aiMenuState.value.rowIndex === rowIndex && aiMenuState.value.key === key) {
+    aiMenuState.value = null;
+  } else {
+    aiMenuState.value = { rowIndex, key };
+  }
+};
+
+const isAiMenuOpen = (rowIndex: number, key: string) =>
+  aiMenuState.value?.rowIndex === rowIndex && aiMenuState.value?.key === key;
+
+const closeAiMenu = () => {
+  aiMenuState.value = null;
+};
+
+const getBaseTranslation = (row: VariationContentRow) => row.defaultTranslation ?? row.translation;
+
+const createTranslatorBeforeStart = (content: string | null | undefined, isHtml = false) => () => {
+  if (isHtml) {
+    if (!content || normalizedHtml(content) === emptyHtml) {
+      Toast.error(t('products.products.variations.content.ai.missingSource'));
+      return false;
+    }
+    return true;
+  }
+
+  if (!content || !content.trim()) {
+    Toast.error(t('products.products.variations.content.ai.missingSource'));
+    return false;
+  }
+  return true;
+};
+
+const applyNameTranslation = (rowIndex: number, content: string) => {
+  const row = variations.value[rowIndex];
+  if (!row) return;
+  row.translation.name = content || '';
+  closeAiMenu();
+};
+
+const applyShortDescriptionContent = (rowIndex: number, content: string) => {
+  const row = variations.value[rowIndex];
+  if (!row) return;
+  row.translation.shortDescription = normalizedHtml(content);
+  closeAiMenu();
+};
+
+const applyDescriptionContent = (rowIndex: number, content: string) => {
+  const row = variations.value[rowIndex];
+  if (!row) return;
+  row.translation.description = normalizedHtml(content);
+  closeAiMenu();
+};
+
+const applyBulletText = (rowIndex: number, bulletIndex: number, text: string) => {
+  const row = variations.value[rowIndex];
+  if (!row) return;
+  const bullet = ensureBullet(row, bulletIndex);
+  bullet.text = text || '';
+  bullet.sortOrder = bulletIndex;
+  closeAiMenu();
+};
+
+const handleGeneratedBulletPoints = (rowIndex: number, bulletIndex: number, points: any[]) => {
+  const pointText = points?.[0]?.text ?? '';
+  applyBulletText(rowIndex, bulletIndex, pointText);
+};
+
+const handleTranslatedBulletPoint = (rowIndex: number, bulletIndex: number, text: string) => {
+  const parts = text
+    ? text
+        .split(BULLET_POINT_SEPARATOR)
+        .map((item) => item.trim())
+        .filter((item) => item)
+    : [];
+  applyBulletText(rowIndex, bulletIndex, parts[0] ?? '');
+};
+
+const getBaseBulletPointText = (row: VariationContentRow, index: number) => row.defaultBulletPoints[index]?.text || '';
 
 const shortDescriptionToolbarOptions = [
   ['bold', 'underline'],
@@ -145,6 +231,18 @@ const contentFieldRules = computed(() => {
   const selectedChannel = salesChannels.value.find((channel: any) => channel.id === currentSalesChannel.value);
   return getContentFieldRules(selectedChannel?.type);
 });
+
+const currentSalesChannelType = computed(() => {
+  if (currentSalesChannel.value === 'default') {
+    return 'default';
+  }
+  const selectedChannel = salesChannels.value.find((channel: any) => channel.id === currentSalesChannel.value);
+  return selectedChannel?.type || 'default';
+});
+
+const currentSalesChannelId = computed(() => (currentSalesChannel.value === 'default' ? null : currentSalesChannel.value));
+
+const canUseTranslator = computed(() => !!language.value && language.value !== defaultLanguageCode.value);
 
 const matrixRefetch = async () => {
   matrixRef.value?.resetHistory(variations.value);
@@ -264,6 +362,7 @@ const fetchLanguages = async () => {
   const { data } = await apolloClient.query({ query: translationLanguagesQuery, fetchPolicy: 'cache-first' });
   languages.value = data?.translationLanguages?.languages || [];
   const defaultCode = data?.translationLanguages?.defaultLanguage?.code || null;
+  defaultLanguageCode.value = defaultCode;
   if (!language.value) {
     language.value = defaultCode;
     previousLanguage.value = defaultCode;
@@ -407,6 +506,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
 
 const loadData = async (policy: FetchPolicy = 'network-only') => {
   if (!language.value) return;
+  closeAiMenu();
   loading.value = true;
   try {
     const variationNodes = await fetchVariations(policy);
@@ -545,8 +645,8 @@ const startHtmlHoverPreview = (event: MouseEvent, value: string | null | undefin
 
   hoverTimer.value = window.setTimeout(() => {
     const rect = target.getBoundingClientRect();
-    const preferredWidth = Math.max(rect.width, 320);
-    const maxWidth = Math.min(preferredWidth, 480);
+    const preferredWidth = Math.max(rect.width, 400);
+    const maxWidth = Math.min(preferredWidth, 640);
     let left = rect.left + rect.width / 2 - maxWidth / 2;
     left = Math.max(16, Math.min(left, window.innerWidth - maxWidth - 16));
     const availableTop = rect.top;
@@ -599,6 +699,7 @@ const clearMatrixCellValue = (rowIndex: number, key: string) => {
 };
 
 const openPreview = (row: VariationContentRow) => {
+  closeAiMenu();
   previewRow.value = row;
   previewVisible.value = true;
 };
@@ -610,6 +711,7 @@ const closePreview = () => {
 
 const openHtmlModal = (rowIndex: number, field: 'shortDescription' | 'description') => {
   stopHtmlHoverPreview();
+  closeAiMenu();
   htmlModal.rowIndex = rowIndex;
   htmlModal.field = field;
   const row = variations.value[rowIndex];
@@ -635,6 +737,7 @@ const saveHtmlModal = () => {
 };
 
 const openTextModal = (rowIndex: number, key: string) => {
+  closeAiMenu();
   textModal.rowIndex = rowIndex;
   textModal.key = key;
   const row = variations.value[rowIndex];
@@ -713,8 +816,14 @@ const handleSalesChannelChange = async (newChannel: 'default' | string) => {
   await loadData('network-only');
 };
 
-watch(language, handleLanguageChange);
-watch(currentSalesChannel, handleSalesChannelChange);
+watch(language, async (newLang) => {
+  closeAiMenu();
+  await handleLanguageChange(newLang);
+});
+watch(currentSalesChannel, async (newChannel) => {
+  closeAiMenu();
+  await handleSalesChannelChange(newChannel);
+});
 
 const shouldCreateTranslation = (row: VariationContentRow) => {
   const translation = row.translation;
@@ -960,51 +1069,159 @@ defineExpose({ hasUnsavedChanges });
           />
         </template>
         <template v-else-if="column.key === 'translationName'">
-          <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
-            <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
-              <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
-                {{ shortenText(row.translation.name || '', 40) }}
+          <div class="space-y-2">
+            <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
+              <div class="flex h-8 items-center justify-between border border-gray-300 p-1">
+                <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                  {{ shortenText(row.translation.name || '', 40) }}
+                </div>
+                <Icon
+                  name="maximize"
+                  class="flex-shrink-0 cursor-pointer text-gray-400"
+                  @click.stop="openTextModal(rowIndex, column.key)"
+                />
               </div>
-              <Icon
-                name="maximize"
-                class="text-gray-400 cursor-pointer flex-shrink-0"
-                @click.stop="openTextModal(rowIndex, column.key)"
-              />
+            </div>
+            <div v-if="language && canUseTranslator" class="flex flex-col gap-2">
+              <Button
+                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                @click.stop="toggleAiMenu(rowIndex, column.key)"
+              >
+                <Icon name="gem" class="h-3 w-3 text-gray-500" />
+                <span>{{ t('shared.button.useAi') }}</span>
+              </Button>
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+                <AiContentTranslator
+                  :product="{ id: row.variation.id }"
+                  product-content-type="NAME"
+                  :to-translate="getBaseTranslation(row).name || ''"
+                  :from-language-code="defaultLanguageCode || 'en'"
+                  :to-language-code="language || ''"
+                  :sales-channel-id="currentSalesChannelId || undefined"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  :before-start="createTranslatorBeforeStart(getBaseTranslation(row).name || '')"
+                  @translated="(value) => applyNameTranslation(rowIndex, value)"
+                />
+              </div>
             </div>
           </div>
         </template>
         <template v-else-if="column.key === 'shortDescription'">
-          <div
-            class="relative cursor-pointer"
-            @dblclick="openHtmlModal(rowIndex, 'shortDescription')"
-            @mouseenter="startHtmlHoverPreview($event, row.translation.shortDescription)"
-            @mouseleave="stopHtmlHoverPreview"
-          >
-            <div class="border border-gray-300 p-2 min-h-[4rem] flex gap-2 items-start">
-              <div class="flex-1 overflow-hidden overflow-y-auto break-words whitespace-normal text-sm leading-5 pr-4">
-                {{ shortenText(row.translation.shortDescription?.replace(/<[^>]+>/g, '') || '', 48) }}
+          <div class="space-y-2">
+            <div
+              class="relative cursor-pointer"
+              @dblclick="openHtmlModal(rowIndex, 'shortDescription')"
+              @mouseenter="startHtmlHoverPreview($event, row.translation.shortDescription)"
+              @mouseleave="stopHtmlHoverPreview"
+            >
+              <div class="flex min-h-[4rem] items-start gap-2 border border-gray-300 p-2">
+                <div class="flex-1 overflow-hidden break-words whitespace-normal pr-4 text-sm leading-5">
+                  {{ shortenText(row.translation.shortDescription?.replace(/<[^>]+>/g, '') || '', 48) }}
+                </div>
+                <div class="flex flex-shrink-0 items-center gap-2 self-center">
+                  <Icon name="code" class="text-primary" />
+                  <Icon
+                    name="maximize"
+                    class="cursor-pointer text-gray-400"
+                    @click.stop="openHtmlModal(rowIndex, 'shortDescription')"
+                  />
+                </div>
               </div>
-              <div class="flex items-center gap-2 self-center flex-shrink-0">
-                <Icon name="code" class="text-primary" />
-                <Icon name="maximize" class="text-gray-400 cursor-pointer" @click.stop="openHtmlModal(rowIndex, 'shortDescription')" />
+            </div>
+            <div v-if="language" class="flex flex-col gap-2">
+              <Button
+                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                @click.stop="toggleAiMenu(rowIndex, column.key)"
+              >
+                <Icon name="gem" class="h-3 w-3 text-gray-500" />
+                <span>{{ t('shared.button.useAi') }}</span>
+              </Button>
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+                <AiContentGenerator
+                  :product-id="row.variation.id"
+                  :language-code="language"
+                  content-ai-generate-type="SHORT_DESCRIPTION"
+                  :sales-channel-type="currentSalesChannelType"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  @generated="(value) => applyShortDescriptionContent(rowIndex, value)"
+                />
+                <AiContentTranslator
+                  v-if="canUseTranslator"
+                  :product="{ id: row.variation.id }"
+                  product-content-type="SHORT_DESCRIPTION"
+                  :to-translate="getBaseTranslation(row).shortDescription || ''"
+                  :from-language-code="defaultLanguageCode || 'en'"
+                  :to-language-code="language || ''"
+                  :sales-channel-id="currentSalesChannelId || undefined"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  :before-start="createTranslatorBeforeStart(getBaseTranslation(row).shortDescription || '', true)"
+                  @translated="(value) => applyShortDescriptionContent(rowIndex, value)"
+                />
               </div>
             </div>
           </div>
         </template>
         <template v-else-if="column.key === 'description'">
-          <div
-            class="relative cursor-pointer"
-            @dblclick="openHtmlModal(rowIndex, 'description')"
-            @mouseenter="startHtmlHoverPreview($event, row.translation.description)"
-            @mouseleave="stopHtmlHoverPreview"
-          >
-            <div class="border border-gray-300 p-2 min-h-[4rem] flex gap-2 items-start">
-              <div class="flex-1 overflow-hidden overflow-y-auto break-words whitespace-normal text-sm leading-5 pr-4">
-                {{ shortenText(row.translation.description?.replace(/<[^>]+>/g, '') || '', 48) }}
+          <div class="space-y-2">
+            <div
+              class="relative cursor-pointer"
+              @dblclick="openHtmlModal(rowIndex, 'description')"
+              @mouseenter="startHtmlHoverPreview($event, row.translation.description)"
+              @mouseleave="stopHtmlHoverPreview"
+            >
+              <div class="flex min-h-[4rem] items-start gap-2 border border-gray-300 p-2">
+                <div class="flex-1 overflow-hidden break-words whitespace-normal pr-4 text-sm leading-5">
+                  {{ shortenText(row.translation.description?.replace(/<[^>]+>/g, '') || '', 48) }}
+                </div>
+                <div class="flex flex-shrink-0 items-center gap-2 self-center">
+                  <Icon name="code" class="text-primary" />
+                  <Icon
+                    name="maximize"
+                    class="cursor-pointer text-gray-400"
+                    @click.stop="openHtmlModal(rowIndex, 'description')"
+                  />
+                </div>
               </div>
-              <div class="flex items-center gap-2 self-center flex-shrink-0">
-                <Icon name="code" class="text-primary" />
-                <Icon name="maximize" class="text-gray-400 cursor-pointer" @click.stop="openHtmlModal(rowIndex, 'description')" />
+            </div>
+            <div v-if="language" class="flex flex-col gap-2">
+              <Button
+                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                @click.stop="toggleAiMenu(rowIndex, column.key)"
+              >
+                <Icon name="gem" class="h-3 w-3 text-gray-500" />
+                <span>{{ t('shared.button.useAi') }}</span>
+              </Button>
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+                <AiContentGenerator
+                  :product-id="row.variation.id"
+                  :language-code="language"
+                  content-ai-generate-type="DESCRIPTION"
+                  :sales-channel-type="currentSalesChannelType"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  @generated="(value) => applyDescriptionContent(rowIndex, value)"
+                />
+                <AiContentTranslator
+                  v-if="canUseTranslator"
+                  :product="{ id: row.variation.id }"
+                  product-content-type="DESCRIPTION"
+                  :to-translate="getBaseTranslation(row).description || ''"
+                  :from-language-code="defaultLanguageCode || 'en'"
+                  :to-language-code="language || ''"
+                  :sales-channel-id="currentSalesChannelId || undefined"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  :before-start="createTranslatorBeforeStart(getBaseTranslation(row).description || '', true)"
+                  @translated="(value) => applyDescriptionContent(rowIndex, value)"
+                />
               </div>
             </div>
           </div>
@@ -1024,21 +1241,62 @@ defineExpose({ hasUnsavedChanges });
           </div>
         </template>
         <template v-else>
-          <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
-            <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
-              <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
-                {{
-                  shortenText(
-                    row.bulletPoints[parseInt(column.key.split('-')[1], 10)]?.text || '',
-                    24
-                  )
-                }}
+          <div class="space-y-2">
+            <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
+              <div class="flex h-8 items-center justify-between border border-gray-300 p-1">
+                <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                  {{
+                    shortenText(
+                      row.bulletPoints[parseInt(column.key.split('-')[1], 10)]?.text || '',
+                      24
+                    )
+                  }}
+                </div>
+                <Icon
+                  name="maximize"
+                  class="flex-shrink-0 cursor-pointer text-gray-400"
+                  @click.stop="openTextModal(rowIndex, column.key)"
+                />
               </div>
-              <Icon
-                name="maximize"
-                class="text-gray-400 cursor-pointer flex-shrink-0"
-                @click.stop="openTextModal(rowIndex, column.key)"
-              />
+            </div>
+            <div v-if="language" class="flex flex-col gap-2">
+              <Button
+                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                @click.stop="toggleAiMenu(rowIndex, column.key)"
+              >
+                <Icon name="gem" class="h-3 w-3 text-gray-500" />
+                <span>{{ t('shared.button.useAi') }}</span>
+              </Button>
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+                <AiBulletPointsGenerator
+                  :product-id="row.variation.id"
+                  :language-code="language"
+                  :return-one="true"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  @generated="(points) =>
+                    handleGeneratedBulletPoints(rowIndex, parseInt(column.key.split('-')[1], 10), points)
+                  "
+                />
+                <AiContentTranslator
+                  v-if="canUseTranslator"
+                  :product="{ id: row.variation.id }"
+                  product-content-type="BULLET_POINTS"
+                  :to-translate="getBaseBulletPointText(row, parseInt(column.key.split('-')[1], 10))"
+                  :from-language-code="defaultLanguageCode || 'en'"
+                  :to-language-code="language || ''"
+                  :sales-channel-id="currentSalesChannelId || undefined"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  :return-one-bullet-point="true"
+                  :before-start="createTranslatorBeforeStart(getBaseBulletPointText(row, parseInt(column.key.split('-')[1], 10)))"
+                  @translated="(value) =>
+                    handleTranslatedBulletPoint(rowIndex, parseInt(column.key.split('-')[1], 10), value)
+                  "
+                />
+              </div>
             </div>
           </div>
         </template>
@@ -1064,7 +1322,7 @@ defineExpose({ hasUnsavedChanges });
                 : 'translateY(12px)',
           }"
         >
-          <div class="rounded-md border border-gray-200 bg-white p-3 shadow-lg max-h-64 overflow-auto">
+          <div class="rounded-md border border-gray-200 bg-white p-4 shadow-lg">
             <div class="text-sm leading-5" v-html="hoverPreview.content" />
           </div>
         </div>

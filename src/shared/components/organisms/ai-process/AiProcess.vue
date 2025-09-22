@@ -18,11 +18,13 @@ const props = withDefaults(
     label?: string;
     small?: boolean;
     beforeStart?: () => Promise<boolean> | boolean;
+    iconClass?: string;
   }>(),
   {
     btnClass: 'btn-outline-primary',
     label: 'shared.button.generate',
     small: true,
+    iconClass: 'text-purple-600',
   }
 );
 
@@ -128,7 +130,7 @@ const handleClick = async (mutate: Function) => {
             <span class="spinner" />
           </template>
           <template v-else>
-            <Icon name="gem" size="lg" class="text-purple-600 mr-2"/>
+            <Icon name="gem" size="lg" :class="`${props.iconClass} mr-2`"/>
             {{ t(props.label) }}
           </template>
         </Button>

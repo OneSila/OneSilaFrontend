@@ -12,9 +12,20 @@ interface Props {
   productContentType?: string;
   salesChannelId?: string;
   beforeStart?: () => Promise<boolean> | boolean;
+  btnClass?: string;
+  small?: boolean;
+  iconClass?: string;
+  label?: string;
+  returnOneBulletPoint?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  btnClass: 'btn-outline-success',
+  small: true,
+  iconClass: 'text-purple-600',
+  label: 'shared.button.translate',
+  returnOneBulletPoint: false,
+});
 const emit = defineEmits<{
   (e: 'translated', translatedText: string): void;
 }>();
@@ -40,6 +51,10 @@ const mutationVariables = computed(() => {
     data.salesChannel = { id: props.salesChannelId };
   }
 
+  if (props.returnOneBulletPoint) {
+    data.returnOneBulletPoint = props.returnOneBulletPoint;
+  }
+
   return { data };
 });
 
@@ -58,11 +73,13 @@ const steps = computed(() => [
     :variables="mutationVariables"
     :mutation="generateAiTranslationMutation"
     :steps="steps"
-    label="shared.button.translate"
+    :label="props.label"
     mutationKey="generateAiTranslation"
     modal-title="shared.components.organisms.aiContentTranslator.title"
     successToastKey="shared.components.organisms.aiContentTranslator.success"
-    btn-class="btn-outline-success"
+    :btn-class="props.btnClass"
+    :small="props.small"
+    :icon-class="props.iconClass"
     :before-start="props.beforeStart"
     @processed="text => emit('translated', text)"
   />

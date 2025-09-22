@@ -7,9 +7,20 @@ import { AiProcess } from "../ai-process";
 interface Props {
   productId: string | number;
   languageCode: string | null;
+  returnOne?: boolean;
+  btnClass?: string;
+  small?: boolean;
+  iconClass?: string;
+  label?: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  returnOne: false,
+  btnClass: 'btn-outline-primary',
+  small: true,
+  iconClass: 'text-purple-600',
+  label: 'shared.button.generate',
+});
 const emit = defineEmits<{
   (e: 'generated', bulletPoints: any[]): void;
 }>();
@@ -20,6 +31,7 @@ const mutationVariables = computed(() => ({
   data: {
     id: props.productId,
     languageCode: props.languageCode,
+    returnOne: props.returnOne,
   },
 }));
 
@@ -38,6 +50,10 @@ const steps = computed(() => [
     mutationKey="generateProductBulletPointsAi"
     modal-title="shared.components.organisms.aiBulletPointsGenerator.title"
     successToastKey="shared.components.organisms.aiBulletPointsGenerator.success"
+    :btn-class="props.btnClass"
+    :small="props.small"
+    :icon-class="props.iconClass"
+    :label="props.label"
     @bullet-points-processed="points => emit('generated', points)"
   />
 </template>
