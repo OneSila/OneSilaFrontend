@@ -5,6 +5,8 @@ import type { FetchPolicy } from '@apollo/client';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { processGraphQLErrors, shortenText } from "../../../../../../../../../shared/utils";
@@ -18,7 +20,7 @@ import {
   updateSalesPriceMutation,
 } from "../../../../../../../../../shared/api/mutations/salesPrices.js";
 import { salesPriceListItemsQuery } from "../../../../../../../../../shared/api/queries/salesPrices.js";
-import { Product } from "../../../../configs";
+import { Product } from "../../../../../../configs";
 import { ProductType } from "../../../../../../../../../shared/utils/constants";
 
 interface CurrencyInfo {
@@ -96,6 +98,15 @@ const originalVariations = ref<VariationRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const matrixRef = ref<MatrixEditorExpose | null>(null);
+
+const copySkuToClipboard = async (sku: string) => {
+  try {
+    await navigator.clipboard.writeText(sku);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (error) {
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
+};
 
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
@@ -787,14 +798,21 @@ defineExpose({ save, hasUnsavedChanges });
     >
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
-          <span class="block truncate" :title="row.variation.name">
-            {{ shortenText(row.variation.name, 32) }}
-          </span>
+          <Link :path="{ name: 'products.products.show', params: { id: row.variation.id } }" target="_blank">
+            <span class="block truncate" :title="row.variation.name">
+              {{ shortenText(row.variation.name, 32) }}
+            </span>
+          </Link>
         </template>
         <template v-else-if="column.key === 'sku'">
-          <span class="block truncate" :title="row.variation.sku">
-            {{ row.variation.sku }}
-          </span>
+          <div class="flex items-center gap-1">
+            <span class="block truncate" :title="row.variation.sku">
+              {{ row.variation.sku }}
+            </span>
+            <Button class="p-0" @click="copySkuToClipboard(row.variation.sku)">
+              <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
+            </Button>
+          </div>
         </template>
         <template v-else-if="column.key === 'active'">
           <Icon
