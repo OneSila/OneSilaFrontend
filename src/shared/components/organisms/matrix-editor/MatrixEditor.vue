@@ -518,6 +518,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 const canPasteToColumn = (clipboardValue: ClipboardValue, targetColumn: string) => {
   if (!isEditableColumn(targetColumn)) return false
+  if (clipboardValue.column === targetColumn) return true
   const fromType = clipboardValue.columnType
   const toType = getColumnType(targetColumn)
   return canPasteBetweenTypes(fromType, toType)
@@ -531,9 +532,9 @@ const canPasteBetweenTypes = (
   if (!fromType || !toType) return false
   const from = fromType.toUpperCase()
   const to = toType.toUpperCase()
+  if (from === to) return true
   if (from === PropertyTypes.SELECT || from === PropertyTypes.MULTISELECT) return false
   if (to === PropertyTypes.SELECT || to === PropertyTypes.MULTISELECT) return false
-  if (from === to) return true
   if (from === PropertyTypes.INT && to === PropertyTypes.FLOAT) return true
   if (from === PropertyTypes.TEXT && to === PropertyTypes.DESCRIPTION) return true
   if (from === PropertyTypes.DATE && to === PropertyTypes.DATETIME) return true
