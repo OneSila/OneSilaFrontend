@@ -34,6 +34,7 @@ import {
 } from '../../../../../../../../../shared/api/mutations/products.js';
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js';
 import { integrationsQuery } from '../../../../../../../../../shared/api/queries/integrations.js';
+import { getContentFieldRules } from '../../../content/contentFieldRules';
 
 interface VariationNode {
   id: string;
@@ -94,6 +95,13 @@ const htmlModal = reactive({
   value: '<p><br></p>',
 });
 
+const textModal = reactive({
+  visible: false,
+  rowIndex: -1,
+  key: '' as string,
+  value: '',
+});
+
 const shortDescriptionToolbarOptions = [
   ['bold', 'underline'],
   [{ list: 'bullet' }],
@@ -121,11 +129,22 @@ const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
 const parentProductType = computed(() => parentProduct.value.type);
 
+const contentFieldRules = computed(() => {
+  if (currentSalesChannel.value === 'default') {
+    return getContentFieldRules();
+  }
+  const selectedChannel = salesChannels.value.find((channel: any) => channel.id === currentSalesChannel.value);
+  return getContentFieldRules(selectedChannel?.type);
+});
+
 const matrixRefetch = async () => {
   matrixRef.value?.resetHistory(variations.value);
 };
 
 const bulletColumnCount = computed(() => {
+  if (!contentFieldRules.value.bulletPoints) {
+    return 0;
+  }
   const maxColumns = variations.value.reduce((max, row) => Math.max(max, row.bulletPoints.length), 0);
   return Math.max(maxColumns, 1);
 });
@@ -141,27 +160,66 @@ const salesChannelOptions = computed(() => [
   })),
 ]);
 
-const baseColumns = computed<MatrixColumn[]>(() => [
-  { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
-  { key: 'name', label: t('shared.labels.name'), editable: false },
-  { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 60 },
-  { key: 'preview', label: t('products.products.variations.content.columns.preview'), editable: false, initialWidth: 80 },
-  { key: 'translationName', label: t('products.products.variations.content.columns.productName'), editable: true, initialWidth: 220 },
-  { key: 'shortDescription', label: t('products.products.variations.content.columns.shortDescription'), editable: true, initialWidth: 240 },
-  { key: 'description', label: t('products.products.variations.content.columns.description'), editable: true, initialWidth: 240 },
-  { key: 'urlKey', label: t('products.products.variations.content.columns.urlKey'), editable: true, initialWidth: 200 },
-]);
+const baseColumns = computed<MatrixColumn[]>(() => {
+  const columns: MatrixColumn[] = [
+    { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
+    { key: 'name', label: t('shared.labels.name'), editable: false },
+    { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 60 },
+    { key: 'preview', label: t('products.products.variations.content.columns.preview'), editable: false, initialWidth: 80 },
+  ];
 
-const bulletColumns = computed<MatrixColumn[]>(() =>
-  Array.from({ length: bulletColumnCount.value }, (_, index) => ({
+  if (contentFieldRules.value.name) {
+    columns.push({
+      key: 'translationName',
+      label: t('products.products.variations.content.columns.productName'),
+      editable: true,
+      initialWidth: 280,
+    });
+  }
+
+  if (contentFieldRules.value.shortDescription) {
+    columns.push({
+      key: 'shortDescription',
+      label: t('products.products.variations.content.columns.shortDescription'),
+      editable: true,
+      initialWidth: 240,
+    });
+  }
+
+  if (contentFieldRules.value.description) {
+    columns.push({
+      key: 'description',
+      label: t('products.products.variations.content.columns.description'),
+      editable: true,
+      initialWidth: 240,
+    });
+  }
+
+  if (contentFieldRules.value.urlKey) {
+    columns.push({
+      key: 'urlKey',
+      label: t('products.products.variations.content.columns.urlKey'),
+      editable: true,
+      initialWidth: 200,
+    });
+  }
+
+  return columns;
+});
+
+const bulletColumns = computed<MatrixColumn[]>(() => {
+  if (!contentFieldRules.value.bulletPoints) {
+    return [];
+  }
+  return Array.from({ length: bulletColumnCount.value }, (_, index) => ({
     key: `bullet-${index}`,
     label: t('products.products.variations.content.columns.bullet', { index: index + 1 }),
     editable: true,
     initialWidth: 220,
     beforeInsert: () => insertBulletColumn(index),
     afterInsert: () => insertBulletColumn(index + 1),
-  }))
-);
+  }));
+});
 
 const columns = computed<MatrixColumn[]>(() => [...baseColumns.value, ...bulletColumns.value]);
 
@@ -524,6 +582,46 @@ const saveHtmlModal = () => {
   closeHtmlModal();
 };
 
+const openTextModal = (rowIndex: number, key: string) => {
+  textModal.rowIndex = rowIndex;
+  textModal.key = key;
+  const row = variations.value[rowIndex];
+  if (!row) {
+    textModal.value = '';
+    textModal.visible = true;
+    return;
+  }
+
+  if (key === 'translationName') {
+    textModal.value = row.translation.name || '';
+  } else if (key === 'urlKey') {
+    textModal.value = row.translation.urlKey || '';
+  } else if (key.startsWith('bullet-')) {
+    const index = parseInt(key.split('-')[1], 10);
+    textModal.value = row.bulletPoints[index]?.text || '';
+  } else {
+    textModal.value = '';
+  }
+
+  textModal.visible = true;
+};
+
+const closeTextModal = () => {
+  textModal.visible = false;
+  textModal.rowIndex = -1;
+  textModal.key = '';
+  textModal.value = '';
+};
+
+const saveTextModal = () => {
+  if (textModal.rowIndex < 0 || !textModal.key) {
+    closeTextModal();
+    return;
+  }
+  setMatrixCellValue(textModal.rowIndex, textModal.key, textModal.value ?? '');
+  closeTextModal();
+};
+
 const handleLanguageChange = async (newLang: string | null) => {
   if (skipLanguageWatch.value) return;
   if (!newLang) return;
@@ -568,12 +666,13 @@ watch(currentSalesChannel, handleSalesChannelChange);
 
 const shouldCreateTranslation = (row: VariationContentRow) => {
   const translation = row.translation;
+  const rules = contentFieldRules.value;
   const hasFields =
-    !!translation.name ||
-    normalizedHtml(translation.shortDescription) !== emptyHtml ||
-    normalizedHtml(translation.description) !== emptyHtml ||
-    !!translation.urlKey;
-  const hasBullets = row.bulletPoints.some((bp) => bp.text.trim());
+    (rules.name && !!translation.name) ||
+    (rules.shortDescription && normalizedHtml(translation.shortDescription) !== emptyHtml) ||
+    (rules.description && normalizedHtml(translation.description) !== emptyHtml) ||
+    (rules.urlKey && !!translation.urlKey);
+  const hasBullets = rules.bulletPoints && row.bulletPoints.some((bp) => bp.text.trim());
   return hasFields || hasBullets;
 };
 
@@ -783,16 +882,30 @@ defineExpose({ hasUnsavedChanges });
           <Icon v-else name="times-circle" class="text-red-500" />
         </template>
         <template v-else-if="column.key === 'preview'">
-          <Button class="btn btn-outline-primary btn-sm" @click="openPreview(row)">
-            <Icon name="eye" class="h-4 w-4" />
-          </Button>
+          <Icon
+            name="eye"
+            class="h-5 w-5 text-gray-500 cursor-pointer"
+            role="button"
+            tabindex="0"
+            :aria-label="t('products.products.variations.content.columns.preview')"
+            @click="openPreview(row)"
+            @keydown.enter.prevent="openPreview(row)"
+            @keydown.space.prevent="openPreview(row)"
+          />
         </template>
         <template v-else-if="column.key === 'translationName'">
-          <TextInput
-            :model-value="row.translation.name"
-            class="w-full"
-            @update:modelValue="(value) => setMatrixCellValue(rowIndex, column.key, value)"
-          />
+          <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
+            <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
+              <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                {{ shortenText(row.translation.name || '', 24) }}
+              </div>
+              <Icon
+                name="maximize"
+                class="text-gray-400 cursor-pointer flex-shrink-0"
+                @click.stop="openTextModal(rowIndex, column.key)"
+              />
+            </div>
+          </div>
         </template>
         <template v-else-if="column.key === 'shortDescription'">
           <div class="relative cursor-pointer" @dblclick="openHtmlModal(rowIndex, 'shortDescription')">
@@ -809,27 +922,49 @@ defineExpose({ hasUnsavedChanges });
         </template>
         <template v-else-if="column.key === 'description'">
           <div class="relative cursor-pointer" @dblclick="openHtmlModal(rowIndex, 'description')">
-            <div class="border border-gray-300 p-1 h-24 flex justify-between items-start gap-2">
+            <div class="border border-gray-300 p-1 h-16 flex justify-between items-center gap-2">
               <div class="overflow-hidden break-words text-sm pr-6">
-                {{ shortenText(row.translation.description?.replace(/<[^>]+>/g, '') || '', 64) }}
+                {{ shortenText(row.translation.description?.replace(/<[^>]+>/g, '') || '', 48) }}
               </div>
-              <Icon name="maximize" class="text-gray-400 cursor-pointer" @click.stop="openHtmlModal(rowIndex, 'description')" />
+              <div class="flex items-center gap-2">
+                <Icon name="code" class="text-primary" />
+                <Icon name="maximize" class="text-gray-400 cursor-pointer" @click.stop="openHtmlModal(rowIndex, 'description')" />
+              </div>
             </div>
           </div>
         </template>
         <template v-else-if="column.key === 'urlKey'">
-          <TextInput
-            :model-value="row.translation.urlKey"
-            class="w-full"
-            @update:modelValue="(value) => setMatrixCellValue(rowIndex, column.key, value)"
-          />
+          <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
+            <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
+              <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                {{ shortenText(row.translation.urlKey || '', 24) }}
+              </div>
+              <Icon
+                name="maximize"
+                class="text-gray-400 cursor-pointer flex-shrink-0"
+                @click.stop="openTextModal(rowIndex, column.key)"
+              />
+            </div>
+          </div>
         </template>
         <template v-else>
-          <TextInput
-            :model-value="row.bulletPoints[parseInt(column.key.split('-')[1], 10)]?.text || ''"
-            class="w-full"
-            @update:modelValue="(value) => setMatrixCellValue(rowIndex, column.key, value)"
-          />
+          <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
+            <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
+              <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                {{
+                  shortenText(
+                    row.bulletPoints[parseInt(column.key.split('-')[1], 10)]?.text || '',
+                    24
+                  )
+                }}
+              </div>
+              <Icon
+                name="maximize"
+                class="text-gray-400 cursor-pointer flex-shrink-0"
+                @click.stop="openTextModal(rowIndex, column.key)"
+              />
+            </div>
+          </div>
         </template>
       </template>
     </MatrixEditor>
@@ -841,7 +976,7 @@ defineExpose({ hasUnsavedChanges });
             {{ t('products.products.variations.content.previewModal.title') }}
           </h3>
           <Button class="btn btn-outline-dark" @click="closePreview">
-            {{ t('shared.button.close') }}
+            {{ t('shared.button.cancel') }}
           </Button>
         </div>
         <ProductContentPreview
@@ -852,6 +987,19 @@ defineExpose({ hasUnsavedChanges });
           :channels="salesChannels"
           :bullet-points="(previewRow.bulletPoints.some((bp) => bp.text.trim()) ? previewRow.bulletPoints : previewRow.defaultBulletPoints).filter((bp) => bp.text.trim())"
         />
+      </Card>
+    </Modal>
+
+    <Modal v-model="textModal.visible" @closed="closeTextModal">
+      <Card class="modal-content w-1/2 max-w-xl">
+        <h3 class="text-xl font-semibold text-center mb-4">
+          {{ t('products.products.bulkEditModal.textTitle') }}
+        </h3>
+        <TextInput class="w-full" v-model="textModal.value" />
+        <div class="flex justify-end gap-4 mt-4">
+          <Button class="btn btn-outline-dark" @click="closeTextModal">{{ t('shared.button.cancel') }}</Button>
+          <Button class="btn btn-primary" @click="saveTextModal">{{ t('shared.button.edit') }}</Button>
+        </div>
       </Card>
     </Modal>
 
