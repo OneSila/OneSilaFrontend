@@ -590,6 +590,12 @@ const selectedIndex = ref<number | null>(null)
 const selectedColKey = ref('')
 const modalValue = ref('')
 
+const resetModalState = () => {
+  selectedIndex.value = null
+  selectedColKey.value = ''
+  modalValue.value = ''
+}
+
 const openTextModal = (index: number, key: string) => {
   selectedIndex.value = index
   selectedColKey.value = key
@@ -609,7 +615,26 @@ const openDescriptionModal = (index: number, key: string) => {
 const cancelModal = () => {
   showTextModal.value = false
   showDescriptionModal.value = false
+  resetModalState()
 }
+
+watch(
+  showTextModal,
+  (value, previousValue) => {
+    if (!value && previousValue) {
+      resetModalState()
+    }
+  }
+)
+
+watch(
+  showDescriptionModal,
+  (value, previousValue) => {
+    if (!value && previousValue) {
+      resetModalState()
+    }
+  }
+)
 
 const saveModal = () => {
   if (selectedIndex.value === null) return
