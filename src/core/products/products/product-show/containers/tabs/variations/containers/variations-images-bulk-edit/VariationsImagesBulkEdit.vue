@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
@@ -21,6 +21,9 @@ import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Image as ProductImage } from "../../../../../../../../../shared/components/atoms/image";
 import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
 import { shortenText } from "../../../../../../../../../shared/utils";
+import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
+import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
+import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../../../media/files/media";
 
 interface VariationImageSlot {
   id: string | null;
@@ -31,6 +34,8 @@ interface VariationImageSlot {
   isMainImage: boolean;
   sortOrder: number | null;
   active: boolean;
+  imageType?: string | null;
+  uploadSource?: 'existing' | 'uploaded';
 }
 
 interface VariationRow {
@@ -53,6 +58,19 @@ const variations = ref<VariationRow[]>([]);
 const originalVariations = ref<VariationRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
+const uploadContext = ref<{ rowIndex: number; columnIndex: number | null } | null>(null);
+const selectExistingModalVisible = ref(false);
+const uploadImagesModalVisible = ref(false);
+
+const assignedMediaIds = computed(() =>
+  variations.value.flatMap((row) =>
+    row.images
+      .map((slot) => slot?.mediaId)
+      .filter((id): id is string => Boolean(id))
+  )
+);
+
+const isSingleUpload = computed(() => uploadContext.value?.columnIndex !== null);
 
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
@@ -62,6 +80,7 @@ const baseColumns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
   { key: 'name', label: t('shared.labels.name'), editable: false },
   { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 60 },
+  { key: 'upload', label: t('products.products.variations.images.columns.upload'), editable: false, initialWidth: 160 },
 ]);
 
 const imageColumnCount = computed(() => {
@@ -148,6 +167,8 @@ const normalizeImageSlot = (
     isMainImage: preserveId ? !!value.isMainImage : false,
     sortOrder: value.sortOrder ?? null,
     active: value.active ?? true,
+    imageType: value.imageType ?? null,
+    uploadSource: value.uploadSource,
   };
 };
 
@@ -193,6 +214,131 @@ const clearMatrixCellValue = (rowIndex: number, columnKey: string) => {
   }
   ensureRowHasMainImage(row);
 };
+
+const resolveTargetIndex = (row: VariationRow, columnIndex: number | null) => {
+  if (columnIndex != null) {
+    ensureImageCapacity(row, columnIndex);
+    return columnIndex;
+  }
+  const emptyIndex = row.images.findIndex((slot) => !slot);
+  if (emptyIndex !== -1) {
+    ensureImageCapacity(row, emptyIndex);
+    return emptyIndex;
+  }
+  const targetIndex = row.images.length;
+  ensureImageCapacity(row, targetIndex);
+  return targetIndex;
+};
+
+const assignMediaToRow = (
+  rowIndex: number,
+  columnIndex: number | null,
+  media: any,
+  source: 'existing' | 'uploaded'
+) => {
+  const row = variations.value[rowIndex];
+  if (!row) {
+    return;
+  }
+  const resolvedMedia = media?.media ?? media;
+  if (!resolvedMedia?.id) {
+    return;
+  }
+  const targetIndex = resolveTargetIndex(row, columnIndex);
+  const currentSlot = row.images[targetIndex];
+  const slotValue: VariationImageSlot = {
+    id: null,
+    productId: row.variation.id,
+    mediaId: resolvedMedia.id,
+    mediaUrl:
+      resolvedMedia.imageWebUrl ??
+      resolvedMedia.fileUrl ??
+      resolvedMedia.videoUrl ??
+      resolvedMedia.mediaUrl ??
+      null,
+    mediaName:
+      resolvedMedia.image?.name ??
+      resolvedMedia.file?.name ??
+      resolvedMedia.mediaName ??
+      resolvedMedia.name ??
+      null,
+    isMainImage: currentSlot?.isMainImage ?? false,
+    sortOrder: null,
+    active: true,
+    imageType: resolvedMedia.type ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
+    uploadSource: source,
+  };
+  setMatrixCellValue(rowIndex, `image-${targetIndex}`, slotValue);
+};
+
+const openSelectExistingModal = (rowIndex: number, columnIndex: number | null = null) => {
+  uploadContext.value = { rowIndex, columnIndex };
+  selectExistingModalVisible.value = true;
+};
+
+const openUploadImagesModal = (rowIndex: number, columnIndex: number | null = null) => {
+  uploadContext.value = { rowIndex, columnIndex };
+  uploadImagesModalVisible.value = true;
+};
+
+const resetUploadContext = () => {
+  if (!selectExistingModalVisible.value && !uploadImagesModalVisible.value) {
+    uploadContext.value = null;
+  }
+};
+
+const handleExistingSelected = (media: any) => {
+  if (!uploadContext.value) {
+    selectExistingModalVisible.value = false;
+    return;
+  }
+  assignMediaToRow(uploadContext.value.rowIndex, uploadContext.value.columnIndex, media, 'existing');
+  selectExistingModalVisible.value = false;
+};
+
+const handleImagesCreated = (images: any[]) => {
+  if (!uploadContext.value) {
+    uploadImagesModalVisible.value = false;
+    return;
+  }
+  const createdImages = Array.isArray(images) ? images : images ? [images] : [];
+  if (!createdImages.length) {
+    uploadImagesModalVisible.value = false;
+    return;
+  }
+  const { rowIndex, columnIndex } = uploadContext.value;
+  if (columnIndex != null) {
+    assignMediaToRow(rowIndex, columnIndex, createdImages[0], 'uploaded');
+  } else {
+    createdImages.forEach((image) => {
+      assignMediaToRow(rowIndex, null, image, 'uploaded');
+    });
+  }
+  uploadImagesModalVisible.value = false;
+};
+
+const isNewlyUploadedSlot = (slot: VariationImageSlot | null | undefined) =>
+  !!slot && slot.uploadSource === 'uploaded' && !slot.id;
+
+const getImageTypeLabel = (slot: VariationImageSlot | null | undefined) => {
+  if (!slot) {
+    return null;
+  }
+  const type = slot.imageType;
+  if (type === IMAGE_TYPE_PACK) {
+    return t('media.images.labels.packShot');
+  }
+  if (type === IMAGE_TYPE_MOOD) {
+    return t('media.images.labels.moodShot');
+  }
+  if (slot.uploadSource === 'uploaded') {
+    return t('media.images.labels.packShot');
+  }
+  return null;
+};
+
+watch(selectExistingModalVisible, resetUploadContext);
+watch(uploadImagesModalVisible, resetUploadContext);
 
 const handleMainToggle = (rowIndex: number, columnIndex: number, value: boolean) => {
   const row = variations.value[rowIndex];
@@ -334,6 +480,7 @@ const fetchVariationImages = async (
       isMainImage: !!node.isMainImage,
       sortOrder: node.sortOrder ?? null,
       active: node.active ?? true,
+      uploadSource: 'existing',
     });
   });
 
@@ -516,22 +663,80 @@ defineExpose({ hasUnsavedChanges });
           <Icon v-if="row.variation.active" name="check-circle" class="text-green-500" />
           <Icon v-else name="times-circle" class="text-red-500" />
         </template>
+        <template v-else-if="column.key === 'upload'">
+          <Popper :placement="'bottom-start'" offsetDistance="8" class="!block">
+            <Button class="btn btn-secondary flex w-full items-center justify-center gap-2">
+              <Icon name="cloud-upload" class="h-4 w-4" aria-hidden="true" />
+              <span>{{ t('products.products.variations.images.buttons.openUploadMenu') }}</span>
+            </Button>
+            <template #content="{ close }">
+              <ul class="w-48 rounded-md border border-gray-300 bg-white py-1 text-dark">
+                <li>
+                  <Button
+                    class="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-100"
+                    @click="() => { openUploadImagesModal(rowIndex); close(); }"
+                  >
+                    <Icon name="upload" class="h-4 w-4" aria-hidden="true" />
+                    {{ t('products.products.variations.images.buttons.uploadNew') }}
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    class="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-100"
+                    @click="() => { openSelectExistingModal(rowIndex); close(); }"
+                  >
+                    <Icon name="images" class="h-4 w-4" aria-hidden="true" />
+                    {{ t('products.products.variations.images.buttons.addExisting') }}
+                  </Button>
+                </li>
+              </ul>
+            </template>
+          </Popper>
+        </template>
         <template v-else>
           <div class="group relative flex items-center justify-center">
-            <div class="flex h-32 w-32 flex-col items-center justify-center overflow-hidden rounded-md border border-dashed border-gray-300 bg-gray-50">
+            <div
+              class="relative flex h-32 w-32 flex-col items-center justify-center overflow-hidden rounded-md border bg-white"
+              :class="{
+                'border-dashed border-gray-300 bg-gray-50': !row.images[getImageColumnIndex(column.key)],
+                'bg-gray-100': isNewlyUploadedSlot(row.images[getImageColumnIndex(column.key)]),
+              }"
+            >
               <ProductImage
                 v-if="row.images[getImageColumnIndex(column.key)]"
                 :source="row.images[getImageColumnIndex(column.key)]?.mediaUrl || ''"
                 :alt="row.images[getImageColumnIndex(column.key)]?.mediaName || row.variation.name"
                 class="h-full w-full object-cover"
               />
-              <div v-else class="flex flex-col items-center gap-2">
+              <div v-else class="flex w-full flex-col items-center gap-2 px-3 text-center">
                 <span class="text-xs text-gray-500">
                   {{ t('products.products.variations.images.labels.noImage') }}
                 </span>
                 <div class="flex h-7 w-7 items-center justify-center rounded-full border border-gray-300">
                   <Icon name="plus" class="h-3 w-3 text-gray-400" aria-hidden="true" />
                 </div>
+                <div class="mt-2 flex w-full flex-col gap-2">
+                  <Button
+                    class="btn btn-primary flex items-center justify-center gap-2 px-2 py-1 text-xs"
+                    @click.stop="openUploadImagesModal(rowIndex, getImageColumnIndex(column.key))"
+                  >
+                    <Icon name="upload" class="h-3 w-3" aria-hidden="true" />
+                    {{ t('products.products.variations.images.buttons.uploadNew') }}
+                  </Button>
+                  <Button
+                    class="btn btn-secondary flex items-center justify-center gap-2 px-2 py-1 text-xs"
+                    @click.stop="openSelectExistingModal(rowIndex, getImageColumnIndex(column.key))"
+                  >
+                    <Icon name="images" class="h-3 w-3" aria-hidden="true" />
+                    {{ t('products.products.variations.images.buttons.addExisting') }}
+                  </Button>
+                </div>
+              </div>
+              <div
+                v-if="getImageTypeLabel(row.images[getImageColumnIndex(column.key)])"
+                class="absolute bottom-2 left-2 rounded bg-white/80 px-2 py-1 text-xs font-medium text-gray-700"
+              >
+                {{ getImageTypeLabel(row.images[getImageColumnIndex(column.key)]) }}
               </div>
             </div>
             <div
@@ -571,6 +776,18 @@ defineExpose({ hasUnsavedChanges });
         </template>
       </template>
     </MatrixEditor>
+    <UploadMediaModal
+      v-model="selectExistingModalVisible"
+      :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct.id"
+      :ids="assignedMediaIds"
+      :link-on-select="false"
+      @entries-created="handleExistingSelected"
+    />
+    <CreateImagesModal
+      v-model="uploadImagesModalVisible"
+      :single-upload="isSingleUpload"
+      @entries-created="handleImagesCreated"
+    />
   </div>
 </template>
 

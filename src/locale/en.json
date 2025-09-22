@@ -1002,12 +1002,16 @@
         },
         "images": {
           "columns": {
+            "upload": "Upload",
             "image": "Image #{index}"
           },
           "labels": {
             "noImage": "No image"
           },
           "buttons": {
+            "openUploadMenu": "Add images",
+            "uploadNew": "Upload new",
+            "addExisting": "Add from existing",
             "moveLeft": "Move image left",
             "moveRight": "Move image right"
           }
