@@ -682,7 +682,16 @@
         "tabs": {
           "list": "Lijst",
           "editProperties": "Eigenschappen bewerken",
-          "editPrices": "Prijzen"
+          "editPrices": "Prijzen",
+          "images": "Afbeeldingen"
+        },
+        "images": {
+          "columns": {
+            "image": "Afbeelding #{index}"
+          },
+          "labels": {
+            "noImage": "Geen afbeelding"
+          }
         },
         "prices": {
           "columns": {
