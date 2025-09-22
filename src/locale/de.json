@@ -104,6 +104,18 @@
         "amazon": "Amazon"
       },
       "variations": {
+        "tabs": {
+          "list": "Liste",
+          "images": "Bilder"
+        },
+        "images": {
+          "columns": {
+            "image": "Bild #{index}"
+          },
+          "labels": {
+            "noImage": "Kein Bild"
+          }
+        },
         "prices": {
           "columns": {
             "rrp": "RRP ({currency})",

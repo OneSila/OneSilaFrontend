@@ -997,7 +997,16 @@
       },
       "variations": {
         "tabs": {
-          "list": "List"
+          "list": "List",
+          "images": "Images"
+        },
+        "images": {
+          "columns": {
+            "image": "Image #{index}"
+          },
+          "labels": {
+            "noImage": "No image"
+          }
         },
         "prices": {
           "columns": {
