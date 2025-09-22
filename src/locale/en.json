@@ -1006,6 +1006,10 @@
           },
           "labels": {
             "noImage": "No image"
+          },
+          "buttons": {
+            "moveLeft": "Move image left",
+            "moveRight": "Move image right"
           }
         },
         "prices": {
