@@ -15,6 +15,7 @@ import { shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
@@ -89,6 +90,16 @@ const filteredProperties = computed(() => {
     return p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
+
+const copySkuToClipboard = async (sku: string) => {
+  try {
+    await navigator.clipboard.writeText(sku)
+    Toast.success(t('shared.alert.toast.clipboardSuccess'))
+  } catch (err) {
+    console.error('Failed to copy:', err)
+    Toast.error(t('shared.alert.toast.clipboardFail'))
+  }
+}
 
 const columns = computed<MatrixColumn[]>(() => [
   ...baseColumns.value,
@@ -764,14 +775,25 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
       </template>
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
-          <span class="block truncate" :title="row.variation.name">
-            {{ shortenText(row.variation.name, 32) }}
-          </span>
+          <Link
+            :path="{ name: 'products.products.show', params: { id: row.variation.id } }"
+            target="_blank"
+            block
+          >
+            <span class="block truncate" :title="row.variation.name">
+              {{ shortenText(row.variation.name, 32) }}
+            </span>
+          </Link>
         </template>
         <template v-else-if="column.key === 'sku'">
-          <span class="block truncate" :title="row.variation.sku">
-            {{ row.variation.sku }}
-          </span>
+          <div class="flex items-center">
+            <span class="block truncate" :title="row.variation.sku">
+              {{ row.variation.sku }}
+            </span>
+            <Button class="ml-1" @click="copySkuToClipboard(row.variation.sku)">
+              <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
+            </Button>
+          </div>
         </template>
         <template v-else-if="column.key === 'active'">
           <Icon
