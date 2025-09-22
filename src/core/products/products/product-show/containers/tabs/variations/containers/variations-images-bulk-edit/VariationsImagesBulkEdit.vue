@@ -589,10 +589,12 @@ const save = async () => {
       });
     });
 
+    const inputDataInput = toDelete.map(id => ({ id }));
+
     if (toDelete.length) {
       await apolloClient.mutate({
         mutation: deleteMediaProductThroughsMutation,
-        variables: { ids: toDelete },
+        variables: { data: inputDataInput },
       });
     }
 

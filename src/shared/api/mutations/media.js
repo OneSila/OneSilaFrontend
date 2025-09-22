@@ -232,8 +232,8 @@ export const deleteMediaProductThroughMutation = gql`
 `;
 
 export const deleteMediaProductThroughsMutation = gql`
-  mutation deleteMediaproducthroughs($ids: [GlobalID!]!) {
-    deleteMediaproducthroughs(data: {ids: $ids}) {
+  mutation deleteMediaproducthroughs($data: [NodeInput!]!) {
+    deleteMediaproducthroughs(data: $data) {
       id
     }
   }
