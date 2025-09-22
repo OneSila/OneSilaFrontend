@@ -99,6 +99,11 @@
         "amazon": "Amazon"
       },
       "variations": {
+        "content": {
+          "validation": {
+            "fieldError": "{field} : {message}"
+          }
+        },
         "tabs": {
           "list": "Liste",
           "images": "Images"

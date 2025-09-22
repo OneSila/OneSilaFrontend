@@ -21,7 +21,7 @@ import {BULLET_POINT_SEPARATOR} from '../../../../../../../shared/utils/constant
 
 const {t} = useI18n();
 
-const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null; salesChannelId?: string }>();
+const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null; salesChannelId?: string; defaultLanguageCode?: string }>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
   (e: 'initial-bullet-points', value: any[]): void;
@@ -30,6 +30,7 @@ const emit = defineEmits<{
 const bulletPoints = ref<any[]>([]);
 const initialBulletPoints = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
+const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
 
 const handleGeneratedBulletPoints = (list: any[]) => {
   bulletPoints.value = list.map((bp, idx) => ({
@@ -174,12 +175,12 @@ defineExpose({save, fetchPoints, hasChanges});
                 @generated="handleGeneratedBulletPoints"
             />
           </FlexCell>
-          <FlexCell v-if="props.languageCode && props.languageCode !== 'en'">
+          <FlexCell v-if="props.languageCode && props.languageCode !== defaultLanguage">
             <AiContentTranslator
                 :product="{ id: props.productId }"
                 productContentType="BULLET_POINTS"
                 toTranslate=""
-                fromLanguageCode="en"
+                :fromLanguageCode="defaultLanguage"
                 :toLanguageCode="props.languageCode"
                 :sales-channel-id="props.salesChannelId"
                 @translated="handleTranslatedBulletPoints"

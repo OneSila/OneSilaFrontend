@@ -1043,6 +1043,9 @@
           },
           "ai": {
             "missingSource": "Add source content before using AI."
+          },
+          "validation": {
+            "fieldError": "{field}: {message}"
           }
         },
         "prices": {
