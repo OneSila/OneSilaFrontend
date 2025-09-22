@@ -42,6 +42,7 @@ const defaultPreviewContent = ref<any | null>(null);
 const fieldErrors = ref<Record<string, string>>({});
 const bulletPointsRef = ref<any>(null);
 const previewBulletPoints = ref<any[]>([]);
+const defaultLanguageCode = ref('en');
 
 const currentChannelType = computed(() => {
   if (currentSalesChannel.value === 'default') return 'default';
@@ -58,6 +59,7 @@ const cleanedData = (rawData) => {
     if (currentLanguage.value === null) {
       currentLanguage.value = rawData.defaultLanguage.code;
     }
+    defaultLanguageCode.value = rawData.defaultLanguage.code || 'en';
     return rawData.languages;
   }
   return [];
@@ -357,6 +359,7 @@ const shortDescriptionToolbarOptions = [
           :field-errors="fieldErrors"
           :product-id="product.id"
           :current-language="currentLanguage"
+          :default-language-code="defaultLanguageCode"
           :short-description-toolbar-options="shortDescriptionToolbarOptions"
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
@@ -372,6 +375,7 @@ const shortDescriptionToolbarOptions = [
               :translation-id="translationId"
               :product-id="product.id"
               :language-code="currentLanguage"
+              :default-language-code="defaultLanguageCode"
               :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
               @initial-bullet-points="previewBulletPoints = [...$event]"
             />

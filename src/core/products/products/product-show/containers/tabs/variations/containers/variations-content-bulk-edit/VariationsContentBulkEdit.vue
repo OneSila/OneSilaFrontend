@@ -76,13 +76,15 @@ interface VariationContentRow {
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 
+const WEBHOOK_CHANNEL_TYPE = 'webhook';
+
 const matrixRef = ref<MatrixEditorExpose | null>(null);
 const variations = ref<VariationContentRow[]>([]);
 const originalVariations = ref<VariationContentRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const languages = ref<any[]>([]);
-const defaultLanguageCode = ref<string | null>(null);
+const defaultLanguageCode = ref<string>('en');
 const language = ref<string | null>(null);
 const previousLanguage = ref<string | null>(null);
 const salesChannels = ref<any[]>([]);
@@ -352,7 +354,7 @@ const fetchLanguages = async () => {
   const { data } = await apolloClient.query({ query: translationLanguagesQuery, fetchPolicy: 'cache-first' });
   languages.value = data?.translationLanguages?.languages || [];
   const defaultCode = data?.translationLanguages?.defaultLanguage?.code || null;
-  defaultLanguageCode.value = defaultCode;
+  defaultLanguageCode.value = defaultCode || 'en';
   if (!language.value) {
     language.value = defaultCode;
     previousLanguage.value = defaultCode;
@@ -362,7 +364,10 @@ const fetchLanguages = async () => {
 const loadSalesChannels = async () => {
   try {
     const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
-    salesChannels.value = data?.integrations?.edges?.map((edge: any) => edge.node)?.filter((node: any) => node.type) || [];
+    salesChannels.value =
+      data?.integrations?.edges
+        ?.map((edge: any) => edge.node)
+        ?.filter((node: any) => node.type && node.type !== WEBHOOK_CHANNEL_TYPE) || [];
   } catch (error) {
     console.error('Failed to load sales channels', error);
     salesChannels.value = [];
@@ -961,7 +966,27 @@ const save = async () => {
   } catch (error) {
     console.error('Failed to save variation content', error);
     const validationErrors = processGraphQLErrors(error, t);
-    const messages = Object.values(validationErrors).filter(Boolean);
+    const messages = Object.entries(validationErrors)
+      .map(([field, message]) => {
+        if (!message) return null;
+        const messageText = Array.isArray(message) ? message.join(', ') : String(message);
+        if (field === '__all__') {
+          return messageText;
+        }
+        const fieldLabels: Record<string, string> = {
+          name: t('shared.labels.name'),
+          shortDescription: t('shared.labels.shortDescription'),
+          description: t('products.translation.labels.description'),
+          urlKey: t('products.translation.labels.urlKey'),
+          bulletPoints: t('products.translation.labels.bulletPoints'),
+        };
+        const label = fieldLabels[field] || field;
+        return t('products.products.variations.content.validation.fieldError', {
+          field: label,
+          message: messageText,
+        });
+      })
+      .filter(Boolean) as string[];
     if (messages.length) {
       Toast.error(messages.join('<br>'));
     } else {
@@ -1039,7 +1064,10 @@ defineExpose({ hasUnsavedChanges });
       </template>
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
-          <Link :path="{ name: 'products.products.show', params: { id: row.variation.id } }" target="_blank">
+          <Link
+            :path="{ name: 'products.products.show', params: { id: row.variation.id }, query: { tab: 'productContent' } }"
+            target="_blank"
+          >
             <span class="block truncate" :title="row.variation.name">
               {{ shortenText(row.variation.name, 40) }}
             </span>

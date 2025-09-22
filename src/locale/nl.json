@@ -689,6 +689,9 @@
         "content": {
           "ai": {
             "missingSource": "Voeg broninhoud toe voordat je AI gebruikt."
+          },
+          "validation": {
+            "fieldError": "{field}: {message}"
           }
         },
         "images": {
