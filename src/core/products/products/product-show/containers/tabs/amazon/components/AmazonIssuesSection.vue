@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
@@ -28,6 +29,15 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+
+const variationValidationIssues = ref<VariationValidationIssues[]>(props.variationValidationIssues ?? []);
+
+watch(
+  () => props.variationValidationIssues,
+  (newVariationValidationIssues) => {
+    variationValidationIssues.value = newVariationValidationIssues ?? [];
+  }
+);
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return '-';
