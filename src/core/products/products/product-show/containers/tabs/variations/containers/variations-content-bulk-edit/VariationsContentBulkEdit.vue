@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch, nextTick } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import type { FetchPolicy } from '@apollo/client';
@@ -87,6 +87,15 @@ const skipLanguageWatch = ref(false);
 const skipChannelWatch = ref(false);
 const previewRow = ref<VariationContentRow | null>(null);
 const previewVisible = ref(false);
+const hoverTimer = ref<number | null>(null);
+const hoverPreview = reactive({
+  visible: false,
+  content: '',
+  top: 0,
+  left: 0,
+  width: 0,
+  placement: 'above' as 'above' | 'below',
+});
 
 const htmlModal = reactive({
   visible: false,
@@ -173,7 +182,7 @@ const baseColumns = computed<MatrixColumn[]>(() => {
       key: 'translationName',
       label: t('products.products.variations.content.columns.productName'),
       editable: true,
-      initialWidth: 280,
+      initialWidth: 336,
     });
   }
 
@@ -520,6 +529,48 @@ const cloneMatrixCellValue = (from: number, to: number, key: string) => {
   }
 };
 
+const startHtmlHoverPreview = (event: MouseEvent, value: string | null | undefined) => {
+  const htmlValue = normalizedHtml(value);
+  if (htmlValue === emptyHtml) return;
+  if (hoverTimer.value) {
+    window.clearTimeout(hoverTimer.value);
+    hoverTimer.value = null;
+  }
+
+  hoverPreview.visible = false;
+
+  const target = event.currentTarget as HTMLElement | null;
+  if (!target) return;
+  if (typeof window === 'undefined') return;
+
+  hoverTimer.value = window.setTimeout(() => {
+    const rect = target.getBoundingClientRect();
+    const preferredWidth = Math.max(rect.width, 320);
+    const maxWidth = Math.min(preferredWidth, 480);
+    let left = rect.left + rect.width / 2 - maxWidth / 2;
+    left = Math.max(16, Math.min(left, window.innerWidth - maxWidth - 16));
+    const availableTop = rect.top;
+    const availableBottom = window.innerHeight - rect.bottom;
+    const showBelow = availableTop < 200 && availableBottom > availableTop;
+
+    hoverPreview.content = htmlValue;
+    hoverPreview.top = showBelow ? rect.bottom : rect.top;
+    hoverPreview.left = left;
+    hoverPreview.width = maxWidth;
+    hoverPreview.placement = showBelow ? 'below' : 'above';
+    hoverPreview.visible = true;
+  }, 1000);
+};
+
+const stopHtmlHoverPreview = () => {
+  if (typeof window === 'undefined') return;
+  if (hoverTimer.value !== null) {
+    window.clearTimeout(hoverTimer.value);
+    hoverTimer.value = null;
+  }
+  hoverPreview.visible = false;
+};
+
 const clearMatrixCellValue = (rowIndex: number, key: string) => {
   const row = variations.value[rowIndex];
   if (!row) return;
@@ -558,6 +609,7 @@ const closePreview = () => {
 };
 
 const openHtmlModal = (rowIndex: number, field: 'shortDescription' | 'description') => {
+  stopHtmlHoverPreview();
   htmlModal.rowIndex = rowIndex;
   htmlModal.field = field;
   const row = variations.value[rowIndex];
@@ -816,11 +868,23 @@ const save = async () => {
 };
 
 onMounted(async () => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', stopHtmlHoverPreview, true);
+    window.addEventListener('resize', stopHtmlHoverPreview);
+  }
   await Promise.all([fetchLanguages(), loadSalesChannels()]);
   previousSalesChannel.value = currentSalesChannel.value;
   if (language.value) {
     await loadData('network-only');
   }
+});
+
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', stopHtmlHoverPreview, true);
+    window.removeEventListener('resize', stopHtmlHoverPreview);
+  }
+  stopHtmlHoverPreview();
 });
 
 defineExpose({ hasUnsavedChanges });
@@ -842,34 +906,36 @@ defineExpose({ hasUnsavedChanges });
       @save="save"
     >
       <template #toolbar-right>
-        <Selector
-          v-if="salesChannelOptions.length"
-          v-model="currentSalesChannel"
-          :options="salesChannelOptions"
-          class="w-48 mr-2"
-          :placeholder="t('products.products.variations.content.selectors.salesChannel')"
-          :removable="false"
-          labelBy="name"
-          valueBy="value"
-          filterable
-        />
-        <Selector
-          v-if="languages.length"
-          v-model="language"
-          :options="languages"
-          class="w-32"
-          :placeholder="t('products.translation.placeholders.language')"
-          :removable="false"
-          labelBy="name"
-          valueBy="code"
-          mandatory
-          filterable
-        />
+        <div class="flex items-center gap-2">
+          <Selector
+            v-if="salesChannelOptions.length"
+            v-model="currentSalesChannel"
+            :options="salesChannelOptions"
+            class="w-48"
+            :placeholder="t('products.products.variations.content.selectors.salesChannel')"
+            :removable="false"
+            labelBy="name"
+            valueBy="value"
+            filterable
+          />
+          <Selector
+            v-if="languages.length"
+            v-model="language"
+            :options="languages"
+            class="w-40"
+            :placeholder="t('products.translation.placeholders.language')"
+            :removable="false"
+            labelBy="name"
+            valueBy="code"
+            mandatory
+            filterable
+          />
+        </div>
       </template>
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
           <span class="block truncate" :title="row.variation.name">
-            {{ shortenText(row.variation.name, 32) }}
+            {{ shortenText(row.variation.name, 40) }}
           </span>
         </template>
         <template v-else-if="column.key === 'sku'">
@@ -897,7 +963,7 @@ defineExpose({ hasUnsavedChanges });
           <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
             <div class="border border-gray-300 p-1 h-8 flex items-center justify-between">
               <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
-                {{ shortenText(row.translation.name || '', 24) }}
+                {{ shortenText(row.translation.name || '', 40) }}
               </div>
               <Icon
                 name="maximize"
@@ -908,12 +974,17 @@ defineExpose({ hasUnsavedChanges });
           </div>
         </template>
         <template v-else-if="column.key === 'shortDescription'">
-          <div class="relative cursor-pointer" @dblclick="openHtmlModal(rowIndex, 'shortDescription')">
-            <div class="border border-gray-300 p-1 h-16 flex justify-between items-center gap-2">
-              <div class="overflow-hidden break-words text-sm pr-6">
+          <div
+            class="relative cursor-pointer"
+            @dblclick="openHtmlModal(rowIndex, 'shortDescription')"
+            @mouseenter="startHtmlHoverPreview($event, row.translation.shortDescription)"
+            @mouseleave="stopHtmlHoverPreview"
+          >
+            <div class="border border-gray-300 p-2 min-h-[4rem] flex gap-2 items-start">
+              <div class="flex-1 overflow-hidden overflow-y-auto break-words whitespace-normal text-sm leading-5 pr-4">
                 {{ shortenText(row.translation.shortDescription?.replace(/<[^>]+>/g, '') || '', 48) }}
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 self-center flex-shrink-0">
                 <Icon name="code" class="text-primary" />
                 <Icon name="maximize" class="text-gray-400 cursor-pointer" @click.stop="openHtmlModal(rowIndex, 'shortDescription')" />
               </div>
@@ -921,12 +992,17 @@ defineExpose({ hasUnsavedChanges });
           </div>
         </template>
         <template v-else-if="column.key === 'description'">
-          <div class="relative cursor-pointer" @dblclick="openHtmlModal(rowIndex, 'description')">
-            <div class="border border-gray-300 p-1 h-16 flex justify-between items-center gap-2">
-              <div class="overflow-hidden break-words text-sm pr-6">
+          <div
+            class="relative cursor-pointer"
+            @dblclick="openHtmlModal(rowIndex, 'description')"
+            @mouseenter="startHtmlHoverPreview($event, row.translation.description)"
+            @mouseleave="stopHtmlHoverPreview"
+          >
+            <div class="border border-gray-300 p-2 min-h-[4rem] flex gap-2 items-start">
+              <div class="flex-1 overflow-hidden overflow-y-auto break-words whitespace-normal text-sm leading-5 pr-4">
                 {{ shortenText(row.translation.description?.replace(/<[^>]+>/g, '') || '', 48) }}
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 self-center flex-shrink-0">
                 <Icon name="code" class="text-primary" />
                 <Icon name="maximize" class="text-gray-400 cursor-pointer" @click.stop="openHtmlModal(rowIndex, 'description')" />
               </div>
@@ -969,6 +1045,32 @@ defineExpose({ hasUnsavedChanges });
       </template>
     </MatrixEditor>
 
+    <Teleport to="body">
+      <div
+        v-if="hoverPreview.visible"
+        class="fixed z-50 pointer-events-none"
+        :style="{
+          top: hoverPreview.top + 'px',
+          left: hoverPreview.left + 'px',
+          width: hoverPreview.width + 'px',
+        }"
+      >
+        <div
+          class="pointer-events-auto"
+          :style="{
+            transform:
+              hoverPreview.placement === 'above'
+                ? 'translateY(calc(-100% - 12px))'
+                : 'translateY(12px)',
+          }"
+        >
+          <div class="rounded-md border border-gray-200 bg-white p-3 shadow-lg max-h-64 overflow-auto">
+            <div class="text-sm leading-5" v-html="hoverPreview.content" />
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <Modal v-model="previewVisible" @closed="closePreview">
       <Card class="modal-content w-3/4 max-w-5xl">
         <div class="flex justify-between items-center mb-4">
@@ -991,7 +1093,7 @@ defineExpose({ hasUnsavedChanges });
     </Modal>
 
     <Modal v-model="textModal.visible" @closed="closeTextModal">
-      <Card class="modal-content w-1/2 max-w-xl">
+      <Card class="modal-content w-2/3 max-w-2xl">
         <h3 class="text-xl font-semibold text-center mb-4">
           {{ t('products.products.bulkEditModal.textTitle') }}
         </h3>
