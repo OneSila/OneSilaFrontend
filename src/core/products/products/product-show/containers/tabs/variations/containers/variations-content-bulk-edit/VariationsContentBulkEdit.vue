@@ -142,24 +142,6 @@ const copySkuToClipboard = async (sku: string) => {
   }
 };
 
-const getBaseTranslation = (row: VariationContentRow) => row.defaultTranslation ?? row.translation;
-
-const createTranslatorBeforeStart = (content: string | null | undefined, isHtml = false) => () => {
-  if (isHtml) {
-    if (!content || normalizedHtml(content) === emptyHtml) {
-      Toast.error(t('products.products.variations.content.ai.missingSource'));
-      return false;
-    }
-    return true;
-  }
-
-  if (!content || !content.trim()) {
-    Toast.error(t('products.products.variations.content.ai.missingSource'));
-    return false;
-  }
-  return true;
-};
-
 const applyNameTranslation = (rowIndex: number, content: string) => {
   const row = variations.value[rowIndex];
   if (!row) return;
@@ -204,8 +186,6 @@ const handleTranslatedBulletPoint = (rowIndex: number, bulletIndex: number, text
     : [];
   applyBulletText(rowIndex, bulletIndex, parts[0] ?? '');
 };
-
-const getBaseBulletPointText = (row: VariationContentRow, index: number) => row.defaultBulletPoints[index]?.text || '';
 
 const shortDescriptionToolbarOptions = [
   ['bold', 'underline'],
@@ -1117,14 +1097,13 @@ defineExpose({ hasUnsavedChanges });
                 <AiContentTranslator
                   :product="{ id: row.variation.id }"
                   product-content-type="NAME"
-                  :to-translate="getBaseTranslation(row).name || ''"
-                  :from-language-code="defaultLanguageCode || 'en'"
+                  to-translate=""
+                  :from-language-code="defaultLanguageCode"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
                   :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
-                  :before-start="createTranslatorBeforeStart(getBaseTranslation(row).name || '')"
                   @translated="(value) => applyNameTranslation(rowIndex, value)"
                 />
               </div>
@@ -1176,14 +1155,13 @@ defineExpose({ hasUnsavedChanges });
                   v-if="canUseTranslator"
                   :product="{ id: row.variation.id }"
                   product-content-type="SHORT_DESCRIPTION"
-                  :to-translate="getBaseTranslation(row).shortDescription || ''"
-                  :from-language-code="defaultLanguageCode || 'en'"
+                  to-translate=""
+                  :from-language-code="defaultLanguageCode"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
                   :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
-                  :before-start="createTranslatorBeforeStart(getBaseTranslation(row).shortDescription || '', true)"
                   @translated="(value) => applyShortDescriptionContent(rowIndex, value)"
                 />
               </div>
@@ -1235,14 +1213,13 @@ defineExpose({ hasUnsavedChanges });
                   v-if="canUseTranslator"
                   :product="{ id: row.variation.id }"
                   product-content-type="DESCRIPTION"
-                  :to-translate="getBaseTranslation(row).description || ''"
-                  :from-language-code="defaultLanguageCode || 'en'"
+                  to-translate=""
+                  :from-language-code="defaultLanguageCode"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
                   :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
-                  :before-start="createTranslatorBeforeStart(getBaseTranslation(row).description || '', true)"
                   @translated="(value) => applyDescriptionContent(rowIndex, value)"
                 />
               </div>
@@ -1306,15 +1283,14 @@ defineExpose({ hasUnsavedChanges });
                   v-if="canUseTranslator"
                   :product="{ id: row.variation.id }"
                   product-content-type="BULLET_POINTS"
-                  :to-translate="getBaseBulletPointText(row, parseInt(column.key.split('-')[1], 10))"
-                  :from-language-code="defaultLanguageCode || 'en'"
+                  to-translate=""
+                  :from-language-code="defaultLanguageCode"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
                   :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   :return-one-bullet-point="true"
-                  :before-start="createTranslatorBeforeStart(getBaseBulletPointText(row, parseInt(column.key.split('-')[1], 10)))"
                   @translated="(value) =>
                     handleTranslatedBulletPoint(rowIndex, parseInt(column.key.split('-')[1], 10), value)
                   "
