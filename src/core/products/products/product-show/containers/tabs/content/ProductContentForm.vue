@@ -4,7 +4,7 @@ import { TextInput } from '../../../../../../../shared/components/atoms/input-te
 import { TextHtmlEditor } from '../../../../../../../shared/components/atoms/input-text-html-editor';
 import { AiContentTranslator } from '../../../../../../../shared/components/organisms/ai-content-translator';
 import { AiContentGenerator } from '../../../../../../../shared/components/organisms/ai-content-generator';
-import { PropType } from 'vue';
+import { PropType, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -46,12 +46,18 @@ const props = defineProps({
     type: String as PropType<string | undefined>,
     default: undefined,
   },
+  defaultLanguageCode: {
+    type: String,
+    default: 'en',
+  },
 });
 
 const emit = defineEmits<{
   (e: 'description', val: string): void;
   (e: 'shortDescription', val: string): void;
 }>();
+
+const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
 </script>
 
 <template>
@@ -61,12 +67,12 @@ const emit = defineEmits<{
         <FlexCell center>
           <Label semi-bold>{{ t('shared.labels.name') }}</Label>
         </FlexCell>
-        <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
+        <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
           <AiContentTranslator
             :product="{ id: productId }"
             productContentType="NAME"
             toTranslate=""
-            fromLanguageCode="en"
+            :fromLanguageCode="defaultLanguage"
             :toLanguageCode="currentLanguage"
             :sales-channel-id="salesChannelId"
             @translated="val => form.name = val"
@@ -98,12 +104,12 @@ const emit = defineEmits<{
               @generated="val => emit('shortDescription', val)"
             />
         </FlexCell>
-        <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
+        <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
           <AiContentTranslator
             :product="{ id: productId }"
             productContentType="SHORT_DESCRIPTION"
             toTranslate=""
-            fromLanguageCode="en"
+            :fromLanguageCode="defaultLanguage"
             :toLanguageCode="currentLanguage"
             :sales-channel-id="salesChannelId"
             @translated="val => emit('shortDescription', val)"
@@ -134,12 +140,12 @@ const emit = defineEmits<{
               @generated="val => emit('description', val)"
             />
         </FlexCell>
-        <FlexCell v-if="currentLanguage !== null && currentLanguage !== 'en'" center>
+        <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
           <AiContentTranslator
             :product="{ id: productId }"
             productContentType="DESCRIPTION"
             toTranslate=""
-            fromLanguageCode="en"
+            :fromLanguageCode="defaultLanguage"
             :toLanguageCode="currentLanguage"
             :sales-channel-id="salesChannelId"
             @translated="val => emit('description', val)"

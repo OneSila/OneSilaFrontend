@@ -9,11 +9,20 @@ interface Props {
   languageCode: string | null;
   contentAiGenerateType: string;
   salesChannelType?: string;
+  btnClass?: string;
+  small?: boolean;
+  iconClass?: string;
+  label?: string;
 }
 
 const { t } = useI18n();
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  btnClass: 'btn-outline-primary',
+  small: true,
+  iconClass: 'text-purple-600',
+  label: 'shared.button.generate',
+});
 const emit = defineEmits<{
   (e: 'generated', content: string): void;
 }>();
@@ -48,6 +57,10 @@ const steps = computed(() => [
     mutationKey="generateProductAiContent"
     modal-title="shared.components.organisms.aiContentGenerator.title"
     successToastKey="shared.components.organisms.aiContentGenerator.success"
+    :btn-class="props.btnClass"
+    :small="props.small"
+    :icon-class="props.iconClass"
+    :label="props.label"
     @processed="content => emit('generated', content)"
   />
 </template>

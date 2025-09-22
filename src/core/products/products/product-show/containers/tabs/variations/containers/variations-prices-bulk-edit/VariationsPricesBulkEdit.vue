@@ -798,7 +798,10 @@ defineExpose({ save, hasUnsavedChanges });
     >
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
-          <Link :path="{ name: 'products.products.show', params: { id: row.variation.id } }" target="_blank">
+          <Link
+            :path="{ name: 'products.products.show', params: { id: row.variation.id }, query: { tab: 'price' } }"
+            target="_blank"
+          >
             <span class="block truncate" :title="row.variation.name">
               {{ shortenText(row.variation.name, 32) }}
             </span>
