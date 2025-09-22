@@ -4,6 +4,7 @@ import { AssignProgressBar } from '../../../../../../../../shared/components/mol
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { ApolloMutation } from '@vue/apollo-components';
+import { Link } from "../../../../../../../../shared/components/atoms/link";
 
 const props = defineProps<{
   selectedProduct: any | null;
@@ -137,15 +138,15 @@ const formatDate = (dateString?: string | null) => {
           </div>
         </div>
         <div v-if="amazonProductUrl" class="mt-2">
-          <a
-            :href="amazonProductUrl"
+          <Link
+            :path="amazonProductUrl"
             class="inline-flex items-center gap-1 text-primary hover:text-primary-dark"
             target="_blank"
-            rel="noopener noreferrer"
+            external
           >
             <Icon name="eye" class="w-4 h-4" />
             <span class="text-xs">{{ t('products.products.amazon.viewOnAmazon') }}</span>
-          </a>
+          </Link>
         </div>
       </div>
     </div>
