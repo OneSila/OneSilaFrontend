@@ -1319,6 +1319,7 @@ defineExpose({ hasUnsavedChanges });
                   :icon-class="'text-gray-500'"
                   :small="false"
                   :return-one-bullet-point="true"
+                  :bullet-point-index="parseInt(column.key.split('-')[1], 10)"
                   @translated="(value) =>
                     handleTranslatedBulletPoint(rowIndex, parseInt(column.key.split('-')[1], 10), value)
                   "

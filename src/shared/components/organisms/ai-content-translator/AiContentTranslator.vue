@@ -17,6 +17,7 @@ interface Props {
   iconClass?: string;
   label?: string;
   returnOneBulletPoint?: boolean;
+  bulletPointIndex?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
   iconClass: 'text-purple-600',
   label: 'shared.button.translate',
   returnOneBulletPoint: false,
+  bulletPointIndex: undefined,
 });
 const emit = defineEmits<{
   (e: 'translated', translatedText: string): void;
@@ -53,6 +55,10 @@ const mutationVariables = computed(() => {
 
   if (props.returnOneBulletPoint) {
     data.returnOneBulletPoint = props.returnOneBulletPoint;
+  }
+
+  if (props.bulletPointIndex !== undefined && props.bulletPointIndex !== null) {
+    data.bulletPointIndex = props.bulletPointIndex;
   }
 
   return { data };
