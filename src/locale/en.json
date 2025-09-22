@@ -373,7 +373,8 @@
       "change": "Change",
       "leaveTab": "Leave tab",
       "createAnyway": "Create anyway",
-      "abort": "Abort"
+      "abort": "Abort",
+      "useAi": "Use AI"
     },
     "colors": {
       "red": "Red",
@@ -1039,6 +1040,9 @@
           },
           "toast": {
             "saveSuccess": "Variation content updated successfully."
+          },
+          "ai": {
+            "missingSource": "Add source content before using AI."
           }
         },
         "prices": {

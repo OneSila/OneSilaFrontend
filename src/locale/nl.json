@@ -188,7 +188,8 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
-      "import": "Import"
+      "import": "Import",
+      "useAi": "Gebruik AI"
     },
     "colors": {
       "red": "Rood",
@@ -684,6 +685,11 @@
           "editProperties": "Eigenschappen bewerken",
           "editPrices": "Prijzen",
           "images": "Afbeeldingen"
+        },
+        "content": {
+          "ai": {
+            "missingSource": "Voeg broninhoud toe voordat je AI gebruikt."
+          }
         },
         "images": {
           "columns": {
