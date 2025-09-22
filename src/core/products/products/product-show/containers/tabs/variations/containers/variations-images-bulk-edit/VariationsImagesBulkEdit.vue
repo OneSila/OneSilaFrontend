@@ -61,6 +61,7 @@ const saving = ref(false);
 const uploadContext = ref<{ rowIndex: number; columnIndex: number | null } | null>(null);
 const selectExistingModalVisible = ref(false);
 const uploadImagesModalVisible = ref(false);
+const expandedPlaceholder = ref<{ rowIndex: number; columnIndex: number } | null>(null);
 
 const assignedMediaIds = computed(() =>
   variations.value.flatMap((row) =>
@@ -195,6 +196,9 @@ const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => 
   const slot = normalizeImageSlot(value, row.variation.id, currentSlot?.id ?? null);
   row.images.splice(columnIndex, 1, slot);
   ensureRowHasMainImage(row);
+  if (slot && isPlaceholderExpanded(rowIndex, columnIndex)) {
+    closePlaceholder();
+  }
 };
 
 const cloneMatrixCellValue = (fromRow: number, toRow: number, columnKey: string) => {
@@ -281,6 +285,19 @@ const openUploadImagesModal = (rowIndex: number, columnIndex: number | null = nu
   uploadImagesModalVisible.value = true;
 };
 
+const handlePlaceholderAction = (
+  action: 'upload' | 'existing',
+  rowIndex: number,
+  columnIndex: number
+) => {
+  if (action === 'upload') {
+    openUploadImagesModal(rowIndex, columnIndex);
+  } else {
+    openSelectExistingModal(rowIndex, columnIndex);
+  }
+  closePlaceholder();
+};
+
 const resetUploadContext = () => {
   if (!selectExistingModalVisible.value && !uploadImagesModalVisible.value) {
     uploadContext.value = null;
@@ -317,24 +334,32 @@ const handleImagesCreated = (images: any[]) => {
   uploadImagesModalVisible.value = false;
 };
 
-const isNewlyUploadedSlot = (slot: VariationImageSlot | null | undefined) =>
-  !!slot && slot.uploadSource === 'uploaded' && !slot.id;
+const isUnsavedSlot = (slot: VariationImageSlot | null | undefined) => !!slot && !slot.id;
 
 const getImageTypeLabel = (slot: VariationImageSlot | null | undefined) => {
   if (!slot) {
     return null;
   }
   const type = slot.imageType;
-  if (type === IMAGE_TYPE_PACK) {
-    return t('media.images.labels.packShot');
-  }
   if (type === IMAGE_TYPE_MOOD) {
     return t('media.images.labels.moodShot');
   }
-  if (slot.uploadSource === 'uploaded') {
-    return t('media.images.labels.packShot');
-  }
   return null;
+};
+
+const isPlaceholderExpanded = (rowIndex: number, columnIndex: number) =>
+  expandedPlaceholder.value?.rowIndex === rowIndex && expandedPlaceholder.value?.columnIndex === columnIndex;
+
+const togglePlaceholder = (rowIndex: number, columnIndex: number) => {
+  if (isPlaceholderExpanded(rowIndex, columnIndex)) {
+    expandedPlaceholder.value = null;
+    return;
+  }
+  expandedPlaceholder.value = { rowIndex, columnIndex };
+};
+
+const closePlaceholder = () => {
+  expandedPlaceholder.value = null;
 };
 
 watch(selectExistingModalVisible, resetUploadContext);
@@ -508,6 +533,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     });
     variations.value = JSON.parse(JSON.stringify(variationRows));
     originalVariations.value = JSON.parse(JSON.stringify(variationRows));
+    expandedPlaceholder.value = null;
     matrixRef.value?.resetHistory(variations.value);
   } finally {
     loading.value = false;
@@ -665,8 +691,10 @@ defineExpose({ hasUnsavedChanges });
         </template>
         <template v-else-if="column.key === 'upload'">
           <Popper :placement="'bottom-start'" offsetDistance="8" class="!block">
-            <Button class="btn btn-secondary flex w-full items-center justify-center gap-2">
-              <Icon name="cloud-upload" class="h-4 w-4" aria-hidden="true" />
+            <Button
+              class="btn btn-secondary flex w-full items-center justify-center gap-2 px-3 py-1.5 text-sm"
+            >
+              <Icon name="cloud-upload" class="h-3 w-3" aria-hidden="true" />
               <span>{{ t('products.products.variations.images.buttons.openUploadMenu') }}</span>
             </Button>
             <template #content="{ close }">
@@ -696,36 +724,45 @@ defineExpose({ hasUnsavedChanges });
         <template v-else>
           <div class="group relative flex items-center justify-center">
             <div
-              class="relative flex h-32 w-32 flex-col items-center justify-center overflow-hidden rounded-md border bg-white"
+              class="relative flex h-36 w-36 flex-col items-center justify-center overflow-hidden rounded-md border bg-white p-2 md:h-40 md:w-40"
               :class="{
                 'border-dashed border-gray-300 bg-gray-50': !row.images[getImageColumnIndex(column.key)],
-                'bg-gray-100': isNewlyUploadedSlot(row.images[getImageColumnIndex(column.key)]),
+                'border-sky-200 bg-sky-50': isUnsavedSlot(row.images[getImageColumnIndex(column.key)]),
               }"
             >
               <ProductImage
                 v-if="row.images[getImageColumnIndex(column.key)]"
                 :source="row.images[getImageColumnIndex(column.key)]?.mediaUrl || ''"
                 :alt="row.images[getImageColumnIndex(column.key)]?.mediaName || row.variation.name"
-                class="h-full w-full object-cover"
+                class="h-full w-full object-contain"
               />
-              <div v-else class="flex w-full flex-col items-center gap-2 px-3 text-center">
-                <span class="text-xs text-gray-500">
-                  {{ t('products.products.variations.images.labels.noImage') }}
-                </span>
-                <div class="flex h-7 w-7 items-center justify-center rounded-full border border-gray-300">
-                  <Icon name="plus" class="h-3 w-3 text-gray-400" aria-hidden="true" />
-                </div>
-                <div class="mt-2 flex w-full flex-col gap-2">
+              <div v-else class="flex w-full flex-col items-center gap-3 px-3 py-2 text-center">
+                <template v-if="!isPlaceholderExpanded(rowIndex, getImageColumnIndex(column.key))">
+                  <span class="text-xs text-gray-500">
+                    {{ t('products.products.variations.images.labels.noImage') }}
+                  </span>
+                </template>
+                <Button
+                  class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-500 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                  :aria-label="t('products.products.variations.images.buttons.openUploadMenu')"
+                  @click.stop="togglePlaceholder(rowIndex, getImageColumnIndex(column.key))"
+                >
+                  <Icon name="plus" class="h-4 w-4" aria-hidden="true" />
+                </Button>
+                <div
+                  v-if="isPlaceholderExpanded(rowIndex, getImageColumnIndex(column.key))"
+                  class="flex w-full flex-col gap-2"
+                >
                   <Button
-                    class="btn btn-primary flex items-center justify-center gap-2 px-2 py-1 text-xs"
-                    @click.stop="openUploadImagesModal(rowIndex, getImageColumnIndex(column.key))"
+                    class="flex items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                    @click.stop="handlePlaceholderAction('upload', rowIndex, getImageColumnIndex(column.key))"
                   >
                     <Icon name="upload" class="h-3 w-3" aria-hidden="true" />
                     {{ t('products.products.variations.images.buttons.uploadNew') }}
                   </Button>
                   <Button
-                    class="btn btn-secondary flex items-center justify-center gap-2 px-2 py-1 text-xs"
-                    @click.stop="openSelectExistingModal(rowIndex, getImageColumnIndex(column.key))"
+                    class="flex items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                    @click.stop="handlePlaceholderAction('existing', rowIndex, getImageColumnIndex(column.key))"
                   >
                     <Icon name="images" class="h-3 w-3" aria-hidden="true" />
                     {{ t('products.products.variations.images.buttons.addExisting') }}
@@ -741,6 +778,7 @@ defineExpose({ hasUnsavedChanges });
             </div>
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-900 bg-opacity-60 px-3 py-2 opacity-0 transition-opacity group-hover:opacity-100"
+              :class="{ 'pointer-events-none': !row.images[getImageColumnIndex(column.key)] }"
             >
               <template v-if="row.images[getImageColumnIndex(column.key)]">
                 <Toggle
