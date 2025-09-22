@@ -998,6 +998,7 @@
       "variations": {
         "tabs": {
           "list": "List",
+          "content": "Content",
           "images": "Images"
         },
         "images": {
@@ -1014,6 +1015,30 @@
             "addExisting": "Add existing",
             "moveLeft": "Move image left",
             "moveRight": "Move image right"
+          }
+        },
+        "content": {
+          "columns": {
+            "preview": "Preview",
+            "productName": "Product name",
+            "shortDescription": "Short description",
+            "description": "Description",
+            "urlKey": "URL key",
+            "bullet": "Bullet #{index}"
+          },
+          "selectors": {
+            "salesChannel": "Sales channel",
+            "defaultChannel": "Default"
+          },
+          "previewModal": {
+            "title": "Content preview"
+          },
+          "modals": {
+            "shortDescriptionTitle": "Edit short description",
+            "descriptionTitle": "Edit description"
+          },
+          "toast": {
+            "saveSuccess": "Variation content updated successfully."
           }
         },
         "prices": {
