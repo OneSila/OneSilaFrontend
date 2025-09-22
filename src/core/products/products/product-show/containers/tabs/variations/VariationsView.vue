@@ -9,6 +9,7 @@ import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import VariationsList from "./containers/variations-list/VariationsList.vue";
 import VariationCreate from "./containers/variation-create/VariationCreate.vue";
 import VariationsBulkEdit from "./containers/variations-bulk-edit/VariationsBulkEdit.vue";
+import VariationsContentBulkEdit from "./containers/variations-content-bulk-edit/VariationsContentBulkEdit.vue";
 import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
@@ -19,13 +20,17 @@ const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-type Mode = 'list' | 'editProperties' | 'editPrices' | 'editImages';
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages';
 const mode = ref<Mode>('list');
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
+const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
 const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
 const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(null);
 
 const getUnsavedChangesForMode = (currentMode: Mode) => {
+  if (currentMode === 'editContent') {
+    return contentEditRef.value?.hasUnsavedChanges ?? false;
+  }
   if (currentMode === 'editProperties') {
     return bulkEditRef.value?.hasUnsavedChanges ?? false;
   }
@@ -41,12 +46,14 @@ const getUnsavedChangesForMode = (currentMode: Mode) => {
 const hasUnsavedChanges = computed(
   () =>
     (bulkEditRef.value?.hasUnsavedChanges ?? false) ||
+    (contentEditRef.value?.hasUnsavedChanges ?? false) ||
     (priceEditRef.value?.hasUnsavedChanges ?? false) ||
     (imageEditRef.value?.hasUnsavedChanges ?? false)
 );
 
 const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
   { key: 'list', label: t('products.products.variations.tabs.list'), icon: 'list' },
+  { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
   { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
   { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
   { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
@@ -156,6 +163,9 @@ defineExpose({ hasUnsavedChanges });
             <div v-if="product.type !== ProductType.Alias" class="mt-2">
               <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
             </div>
+          </template>
+          <template v-else-if="mode === 'editContent'">
+            <VariationsContentBulkEdit ref="contentEditRef" :product="product" />
           </template>
           <template v-else-if="mode === 'editProperties'">
             <VariationsBulkEdit ref="bulkEditRef" :product="product" />
