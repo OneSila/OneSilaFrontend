@@ -901,7 +901,7 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
         />
       </div>
     </div>
-    <Modal v-model="showTextModal">
+    <Modal v-model="showTextModal" @closed="cancelModal">
       <Card class="modal-content w-1/2">
         <h3 class="text-xl font-semibold text-center mb-4">
           {{ t('products.products.bulkEditModal.textTitle') }}
@@ -913,7 +913,7 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
         </div>
       </Card>
     </Modal>
-    <Modal v-model="showDescriptionModal">
+    <Modal v-model="showDescriptionModal" @closed="cancelModal">
       <Card class="modal-content w-2/3">
         <h3 class="text-xl font-semibold text-center mb-4">
           {{ t('products.products.bulkEditModal.descriptionTitle') }}
