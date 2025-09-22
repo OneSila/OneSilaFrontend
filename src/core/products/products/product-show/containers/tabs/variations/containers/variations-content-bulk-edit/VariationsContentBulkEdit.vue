@@ -6,6 +6,7 @@ import type { FetchPolicy } from '@apollo/client';
 import { Product } from '../../../../../../configs';
 import { Icon } from '../../../../../../../../../shared/components/atoms/icon';
 import { Button } from '../../../../../../../../../shared/components/atoms/button';
+import { Link } from '../../../../../../../../../shared/components/atoms/link';
 import { TextInput } from '../../../../../../../../../shared/components/atoms/input-text';
 import { TextHtmlEditor } from '../../../../../../../../../shared/components/atoms/input-text-html-editor';
 import { Selector } from '../../../../../../../../../shared/components/atoms/selector';
@@ -18,7 +19,7 @@ import { AiContentTranslator } from '../../../../../../../../../shared/component
 import { AiBulletPointsGenerator } from '../../../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 import ProductContentPreview from '../../../content/ProductContentPreview.vue';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
-import { shortenText } from '../../../../../../../../../shared/utils';
+import { processGraphQLErrors, shortenText } from '../../../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../../../apollo-client';
 import { BULLET_POINT_SEPARATOR, ProductType } from '../../../../../../../../../shared/utils/constants';
 import {
@@ -130,6 +131,15 @@ const isAiMenuOpen = (rowIndex: number, key: string) =>
 
 const closeAiMenu = () => {
   aiMenuState.value = null;
+};
+
+const copySkuToClipboard = async (sku: string) => {
+  try {
+    await navigator.clipboard.writeText(sku);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (_error) {
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
 };
 
 const getBaseTranslation = (row: VariationContentRow) => row.defaultTranslation ?? row.translation;
@@ -970,7 +980,13 @@ const save = async () => {
     await loadData('network-only');
   } catch (error) {
     console.error('Failed to save variation content', error);
-    Toast.error(t('shared.alert.toast.generalError'));
+    const validationErrors = processGraphQLErrors(error, t);
+    const messages = Object.values(validationErrors).filter(Boolean);
+    if (messages.length) {
+      Toast.error(messages.join('<br>'));
+    } else {
+      Toast.error(t('shared.messages.somethingWentWrong'));
+    }
   } finally {
     saving.value = false;
   }
@@ -1043,14 +1059,21 @@ defineExpose({ hasUnsavedChanges });
       </template>
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
-          <span class="block truncate" :title="row.variation.name">
-            {{ shortenText(row.variation.name, 40) }}
-          </span>
+          <Link :path="{ name: 'products.products.show', params: { id: row.variation.id } }" target="_blank">
+            <span class="block truncate" :title="row.variation.name">
+              {{ shortenText(row.variation.name, 40) }}
+            </span>
+          </Link>
         </template>
         <template v-else-if="column.key === 'sku'">
-          <span class="block truncate" :title="row.variation.sku">
-            {{ row.variation.sku }}
-          </span>
+          <div class="flex items-center gap-1">
+            <span class="block truncate" :title="row.variation.sku">
+              {{ row.variation.sku }}
+            </span>
+            <Button class="p-0" @click="copySkuToClipboard(row.variation.sku)">
+              <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
+            </Button>
+          </div>
         </template>
         <template v-else-if="column.key === 'active'">
           <Icon v-if="row.variation.active" name="check-circle" class="text-green-500" />
@@ -1082,15 +1105,15 @@ defineExpose({ hasUnsavedChanges });
                 />
               </div>
             </div>
-            <div v-if="language && canUseTranslator" class="flex flex-col gap-2">
+            <div v-if="language && canUseTranslator" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               <Button
-                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                class="flex w-full sm:w-auto items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 @click.stop="toggleAiMenu(rowIndex, column.key)"
               >
                 <Icon name="gem" class="h-3 w-3 text-gray-500" />
                 <span>{{ t('shared.button.useAi') }}</span>
               </Button>
-              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <AiContentTranslator
                   :product="{ id: row.variation.id }"
                   product-content-type="NAME"
@@ -1098,7 +1121,7 @@ defineExpose({ hasUnsavedChanges });
                   :from-language-code="defaultLanguageCode || 'en'"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   :before-start="createTranslatorBeforeStart(getBaseTranslation(row).name || '')"
@@ -1130,21 +1153,21 @@ defineExpose({ hasUnsavedChanges });
                 </div>
               </div>
             </div>
-            <div v-if="language" class="flex flex-col gap-2">
+            <div v-if="language" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               <Button
-                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                class="flex w-full sm:w-auto items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 @click.stop="toggleAiMenu(rowIndex, column.key)"
               >
                 <Icon name="gem" class="h-3 w-3 text-gray-500" />
                 <span>{{ t('shared.button.useAi') }}</span>
               </Button>
-              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <AiContentGenerator
                   :product-id="row.variation.id"
                   :language-code="language"
                   content-ai-generate-type="SHORT_DESCRIPTION"
                   :sales-channel-type="currentSalesChannelType"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   @generated="(value) => applyShortDescriptionContent(rowIndex, value)"
@@ -1157,7 +1180,7 @@ defineExpose({ hasUnsavedChanges });
                   :from-language-code="defaultLanguageCode || 'en'"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   :before-start="createTranslatorBeforeStart(getBaseTranslation(row).shortDescription || '', true)"
@@ -1189,21 +1212,21 @@ defineExpose({ hasUnsavedChanges });
                 </div>
               </div>
             </div>
-            <div v-if="language" class="flex flex-col gap-2">
+            <div v-if="language" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               <Button
-                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                class="flex w-full sm:w-auto items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 @click.stop="toggleAiMenu(rowIndex, column.key)"
               >
                 <Icon name="gem" class="h-3 w-3 text-gray-500" />
                 <span>{{ t('shared.button.useAi') }}</span>
               </Button>
-              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <AiContentGenerator
                   :product-id="row.variation.id"
                   :language-code="language"
                   content-ai-generate-type="DESCRIPTION"
                   :sales-channel-type="currentSalesChannelType"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   @generated="(value) => applyDescriptionContent(rowIndex, value)"
@@ -1216,7 +1239,7 @@ defineExpose({ hasUnsavedChanges });
                   :from-language-code="defaultLanguageCode || 'en'"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   :before-start="createTranslatorBeforeStart(getBaseTranslation(row).description || '', true)"
@@ -1259,20 +1282,20 @@ defineExpose({ hasUnsavedChanges });
                 />
               </div>
             </div>
-            <div v-if="language" class="flex flex-col gap-2">
+            <div v-if="language" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               <Button
-                class="flex w-full items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                class="flex w-full sm:w-auto items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
                 @click.stop="toggleAiMenu(rowIndex, column.key)"
               >
                 <Icon name="gem" class="h-3 w-3 text-gray-500" />
                 <span>{{ t('shared.button.useAi') }}</span>
               </Button>
-              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2">
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <AiBulletPointsGenerator
                   :product-id="row.variation.id"
                   :language-code="language"
                   :return-one="true"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   @generated="(points) =>
@@ -1287,7 +1310,7 @@ defineExpose({ hasUnsavedChanges });
                   :from-language-code="defaultLanguageCode || 'en'"
                   :to-language-code="language || ''"
                   :sales-channel-id="currentSalesChannelId || undefined"
-                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50'"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
                   :icon-class="'text-gray-500'"
                   :small="false"
                   :return-one-bullet-point="true"
