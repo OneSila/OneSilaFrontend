@@ -227,6 +227,19 @@ const moveImage = (rowIndex: number, columnIndex: number, direction: -1 | 1) => 
   ensureRowHasMainImage(row);
 };
 
+const handleImageCtrlArrow = (
+  rowIndex: number,
+  columnKey: string,
+  direction: 'left' | 'right'
+) => {
+  const columnIndex = parseImageColumnKey(columnKey);
+  if (columnIndex === null) {
+    return false;
+  }
+  moveImage(rowIndex, columnIndex, direction === 'left' ? -1 : 1);
+  return true;
+};
+
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
   const isBundle = parentProductType.value === ProductType.Bundle;
   const query = isBundle ? bundleVariationsQuery : configurableVariationsQuery;
@@ -478,6 +491,7 @@ defineExpose({ hasUnsavedChanges });
       :set-cell-value="setMatrixCellValue"
       :clone-cell-value="cloneMatrixCellValue"
       :clear-cell-value="clearMatrixCellValue"
+      :on-ctrl-arrow="handleImageCtrlArrow"
       @save="save"
     >
       <template #cell="{ row, column, rowIndex }">

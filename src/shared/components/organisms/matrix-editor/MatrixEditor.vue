@@ -26,6 +26,7 @@ const props = withDefaults(
     setCellValue: (rowIndex: number, columnKey: string, value: any) => void
     cloneCellValue: (fromRow: number, toRow: number, columnKey: string) => void
     clearCellValue: (rowIndex: number, columnKey: string) => void
+    onCtrlArrow?: (rowIndex: number, columnKey: string, direction: 'left' | 'right') => boolean | void
   }>(),
   {
     rowKey: 'id',
@@ -403,6 +404,20 @@ const handleKeydown = (event: KeyboardEvent) => {
   const { row, col } = selectedCell.value
   if (row === null || col === null) return
   if (!rows.value[row]) return
+
+  if (
+    (event.ctrlKey || event.metaKey) &&
+    (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+  ) {
+    if (props.onCtrlArrow) {
+      const direction = event.key === 'ArrowLeft' ? 'left' : 'right'
+      const handled = props.onCtrlArrow(row, col, direction)
+      if (handled) {
+        event.preventDefault()
+        return
+      }
+    }
+  }
 
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c') {
     if (isEditableColumn(col)) {
