@@ -123,6 +123,11 @@ export const salesPriceListItemsQuery = gql`
             id
             name
             discountPcnt
+            currency {
+              id
+              isoCode
+              symbol
+            }
           }
           product {
             id

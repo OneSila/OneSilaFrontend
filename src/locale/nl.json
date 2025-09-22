@@ -687,11 +687,19 @@
         "prices": {
           "columns": {
             "rrp": "Adviesprijs ({currency})",
-            "price": "Prijs ({currency})"
+            "price": "Prijs ({currency})",
+            "priceListPrice": "{priceList} ({currency}) price override",
+            "priceListDiscount": "{priceList} ({currency}) discount override"
           },
           "toast": {
             "created": "{count} verkoopprijzen aangemaakt.",
-            "updated": "{count} verkoopprijzen bijgewerkt."
+            "updated": "{count} verkoopprijzen bijgewerkt.",
+            "priceListCreated": "Created {count} price list overrides.",
+            "priceListUpdated": "Updated {count} price list overrides."
+          },
+          "labels": {
+            "autoValue": "Auto: {value}",
+            "autoValueEmpty": "Auto: —"
           }
         }
       },

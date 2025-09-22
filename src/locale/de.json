@@ -103,6 +103,26 @@
       "tabs": {
         "amazon": "Amazon"
       },
+      "variations": {
+        "prices": {
+          "columns": {
+            "rrp": "RRP ({currency})",
+            "price": "Price ({currency})",
+            "priceListPrice": "{priceList} ({currency}) price override",
+            "priceListDiscount": "{priceList} ({currency}) discount override"
+          },
+          "toast": {
+            "created": "Created {count} sales prices.",
+            "updated": "Updated {count} sales prices.",
+            "priceListCreated": "Created {count} price list overrides.",
+            "priceListUpdated": "Updated {count} price list overrides."
+          },
+          "labels": {
+            "autoValue": "Auto: {value}",
+            "autoValueEmpty": "Auto: —"
+          }
+        }
+      },
       "properties": {
         "searchPlaceholder": "Eigenschaften suchen",
         "typePlaceholder": "Nach Typ filtern"
