@@ -52,6 +52,12 @@ const handleSubscriptionResult = (data: any) => {
                               <h4 class="text-base">
                                 {{ user.firstName }} {{ user.lastName }}
                               </h4>
+                              <p
+                                v-if="user.company?.name"
+                                class="text-sm text-slate-500 dark:text-white-dark/70"
+                              >
+                                {{ user.company?.name }}
+                              </p>
                               <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;">{{ user.username }}</a>
                           </div>
                       </div>

@@ -10,6 +10,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "import": "Import",
       "saveAll": "Tout enregistrer"
     },
     "colors": {
@@ -97,10 +98,42 @@
       "tabs": {
         "amazon": "Amazon"
       },
-        "properties": {
-          "searchPlaceholder": "Rechercher des propriétés",
-          "typePlaceholder": "Filtrer par type"
+      "variations": {
+        "tabs": {
+          "list": "Liste",
+          "images": "Images"
         },
+        "images": {
+          "columns": {
+            "image": "Image n°{index}"
+          },
+          "labels": {
+            "noImage": "Aucune image"
+          }
+        },
+        "prices": {
+          "columns": {
+            "rrp": "RRP ({currency})",
+            "price": "Price ({currency})",
+            "priceListPrice": "{priceList} ({currency}) price override",
+            "priceListDiscount": "{priceList} ({currency}) discount override"
+          },
+          "toast": {
+            "created": "Created {count} sales prices.",
+            "updated": "Updated {count} sales prices.",
+            "priceListCreated": "Created {count} price list overrides.",
+            "priceListUpdated": "Updated {count} price list overrides."
+          },
+          "labels": {
+            "autoValue": "Auto: {value}",
+            "autoValueEmpty": "Auto: —"
+          }
+        }
+      },
+      "properties": {
+        "searchPlaceholder": "Rechercher des propriétés",
+        "typePlaceholder": "Filtrer par type"
+      },
       "labels": {
         "configuratorValue": ""
       },
@@ -136,6 +169,12 @@
         "productTypeCreated": "Product type created",
         "validationIssues": "Problèmes de validation détectés",
         "validationIssuesDescription": "Problèmes de validation Amazon probables basés sur la structure de produit attendue par Amazon",
+        "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationIssuesHeading": "Variation {identifier}",
+        "openVariation": "Open variation",
+        "noVariationValidationIssues": "No variation validation issues found.",
+        "unnamedVariation": "Variation",
+        "viewOnAmazon": "View on Amazon",
         "otherIssues": "Problèmes de produit Amazon",
         "otherIssuesDescription": "Problèmes soulevés par Amazon après la création ou la mise à jour d’un produit. Ils apparaissent généralement après 15 à 45 minutes, car Amazon les traite après la publication de vos modifications.",
         "status": "Status",

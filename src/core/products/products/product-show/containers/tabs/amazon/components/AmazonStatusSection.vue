@@ -2,20 +2,26 @@
 import { useI18n } from 'vue-i18n';
 import { AssignProgressBar } from '../../../../../../../../shared/components/molecules/assign-progress-bar';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { ApolloMutation } from '@vue/apollo-components';
+import { Link } from "../../../../../../../../shared/components/atoms/link";
 
 const props = defineProps<{
   selectedProduct: any | null;
   lastSyncAt: string | null;
   syncingCurrentPercentage: number | null;
   remoteProductId: string | null;
+  amazonProductUrl: string | null;
   selectedView: any | null;
   resyncAmazonProductMutation: any;
   refreshAmazonProductIssuesMutation: any;
+  refreshAmazonProductFromRemoteMutation: any;
+  productId: string;
 }>();
 
 const emit = defineEmits<{
   (e: 'resync-success'): void;
+  (e: 'import-success'): void;
   (e: 'validate-success'): void;
   (e: 'fetch-issues-success'): void;
   (e: 'error', err: unknown): void;
@@ -50,6 +56,18 @@ const formatDate = (dateString?: string | null) => {
       </FlexCell>
       <FlexCell>
         <div class="flex gap-2 sm:ml-auto">
+        <ApolloMutation
+          :mutation="refreshAmazonProductFromRemoteMutation"
+          :variables="{ product: { id: productId }, view: { id: selectedView?.id } }"
+          @done="() => emit('import-success')"
+          @error="(e) => emit('error', e)"
+        >
+          <template #default="{ mutate, loading }">
+            <Button class="btn btn-sm btn-outline-primary" :disabled="loading" @click.stop="mutate">
+              {{ t('shared.button.import') }}
+            </Button>
+          </template>
+        </ApolloMutation>
         <ApolloMutation
           v-if="remoteProductId"
           :mutation="resyncAmazonProductMutation"
@@ -118,6 +136,17 @@ const formatDate = (dateString?: string | null) => {
           <div class="w-48 mt-1">
             <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
           </div>
+        </div>
+        <div v-if="amazonProductUrl" class="mt-2">
+          <Link
+            :path="amazonProductUrl"
+            class="inline-flex items-center gap-1 text-primary hover:text-primary-dark"
+            target="_blank"
+            external
+          >
+            <Icon name="eye" class="w-4 h-4" />
+            <span class="text-xs">{{ t('products.products.amazon.viewOnAmazon') }}</span>
+          </Link>
         </div>
       </div>
     </div>

@@ -6,6 +6,11 @@ export const amazonProductsQuery = gql`
       edges {
         node {
           id
+          localInstance {
+            id
+            name
+            sku
+          }
           createdMarketplaces
           lastSyncAt
           syncingCurrentPercentage
@@ -65,6 +70,25 @@ export const amazonProductBrowseNodesQuery = gql`
           recommendedBrowseNodeId
           view {
             id
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const amazonChildRemoteProductsQuery = gql`
+  query AmazonChildRemoteProducts($remoteParentProductId: GlobalID!) {
+    amazonProducts(
+      filters: { remoteParentProduct: { id: { exact: $remoteParentProductId } } }
+    ) {
+      edges {
+        node {
+          id
+          localInstance {
+            id
+            name
+            sku
           }
         }
       }

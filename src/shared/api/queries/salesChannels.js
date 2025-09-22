@@ -528,6 +528,7 @@ export const amazonChannelViewsQuery = gql`
           id
           remoteId
           name
+          url
           active
           isDefault
           salesChannel {

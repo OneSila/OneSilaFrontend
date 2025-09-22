@@ -12,7 +12,13 @@ import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 
 
-const props = defineProps<{ modelValue: boolean; productId: string; ids: any[] }>();
+const props = withDefaults(
+  defineProps<{ modelValue: boolean; productId?: string; ids?: any[]; linkOnSelect?: boolean }>(),
+  {
+    ids: () => [],
+    linkOnSelect: true,
+  }
+);
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const localShowModal = ref(props.modelValue);
 
@@ -38,6 +44,11 @@ const closeModal = () => {
 };
 
 const handleMediaAssign = async (media) => {
+  if (!props.linkOnSelect || !props.productId) {
+    emit('entries-created', media);
+    closeModal();
+    return;
+  }
 
   const variables = {
     product: { id: props.productId},
@@ -48,7 +59,7 @@ const handleMediaAssign = async (media) => {
       mutation: createMediaProductThroughMutation,
       variables: { data: variables }
     });
-    emit('entries-created')
+    emit('entries-created', data?.createMediaProductThrough ?? media)
     console.log('Linking success:', data);
   } catch (error) {
     const validationErrors = processGraphQLErrors(error, t);

@@ -315,6 +315,68 @@ export const bundleVariationsQuery = gql`
   }
 `;
 
+export const configurableVariationsWithPricesQuery = gql`
+  query ConfigurableVariationsWithPrices($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+            salespriceSet {
+              id
+              price
+              rrp
+              currency {
+                id
+                isoCode
+              }
+            }
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsWithPricesQuery = gql`
+  query BundleVariationsWithPrices($first: Int, $after: String, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+            salespriceSet {
+              id
+              price
+              rrp
+              currency {
+                id
+                isoCode
+              }
+            }
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const getProductQuery = gql`
   query getProduct($id: GlobalID!) {
     product(id: $id) {

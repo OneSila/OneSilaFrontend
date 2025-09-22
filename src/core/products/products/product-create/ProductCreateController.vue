@@ -51,6 +51,7 @@ const form: FormType = reactive({
   name: '',
   active: true,
   aliasCopyImages: true,
+  aliasCopyContent: true,
   aliasCopyProductProperties: true,
   vatRate: {
     id: null

@@ -157,7 +157,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="item in data[queryKey].edges" :key="item.node.id">
                   <td>
-                    <Link :path="{name: 'products.products.show', params: {id: item.node.variation.id}}">
+                    <Link :path="{name: 'products.products.show', params: {id: item.node.variation.id}}" target="_blank">
                       <Flex class="gap-4">
                         <FlexCell center>
                           <div v-if="item.node.variation.thumbnailUrl" class="w-8 h-8 overflow-hidden">
