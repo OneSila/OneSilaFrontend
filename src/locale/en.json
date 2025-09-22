@@ -1011,7 +1011,7 @@
           "buttons": {
             "openUploadMenu": "Add images",
             "uploadNew": "Upload new",
-            "addExisting": "Add from existing",
+            "addExisting": "Add existing",
             "moveLeft": "Move image left",
             "moveRight": "Move image right"
           }
@@ -1892,7 +1892,7 @@
         "owner": "Owner",
         "files": "Files",
         "recentFiles": "Recent Files",
-        "addExistingFiles": "Add from existing media",
+        "addExistingFiles": "Add existing media",
         "images": "Images",
         "fileThumbnail": "File thumbnail"
       },

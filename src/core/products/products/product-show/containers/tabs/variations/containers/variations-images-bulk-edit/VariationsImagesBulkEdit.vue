@@ -33,7 +33,6 @@ interface VariationImageSlot {
   mediaName: string | null;
   isMainImage: boolean;
   sortOrder: number | null;
-  active: boolean;
   imageType?: string | null;
   uploadSource?: 'existing' | 'uploaded';
 }
@@ -167,7 +166,6 @@ const normalizeImageSlot = (
     mediaName: value.mediaName ?? null,
     isMainImage: preserveId ? !!value.isMainImage : false,
     sortOrder: value.sortOrder ?? null,
-    active: value.active ?? true,
     imageType: value.imageType ?? null,
     uploadSource: value.uploadSource,
   };
@@ -268,7 +266,6 @@ const assignMediaToRow = (
       null,
     isMainImage: currentSlot?.isMainImage ?? false,
     sortOrder: null,
-    active: true,
     imageType: resolvedMedia.type ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
     uploadSource: source,
   };
@@ -504,7 +501,6 @@ const fetchVariationImages = async (
       mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
       isMainImage: !!node.isMainImage,
       sortOrder: node.sortOrder ?? null,
-      active: node.active ?? true,
       uploadSource: 'existing',
     });
   });
@@ -606,7 +602,6 @@ const save = async () => {
         media: { id: item.mediaId },
         sortOrder: item.sortOrder,
         isMainImage: item.isMainImage,
-        active: true,
       }));
       await apolloClient.mutate({
         mutation: createMediaProductThroughsMutation,
