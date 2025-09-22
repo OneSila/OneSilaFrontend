@@ -857,7 +857,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
 
 .insert-column-button {
   position: absolute;
-  top: -10px;
+  top: 20px;
   right: -6px;
   width: 16px;
   height: 16px;
