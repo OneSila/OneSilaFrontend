@@ -13,7 +13,11 @@ import AmazonBrowseNodeSection from './components/AmazonBrowseNodeSection.vue';
 import AmazonUnmappedValuesSection from './components/AmazonUnmappedValuesSection.vue';
 import AmazonVariationThemeSection from './components/AmazonVariationThemeSection.vue';
 import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
-import { amazonProductsQuery } from '../../../../../../../shared/api/queries/amazonProducts.js';
+import {
+  amazonProductsQuery,
+  amazonChildRemoteProductsQuery,
+} from '../../../../../../../shared/api/queries/amazonProducts.js';
+import { amazonProductIssuesQuery } from '../../../../../../../shared/api/queries/amazonProductIssues.js';
 import { amazonExternalProductIdsQuery } from '../../../../../../../shared/api/queries/amazonExternalProductIds.js';
 import {
   resyncAmazonProductMutation,
@@ -72,6 +76,7 @@ interface AmazonProductIssue {
   isValidationIssue?: boolean | null;
   view?: { remoteId: string; name?: string } | null;
   createdAt?: string | null;
+  remoteProduct?: { id: string } | null;
 }
 
 interface AmazonProduct {
@@ -229,29 +234,107 @@ interface VariationValidationIssues {
   issues: AmazonProductIssue[];
 }
 
-const variationValidationIssues = computed<VariationValidationIssues[]>(() => {
-  if (
-    !isConfigurable.value ||
-    !selectedProduct.value ||
-    !selectedView.value ||
-    !amazonProducts.value.length
-  ) {
-    return [];
+const variationValidationIssues = ref<VariationValidationIssues[]>([]);
+let variationIssuesRequestToken = 0;
+
+const fetchVariationValidationIssues = async () => {
+  const currentToken = ++variationIssuesRequestToken;
+
+  if (!isConfigurable.value || !selectedProduct.value?.id || !selectedView.value?.remoteId) {
+    if (currentToken === variationIssuesRequestToken) {
+      variationValidationIssues.value = [];
+    }
+    return;
   }
 
-  return amazonProducts.value
-    .filter((product) => product.remoteParentProduct?.id === selectedProduct.value?.id)
-    .map((product) => ({
-      productId: product.id,
-      localInstance: product.localInstance ?? null,
-      issues:
-        product.issues?.filter(
-          (issue) =>
-            issue.view?.remoteId === selectedView.value?.remoteId && issue.isValidationIssue,
-        ) || [],
-    }))
-    .filter((entry) => entry.issues.length > 0);
-});
+  try {
+    const { data: childrenData } = await apolloClient.query({
+      query: amazonChildRemoteProductsQuery,
+      variables: { remoteParentProductId: selectedProduct.value.id },
+      fetchPolicy: 'cache-first',
+    });
+
+    const variationProducts =
+      childrenData?.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
+
+    if (!variationProducts.length) {
+      if (currentToken === variationIssuesRequestToken) {
+        variationValidationIssues.value = [];
+      }
+      return;
+    }
+
+    const remoteProductIds = Array.from(
+      new Set(variationProducts.map((product: any) => product.id).filter(Boolean)),
+    );
+
+    if (!remoteProductIds.length) {
+      if (currentToken === variationIssuesRequestToken) {
+        variationValidationIssues.value = [];
+      }
+      return;
+    }
+
+    const { data: issuesData } = await apolloClient.query({
+      query: amazonProductIssuesQuery,
+      variables: {
+        filter: {
+          isValidationIssue: { exact: true },
+          view: { remoteId: { exact: selectedView.value.remoteId } },
+          remoteProduct: { id: { inList: remoteProductIds } },
+        },
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    const issues = issuesData?.amazonProductIssues?.edges?.map((edge: any) => edge.node) || [];
+
+    const groupedByProductId: Record<string, VariationValidationIssues> = {};
+
+    variationProducts.forEach((product: any) => {
+      groupedByProductId[product.id] = {
+        productId: product.id,
+        localInstance: product.localInstance ?? null,
+        issues: [],
+      };
+    });
+
+    issues.forEach((issue: any) => {
+      const remoteId = issue.remoteProduct?.id;
+      if (!remoteId || !groupedByProductId[remoteId]) {
+        return;
+      }
+
+      groupedByProductId[remoteId].issues.push({
+        id: issue.id,
+        code: issue.code,
+        message: issue.message,
+        severity: issue.severity,
+        isValidationIssue: issue.isValidationIssue,
+        view: issue.view,
+        createdAt: issue.createdAt,
+      });
+    });
+
+    if (currentToken === variationIssuesRequestToken) {
+      variationValidationIssues.value = Object.values(groupedByProductId).filter(
+        (entry) => entry.issues.length > 0,
+      );
+    }
+  } catch (error) {
+    if (currentToken === variationIssuesRequestToken) {
+      variationValidationIssues.value = [];
+    }
+  }
+};
+
+watch(
+  [() => isConfigurable.value, () => selectedProduct.value?.id, () => selectedView.value?.remoteId],
+  () => {
+    fetchVariationValidationIssues();
+  },
+  { immediate: true },
+);
 
 const externalIdRef = ref<InstanceType<typeof AmazonExternalProductIdSection> | null>(null);
 const gtinExemptionRef = ref<InstanceType<typeof AmazonGtinExemptionSection> | null>(null);

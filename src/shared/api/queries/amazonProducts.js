@@ -77,3 +77,22 @@ export const amazonProductBrowseNodesQuery = gql`
   }
 `;
 
+export const amazonChildRemoteProductsQuery = gql`
+  query AmazonChildRemoteProducts($remoteParentProductId: GlobalID!) {
+    amazonProducts(
+      filters: { remoteParentProduct: { id: { exact: $remoteParentProductId } } }
+    ) {
+      edges {
+        node {
+          id
+          localInstance {
+            id
+            name
+            sku
+          }
+        }
+      }
+    }
+  }
+`;
+
