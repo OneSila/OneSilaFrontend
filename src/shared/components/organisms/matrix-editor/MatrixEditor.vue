@@ -78,6 +78,22 @@ const getValue = (rowIndex: number, columnKey: string) =>
 const getDefaultColumnWidth = (column: MatrixColumn) =>
   column.initialWidth != null ? column.initialWidth : column.key === 'active' ? 60 : 150
 
+const hasInsertAction = (columnIndex: number) => {
+  const column = props.columns[columnIndex]
+  const nextColumn = props.columns[columnIndex + 1]
+  return Boolean(nextColumn?.beforeInsert || column?.afterInsert)
+}
+
+const handleInsertClick = (columnIndex: number) => {
+  const nextColumn = props.columns[columnIndex + 1]
+  if (nextColumn?.beforeInsert) {
+    nextColumn.beforeInsert()
+    return
+  }
+  const column = props.columns[columnIndex]
+  column?.afterInsert?.()
+}
+
 watch(
   () => props.columns,
   (cols) => {
@@ -726,7 +742,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
         <thead class="bg-gray-100 sticky top-0">
           <tr>
             <th
-              v-for="column in columns"
+              v-for="(column, columnIndex) in columns"
               :key="column.key"
               class="px-2 py-1 text-sm font-medium text-gray-700 relative border-r border-gray-200"
               :class="[
@@ -745,7 +761,21 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
                   :class="[getHeaderIconClass(column), 'mr-1']"
                 />
                 <span class="block truncate" :title="column.label"><strong>{{ column.label }}</strong></span>
-                <span class="resizer select-none" @mousedown="(event) => startResize(event, column.key)" />
+                <div
+                  class="resizer-wrapper select-none"
+                  @mousedown="(event) => startResize(event, column.key)"
+                >
+                  <span class="resizer" />
+                  <button
+                    v-if="hasInsertAction(columnIndex)"
+                    type="button"
+                    class="insert-column-button"
+                    @mousedown.stop
+                    @click.stop.prevent="handleInsertClick(columnIndex)"
+                  >
+                    <Icon name="plus" class="w-3 h-3 text-gray-600" aria-hidden="true" />
+                  </button>
+                </div>
               </div>
             </th>
           </tr>
@@ -809,13 +839,42 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
 </template>
 
 <style scoped>
-.resizer {
+.resizer-wrapper {
   position: absolute;
   right: 0;
   top: 0;
   width: 4px;
   height: 100%;
   cursor: col-resize;
+}
+
+.resizer {
+  position: absolute;
+  inset: 0;
   background-color: #e5e7eb;
+  cursor: inherit;
+}
+
+.insert-column-button {
+  position: absolute;
+  top: -10px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.resizer-wrapper:hover .insert-column-button,
+.insert-column-button:focus {
+  opacity: 1;
+  pointer-events: auto;
 }
 </style>

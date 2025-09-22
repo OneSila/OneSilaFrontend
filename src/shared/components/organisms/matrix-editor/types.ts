@@ -7,6 +7,8 @@ export interface MatrixColumn {
   iconColorClass?: string
   initialWidth?: number
   valueType?: string
+  beforeInsert?: () => void
+  afterInsert?: () => void
 }
 
 export interface MatrixEditorExpose {

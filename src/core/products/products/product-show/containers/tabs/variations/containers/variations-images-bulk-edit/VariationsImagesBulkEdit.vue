@@ -94,6 +94,8 @@ const imageColumns = computed<MatrixColumn[]>(() =>
     label: t('products.products.variations.images.columns.image', { index: index + 1 }),
     editable: true,
     initialWidth: 200,
+    beforeInsert: () => insertImageColumn(index),
+    afterInsert: () => insertImageColumn(index + 1),
   }))
 );
 
@@ -141,6 +143,18 @@ const ensureRowHasMainImage = (row: VariationRow) => {
   const firstImage = row.images[firstImageIndex];
   if (firstImage) {
     firstImage.isMainImage = true;
+  }
+};
+
+const insertImageColumn = (insertIndex: number) => {
+  variations.value.forEach((row) => {
+    while (row.images.length < insertIndex) {
+      row.images.push(null);
+    }
+    row.images.splice(insertIndex, 0, null);
+  });
+  if (expandedPlaceholder.value) {
+    closePlaceholder();
   }
 };
 
