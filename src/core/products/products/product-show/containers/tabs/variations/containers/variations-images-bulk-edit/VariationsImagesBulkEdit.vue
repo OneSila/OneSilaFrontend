@@ -111,6 +111,22 @@ const ensureImageCapacity = (row: VariationRow, index: number) => {
   }
 };
 
+const ensureRowHasMainImage = (row: VariationRow) => {
+  if (row.images.some((image) => image?.isMainImage)) {
+    return;
+  }
+  const firstImageIndex = row.images.findIndex((image) => Boolean(image));
+  if (firstImageIndex === -1) {
+    return;
+  }
+  const firstImage = row.images[firstImageIndex];
+  if (firstImage) {
+    firstImage.isMainImage = true;
+  }
+};
+
+const getImageColumnIndex = (columnKey: string) => parseImageColumnKey(columnKey) ?? 0;
+
 const normalizeImageSlot = (
   value: any,
   productId: string,
@@ -157,6 +173,7 @@ const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => 
   const currentSlot = row.images[columnIndex];
   const slot = normalizeImageSlot(value, row.variation.id, currentSlot?.id ?? null);
   row.images.splice(columnIndex, 1, slot);
+  ensureRowHasMainImage(row);
 };
 
 const cloneMatrixCellValue = (fromRow: number, toRow: number, columnKey: string) => {
@@ -174,6 +191,7 @@ const clearMatrixCellValue = (rowIndex: number, columnKey: string) => {
   if (row.images.length > columnIndex) {
     row.images.splice(columnIndex, 1, null);
   }
+  ensureRowHasMainImage(row);
 };
 
 const handleMainToggle = (rowIndex: number, columnIndex: number, value: boolean) => {
@@ -191,6 +209,22 @@ const handleMainToggle = (rowIndex: number, columnIndex: number, value: boolean)
   } else {
     slot.isMainImage = false;
   }
+  ensureRowHasMainImage(row);
+};
+
+const moveImage = (rowIndex: number, columnIndex: number, direction: -1 | 1) => {
+  const row = variations.value[rowIndex];
+  if (!row) return;
+  const targetIndex = columnIndex + direction;
+  if (targetIndex < 0) {
+    return;
+  }
+  ensureImageCapacity(row, targetIndex);
+  const currentSlot = row.images[columnIndex] ?? null;
+  const targetSlot = row.images[targetIndex] ?? null;
+  row.images.splice(columnIndex, 1, targetSlot);
+  row.images.splice(targetIndex, 1, currentSlot);
+  ensureRowHasMainImage(row);
 };
 
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
@@ -310,6 +344,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     variationRows.forEach((row) => {
       const entries = imagesMap.get(row.variation.id) ?? [];
       row.images = entries;
+      ensureRowHasMainImage(row);
     });
     variations.value = JSON.parse(JSON.stringify(variationRows));
     originalVariations.value = JSON.parse(JSON.stringify(variationRows));
@@ -469,32 +504,54 @@ defineExpose({ hasUnsavedChanges });
         </template>
         <template v-else>
           <div class="group relative flex items-center justify-center">
-            <div class="h-32 w-32 overflow-hidden rounded-md border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+            <div class="flex h-32 w-32 flex-col items-center justify-center overflow-hidden rounded-md border border-dashed border-gray-300 bg-gray-50">
               <ProductImage
-                v-if="row.images[parseImageColumnKey(column.key) ?? 0]"
-                :source="row.images[parseImageColumnKey(column.key) ?? 0]?.mediaUrl || ''"
-                :alt="row.images[parseImageColumnKey(column.key) ?? 0]?.mediaName || row.variation.name"
+                v-if="row.images[getImageColumnIndex(column.key)]"
+                :source="row.images[getImageColumnIndex(column.key)]?.mediaUrl || ''"
+                :alt="row.images[getImageColumnIndex(column.key)]?.mediaName || row.variation.name"
                 class="h-full w-full object-cover"
               />
-              <span v-else class="text-xs text-gray-500">
-                {{ t('products.products.variations.images.labels.noImage') }}
-              </span>
+              <div v-else class="flex flex-col items-center gap-2">
+                <span class="text-xs text-gray-500">
+                  {{ t('products.products.variations.images.labels.noImage') }}
+                </span>
+                <div class="flex h-7 w-7 items-center justify-center rounded-full border border-gray-300">
+                  <Icon name="plus" class="h-3 w-3 text-gray-400" aria-hidden="true" />
+                </div>
+              </div>
             </div>
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-900 bg-opacity-60 px-3 py-2 opacity-0 transition-opacity group-hover:opacity-100"
             >
-              <Toggle
-                v-if="row.images[parseImageColumnKey(column.key) ?? 0]"
-                :model-value="row.images[parseImageColumnKey(column.key) ?? 0]?.isMainImage ?? false"
-                @update:model-value="(value) => handleMainToggle(rowIndex, parseImageColumnKey(column.key) ?? 0, value)"
-              />
-              <Button
-                v-if="row.images[parseImageColumnKey(column.key) ?? 0]"
-                class="btn btn-secondary"
-                @click="removeImage(rowIndex, parseImageColumnKey(column.key) ?? 0)"
-              >
-                {{ t('shared.button.delete') }}
-              </Button>
+              <template v-if="row.images[getImageColumnIndex(column.key)]">
+                <Toggle
+                  :model-value="row.images[getImageColumnIndex(column.key)]?.isMainImage ?? false"
+                  @update:model-value="(value) => handleMainToggle(rowIndex, getImageColumnIndex(column.key), value)"
+                />
+                <div class="flex items-center gap-2">
+                  <Button
+                    v-if="getImageColumnIndex(column.key) > 0"
+                    class="btn btn-secondary p-2"
+                    :aria-label="t('products.products.variations.images.buttons.moveLeft')"
+                    :title="t('products.products.variations.images.buttons.moveLeft')"
+                    @click="moveImage(rowIndex, getImageColumnIndex(column.key), -1)"
+                  >
+                    <Icon name="chevron-left" class="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    v-if="getImageColumnIndex(column.key) < imageColumnCount - 1"
+                    class="btn btn-secondary p-2"
+                    :aria-label="t('products.products.variations.images.buttons.moveRight')"
+                    :title="t('products.products.variations.images.buttons.moveRight')"
+                    @click="moveImage(rowIndex, getImageColumnIndex(column.key), 1)"
+                  >
+                    <Icon name="chevron-right" class="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </div>
+                <Button class="btn btn-secondary" @click="removeImage(rowIndex, getImageColumnIndex(column.key))">
+                  {{ t('shared.button.delete') }}
+                </Button>
+              </template>
             </div>
           </div>
         </template>
