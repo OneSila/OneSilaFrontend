@@ -196,8 +196,8 @@ export const createMediaProductThroughMutation = gql`
 `;
 
 export const createMediaProductThroughsMutation = gql`
-  mutation createMediaProductThroughs($data: [MediaProductThroughInput!]!) {
-    createMediaProductThroughs(data: $data) {
+  mutation createMediaproducthroughs($data: [MediaProductThroughInput!]!) {
+    createMediaproducthroughs(data: $data) {
       id
       media {
         id
