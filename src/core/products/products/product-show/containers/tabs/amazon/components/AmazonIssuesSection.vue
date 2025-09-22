@@ -92,8 +92,8 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
       </div>
 
       <div v-if="isConfigurable" class="mt-4 space-y-3">
-        <p class="text-xs text-gray-500">{{ t('products.products.amazon.variationValidationIssuesNote') }}</p>
         <div v-if="variationValidationIssues.length" class="space-y-4">
+          <h4 class="font-semibold mb-2">{{ t('products.products.amazon.variationValidationIssuesNote') }}</h4>
           <div
             v-for="variation in variationValidationIssues"
             :key="variation.productId"
@@ -107,8 +107,9 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
                 v-if="variation.localInstance?.id"
                 class="flex items-center gap-1 text-xs text-primary hover:underline"
                 :path="{ name: 'products.products.show', params: { id: variation.localInstance.id } }"
+                target="_blank"
               >
-                <Icon name="eye" class="w-3 h-3" />
+                <Icon name="eye" class="w-3 h-3 mr-1" />
                 <span>{{ t('products.products.amazon.openVariation') }}</span>
               </Link>
             </div>
@@ -137,9 +138,6 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
               </table>
             </div>
           </div>
-        </div>
-        <div v-else class="text-sm text-gray-500">
-          {{ t('products.products.amazon.noVariationValidationIssues') }}
         </div>
       </div>
     </div>

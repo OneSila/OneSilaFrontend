@@ -17,6 +17,9 @@ export const amazonProductIssuesQuery = gql`
           }
           remoteProduct {
             id
+          localInstance {
+            id
+          }
           }
         }
       }

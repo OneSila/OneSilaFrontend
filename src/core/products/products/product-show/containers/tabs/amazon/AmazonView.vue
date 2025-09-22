@@ -235,16 +235,12 @@ interface VariationValidationIssues {
 }
 
 const variationValidationIssues = ref<VariationValidationIssues[]>([]);
-let variationIssuesRequestToken = 0;
 
 const fetchVariationValidationIssues = async () => {
-  const currentToken = ++variationIssuesRequestToken;
 
   if (!isConfigurable.value || !selectedProduct.value?.id || !selectedView.value?.remoteId) {
-    if (currentToken === variationIssuesRequestToken) {
       variationValidationIssues.value = [];
-    }
-    return;
+     return;
   }
 
   try {
@@ -258,9 +254,7 @@ const fetchVariationValidationIssues = async () => {
       childrenData?.amazonProducts?.edges?.map((edge: any) => edge.node) || [];
 
     if (!variationProducts.length) {
-      if (currentToken === variationIssuesRequestToken) {
-        variationValidationIssues.value = [];
-      }
+      variationValidationIssues.value = [];
       return;
     }
 
@@ -269,9 +263,7 @@ const fetchVariationValidationIssues = async () => {
     );
 
     if (!remoteProductIds.length) {
-      if (currentToken === variationIssuesRequestToken) {
-        variationValidationIssues.value = [];
-      }
+      variationValidationIssues.value = [];
       return;
     }
 
@@ -292,18 +284,24 @@ const fetchVariationValidationIssues = async () => {
     const groupedByProductId: Record<string, VariationValidationIssues> = {};
 
     variationProducts.forEach((product: any) => {
-      groupedByProductId[product.id] = {
+      groupedByProductId[product.localInstance.id] = {
         productId: product.id,
         localInstance: product.localInstance ?? null,
         issues: [],
       };
     });
 
+    console.log(issues);
+
     issues.forEach((issue: any) => {
-      const remoteId = issue.remoteProduct?.id;
+      const remoteId = issue.remoteProduct?.localInstance?.id;
+
+      console.log(remoteId);
       if (!remoteId || !groupedByProductId[remoteId]) {
         return;
       }
+
+      console.log('????')
 
       groupedByProductId[remoteId].issues.push({
         id: issue.id,
@@ -316,15 +314,17 @@ const fetchVariationValidationIssues = async () => {
       });
     });
 
-    if (currentToken === variationIssuesRequestToken) {
-      variationValidationIssues.value = Object.values(groupedByProductId).filter(
-        (entry) => entry.issues.length > 0,
-      );
-    }
+    console.log(groupedByProductId)
+
+
+    variationValidationIssues.value = Object.values(groupedByProductId).filter(
+      (entry) => entry.issues.length > 0,
+    );
+
+    console.log(variationValidationIssues.value)
+
   } catch (error) {
-    if (currentToken === variationIssuesRequestToken) {
-      variationValidationIssues.value = [];
-    }
+    variationValidationIssues.value = [];
   }
 };
 
