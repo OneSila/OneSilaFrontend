@@ -6,6 +6,11 @@ export const amazonProductsQuery = gql`
       edges {
         node {
           id
+          localInstance {
+            id
+            name
+            sku
+          }
           createdMarketplaces
           lastSyncAt
           syncingCurrentPercentage

@@ -710,6 +710,12 @@
       "amazon": {
         "validationIssues": "Gedetecteerde validatieproblemen",
         "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",
+        "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationIssuesHeading": "Variation {identifier}",
+        "openVariation": "Open variation",
+        "noVariationValidationIssues": "No variation validation issues found.",
+        "unnamedVariation": "Variation",
+        "viewOnAmazon": "View on Amazon",
         "otherIssues": "Amazon-productproblemen",
         "otherIssuesDescription": "Problemen die door Amazon worden gemeld nadat je een product hebt gemaakt of bijgewerkt. Deze verschijnen vaak pas na 15 tot 45 minuten, omdat Amazon ze verwerkt nadat je je wijzigingen hebt gepubliceerd.",
         "status": "Status",

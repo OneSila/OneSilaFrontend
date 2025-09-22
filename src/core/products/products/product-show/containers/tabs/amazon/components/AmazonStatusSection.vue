@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { AssignProgressBar } from '../../../../../../../../shared/components/molecules/assign-progress-bar';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { ApolloMutation } from '@vue/apollo-components';
 
 const props = defineProps<{
@@ -9,6 +10,7 @@ const props = defineProps<{
   lastSyncAt: string | null;
   syncingCurrentPercentage: number | null;
   remoteProductId: string | null;
+  amazonProductUrl: string | null;
   selectedView: any | null;
   resyncAmazonProductMutation: any;
   refreshAmazonProductIssuesMutation: any;
@@ -133,6 +135,17 @@ const formatDate = (dateString?: string | null) => {
           <div class="w-48 mt-1">
             <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
           </div>
+        </div>
+        <div v-if="amazonProductUrl" class="mt-2">
+          <a
+            :href="amazonProductUrl"
+            class="inline-flex items-center gap-1 text-primary hover:text-primary-dark"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="eye" class="w-4 h-4" />
+            <span class="text-xs">{{ t('products.products.amazon.viewOnAmazon') }}</span>
+          </a>
         </div>
       </div>
     </div>

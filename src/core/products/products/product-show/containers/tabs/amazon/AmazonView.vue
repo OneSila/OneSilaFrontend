@@ -14,6 +14,7 @@ import AmazonUnmappedValuesSection from './components/AmazonUnmappedValuesSectio
 import AmazonVariationThemeSection from './components/AmazonVariationThemeSection.vue';
 import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { amazonProductsQuery } from '../../../../../../../shared/api/queries/amazonProducts.js';
+import { amazonExternalProductIdsQuery } from '../../../../../../../shared/api/queries/amazonExternalProductIds.js';
 import {
   resyncAmazonProductMutation,
   refreshAmazonProductIssuesMutation,
@@ -75,6 +76,11 @@ interface AmazonProductIssue {
 
 interface AmazonProduct {
   id: string;
+  localInstance?: {
+    id: string;
+    name?: string | null;
+    sku?: string | null;
+  } | null;
   createdMarketplaces: string[];
   lastSyncAt?: string | null;
   syncingCurrentPercentage?: number | null;
@@ -213,6 +219,40 @@ const otherIssues = computed(() => {
 });
 const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
 
+interface VariationValidationIssues {
+  productId: string;
+  localInstance?: {
+    id: string;
+    name?: string | null;
+    sku?: string | null;
+  } | null;
+  issues: AmazonProductIssue[];
+}
+
+const variationValidationIssues = computed<VariationValidationIssues[]>(() => {
+  if (
+    !isConfigurable.value ||
+    !selectedProduct.value ||
+    !selectedView.value ||
+    !amazonProducts.value.length
+  ) {
+    return [];
+  }
+
+  return amazonProducts.value
+    .filter((product) => product.remoteParentProduct?.id === selectedProduct.value?.id)
+    .map((product) => ({
+      productId: product.id,
+      localInstance: product.localInstance ?? null,
+      issues:
+        product.issues?.filter(
+          (issue) =>
+            issue.view?.remoteId === selectedView.value?.remoteId && issue.isValidationIssue,
+        ) || [],
+    }))
+    .filter((entry) => entry.issues.length > 0);
+});
+
 const externalIdRef = ref<InstanceType<typeof AmazonExternalProductIdSection> | null>(null);
 const gtinExemptionRef = ref<InstanceType<typeof AmazonGtinExemptionSection> | null>(null);
 const browseNodeRef = ref<InstanceType<typeof AmazonBrowseNodeSection> | null>(null);
@@ -228,6 +268,70 @@ const hasUnsavedChanges = computed(
 );
 
 defineExpose({ hasUnsavedChanges, fetchAmazonProducts });
+
+const selectedExternalProductAsin = ref<string | null>(null);
+
+const fetchExternalProductId = async () => {
+  if (!selectedView.value?.id || !props.product?.id || !remoteProductId.value) {
+    selectedExternalProductAsin.value = null;
+    return;
+  }
+
+  try {
+    const { data } = await apolloClient.query({
+      query: amazonExternalProductIdsQuery,
+      variables: {
+        filter: {
+          product: { id: { exact: props.product.id } },
+          view: { id: { exact: selectedView.value.id } },
+        },
+      },
+      fetchPolicy: 'cache-first',
+    });
+
+    const node = data?.amazonExternalProductIds?.edges?.[0]?.node;
+    if (!node) {
+      selectedExternalProductAsin.value = null;
+      return;
+    }
+
+    const asin =
+      node.type === 'ASIN'
+        ? node.value
+        : node.createdAsin || (node.type ? null : node.value);
+
+    selectedExternalProductAsin.value = asin || null;
+  } catch (error) {
+    selectedExternalProductAsin.value = null;
+  }
+};
+
+watch(
+  [() => selectedView.value?.id, remoteProductId],
+  () => {
+    if (!selectedView.value?.id || !remoteProductId.value) {
+      selectedExternalProductAsin.value = null;
+      return;
+    }
+    fetchExternalProductId();
+  },
+  { immediate: true },
+);
+
+const amazonProductUrl = computed(() => {
+  if (!remoteProductId.value || !selectedExternalProductAsin.value) return null;
+  const rawBaseUrl =
+    selectedView.value?.url ||
+    (selectedView.value?.salesChannel?.hostname
+      ? `https://${selectedView.value.salesChannel.hostname}`
+      : '');
+
+  if (!rawBaseUrl) return null;
+
+  const baseUrl = rawBaseUrl.replace(/\/$/, '');
+
+  return `${baseUrl}/dp/${selectedExternalProductAsin.value}`;
+});
 
 const handleMarketplaceSelection = async (newKey: string) => {
   if (hasUnsavedChanges.value) {
@@ -307,6 +411,7 @@ const formatDate = (dateString?: string | null) => {
                 :last-sync-at="lastSyncAt"
                 :syncing-current-percentage="syncingCurrentPercentage"
                 :remote-product-id="remoteProductId"
+                :amazon-product-url="amazonProductUrl"
                 :selected-view="selectedView"
                 :resync-amazon-product-mutation="resyncAmazonProductMutation"
                 :refresh-amazon-product-issues-mutation="refreshAmazonProductIssuesMutation"
@@ -325,6 +430,8 @@ const formatDate = (dateString?: string | null) => {
                 class="mb-4"
                 :validation-issues="validationIssues"
                 :other-issues="otherIssues"
+                :is-configurable="isConfigurable"
+                :variation-validation-issues="variationValidationIssues"
               />
 
               <div class="border-t my-4"></div>

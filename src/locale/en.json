@@ -1025,6 +1025,12 @@
       "amazon": {
         "validationIssues": "Detected Validation Issues",
         "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
+        "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationIssuesHeading": "Variation {identifier}",
+        "openVariation": "Open variation",
+        "noVariationValidationIssues": "No variation validation issues found.",
+        "unnamedVariation": "Variation",
+        "viewOnAmazon": "View on Amazon",
         "otherIssues": "Amazon Product Issues",
         "gtinExemption": "GTIN Exemption",
         "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace.",
