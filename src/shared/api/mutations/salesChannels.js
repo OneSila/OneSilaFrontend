@@ -695,6 +695,19 @@ export const suggestAmazonProductTypeMutation = gql`
     }
   }
 `;
+export const suggestEbayCategoryMutation = gql`
+  mutation suggestEbayCategory($name: String, $marketplace: SalesChannelViewPartialInput!) {
+    suggestEbayCategory(name: $name, marketplace: $marketplace) {
+      categoryTreeId
+      categories {
+        categoryId
+        categoryName
+        categoryPath
+        leaf
+      }
+    }
+  }
+`;
 export const createAmazonImportProcessMutation = gql`
   mutation createAmazonImportProcess($data: AmazonSalesChannelImportInput!) {
     createAmazonImportProcess(data: $data) {
