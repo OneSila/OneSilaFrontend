@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRefs } from 'vue';
-import RemoteProductTypes from './RemoteProductTypes.vue';
+import RemoteProductTypes from '../remote-product-types/RemoteProductTypes.vue';
 import { IntegrationTypes } from '../../../../../integrations';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();

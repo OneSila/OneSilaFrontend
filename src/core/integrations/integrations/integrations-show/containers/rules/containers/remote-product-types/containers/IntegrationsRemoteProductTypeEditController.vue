@@ -6,9 +6,8 @@ import {
   getProductTypeQuery,
   getProductTypeQueryDataKey,
 } from '../configs';
-import { IntegrationTypes } from '../../../../../../integrations';
-import RemotelyMappedAmazonProductType from './RemotelyMappedAmazonProductType.vue';
-import ImportedAmazonProductType from './ImportedAmazonProductType.vue';
+import RemotelyMappedRemoteProductType from './RemotelyMappedRemoteProductType.vue';
+import ImportedRemoteProductType from './ImportedRemoteProductType.vue';
 
 const route = useRoute();
 const productTypeId = String(route.params.id);
@@ -28,13 +27,12 @@ onMounted(async () => {
   loading.value = false;
 });
 
-const isAmazon = computed(() => type.value === IntegrationTypes.Amazon);
-const imported = computed(() => (isAmazon.value ? productType.value?.imported : true));
+const imported = computed(() => Boolean(productType.value?.imported));
 const currentComponent = computed(() => {
-  if (isAmazon.value && !imported.value) {
-    return ImportedAmazonProductType;
+  if (!imported.value) {
+    return ImportedRemoteProductType;
   }
-  return RemotelyMappedAmazonProductType;
+  return RemotelyMappedRemoteProductType;
 });
 </script>
 
