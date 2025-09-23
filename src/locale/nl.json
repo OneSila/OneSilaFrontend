@@ -2006,6 +2006,16 @@
     "show": {
       "ebay": {
         "title": "",
+        "productRules": {
+          "title": "",
+          "labels": {
+            "translatedName": ""
+          },
+          "help": {
+            "translatedName": "",
+            "productRule": ""
+          }
+        },
         "properties": {
           "title": ""
         },

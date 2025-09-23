@@ -9,6 +9,7 @@ const emit = defineEmits(['pull-data']);
 const currentComponent = computed(() => {
   switch (props.type) {
     case IntegrationTypes.Amazon:
+    case IntegrationTypes.Ebay:
       return AmazonProductTypes;
     default:
       return null;
@@ -22,6 +23,7 @@ const currentComponent = computed(() => {
     :is="currentComponent"
     :id="id"
     :sales-channel-id="salesChannelId"
+    :type="type"
     @pull-data="emit('pull-data')"
   />
 </template>

@@ -1,17 +1,22 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
-import { amazonProductTypesSearchConfigConstructor, amazonProductTypesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
+import {
+  getCreateProductTypesFromLocalRulesMutation,
+  getListingQuery,
+  getListingQueryKey,
+  productTypesListingConfigConstructor,
+  productTypesSearchConfigConstructor,
+} from './configs';
 import apolloClient from "../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../../shared/utils";
-import { createAmazonProductTypesFromLocalRulesMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 
-const props = defineProps<{ id: string; salesChannelId: string }>();
+const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 const router = useRouter();
@@ -19,19 +24,25 @@ const router = useRouter();
 const canStartMapping = ref(false);
 const pulling = ref(false);
 
+const listingQueryKey = computed(() => getListingQueryKey(props.type));
+const listingQuery = computed(() => getListingQuery(props.type));
+const pullMutation = computed(() => getCreateProductTypesFromLocalRulesMutation(props.type));
+const searchConfig = computed(() => productTypesSearchConfigConstructor(t, props.type));
+const listingConfig = computed(() => productTypesListingConfigConstructor(t, props.type, props.id));
+
 const fetchFirstUnmapped = async () => {
   const { data } = await apolloClient.query({
-    query: listingQuery,
+    query: listingQuery.value,
     variables: {
       first: 1,
       filter: {
         salesChannel: { id: { exact: props.salesChannelId } },
-        mappedLocally:  false ,
+        mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',
   });
-  const edges = data?.amazonProductTypes?.edges || [];
+  const edges = data?.[listingQueryKey.value]?.edges || [];
   canStartMapping.value = edges.length > 0;
   return edges.length > 0 ? edges[0].node.id : null;
 };
@@ -43,7 +54,7 @@ const startMapping = async () => {
   if (id) {
     router.push({
       name: 'integrations.amazonProductTypes.edit',
-      params: { type: 'amazon', id },
+      params: { type: props.type, id },
       query: { integrationId: props.id, salesChannelId: props.salesChannelId, wizard: '1' },
     });
   }
@@ -53,7 +64,7 @@ const pullLocalRules = async () => {
   pulling.value = true;
   try {
     await apolloClient.mutate({
-      mutation: createAmazonProductTypesFromLocalRulesMutation,
+      mutation: pullMutation.value,
       variables: { data: { id: props.salesChannelId } },
     });
     Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
@@ -67,9 +78,6 @@ const pullLocalRules = async () => {
     pulling.value = false;
   }
 };
-
-const searchConfig = amazonProductTypesSearchConfigConstructor(t);
-const listingConfig = amazonProductTypesListingConfigConstructor(t, props.id);
 </script>
 
 <template>
