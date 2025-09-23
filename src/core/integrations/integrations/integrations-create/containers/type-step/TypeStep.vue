@@ -37,10 +37,10 @@ watch(
 
 const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
-  { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Shopify, disabled: false },
+  { name: IntegrationTypes.Amazon, disabled: false },
   { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Webhook, disabled: false }
+  { name: IntegrationTypes.Webhook, disabled: false, banner: t('shared.labels.beta') }
 ];
 
 const onModalOpen = () => {
