@@ -679,6 +679,12 @@
         "websites": "Verkoopskanalen",
         "amazon": "Amazon"
       },
+      "priceLists": {
+        "add": {
+          "placeholder": "",
+          "select": ""
+        }
+      },
       "variations": {
         "tabs": {
           "list": "Lijst",
