@@ -29,6 +29,7 @@ mutation Login($username: String!, $password: String!) {
     multiTenantCompany {
       id
       language
+      name
     }
   }
 }`;

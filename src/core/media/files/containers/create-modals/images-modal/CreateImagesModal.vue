@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Ref, ref, watch} from 'vue';
+import {Ref, computed, ref, watch} from 'vue';
 import { Modal } from '../../../../../../shared/components/atoms/modal';
 import { Card } from '../../../../../../shared/components/atoms/card';
 import { Icon } from '../../../../../../shared/components/atoms/icon';
@@ -16,7 +16,12 @@ import { Toast } from "../../../../../../shared/modules/toast";
 import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../media";
 import { processGraphQLErrors } from "../../../../../../shared/utils";
 
-const props = defineProps<{ modelValue: boolean; productId?: string }>();
+const props = withDefaults(
+  defineProps<{ modelValue: boolean; productId?: string; singleUpload?: boolean }>(),
+  {
+    singleUpload: false,
+  }
+);
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const localShowModal = ref(props.modelValue);
 
@@ -40,6 +45,7 @@ const dropZone: Ref<any> = ref(null)
 const urlInput = ref('')
 const activeTab = ref<'upload' | 'urls'>('upload')
 const isSubmitting = ref(false)
+const singleUpload = computed(() => props.singleUpload ?? false)
 
 const imageTypeOptions = [
   { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
@@ -59,13 +65,26 @@ const closeModal = () => {
 };
 
 const onUploaded = (files: UploadedImage[]) => {
-  files.forEach(file => {
+  if (!files.length) {
+    return;
+  }
+  if (props.singleUpload) {
+    images.value = [];
+    const file = files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
-      images.value.push({ url: e?.target?.result, type: IMAGE_TYPE_PACK, file });
+      images.value = [{ url: e?.target?.result, type: IMAGE_TYPE_PACK, file }];
     };
     reader.readAsDataURL(file);
-  });
+  } else {
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        images.value.push({ url: e?.target?.result, type: IMAGE_TYPE_PACK, file });
+      };
+      reader.readAsDataURL(file);
+    });
+  }
   dropZone.value?.clear();
 };
 
@@ -125,7 +144,7 @@ const submitImages = async () => {
         }
       }
 
-      emit('entries-created')
+      emit('entries-created', createdImages)
       closeModal()
     }
   } finally {
@@ -140,13 +159,20 @@ const switchTab = (tab: 'upload' | 'urls') => {
 }
 
 const addImageUrl = () => {
+  if (props.singleUpload && images.value.length > 0) {
+    return;
+  }
   if (urlInput.value) {
     const isValid = /(\.jpg|\.jpeg|\.png|\.webp)(\?.*)?$/i.test(urlInput.value)
     if (!isValid) {
       Toast.error(t('media.images.alert.toast.invalidUrl'))
       return
     }
-    images.value.push({ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK })
+    if (props.singleUpload) {
+      images.value = [{ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK }]
+    } else {
+      images.value.push({ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK })
+    }
     urlInput.value = ''
   }
 }
@@ -180,10 +206,23 @@ const addImageUrl = () => {
           </button>
         </div>
         <hr class="my-4">
-        <DropZone v-if="activeTab === 'upload'" ref="dropZone" class="mt-2" :formats="['.jpg', '.png', '.jpeg']" @uploaded="onUploaded" />
+        <DropZone
+          v-if="activeTab === 'upload'"
+          ref="dropZone"
+          class="mt-2"
+          :formats="['.jpg', '.png', '.jpeg']"
+          :multiple="!singleUpload"
+          @uploaded="onUploaded"
+        />
         <div v-else class="mt-2 flex gap-2">
           <TextInput class="flex-1" v-model="urlInput" :placeholder="t('media.images.labels.imageUrl')" />
-          <Button class="btn btn-primary" :disabled="!urlInput" @click="addImageUrl">{{ t('shared.button.add') }}</Button>
+          <Button
+            class="btn btn-primary"
+            :disabled="!urlInput || (singleUpload && images.length > 0)"
+            @click="addImageUrl"
+          >
+            {{ t('shared.button.add') }}
+          </Button>
         </div>
         <div class="gallery mt-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 p-4">
           <div v-for="(image, index) in images" :key="index" class="file-entry relative w-full h-full border border-gray-300 p-2 rounded-lg">

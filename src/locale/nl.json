@@ -187,7 +187,9 @@
       "resync": "Resync",
       "fullUpdate": "Full Update",
       "validate": "Validate",
-      "fetchIssues": "Fetch Issues"
+      "fetchIssues": "Fetch Issues",
+      "import": "Import",
+      "useAi": "Gebruik AI"
     },
     "colors": {
       "red": "Rood",
@@ -652,6 +654,7 @@
           "copied": "Gekopieerd",
           "pasted": "Geplakt",
           "pasteDifferentColumn": "Kan niet plakken naar een andere kolom",
+          "pasteIncompatibleColumn": "Kan niet plakken in kolom met incompatibel type",
           "undo": "Laatste wijziging ongedaan gemaakt",
           "redo": "Laatste wijziging opnieuw toegepast",
           "createdProductProperties": "{count} producteigenschappen aangemaakt.",
@@ -676,6 +679,48 @@
         "websites": "Verkoopskanalen",
         "amazon": "Amazon"
       },
+      "variations": {
+        "tabs": {
+          "list": "Lijst",
+          "editProperties": "Eigenschappen bewerken",
+          "editPrices": "Prijzen",
+          "images": "Afbeeldingen"
+        },
+        "content": {
+          "ai": {
+            "missingSource": "Voeg broninhoud toe voordat je AI gebruikt."
+          },
+          "validation": {
+            "fieldError": "{field}: {message}"
+          }
+        },
+        "images": {
+          "columns": {
+            "image": "Afbeelding #{index}"
+          },
+          "labels": {
+            "noImage": "Geen afbeelding"
+          }
+        },
+        "prices": {
+          "columns": {
+            "rrp": "Adviesprijs ({currency})",
+            "price": "Prijs ({currency})",
+            "priceListPrice": "{priceList} ({currency}) price override",
+            "priceListDiscount": "{priceList} ({currency}) discount override"
+          },
+          "toast": {
+            "created": "{count} verkoopprijzen aangemaakt.",
+            "updated": "{count} verkoopprijzen bijgewerkt.",
+            "priceListCreated": "Created {count} price list overrides.",
+            "priceListUpdated": "Updated {count} price list overrides."
+          },
+          "labels": {
+            "autoValue": "Auto: {value}",
+            "autoValueEmpty": "Auto: —"
+          }
+        }
+      },
         "properties": {
           "searchPlaceholder": "Zoek eigenschappen",
           "typePlaceholder": "Filter op type"
@@ -683,6 +728,12 @@
       "amazon": {
         "validationIssues": "Gedetecteerde validatieproblemen",
         "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",
+        "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationIssuesHeading": "Variation {identifier}",
+        "openVariation": "Open variation",
+        "noVariationValidationIssues": "No variation validation issues found.",
+        "unnamedVariation": "Variation",
+        "viewOnAmazon": "View on Amazon",
         "otherIssues": "Amazon-productproblemen",
         "otherIssuesDescription": "Problemen die door Amazon worden gemeld nadat je een product hebt gemaakt of bijgewerkt. Deze verschijnen vaak pas na 15 tot 45 minuten, omdat Amazon ze verwerkt nadat je je wijzigingen hebt gepubliceerd.",
         "status": "Status",

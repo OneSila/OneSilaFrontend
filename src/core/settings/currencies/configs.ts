@@ -74,7 +74,7 @@ export const getNonDefaultFields = (t): FormField[] => {
       type: FieldType.Query,
       name: 'inheritsFrom',
       label:  t('settings.currencies.labels.inheritsFrom'),
-      labelBy: 'name',
+      labelBy: 'isoCode',
       valueBy: 'id',
       query: currenciesQuerySelector,
       dataKey: 'currencies',

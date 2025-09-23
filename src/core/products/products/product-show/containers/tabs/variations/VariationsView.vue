@@ -9,6 +9,9 @@ import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import VariationsList from "./containers/variations-list/VariationsList.vue";
 import VariationCreate from "./containers/variation-create/VariationCreate.vue";
 import VariationsBulkEdit from "./containers/variations-bulk-edit/VariationsBulkEdit.vue";
+import VariationsContentBulkEdit from "./containers/variations-content-bulk-edit/VariationsContentBulkEdit.vue";
+import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
+import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 
@@ -17,14 +20,44 @@ const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-const mode = ref<'list' | 'edit'>('list');
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages';
+const mode = ref<Mode>('list');
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
-const hasUnsavedChanges = computed(() => bulkEditRef.value?.hasUnsavedChanges ?? false);
+const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
+const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
+const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(null);
 
-const tabs: { key: 'list' | 'edit'; label: string; icon: string }[] = [
-  { key: 'list', label: 'List', icon: 'list' },
-  { key: 'edit', label: 'Edit', icon: 'pen-to-square' },
-];
+const getUnsavedChangesForMode = (currentMode: Mode) => {
+  if (currentMode === 'editContent') {
+    return contentEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editProperties') {
+    return bulkEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editPrices') {
+    return priceEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editImages') {
+    return imageEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  return false;
+};
+
+const hasUnsavedChanges = computed(
+  () =>
+    (bulkEditRef.value?.hasUnsavedChanges ?? false) ||
+    (contentEditRef.value?.hasUnsavedChanges ?? false) ||
+    (priceEditRef.value?.hasUnsavedChanges ?? false) ||
+    (imageEditRef.value?.hasUnsavedChanges ?? false)
+);
+
+const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
+  { key: 'list', label: t('products.products.variations.tabs.list'), icon: 'list' },
+  { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
+  { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+  { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
+  { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
+]);
 
 const searchConfig: SearchConfig = {
   search: true,
@@ -79,8 +112,8 @@ const getQueryKey = () => {
   }
 };
 
-const changeMode = async (newMode: 'list' | 'edit') => {
-  if (mode.value === 'edit' && newMode !== 'edit' && hasUnsavedChanges.value) {
+const changeMode = async (newMode: Mode) => {
+  if (mode.value !== newMode && getUnsavedChangesForMode(mode.value)) {
     const res = await Swal.fire({
       icon: 'warning',
       text: t('products.products.messages.unsavedChanges'),
@@ -103,7 +136,7 @@ defineExpose({ hasUnsavedChanges });
   <TabContentTemplate>
     <template v-slot:content>
       <div class="flex">
-        <div class="w-24 border-r border-gray-200 pr-4 space-y-2">
+        <div class="w-36 border-r border-gray-200 pr-4 space-y-2">
           <div
             v-for="tab in tabs"
             :key="tab.key"
@@ -131,8 +164,17 @@ defineExpose({ hasUnsavedChanges });
               <VariationCreate :product="product" :variation-ids="ids" @variation-added="handleVariationAdded" />
             </div>
           </template>
-          <template v-else>
+          <template v-else-if="mode === 'editContent'">
+            <VariationsContentBulkEdit ref="contentEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editProperties'">
             <VariationsBulkEdit ref="bulkEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editPrices'">
+            <VariationsPricesBulkEdit ref="priceEditRef" :product="product" />
+          </template>
+          <template v-else>
+            <VariationsImagesBulkEdit ref="imageEditRef" :product="product" />
           </template>
         </div>
       </div>

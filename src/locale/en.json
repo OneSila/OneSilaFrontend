@@ -357,6 +357,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "import": "Import",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
@@ -372,7 +373,8 @@
       "change": "Change",
       "leaveTab": "Leave tab",
       "createAnyway": "Create anyway",
-      "abort": "Abort"
+      "abort": "Abort",
+      "useAi": "Use AI"
     },
     "colors": {
       "red": "Red",
@@ -964,6 +966,7 @@
           "copied": "Copied",
           "pasted": "Pasted",
           "pasteDifferentColumn": "Cannot paste to different column",
+          "pasteIncompatibleColumn": "Cannot paste into column with incompatible type",
           "undo": "Undid last change",
           "redo": "Redid last change",
           "createdProductProperties": "Created {count} product properties.",
@@ -993,6 +996,77 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
       },
+      "variations": {
+        "tabs": {
+          "list": "List",
+          "content": "Content",
+          "images": "Images"
+        },
+        "images": {
+          "columns": {
+            "upload": "Upload",
+            "image": "Image #{index}"
+          },
+          "labels": {
+            "noImage": "No image"
+          },
+          "buttons": {
+            "openUploadMenu": "Add images",
+            "uploadNew": "Upload new",
+            "addExisting": "Add existing",
+            "moveLeft": "Move image left",
+            "moveRight": "Move image right"
+          }
+        },
+        "content": {
+          "columns": {
+            "preview": "Preview",
+            "productName": "Product name",
+            "shortDescription": "Short description",
+            "description": "Description",
+            "urlKey": "URL key",
+            "bullet": "Bullet #{index}"
+          },
+          "selectors": {
+            "salesChannel": "Sales channel",
+            "defaultChannel": "Default"
+          },
+          "previewModal": {
+            "title": "Content preview"
+          },
+          "modals": {
+            "shortDescriptionTitle": "Edit short description",
+            "descriptionTitle": "Edit description"
+          },
+          "toast": {
+            "saveSuccess": "Variation content updated successfully."
+          },
+          "ai": {
+            "missingSource": "Add source content before using AI."
+          },
+          "validation": {
+            "fieldError": "{field}: {message}"
+          }
+        },
+        "prices": {
+          "columns": {
+            "rrp": "RRP ({currency})",
+            "price": "Price ({currency})",
+            "priceListPrice": "{priceList} ({currency}) price override",
+            "priceListDiscount": "{priceList} ({currency}) discount override"
+          },
+          "toast": {
+            "created": "Created {count} sales prices.",
+            "updated": "Updated {count} sales prices.",
+            "priceListCreated": "Created {count} price list overrides.",
+            "priceListUpdated": "Updated {count} price list overrides."
+          },
+          "labels": {
+            "autoValue": "Auto: {value}",
+            "autoValueEmpty": "Auto: —"
+          }
+        }
+      },
         "properties": {
           "searchPlaceholder": "Search properties",
           "typePlaceholder": "Filter by type"
@@ -1000,6 +1074,12 @@
       "amazon": {
         "validationIssues": "Detected Validation Issues",
         "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
+        "variationValidationIssuesNote": "Variations linked to this configurable product have validation issues. Review them below.",
+        "variationIssuesHeading": "Variation {identifier}",
+        "openVariation": "Open variation",
+        "noVariationValidationIssues": "No variation validation issues found.",
+        "unnamedVariation": "Variation",
+        "viewOnAmazon": "View on Amazon",
         "otherIssues": "Amazon Product Issues",
         "gtinExemption": "GTIN Exemption",
         "gtinExemptionDescription": "Enable if this product is exempt from GTIN requirements for this marketplace.",
@@ -1174,10 +1254,12 @@
             "labels": {
               "aliasParent": "Clone from product (alias target)",
               "copyImages": "Copy images from original product",
+              "copyContent": "Copy content from original product",
               "copyProperties": "Copy properties from original product"
             },
             "helpText": {
               "copyImages": "If enabled, all images from the original product will be copied to this alias product.",
+              "copyContent": "If enabled, default content from the original product will be copied to this alias product.",
               "copyProperties": "If enabled, product attributes (e.g. color, material) from the original product will be cloned."
             }
           },
@@ -1842,7 +1924,7 @@
         "owner": "Owner",
         "files": "Files",
         "recentFiles": "Recent Files",
-        "addExistingFiles": "Add from existing media",
+        "addExistingFiles": "Add existing media",
         "images": "Images",
         "fileThumbnail": "File thumbnail"
       },
@@ -2789,6 +2871,7 @@
       },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
+        "importSuccess": "The product import process has begun. Please come later to see the results.",
         "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
         "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },

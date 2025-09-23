@@ -132,6 +132,7 @@ onMounted(async () => {
         <thead>
           <tr>
             <th class="px-3 py-2 text-left">{{ t('shared.labels.name') }}</th>
+            <th class="px-3 py-2 text-left">{{ t('shared.labels.sku') }}</th>
             <th class="px-3 py-2 text-left">{{ t('shared.labels.type') }}</th>
             <th class="px-3 py-2 text-left">{{ t('shared.labels.active') }}</th>
             <th class="px-3 py-2 text-left">{{ t('products.products.labels.inspectorStatus') }}</th>
@@ -156,6 +157,9 @@ onMounted(async () => {
                   <span :title="parent.name">{{ shortenText(parent.name, 64) }}</span>
                 </div>
               </Link>
+            </td>
+            <td>
+              {{ parent.sku }}
             </td>
             <td>
               <Badge
