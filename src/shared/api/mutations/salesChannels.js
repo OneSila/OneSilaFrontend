@@ -617,6 +617,24 @@ export const bulkUpdateAmazonPropertySelectValueLocalInstanceMutation = gql`
   }
 `;
 
+export const updateEbayPropertySelectValueMutation = gql`
+  mutation updateEbayPropertySelectValue($data: EbayPropertySelectValuePartialInput!) {
+    updateEbayPropertySelectValue(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const bulkUpdateEbayPropertySelectValueLocalInstanceMutation = gql`
+  mutation bulkUpdateEbayPropertySelectValueLocalInstance($data: BulkEbayPropertySelectValueLocalInstanceInput!) {
+    bulkUpdateEbayPropertySelectValueLocalInstance(instance: $data) {
+      id
+    }
+  }
+`;
+
 // Amazon Product Type Mutations
 
 export const updateAmazonProductTypeMutation = gql`

@@ -2544,22 +2544,28 @@
       "propertySelectValues": {
         "title": "Amazon Property Values",
         "labels": {
-          "remoteName": "Amazon Name",
-          "remoteValue": "Amazon Value",
+          "remoteName": "Remote Name",
+          "remoteValue": "Remote Value",
           "amazonProperty": "Amazon Property",
+          "ebayProperty": "eBay Property",
           "marketplace": "Marketplace",
           "localProperty": "OneSila Property",
           "selectValue": "OneSila Select Value",
-          "translatedRemoteName": "Translated Name"
+          "translatedRemoteName": "Translated Name",
+          "localizedValue": "Localized Value",
+          "translatedValue": "Translated Value"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
-          "marketplace": "Amazon marketplace for this value.",
-          "localProperty": "OneSila property that this Amazon property maps to.",
-          "remoteValue": "Value exactly as defined in Amazon.",
-          "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the OneSila value that matches this Amazon value.",
-          "translatedRemoteName": "Translated name for this value."
+          "ebayProperty": "eBay property to which this value belongs.",
+          "marketplace": "Marketplace for this value.",
+          "localProperty": "OneSila property that this remote property maps to.",
+          "remoteValue": "Value exactly as defined remotely.",
+          "remoteName": "Name from the remote channel. You can change it.",
+          "selectValue": "Choose the OneSila value that matches this remote value.",
+          "translatedRemoteName": "Translated name for this value.",
+          "localizedValue": "Value as returned by the marketplace.",
+          "translatedValue": "Translated value in the company language."
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",

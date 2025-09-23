@@ -1,0 +1,179 @@
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter, type RouteLocationRaw } from 'vue-router';
+import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
+import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
+import { Button } from "../../../../../../../../shared/components/atoms/button";
+import apolloClient from "../../../../../../../../../apollo-client";
+import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
+import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+
+type RouteBuilderContext = {
+  id: string;
+  integrationId: string;
+  salesChannelId: string;
+};
+
+type BaseFilterBuilderContext = {
+  salesChannelId: string;
+};
+
+type FirstUnmappedQueryVariables = {
+  filter?: Record<string, any>;
+  [key: string]: any;
+};
+
+const props = defineProps<{
+  id: string;
+  salesChannelId: string;
+  searchConfig: SearchConfig;
+  listingConfig: ListingConfig;
+  listingQuery: any;
+  listingQueryKey: string;
+  fixedFilterVariables?: Record<string, any>;
+  buildBaseFilter?: (context: BaseFilterBuilderContext) => Record<string, any>;
+  buildStartMappingRoute?: (context: RouteBuilderContext) => RouteLocationRaw;
+  firstUnmappedQueryVariables?: FirstUnmappedQueryVariables;
+}>();
+
+const emit = defineEmits(['pull-data']);
+const { t } = useI18n();
+const router = useRouter();
+
+const canStartMapping = ref(false);
+const generalListingRef = ref<any>(null);
+
+const baseFilter = computed(() => {
+  if (props.buildBaseFilter) {
+    return props.buildBaseFilter({ salesChannelId: props.salesChannelId });
+  }
+
+  if (!props.salesChannelId) {
+    return {};
+  }
+
+  return { salesChannel: { id: { exact: props.salesChannelId } } };
+});
+
+const mergedFixedFilterVariables = computed(() => ({
+  ...baseFilter.value,
+  ...(props.fixedFilterVariables || {}),
+}));
+
+const hasStartMapping = computed(() => Boolean(props.buildStartMappingRoute));
+
+const fetchFirstUnmapped = async (): Promise<string | null> => {
+  if (!hasStartMapping.value) {
+    return null;
+  }
+
+  const { filter: additionalFilter = {}, ...restVariables } = props.firstUnmappedQueryVariables || {};
+
+  const variables = {
+    first: 1,
+    ...restVariables,
+    filter: {
+      ...additionalFilter,
+      ...mergedFixedFilterVariables.value,
+      mappedLocally: false,
+    },
+  };
+
+  const { data } = await apolloClient.query({
+    query: props.listingQuery,
+    variables,
+    fetchPolicy: 'network-only',
+  });
+
+  const listingData = data?.[props.listingQueryKey] ?? {};
+  const edges = listingData?.edges || [];
+  canStartMapping.value = edges.length > 0;
+  return edges.length > 0 ? edges[0].node.id : null;
+};
+
+onMounted(() => {
+  if (hasStartMapping.value) {
+    fetchFirstUnmapped();
+  }
+});
+
+watch(
+  () => props.salesChannelId,
+  () => {
+    if (hasStartMapping.value) {
+      fetchFirstUnmapped();
+    }
+  }
+);
+
+watch(
+  () => props.fixedFilterVariables,
+  () => {
+    if (hasStartMapping.value) {
+      fetchFirstUnmapped();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.firstUnmappedQueryVariables,
+  () => {
+    if (hasStartMapping.value) {
+      fetchFirstUnmapped();
+    }
+  },
+  { deep: true }
+);
+
+const startMapping = async () => {
+  if (!props.buildStartMappingRoute) {
+    return;
+  }
+
+  const id = await fetchFirstUnmapped();
+  if (!id) {
+    return;
+  }
+
+  router.push(
+    props.buildStartMappingRoute({
+      id,
+      integrationId: props.id,
+      salesChannelId: props.salesChannelId,
+    })
+  );
+};
+
+const clearSelection = (query?: any) => {
+  generalListingRef.value?.clearSelected?.();
+  query?.refetch?.();
+};
+</script>
+
+<template>
+  <GeneralTemplate>
+    <template v-if="hasStartMapping" #buttons>
+      <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">
+        {{ t('integrations.show.mapping.startMapping') }}
+      </Button>
+    </template>
+
+    <template #content>
+      <GeneralListing
+        ref="generalListingRef"
+        :search-config="searchConfig"
+        :config="listingConfig"
+        :query="listingQuery"
+        :query-key="listingQueryKey"
+        :fixed-filter-variables="mergedFixedFilterVariables"
+        @pull-data="emit('pull-data')"
+      >
+        <template v-if="$slots.bulkActions" #bulkActions="slotProps">
+          <slot name="bulkActions" v-bind="{ ...slotProps, clearSelection }" />
+        </template>
+      </GeneralListing>
+    </template>
+  </GeneralTemplate>
+</template>

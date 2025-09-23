@@ -210,6 +210,35 @@
       "isDefaultMarketplace": "Marketplace par défaut"
     },
     "show": {
+      "propertySelectValues": {
+        "labels": {
+          "remoteName": "",
+          "remoteValue": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "selectValue": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "help": {
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "remoteValue": "",
+          "remoteName": "",
+          "selectValue": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "bulkAssign": "",
+        "bulkAssignTitle": "",
+        "assignSuccess": ""
+      },
       "tabs": {
         "reports": "Rapports"
       }
