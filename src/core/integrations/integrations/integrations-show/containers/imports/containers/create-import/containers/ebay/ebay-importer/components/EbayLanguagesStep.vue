@@ -73,7 +73,7 @@ const fetchLanguages = async () => {
 onMounted(fetchLanguages);
 
 const isValid = computed(() =>
-  languages.value.length > 0 && languages.value.every((language) => Boolean(language.localInstance))
+  languages.value.some((language) => Boolean(language.localInstance))
 );
 
 defineExpose({

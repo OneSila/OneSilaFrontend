@@ -78,7 +78,7 @@ const fetchCurrencies = async () => {
 onMounted(fetchCurrencies);
 
 const isValid = computed(() =>
-  currencies.value.length > 0 && currencies.value.every((currency) => Boolean(currency.localInstance))
+  currencies.value.some((currency) => Boolean(currency.localInstance))
 );
 
 defineExpose({
