@@ -77,6 +77,7 @@ if (type.value !== IntegrationTypes.Webhook) {
     );
   } else if (type.value === IntegrationTypes.Ebay) {
     tabItems.value.push(
+          { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'inventoryFields', label: t('integrations.show.ebay.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
