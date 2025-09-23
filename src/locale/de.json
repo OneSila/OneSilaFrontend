@@ -103,6 +103,12 @@
       "tabs": {
         "amazon": "Amazon"
       },
+      "priceLists": {
+        "add": {
+          "placeholder": "",
+          "select": ""
+        }
+      },
       "variations": {
         "content": {
           "validation": {

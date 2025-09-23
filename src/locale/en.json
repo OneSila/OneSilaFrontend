@@ -996,6 +996,12 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
       },
+      "priceLists": {
+        "add": {
+          "placeholder": "Select a price list",
+          "select": "Select"
+        }
+      },
       "variations": {
         "tabs": {
           "list": "List",
