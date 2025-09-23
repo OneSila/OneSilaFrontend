@@ -337,7 +337,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                 <div class="col-span-full">
                   <Flex vertical>
                     <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</Label>
+                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.remoteName') }}</Label>
                     </FlexCell>
                     <FlexCell>
                       <TextInput v-model="form.remoteName" class="w-full" />

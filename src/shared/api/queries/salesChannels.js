@@ -1080,7 +1080,8 @@ export const getAmazonPropertyQuery = gql`
       id
       mappedLocally
       mappedRemotely
-      localizedName
+      code
+      name
       type
       allowsUnmappedValues
       localInstance {
@@ -1117,6 +1118,8 @@ export const amazonPropertySelectValuesQuery = gql`
           amazonProperty {
             id
             name
+            code
+            type
             mappedLocally
             mappedRemotely
           }
@@ -1153,6 +1156,8 @@ export const getAmazonPropertySelectValueQuery = gql`
       amazonProperty {
         id
         name
+        code
+        type
       }
       marketplace {
         id
