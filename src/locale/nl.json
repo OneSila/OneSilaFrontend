@@ -2004,6 +2004,18 @@
   },
   "integrations": {
     "show": {
+      "ebay": {
+        "title": "",
+        "properties": {
+          "title": ""
+        },
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "isRoot": ""
+          }
+        }
+      },
       "products": {
         "labels": {
           "store": "Winkel",

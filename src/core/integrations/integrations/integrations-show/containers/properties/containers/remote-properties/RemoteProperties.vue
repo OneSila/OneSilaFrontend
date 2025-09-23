@@ -5,6 +5,7 @@ import { useRouter, type RouteLocationRaw } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
+import { Title } from "../../../../../../../../shared/components/atoms/title";
 import apolloClient from "../../../../../../../../../apollo-client";
 import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
@@ -29,6 +30,7 @@ const props = defineProps<{
   fixedFilterVariables?: Record<string, any>;
   buildBaseFilter?: (context: BaseFilterBuilderContext) => Record<string, any>;
   buildStartMappingRoute?: (context: RouteBuilderContext) => RouteLocationRaw;
+  titleKey?: string;
 }>();
 
 const emit = defineEmits(['pull-data']);
@@ -55,6 +57,7 @@ const mergedFixedFilterVariables = computed(() => ({
 }));
 
 const hasStartMapping = computed(() => Boolean(props.buildStartMappingRoute));
+const hasTitle = computed(() => Boolean(props.titleKey));
 
 const fetchFirstUnmapped = async (): Promise<string | null> => {
   if (!hasStartMapping.value) {
@@ -133,14 +136,19 @@ const startMapping = async () => {
     </template>
 
     <template #content>
-      <GeneralListing
-        :search-config="searchConfig"
-        :config="listingConfig"
-        :query="listingQuery"
-        :query-key="listingQueryKey"
-        :fixed-filter-variables="mergedFixedFilterVariables"
-        @pull-data="emit('pull-data')"
-      />
+      <div class="space-y-4">
+        <Title v-if="hasTitle" level="3" semi-bold>
+          {{ t(props.titleKey as string) }}
+        </Title>
+        <GeneralListing
+          :search-config="searchConfig"
+          :config="listingConfig"
+          :query="listingQuery"
+          :query-key="listingQueryKey"
+          :fixed-filter-variables="mergedFixedFilterVariables"
+          @pull-data="emit('pull-data')"
+        />
+      </div>
     </template>
   </GeneralTemplate>
 </template>

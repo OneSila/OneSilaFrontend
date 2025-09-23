@@ -339,6 +339,16 @@ export const updateEbaySalesChannelViewMutation = gql`
   }
 `;
 
+export const updateEbayInternalPropertyMutation = gql`
+  mutation updateEbayInternalProperty($data: EbayInternalPropertyPartialInput!) {
+    updateEbayInternalProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
 export const updateRemoteLanguageMutation = gql`
   mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
     updateRemoteLanguage(data: $data) {
