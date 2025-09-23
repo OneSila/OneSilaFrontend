@@ -55,6 +55,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/properties/containers/amazon-properties/containers/IntegrationsAmazonPropertyEditController.vue'),
   },
   {
+    path: '/integrations/:type/ebay-internal-property/:id',
+    name: 'integrations.ebayInternalProperties.edit',
+    meta: { title: 'integrations.show.ebay.internalProperties.title' },
+    component: () => import('./integrations/integrations-show/containers/properties/containers/ebay-properties/containers/IntegrationsEbayInternalPropertyEditController.vue'),
+  },
+  {
     path: '/integrations/:type/amazon-property-value/:id',
     name: 'integrations.amazonPropertySelectValues.edit',
     meta: { title: 'integrations.show.propertySelectValues.title' },

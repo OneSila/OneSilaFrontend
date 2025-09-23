@@ -1012,6 +1012,68 @@ export const ebayPropertiesQuery = gql`
   }
 `;
 
+export const ebayInternalPropertiesQuery = gql`
+  query EbayInternalProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayInternalPropertyOrder
+    $filter: EbayInternalPropertyFilter
+  ) {
+    ebayInternalProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          code
+          name
+          type
+          isRoot
+          mappedLocally
+          mappedRemotely
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayInternalPropertyQuery = gql`
+  query getEbayInternalProperty($id: GlobalID!) {
+    ebayInternalProperty(id: $id) {
+      id
+      code
+      name
+      type
+      isRoot
+      mappedLocally
+      mappedRemotely
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const getAmazonPropertyQuery = gql`
   query getAmazonProperty($id: GlobalID!) {
     amazonProperty(id: $id) {

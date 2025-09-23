@@ -210,6 +210,18 @@
       "isDefaultMarketplace": "Marketplace par défaut"
     },
     "show": {
+      "ebay": {
+        "title": "",
+        "properties": {
+          "title": ""
+        },
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "isRoot": ""
+          }
+        }
+      },
       "tabs": {
         "reports": "Rapports"
       }

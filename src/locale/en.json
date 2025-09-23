@@ -2448,6 +2448,18 @@
       "amazon": {
         "title": "Amazon Integration"
       },
+      "ebay": {
+        "title": "Ebay Integration",
+        "properties": {
+          "title": "Ebay Aspects"
+        },
+        "internalProperties": {
+          "title": "Ebay Inventory Fields",
+          "labels": {
+            "isRoot": "Is Inventory Item Field"
+          }
+        }
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
