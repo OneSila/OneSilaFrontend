@@ -54,17 +54,11 @@ const allowNextStep = computed(() => {
   }
 
   if (step.value === 1) {
-    return (
-      mappedLanguages.value.length > 0 &&
-      mappedLanguages.value.every((language) => Boolean(language.localInstance))
-    );
+    return mappedLanguages.value.some((language) => Boolean(language.localInstance));
   }
 
   if (step.value === 2) {
-    return (
-      mappedCurrencies.value.length > 0 &&
-      mappedCurrencies.value.every((currency) => Boolean(currency.localInstance))
-    );
+    return mappedCurrencies.value.some((currency) => Boolean(currency.localInstance));
   }
 
   return true;
