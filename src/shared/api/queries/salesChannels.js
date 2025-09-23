@@ -1443,6 +1443,40 @@ export const amazonImportProcessesQuery = gql`
   }
 `;
 
+export const ebayImportProcessesQuery = gql`
+  query EbayImportProcesses(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: EbaySalesChannelImportOrder,
+    $filter: EbaySalesChannelImportFilter
+  ) {
+    ebayImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          status
+          percentage
+          createdAt
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 // Amazon Default Unit Configurator Queries
 export const amazonDefaultUnitConfiguratorsQuery = gql`
   query AmazonDefaultUnitConfigurators(

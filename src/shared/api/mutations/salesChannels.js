@@ -738,6 +738,36 @@ export const updateAmazonImportProcessMutation = gql`
   }
 `;
 
+export const createEbayImportProcessMutation = gql`
+  mutation createEbayImportProcess($data: EbaySalesChannelImportInput!) {
+    createEbayImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateEbayImportProcessMutation = gql`
+  mutation updateEbayImportProcess($data: EbaySalesChannelImportPartialInput!) {
+    updateEbayImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
 // Amazon Default Unit Configurator Mutation
 export const updateAmazonDefaultUnitConfiguratorMutation = gql`
   mutation updateAmazonDefaultUnitConfigurator($data: AmazonDefaultUnitConfiguratorPartialInput!) {

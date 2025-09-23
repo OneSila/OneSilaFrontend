@@ -2076,6 +2076,29 @@
           "NAME_TOO_LONG": "Name too long",
           "INVALID_VARIATION_THEME": "Invalid variation theme"
         }
+      },
+      "create": {
+        "ebay": {
+          "wizard": {
+            "steps": {
+              "type": "",
+              "languages": "",
+              "currencies": ""
+            },
+            "languages": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            },
+            "currencies": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            }
+          }
+        }
       }
     }
   }
