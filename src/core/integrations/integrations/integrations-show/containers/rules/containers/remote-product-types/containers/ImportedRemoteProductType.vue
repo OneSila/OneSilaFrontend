@@ -56,7 +56,7 @@ const marketplaceField = computed<QueryFormField>(() => ({
   isEdge: true,
   multiple: false,
   filterable: true,
-  queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } },
+  queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
 }));
 
 type NormalizedSuggestion = {
@@ -67,7 +67,7 @@ type NormalizedSuggestion = {
 };
 
 const productName = ref('');
-const marketplace = ref(salesChannelId);
+const marketplace = ref();
 const suggestions = ref<NormalizedSuggestion[]>([]);
 const allProductTypes = ref<NormalizedSuggestion[]>([]);
 const selectedCode = ref<string>('');

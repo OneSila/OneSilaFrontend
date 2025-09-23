@@ -147,7 +147,8 @@ export const productTypesSearchConfigConstructor = (
 
 const amazonProductTypesListingConfig = (
   t: Function,
-  specificIntegrationId: string
+  specificIntegrationId: string,
+  salesChannelId: string
 ): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
@@ -172,7 +173,7 @@ const amazonProductTypesListingConfig = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId: salesChannelId },
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -184,7 +185,8 @@ const amazonProductTypesListingConfig = (
 
 const ebayProductTypesListingConfig = (
   t: Function,
-  specificIntegrationId: string
+  specificIntegrationId: string,
+  salesChannelId: string,
 ): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
@@ -207,7 +209,7 @@ const ebayProductTypesListingConfig = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId: salesChannelId },
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -220,11 +222,12 @@ const ebayProductTypesListingConfig = (
 export const productTypesListingConfigConstructor = (
   t: Function,
   integrationType: string,
-  specificIntegrationId: string
+  specificIntegrationId: string,
+  salesChannelId: string
 ): ListingConfig =>
   integrationType === IntegrationTypes.Ebay
-    ? ebayProductTypesListingConfig(t, specificIntegrationId)
-    : amazonProductTypesListingConfig(t, specificIntegrationId);
+    ? ebayProductTypesListingConfig(t, specificIntegrationId, salesChannelId)
+    : amazonProductTypesListingConfig(t, specificIntegrationId, salesChannelId);
 
 export const getListingQueryKey = (integrationType: string): string =>
   integrationType === IntegrationTypes.Ebay ? 'ebayProductTypes' : 'amazonProductTypes';
