@@ -13,7 +13,7 @@ const { id, salesChannelId } = toRefs(props);
   <RemoteProductTypes
     :id="id"
     :sales-channel-id="salesChannelId"
-    :type="IntegrationTypes.Amazon"
+    :type="IntegrationTypes.Ebay"
     @pull-data="emit('pull-data')"
   />
 </template>
