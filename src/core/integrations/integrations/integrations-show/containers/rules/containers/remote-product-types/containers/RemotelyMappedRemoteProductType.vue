@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import type { RouteLocationRaw } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
@@ -17,20 +16,18 @@ import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Accordion } from "../../../../../../../../../shared/components/atoms/accordion";
 import { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
-import {
-  getListingQuery,
-  getListingQueryKey,
-  getProductTypeQueryDataKey,
-  productTypeEditFormConfigConstructor,
-} from "../configs";
+import { productTypeEditFormConfigConstructor } from "../configs";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import { IntegrationTypes } from "../../../../../../integrations";
+import type { AdditionalButtonConfig, MappedRemoteProductTypeConfig } from '../configTypes';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
-const props = defineProps<{ productType: any | null }>();
+const props = defineProps<{
+  productType: any | null;
+  config: MappedRemoteProductTypeConfig<any>;
+}>();
 
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
@@ -39,17 +36,15 @@ const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.t
 const isWizard = route.query.wizard === '1';
 const defaultRuleId = route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null;
 const resolvedDefaultRuleId = ref<string | null>(null);
-
-const propertyProductTypeId = ref<string | null>(null);
 const formData = ref<Record<string, any>>({});
 const formConfig = ref<FormConfig | null>(null);
-const nextWizardId = ref<string | null>(null);
 const items = ref<any[]>([]);
 
-const listingQuery = computed(() => getListingQuery(type.value));
-const listingQueryKey = computed(() => getListingQueryKey(type.value));
-const queryDataKey = computed(() => getProductTypeQueryDataKey(type.value));
-const isAmazon = computed(() => type.value === IntegrationTypes.Amazon);
+const state = reactive(props.config.createState());
+
+const listingQuery = computed(() => props.config.listingQuery);
+const listingQueryKey = computed(() => props.config.listingQueryKey);
+const queryDataKey = computed(() => props.config.productTypeQueryDataKey);
 
 const configTypeChoices = [
   { id: ConfigTypes.REQUIRED_IN_CONFIGURATOR, text: t('properties.rule.configTypes.requiredInConfigurator.title') },
@@ -62,35 +57,16 @@ const accordionItems = [
   { name: 'items', label: t('integrations.imports.types.schema'), icon: 'sitemap' },
 ];
 
-const integrationTitle = computed(() => t(`integrations.show.${type.value}.title`));
-
-const getItemProperty = (item: any) => (isAmazon.value ? item.remoteProperty : item.ebayProperty);
-const getItemName = (item: any) => {
-  const property = getItemProperty(item);
-  if (!property) return '';
-  return isAmazon.value ? property.name : property.localizedName || property.translatedName || '';
-};
-const getItemCode = (item: any) => {
-  if (!isAmazon.value) {
-    return '';
-  }
-  return getItemProperty(item)?.code || '';
-};
-const isItemMappedLocally = (item: any) => Boolean(getItemProperty(item)?.mappedLocally);
-
-const extractItems = (data: any) => {
-  if (!data) return [];
-  return isAmazon.value ? data.amazonproducttypeitemSet || [] : data.items || [];
-};
+const integrationTitle = computed(() => props.config.getIntegrationTitle(t, type.value));
 
 const updateItemsFromData = (data: any) => {
-  items.value = extractItems(data);
+  items.value = props.config.extractItems(data, state);
 };
 
 const setupFormConfig = () => {
   formConfig.value = productTypeEditFormConfigConstructor(
     t,
-    type.value,
+    props.config.integrationType,
     productTypeId.value,
     integrationId,
     resolvedDefaultRuleId.value,
@@ -132,7 +108,7 @@ const fetchProductType = async () => {
   });
 
   if (data && data.properties && data.properties.edges && data.properties.edges.length === 1) {
-    propertyProductTypeId.value = data.properties.edges[0].node.id;
+    state.propertyProductTypeId = data.properties.edges[0].node.id;
   }
 };
 
@@ -166,7 +142,6 @@ onMounted(async () => {
   if (!isWizard || formConfig.value == null) return;
 
   const { nextId, last } = await fetchNextUnmapped();
-  nextWizardId.value = nextId;
 
   formConfig.value.addSubmitAndContinue = false;
   formConfig.value.cancelUrl = {
@@ -177,7 +152,7 @@ onMounted(async () => {
 
   if (nextId) {
     formConfig.value.submitUrl = {
-      name: 'integrations.amazonProductTypes.edit',
+      name: props.config.editRouteName,
       params: { type: type.value, id: nextId },
       query: { integrationId, salesChannelId, wizard: '1' },
     };
@@ -206,18 +181,10 @@ const handleFormUpdate = (form: any) => {
   formData.value = form;
 };
 
-const buildPropertyPath = (item: any): RouteLocationRaw | null => {
-  const property = getItemProperty(item);
-  if (!property?.id) {
-    return null;
-  }
-  const routeName = isAmazon.value ? 'integrations.amazonProperties.edit' : 'integrations.ebayProperties.edit';
-  return {
-    name: routeName,
-    params: { type: type.value, id: property.id },
-    query: { integrationId, salesChannelId },
-  };
-};
+const buildPropertyPath = (item: any) =>
+  props.config.getPropertyRoute
+    ? props.config.getPropertyRoute(item, { type: type.value, integrationId, salesChannelId }, state)
+    : null;
 
 const mappedItems = computed(() =>
   items.value.map((item) => ({
@@ -226,7 +193,32 @@ const mappedItems = computed(() =>
   }))
 );
 
-const shouldShowAdditionalButton = computed(() => isAmazon.value && Boolean(propertyProductTypeId.value));
+const getItemName = (item: any) => props.config.getItemName(item, state);
+const getItemCode = (item: any) => (props.config.getItemCode ? props.config.getItemCode(item, state) : '');
+const isItemMappedLocally = (item: any) => props.config.isItemMappedLocally(item, state);
+
+const additionalButton = computed<AdditionalButtonConfig | null>(() => {
+  if (!props.config.getAdditionalButtonConfig) {
+    return null;
+  }
+
+  return (
+    props.config.getAdditionalButtonConfig({
+      productTypeId: productTypeId.value,
+      integrationId,
+      salesChannelId,
+      isWizard,
+      formData: formData.value,
+      state,
+    }) || null
+  );
+});
+
+const shouldShowAdditionalButton = computed(() =>
+  props.config.shouldShowAdditionalButton ? props.config.shouldShowAdditionalButton({ state }) : false,
+);
+
+const showCodeColumn = computed(() => typeof props.config.getItemCode === 'function');
 </script>
 
 <template>
@@ -250,20 +242,10 @@ const shouldShowAdditionalButton = computed(() => isAmazon.value && Boolean(prop
 
     <template #content>
       <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData">
-        <template v-if="shouldShowAdditionalButton" #additional-button>
-          <Link
-            :path="{
-              name: 'properties.values.create',
-              query: {
-                propertyId: propertyProductTypeId,
-                isRule: '1',
-                amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
-                value: formData.name,
-              },
-            }"
-          >
+        <template v-if="shouldShowAdditionalButton && additionalButton" #additional-button>
+          <Link :path="additionalButton.route">
             <Button type="button" class="btn btn-info">
-              {{ t('integrations.show.generateProductType') }}
+              {{ t(additionalButton.labelKey) }}
             </Button>
           </Link>
         </template>
@@ -278,7 +260,7 @@ const shouldShowAdditionalButton = computed(() => isAmazon.value && Boolean(prop
                   <thead>
                     <tr>
                       <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
-                      <th v-if="isAmazon" class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
+                      <th v-if="showCodeColumn" class="p-2 text-left">{{ t('integrations.show.properties.labels.code') }}</th>
                       <th class="p-2 text-left">{{ t('integrations.show.mapping.mappedLocally') }}</th>
                       <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
                     </tr>
@@ -291,7 +273,7 @@ const shouldShowAdditionalButton = computed(() => isAmazon.value && Boolean(prop
                         </Link>
                         <span v-else>{{ getItemName(entry.item) }}</span>
                       </td>
-                      <td v-if="isAmazon" class="p-2">{{ getItemCode(entry.item) }}</td>
+                      <td v-if="showCodeColumn" class="p-2">{{ getItemCode(entry.item) }}</td>
                       <td class="p-2">
                         <Icon v-if="isItemMappedLocally(entry.item)" name="check-circle" class="text-green-500" />
                         <Icon v-else name="times-circle" class="text-red-500" />

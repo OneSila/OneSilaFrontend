@@ -46,7 +46,7 @@ export const routes = [
     path: '/integrations/:type/product-type/:id',
     name: 'integrations.amazonProductTypes.edit',
     meta: { title: 'integrations.show.productRules.title' },
-    component: () => import('./integrations/integrations-show/containers/rules/containers/remote-product-types/containers/IntegrationsRemoteProductTypeEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/rules/IntegrationsRemoteProductTypeEditController.vue'),
   },
   {
     path: '/integrations/:type/amazon-property/:id',
