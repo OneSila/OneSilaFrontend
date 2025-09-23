@@ -665,6 +665,24 @@ export const createAmazonProductTypesFromLocalRulesMutation = gql`
   }
 `;
 
+export const updateEbayProductTypeMutation = gql`
+  mutation updateEbayProductType($data: EbayProductTypePartialInput!) {
+    updateEbayProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const createEbayProductTypesFromLocalRulesMutation = gql`
+  mutation createEbayProductTypesFromLocalRules($data: EbaySalesChannelPartialInput!) {
+    createEbayProductTypesFromLocalRules(instance: $data) {
+      id
+    }
+  }
+`;
+
 export const suggestAmazonProductTypeMutation = gql`
   mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
     suggestAmazonProductType(name: $name, marketplace: $marketplace) {

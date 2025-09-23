@@ -1331,6 +1331,84 @@ export const getAmazonProductTypeQuery = gql`
     }
   }
 `;
+
+export const ebayProductTypesQuery = gql`
+  query EbayProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayProductTypeOrder
+    $filter: EbayProductTypeFilter
+  ) {
+    ebayProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          name
+          translatedName
+          localInstance {
+            id
+            value
+            productType {
+              id
+              value
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayProductTypeQuery = gql`
+  query getEbayProductType($id: GlobalID!) {
+    ebayProductType(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      imported
+      name
+      translatedName
+      localInstance {
+        id
+        value
+        productType {
+          id
+          value
+        }
+      }
+      items {
+        id
+        remoteType
+        ebayProperty {
+          id
+          localizedName
+          mappedLocally
+          allowsUnmappedValues
+          type
+        }
+      }
+    }
+  }
+`;
 export const amazonImportProcessesQuery = gql`
   query AmazonImportProcesses(
     $first: Int,

@@ -2450,6 +2450,16 @@
       },
       "ebay": {
         "title": "Ebay Integration",
+        "productRules": {
+          "title": "Ebay Categories",
+          "labels": {
+            "translatedName": "Translated Name"
+          },
+          "help": {
+            "translatedName": "Translated name for this eBay category.",
+            "productRule": "Select the local product rule to link with this eBay category."
+          }
+        },
         "properties": {
           "title": "Ebay Aspects"
         },

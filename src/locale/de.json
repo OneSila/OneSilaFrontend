@@ -246,6 +246,19 @@
       },
       "tabs": {
         "reports": "Berichte"
+      },
+      "ebay": {
+        "title": "",
+        "productRules": {
+          "title": "",
+          "labels": {
+            "translatedName": ""
+          },
+          "help": {
+            "translatedName": "",
+            "productRule": ""
+          }
+        }
       }
     },
     "imports": {
