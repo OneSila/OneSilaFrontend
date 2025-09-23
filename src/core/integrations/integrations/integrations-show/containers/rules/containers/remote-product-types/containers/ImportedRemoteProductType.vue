@@ -42,6 +42,7 @@ const localInstancePath = computed(() => {
   return id ? { name: 'properties.rule.show', params: { id } } : null;
 });
 const localInstanceName = computed(() => props.productType?.localInstance?.value || '');
+const marketplaceName = computed(() => props.productType?.marketplace?.name || '');
 
 const marketplaceField = computed<QueryFormField>(() => ({
   type: FieldType.Query,
@@ -58,7 +59,7 @@ const marketplaceField = computed<QueryFormField>(() => ({
 }));
 
 const productName = ref('');
-const marketplace = ref();
+const marketplace = ref<string | null>(null);
 const suggestions = ref<NormalizedSuggestion[]>([]);
 const allProductTypes = ref<NormalizedSuggestion[]>([]);
 const selectedCode = ref<string>('');
@@ -72,6 +73,14 @@ watch(
   () => props.productType?.localInstance?.value,
   (value) => {
     productName.value = value || '';
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.productType?.marketplace?.id,
+  (value) => {
+    marketplace.value = value || null;
   },
   { immediate: true },
 );
@@ -102,7 +111,7 @@ const runSuggestion = async (name: string | null): Promise<NormalizedSuggestion[
     mutation: props.config.suggestMutation,
     variables: props.config.getSuggestionVariables({
       name,
-      marketplace: String(marketplace.value),
+      marketplace: marketplace.value ? String(marketplace.value) : '',
     }),
   });
 
@@ -247,6 +256,10 @@ const save = async () => {
               <div v-if="selectedName">
                 <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.productRules.labels.selectedProductType') }}</label>
                 <p class="mt-1 text-sm">{{ selectedName }}</p>
+              </div>
+              <div v-if="marketplaceName">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</label>
+                <p class="mt-1 text-sm">{{ marketplaceName }}</p>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 md:divide-x">
                 <div class="space-y-4">

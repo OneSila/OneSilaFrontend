@@ -1356,6 +1356,10 @@ export const ebayProductTypesQuery = gql`
           mappedRemotely
           name
           translatedName
+          marketplace {
+            id
+            name
+          }
           localInstance {
             id
             value
@@ -1387,6 +1391,10 @@ export const getEbayProductTypeQuery = gql`
       imported
       name
       translatedName
+      marketplace {
+        id
+        name
+      }
       localInstance {
         id
         value
