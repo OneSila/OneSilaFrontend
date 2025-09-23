@@ -1107,6 +1107,82 @@ export const getAmazonPropertySelectValueQuery = gql`
   }
 `;
 
+export const ebayPropertySelectValuesQuery = gql`
+  query EbayPropertySelectValues(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayPropertySelectValueOrder
+    $filter: EbayPropertySelectValueFilter
+  ) {
+    ebayPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          ebayProperty {
+            id
+            localizedName
+            mappedLocally
+            mappedRemotely
+          }
+          marketplace {
+            id
+            name
+          }
+          localizedValue
+          translatedValue
+          localInstance {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayPropertySelectValueQuery = gql`
+  query getEbayPropertySelectValue($id: GlobalID!) {
+    ebayPropertySelectValue(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      ebayProperty {
+        id
+        localizedName
+      }
+      marketplace {
+        id
+        name
+      }
+      localizedValue
+      translatedValue
+      localInstance {
+        id
+        value
+      }
+    }
+  }
+`;
+
 // Amazon Product Type Queries
 export const amazonProductTypesQuery = gql`
   query AmazonProductTypes(
