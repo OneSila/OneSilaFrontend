@@ -2556,8 +2556,8 @@
       "propertySelectValues": {
         "title": "Amazon Property Values",
         "labels": {
-          "remoteName": "Remote Name",
-          "remoteValue": "Remote Value",
+          "remoteName": "Amazon Name",
+          "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
           "ebayProperty": "eBay Property",
           "marketplace": "Marketplace",
@@ -2570,11 +2570,11 @@
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "ebayProperty": "eBay property to which this value belongs.",
-          "marketplace": "Marketplace for this value.",
+          "marketplace": "Amazon marketplace for this value.",
           "localProperty": "OneSila property that this remote property maps to.",
-          "remoteValue": "Value exactly as defined remotely.",
-          "remoteName": "Name from the remote channel. You can change it.",
-          "selectValue": "Choose the OneSila value that matches this remote value.",
+          "remoteValue": "Value exactly as defined in Amazon.",
+          "remoteName": "Name from Amazon. You can change it.",
+          "selectValue": "Choose the OneSila value that matches this Amazon value.",
           "translatedRemoteName": "Translated name for this value.",
           "localizedValue": "Value as returned by the marketplace.",
           "translatedValue": "Translated value in the company language."

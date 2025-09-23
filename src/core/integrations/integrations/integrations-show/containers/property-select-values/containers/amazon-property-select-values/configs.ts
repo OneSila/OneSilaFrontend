@@ -32,7 +32,7 @@ export const amazonPropertySelectValueEditFormConfigConstructor = (
     { type: FieldType.Text, name: 'amazonProperty', label: t('integrations.show.propertySelectValues.labels.amazonProperty'), disabled: true, help: t('integrations.show.propertySelectValues.help.amazonProperty') },
     { type: FieldType.Text, name: 'marketplace', label: t('integrations.show.propertySelectValues.labels.marketplace'), disabled: true, help: t('integrations.show.propertySelectValues.help.marketplace') },
     { type: FieldType.Text, name: 'remoteValue', label: t('integrations.show.propertySelectValues.labels.remoteValue'), disabled: true, help: t('integrations.show.propertySelectValues.help.remoteValue') },
-    { type: FieldType.Text, name: 'remoteName', label: t('shared.labels.name'), help: t('integrations.show.propertySelectValues.help.remoteName') },
+    { type: FieldType.Text, name: 'remoteName', label: t('integrations.show.propertySelectValues.labels.remoteName'), help: t('integrations.show.propertySelectValues.help.remoteName') },
     { type: FieldType.Text, name: 'translatedRemoteName', label: t('integrations.show.propertySelectValues.labels.translatedRemoteName'), help: t('integrations.show.propertySelectValues.help.translatedRemoteName') },
   ]
 });
