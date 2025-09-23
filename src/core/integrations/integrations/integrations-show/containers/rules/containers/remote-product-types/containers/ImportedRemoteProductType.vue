@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
@@ -8,13 +8,6 @@ import { TextInput } from "../../../../../../../../../shared/components/atoms/in
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { salesChannelViewsQuerySelector } from "../../../../../../../../../shared/api/queries/salesChannels.js";
-import {
-  suggestAmazonProductTypeMutation,
-  suggestEbayCategoryMutation,
-  updateAmazonProductTypeMutation,
-  updateEbayProductTypeMutation,
-} from "../../../../../../../../../shared/api/mutations/salesChannels.js";
-import { getListingQuery, getListingQueryKey } from '../configs';
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
@@ -25,19 +18,24 @@ import { Loader } from "../../../../../../../../../shared/components/atoms/loade
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
-import { IntegrationTypes } from "../../../../../../integrations";
+import type { ImportedRemoteProductTypeConfig, NormalizedSuggestion } from '../configTypes';
 
-const {t} = useI18n();
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
-const props = defineProps<{ productType: any | null }>();
+const props = defineProps<{
+  productType: any | null;
+  config: ImportedRemoteProductTypeConfig<any>;
+}>();
 
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
+
+const state = reactive(props.config.createState());
 
 const localInstancePath = computed(() => {
   const id = props.productType?.localInstance?.id;
@@ -59,13 +57,6 @@ const marketplaceField = computed<QueryFormField>(() => ({
   queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
 }));
 
-type NormalizedSuggestion = {
-  code: string;
-  displayName: string;
-  secondary?: string;
-  raw: Record<string, any>;
-};
-
 const productName = ref('');
 const marketplace = ref();
 const suggestions = ref<NormalizedSuggestion[]>([]);
@@ -73,7 +64,6 @@ const allProductTypes = ref<NormalizedSuggestion[]>([]);
 const selectedCode = ref<string>('');
 const selectedName = ref<string>('');
 const selectedSuggestion = ref<NormalizedSuggestion | null>(null);
-const categoryTreeId = ref<string | null>(null);
 const saving = ref(false);
 const loadingSuggestions = ref(false);
 const errors = ref<Record<string, string>>({});
@@ -86,15 +76,18 @@ watch(
   { immediate: true },
 );
 
-const listingQuery = computed(() => getListingQuery(type.value));
-const listingQueryKey = computed(() => getListingQueryKey(type.value));
-const isAmazon = computed(() => type.value === IntegrationTypes.Amazon);
-const integrationTitle = computed(() => t(`integrations.show.${type.value}.title`));
+const listingQuery = computed(() => props.config.listingQuery);
+const listingQueryKey = computed(() => props.config.listingQueryKey);
+const integrationTitle = computed(() => props.config.getIntegrationTitle(t, type.value));
 
 const selectSuggestion = (suggestion: NormalizedSuggestion | null) => {
   selectedSuggestion.value = suggestion;
   selectedCode.value = suggestion?.code || '';
   selectedName.value = suggestion?.displayName || '';
+};
+
+const resetState = () => {
+  Object.assign(state, props.config.createState());
 };
 
 const handleEmptySuggestions = (list: NormalizedSuggestion[]) => {
@@ -104,34 +97,16 @@ const handleEmptySuggestions = (list: NormalizedSuggestion[]) => {
 };
 
 const runSuggestion = async (name: string | null): Promise<NormalizedSuggestion[]> => {
+  resetState();
   const { data } = await apolloClient.mutate({
-    mutation: isAmazon.value ? suggestAmazonProductTypeMutation : suggestEbayCategoryMutation,
-    variables: {
+    mutation: props.config.suggestMutation,
+    variables: props.config.getSuggestionVariables({
       name,
-      marketplace: { id: marketplace.value },
-    },
+      marketplace: String(marketplace.value),
+    }),
   });
 
-  if (isAmazon.value) {
-    categoryTreeId.value = null;
-    const productTypes = data?.suggestAmazonProductType?.productTypes || [];
-    return productTypes.map((entry: any) => ({
-      code: entry.name,
-      displayName: entry.displayName,
-      secondary: entry.name,
-      raw: entry,
-    }));
-  }
-
-  const payload = data?.suggestEbayCategory || {};
-  categoryTreeId.value = payload?.categoryTreeId ?? null;
-  const categories = payload?.categories || [];
-  return categories.map((entry: any) => ({
-    code: entry.categoryId,
-    displayName: entry.categoryName,
-    secondary: entry.categoryPath,
-    raw: entry,
-  }));
+  return props.config.mapSuggestions(data || {}, state);
 };
 
 const fetchSuggestions = async () => {
@@ -212,49 +187,21 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 };
 
 const save = async () => {
-  if (!selectedCode.value) return;
+  const payload = props.config.buildSaveInput({
+    productTypeId: productTypeId.value,
+    selectedSuggestion: selectedSuggestion.value,
+    selectedCode: selectedCode.value,
+    selectedName: selectedName.value,
+    state,
+  });
+
+  if (!payload) {
+    return;
+  }
+
   saving.value = true;
   try {
-    if (isAmazon.value) {
-      await apolloClient.mutate({
-        mutation: updateAmazonProductTypeMutation,
-        variables: {
-          data: {
-            id: productTypeId.value,
-            productTypeCode: selectedCode.value,
-            name: selectedName.value,
-            imported: true,
-          },
-        },
-      });
-    } else {
-      const raw = selectedSuggestion.value?.raw || {};
-      const input: Record<string, unknown> = {
-        id: productTypeId.value,
-        imported: true,
-      };
-
-      if (raw.categoryId || selectedSuggestion.value?.code) {
-        input.categoryId = raw.categoryId ?? selectedSuggestion.value?.code;
-      }
-      if (categoryTreeId.value) {
-        input.categoryTreeId = categoryTreeId.value;
-      }
-      if (raw.categoryPath) {
-        input.categoryPath = raw.categoryPath;
-      }
-      if (raw.categoryName || selectedSuggestion.value?.displayName) {
-        input.name = raw.categoryName ?? selectedSuggestion.value?.displayName;
-      }
-      if (selectedName.value || raw.categoryName) {
-        input.translatedName = selectedName.value || raw.categoryName;
-      }
-
-      await apolloClient.mutate({
-        mutation: updateEbayProductTypeMutation,
-        variables: { data: input },
-      });
-    }
+    await apolloClient.mutate(payload);
     Toast.success(t('shared.success'));
 
     if (!isWizard) {
@@ -264,7 +211,7 @@ const save = async () => {
 
     const { nextId, last } = await fetchNextUnmapped();
     if (nextId) {
-      router.push({ name: 'integrations.amazonProductTypes.edit', params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
+      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
     } else if (last) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
     } else {

@@ -10,12 +10,19 @@ import { productPropertiesRulesListingQuery } from "../../../../../../../../shar
 import {
   createAmazonProductTypesFromLocalRulesMutation,
   createEbayProductTypesFromLocalRulesMutation,
+  suggestAmazonProductTypeMutation,
+  suggestEbayCategoryMutation,
   updateAmazonProductTypeMutation,
   updateEbayProductTypeMutation,
 } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import type {
+  ImportedRemoteProductTypeConfig,
+  MappedRemoteProductTypeConfig,
+  NormalizedSuggestion,
+} from './configTypes';
 
 const amazonProductTypeFormConfig = (
   t: Function,
@@ -251,3 +258,182 @@ export const getCreateProductTypesFromLocalRulesMutation = (integrationType: str
 
 export const listingQueryKey = getListingQueryKey(IntegrationTypes.Amazon);
 export const listingQuery = getListingQuery(IntegrationTypes.Amazon);
+
+const getIntegrationTitle = (t: (key: string, ...args: any[]) => string, type: string) =>
+  t(`integrations.show.${type}.title`);
+
+const commonSuggestionVariables = ({ name, marketplace }: { name: string | null; marketplace: string }) => ({
+  name,
+  marketplace: { id: marketplace },
+});
+
+export const amazonImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfig = {
+  integrationType: IntegrationTypes.Amazon,
+  listingQuery: getListingQuery(IntegrationTypes.Amazon),
+  listingQueryKey: getListingQueryKey(IntegrationTypes.Amazon),
+  suggestMutation: suggestAmazonProductTypeMutation,
+  getSuggestionVariables: commonSuggestionVariables,
+  mapSuggestions: (data: Record<string, any>, _state): NormalizedSuggestion[] => {
+    const productTypes = data?.suggestAmazonProductType?.productTypes || [];
+    return productTypes.map((entry: any) => ({
+      code: entry.name,
+      displayName: entry.displayName,
+      secondary: entry.name,
+      raw: entry,
+    }));
+  },
+  createState: () => ({}),
+  buildSaveInput: ({ productTypeId, selectedCode, selectedName }) => {
+    if (!selectedCode) {
+      return null;
+    }
+
+    return {
+      mutation: updateAmazonProductTypeMutation,
+      variables: {
+        data: {
+          id: productTypeId,
+          productTypeCode: selectedCode,
+          name: selectedName,
+          imported: true,
+        },
+      },
+    };
+  },
+  getIntegrationTitle,
+  editRouteName: 'integrations.amazonProductTypes.edit',
+};
+
+type EbayImportedState = { categoryTreeId: string | null };
+
+export const ebayImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfig<EbayImportedState> = {
+  integrationType: IntegrationTypes.Ebay,
+  listingQuery: getListingQuery(IntegrationTypes.Ebay),
+  listingQueryKey: getListingQueryKey(IntegrationTypes.Ebay),
+  suggestMutation: suggestEbayCategoryMutation,
+  getSuggestionVariables: commonSuggestionVariables,
+  mapSuggestions: (data: Record<string, any>, state: EbayImportedState): NormalizedSuggestion[] => {
+    const payload = data?.suggestEbayCategory || {};
+    state.categoryTreeId = payload?.categoryTreeId ?? null;
+    const categories = payload?.categories || [];
+    return categories.map((entry: any) => ({
+      code: entry.categoryId,
+      displayName: entry.categoryName,
+      secondary: entry.categoryPath,
+      raw: entry,
+    }));
+  },
+  createState: () => ({ categoryTreeId: null }),
+  buildSaveInput: ({ productTypeId, selectedSuggestion, selectedCode, selectedName, state }) => {
+    if (!selectedSuggestion && !selectedCode) {
+      return null;
+    }
+
+    const raw = selectedSuggestion?.raw || {};
+    const input: Record<string, unknown> = {
+      id: productTypeId,
+      imported: true,
+    };
+
+    if (raw.categoryId || selectedCode) {
+      input.categoryId = raw.categoryId ?? selectedCode;
+    }
+    if (state.categoryTreeId) {
+      input.categoryTreeId = state.categoryTreeId;
+    }
+    if (raw.categoryPath) {
+      input.categoryPath = raw.categoryPath;
+    }
+    if (raw.categoryName || selectedSuggestion?.displayName) {
+      input.name = raw.categoryName ?? selectedSuggestion?.displayName;
+    }
+    if (selectedName || raw.categoryName) {
+      input.translatedName = selectedName || raw.categoryName;
+    }
+
+    return {
+      mutation: updateEbayProductTypeMutation,
+      variables: { data: input },
+    };
+  },
+  getIntegrationTitle,
+  editRouteName: 'integrations.amazonProductTypes.edit',
+};
+
+type RemoteProductTypeState = { propertyProductTypeId: string | null };
+
+export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<RemoteProductTypeState> = {
+  integrationType: IntegrationTypes.Amazon,
+  listingQuery: getListingQuery(IntegrationTypes.Amazon),
+  listingQueryKey: getListingQueryKey(IntegrationTypes.Amazon),
+  productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Amazon),
+  getIntegrationTitle,
+  editRouteName: 'integrations.amazonProductTypes.edit',
+  createState: () => ({ propertyProductTypeId: null }),
+  extractItems: (data) => data?.amazonproducttypeitemSet || [],
+  getItemName: (item) => item?.remoteProperty?.name || '',
+  getItemCode: (item) => item?.remoteProperty?.code || '',
+  isItemMappedLocally: (item) => Boolean(item?.remoteProperty?.mappedLocally),
+  getPropertyRoute: (item, { type, integrationId, salesChannelId }) => {
+    const property = item?.remoteProperty;
+    if (!property?.id) {
+      return null;
+    }
+
+    return {
+      name: 'integrations.amazonProperties.edit',
+      params: { type, id: property.id },
+      query: { integrationId, salesChannelId },
+    };
+  },
+  shouldShowAdditionalButton: ({ state }) => Boolean(state.propertyProductTypeId),
+  getAdditionalButtonConfig: ({ productTypeId, integrationId, salesChannelId, isWizard, formData, state }) => {
+    if (!state.propertyProductTypeId) {
+      return null;
+    }
+
+    return {
+      route: {
+        name: 'properties.values.create',
+        query: {
+          propertyId: state.propertyProductTypeId,
+          isRule: '1',
+          amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
+          value: formData?.name,
+        },
+      },
+      labelKey: 'integrations.show.generateProductType',
+    };
+  },
+};
+
+export const ebayMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<RemoteProductTypeState> = {
+  integrationType: IntegrationTypes.Ebay,
+  listingQuery: getListingQuery(IntegrationTypes.Ebay),
+  listingQueryKey: getListingQueryKey(IntegrationTypes.Ebay),
+  productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Ebay),
+  getIntegrationTitle,
+  editRouteName: 'integrations.amazonProductTypes.edit',
+  createState: () => ({ propertyProductTypeId: null }),
+  extractItems: (data) => data?.items || [],
+  getItemName: (item) => {
+    const property = item?.ebayProperty;
+    if (!property) {
+      return '';
+    }
+    return property.localizedName || property.translatedName || '';
+  },
+  isItemMappedLocally: (item) => Boolean(item?.ebayProperty?.mappedLocally),
+  getPropertyRoute: (item, { type, integrationId, salesChannelId }) => {
+    const property = item?.ebayProperty;
+    if (!property?.id) {
+      return null;
+    }
+
+    return {
+      name: 'integrations.ebayProperties.edit',
+      params: { type, id: property.id },
+      query: { integrationId, salesChannelId },
+    };
+  },
+};
