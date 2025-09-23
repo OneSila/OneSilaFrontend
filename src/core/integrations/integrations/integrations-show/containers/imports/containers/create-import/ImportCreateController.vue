@@ -8,6 +8,7 @@ import { MagentoImporter } from "./containers/magento/magento-importer";
 import { ShopifyImporter } from "./containers/shopify/shopify-importer";
 import { WoocommerceImporter } from "./containers/woocommerce/woocommerce-importer";
 import { AmazonImporter } from "./containers/amazon/amazon-importer";
+import { EbayImporter } from "./containers/ebay/ebay-importer";
 import {IntegrationTypes} from "../../../../../integrations";
 
 
@@ -35,6 +36,7 @@ const type = ref(String(route.params.type));
       <MagentoImporter v-if="type == IntegrationTypes.Magento" :integration-id="integrationId" :type="type" />
       <ShopifyImporter v-else-if="type == IntegrationTypes.Shopify" :integration-id="integrationId" :type="type" />
       <AmazonImporter v-else-if="type == IntegrationTypes.Amazon" :integration-id="integrationId" :type="type" />
+      <EbayImporter v-else-if="type == IntegrationTypes.Ebay" :integration-id="integrationId" :type="type" />
       <WoocommerceImporter v-else-if="type == IntegrationTypes.Woocommerce" :integration-id="integrationId" :type="type" />
     </template>
   </GeneralTemplate>

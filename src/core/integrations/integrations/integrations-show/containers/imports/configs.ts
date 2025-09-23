@@ -27,6 +27,14 @@ export interface AmazonSalesChannelImportItem {
   createdAt: string;
 }
 
+export interface EbaySalesChannelImportItem {
+  id: string;
+  type: string;
+  status: 'new' | 'pending' | 'failed' | 'success' | 'processing';
+  percentage: number;
+  createdAt: string;
+}
+
 export interface SalesChannelSubscriptionResult {
   salesChannel: {
     id: string;
@@ -34,6 +42,7 @@ export interface SalesChannelSubscriptionResult {
     isImporting: boolean;
     saleschannelimportSet: SalesChannelImportItem[];
     amazonImports: AmazonSalesChannelImportItem[];
+    ebayImports: EbaySalesChannelImportItem[];
   };
 }
 

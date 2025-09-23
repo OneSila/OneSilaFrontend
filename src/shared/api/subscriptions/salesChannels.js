@@ -21,6 +21,14 @@ export const salesChannelSubscription = gql`
         percentage
         createdAt
       }
+      ebayImports {
+        id
+        proxyId
+        type
+        status
+        percentage
+        createdAt
+      }
     }
   }
 `;
