@@ -31,6 +31,7 @@ import { Currencies } from "./containers/currencies";
 import { PriceLists } from "./containers/price-lists";
 import { Rules } from "./containers/rules";
 import { Properties } from "./containers/properties";
+import { InventoryFields } from "./containers/inventory-fields";
 import { PropertySelectValues } from "./containers/property-select-values";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
@@ -77,6 +78,7 @@ if (type.value !== IntegrationTypes.Webhook) {
   } else if (type.value === IntegrationTypes.Ebay) {
     tabItems.value.push(
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
+      { name: 'inventoryFields', label: t('integrations.show.ebay.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
   }
@@ -306,6 +308,17 @@ const pullData = async () => {
           <!-- Properties Tab -->
           <template #properties>
             <Properties v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
+          </template>
+
+          <!-- Inventory Fields Tab -->
+          <template #inventoryFields>
+            <InventoryFields
+              v-if="salesChannelId"
+              :id="id"
+              :sales-channel-id="salesChannelId"
+              :type="type"
+              @pull-data="pullData()"
+            />
           </template>
 
           <!-- Property Select Values Tab -->
