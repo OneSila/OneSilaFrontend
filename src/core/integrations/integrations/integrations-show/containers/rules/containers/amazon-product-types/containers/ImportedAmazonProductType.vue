@@ -161,7 +161,7 @@ const save = async () => {
       mutation: updateAmazonProductTypeMutation,
       variables: { data: { id: productTypeId.value, productTypeCode: selectedCode.value, name: selectedName.value, imported: true } }
     });
-    Toast.success(t('shared.success'));
+    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
 
     if (!isWizard) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
