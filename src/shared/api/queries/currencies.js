@@ -64,6 +64,7 @@ export const getCurrencyQuery = gql`
       inheritsFrom {
         id
         name
+        isoCode
       }
       exchangeRate
       exchangeRateOfficial
