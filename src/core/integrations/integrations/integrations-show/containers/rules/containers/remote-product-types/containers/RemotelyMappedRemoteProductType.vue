@@ -58,6 +58,7 @@ const accordionItems = [
 ];
 
 const integrationTitle = computed(() => props.config.getIntegrationTitle(t, type.value));
+const marketplaceName = computed(() => props.productType?.marketplace?.name || '');
 
 const updateItemsFromData = (data: any) => {
   items.value = props.config.extractItems(data, state);
@@ -250,6 +251,14 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
           </Link>
         </template>
       </GeneralForm>
+
+      <div
+        v-if="marketplaceName"
+        class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl p-6 mt-4"
+      >
+        <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</label>
+        <p class="mt-1 text-sm">{{ marketplaceName }}</p>
+      </div>
 
       <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 mt-4">
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">

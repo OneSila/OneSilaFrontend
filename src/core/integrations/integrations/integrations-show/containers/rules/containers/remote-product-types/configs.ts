@@ -2,6 +2,7 @@ import { IntegrationTypes } from "../../../../../integrations";
 import { FieldType } from "../../../../../../../../shared/utils/constants";
 import {
   amazonProductTypesQuery,
+  ebayChannelViewsQuery,
   ebayProductTypesQuery,
   getAmazonProductTypeQuery,
   getEbayProductTypeQuery,
@@ -17,7 +18,7 @@ import {
 } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
-import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import { SearchConfig, SearchFilter } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 import type {
   ImportedRemoteProductTypeConfig,
   MappedRemoteProductTypeConfig,
@@ -141,16 +142,38 @@ export const productTypeEditFormConfigConstructor = (
 
 export const productTypesSearchConfigConstructor = (
   t: Function,
-  _integrationType: string
-): SearchConfig => ({
-  search: true,
-  orderKey: 'sort',
-  filters: [
+  integrationType: string,
+  salesChannelId: string,
+): SearchConfig => {
+  const filters: SearchFilter[] = [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
     { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
-  ],
-  orders: [],
-});
+  ];
+
+  if (integrationType === IntegrationTypes.Ebay) {
+    filters.push({
+      type: FieldType.Query,
+      name: 'marketplace',
+      label: t('integrations.show.propertySelectValues.labels.marketplace'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: ebayChannelViewsQuery,
+      dataKey: 'ebaySalesChannelViews',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id'],
+      queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } },
+    });
+  }
+
+  return {
+    search: true,
+    orderKey: 'sort',
+    filters,
+    orders: [],
+  };
+};
 
 const amazonProductTypesListingConfig = (
   t: Function,
@@ -200,6 +223,7 @@ const ebayProductTypesListingConfig = (
     t('integrations.show.mapping.mappedLocally'),
     t('integrations.show.mapping.mappedRemotely'),
     t('properties.rule.title'),
+    t('integrations.show.propertySelectValues.labels.marketplace'),
   ],
   fields: [
     { name: 'name', type: FieldType.Text },
@@ -213,6 +237,12 @@ const ebayProductTypesListingConfig = (
       clickable: true,
       clickIdentifiers: [{ id: ['id'] }],
       clickUrl: { name: 'properties.rule.show' },
+    },
+    {
+      name: 'marketplace',
+      type: FieldType.NestedText,
+      keys: ['name'],
+      showLabel: true,
     },
   ],
   identifierKey: 'id',

@@ -30,7 +30,7 @@ const pulling = ref(false);
 const listingQueryKey = computed(() => getListingQueryKey(type.value));
 const listingQuery = computed(() => getListingQuery(type.value));
 const pullMutation = computed(() => getCreateProductTypesFromLocalRulesMutation(type.value));
-const searchConfig = computed(() => productTypesSearchConfigConstructor(t, type.value));
+const searchConfig = computed(() => productTypesSearchConfigConstructor(t, type.value, salesChannelId.value));
 const listingConfig = computed(() => productTypesListingConfigConstructor(t, type.value, integrationId.value, salesChannelId.value));
 
 const fetchFirstUnmapped = async () => {
