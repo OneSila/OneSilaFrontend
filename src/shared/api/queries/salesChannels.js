@@ -790,7 +790,43 @@ export const remoteCurrenciesQuery = gql`
           id
           remoteCode
           name
-          marketplace {
+          localInstance {
+            id
+            name
+            symbol
+            isoCode
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const ebayRemoteCurrenciesQuery = gql`
+  query EbayRemoteCurrencies(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: RemoteCurrencyOrder,
+    $filter: RemoteCurrencyFilter
+  ) {
+    remoteCurrencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          remoteCode
+          name
+          salesChannelView {
+            id
             name
           }
           localInstance {
