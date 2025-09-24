@@ -77,6 +77,7 @@ watch(() => props.fieldsToClear, (fields) => {
 
 <template>
   <div class="px-4 py-6 sm:p-8">
+    <slot name="before-fields" />
     <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
       <FormLayout :config="config" :form="form" :errors="outsideErrors !== null && outsideErrors !== undefined ? outsideErrors : errors" />
     </div>
