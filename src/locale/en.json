@@ -2583,14 +2583,18 @@
           "code": "Code",
           "type": "Type",
           "allowsUnmappedValues": "Allow Unmapped Values",
-          "property": "Property"
+          "property": "Property",
+          "localizedName": "Marketplace Name",
+          "translatedName": "Translated Name"
         },
         "help": {
-          "code": "Amazon's code for this property.",
-          "type": "Type mapped from Amazon. Cannot be changed.",
+          "code": "Marketplace code for this property.",
+          "type": "Type mapped from the marketplace. Cannot be changed.",
           "allowsUnmappedValues": "Allow values that have not been mapped locally.",
-          "name": "Name from Amazon. You can modify it.",
-          "property": "Select the local property this Amazon property maps to."
+          "name": "Name provided by the marketplace. You can modify it.",
+          "property": "Select the local property this marketplace property maps to.",
+          "localizedName": "Name provided by the marketplace. Usually localized to the marketplace language.",
+          "translatedName": "Name translated into your company language. You can adjust it."
         }
       },
       "propertySelectValues": {

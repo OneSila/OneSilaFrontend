@@ -2058,6 +2058,26 @@
           }
         }
       },
+      "properties": {
+        "title": "",
+        "labels": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        }
+      },
       "products": {
         "labels": {
           "store": "Winkel",
