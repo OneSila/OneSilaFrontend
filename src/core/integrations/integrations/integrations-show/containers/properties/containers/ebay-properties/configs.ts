@@ -1,8 +1,49 @@
 import { FieldType, getPropertyTypeOptions } from "../../../../../../../../shared/utils/constants";
-import { ebayPropertiesQuery, ebayChannelViewsQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import { ebayPropertiesQuery, ebayChannelViewsQuery, getEbayPropertyQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertiesQuerySelector } from "../../../../../../../../shared/api/queries/properties.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import { updateEbayPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
+
+export const ebayPropertyEditFormConfigConstructor = (
+  t: Function,
+  type: string,
+  propertyId: string,
+  integrationId: string,
+): FormConfig => ({
+  cols: 1,
+  type: FormType.EDIT,
+  mutation: updateEbayPropertyMutation,
+  mutationKey: "updateEbayProperty",
+  query: getEbayPropertyQuery,
+  queryVariables: { id: propertyId },
+  queryDataKey: "ebayProperty",
+  submitUrl: { name: 'integrations.integrations.show', params: { type, id: integrationId }, query: { tab: 'properties' } },
+  fields: [
+    { type: FieldType.Hidden, name: 'id', value: propertyId },
+    { type: FieldType.Text, name: 'localizedName', label: t('shared.labels.name'), help: t('integrations.show.properties.help.name') },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('products.products.labels.type.title'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      disabled: true,
+      removable: false,
+      help: t('integrations.show.properties.help.type'),
+    },
+    {
+      type: FieldType.Boolean,
+      name: 'allowsUnmappedValues',
+      label: t('integrations.show.properties.labels.allowsUnmappedValues'),
+      disabled: true,
+      strict: true,
+      help: t('integrations.show.properties.help.allowsUnmappedValues'),
+    },
+  ],
+});
 
 export const ebayPropertiesSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
   search: true,

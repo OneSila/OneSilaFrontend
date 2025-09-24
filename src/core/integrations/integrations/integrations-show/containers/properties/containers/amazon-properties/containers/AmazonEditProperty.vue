@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter, useRoute } from 'vue-router';
-import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
-import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
-import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
+import { useRoute, useRouter } from 'vue-router';
+import RemotePropertyEdit from "../../remote-properties/components/RemotePropertyEdit.vue";
 import { amazonPropertyEditFormConfigConstructor } from "../configs";
 import { FieldType } from "../../../../../../../../../shared/utils/constants";
 import { propertiesQuerySelector } from "../../../../../../../../../shared/api/queries/properties.js";
@@ -16,7 +14,7 @@ import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { amazonPropertiesQuery } from "../../../../../../../../../shared/api/queries/salesChannels";
 import { checkPropertyForDuplicatesMutation } from "../../../../../../../../../shared/api/mutations/properties.js";
 import debounce from 'lodash.debounce';
-import { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import type { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -26,12 +24,24 @@ const amazonPropertyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
-const isWizard = route.query.wizard == '1';
+const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
 const amazonCreateValue = route.query.amazonCreateValue?.toString() || null;
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
-const nextWizardId = ref<string | null>(null);
+
+const breadcrumbsLinks = computed(() => [
+  { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
+  {
+    path: {
+      name: 'integrations.integrations.show',
+      params: { id: integrationId, type: type.value },
+      query: { tab: 'properties' },
+    },
+    name: t('integrations.show.amazon.title'),
+  },
+  { name: t('integrations.show.mapProperty') },
+]);
 
 const recommendations = ref<{ id: string; name: string }[]>([]);
 const loadingRecommendations = ref(false);
@@ -64,6 +74,10 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 onMounted(async () => {
   formConfig.value = amazonPropertyEditFormConfigConstructor(t, type.value, amazonPropertyId.value, integrationId, propertyId);
 
+  if (!formConfig.value) {
+    return;
+  }
+
   if (amazonCreateValue) {
     formConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
@@ -73,16 +87,17 @@ onMounted(async () => {
     return;
   }
 
-  if (!isWizard) return;
+  if (!isWizard) {
+    return;
+  }
 
   const { nextId, last } = await fetchNextUnmapped();
-  nextWizardId.value = nextId;
 
   formConfig.value.addSubmitAndContinue = false;
   formConfig.value.cancelUrl = {
     name: 'integrations.integrations.show',
     params: { type: type.value, id: integrationId },
-    query: { tab: 'properties' }
+    query: { tab: 'properties' },
   };
 
   if (nextId) {
@@ -96,21 +111,23 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.integrations.show',
       params: { type: type.value, id: integrationId },
-      query: { tab: 'properties' }
+      query: { tab: 'properties' },
     };
   } else {
     Toast.success(t('integrations.show.mapping.allMappedSuccess'));
     router.push({
       name: 'integrations.integrations.show',
       params: { type: type.value, id: integrationId },
-      query: { tab: 'properties' }
+      query: { tab: 'properties' },
     });
   }
 });
 
 const handleSetData = (data: any) => {
   const propertyType = data?.amazonProperty?.type;
-  if (!formConfig.value || !propertyType) return;
+  if (!formConfig.value || !propertyType) {
+    return;
+  }
 
   const field = {
     type: FieldType.Query,
@@ -126,10 +143,10 @@ const handleSetData = (data: any) => {
     multiple: false,
     filterable: true,
     formMapIdentifier: 'id',
-    ...(propertyId ? { default: propertyId } : {})
+    ...(propertyId ? { default: propertyId } : {}),
   };
 
-  const index = formConfig.value.fields.findIndex(f => f.name === 'localInstance');
+  const index = formConfig.value.fields.findIndex((f) => f.name === 'localInstance');
   if (index === -1) {
     formConfig.value.fields.push(field as any);
   } else {
@@ -137,7 +154,7 @@ const handleSetData = (data: any) => {
   }
 };
 
-const handleFormUpdate = (form) => {
+const handleFormUpdate = (form: Record<string, any>) => {
   formData.value = form;
 };
 
@@ -151,7 +168,7 @@ const fetchRecommendations = async () => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: checkPropertyForDuplicatesMutation,
-      variables: { name: searchValue }
+      variables: { name: searchValue },
     });
 
     if (data && data.checkPropertyForDuplicates && data.checkPropertyForDuplicates.duplicateFound) {
@@ -173,67 +190,67 @@ watch(() => formData.value.name, () => {
 });
 
 watch(() => formData.value.localInstance, () => {
-  recommendations.value = recommendations.value.filter(r => r.id !== formData.value.localInstance);
+  recommendations.value = recommendations.value.filter((r) => r.id !== formData.value.localInstance);
 });
 
 const selectRecommendation = (id: string) => {
   formData.value.localInstance = id;
-  recommendations.value = recommendations.value.filter(r => r.id !== id);
+  recommendations.value = recommendations.value.filter((r) => r.id !== id);
 };
-
 </script>
 
-
 <template>
-  <GeneralTemplate>
-    <template v-slot:breadcrumbs>
-      <Breadcrumbs
-        :links="[
-          { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'properties'} }, name: t('integrations.show.amazon.title') },
-          { name: t('integrations.show.mapProperty') }
-        ]" />
+  <RemotePropertyEdit
+    :breadcrumbs-links="breadcrumbsLinks"
+    :form-config="formConfig"
+    @set-data="handleSetData"
+    @form-updated="handleFormUpdate"
+  >
+    <template #additional-button>
+      <Link
+        :path="{ name: 'properties.properties.create', query: {
+          amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
+          name: formData.name,
+          type: formData.type,
+          amazonWizard: isWizard ? '1' : '0',
+          ...(amazonCreateValue ? { amazonCreateValue } : {}),
+        } }"
+      >
+        <Button type="button" class="btn btn-info">
+          {{ t('integrations.show.generateProperty') }}
+        </Button>
+      </Link>
     </template>
-    <template v-slot:content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData" >
-        <template #additional-button>
-          <Link :path="{ name: 'properties.properties.create', query: {
-            amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
-            name: formData.name,
-            type: formData.type,
-            amazonWizard: isWizard ? '1' : '0',
-            ...(amazonCreateValue ? { amazonCreateValue } : {}) } }">
-            <Button type="button" class="btn btn-info">
-              {{ t('integrations.show.generateProperty') }}
-            </Button>
-          </Link>
-        </template>
-        <template #additional-fields>
-          <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
-            <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
-            <div v-if="loadingRecommendations" class="flex items-center gap-2">
-              <div class="loader-mini"></div>
-              <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
-            </div>
-            <div v-else>
-              <div v-if="recommendations.length" class="flex flex-wrap gap-2">
-                <button
-                  v-for="item in recommendations"
-                  :key="item.id"
-                  type="button"
-                  class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
-                  @click="selectRecommendation(item.id)"
-                >
-                  {{ item.name }}
-                </button>
-              </div>
-              <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
-            </div>
+    <template #additional-fields>
+      <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
+          {{ t('integrations.show.propertySelectValues.recommendation.title') }}
+        </Label>
+        <div v-if="loadingRecommendations" class="flex items-center gap-2">
+          <div class="loader-mini"></div>
+          <span class="text-sm text-gray-500">
+            {{ t('integrations.show.propertySelectValues.recommendation.searching') }}
+          </span>
+        </div>
+        <div v-else>
+          <div v-if="recommendations.length" class="flex flex-wrap gap-2">
+            <button
+              v-for="item in recommendations"
+              :key="item.id"
+              type="button"
+              class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
+              @click="selectRecommendation(item.id)"
+            >
+              {{ item.name }}
+            </button>
           </div>
-        </template>
-      </GeneralForm>
+          <p v-else class="text-sm text-gray-500">
+            {{ t('integrations.show.propertySelectValues.recommendation.none') }}
+          </p>
+        </div>
+      </div>
     </template>
-  </GeneralTemplate>
+  </RemotePropertyEdit>
 </template>
 
 <style scoped>

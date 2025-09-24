@@ -607,6 +607,16 @@ export const updateAmazonPropertyMutation = gql`
   }
 `;
 
+export const updateEbayPropertyMutation = gql`
+  mutation updateEbayProperty($data: EbayPropertyPartialInput!) {
+    updateEbayProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
 // Amazon Property Select Value Mutations
 
 export const updateAmazonPropertySelectValueMutation = gql`

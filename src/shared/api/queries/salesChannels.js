@@ -1131,6 +1131,27 @@ export const getAmazonPropertyQuery = gql`
   }
 `;
 
+export const getEbayPropertyQuery = gql`
+  query getEbayProperty($id: GlobalID!) {
+    ebayProperty(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      localizedName
+      type
+      allowsUnmappedValues
+      marketplace {
+        id
+        name
+      }
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
 // Amazon Property Select Value Queries
 export const amazonPropertySelectValuesQuery = gql`
   query AmazonPropertySelectValues(
