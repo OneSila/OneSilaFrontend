@@ -7,10 +7,10 @@ import {
   getProductTypeQuery,
   getProductTypeQueryDataKey,
 } from './containers/remote-product-types/configs';
-import ImportedAmazonProductType from './containers/remote-product-types/containers/ImportedAmazonProductType.vue';
-import ImportedEbayProductType from './containers/remote-product-types/containers/ImportedEbayProductType.vue';
-import AmazonMappedRemoteProductType from './containers/remote-product-types/containers/AmazonMappedRemoteProductType.vue';
-import EbayMappedRemoteProductType from './containers/remote-product-types/containers/EbayMappedRemoteProductType.vue';
+import ImportedAmazonProductType from './containers/amazon-product-types/ImportedAmazonProductType.vue';
+import ImportedEbayProductType from './containers/ebay-product-types/ImportedEbayProductType.vue';
+import AmazonMappedRemoteProductType from './containers/amazon-product-types/AmazonMappedRemoteProductType.vue';
+import EbayMappedRemoteProductType from './containers/ebay-product-types/EbayMappedRemoteProductType.vue';
 import { IntegrationTypes } from '../../../integrations';
 
 const route = useRoute();

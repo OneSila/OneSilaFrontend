@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import RemotelyMappedRemoteProductType from './RemotelyMappedRemoteProductType.vue';
-import { amazonMappedRemoteProductTypeConfig } from '../configs';
+import RemotelyMappedRemoteProductType from '../remote-product-types/containers/RemotelyMappedRemoteProductType.vue';
+import { amazonMappedRemoteProductTypeConfig } from '../remote-product-types/configs';
 
 defineProps<{ productType: any | null }>();
 </script>

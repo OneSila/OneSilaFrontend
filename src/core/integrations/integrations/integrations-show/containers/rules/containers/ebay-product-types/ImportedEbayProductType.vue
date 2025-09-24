@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ImportedRemoteProductType from './ImportedRemoteProductType.vue';
-import { ebayImportedRemoteProductTypeConfig } from '../configs';
+import ImportedRemoteProductType from '../remote-product-types/containers/ImportedRemoteProductType.vue';
+import { ebayImportedRemoteProductTypeConfig } from '../remote-product-types/configs';
 
 defineProps<{ productType: any | null }>();
 </script>
