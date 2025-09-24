@@ -27,6 +27,11 @@ const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
 const amazonCreateValue = route.query.amazonCreateValue?.toString() || null;
+const remoteRuleId = computed(() =>
+  [amazonPropertyId.value, integrationId, salesChannelId, type.value]
+    .map((part) => part ?? '')
+    .join('__'),
+);
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
 
@@ -209,10 +214,10 @@ const selectRecommendation = (id: string) => {
     <template #additional-button>
       <Link
         :path="{ name: 'properties.properties.create', query: {
-          amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
+          remoteRuleId,
           name: formData.name,
           type: formData.type,
-          amazonWizard: isWizard ? '1' : '0',
+          remoteWizard: isWizard ? '1' : '0',
           ...(amazonCreateValue ? { amazonCreateValue } : {}),
         } }"
       >

@@ -243,6 +243,26 @@
       "isDefaultMarketplace": "Marketplace par défaut"
     },
     "show": {
+      "properties": {
+        "title": "",
+        "labels": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        }
+      },
       "propertySelectValues": {
         "labels": {
           "remoteName": "",

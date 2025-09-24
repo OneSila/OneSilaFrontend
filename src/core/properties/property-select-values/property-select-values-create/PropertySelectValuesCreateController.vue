@@ -43,7 +43,11 @@ onMounted(async () => {
   let addImage = false;
   const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
   const isRule = route.query.isRule ? route.query.isRule.toString() : null;
-  const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
+  const remoteRuleId = route.query.remoteRuleId
+    ? route.query.remoteRuleId.toString()
+    : route.query.amazonRuleId
+    ? route.query.amazonRuleId.toString()
+    : null;
   const remoteSelectValueId = route.query.remoteSelectValueId
     ? route.query.remoteSelectValueId.toString()
     : route.query.amazonSelectValueId
@@ -73,7 +77,7 @@ onMounted(async () => {
     propertyId,
     addImage,
     isRule !== null,
-    amazonRuleId,
+    remoteRuleId,
     remoteSelectValueId,
     remoteSelectValueType
   );

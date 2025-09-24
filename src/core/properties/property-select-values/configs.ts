@@ -28,7 +28,7 @@ export const baseFormConfigConstructor = (
     propertyId: string | null = null,
     addImage: boolean = true,
     redirectToRules: boolean = false,
-    amazonRuleId: string | null = null,
+    remoteRuleId: string | null = null,
     remoteSelectValueId: string | null = null,
     remoteSelectValueType: string | null = null,
 ): FormConfig => ({
@@ -36,11 +36,11 @@ export const baseFormConfigConstructor = (
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId, remoteSelectValueId, remoteSelectValueType),
-    addSubmitAndContinue: !amazonRuleId && !remoteSelectValueId,
+    submitUrl: getSubmitUrl(redirectToRules, propertyId, remoteRuleId, remoteSelectValueId, remoteSelectValueType),
+    addSubmitAndContinue: !remoteRuleId && !remoteSelectValueId,
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
-    ...((redirectToRules && amazonRuleId) || remoteSelectValueId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
+    ...((redirectToRules && remoteRuleId) || remoteSelectValueId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
     fields: [
         getPropertyField(t, propertyId, type),
         {
@@ -61,15 +61,35 @@ export const baseFormConfigConstructor = (
 const getSubmitUrl = (
     redirectToRules: boolean,
     propertyId: string | null,
-    amazonRuleId: string | null,
+    remoteRuleId: string | null,
     remoteSelectValueId: string | null,
     remoteSelectValueType: string | null,
 ) => {
+    const parseRemoteIdentifier = (value: string) => {
+        const parts = value.split('__');
+        const [id = '', integrationId = '', salesChannelId = '', fourth = '', fifth = ''] = parts;
+        let type = '';
+        let wizard = '';
+
+        if (parts.length >= 5) {
+            type = fourth;
+            wizard = fifth;
+        } else if (parts.length === 4) {
+            if (fourth === '0' || fourth === '1') {
+                wizard = fourth;
+            } else {
+                type = fourth;
+            }
+        }
+
+        return { id, integrationId, salesChannelId, type, wizard };
+    };
+
     if (remoteSelectValueId) {
-        const [selectValueId, integrationId, salesChannelId, wizard] = remoteSelectValueId.split('__');
+        const { id: selectValueId, integrationId, salesChannelId, type, wizard } = parseRemoteIdentifier(remoteSelectValueId);
         const url: any = {
             name: 'integrations.remotePropertySelectValues.edit',
-            params: { type: remoteSelectValueType ?? 'amazon', id: selectValueId }
+            params: { type: remoteSelectValueType ?? (type || 'amazon'), id: selectValueId }
         };
         if (integrationId) {
             url.query = { integrationId } as any;
@@ -82,9 +102,9 @@ const getSubmitUrl = (
         }
         return url;
     }
-    if (redirectToRules && amazonRuleId) {
-        const [ruleId, integrationId, salesChannelId, wizard] = amazonRuleId.split('__');
-        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: 'amazon', id: ruleId } };
+    if (redirectToRules && remoteRuleId) {
+        const { id: ruleId, integrationId, salesChannelId, type, wizard } = parseRemoteIdentifier(remoteRuleId);
+        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: type || 'amazon', id: ruleId } };
         if (integrationId) {
             url.query = { integrationId } as any;
             if (salesChannelId) {

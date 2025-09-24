@@ -22,7 +22,18 @@ export const ebayPropertyEditFormConfigConstructor = (
   submitUrl: { name: 'integrations.integrations.show', params: { type, id: integrationId }, query: { tab: 'properties' } },
   fields: [
     { type: FieldType.Hidden, name: 'id', value: propertyId },
-    { type: FieldType.Text, name: 'localizedName', label: t('shared.labels.name'), help: t('integrations.show.properties.help.name') },
+    {
+      type: FieldType.Text,
+      name: 'localizedName',
+      label: t('integrations.show.properties.labels.localizedName'),
+      help: t('integrations.show.properties.help.localizedName'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'translatedName',
+      label: t('integrations.show.properties.labels.translatedName'),
+      help: t('integrations.show.properties.help.translatedName'),
+    },
     {
       type: FieldType.Choice,
       name: 'type',
