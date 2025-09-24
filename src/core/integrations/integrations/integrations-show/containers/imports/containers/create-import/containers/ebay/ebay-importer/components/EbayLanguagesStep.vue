@@ -84,7 +84,11 @@ defineExpose({
 watch(
   languages,
   () => {
-    emit("update:languages", languages.value);
+    const mappedLanguages = languages.value.filter((language) =>
+      Boolean(language.localInstance),
+    );
+
+    emit("update:languages", mappedLanguages);
   },
   { deep: true },
 );

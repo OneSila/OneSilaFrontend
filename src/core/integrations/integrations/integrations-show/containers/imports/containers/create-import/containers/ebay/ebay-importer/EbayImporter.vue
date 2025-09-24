@@ -58,7 +58,7 @@ const allowNextStep = computed(() => {
   }
 
   if (step.value === 2) {
-    return mappedCurrencies.value.some((currency) => Boolean(currency.localInstance));
+    return mappedCurrencies.value.some((currency) => Boolean(currency.localInstance?.id));
   }
 
   return true;
@@ -104,11 +104,13 @@ const updateCurrencies = (currencies: RemoteCurrency[]) => {
 };
 
 const bulkUpdateLanguages = async () => {
-  const data = mappedLanguages.value.map((language) => ({
-    id: language.id,
-    remoteCode: language.remoteCode,
-    localInstance: language.localInstance,
-  }));
+  const data = mappedLanguages.value
+    .filter((language) => Boolean(language.localInstance))
+    .map((language) => ({
+      id: language.id,
+      remoteCode: language.remoteCode,
+      localInstance: language.localInstance,
+    }));
 
   await apolloClient.mutate({
     mutation: bulkUpdateRemoteLanguagesMutation,
@@ -117,11 +119,13 @@ const bulkUpdateLanguages = async () => {
 };
 
 const bulkUpdateCurrencies = async () => {
-  const data = mappedCurrencies.value.map((currency) => ({
-    id: currency.id,
-    remoteCode: currency.remoteCode,
-    localInstance: currency.localInstance ? { id: currency.localInstance } : null,
-  }));
+  const data = mappedCurrencies.value
+    .filter((currency) => Boolean(currency.localInstance?.id))
+    .map((currency) => ({
+      id: currency.id,
+      remoteCode: currency.remoteCode,
+      localInstance: currency.localInstance,
+    }));
 
   await apolloClient.mutate({
     mutation: bulkUpdateRemoteCurrenciesMutation,

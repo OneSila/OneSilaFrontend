@@ -50,14 +50,15 @@ export interface RemoteLanguage {
   id: string;
   remoteCode: string;
   name: string;
-  localInstance: { id: string };
+  localInstance: { id: string } | null;
 }
 
 export interface RemoteCurrency {
   id: string;
   remoteCode: string;
   name: string;
-  localInstance: { id: string };
+  marketplaceName?: string | null;
+  localInstance: { id: string } | null;
 }
 
 export interface RemoteAttribute {
