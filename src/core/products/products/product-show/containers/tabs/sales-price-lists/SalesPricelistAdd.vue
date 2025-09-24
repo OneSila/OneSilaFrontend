@@ -40,7 +40,7 @@ const fetchExistingPriceListIds = async () => {
       query: salesPriceListItemsQuery,
       variables: {
         filter: { product: { id: { exact: props.product.id } } },
-        first: 250,
+        first: 100,
       },
       fetchPolicy: 'network-only',
     });

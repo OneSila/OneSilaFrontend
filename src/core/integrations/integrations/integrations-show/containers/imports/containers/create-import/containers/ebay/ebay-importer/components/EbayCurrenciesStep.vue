@@ -102,7 +102,7 @@ const fetchCurrencies = async () => {
     ]);
 
     currencies.value =
-      remoteResult?.data?.remoteCurrencies?.edges?.map((edge: any) => {
+      remoteResult?.data?.ebayCurrencies?.edges?.map((edge: any) => {
         const node = edge.node;
         const existingLocalInstance =
           typeof node?.localInstance?.id === "string"
@@ -116,8 +116,10 @@ const fetchCurrencies = async () => {
           existingLocalInstance ??
           (remoteCodeKey ? localCurrencyMap[remoteCodeKey] ?? null : null);
 
+        console.log(autoMappedInstance)
+
         return {
-          id: node.id,
+          id: node.proxyId,
           remoteCode: node.remoteCode,
           name: node.name,
           marketplaceName: node?.salesChannelView?.name || null,
@@ -196,7 +198,7 @@ watch(
             </td>
             <td class="p-3 w-96">
               <FieldQuery
-                v-model="currency.localInstance"
+                :model-value="currency.localInstance ? currency.localInstance.id : null"
                 :field="currencyField as QueryFormField"
               />
             </td>

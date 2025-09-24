@@ -816,15 +816,15 @@ export const ebayRemoteCurrenciesQuery = gql`
     $last: Int,
     $after: String,
     $before: String,
-    $order: RemoteCurrencyOrder,
-    $filter: RemoteCurrencyFilter
+    $order: EbayCurrencyOrder,
+    $filter: EbayCurrencyFilter
   ) {
-    remoteCurrencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+    ebayCurrencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id
+          proxyId
           remoteCode
-          name
           salesChannelView {
             id
             name
