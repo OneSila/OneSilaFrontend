@@ -8,7 +8,7 @@ import {
 } from "../../../../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 import { QueryFormField } from "../../../../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FieldType } from "../../../../../../../../../../../../shared/utils/constants";
-import { remoteCurrenciesQuery } from "../../../../../../../../../../../../shared/api/queries/salesChannels.js";
+import { ebayRemoteCurrenciesQuery } from "../../../../../../../../../../../../shared/api/queries/salesChannels.js";
 import { currenciesQuerySelector } from "../../../../../../../../../../../../shared/api/queries/currencies.js";
 import { currencyOnTheFlyConfig } from "../../../../../../../../../../../settings/currencies/configs";
 import type { RemoteCurrency } from "../../../../../../configs";
@@ -89,7 +89,7 @@ const fetchCurrencies = async () => {
   try {
     const [remoteResult, localCurrencyMap] = await Promise.all([
       apolloClient.query({
-        query: remoteCurrenciesQuery,
+        query: ebayRemoteCurrenciesQuery,
         variables: {
           filter: { salesChannel: { id: { exact: props.salesChannelId } } },
         },
@@ -120,7 +120,7 @@ const fetchCurrencies = async () => {
           id: node.id,
           remoteCode: node.remoteCode,
           name: node.name,
-          marketplaceName: node?.marketplace?.name || null,
+          marketplaceName: node?.salesChannelView?.name || null,
           localInstance: autoMappedInstance,
         };
       }) || [];
