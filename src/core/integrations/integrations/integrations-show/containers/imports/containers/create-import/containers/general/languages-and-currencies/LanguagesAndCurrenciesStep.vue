@@ -85,7 +85,10 @@ const fetchData = async () => {
       id: edge.node.id,
       remoteCode: edge.node.remoteCode,
       name: edge.node.name,
-      localInstance: edge.node.localInstance ? edge.node.localInstance.id : null,
+      localInstance:
+        typeof edge?.node?.localInstance?.id === "string"
+          ? { id: edge.node.localInstance.id }
+          : null,
     }));
 
     if (!languages.value.length || !currencies.value.length) {
@@ -107,8 +110,8 @@ const isValid = computed(() => {
   return (
     languages.value.length > 0 &&
     currencies.value.length > 0 &&
-    languages.value.every((l) => l.localInstance) &&
-    currencies.value.every((c) => c.localInstance)
+    languages.value.every((l) => l.localInstance?.id) &&
+    currencies.value.every((c) => c.localInstance?.id)
   );
 });
 

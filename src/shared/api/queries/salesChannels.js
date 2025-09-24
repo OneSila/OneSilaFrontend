@@ -790,6 +790,9 @@ export const remoteCurrenciesQuery = gql`
           id
           remoteCode
           name
+          marketplace {
+            name
+          }
           localInstance {
             id
             name

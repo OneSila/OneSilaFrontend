@@ -27,6 +27,44 @@ const currencies = ref<RemoteCurrency[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 
+const fetchLocalCurrencies = async (): Promise<Record<string, { id: string }>> => {
+  const map: Record<string, { id: string }> = {};
+  let after: string | null = null;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: currenciesQuerySelector,
+      variables: {
+        first: 100,
+        after,
+      },
+      fetchPolicy: "cache-first",
+    });
+
+    const edges = data?.currencies?.edges || [];
+
+    edges.forEach((edge: any) => {
+      const isoCode = edge?.node?.isoCode;
+      const id = edge?.node?.id;
+
+      if (typeof isoCode === "string" && typeof id === "string") {
+        map[isoCode.toUpperCase()] = { id };
+      }
+    });
+
+    const pageInfo = data?.currencies?.pageInfo;
+    hasNextPage = Boolean(pageInfo?.hasNextPage);
+    after = pageInfo?.endCursor || null;
+
+    if (!after) {
+      hasNextPage = false;
+    }
+  }
+
+  return map;
+};
+
 const currencyField = computed(() => ({
   type: FieldType.Query,
   name: "localInstance",
@@ -49,20 +87,43 @@ const fetchCurrencies = async () => {
   error.value = null;
 
   try {
-    const { data } = await apolloClient.query({
-      query: remoteCurrenciesQuery,
-      variables: {
-        filter: { salesChannel: { id: { exact: props.salesChannelId } } },
-      },
-      fetchPolicy: "cache-first",
-    });
+    const [remoteResult, localCurrencyMap] = await Promise.all([
+      apolloClient.query({
+        query: remoteCurrenciesQuery,
+        variables: {
+          filter: { salesChannel: { id: { exact: props.salesChannelId } } },
+        },
+        fetchPolicy: "cache-first",
+      }),
+      fetchLocalCurrencies().catch((localCurrencyError) => {
+        console.error(localCurrencyError);
+        return {} as Record<string, string>;
+      }),
+    ]);
 
-    currencies.value = data?.remoteCurrencies?.edges?.map((edge: any) => ({
-      id: edge.node.id,
-      remoteCode: edge.node.remoteCode,
-      name: edge.node.name,
-      localInstance: edge.node.localInstance ? edge.node.localInstance.id : null,
-    })) || [];
+    currencies.value =
+      remoteResult?.data?.remoteCurrencies?.edges?.map((edge: any) => {
+        const node = edge.node;
+        const existingLocalInstance =
+          typeof node?.localInstance?.id === "string"
+            ? { id: node.localInstance.id }
+            : null;
+        const remoteCodeKey =
+          typeof node?.remoteCode === "string"
+            ? node.remoteCode.toUpperCase()
+            : null;
+        const autoMappedInstance =
+          existingLocalInstance ??
+          (remoteCodeKey ? localCurrencyMap[remoteCodeKey] ?? null : null);
+
+        return {
+          id: node.id,
+          remoteCode: node.remoteCode,
+          name: node.name,
+          marketplaceName: node?.marketplace?.name || null,
+          localInstance: autoMappedInstance,
+        };
+      }) || [];
 
     if (!currencies.value.length) {
       error.value = t("integrations.imports.create.ebay.currencies.noData");
@@ -78,7 +139,7 @@ const fetchCurrencies = async () => {
 onMounted(fetchCurrencies);
 
 const isValid = computed(() =>
-  currencies.value.some((currency) => Boolean(currency.localInstance))
+  currencies.value.some((currency) => Boolean(currency.localInstance?.id))
 );
 
 defineExpose({
@@ -89,7 +150,11 @@ defineExpose({
 watch(
   currencies,
   () => {
-    emit("update:currencies", currencies.value);
+    const mappedCurrencies = currencies.value.filter((currency) =>
+      Boolean(currency.localInstance?.id),
+    );
+
+    emit("update:currencies", mappedCurrencies);
   },
   { deep: true },
 );
@@ -117,7 +182,18 @@ watch(
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white">
           <tr v-for="currency in currencies" :key="currency.id" class="border-t">
-            <td class="p-3">{{ currency.name }}</td>
+            <td class="p-3">
+              <div class="flex flex-col">
+                <span>{{ currency.name }}</span>
+                <span class="text-xs text-gray-500">
+                  {{
+                    currency.marketplaceName
+                      ? `${currency.marketplaceName} - ${currency.remoteCode}`
+                      : currency.remoteCode
+                  }}
+                </span>
+              </div>
+            </td>
             <td class="p-3 w-96">
               <FieldQuery
                 v-model="currency.localInstance"
