@@ -133,7 +133,8 @@ const config: RemoteSelectValueEditPropertyConfig = {
           name: 'properties.values.create',
           query: {
             propertyId: ctx.localPropertyId,
-            amazonSelectValueId: `${ctx.valueId}__${ctx.integrationId}__${ctx.salesChannelId}__${ctx.isWizard ? '1' : '0'}`,
+            remoteSelectValueId: `${ctx.valueId}__${ctx.integrationId}__${ctx.salesChannelId}__${ctx.isWizard ? '1' : '0'}`,
+            remoteSelectValueType: ctx.type,
             value: ctx.form.translatedRemoteName || ctx.form.remoteName,
           },
         }
