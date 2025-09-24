@@ -82,8 +82,35 @@
         "email": "E-Mail eingeben"
       }
     }
-  }
-  ,
+  },
+  "dashboard": {
+    "cards": {
+      "ebay": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
+      }
+    }
+  },
   "products": {
     "translation": {
       "messages": {

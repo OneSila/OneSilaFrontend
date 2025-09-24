@@ -213,6 +213,30 @@
           "title": "Products With Issues",
           "description": "Amazon products that failed to sync correctly."
         }
+      },
+      "ebay": {
+        "title": "eBay integration",
+        "description": "Resolve unmapped eBay data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "eBay properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "eBay product types that need mapping."
+        },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to eBay."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "eBay property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedInventoryFields": {
+          "title": "Inventory Fields",
+          "description": "eBay inventory fields missing a mapped OneSila property."
+        }
       }
     },
     "onboarding": {
