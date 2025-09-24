@@ -64,7 +64,7 @@ export const routes = [
     path: '/integrations/:type/property-value/:id',
     name: 'integrations.remotePropertySelectValues.edit',
     meta: { title: 'integrations.show.propertySelectValues.title' },
-    component: () => import('./integrations/integrations-show/containers/property-select-values/containers/amazon-property-select-values/containers/IntegrationsAmazonPropertySelectValueEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/property-select-values/containers/remote-property-select-values/IntegrationsRemotePropertySelectValueEditController.vue'),
   },
   {
     path: '/integrations/:type/amazon-default-unit-configurator/:id',
