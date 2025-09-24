@@ -36,6 +36,7 @@ export type Company = {
   id: string;
   name: string;
   hasAmazonIntegration?: boolean;
+  hasEbayIntegration?: boolean;
 };
 
 

@@ -331,8 +331,6 @@ export const ebayChannelsQuery = gql`
           id
           hostname
           active
-          region
-          country
           createdAt
           integrationPtr {
             id

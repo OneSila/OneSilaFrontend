@@ -9,7 +9,8 @@ import { injectAuth } from "../../../../../shared/modules/auth";
 const auth = injectAuth();
 
 const hasAmazonIntegration = computed(() => Boolean(auth.user.company?.hasAmazonIntegration));
-const hasEbayIntegration = computed(() => Boolean((auth.user.company as any)?.hasEbayIntegration));
+const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayIntegration));
+
 </script>
 
 <template>
