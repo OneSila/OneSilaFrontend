@@ -67,8 +67,8 @@ export const ebayInternalPropertiesListingConfigConstructor = (t: Function, spec
   addActions: true,
   addEdit: true,
   addShow: true,
-  editUrlName: 'integrations.ebayInternalProperties.edit',
-  showUrlName: 'integrations.ebayInternalProperties.edit',
+  editUrlName: 'integrations.remoteInternalProperties.edit',
+  showUrlName: 'integrations.remoteInternalProperties.edit',
   addDelete: false,
   addPagination: true,
 });

@@ -17,7 +17,7 @@ const internalSearchConfig = computed(() => ebayInternalPropertiesSearchConfigCo
 const internalListingConfig = ebayInternalPropertiesListingConfigConstructor(t, props.id);
 
 const buildInternalStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
-  name: 'integrations.ebayInternalProperties.edit',
+  name: 'integrations.remoteInternalProperties.edit',
   params: { type: 'ebay', id },
   query: { integrationId, salesChannelId, wizard: '1' },
 });
@@ -32,7 +32,6 @@ const buildInternalStartMappingRoute = ({ id, integrationId, salesChannelId }: {
     :listing-query="ebayInternalListingQuery"
     :listing-query-key="ebayInternalListingQueryKey"
     :build-start-mapping-route="buildInternalStartMappingRoute"
-    title-key="integrations.show.ebay.internalProperties.title"
     @pull-data="emit('pull-data')"
   />
 </template>

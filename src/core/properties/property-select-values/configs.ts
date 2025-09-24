@@ -65,7 +65,7 @@ const getSubmitUrl = (
 ) => {
     if (amazonSelectValueId) {
         const [selectValueId, integrationId, salesChannelId, wizard] = amazonSelectValueId.split('__');
-        const url: any = { name: 'integrations.amazonPropertySelectValues.edit', params: { type: 'amazon', id: selectValueId } };
+        const url: any = { name: 'integrations.remotePropertySelectValues.edit', params: { type: 'amazon', id: selectValueId } };
         if (integrationId) {
             url.query = { integrationId } as any;
             if (salesChannelId) {
@@ -79,7 +79,7 @@ const getSubmitUrl = (
     }
     if (redirectToRules && amazonRuleId) {
         const [ruleId, integrationId, salesChannelId, wizard] = amazonRuleId.split('__');
-        const url: any = { name: 'integrations.amazonProductTypes.edit', params: { type: 'amazon', id: ruleId } };
+        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: 'amazon', id: ruleId } };
         if (integrationId) {
             url.query = { integrationId } as any;
             if (salesChannelId) {

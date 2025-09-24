@@ -73,7 +73,7 @@ onMounted(async () => {
 
   if (nextId) {
     formConfig.value.submitUrl = {
-      name: 'integrations.ebayInternalProperties.edit',
+      name: 'integrations.remoteInternalProperties.edit',
       params: { type: type.value, id: nextId },
       query: { integrationId, salesChannelId, wizard: '1' },
     };

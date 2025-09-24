@@ -11,6 +11,12 @@ const { t } = useI18n();
 
 const searchConfig = ebayPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = ebayPropertySelectValuesListingConfigConstructor(t, props.id);
+
+const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
+  name: 'integrations.remotePropertySelectValues.edit',
+  params: { type: 'ebay', id },
+  query: { integrationId, salesChannelId, wizard: '1' },
+});
 </script>
 
 <template>
@@ -22,6 +28,7 @@ const listingConfig = ebayPropertySelectValuesListingConfigConstructor(t, props.
     :listing-query="listingQuery"
     :listing-query-key="listingQueryKey"
     :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } } }"
+    :build-start-mapping-route="buildStartMappingRoute"
     @pull-data="emit('pull-data')"
   >
     <template #bulkActions="{ selectedEntities, query, clearSelection }">

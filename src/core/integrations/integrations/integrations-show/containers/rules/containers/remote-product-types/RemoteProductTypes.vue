@@ -56,7 +56,7 @@ const startMapping = async () => {
   const id = await fetchFirstUnmapped();
   if (id) {
     router.push({
-      name: 'integrations.amazonProductTypes.edit',
+      name: 'integrations.remoteProductTypes.edit',
       params: { type: type.value, id },
       query: { integrationId: integrationId.value, salesChannelId: salesChannelId.value, wizard: '1' },
     });

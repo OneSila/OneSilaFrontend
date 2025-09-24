@@ -207,8 +207,8 @@ const amazonProductTypesListingConfig = (
   addActions: true,
   addEdit: true,
   addShow: true,
-  editUrlName: 'integrations.amazonProductTypes.edit',
-  showUrlName: 'integrations.amazonProductTypes.edit',
+  editUrlName: 'integrations.remoteProductTypes.edit',
+  showUrlName: 'integrations.remoteProductTypes.edit',
   addDelete: false,
   addPagination: true,
 });
@@ -250,8 +250,8 @@ const ebayProductTypesListingConfig = (
   addActions: true,
   addEdit: true,
   addShow: true,
-  editUrlName: 'integrations.amazonProductTypes.edit',
-  showUrlName: 'integrations.amazonProductTypes.edit',
+  editUrlName: 'integrations.remoteProductTypes.edit',
+  showUrlName: 'integrations.remoteProductTypes.edit',
   addDelete: false,
   addPagination: true,
 });
@@ -331,7 +331,7 @@ export const amazonImportedRemoteProductTypeConfig: ImportedRemoteProductTypeCon
     };
   },
   getIntegrationTitle,
-  editRouteName: 'integrations.amazonProductTypes.edit',
+  editRouteName: 'integrations.remoteProductTypes.edit',
 };
 
 type EbayImportedState = { categoryTreeId: string | null };
@@ -387,7 +387,7 @@ export const ebayImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfi
     };
   },
   getIntegrationTitle,
-  editRouteName: 'integrations.amazonProductTypes.edit',
+  editRouteName: 'integrations.remoteProductTypes.edit',
 };
 
 type RemoteProductTypeState = { propertyProductTypeId: string | null };
@@ -398,7 +398,7 @@ export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
   listingQueryKey: getListingQueryKey(IntegrationTypes.Amazon),
   productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Amazon),
   getIntegrationTitle,
-  editRouteName: 'integrations.amazonProductTypes.edit',
+  editRouteName: 'integrations.remoteProductTypes.edit',
   createState: () => ({ propertyProductTypeId: null }),
   extractItems: (data) => data?.amazonproducttypeitemSet || [],
   getItemName: (item) => item?.remoteProperty?.name || '',
@@ -411,7 +411,7 @@ export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
     }
 
     return {
-      name: 'integrations.amazonProperties.edit',
+      name: 'integrations.remoteProperties.edit',
       params: { type, id: property.id },
       query: { integrationId, salesChannelId },
     };
@@ -443,7 +443,7 @@ export const ebayMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<Re
   listingQueryKey: getListingQueryKey(IntegrationTypes.Ebay),
   productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Ebay),
   getIntegrationTitle,
-  editRouteName: 'integrations.amazonProductTypes.edit',
+  editRouteName: 'integrations.remoteProductTypes.edit',
   createState: () => ({ propertyProductTypeId: null }),
   extractItems: (data) => data?.items || [],
   getItemName: (item) => {
@@ -460,10 +460,6 @@ export const ebayMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<Re
       return null;
     }
 
-    return {
-      name: 'integrations.ebayProperties.edit',
-      params: { type, id: property.id },
-      query: { integrationId, salesChannelId },
-    };
+    return null;
   },
 };

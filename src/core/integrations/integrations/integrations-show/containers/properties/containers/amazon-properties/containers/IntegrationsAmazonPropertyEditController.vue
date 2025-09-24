@@ -66,7 +66,7 @@ onMounted(async () => {
 
   if (amazonCreateValue) {
     formConfig.value.submitUrl = {
-      name: 'integrations.amazonPropertySelectValues.edit',
+      name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: amazonCreateValue },
       query: { integrationId, salesChannelId, ...(isWizard ? { wizard: '1' } : {}) },
     };
@@ -87,7 +87,7 @@ onMounted(async () => {
 
   if (nextId) {
     formConfig.value.submitUrl = {
-      name: 'integrations.amazonProperties.edit',
+      name: 'integrations.remoteProperties.edit',
       params: { type: type.value, id: nextId },
       query: { integrationId, salesChannelId, wizard: '1' },
     };

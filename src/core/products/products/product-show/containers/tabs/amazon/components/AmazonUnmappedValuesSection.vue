@@ -93,7 +93,7 @@ const unmappedValues = computed(() => {
           <td class="py-1 px-2">
             <Link
               :path="{
-                name: 'integrations.amazonPropertySelectValues.edit',
+                name: 'integrations.remotePropertySelectValues.edit',
                 params: { type: 'amazon', id: value.id },
                 query: {
                   integrationId: value.salesChannel?.id,
@@ -107,7 +107,7 @@ const unmappedValues = computed(() => {
             <Link
               v-if="value.amazonProperty"
               :path="{
-                name: 'integrations.amazonProperties.edit',
+                name: 'integrations.remoteProperties.edit',
                 params: { type: 'amazon', id: value.amazonProperty.id },
                 query: {
                   integrationId: value.salesChannel?.id,
