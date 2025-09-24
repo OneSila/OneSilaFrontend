@@ -12,7 +12,7 @@ const searchConfig = computed(() => ebayPropertiesSearchConfigConstructor(t, pro
 const listingConfig = ebayPropertiesListingConfigConstructor(t, props.id);
 
 const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
-  name: 'integrations.ebayProperties.edit',
+  name: 'integrations.remoteProperties.edit',
   params: { type: 'ebay', id },
   query: { integrationId, salesChannelId, wizard: '1' },
 });
@@ -29,7 +29,6 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
       :listing-query="listingQuery"
       :listing-query-key="listingQueryKey"
       :build-start-mapping-route="buildStartMappingRoute"
-      title-key="integrations.show.ebay.properties.title"
       @pull-data="emit('pull-data')"
     />
   </div>

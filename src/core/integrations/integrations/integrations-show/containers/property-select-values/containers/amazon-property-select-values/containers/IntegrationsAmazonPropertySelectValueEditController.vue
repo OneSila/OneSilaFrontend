@@ -75,7 +75,7 @@ const loadingRecommendations = ref(false);
 const amazonPropertyEditPath = computed(() =>
   amazonPropertyId.value
     ? {
-        name: 'integrations.amazonProperties.edit',
+        name: 'integrations.remoteProperties.edit',
         params: { type: type.value, id: amazonPropertyId.value },
         query: { integrationId, salesChannelId }
       }
@@ -226,7 +226,7 @@ onMounted(async () => {
 
   if (nextId) {
     enhancedConfig.value.submitUrl = {
-      name: 'integrations.amazonPropertySelectValues.edit',
+      name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: nextId },
       query: { integrationId, salesChannelId, wizard: '1' },
     };
@@ -364,7 +364,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
                   <span class="font-medium flex items-center gap-1">
                     ⚠️ {{ t('integrations.show.propertySelectValues.notMappedBanner.title') }}
                   </span>
-                  <Link :path="{ name: 'integrations.amazonProperties.edit', params: { type: type, id: amazonPropertyId }, query: { integrationId, salesChannelId, amazonCreateValue: valueId } }" class="underline">
+                  <Link :path="{ name: 'integrations.remoteProperties.edit', params: { type: type, id: amazonPropertyId }, query: { integrationId, salesChannelId, amazonCreateValue: valueId } }" class="underline">
                     {{ t('integrations.show.propertySelectValues.notMappedBanner.content') }}
                   </Link>
                 </div>

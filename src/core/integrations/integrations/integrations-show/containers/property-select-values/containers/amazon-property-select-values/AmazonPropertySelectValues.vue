@@ -13,7 +13,7 @@ const searchConfig = amazonPropertySelectValuesSearchConfigConstructor(t, props.
 const listingConfig = amazonPropertySelectValuesListingConfigConstructor(t, props.id);
 
 const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
-  name: 'integrations.amazonPropertySelectValues.edit',
+  name: 'integrations.remotePropertySelectValues.edit',
   params: { type: 'amazon', id },
   query: { integrationId, salesChannelId, wizard: '1' },
 });

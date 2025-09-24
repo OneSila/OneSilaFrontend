@@ -152,7 +152,7 @@ const createProperty = async () => {
     Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
     if (amazonRuleId) {
       const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
-      const url: any = { name: 'integrations.amazonProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
+      const url: any = { name: 'integrations.remoteProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
       if (integrationId) {
         url.query = {
           integrationId,
