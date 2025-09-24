@@ -94,14 +94,12 @@ export const ebayPropertiesSearchConfigConstructor = (t: Function, salesChannelI
 export const ebayPropertiesListingConfigConstructor = (t: Function, specificIntegrationId): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
-    t('integrations.show.properties.labels.code'),
     t('integrations.show.mapping.mappedLocally'),
     t('properties.properties.title'),
     t('integrations.show.propertySelectValues.labels.marketplace'),
   ],
   fields: [
     { name: 'localizedName', type: FieldType.Text },
-    { name: 'code', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
     {
       name: 'localInstance',

@@ -1024,7 +1024,6 @@ export const ebayPropertiesQuery = gql`
       edges {
         node {
           id
-          code
           mappedLocally
           mappedRemotely
           localizedName
