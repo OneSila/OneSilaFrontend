@@ -10,6 +10,32 @@
       "addProduct": "Product Toevoegen",
       "addInventory": "Voorraad Toevoegen"
     },
+    "cards": {
+      "ebay": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
+      }
+    },
     "onboarding": {
       "completedHeader": "Alle stappen zijn afgewerkt!",
       "completedMessage": "Proficiat!  Alle stappen om van start te kunnen gaan zijn nu klaar en uw bedrijf te beheren via OneSila.  We wensen u veel success, en weet dat we voor uw klaar staan om u te helpen.",

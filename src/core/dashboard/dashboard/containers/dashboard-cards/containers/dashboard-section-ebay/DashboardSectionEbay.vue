@@ -3,13 +3,12 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { injectAuth } from '../../../../../../../shared/modules/auth';
 import {
-  amazonPropertiesQuery,
-  amazonProductTypesQuery,
-  amazonPropertySelectValuesQuery,
-  amazonDefaultUnitConfiguratorsQuery,
-  amazonChannelsQuery
+  ebayPropertiesQuery,
+  ebayProductTypesQuery,
+  ebayPropertySelectValuesQuery,
+  ebayInternalPropertiesQuery,
+  ebayChannelsQuery,
 } from '../../../../../../../shared/api/queries/salesChannels.js';
-import { dashboardAmazonProductsWithIssues } from '../../../../../../../shared/api/queries/dashboardCards.js';
 import apolloClient from '../../../../../../../../apollo-client';
 import { DashboardCard } from '../dashboard-card';
 import { Toggle } from '../../../../../../../shared/components/atoms/toggle';
@@ -20,7 +19,7 @@ import { LocalLoader } from '../../../../../../../shared/components/atoms/local-
 const { t } = useI18n();
 const auth = injectAuth();
 
-interface AmazonCardData {
+interface EbayCardData {
   integrationId: string;
   hostname: string;
   salesChannelId: string;
@@ -28,88 +27,80 @@ interface AmazonCardData {
   productTypes: number;
   localProductTypes: number;
   selectValues: number;
-  unitConfigurators: number;
-  productsWithIssues: number;
+  inventoryFields: number;
 }
 
-const showCompletedAmazonCards = ref<Record<string, boolean>>({});
-const integrations = ref<AmazonCardData[]>([]);
+const showCompletedEbayCards = ref<Record<string, boolean>>({});
+const integrations = ref<EbayCardData[]>([]);
 const loading = ref(false);
 const finishedFetch = ref(false);
 
-const fetchCounts = async (salesChannelId: string) => {
-const makeQuery = (options: any) =>
-  apolloClient
-    .query({ ...options, fetchPolicy: 'cache-first' })
-    .then(({ data }) => data)
-    .catch(() => null);
+const isShowingCompleted = (integrationId: string) =>
+  showCompletedEbayCards.value[integrationId] ?? false;
 
-  const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
+const updateShowCompleted = (integrationId: string, value: boolean) => {
+  showCompletedEbayCards.value = {
+    ...showCompletedEbayCards.value,
+    [integrationId]: value,
+  };
+};
+
+const fetchCounts = async (salesChannelId: string) => {
+  const makeQuery = (options: any) =>
+    apolloClient
+      .query({ ...options, fetchPolicy: 'cache-first' })
+      .then(({ data }) => data)
+      .catch(() => null);
+
+  const [propRes, typeRes, localTypeRes, valueRes, inventoryRes] = await Promise.all([
     makeQuery({
-      query: amazonPropertiesQuery,
+      query: ebayPropertiesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
     }),
     makeQuery({
-      query: amazonProductTypesQuery,
+      query: ebayProductTypesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
     }),
     makeQuery({
-      query: amazonProductTypesQuery,
+      query: ebayProductTypesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedRemotely: false },
       },
     }),
     makeQuery({
-      query: amazonPropertySelectValuesQuery,
+      query: ebayPropertySelectValuesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
     }),
     makeQuery({
-      query: amazonDefaultUnitConfiguratorsQuery,
+      query: ebayInternalPropertiesQuery,
       variables: {
         first: 1,
-        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false  },
-      },
-    }),
-    makeQuery({
-      query: dashboardAmazonProductsWithIssues,
-      variables: {
-        salesChannelId,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
       },
     }),
   ]);
 
   return {
-    properties: propRes?.amazonProperties?.totalCount || 0,
-    productTypes: typeRes?.amazonProductTypes?.totalCount || 0,
-    localProductTypes: localTypeRes?.amazonProductTypes?.totalCount || 0,
-    selectValues: valueRes?.amazonPropertySelectValues?.totalCount || 0,
-    unitConfigurators: unitRes?.amazonDefaultUnitConfigurators?.totalCount || 0,
-    productsWithIssues: issuesRes?.products?.totalCount || 0,
+    properties: propRes?.ebayProperties?.totalCount || 0,
+    productTypes: typeRes?.ebayProductTypes?.totalCount || 0,
+    localProductTypes: localTypeRes?.ebayProductTypes?.totalCount || 0,
+    selectValues: valueRes?.ebayPropertySelectValues?.totalCount || 0,
+    inventoryFields: inventoryRes?.ebayInternalProperties?.totalCount || 0,
   };
 };
 
-const isShowingCompleted = (integrationId: string) =>
-  showCompletedAmazonCards.value[integrationId] ?? false;
-
-const updateShowCompleted = (integrationId: string, value: boolean) => {
-  showCompletedAmazonCards.value = {
-    ...showCompletedAmazonCards.value,
-    [integrationId]: value,
-  };
-};
-
-const fetchAmazonIntegrations = async () => {
-  if (!(auth.user?.company as any)?.hasAmazonIntegration) {
+const fetchEbayIntegrations = async () => {
+  if (!(auth.user?.company as any)?.hasEbayIntegration) {
     finishedFetch.value = true;
     return;
   }
@@ -118,12 +109,12 @@ const fetchAmazonIntegrations = async () => {
 
   try {
     const { data } = await apolloClient.query({
-      query: amazonChannelsQuery,
-      fetchPolicy: 'cache-first'
+      query: ebayChannelsQuery,
+      fetchPolicy: 'cache-first',
     });
 
     integrations.value = [];
-    const edges = data?.amazonChannels?.edges || [];
+    const edges = data?.ebayChannels?.edges || [];
 
     for (const edge of edges) {
       const channel = edge.node;
@@ -148,8 +139,7 @@ const fetchAmazonIntegrations = async () => {
   }
 };
 
-
-onMounted(fetchAmazonIntegrations);
+onMounted(fetchEbayIntegrations);
 </script>
 
 <template>
@@ -161,7 +151,7 @@ onMounted(fetchAmazonIntegrations);
             <FlexCell center>
               <Flex>
                 <h5 class="font-semibold text-lg dark:text-white-light">
-                  {{ t('dashboard.cards.amazon.title') }} - {{ integration.hostname }}
+                  {{ t('dashboard.cards.ebay.title') }} - {{ integration.hostname }}
                 </h5>
               </Flex>
             </FlexCell>
@@ -187,64 +177,56 @@ onMounted(fetchAmazonIntegrations);
             </FlexCell>
             <FlexCell>
               <h6 class="text-md text-gray-600 dark:text-white-light">
-                {{ t('dashboard.cards.amazon.description') }}
+                {{ t('dashboard.cards.ebay.description') }}
               </h6>
             </FlexCell>
           </Flex>
         </FlexCell>
         <FlexCell>
-          <hr class="mt-2">
+          <hr class="mt-2" />
         </FlexCell>
       </Flex>
 
       <div class="cards grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         <DashboardCard
           :counter="integration.productTypes"
-          :title="t('dashboard.cards.amazon.unmappedProductTypes.title')"
-          :description="t('dashboard.cards.amazon.unmappedProductTypes.description')"
+          :title="t('dashboard.cards.ebay.unmappedProductTypes.title')"
+          :description="t('dashboard.cards.ebay.unmappedProductTypes.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
         />
         <DashboardCard
           :counter="integration.localProductTypes"
-          :title="t('dashboard.cards.amazon.unmappedLocalProductTypes.title')"
-          :description="t('dashboard.cards.amazon.unmappedLocalProductTypes.description')"
+          :title="t('dashboard.cards.ebay.unmappedLocalProductTypes.title')"
+          :description="t('dashboard.cards.ebay.unmappedLocalProductTypes.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
         <DashboardCard
           :counter="integration.properties"
-          :title="t('dashboard.cards.amazon.unmappedProperties.title')"
-          :description="t('dashboard.cards.amazon.unmappedProperties.description')"
+          :title="t('dashboard.cards.ebay.unmappedProperties.title')"
+          :description="t('dashboard.cards.ebay.unmappedProperties.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
         />
         <DashboardCard
           :counter="integration.selectValues"
-          :title="t('dashboard.cards.amazon.unmappedSelectValues.title')"
-          :description="t('dashboard.cards.amazon.unmappedSelectValues.description')"
+          :title="t('dashboard.cards.ebay.unmappedSelectValues.title')"
+          :description="t('dashboard.cards.ebay.unmappedSelectValues.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false } }"
         />
         <DashboardCard
-          :counter="integration.unitConfigurators"
-          :title="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.title')"
-          :description="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.description')"
+          :counter="integration.inventoryFields"
+          :title="t('dashboard.cards.ebay.unmappedInventoryFields.title')"
+          :description="t('dashboard.cards.ebay.unmappedInventoryFields.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'defaultUnits', mappedLocally: false } }"
-        />
-        <DashboardCard
-          :counter="integration.productsWithIssues"
-          :title="t('dashboard.cards.amazon.productsWithIssues.title')"
-          :description="t('dashboard.cards.amazon.productsWithIssues.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
-          color="red"
-          :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId, active: true } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'inventoryFields', mappedLocally: false, mappedRemotely: 'all' } }"
         />
       </div>
     </Card>
