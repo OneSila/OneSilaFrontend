@@ -52,7 +52,7 @@ export const routes = [
     path: '/integrations/:type/property/:id',
     name: 'integrations.remoteProperties.edit',
     meta: { title: 'integrations.show.properties.title' },
-    component: () => import('./integrations/integrations-show/containers/properties/containers/amazon-properties/containers/IntegrationsAmazonPropertyEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/properties/containers/remote-properties/IntegrationsRemotePropertyEditController.vue'),
   },
   {
     path: '/integrations/:type/internal-property/:id',
