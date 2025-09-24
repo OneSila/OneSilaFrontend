@@ -101,6 +101,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
     dropdownPosition: 'bottom',
   }),
   localPropertyLabelKey: 'integrations.show.propertySelectValues.labels.localProperty',
+  localPropertyHelpKey: 'integrations.show.propertySelectValues.help.selectValueEbay',
   localPropertyEditPath: ctx =>
     ctx.localPropertyId ? { name: 'properties.properties.edit', params: { id: ctx.localPropertyId } } : null,
   recommendations: {

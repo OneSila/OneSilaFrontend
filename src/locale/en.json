@@ -2591,6 +2591,8 @@
           "remoteValue": "Value exactly as defined by the marketplace.",
           "remoteName": "Name from the marketplace. You can change it.",
           "selectValue": "Choose the OneSila value that matches this marketplace value.",
+          "selectValueAmazon": "Choose the OneSila value that matches this Amazon value.",
+          "selectValueEbay": "Choose the OneSila value that matches this eBay value.",
           "translatedRemoteName": "Translated name for this value.",
           "localizedValue": "Value as returned by the marketplace.",
           "translatedValue": "Translated value in the company language."
