@@ -1138,6 +1138,7 @@ export const getEbayPropertyQuery = gql`
       mappedLocally
       mappedRemotely
       localizedName
+      translatedName
       type
       allowsUnmappedValues
       marketplace {

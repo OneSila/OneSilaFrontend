@@ -428,7 +428,8 @@ export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
         query: {
           propertyId: state.propertyProductTypeId,
           isRule: '1',
-          amazonRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
+          remoteRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${isWizard ? '1' : '0'}`,
+          remoteIntegrationType: IntegrationTypes.Amazon,
           value: formData?.name,
         },
       },

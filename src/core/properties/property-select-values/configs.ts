@@ -28,18 +28,19 @@ export const baseFormConfigConstructor = (
     propertyId: string | null = null,
     addImage: boolean = true,
     redirectToRules: boolean = false,
-    amazonRuleId: string | null = null,
-    amazonSelectValueId: string | null = null,
+    remoteRuleId: string | null = null,
+    remoteSelectValueId: string | null = null,
+    remoteIntegrationType: string | null = null,
 ): FormConfig => ({
     cols: 1,
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId, amazonSelectValueId),
-    addSubmitAndContinue: !amazonRuleId && !amazonSelectValueId,
+    submitUrl: getSubmitUrl(redirectToRules, propertyId, remoteRuleId, remoteSelectValueId, remoteIntegrationType),
+    addSubmitAndContinue: !remoteRuleId && !remoteSelectValueId,
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
-    ...((redirectToRules && amazonRuleId) || amazonSelectValueId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
+    ...((redirectToRules && remoteRuleId) || remoteSelectValueId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
     fields: [
         getPropertyField(t, propertyId, type),
         {
@@ -60,12 +61,15 @@ export const baseFormConfigConstructor = (
 const getSubmitUrl = (
     redirectToRules: boolean,
     propertyId: string | null,
-    amazonRuleId: string | null,
-    amazonSelectValueId: string | null,
+    remoteRuleId: string | null,
+    remoteSelectValueId: string | null,
+    remoteIntegrationType: string | null,
 ) => {
-    if (amazonSelectValueId) {
-        const [selectValueId, integrationId, salesChannelId, wizard] = amazonSelectValueId.split('__');
-        const url: any = { name: 'integrations.remotePropertySelectValues.edit', params: { type: 'amazon', id: selectValueId } };
+    const integrationType = remoteIntegrationType || 'amazon';
+
+    if (remoteSelectValueId) {
+        const [selectValueId, integrationId, salesChannelId, wizard] = remoteSelectValueId.split('__');
+        const url: any = { name: 'integrations.remotePropertySelectValues.edit', params: { type: integrationType, id: selectValueId } };
         if (integrationId) {
             url.query = { integrationId } as any;
             if (salesChannelId) {
@@ -77,9 +81,9 @@ const getSubmitUrl = (
         }
         return url;
     }
-    if (redirectToRules && amazonRuleId) {
-        const [ruleId, integrationId, salesChannelId, wizard] = amazonRuleId.split('__');
-        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: 'amazon', id: ruleId } };
+    if (redirectToRules && remoteRuleId) {
+        const [ruleId, integrationId, salesChannelId, wizard] = remoteRuleId.split('__');
+        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: integrationType, id: ruleId } };
         if (integrationId) {
             url.query = { integrationId } as any;
             if (salesChannelId) {

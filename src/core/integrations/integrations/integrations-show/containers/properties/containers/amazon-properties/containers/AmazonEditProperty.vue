@@ -26,7 +26,7 @@ const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
-const amazonCreateValue = route.query.amazonCreateValue?.toString() || null;
+const remoteCreateValue = route.query.remoteCreateValue?.toString() || null;
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
 
@@ -78,10 +78,10 @@ onMounted(async () => {
     return;
   }
 
-  if (amazonCreateValue) {
+  if (remoteCreateValue) {
     formConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
-      params: { type: type.value, id: amazonCreateValue },
+      params: { type: type.value, id: remoteCreateValue },
       query: { integrationId, salesChannelId, ...(isWizard ? { wizard: '1' } : {}) },
     };
     return;
@@ -209,11 +209,12 @@ const selectRecommendation = (id: string) => {
     <template #additional-button>
       <Link
         :path="{ name: 'properties.properties.create', query: {
-          amazonRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
+          remoteRuleId: `${amazonPropertyId}__${integrationId}__${salesChannelId}`,
+          remoteIntegrationType: type,
           name: formData.name,
           type: formData.type,
-          amazonWizard: isWizard ? '1' : '0',
-          ...(amazonCreateValue ? { amazonCreateValue } : {}),
+          remoteWizard: isWizard ? '1' : '0',
+          ...(remoteCreateValue ? { remoteCreateValue } : {}),
         } }"
       >
         <Button type="button" class="btn btn-info">

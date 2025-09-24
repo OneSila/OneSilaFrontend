@@ -26,14 +26,15 @@ import {processGraphQLErrors} from "../../../../shared/utils";
 const router = useRouter();
 const { t } = useI18n();
 const route = useRoute();
-const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
+const remoteRuleId = route.query.remoteRuleId ? route.query.remoteRuleId.toString() : null;
+const remoteIntegrationType = route.query.remoteIntegrationType ? route.query.remoteIntegrationType.toString() : null;
 const nameFromUrl = route.query.name ? route.query.name.toString() : '';
 const typeFromUrl = route.query.type ? route.query.type.toString() : '';
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
-const isAmazonWizard = route.query.amazonWizard === '1';
-const amazonCreateValue = route.query.amazonCreateValue ? route.query.amazonCreateValue.toString() : null;
+const isRemoteWizard = route.query.remoteWizard === '1';
+const remoteCreateValue = route.query.remoteCreateValue ? route.query.remoteCreateValue.toString() : null;
 const showDuplicateModal = ref(false);
 const duplicateItems = ref<{ label: string; urlParam: any }[]>([]);
 const checkingDuplicates = ref(false);
@@ -150,16 +151,20 @@ const createProperty = async () => {
 
   if (data && data.createProperty) {
     Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
-    if (amazonRuleId) {
-      const [ruleId, integrationId, salesChannelId] = amazonRuleId.split('__');
-      const url: any = { name: 'integrations.remoteProperties.edit', params: { type: 'amazon', id: ruleId, integrationId: integrationId } };
+    if (remoteRuleId) {
+      const [ruleId, integrationId = '', salesChannelId = ''] = remoteRuleId.split('__');
+      const integrationType = remoteIntegrationType || 'amazon';
+      const url: any = {
+        name: 'integrations.remoteProperties.edit',
+        params: { type: integrationType, id: ruleId, integrationId },
+      };
       if (integrationId) {
         url.query = {
           integrationId,
-          salesChannelId,
+          ...(salesChannelId ? { salesChannelId } : {}),
           propertyId: data.createProperty.id,
-          wizard: isAmazonWizard ? '1' : '0',
-          ...(amazonCreateValue ? { amazonCreateValue } : {}),
+          wizard: isRemoteWizard ? '1' : '0',
+          ...(remoteCreateValue ? { remoteCreateValue } : {}),
         };
       }
       router.push(url);

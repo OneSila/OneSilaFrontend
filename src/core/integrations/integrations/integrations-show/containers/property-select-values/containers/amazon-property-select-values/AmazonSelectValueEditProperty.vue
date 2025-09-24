@@ -108,7 +108,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
       query: {
         integrationId: ctx.integrationId,
         salesChannelId: ctx.salesChannelId,
-        amazonCreateValue: ctx.valueId,
+        remoteCreateValue: ctx.valueId,
       },
     }),
   },
@@ -133,7 +133,8 @@ const config: RemoteSelectValueEditPropertyConfig = {
           name: 'properties.values.create',
           query: {
             propertyId: ctx.localPropertyId,
-            amazonSelectValueId: `${ctx.valueId}__${ctx.integrationId}__${ctx.salesChannelId}__${ctx.isWizard ? '1' : '0'}`,
+            remoteSelectValueId: `${ctx.valueId}__${ctx.integrationId}__${ctx.salesChannelId}__${ctx.isWizard ? '1' : '0'}`,
+            remoteIntegrationType: ctx.type,
             value: ctx.form.translatedRemoteName || ctx.form.remoteName,
           },
         }

@@ -2010,6 +2010,26 @@
   },
   "integrations": {
     "show": {
+      "properties": {
+        "title": "",
+        "labels": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "localizedName": "",
+          "translatedName": "",
+          "property": ""
+        }
+      },
       "ebay": {
         "title": "",
         "productRules": {
