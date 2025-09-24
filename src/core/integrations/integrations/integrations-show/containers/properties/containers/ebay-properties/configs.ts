@@ -101,6 +101,7 @@ export const ebayPropertiesListingConfigConstructor = (t: Function, specificInte
   ],
   fields: [
     { name: 'localizedName', type: FieldType.Text },
+    { name: 'code', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
     {
       name: 'localInstance',
