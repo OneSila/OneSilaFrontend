@@ -29,17 +29,18 @@ export const baseFormConfigConstructor = (
     addImage: boolean = true,
     redirectToRules: boolean = false,
     amazonRuleId: string | null = null,
-    amazonSelectValueId: string | null = null,
+    remoteSelectValueId: string | null = null,
+    remoteSelectValueType: string | null = null,
 ): FormConfig => ({
     cols: 1,
     type: type,
     mutation: mutation,
     mutationKey: mutationKey,
-    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId, amazonSelectValueId),
-    addSubmitAndContinue: !amazonRuleId && !amazonSelectValueId,
+    submitUrl: getSubmitUrl(redirectToRules, propertyId, amazonRuleId, remoteSelectValueId, remoteSelectValueType),
+    addSubmitAndContinue: !amazonRuleId && !remoteSelectValueId,
     submitAndContinueUrl: {name: 'properties.values.edit'},
     deleteMutation: deletePropertySelectValueMutation,
-    ...((redirectToRules && amazonRuleId) || amazonSelectValueId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
+    ...((redirectToRules && amazonRuleId) || remoteSelectValueId ? { addIdAsQueryParamInSubmitUrl: true } : {}),
     fields: [
         getPropertyField(t, propertyId, type),
         {
@@ -61,11 +62,15 @@ const getSubmitUrl = (
     redirectToRules: boolean,
     propertyId: string | null,
     amazonRuleId: string | null,
-    amazonSelectValueId: string | null,
+    remoteSelectValueId: string | null,
+    remoteSelectValueType: string | null,
 ) => {
-    if (amazonSelectValueId) {
-        const [selectValueId, integrationId, salesChannelId, wizard] = amazonSelectValueId.split('__');
-        const url: any = { name: 'integrations.remotePropertySelectValues.edit', params: { type: 'amazon', id: selectValueId } };
+    if (remoteSelectValueId) {
+        const [selectValueId, integrationId, salesChannelId, wizard] = remoteSelectValueId.split('__');
+        const url: any = {
+            name: 'integrations.remotePropertySelectValues.edit',
+            params: { type: remoteSelectValueType ?? 'amazon', id: selectValueId }
+        };
         if (integrationId) {
             url.query = { integrationId } as any;
             if (salesChannelId) {

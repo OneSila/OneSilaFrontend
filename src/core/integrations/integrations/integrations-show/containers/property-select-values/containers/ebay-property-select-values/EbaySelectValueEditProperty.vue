@@ -7,6 +7,8 @@ import { ebayPropertySelectValueEditFormConfigConstructor, listingQuery } from '
 import { getEbayPropertySelectValueQuery, ebayPropertiesQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
 import { propertySelectValuesQuery } from '../../../../../../../../shared/api/queries/properties.js';
 import { checkPropertySelectValueForDuplicatesMutation } from '../../../../../../../../shared/api/mutations/properties.js';
+import { Link } from '../../../../../../../../shared/components/atoms/link';
+import { Button } from '../../../../../../../../shared/components/atoms/button';
 
 const { t } = useI18n();
 
@@ -46,6 +48,14 @@ const config: RemoteSelectValueEditPropertyConfig = {
   marketplaceEditPath: ctx =>
     ctx.marketplaceId
       ? { name: 'integrations.stores.edit', params: { type: ctx.type, id: ctx.marketplaceId }, query: { integrationId: ctx.integrationId } }
+      : null,
+  propertyEditPath: ctx =>
+    ctx.propertyId
+      ? {
+          name: 'integrations.remoteProperties.edit',
+          params: { type: ctx.type, id: ctx.propertyId },
+          query: { integrationId: ctx.integrationId, salesChannelId: ctx.salesChannelId },
+        }
       : null,
   remoteFields: [
     {
@@ -91,6 +101,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
     dropdownPosition: 'bottom',
   }),
   localPropertyLabelKey: 'integrations.show.propertySelectValues.labels.localProperty',
+  localPropertyHelpKey: 'integrations.show.propertySelectValues.help.selectValueEbay',
   localPropertyEditPath: ctx =>
     ctx.localPropertyId ? { name: 'properties.properties.edit', params: { id: ctx.localPropertyId } } : null,
   recommendations: {
@@ -113,6 +124,18 @@ const config: RemoteSelectValueEditPropertyConfig = {
     params: { type: ctx.type, id: ctx.integrationId },
     query: { tab: 'propertySelectValues' },
   }),
+  generateValuePath: ctx =>
+    ctx.localPropertyId
+      ? {
+          name: 'properties.values.create',
+          query: {
+            propertyId: ctx.localPropertyId,
+            remoteSelectValueId: `${ctx.valueId}__${ctx.integrationId}__${ctx.salesChannelId}__${ctx.isWizard ? '1' : '0'}`,
+            remoteSelectValueType: ctx.type,
+            value: ctx.form.translatedValue || ctx.form.localizedValue,
+          },
+        }
+      : null,
   wizard: {
     query: listingQuery,
     variables: ctx => ({
@@ -129,5 +152,13 @@ const config: RemoteSelectValueEditPropertyConfig = {
 </script>
 
 <template>
-  <RemoteSelectValueEditProperty :config="config" />
+  <RemoteSelectValueEditProperty :config="config">
+    <template #additional-button="{ generateValuePath }">
+      <Link v-if="generateValuePath" :path="generateValuePath">
+        <Button type="button" class="btn btn-info">
+          {{ t('integrations.show.generatePropertySelectValue') }}
+        </Button>
+      </Link>
+    </template>
+  </RemoteSelectValueEditProperty>
 </template>
