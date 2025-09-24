@@ -48,6 +48,9 @@ watch(() => props.config, (newConfig) => {
       <HelpSection :config="enhancedConfig" />
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
         <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear"  @submit="emit('submit')" @form-updated="handleFormUpdate" >
+          <template #before-fields>
+            <slot name="before-fields" />
+          </template>
           <template #additional-button>
             <slot name="additional-button" />
           </template>
@@ -57,12 +60,15 @@ watch(() => props.config, (newConfig) => {
         </FormCreate>
 
         <FormEdit v-else-if="enhancedConfig.type === FormType.EDIT" :config="enhancedConfig" :fields-to-clear="fieldsToClear" @submit="emit('submit')"  @set-data="handleSetData" @form-updated="handleFormUpdate" >
-            <template #additional-button>
-              <slot name="additional-button" />
-            </template>
-            <template #additional-fields>
-              <slot name="additional-fields" />
-            </template>
+          <template #before-fields>
+            <slot name="before-fields" />
+          </template>
+          <template #additional-button>
+            <slot name="additional-button" />
+          </template>
+          <template #additional-fields>
+            <slot name="additional-fields" />
+          </template>
         </FormEdit>
       </div>
     </div>

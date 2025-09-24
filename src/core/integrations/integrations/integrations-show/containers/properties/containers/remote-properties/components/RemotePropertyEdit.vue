@@ -38,13 +38,15 @@ const handleFormUpdated = (form: Record<string, any>) => {
       <Breadcrumbs :links="props.breadcrumbsLinks" />
     </template>
     <template #content>
-      <slot name="before-form" />
       <GeneralForm
         v-if="props.formConfig"
         :config="props.formConfig"
         @set-data="handleSetData"
         @form-updated="handleFormUpdated"
       >
+        <template #before-fields>
+          <slot name="before-form" />
+        </template>
         <template #additional-button>
           <slot name="additional-button" />
         </template>

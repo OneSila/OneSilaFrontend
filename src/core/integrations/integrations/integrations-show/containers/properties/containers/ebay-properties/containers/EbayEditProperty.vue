@@ -254,7 +254,7 @@ const selectRecommendation = (id: string) => {
     @form-updated="handleFormUpdate"
   >
     <template #before-form>
-      <div v-if="marketplaceInfo.name" class="px-4 pt-6 sm:px-8 sm:pt-8">
+      <div v-if="marketplaceInfo.name" class="mb-6">
         <Label class="font-semibold block text-sm leading-6 text-gray-900">
           {{ t('integrations.show.propertySelectValues.labels.marketplace') }}
         </Label>
