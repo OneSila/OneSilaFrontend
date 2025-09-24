@@ -2,10 +2,64 @@ import { FieldType, PropertyTypes } from "../../../../../../../../shared/utils/c
 import {
   ebayPropertySelectValuesQuery,
   ebayPropertiesQuery,
+  getEbayPropertySelectValueQuery,
   salesChannelViewsQuerySelector,
 } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import { updateEbayPropertySelectValueMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import type { FormConfig } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
+
+export const ebayPropertySelectValueEditFormConfigConstructor = (
+  t: Function,
+  type: string,
+  valueId: string,
+  integrationId: string,
+): FormConfig => ({
+  cols: 1,
+  type: FormType.EDIT,
+  mutation: updateEbayPropertySelectValueMutation,
+  mutationKey: "updateEbayPropertySelectValue",
+  query: getEbayPropertySelectValueQuery,
+  queryVariables: { id: valueId },
+  queryDataKey: "ebayPropertySelectValue",
+  submitUrl: {
+    name: 'integrations.integrations.show',
+    params: { type, id: integrationId },
+    query: { tab: 'propertySelectValues' },
+  },
+  fields: [
+    { type: FieldType.Hidden, name: 'id', value: valueId },
+    {
+      type: FieldType.Text,
+      name: 'ebayProperty',
+      label: t('integrations.show.propertySelectValues.labels.ebayProperty'),
+      disabled: true,
+      help: t('integrations.show.propertySelectValues.help.ebayProperty'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'marketplace',
+      label: t('integrations.show.propertySelectValues.labels.marketplace'),
+      disabled: true,
+      help: t('integrations.show.propertySelectValues.help.marketplace'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'localizedValue',
+      label: t('integrations.show.propertySelectValues.labels.localizedValue'),
+      disabled: true,
+      help: t('integrations.show.propertySelectValues.help.localizedValue'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'translatedValue',
+      label: t('integrations.show.propertySelectValues.labels.translatedValue'),
+      help: t('integrations.show.propertySelectValues.help.translatedValue'),
+    },
+  ],
+});
 
 export const ebayPropertySelectValuesSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
   search: true,
