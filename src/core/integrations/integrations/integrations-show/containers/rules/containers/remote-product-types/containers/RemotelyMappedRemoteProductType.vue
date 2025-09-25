@@ -60,6 +60,23 @@ const accordionItems = [
 
 const integrationTitle = computed(() => props.config.getIntegrationTitle(t, type.value));
 const marketplaceName = computed(() => props.productType?.marketplace?.name || '');
+const marketplaceLink = computed(() => {
+  const marketplace = props.productType?.marketplace;
+  if (!marketplace?.id) {
+    return null;
+  }
+
+  const query: Record<string, string> = {};
+  if (integrationId) {
+    query.integrationId = integrationId;
+  }
+
+  return {
+    name: 'integrations.stores.edit',
+    params: { type: type.value, id: marketplace.id },
+    ...(Object.keys(query).length ? { query } : {}),
+  };
+});
 
 const updateItemsFromData = (data: any) => {
   items.value = props.config.extractItems(data, state);
@@ -250,10 +267,15 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
             <Label class="font-semibold block text-sm leading-6 text-gray-900">
               {{ t('integrations.show.propertySelectValues.labels.marketplace') }}
             </Label>
-<!--            <Link v-if="marketplaceLink" class="text-sm text-purple-700 hover:underline" :path="marketplaceLink">-->
+            <Link
+              v-if="marketplaceLink"
+              class="text-sm text-purple-700 hover:underline"
+              :path="marketplaceLink"
+            >
               {{ marketplaceName }}
-<!--            </Link>-->
-            </div>
+            </Link>
+            <span v-else>{{ marketplaceName }}</span>
+          </div>
         </template>
 
 
