@@ -76,12 +76,15 @@ watch(
 );
 
 watch(
-  () => props.productType?.categoryId,
+  () => props.productType?.remoteId,
   (value) => {
     if (value) {
       selectedCode.value = value;
       manualCategoryId.value = value;
       state.categoryTreeId = marketplaceDefaultTreeId.value;
+    } else {
+      selectedCode.value = '';
+      manualCategoryId.value = null;
     }
   },
   { immediate: true },

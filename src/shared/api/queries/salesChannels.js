@@ -1450,8 +1450,7 @@ export const getEbayProductTypeQuery = gql`
       imported
       name
       translatedName
-      categoryId
-      categoryTreeId
+      remoteId
       marketplace {
         id
         name
