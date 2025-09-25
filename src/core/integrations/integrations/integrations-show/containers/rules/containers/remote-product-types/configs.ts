@@ -20,6 +20,7 @@ import { ListingConfig } from "../../../../../../../../shared/components/organis
 import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { SearchConfig, SearchFilter } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 import type {
+  AdditionalButtonConfig,
   ImportedRemoteProductTypeConfig,
   MappedRemoteProductTypeConfig,
   NormalizedSuggestion,
@@ -297,6 +298,55 @@ const commonSuggestionVariables = ({ name, marketplace }: { name: string | null;
   marketplace: { id: marketplace },
 });
 
+const shouldShowProductTypeButton = ({ state }: { state: { propertyProductTypeId: string | null } }) =>
+  Boolean(state.propertyProductTypeId);
+
+const buildProductTypeAdditionalButtonConfig = (
+  integrationType: string,
+  getRuleValue: (formData: Record<string, any>) => string | undefined = (formData) => formData?.name,
+) =>
+  ({
+    productTypeId,
+    integrationId,
+    salesChannelId,
+    isWizard,
+    formData,
+    state,
+  }: {
+    productTypeId: string;
+    integrationId: string;
+    salesChannelId: string;
+    isWizard: boolean;
+    formData: Record<string, any>;
+    state: { propertyProductTypeId: string | null };
+  }): AdditionalButtonConfig | null => {
+    if (!state.propertyProductTypeId) {
+      return null;
+    }
+
+    const remoteRuleIdParts = [productTypeId, integrationId, salesChannelId, integrationType, isWizard ? '1' : '0'];
+    const remoteRuleId = remoteRuleIdParts.map((part) => part ?? '').join('__');
+    const value = getRuleValue(formData);
+
+    const query: Record<string, string> = {
+      propertyId: state.propertyProductTypeId,
+      isRule: '1',
+      remoteRuleId,
+    };
+
+    if (value) {
+      query.value = value;
+    }
+
+    return {
+      route: {
+        name: 'properties.values.create',
+        query,
+      },
+      labelKey: 'integrations.show.generateProductType',
+    };
+  };
+
 export const amazonImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfig = {
   integrationType: IntegrationTypes.Amazon,
   listingQuery: getListingQuery(IntegrationTypes.Amazon),
@@ -416,25 +466,8 @@ export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
       query: { integrationId, salesChannelId },
     };
   },
-  shouldShowAdditionalButton: ({ state }) => Boolean(state.propertyProductTypeId),
-  getAdditionalButtonConfig: ({ productTypeId, integrationId, salesChannelId, isWizard, formData, state }) => {
-    if (!state.propertyProductTypeId) {
-      return null;
-    }
-
-    return {
-      route: {
-        name: 'properties.values.create',
-        query: {
-          propertyId: state.propertyProductTypeId,
-          isRule: '1',
-          remoteRuleId: `${productTypeId}__${integrationId}__${salesChannelId}__${IntegrationTypes.Amazon}__${isWizard ? '1' : '0'}`,
-          value: formData?.name,
-        },
-      },
-      labelKey: 'integrations.show.generateProductType',
-    };
-  },
+  shouldShowAdditionalButton: shouldShowProductTypeButton,
+  getAdditionalButtonConfig: buildProductTypeAdditionalButtonConfig(IntegrationTypes.Amazon),
 };
 
 export const ebayMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<RemoteProductTypeState> = {
@@ -462,4 +495,8 @@ export const ebayMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<Re
 
     return null;
   },
+  shouldShowAdditionalButton: shouldShowProductTypeButton,
+  getAdditionalButtonConfig: buildProductTypeAdditionalButtonConfig(IntegrationTypes.Ebay, (formData) =>
+    formData?.translatedName || formData?.name,
+  ),
 };
