@@ -2562,19 +2562,24 @@
           "productTypeCode": "Product Type Code",
           "productRule": "Product Rule",
           "productName": "Product name",
-          "selectedProductType": "Selected product type"
+          "selectedProductType": "Selected product type",
+          "ebayCategory": "eBay category"
         },
         "help": {
           "productTypeCode": "Amazon identifier for this product type.",
           "productName": "Provide a product name and Amazon will suggest matching types.",
-          "productRule": "Select the local product rule to link with this Amazon product type."
+          "productRule": "Select the local product rule to link with this Amazon product type.",
+          "ebayCategory": "Select the eBay category by searching with its name or ID."
         },
         "titles": {
           "suggestUsingName": "Get suggestion using product name",
           "searchInAll": "Search in all"
         },
         "errors": {
-          "noSuggestions": "No recommended product types found."
+          "noSuggestions": "No recommended product types found.",
+          "missingMarketplace": "Marketplace information is missing for this product type.",
+          "categoryLookupFailed": "Unable to load the selected eBay category. Please try again.",
+          "noSelection": "Select a category before saving."
         }
       },
       "properties": {

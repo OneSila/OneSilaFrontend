@@ -299,6 +299,32 @@
         "bulkAssignTitle": "",
         "assignSuccess": ""
       },
+      "productRules": {
+        "title": "",
+        "labels": {
+          "productTypeCode": "",
+          "productRule": "",
+          "productName": "",
+          "selectedProductType": "",
+          "ebayCategory": ""
+        },
+        "help": {
+          "productTypeCode": "",
+          "productName": "",
+          "productRule": "",
+          "ebayCategory": ""
+        },
+        "titles": {
+          "suggestUsingName": "",
+          "searchInAll": ""
+        },
+        "errors": {
+          "noSuggestions": "",
+          "missingMarketplace": "",
+          "categoryLookupFailed": "",
+          "noSelection": ""
+        }
+      },
       "tabs": {
         "reports": "Berichte"
       },
