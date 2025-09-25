@@ -109,12 +109,15 @@ const categoryField = computed<QueryFormField>(() => {
     valueBy: 'remoteId',
     query: ebayCategoriesQuery,
     dataKey: 'ebayCategories',
-    isEdge: false,
+    isEdge: true,
     multiple: false,
     filterable: true,
     minSearchLength: 1,
     disabled: !marketplaceDefaultTreeId.value,
-    queryVariables: { filter },
+    queryVariables: {
+      first: 20,
+      filter,
+    },
   };
 });
 
