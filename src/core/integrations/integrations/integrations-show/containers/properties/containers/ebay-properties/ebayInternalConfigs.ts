@@ -39,7 +39,11 @@ export const ebayInternalPropertiesSearchConfigConstructor = (t: Function): Sear
   orders: [],
 });
 
-export const ebayInternalPropertiesListingConfigConstructor = (t: Function, specificIntegrationId): ListingConfig => ({
+export const ebayInternalPropertiesListingConfigConstructor = (
+  t: Function,
+  specificIntegrationId,
+  returnTab = 'properties'
+): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
     t('integrations.show.properties.labels.code'),
@@ -63,7 +67,7 @@ export const ebayInternalPropertiesListingConfigConstructor = (t: Function, spec
     { name: 'isRoot', type: FieldType.Boolean },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: { integrationId: specificIntegrationId, fromTab: returnTab },
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -77,7 +81,8 @@ export const ebayInternalPropertyEditFormConfigConstructor = (
   t: Function,
   type: string,
   propertyId: string,
-  integrationId: string
+  integrationId: string,
+  returnTab = 'properties'
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
@@ -86,7 +91,11 @@ export const ebayInternalPropertyEditFormConfigConstructor = (
   query: getEbayInternalPropertyQuery,
   queryVariables: { id: propertyId },
   queryDataKey: "ebayInternalProperty",
-  submitUrl: { name: 'integrations.integrations.show', params: { type, id: integrationId }, query: { tab: 'properties' } },
+  submitUrl: {
+    name: 'integrations.integrations.show',
+    params: { type, id: integrationId },
+    query: { tab: returnTab },
+  },
   fields: [
     { type: FieldType.Hidden, name: 'id', value: propertyId },
     { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true },
