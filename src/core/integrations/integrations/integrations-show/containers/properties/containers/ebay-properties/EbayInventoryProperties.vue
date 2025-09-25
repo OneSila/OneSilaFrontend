@@ -14,12 +14,12 @@ const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
 const internalSearchConfig = computed(() => ebayInternalPropertiesSearchConfigConstructor(t));
-const internalListingConfig = ebayInternalPropertiesListingConfigConstructor(t, props.id);
+const internalListingConfig = ebayInternalPropertiesListingConfigConstructor(t, props.id, 'inventoryFields');
 
 const buildInternalStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
   name: 'integrations.remoteInternalProperties.edit',
   params: { type: 'ebay', id },
-  query: { integrationId, salesChannelId, wizard: '1' },
+  query: { integrationId, salesChannelId, wizard: '1', fromTab: 'inventoryFields' },
 });
 </script>
 

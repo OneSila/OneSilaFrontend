@@ -26,6 +26,7 @@ const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
+const returnTab = route.query.fromTab?.toString() || 'properties';
 
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
@@ -39,7 +40,7 @@ const breadcrumbsLinks = computed(() => [
     path: {
       name: 'integrations.integrations.show',
       params: { id: integrationId, type: type.value },
-      query: { tab: 'properties' },
+      query: { tab: returnTab },
     },
     name: t('integrations.show.ebay.title'),
   },
@@ -104,7 +105,13 @@ onMounted(async () => {
   formConfig.value.cancelUrl = {
     name: 'integrations.integrations.show',
     params: { type: type.value, id: integrationId },
-    query: { tab: 'properties' },
+    query: { tab: returnTab },
+  };
+
+  formConfig.value.submitUrl = {
+    name: 'integrations.integrations.show',
+    params: { type: type.value, id: integrationId },
+    query: { tab: returnTab },
   };
 
   if (!isWizard) {
@@ -119,7 +126,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.remoteProperties.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { integrationId, salesChannelId, wizard: '1', fromTab: returnTab },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
     return;
@@ -129,7 +136,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.integrations.show',
       params: { type: type.value, id: integrationId },
-      query: { tab: 'properties' },
+      query: { tab: returnTab },
     };
     return;
   }
@@ -138,7 +145,7 @@ onMounted(async () => {
   router.push({
     name: 'integrations.integrations.show',
     params: { type: type.value, id: integrationId },
-    query: { tab: 'properties' },
+    query: { tab: returnTab },
   });
 });
 
@@ -258,7 +265,7 @@ const selectRecommendation = (id: string) => {
         <Label class="font-semibold block text-sm leading-6 text-gray-900">
           {{ t('integrations.show.propertySelectValues.labels.marketplace') }}
         </Label>
-        <Link v-if="marketplaceLink" class="text-sm text-purple-700 hover:underline" :path="marketplaceLink">
+        <Link v-if="marketplaceLink" :path="marketplaceLink">
           {{ marketplaceInfo.name }}
         </Link>
         <span v-else class="text-sm text-gray-500">{{ marketplaceInfo.name }}</span>

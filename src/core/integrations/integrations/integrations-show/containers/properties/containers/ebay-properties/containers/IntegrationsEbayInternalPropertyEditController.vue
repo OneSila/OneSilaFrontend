@@ -22,6 +22,7 @@ const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
+const returnTab = route.query.fromTab?.toString() || 'properties';
 
 const formConfig = ref<FormConfig | null>(null);
 
@@ -51,7 +52,13 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 };
 
 onMounted(async () => {
-  formConfig.value = ebayInternalPropertyEditFormConfigConstructor(t, type.value, ebayInternalPropertyId.value, integrationId);
+  formConfig.value = ebayInternalPropertyEditFormConfigConstructor(
+    t,
+    type.value,
+    ebayInternalPropertyId.value,
+    integrationId,
+    returnTab,
+  );
 
   if (!formConfig.value) {
     return;
@@ -60,7 +67,7 @@ onMounted(async () => {
   formConfig.value.cancelUrl = {
     name: 'integrations.integrations.show',
     params: { type: type.value, id: integrationId },
-    query: { tab: 'properties' },
+    query: { tab: returnTab },
   };
 
   if (!isWizard) {
@@ -75,7 +82,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.remoteInternalProperties.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { integrationId, salesChannelId, wizard: '1', fromTab: returnTab },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
     return;
@@ -85,7 +92,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.integrations.show',
       params: { type: type.value, id: integrationId },
-      query: { tab: 'properties' },
+      query: { tab: returnTab },
     };
     return;
   }
@@ -94,7 +101,7 @@ onMounted(async () => {
   router.push({
     name: 'integrations.integrations.show',
     params: { type: type.value, id: integrationId },
-    query: { tab: 'properties' },
+    query: { tab: returnTab },
   });
 });
 
@@ -144,7 +151,7 @@ const handleSetData = (data: any) => {
       <Breadcrumbs
         :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: { name: 'integrations.integrations.show', params: { id: integrationId, type: type }, query: { tab: 'properties' } }, name: t('integrations.show.ebay.title') },
+          { path: { name: 'integrations.integrations.show', params: { id: integrationId, type: type }, query: { tab: returnTab } }, name: t('integrations.show.ebay.title') },
           { name: t('integrations.show.mapProperty') },
         ]"
       />

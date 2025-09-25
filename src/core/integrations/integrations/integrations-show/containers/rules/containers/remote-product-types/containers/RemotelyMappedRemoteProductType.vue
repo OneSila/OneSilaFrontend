@@ -269,7 +269,6 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
             </Label>
             <Link
               v-if="marketplaceLink"
-              class="text-sm text-purple-700 hover:underline"
               :path="marketplaceLink"
             >
               {{ marketplaceName }}
