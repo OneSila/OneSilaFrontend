@@ -146,9 +146,11 @@ const applyValueData = (result: MapValueDataResult | null | undefined) => {
     });
   }
   if (result.localInstanceId !== undefined) {
+    const currentLocalInstance = form[props.config.localInstanceFieldKey] || { id: null };
     if (!form[props.config.localInstanceFieldKey]) {
-      form[props.config.localInstanceFieldKey] = { id: result.localInstanceId };
-    } else {
+      form[props.config.localInstanceFieldKey] = currentLocalInstance;
+    }
+    if (result.localInstanceId !== null || currentLocalInstance.id === null || currentLocalInstance.id === undefined) {
       form[props.config.localInstanceFieldKey].id = result.localInstanceId;
     }
   }
