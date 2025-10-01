@@ -122,6 +122,14 @@
           }
         }
       },
+      "translation": {
+        "placeholders": {
+          "subtitle": ""
+        },
+        "labels": {
+          "subtitle": ""
+        }
+      },
       "tabs": {
         "amazon": "Amazon"
       },
@@ -135,6 +143,9 @@
         "content": {
           "validation": {
             "fieldError": "{field} : {message}"
+          },
+          "columns": {
+            "subtitle": ""
           }
         },
         "tabs": {

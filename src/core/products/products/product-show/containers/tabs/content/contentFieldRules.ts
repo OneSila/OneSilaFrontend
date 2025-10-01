@@ -2,6 +2,7 @@ import { IntegrationTypes } from '../../../../../../integrations/integrations/in
 
 export interface ContentFieldRules {
   name: boolean;
+  subtitle: boolean;
   shortDescription: boolean;
   description: boolean;
   urlKey: boolean;
@@ -10,6 +11,7 @@ export interface ContentFieldRules {
 
 const baseRules: ContentFieldRules = {
   name: true,
+  subtitle: false,
   shortDescription: true,
   description: true,
   urlKey: true,
@@ -21,6 +23,7 @@ export const FIELD_RULES: Record<string, ContentFieldRules> = {
   [IntegrationTypes.Woocommerce]: { ...baseRules },
   [IntegrationTypes.Shopify]: { ...baseRules, shortDescription: false },
   [IntegrationTypes.Amazon]: { ...baseRules, shortDescription: false, urlKey: false, bulletPoints: true },
+  [IntegrationTypes.Ebay]: { ...baseRules, subtitle: true },
   default: { ...baseRules },
 };
 

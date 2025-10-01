@@ -961,11 +961,13 @@
       "placeholders": {
         "language": "Select a language",
         "name": "Enter name",
+        "subtitle": "Enter a subtitle",
         "shortDescription": "Enter a short description",
         "description": "Enter a detailed description",
         "urlKey": "Enter URL key"
       },
       "labels": {
+        "subtitle": "Subtitle",
         "description": "Description",
         "urlKey": "URL Key",
         "bulletPoints": "Bullet Points"
@@ -1051,8 +1053,9 @@
         "content": {
           "columns": {
             "preview": "Preview",
-            "productName": "Product name",
-            "shortDescription": "Short description",
+          "productName": "Product name",
+          "subtitle": "Subtitle",
+          "shortDescription": "Short description",
             "description": "Description",
             "urlKey": "URL key",
             "bullet": "Bullet #{index}"

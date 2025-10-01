@@ -115,6 +115,12 @@
     "translation": {
       "messages": {
         "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
+      },
+      "placeholders": {
+        "subtitle": ""
+      },
+      "labels": {
+        "subtitle": ""
       }
     },
     "products": {
@@ -140,6 +146,9 @@
         "content": {
           "validation": {
             "fieldError": "{field}: {message}"
+          },
+          "columns": {
+            "subtitle": ""
           }
         },
         "tabs": {
