@@ -1988,10 +1988,14 @@
         "imageType": "Image Type",
         "packShot": "Pack Shot",
         "moodShot": "Mood Shot",
-        "addImages": "Add new images"
+        "addImages": "Add new images",
+        "title": "Title",
+        "description": "Description"
       },
       "placeholders": {
-        "imageType": "Image Type"
+        "imageType": "Image Type",
+        "title": "Enter a title",
+        "description": "Add a description"
       },
       "alert": {
         "toast": {

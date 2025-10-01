@@ -546,6 +546,14 @@
         "upload": "Téléverser",
         "urls": "URLs"
       },
+      "labels": {
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
+      },
       "alert": {
         "toast": {
           "invalidUrl": "Veuillez saisir une URL d'image valide (jpg, jpeg, png, webp)."

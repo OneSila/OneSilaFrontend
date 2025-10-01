@@ -1602,10 +1602,14 @@
         "imageType": "Afbeeldingstype",
         "packShot": "Packshot",
         "moodShot": "Mood Shot",
-        "addImages": "Afbeeldingen toevoegen"
+        "addImages": "Afbeeldingen toevoegen",
+        "title": "",
+        "description": ""
       },
       "placeholders": {
-        "imageType": "Afbeeldingstype"
+        "imageType": "Afbeeldingstype",
+        "title": "",
+        "description": ""
       },
       "alert": {
         "toast": {

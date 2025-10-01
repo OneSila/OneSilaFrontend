@@ -103,6 +103,8 @@ export const getImageQuery = gql`
           id
           proxyId
           type
+          title
+          description
           image {
             size
             name
