@@ -416,19 +416,7 @@ export const ebayImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfi
     };
 
     if (raw.categoryId || selectedCode) {
-      input.categoryId = raw.categoryId ?? selectedCode;
-    }
-    if (state.categoryTreeId) {
-      input.categoryTreeId = state.categoryTreeId;
-    }
-    if (raw.categoryPath) {
-      input.categoryPath = raw.categoryPath;
-    }
-    if (raw.categoryName || selectedSuggestion?.displayName) {
-      input.name = raw.categoryName ?? selectedSuggestion?.displayName;
-    }
-    if (selectedName || raw.categoryName) {
-      input.translatedName = selectedName || raw.categoryName;
+      input.remoteId = raw.categoryId ?? selectedCode;
     }
 
     return {
