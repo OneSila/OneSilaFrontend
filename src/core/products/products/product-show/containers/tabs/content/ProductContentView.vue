@@ -24,6 +24,7 @@ const props = defineProps<{ product: Product }>();
 
 const initialForm = ref({
   name: '',
+  subtitle: '',
   shortDescription: '',
   description: '',
   urlKey: ''
@@ -97,6 +98,7 @@ const setFormAndMutation = async (language, channel) => {
       if (data && data.productTranslations.edges.length === 1) {
         const translation = data.productTranslations.edges[0].node;
         form.name = translation.name;
+        form.subtitle = translation.subtitle;
         form.shortDescription = translation.shortDescription;
         form.description = translation.description;
         form.urlKey = translation.urlKey;
@@ -105,6 +107,7 @@ const setFormAndMutation = async (language, channel) => {
         previewContent.value = translation;
       } else {
         form.name = '';
+        form.subtitle = '';
         form.shortDescription = '<p><br></p>';
         form.description = '<p><br></p>';
         form.urlKey = '';
@@ -129,6 +132,7 @@ const setFormAndMutation = async (language, channel) => {
       if (data && data.productTranslations.edges.length === 1) {
         const translation = data.productTranslations.edges[0].node;
         form.name = translation.name;
+        form.subtitle = translation.subtitle;
         form.shortDescription = translation.shortDescription;
         form.description = translation.description;
         form.urlKey = translation.urlKey;
@@ -137,6 +141,7 @@ const setFormAndMutation = async (language, channel) => {
         previewContent.value = translation;
       } else {
         form.name = '';
+        form.subtitle = '';
         form.shortDescription = '<p><br></p>';
         form.description = '<p><br></p>';
         form.urlKey = '';
@@ -361,6 +366,7 @@ const shortDescriptionToolbarOptions = [
           :current-language="currentLanguage"
           :default-language-code="defaultLanguageCode"
           :short-description-toolbar-options="shortDescriptionToolbarOptions"
+          :show-subtitle="fieldRules.subtitle"
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
           :sales-channel-type="currentChannelType"

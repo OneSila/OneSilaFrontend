@@ -52,6 +52,7 @@ const finalPreview = computed(() => {
   const base = props.currentChannel !== 'default' && props.defaultContent ? props.defaultContent : {};
   return {
     name: props.content?.name || base.name || '',
+    subtitle: fieldRules.value.subtitle ? (props.content?.subtitle || base.subtitle || '') : '',
     shortDescription:
       fieldRules.value.shortDescription
         ? (!isEmptyContent(props.content?.shortDescription)
@@ -88,6 +89,9 @@ const previewUrl = computed(() => {
     </div>
     <!-- Name -->
     <div class="px-5 pt-4 pb-1 text-lg font-semibold truncate">{{ finalPreview.name }}</div>
+    <div v-if="fieldRules.subtitle && finalPreview.subtitle" class="px-5 text-sm text-gray-600 truncate">
+      {{ finalPreview.subtitle }}
+    </div>
     <!-- Upper section: image (1/3) and short description (2/3) -->
     <div class="flex px-5 pt-4 pb-1 gap-4">
       <div class="w-1/3 flex-shrink-0">

@@ -202,6 +202,7 @@ export const createProductTranslationMutation = gql`
     createProductTranslation(data: $data) {
       id
       name
+      subtitle
       shortDescription
       description
       urlKey
@@ -214,6 +215,7 @@ export const createProductTranslationsMutation = gql`
     createProductTranslations(data: $data) {
       id
       name
+      subtitle
       shortDescription
       description
       urlKey
@@ -226,6 +228,7 @@ export const updateProductTranslationMutation = gql`
     updateProductTranslation(data: $data) {
       id
       name
+      subtitle
       shortDescription
       description
       urlKey
@@ -238,6 +241,7 @@ export const createProductContentMutation = gql`
     createProductContent(data: $data) {
       id
       name
+      subtitle
       shortDescription
       description
       urlKey
@@ -250,6 +254,7 @@ export const updateProductContentMutation = gql`
     updateProductContent(data: $data) {
       id
       name
+      subtitle
       shortDescription
       description
       urlKey

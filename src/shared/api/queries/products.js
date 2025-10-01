@@ -184,6 +184,7 @@ export const getProductTranslationByLanguageQuery = gql`
         node {
           id
           name
+          subtitle
           shortDescription
           description
           urlKey
@@ -204,6 +205,7 @@ export const getProductContentByLanguageAndChannelQuery = gql`
         node {
           id
           name
+          subtitle
           shortDescription
           description
           urlKey
@@ -227,6 +229,7 @@ export const getProductContentByLanguageAndDefaultQuery = gql`
         node {
           id
           name
+          subtitle
           shortDescription
           description
           urlKey

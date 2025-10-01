@@ -11,7 +11,7 @@ const { t } = useI18n();
 
 const props = defineProps({
   form: {
-    type: Object as PropType<{ name: string; shortDescription: string; description: string; urlKey: string }>,
+    type: Object as PropType<{ name: string; subtitle: string; shortDescription: string; description: string; urlKey: string }>,
     required: true,
   },
   fieldErrors: {
@@ -33,6 +33,10 @@ const props = defineProps({
   showShortDescription: {
     type: Boolean,
     default: true,
+  },
+  showSubtitle: {
+    type: Boolean,
+    default: false,
   },
   showUrlKey: {
     type: Boolean,
@@ -63,7 +67,7 @@ const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
 <template>
   <Flex vertical>
     <FlexCell>
-      <Flex  class="gap-4">
+      <Flex class="gap-4">
         <FlexCell center>
           <Label semi-bold>{{ t('shared.labels.name') }}</Label>
         </FlexCell>
@@ -83,6 +87,30 @@ const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
                  class="mt-2 mb-4 w-full"/>
       <div class="mb-1 text-sm leading-6">
         <p class="text-red-500" v-if="fieldErrors['name']">{{ fieldErrors['name'] }}</p>
+      </div>
+    </FlexCell>
+
+    <FlexCell v-if="showSubtitle">
+      <Flex class="gap-4">
+        <FlexCell center>
+          <Label semi-bold>{{ t('products.translation.labels.subtitle') }}</Label>
+        </FlexCell>
+        <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
+          <AiContentTranslator
+            :product="{ id: productId }"
+            productContentType="SUBTITLE"
+            toTranslate=""
+            :fromLanguageCode="defaultLanguage"
+            :toLanguageCode="currentLanguage"
+            :sales-channel-id="salesChannelId"
+            @translated="val => form.subtitle = val"
+          />
+        </FlexCell>
+      </Flex>
+      <TextInput v-model="form.subtitle" :placeholder="t('products.translation.placeholders.subtitle')"
+                 class="mt-2 mb-4 w-full"/>
+      <div class="mb-1 text-sm leading-6">
+        <p class="text-red-500" v-if="fieldErrors['subtitle']">{{ fieldErrors['subtitle'] }}</p>
       </div>
     </FlexCell>
 

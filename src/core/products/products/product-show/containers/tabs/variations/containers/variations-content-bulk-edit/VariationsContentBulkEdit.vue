@@ -53,6 +53,7 @@ interface VariationNode {
 interface TranslationData {
   id: string | null;
   name: string;
+  subtitle: string;
   shortDescription: string;
   description: string;
   urlKey: string;
@@ -151,6 +152,13 @@ const applyNameTranslation = (rowIndex: number, content: string) => {
   closeAiMenu();
 };
 
+const applySubtitleTranslation = (rowIndex: number, content: string) => {
+  const row = variations.value[rowIndex];
+  if (!row) return;
+  row.translation.subtitle = content || '';
+  closeAiMenu();
+};
+
 const applyShortDescriptionContent = (rowIndex: number, content: string) => {
   const row = variations.value[rowIndex];
   if (!row) return;
@@ -200,6 +208,7 @@ const emptyHtml = '<p><br></p>';
 const createEmptyTranslation = (): TranslationData => ({
   id: null,
   name: '',
+  subtitle: '',
   shortDescription: emptyHtml,
   description: emptyHtml,
   urlKey: '',
@@ -273,6 +282,15 @@ const baseColumns = computed<MatrixColumn[]>(() => {
       label: t('products.products.variations.content.columns.productName'),
       editable: true,
       initialWidth: 336,
+    });
+  }
+
+  if (contentFieldRules.value.subtitle) {
+    columns.push({
+      key: 'subtitle',
+      label: t('products.products.variations.content.columns.subtitle'),
+      editable: true,
+      initialWidth: 320,
     });
   }
 
@@ -433,6 +451,7 @@ const fetchTranslation = async (variationId: string, policy: FetchPolicy = 'netw
   const translation: TranslationData = {
     id: translationNode?.id ?? null,
     name: translationNode?.name || '',
+    subtitle: translationNode?.subtitle || '',
     shortDescription: normalizedHtml(translationNode?.shortDescription),
     description: normalizedHtml(translationNode?.description),
     urlKey: translationNode?.urlKey || '',
@@ -442,6 +461,7 @@ const fetchTranslation = async (variationId: string, policy: FetchPolicy = 'netw
     ? {
         id: defaultNode.id ?? null,
         name: defaultNode.name || '',
+        subtitle: defaultNode.subtitle || '',
         shortDescription: normalizedHtml(defaultNode.shortDescription),
         description: normalizedHtml(defaultNode.description),
         urlKey: defaultNode.urlKey || '',
@@ -547,6 +567,8 @@ const getMatrixCellValue = (rowIndex: number, key: string) => {
       return null;
     case 'translationName':
       return row.translation.name;
+    case 'subtitle':
+      return row.translation.subtitle;
     case 'shortDescription':
       return row.translation.shortDescription;
     case 'description':
@@ -576,6 +598,10 @@ const setMatrixCellValue = (rowIndex: number, key: string, value: any) => {
     row.translation.name = value ?? '';
     return;
   }
+  if (key === 'subtitle') {
+    row.translation.subtitle = value ?? '';
+    return;
+  }
   if (key === 'shortDescription') {
     row.translation.shortDescription = value ?? emptyHtml;
     return;
@@ -602,6 +628,10 @@ const cloneMatrixCellValue = (from: number, to: number, key: string) => {
   if (!source || !target) return;
   if (key === 'translationName') {
     target.translation.name = source.translation.name;
+    return;
+  }
+  if (key === 'subtitle') {
+    target.translation.subtitle = source.translation.subtitle;
     return;
   }
   if (key === 'shortDescription') {
@@ -671,6 +701,10 @@ const clearMatrixCellValue = (rowIndex: number, key: string) => {
   if (!row) return;
   if (key === 'translationName') {
     row.translation.name = '';
+    return;
+  }
+  if (key === 'subtitle') {
+    row.translation.subtitle = '';
     return;
   }
   if (key === 'shortDescription') {
@@ -744,6 +778,8 @@ const openTextModal = (rowIndex: number, key: string) => {
 
   if (key === 'translationName') {
     textModal.value = row.translation.name || '';
+  } else if (key === 'subtitle') {
+    textModal.value = row.translation.subtitle || '';
   } else if (key === 'urlKey') {
     textModal.value = row.translation.urlKey || '';
   } else if (key.startsWith('bullet-')) {
@@ -825,6 +861,7 @@ const shouldCreateTranslation = (row: VariationContentRow) => {
   const rules = contentFieldRules.value;
   const hasFields =
     (rules.name && !!translation.name) ||
+    (rules.subtitle && !!translation.subtitle) ||
     (rules.shortDescription && normalizedHtml(translation.shortDescription) !== emptyHtml) ||
     (rules.description && normalizedHtml(translation.description) !== emptyHtml) ||
     (rules.urlKey && !!translation.urlKey);
@@ -888,6 +925,7 @@ const save = async () => {
       const original = originalVariations.value.find((orig) => orig.id === row.id);
       const translationInput = {
         name: row.translation.name,
+        subtitle: row.translation.subtitle,
         shortDescription: normalizedHtml(row.translation.shortDescription),
         description: normalizedHtml(row.translation.description),
         urlKey: row.translation.urlKey,
@@ -898,6 +936,7 @@ const save = async () => {
 
       const translationChanged = !original ||
         row.translation.name !== original.translation.name ||
+        row.translation.subtitle !== original.translation.subtitle ||
         normalizedHtml(row.translation.shortDescription) !== normalizedHtml(original.translation.shortDescription) ||
         normalizedHtml(row.translation.description) !== normalizedHtml(original.translation.description) ||
         (row.translation.urlKey || '') !== (original.translation.urlKey || '');
@@ -973,13 +1012,14 @@ const save = async () => {
         if (field === '__all__') {
           return messageText;
         }
-        const fieldLabels: Record<string, string> = {
-          name: t('shared.labels.name'),
-          shortDescription: t('shared.labels.shortDescription'),
-          description: t('products.translation.labels.description'),
-          urlKey: t('products.translation.labels.urlKey'),
-          bulletPoints: t('products.translation.labels.bulletPoints'),
-        };
+          const fieldLabels: Record<string, string> = {
+            name: t('shared.labels.name'),
+            subtitle: t('products.translation.labels.subtitle'),
+            shortDescription: t('shared.labels.shortDescription'),
+            description: t('products.translation.labels.description'),
+            urlKey: t('products.translation.labels.urlKey'),
+            bulletPoints: t('products.translation.labels.bulletPoints'),
+          };
         const label = fieldLabels[field] || field;
         return t('products.products.variations.content.validation.fieldError', {
           field: label,
@@ -1133,6 +1173,45 @@ defineExpose({ hasUnsavedChanges });
                   :icon-class="'text-gray-500'"
                   :small="false"
                   @translated="(value) => applyNameTranslation(rowIndex, value)"
+                />
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-else-if="column.key === 'subtitle'">
+          <div class="space-y-2">
+            <div class="relative cursor-pointer" @dblclick="openTextModal(rowIndex, column.key)">
+              <div class="flex h-8 items-center justify-between border border-gray-300 p-1">
+                <div class="overflow-hidden text-ellipsis whitespace-nowrap pr-6">
+                  {{ shortenText(row.translation.subtitle || '', 40) }}
+                </div>
+                <Icon
+                  name="maximize"
+                  class="flex-shrink-0 cursor-pointer text-gray-400"
+                  @click.stop="openTextModal(rowIndex, column.key)"
+                />
+              </div>
+            </div>
+            <div v-if="language && canUseTranslator" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <Button
+                class="flex w-full sm:w-auto items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+                @click.stop="toggleAiMenu(rowIndex, column.key)"
+              >
+                <Icon name="gem" class="h-3 w-3 text-gray-500" />
+                <span>{{ t('shared.button.useAi') }}</span>
+              </Button>
+              <div v-if="isAiMenuOpen(rowIndex, column.key)" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                <AiContentTranslator
+                  :product="{ id: row.variation.id }"
+                  product-content-type="SUBTITLE"
+                  to-translate=""
+                  :from-language-code="defaultLanguageCode"
+                  :to-language-code="language || ''"
+                  :sales-channel-id="currentSalesChannelId || undefined"
+                  :btn-class="'btn-outline-secondary border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-700'"
+                  :icon-class="'text-gray-500'"
+                  :small="false"
+                  @translated="(value) => applySubtitleTranslation(rowIndex, value)"
                 />
               </div>
             </div>
