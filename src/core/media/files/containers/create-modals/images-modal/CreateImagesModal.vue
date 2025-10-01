@@ -275,6 +275,7 @@ const addImageUrl = () => {
                 <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.title') }}</label>
                 <TextInput
                   v-model="image.title"
+                  class="w-full"
                   :placeholder="t('media.images.placeholders.title')"
                 />
               </FlexCell>

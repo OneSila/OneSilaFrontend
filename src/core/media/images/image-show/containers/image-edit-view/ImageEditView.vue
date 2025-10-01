@@ -71,6 +71,7 @@ watch(() => props.image, (newImage) => {
           <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.title') }}</label>
           <TextInput
             v-model="localTitle"
+            class="w-full"
             :placeholder="t('media.images.placeholders.title')"
           />
         </FlexCell>
