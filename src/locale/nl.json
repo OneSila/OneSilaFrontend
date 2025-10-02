@@ -766,6 +766,7 @@
         "validationIssues": "Gedetecteerde validatieproblemen",
         "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",
         "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationOtherIssuesNote": "",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",

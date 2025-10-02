@@ -1108,6 +1108,7 @@
         "validationIssues": "Detected Validation Issues",
         "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
         "variationValidationIssuesNote": "Variations linked to this configurable product have validation issues. Review them below.",
+        "variationOtherIssuesNote": "Variations linked to this configurable product have other issues reported by Amazon. Review them below.",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",

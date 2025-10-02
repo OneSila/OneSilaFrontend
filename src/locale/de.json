@@ -222,6 +222,7 @@
         "validationIssues": "Erkannte Validierungsprobleme",
         "validationIssuesDescription": "Wahrscheinliche Amazon-Validierungsprobleme basierend auf der von Amazon erwarteten Produktstruktur",
         "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationOtherIssuesNote": "",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",
