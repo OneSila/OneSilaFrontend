@@ -33,6 +33,7 @@ type ShowImage = {
     file: any;
     url?: any;
     type: string;
+    title: string;
 };
 
 type Image = {
@@ -46,6 +47,41 @@ const urlInput = ref('')
 const activeTab = ref<'upload' | 'urls'>('upload')
 const isSubmitting = ref(false)
 const singleUpload = computed(() => props.singleUpload ?? false)
+
+const stripExtension = (value: string) => value.replace(/\.[^/.]+$/, '');
+
+const getDefaultTitleFromFile = (file?: File) => {
+  if (!file?.name) {
+    return '';
+  }
+  const stripped = stripExtension(file.name);
+  return stripped || file.name;
+};
+
+const getDefaultTitleFromUrl = (value: string) => {
+  if (!value) {
+    return '';
+  }
+  try {
+    const parsed = new URL(value);
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    const lastSegment = segments.pop();
+    if (!lastSegment) {
+      return stripExtension(parsed.hostname);
+    }
+    const decoded = decodeURIComponent(lastSegment);
+    const stripped = stripExtension(decoded);
+    return stripped || decoded;
+  } catch (error) {
+    const fallbackSegments = value.split('/').filter(Boolean);
+    const lastSegment = fallbackSegments.pop();
+    if (!lastSegment) {
+      return value;
+    }
+    const stripped = stripExtension(lastSegment);
+    return stripped || lastSegment;
+  }
+};
 
 const imageTypeOptions = [
   { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
@@ -71,16 +107,18 @@ const onUploaded = (files: UploadedImage[]) => {
   if (props.singleUpload) {
     images.value = [];
     const file = files[0];
+    const title = getDefaultTitleFromFile(file);
     const reader = new FileReader();
     reader.onload = (e) => {
-      images.value = [{ url: e?.target?.result, type: IMAGE_TYPE_PACK, file }];
+      images.value = [{ url: e?.target?.result, type: IMAGE_TYPE_PACK, file, title }];
     };
     reader.readAsDataURL(file);
   } else {
     files.forEach(file => {
+      const title = getDefaultTitleFromFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
-        images.value.push({ url: e?.target?.result, type: IMAGE_TYPE_PACK, file });
+        images.value.push({ url: e?.target?.result, type: IMAGE_TYPE_PACK, file, title });
       };
       reader.readAsDataURL(file);
     });
@@ -107,11 +145,11 @@ const submitImages = async () => {
     let dataKey = 'createImages'
 
     if (activeTab.value === 'upload') {
-      variables.data = images.value.map(image => ({ image: image.file, imageType: image.type }))
+      variables.data = images.value.map(image => ({ image: image.file, imageType: image.type, title: image.title?.trim() || null }))
     } else {
       mutation = uploadImagesFromUrlsMutation
       dataKey = 'uploadImagesFromUrls'
-      variables.urls = images.value.map(image => ({ url: image.url, type: image.type }))
+      variables.urls = images.value.map(image => ({ url: image.url, type: image.type, title: image.title?.trim() || null }))
     }
 
     const { data } = await apolloClient.mutate({
@@ -168,10 +206,11 @@ const addImageUrl = () => {
       Toast.error(t('media.images.alert.toast.invalidUrl'))
       return
     }
+    const title = getDefaultTitleFromUrl(urlInput.value);
     if (props.singleUpload) {
-      images.value = [{ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK }]
+      images.value = [{ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK, title }]
     } else {
-      images.value.push({ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK })
+      images.value.push({ file: null, url: urlInput.value, type: IMAGE_TYPE_PACK, title })
     }
     urlInput.value = ''
   }
@@ -231,6 +270,14 @@ const addImageUrl = () => {
                 <div class="w-full h-48 overflow-hidden flex justify-center items-center">
                   <Image :source="image.url" alt="File thumbnail" class="h-full object-contain rounded-md" />
                 </div>
+              </FlexCell>
+              <FlexCell class="mt-2">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.title') }}</label>
+                <TextInput
+                  v-model="image.title"
+                  class="w-full"
+                  :placeholder="t('media.images.placeholders.title')"
+                />
               </FlexCell>
               <FlexCell>
                 <Flex between class="mt-2">

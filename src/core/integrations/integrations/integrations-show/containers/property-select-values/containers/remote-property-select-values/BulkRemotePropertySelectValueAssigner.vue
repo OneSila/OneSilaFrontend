@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref, watch} from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { DocumentNode } from 'graphql';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Label } from '../../../../../../../../shared/components/atoms/label';
 import { FieldQuery } from '../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { propertiesQuerySelector, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../shared/api/queries/properties';
 import apolloClient from '../../../../../../../../../apollo-client';
-import {FieldType, PropertyTypes} from '../../../../../../../../shared/utils/constants';
-import { QueryFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
+import { FieldType, PropertyTypes } from '../../../../../../../../shared/utils/constants';
+import type { QueryFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { selectValueOnTheFlyConfig } from '../../../../../../../properties/property-select-values/configs';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../../../../shared/utils';
-import { bulkUpdateAmazonPropertySelectValueLocalInstanceMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
-const props = defineProps<{ selectedEntities: string[] }>();
+const props = defineProps<{ selectedEntities: string[]; mutation: DocumentNode }>();
 const emit = defineEmits<{ (e: 'started'): void }>();
 
 const { t } = useI18n();
@@ -32,7 +32,7 @@ const propertyField = {
   labelBy: 'name',
   valueBy: 'id',
   query: propertiesQuerySelector,
-  queryVariables: { filter: { isProductType: { exact: false }, type: {exact: PropertyTypes.SELECT} } },
+  queryVariables: { filter: { isProductType: { exact: false }, type: { exact: PropertyTypes.SELECT } } },
   dataKey: 'properties',
   isEdge: true,
   multiple: false,
@@ -74,7 +74,7 @@ const onAssignSubmit = async () => {
 
   try {
     await apolloClient.mutate({
-      mutation: bulkUpdateAmazonPropertySelectValueLocalInstanceMutation,
+      mutation: props.mutation,
       variables: {
         data: {
           ids: props.selectedEntities,
@@ -111,7 +111,6 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleGlobalClick, true);
 });
-
 </script>
 
 <template>

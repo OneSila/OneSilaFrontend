@@ -44,21 +44,27 @@ export const routes = [
   },
   {
     path: '/integrations/:type/product-type/:id',
-    name: 'integrations.amazonProductTypes.edit',
+    name: 'integrations.remoteProductTypes.edit',
     meta: { title: 'integrations.show.productRules.title' },
-    component: () => import('./integrations/integrations-show/containers/rules/containers/amazon-product-types/containers/IntegrationsAmazonProductTypeEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/rules/IntegrationsRemoteProductTypeEditController.vue'),
   },
   {
-    path: '/integrations/:type/amazon-property/:id',
-    name: 'integrations.amazonProperties.edit',
+    path: '/integrations/:type/property/:id',
+    name: 'integrations.remoteProperties.edit',
     meta: { title: 'integrations.show.properties.title' },
-    component: () => import('./integrations/integrations-show/containers/properties/containers/amazon-properties/containers/IntegrationsAmazonPropertyEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/properties/containers/remote-properties/IntegrationsRemotePropertyEditController.vue'),
   },
   {
-    path: '/integrations/:type/amazon-property-value/:id',
-    name: 'integrations.amazonPropertySelectValues.edit',
+    path: '/integrations/:type/internal-property/:id',
+    name: 'integrations.remoteInternalProperties.edit',
+    meta: { title: 'integrations.show.ebay.internalProperties.title' },
+    component: () => import('./integrations/integrations-show/containers/properties/containers/ebay-properties/containers/IntegrationsEbayInternalPropertyEditController.vue'),
+  },
+  {
+    path: '/integrations/:type/property-value/:id',
+    name: 'integrations.remotePropertySelectValues.edit',
     meta: { title: 'integrations.show.propertySelectValues.title' },
-    component: () => import('./integrations/integrations-show/containers/property-select-values/containers/amazon-property-select-values/containers/IntegrationsAmazonPropertySelectValueEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/property-select-values/containers/remote-property-select-values/IntegrationsRemotePropertySelectValueEditController.vue'),
   },
   {
     path: '/integrations/:type/amazon-default-unit-configurator/:id',
@@ -96,6 +102,12 @@ export const routes = [
     name: 'integrations.amazon.installed',
     meta: { title: 'integrations.amazon.installed.title' },
     component: () => import('./integrations/integrations-installed/amazon-installed/AmazonInstalledController.vue'),
+  },
+  {
+    path: '/integrations/ebay/installed',
+    name: 'integrations.ebay.installed',
+    meta: { title: 'integrations.ebay.installed.title' },
+    component: () => import('./integrations/integrations-installed/ebay-installed/EbayInstalledController.vue'),
   }
 
 ];

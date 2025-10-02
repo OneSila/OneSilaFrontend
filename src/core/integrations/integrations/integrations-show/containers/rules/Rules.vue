@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { IntegrationTypes } from '../../../integrations';
 import { AmazonProductTypes } from './containers/amazon-product-types';
+import { EbayProductTypes } from './containers/ebay-product-types';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
@@ -10,6 +11,8 @@ const currentComponent = computed(() => {
   switch (props.type) {
     case IntegrationTypes.Amazon:
       return AmazonProductTypes;
+    case IntegrationTypes.Ebay:
+      return EbayProductTypes;
     default:
       return null;
   }

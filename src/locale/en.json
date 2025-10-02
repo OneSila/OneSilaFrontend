@@ -213,6 +213,30 @@
           "title": "Products With Issues",
           "description": "Amazon products that failed to sync correctly."
         }
+      },
+      "ebay": {
+        "title": "eBay integration",
+        "description": "Resolve unmapped eBay data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "eBay properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "eBay product types that need mapping."
+        },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to eBay."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "eBay property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedInventoryFields": {
+          "title": "Inventory Fields",
+          "description": "eBay inventory fields missing a mapped OneSila property."
+        }
       }
     },
     "onboarding": {
@@ -937,11 +961,13 @@
       "placeholders": {
         "language": "Select a language",
         "name": "Enter name",
+        "subtitle": "Enter a subtitle",
         "shortDescription": "Enter a short description",
         "description": "Enter a detailed description",
         "urlKey": "Enter URL key"
       },
       "labels": {
+        "subtitle": "Subtitle",
         "description": "Description",
         "urlKey": "URL Key",
         "bulletPoints": "Bullet Points"
@@ -960,19 +986,19 @@
         "sameProductType": "Same product type only"
       },
       "alert": {
-      "toast": {
-        "bulkDeleteSuccess": "Products deleted successfully.",
-        "bulkDeleteError": "Failed to delete products. Please try again.",
-        "copied": "Copied",
-        "pasted": "Pasted",
-        "pasteDifferentColumn": "Cannot paste to different column",
-        "pasteIncompatibleColumn": "Cannot paste into column with incompatible type",
-        "undo": "Undid last change",
-        "redo": "Redid last change",
-        "createdProductProperties": "Created {count} product properties.",
-        "updatedProductProperties": "Updated {count} product properties.",
-        "deletedProductProperties": "Deleted {count} product properties."
-      }
+        "toast": {
+          "bulkDeleteSuccess": "Products deleted successfully.",
+          "bulkDeleteError": "Failed to delete products. Please try again.",
+          "copied": "Copied",
+          "pasted": "Pasted",
+          "pasteDifferentColumn": "Cannot paste to different column",
+          "pasteIncompatibleColumn": "Cannot paste into column with incompatible type",
+          "undo": "Undid last change",
+          "redo": "Redid last change",
+          "createdProductProperties": "Created {count} product properties.",
+          "updatedProductProperties": "Updated {count} product properties.",
+          "deletedProductProperties": "Deleted {count} product properties."
+        }
     },
       "messages": {
         "unsavedChanges": "You have unsaved changes. Are you sure you want to leave this tab?"
@@ -995,6 +1021,12 @@
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
+      },
+      "priceLists": {
+        "add": {
+          "placeholder": "Select a price list",
+          "select": "Select"
+        }
       },
       "variations": {
         "tabs": {
@@ -1021,8 +1053,9 @@
         "content": {
           "columns": {
             "preview": "Preview",
-            "productName": "Product name",
-            "shortDescription": "Short description",
+          "productName": "Product name",
+          "subtitle": "Subtitle",
+          "shortDescription": "Short description",
             "description": "Description",
             "urlKey": "URL key",
             "bullet": "Bullet #{index}"
@@ -1075,6 +1108,7 @@
         "validationIssues": "Detected Validation Issues",
         "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
         "variationValidationIssuesNote": "Variations linked to this configurable product have validation issues. Review them below.",
+        "variationOtherIssuesNote": "Variations linked to this configurable product have product issues reported by Amazon. Review them below.",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",
@@ -1958,10 +1992,14 @@
         "imageType": "Image Type",
         "packShot": "Pack Shot",
         "moodShot": "Mood Shot",
-        "addImages": "Add new images"
+        "addImages": "Add new images",
+        "title": "Title",
+        "description": "Description"
       },
       "placeholders": {
-        "imageType": "Image Type"
+        "imageType": "Image Type",
+        "title": "Enter a title",
+        "description": "Add a description"
       },
       "alert": {
         "toast": {
@@ -2448,6 +2486,28 @@
       "amazon": {
         "title": "Amazon Integration"
       },
+      "ebay": {
+        "title": "Ebay Integration",
+        "productRules": {
+          "title": "Ebay Categories",
+          "labels": {
+            "translatedName": "Translated Name"
+          },
+          "help": {
+            "translatedName": "Translated name for this eBay category.",
+            "productRule": "Select the local product rule to link with this eBay category."
+          }
+        },
+        "properties": {
+          "title": "Ebay Aspects"
+        },
+        "internalProperties": {
+          "title": "Ebay Inventory Fields",
+          "labels": {
+            "isRoot": "Is Inventory Item Field"
+          }
+        }
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -2468,6 +2528,10 @@
       },
       "amazonNotConnectedBanner": {
         "title": "Amazon connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
+      "ebayNotConnectedBanner": {
+        "title": "Ebay connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
       "stores": {
@@ -2506,19 +2570,24 @@
           "productTypeCode": "Product Type Code",
           "productRule": "Product Rule",
           "productName": "Product name",
-          "selectedProductType": "Selected product type"
+          "selectedProductType": "Selected product type",
+          "ebayCategory": "eBay category"
         },
         "help": {
           "productTypeCode": "Amazon identifier for this product type.",
           "productName": "Provide a product name and Amazon will suggest matching types.",
-          "productRule": "Select the local product rule to link with this Amazon product type."
+          "productRule": "Select the local product rule to link with this Amazon product type.",
+          "ebayCategory": "Select the eBay category by searching with its name or ID."
         },
         "titles": {
           "suggestUsingName": "Get suggestion using product name",
           "searchInAll": "Search in all"
         },
         "errors": {
-          "noSuggestions": "No recommended product types found."
+          "noSuggestions": "No recommended product types found.",
+          "missingMarketplace": "Marketplace information is missing for this product type.",
+          "categoryLookupFailed": "Unable to load the selected eBay category. Please try again.",
+          "noSelection": "Select a category before saving."
         }
       },
       "properties": {
@@ -2527,14 +2596,18 @@
           "code": "Code",
           "type": "Type",
           "allowsUnmappedValues": "Allow Unmapped Values",
-          "property": "Property"
+          "property": "Property",
+          "localizedName": "Marketplace Name",
+          "translatedName": "Translated Name"
         },
         "help": {
-          "code": "Amazon's code for this property.",
-          "type": "Type mapped from Amazon. Cannot be changed.",
+          "code": "Marketplace code for this property.",
+          "type": "Type mapped from the marketplace. Cannot be changed.",
           "allowsUnmappedValues": "Allow values that have not been mapped locally.",
-          "name": "Name from Amazon. You can modify it.",
-          "property": "Select the local property this Amazon property maps to."
+          "name": "Name provided by the marketplace. You can modify it.",
+          "property": "Select the local property this marketplace property maps to.",
+          "localizedName": "Name provided by the marketplace. Usually localized to the marketplace language.",
+          "translatedName": "Name translated into your company language. You can adjust it."
         }
       },
       "propertySelectValues": {
@@ -2543,19 +2616,27 @@
           "remoteName": "Amazon Name",
           "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
+          "ebayProperty": "eBay Property",
           "marketplace": "Marketplace",
           "localProperty": "OneSila Property",
           "selectValue": "OneSila Select Value",
-          "translatedRemoteName": "Translated Name"
+          "translatedRemoteName": "Translated Name",
+          "localizedValue": "Localized Value",
+          "translatedValue": "Translated Value"
         },
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
-          "marketplace": "Amazon marketplace for this value.",
-          "localProperty": "OneSila property that this Amazon property maps to.",
-          "remoteValue": "Value exactly as defined in Amazon.",
-          "remoteName": "Name from Amazon. You can change it.",
-          "selectValue": "Choose the OneSila value that matches this Amazon value.",
-          "translatedRemoteName": "Translated name for this value."
+          "ebayProperty": "eBay property to which this value belongs.",
+          "marketplace": "Marketplace for this value.",
+          "localProperty": "OneSila property that this remote property maps to.",
+          "remoteValue": "Value exactly as defined by the marketplace.",
+          "remoteName": "Name from the marketplace. You can change it.",
+          "selectValue": "Choose the OneSila value that matches this marketplace value.",
+          "selectValueAmazon": "Choose the OneSila value that matches this Amazon value.",
+          "selectValueEbay": "Choose the OneSila value that matches this eBay value.",
+          "translatedRemoteName": "Translated name for this value.",
+          "localizedValue": "Value as returned by the marketplace.",
+          "translatedValue": "Translated value in the company language."
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",
@@ -2605,6 +2686,8 @@
           "shopifyExample": "Shopify integration to manage your products in seconds.",
           "amazonTitle": "Amazon",
           "amazonExample": "Amazon integration to manage your marketplace listings.",
+          "ebayTitle": "Ebay",
+          "ebayExample": "Ebay integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "webhookTitle": "Webhook",
@@ -2703,6 +2786,10 @@
             "title": "Webhook Settings",
             "content": "Configure your webhook endpoint and options."
           },
+          "ebay": {
+            "title": "Ebay Channel Details",
+            "content": "Provide Ebay-specific configuration to connect your marketplace."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -2713,6 +2800,7 @@
       "syncEanCodes": "Sync EAN Codes",
       "syncPrices": "Sync Prices",
       "importOrders": "Import Orders",
+      "startingStock": "Starting Stock",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "successfullyConnected": "Connected",
@@ -2729,6 +2817,13 @@
       "accessToken": "Access Token",
       "region": "Region",
       "country": "Country",
+      "fulfillmentPolicy": "Fulfillment policy",
+      "paymentPolicy": "Payment policy",
+      "returnPolicy": "Return policy",
+      "merchantLocation": "Inventory location",
+      "lengthUnit": "Length unit",
+      "weightUnit": "Weight unit",
+      "isDefaultMarketplace": "Default marketplace",
       "expirationDate": "Access Token Expiration",
       "pullData": "Pull Data",
       "defaultUnits": "Default Units",
@@ -2792,6 +2887,23 @@
         "title": "Amazon Connected"
       }
     },
+    "ebay": {
+      "lengthUnits": {
+        "centimeter": "Centimeter",
+        "meter": "Meter",
+        "inch": "Inch",
+        "foot": "Foot"
+      },
+      "weightUnits": {
+        "gram": "Gram",
+        "kilogram": "Kilogram",
+        "ounce": "Ounce",
+        "pound": "Pound"
+      },
+      "installed": {
+        "title": "Ebay Connected"
+      }
+    },
     "salesChannel": {
       "shopify": {
         "installed": {
@@ -2826,6 +2938,15 @@
         "assignedToSalesChannelView": "Assigned To Store",
         "notAssignedToSalesChannelView": "Not Assigned To Store"
       },
+      "ebay": {
+        "installed": {
+          "title": "Ebay Connected",
+          "loading": "Connecting your store",
+          "success": "Your Ebay store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
+        }
+      },
       "toast": {
         "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
         "importSuccess": "The product import process has begun. Please come later to see the results.",
@@ -2838,6 +2959,7 @@
         "syncEanCodes": "Toggle this to ensure your product's EAN codes are synchronized with the remote system.",
         "syncPrices": "Toggle this to keep the product pricing updated in the remote system.",
         "importOrders": "Toggle this to allow the system to import integration orders to be able to process and do things as suggesting related products.",
+        "startingStock": "Set the initial stock level for new products sent to this integration. Leave empty to avoid sending a stock quantity.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
@@ -2986,6 +3108,27 @@
               "salesChannel": "Updating sales channel",
               "startProcess": "Starting import process"
             }
+          }
+        }
+      },
+      "ebay": {
+        "wizard": {
+          "steps": {
+            "type": "Select import type",
+            "languages": "Map languages",
+            "currencies": "Map currencies"
+          },
+          "languages": {
+            "title": "Map your remote languages",
+            "description": "Match at least one remote language with a local language to continue.",
+            "noData": "No languages available. Please try again later.",
+            "fetchError": "An error occurred while fetching remote languages."
+          },
+          "currencies": {
+            "title": "Map your remote currencies",
+            "description": "Match at least one remote currency with a local currency to continue.",
+            "noData": "No currencies available. Please try again later.",
+            "fetchError": "An error occurred while fetching remote currencies."
           }
         }
       }

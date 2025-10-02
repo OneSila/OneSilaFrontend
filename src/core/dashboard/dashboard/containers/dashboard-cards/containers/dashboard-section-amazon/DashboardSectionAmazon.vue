@@ -32,7 +32,7 @@ interface AmazonCardData {
   productsWithIssues: number;
 }
 
-const showCompletedAmazonCards = ref(false);
+const showCompletedAmazonCards = ref<Record<string, boolean>>({});
 const integrations = ref<AmazonCardData[]>([]);
 const loading = ref(false);
 const finishedFetch = ref(false);
@@ -95,6 +95,16 @@ const makeQuery = (options: any) =>
     selectValues: valueRes?.amazonPropertySelectValues?.totalCount || 0,
     unitConfigurators: unitRes?.amazonDefaultUnitConfigurators?.totalCount || 0,
     productsWithIssues: issuesRes?.products?.totalCount || 0,
+  };
+};
+
+const isShowingCompleted = (integrationId: string) =>
+  showCompletedAmazonCards.value[integrationId] ?? false;
+
+const updateShowCompleted = (integrationId: string, value: boolean) => {
+  showCompletedAmazonCards.value = {
+    ...showCompletedAmazonCards.value,
+    [integrationId]: value,
   };
 };
 
@@ -161,7 +171,10 @@ onMounted(fetchAmazonIntegrations);
                   <span class="mr-2 font-semibold">{{ t('dashboard.cards.help.showCompletedItems') }}</span>
                 </FlexCell>
                 <FlexCell center>
-                  <Toggle v-model="showCompletedAmazonCards" />
+                  <Toggle
+                    :model-value="isShowingCompleted(integration.integrationId)"
+                    @update:model-value="(value) => updateShowCompleted(integration.integrationId, value)"
+                  />
                 </FlexCell>
               </Flex>
             </FlexCell>
@@ -189,7 +202,7 @@ onMounted(fetchAmazonIntegrations);
           :counter="integration.productTypes"
           :title="t('dashboard.cards.amazon.unmappedProductTypes.title')"
           :description="t('dashboard.cards.amazon.unmappedProductTypes.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedLocally: false, mappedRemotely: 'all' } }"
         />
@@ -197,7 +210,7 @@ onMounted(fetchAmazonIntegrations);
           :counter="integration.localProductTypes"
           :title="t('dashboard.cards.amazon.unmappedLocalProductTypes.title')"
           :description="t('dashboard.cards.amazon.unmappedLocalProductTypes.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
@@ -205,7 +218,7 @@ onMounted(fetchAmazonIntegrations);
           :counter="integration.properties"
           :title="t('dashboard.cards.amazon.unmappedProperties.title')"
           :description="t('dashboard.cards.amazon.unmappedProperties.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
         />
@@ -213,7 +226,7 @@ onMounted(fetchAmazonIntegrations);
           :counter="integration.selectValues"
           :title="t('dashboard.cards.amazon.unmappedSelectValues.title')"
           :description="t('dashboard.cards.amazon.unmappedSelectValues.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all' } }"
         />
@@ -221,7 +234,7 @@ onMounted(fetchAmazonIntegrations);
           :counter="integration.unitConfigurators"
           :title="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.title')"
           :description="t('dashboard.cards.amazon.unmappedDefaultUnitConfigurators.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'defaultUnits', mappedLocally: false } }"
         />

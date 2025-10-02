@@ -53,6 +53,7 @@ export const getMagentoChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       hostApiUsername
       hostApiKey
       authenticationMethod
@@ -116,6 +117,7 @@ export const getWoocommerceChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       apiKey
       apiSecret
       firstImportComplete
@@ -185,6 +187,7 @@ export const getAmazonChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       accessToken
       refreshTokenExpiration
       expirationDate
@@ -257,6 +260,112 @@ export const amazonChannelsQuerySelector = gql`
     $filters: AmazonSalesChannelFilter
   ) {
     amazonChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayChannelQuery = gql`
+  query getEbayChannel($id: GlobalID!) {
+    ebayChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      startingStock
+      firstImportComplete
+      isImporting
+      accessToken
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
+export const ebayChannelsQuery = gql`
+  query ebayChannelsQuery(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbaySalesChannelOrder
+    $filters: EbaySalesChannelFilter
+  ) {
+    ebayChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          createdAt
+          integrationPtr {
+            id
+          }
+          saleschannelPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const ebayChannelsQuerySelector = gql`
+  query EbayChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbaySalesChannelOrder
+    $filters: EbaySalesChannelFilter
+  ) {
+    ebayChannels(
       first: $first
       last: $last
       after: $after
@@ -549,6 +658,33 @@ export const amazonChannelViewsQuery = gql`
   }
 `;
 
+export const ebayChannelViewsQuery = gql`
+  query EbayChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: EbaySalesChannelViewOrder, $filter: EbaySalesChannelViewFilter) {
+    ebaySalesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          active
+          isDefault
+          salesChannel {
+            id
+            hostname
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getAmazonChannelViewQuery = gql`
   query getAmazonChannelView($id: GlobalID!) {
     amazonChannelView(id: $id) {
@@ -561,6 +697,27 @@ export const getAmazonChannelViewQuery = gql`
         id
         hostname
       }
+    }
+  }
+`;
+
+export const getEbaySalesChannelViewQuery = gql`
+  query getEbaySalesChannelView($id: GlobalID!) {
+    ebaySalesChannelView(id: $id) {
+      id
+      name
+      url
+      fulfillmentPolicyId
+      fulfillmentPolicyChoices
+      paymentPolicyId
+      paymentPolicyChoices
+      returnPolicyId
+      returnPolicyChoices
+      merchantLocationKey
+      merchantLocationChoices
+      lengthUnit
+      weightUnit
+      isDefault
     }
   }
 `;
@@ -635,6 +792,45 @@ export const remoteCurrenciesQuery = gql`
           id
           remoteCode
           name
+          localInstance {
+            id
+            name
+            symbol
+            isoCode
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const ebayRemoteCurrenciesQuery = gql`
+  query EbayRemoteCurrencies(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: EbayCurrencyOrder,
+    $filter: EbayCurrencyFilter
+  ) {
+    ebayCurrencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          proxyId
+          remoteCode
+          salesChannelView {
+            id
+            name
+          }
           localInstance {
             id
             name
@@ -809,6 +1005,116 @@ export const amazonPropertiesQuery = gql`
   }
 `;
 
+// eBay Property Queries
+export const ebayPropertiesQuery = gql`
+  query EbayProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayPropertyOrder
+    $filter: EbayPropertyFilter
+  ) {
+    ebayProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          localizedName
+          type
+          allowsUnmappedValues
+          marketplace {
+            id
+            name
+          }
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const ebayInternalPropertiesQuery = gql`
+  query EbayInternalProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayInternalPropertyOrder
+    $filter: EbayInternalPropertyFilter
+  ) {
+    ebayInternalProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          code
+          name
+          type
+          isRoot
+          mappedLocally
+          mappedRemotely
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayInternalPropertyQuery = gql`
+  query getEbayInternalProperty($id: GlobalID!) {
+    ebayInternalProperty(id: $id) {
+      id
+      code
+      name
+      type
+      isRoot
+      mappedLocally
+      mappedRemotely
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const getAmazonPropertyQuery = gql`
   query getAmazonProperty($id: GlobalID!) {
     amazonProperty(id: $id) {
@@ -819,6 +1125,28 @@ export const getAmazonPropertyQuery = gql`
       name
       type
       allowsUnmappedValues
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const getEbayPropertyQuery = gql`
+  query getEbayProperty($id: GlobalID!) {
+    ebayProperty(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      localizedName
+      translatedName
+      type
+      allowsUnmappedValues
+      marketplace {
+        id
+        name
+      }
       localInstance {
         id
         name
@@ -853,6 +1181,8 @@ export const amazonPropertySelectValuesQuery = gql`
           amazonProperty {
             id
             name
+            code
+            type
             mappedLocally
             mappedRemotely
           }
@@ -889,6 +1219,8 @@ export const getAmazonPropertySelectValueQuery = gql`
       amazonProperty {
         id
         name
+        code
+        type
       }
       marketplace {
         id
@@ -897,6 +1229,82 @@ export const getAmazonPropertySelectValueQuery = gql`
       remoteValue
       remoteName
       translatedRemoteName
+      localInstance {
+        id
+        value
+      }
+    }
+  }
+`;
+
+export const ebayPropertySelectValuesQuery = gql`
+  query EbayPropertySelectValues(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayPropertySelectValueOrder
+    $filter: EbayPropertySelectValueFilter
+  ) {
+    ebayPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          ebayProperty {
+            id
+            localizedName
+            mappedLocally
+            mappedRemotely
+          }
+          marketplace {
+            id
+            name
+          }
+          localizedValue
+          translatedValue
+          localInstance {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayPropertySelectValueQuery = gql`
+  query getEbayPropertySelectValue($id: GlobalID!) {
+    ebayPropertySelectValue(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      ebayProperty {
+        id
+        localizedName
+      }
+      marketplace {
+        id
+        name
+      }
+      localizedValue
+      translatedValue
       localInstance {
         id
         value
@@ -986,6 +1394,94 @@ export const getAmazonProductTypeQuery = gql`
     }
   }
 `;
+
+export const ebayProductTypesQuery = gql`
+  query EbayProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayProductTypeOrder
+    $filter: EbayProductTypeFilter
+  ) {
+    ebayProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          name
+          translatedName
+          marketplace {
+            id
+            name
+          }
+          localInstance {
+            id
+            value
+            productType {
+              id
+              value
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getEbayProductTypeQuery = gql`
+  query getEbayProductType($id: GlobalID!) {
+    ebayProductType(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      imported
+      name
+      translatedName
+      remoteId
+      marketplace {
+        id
+        name
+        defaultCategoryTreeId
+      }
+      localInstance {
+        id
+        value
+        productType {
+          id
+          value
+        }
+      }
+      items {
+        id
+        remoteType
+        ebayProperty {
+          id
+          localizedName
+          mappedLocally
+          allowsUnmappedValues
+          type
+        }
+      }
+    }
+  }
+`;
 export const amazonImportProcessesQuery = gql`
   query AmazonImportProcesses(
     $first: Int,
@@ -996,6 +1492,40 @@ export const amazonImportProcessesQuery = gql`
     $filter: AmazonSalesChannelImportFilter
   ) {
     amazonImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          status
+          percentage
+          createdAt
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const ebayImportProcessesQuery = gql`
+  query EbayImportProcesses(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: EbaySalesChannelImportOrder,
+    $filter: EbaySalesChannelImportFilter
+  ) {
+    ebayImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id

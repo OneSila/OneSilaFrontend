@@ -20,6 +20,7 @@ import {
   IntegrationCreateWizardForm,
   IntegrationTypes,
   AmazonChannelInfo,
+  EbayChannelInfo,
   MagentoChannelInfo,
   ShopifyChannelInfo,
   WoocommerceChannelInfo,
@@ -37,9 +38,11 @@ import {
   createMagentoSalesChannelMutation,
   createShopifySalesChannelMutation,
   createAmazonSalesChannelMutation,
+  createEbaySalesChannelMutation,
   createWoocommerceSalesChannelMutation,
   getShopifyRedirectUrlMutation,
   getAmazonRedirectUrlMutation
+  , getEbayRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { createWebhookIntegrationMutation } from "../../../../shared/api/mutations/webhookIntegrations.js";
 import { Toast } from "../../../../shared/modules/toast";
@@ -75,10 +78,11 @@ const form = reactive<IntegrationCreateWizardForm>({
     syncEanCodes: true,
     syncPrices: true,
     importOrders: true,
+    startingStock: null,
   }
 });
 
-const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | WebhookChannelInfo | {}>({});
+const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | WebhookChannelInfo| EbayChannelInfo | {}>({});
 
 
 watch(selectedIntegrationType, (newType) => {
@@ -97,6 +101,8 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
   } else if (newType === IntegrationTypes.Webhook) {
     Object.assign(specificChannelInfo.value, getWebhookDefaultFields());
+  } else if (newType === IntegrationTypes.Ebay) {
+     specificChannelInfo.value = {};
   } else {
     specificChannelInfo.value = {};
   }
@@ -124,6 +130,10 @@ const stepFourLabel = computed(() => {
     return t('integrations.create.wizard.step4.webhook.title');
   }
 
+  if (selectedIntegrationType.value === IntegrationTypes.Ebay) {
+    return t('integrations.create.wizard.step4.ebay.title');
+  }
+
   return t('integrations.create.wizard.step4.title');
 });
 
@@ -135,7 +145,10 @@ const wizardSteps = computed(() => {
   if (selectedIntegrationType.value !== IntegrationTypes.Webhook) {
     steps.push({ title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' });
   }
-  steps.push({ title: stepFourLabel.value, name: 'specificChannelStep' });
+  if (selectedIntegrationType.value !== IntegrationTypes.Ebay) {
+    steps.push({ title: stepFourLabel.value, name: 'specificChannelStep' });
+  }
+
   return steps;
 });
 
@@ -185,6 +198,7 @@ function isAmazonChannelInfo(value: any): value is AmazonChannelInfo {
 }
 
 
+
 const allowNextStep = computed(() => {
 
   const stepName = wizardSteps.value[step.value].name;
@@ -199,7 +213,7 @@ const allowNextStep = computed(() => {
       return false;
     }
 
-    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook];
+    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay];
     if (!excludedTypes.includes(selectedIntegrationType.value)) {
       // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
       const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
@@ -239,12 +253,13 @@ const allowNextStep = computed(() => {
     }
   }
 
-  if (stepName === 'specificChannelStep' &&
-  selectedIntegrationType.value === IntegrationTypes.Amazon &&
-  !isAmazonChannelInfo(specificChannelInfo.value)
-) {
-  return false;
-}
+  if (
+    stepName === 'specificChannelStep' &&
+    selectedIntegrationType.value === IntegrationTypes.Amazon &&
+    !isAmazonChannelInfo(specificChannelInfo.value)
+  ) {
+    return false;
+  }
 
   if (stepName === 'specificChannelStep' && selectedIntegrationType.value === IntegrationTypes.Webhook) {
     const info = specificChannelInfo.value as WebhookChannelInfo;
@@ -252,6 +267,7 @@ const allowNextStep = computed(() => {
       return false;
     }
   }
+
 
 
   return true;
@@ -296,6 +312,8 @@ const getIntegrationMutation = () => {
       return createAmazonSalesChannelMutation;
     case IntegrationTypes.Webhook:
       return createWebhookIntegrationMutation;
+    case IntegrationTypes.Ebay:
+      return createEbaySalesChannelMutation;
     default:
       return null;
   }
@@ -313,6 +331,8 @@ const getIntegrationMutationKey = () => {
       return 'createAmazonSalesChannel';
     case IntegrationTypes.Webhook:
       return 'createWebhookIntegration';
+    case IntegrationTypes.Ebay:
+      return 'createEbaySalesChannel';
     default:
       return '';
   }
@@ -330,10 +350,25 @@ const handleFinish = async () => {
       return;
     }
 
+    const shouldIncludeStartingStock = [
+      IntegrationTypes.Magento,
+      IntegrationTypes.Woocommerce,
+      IntegrationTypes.Amazon,
+      IntegrationTypes.Ebay,
+    ].includes(selectedIntegrationType.value);
+
+    const salesChannelData = selectedIntegrationType.value !== IntegrationTypes.Webhook
+        ? { ...form.salesChannelInfo }
+        : {};
+
+    if (!shouldIncludeStartingStock) {
+      delete (salesChannelData as any).startingStock;
+    }
+
     // Flatten the form fields into a single object
     const dataInput = {
       ...form.generalInfo,
-      ...(selectedIntegrationType.value !== IntegrationTypes.Webhook ? form.salesChannelInfo : {}),
+      ...salesChannelData,
       ...specificChannelInfo.value
     };
 
@@ -448,6 +483,34 @@ const handleAmazonSalesChannelSuccess = async (channelData: any) => {
   });
 };
 
+const handleEbaySalesChannelSuccess = async (channelData: any) => {
+  const id = channelData.id;
+
+  const { data } = await apolloClient.mutate({
+    mutation: getEbayRedirectUrlMutation,
+    variables: {
+      data: { id },
+    },
+  });
+
+  const result = data?.getEbayRedirectUrl;
+
+  if (result?.redirectUrl) {
+    window.location.href = result.redirectUrl;
+    return;
+  }
+
+  const messages = result?.messages || [];
+  messages.forEach((msg: any) => {
+    Toast.error(msg.message);
+  });
+
+  router.push({
+    name: 'integrations.integrations.show',
+    params: { type: IntegrationTypes.Ebay, id },
+  });
+};
+
 
 
 const handleSalesChannelSuccess = async (channelData: any, integrationType: string) => {
@@ -458,6 +521,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
   if (integrationType === IntegrationTypes.Amazon) {
     await handleAmazonSalesChannelSuccess(channelData);
+    return;
+  }
+
+  if (integrationType === IntegrationTypes.Ebay) {
+    await handleEbaySalesChannelSuccess(channelData);
     return;
   }
 
@@ -515,7 +583,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
         </template>
 
         <template #specificChannelStep>
-          <component :is="getIntegrationComponent()" :channel-info="specificChannelInfo"/>
+          <component
+            v-if="selectedIntegrationType !== IntegrationTypes.Ebay"
+            :is="getIntegrationComponent()"
+            :channel-info="specificChannelInfo"
+          />
         </template>
 
         <template #additionalButtons>

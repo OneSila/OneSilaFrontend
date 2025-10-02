@@ -57,6 +57,7 @@ export const aiPointsSubscriptions = gql`
     myMultiTenantCompany {
       aiPoints
       hasAmazonIntegration
+      hasEbayIntegration
   }
  }
 `;

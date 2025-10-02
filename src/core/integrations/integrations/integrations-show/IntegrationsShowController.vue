@@ -12,7 +12,8 @@ import {
   getSalesChannelQuery,
   getShopifyChannelQuery,
   getWoocommerceChannelQuery,
-  getAmazonChannelQuery
+  getAmazonChannelQuery,
+  getEbayChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { getWebhookIntegrationQuery } from "../../../../shared/api/queries/webhookIntegrations.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
@@ -20,6 +21,7 @@ import { MagentoGeneralInfoTab } from "./containers/general/magento-general-tab"
 import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab";
 import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
 import { WebhookGeneralInfoTab } from "./containers/general/webhook-general-tab";
+import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -29,6 +31,7 @@ import { Currencies } from "./containers/currencies";
 import { PriceLists } from "./containers/price-lists";
 import { Rules } from "./containers/rules";
 import { Properties } from "./containers/properties";
+import { InventoryFields } from "./containers/inventory-fields";
 import { PropertySelectValues } from "./containers/property-select-values";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
@@ -72,6 +75,13 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
       { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' }
     );
+  } else if (type.value === IntegrationTypes.Ebay) {
+    tabItems.value.push(
+      { name: 'inventoryFields', label: t('integrations.show.ebay.internalProperties.title'), icon: 'boxes-stacked' },
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+      { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
+      { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
+    );
   }
 
   tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
@@ -93,6 +103,8 @@ const getIntegrationQuery = () => {
       return getWoocommerceChannelQuery;
     case IntegrationTypes.Amazon:
       return getAmazonChannelQuery;
+    case IntegrationTypes.Ebay:
+      return getEbayChannelQuery;
     case IntegrationTypes.Webhook:
       return getWebhookIntegrationQuery;
     default:
@@ -112,6 +124,8 @@ const getIntegrationQueryKey = () => {
       return "amazonChannel";
     case IntegrationTypes.Webhook:
       return "webhookIntegration";
+    case IntegrationTypes.Ebay:
+      return "ebayChannel";
     default:
       return "salesChannel";
   }
@@ -129,6 +143,8 @@ const getGeneralComponent = () => {
       return AmazonGeneralInfoTab;
     case IntegrationTypes.Webhook:
       return WebhookGeneralInfoTab;
+    case IntegrationTypes.Ebay:
+      return EbayGeneralInfoTab;
     default:
       return null;
   }
@@ -293,6 +309,17 @@ const pullData = async () => {
           <!-- Properties Tab -->
           <template #properties>
             <Properties v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
+          </template>
+
+          <!-- Inventory Fields Tab -->
+          <template #inventoryFields>
+            <InventoryFields
+              v-if="salesChannelId"
+              :id="id"
+              :sales-channel-id="salesChannelId"
+              :type="type"
+              @pull-data="pullData()"
+            />
           </template>
 
           <!-- Property Select Values Tab -->

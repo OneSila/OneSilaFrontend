@@ -3,6 +3,7 @@ export enum IntegrationTypes {
   Shopify = 'shopify',
   Woocommerce = 'woocommerce',
   Amazon = 'amazon',
+  Ebay = 'ebay',
   Webhook = 'webhook',
   None = 'none',
 }
@@ -64,6 +65,7 @@ export interface SalesChannelInfo {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  startingStock: number | null;
 }
 
 /**
@@ -114,6 +116,12 @@ export interface WebhookChannelInfo extends SpecificChannelInfo {
   config: Record<string, any>;
 }
 
+export interface EbayChannelInfo extends SpecificChannelInfo {
+  region: string | null;
+  country: string | null;
+  listingOwner?: boolean;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -156,6 +164,14 @@ export function getAmazonDefaultFields(): AmazonChannelInfo {
   };
 }
 
+export function getEbayDefaultFields(): EbayChannelInfo {
+  return {
+    region: null,
+    country: null,
+    listingOwner: false,
+  };
+}
+
 export function getWebhookDefaultFields(): WebhookChannelInfo {
   return {
     topic: '',
@@ -178,6 +194,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getWoocommerceDefaultFields();
     case IntegrationTypes.Amazon:
       return getAmazonDefaultFields();
+    case IntegrationTypes.Ebay:
+      return getEbayDefaultFields();
     case IntegrationTypes.Webhook:
       return getWebhookDefaultFields();
     default:

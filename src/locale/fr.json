@@ -82,8 +82,35 @@
         "email": "Entrez l'e-mail"
       }
     }
-  }
-  ,
+  },
+  "dashboard": {
+    "cards": {
+      "ebay": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
+      }
+    }
+  },
   "products": {
     "products": {
       "create": {
@@ -95,13 +122,30 @@
           }
         }
       },
+      "translation": {
+        "placeholders": {
+          "subtitle": ""
+        },
+        "labels": {
+          "subtitle": ""
+        }
+      },
       "tabs": {
         "amazon": "Amazon"
+      },
+      "priceLists": {
+        "add": {
+          "placeholder": "",
+          "select": ""
+        }
       },
       "variations": {
         "content": {
           "validation": {
             "fieldError": "{field} : {message}"
+          },
+          "columns": {
+            "subtitle": ""
           }
         },
         "tabs": {
@@ -175,6 +219,7 @@
         "validationIssues": "Problèmes de validation détectés",
         "validationIssuesDescription": "Problèmes de validation Amazon probables basés sur la structure de produit attendue par Amazon",
         "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationOtherIssuesNote": "",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",
@@ -200,9 +245,114 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "labels": {
+      "fulfillmentPolicy": "Politique d'expédition",
+      "paymentPolicy": "Politique de paiement",
+      "returnPolicy": "Politique de retour",
+      "merchantLocation": "Lieu d'inventaire",
+      "lengthUnit": "Unité de longueur",
+      "weightUnit": "Unité de poids",
+      "isDefaultMarketplace": "Marketplace par défaut",
+      "startingStock": ""
+    },
+    "salesChannel": {
+      "helpText": {
+        "startingStock": ""
+      }
+    },
     "show": {
+      "properties": {
+        "title": "",
+        "labels": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        }
+      },
+      "propertySelectValues": {
+        "labels": {
+          "remoteName": "",
+          "remoteValue": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "selectValue": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "help": {
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "remoteValue": "",
+          "remoteName": "",
+          "selectValue": "",
+          "selectValueAmazon": "",
+          "selectValueEbay": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "bulkAssign": "",
+        "bulkAssignTitle": "",
+        "assignSuccess": ""
+      },
+      "productRules": {
+        "title": "",
+        "labels": {
+          "productTypeCode": "",
+          "productRule": "",
+          "productName": "",
+          "selectedProductType": "",
+          "ebayCategory": ""
+        },
+        "help": {
+          "productTypeCode": "",
+          "productName": "",
+          "productRule": "",
+          "ebayCategory": ""
+        },
+        "titles": {
+          "suggestUsingName": "",
+          "searchInAll": ""
+        },
+        "errors": {
+          "noSuggestions": "",
+          "missingMarketplace": "",
+          "categoryLookupFailed": "",
+          "noSelection": ""
+        }
+      },
       "tabs": {
         "reports": "Rapports"
+      },
+      "ebay": {
+        "title": "",
+        "productRules": {
+          "title": "",
+          "labels": {
+            "translatedName": ""
+          },
+          "help": {
+            "translatedName": "",
+            "productRule": ""
+          }
+        }
       }
     },
     "imports": {
@@ -216,8 +366,45 @@
           "NAME_TOO_LONG": "Name too long",
           "INVALID_VARIATION_THEME": "Invalid variation theme"
         }
+      },
+      "create": {
+        "ebay": {
+          "wizard": {
+            "steps": {
+              "type": "",
+              "languages": "",
+              "currencies": ""
+            },
+            "languages": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            },
+            "currencies": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            }
+          }
+        }
       }
-    }
+    },
+    "ebay": {
+        "lengthUnits": {
+          "centimeter": "Centimètre",
+          "meter": "Mètre",
+          "inch": "Pouce",
+          "foot": "Pied"
+        },
+        "weightUnits": {
+          "gram": "Gramme",
+          "kilogram": "Kilogramme",
+          "ounce": "Once",
+          "pound": "Livre"
+        }
+      }
   },
   "webhooks": {
     "monitor": {
@@ -376,6 +563,14 @@
       "tabs": {
         "upload": "Téléverser",
         "urls": "URLs"
+      },
+      "labels": {
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
       },
       "alert": {
         "toast": {

@@ -5,7 +5,8 @@ import { useI18n } from 'vue-i18n';
 import magentoIcon from "../../../../../../../assets/images/integration-types/icons/magento.svg";
 import shopifyIcon from "../../../../../../../assets/images/integration-types/icons/shopify.svg";
 import woocommerceIcon from "../../../../../../../assets/images/integration-types/icons/woocommerce.svg";
-import amazonIcon from "../../../../../../../assets/images/integration-types/icons//amazon.svg";
+import amazonIcon from "../../../../../../../assets/images/integration-types/icons/amazon.svg";
+import ebayIcon from "../../../../../../../assets/images/integration-types/icons/ebay.svg";
 
 const props = defineProps<{ channels: any[]; modelValue: string }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -13,7 +14,7 @@ const { t } = useI18n();
 
 const cleanHostname = (hostname: string, type: string) => {
   if (!hostname) return '';
-  if (type === IntegrationTypes.Amazon) {
+  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
     return hostname;
   }
   try {
@@ -30,6 +31,7 @@ const integrationTypeIcons = {
   shopify: shopifyIcon,
   woocommerce: woocommerceIcon,
   amazon: amazonIcon,
+  ebay: ebayIcon
 };
 
 

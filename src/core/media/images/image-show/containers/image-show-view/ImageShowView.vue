@@ -9,7 +9,7 @@ import { Toast } from "../../../../../../shared/modules/toast";
 import {getFileName, getFileSize, truncateText} from "../../../../files/media";
 
 const { t } = useI18n();
-const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string, image: {size: string, name: string}; imageUrl: string } }>();
+const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string, image: {size: string, name: string}; imageUrl: string, title?: string | null, description?: string | null } }>();
 
 const imageTypeOptions = {
       PACK: t('media.images.labels.packShot'),
@@ -50,6 +50,14 @@ const copyUrlToClipboard = async () => {
       <FlexCell>
         <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('media.media.labels.fileSize') }}</label>
         <span class="flex-grow text-gray-900">{{ getFileSize(image) }}</span>
+      </FlexCell>
+      <FlexCell>
+        <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.title') }}</label>
+        <span class="flex-grow text-gray-900">{{ image.title || '—' }}</span>
+      </FlexCell>
+      <FlexCell>
+        <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.description') }}</label>
+        <p class="flex-grow text-gray-900 whitespace-pre-line">{{ image.description || '—' }}</p>
       </FlexCell>
       <FlexCell>
           <div class="mt-2">

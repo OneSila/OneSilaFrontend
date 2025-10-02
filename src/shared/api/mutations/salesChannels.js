@@ -57,6 +57,15 @@ export const createAmazonSalesChannelMutation = gql`
   }
 `;
 
+export const createEbaySalesChannelMutation = gql`
+  mutation createEbaySalesChannel($data: EbaySalesChannelInput!) {
+    createEbaySalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
@@ -69,6 +78,15 @@ export const updateWoocommerceSalesChannelMutation = gql`
 export const updateAmazonSalesChannelMutation = gql`
   mutation updateAmazonSalesChannel($data: AmazonSalesChannelPartialInput!) {
     updateAmazonSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateEbaySalesChannelMutation = gql`
+  mutation updateEbaySalesChannel($data: EbaySalesChannelPartialInput!) {
+    updateEbaySalesChannel(data: $data) {
       id
       hostname
     }
@@ -300,6 +318,37 @@ export const updateAmazonSalesChannelViewMutation = gql`
   }
 `;
 
+export const updateEbaySalesChannelViewMutation = gql`
+  mutation updateEbaySalesChannelView($data: EbaySalesChannelViewPartialInput!) {
+    updateEbaySalesChannelView(data: $data) {
+      id
+      name
+      url
+      fulfillmentPolicyId
+      fulfillmentPolicyChoices
+      paymentPolicyId
+      paymentPolicyChoices
+      returnPolicyId
+      returnPolicyChoices
+      merchantLocationKey
+      merchantLocationChoices
+      lengthUnit
+      weightUnit
+      isDefault
+    }
+  }
+`;
+
+export const updateEbayInternalPropertyMutation = gql`
+  mutation updateEbayInternalProperty($data: EbayInternalPropertyPartialInput!) {
+    updateEbayInternalProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
 export const updateRemoteLanguageMutation = gql`
   mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
     updateRemoteLanguage(data: $data) {
@@ -490,6 +539,24 @@ export const getAmazonRedirectUrlMutation = gql`
   }
 `;
 
+export const getEbayRedirectUrlMutation = gql`
+  mutation GetEbayRedirectUrl($data: EbaySalesChannelPartialInput!) {
+    getEbayRedirectUrl(instance: $data) {
+      ... on EbayRedirectUrlType {
+        redirectUrl
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 export const validateAmazonAuthMutation = gql`
   mutation ValidateAmazonAuth($data: AmazonValidateAuthInput!) {
     validateAmazonAuth(instance: $data) {
@@ -510,11 +577,39 @@ export const validateAmazonAuthMutation = gql`
   }
 `;
 
+export const validateEbayAuthMutation = gql`
+  mutation ValidateEbayAuth($data: EbayValidateAuthInput!) {
+    validateEbayAuth(instance: $data) {
+      ... on EbaySalesChannelType {
+        id
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 // Amazon Property Mutations
 
 export const updateAmazonPropertyMutation = gql`
   mutation updateAmazonProperty($data: AmazonPropertyPartialInput!) {
     updateAmazonProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const updateEbayPropertyMutation = gql`
+  mutation updateEbayProperty($data: EbayPropertyPartialInput!) {
+    updateEbayProperty(data: $data) {
       id
       mappedLocally
       mappedRemotely
@@ -542,6 +637,24 @@ export const bulkUpdateAmazonPropertySelectValueLocalInstanceMutation = gql`
   }
 `;
 
+export const updateEbayPropertySelectValueMutation = gql`
+  mutation updateEbayPropertySelectValue($data: EbayPropertySelectValuePartialInput!) {
+    updateEbayPropertySelectValue(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const bulkUpdateEbayPropertySelectValueLocalInstanceMutation = gql`
+  mutation bulkUpdateEbayPropertySelectValueLocalInstance($data: BulkEbayPropertySelectValueLocalInstanceInput!) {
+    bulkUpdateEbayPropertySelectValueLocalInstance(instance: $data) {
+      id
+    }
+  }
+`;
+
 // Amazon Product Type Mutations
 
 export const updateAmazonProductTypeMutation = gql`
@@ -562,6 +675,24 @@ export const createAmazonProductTypesFromLocalRulesMutation = gql`
   }
 `;
 
+export const updateEbayProductTypeMutation = gql`
+  mutation updateEbayProductType($data: EbayProductTypePartialInput!) {
+    updateEbayProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const createEbayProductTypesFromLocalRulesMutation = gql`
+  mutation createEbayProductTypesFromLocalRules($data: EbaySalesChannelPartialInput!) {
+    createEbayProductTypesFromLocalRules(instance: $data) {
+      id
+    }
+  }
+`;
+
 export const suggestAmazonProductTypeMutation = gql`
   mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
     suggestAmazonProductType(name: $name, marketplace: $marketplace) {
@@ -570,6 +701,19 @@ export const suggestAmazonProductTypeMutation = gql`
         displayName
         marketplaceIds
         name
+      }
+    }
+  }
+`;
+export const suggestEbayCategoryMutation = gql`
+  mutation suggestEbayCategory($name: String, $marketplace: SalesChannelViewPartialInput!) {
+    suggestEbayCategory(name: $name, marketplace: $marketplace) {
+      categoryTreeId
+      categories {
+        categoryId
+        categoryName
+        categoryPath
+        leaf
       }
     }
   }
@@ -592,6 +736,36 @@ export const createAmazonImportProcessMutation = gql`
 export const updateAmazonImportProcessMutation = gql`
   mutation updateAmazonImportProcess($data: AmazonSalesChannelImportPartialInput!) {
     updateAmazonImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const createEbayImportProcessMutation = gql`
+  mutation createEbayImportProcess($data: EbaySalesChannelImportInput!) {
+    createEbayImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateEbayImportProcessMutation = gql`
+  mutation updateEbayImportProcess($data: EbaySalesChannelImportPartialInput!) {
+    updateEbayImportProcess(data: $data) {
       id
       type
       status

@@ -97,8 +97,8 @@ export const amazonPropertiesListingConfigConstructor = (t: Function, specificIn
   addActions: true,
   addEdit: true,
   addShow: true,
-  editUrlName: 'integrations.amazonProperties.edit',
-  showUrlName: 'integrations.amazonProperties.edit',
+  editUrlName: 'integrations.remoteProperties.edit',
+  showUrlName: 'integrations.remoteProperties.edit',
   addDelete: false,
   addPagination: true,
 });

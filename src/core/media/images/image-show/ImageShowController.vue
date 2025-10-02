@@ -46,6 +46,8 @@ type Image = {
     imageType: string;
     imageWebUrl: string;
     imageUrl: string;
+    title?: string | null;
+    description?: string | null;
 };
 
 type ImageSubscriptionResult = {

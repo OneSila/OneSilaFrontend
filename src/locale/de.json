@@ -82,12 +82,45 @@
         "email": "E-Mail eingeben"
       }
     }
-  }
-  ,
+  },
+  "dashboard": {
+    "cards": {
+      "ebay": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
+      }
+    }
+  },
   "products": {
     "translation": {
       "messages": {
         "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
+      },
+      "placeholders": {
+        "subtitle": ""
+      },
+      "labels": {
+        "subtitle": ""
       }
     },
     "products": {
@@ -103,10 +136,19 @@
       "tabs": {
         "amazon": "Amazon"
       },
+      "priceLists": {
+        "add": {
+          "placeholder": "",
+          "select": ""
+        }
+      },
       "variations": {
         "content": {
           "validation": {
             "fieldError": "{field}: {message}"
+          },
+          "columns": {
+            "subtitle": ""
           }
         },
         "tabs": {
@@ -180,6 +222,7 @@
         "validationIssues": "Erkannte Validierungsprobleme",
         "validationIssuesDescription": "Wahrscheinliche Amazon-Validierungsprobleme basierend auf der von Amazon erwarteten Produktstruktur",
         "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationOtherIssuesNote": "",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",
@@ -205,9 +248,114 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "labels": {
+      "fulfillmentPolicy": "Versandrichtlinie",
+      "paymentPolicy": "Zahlungsrichtlinie",
+      "returnPolicy": "Rückgaberichtlinie",
+      "merchantLocation": "Lagerort",
+      "lengthUnit": "Längeneinheit",
+      "weightUnit": "Gewichtseinheit",
+      "isDefaultMarketplace": "Standardmarktplatz",
+      "startingStock": ""
+    },
+    "salesChannel": {
+      "helpText": {
+        "startingStock": ""
+      }
+    },
     "show": {
+      "properties": {
+        "title": "",
+        "labels": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        }
+      },
+      "propertySelectValues": {
+        "labels": {
+          "remoteName": "",
+          "remoteValue": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "selectValue": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "help": {
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "remoteValue": "",
+          "remoteName": "",
+          "selectValue": "",
+          "selectValueAmazon": "",
+          "selectValueEbay": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "bulkAssign": "",
+        "bulkAssignTitle": "",
+        "assignSuccess": ""
+      },
+      "productRules": {
+        "title": "",
+        "labels": {
+          "productTypeCode": "",
+          "productRule": "",
+          "productName": "",
+          "selectedProductType": "",
+          "ebayCategory": ""
+        },
+        "help": {
+          "productTypeCode": "",
+          "productName": "",
+          "productRule": "",
+          "ebayCategory": ""
+        },
+        "titles": {
+          "suggestUsingName": "",
+          "searchInAll": ""
+        },
+        "errors": {
+          "noSuggestions": "",
+          "missingMarketplace": "",
+          "categoryLookupFailed": "",
+          "noSelection": ""
+        }
+      },
       "tabs": {
         "reports": "Berichte"
+      },
+      "ebay": {
+        "title": "",
+        "productRules": {
+          "title": "",
+          "labels": {
+            "translatedName": ""
+          },
+          "help": {
+            "translatedName": "",
+            "productRule": ""
+          }
+        }
       }
     },
     "imports": {
@@ -221,6 +369,43 @@
           "NAME_TOO_LONG": "Name too long",
           "INVALID_VARIATION_THEME": "Invalid variation theme"
         }
+      },
+      "create": {
+        "ebay": {
+          "wizard": {
+            "steps": {
+              "type": "",
+              "languages": "",
+              "currencies": ""
+            },
+            "languages": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            },
+            "currencies": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            }
+          }
+        }
+      }
+    },
+    "ebay": {
+      "lengthUnits": {
+        "centimeter": "Zentimeter",
+        "meter": "Meter",
+        "inch": "Zoll",
+        "foot": "Fuß"
+      },
+      "weightUnits": {
+        "gram": "Gramm",
+        "kilogram": "Kilogramm",
+        "ounce": "Unze",
+        "pound": "Pfund"
       }
     }
   },
@@ -381,6 +566,14 @@
       "tabs": {
         "upload": "Hochladen",
         "urls": "URLs"
+      },
+      "labels": {
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
       },
       "alert": {
         "toast": {

@@ -10,6 +10,32 @@
       "addProduct": "Product Toevoegen",
       "addInventory": "Voorraad Toevoegen"
     },
+    "cards": {
+      "ebay": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
+      }
+    },
     "onboarding": {
       "completedHeader": "Alle stappen zijn afgewerkt!",
       "completedMessage": "Proficiat!  Alle stappen om van start te kunnen gaan zijn nu klaar en uw bedrijf te beheren via OneSila.  We wensen u veel success, en weet dat we voor uw klaar staan om u te helpen.",
@@ -632,11 +658,13 @@
       "placeholders": {
         "language": "Selecteer taal",
         "name": "Product Naam",
+        "subtitle": "",
         "shortDescription": "Korte beschrijving van het product voor de snelle lezer.",
         "description": "Schrijf hier de lange product beschrijving die tot in detail gaat. Voor de geïnformeerde klant.",
         "urlKey": "Voer URL sleutel in"
       },
       "labels": {
+        "subtitle": "",
         "description": "Beschrijving",
         "urlKey": "URL Sleutel"
       },
@@ -679,6 +707,12 @@
         "websites": "Verkoopskanalen",
         "amazon": "Amazon"
       },
+      "priceLists": {
+        "add": {
+          "placeholder": "",
+          "select": ""
+        }
+      },
       "variations": {
         "tabs": {
           "list": "Lijst",
@@ -692,6 +726,9 @@
           },
           "validation": {
             "fieldError": "{field}: {message}"
+          },
+          "columns": {
+            "subtitle": ""
           }
         },
         "images": {
@@ -729,6 +766,7 @@
         "validationIssues": "Gedetecteerde validatieproblemen",
         "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",
         "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
+        "variationOtherIssuesNote": "",
         "variationIssuesHeading": "Variation {identifier}",
         "openVariation": "Open variation",
         "noVariationValidationIssues": "No variation validation issues found.",
@@ -1570,10 +1608,14 @@
         "imageType": "Afbeeldingstype",
         "packShot": "Packshot",
         "moodShot": "Mood Shot",
-        "addImages": "Afbeeldingen toevoegen"
+        "addImages": "Afbeeldingen toevoegen",
+        "title": "",
+        "description": ""
       },
       "placeholders": {
-        "imageType": "Afbeeldingstype"
+        "imageType": "Afbeeldingstype",
+        "title": "",
+        "description": ""
       },
       "alert": {
         "toast": {
@@ -2004,11 +2046,110 @@
   },
   "integrations": {
     "show": {
+      "ebay": {
+        "title": "",
+        "productRules": {
+          "title": "",
+          "labels": {
+            "translatedName": ""
+          },
+          "help": {
+            "translatedName": "",
+            "productRule": ""
+          }
+        },
+        "properties": {
+          "title": ""
+        },
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "isRoot": ""
+          }
+        }
+      },
+      "properties": {
+        "title": "",
+        "labels": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        }
+      },
       "products": {
         "labels": {
           "store": "Winkel",
           "excludeStores": "Winkels uitsluiten"
         }
+      },
+      "productRules": {
+        "title": "",
+        "labels": {
+          "productTypeCode": "",
+          "productRule": "",
+          "productName": "",
+          "selectedProductType": "",
+          "ebayCategory": ""
+        },
+        "help": {
+          "productTypeCode": "",
+          "productName": "",
+          "productRule": "",
+          "ebayCategory": ""
+        },
+        "titles": {
+          "suggestUsingName": "",
+          "searchInAll": ""
+        },
+        "errors": {
+          "noSuggestions": "",
+          "missingMarketplace": "",
+          "categoryLookupFailed": "",
+          "noSelection": ""
+        }
+      },
+      "propertySelectValues": {
+        "labels": {
+          "remoteName": "",
+          "remoteValue": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "selectValue": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "help": {
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
+          "localProperty": "",
+          "remoteValue": "",
+          "remoteName": "",
+          "selectValue": "",
+          "selectValueAmazon": "",
+          "selectValueEbay": "",
+          "translatedRemoteName": "",
+          "localizedValue": "",
+          "translatedValue": ""
+        },
+        "bulkAssign": "",
+        "bulkAssignTitle": "",
+        "assignSuccess": ""
       },
       "tabs": {
         "reports": "Rapporten"
@@ -2025,6 +2166,29 @@
           "NAME_TOO_LONG": "Name too long",
           "INVALID_VARIATION_THEME": "Invalid variation theme"
         }
+      },
+      "create": {
+        "ebay": {
+          "wizard": {
+            "steps": {
+              "type": "",
+              "languages": "",
+              "currencies": ""
+            },
+            "languages": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            },
+            "currencies": {
+              "title": "",
+              "description": "",
+              "noData": "",
+              "fetchError": ""
+            }
+          }
+        }
       }
     }
   }
@@ -2037,10 +2201,37 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "labels": {
+      "fulfillmentPolicy": "Verzendbeleid",
+      "paymentPolicy": "Betaalbeleid",
+      "returnPolicy": "Retourbeleid",
+      "merchantLocation": "Voorraadlocatie",
+      "lengthUnit": "Lengte-eenheid",
+      "weightUnit": "Gewichtseenheid",
+      "isDefaultMarketplace": "Standaardmarktplaats",
+      "startingStock": ""
+    },
     "salesChannel": {
       "labels": {
         "assignedToSalesChannelView": "Toegewezen aan winkel",
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+      },
+      "helpText": {
+        "startingStock": ""
+      }
+    },
+    "ebay": {
+      "lengthUnits": {
+        "centimeter": "Centimeter",
+        "meter": "Meter",
+        "inch": "Inch",
+        "foot": "Voet"
+      },
+      "weightUnits": {
+        "gram": "Gram",
+        "kilogram": "Kilogram",
+        "ounce": "Ons",
+        "pound": "Pond"
       }
     }
   },

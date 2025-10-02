@@ -43,8 +43,21 @@ onMounted(async () => {
   let addImage = false;
   const propertyId = route.query.propertyId ? route.query.propertyId.toString() : null;
   const isRule = route.query.isRule ? route.query.isRule.toString() : null;
-  const amazonRuleId = route.query.amazonRuleId ? route.query.amazonRuleId.toString() : null;
-  const amazonSelectValueId = route.query.amazonSelectValueId ? route.query.amazonSelectValueId.toString() : null;
+  const remoteRuleId = route.query.remoteRuleId
+    ? route.query.remoteRuleId.toString()
+    : route.query.amazonRuleId
+    ? route.query.amazonRuleId.toString()
+    : null;
+  const remoteSelectValueId = route.query.remoteSelectValueId
+    ? route.query.remoteSelectValueId.toString()
+    : route.query.amazonSelectValueId
+    ? route.query.amazonSelectValueId.toString()
+    : null;
+  const remoteSelectValueType = route.query.remoteSelectValueType
+    ? route.query.remoteSelectValueType.toString()
+    : route.query.amazonSelectValueId
+    ? 'amazon'
+    : null;
 
   if (propertyId) {
     const { data } = await apolloClient.query({
@@ -64,8 +77,9 @@ onMounted(async () => {
     propertyId,
     addImage,
     isRule !== null,
-    amazonRuleId,
-    amazonSelectValueId
+    remoteRuleId,
+    remoteSelectValueId,
+    remoteSelectValueType
   );
 
   if (formConfig.value) {

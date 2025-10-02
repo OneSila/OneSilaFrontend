@@ -406,7 +406,7 @@ defineExpose({ hasUnsavedChanges });
                 <Link
                   v-if="type.exists && type.id"
                   :path="{
-                    name: 'integrations.amazonProductTypes.edit',
+                    name: 'integrations.remoteProductTypes.edit',
                     params: { type: 'amazon', id: type.id },
                     query: { integrationId: props.salesChannelId },
                   }"

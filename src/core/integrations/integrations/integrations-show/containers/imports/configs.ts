@@ -27,6 +27,14 @@ export interface AmazonSalesChannelImportItem {
   createdAt: string;
 }
 
+export interface EbaySalesChannelImportItem {
+  id: string;
+  type: string;
+  status: 'new' | 'pending' | 'failed' | 'success' | 'processing';
+  percentage: number;
+  createdAt: string;
+}
+
 export interface SalesChannelSubscriptionResult {
   salesChannel: {
     id: string;
@@ -34,6 +42,7 @@ export interface SalesChannelSubscriptionResult {
     isImporting: boolean;
     saleschannelimportSet: SalesChannelImportItem[];
     amazonImports: AmazonSalesChannelImportItem[];
+    ebayImports: EbaySalesChannelImportItem[];
   };
 }
 
@@ -41,14 +50,15 @@ export interface RemoteLanguage {
   id: string;
   remoteCode: string;
   name: string;
-  localInstance: { id: string };
+  localInstance: { id: string } | null;
 }
 
 export interface RemoteCurrency {
   id: string;
   remoteCode: string;
   name: string;
-  localInstance: { id: string };
+  marketplaceName?: string | null;
+  localInstance: { id: string } | null;
 }
 
 export interface RemoteAttribute {

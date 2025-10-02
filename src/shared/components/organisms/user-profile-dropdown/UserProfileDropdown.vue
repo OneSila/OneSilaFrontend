@@ -16,6 +16,7 @@ const auth = injectAuth();
 const user = ref(auth.user)
 const router = useRouter();
 const previousHasAmazon = ref<boolean | null>(null);
+const previousHasEbay = ref<boolean | null>(null);
 
 const logout = async () => {
 
@@ -24,16 +25,28 @@ const logout = async () => {
 };
 
 const handleSubscriptionResult = (data: any) => {
-  const current = data?.myMultiTenantCompany?.hasAmazonIntegration ?? false; // default to false
-  const previous = auth.user.company?.hasAmazonIntegration ?? false;
+  // Amazon
+  const currentAmazon = data?.myMultiTenantCompany?.hasAmazonIntegration ?? false;
+  const previousAmazon = auth.user.company?.hasAmazonIntegration ?? false;
 
-  if (auth.user.company && current !== previous) {
-    auth.user.company.hasAmazonIntegration = current;
+  if (auth.user.company && currentAmazon !== previousAmazon) {
+    auth.user.company.hasAmazonIntegration = currentAmazon;
     localStorage.setItem('auth_user', JSON.stringify(auth.user));
   }
+  previousHasAmazon.value = currentAmazon;
 
-  previousHasAmazon.value = current;
+  // eBay
+  const currentEbay = data?.myMultiTenantCompany?.hasEbayIntegration ?? false;
+  const previousEbay = auth.user.company?.hasEbayIntegration ?? false;
+  console.log(currentEbay);
+
+  if (auth.user.company && currentEbay !== previousEbay) {
+    auth.user.company.hasEbayIntegration = currentEbay;
+    localStorage.setItem('auth_user', JSON.stringify(auth.user));
+  }
+  previousHasEbay.value = currentEbay;
 };
+
 
 
 </script>

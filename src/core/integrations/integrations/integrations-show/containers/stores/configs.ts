@@ -4,10 +4,13 @@ import {
   salesChannelViewsQuery,
   amazonChannelViewsQuery,
   getAmazonChannelViewQuery,
+  ebayChannelViewsQuery,
+  getEbaySalesChannelViewQuery,
 } from "../../../../../../shared/api/queries/salesChannels.js";
 import {
   updateSalesChannelViewMutation,
   updateAmazonSalesChannelViewMutation,
+  updateEbaySalesChannelViewMutation,
 } from "../../../../../../shared/api/mutations/salesChannels.js";
 import { IntegrationTypes } from "../../../integrations";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
@@ -23,11 +26,31 @@ export const storeEditFormConfigConstructor = (
 ): FormConfig => ({
   cols: 1,
   type: FormType.EDIT,
-  mutation: type === IntegrationTypes.Amazon ? updateAmazonSalesChannelViewMutation : updateSalesChannelViewMutation,
-  mutationKey: type === IntegrationTypes.Amazon ? 'updateAmazonSalesChannelView' : 'updateSalesChannelView',
-  query: type === IntegrationTypes.Amazon ? getAmazonChannelViewQuery : getSalesChannelViewQuery,
+  mutation:
+    type === IntegrationTypes.Amazon
+      ? updateAmazonSalesChannelViewMutation
+      : type === IntegrationTypes.Ebay
+        ? updateEbaySalesChannelViewMutation
+        : updateSalesChannelViewMutation,
+  mutationKey:
+    type === IntegrationTypes.Amazon
+      ? 'updateAmazonSalesChannelView'
+      : type === IntegrationTypes.Ebay
+        ? 'updateEbaySalesChannelView'
+        : 'updateSalesChannelView',
+  query:
+    type === IntegrationTypes.Amazon
+      ? getAmazonChannelViewQuery
+      : type === IntegrationTypes.Ebay
+        ? getEbaySalesChannelViewQuery
+        : getSalesChannelViewQuery,
   queryVariables: { id: storeId },
-  queryDataKey: type === IntegrationTypes.Amazon ? 'amazonChannelView' : 'salesChannelView',
+  queryDataKey:
+    type === IntegrationTypes.Amazon
+      ? 'amazonChannelView'
+      : type === IntegrationTypes.Ebay
+        ? 'ebaySalesChannelView'
+        : 'salesChannelView',
   submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'stores' } },
   fields: (() => {
     const baseFields: FormField[] = [
@@ -51,7 +74,7 @@ export const storeEditFormConfigConstructor = (
       },
     ];
 
-    if (type === IntegrationTypes.Amazon) {
+    if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
       baseFields.push({
         type: FieldType.Checkbox,
         name: 'isDefault',
@@ -91,7 +114,7 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
     { name: 'active', type: FieldType.Boolean },
   ];
 
-  if (type === IntegrationTypes.Amazon) {
+  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
     headers.push(t('integrations.show.stores.labels.isDefault'));
     fields.push({ name: 'isDefault', type: FieldType.Boolean });
   }
@@ -113,8 +136,22 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
   };
 };
 
-export const listingQueryConstructor = (type: string) =>
-  type === IntegrationTypes.Amazon ? amazonChannelViewsQuery : salesChannelViewsQuery;
+export const listingQueryConstructor = (type: string) => {
+  if (type === IntegrationTypes.Amazon) {
+    return amazonChannelViewsQuery;
+  }
+  if (type === IntegrationTypes.Ebay) {
+    return ebayChannelViewsQuery;
+  }
+  return salesChannelViewsQuery;
+};
 
-export const listingQueryKeyConstructor = (type: string) =>
-  type === IntegrationTypes.Amazon ? 'amazonChannelViews' : 'salesChannelViews';
+export const listingQueryKeyConstructor = (type: string) => {
+  if (type === IntegrationTypes.Amazon) {
+    return 'amazonChannelViews';
+  }
+  if (type === IntegrationTypes.Ebay) {
+    return 'ebaySalesChannelViews';
+  }
+  return 'salesChannelViews';
+};

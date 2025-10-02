@@ -33,6 +33,7 @@ interface EditAmazonForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  startingStock: number | null;
   accessToken?: string;
   expirationDate?: string;
   region: string | null;
@@ -44,12 +45,18 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
-const formData = ref<EditAmazonForm>({ ...props.data });
+const formData = ref<EditAmazonForm>({
+  ...props.data,
+  startingStock: props.data.startingStock ?? null
+});
 const fieldErrors = ref<Record<string, string>>({});
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
 watch(() => props.data, (newData) => {
-  formData.value = { ...newData };
+  formData.value = {
+    ...newData,
+    startingStock: newData.startingStock ?? null
+  };
 }, { deep: true });
 
 const openAccordionItem = computed(() => String(route.query.accordion || ''));
@@ -264,6 +271,30 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
             <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
               {{ t(`integrations.salesChannel.helpText.${toggleField}`) }}
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-gray-200 grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.startingStock') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                      :model-value="formData.startingStock ?? ''"
+                      :number="true"
+                      :min-number="0"
+                      class="w-full md:w-24"
+                      @update:modelValue="(value) => { formData.startingStock = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['startingStock']">{{ fieldErrors['startingStock'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.startingStock') }}
             </div>
           </div>
         </div>

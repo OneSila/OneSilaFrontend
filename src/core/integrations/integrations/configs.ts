@@ -28,11 +28,12 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingIntegrationTypeBadgeMap = (t: Function) => ({
-  [IntegrationTypes.Magento]: { text: t('integrations.integrationTypes.magento'), color: 'red' },
-  [IntegrationTypes.Shopify]: { text: t('integrations.integrationTypes.shopify'), color: 'green' },
-  [IntegrationTypes.Woocommerce]: { text: t('integrations.integrationTypes.woocommerce'), color: 'blue' },
-  [IntegrationTypes.Amazon]: { text: t('integrations.integrationTypes.amazon'), color: 'yellow' },
-  [IntegrationTypes.Webhook]: { text: t('integrations.integrationTypes.webhook'), color: 'indigo' }
+  [IntegrationTypes.Magento]: { text: 'Magento', color: 'red' },
+  [IntegrationTypes.Shopify]: { text: 'Shopify', color: 'green' },
+  [IntegrationTypes.Woocommerce]: { text: 'Woocommerce', color: 'blue' },
+  [IntegrationTypes.Amazon]: { text: 'Amazon', color: 'yellow' },
+  [IntegrationTypes.Webhook]: { text: t('integrations.integrationTypes.webhook'), color: 'indigo' },
+  [IntegrationTypes.Ebay]: { text: 'Ebay', color: 'purple' }
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({

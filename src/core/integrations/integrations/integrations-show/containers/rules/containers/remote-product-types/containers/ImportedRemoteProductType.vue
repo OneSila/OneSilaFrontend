@@ -1,31 +1,33 @@
 <script setup lang="ts">
-import {ref, computed} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import {useI18n} from 'vue-i18n';
-import {Breadcrumbs} from "../../../../../../../../../shared/components/molecules/breadcrumbs";
+import { computed, reactive, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
-import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
-import {Button} from "../../../../../../../../../shared/components/atoms/button";
-import {FieldQuery} from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import {salesChannelViewsQuerySelector} from "../../../../../../../../../shared/api/queries/salesChannels.js";
-import {suggestAmazonProductTypeMutation, updateAmazonProductTypeMutation} from "../../../../../../../../../shared/api/mutations/salesChannels.js";
-import {listingQuery} from '../configs';
-import {Link} from "../../../../../../../../../shared/components/atoms/link";
+import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import { salesChannelViewsQuerySelector } from "../../../../../../../../../shared/api/queries/salesChannels.js";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import {QueryFormField} from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
-import {FieldType} from "../../../../../../../../../shared/utils/constants";
-import {Toast} from "../../../../../../../../../shared/modules/toast";
-import {CancelButton} from "../../../../../../../../../shared/components/atoms/button-cancel";
+import { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FieldType } from "../../../../../../../../../shared/utils/constants";
+import { Toast } from "../../../../../../../../../shared/modules/toast";
+import { CancelButton } from "../../../../../../../../../shared/components/atoms/button-cancel";
 import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { processGraphQLErrors } from "../../../../../../../../../shared/utils";
-import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
-import {Selector} from "../../../../../../../../../shared/components/atoms/selector";
+import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
+import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
+import type { ImportedRemoteProductTypeConfig, NormalizedSuggestion } from '../configTypes';
 
-const {t} = useI18n();
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
-const props = defineProps<{ productType: any | null }>();
+const props = defineProps<{
+  productType: any | null;
+  config: ImportedRemoteProductTypeConfig<any>;
+}>();
 
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
@@ -33,13 +35,16 @@ const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 
+const state = reactive(props.config.createState());
+
 const localInstancePath = computed(() => {
   const id = props.productType?.localInstance?.id;
   return id ? { name: 'properties.rule.show', params: { id } } : null;
 });
 const localInstanceName = computed(() => props.productType?.localInstance?.value || '');
+const marketplaceName = computed(() => props.productType?.marketplace?.name || '');
 
-const marketplaceField: QueryFormField = {
+const marketplaceField = computed<QueryFormField>(() => ({
   type: FieldType.Query,
   name: 'marketplace',
   label: t('integrations.show.propertySelectValues.labels.marketplace'),
@@ -50,43 +55,87 @@ const marketplaceField: QueryFormField = {
   isEdge: true,
   multiple: false,
   filterable: true,
-  queryVariables: {filters: { salesChannel: { id: { exact: salesChannelId } } } }
-};
+  queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
+}));
 
 const productName = ref('');
-const marketplace = ref('');
-const suggestions = ref<any[]>([]);
-const allProductTypes = ref<any[]>([]);
+const marketplace = ref<string | null>(null);
+const suggestions = ref<NormalizedSuggestion[]>([]);
+const allProductTypes = ref<NormalizedSuggestion[]>([]);
 const selectedCode = ref<string>('');
-const selectedName = ref('');
+const selectedName = ref<string>('');
+const selectedSuggestion = ref<NormalizedSuggestion | null>(null);
 const saving = ref(false);
 const loadingSuggestions = ref(false);
 const errors = ref<Record<string, string>>({});
-const nextWizardId = ref<string | null>(null);
+
+watch(
+  () => props.productType?.localInstance?.value,
+  (value) => {
+    productName.value = value || '';
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.productType?.marketplace?.id,
+  (value) => {
+    marketplace.value = value || null;
+  },
+  { immediate: true },
+);
+
+const listingQuery = computed(() => props.config.listingQuery);
+const listingQueryKey = computed(() => props.config.listingQueryKey);
+const integrationTitle = computed(() => props.config.getIntegrationTitle(t, type.value));
+
+const selectSuggestion = (suggestion: NormalizedSuggestion | null) => {
+  selectedSuggestion.value = suggestion;
+  selectedCode.value = suggestion?.code || '';
+  selectedName.value = suggestion?.displayName || '';
+};
+
+const resetState = () => {
+  Object.assign(state, props.config.createState());
+};
+
+const handleEmptySuggestions = (list: NormalizedSuggestion[]) => {
+  if (!list.length) {
+    errors.value.__all__ = t('integrations.show.productRules.errors.noSuggestions');
+  }
+};
+
+const runSuggestion = async (name: string | null): Promise<NormalizedSuggestion[]> => {
+  resetState();
+  const { data } = await apolloClient.mutate({
+    mutation: props.config.suggestMutation,
+    variables: props.config.getSuggestionVariables({
+      name,
+      marketplace: marketplace.value ? String(marketplace.value) : '',
+    }),
+  });
+
+  return props.config.mapSuggestions(data || {}, state);
+};
 
 const fetchSuggestions = async () => {
   errors.value = {};
+  selectSuggestion(null);
   if (!productName.value) {
     errors.value.name = t('shared.validationErrors.required');
   }
   if (!marketplace.value) {
     errors.value.marketplace = t('shared.validationErrors.required');
   }
-  if (Object.keys(errors.value).length) return;
+  if (Object.keys(errors.value).length) {
+    return;
+  }
 
   loadingSuggestions.value = true;
   try {
-    const { data } = await apolloClient.mutate({
-      mutation: suggestAmazonProductTypeMutation,
-      variables: {
-        name: productName.value,
-        marketplace: { id: marketplace.value }
-      }
-    });
-    suggestions.value = data?.suggestAmazonProductType?.productTypes || [];
-    if (!suggestions.value.length) {
-      errors.value.__all__ = t('integrations.show.productRules.errors.noSuggestions');
-    }
+    const result = await runSuggestion(productName.value);
+    suggestions.value = result;
+    handleEmptySuggestions(result);
   } catch (err) {
     const validationErrors = processGraphQLErrors(err, t);
     if (validationErrors['__all__']) {
@@ -99,26 +148,19 @@ const fetchSuggestions = async () => {
 
 const fetchAllProductTypes = async () => {
   errors.value = {};
+  selectSuggestion(null);
   if (!marketplace.value) {
     errors.value.marketplace = t('shared.validationErrors.required');
   }
-  if (Object.keys(errors.value).length) return;
+  if (Object.keys(errors.value).length) {
+    return;
+  }
 
   loadingSuggestions.value = true;
   try {
-    const { data } = await apolloClient.mutate({
-      mutation: suggestAmazonProductTypeMutation,
-      variables: {
-        name: null,
-        marketplace: { id: marketplace.value }
-      }
-    });
-
-    console.log(data?.suggestAmazonProductType?.productTypes)
-    allProductTypes.value = data?.suggestAmazonProductType?.productTypes || [];
-    if (!allProductTypes.value.length) {
-      errors.value.__all__ = t('integrations.show.productRules.errors.noSuggestions');
-    }
+    const result = await runSuggestion(null);
+    allProductTypes.value = result;
+    handleEmptySuggestions(result);
   } catch (err) {
     const validationErrors = processGraphQLErrors(err, t);
     if (validationErrors['__all__']) {
@@ -130,18 +172,18 @@ const fetchAllProductTypes = async () => {
 };
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
-  const {data} = await apolloClient.query({
-    query: listingQuery,
+  const { data } = await apolloClient.query({
+    query: listingQuery.value,
     variables: {
       first: 2,
       filter: {
-        salesChannel: {id: {exact: salesChannelId}},
+        salesChannel: { id: { exact: salesChannelId } },
         mappedLocally: false,
       },
     },
     fetchPolicy: 'network-only',
   });
-  const edges = data?.amazonProductTypes?.edges || [];
+  const edges = data?.[listingQueryKey.value]?.edges || [];
   let nextId: string | null = null;
   for (const edge of edges) {
     if (edge.node.id !== productTypeId.value) {
@@ -150,27 +192,35 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
     }
   }
   const last = edges.length === 1 && edges[0].node.id === productTypeId.value;
-  return {nextId, last};
+  return { nextId, last };
 };
 
 const save = async () => {
-  if (!selectedCode.value) return;
+  const payload = props.config.buildSaveInput({
+    productTypeId: productTypeId.value,
+    selectedSuggestion: selectedSuggestion.value,
+    selectedCode: selectedCode.value,
+    selectedName: selectedName.value,
+    state,
+  });
+
+  if (!payload) {
+    return;
+  }
+
   saving.value = true;
   try {
-    await apolloClient.mutate({
-      mutation: updateAmazonProductTypeMutation,
-      variables: { data: { id: productTypeId.value, productTypeCode: selectedCode.value, name: selectedName.value, imported: true } }
-    });
-    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
+    await apolloClient.mutate(payload);
+    Toast.success(t('shared.success'));
 
     if (!isWizard) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
       return;
     }
 
-    const {nextId, last} = await fetchNextUnmapped();
+    const { nextId, last } = await fetchNextUnmapped();
     if (nextId) {
-      router.push({ name: 'integrations.amazonProductTypes.edit', params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
+      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
     } else if (last) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
     } else {
@@ -190,7 +240,7 @@ const save = async () => {
 <template>
   <GeneralTemplate>
     <template #breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'integrations.integrations.list' }, name: t('integrations.title') }, { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'productRules'} }, name: t('integrations.show.amazon.title') }, { name: t('integrations.show.mapProductType') }]" />
+      <Breadcrumbs :links="[{ path: { name: 'integrations.integrations.list' }, name: t('integrations.title') }, { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'productRules'} }, name: integrationTitle }, { name: t('integrations.show.mapProductType') }]" />
     </template>
     <template #content>
       <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
@@ -206,6 +256,10 @@ const save = async () => {
               <div v-if="selectedName">
                 <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.productRules.labels.selectedProductType') }}</label>
                 <p class="mt-1 text-sm">{{ selectedName }}</p>
+              </div>
+              <div v-if="marketplaceName">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.labels.marketplace') }}</label>
+                <p class="mt-1 text-sm">{{ marketplaceName }}</p>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 md:divide-x">
                 <div class="space-y-4">
@@ -235,9 +289,15 @@ const save = async () => {
                     <span class="ml-1">{{ errors.__all__ }}</span>
                   </div>
                   <div v-if="suggestions.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="s in suggestions" :key="s.name" class="p-4 border rounded cursor-pointer" :class="{ 'border-primary': selectedCode === s.name }" @click="selectedCode = s.name; selectedName = s.displayName">
+                    <div
+                      v-for="s in suggestions"
+                      :key="s.code"
+                      class="p-4 border rounded cursor-pointer"
+                      :class="{ 'border-primary': selectedCode === s.code }"
+                      @click="selectSuggestion(s)"
+                    >
                       <strong>{{ s.displayName }}</strong>
-                      <p class="text-sm text-gray-500">{{ s.name }}</p>
+                      <p v-if="s.secondary" class="text-sm text-gray-500">{{ s.secondary }}</p>
                     </div>
                   </div>
                 </div>
@@ -255,14 +315,14 @@ const save = async () => {
                     <Button type="button" class="btn btn-secondary" :loading="loadingSuggestions" :disabled="loadingSuggestions" @click="fetchAllProductTypes">{{ t('shared.button.search') }}</Button>
                   </div>
                   <Selector
-                    class="max-h-10 "
+                    class="max-h-10"
                     v-if="allProductTypes.length"
                     v-model="selectedCode"
                     :options="allProductTypes"
                     label-by="displayName"
-                    value-by="name"
+                    value-by="code"
                     filterable
-                    @update:model-value="val => { selectedCode = val; const item = allProductTypes.find(p => p.name === val); selectedName = item ? item.displayName : '' }"
+                    @update:model-value="val => selectSuggestion(allProductTypes.find(p => p.code === val) || null)"
                   />
                 </div>
               </div>

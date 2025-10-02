@@ -40,9 +40,9 @@ const mappedData = ref<{
 const allowNextStep = computed(() => {
   if (step.value === 0) {
     const langsValid = mappedData.value.languages.length > 0 &&
-      mappedData.value.languages.every((l) => l.localInstance);
+      mappedData.value.languages.every((l) => l.localInstance?.id);
     const currenciesValid = mappedData.value.currencies.length > 0 &&
-      mappedData.value.currencies.every((c) => c.localInstance);
+      mappedData.value.currencies.every((c) => c.localInstance?.id);
 
     return langsValid && currenciesValid;
   }
@@ -112,7 +112,7 @@ const bulkUpdateRemoteCurrencies = async () => {
     const data = mappedData.value.currencies.map((currency) => ({
       id: currency.id,
       remoteCode: currency.remoteCode,
-      localInstance: { id: currency.localInstance } ,
+      localInstance: currency.localInstance,
     }));
 
     const { data: result } = await apolloClient.mutate({
