@@ -30,6 +30,7 @@ interface EditMagentoForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  startingStock: number | null;
   authenticationMethod: string;
   hostApiUsername: string | null;
   hostApiKey: string;
@@ -39,7 +40,10 @@ interface EditMagentoForm {
 const {t} = useI18n();
 const props = defineProps<{ data: EditMagentoForm }>();
 
-const formData = ref<EditMagentoForm>({...props.data});
+const formData = ref<EditMagentoForm>({
+  ...props.data,
+  startingStock: props.data.startingStock ?? null
+});
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
 const fieldErrors = ref<Record<string, string>>({});
@@ -56,7 +60,10 @@ const accordionItems = [
 watch(
     () => props.data,
     (newData) => {
-      formData.value = {...newData};
+      formData.value = {
+        ...newData,
+        startingStock: newData.startingStock ?? null
+      };
     },
     {deep: true}
 );
@@ -272,6 +279,30 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
             <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
               {{ t('integrations.salesChannel.helpText.importOrders') }}
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-gray-200">
+            <div class="mb-2 text-sm font-semibold text-gray-900">
+              {{ t('shared.tabs.advanced') }}
+            </div>
+            <div class="grid grid-cols-12 gap-4">
+              <div class="md:col-span-4 col-span-12">
+                <Label class="font-semibold text-sm text-gray-900 mb-1">
+                  {{ t('integrations.labels.startingStock') }}
+                </Label>
+                <TextInput
+                    :model-value="formData.startingStock ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full"
+                    @update:modelValue="(value) => { formData.startingStock = Number.isNaN(value) ? null : value; }"
+                />
+                <div class="mt-1 text-sm text-gray-400">
+                  <p class="text-red-500" v-if="fieldErrors['startingStock']">{{ fieldErrors['startingStock'] }}</p>
+                  <p>{{ t('integrations.salesChannel.helpText.startingStock') }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

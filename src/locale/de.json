@@ -254,7 +254,13 @@
       "merchantLocation": "Lagerort",
       "lengthUnit": "Längeneinheit",
       "weightUnit": "Gewichtseinheit",
-      "isDefaultMarketplace": "Standardmarktplatz"
+      "isDefaultMarketplace": "Standardmarktplatz",
+      "startingStock": ""
+    },
+    "salesChannel": {
+      "helpText": {
+        "startingStock": ""
+      }
     },
     "show": {
       "properties": {
