@@ -78,7 +78,7 @@ const form = reactive<IntegrationCreateWizardForm>({
     syncEanCodes: true,
     syncPrices: true,
     importOrders: true,
-    startingStock: 0,
+    startingStock: null,
   }
 });
 
