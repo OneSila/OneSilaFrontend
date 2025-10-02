@@ -78,6 +78,7 @@ const form = reactive<IntegrationCreateWizardForm>({
     syncEanCodes: true,
     syncPrices: true,
     importOrders: true,
+    startingStock: null,
   }
 });
 
@@ -349,10 +350,25 @@ const handleFinish = async () => {
       return;
     }
 
+    const shouldIncludeStartingStock = [
+      IntegrationTypes.Magento,
+      IntegrationTypes.Woocommerce,
+      IntegrationTypes.Amazon,
+      IntegrationTypes.Ebay,
+    ].includes(selectedIntegrationType.value);
+
+    const salesChannelData = selectedIntegrationType.value !== IntegrationTypes.Webhook
+        ? { ...form.salesChannelInfo }
+        : {};
+
+    if (!shouldIncludeStartingStock) {
+      delete (salesChannelData as any).startingStock;
+    }
+
     // Flatten the form fields into a single object
     const dataInput = {
       ...form.generalInfo,
-      ...(selectedIntegrationType.value !== IntegrationTypes.Webhook ? form.salesChannelInfo : {}),
+      ...salesChannelData,
       ...specificChannelInfo.value
     };
 

@@ -3,6 +3,7 @@ import { defineProps } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Label } from '../../../../../../shared/components/atoms/label';
+import { TextInput } from '../../../../../../shared/components/atoms/input-text';
 import type { SalesChannelInfo } from '../../../integrations';
 
 const props = defineProps<{
@@ -100,7 +101,31 @@ const { t } = useI18n();
         </Flex>
       </FlexCell>
 
-      <FlexCell class="py-8 px-96"><hr /></FlexCell>
+      <FlexCell>
+        <Flex class="mt-4 gap-4" center>
+          <FlexCell center>
+            <Flex class="gap-2 items-center">
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('integrations.labels.startingStock') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <TextInput
+                  :model-value="salesChannelInfo.startingStock ?? ''"
+                  :number="true"
+                  :min-number="0"
+                  class="w-full md:w-24"
+                  @update:modelValue="(value) => { salesChannelInfo.startingStock = Number.isNaN(value) ? null : value; }"
+                />
+              </FlexCell>
+            </Flex>
+            <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
+              <p>{{ t('integrations.salesChannel.helpText.startingStock') }}</p>
+            </div>
+          </FlexCell>
+        </Flex>
+      </FlexCell>
 
       <FlexCell>
         <Flex class="mt-4 gap-4" center>

@@ -65,6 +65,7 @@ export interface SalesChannelInfo {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  startingStock: number | null;
 }
 
 /**

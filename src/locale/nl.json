@@ -2207,12 +2207,16 @@
       "merchantLocation": "Voorraadlocatie",
       "lengthUnit": "Lengte-eenheid",
       "weightUnit": "Gewichtseenheid",
-      "isDefaultMarketplace": "Standaardmarktplaats"
+      "isDefaultMarketplace": "Standaardmarktplaats",
+      "startingStock": ""
     },
     "salesChannel": {
       "labels": {
         "assignedToSalesChannelView": "Toegewezen aan winkel",
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+      },
+      "helpText": {
+        "startingStock": ""
       }
     },
     "ebay": {

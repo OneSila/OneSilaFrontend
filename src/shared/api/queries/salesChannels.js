@@ -53,6 +53,7 @@ export const getMagentoChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       hostApiUsername
       hostApiKey
       authenticationMethod
@@ -116,6 +117,7 @@ export const getWoocommerceChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       apiKey
       apiSecret
       firstImportComplete
@@ -185,6 +187,7 @@ export const getAmazonChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       accessToken
       refreshTokenExpiration
       expirationDate
@@ -296,6 +299,7 @@ export const getEbayChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       firstImportComplete
       isImporting
       accessToken
