@@ -234,13 +234,16 @@ interface VariationValidationIssues {
   issues: AmazonProductIssue[];
 }
 
+type VariationOtherIssues = VariationValidationIssues;
+
 const variationValidationIssues = ref<VariationValidationIssues[]>([]);
+const variationOtherIssues = ref<VariationOtherIssues[]>([]);
 
 const fetchVariationValidationIssues = async () => {
-
   if (!isConfigurable.value || !selectedProduct.value?.id || !selectedView.value?.remoteId) {
-      variationValidationIssues.value = [];
-     return;
+    variationValidationIssues.value = [];
+    variationOtherIssues.value = [];
+    return;
   }
 
   try {
@@ -255,6 +258,7 @@ const fetchVariationValidationIssues = async () => {
 
     if (!variationProducts.length) {
       variationValidationIssues.value = [];
+      variationOtherIssues.value = [];
       return;
     }
 
@@ -264,46 +268,72 @@ const fetchVariationValidationIssues = async () => {
 
     if (!remoteProductIds.length) {
       variationValidationIssues.value = [];
+      variationOtherIssues.value = [];
       return;
     }
 
-    const { data: issuesData } = await apolloClient.query({
-      query: amazonProductIssuesQuery,
-      variables: {
-        filter: {
-          isValidationIssue: { exact: true },
-          view: { remoteId: { exact: selectedView.value.remoteId } },
-          remoteProduct: { id: { inList: remoteProductIds } },
+    const [validationIssuesResult, otherIssuesResult] = await Promise.all([
+      apolloClient.query({
+        query: amazonProductIssuesQuery,
+        variables: {
+          filter: {
+            isValidationIssue: { exact: true },
+            view: { remoteId: { exact: selectedView.value.remoteId } },
+            remoteProduct: { id: { inList: remoteProductIds } },
+          },
         },
-      },
-      fetchPolicy: 'network-only',
-    });
+        fetchPolicy: 'network-only',
+      }),
+      apolloClient.query({
+        query: amazonProductIssuesQuery,
+        variables: {
+          filter: {
+            isValidationIssue: { exact: false },
+            view: { remoteId: { exact: selectedView.value.remoteId } },
+            remoteProduct: { id: { inList: remoteProductIds } },
+          },
+        },
+        fetchPolicy: 'network-only',
+      }),
+    ]);
 
-    const issues = issuesData?.amazonProductIssues?.edges?.map((edge: any) => edge.node) || [];
+    const validationIssuesData = validationIssuesResult?.data;
+    const otherIssuesData = otherIssuesResult?.data;
 
-    const groupedByProductId: Record<string, VariationValidationIssues> = {};
+    const validationIssues =
+      validationIssuesData?.amazonProductIssues?.edges?.map((edge: any) => edge.node) || [];
+    const remoteOtherIssues =
+      otherIssuesData?.amazonProductIssues?.edges?.map((edge: any) => edge.node) || [];
+
+    const groupedValidationIssues: Record<string, VariationValidationIssues> = {};
+    const groupedOtherIssues: Record<string, VariationOtherIssues> = {};
 
     variationProducts.forEach((product: any) => {
-      groupedByProductId[product.localInstance.id] = {
+      groupedValidationIssues[product.localInstance.id] = {
+        productId: product.id,
+        localInstance: product.localInstance ?? null,
+        issues: [],
+      };
+      groupedOtherIssues[product.localInstance.id] = {
         productId: product.id,
         localInstance: product.localInstance ?? null,
         issues: [],
       };
     });
 
-    console.log(issues);
+    console.log(validationIssues);
 
-    issues.forEach((issue: any) => {
+    validationIssues.forEach((issue: any) => {
       const remoteId = issue.remoteProduct?.localInstance?.id;
 
       console.log(remoteId);
-      if (!remoteId || !groupedByProductId[remoteId]) {
+      if (!remoteId || !groupedValidationIssues[remoteId]) {
         return;
       }
 
       console.log('????')
 
-      groupedByProductId[remoteId].issues.push({
+      groupedValidationIssues[remoteId].issues.push({
         id: issue.id,
         code: issue.code,
         message: issue.message,
@@ -314,17 +344,39 @@ const fetchVariationValidationIssues = async () => {
       });
     });
 
-    console.log(groupedByProductId)
+    remoteOtherIssues.forEach((issue: any) => {
+      const remoteId = issue.remoteProduct?.localInstance?.id;
+
+      if (!remoteId || !groupedOtherIssues[remoteId]) {
+        return;
+      }
+
+      groupedOtherIssues[remoteId].issues.push({
+        id: issue.id,
+        code: issue.code,
+        message: issue.message,
+        severity: issue.severity,
+        isValidationIssue: issue.isValidationIssue,
+        view: issue.view,
+        createdAt: issue.createdAt,
+      });
+    });
+
+    console.log(groupedValidationIssues)
 
 
-    variationValidationIssues.value = Object.values(groupedByProductId).filter(
+    variationValidationIssues.value = Object.values(groupedValidationIssues).filter(
       (entry) => entry.issues.length > 0,
     );
 
     console.log(variationValidationIssues.value)
 
+    variationOtherIssues.value = Object.values(groupedOtherIssues).filter(
+      (entry) => entry.issues.length > 0,
+    );
   } catch (error) {
     variationValidationIssues.value = [];
+    variationOtherIssues.value = [];
   }
 };
 
@@ -515,6 +567,7 @@ const formatDate = (dateString?: string | null) => {
                 :other-issues="otherIssues"
                 :is-configurable="isConfigurable"
                 :variation-validation-issues="variationValidationIssues"
+                :variation-other-issues="variationOtherIssues"
               />
 
               <div class="border-t my-4"></div>
