@@ -211,7 +211,7 @@ const save = async () => {
   saving.value = true;
   try {
     await apolloClient.mutate(payload);
-    Toast.success(t('shared.success'));
+    Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
 
     if (!isWizard) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
