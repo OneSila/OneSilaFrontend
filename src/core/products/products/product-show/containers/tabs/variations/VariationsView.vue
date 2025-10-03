@@ -12,6 +12,7 @@ import VariationsBulkEdit from "./containers/variations-bulk-edit/VariationsBulk
 import VariationsContentBulkEdit from "./containers/variations-content-bulk-edit/VariationsContentBulkEdit.vue";
 import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
+import VariationsGeneralBulkEdit from "./containers/variations-general-bulk-edit/VariationsGeneralBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 
@@ -20,12 +21,13 @@ const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages';
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editGeneral';
 const mode = ref<Mode>('list');
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
 const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
 const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
 const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(null);
+const generalEditRef = ref<InstanceType<typeof VariationsGeneralBulkEdit> | null>(null);
 
 const getUnsavedChangesForMode = (currentMode: Mode) => {
   if (currentMode === 'editContent') {
@@ -40,6 +42,9 @@ const getUnsavedChangesForMode = (currentMode: Mode) => {
   if (currentMode === 'editImages') {
     return imageEditRef.value?.hasUnsavedChanges ?? false;
   }
+  if (currentMode === 'editGeneral') {
+    return generalEditRef.value?.hasUnsavedChanges ?? false;
+  }
   return false;
 };
 
@@ -48,7 +53,8 @@ const hasUnsavedChanges = computed(
     (bulkEditRef.value?.hasUnsavedChanges ?? false) ||
     (contentEditRef.value?.hasUnsavedChanges ?? false) ||
     (priceEditRef.value?.hasUnsavedChanges ?? false) ||
-    (imageEditRef.value?.hasUnsavedChanges ?? false)
+    (imageEditRef.value?.hasUnsavedChanges ?? false) ||
+    (generalEditRef.value?.hasUnsavedChanges ?? false)
 );
 
 const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
@@ -57,6 +63,7 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
   { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
   { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
   { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
+  { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
 ]);
 
 const searchConfig: SearchConfig = {
@@ -173,8 +180,11 @@ defineExpose({ hasUnsavedChanges });
           <template v-else-if="mode === 'editPrices'">
             <VariationsPricesBulkEdit ref="priceEditRef" :product="product" />
           </template>
-          <template v-else>
+          <template v-else-if="mode === 'editImages'">
             <VariationsImagesBulkEdit ref="imageEditRef" :product="product" />
+          </template>
+          <template v-else>
+            <VariationsGeneralBulkEdit ref="generalEditRef" :product="product" />
           </template>
         </div>
       </div>

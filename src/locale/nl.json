@@ -718,7 +718,8 @@
           "list": "Lijst",
           "editProperties": "Eigenschappen bewerken",
           "editPrices": "Prijzen",
-          "images": "Afbeeldingen"
+          "images": "Afbeeldingen",
+          "general": ""
         },
         "content": {
           "ai": {
@@ -730,6 +731,15 @@
           "columns": {
             "subtitle": ""
           }
+        },
+        "general": {
+          "placeholders": {
+            "vatRate": ""
+          },
+          "toast": {
+            "updated": ""
+          },
+          "optionLabel": ""
         },
         "images": {
           "columns": {

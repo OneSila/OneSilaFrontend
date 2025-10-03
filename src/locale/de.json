@@ -153,7 +153,8 @@
         },
         "tabs": {
           "list": "Liste",
-          "images": "Bilder"
+          "images": "Bilder",
+          "general": ""
         },
         "images": {
           "columns": {
@@ -162,6 +163,15 @@
           "labels": {
             "noImage": "Kein Bild"
           }
+        },
+        "general": {
+          "placeholders": {
+            "vatRate": ""
+          },
+          "toast": {
+            "updated": ""
+          },
+          "optionLabel": ""
         },
         "prices": {
           "columns": {
