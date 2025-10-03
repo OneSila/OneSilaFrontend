@@ -85,6 +85,7 @@ export const getShopifyChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
+      startingStock
       apiKey
       apiSecret
       accessToken

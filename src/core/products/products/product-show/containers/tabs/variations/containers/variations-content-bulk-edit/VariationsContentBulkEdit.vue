@@ -8,6 +8,7 @@ import { Icon } from '../../../../../../../../../shared/components/atoms/icon';
 import { Button } from '../../../../../../../../../shared/components/atoms/button';
 import { Link } from '../../../../../../../../../shared/components/atoms/link';
 import { TextInput } from '../../../../../../../../../shared/components/atoms/input-text';
+import { TextEditor } from '../../../../../../../../../shared/components/atoms/input-text-editor';
 import { TextHtmlEditor } from '../../../../../../../../../shared/components/atoms/input-text-html-editor';
 import { Selector } from '../../../../../../../../../shared/components/atoms/selector';
 import { Modal } from '../../../../../../../../../shared/components/atoms/modal';
@@ -1458,11 +1459,17 @@ defineExpose({ hasUnsavedChanges });
     </Modal>
 
     <Modal v-model="textModal.visible" @closed="closeTextModal">
-      <Card class="modal-content w-2/3 max-w-2xl">
+      <Card class="modal-content w-4/5 max-w-3xl">
         <h3 class="text-xl font-semibold text-center mb-4">
           {{ t('products.products.bulkEditModal.textTitle') }}
         </h3>
-        <TextInput class="w-full" v-model="textModal.value" />
+        <TextEditor
+          v-if="textModal.key.startsWith('bullet-')"
+          v-model="textModal.value"
+          class="w-full min-h-[96px]"
+          :scroll="true"
+        />
+        <TextInput v-else class="w-full" v-model="textModal.value" />
         <div class="flex justify-end gap-4 mt-4">
           <Button class="btn btn-outline-dark" @click="closeTextModal">{{ t('shared.button.cancel') }}</Button>
           <Button class="btn btn-primary" @click="saveTextModal">{{ t('shared.button.edit') }}</Button>
