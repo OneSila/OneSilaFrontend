@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, watch, onMounted, computed} from 'vue';
 import {useI18n} from 'vue-i18n';
-import {TextInput} from '../../../../../../../shared/components/atoms/input-text';
+import { TextEditor } from '../../../../../../../shared/components/atoms/input-text-editor';
 import {Button} from '../../../../../../../shared/components/atoms/button';
 import {Label} from '../../../../../../../shared/components/atoms/label';
 import {Icon} from '../../../../../../../shared/components/atoms/icon';
@@ -203,7 +203,11 @@ defineExpose({save, fetchPoints, hasChanges});
           <Icon class="text-primary" name="fa-up-down-left-right"/>
         </FlexCell>
         <FlexCell grow>
-          <TextInput v-model="point.text" class="w-full"/>
+          <TextEditor
+            v-model="point.text"
+            class="w-full min-h-[96px]"
+            :scroll="true"
+          />
         </FlexCell>
         <FlexCell>
           <Button class="btn btn-sm btn-outline-danger" @click="removeBulletPoint(index)">
