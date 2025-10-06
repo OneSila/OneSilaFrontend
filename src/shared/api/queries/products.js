@@ -349,6 +349,34 @@ export const configurableVariationsWithPricesQuery = gql`
   }
 `;
 
+export const configurableVariationsWithGeneralQuery = gql`
+  query ConfigurableVariationsWithGeneral($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+            allowBackorder
+            vatRate {
+              id
+              name
+              rate
+            }
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const bundleVariationsWithPricesQuery = gql`
   query BundleVariationsWithPrices($first: Int, $after: String, $filter: BundleVariationFilter) {
     bundleVariations(first: $first, after: $after, filters: $filter) {
@@ -368,6 +396,34 @@ export const bundleVariationsWithPricesQuery = gql`
                 id
                 isoCode
               }
+            }
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsWithGeneralQuery = gql`
+  query BundleVariationsWithGeneral($first: Int, $after: String, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+            allowBackorder
+            vatRate {
+              id
+              name
+              rate
             }
           }
         }

@@ -579,7 +579,10 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
         </template>
 
         <template #salesChannelStep>
-          <SalesChannelStep :sales-channel-info="form.salesChannelInfo" />
+          <SalesChannelStep
+            :sales-channel-info="form.salesChannelInfo"
+            :integration-type="selectedIntegrationType"
+          />
         </template>
 
         <template #specificChannelStep>

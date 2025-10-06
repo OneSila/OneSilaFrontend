@@ -4,10 +4,12 @@ import { useI18n } from 'vue-i18n';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Label } from '../../../../../../shared/components/atoms/label';
 import { TextInput } from '../../../../../../shared/components/atoms/input-text';
+import { IntegrationTypes } from '../../../integrations';
 import type { SalesChannelInfo } from '../../../integrations';
 
-const props = defineProps<{
-  salesChannelInfo: SalesChannelInfo
+defineProps<{
+  salesChannelInfo: SalesChannelInfo;
+  integrationType: IntegrationTypes;
 }>();
 
 const { t } = useI18n();
@@ -101,7 +103,7 @@ const { t } = useI18n();
         </Flex>
       </FlexCell>
 
-      <FlexCell>
+      <FlexCell v-if="integrationType !== IntegrationTypes.Shopify">
         <Flex class="mt-4 gap-4" center>
           <FlexCell center>
             <Flex class="gap-2 items-center">

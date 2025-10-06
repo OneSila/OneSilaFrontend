@@ -1032,7 +1032,8 @@
         "tabs": {
           "list": "List",
           "content": "Content",
-          "images": "Images"
+          "images": "Images",
+          "general": "General"
         },
         "images": {
           "columns": {
@@ -1080,6 +1081,15 @@
           "validation": {
             "fieldError": "{field}: {message}"
           }
+        },
+        "general": {
+          "placeholders": {
+            "vatRate": "Select VAT rate"
+          },
+          "toast": {
+            "updated": "Updated {count} variation(s)."
+          },
+          "optionLabel": "{name} ({rate}%)"
         },
         "prices": {
           "columns": {
