@@ -13,7 +13,7 @@ import { Toast } from "../../../../../../../../../shared/modules/toast";
 
 
 const props = withDefaults(
-  defineProps<{ modelValue: boolean; productId?: string; ids?: any[]; linkOnSelect?: boolean }>(),
+  defineProps<{ modelValue: boolean; productId?: string; ids?: any[]; linkOnSelect?: boolean; salesChannelId?: string }>(),
   {
     ids: () => [],
     linkOnSelect: true,
@@ -50,10 +50,13 @@ const handleMediaAssign = async (media) => {
     return;
   }
 
-  const variables = {
+  const variables: any = {
     product: { id: props.productId},
     media: { id: media.id},
   };
+  if (props.salesChannelId) {
+    variables.salesChannel = { id: props.salesChannelId };
+  }
   try {
     const {data} = await apolloClient.mutate({
       mutation: createMediaProductThroughMutation,

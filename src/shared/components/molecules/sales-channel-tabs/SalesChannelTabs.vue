@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
-import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import { useI18n } from 'vue-i18n';
-import magentoIcon from "../../../../../../../assets/images/integration-types/icons/magento.svg";
-import shopifyIcon from "../../../../../../../assets/images/integration-types/icons/shopify.svg";
-import woocommerceIcon from "../../../../../../../assets/images/integration-types/icons/woocommerce.svg";
-import amazonIcon from "../../../../../../../assets/images/integration-types/icons/amazon.svg";
-import ebayIcon from "../../../../../../../assets/images/integration-types/icons/ebay.svg";
+import { IntegrationTypes } from '../../../../core/integrations/integrations/integrations';
+import { Icon } from '../../atoms/icon';
+import magentoIcon from '../../../../assets/images/integration-types/icons/magento.svg';
+import shopifyIcon from '../../../../assets/images/integration-types/icons/shopify.svg';
+import woocommerceIcon from '../../../../assets/images/integration-types/icons/woocommerce.svg';
+import amazonIcon from '../../../../assets/images/integration-types/icons/amazon.svg';
+import ebayIcon from '../../../../assets/images/integration-types/icons/ebay.svg';
 
 const props = defineProps<{ channels: any[]; modelValue: string }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -26,7 +26,7 @@ const cleanHostname = (hostname: string, type: string) => {
   }
 };
 
-const integrationTypeIcons = {
+const integrationTypeIcons: Record<string, string> = {
   magento: magentoIcon,
   shopify: shopifyIcon,
   woocommerce: woocommerceIcon,
@@ -34,6 +34,11 @@ const integrationTypeIcons = {
   ebay: ebayIcon
 };
 
+
+const resolveLabel = (channel: any) => {
+  if (!channel) return '';
+  return channel.name || cleanHostname(channel.hostname, channel.type);
+};
 
 const select = (val: string) => emit('update:modelValue', val);
 
@@ -70,7 +75,7 @@ const select = (val: string) => emit('update:modelValue', val);
           :src="integrationTypeIcons[channel.type]"
           :alt="channel.type"
         />
-        {{ cleanHostname(channel.hostname, channel.type) }}
+        {{ resolveLabel(channel) }}
       </div>
     </div>
   </div>

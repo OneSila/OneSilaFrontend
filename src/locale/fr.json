@@ -189,6 +189,21 @@
           }
         }
       },
+      "media": {
+        "messages": {
+          "inheritedFromDefault": ""
+        },
+        "preview": {
+          "channelHeading": "",
+          "channelFallback": "",
+          "description": "",
+          "mainImageAlt": "",
+          "thumbnailAlt": "",
+          "noImages": "",
+          "unsupported": "",
+          "untitledProduct": ""
+        }
+      },
       "properties": {
         "searchPlaceholder": "Rechercher des propriétés",
         "typePlaceholder": "Filtrer par type"
