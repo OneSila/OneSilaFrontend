@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
+import Swal from 'sweetalert2';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
 import { Product } from "../../../../../../configs";
@@ -9,6 +10,7 @@ import { ProductType } from "../../../../../../../../../shared/utils/constants";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
 import { mediaProductThroughQuery } from "../../../../../../../../../shared/api/queries/media.js";
+import { integrationsQuery } from "../../../../../../../../../shared/api/queries/integrations.js";
 import {
   createMediaProductThroughsMutation,
   deleteMediaProductThroughsMutation,
@@ -20,6 +22,7 @@ import { Button } from "../../../../../../../../../shared/components/atoms/butto
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Image as ProductImage } from "../../../../../../../../../shared/components/atoms/image";
 import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
+import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
 import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
@@ -52,6 +55,8 @@ const props = defineProps<{ product: Product }>();
 
 const { t } = useI18n();
 
+const WEBHOOK_CHANNEL_TYPE = 'webhook';
+
 const matrixRef = ref<MatrixEditorExpose | null>(null);
 const variations = ref<VariationRow[]>([]);
 const originalVariations = ref<VariationRow[]>([]);
@@ -61,6 +66,10 @@ const uploadContext = ref<{ rowIndex: number; columnIndex: number | null } | nul
 const selectExistingModalVisible = ref(false);
 const uploadImagesModalVisible = ref(false);
 const expandedPlaceholder = ref<{ rowIndex: number; columnIndex: number } | null>(null);
+const salesChannels = ref<any[]>([]);
+const currentSalesChannel = ref<'default' | string>('default');
+const previousSalesChannel = ref<'default' | string>('default');
+const skipChannelWatch = ref(false);
 
 const assignedMediaIds = computed(() =>
   variations.value.flatMap((row) =>
@@ -69,6 +78,19 @@ const assignedMediaIds = computed(() =>
       .filter((id): id is string => Boolean(id))
   )
 );
+
+const currentSalesChannelId = computed(() => (currentSalesChannel.value === 'default' ? null : currentSalesChannel.value));
+
+const salesChannelOptions = computed(() => [
+  {
+    name: t('products.products.variations.content.selectors.defaultChannel'),
+    value: 'default',
+  },
+  ...salesChannels.value.map((channel: any) => ({
+    name: channel.name || channel.hostname || channel.type || '',
+    value: channel.id,
+  })),
+]);
 
 const isSingleUpload = computed(() => uploadContext.value?.columnIndex !== null);
 
@@ -109,6 +131,18 @@ const hasChanges = computed(
 );
 
 const hasUnsavedChanges = hasChanges;
+
+const askDiscardChanges = async () => {
+  if (!hasChanges.value) return true;
+  const res = await Swal.fire({
+    icon: 'warning',
+    text: t('products.products.messages.unsavedChanges'),
+    showCancelButton: true,
+    confirmButtonText: t('shared.button.cancel'),
+    cancelButtonText: t('shared.button.leaveTab'),
+  });
+  return res.dismiss === Swal.DismissReason.cancel;
+};
 
 const copySkuToClipboard = async (sku: string) => {
   try {
@@ -373,6 +407,9 @@ const closePlaceholder = () => {
   expandedPlaceholder.value = null;
 };
 
+watch(currentSalesChannel, async (newChannel) => {
+  await handleSalesChannelChange(newChannel);
+});
 watch(selectExistingModalVisible, resetUploadContext);
 watch(uploadImagesModalVisible, resetUploadContext);
 
@@ -467,6 +504,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
 
 const fetchVariationImages = async (
   variationIds: string[],
+  salesChannelId: 'default' | string,
   policy: FetchPolicy = 'cache-first'
 ) => {
   if (!variationIds.length) {
@@ -486,6 +524,10 @@ const fetchVariationImages = async (
         filter: {
           product: { id: { inList: variationIds } },
           media: { type: { exact: 'IMAGE' } },
+          salesChannel:
+            salesChannelId === 'default'
+              ? { id: { isNull: true } }
+              : { id: { exact: salesChannelId } },
         },
       },
       fetchPolicy: policy,
@@ -535,18 +577,53 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
   try {
     const variationRows = await fetchVariations(policy);
     const variationIds = variationRows.map((row) => row.variation.id);
-    const imagesMap = await fetchVariationImages(variationIds, policy);
+    const selectedChannel = currentSalesChannel.value;
+    const imagesMap = await fetchVariationImages(variationIds, selectedChannel, policy);
+    let defaultMap: Map<string, VariationImageSlot[]> | null = null;
+
+    if (selectedChannel !== 'default') {
+      const needsDefault = variationRows.some((row) => (imagesMap.get(row.variation.id) ?? []).length === 0);
+      if (needsDefault) {
+        defaultMap = await fetchVariationImages(variationIds, 'default', policy);
+      }
+    }
+
     variationRows.forEach((row) => {
       const entries = imagesMap.get(row.variation.id) ?? [];
-      row.images = entries;
+      if (entries.length || selectedChannel === 'default') {
+        row.images = entries.map((slot) => ({ ...slot }));
+      } else {
+        const fallback = defaultMap?.get(row.variation.id) ?? [];
+        row.images = fallback.map((slot, index) => ({
+          ...slot,
+          id: null,
+          productId: row.variation.id,
+          sortOrder: slot.sortOrder ?? index,
+          uploadSource: slot.uploadSource ?? 'existing',
+        }));
+      }
       ensureRowHasMainImage(row);
     });
     variations.value = JSON.parse(JSON.stringify(variationRows));
     originalVariations.value = JSON.parse(JSON.stringify(variationRows));
     expandedPlaceholder.value = null;
     matrixRef.value?.resetHistory(variations.value);
+    previousSalesChannel.value = currentSalesChannel.value;
   } finally {
     loading.value = false;
+  }
+};
+
+const loadSalesChannels = async () => {
+  try {
+    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
+    salesChannels.value =
+      data?.integrations?.edges
+        ?.map((edge: any) => edge.node)
+        ?.filter((node: any) => node.type && node.type !== WEBHOOK_CHANNEL_TYPE) || [];
+  } catch (error) {
+    console.error('Failed to load sales channels', error);
+    salesChannels.value = [];
   }
 };
 
@@ -556,6 +633,8 @@ const save = async () => {
   }
   saving.value = true;
   try {
+    const selectedChannel = currentSalesChannel.value;
+    const isDefaultChannel = selectedChannel === 'default';
     const originalMap = new Map<string, VariationRow>();
     originalVariations.value.forEach((row) => {
       originalMap.set(row.variation.id, row);
@@ -613,12 +692,18 @@ const save = async () => {
     }
 
     if (toCreate.length) {
-      const payload = toCreate.map((item) => ({
-        product: { id: item.productId },
-        media: { id: item.mediaId },
-        sortOrder: item.sortOrder,
-        isMainImage: item.isMainImage,
-      }));
+      const payload = toCreate.map((item) => {
+        const input: Record<string, any> = {
+          product: { id: item.productId },
+          media: { id: item.mediaId },
+          sortOrder: item.sortOrder,
+          isMainImage: item.isMainImage,
+        };
+        if (!isDefaultChannel) {
+          input.salesChannel = { id: selectedChannel };
+        }
+        return input;
+      });
       await apolloClient.mutate({
         mutation: createMediaProductThroughsMutation,
         variables: { data: payload },
@@ -650,13 +735,34 @@ const save = async () => {
   }
 };
 
+const handleSalesChannelChange = async (newChannel: 'default' | string) => {
+  if (skipChannelWatch.value) return;
+  if (!previousSalesChannel.value) {
+    previousSalesChannel.value = newChannel;
+    return;
+  }
+  if (newChannel === previousSalesChannel.value) return;
+  const proceed = await askDiscardChanges();
+  if (!proceed) {
+    skipChannelWatch.value = true;
+    currentSalesChannel.value = previousSalesChannel.value;
+    await nextTick();
+    skipChannelWatch.value = false;
+    return;
+  }
+  previousSalesChannel.value = newChannel;
+  await loadData('network-only');
+};
+
 const removeImage = (rowIndex: number, columnIndex: number) => {
   const columnKey = `image-${columnIndex}`;
   clearMatrixCellValue(rowIndex, columnKey);
 };
 
-onMounted(() => {
-  loadData();
+onMounted(async () => {
+  await loadSalesChannels();
+  previousSalesChannel.value = currentSalesChannel.value;
+  await loadData('network-only');
 });
 
 defineExpose({ hasUnsavedChanges });
@@ -678,6 +784,21 @@ defineExpose({ hasUnsavedChanges });
       :on-ctrl-arrow="handleImageCtrlArrow"
       @save="save"
     >
+      <template #toolbar-right>
+        <div class="flex items-center gap-2">
+          <Selector
+            v-if="salesChannelOptions.length"
+            v-model="currentSalesChannel"
+            :options="salesChannelOptions"
+            class="w-48"
+            :placeholder="t('products.products.variations.content.selectors.salesChannel')"
+            :removable="false"
+            labelBy="name"
+            valueBy="value"
+            filterable
+          />
+        </div>
+      </template>
       <template #cell="{ row, column, rowIndex }">
         <template v-if="column.key === 'name'">
           <Link
@@ -833,11 +954,13 @@ defineExpose({ hasUnsavedChanges });
       :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct.id"
       :ids="assignedMediaIds"
       :link-on-select="false"
+      :sales-channel-id="currentSalesChannelId || undefined"
       @entries-created="handleExistingSelected"
     />
     <CreateImagesModal
       v-model="uploadImagesModalVisible"
       :single-upload="isSingleUpload"
+      :sales-channel-id="currentSalesChannelId || undefined"
       @entries-created="handleImagesCreated"
     />
   </div>

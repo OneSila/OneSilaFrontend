@@ -322,7 +322,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
         v-if="isChannelInherited"
         class="mb-4 rounded border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700"
       >
-        {{ t('products.media.messages.inheritedFromDefault') }}
+        {{ t('products.products.variations.media.messages.inheritedFromDefault') }}
       </div>
       <div v-if="viewType === 'table'" class="overflow-x-auto" :class="{ 'opacity-60': isChannelInherited }">
         <div class="inline-block min-w-full align-middle">
@@ -412,7 +412,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
       <div v-else>
         <VueDraggableNext
           :list="items"
-          class="dragArea gallery grid grid-cols-1 gap-4 p-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+          class="dragArea gallery grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3"
           :class="{ 'opacity-60': isChannelInherited }"
           @end="handleEnd"
         >
