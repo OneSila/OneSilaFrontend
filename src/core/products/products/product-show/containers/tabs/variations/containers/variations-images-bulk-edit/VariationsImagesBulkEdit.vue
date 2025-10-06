@@ -70,6 +70,7 @@ const salesChannels = ref<any[]>([]);
 const currentSalesChannel = ref<'default' | string>('default');
 const previousSalesChannel = ref<'default' | string>('default');
 const skipChannelWatch = ref(false);
+const inheritedFromDefault = ref(false);
 
 const assignedMediaIds = computed(() =>
   variations.value.flatMap((row) =>
@@ -97,6 +98,9 @@ const isSingleUpload = computed(() => uploadContext.value?.columnIndex !== null)
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
 const parentProductType = computed(() => parentProduct.value.type);
+const isChannelInherited = computed(
+  () => currentSalesChannel.value !== 'default' && inheritedFromDefault.value
+);
 
 const baseColumns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
@@ -588,6 +592,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
       }
     }
 
+    let channelInherited = false;
     variationRows.forEach((row) => {
       const entries = imagesMap.get(row.variation.id) ?? [];
       if (entries.length || selectedChannel === 'default') {
@@ -601,6 +606,9 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
           sortOrder: slot.sortOrder ?? index,
           uploadSource: slot.uploadSource ?? 'existing',
         }));
+        if (fallback.length) {
+          channelInherited = true;
+        }
       }
       ensureRowHasMainImage(row);
     });
@@ -609,6 +617,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     expandedPlaceholder.value = null;
     matrixRef.value?.resetHistory(variations.value);
     previousSalesChannel.value = currentSalesChannel.value;
+    inheritedFromDefault.value = channelInherited;
   } finally {
     loading.value = false;
   }
@@ -782,8 +791,17 @@ defineExpose({ hasUnsavedChanges });
       :clone-cell-value="cloneMatrixCellValue"
       :clear-cell-value="clearMatrixCellValue"
       :on-ctrl-arrow="handleImageCtrlArrow"
+      :class="{ 'opacity-60': isChannelInherited }"
       @save="save"
     >
+      <template #filters>
+        <div
+          v-if="isChannelInherited"
+          class="rounded border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700"
+        >
+          {{ t('products.products.variations.media.messages.inheritedFromDefault') }}
+        </div>
+      </template>
       <template #toolbar-right>
         <div class="flex items-center gap-2">
           <Selector
