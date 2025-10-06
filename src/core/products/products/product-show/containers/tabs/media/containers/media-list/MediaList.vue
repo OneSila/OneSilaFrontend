@@ -187,8 +187,6 @@ const ensureChannelSpecificSet = async (): Promise<boolean> => {
         salesChannel: { id: props.salesChannelId },
         sortOrder: index,
         isMainImage: item.isMainImage,
-        active: item.active,
-        productType: item.productType
       }))
     }
   });

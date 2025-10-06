@@ -204,7 +204,6 @@ export const mediaProductThroughQuery = gql`
             id
             type
             hostname
-            name
           }
           isMainImage
           active
