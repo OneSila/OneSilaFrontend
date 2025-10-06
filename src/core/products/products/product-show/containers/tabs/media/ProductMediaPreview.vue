@@ -52,7 +52,7 @@ watch(
 
 const activeItem = computed(() => orderedItems.value[activeIndex.value] || null);
 
-const previewTitle = computed(() => props.productName || t('products.media.preview.untitledProduct'));
+const previewTitle = computed(() => props.productName || t('products.products.variations.media.preview.untitledProduct'));
 const channelDisplay = computed(() => props.channelLabel || props.defaultLabel);
 
 const hasItems = computed(() => orderedItems.value.length > 0);
@@ -70,19 +70,23 @@ const setActiveIndex = (index: number) => {
 <template>
   <div class="sticky top-20 h-fit max-h-[580px] overflow-hidden rounded border bg-white shadow">
     <div class="border-b bg-gray-100 px-5 py-3 text-sm text-gray-500">
-      {{ t('products.media.preview.channelHeading', { channel: channelDisplay || t('products.media.preview.channelFallback') }) }}
+      {{
+        t('products.products.variations.media.preview.channelHeading', {
+          channel: channelDisplay || t('products.products.variations.media.preview.channelFallback')
+        })
+      }}
     </div>
     <div class="space-y-4 px-5 py-4">
       <div>
         <h3 class="text-lg font-semibold text-gray-900">{{ previewTitle }}</h3>
-        <p class="text-sm text-gray-600">{{ t('products.media.preview.description') }}</p>
+        <p class="text-sm text-gray-600">{{ t('products.products.variations.media.preview.description') }}</p>
       </div>
       <div v-if="hasItems" class="space-y-4" :class="{ 'opacity-60': isInherited }">
         <div class="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border bg-gray-50">
           <img
             v-if="mediaType === 'IMAGE' && imageSource"
             :src="imageSource"
-            :alt="t('products.media.preview.mainImageAlt')"
+            :alt="t('products.products.variations.media.preview.mainImageAlt')"
             class="h-full w-full object-cover"
           />
           <video
@@ -94,7 +98,7 @@ const setActiveIndex = (index: number) => {
           </video>
           <div v-else class="flex h-full w-full flex-col items-center justify-center text-gray-400">
             <Icon name="image" class="mb-2 h-8 w-8" />
-            <span class="text-sm">{{ t('products.media.preview.unsupported') }}</span>
+            <span class="text-sm">{{ t('products.products.variations.media.preview.unsupported') }}</span>
           </div>
         </div>
         <div class="flex gap-3 overflow-x-auto pb-1">
@@ -113,7 +117,7 @@ const setActiveIndex = (index: number) => {
             <img
               v-if="item.media?.imageWebUrl || item.media?.onesilaThumbnailUrl"
               :src="item.media.imageWebUrl || item.media.onesilaThumbnailUrl"
-              :alt="t('products.media.preview.thumbnailAlt')"
+              :alt="t('products.products.variations.media.preview.thumbnailAlt')"
               class="h-full w-full object-cover"
             />
             <Icon v-else-if="item.media?.type === 'VIDEO'" name="video" class="h-5 w-5 text-gray-500" />
@@ -123,7 +127,7 @@ const setActiveIndex = (index: number) => {
       </div>
       <div v-else class="flex h-64 flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-center">
         <Icon name="image" class="mb-3 h-8 w-8 text-gray-400" />
-        <p class="text-sm text-gray-500">{{ t('products.media.preview.noImages') }}</p>
+        <p class="text-sm text-gray-500">{{ t('products.products.variations.media.preview.noImages') }}</p>
       </div>
     </div>
   </div>
