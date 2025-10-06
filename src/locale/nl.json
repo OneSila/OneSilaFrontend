@@ -768,6 +768,21 @@
           }
         }
       },
+      "media": {
+        "messages": {
+          "inheritedFromDefault": ""
+        },
+        "preview": {
+          "channelHeading": "",
+          "channelFallback": "",
+          "description": "",
+          "mainImageAlt": "",
+          "thumbnailAlt": "",
+          "noImages": "",
+          "unsupported": "",
+          "untitledProduct": ""
+        }
+      },
         "properties": {
           "searchPlaceholder": "Zoek eigenschappen",
           "typePlaceholder": "Filter op type"

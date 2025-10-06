@@ -1091,6 +1091,21 @@
           },
           "optionLabel": "{name} ({rate}%)"
         },
+        "media": {
+          "messages": {
+            "inheritedFromDefault": "These images are currently inherited from the default channel. Making changes will create a dedicated gallery for this channel."
+          },
+          "preview": {
+            "channelHeading": "Preview for {channel}",
+            "channelFallback": "this channel",
+            "description": "See how your media gallery appears on the selected channel.",
+            "mainImageAlt": "Main product image preview",
+            "thumbnailAlt": "Gallery thumbnail",
+            "noImages": "No images available for this product yet.",
+            "unsupported": "Preview unavailable",
+            "untitledProduct": "Unnamed product"
+          }
+        },
         "prices": {
           "columns": {
             "rrp": "RRP ({currency})",

@@ -12,7 +12,7 @@ import {Toast} from "../../../../../../shared/modules/toast";
 import {VideoPreview} from "../../../../videos/video-show/containers/video-preview";
 import apolloClient from "../../../../../../../apollo-client";
 
-const props = defineProps<{ modelValue: boolean; productId?: string }>();
+const props = defineProps<{ modelValue: boolean; productId?: string; salesChannelId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const websites = ref(['']);
 
@@ -57,10 +57,13 @@ const onVideosCreated = async (d) => {
 
   if (props.productId) {
     for (const video of d.data.createVideos) {
-      const variables = {
+      const variables: any = {
         product: {id: props.productId},
         media: {id: video.id},
       };
+      if (props.salesChannelId) {
+        variables.salesChannel = { id: props.salesChannelId };
+      }
       try {
         const {data} = await apolloClient.mutate({
           mutation: createMediaProductThroughMutation,

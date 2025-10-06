@@ -200,6 +200,12 @@ export const mediaProductThroughQuery = gql`
         node {
           id
           productId
+          salesChannel {
+            id
+            type
+            hostname
+            name
+          }
           isMainImage
           active
           productType
