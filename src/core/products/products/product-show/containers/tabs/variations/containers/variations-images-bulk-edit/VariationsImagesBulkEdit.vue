@@ -778,7 +778,10 @@ defineExpose({ hasUnsavedChanges });
 </script>
 
 <template>
-  <div class="relative w-full min-w-0 variations-images-bulk-edit">
+  <div
+    class="relative w-full min-w-0 variations-images-bulk-edit"
+    :class="{ 'variations-images-bulk-edit--inherited': isChannelInherited }"
+  >
     <MatrixEditor
       ref="matrixRef"
       v-model:rows="variations"
@@ -791,7 +794,6 @@ defineExpose({ hasUnsavedChanges });
       :clone-cell-value="cloneMatrixCellValue"
       :clear-cell-value="clearMatrixCellValue"
       :on-ctrl-arrow="handleImageCtrlArrow"
-      :class="{ 'opacity-60': isChannelInherited }"
       @save="save"
     >
       <template #filters>
@@ -985,6 +987,10 @@ defineExpose({ hasUnsavedChanges });
 </template>
 
 <style scoped>
+.variations-images-bulk-edit--inherited :deep(.overflow-x-auto) {
+  opacity: 0.6;
+}
+
 .variations-images-bulk-edit .group:hover .group-hover\:opacity-100 {
   opacity: 1;
 }
