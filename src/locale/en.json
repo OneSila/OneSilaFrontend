@@ -1093,7 +1093,10 @@
         },
         "media": {
           "messages": {
-            "inheritedFromDefault": "These images are currently inherited from the default channel. Making changes will create a dedicated gallery for this channel."
+            "inheritedFromDefault": "These images are currently inherited from the default channel. Click \"Create gallery\" to create a dedicated gallery for this channel."
+          },
+          "actions": {
+            "createChannelGallery": "Create gallery"
           },
           "preview": {
             "channelHeading": "Preview for {channel}",

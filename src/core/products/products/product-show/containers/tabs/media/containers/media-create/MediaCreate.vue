@@ -17,7 +17,7 @@ const props = defineProps<{
   product: Product;
   mediaIds: string[];
   salesChannelId?: string | 'default';
-  ensureSalesChannelSet?: () => Promise<void>;
+  disabled?: boolean;
 }>();
 const imagesModalVisible = ref(false);
 const videosModalVisible = ref(false);
@@ -34,14 +34,10 @@ const handleEntryAdded = () => {
   emit('media-added')
 };
 
-const ensureBeforeAction = async () => {
-  if (resolvedSalesChannelId.value) {
-    await props.ensureSalesChannelSet?.();
-  }
-};
-
 const openModal = async (modalType: string, close: any) => {
-  await ensureBeforeAction();
+  if (props.disabled) {
+    return;
+  }
   if (modalType === TYPE_IMAGE) {
     imagesModalVisible.value = true;
   } else if (modalType === TYPE_VIDEO) {
@@ -60,7 +56,7 @@ const openModal = async (modalType: string, close: any) => {
 <template>
   <div>
     <Popper :placement="'bottom-end'" offsetDistance="8" class="!block">
-        <Button class="btn btn-primary">
+        <Button class="btn btn-primary" :disabled="disabled">
           <Icon class="mr-2" name="plus" />
           {{ t('shared.button.add') }}
         </Button>
