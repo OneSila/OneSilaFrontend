@@ -8,7 +8,7 @@ import woocommerceIcon from '../../../../assets/images/integration-types/icons/w
 import amazonIcon from '../../../../assets/images/integration-types/icons/amazon.svg';
 import ebayIcon from '../../../../assets/images/integration-types/icons/ebay.svg';
 
-const props = defineProps<{ channels: any[]; modelValue: string }>();
+const props = defineProps<{ channels: any[]; modelValue: string; disabled?: boolean }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
 const { t } = useI18n();
 
@@ -40,7 +40,12 @@ const resolveLabel = (channel: any) => {
   return channel.name || cleanHostname(channel.hostname, channel.type);
 };
 
-const select = (val: string) => emit('update:modelValue', val);
+const select = (val: string) => {
+  if (props.disabled) {
+    return;
+  }
+  emit('update:modelValue', val);
+};
 
 </script>
 
@@ -55,8 +60,11 @@ const select = (val: string) => emit('update:modelValue', val);
     >
       <!-- Default channel -->
       <div
-        class="cursor-pointer flex items-center gap-2 p-2"
-        :class="{ 'bg-primary text-white': modelValue === 'default' }"
+        class="flex items-center gap-2 p-2"
+        :class="[
+          { 'bg-primary text-white': modelValue === 'default' },
+          disabled ? 'cursor-not-allowed opacity-60 pointer-events-none' : 'cursor-pointer'
+        ]"
         @click="select('default')"
       >
         <Icon name="store" class="w-4 h-4" />
@@ -66,8 +74,11 @@ const select = (val: string) => emit('update:modelValue', val);
       <div
         v-for="channel in channels"
         :key="channel.id"
-        class="cursor-pointer flex items-center gap-2 p-2"
-        :class="{ 'bg-primary text-white': modelValue === channel.id }"
+        class="flex items-center gap-2 p-2"
+        :class="[
+          { 'bg-primary text-white': modelValue === channel.id },
+          disabled ? 'cursor-not-allowed opacity-60 pointer-events-none' : 'cursor-pointer'
+        ]"
         @click="select(channel.id)"
       >
         <Icon v-if="channel.type == 'default'" :name="channel.type" class="w-4 h-4" />

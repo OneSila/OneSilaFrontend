@@ -70,6 +70,8 @@ const emit = defineEmits<{
   (e: 'refetched'): void;
   (e: 'update-ids', ids: string[]): void;
   (e: 'items-loaded', payload: { items: Item[]; inherited: boolean }): void;
+  (e: 'duplication-start'): void;
+  (e: 'duplication-end'): void;
 }>();
 
 const { t } = useI18n();
@@ -178,22 +180,28 @@ const ensureChannelSpecificSet = async (): Promise<boolean> => {
     return false;
   }
 
-  await apolloClient.mutate({
-    mutation: createMediaProductThroughsMutation,
-    variables: {
-      data: defaults.map((item, index) => ({
-        product: { id: props.product.id },
-        media: { id: item.media.id },
-        salesChannel: { id: props.salesChannelId },
-        sortOrder: index,
-        isMainImage: item.isMainImage,
-      }))
-    }
-  });
+  emit('duplication-start');
 
-  inheritedFromDefault.value = false;
-  await fetchData('network-only');
-  return true;
+  try {
+    await apolloClient.mutate({
+      mutation: createMediaProductThroughsMutation,
+      variables: {
+        data: defaults.map((item, index) => ({
+          product: { id: props.product.id },
+          media: { id: item.media.id },
+          salesChannel: { id: props.salesChannelId },
+          sortOrder: index,
+          isMainImage: item.isMainImage,
+        }))
+      }
+    });
+
+    inheritedFromDefault.value = false;
+    await fetchData('network-only');
+    return true;
+  } finally {
+    emit('duplication-end');
+  }
 };
 
 defineExpose({ ensureChannelSpecificSet });
