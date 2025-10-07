@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
+import { shortenText } from '../../../../../../../shared/utils';
 
 type MediaItem = {
   id: string;
@@ -52,7 +53,16 @@ watch(
 
 const activeItem = computed(() => orderedItems.value[activeIndex.value] || null);
 
-const previewTitle = computed(() => props.productName || t('products.products.variations.media.preview.untitledProduct'));
+const previewTitle = computed(() => {
+  const fallbackTitle = t('products.products.variations.media.preview.untitledProduct');
+  const resolvedName = (props.productName || '').trim();
+
+  if (!resolvedName) {
+    return fallbackTitle;
+  }
+
+  return shortenText(resolvedName, 60);
+});
 const channelDisplay = computed(() => props.channelLabel || props.defaultLabel);
 
 const hasItems = computed(() => orderedItems.value.length > 0);
@@ -68,7 +78,7 @@ const setActiveIndex = (index: number) => {
 </script>
 
 <template>
-  <div class="sticky top-20 h-fit max-h-[580px] overflow-hidden rounded border bg-white shadow">
+  <div class="sticky top-20 h-fit max-h-[580px] overflow-x-hidden overflow-y-auto rounded border bg-white shadow">
     <div class="border-b bg-gray-100 px-5 py-3 text-sm text-gray-500">
       {{
         t('products.products.variations.media.preview.channelHeading', {
@@ -78,7 +88,7 @@ const setActiveIndex = (index: number) => {
     </div>
     <div class="space-y-4 px-5 py-4">
       <div>
-        <h3 class="text-lg font-semibold text-gray-900">{{ previewTitle }}</h3>
+        <h3 class="truncate text-lg font-semibold text-gray-900">{{ previewTitle }}</h3>
         <p class="text-sm text-gray-600">{{ t('products.products.variations.media.preview.description') }}</p>
       </div>
       <div v-if="hasItems" class="space-y-4" :class="{ 'opacity-60': isInherited }">
