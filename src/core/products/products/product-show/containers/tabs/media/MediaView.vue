@@ -121,7 +121,7 @@ const handleCreateGallery = async () => {
 <template>
   <TabContentTemplate>
     <template #content>
-      <div class="grid gap-6 lg:grid-cols-[220px_1fr_380px]">
+      <div class="grid gap-6 lg:grid-cols-[220px_1fr] xl:grid-cols-[220px_1fr_380px]">
         <SalesChannelTabs
           v-model="currentSalesChannel"
           :channels="salesChannels"
@@ -160,6 +160,7 @@ const handleCreateGallery = async () => {
           />
         </div>
         <ProductMediaPreview
+          class="lg:col-span-2 xl:col-span-1"
           :product-name="productName"
           :channel-label="channelLabel"
           :default-label="defaultChannelLabel"
