@@ -11,8 +11,14 @@ import { MediaCreate } from './containers/media-create';
 import { MediaList } from './containers/media-list';
 import ProductMediaPreview from './ProductMediaPreview.vue';
 
+type EnsureChannelSpecificSetResult = {
+  duplicated: boolean;
+  appliedToCurrentChannel: boolean;
+  createdEntries: Array<{ id: string; media: { id: string } }> | null;
+};
+
 type MediaListExpose = {
-  ensureChannelSpecificSet: () => Promise<boolean>;
+  ensureChannelSpecificSet: () => Promise<EnsureChannelSpecificSetResult>;
 };
 
 const props = defineProps<{ product: Product }>();

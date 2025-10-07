@@ -60,6 +60,12 @@ type Item = {
   salesChannel: SalesChannelInfo | null;
 };
 
+type EnsureChannelSpecificSetResult = {
+  duplicated: boolean;
+  appliedToCurrentChannel: boolean;
+  createdEntries: Array<{ id: string; media: { id: string } }> | null;
+};
+
 const props = defineProps<{
   product: Product;
   refetchNeeded: boolean;
@@ -148,30 +154,42 @@ const emitState = () => {
   emit('items-loaded', { items: items.value, inherited: inheritedFromDefault.value });
 };
 
-const fetchData = async (policy: FetchPolicy = 'cache-first') => {
+const fetchData = async (
+  policy: FetchPolicy = 'cache-first',
+  channelId: string = props.salesChannelId
+): Promise<{ appliedToCurrentChannel: boolean; nodes: Item[] }> => {
   const { data } = await apolloClient.query({
     query: mediaProductThroughQuery,
-    variables: { filter: buildFilter(props.salesChannelId) },
+    variables: { filter: buildFilter(channelId) },
     fetchPolicy: policy
   });
 
   const nodes = extractNodes(data?.mediaProductThroughs);
 
-  if (isDefaultChannel.value) {
-    items.value = nodes;
+  if (channelId === 'default') {
     defaultItems.value = nodes;
+    if (channelId !== props.salesChannelId) {
+      return { appliedToCurrentChannel: false, nodes };
+    }
+    items.value = nodes;
     inheritedFromDefault.value = false;
   } else if (nodes.length === 0) {
-    const defaults = await loadDefaultItems(policy);
+    const defaults = defaultItems.value.length ? defaultItems.value : await loadDefaultItems(policy);
     defaultItems.value = defaults;
+    if (channelId !== props.salesChannelId) {
+      return { appliedToCurrentChannel: false, nodes: defaults };
+    }
     items.value = defaults;
     inheritedFromDefault.value = true;
   } else {
-    items.value = nodes;
-    inheritedFromDefault.value = false;
     if (!defaultItems.value.length) {
       defaultItems.value = await loadDefaultItems(policy);
     }
+    if (channelId !== props.salesChannelId) {
+      return { appliedToCurrentChannel: false, nodes };
+    }
+    items.value = nodes;
+    inheritedFromDefault.value = false;
   }
 
   syncMainImageMap(items.value);
@@ -179,11 +197,20 @@ const fetchData = async (policy: FetchPolicy = 'cache-first') => {
     delete deleteVariables[key];
   });
   emitState();
+
+  return { appliedToCurrentChannel: true, nodes: items.value };
 };
 
-const ensureChannelSpecificSet = async (): Promise<boolean> => {
-  if (isDefaultChannel.value || !inheritedFromDefault.value) {
-    return false;
+const ensureChannelSpecificSet = async (): Promise<EnsureChannelSpecificSetResult> => {
+  const channelId = props.salesChannelId;
+  const inheritedAtCall = inheritedFromDefault.value;
+
+  if (channelId === 'default' || !inheritedAtCall) {
+    return {
+      duplicated: false,
+      appliedToCurrentChannel: false,
+      createdEntries: null
+    };
   }
 
   const defaults = defaultItems.value.length
@@ -191,32 +218,66 @@ const ensureChannelSpecificSet = async (): Promise<boolean> => {
     : await loadDefaultItems('network-only');
 
   if (!defaults.length) {
-    inheritedFromDefault.value = false;
-    items.value = [];
-    syncMainImageMap(items.value);
-    emitState();
-    return false;
+    if (channelId === props.salesChannelId) {
+      inheritedFromDefault.value = false;
+      items.value = [];
+      syncMainImageMap(items.value);
+      emitState();
+    }
+
+    return {
+      duplicated: false,
+      appliedToCurrentChannel: false,
+      createdEntries: null
+    };
   }
 
+  let createdEntries: Array<{ id: string; media: { id: string } }> | null = null;
+
   await runWithMutationGuard(async () => {
-    await apolloClient.mutate({
+    const { data } = await apolloClient.mutate({
       mutation: createMediaProductThroughsMutation,
       variables: {
         data: defaults.map((item, index) => ({
           product: { id: props.product.id },
           media: { id: item.media.id },
-          salesChannel: { id: props.salesChannelId },
+          salesChannel: { id: channelId },
           sortOrder: index,
-          isMainImage: item.isMainImage,
+          isMainImage: item.isMainImage
         }))
       }
     });
 
-    inheritedFromDefault.value = false;
-    await fetchData('network-only');
+    createdEntries = data?.createMediaproducthroughs ?? null;
+
+    if (channelId === props.salesChannelId) {
+      inheritedFromDefault.value = false;
+      await fetchData('network-only', channelId);
+    }
   });
 
-  return true;
+  return {
+    duplicated: true,
+    appliedToCurrentChannel: channelId === props.salesChannelId,
+    createdEntries
+  };
+};
+
+const resolveDuplicatedTarget = (item: Item, result: EnsureChannelSpecificSetResult): Item => {
+  if (!result.duplicated) {
+    return item;
+  }
+
+  if (result.appliedToCurrentChannel) {
+    return items.value.find((entry) => entry.media.id === item.media.id) || item;
+  }
+
+  const createdEntry = result.createdEntries?.find((entry) => entry.media?.id === item.media.id);
+  if (createdEntry) {
+    return { ...item, id: createdEntry.id };
+  }
+
+  return item;
 };
 
 defineExpose({ ensureChannelSpecificSet });
@@ -275,8 +336,8 @@ const handleEnd = async () => {
   const orderedMediaIds = items.value.map((entry) => entry.media.id);
 
   if (!isDefaultChannel.value && inheritedFromDefault.value) {
-    const duplicated = await ensureChannelSpecificSet();
-    if (duplicated) {
+    const duplicationResult = await ensureChannelSpecificSet();
+    if (duplicationResult.duplicated && duplicationResult.appliedToCurrentChannel) {
       await nextTick();
     }
   }
@@ -301,28 +362,30 @@ const updateMainImage = async (target: Item) => {
 };
 
 const handleMainImageChange = async (item: Item) => {
-  let target = item;
+  await runWithMutationGuard(async () => {
+    let target = item;
 
-  if (!isDefaultChannel.value && inheritedFromDefault.value) {
-    const duplicated = await ensureChannelSpecificSet();
-    if (duplicated) {
-      await nextTick();
+    if (!isDefaultChannel.value && inheritedFromDefault.value) {
+      const duplicationResult = await ensureChannelSpecificSet();
+      if (duplicationResult.duplicated && duplicationResult.appliedToCurrentChannel) {
+        await nextTick();
+      }
+      target = resolveDuplicatedTarget(item, duplicationResult);
     }
-    target = items.value.find((entry) => entry.media.id === item.media.id) || item;
-  }
 
-  await updateMainImage(target);
+    await updateMainImage(target);
+  });
 };
 
 const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
   let target = item;
 
   if (!isDefaultChannel.value && inheritedFromDefault.value) {
-    const duplicated = await ensureChannelSpecificSet();
-    if (duplicated) {
+    const duplicationResult = await ensureChannelSpecificSet();
+    if (duplicationResult.duplicated && duplicationResult.appliedToCurrentChannel) {
       await nextTick();
     }
-    target = items.value.find((entry) => entry.media.id === item.media.id) || item;
+    target = resolveDuplicatedTarget(item, duplicationResult);
   }
 
   deleteVariables[item.media.id] = { id: target.id };
