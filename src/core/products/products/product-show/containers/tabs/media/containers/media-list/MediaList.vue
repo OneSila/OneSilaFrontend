@@ -70,8 +70,8 @@ const emit = defineEmits<{
   (e: 'refetched'): void;
   (e: 'update-ids', ids: string[]): void;
   (e: 'items-loaded', payload: { items: Item[]; inherited: boolean }): void;
-  (e: 'duplication-start'): void;
-  (e: 'duplication-end'): void;
+  (e: 'mutation-start'): void;
+  (e: 'mutation-end'): void;
 }>();
 
 const { t } = useI18n();
@@ -82,6 +82,24 @@ const defaultItems: Ref<Item[]> = ref([]);
 const inheritedFromDefault = ref(false);
 const isMainImageMap = ref<Record<string, boolean>>({});
 const deleteVariables = reactive<Record<string, { id: string }>>({});
+const activeMutations = ref(0);
+
+const runWithMutationGuard = async <T>(operation: () => Promise<T>): Promise<T> => {
+  if (activeMutations.value === 0) {
+    emit('mutation-start');
+  }
+
+  activeMutations.value += 1;
+
+  try {
+    return await operation();
+  } finally {
+    activeMutations.value -= 1;
+    if (activeMutations.value === 0) {
+      emit('mutation-end');
+    }
+  }
+};
 
 const isDefaultChannel = computed(() => props.salesChannelId === 'default');
 const isChannelInherited = computed(() => !isDefaultChannel.value && inheritedFromDefault.value);
@@ -180,9 +198,7 @@ const ensureChannelSpecificSet = async (): Promise<boolean> => {
     return false;
   }
 
-  emit('duplication-start');
-
-  try {
+  await runWithMutationGuard(async () => {
     await apolloClient.mutate({
       mutation: createMediaProductThroughsMutation,
       variables: {
@@ -198,10 +214,9 @@ const ensureChannelSpecificSet = async (): Promise<boolean> => {
 
     inheritedFromDefault.value = false;
     await fetchData('network-only');
-    return true;
-  } finally {
-    emit('duplication-end');
-  }
+  });
+
+  return true;
 };
 
 defineExpose({ ensureChannelSpecificSet });
@@ -245,11 +260,15 @@ const persistSortOrder = async (orderedMediaIds: string[]) => {
     });
   }).filter(Boolean) as Promise<any>[];
 
-  if (updatePromises.length) {
-    await Promise.allSettled(updatePromises);
+  if (!updatePromises.length) {
+    await fetchData('network-only');
+    return;
   }
 
-  await fetchData('network-only');
+  await runWithMutationGuard(async () => {
+    await Promise.allSettled(updatePromises);
+    await fetchData('network-only');
+  });
 };
 
 const handleEnd = async () => {
@@ -266,17 +285,19 @@ const handleEnd = async () => {
 };
 
 const updateMainImage = async (target: Item) => {
-  await apolloClient.mutate({
-    mutation: updateMediaProductThroughMutation,
-    variables: {
-      data: {
-        id: target.id,
-        isMainImage: !!isMainImageMap.value[target.media.id]
+  await runWithMutationGuard(async () => {
+    await apolloClient.mutate({
+      mutation: updateMediaProductThroughMutation,
+      variables: {
+        data: {
+          id: target.id,
+          isMainImage: !!isMainImageMap.value[target.media.id]
+        }
       }
-    }
-  });
+    });
 
-  await fetchData('network-only');
+    await fetchData('network-only');
+  });
 };
 
 const handleMainImageChange = async (item: Item) => {
@@ -305,7 +326,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
   }
 
   deleteVariables[item.media.id] = { id: target.id };
-  await confirm();
+  await runWithMutationGuard(confirm);
 };
 
 </script>

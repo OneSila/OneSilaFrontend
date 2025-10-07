@@ -24,7 +24,7 @@ const currentSalesChannel = ref<'default' | string>('default');
 const previewItems = ref<any[]>([]);
 const inheritedFromDefault = ref(false);
 const mediaListRef = ref<MediaListExpose | null>(null);
-const isChannelDuplicationRunning = ref(false);
+const isChannelMutationRunning = ref(false);
 
 const defaultChannelLabel = window.location.hostname;
 const productName = computed(() => (props.product as any)?.name ?? '');
@@ -88,12 +88,12 @@ const handleItemsLoaded = ({ items, inherited }: { items: any[]; inherited: bool
   inheritedFromDefault.value = inherited;
 };
 
-const handleDuplicationStart = () => {
-  isChannelDuplicationRunning.value = true;
+const handleMutationStart = () => {
+  isChannelMutationRunning.value = true;
 };
 
-const handleDuplicationEnd = () => {
-  isChannelDuplicationRunning.value = false;
+const handleMutationEnd = () => {
+  isChannelMutationRunning.value = false;
 };
 
 const ensureChannelSet = async () => {
@@ -112,7 +112,7 @@ const ensureChannelSet = async () => {
         <SalesChannelTabs
           v-model="currentSalesChannel"
           :channels="salesChannels"
-          :disabled="isChannelDuplicationRunning"
+          :disabled="isChannelMutationRunning"
         />
         <div class="space-y-4">
           <Flex class="items-center justify-end">
@@ -135,8 +135,8 @@ const ensureChannelSet = async () => {
             @refetched="handleRefetched"
             @update-ids="updateIds"
             @items-loaded="handleItemsLoaded"
-            @duplication-start="handleDuplicationStart"
-            @duplication-end="handleDuplicationEnd"
+            @mutation-start="handleMutationStart"
+            @mutation-end="handleMutationEnd"
           />
         </div>
         <ProductMediaPreview
