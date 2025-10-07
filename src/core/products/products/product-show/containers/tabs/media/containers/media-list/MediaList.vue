@@ -64,6 +64,7 @@ const props = defineProps<{
   product: Product;
   refetchNeeded: boolean;
   salesChannelId: string;
+  readonlyMode: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -83,6 +84,7 @@ const deleteVariables = reactive<Record<string, { id: string }>>({});
 
 const isDefaultChannel = computed(() => props.salesChannelId === 'default');
 const isChannelInherited = computed(() => !isDefaultChannel.value && inheritedFromDefault.value);
+const isReadOnly = computed(() => props.readonlyMode);
 
 const extractNodes = (connection: any): Item[] => {
   if (!connection?.edges?.length) {
@@ -245,6 +247,10 @@ const persistSortOrder = async (orderedMediaIds: string[]) => {
 };
 
 const handleEnd = async () => {
+  if (isReadOnly.value) {
+    return;
+  }
+
   const orderedMediaIds = items.value.map((entry) => entry.media.id);
 
   if (!isDefaultChannel.value && inheritedFromDefault.value) {
@@ -272,6 +278,10 @@ const updateMainImage = async (target: Item) => {
 };
 
 const handleMainImageChange = async (item: Item) => {
+  if (isReadOnly.value) {
+    return;
+  }
+
   let target = item;
 
   if (!isDefaultChannel.value && inheritedFromDefault.value) {
@@ -286,6 +296,10 @@ const handleMainImageChange = async (item: Item) => {
 };
 
 const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
+  if (isReadOnly.value) {
+    return;
+  }
+
   let target = item;
 
   if (!isDefaultChannel.value && inheritedFromDefault.value) {
@@ -354,6 +368,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                 tag="tbody"
                 :list="items"
                 class="dragArea divide-y divide-gray-200 dark:divide-gray-600"
+                :disabled="isReadOnly"
                 @end="handleEnd"
               >
                 <tr v-for="item in items" :key="item.id">
@@ -382,6 +397,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                     <Toggle
                       v-if="item.media.type === TYPE_IMAGE"
                       v-model="isMainImageMap[item.media.id]"
+                      :disabled="isReadOnly"
                       @update:modelValue="handleMainImageChange(item)"
                     />
                   </td>
@@ -395,7 +411,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                           @done="handleDeleteSuccess"
                         >
                           <template #default="{ confirmAndMutate }">
-                            <Button @click="() => prepareDelete(item, confirmAndMutate)">
+                            <Button :disabled="isReadOnly" @click="() => prepareDelete(item, confirmAndMutate)">
                               <Icon name="trash" />
                             </Button>
                           </template>
@@ -414,6 +430,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
           :list="items"
           class="dragArea gallery grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3"
           :class="{ 'opacity-60': isChannelInherited }"
+          :disabled="isReadOnly"
           @end="handleEnd"
         >
           <div v-for="item in items" :key="item.media.id" class="file-entry relative">
@@ -447,6 +464,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                 <FlexCell v-if="item.media.type === TYPE_IMAGE" center class="mr-2">
                   <Toggle
                     v-model="isMainImageMap[item.media.id]"
+                    :disabled="isReadOnly"
                     @update:modelValue="handleMainImageChange(item)"
                   />
                 </FlexCell>
@@ -457,7 +475,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                     @done="handleDeleteSuccess"
                   >
                     <template #default="{ confirmAndMutate }">
-                      <Button @click="() => prepareDelete(item, confirmAndMutate)">
+                      <Button :disabled="isReadOnly" @click="() => prepareDelete(item, confirmAndMutate)">
                         <Icon size="xl" name="trash" />
                       </Button>
                     </template>

@@ -193,6 +193,9 @@
         "messages": {
           "inheritedFromDefault": ""
         },
+        "actions": {
+          "createChannelGallery": ""
+        },
         "preview": {
           "channelHeading": "",
           "channelFallback": "",
