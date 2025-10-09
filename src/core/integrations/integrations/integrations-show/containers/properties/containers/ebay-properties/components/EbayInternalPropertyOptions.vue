@@ -21,7 +21,7 @@ type OptionNode = {
   description: string | null;
   sortOrder: number;
   isActive: boolean;
-  localInstance: { id: string; fullValueName: string } | null;
+  localInstance: { id: string; value: string } | null;
 };
 
 const props = defineProps<{
@@ -126,7 +126,7 @@ watch(
 const buildField = (option: OptionNode): QueryFormField => ({
   type: FieldType.Query,
   name: `localInstance__${option.id}`,
-  labelBy: 'fullValueName',
+  labelBy: 'value',
   valueBy: 'id',
   query: propertySelectValuesQuerySelector,
   queryVariables: { filter: { property: { id: { exact: props.localPropertyId } } } },

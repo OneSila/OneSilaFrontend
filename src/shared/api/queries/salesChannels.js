@@ -1124,7 +1124,7 @@ export const ebayInternalPropertyOptionsQuery = gql`
           isActive
           localInstance {
             id
-            fullValueName
+            value
           }
         }
         cursor

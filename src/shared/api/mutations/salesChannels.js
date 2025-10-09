@@ -355,7 +355,7 @@ export const updateEbayInternalPropertyOptionMutation = gql`
       id
       localInstance {
         id
-        fullValueName
+        value
       }
     }
   }
