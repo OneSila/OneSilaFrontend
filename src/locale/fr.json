@@ -380,6 +380,23 @@
             "translatedName": "",
             "productRule": ""
           }
+        },
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "isRoot": ""
+          },
+          "options": {
+            "accordionTitle": "",
+            "remoteValue": "",
+            "description": "",
+            "localValue": "",
+            "empty": "",
+            "noDescription": "",
+            "loadError": "",
+            "updateSuccess": "",
+            "updateError": ""
+          }
         }
       }
     },

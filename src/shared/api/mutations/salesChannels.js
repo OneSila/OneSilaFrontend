@@ -349,6 +349,18 @@ export const updateEbayInternalPropertyMutation = gql`
   }
 `;
 
+export const updateEbayInternalPropertyOptionMutation = gql`
+  mutation updateEbayInternalPropertyOption($data: EbayInternalPropertyOptionPartialInput!) {
+    updateEbayInternalPropertyOption(data: $data) {
+      id
+      localInstance {
+        id
+        fullValueName
+      }
+    }
+  }
+`;
+
 export const updateRemoteLanguageMutation = gql`
   mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
     updateRemoteLanguage(data: $data) {

@@ -2533,6 +2533,17 @@
           "title": "Ebay Inventory Fields",
           "labels": {
             "isRoot": "Is Inventory Item Field"
+          },
+          "options": {
+            "accordionTitle": "Options",
+            "remoteValue": "Remote Option",
+            "description": "Description",
+            "localValue": "OneSila Value",
+            "empty": "No options are available for this inventory field.",
+            "noDescription": "No description provided.",
+            "loadError": "Unable to load options. Please try again.",
+            "updateSuccess": "Option mapping updated successfully.",
+            "updateError": "Failed to update option mapping."
           }
         }
       },
