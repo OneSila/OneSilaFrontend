@@ -82,7 +82,7 @@ const fetchOptions = async () => {
     const { data } = await apolloClient.query({
       query: ebayInternalPropertyOptionsQuery,
       variables: {
-        first: 200,
+        first: 100,
         filter: {
           internalProperty: { id: { exact: props.propertyId } },
           isActive: { exact: true },
@@ -200,47 +200,49 @@ const handleOptionUpdate = async (option: OptionNode, rawValue: string | null | 
         <div v-else-if="!hasOptions" class="text-sm text-gray-500">
           {{ t('integrations.show.ebay.internalProperties.options.empty') }}
         </div>
-        <div v-else class="overflow-x-auto">
-          <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                  {{ t('integrations.show.ebay.internalProperties.options.remoteValue') }}
-                </th>
-                <th class="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                  {{ t('integrations.show.ebay.internalProperties.options.description') }}
-                </th>
-                <th class="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                  {{ t('integrations.show.ebay.internalProperties.options.localValue') }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="option in options" :key="option.id" class="align-top">
-                <td class="p-3">
-                  <div class="flex flex-col gap-1">
-                    <span class="font-medium text-gray-900">{{ option.label }}</span>
-                    <span class="text-xs text-gray-500">{{ option.value }}</span>
-                  </div>
-                </td>
-                <td class="p-3">
-                  <span v-if="option.description" class="text-sm text-gray-700 whitespace-pre-line">
-                    {{ option.description }}
-                  </span>
-                  <span v-else class="text-sm text-gray-400">
-                    {{ t('integrations.show.ebay.internalProperties.options.noDescription') }}
-                  </span>
-                </td>
-                <td class="p-3 w-96">
-                  <FieldQuery
-                    :model-value="optionMappings[option.id]"
-                    :field="buildField(option)"
-                    @update:model-value="value => handleOptionUpdate(option, value as string | null)"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-else class="max-h-96 overflow-y-auto">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                    {{ t('integrations.show.ebay.internalProperties.options.remoteValue') }}
+                  </th>
+                  <th class="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                    {{ t('integrations.show.ebay.internalProperties.options.description') }}
+                  </th>
+                  <th class="p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                    {{ t('integrations.show.ebay.internalProperties.options.localValue') }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                <tr v-for="option in options" :key="option.id" class="align-top">
+                  <td class="p-3">
+                    <div class="flex flex-col gap-1">
+                      <span class="font-medium text-gray-900">{{ option.label }}</span>
+                      <span class="text-xs text-gray-500">{{ option.value }}</span>
+                    </div>
+                  </td>
+                  <td class="p-3">
+                    <span v-if="option.description" class="text-sm text-gray-700 whitespace-pre-line">
+                      {{ option.description }}
+                    </span>
+                    <span v-else class="text-sm text-gray-400">
+                      {{ t('integrations.show.ebay.internalProperties.options.noDescription') }}
+                    </span>
+                  </td>
+                  <td class="p-3 w-96">
+                    <FieldQuery
+                      :model-value="optionMappings[option.id]"
+                      :field="buildField(option)"
+                      @update:model-value="value => handleOptionUpdate(option, value as string | null)"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </template>
