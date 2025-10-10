@@ -8,7 +8,7 @@ import type { QueryFormField } from '../../../../../../../../../shared/component
 import { FieldType } from '../../../../../../../../../shared/utils/constants';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../../../../../shared/utils';
-import { propertySelectValuesQuerySelector } from '../../../../../../../../../shared/api/queries/properties.js';
+import { propertySelectValuesQuerySelectorValueOnly } from '../../../../../../../../../shared/api/queries/properties.js';
 import { ebayInternalPropertyOptionsQuery } from '../../../../../../../../../shared/api/queries/salesChannels.js';
 import { updateEbayInternalPropertyOptionMutation } from '../../../../../../../../../shared/api/mutations/salesChannels.js';
 import { selectValueOnTheFlyConfig } from '../../../../../../../../properties/property-select-values/configs';
@@ -128,7 +128,7 @@ const buildField = (option: OptionNode): QueryFormField => ({
   name: `localInstance__${option.id}`,
   labelBy: 'value',
   valueBy: 'id',
-  query: propertySelectValuesQuerySelector,
+  query: propertySelectValuesQuerySelectorValueOnly,
   queryVariables: { filter: { property: { id: { exact: props.localPropertyId } } } },
   dataKey: 'propertySelectValues',
   isEdge: true,
