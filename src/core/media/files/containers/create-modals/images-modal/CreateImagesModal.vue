@@ -17,7 +17,7 @@ import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../media";
 import { processGraphQLErrors } from "../../../../../../shared/utils";
 
 const props = withDefaults(
-  defineProps<{ modelValue: boolean; productId?: string; singleUpload?: boolean }>(),
+  defineProps<{ modelValue: boolean; productId?: string; singleUpload?: boolean; salesChannelId?: string }>(),
   {
     singleUpload: false,
   }
@@ -162,9 +162,12 @@ const submitImages = async () => {
     if (createdImages) {
       if (props.productId) {
         for (const image of createdImages) {
-          const variables = {
+          const variables: any = {
             product: { id: props.productId },
             media: { id: image.id },
+          }
+          if (props.salesChannelId) {
+            variables.salesChannel = { id: props.salesChannelId };
           }
           try {
             await apolloClient.mutate({

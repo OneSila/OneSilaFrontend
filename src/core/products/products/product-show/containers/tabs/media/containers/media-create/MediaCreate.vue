@@ -2,22 +2,31 @@
 
 import { Product } from "../../../../../../configs";
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
 import { CreateVideosModal } from "../../../../../../../../media/files/containers/create-modals/videos-modals";
 import { CreateDocumentsModal } from "../../../../../../../../media/files/containers/create-modals/documents-modal";
 import { TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO } from "../../../../../../../../media/files/media";
-import {UploadMediaModal} from "../upload-media-modal";
+import { UploadMediaModal } from "../upload-media-modal";
 
 const { t } = useI18n();
 
-const props = defineProps<{ product: Product; mediaIds: string[] }>();
+const props = defineProps<{
+  product: Product;
+  mediaIds: string[];
+  salesChannelId?: string | 'default';
+  disabled?: boolean;
+}>();
 const imagesModalVisible = ref(false);
 const videosModalVisible = ref(false);
 const documentsModalVisible = ref(false);
 const uploadModalVisible = ref(false);
+
+const resolvedSalesChannelId = computed(() =>
+  props.salesChannelId && props.salesChannelId !== 'default' ? props.salesChannelId : undefined
+);
 
 const emit = defineEmits(['media-added']);
 
@@ -25,8 +34,10 @@ const handleEntryAdded = () => {
   emit('media-added')
 };
 
-const openModal = (modalType: string, close: any) => {
-
+const openModal = async (modalType: string, close: any) => {
+  if (props.disabled) {
+    return;
+  }
   if (modalType === TYPE_IMAGE) {
     imagesModalVisible.value = true;
   } else if (modalType === TYPE_VIDEO) {
@@ -45,7 +56,7 @@ const openModal = (modalType: string, close: any) => {
 <template>
   <div>
     <Popper :placement="'bottom-end'" offsetDistance="8" class="!block">
-        <Button class="btn btn-primary">
+        <Button class="btn btn-primary" :disabled="disabled">
           <Icon class="mr-2" name="plus" />
           {{ t('shared.button.add') }}
         </Button>
@@ -79,9 +90,30 @@ const openModal = (modalType: string, close: any) => {
         </template>
       </Popper>
 
-      <UploadMediaModal v-model="uploadModalVisible" :product-id="product.id" :ids="mediaIds" @entries-created="handleEntryAdded" />
-      <CreateImagesModal v-model="imagesModalVisible" :product-id="product.id" @entries-created="handleEntryAdded" />
-      <CreateVideosModal v-model="videosModalVisible" :product-id="product.id" @entries-created="handleEntryAdded"/>
-      <CreateDocumentsModal v-model="documentsModalVisible" :product-id="product.id" @entries-created="handleEntryAdded" />
+      <UploadMediaModal
+        v-model="uploadModalVisible"
+        :product-id="product.id"
+        :ids="mediaIds"
+        :sales-channel-id="resolvedSalesChannelId"
+        @entries-created="handleEntryAdded"
+      />
+      <CreateImagesModal
+        v-model="imagesModalVisible"
+        :product-id="product.id"
+        :sales-channel-id="resolvedSalesChannelId"
+        @entries-created="handleEntryAdded"
+      />
+      <CreateVideosModal
+        v-model="videosModalVisible"
+        :product-id="product.id"
+        :sales-channel-id="resolvedSalesChannelId"
+        @entries-created="handleEntryAdded"
+      />
+      <CreateDocumentsModal
+        v-model="documentsModalVisible"
+        :product-id="product.id"
+        :sales-channel-id="resolvedSalesChannelId"
+        @entries-created="handleEntryAdded"
+      />
   </div>
 </template>

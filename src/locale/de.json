@@ -192,6 +192,24 @@
           }
         }
       },
+      "media": {
+        "messages": {
+          "inheritedFromDefault": ""
+        },
+        "actions": {
+          "createChannelGallery": ""
+        },
+        "preview": {
+          "channelHeading": "",
+          "channelFallback": "",
+          "description": "",
+          "mainImageAlt": "",
+          "thumbnailAlt": "",
+          "noImages": "",
+          "unsupported": "",
+          "untitledProduct": ""
+        }
+      },
       "properties": {
         "searchPlaceholder": "Eigenschaften suchen",
         "typePlaceholder": "Nach Typ filtern"
@@ -364,6 +382,23 @@
           "help": {
             "translatedName": "",
             "productRule": ""
+          }
+        },
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "isRoot": ""
+          },
+          "options": {
+            "accordionTitle": "",
+            "remoteValue": "",
+            "description": "",
+            "localValue": "",
+            "empty": "",
+            "noDescription": "",
+            "loadError": "",
+            "updateSuccess": "",
+            "updateError": ""
           }
         }
       }

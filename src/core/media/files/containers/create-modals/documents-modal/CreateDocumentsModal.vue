@@ -11,7 +11,7 @@ import { createFilesMutation, createMediaProductThroughMutation } from "../../..
 import { Toast } from "../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../shared/utils";
 
-const props = defineProps<{ modelValue: boolean; productId?: string }>();
+const props = defineProps<{ modelValue: boolean; productId?: string; salesChannelId?: string }>();
 const emit = defineEmits(['update:modelValue', 'entries-created']);
 const localShowModal = ref(props.modelValue);
 
@@ -71,10 +71,13 @@ const submitImages = async () => {
 
     if (props.productId) {
       for (const file of data.createFiles) {
-        const variables = {
+        const variables: any = {
           product: {id: props.productId},
           media: {id: file.id},
         };
+        if (props.salesChannelId) {
+          variables.salesChannel = { id: props.salesChannelId };
+        }
         try {
           const {data} = await apolloClient.mutate({
             mutation: createMediaProductThroughMutation,

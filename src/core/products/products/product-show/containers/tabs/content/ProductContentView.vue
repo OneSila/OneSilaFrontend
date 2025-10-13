@@ -14,7 +14,7 @@ import { Toast } from "../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { IntegrationTypes } from "../../../../../../integrations/integrations/integrations";
 import { getContentFieldRules } from './contentFieldRules';
-import SalesChannelTabs from "./SalesChannelTabs.vue";
+import { SalesChannelTabs } from "../../../../../../../shared/components/molecules/sales-channel-tabs";
 import ProductContentPreview from "./ProductContentPreview.vue";
 import ProductContentForm from "./ProductContentForm.vue";
 import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";

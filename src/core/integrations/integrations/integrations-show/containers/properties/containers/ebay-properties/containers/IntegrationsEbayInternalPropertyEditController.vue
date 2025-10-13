@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter, useRoute } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
 import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import { ebayInternalPropertyEditFormConfigConstructor, ebayInternalListingQuery } from "../ebayInternalConfigs";
-import { FieldType } from "../../../../../../../../../shared/utils/constants";
+import { FieldType, PropertyTypes } from "../../../../../../../../../shared/utils/constants";
 import { propertiesQuerySelector } from "../../../../../../../../../shared/api/queries/properties.js";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import type { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import EbayInternalPropertyOptions from "../components/EbayInternalPropertyOptions.vue";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -25,6 +26,8 @@ const propertyId = route.query.propertyId?.toString() || null;
 const returnTab = route.query.fromTab?.toString() || 'properties';
 
 const formConfig = ref<FormConfig | null>(null);
+const formState = ref<Record<string, any>>({});
+const propertyData = ref<any | null>(null);
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   const { data } = await apolloClient.query({
@@ -110,6 +113,7 @@ const handleSetData = (data: any) => {
     return;
   }
 
+  propertyData.value = data?.ebayInternalProperty ?? null;
   const propertyType = data?.ebayInternalProperty?.type;
   if (!propertyType) {
     return;
@@ -143,6 +147,32 @@ const handleSetData = (data: any) => {
     formConfig.value.fields[index] = field as any;
   }
 };
+
+const handleFormUpdate = (form: Record<string, any>) => {
+  formState.value = { ...form };
+};
+
+const localInstanceId = computed<string | null>(() => {
+  const formLocal = formState.value?.localInstance;
+  if (typeof formLocal === 'string') {
+    return formLocal;
+  }
+  if (formLocal && typeof formLocal === 'object') {
+    return formLocal.id ?? null;
+  }
+
+  const dataLocal = propertyData.value?.localInstance;
+  if (typeof dataLocal === 'string') {
+    return dataLocal;
+  }
+  if (dataLocal && typeof dataLocal === 'object') {
+    return dataLocal.id ?? null;
+  }
+
+  return null;
+});
+
+const isSelectProperty = computed(() => propertyData.value?.type === PropertyTypes.SELECT);
 </script>
 
 <template>
@@ -157,7 +187,18 @@ const handleSetData = (data: any) => {
       />
     </template>
     <template #content>
-      <GeneralForm v-if="formConfig" :config="formConfig" @set-data="handleSetData" />
+      <div v-if="formConfig" class="space-y-6">
+        <GeneralForm
+          :config="formConfig"
+          @set-data="handleSetData"
+          @form-updated="handleFormUpdate"
+        />
+        <EbayInternalPropertyOptions
+          v-if="isSelectProperty && localInstanceId"
+          :property-id="ebayInternalPropertyId"
+          :local-property-id="localInstanceId"
+        />
+      </div>
     </template>
   </GeneralTemplate>
 </template>
