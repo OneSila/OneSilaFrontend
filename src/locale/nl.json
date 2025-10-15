@@ -2127,6 +2127,179 @@
           "translatedName": ""
         }
       },
+      "template": {
+        "tabLabel": "",
+        "labels": {
+          "language": "",
+          "templateEditor": ""
+        },
+        "languagePlaceholder": "",
+        "placeholders": {
+          "template": ""
+        },
+        "buttons": {
+          "clear": "",
+          "validate": ""
+        },
+        "messages": {
+          "languageLoadError": "",
+          "loadFailed": "",
+          "saveSuccess": "",
+          "saveError": "",
+          "clearSuccess": "",
+          "clearError": "",
+          "confirmClear": "",
+          "confirmLanguageChange": "",
+          "selectLanguage": "",
+          "validationError": "",
+          "validationFailed": "",
+          "validationSuccess": "",
+          "unsavedChanges": ""
+        },
+        "preview": {
+          "title": "",
+          "subtitle": "",
+          "stale": "",
+          "empty": "",
+          "errorsTitle": "",
+          "availableVariables": "",
+          "rendered": "",
+          "noContent": "",
+          "noSku": ""
+        },
+        "productPicker": {
+          "title": "",
+          "description": "",
+          "searchPlaceholder": "",
+          "loadError": "",
+          "empty": "",
+          "confirm": "",
+          "fallbackName": ""
+        },
+        "documentation": {
+          "title": "",
+          "intro": {
+            "p1": "",
+            "p2": "",
+            "p3": "",
+            "p4": ""
+          },
+          "reference": {
+            "label": "",
+            "url": ""
+          },
+          "sections": {
+            "context": {
+              "title": "",
+              "description": "",
+              "items": {
+                "content": {
+                  "label": "",
+                  "description": ""
+                },
+                "title": {
+                  "label": "",
+                  "description": ""
+                },
+                "sku": {
+                  "label": "",
+                  "description": ""
+                },
+                "price": {
+                  "label": "",
+                  "description": ""
+                },
+                "discount_price": {
+                  "label": "",
+                  "description": ""
+                },
+                "currency": {
+                  "label": "",
+                  "description": ""
+                },
+                "brand": {
+                  "label": "",
+                  "description": ""
+                },
+                "language": {
+                  "label": "",
+                  "description": ""
+                },
+                "images": {
+                  "label": "",
+                  "description": ""
+                },
+                "product_properties": {
+                  "label": "",
+                  "description": ""
+                },
+                "product_properties_map": {
+                  "label": "",
+                  "description": ""
+                }
+              }
+            },
+            "syntax": {
+              "title": "",
+              "description": "",
+              "items": {
+                "variables": {
+                  "title": "",
+                  "description": "",
+                  "example": ""
+                },
+                "filters": {
+                  "title": "",
+                  "description": "",
+                  "example": ""
+                },
+                "conditions": {
+                  "title": "",
+                  "description": "",
+                  "example": ""
+                },
+                "loops": {
+                  "title": "",
+                  "description": "",
+                  "example": ""
+                },
+                "includes": {
+                  "title": "",
+                  "description": "",
+                  "example": ""
+                }
+              }
+            },
+            "tips": {
+              "title": "",
+              "items": {
+                "preview": "",
+                "escaping": "",
+                "defaults": "",
+                "formatting": ""
+              }
+            }
+          },
+          "examples": {
+            "title": "",
+            "images": {
+              "title": "",
+              "description": "",
+              "code": ""
+            },
+            "properties": {
+              "title": "",
+              "description": "",
+              "code": ""
+            },
+            "full": {
+              "title": "",
+              "description": "",
+              "code": ""
+            }
+          }
+        }
+      },
       "products": {
         "labels": {
           "store": "Winkel",

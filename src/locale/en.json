@@ -2597,6 +2597,179 @@
           }
         }
       },
+      "template": {
+        "tabLabel": "Template",
+        "labels": {
+          "language": "Language",
+          "templateEditor": "Template"
+        },
+        "languagePlaceholder": "Select a language",
+        "placeholders": {
+          "template": "Write a Django template that uses the available variables."
+        },
+        "buttons": {
+          "clear": "Clear",
+          "validate": "Validate & preview"
+        },
+        "messages": {
+          "languageLoadError": "We could not load the available languages. Please refresh the page and try again.",
+          "loadFailed": "Unable to load the template for this language.",
+          "saveSuccess": "Template saved successfully.",
+          "saveError": "We could not save the template. Review the errors and try again.",
+          "clearSuccess": "Template cleared for this language.",
+          "clearError": "We could not clear the template. Please try again.",
+          "confirmClear": "Clearing the template will remove all custom HTML for this language. Continue?",
+          "confirmLanguageChange": "You have unsaved changes. Switching languages will discard them. Continue?",
+          "selectLanguage": "Select a language before continuing.",
+          "validationError": "We could not validate the template. Please try again.",
+          "validationFailed": "The template could not be rendered. Review the issues below.",
+          "validationSuccess": "Template rendered successfully.",
+          "unsavedChanges": "You have unsaved changes that are not yet saved."
+        },
+        "preview": {
+          "title": "Preview",
+          "subtitle": "Preview generated with {product} · SKU: {sku}",
+          "stale": "Preview based on an earlier version. Run \"Validate & preview\" again after editing.",
+          "empty": "Validate the template with a product to generate a preview.",
+          "errorsTitle": "Validation issues",
+          "availableVariables": "Available variables",
+          "rendered": "Rendered output",
+          "noContent": "No rendered content was returned.",
+          "noSku": "N/A"
+        },
+        "productPicker": {
+          "title": "Validate with a product",
+          "description": "Pick a product to build the template context. Use search to quickly find the item you want to preview.",
+          "searchPlaceholder": "Search by name, SKU or attribute",
+          "loadError": "We could not load products. Please try again.",
+          "empty": "No products match your search yet.",
+          "confirm": "Use this product",
+          "fallbackName": "Unnamed product"
+        },
+        "documentation": {
+          "title": "How to build channel templates",
+          "intro": {
+            "p1": "Channel templates let you override the default product description that OneSila sends to each sales channel.",
+            "p2": "Templates are rendered with the Django template engine, the same syntax described in the official documentation.",
+            "p3": "Every preview uses a rich context that already contains the product content, pricing and merchandising details you maintain in OneSila.",
+            "p4": "Use the examples below to design engaging storefront experiences tailored to each channel."
+          },
+          "reference": {
+            "label": "Open the Django template guide",
+            "url": "https://docs.djangoproject.com/en/5.2/topics/templates/"
+          },
+          "sections": {
+            "context": {
+              "title": "Context variables",
+              "description": "Each render receives the following variables. Combine them to highlight the right details for your channel.",
+              "items": {
+                "content": {
+                  "label": "{{ content }}",
+                  "description": "Rich HTML version of the product description for the selected language."
+                },
+                "title": {
+                  "label": "{{ title }}",
+                  "description": "Localized product name for the chosen language."
+                },
+                "sku": {
+                  "label": "{{ sku }}",
+                  "description": "Primary SKU for the product or variation being rendered."
+                },
+                "price": {
+                  "label": "{{ price }}",
+                  "description": "Current price for the selected channel, already formatted as a decimal."
+                },
+                "discount_price": {
+                  "label": "{{ discount_price }}",
+                  "description": "Promotional price when a discount is available. Use it with conditions to show sale messaging."
+                },
+                "currency": {
+                  "label": "{{ currency }}",
+                  "description": "ISO currency code (for example EUR or USD)."
+                },
+                "brand": {
+                  "label": "{{ brand }}",
+                  "description": "Brand name associated with the product, when available."
+                },
+                "language": {
+                  "label": "{{ language }}",
+                  "description": "Language code (ISO 639-1) currently selected for the template preview."
+                },
+                "images": {
+                  "label": "{{ images }}",
+                  "description": "List of image objects. Each item contains url, alt and is_main flags so you can build galleries or hero banners."
+                },
+                "product_properties": {
+                  "label": "{{ product_properties }}",
+                  "description": "List of mapped product properties with name, code and value fields. Useful for feature lists."
+                },
+                "product_properties_map": {
+                  "label": "{{ product_properties_map }}",
+                  "description": "Dictionary keyed by property code for quick lookups such as product_properties_map.material.value."
+                }
+              }
+            },
+            "syntax": {
+              "title": "Template basics",
+              "description": "Django templates combine variables with control flow. These patterns cover the most common customisations.",
+              "items": {
+                "variables": {
+                  "title": "Output variables",
+                  "description": "Wrap a variable in double curly braces to print it. Use the default filter to provide fallbacks for missing data.",
+                  "example": "<h1>{{ title|default:'Coming soon' }}</h1>"
+                },
+                "filters": {
+                  "title": "Format values with filters",
+                  "description": "Filters transform a value. Chain filters to combine behaviour, such as trimming text and keeping safe HTML.",
+                  "example": "<p>{{ content|truncatewords:80|safe }}</p>"
+                },
+                "conditions": {
+                  "title": "Display sections conditionally",
+                  "description": "Use {% if %} blocks to show sale banners only when discount_price is present.",
+                  "example": "{% if discount_price %}\n  <p class=\"sale\">Now {{ discount_price }} {{ currency }} (was {{ price }})</p>\n{% endif %}"
+                },
+                "loops": {
+                  "title": "Iterate over collections",
+                  "description": "Loop through images or properties to render lists dynamically.",
+                  "example": "<ul>\n{% for prop in product_properties %}\n  <li><strong>{{ prop.name }}:</strong> {{ prop.value }}</li>\n{% endfor %}\n</ul>"
+                },
+                "includes": {
+                  "title": "Reuse snippets",
+                  "description": "Break big templates into smaller snippets with the include tag. Store shared fragments in your library and reference them here.",
+                  "example": "{% include 'snippets/channel-footer.html' %}"
+                }
+              }
+            },
+            "tips": {
+              "title": "Best practices",
+              "items": {
+                "preview": "Validate the template with real products to confirm pricing, images and properties are available.",
+                "escaping": "Use the safe filter only on trusted HTML like content. All other variables are escaped by default to avoid layout issues.",
+                "defaults": "Always provide defaults for optional fields such as brand or discount_price to prevent empty headings.",
+                "formatting": "Keep classes and inline styles minimal. Tailor the layout to the receiving channel's HTML capabilities."
+              }
+            }
+          },
+          "examples": {
+            "title": "Practical examples",
+            "images": {
+              "title": "Responsive image gallery",
+              "description": "Loop through images and highlight the main visual with a specific class.",
+              "code": "{% if images %}\n  <section class=\"gallery\">\n    {% for image in images %}\n      <figure class=\"gallery__item{% if image.is_main %} gallery__item--featured{% endif %}\">\n        <img src=\"{{ image.url }}\" alt=\"{{ image.alt|default:title }}\" loading=\"lazy\" />\n      </figure>\n    {% endfor %}\n  </section>\n{% endif %}"
+            },
+            "properties": {
+              "title": "Feature highlights",
+              "description": "Build a quick list of selling points using mapped product properties.",
+              "code": "{% if product_properties %}\n  <ul class=\"feature-list\">\n    {% for prop in product_properties %}\n      <li><strong>{{ prop.name }}:</strong> {{ prop.value }}</li>\n    {% endfor %}\n  </ul>\n{% endif %}"
+            },
+            "full": {
+              "title": "Hero section with OneSila branding",
+              "description": "Combine multiple variables to craft a promotional block. Update the logo URL if you use a custom asset.",
+              "code": "<section class=\"channel-hero\">\n  <img src=\"https://assets.onesila.com/logo.svg\" alt=\"OneSila\" class=\"channel-hero__logo\" />\n  <h1>{{ title }}</h1>\n  <p class=\"channel-hero__lead\">{{ content|safe }}</p>\n  {% if discount_price %}\n    <p class=\"channel-hero__price\">\n      <span class=\"channel-hero__price--current\">{{ discount_price }} {{ currency }}</span>\n      <span class=\"channel-hero__price--compare\">{{ price }} {{ currency }}</span>\n    </p>\n  {% else %}\n    <p class=\"channel-hero__price\">{{ price }} {{ currency }}</p>\n  {% endif %}\n  {% if images %}\n    <img src=\"{{ images.0.url }}\" alt=\"{{ images.0.alt|default:title }}\" class=\"channel-hero__image\" />\n  {% endif %}\n</section>"
+            }
+          }
+        }
+      },
       "products": {
         "labels": {
           "store": "Store",
