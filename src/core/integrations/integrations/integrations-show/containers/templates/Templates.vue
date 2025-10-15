@@ -7,6 +7,7 @@ import { Button } from '../../../../../../shared/components/atoms/button';
 import { Card } from '../../../../../../shared/components/atoms/card';
 import { Icon } from '../../../../../../shared/components/atoms/icon';
 import { InfoModal } from '../../../../../../shared/components/molecules/info-modal';
+import { Label } from '../../../../../../shared/components/atoms/label';
 import { Toast } from '../../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../../shared/utils';
 import { translationLanguagesQuery } from '../../../../../../shared/api/queries/languages.js';
@@ -36,7 +37,9 @@ const isClearing = ref(false);
 const isValidating = ref(false);
 const showProductPicker = ref(false);
 const previewResult = ref<any | null>(null);
-const previewProduct = ref<{ id: string; name: string; sku: string | null } | null>(null);
+const previewProduct = ref<
+  { id: string; name: string; sku: string | null; thumbnailUrl: string | null } | null
+>(null);
 const lastValidatedTemplate = ref('');
 const lastValidatedLanguage = ref<string | null>(null);
 
@@ -102,7 +105,6 @@ const fetchTemplate = async (languageCode: string) => {
     lastValidatedLanguage.value = null;
   } catch (error) {
     console.error('Failed to load template', error);
-    Toast.error(t('integrations.show.template.messages.loadFailed'));
   } finally {
     isLoading.value = false;
   }
@@ -238,7 +240,9 @@ const openProductPicker = () => {
   showProductPicker.value = true;
 };
 
-const handleProductSelected = async (product: { id: string; name: string; sku: string | null }) => {
+const handleProductSelected = async (
+  product: { id: string; name: string; sku: string | null; thumbnailUrl: string | null },
+) => {
   showProductPicker.value = false;
   if (!selectedLanguage.value) return;
 
@@ -300,8 +304,12 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
             class="w-56"
           />
         </div>
-        <div class="flex flex-wrap gap-2">
-          <InfoModal :button-class="'btn btn-secondary p-2 rounded-full'">
+        <div class="flex flex-wrap items-center gap-3">
+          <InfoModal
+            :button-class="'inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 focus:outline-none'"
+            :icon="'book-open'"
+            :label="t('integrations.show.template.documentation.learn')"
+          >
             <template #content>
               <TemplateDocumentationContent />
             </template>
@@ -332,36 +340,54 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
           </Button>
         </div>
       </div>
+    </Card>
 
-      <div class="mt-6">
-        <label class="block text-sm font-medium text-gray-700">
+    <Card>
+      <div class="space-y-4">
+        <Label class="block text-sm font-semibold leading-6 text-gray-900">
           {{ t('integrations.show.template.labels.templateEditor') }}
-        </label>
+        </Label>
         <textarea
           v-model="templateContent"
-          class="mt-2 h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          class="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           :placeholder="t('integrations.show.template.placeholders.template')"
         ></textarea>
-        <p v-if="hasUnsavedChanges" class="mt-2 text-xs text-amber-600">
+        <p v-if="hasUnsavedChanges" class="text-xs text-amber-600">
           {{ t('integrations.show.template.messages.unsavedChanges') }}
         </p>
       </div>
     </Card>
 
     <Card>
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900">
-            {{ t('integrations.show.template.preview.title') }}
-          </h3>
-          <p v-if="previewProduct" class="text-sm text-gray-600">
-            {{
-              t('integrations.show.template.preview.subtitle', {
-                product: previewProduct?.name || t('integrations.show.template.productPicker.fallbackName'),
-                sku: previewProduct?.sku || t('integrations.show.template.preview.noSku'),
-              })
-            }}
-          </p>
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex flex-1 items-start gap-3">
+          <div
+            v-if="previewProduct?.thumbnailUrl"
+            class="h-12 w-12 overflow-hidden rounded border border-gray-200"
+          >
+            <img
+              :alt="
+                t('integrations.show.template.preview.thumbnailAlt', {
+                  product: previewProduct?.name || t('integrations.show.template.productPicker.fallbackName'),
+                })
+              "
+              :src="previewProduct.thumbnailUrl"
+              class="h-full w-full object-cover"
+            />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-lg font-semibold text-gray-900">
+              {{ t('integrations.show.template.preview.title') }}
+            </h3>
+            <p v-if="previewProduct" class="text-sm text-gray-600">
+              {{
+                t('integrations.show.template.preview.subtitle', {
+                  product: previewProduct?.name || t('integrations.show.template.productPicker.fallbackName'),
+                  sku: previewProduct?.sku || t('integrations.show.template.preview.noSku'),
+                })
+              }}
+            </p>
+          </div>
         </div>
         <div v-if="isPreviewStale" class="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
           {{ t('integrations.show.template.preview.stale') }}

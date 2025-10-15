@@ -12,7 +12,10 @@ const props = defineProps<{ modelValue: boolean }>();
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'selected', payload: { id: string; name: string; sku: string | null }): void;
+  (
+    e: 'selected',
+    payload: { id: string; name: string; sku: string | null; thumbnailUrl: string | null },
+  ): void;
 }>();
 
 const { t } = useI18n();
@@ -87,6 +90,7 @@ const confirmSelection = () => {
     id: product.id,
     name: product.name,
     sku: product.sku ?? null,
+    thumbnailUrl: product.thumbnailUrl ?? null,
   });
   close();
 };
@@ -148,9 +152,36 @@ const confirmSelection = () => {
                   name="template-product"
                   type="radio"
                 />
-                <div class="space-y-1">
-                  <p class="text-sm font-semibold text-gray-900">{{ product.name || t('shared.labels.unnamed') }}</p>
-                  <p v-if="product.sku" class="text-xs uppercase tracking-wide text-gray-500">SKU: {{ product.sku }}</p>
+                <div class="flex items-start gap-4">
+                  <div
+                    class="flex h-12 w-12 items-center justify-center overflow-hidden rounded border border-gray-200 bg-gray-50"
+                  >
+                    <img
+                      v-if="product.thumbnailUrl"
+                      :alt="
+                        t('integrations.show.template.productPicker.thumbnailAlt', {
+                          name: product.name || t('shared.labels.unnamed'),
+                        })
+                      "
+                      :src="product.thumbnailUrl"
+                      class="h-full w-full object-cover"
+                    />
+                    <Icon v-else name="image" class="text-gray-400" />
+                  </div>
+                  <div class="space-y-1">
+                    <p class="text-sm font-semibold text-gray-900">
+                      {{ product.name || t('shared.labels.unnamed') }}
+                      <span
+                        v-if="product.sku"
+                        class="ml-2 text-xs font-medium uppercase tracking-wide text-gray-500"
+                      >
+                        [{{ product.sku }}]
+                      </span>
+                    </p>
+                    <p v-if="product.sku" class="text-xs text-gray-500">
+                      {{ t('integrations.show.template.productPicker.skuLabel', { sku: product.sku }) }}
+                    </p>
+                  </div>
                 </div>
               </label>
             </li>
