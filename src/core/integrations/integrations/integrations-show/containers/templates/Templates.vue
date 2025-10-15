@@ -317,16 +317,7 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
           :disabled="isValidating || isLoading"
           @click="openProductPicker"
         >
-          <Icon name="eye" class="mr-2" />
           {{ t('integrations.show.template.buttons.validate') }}
-        </Button>
-        <Button
-          :customClass="'btn btn-primary px-4'"
-          :disabled="isSaving || isLoading"
-          @click="handleSave"
-        >
-          <Icon name="floppy-disk" class="mr-2" />
-          {{ t('shared.button.save') }}
         </Button>
         <Button
           :customClass="'btn btn-danger px-4'"
@@ -334,6 +325,13 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
           @click="handleClear"
         >
           {{ t('integrations.show.template.buttons.clear') }}
+        </Button>
+        <Button
+          :customClass="'btn btn-primary px-4'"
+          :disabled="isSaving || isLoading"
+          @click="handleSave"
+        >
+          {{ t('shared.button.save') }}
         </Button>
       </div>
     </div>
