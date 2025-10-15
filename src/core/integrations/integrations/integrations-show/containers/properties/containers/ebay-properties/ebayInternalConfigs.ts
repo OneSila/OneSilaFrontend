@@ -11,7 +11,7 @@ export const ebayInternalPropertiesSearchConfigConstructor = (t: Function): Sear
   orderKey: "sort",
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
-    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
+    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotelyEbay'), strict: true },
     {
       type: FieldType.Choice,
       name: 'type',

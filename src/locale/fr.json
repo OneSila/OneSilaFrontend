@@ -340,6 +340,15 @@
         "bulkAssignTitle": "",
         "assignSuccess": ""
       },
+      "mapping": {
+        "mappedLocally": "",
+        "mappedRemotely": "",
+        "mappedRemotelyAmazon": "",
+        "mappedRemotelyEbay": "",
+        "startMapping": "",
+        "saveAndMapNext": "",
+        "allMappedSuccess": ""
+      },
       "productRules": {
         "title": "",
         "labels": {

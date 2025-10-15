@@ -146,9 +146,14 @@ export const productTypesSearchConfigConstructor = (
   integrationType: string,
   salesChannelId: string,
 ): SearchConfig => {
+  const mappedRemotelyLabel =
+    integrationType === IntegrationTypes.Ebay
+      ? t('integrations.show.mapping.mappedRemotelyEbay')
+      : t('integrations.show.mapping.mappedRemotelyAmazon');
+
   const filters: SearchFilter[] = [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
-    { type: FieldType.Boolean, name: 'mappedRemotely', label: t('integrations.show.mapping.mappedRemotely'), strict: true },
+    { type: FieldType.Boolean, name: 'mappedRemotely', label: mappedRemotelyLabel, strict: true },
   ];
 
   if (integrationType === IntegrationTypes.Ebay) {
@@ -185,7 +190,7 @@ const amazonProductTypesListingConfig = (
     t('shared.labels.name'),
     t('integrations.show.productRules.labels.productTypeCode'),
     t('integrations.show.mapping.mappedLocally'),
-    t('integrations.show.mapping.mappedRemotely'),
+    t('integrations.show.mapping.mappedRemotelyAmazon'),
     t('properties.rule.title'),
   ],
   fields: [
@@ -222,7 +227,7 @@ const ebayProductTypesListingConfig = (
   headers: [
     t('shared.labels.name'),
     t('integrations.show.mapping.mappedLocally'),
-    t('integrations.show.mapping.mappedRemotely'),
+    t('integrations.show.mapping.mappedRemotelyEbay'),
     t('properties.rule.title'),
     t('integrations.show.propertySelectValues.labels.marketplace'),
   ],
