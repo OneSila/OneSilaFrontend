@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../../apollo-client';
 import { Selector } from '../../../../../../shared/components/atoms/selector';
 import { Button } from '../../../../../../shared/components/atoms/button';
-import { Card } from '../../../../../../shared/components/atoms/card';
 import { Icon } from '../../../../../../shared/components/atoms/icon';
 import { InfoModal } from '../../../../../../shared/components/molecules/info-modal';
 import { Label } from '../../../../../../shared/components/atoms/label';
@@ -284,81 +283,76 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
 </script>
 
 <template>
-  <div class="space-y-6">
-    <Card>
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <div class="flex items-center gap-2">
-            <Icon name="language" class="text-gray-500" />
-            <span class="text-sm font-medium text-gray-700">
-              {{ t('integrations.show.template.labels.language') }}
-            </span>
-          </div>
-          <Selector
-            v-model="selectedLanguage"
-            :options="languageOptions"
-            :label-by="'name'"
-            :value-by="'id'"
-            :placeholder="t('integrations.show.template.languagePlaceholder')"
-            :removable="false"
-            class="w-56"
-          />
+  <div class="space-y-8">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <div class="flex items-center gap-2">
+          <Icon name="language" class="text-gray-500" />
+          <span class="text-sm font-medium text-gray-700">
+            {{ t('integrations.show.template.labels.language') }}
+          </span>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <InfoModal
-            :button-class="'inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 focus:outline-none'"
-            :icon="'book-open'"
-            :label="t('integrations.show.template.documentation.learn')"
-          >
-            <template #content>
-              <TemplateDocumentationContent />
-            </template>
-          </InfoModal>
-          <Button
-            :customClass="'btn btn-secondary px-4'"
-            :disabled="isClearing || isLoading"
-            @click="handleClear"
-          >
-            <Icon name="trash" class="mr-2" />
-            {{ t('integrations.show.template.buttons.clear') }}
-          </Button>
-          <Button
-            :customClass="'btn btn-secondary px-4'"
-            :disabled="isValidating || isLoading"
-            @click="openProductPicker"
-          >
-            <Icon name="eye" class="mr-2" />
-            {{ t('integrations.show.template.buttons.validate') }}
-          </Button>
-          <Button
-            :customClass="'btn btn-primary px-4'"
-            :disabled="isSaving || isLoading"
-            @click="handleSave"
-          >
-            <Icon name="floppy-disk" class="mr-2" />
-            {{ t('shared.button.save') }}
-          </Button>
-        </div>
+        <Selector
+          v-model="selectedLanguage"
+          :options="languageOptions"
+          :label-by="'name'"
+          :value-by="'id'"
+          :placeholder="t('integrations.show.template.languagePlaceholder')"
+          :removable="false"
+          class="w-56"
+        />
       </div>
-    </Card>
-
-    <Card>
-      <div class="space-y-4">
-        <Label class="block text-sm font-semibold leading-6 text-gray-900">
-          {{ t('integrations.show.template.labels.templateEditor') }}
-        </Label>
-        <textarea
-          v-model="templateContent"
-          class="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          :placeholder="t('integrations.show.template.placeholders.template')"
-        ></textarea>
-        <p v-if="hasUnsavedChanges" class="text-xs text-amber-600">
-          {{ t('integrations.show.template.messages.unsavedChanges') }}
-        </p>
+      <div class="flex flex-wrap items-center gap-3">
+        <InfoModal
+          :button-class="'inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 focus:outline-none'"
+          :icon="'book-open'"
+          :label="t('integrations.show.template.documentation.learn')"
+        >
+          <template #content>
+            <TemplateDocumentationContent />
+          </template>
+        </InfoModal>
+        <Button
+          :customClass="'btn btn-secondary px-4'"
+          :disabled="isValidating || isLoading"
+          @click="openProductPicker"
+        >
+          <Icon name="eye" class="mr-2" />
+          {{ t('integrations.show.template.buttons.validate') }}
+        </Button>
+        <Button
+          :customClass="'btn btn-primary px-4'"
+          :disabled="isSaving || isLoading"
+          @click="handleSave"
+        >
+          <Icon name="floppy-disk" class="mr-2" />
+          {{ t('shared.button.save') }}
+        </Button>
+        <Button
+          :customClass="'btn btn-danger px-4'"
+          :disabled="isClearing || isLoading"
+          @click="handleClear"
+        >
+          {{ t('integrations.show.template.buttons.clear') }}
+        </Button>
       </div>
-    </Card>
+    </div>
 
-    <Card>
+    <div class="space-y-4">
+      <Label class="block text-sm font-semibold leading-6 text-gray-900">
+        {{ t('integrations.show.template.labels.templateEditor') }}
+      </Label>
+      <textarea
+        v-model="templateContent"
+        class="h-96 w-full rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        :placeholder="t('integrations.show.template.placeholders.template')"
+      ></textarea>
+      <p v-if="hasUnsavedChanges" class="text-xs text-amber-600">
+        {{ t('integrations.show.template.messages.unsavedChanges') }}
+      </p>
+    </div>
+
+    <section class="space-y-6">
       <div class="flex items-start justify-between gap-4">
         <div class="flex flex-1 items-start gap-3">
           <div
@@ -394,11 +388,11 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
         </div>
       </div>
 
-      <div v-if="!previewResult" class="mt-4 rounded-lg border border-dashed border-gray-300 p-6 text-sm text-gray-600">
+      <div v-if="!previewResult" class="rounded-lg border border-dashed border-gray-300 p-6 text-sm text-gray-600">
         {{ t('integrations.show.template.preview.empty') }}
       </div>
 
-      <div v-else class="mt-4 space-y-6">
+      <div v-else class="space-y-6">
         <div v-if="previewResult.errors?.length" class="rounded-lg border border-red-200 bg-red-50 p-4">
           <h4 class="text-sm font-semibold text-red-700">
             {{ t('integrations.show.template.preview.errorsTitle') }}
@@ -418,7 +412,7 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
             <span
               v-for="variable in availableVariables"
               :key="variable"
-              class="rounded bg-white px-2 py-1 font-mono text-xs text-primary shadow-sm"
+              class="rounded bg-white px-2 py-1 font-mono text-xs text-primary"
             >
               {{ variable }}
             </span>
@@ -439,7 +433,7 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
           </p>
         </div>
       </div>
-    </Card>
+    </section>
     <ProductPickerModal v-model="showProductPicker" @selected="handleProductSelected" />
   </div>
 </template>

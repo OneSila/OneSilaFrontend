@@ -2701,15 +2701,15 @@
                 },
                 "images": {
                   "label": "{{ images }}",
-                  "description": "List of image objects. Each item contains url, alt and is_main flags so you can build galleries or hero banners."
+                  "description": "Dictionary with the main image URL, a flat list of URLs in all and an items collection of { url, thumbnail, is_main, title } objects to build galleries or hero banners."
                 },
                 "product_properties": {
                   "label": "{{ product_properties }}",
-                  "description": "List of mapped product properties with name, code and value fields. Useful for feature lists."
+                  "description": "Array of objects containing name, internal_name, type and value. Use it to render specification tables or feature lists."
                 },
                 "product_properties_map": {
                   "label": "{{ product_properties_map }}",
-                  "description": "Dictionary keyed by property code for quick lookups such as product_properties_map.material.value."
+                  "description": "Dictionary keyed by property internal name. Access values quickly, for example product_properties_map.material.value."
                 }
               }
             },
@@ -2729,12 +2729,12 @@
                 },
                 "conditions": {
                   "title": "Display sections conditionally",
-                  "description": "Use {% if %} blocks to show sale banners only when discount_price is present.",
+                  "description": "Wrap promotional blocks in {% if discount_price %} so you only show a sale banner when a discounted price exists.",
                   "example": "{% if discount_price %}\n  <p class=\"sale\">Now {{ discount_price }} {{ currency }} (was {{ price }})</p>\n{% endif %}"
                 },
                 "loops": {
                   "title": "Iterate over collections",
-                  "description": "Loop through images or properties to render lists dynamically.",
+                  "description": "Loop through the provided arrays (like images.items or product_properties) to build galleries and specification lists.",
                   "example": "<ul>\n{% for prop in product_properties %}\n  <li><strong>{{ prop.name }}:</strong> {{ prop.value }}</li>\n{% endfor %}\n</ul>"
                 },
                 "includes": {
@@ -2758,18 +2758,18 @@
             "title": "Practical examples",
             "images": {
               "title": "Responsive image gallery",
-              "description": "Loop through images and highlight the main visual with a specific class.",
-              "code": "{% if images %}\n  <section class=\"gallery\">\n    {% for image in images %}\n      <figure class=\"gallery__item{% if image.is_main %} gallery__item--featured{% endif %}\">\n        <img src=\"{{ image.url }}\" alt=\"{{ image.alt|default:title }}\" loading=\"lazy\" />\n      </figure>\n    {% endfor %}\n  </section>\n{% endif %}"
+              "description": "Render every entry from images.items and highlight the item marked as is_main.",
+              "code": "{% if images.items %}\n<section class=\"channel-gallery\">\n  {% for image in images.items %}\n    <figure class=\"channel-gallery__item{% if image.is_main %} channel-gallery__item--highlight{% endif %}\">\n      <img src=\"{{ image.url }}\" alt=\"{{ image.title|default:title }}\" loading=\"lazy\" />\n    </figure>\n  {% endfor %}\n</section>\n{% endif %}"
             },
             "properties": {
               "title": "Feature highlights",
-              "description": "Build a quick list of selling points using mapped product properties.",
-              "code": "{% if product_properties %}\n  <ul class=\"feature-list\">\n    {% for prop in product_properties %}\n      <li><strong>{{ prop.name }}:</strong> {{ prop.value }}</li>\n    {% endfor %}\n  </ul>\n{% endif %}"
+              "description": "Combine product_properties_map with the fallback product_properties array to surface key specifications.",
+              "code": "{% if product_properties_map %}\n<dl class=\"channel-specs\">\n  {% if product_properties_map.material %}\n    <div class=\"channel-specs__row\">\n      <dt>Material</dt>\n      <dd>{{ product_properties_map.material.value }}</dd>\n    </div>\n  {% endif %}\n  {% if product_properties_map.color %}\n    <div class=\"channel-specs__row\">\n      <dt>Color</dt>\n      <dd>{{ product_properties_map.color.value }}</dd>\n    </div>\n  {% endif %}\n  {% for prop in product_properties %}\n    {% if prop.internal_name not in ['material', 'color'] %}\n      <div class=\"channel-specs__row\">\n        <dt>{{ prop.name }}</dt>\n        <dd>{{ prop.value }}</dd>\n      </div>\n    {% endif %}\n  {% endfor %}\n</dl>\n{% endif %}"
             },
             "full": {
-              "title": "Hero section with OneSila branding",
-              "description": "Combine multiple variables to craft a promotional block. Update the logo URL if you use a custom asset.",
-              "code": "<section class=\"channel-hero\">\n  <img src=\"https://assets.onesila.com/logo.svg\" alt=\"OneSila\" class=\"channel-hero__logo\" />\n  <h1>{{ title }}</h1>\n  <p class=\"channel-hero__lead\">{{ content|safe }}</p>\n  {% if discount_price %}\n    <p class=\"channel-hero__price\">\n      <span class=\"channel-hero__price--current\">{{ discount_price }} {{ currency }}</span>\n      <span class=\"channel-hero__price--compare\">{{ price }} {{ currency }}</span>\n    </p>\n  {% else %}\n    <p class=\"channel-hero__price\">{{ price }} {{ currency }}</p>\n  {% endif %}\n  {% if images %}\n    <img src=\"{{ images.0.url }}\" alt=\"{{ images.0.alt|default:title }}\" class=\"channel-hero__image\" />\n  {% endif %}\n</section>"
+              "title": "Channel-ready product layout",
+              "description": "Showcase pricing, content and highlights in a single block that channels can ingest without extra tweaks.",
+              "code": "<article class=\"channel-template\">\n  <header class=\"channel-template__header\">\n    {% if brand %}\n      <p class=\"channel-template__brand\">{{ brand }}</p>\n    {% endif %}\n    <h1>{{ title }}</h1>\n  </header>\n\n  <section class=\"channel-template__pricing\">\n    {% if discount_price %}\n      <span class=\"channel-template__price--current\">{{ discount_price }} {{ currency }}</span>\n      <span class=\"channel-template__price--compare\">{{ price }} {{ currency }}</span>\n    {% else %}\n      <span class=\"channel-template__price\">{{ price }} {{ currency }}</span>\n    {% endif %}\n  </section>\n\n  {% if images.main %}\n    <img class=\"channel-template__hero\" src=\"{{ images.main }}\" alt=\"{{ title }}\" loading=\"lazy\" />\n  {% endif %}\n\n  <section class=\"channel-template__content\">\n    {{ content|safe }}\n  </section>\n\n  {% if product_properties %}\n    <section class=\"channel-template__features\">\n      <h2>Highlights</h2>\n      <ul>\n        {% for prop in product_properties %}\n          <li><strong>{{ prop.name }}:</strong> {{ prop.value }}</li>\n        {% endfor %}\n      </ul>\n    </section>\n  {% endif %}\n</article>"
             }
           }
         }
