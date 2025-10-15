@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Card } from '../../../../../../../shared/components/atoms/card';
+import { Button } from '../../../../../../../shared/components/atoms/button';
+import { Toast } from '../../../../../../../shared/modules/toast';
 
 const { t } = useI18n();
 
@@ -24,6 +26,9 @@ const tipKeys = ['preview', 'escaping', 'defaults', 'formatting'];
 const exampleKeys = ['images', 'properties', 'full'];
 
 const joinLines = (lines: readonly string[]): string => lines.join('\n');
+
+const copyButtonClass =
+  'absolute right-4 top-4 inline-flex items-center rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs font-medium text-white transition hover:bg-gray-700';
 
 const syntaxExamples: Record<string, string> = {
   variables: "<h1>{{ title|default:'Coming soon' }}</h1>",
@@ -174,6 +179,16 @@ const exampleItems = computed(() =>
     }))
     .filter((item) => item.title && item.code),
 );
+
+const copySnippet = async (value: string) => {
+  try {
+    await navigator.clipboard.writeText(value);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (error) {
+    console.error('Failed to copy snippet', error);
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
+};
 </script>
 
 <template>
@@ -228,9 +243,18 @@ const exampleItems = computed(() =>
           <article v-for="item in syntaxItems" :key="item.key" class="rounded-lg border border-gray-200 p-4">
             <h4 class="text-lg font-semibold text-gray-900">{{ item.title }}</h4>
             <p class="mt-2 text-sm leading-6">{{ item.description }}</p>
-            <pre v-if="item.example" class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
-              <code v-pre>{{ item.example }}</code>
-            </pre>
+            <div v-if="item.example" class="relative mt-3">
+              <Button
+                :aria-label="t('shared.actions.copy')"
+                :custom-class="copyButtonClass"
+                @click="copySnippet(item.example)"
+              >
+                {{ t('shared.actions.copy') }}
+              </Button>
+              <pre class="overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
+                <code class="block whitespace-pre" v-text="item.example"></code>
+              </pre>
+            </div>
           </article>
         </div>
       </section>
@@ -259,9 +283,18 @@ const exampleItems = computed(() =>
           <p class="mt-2 text-sm leading-6">
             {{ item.description }}
           </p>
-          <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
-            <code v-pre>{{ item.code }}</code>
-          </pre>
+          <div class="relative mt-3">
+            <Button
+              :aria-label="t('shared.actions.copy')"
+              :custom-class="copyButtonClass"
+              @click="copySnippet(item.code)"
+            >
+              {{ t('shared.actions.copy') }}
+            </Button>
+            <pre class="overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
+              <code class="block whitespace-pre" v-text="item.code"></code>
+            </pre>
+          </div>
         </article>
       </section>
     </div>
