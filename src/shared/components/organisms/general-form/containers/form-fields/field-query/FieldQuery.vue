@@ -13,6 +13,7 @@ import { DocumentNode } from "graphql";
 const props = defineProps<{
   field: QueryFormField;
   modelValue: any;
+  initialOptions?: any[];
 }>();
 
 const limit = computed(() => props.field.limit ?? 20);
@@ -23,7 +24,7 @@ onMounted(() => {
   fetchData(null, true);
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'label-selected']);
 const showCreateOnFlyModal = ref(false);
 const loading = ref(true);
 const rawDataRef: Ref<any> = ref([]);
@@ -37,6 +38,54 @@ const mandatory = props.field.mandatory !== undefined ? props.field.mandatory : 
 const multiple = props.field.multiple || false;
 const filterable = props.field.filterable || false;
 const removable = props.field.removable !== undefined ? props.field.removable : true;
+
+const mergeOptions = (base: any[], additions: any[]): any[] => {
+  if (!additions?.length) {
+    return base;
+  }
+
+  if (!props.field.valueBy) {
+    const existing = new Set(base);
+    additions.forEach((option) => {
+      if (option != null && !existing.has(option)) {
+        existing.add(option);
+      }
+    });
+    return Array.from(existing);
+  }
+
+  const map = new Map<any, any>();
+  base.forEach((option) => {
+    if (!option) return;
+    const key = option[props.field.valueBy!];
+    if (key === undefined || key === null) return;
+    map.set(key, option);
+  });
+
+  additions.forEach((option) => {
+    if (!option) return;
+    const key = option[props.field.valueBy!];
+    if (key === undefined || key === null) return;
+    const existing = map.get(key) || {};
+    map.set(key, { ...existing, ...option });
+  });
+
+  return Array.from(map.values());
+};
+
+const mergeInitialOptions = (options?: any[]) => {
+  if (!options || !options.length) return;
+  cleanedData.value = mergeOptions(cleanedData.value, options.filter(Boolean));
+};
+
+watch(
+  () => props.initialOptions,
+  (options) => {
+    if (!options) return;
+    mergeInitialOptions(options);
+  },
+  { deep: true, immediate: true }
+);
 
 watch(() => props.modelValue, (value) => {
   if (value !== selectedValue.value) {
@@ -92,7 +141,7 @@ async function ensureSelectedValuesArePresent() {
     ? data[props.field.dataKey]?.edges?.map((e: any) => e.node) ?? []
     : data[props.field.dataKey] ?? [];
 
-  cleanedData.value = [...cleanedData.value, ...newItems];
+  cleanedData.value = mergeOptions(cleanedData.value, newItems);
 }
 
 
@@ -168,7 +217,8 @@ function processAndCleanData(rawData: any) {
       }
     }
 
-  cleanedData.value = [...newData, ...preservedItems];
+  cleanedData.value = mergeOptions(newData, preservedItems);
+  mergeInitialOptions(props.initialOptions);
 
   if (
     props.field.autocompleteIfOneResult !== false &&
@@ -294,6 +344,7 @@ const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
             @update:model-value="updateValue"
             @searched="handleInput"
             @add-clicked="showCreateOnFlyModal = true"
+            @label-selected="emit('label-selected', $event)"
           />
         </FlexCell>
         <FlexCell v-if="field.createOnFlyConfig">

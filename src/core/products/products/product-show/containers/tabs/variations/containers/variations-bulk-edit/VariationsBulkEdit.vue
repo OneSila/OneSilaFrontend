@@ -671,6 +671,14 @@ const ensureProp = (index: number, key: string) => {
   return item.propertyValues[key]
 }
 
+const normalizeSelectOption = (option: any) =>
+  option?.id ? [{ id: option.id, value: option.value ?? '' }] : []
+
+const normalizeMultiSelectOptions = (options: any[] | null | undefined) =>
+  (options ?? [])
+    .filter((option) => option?.id)
+    .map((option) => ({ id: option.id, value: option.value ?? '' }))
+
 const updateSelectValue = (index: number, key: string, value: any) => {
   const item = variations.value[index]
   if (!value) {
@@ -678,7 +686,8 @@ const updateSelectValue = (index: number, key: string, value: any) => {
     return
   }
   const prop = ensureProp(index, key)
-  prop.valueSelect = { id: value }
+  const previousLabel = prop.valueSelect?.value ?? null
+  prop.valueSelect = { id: value, value: previousLabel }
 }
 
 const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
@@ -688,7 +697,41 @@ const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
     return
   }
   const prop = ensureProp(index, key)
-  prop.valueMultiSelect = value.map((id) => ({ id }))
+  const existing = Array.isArray(prop.valueMultiSelect) ? prop.valueMultiSelect : []
+  const labelMap = new Map<string, any>(
+    existing
+      .filter((entry: any) => entry?.id)
+      .map((entry: any) => [entry.id, entry.value ?? null])
+  )
+  prop.valueMultiSelect = value.map((id) => ({ id, value: labelMap.get(id) ?? null }))
+}
+
+const handleLabelSelected = (
+  index: number,
+  key: string,
+  payload: { id: string; label: string }
+) => {
+  if (!payload?.id) return
+  const prop = ensureProp(index, key)
+  const type = getPropertyType(key)
+
+  if (type === PropertyTypes.SELECT) {
+    prop.valueSelect = { id: payload.id, value: payload.label }
+    return
+  }
+
+  if (type === PropertyTypes.MULTISELECT) {
+    if (!Array.isArray(prop.valueMultiSelect)) {
+      prop.valueMultiSelect = []
+    }
+    const currentIndex = prop.valueMultiSelect.findIndex((entry: any) => entry?.id === payload.id)
+    const nextEntry = { id: payload.id, value: payload.label }
+    if (currentIndex >= 0) {
+      prop.valueMultiSelect.splice(currentIndex, 1, nextEntry)
+    } else {
+      prop.valueMultiSelect.push(nextEntry)
+    }
+  }
 }
 
 const updateNumberValue = (
@@ -809,14 +852,18 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
           <FieldQuery
             v-if="getPropertyType(column.key) === PropertyTypes.SELECT"
             :field="selectFields[column.key]"
-            :model-value="row.propertyValues[column.key]?.valueSelect?.id"
+            :model-value="row.propertyValues[column.key]?.valueSelect?.id ?? null"
+            :initial-options="normalizeSelectOption(row.propertyValues[column.key]?.valueSelect)"
             @update:modelValue="(value) => updateSelectValue(rowIndex, column.key, value)"
+            @label-selected="(payload) => handleLabelSelected(rowIndex, column.key, payload)"
           />
           <FieldQuery
             v-else-if="getPropertyType(column.key) === PropertyTypes.MULTISELECT"
             :field="selectFields[column.key]"
             :model-value="row.propertyValues[column.key]?.valueMultiSelect?.map((v) => v.id)"
+            :initial-options="normalizeMultiSelectOptions(row.propertyValues[column.key]?.valueMultiSelect)"
             @update:modelValue="(value) => updateMultiSelectValue(rowIndex, column.key, value)"
+            @label-selected="(payload) => handleLabelSelected(rowIndex, column.key, payload)"
           />
           <TextInput
             v-else-if="getPropertyType(column.key) === PropertyTypes.INT"
