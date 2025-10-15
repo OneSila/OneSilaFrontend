@@ -428,7 +428,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
       <div v-else>
         <VueDraggableNext
           :list="items"
-          class="dragArea gallery grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3"
+          class="dragArea gallery grid gap-4 p-4"
           :class="{ 'opacity-60': isChannelInherited }"
           :disabled="isReadOnly"
           @end="handleEnd"
@@ -457,18 +457,19 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
             </template>
 
             <div class="overlay-info absolute bottom-0 left-0 right-0 hidden bg-gray-700 bg-opacity-50 p-2 text-md font-medium text-white">
-              <Flex>
-                <FlexCell center grow>
-                  {{ getFileName(item.media) }} {{ getFileSize(item.media) }}
-                </FlexCell>
-                <FlexCell v-if="item.media.type === TYPE_IMAGE" center class="mr-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:flex-1">
+                  <span class="truncate">{{ getFileName(item.media) }}</span>
+                  <span class="hidden text-sm sm:inline-block">{{ getFileSize(item.media) }}</span>
+                </div>
+                <div class="flex items-center gap-2 sm:ml-auto">
+                  <span class="text-sm sm:hidden">{{ getFileSize(item.media) }}</span>
                   <Toggle
+                    v-if="item.media.type === TYPE_IMAGE"
                     v-model="isMainImageMap[item.media.id]"
                     :disabled="isReadOnly"
                     @update:modelValue="handleMainImageChange(item)"
                   />
-                </FlexCell>
-                <FlexCell center>
                   <ApolloAlertMutation
                     :mutation="deleteMediaProductThroughMutation"
                     :mutation-variables="deleteVariables[item.media.id] ?? { id: item.id }"
@@ -480,8 +481,8 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                       </Button>
                     </template>
                   </ApolloAlertMutation>
-                </FlexCell>
-              </Flex>
+                </div>
+              </div>
             </div>
           </div>
         </VueDraggableNext>
@@ -499,6 +500,19 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
   display: grid;
   grid-gap: 4px;
   padding: 4px;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1536px) {
+  .gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .file-entry {
