@@ -67,7 +67,7 @@ if (type.value !== IntegrationTypes.Webhook) {
     { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
     { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
     { name: 'priceLists', label: t('sales.priceLists.title'), icon: 'money-bill' },
-    { name: 'template', label: t('integrations.show.template.tabLabel'), icon: 'code' },
+    // { name: 'template', label: t('integrations.show.template.tabLabel'), icon: 'code' },
   );
 
   if (type.value === IntegrationTypes.Amazon) {
@@ -304,9 +304,9 @@ const pullData = async () => {
           </template>
 
           <!-- Template Tab -->
-          <template #template>
-            <Templates v-if="salesChannelId" :sales-channel-id="salesChannelId" />
-          </template>
+<!--          <template #template>-->
+<!--            <Templates v-if="salesChannelId" :sales-channel-id="salesChannelId" />-->
+<!--          </template>-->
 
           <!-- Rules Tab -->
           <template #productRules>
