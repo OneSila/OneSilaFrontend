@@ -8,6 +8,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
         node {
           id
           name
+          sku
           active
           thumbnailUrl
           inspectorStatus

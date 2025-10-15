@@ -8,10 +8,14 @@ withDefaults(
   defineProps<{
     disabled?: boolean;
     buttonClass?: string;
+    label?: string;
+    icon?: string | null;
   }>(),
   {
     disabled: false,
     buttonClass: '',
+    label: '',
+    icon: 'info-circle',
   },
 );
 
@@ -29,7 +33,13 @@ const onInfoClicked = () => {
       :class="buttonClass"
       @click.stop.prevent="onInfoClicked"
     >
-      <Icon class="text-gray-600" name="info-circle" size="sm" />
+      <Icon
+        v-if="icon"
+        :name="icon"
+        :class="label ? 'text-current' : 'text-gray-600'"
+        size="sm"
+      />
+      <span v-if="label" class="text-sm font-medium">{{ label }}</span>
     </Button>
 
     <Modal v-model="showModal" @closed="showModal = false">

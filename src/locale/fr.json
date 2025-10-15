@@ -338,10 +338,11 @@
           "validationSuccess": "",
           "unsavedChanges": ""
         },
-        "preview": {
-          "title": "",
-          "subtitle": "",
-          "stale": "",
+  "preview": {
+    "title": "",
+    "subtitle": "",
+    "thumbnailAlt": "",
+    "stale": "",
           "empty": "",
           "errorsTitle": "",
           "availableVariables": "",
@@ -349,17 +350,20 @@
           "noContent": "",
           "noSku": ""
         },
-        "productPicker": {
-          "title": "",
+  "productPicker": {
+    "title": "",
           "description": "",
           "searchPlaceholder": "",
           "loadError": "",
           "empty": "",
-          "confirm": "",
-          "fallbackName": ""
-        },
-        "documentation": {
-          "title": "",
+    "confirm": "",
+    "fallbackName": "",
+    "thumbnailAlt": "",
+    "skuLabel": ""
+  },
+  "documentation": {
+    "title": "",
+    "learn": "",
           "intro": {
             "p1": "",
             "p2": "",

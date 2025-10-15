@@ -2628,7 +2628,8 @@
         },
         "preview": {
           "title": "Preview",
-          "subtitle": "Preview generated with {product} · SKU: {sku}",
+    "subtitle": "Preview generated with {product} [{sku}]",
+    "thumbnailAlt": "Thumbnail for {product}",
           "stale": "Preview based on an earlier version. Run \"Validate & preview\" again after editing.",
           "empty": "Validate the template with a product to generate a preview.",
           "errorsTitle": "Validation issues",
@@ -2643,11 +2644,14 @@
           "searchPlaceholder": "Search by name, SKU or attribute",
           "loadError": "We could not load products. Please try again.",
           "empty": "No products match your search yet.",
-          "confirm": "Use this product",
-          "fallbackName": "Unnamed product"
-        },
-        "documentation": {
-          "title": "How to build channel templates",
+    "confirm": "Use this product",
+    "fallbackName": "Unnamed product",
+    "thumbnailAlt": "Thumbnail for {name}",
+    "skuLabel": "SKU: {sku}"
+  },
+  "documentation": {
+    "title": "How to build channel templates",
+    "learn": "Learn how to use",
           "intro": {
             "p1": "Channel templates let you override the default product description that OneSila sends to each sales channel.",
             "p2": "Templates are rendered with the Django template engine, the same syntax described in the official documentation.",

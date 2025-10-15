@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { Card } from '../../../../../../../shared/components/atoms/card';
 
 const { t } = useI18n();
 
@@ -62,112 +63,114 @@ const tipItems = computed(() =>
 </script>
 
 <template>
-  <div class="w-full max-w-4xl p-6 overflow-y-auto max-h-[80vh] space-y-6 text-gray-800">
-    <header class="space-y-3">
-      <h2 class="text-2xl font-semibold text-gray-900">
-        {{ t('integrations.show.template.documentation.title') }}
-      </h2>
-      <p v-for="paragraph in introParagraphs" :key="paragraph" class="text-sm">
-        {{ paragraph }}
-      </p>
-      <p class="text-sm" v-if="t('integrations.show.template.documentation.reference.label')">
-        <a
-          :href="t('integrations.show.template.documentation.reference.url')"
-          class="text-primary font-medium underline"
-          rel="noreferrer"
-          target="_blank"
-        >
-          {{ t('integrations.show.template.documentation.reference.label') }}
-        </a>
-      </p>
-    </header>
-
-    <section v-if="contextItems.length" class="space-y-4">
-      <div>
-        <h3 class="text-xl font-semibold">
-          {{ t('integrations.show.template.documentation.sections.context.title') }}
-        </h3>
-        <p class="text-sm text-gray-600">
-          {{ t('integrations.show.template.documentation.sections.context.description') }}
+  <Card class="w-full max-w-4xl overflow-y-auto max-h-[80vh]">
+    <div class="space-y-6 p-6 text-gray-800">
+      <header class="space-y-3">
+        <h2 class="text-2xl font-semibold text-gray-900">
+          {{ t('integrations.show.template.documentation.title') }}
+        </h2>
+        <p v-for="paragraph in introParagraphs" :key="paragraph" class="text-sm">
+          {{ paragraph }}
         </p>
-      </div>
-      <ul class="space-y-3">
-        <li v-for="item in contextItems" :key="item.key" class="rounded-lg border border-gray-200 p-4 bg-gray-50">
-          <p class="font-mono text-sm font-semibold text-primary">{{ item.label }}</p>
-          <p class="mt-2 text-sm leading-6">{{ item.description }}</p>
-        </li>
-      </ul>
-    </section>
-
-    <section v-if="syntaxItems.length" class="space-y-4">
-      <div>
-        <h3 class="text-xl font-semibold">
-          {{ t('integrations.show.template.documentation.sections.syntax.title') }}
-        </h3>
-        <p class="text-sm text-gray-600">
-          {{ t('integrations.show.template.documentation.sections.syntax.description') }}
+        <p class="text-sm" v-if="t('integrations.show.template.documentation.reference.label')">
+          <a
+            :href="t('integrations.show.template.documentation.reference.url')"
+            class="text-primary font-medium underline"
+            rel="noreferrer"
+            target="_blank"
+          >
+            {{ t('integrations.show.template.documentation.reference.label') }}
+          </a>
         </p>
-      </div>
-      <div class="space-y-4">
-        <article v-for="item in syntaxItems" :key="item.key" class="rounded-lg border border-gray-200 p-4">
-          <h4 class="text-lg font-semibold text-gray-900">{{ item.title }}</h4>
-          <p class="mt-2 text-sm leading-6">{{ item.description }}</p>
-          <pre v-if="item.example" class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
-            <code v-pre>{{ item.example }}</code>
+      </header>
+
+      <section v-if="contextItems.length" class="space-y-4">
+        <div>
+          <h3 class="text-xl font-semibold">
+            {{ t('integrations.show.template.documentation.sections.context.title') }}
+          </h3>
+          <p class="text-sm text-gray-600">
+            {{ t('integrations.show.template.documentation.sections.context.description') }}
+          </p>
+        </div>
+        <ul class="space-y-3">
+          <li v-for="item in contextItems" :key="item.key" class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <p class="font-mono text-sm font-semibold text-primary">{{ item.label }}</p>
+            <p class="mt-2 text-sm leading-6">{{ item.description }}</p>
+          </li>
+        </ul>
+      </section>
+
+      <section v-if="syntaxItems.length" class="space-y-4">
+        <div>
+          <h3 class="text-xl font-semibold">
+            {{ t('integrations.show.template.documentation.sections.syntax.title') }}
+          </h3>
+          <p class="text-sm text-gray-600">
+            {{ t('integrations.show.template.documentation.sections.syntax.description') }}
+          </p>
+        </div>
+        <div class="space-y-4">
+          <article v-for="item in syntaxItems" :key="item.key" class="rounded-lg border border-gray-200 p-4">
+            <h4 class="text-lg font-semibold text-gray-900">{{ item.title }}</h4>
+            <p class="mt-2 text-sm leading-6">{{ item.description }}</p>
+            <pre v-if="item.example" class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
+              <code v-pre>{{ item.example }}</code>
+            </pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h3 class="text-xl font-semibold">
+          {{ t('integrations.show.template.documentation.sections.tips.title') }}
+        </h3>
+        <ul class="list-disc space-y-2 pl-6 text-sm leading-6 text-gray-700">
+          <li v-for="item in tipItems" :key="item.key">{{ item.text }}</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-xl font-semibold">
+          {{ t('integrations.show.template.documentation.examples.title') }}
+        </h3>
+
+        <article class="rounded-lg border border-gray-200 p-4">
+          <h4 class="text-lg font-semibold text-gray-900">
+            {{ t('integrations.show.template.documentation.examples.images.title') }}
+          </h4>
+          <p class="mt-2 text-sm leading-6">
+            {{ t('integrations.show.template.documentation.examples.images.description') }}
+          </p>
+          <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
+            <code v-pre>{{ t('integrations.show.template.documentation.examples.images.code') }}</code>
           </pre>
         </article>
-      </div>
-    </section>
 
-    <section class="space-y-3">
-      <h3 class="text-xl font-semibold">
-        {{ t('integrations.show.template.documentation.sections.tips.title') }}
-      </h3>
-      <ul class="list-disc space-y-2 pl-6 text-sm leading-6 text-gray-700">
-        <li v-for="item in tipItems" :key="item.key">{{ item.text }}</li>
-      </ul>
-    </section>
+        <article class="rounded-lg border border-gray-200 p-4">
+          <h4 class="text-lg font-semibold text-gray-900">
+            {{ t('integrations.show.template.documentation.examples.properties.title') }}
+          </h4>
+          <p class="mt-2 text-sm leading-6">
+            {{ t('integrations.show.template.documentation.examples.properties.description') }}
+          </p>
+          <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
+            <code v-pre>{{ t('integrations.show.template.documentation.examples.properties.code') }}</code>
+          </pre>
+        </article>
 
-    <section class="space-y-4">
-      <h3 class="text-xl font-semibold">
-        {{ t('integrations.show.template.documentation.examples.title') }}
-      </h3>
-
-      <article class="rounded-lg border border-gray-200 p-4">
-        <h4 class="text-lg font-semibold text-gray-900">
-          {{ t('integrations.show.template.documentation.examples.images.title') }}
-        </h4>
-        <p class="mt-2 text-sm leading-6">
-          {{ t('integrations.show.template.documentation.examples.images.description') }}
-        </p>
-        <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
-          <code v-pre>{{ t('integrations.show.template.documentation.examples.images.code') }}</code>
-        </pre>
-      </article>
-
-      <article class="rounded-lg border border-gray-200 p-4">
-        <h4 class="text-lg font-semibold text-gray-900">
-          {{ t('integrations.show.template.documentation.examples.properties.title') }}
-        </h4>
-        <p class="mt-2 text-sm leading-6">
-          {{ t('integrations.show.template.documentation.examples.properties.description') }}
-        </p>
-        <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
-          <code v-pre>{{ t('integrations.show.template.documentation.examples.properties.code') }}</code>
-        </pre>
-      </article>
-
-      <article class="rounded-lg border border-gray-200 p-4">
-        <h4 class="text-lg font-semibold text-gray-900">
-          {{ t('integrations.show.template.documentation.examples.full.title') }}
-        </h4>
-        <p class="mt-2 text-sm leading-6">
-          {{ t('integrations.show.template.documentation.examples.full.description') }}
-        </p>
-        <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
-          <code v-pre>{{ t('integrations.show.template.documentation.examples.full.code') }}</code>
-        </pre>
-      </article>
-    </section>
-  </div>
+        <article class="rounded-lg border border-gray-200 p-4">
+          <h4 class="text-lg font-semibold text-gray-900">
+            {{ t('integrations.show.template.documentation.examples.full.title') }}
+          </h4>
+          <p class="mt-2 text-sm leading-6">
+            {{ t('integrations.show.template.documentation.examples.full.description') }}
+          </p>
+          <pre class="mt-3 overflow-x-auto rounded bg-gray-900 p-4 text-sm text-gray-100">
+            <code v-pre>{{ t('integrations.show.template.documentation.examples.full.code') }}</code>
+          </pre>
+        </article>
+      </section>
+    </div>
+  </Card>
 </template>
