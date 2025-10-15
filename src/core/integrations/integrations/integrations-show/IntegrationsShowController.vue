@@ -35,6 +35,7 @@ import { InventoryFields } from "./containers/inventory-fields";
 import { PropertySelectValues } from "./containers/property-select-values";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
+import { Templates } from "./containers/templates";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
 
@@ -66,6 +67,7 @@ if (type.value !== IntegrationTypes.Webhook) {
     { name: 'languages', label: t('shared.tabs.languages'), icon: 'language' },
     { name: 'currencies', label: t('settings.currencies.title'), icon: 'money-bill' },
     { name: 'priceLists', label: t('sales.priceLists.title'), icon: 'money-bill' },
+    { name: 'template', label: t('integrations.show.template.tabLabel'), icon: 'code' },
   );
 
   if (type.value === IntegrationTypes.Amazon) {
@@ -299,6 +301,11 @@ const pullData = async () => {
           <!-- Imports Tab -->
           <template #imports>
             <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
+          </template>
+
+          <!-- Template Tab -->
+          <template #template>
+            <Templates v-if="salesChannelId" :sales-channel-id="salesChannelId" />
           </template>
 
           <!-- Rules Tab -->
