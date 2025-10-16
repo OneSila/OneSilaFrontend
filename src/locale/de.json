@@ -316,7 +316,11 @@
         "tabLabel": "",
         "labels": {
           "language": "",
-          "templateEditor": ""
+          "templateEditor": "",
+          "addAsIframe": ""
+        },
+        "helpTexts": {
+          "addAsIframe": ""
         },
         "languagePlaceholder": "",
         "placeholders": {

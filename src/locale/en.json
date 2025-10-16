@@ -2601,7 +2601,11 @@
         "tabLabel": "Template",
         "labels": {
           "language": "Language",
-          "templateEditor": "Template"
+          "templateEditor": "Template",
+          "addAsIframe": "Serve template output via iframe"
+        },
+        "helpTexts": {
+          "addAsIframe": "When enabled, OneSila will embed the hosted product page in an iframe instead of sending rendered HTML to the sales channel."
         },
         "languagePlaceholder": "Select a language",
         "placeholders": {
