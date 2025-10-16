@@ -7,6 +7,7 @@ import { Button } from '../../../../../../shared/components/atoms/button';
 import { Icon } from '../../../../../../shared/components/atoms/icon';
 import { InfoModal } from '../../../../../../shared/components/molecules/info-modal';
 import { Label } from '../../../../../../shared/components/atoms/label';
+import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Toast } from '../../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../../shared/utils';
 import { translationLanguagesQuery } from '../../../../../../shared/api/queries/languages.js';
@@ -30,6 +31,8 @@ const previousLanguage = ref<string | null>(null);
 const templateId = ref<string | null>(null);
 const templateContent = ref('');
 const initialTemplate = ref('');
+const addAsIframe = ref(false);
+const initialAddAsIframe = ref(false);
 const isLoading = ref(false);
 const isSaving = ref(false);
 const isClearing = ref(false);
@@ -47,7 +50,9 @@ const languageOptions = computed(() =>
 );
 
 const hasUnsavedChanges = computed(
-  () => templateContent.value !== initialTemplate.value,
+  () =>
+    templateContent.value !== initialTemplate.value ||
+    addAsIframe.value !== initialAddAsIframe.value,
 );
 
 const isPreviewStale = computed(
@@ -98,6 +103,8 @@ const fetchTemplate = async (languageCode: string) => {
     templateId.value = node?.id ?? null;
     templateContent.value = node?.template ?? '';
     initialTemplate.value = templateContent.value;
+    addAsIframe.value = node?.addAsIframe ?? false;
+    initialAddAsIframe.value = addAsIframe.value;
     previewResult.value = null;
     previewProduct.value = null;
     lastValidatedTemplate.value = '';
@@ -148,12 +155,14 @@ const handleSave = async () => {
           data: {
             id: templateId.value,
             template: templateContent.value,
+            addAsIframe: addAsIframe.value,
           },
         }
       : {
           data: {
             language: selectedLanguage.value,
             template: templateContent.value,
+            addAsIframe: addAsIframe.value,
             salesChannel: { id: props.salesChannelId },
           },
         };
@@ -174,10 +183,13 @@ const handleSave = async () => {
       templateId.value = payload.id;
       initialTemplate.value = payload.template ?? '';
       templateContent.value = payload.template ?? '';
+      initialAddAsIframe.value = payload.addAsIframe ?? false;
+      addAsIframe.value = payload.addAsIframe ?? false;
       Toast.success(t('integrations.show.template.messages.saveSuccess'));
     } else {
       Toast.success(t('integrations.show.template.messages.saveSuccess'));
       initialTemplate.value = templateContent.value;
+      initialAddAsIframe.value = addAsIframe.value;
     }
   } catch (error) {
     const validationErrors = processGraphQLErrors(error, t);
@@ -198,6 +210,8 @@ const handleClear = async () => {
   if (!templateId.value) {
     templateContent.value = '';
     initialTemplate.value = '';
+    addAsIframe.value = false;
+    initialAddAsIframe.value = false;
     previewResult.value = null;
     previewProduct.value = null;
     lastValidatedTemplate.value = '';
@@ -215,6 +229,8 @@ const handleClear = async () => {
     templateId.value = null;
     templateContent.value = '';
     initialTemplate.value = '';
+    addAsIframe.value = false;
+    initialAddAsIframe.value = false;
     previewResult.value = null;
     previewProduct.value = null;
     lastValidatedTemplate.value = '';
@@ -337,6 +353,17 @@ const availableVariables = computed(() => previewResult.value?.availableVariable
     </div>
 
     <div class="space-y-4">
+      <div class="flex items-start gap-3">
+        <Toggle v-model="addAsIframe" />
+        <div class="space-y-1">
+          <Label class="block text-sm font-semibold leading-6 text-gray-900">
+            {{ t('integrations.show.template.labels.addAsIframe') }}
+          </Label>
+          <p class="text-xs text-gray-600">
+            {{ t('integrations.show.template.helpTexts.addAsIframe') }}
+          </p>
+        </div>
+      </div>
       <Label class="block text-sm font-semibold leading-6 text-gray-900">
         {{ t('integrations.show.template.labels.templateEditor') }}
       </Label>

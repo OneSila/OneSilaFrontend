@@ -6,6 +6,7 @@ export const createSalesChannelContentTemplateMutation = gql`
       id
       language
       template
+      addAsIframe
     }
   }
 `;
@@ -16,6 +17,7 @@ export const updateSalesChannelContentTemplateMutation = gql`
       id
       language
       template
+      addAsIframe
     }
   }
 `;

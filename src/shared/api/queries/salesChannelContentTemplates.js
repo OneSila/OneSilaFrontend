@@ -14,6 +14,7 @@ export const salesChannelContentTemplateQuery = gql`
           id
           language
           template
+          addAsIframe
         }
       }
     }
