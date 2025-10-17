@@ -337,9 +337,12 @@ const getLabel = (option: any): string | null => {
   overflow-x: hidden;
 }
 
-.selector .vs__dropdown-option {
-  white-space: normal;
+.selector .vs__dropdown-option,
+.selector .vs__dropdown-option--highlight,
+.selector .vs__dropdown-option--selected {
+  white-space: normal !important;
   word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .selector .vs__selected-options {
