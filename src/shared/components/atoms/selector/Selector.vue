@@ -332,6 +332,16 @@ const getLabel = (option: any): string | null => {
   padding: 7px 0;
 }
 
+.selector .vs__dropdown-menu {
+  max-width: none;
+  overflow-x: hidden;
+}
+
+.selector .vs__dropdown-option {
+  white-space: normal;
+  word-break: break-word;
+}
+
 .selector .vs__selected-options {
   align-items: flex-start;
   align-content: flex-start;
