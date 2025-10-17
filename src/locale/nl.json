@@ -204,6 +204,7 @@
       "skip": "Overslaan",
       "generate": "Genereren",
       "duplicate": "Dupliceren",
+      "copy": "",
       "change": "Wijzig",
       "leaveTab": "Tab verlaten",
       "fix": "Fixen",
