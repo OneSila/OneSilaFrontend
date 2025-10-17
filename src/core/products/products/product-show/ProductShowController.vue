@@ -111,11 +111,11 @@ const redirectToList = (response) => {
   }
 }
 
-const handleDuplicate = async (sku: string | null, createAsAlias: boolean) => {
+const handleDuplicate = async (sku: string | null, createAsAlias: boolean, createRelationships: boolean) => {
   try {
     const { data } = await apolloClient.mutate({
       mutation: duplicateProductMutation,
-      variables: { product: {id: id.value}, sku, createAsAlias },
+      variables: { product: {id: id.value}, sku, createAsAlias, createRelationships },
     });
 
     if (data && data.duplicateProduct) {

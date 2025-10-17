@@ -10,18 +10,20 @@ import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 const props = defineProps<{ modelValue: boolean; isConfigurable: boolean }>();
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'duplicate', sku: string | null, createAsAlias: boolean): void;
+  (e: 'duplicate', sku: string | null, createAsAlias: boolean, createRelationships: boolean): void;
 }>();
 
 const { t } = useI18n();
 const localShowModal = ref(props.modelValue);
 const sku = ref('');
 const createAsAlias = ref(false);
+const createRelationships = ref(true);
 
 watch(() => props.modelValue, (val) => {
   localShowModal.value = val;
   if (val) {
     createAsAlias.value = false;
+    createRelationships.value = true;
   }
 });
 
@@ -31,7 +33,12 @@ const closeModal = () => {
 };
 
 const submit = () => {
-  emit('duplicate', sku.value.trim() === '' ? null : sku.value.trim(), createAsAlias.value);
+  emit(
+    'duplicate',
+    sku.value.trim() === '' ? null : sku.value.trim(),
+    createAsAlias.value,
+    createRelationships.value,
+  );
   closeModal();
 };
 
@@ -52,6 +59,19 @@ const submit = () => {
             <Toggle v-model="createAsAlias" />
           </FlexCell>
         </Flex>
+        <div class="mt-4">
+          <Flex gap="2" align="center">
+            <FlexCell>
+              {{ t('products.products.duplicateModal.createRelationships') }}
+            </FlexCell>
+            <FlexCell>
+              <Toggle v-model="createRelationships" />
+            </FlexCell>
+          </Flex>
+          <p class="mt-2 text-sm leading-6 text-gray-400">
+            {{ t('products.products.duplicateModal.createRelationshipsHelp') }}
+          </p>
+        </div>
         <div class="flex justify-end gap-4 mt-4">
           <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
           <Button class="btn btn-primary" @click="submit">{{ t('shared.button.duplicate') }}</Button>
