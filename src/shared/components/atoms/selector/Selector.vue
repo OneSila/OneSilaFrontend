@@ -68,7 +68,29 @@ const filterBy = (_option: any, label: any, search: string | undefined) => {
 };
 
 const calculatePosition = (dropdownList, component, { width }) => {
-  dropdownList.style.width = width;
+  dropdownList.style.minWidth = width;
+
+  if (typeof window !== 'undefined') {
+    const toggleRect = component?.$refs?.toggle?.getBoundingClientRect
+      ? component.$refs.toggle.getBoundingClientRect()
+      : null;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+    if (toggleRect) {
+      const availableWidth = viewportWidth - toggleRect.left - 16;
+      const baseWidth = Number.parseFloat(width);
+
+      if (!Number.isNaN(baseWidth) && availableWidth > baseWidth) {
+        dropdownList.style.maxWidth = `${availableWidth}px`;
+      } else {
+        dropdownList.style.removeProperty('max-width');
+      }
+    }
+
+    dropdownList.style.width = 'auto';
+  } else {
+    dropdownList.style.width = width;
+  }
 
   const popper = createPopper(component.$refs.toggle, dropdownList, {
     placement: props.dropdownPosition as Placement,
@@ -89,6 +111,15 @@ const calculatePosition = (dropdownList, component, { width }) => {
       },
     ],
   });
+
+  if (typeof window !== 'undefined') {
+    const updatePopper = () => popper.update();
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(updatePopper);
+    } else {
+      updatePopper();
+    }
+  }
 
   return () => popper.destroy();
 };
