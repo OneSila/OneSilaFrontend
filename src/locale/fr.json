@@ -139,6 +139,12 @@
           "select": ""
         }
       },
+      "duplicateModal": {
+        "description": "",
+        "createAsAlias": "",
+        "createRelationships": "",
+        "createRelationshipsHelp": ""
+      },
       "variations": {
         "content": {
           "validation": {

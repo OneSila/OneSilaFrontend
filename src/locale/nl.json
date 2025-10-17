@@ -1006,7 +1006,9 @@
       },
       "duplicateModal": {
         "description": "Geef een SKU op voor het gedupliceerde product of laat leeg om automatisch te genereren.",
-        "createAsAlias": "Als aliasproduct aanmaken?"
+        "createAsAlias": "Als aliasproduct aanmaken?",
+        "createRelationships": "",
+        "createRelationshipsHelp": ""
       },
       "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
