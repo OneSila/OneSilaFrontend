@@ -342,6 +342,11 @@ const getLabel = (option: any): string | null => {
   word-break: break-word;
 }
 
+.vs__dropdown-option--highlight {
+  white-space: normal;
+  word-break: break-word;
+}
+
 .selector .vs__selected-options {
   align-items: flex-start;
   align-content: flex-start;
