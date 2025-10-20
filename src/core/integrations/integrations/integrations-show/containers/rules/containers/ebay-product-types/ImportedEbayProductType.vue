@@ -114,8 +114,8 @@ const categoryField = computed<QueryFormField>(() => {
     filterable: true,
     minSearchLength: 1,
     disabled: !marketplaceDefaultTreeId.value,
+    limit: 100,
     queryVariables: {
-      first: 20,
       filter,
     },
   };
@@ -140,7 +140,7 @@ const handleEmptySuggestions = (list: NormalizedSuggestion[]) => {
   }
 };
 
-const runSuggestion = async (name: string | null): Promise<NormalizedSuggestion[]> => {
+const runSuggestion = async (name: string): Promise<NormalizedSuggestion[]> => {
   resetState();
   const { data } = await apolloClient.mutate({
     mutation: ebayImportedRemoteProductTypeConfig.suggestMutation,
@@ -156,8 +156,9 @@ const runSuggestion = async (name: string | null): Promise<NormalizedSuggestion[
 const fetchSuggestions = async () => {
   errors.value = {};
   selectSuggestion(null);
+  const searchTerm = productName.value.trim();
 
-  if (!productName.value) {
+  if (!searchTerm) {
     errors.value.name = t('shared.validationErrors.required');
   }
   if (!marketplaceId.value) {
@@ -169,7 +170,7 @@ const fetchSuggestions = async () => {
 
   loadingSuggestions.value = true;
   try {
-    const result = await runSuggestion(productName.value);
+    const result = await runSuggestion(searchTerm);
     suggestions.value = result;
     handleEmptySuggestions(result);
   } catch (err) {

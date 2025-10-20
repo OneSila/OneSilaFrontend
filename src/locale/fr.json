@@ -6,6 +6,7 @@
       "recover": "Récupérer",
       "select": "Sélectionner",
       "duplicate": "Dupliquer",
+      "copy": "",
       "resync": "Resync",
       "fullUpdate": "Full Update",
       "validate": "Validate",
@@ -138,6 +139,12 @@
           "placeholder": "",
           "select": ""
         }
+      },
+      "duplicateModal": {
+        "description": "",
+        "createAsAlias": "",
+        "createRelationships": "",
+        "createRelationshipsHelp": ""
       },
       "variations": {
         "content": {
@@ -313,7 +320,11 @@
         "tabLabel": "",
         "labels": {
           "language": "",
-          "templateEditor": ""
+          "templateEditor": "",
+          "addAsIframe": ""
+        },
+        "helpTexts": {
+          "addAsIframe": ""
         },
         "languagePlaceholder": "",
         "placeholders": {

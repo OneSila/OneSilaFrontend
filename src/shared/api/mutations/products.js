@@ -612,8 +612,8 @@ export const generateProductVariationsMutation = gql`
 `;
 
 export const duplicateProductMutation = gql`
-    mutation($product: ProductPartialInput!, $sku: String, $createAsAlias: Boolean) {
-      duplicateProduct(product: $product, sku: $sku, createAsAlias: $createAsAlias) {
+    mutation($product: ProductPartialInput!, $sku: String, $createAsAlias: Boolean, $createRelationships: Boolean) {
+      duplicateProduct(product: $product, sku: $sku, createAsAlias: $createAsAlias, createRelationships: $createRelationships) {
         id
         sku
       }

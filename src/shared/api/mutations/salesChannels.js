@@ -718,7 +718,7 @@ export const suggestAmazonProductTypeMutation = gql`
   }
 `;
 export const suggestEbayCategoryMutation = gql`
-  mutation suggestEbayCategory($name: String, $marketplace: SalesChannelViewPartialInput!) {
+  mutation suggestEbayCategory($name: String!, $marketplace: SalesChannelViewPartialInput!) {
     suggestEbayCategory(name: $name, marketplace: $marketplace) {
       categoryTreeId
       categories {

@@ -50,6 +50,19 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
       lookupType: 'exact',
       queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
     },
+    {
+      type: FieldType.Choice,
+      name: 'status',
+      label: t('shared.labels.status'),
+      labelBy: 'label',
+      valueBy: 'value',
+      options: [
+        { label: t('shared.labels.completed'), value: 'completed' },
+        { label: t('shared.labels.processing'), value: 'processing' },
+        { label: t('shared.labels.failed'), value: 'failed' },
+      ],
+      removable: true,
+    },
   ],
   orders: [],
 });
