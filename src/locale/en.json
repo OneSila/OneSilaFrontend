@@ -2864,6 +2864,10 @@
           "title": "Amazon property not mapped",
           "content": "Map the Amazon property first before mapping values."
         },
+        "notMappedBannerEbay": {
+          "title": "eBay property not mapped",
+          "content": "Map the eBay property first before mapping values."
+        },
         "recommendation": {
           "title": "Recommendations",
           "searching": "Searching for suggestions...",

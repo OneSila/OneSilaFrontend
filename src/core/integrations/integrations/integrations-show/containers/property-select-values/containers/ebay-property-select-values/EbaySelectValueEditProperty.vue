@@ -104,6 +104,19 @@ const config: RemoteSelectValueEditPropertyConfig = {
   localPropertyHelpKey: 'integrations.show.propertySelectValues.help.selectValueEbay',
   localPropertyEditPath: ctx =>
     ctx.localPropertyId ? { name: 'properties.properties.edit', params: { id: ctx.localPropertyId } } : null,
+  notMappedBanner: {
+    titleKey: 'integrations.show.propertySelectValues.notMappedBannerEbay.title',
+    contentKey: 'integrations.show.propertySelectValues.notMappedBannerEbay.content',
+    linkPath: ctx => ({
+      name: 'integrations.remoteProperties.edit',
+      params: { type: ctx.type, id: ctx.propertyId! },
+      query: {
+        integrationId: ctx.integrationId,
+        salesChannelId: ctx.salesChannelId,
+        ebayCreateValue: ctx.valueId,
+      },
+    }),
+  },
   recommendations: {
     mutation: checkPropertySelectValueForDuplicatesMutation,
     watchKeys: ['translatedValue', 'localizedValue'],

@@ -2370,6 +2370,10 @@
           "localizedValue": "",
           "translatedValue": ""
         },
+        "notMappedBannerEbay": {
+          "title": "",
+          "content": ""
+        },
         "bulkAssign": "",
         "bulkAssignTitle": "",
         "assignSuccess": ""
