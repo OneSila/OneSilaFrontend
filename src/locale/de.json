@@ -636,6 +636,18 @@
               "noData": "",
               "fetchError": ""
             }
+          },
+          "languages": {
+            "title": "",
+            "description": "",
+            "noData": "",
+            "fetchError": ""
+          },
+          "currencies": {
+            "title": "",
+            "description": "",
+            "noData": "",
+            "fetchError": ""
           }
         }
       }
