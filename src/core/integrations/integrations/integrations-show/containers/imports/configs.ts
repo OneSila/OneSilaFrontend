@@ -51,6 +51,7 @@ export interface RemoteLanguage {
   remoteCode: string;
   name: string;
   localInstance: { id: string } | null;
+  localInstanceId?: string | null;
 }
 
 export interface RemoteCurrency {
@@ -58,7 +59,8 @@ export interface RemoteCurrency {
   remoteCode: string;
   name: string;
   marketplaceName?: string | null;
-  localInstance: { id: string } | null;
+  localInstance: { id: string; isoCode?: string } | null;
+  localInstanceId?: string | null;
 }
 
 export interface RemoteAttribute {
