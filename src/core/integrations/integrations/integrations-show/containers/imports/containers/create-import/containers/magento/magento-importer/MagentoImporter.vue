@@ -158,7 +158,9 @@ const bulkUpdateRemoteLanguages = async () => {
     const data = mappedData.value.languages.map((language) => ({
       id: language.id,
       remoteCode: language.remoteCode,
-      localInstance: language.localInstance,
+      localInstance: typeof language.localInstance === "string"
+        ? language.localInstance
+        : language.localInstance?.id ?? language.localInstanceId ?? null,
     }));
 
     const { data: result } = await apolloClient.mutate({
