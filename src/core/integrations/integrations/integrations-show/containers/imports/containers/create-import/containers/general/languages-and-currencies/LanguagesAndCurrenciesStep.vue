@@ -49,10 +49,15 @@ const normalizeCurrencyLocalInstance = (value: any): { id: string; isoCode?: str
   }
 
   if (typeof value === "object" && value !== null && typeof value.id === "string") {
-    return {
+    const normalized: { id: string; isoCode?: string } = {
       id: value.id,
-      ...(value.isoCode ? { isoCode: value.isoCode } : {}),
     };
+
+    if (typeof value.isoCode === "string") {
+      normalized.isoCode = value.isoCode;
+    }
+
+    return normalized;
   }
 
   if (typeof value === "string") {
@@ -86,14 +91,10 @@ const updateCurrencyLocalInstance = (currencyId: string, value: string | null) =
     return;
   }
 
-  const previousIsoCode = currency.localInstance?.isoCode;
-  const keepIsoCode = value && currency.localInstance?.id === value ? previousIsoCode : undefined;
-
   currency.localInstanceId = value;
   currency.localInstance = value
     ? {
         id: value,
-        ...(keepIsoCode ? { isoCode: keepIsoCode } : {}),
       }
     : null;
 
@@ -113,8 +114,6 @@ const updateCurrencyLabel = (currencyId: string, payload: { id: string; label: s
   if (!currency.localInstance || currency.localInstance.id !== payload.id) {
     currency.localInstance = { id: payload.id };
   }
-
-  currency.localInstance.isoCode = payload.label;
   emitMappedData();
 };
 

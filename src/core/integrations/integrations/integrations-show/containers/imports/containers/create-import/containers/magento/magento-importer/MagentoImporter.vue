@@ -177,11 +177,15 @@ const bulkUpdateRemoteLanguages = async () => {
 
 const bulkUpdateRemoteCurrencies = async () => {
   try {
-    const data = mappedData.value.currencies.map((currency) => ({
-      id: currency.id,
-      remoteCode: currency.remoteCode,
-      localInstance: currency.localInstance,
-    }));
+    const data = mappedData.value.currencies.map((currency) => {
+      const localInstanceId = currency.localInstance?.id ?? currency.localInstanceId ?? null;
+
+      return {
+        id: currency.id,
+        remoteCode: currency.remoteCode,
+        localInstance: localInstanceId ? { id: localInstanceId } : null,
+      };
+    });
 
     const { data: result } = await apolloClient.mutate({
       mutation: bulkUpdateRemoteCurrenciesMutation,
