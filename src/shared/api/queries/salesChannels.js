@@ -313,6 +313,33 @@ export const getEbayChannelQuery = gql`
   }
 `;
 
+export const getSheinChannelQuery = gql`
+  query getSheinChannel($id: GlobalID!) {
+    sheinChannel(id: $id) {
+      id
+      hostname
+      active
+      verifySsl
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      startingStock
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
 export const ebayChannelsQuery = gql`
   query ebayChannelsQuery(
     $first: Int

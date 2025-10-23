@@ -33,7 +33,8 @@ export const listingIntegrationTypeBadgeMap = (t: Function) => ({
   [IntegrationTypes.Woocommerce]: { text: 'Woocommerce', color: 'blue' },
   [IntegrationTypes.Amazon]: { text: 'Amazon', color: 'yellow' },
   [IntegrationTypes.Webhook]: { text: t('integrations.integrationTypes.webhook'), color: 'indigo' },
-  [IntegrationTypes.Ebay]: { text: 'Ebay', color: 'purple' }
+  [IntegrationTypes.Ebay]: { text: 'Ebay', color: 'purple' },
+  [IntegrationTypes.Shein]: { text: 'Shein', color: 'pink' }
 });
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({

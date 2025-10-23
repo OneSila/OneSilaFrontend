@@ -108,6 +108,12 @@ export const routes = [
     name: 'integrations.ebay.installed',
     meta: { title: 'integrations.ebay.installed.title' },
     component: () => import('./integrations/integrations-installed/ebay-installed/EbayInstalledController.vue'),
+  },
+  {
+    path: '/integrations/shein/installed',
+    name: 'integrations.shein.installed',
+    meta: { title: 'integrations.shein.installed.title' },
+    component: () => import('./integrations/integrations-installed/shein-installed/SheinInstalledController.vue'),
   }
 
 ];
