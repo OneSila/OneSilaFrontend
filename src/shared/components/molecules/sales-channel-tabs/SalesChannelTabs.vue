@@ -7,6 +7,7 @@ import shopifyIcon from '../../../../assets/images/integration-types/icons/shopi
 import woocommerceIcon from '../../../../assets/images/integration-types/icons/woocommerce.svg';
 import amazonIcon from '../../../../assets/images/integration-types/icons/amazon.svg';
 import ebayIcon from '../../../../assets/images/integration-types/icons/ebay.svg';
+import sheinIcon from '../../../../assets/images/integration-types/icons/shein.svg';
 
 const props = defineProps<{ channels: any[]; modelValue: string }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -14,7 +15,7 @@ const { t } = useI18n();
 
 const cleanHostname = (hostname: string, type: string) => {
   if (!hostname) return '';
-  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
+  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay || type === IntegrationTypes.Shein) {
     return hostname;
   }
   try {
@@ -31,7 +32,8 @@ const integrationTypeIcons: Record<string, string> = {
   shopify: shopifyIcon,
   woocommerce: woocommerceIcon,
   amazon: amazonIcon,
-  ebay: ebayIcon
+  ebay: ebayIcon,
+  shein: sheinIcon
 };
 
 

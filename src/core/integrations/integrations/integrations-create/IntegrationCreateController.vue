@@ -39,10 +39,12 @@ import {
   createShopifySalesChannelMutation,
   createAmazonSalesChannelMutation,
   createEbaySalesChannelMutation,
+  createSheinSalesChannelMutation,
   createWoocommerceSalesChannelMutation,
   getShopifyRedirectUrlMutation,
   getAmazonRedirectUrlMutation
   , getEbayRedirectUrlMutation
+  , getSheinRedirectUrlMutation
 } from "../../../../shared/api/mutations/salesChannels.js";
 import { createWebhookIntegrationMutation } from "../../../../shared/api/mutations/webhookIntegrations.js";
 import { Toast } from "../../../../shared/modules/toast";
@@ -101,7 +103,7 @@ watch(selectedIntegrationType, (newType) => {
     Object.assign(specificChannelInfo.value, getAmazonDefaultFields());
   } else if (newType === IntegrationTypes.Webhook) {
     Object.assign(specificChannelInfo.value, getWebhookDefaultFields());
-  } else if (newType === IntegrationTypes.Ebay) {
+  } else if (newType === IntegrationTypes.Ebay || newType === IntegrationTypes.Shein) {
      specificChannelInfo.value = {};
   } else {
     specificChannelInfo.value = {};
@@ -130,7 +132,7 @@ const stepFourLabel = computed(() => {
     return t('integrations.create.wizard.step4.webhook.title');
   }
 
-  if (selectedIntegrationType.value === IntegrationTypes.Ebay) {
+  if (selectedIntegrationType.value === IntegrationTypes.Ebay || selectedIntegrationType.value === IntegrationTypes.Shein) {
     return t('integrations.create.wizard.step4.ebay.title');
   }
 
@@ -145,7 +147,10 @@ const wizardSteps = computed(() => {
   if (selectedIntegrationType.value !== IntegrationTypes.Webhook) {
     steps.push({ title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' });
   }
-  if (selectedIntegrationType.value !== IntegrationTypes.Ebay) {
+  if (
+    selectedIntegrationType.value !== IntegrationTypes.Ebay &&
+    selectedIntegrationType.value !== IntegrationTypes.Shein
+  ) {
     steps.push({ title: stepFourLabel.value, name: 'specificChannelStep' });
   }
 
@@ -213,7 +218,7 @@ const allowNextStep = computed(() => {
       return false;
     }
 
-    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay];
+    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay, IntegrationTypes.Shein];
     if (!excludedTypes.includes(selectedIntegrationType.value)) {
       // This regex checks for an optional protocol (http/https) and a basic hostname pattern.
       const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
@@ -314,6 +319,8 @@ const getIntegrationMutation = () => {
       return createWebhookIntegrationMutation;
     case IntegrationTypes.Ebay:
       return createEbaySalesChannelMutation;
+    case IntegrationTypes.Shein:
+      return createSheinSalesChannelMutation;
     default:
       return null;
   }
@@ -333,6 +340,8 @@ const getIntegrationMutationKey = () => {
       return 'createWebhookIntegration';
     case IntegrationTypes.Ebay:
       return 'createEbaySalesChannel';
+    case IntegrationTypes.Shein:
+      return 'createSheinSalesChannel';
     default:
       return '';
   }
@@ -355,6 +364,7 @@ const handleFinish = async () => {
       IntegrationTypes.Woocommerce,
       IntegrationTypes.Amazon,
       IntegrationTypes.Ebay,
+      IntegrationTypes.Shein,
     ].includes(selectedIntegrationType.value);
 
     const salesChannelData = selectedIntegrationType.value !== IntegrationTypes.Webhook
@@ -511,6 +521,34 @@ const handleEbaySalesChannelSuccess = async (channelData: any) => {
   });
 };
 
+const handleSheinSalesChannelSuccess = async (channelData: any) => {
+  const id = channelData.id;
+
+  const { data } = await apolloClient.mutate({
+    mutation: getSheinRedirectUrlMutation,
+    variables: {
+      data: { id },
+    },
+  });
+
+  const result = data?.getSheinRedirectUrl;
+
+  if (result?.redirectUrl) {
+    window.location.href = result.redirectUrl;
+    return;
+  }
+
+  const messages = result?.messages || [];
+  messages.forEach((msg: any) => {
+    Toast.error(msg.message);
+  });
+
+  router.push({
+    name: 'integrations.integrations.show',
+    params: { type: IntegrationTypes.Shein, id },
+  });
+};
+
 
 
 const handleSalesChannelSuccess = async (channelData: any, integrationType: string) => {
@@ -526,6 +564,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
   if (integrationType === IntegrationTypes.Ebay) {
     await handleEbaySalesChannelSuccess(channelData);
+    return;
+  }
+
+  if (integrationType === IntegrationTypes.Shein) {
+    await handleSheinSalesChannelSuccess(channelData);
     return;
   }
 
@@ -587,7 +630,7 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
         <template #specificChannelStep>
           <component
-            v-if="selectedIntegrationType !== IntegrationTypes.Ebay"
+            v-if="selectedIntegrationType !== IntegrationTypes.Ebay && selectedIntegrationType !== IntegrationTypes.Shein"
             :is="getIntegrationComponent()"
             :channel-info="specificChannelInfo"
           />

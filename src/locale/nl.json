@@ -2077,6 +2077,13 @@
   },
   "integrations": {
     "show": {
+      "shein": {
+        "title": ""
+      },
+      "sheinNotConnectedBanner": {
+        "title": "",
+        "content": ""
+      },
       "ebay": {
         "title": "",
         "productRules": {
@@ -2447,7 +2454,21 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook"
+      "webhook": "Webhook",
+      "shein": ""
+    },
+    "create": {
+      "wizard": {
+        "step1": {
+          "sheinTitle": "",
+          "sheinExample": ""
+        }
+      }
+    },
+    "shein": {
+      "installed": {
+        "title": ""
+      }
     },
     "labels": {
       "fulfillmentPolicy": "Verzendbeleid",
@@ -2466,6 +2487,15 @@
       },
       "helpText": {
         "startingStock": ""
+      },
+      "shein": {
+        "installed": {
+          "title": "",
+          "loading": "",
+          "success": "",
+          "genericError": "",
+          "missingParams": ""
+        }
       }
     },
     "ebay": {

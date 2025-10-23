@@ -66,6 +66,15 @@ export const createEbaySalesChannelMutation = gql`
   }
 `;
 
+export const createSheinSalesChannelMutation = gql`
+  mutation createSheinSalesChannel($data: SheinSalesChannelInput!) {
+    createSheinSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
@@ -87,6 +96,15 @@ export const updateAmazonSalesChannelMutation = gql`
 export const updateEbaySalesChannelMutation = gql`
   mutation updateEbaySalesChannel($data: EbaySalesChannelPartialInput!) {
     updateEbaySalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
+export const updateSheinSalesChannelMutation = gql`
+  mutation updateSheinSalesChannel($data: SheinSalesChannelPartialInput!) {
+    updateSheinSalesChannel(data: $data) {
       id
       hostname
     }
@@ -569,6 +587,24 @@ export const getEbayRedirectUrlMutation = gql`
   }
 `;
 
+export const getSheinRedirectUrlMutation = gql`
+  mutation GetSheinRedirectUrl($data: SheinSalesChannelPartialInput!) {
+    getSheinRedirectUrl(instance: $data) {
+      ... on SheinRedirectUrlType {
+        redirectUrl
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 export const validateAmazonAuthMutation = gql`
   mutation ValidateAmazonAuth($data: AmazonValidateAuthInput!) {
     validateAmazonAuth(instance: $data) {
@@ -593,6 +629,24 @@ export const validateEbayAuthMutation = gql`
   mutation ValidateEbayAuth($data: EbayValidateAuthInput!) {
     validateEbayAuth(instance: $data) {
       ... on EbaySalesChannelType {
+        id
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
+export const validateSheinAuthMutation = gql`
+  mutation ValidateSheinAuth($data: SheinValidateAuthInput!) {
+    validateSheinAuth(instance: $data) {
+      ... on SheinSalesChannelType {
         id
       }
       ... on OperationInfo {

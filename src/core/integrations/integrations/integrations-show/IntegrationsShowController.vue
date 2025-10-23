@@ -13,7 +13,8 @@ import {
   getShopifyChannelQuery,
   getWoocommerceChannelQuery,
   getAmazonChannelQuery,
-  getEbayChannelQuery
+  getEbayChannelQuery,
+  getSheinChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { getWebhookIntegrationQuery } from "../../../../shared/api/queries/webhookIntegrations.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
@@ -22,6 +23,7 @@ import { ShopifyGeneralInfoTab } from "./containers/general/shopify-general-tab"
 import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-general-tab";
 import { WebhookGeneralInfoTab } from "./containers/general/webhook-general-tab";
 import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
+import { SheinGeneralInfoTab } from "./containers/general/shein-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -107,6 +109,8 @@ const getIntegrationQuery = () => {
       return getAmazonChannelQuery;
     case IntegrationTypes.Ebay:
       return getEbayChannelQuery;
+    case IntegrationTypes.Shein:
+      return getSheinChannelQuery;
     case IntegrationTypes.Webhook:
       return getWebhookIntegrationQuery;
     default:
@@ -128,6 +132,8 @@ const getIntegrationQueryKey = () => {
       return "webhookIntegration";
     case IntegrationTypes.Ebay:
       return "ebayChannel";
+    case IntegrationTypes.Shein:
+      return "sheinChannel";
     default:
       return "salesChannel";
   }
@@ -147,6 +153,8 @@ const getGeneralComponent = () => {
       return WebhookGeneralInfoTab;
     case IntegrationTypes.Ebay:
       return EbayGeneralInfoTab;
+    case IntegrationTypes.Shein:
+      return SheinGeneralInfoTab;
     default:
       return null;
   }

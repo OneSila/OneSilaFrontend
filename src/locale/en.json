@@ -2506,7 +2506,13 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook"
+      "webhook": "Webhook",
+      "shein": "Shein"
+    },
+    "shein": {
+      "installed": {
+        "title": "Shein Connected"
+      }
     },
     "show": {
       "title": "Integration",
@@ -2549,6 +2555,9 @@
           }
         }
       },
+      "shein": {
+        "title": "Shein Integration"
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -2573,6 +2582,10 @@
       },
       "ebayNotConnectedBanner": {
         "title": "Ebay connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
+      "sheinNotConnectedBanner": {
+        "title": "Shein connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
       "stores": {
@@ -2916,6 +2929,8 @@
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "ebayTitle": "Ebay",
           "ebayExample": "Ebay integration to manage your marketplace listings.",
+          "sheinTitle": "Shein",
+          "sheinExample": "Shein integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "webhookTitle": "Webhook",
@@ -3171,6 +3186,15 @@
           "title": "Ebay Connected",
           "loading": "Connecting your store",
           "success": "Your Ebay store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
+        }
+      },
+      "shein": {
+        "installed": {
+          "title": "Shein Connected",
+          "loading": "Connecting your store",
+          "success": "Your Shein store was successfully connected!",
           "genericError": "Something went wrong while connecting your store.",
           "missingParams": "Missing required query parameters. Please retry the installation."
         }

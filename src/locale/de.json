@@ -281,7 +281,21 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook"
+      "webhook": "Webhook",
+      "shein": ""
+    },
+    "create": {
+      "wizard": {
+        "step1": {
+          "sheinTitle": "",
+          "sheinExample": ""
+        }
+      }
+    },
+    "shein": {
+      "installed": {
+        "title": ""
+      }
     },
     "labels": {
       "fulfillmentPolicy": "Versandrichtlinie",
@@ -296,9 +310,25 @@
     "salesChannel": {
       "helpText": {
         "startingStock": ""
+      },
+      "shein": {
+        "installed": {
+          "title": "",
+          "loading": "",
+          "success": "",
+          "genericError": "",
+          "missingParams": ""
+        }
       }
     },
     "show": {
+      "shein": {
+        "title": ""
+      },
+      "sheinNotConnectedBanner": {
+        "title": "",
+        "content": ""
+      },
       "properties": {
         "title": "",
         "labels": {
