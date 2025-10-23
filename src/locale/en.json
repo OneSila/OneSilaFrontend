@@ -2864,6 +2864,10 @@
           "title": "Amazon property not mapped",
           "content": "Map the Amazon property first before mapping values."
         },
+        "notMappedBannerEbay": {
+          "title": "eBay property not mapped",
+          "content": "Map the eBay property first before mapping values."
+        },
         "recommendation": {
           "title": "Recommendations",
           "searching": "Searching for suggestions...",
@@ -3333,14 +3337,26 @@
               "startProcess": "Starting import process"
             }
           }
-        }
-      },
-      "ebay": {
-        "wizard": {
-          "steps": {
-            "type": "Select import type",
-            "languages": "Map languages",
-            "currencies": "Map currencies"
+        },
+        "ebay": {
+          "wizard": {
+            "steps": {
+              "type": "Select import type",
+              "languages": "Map languages",
+              "currencies": "Map currencies"
+            },
+            "languages": {
+              "title": "Map your remote languages",
+              "description": "Match at least one remote language with a local language to continue.",
+              "noData": "No languages available. Please try again later.",
+              "fetchError": "An error occurred while fetching remote languages."
+            },
+            "currencies": {
+              "title": "Map your remote currencies",
+              "description": "Match at least one remote currency with a local currency to continue.",
+              "noData": "No currencies available. Please try again later.",
+              "fetchError": "An error occurred while fetching remote currencies."
+            }
           },
           "languages": {
             "title": "Map your remote languages",

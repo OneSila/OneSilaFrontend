@@ -60,6 +60,8 @@ const perPageOptions = [
   {name: '100', value: 100},
 ];
 
+const PRODUCT_PROPERTIES_PAGE_SIZE = 100;
+
 const searchQuery = ref('');
 const filters = ref<Record<string, boolean>>({
   [ConfigTypes.REQUIRED]: true,
@@ -282,14 +284,32 @@ const fetchPropertiesIds = async (productTypeValueId, fetchPolicy) => {
 }
 
 const setInitialValues = async (propertiesIds, fetchPolicy) => {
-  const {data} = await apolloClient.query({
-    query: productPropertiesQuery,
-    variables: {filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}}},
-    fetchPolicy: fetchPolicy
-  });
+  if (!propertiesIds.length) {
+    return true;
+  }
 
-  if (data && data.productProperties && data.productProperties.edges) {
-    data.productProperties.edges.forEach(edge => {
+  let hasNextPage = true;
+  let afterCursor: string | null = null;
+
+  while (hasNextPage) {
+    const variables: Record<string, unknown> = {
+      filter: {property: {id: {inList: propertiesIds}}, product: {id: {exact: props.product.id}}},
+      first: PRODUCT_PROPERTIES_PAGE_SIZE,
+    };
+
+    if (afterCursor) {
+      variables.after = afterCursor;
+    }
+
+    const {data} = await apolloClient.query({
+      query: productPropertiesQuery,
+      variables,
+      fetchPolicy: fetchPolicy
+    });
+
+    const edges = data?.productProperties?.edges ?? [];
+
+    edges.forEach(edge => {
       const value = edge.node;
       const existingItem = values.value.find(v => v.property.id === value.property.id);
 
@@ -307,6 +327,10 @@ const setInitialValues = async (propertiesIds, fetchPolicy) => {
         })) : null;
       }
     });
+
+    const pageInfo = data?.productProperties?.pageInfo;
+    hasNextPage = Boolean(pageInfo?.hasNextPage && edges.length);
+    afterCursor = pageInfo?.endCursor ?? null;
   }
 
   return true;

@@ -524,6 +524,10 @@
           "localizedValue": "",
           "translatedValue": ""
         },
+        "notMappedBannerEbay": {
+          "title": "",
+          "content": ""
+        },
         "bulkAssign": "",
         "bulkAssignTitle": "",
         "assignSuccess": ""
@@ -629,6 +633,18 @@
               "noData": "",
               "fetchError": ""
             }
+          },
+          "languages": {
+            "title": "",
+            "description": "",
+            "noData": "",
+            "fetchError": ""
+          },
+          "currencies": {
+            "title": "",
+            "description": "",
+            "noData": "",
+            "fetchError": ""
           }
         }
       }
