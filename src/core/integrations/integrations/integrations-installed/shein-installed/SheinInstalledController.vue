@@ -9,8 +9,8 @@ import { Card } from "../../../../../shared/components/atoms/card";
 import { Link } from "../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../shared/components/atoms/button";
 import { IntegrationTypes } from "../../integrations";
-import GeneralTemplate from "../../../../../shared/templates/GeneralTemplate.vue";
 import { validateSheinAuthMutation } from "../../../../../shared/api/mutations/salesChannels";
+import GeneralTemplate from "../../../../../shared/templates/GeneralTemplate.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -20,9 +20,9 @@ const loading = ref(true);
 const id = ref<string | null>(null);
 
 onMounted(async () => {
-  const { app_id, temp_token, state } = route.query;
+  const { appid, tempToken, state } = route.query;
 
-  if (!app_id || !temp_token || !state) {
+  if (!appid || !tempToken || !state) {
     errors.value.push(t('integrations.salesChannel.shein.installed.missingParams'));
     loading.value = false;
     return;
@@ -33,8 +33,8 @@ onMounted(async () => {
       mutation: validateSheinAuthMutation,
       variables: {
         data: {
-          appId: Array.isArray(app_id) ? app_id[0] : app_id,
-          tempToken: Array.isArray(temp_token) ? temp_token[0] : temp_token,
+          appId: Array.isArray(appid) ? appid[0] : appid,
+          tempToken: Array.isArray(tempToken) ? tempToken[0] : tempToken,
           state: Array.isArray(state) ? state[0] : state,
         }
       }

@@ -31,7 +31,7 @@ interface EditSheinForm {
   syncPrices: boolean;
   importOrders: boolean;
   startingStock: number | null;
-  accessToken?: string | null;
+  openKeyId?: string | null;
 }
 
 const props = defineProps<{ data: EditSheinForm }>();
@@ -220,7 +220,7 @@ useShiftBackspaceKeyboardListener(goBack);
     </div>
   </div>
 
-  <div v-if="!formData.accessToken" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 mt-4" role="alert">
+  <div v-if="!formData.openKeyId" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 mt-4" role="alert">
     <span class="font-medium flex items-center gap-1">
       ⚠️ {{ t('integrations.show.sheinNotConnectedBanner.title') }}
     </span>

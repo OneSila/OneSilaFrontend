@@ -330,6 +330,7 @@ export const getSheinChannelQuery = gql`
       startingStock
       firstImportComplete
       isImporting
+      openKeyId
       integrationPtr {
         id
       }
