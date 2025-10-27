@@ -170,6 +170,7 @@ export const productTypesSearchConfigConstructor = (
       addLookup: true,
       lookupKeys: ['id'],
       queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } },
+      default: salesChannelId,
     });
   }
 

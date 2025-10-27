@@ -4,6 +4,7 @@ import RemotePropertySelectValues from '../remote-property-select-values/RemoteP
 import BulkRemotePropertySelectValueAssigner from '../remote-property-select-values/BulkRemotePropertySelectValueAssigner.vue';
 import { ebayPropertySelectValuesSearchConfigConstructor, ebayPropertySelectValuesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
 import { bulkUpdateEbayPropertySelectValueLocalInstanceMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
+import { useEnsureMarketplaceFilter } from "../../../../utils/useEnsureMarketplaceFilter";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -11,6 +12,8 @@ const { t } = useI18n();
 
 const searchConfig = ebayPropertySelectValuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = ebayPropertySelectValuesListingConfigConstructor(t, props.id);
+
+useEnsureMarketplaceFilter(() => props.salesChannelId);
 
 const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
   name: 'integrations.remotePropertySelectValues.edit',
