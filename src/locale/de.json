@@ -855,5 +855,184 @@
         "step2": "Searching for duplicates"
       }
     }
+  },
+  "settings": {
+    "chatGptProductFeed": {
+      "title": "",
+      "form": {
+        "successUpdate": ""
+      },
+      "messages": {
+        "loadError": ""
+      },
+      "labels": {
+        "conditionProperty": "",
+        "condtionNewValue": "",
+        "condtionRefurbishedValue": "",
+        "condtionUsdValue": "",
+        "brandProperty": "",
+        "materialProperty": "",
+        "mpnProperty": "",
+        "colorProperty": "",
+        "sizeProperty": "",
+        "ageGroupProperty": "",
+        "ageGroupNewbornValue": "",
+        "ageGroupInfantValue": "",
+        "ageGroupTodlerValue": "",
+        "ageGroupKidsValue": "",
+        "ageGroupAdultValue": "",
+        "lengthProperty": "",
+        "lengthUnit": "",
+        "widthProperty": "",
+        "heightProperty": "",
+        "weightProperty": "",
+        "weightUnit": "",
+        "expirationDateProperty": "",
+        "pickupMethodProperty": "",
+        "pickupMethodInStoreValue": "",
+        "pickupMethodReserveValue": "",
+        "pickupMethodNotSupportedValue": "",
+        "genderSystemProperty": "",
+        "popularityScoreProperty": "",
+        "warningProperty": "",
+        "ageRestrictionProperty": ""
+      },
+      "placeholders": {
+        "property": "",
+        "value": "",
+        "unit": ""
+      },
+      "info": {
+        "title": "",
+        "description": "",
+        "linkLabel": "",
+        "sources": {
+          "product": "",
+          "mapping": "",
+          "salesChannel": "",
+          "notSynced": "",
+          "bundle": "",
+          "defaultSync": ""
+        },
+        "sections": {
+          "basicProductData": {
+            "title": "",
+            "description": ""
+          },
+          "itemInformation": {
+            "title": "",
+            "description": ""
+          },
+          "media": {
+            "title": "",
+            "description": ""
+          },
+          "priceAndPromotions": {
+            "title": "",
+            "description": ""
+          },
+          "availabilityInventory": {
+            "title": "",
+            "description": ""
+          },
+          "variants": {
+            "title": "",
+            "description": ""
+          },
+          "fulfillment": {
+            "title": "",
+            "description": ""
+          },
+          "merchantInfo": {
+            "title": "",
+            "description": ""
+          },
+          "returns": {
+            "title": "",
+            "description": ""
+          },
+          "performanceSignals": {
+            "title": "",
+            "description": ""
+          },
+          "compliance": {
+            "title": "",
+            "description": ""
+          },
+          "reviewsQa": {
+            "title": "",
+            "description": ""
+          },
+          "relatedProducts": {
+            "title": "",
+            "description": ""
+          },
+          "geoTagging": {
+            "title": "",
+            "description": ""
+          }
+        },
+        "fields": {
+          "id": "",
+          "gtin": "",
+          "mpn": "",
+          "title": "",
+          "description": "",
+          "link": "",
+          "condition": "",
+          "productCategory": "",
+          "brand": "",
+          "material": "",
+          "dimensions": "",
+          "length": "",
+          "width": "",
+          "height": "",
+          "weight": "",
+          "ageGroup": "",
+          "imageLink": "",
+          "additionalImageLink": "",
+          "videoLink": "",
+          "price": "",
+          "applicableTaxesFees": "",
+          "salePrice": "",
+          "salePriceEffectiveDate": "",
+          "unitPricingMeasure": "",
+          "pricingTrend": "",
+          "availability": "",
+          "availabilityDate": "",
+          "inventoryQuantity": "",
+          "expirationDate": "",
+          "pickupMethod": "",
+          "pickupSla": "",
+          "itemGroupId": "",
+          "itemGroupTitle": "",
+          "color": "",
+          "size": "",
+          "sizeSystem": "",
+          "gender": "",
+          "offerId": "",
+          "customVariant1Category": "",
+          "customVariant1Option": "",
+          "customVariant2Category": "",
+          "customVariant2Option": "",
+          "customVariant3Category": "",
+          "customVariant3Option": "",
+          "fulfillmentData": "",
+          "sellerName": "",
+          "sellerUrl": "",
+          "sellerPrivacyPolicy": "",
+          "sellerTos": "",
+          "returnPolicy": "",
+          "returnWindow": "",
+          "popularityScore": "",
+          "returnRate": "",
+          "warning": "",
+          "ageRestriction": "",
+          "reviews": "",
+          "relatedProducts": "",
+          "geoOverrides": ""
+        }
+      }
+    }
   }
 }

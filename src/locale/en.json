@@ -2273,6 +2273,183 @@
         "title": "Give your brands a voice",
         "content": "Add a custom description for this brand to guide how it's represented in AI-generated content. You can create different descriptions for different languages. If the language is left empty, this will act as the default description for the brand."
       }
+    },
+    "chatGptProductFeed": {
+      "title": "ChatGPT Product Feed",
+      "form": {
+        "successUpdate": "ChatGPT feed configuration saved."
+      },
+      "messages": {
+        "loadError": "Something went wrong."
+      },
+      "labels": {
+        "conditionProperty": "Condition property",
+        "condtionNewValue": "Condition value – new",
+        "condtionRefurbishedValue": "Condition value – refurbished",
+        "condtionUsdValue": "Condition value – used",
+        "brandProperty": "Brand property",
+        "materialProperty": "Material property",
+        "mpnProperty": "MPN property",
+        "colorProperty": "Color property",
+        "sizeProperty": "Size property",
+        "ageGroupProperty": "Age group property",
+        "ageGroupNewbornValue": "Age group value – newborn",
+        "ageGroupInfantValue": "Age group value – infant",
+        "ageGroupTodlerValue": "Age group value – toddler",
+        "ageGroupKidsValue": "Age group value – kids",
+        "ageGroupAdultValue": "Age group value – adult",
+        "lengthProperty": "Length property",
+        "lengthUnit": "Length unit",
+        "widthProperty": "Width property",
+        "heightProperty": "Height property",
+        "weightProperty": "Weight property",
+        "weightUnit": "Weight unit",
+        "expirationDateProperty": "Expiration date property",
+        "pickupMethodProperty": "Pickup method property",
+        "pickupMethodInStoreValue": "Pickup method value – in store",
+        "pickupMethodReserveValue": "Pickup method value – reserve",
+        "pickupMethodNotSupportedValue": "Pickup method value – not supported",
+        "genderSystemProperty": "Gender system property",
+        "popularityScoreProperty": "Popularity score property",
+        "warningProperty": "Warning property",
+        "ageRestrictionProperty": "Age restriction property"
+      },
+      "placeholders": {
+        "property": "Select a property",
+        "value": "Select a value",
+        "unit": "Enter unit (e.g., cm)"
+      },
+      "info": {
+        "title": "How each feed field is populated",
+        "description": "Review how OneSila maps your catalog data to the ChatGPT Product Feed specification.",
+        "linkLabel": "Open ChatGPT Product Feed specification",
+        "sources": {
+          "product": "Product",
+          "mapping": "Mapped attribute",
+          "salesChannel": "Sales channel config",
+          "notSynced": "Not synced",
+          "bundle": "Bundle",
+          "defaultSync": "Default (sync day)"
+        },
+        "sections": {
+          "basicProductData": {
+            "title": "Basic Product Data",
+            "description": "Provide the core identifiers and descriptive text needed to uniquely reference each product. These fields establish the canonical record that ChatGPT Search uses to display and link to your product."
+          },
+          "itemInformation": {
+            "title": "Item Information",
+            "description": "Capture the physical characteristics and classification details of the product. This data helps ensure accurate categorization, filtering, and search relevance."
+          },
+          "media": {
+            "title": "Media",
+            "description": "Supply visual and rich media assets that represent the product. High-quality images and optional videos or 3D models improve user trust and engagement."
+          },
+          "priceAndPromotions": {
+            "title": "Price & Promotions",
+            "description": "Define standard and promotional pricing information. These attributes power price display, discount messaging, and offer comparisons."
+          },
+          "availabilityInventory": {
+            "title": "Availability & Inventory",
+            "description": "Describe current stock levels and key timing signals for product availability. Accurate inventory data ensures users only see items they can actually purchase."
+          },
+          "variants": {
+            "title": "Variants",
+            "description": "Specify variant relationships and distinguishing attributes such as color or size. These fields allow ChatGPT to group related SKUs and surface variant-specific details."
+          },
+          "fulfillment": {
+            "title": "Fulfillment",
+            "description": "Fulfillment data is not currently synced to ChatGPT."
+          },
+          "merchantInfo": {
+            "title": "Merchant Info",
+            "description": "Identify the seller and link to any relevant merchant policies or storefront pages. This ensures proper attribution and enables users to review seller credentials."
+          },
+          "returns": {
+            "title": "Returns",
+            "description": "Provide return policies and time windows to set clear expectations for buyers. Transparent return data builds trust and reduces post-purchase confusion."
+          },
+          "performanceSignals": {
+            "title": "Performance Signals",
+            "description": "Share popularity and return-rate metrics where available. These signals can be used to enhance ranking and highlight high-performing products."
+          },
+          "compliance": {
+            "title": "Compliance",
+            "description": "Include regulatory warnings, disclaimers, or age restrictions. Compliance fields help meet legal obligations and protect consumers."
+          },
+          "reviewsQa": {
+            "title": "Reviews and Q&A",
+            "description": "User-generated insights strengthen credibility and help shoppers make informed decisions. These fields are not yet synced."
+          },
+          "relatedProducts": {
+            "title": "Related Products",
+            "description": "List products that are commonly bought together or act as substitutes. This enables basket-building recommendations and cross-sell opportunities."
+          },
+          "geoTagging": {
+            "title": "Geo Tagging",
+            "description": "Indicate any region-specific pricing or availability overrides. Geo data allows ChatGPT to present accurate offers and stock status by location."
+          }
+        },
+        "fields": {
+          "id": "ID",
+          "gtin": "GTIN",
+          "mpn": "MPN",
+          "title": "Title",
+          "description": "Description",
+          "link": "Link",
+          "condition": "Condition",
+          "productCategory": "Product category",
+          "brand": "Brand",
+          "material": "Material",
+          "dimensions": "Dimensions",
+          "length": "Length",
+          "width": "Width",
+          "height": "Height",
+          "weight": "Weight",
+          "ageGroup": "Age group",
+          "imageLink": "Image link",
+          "additionalImageLink": "Additional image link",
+          "videoLink": "Video link",
+          "price": "Price",
+          "applicableTaxesFees": "Applicable taxes & fees",
+          "salePrice": "Sale price",
+          "salePriceEffectiveDate": "Sale price effective date",
+          "unitPricingMeasure": "Unit pricing measure",
+          "pricingTrend": "Pricing trend",
+          "availability": "Availability",
+          "availabilityDate": "Availability date",
+          "inventoryQuantity": "Inventory quantity",
+          "expirationDate": "Expiration date",
+          "pickupMethod": "Pickup method",
+          "pickupSla": "Pickup SLA",
+          "itemGroupId": "Item group ID",
+          "itemGroupTitle": "Item group title",
+          "color": "Color",
+          "size": "Size",
+          "sizeSystem": "Size system",
+          "gender": "Gender",
+          "offerId": "Offer ID",
+          "customVariant1Category": "Custom variant 1 category",
+          "customVariant1Option": "Custom variant 1 option",
+          "customVariant2Category": "Custom variant 2 category",
+          "customVariant2Option": "Custom variant 2 option",
+          "customVariant3Category": "Custom variant 3 category",
+          "customVariant3Option": "Custom variant 3 option",
+          "fulfillmentData": "Fulfillment data",
+          "sellerName": "Seller name",
+          "sellerUrl": "Seller URL",
+          "sellerPrivacyPolicy": "Seller privacy policy",
+          "sellerTos": "Seller terms of service",
+          "returnPolicy": "Return policy",
+          "returnWindow": "Return window",
+          "popularityScore": "Popularity score",
+          "returnRate": "Return rate",
+          "warning": "Warning",
+          "ageRestriction": "Age restriction",
+          "reviews": "Reviews & Q&A",
+          "relatedProducts": "Related products",
+          "geoOverrides": "Geo overrides"
+        }
+      }
     }
   },
   "network": {
