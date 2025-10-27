@@ -59,6 +59,14 @@ export const getMagentoChannelQuery = gql`
       authenticationMethod
       attributeSetSkeletonId
       eanCodeAttribute
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
       firstImportComplete
       isImporting
       integrationPtr {
@@ -88,6 +96,14 @@ export const getShopifyChannelQuery = gql`
       apiKey
       apiSecret
       accessToken
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
       firstImportComplete
       isImporting
       integrationPtr {
@@ -118,6 +134,14 @@ export const getWoocommerceChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
       apiKey
       apiSecret
       firstImportComplete

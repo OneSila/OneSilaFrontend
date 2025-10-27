@@ -2077,6 +2077,13 @@
   },
   "integrations": {
     "show": {
+      "sections": {
+        "throttling": "",
+        "syncPreferences": "",
+        "gpt": "",
+        "authentication": "",
+        "defaultUnits": ""
+      },
       "ebay": {
         "title": "",
         "productRules": {
@@ -2457,7 +2464,15 @@
       "lengthUnit": "Lengte-eenheid",
       "weightUnit": "Gewichtseenheid",
       "isDefaultMarketplace": "Standaardmarktplaats",
-      "startingStock": ""
+      "startingStock": "",
+      "gptEnable": "",
+      "gptEnableCheckout": "",
+      "gptSellerName": "",
+      "gptSellerUrl": "",
+      "gptSellerPrivacyPolicy": "",
+      "gptSellerTos": "",
+      "gptReturnPolicy": "",
+      "gptReturnWindow": ""
     },
     "salesChannel": {
       "labels": {
@@ -2465,7 +2480,11 @@
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
       },
       "helpText": {
-        "startingStock": ""
+        "startingStock": "",
+        "gptEnable": "",
+        "gptSellerUrl": "",
+        "gptReturnWindow": "",
+        "gptEnableCheckout": ""
       }
     },
     "ebay": {

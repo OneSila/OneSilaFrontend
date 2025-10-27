@@ -2556,6 +2556,7 @@
       "sections": {
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
+        "gpt": "GPT settings",
         "authentication": "Authentication",
         "defaultUnits": "Default Units"
       },
@@ -3043,6 +3044,14 @@
       "apiKey": "API Key",
       "apiSecret": "API secret key",
       "accessToken": "Access Token",
+      "gptEnable": "Enable GPT product feed",
+      "gptEnableCheckout": "Enable GPT checkout",
+      "gptSellerName": "Seller display name",
+      "gptSellerUrl": "Seller URL",
+      "gptSellerPrivacyPolicy": "Privacy policy URL",
+      "gptSellerTos": "Terms of service URL",
+      "gptReturnPolicy": "Return policy URL",
+      "gptReturnWindow": "Return window",
       "region": "Region",
       "country": "Country",
       "fulfillmentPolicy": "Fulfillment policy",
@@ -3194,7 +3203,11 @@
         "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",
         "hostApiKey": "Your Access Token is available in Magento under System > Integrations.",
         "password": "Using a password is not recommended. Use an Access Token instead.",
-        "shopifyVendorProperty": "This must be a property of type Select. Its selected value will be sent as the product's vendor in Shopify."
+        "shopifyVendorProperty": "This must be a property of type Select. Its selected value will be sent as the product's vendor in Shopify.",
+        "gptEnable": "Toggle to send GPT-ready product data to supported experiences.",
+        "gptSellerUrl": "Leave blank to reuse {hostname} as the seller URL.",
+        "gptReturnWindow": "Specify the number of days customers have to return an order.",
+        "gptEnableCheckout": "Enable when you are ready for GPT experiences to provide checkout flows using these policies."
       },
       "modal": {
         "logs": {

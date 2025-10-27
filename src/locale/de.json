@@ -291,14 +291,33 @@
       "lengthUnit": "Längeneinheit",
       "weightUnit": "Gewichtseinheit",
       "isDefaultMarketplace": "Standardmarktplatz",
-      "startingStock": ""
+      "startingStock": "",
+      "gptEnable": "",
+      "gptEnableCheckout": "",
+      "gptSellerName": "",
+      "gptSellerUrl": "",
+      "gptSellerPrivacyPolicy": "",
+      "gptSellerTos": "",
+      "gptReturnPolicy": "",
+      "gptReturnWindow": ""
     },
     "salesChannel": {
       "helpText": {
-        "startingStock": ""
+        "startingStock": "",
+        "gptEnable": "",
+        "gptSellerUrl": "",
+        "gptReturnWindow": "",
+        "gptEnableCheckout": ""
       }
     },
     "show": {
+      "sections": {
+        "throttling": "",
+        "syncPreferences": "",
+        "gpt": "",
+        "authentication": "",
+        "defaultUnits": ""
+      },
       "properties": {
         "title": "",
         "labels": {
