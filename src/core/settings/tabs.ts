@@ -18,6 +18,12 @@ export const getTabsConfig = (t: Function): TabItem[] => [
     url: 'settings.vatRates.list',
   },
   {
+    name: 'chatGptProductFeed',
+    label: t('settings.chatGptProductFeed.title'),
+    icon: 'rss',
+    url: 'settings.chatGptProductFeedConfig',
+  },
+  {
     name: 'demoData',
     label: t('settings.demoData.title'),
     icon: 'database',
