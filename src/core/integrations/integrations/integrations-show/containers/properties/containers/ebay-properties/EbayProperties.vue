@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import RemoteProperties from "../remote-properties/RemoteProperties.vue";
 import { ebayPropertiesSearchConfigConstructor, ebayPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
-import { useEnsureMarketplaceFilter } from "../../../../utils/useEnsureMarketplaceFilter";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -11,8 +10,6 @@ const { t } = useI18n();
 
 const searchConfig = computed(() => ebayPropertiesSearchConfigConstructor(t, props.salesChannelId));
 const listingConfig = ebayPropertiesListingConfigConstructor(t, props.id);
-
-useEnsureMarketplaceFilter(() => props.salesChannelId);
 
 const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
   name: 'integrations.remoteProperties.edit',
