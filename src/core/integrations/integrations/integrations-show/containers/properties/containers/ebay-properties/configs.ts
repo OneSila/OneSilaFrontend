@@ -97,7 +97,6 @@ export const ebayPropertiesSearchConfigConstructor = (t: Function, salesChannelI
       addLookup: true,
       lookupKeys: ['id'],
       queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } },
-      default: salesChannelId,
     },
   ],
   orders: [],

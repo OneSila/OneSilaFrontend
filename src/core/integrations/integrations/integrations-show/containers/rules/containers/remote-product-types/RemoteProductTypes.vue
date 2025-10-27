@@ -15,8 +15,6 @@ import {
 import apolloClient from "../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../../shared/utils";
-import { IntegrationTypes } from "../../../../../integrations";
-import { useEnsureMarketplaceFilter } from "../../../../utils/useEnsureMarketplaceFilter";
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
@@ -34,8 +32,6 @@ const listingQuery = computed(() => getListingQuery(type.value));
 const pullMutation = computed(() => getCreateProductTypesFromLocalRulesMutation(type.value));
 const searchConfig = computed(() => productTypesSearchConfigConstructor(t, type.value, salesChannelId.value));
 const listingConfig = computed(() => productTypesListingConfigConstructor(t, type.value, integrationId.value, salesChannelId.value));
-
-useEnsureMarketplaceFilter(() => (type.value === IntegrationTypes.Ebay ? salesChannelId.value : null));
 
 const fetchFirstUnmapped = async () => {
   const { data } = await apolloClient.query({
