@@ -60,7 +60,12 @@ export const CHAT_GPT_PROPERTY_VALUE_DEPENDENCIES: Record<string, string[]> = {
   ],
 };
 
-export const getChatGptProductFeedFields = (t: Function): FormField[] => [
+export const getChatGptProductFeedFields = (t: Function, id:string): FormField[] => [
+  {
+    type: FieldType.Hidden,
+    name: 'id',
+    value: id
+  },
   createPropertyField(t, 'conditionProperty', 'settings.chatGptProductFeed.labels.conditionProperty', false),
   createValueField(t, 'condtionNewValue', 'settings.chatGptProductFeed.labels.condtionNewValue'),
   createValueField(t, 'condtionRefurbishedValue', 'settings.chatGptProductFeed.labels.condtionRefurbishedValue'),
@@ -87,13 +92,14 @@ export const getChatGptProductFeedFields = (t: Function): FormField[] => [
   createValueField(t, 'pickupMethodInStoreValue', 'settings.chatGptProductFeed.labels.pickupMethodInStoreValue'),
   createValueField(t, 'pickupMethodReserveValue', 'settings.chatGptProductFeed.labels.pickupMethodReserveValue'),
   createValueField(t, 'pickupMethodNotSupportedValue', 'settings.chatGptProductFeed.labels.pickupMethodNotSupportedValue'),
-  createPropertyField(t, 'genderSystemProperty', 'settings.chatGptProductFeed.labels.genderSystemProperty'),
+  createPropertyField(t, 'sizeSystemProperty', 'settings.chatGptProductFeed.labels.sizeSystemProperty'),
+  createPropertyField(t, 'genderProperty', 'settings.chatGptProductFeed.labels.genderProperty'),
   createPropertyField(t, 'popularityScoreProperty', 'settings.chatGptProductFeed.labels.popularityScoreProperty'),
   createPropertyField(t, 'warningProperty', 'settings.chatGptProductFeed.labels.warningProperty'),
   createPropertyField(t, 'ageRestrictionProperty', 'settings.chatGptProductFeed.labels.ageRestrictionProperty'),
 ];
 
-export const chatGptProductFeedFormConfigConstructor = (t: Function): FormConfig => ({
+export const chatGptProductFeedFormConfigConstructor = (t: Function, id: string): FormConfig => ({
   type: FormType.EDIT,
   mutation: updateChatGptProductFeedConfigMutation,
   mutationKey: 'updateChatGptProductFeedConfig',
@@ -102,8 +108,9 @@ export const chatGptProductFeedFormConfigConstructor = (t: Function): FormConfig
   addDelete: false,
   addCancel: false,
   helpSections: [],
+  omitNullValues: true,
   submitSuccessUpdate: t('settings.chatGptProductFeed.form.successUpdate'),
-  fields: getChatGptProductFeedFields(t),
+  fields: getChatGptProductFeedFields(t, id),
 });
 
 export const updateValueFieldDependencies = (fields: FormField[], form: Record<string, any>) => {

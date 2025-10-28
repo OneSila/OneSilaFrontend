@@ -158,7 +158,8 @@ import {
   faArrowRight,
   faWaveSquare,
   faChartSimple,
-  faCoins
+  faCoins,
+  faRobot,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -317,6 +318,7 @@ library.add(faArrowRight as IconDefinition);
 library.add(faWaveSquare as IconDefinition);
 library.add(faChartSimple as IconDefinition);
 library.add(faCoins as IconDefinition);
+library.add(faRobot as IconDefinition);
 
 
 export default {

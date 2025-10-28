@@ -137,7 +137,11 @@ export const chatGptProductFeedConfigsQuery = gql`
               id
             }
           }
-          genderSystemProperty {
+          sizeSystemProperty {
+            id
+            name
+          }
+          genderProperty {
             id
             name
           }

@@ -206,7 +206,7 @@ const sections = computed<SectionDescriptor[]>(() => [
     key: 'relatedProducts',
     title: t('settings.chatGptProductFeed.info.sections.relatedProducts.title'),
     description: t('settings.chatGptProductFeed.info.sections.relatedProducts.description'),
-    fields: [field('relatedProducts', ['bundle'])],
+    fields: [field('relatedProducts', ['notSynced'])],
   },
   {
     key: 'geoTagging',

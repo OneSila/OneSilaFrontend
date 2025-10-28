@@ -5,7 +5,8 @@ import apolloClient from '../../../../apollo-client';
 import { Breadcrumbs } from '../../../shared/components/molecules/breadcrumbs';
 import { TabsMenu } from '../../../shared/components/molecules/tabs-menu';
 import { GeneralForm } from '../../../shared/components/organisms/general-form';
-import { FormConfig } from '../../../shared/components/organisms/general-form/formConfig';
+import { FormConfig, FormField } from '../../../shared/components/organisms/general-form/formConfig';
+import { FieldType } from '../../../shared/utils/constants.js';
 import SettingsTemplate from '../SettingsTemplate.vue';
 import { getTabsConfig } from '../tabs';
 import { chatGptProductFeedConfigsQuery } from '../../../shared/api/queries/chatGptProductFeed.js';
@@ -54,10 +55,11 @@ onMounted(async () => {
       return;
     }
 
-    const baseConfig = chatGptProductFeedFormConfigConstructor(t);
+    const baseConfig = chatGptProductFeedFormConfigConstructor(t, node.id);
 
     formConfig.value = {
       ...baseConfig,
+      fullWidth: true,
       mutationId: node.id,
       queryDataKey: 'chatGptProductFeedConfig',
       queryData: {
@@ -154,7 +156,7 @@ const handleSetData = (data: any) => {
       >
         {{ t('settings.chatGptProductFeed.messages.loadError') }}
       </div>
-      <div v-else class="grid gap-6 xl:grid-cols-3">
+      <div v-else class="grid gap-6 xl:grid-cols-3 xl:gap-x-0">
         <div class="xl:col-span-2">
           <GeneralForm
             v-if="formConfig"
@@ -164,7 +166,7 @@ const handleSetData = (data: any) => {
             @set-data="handleSetData"
           />
         </div>
-        <div class="xl:col-span-1">
+        <div class="xl:col-span-1 xl:pl-4">
           <ChatGptProductFeedInfoPanel />
         </div>
       </div>

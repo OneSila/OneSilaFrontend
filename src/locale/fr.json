@@ -908,7 +908,8 @@
         "pickupMethodInStoreValue": "",
         "pickupMethodReserveValue": "",
         "pickupMethodNotSupportedValue": "",
-        "genderSystemProperty": "",
+        "sizeSystemProperty": "",
+        "genderProperty": "",
         "popularityScoreProperty": "",
         "warningProperty": "",
         "ageRestrictionProperty": ""

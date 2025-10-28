@@ -105,7 +105,7 @@ watch(
             :model-value="formData.gptReturnWindow ?? ''"
             :number="true"
             :min-number="1"
-            class="w-full md:w-24"
+            class="w-full"
             @update:modelValue="(value) => { formData.gptReturnWindow = Number.isNaN(value) ? null : value; }"
           />
           <p class="text-red-500 text-sm mt-1" v-if="fieldErrors.gptReturnWindow">

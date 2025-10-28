@@ -135,7 +135,11 @@ export const updateChatGptProductFeedConfigMutation = gql`
           id
         }
       }
-      genderSystemProperty {
+      sizeSystemProperty {
+        id
+        name
+      }
+      genderProperty {
         id
         name
       }
