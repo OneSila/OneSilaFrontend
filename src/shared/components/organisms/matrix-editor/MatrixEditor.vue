@@ -15,6 +15,10 @@ interface ClipboardValue {
   value: any
 }
 
+interface RowClipboardValue {
+  values: Record<string, ClipboardValue>
+}
+
 const props = withDefaults(
   defineProps<{
     columns: MatrixColumn[]
@@ -59,6 +63,7 @@ let selectionAutoScrollFrame: number | null = null
 let selectionAutoScrollDirection: -1 | 0 | 1 = 0
 let lastPointerPosition: { x: number; y: number } | null = null
 const clipboard = ref<ClipboardValue | null>(null)
+const rowClipboard = ref<RowClipboardValue | null>(null)
 const dragState = reactive({
   active: false,
   startRow: null as number | null,
@@ -72,6 +77,7 @@ const lastSnapshot = ref<string>(JSON.stringify(toRaw(props.rows ?? [])))
 
 const columnWidths = reactive<Record<string, number>>({})
 const rows = computed(() => props.rows ?? [])
+const hasRowClipboard = computed(() => rowClipboard.value !== null)
 const getValue = (rowIndex: number, columnKey: string) =>
   props.getCellValue(rowIndex, columnKey)
 
@@ -225,6 +231,26 @@ const extendSelectionDrag = (rowIndex: number, columnKey: string, event: MouseEv
   updateSelectionDrag(columnKey)
   handleSelectionAutoScroll(event)
   event.preventDefault()
+}
+
+const hoveredRowForActions = ref<number | null>(null)
+
+const handleCellMouseEnter = (
+  rowIndex: number,
+  columnKey: string,
+  columnIndex: number,
+  event: MouseEvent
+) => {
+  extendSelectionDrag(rowIndex, columnKey, event)
+  if (columnIndex === 0) {
+    hoveredRowForActions.value = rowIndex
+  }
+}
+
+const handleCellMouseLeave = (rowIndex: number, columnIndex: number) => {
+  if (columnIndex === 0 && hoveredRowForActions.value === rowIndex) {
+    hoveredRowForActions.value = null
+  }
 }
 
 const stopSelectionDrag = () => {
@@ -626,6 +652,75 @@ const transformClipboardValue = (
   return undefined
 }
 
+const copyRow = (rowIndex: number) => {
+  const values: Record<string, ClipboardValue> = {}
+  props.columns.forEach((column) => {
+    if (!isEditableColumn(column.key)) return
+    const value = props.getCellValue(rowIndex, column.key)
+    values[column.key] = {
+      column: column.key,
+      columnType: getColumnType(column.key),
+      value: JSON.parse(JSON.stringify(value ?? null)),
+    }
+  })
+
+  if (!Object.keys(values).length) {
+    rowClipboard.value = null
+    Toast.error(t('products.products.alert.toast.rowCopyNoEditableColumns'))
+    return
+  }
+
+  rowClipboard.value = { values }
+  Toast.success(t('products.products.alert.toast.rowCopied'))
+}
+
+const pasteRow = (rowIndex: number) => {
+  if (!rowClipboard.value) {
+    Toast.error(t('products.products.alert.toast.rowClipboardEmpty'))
+    return
+  }
+
+  const entries = Object.entries(rowClipboard.value.values).filter(([columnKey]) => {
+    if (!isEditableColumn(columnKey)) return false
+    return props.columns.some((column) => column.key === columnKey)
+  })
+
+  if (!entries.length) {
+    Toast.error(t('products.products.alert.toast.rowPasteNoEditableColumns'))
+    return
+  }
+
+  const invalidColumn = entries.find(([columnKey, clipboardValue]) =>
+    !canPasteToColumn(clipboardValue, columnKey)
+  )
+
+  if (invalidColumn) {
+    Toast.error(t('products.products.alert.toast.pasteIncompatibleColumn'))
+    return
+  }
+
+  entries.forEach(([columnKey, clipboardValue]) => {
+    if (clipboardValue.value === null) {
+      props.clearCellValue(rowIndex, columnKey)
+      return
+    }
+
+    const transformed = transformClipboardValue(
+      clipboardValue.value,
+      clipboardValue.columnType,
+      getColumnType(columnKey)
+    )
+
+    if (transformed === null) {
+      props.clearCellValue(rowIndex, columnKey)
+    } else if (transformed !== undefined) {
+      props.setCellValue(rowIndex, columnKey, JSON.parse(JSON.stringify(transformed)))
+    }
+  })
+
+  Toast.success(t('products.products.alert.toast.rowPasted'))
+}
+
 watch(
   selectedCell,
   () => {
@@ -783,7 +878,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
         <tbody>
           <tr v-for="(row, rowIndex) in rows" :key="row?.[rowKey] ?? rowIndex" class="border-t">
             <td
-              v-for="column in columns"
+              v-for="(column, columnIndex) in columns"
               :key="column.key"
               class="px-4 py-1 border-r border-gray-200 relative cursor-pointer"
               :class="[
@@ -807,9 +902,33 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
               :data-row="rowIndex"
               :data-col="column.key"
               @mousedown="(event) => beginSelectionDrag(rowIndex, column.key, event)"
-              @mouseenter="(event) => extendSelectionDrag(rowIndex, column.key, event)"
+              @mouseenter="(event) => handleCellMouseEnter(rowIndex, column.key, columnIndex, event)"
+              @mouseleave="() => handleCellMouseLeave(rowIndex, columnIndex)"
               @click="(event) => selectCell(rowIndex, column.key, event)"
             >
+              <div
+                v-if="columnIndex === 0"
+                class="absolute left-0 top-1/2 flex -translate-x-full -translate-y-1/2 transform flex-col space-y-1"
+                :class="[
+                  hoveredRowForActions === rowIndex
+                    ? 'opacity-100 pointer-events-auto'
+                    : 'opacity-0 pointer-events-none',
+                ]"
+              >
+                <Button
+                  customClass="btn btn-secondary px-2 py-1 text-xs leading-none"
+                  @click.stop.prevent="copyRow(rowIndex)"
+                >
+                  {{ t('products.products.matrix.rowActions.copy') }}
+                </Button>
+                <Button
+                  :disabled="!hasRowClipboard"
+                  customClass="btn btn-secondary px-2 py-1 text-xs leading-none"
+                  @click.stop.prevent="pasteRow(rowIndex)"
+                >
+                  {{ t('products.products.matrix.rowActions.paste') }}
+                </Button>
+              </div>
               <div
                 v-if="isActiveCell(rowIndex, column.key)"
                 class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
