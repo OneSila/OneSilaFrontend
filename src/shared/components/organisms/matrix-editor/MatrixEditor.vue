@@ -247,10 +247,22 @@ const handleCellMouseEnter = (
   }
 }
 
-const handleCellMouseLeave = (rowIndex: number, columnIndex: number) => {
-  if (columnIndex === 0 && hoveredRowForActions.value === rowIndex) {
-    hoveredRowForActions.value = null
+const handleCellMouseLeave = (
+  rowIndex: number,
+  columnIndex: number,
+  event?: MouseEvent
+) => {
+  if (columnIndex !== 0 || hoveredRowForActions.value !== rowIndex) {
+    return
   }
+
+  const currentTarget = event?.currentTarget as HTMLElement | null
+  const relatedTarget = event?.relatedTarget as HTMLElement | null
+  if (currentTarget && relatedTarget && currentTarget.contains(relatedTarget)) {
+    return
+  }
+
+  hoveredRowForActions.value = null
 }
 
 const stopSelectionDrag = () => {
@@ -903,17 +915,23 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
               :data-col="column.key"
               @mousedown="(event) => beginSelectionDrag(rowIndex, column.key, event)"
               @mouseenter="(event) => handleCellMouseEnter(rowIndex, column.key, columnIndex, event)"
-              @mouseleave="() => handleCellMouseLeave(rowIndex, columnIndex)"
+              @mouseleave="(event) => handleCellMouseLeave(rowIndex, columnIndex, event)"
               @click="(event) => selectCell(rowIndex, column.key, event)"
             >
+              <slot
+                name="cell"
+                :row="row"
+                :column="column"
+                :row-index="rowIndex"
+                :is-selected="isCellSelected(rowIndex, column.key)"
+              >
+                <span class="block truncate">
+                  {{ getValue(rowIndex, column.key) ?? '' }}
+                </span>
+              </slot>
               <div
-                v-if="columnIndex === 0"
-                class="absolute left-0 top-1/2 flex -translate-x-full -translate-y-1/2 transform flex-col space-y-1"
-                :class="[
-                  hoveredRowForActions === rowIndex
-                    ? 'opacity-100 pointer-events-auto'
-                    : 'opacity-0 pointer-events-none',
-                ]"
+                v-if="columnIndex === 0 && hoveredRowForActions === rowIndex"
+                class="mt-2 flex flex-col space-y-2"
               >
                 <Button
                   customClass="btn btn-secondary px-2 py-1 text-xs leading-none"
@@ -938,17 +956,6 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
                 class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
                 @mousedown.stop="startDragFill(rowIndex, column.key)"
               />
-              <slot
-                name="cell"
-                :row="row"
-                :column="column"
-                :row-index="rowIndex"
-                :is-selected="isCellSelected(rowIndex, column.key)"
-              >
-                <span class="block truncate">
-                  {{ getValue(rowIndex, column.key) ?? '' }}
-                </span>
-              </slot>
             </td>
           </tr>
         </tbody>
