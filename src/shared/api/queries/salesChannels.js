@@ -73,8 +73,16 @@ export const getMagentoChannelQuery = gql`
         id
       }
       saleschannelPtr {
-       id
-       }
+        id
+        gptFeed {
+          id
+          fileUrl
+          lastSyncedAt
+          file {
+            url
+          }
+        }
+      }
     }
   }
 `;
@@ -111,6 +119,14 @@ export const getShopifyChannelQuery = gql`
       }
       saleschannelPtr {
         id
+        gptFeed {
+          id
+          fileUrl
+          lastSyncedAt
+          file {
+            url
+          }
+        }
       }
       vendorProperty {
         id
@@ -151,6 +167,14 @@ export const getWoocommerceChannelQuery = gql`
       }
       saleschannelPtr {
         id
+        gptFeed {
+          id
+          fileUrl
+          lastSyncedAt
+          file {
+            url
+          }
+        }
       }
     }
   }

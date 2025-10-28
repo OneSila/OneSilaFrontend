@@ -93,6 +93,19 @@ export const updateEbaySalesChannelMutation = gql`
   }
 `;
 
+export const resyncSalesChannelGptFeedMutation = gql`
+  mutation resyncSalesChannelGptFeed($data: SalesChannelGptFeedPartialInput!) {
+    resyncSalesChannelGptFeed(data: $data) {
+      id
+      fileUrl
+      lastSyncedAt
+      file {
+        url
+      }
+    }
+  }
+`;
+
 
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`

@@ -45,9 +45,19 @@ interface EditMagentoForm {
   gptReturnWindow: number | null;
 }
 
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
+}
+
 // Localization
 const {t} = useI18n();
-const props = defineProps<{ data: EditMagentoForm }>();
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
+const props = defineProps<{ data: EditMagentoForm; gptFeed: SalesChannelGptFeed | null; initialGptEnable: boolean; salesChannelId: string | null }>();
 
 const formData = ref<EditMagentoForm>({
   ...props.data,
@@ -336,7 +346,15 @@ useShiftBackspaceKeyboardListener(goBack);
       </template>
 
       <template #gpt>
-        <GptSettingsForm :form-data="formData" :field-errors="fieldErrors" :hostname="formData.hostname" />
+        <GptSettingsForm
+          :form-data="formData"
+          :field-errors="fieldErrors"
+          :hostname="formData.hostname"
+          :gpt-feed="props.gptFeed"
+          :initial-gpt-enable="props.initialGptEnable"
+          :sales-channel-id="props.salesChannelId"
+          @gpt-feed-updated="emit('gpt-feed-updated', $event)"
+        />
       </template>
 
       <!-- Authentication -->

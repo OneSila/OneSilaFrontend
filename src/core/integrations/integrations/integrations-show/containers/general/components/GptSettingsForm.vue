@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { toRef, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
+import { Button } from "../../../../../../../shared/components/atoms/button";
+import { Icon } from "../../../../../../../shared/components/atoms/icon";
+import { Toast } from "../../../../../../../shared/modules/toast";
+import { resyncSalesChannelGptFeedMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
+import { displayApolloError } from "../../../../../../../shared/utils";
 
 interface GptFormData {
   gptEnable: boolean;
@@ -16,18 +21,41 @@ interface GptFormData {
   gptReturnWindow: number | null;
 }
 
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
+}
+
 interface Props {
   formData: GptFormData;
   fieldErrors: Record<string, string>;
   hostname: string;
+  gptFeed: SalesChannelGptFeed | null;
+  initialGptEnable: boolean;
+  salesChannelId: string | null;
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
 const formData = toRef(props, 'formData');
 const fieldErrors = toRef(props, 'fieldErrors');
 const hostname = toRef(props, 'hostname');
+const initialGptEnable = toRef(props, 'initialGptEnable');
+const salesChannelId = toRef(props, 'salesChannelId');
+const gptFeed = ref<SalesChannelGptFeed | null>(props.gptFeed ?? null);
 
 const { t } = useI18n();
+
+watch(
+  () => props.gptFeed,
+  (newFeed) => {
+    gptFeed.value = newFeed ?? null;
+  },
+);
 
 watch(
   () => formData.value.gptEnable,
@@ -37,6 +65,58 @@ watch(
     }
   },
 );
+
+const feedUrl = computed(() => gptFeed.value?.fileUrl || gptFeed.value?.file?.url || '');
+const showFile = computed(() => Boolean(initialGptEnable.value && feedUrl.value));
+
+const resyncData = computed(() => {
+  const data: Record<string, string> = {};
+  if (gptFeed.value?.id) {
+    data.id = gptFeed.value.id;
+  }
+  if (salesChannelId.value) {
+    data.salesChannel = salesChannelId.value;
+  }
+  return data;
+});
+
+const resyncVariables = computed(() => ({ data: resyncData.value }));
+const canResync = computed(() => Object.keys(resyncData.value).length > 0);
+
+const copyFeedUrl = async () => {
+  if (!feedUrl.value) {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(feedUrl.value);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (error) {
+    console.error('Failed to copy GPT feed URL', error);
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
+};
+
+const openDownload = () => {
+  if (!feedUrl.value) {
+    return;
+  }
+
+  window.open(feedUrl.value, '_blank', 'noopener');
+};
+
+const handleResyncDone = (response: any) => {
+  const updatedFeed = response?.data?.resyncSalesChannelGptFeed ?? null;
+  if (updatedFeed) {
+    gptFeed.value = updatedFeed;
+    emit('gpt-feed-updated', updatedFeed);
+  }
+  Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
+};
+
+const handleResyncError = (error: unknown) => {
+  displayApolloError(error);
+};
 </script>
 
 <template>
@@ -116,6 +196,52 @@ watch(
           </p>
         </div>
       </div>
+
+      <template v-if="showFile">
+        <hr class="border-gray-200" />
+        <div class="grid grid-cols-12 gap-4 items-center">
+          <div class="md:col-span-4 col-span-12">
+            <Label class="font-semibold text-sm text-gray-900">
+              {{ t('integrations.labels.gptFeedUrl') }}
+            </Label>
+          </div>
+          <div class="md:col-span-8 col-span-12 flex flex-wrap items-center gap-3">
+            <div class="relative flex-1">
+              <TextInput :model-value="feedUrl" disabled class="w-full pr-12" />
+              <Button
+                class="absolute right-2 top-1/2 -translate-y-1/2 p-2"
+                :disabled="!feedUrl"
+                @click="copyFeedUrl"
+              >
+                <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
+              </Button>
+            </div>
+            <Button
+              class="flex h-10 w-10 items-center justify-center"
+              :disabled="!feedUrl"
+              @click="openDownload"
+            >
+              <Icon name="download" class="h-5 w-5 text-gray-500" aria-hidden="true" />
+            </Button>
+            <ApolloMutation
+              :mutation="resyncSalesChannelGptFeedMutation"
+              :variables="resyncVariables"
+              @done="handleResyncDone"
+              @error="handleResyncError"
+            >
+              <template #default="{ mutate, loading }">
+                <Button
+                  class="flex h-10 w-10 items-center justify-center"
+                  :disabled="!canResync || loading"
+                  @click="mutate()"
+                >
+                  <Icon name="clock-rotate-left" class="h-5 w-5 text-gray-500" aria-hidden="true" />
+                </Button>
+              </template>
+            </ApolloMutation>
+          </div>
+        </div>
+      </template>
 
       <div class="pt-4 mt-4 border-t border-gray-200 grid grid-cols-12 items-center">
         <div class="md:col-span-4 col-span-12">
