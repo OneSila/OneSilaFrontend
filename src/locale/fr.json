@@ -131,6 +131,30 @@
           "subtitle": ""
         }
       },
+      "alert": {
+        "toast": {
+          "copied": "",
+          "pasted": "",
+          "rowCopied": "",
+          "rowPasted": "",
+          "rowClipboardEmpty": "",
+          "rowCopyNoEditableColumns": "",
+          "rowPasteNoEditableColumns": "",
+          "pasteDifferentColumn": "",
+          "pasteIncompatibleColumn": "",
+          "undo": "",
+          "redo": "",
+          "createdProductProperties": "",
+          "updatedProductProperties": "",
+          "deletedProductProperties": ""
+        }
+      },
+      "matrix": {
+        "rowActions": {
+          "copy": "",
+          "paste": ""
+        }
+      },
       "tabs": {
         "amazon": "Amazon"
       },

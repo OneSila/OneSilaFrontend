@@ -991,6 +991,11 @@
           "bulkDeleteError": "Failed to delete products. Please try again.",
           "copied": "Copied",
           "pasted": "Pasted",
+          "rowCopied": "Row copied",
+          "rowPasted": "Row pasted",
+          "rowClipboardEmpty": "Copy a row before pasting",
+          "rowCopyNoEditableColumns": "No editable columns available to copy from this row",
+          "rowPasteNoEditableColumns": "No editable columns available to paste into this row",
           "pasteDifferentColumn": "Cannot paste to different column",
           "pasteIncompatibleColumn": "Cannot paste into column with incompatible type",
           "undo": "Undid last change",
@@ -999,7 +1004,13 @@
           "updatedProductProperties": "Updated {count} product properties.",
           "deletedProductProperties": "Deleted {count} product properties."
         }
-    },
+      },
+      "matrix": {
+        "rowActions": {
+          "copy": "Copy row",
+          "paste": "Paste row"
+        }
+      },
       "messages": {
         "unsavedChanges": "You have unsaved changes. Are you sure you want to leave this tab?"
       },
