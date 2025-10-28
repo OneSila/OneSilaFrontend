@@ -39,7 +39,17 @@ interface EditWoocommerceForm {
   gptReturnWindow: number | null;
 }
 
-const props = defineProps<{ data: EditWoocommerceForm }>();
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
+}
+
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
+const props = defineProps<{ data: EditWoocommerceForm; gptFeed: SalesChannelGptFeed | null; initialGptEnable: boolean; salesChannelId: string | null }>();
 const { t } = useI18n();
 const formData = ref<EditWoocommerceForm>({
   ...props.data,
@@ -212,7 +222,15 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
       </template>
 
       <template #gpt>
-        <GptSettingsForm :form-data="formData" :field-errors="fieldErrors" :hostname="formData.hostname" />
+        <GptSettingsForm
+          :form-data="formData"
+          :field-errors="fieldErrors"
+          :hostname="formData.hostname"
+          :gpt-feed="props.gptFeed"
+          :initial-gpt-enable="props.initialGptEnable"
+          :sales-channel-id="props.salesChannelId"
+          @gpt-feed-updated="emit('gpt-feed-updated', $event)"
+        />
       </template>
     </Accordion>
 

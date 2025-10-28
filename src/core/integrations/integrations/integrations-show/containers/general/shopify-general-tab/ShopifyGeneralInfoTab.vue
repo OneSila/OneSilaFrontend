@@ -55,7 +55,17 @@ interface EditShopifyForm {
   };
 }
 
-const props = defineProps<{ data: EditShopifyForm }>();
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
+}
+
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
+const props = defineProps<{ data: EditShopifyForm; gptFeed: SalesChannelGptFeed | null; initialGptEnable: boolean; salesChannelId: string | null }>();
 
 const { t } = useI18n();
 const normalizeShopifyFormData = (data: any): EditShopifyForm => {
@@ -304,7 +314,15 @@ useShiftBackspaceKeyboardListener(goBack);
       </template>
 
       <template #gpt>
-        <GptSettingsForm :form-data="formData" :field-errors="fieldErrors" :hostname="formData.hostname" />
+        <GptSettingsForm
+          :form-data="formData"
+          :field-errors="fieldErrors"
+          :hostname="formData.hostname"
+          :gpt-feed="props.gptFeed"
+          :initial-gpt-enable="props.initialGptEnable"
+          :sales-channel-id="props.salesChannelId"
+          @gpt-feed-updated="emit('gpt-feed-updated', $event)"
+        />
       </template>
     </Accordion>
 

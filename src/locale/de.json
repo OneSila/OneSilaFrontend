@@ -323,7 +323,8 @@
       "gptSellerPrivacyPolicy": "",
       "gptSellerTos": "",
       "gptReturnPolicy": "",
-      "gptReturnWindow": ""
+      "gptReturnWindow": "",
+      "gptFeedUrl": ""
     },
     "salesChannel": {
       "helpText": {
