@@ -682,6 +682,11 @@
         "toast": {
           "copied": "Gekopieerd",
           "pasted": "Geplakt",
+          "rowCopied": "",
+          "rowPasted": "",
+          "rowClipboardEmpty": "",
+          "rowCopyNoEditableColumns": "",
+          "rowPasteNoEditableColumns": "",
           "pasteDifferentColumn": "Kan niet plakken naar een andere kolom",
           "pasteIncompatibleColumn": "Kan niet plakken in kolom met incompatibel type",
           "undo": "Laatste wijziging ongedaan gemaakt",
@@ -689,6 +694,12 @@
           "createdProductProperties": "{count} producteigenschappen aangemaakt.",
           "updatedProductProperties": "{count} producteigenschappen bijgewerkt.",
           "deletedProductProperties": "{count} producteigenschappen verwijderd."
+        }
+      },
+      "matrix": {
+        "rowActions": {
+          "copy": "",
+          "paste": ""
         }
       },
       "tabs": {
@@ -706,7 +717,8 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "amazon": "Amazon"
+        "amazon": "Amazon",
+        "ebay": ""
       },
       "priceLists": {
         "add": {
@@ -839,6 +851,25 @@
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
         "productTypeCreated": "Product type created"
+      },
+      "ebay": {
+        "defaultMarketplace": "",
+        "noViews": "",
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectMarketplacePrompt": "",
+        "noDefaultTree": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": ""
       },
       "inspector": {
         "labels": {
@@ -1878,6 +1909,187 @@
         "title": "Geef je merken een stem",
         "content": "Voeg een aangepaste beschrijving toe voor dit merk om te bepalen hoe het wordt weergegeven in AI-gegenereerde inhoud. Je kunt verschillende beschrijvingen maken voor verschillende talen. Als de taal leeg blijft, wordt dit de standaardbeschrijving voor het merk."
       }
+    },
+    "chatGptProductFeed": {
+      "title": "",
+      "form": {
+        "successUpdate": ""
+      },
+      "messages": {
+        "loadError": ""
+      },
+      "labels": {
+        "conditionProperty": "",
+        "condtionNewValue": "",
+        "condtionRefurbishedValue": "",
+        "condtionUsdValue": "",
+        "brandProperty": "",
+        "materialProperty": "",
+        "mpnProperty": "",
+        "colorProperty": "",
+        "sizeProperty": "",
+        "ageGroupProperty": "",
+        "ageGroupNewbornValue": "",
+        "ageGroupInfantValue": "",
+        "ageGroupTodlerValue": "",
+        "ageGroupKidsValue": "",
+        "ageGroupAdultValue": "",
+        "lengthProperty": "",
+        "lengthUnit": "",
+        "widthProperty": "",
+        "heightProperty": "",
+        "weightProperty": "",
+        "weightUnit": "",
+        "expirationDateProperty": "",
+        "pickupMethodProperty": "",
+        "pickupMethodInStoreValue": "",
+        "pickupMethodReserveValue": "",
+        "pickupMethodNotSupportedValue": "",
+        "sizeSystemProperty": "",
+        "genderProperty": "",
+        "genderMaleValue": "",
+        "genderFemaleValue": "",
+        "genderUnisexValue": "",
+        "popularityScoreProperty": "",
+        "warningProperty": "",
+        "ageRestrictionProperty": ""
+      },
+      "placeholders": {
+        "property": "",
+        "value": "",
+        "unit": ""
+      },
+      "info": {
+        "title": "",
+        "description": "",
+        "linkLabel": "",
+        "sources": {
+          "product": "",
+          "mapping": "",
+          "salesChannel": "",
+          "notSynced": "",
+          "bundle": "",
+          "defaultSync": ""
+        },
+        "sections": {
+          "basicProductData": {
+            "title": "",
+            "description": ""
+          },
+          "itemInformation": {
+            "title": "",
+            "description": ""
+          },
+          "media": {
+            "title": "",
+            "description": ""
+          },
+          "priceAndPromotions": {
+            "title": "",
+            "description": ""
+          },
+          "availabilityInventory": {
+            "title": "",
+            "description": ""
+          },
+          "variants": {
+            "title": "",
+            "description": ""
+          },
+          "fulfillment": {
+            "title": "",
+            "description": ""
+          },
+          "merchantInfo": {
+            "title": "",
+            "description": ""
+          },
+          "returns": {
+            "title": "",
+            "description": ""
+          },
+          "performanceSignals": {
+            "title": "",
+            "description": ""
+          },
+          "compliance": {
+            "title": "",
+            "description": ""
+          },
+          "reviewsQa": {
+            "title": "",
+            "description": ""
+          },
+          "relatedProducts": {
+            "title": "",
+            "description": ""
+          },
+          "geoTagging": {
+            "title": "",
+            "description": ""
+          }
+        },
+        "fields": {
+          "id": "",
+          "gtin": "",
+          "mpn": "",
+          "title": "",
+          "description": "",
+          "link": "",
+          "condition": "",
+          "productCategory": "",
+          "brand": "",
+          "material": "",
+          "dimensions": "",
+          "length": "",
+          "width": "",
+          "height": "",
+          "weight": "",
+          "ageGroup": "",
+          "imageLink": "",
+          "additionalImageLink": "",
+          "videoLink": "",
+          "price": "",
+          "applicableTaxesFees": "",
+          "salePrice": "",
+          "salePriceEffectiveDate": "",
+          "unitPricingMeasure": "",
+          "pricingTrend": "",
+          "availability": "",
+          "availabilityDate": "",
+          "inventoryQuantity": "",
+          "expirationDate": "",
+          "pickupMethod": "",
+          "pickupSla": "",
+          "itemGroupId": "",
+          "itemGroupTitle": "",
+          "color": "",
+          "size": "",
+          "sizeSystem": "",
+          "gender": "",
+          "offerId": "",
+          "customVariant1Category": "",
+          "customVariant1Option": "",
+          "customVariant2Category": "",
+          "customVariant2Option": "",
+          "customVariant3Category": "",
+          "customVariant3Option": "",
+          "fulfillmentData": "",
+          "sellerName": "",
+          "sellerUrl": "",
+          "sellerPrivacyPolicy": "",
+          "sellerTos": "",
+          "returnPolicy": "",
+          "returnWindow": "",
+          "popularityScore": "",
+          "returnRate": "",
+          "warning": "",
+          "ageRestriction": "",
+          "reviews": "",
+          "relatedProducts": "",
+          "geoOverrides": ""
+        }
+      }
     }
   },
   "network": {
@@ -2077,6 +2289,13 @@
   },
   "integrations": {
     "show": {
+      "sections": {
+        "throttling": "",
+        "syncPreferences": "",
+        "gpt": "",
+        "authentication": "",
+        "defaultUnits": ""
+      },
       "ebay": {
         "title": "",
         "productRules": {
@@ -2457,7 +2676,16 @@
       "lengthUnit": "Lengte-eenheid",
       "weightUnit": "Gewichtseenheid",
       "isDefaultMarketplace": "Standaardmarktplaats",
-      "startingStock": ""
+      "startingStock": "",
+      "gptEnable": "",
+      "gptEnableCheckout": "",
+      "gptSellerName": "",
+      "gptSellerUrl": "",
+      "gptSellerPrivacyPolicy": "",
+      "gptSellerTos": "",
+      "gptReturnPolicy": "",
+      "gptReturnWindow": "",
+      "gptFeedUrl": ""
     },
     "salesChannel": {
       "labels": {
@@ -2465,7 +2693,11 @@
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
       },
       "helpText": {
-        "startingStock": ""
+        "startingStock": "",
+        "gptEnable": "",
+        "gptSellerUrl": "",
+        "gptReturnWindow": "",
+        "gptEnableCheckout": ""
       }
     },
     "ebay": {

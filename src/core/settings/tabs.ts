@@ -29,4 +29,10 @@ export const getTabsConfig = (t: Function): TabItem[] => [
     icon: 'comment-dots',
     url: 'settings.brandIdentity.list',
   },
+  {
+    name: 'chatGptProductFeed',
+    label: t('settings.chatGptProductFeed.title'),
+    icon: 'robot',
+    url: 'settings.chatGptProductFeedConfig',
+  },
 ];

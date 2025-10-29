@@ -351,6 +351,7 @@ const getLabel = (option: any): string | null => {
   align-items: flex-start;
   align-content: flex-start;
   min-width: 100px;
+
 }
 
 /* .selector .vs__search {
@@ -362,7 +363,6 @@ const getLabel = (option: any): string | null => {
   margin: 0;
   z-index: 0;
   line-height: 1.2;
-  white-space: pre;
   justify-content: space-between;
 }
 

@@ -1,0 +1,185 @@
+import { gql } from 'graphql-tag';
+
+export const chatGptProductFeedConfigsQuery = gql`
+  query ChatGptProductFeedConfigs {
+    chatGptProductFeedConfigs(first: 1) {
+      edges {
+        node {
+          id
+          conditionProperty {
+            id
+            name
+          }
+          condtionNewValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          condtionRefurbishedValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          condtionUsdValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          brandProperty {
+            id
+            name
+          }
+          materialProperty {
+            id
+            name
+          }
+          mpnProperty {
+            id
+            name
+          }
+          colorProperty {
+            id
+            name
+          }
+          sizeProperty {
+            id
+            name
+          }
+          ageGroupProperty {
+            id
+            name
+          }
+          ageGroupNewbornValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          ageGroupInfantValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          ageGroupTodlerValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          ageGroupKidsValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          ageGroupAdultValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          lengthProperty {
+            id
+            name
+          }
+          lengthUnit
+          widthProperty {
+            id
+            name
+          }
+          heightProperty {
+            id
+            name
+          }
+          weightProperty {
+            id
+            name
+          }
+          weightUnit
+          expirationDateProperty {
+            id
+            name
+          }
+          pickupMethodProperty {
+            id
+            name
+          }
+          pickupMethodInStoreValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          pickupMethodReserveValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          pickupMethodNotSupportedValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          sizeSystemProperty {
+            id
+            name
+          }
+          genderMaleValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          genderFemaleValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          genderUnisexValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          genderProperty {
+            id
+            name
+          }
+          popularityScoreProperty {
+            id
+            name
+          }
+          warningProperty {
+            id
+            name
+          }
+          ageRestrictionProperty {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;

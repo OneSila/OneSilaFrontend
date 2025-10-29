@@ -12,6 +12,7 @@ import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { useRouter } from "vue-router";
 import { updateWoocommerceSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
+import GptSettingsForm from "../components/GptSettingsForm.vue";
 
 interface EditWoocommerceForm {
   id: string;
@@ -28,13 +29,39 @@ interface EditWoocommerceForm {
   startingStock: number | null;
   apiKey: string;
   apiSecret: string;
+  gptEnable: boolean;
+  gptEnableCheckout: boolean;
+  gptSellerName: string;
+  gptSellerUrl: string;
+  gptSellerPrivacyPolicy: string;
+  gptSellerTos: string;
+  gptReturnPolicy: string;
+  gptReturnWindow: number | null;
 }
 
-const props = defineProps<{ data: EditWoocommerceForm }>();
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
+}
+
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
+const props = defineProps<{ data: EditWoocommerceForm; gptFeed: SalesChannelGptFeed | null; initialGptEnable: boolean; salesChannelId: string | null }>();
 const { t } = useI18n();
 const formData = ref<EditWoocommerceForm>({
   ...props.data,
-  startingStock: props.data.startingStock ?? null
+  startingStock: props.data.startingStock ?? null,
+  gptEnable: props.data.gptEnable ?? false,
+  gptEnableCheckout: props.data.gptEnableCheckout ?? false,
+  gptSellerName: props.data.gptSellerName ?? '',
+  gptSellerUrl: props.data.gptSellerUrl ?? '',
+  gptSellerPrivacyPolicy: props.data.gptSellerPrivacyPolicy ?? '',
+  gptSellerTos: props.data.gptSellerTos ?? '',
+  gptReturnPolicy: props.data.gptReturnPolicy ?? '',
+  gptReturnWindow: props.data.gptReturnWindow ?? null
 });
 const fieldErrors = ref<Record<string, string>>({});
 const router = useRouter();
@@ -43,13 +70,22 @@ const submitContinueButtonRef = ref();
 
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
-  { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' }
+  { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' },
+  { name: 'gpt', label: t('integrations.show.sections.gpt'), icon: 'robot' }
 ];
 
 watch(() => props.data, (newData) => {
   formData.value = {
     ...newData,
-    startingStock: newData.startingStock ?? null
+    startingStock: newData.startingStock ?? null,
+    gptEnable: newData.gptEnable ?? false,
+    gptEnableCheckout: newData.gptEnableCheckout ?? false,
+    gptSellerName: newData.gptSellerName ?? '',
+    gptSellerUrl: newData.gptSellerUrl ?? '',
+    gptSellerPrivacyPolicy: newData.gptSellerPrivacyPolicy ?? '',
+    gptSellerTos: newData.gptSellerTos ?? '',
+    gptReturnPolicy: newData.gptReturnPolicy ?? '',
+    gptReturnWindow: newData.gptReturnWindow ?? null
   };
 }, { deep: true });
 
@@ -183,6 +219,18 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
             </div>
           </div>
         </div>
+      </template>
+
+      <template #gpt>
+        <GptSettingsForm
+          :form-data="formData"
+          :field-errors="fieldErrors"
+          :hostname="formData.hostname"
+          :gpt-feed="props.gptFeed"
+          :initial-gpt-enable="props.initialGptEnable"
+          :sales-channel-id="props.salesChannelId"
+          @gpt-feed-updated="emit('gpt-feed-updated', $event)"
+        />
       </template>
     </Accordion>
 

@@ -56,6 +56,13 @@ export const routes = [
         component: () => import('./brand-identity/brand-custom-prompt-edit/BrandCustomPromptEditController.vue')
     },
 
+    {
+        path: '/settings/chat-gpt-product-feed',
+        name: 'settings.chatGptProductFeedConfig',
+        meta: { title: 'settings.title' },
+        component: () => import('./chat-gpt-product-feed/ChatGptProductFeedConfigController.vue')
+    },
+
     // {
     //     path: '/settings/units',
     //     name: 'settings.units.list',
