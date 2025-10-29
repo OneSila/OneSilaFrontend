@@ -717,7 +717,8 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "amazon": "Amazon"
+        "amazon": "Amazon",
+        "ebay": ""
       },
       "priceLists": {
         "add": {
@@ -850,6 +851,22 @@
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
         "productTypeCreated": "Product type created"
+      },
+      "ebay": {
+        "defaultMarketplace": "",
+        "noViews": "",
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectMarketplacePrompt": "",
+        "noDefaultTree": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": ""
       },
       "inspector": {
         "labels": {
