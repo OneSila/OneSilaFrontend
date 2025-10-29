@@ -7,12 +7,15 @@ export const ebayProductCategoriesQuery = gql`
         node {
           id
           remoteId
+          salesChannel {
+            id
+            hostname
+          }
           view {
             id
-            defaultCategoryTreeId
-            salesChannel {
-              id
-              hostname
+            __typename
+            ... on EbaySalesChannelViewType {
+              defaultCategoryTreeId
             }
           }
         }

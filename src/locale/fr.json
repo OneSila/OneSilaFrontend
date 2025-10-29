@@ -309,7 +309,10 @@
         "pendingSelection": "",
         "categorySaved": "",
         "categoryRemoved": "",
-        "removeCategory": ""
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": ""
       }
     }
   },

@@ -1209,7 +1209,10 @@
         "pendingSelection": "Pending selection",
         "categorySaved": "eBay category saved",
         "categoryRemoved": "eBay category removed",
-        "removeCategory": "Remove category"
+        "removeCategory": "Remove category",
+        "categoryMappingInfo": "These entries show each eBay marketplace view; the icon indicates whether a category is mapped for that view.",
+        "defaultCategoryTitle": "Default category from product type",
+        "defaultCategoryInfo": "Remote ID: {id}"
       },
       "inspector": {
         "errors": {

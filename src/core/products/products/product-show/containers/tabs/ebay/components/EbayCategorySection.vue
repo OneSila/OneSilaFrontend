@@ -26,11 +26,12 @@ const props = defineProps<{
   productId: string | null;
   salesChannelId: string | null;
   view: any | null;
-  category: { id: string | null; remoteId: string | null } | null;
+  category: { id: string | null; remoteId: string | null; salesChannelId?: string | null } | null;
+  defaultCategory: { remoteId: string | null; name: string | null } | null;
 }>();
 
 const emit = defineEmits<{
-  (e: 'saved', payload: { id: string; remoteId: string }): void;
+  (e: 'saved', payload: { id: string; remoteId: string; salesChannelId: string | null }): void;
   (e: 'deleted'): void;
 }>();
 
@@ -247,7 +248,11 @@ const saveSelection = async () => {
     pendingNode.value = null;
     Toast.success(t('products.products.ebay.categorySaved'));
     if (productCategoryId.value) {
-      emit('saved', { id: productCategoryId.value, remoteId });
+      emit('saved', {
+        id: productCategoryId.value,
+        remoteId,
+        salesChannelId: props.salesChannelId || null,
+      });
     }
   } catch (error) {
     displayApolloError(error);
@@ -378,8 +383,25 @@ defineExpose({ hasUnsavedChanges });
                 <div class="text-sm font-medium">{{ selectedNode.fullName || selectedNode.name }}</div>
                 <div class="text-xs text-gray-500">{{ selectedNode.remoteId }}</div>
               </div>
-              <div v-else class="text-sm text-gray-500">
-                {{ t('products.products.ebay.noSelection') }}
+              <div v-else>
+                <div
+                  v-if="defaultCategory?.remoteId"
+                  class="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700"
+                >
+                  <div class="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                    <Icon name="folder" class="w-4 h-4 text-gray-500" />
+                    {{ t('products.products.ebay.defaultCategoryTitle') }}
+                  </div>
+                  <div class="text-sm">
+                    {{ defaultCategory.name || defaultCategory.remoteId }}
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">
+                    {{ t('products.products.ebay.defaultCategoryInfo', { id: defaultCategory.remoteId }) }}
+                  </div>
+                </div>
+                <div v-else class="text-sm text-gray-500">
+                  {{ t('products.products.ebay.noSelection') }}
+                </div>
               </div>
             </div>
           </div>

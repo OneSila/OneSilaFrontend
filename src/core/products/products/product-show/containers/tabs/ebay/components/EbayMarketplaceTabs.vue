@@ -8,7 +8,10 @@ import { IntegrationTypes } from '../../../../../../../integrations/integrations
 const props = defineProps<{
   views: any[];
   modelValue: string | null;
-  categories: Record<string, { remoteId: string | null }>;
+  categories: Record<
+    string,
+    { remoteId: string | null; id?: string | null; salesChannelId?: string | null }
+  >;
 }>();
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -27,20 +30,27 @@ const viewEntries = computed(() =>
 </script>
 
 <template>
-  <div class="border-r border-gray-200 pr-4">
+  <div class="border-r border-gray-200 pr-4 w-full">
     <div class="max-h-[660px] overflow-y-auto space-y-2">
       <div
         v-for="entry in viewEntries"
         :key="entry.id"
         class="cursor-pointer flex items-center gap-3 p-3 border rounded-md"
-        :class="{ 'bg-primary text-white': modelValue === entry.id }"
+        :class="[
+          modelValue === entry.id ? 'bg-primary text-white border-primary' : 'border-gray-200 hover:border-primary/60',
+        ]"
         @click="select(entry.id)"
       >
-        <Icon
-          :name="entry.hasCategory ? 'circle-check' : 'circle-xmark'"
-          class="w-4 h-4"
-          :class="entry.hasCategory ? 'text-green-500' : 'text-red-500'"
-        />
+        <div
+          class="flex items-center justify-center w-6 h-6 rounded-full border"
+          :class="entry.hasCategory ? 'border-emerald-400 bg-emerald-50' : 'border-gray-300 bg-gray-50'"
+        >
+          <Icon
+            :name="entry.hasCategory ? 'folder' : 'folder-open'"
+            class="w-3.5 h-3.5"
+            :class="entry.hasCategory ? 'text-emerald-600' : 'text-gray-400'"
+          />
+        </div>
         <div class="flex flex-col gap-1">
           <FlexCell>
             <Flex gap="2">

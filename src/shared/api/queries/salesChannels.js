@@ -1513,6 +1513,7 @@ export const ebayProductTypesQuery = gql`
       edges {
         node {
           id
+          remoteId
           mappedLocally
           mappedRemotely
           name
