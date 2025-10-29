@@ -721,6 +721,7 @@ export const ebayChannelViewsQuery = gql`
           name
           active
           isDefault
+          defaultCategoryTreeId
           salesChannel {
             id
             hostname

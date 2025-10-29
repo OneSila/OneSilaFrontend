@@ -159,7 +159,8 @@
         }
       },
       "tabs": {
-        "amazon": "Amazon"
+        "amazon": "Amazon",
+        "ebay": ""
       },
       "priceLists": {
         "add": {
@@ -296,6 +297,22 @@
         "variationThemePlaceholder": "Variationsthema auswählen",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted"
+      },
+      "ebay": {
+        "defaultMarketplace": "",
+        "noViews": "",
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectMarketplacePrompt": "",
+        "noDefaultTree": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": ""
       }
     }
   },

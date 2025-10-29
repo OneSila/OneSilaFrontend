@@ -1027,6 +1027,7 @@
         "priceLists": "Price Lists",
         "websites": "Channels",
         "amazon": "Amazon",
+        "ebay": "Ebay",
         "supplierProducts": "Supplier Products",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
@@ -1193,6 +1194,22 @@
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
         "productTypeCreated": "Product type created"
+      },
+      "ebay": {
+        "defaultMarketplace": "Default marketplace",
+        "noViews": "No eBay stores are available.",
+        "categoryTitle": "Recommended Category",
+        "categoryDescription": "Browse the eBay category tree and assign the most specific category available.",
+        "selectMarketplacePrompt": "Select a marketplace to manage its eBay category.",
+        "noDefaultTree": "This marketplace does not have a default category tree configured.",
+        "rootLabel": "Root",
+        "leafRestriction": "Only leaf categories can be selected.",
+        "currentSelection": "Current category",
+        "noSelection": "No category selected.",
+        "pendingSelection": "Pending selection",
+        "categorySaved": "eBay category saved",
+        "categoryRemoved": "eBay category removed",
+        "removeCategory": "Remove category"
       },
       "inspector": {
         "errors": {
