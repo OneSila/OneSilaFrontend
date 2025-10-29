@@ -1927,6 +1927,9 @@
         "pickupMethodNotSupportedValue": "",
         "sizeSystemProperty": "",
         "genderProperty": "",
+        "genderMaleValue": "",
+        "genderFemaleValue": "",
+        "genderUnisexValue": "",
         "popularityScoreProperty": "",
         "warningProperty": "",
         "ageRestrictionProperty": ""

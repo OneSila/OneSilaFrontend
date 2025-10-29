@@ -94,8 +94,8 @@ export const updateEbaySalesChannelMutation = gql`
 `;
 
 export const resyncSalesChannelGptFeedMutation = gql`
-  mutation resyncSalesChannelGptFeed($data: SalesChannelGptFeedPartialInput!) {
-    resyncSalesChannelGptFeed(data: $data) {
+  mutation resyncSalesChannelGptFeed($id: GlobalID!) {
+    resyncSalesChannelGptFeed(instance: { id: $id }) {
       id
       fileUrl
       lastSyncedAt

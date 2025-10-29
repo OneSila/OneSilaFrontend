@@ -141,6 +141,27 @@ export const chatGptProductFeedConfigsQuery = gql`
             id
             name
           }
+          genderMaleValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          genderFemaleValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
+          genderUnisexValue {
+            id
+            fullValueName
+            property {
+              id
+            }
+          }
           genderProperty {
             id
             name

@@ -58,6 +58,11 @@ export const CHAT_GPT_PROPERTY_VALUE_DEPENDENCIES: Record<string, string[]> = {
     'pickupMethodReserveValue',
     'pickupMethodNotSupportedValue',
   ],
+  genderProperty: [
+    'genderMaleValue',
+    'genderFemaleValue',
+    'genderUnisexValue',
+  ],
 };
 
 export const getChatGptProductFeedFields = (t: Function, id:string): FormField[] => [
@@ -94,6 +99,9 @@ export const getChatGptProductFeedFields = (t: Function, id:string): FormField[]
   createValueField(t, 'pickupMethodNotSupportedValue', 'settings.chatGptProductFeed.labels.pickupMethodNotSupportedValue'),
   createPropertyField(t, 'sizeSystemProperty', 'settings.chatGptProductFeed.labels.sizeSystemProperty'),
   createPropertyField(t, 'genderProperty', 'settings.chatGptProductFeed.labels.genderProperty'),
+  createValueField(t, 'genderMaleValue', 'settings.chatGptProductFeed.labels.genderMaleValue'),
+  createValueField(t, 'genderFemaleValue', 'settings.chatGptProductFeed.labels.genderFemaleValue'),
+  createValueField(t, 'genderUnisexValue', 'settings.chatGptProductFeed.labels.genderUnisexValue'),
   createPropertyField(t, 'popularityScoreProperty', 'settings.chatGptProductFeed.labels.popularityScoreProperty'),
   createPropertyField(t, 'warningProperty', 'settings.chatGptProductFeed.labels.warningProperty'),
   createPropertyField(t, 'ageRestrictionProperty', 'settings.chatGptProductFeed.labels.ageRestrictionProperty'),

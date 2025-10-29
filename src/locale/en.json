@@ -2322,6 +2322,9 @@
         "pickupMethodNotSupportedValue": "Pickup method value – not supported",
         "sizeSystemProperty": "Size system",
         "genderProperty": "Gender",
+        "genderMaleValue": "Gender value – male",
+        "genderFemaleValue": "Gender value – female",
+        "genderUnisexValue": "Gender value – unisex",
         "popularityScoreProperty": "Popularity score",
         "warningProperty": "Warning",
         "ageRestrictionProperty": "Age restriction"
