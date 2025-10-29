@@ -101,6 +101,7 @@ const categoryField = computed<QueryFormField>(() => {
   if (marketplaceDefaultTreeId.value) {
     filter.marketplaceDefaultTreeId = { exact: marketplaceDefaultTreeId.value };
   }
+  filter.hasChildren = { exact: false };
   return {
     type: FieldType.Query,
     name: 'ebayCategoryId',
