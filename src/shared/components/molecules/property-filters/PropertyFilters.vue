@@ -60,17 +60,18 @@ const requireTypes = computed(() => {
 
 const propertyTypeOptions = computed(() => getPropertyTypeOptions(t));
 
-const salesChannelOptions = ref<{ id: string | null; name: string }[]>([]);
+const salesChannelOptions = ref<{ id: string | null; label: string }[]>([]);
 const isFetchingSalesChannels = ref(false);
 
-const formatSalesChannelLabel = (channel?: { id?: string | null; name?: string | null; hostname?: string | null; type?: string | null }) => {
-  if (!channel || !channel.id) {
+const formatSalesChannelLabel = (channel?: { id?: string | null; hostname?: string | null; type?: string | null }) => {
+  if (!channel) {
     return t('properties.rule.labels.defaultSalesChannel');
   }
 
   return (
-    channel.name ||
     channel.hostname ||
+    channel.type ||
+    channel.id ||
     t('properties.rule.labels.unknownSalesChannel')
   );
 };
@@ -97,7 +98,7 @@ const fetchSalesChannels = async () => {
     });
 
     const edges = data?.productPropertiesRules?.edges ?? [];
-    const optionMap = new Map<string | null, { id: string | null; name: string }>();
+    const optionMap = new Map<string | null, { id: string | null; label: string }>();
 
     edges.forEach((edge: any) => {
       const node = edge?.node;
@@ -112,7 +113,7 @@ const fetchSalesChannels = async () => {
 
       optionMap.set(channelId, {
         id: channelId,
-        name: formatSalesChannelLabel(node.salesChannel),
+        label: formatSalesChannelLabel(node.salesChannel),
       });
     });
 
@@ -120,7 +121,7 @@ const fetchSalesChannels = async () => {
     const otherOptions = Array.from(optionMap.entries())
       .filter(([key]) => key !== null)
       .map(([, value]) => value)
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => a.label.localeCompare(b.label));
 
     salesChannelOptions.value = defaultOption
       ? [defaultOption, ...otherOptions]
@@ -196,7 +197,7 @@ const getIconColor = (requireType: string) => {
         :options="salesChannelOptions"
         :placeholder="t('properties.rule.placeholders.salesChannel')"
         class="min-w-48"
-        labelBy="name"
+        labelBy="label"
         valueBy="id"
         :removable="false"
         :is-loading="isFetchingSalesChannels"
