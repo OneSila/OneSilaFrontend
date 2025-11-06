@@ -142,7 +142,12 @@ const createRuleFromDefault = (defaultEntry: RuleCacheEntry, salesChannelId: str
     items,
     itemsMap,
     salesChannel: salesChannelId
-      ? { id: salesChannelId, name: null, type: null, hostname: null }
+      ? {
+          id: salesChannelId,
+          name: formatSalesChannelLabel({ id: salesChannelId }),
+          type: null,
+          hostname: null,
+        }
       : null,
   };
 };
@@ -173,7 +178,7 @@ const transformRuleNode = (node: any): RuleCacheEntry => {
     salesChannel: node.salesChannel
       ? {
           id: node.salesChannel.id ?? null,
-          name: node.salesChannel.name ?? null,
+          name: formatSalesChannelLabel(node.salesChannel),
           type: node.salesChannel.type ?? null,
           hostname: node.salesChannel.hostname ?? null,
         }

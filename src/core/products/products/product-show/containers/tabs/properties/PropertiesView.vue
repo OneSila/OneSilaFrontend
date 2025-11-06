@@ -24,6 +24,8 @@ import {PropertyFilters} from "../../../../../../../shared/components/molecules/
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
 const ruleId: Ref<string | null> = ref(null);
+const selectedRuleSalesChannelId: Ref<string | null> = ref(null);
+const isUpdatingSalesChannel = ref(false);
 
 const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
@@ -169,6 +171,23 @@ watch(selectedPropertyTypes, () => {
   currentPage.value = 1;
 });
 
+watch(selectedRuleSalesChannelId, (newVal, oldVal) => {
+  if (isUpdatingSalesChannel.value) {
+    isUpdatingSalesChannel.value = false;
+    return;
+  }
+
+  if (newVal === oldVal) {
+    return;
+  }
+
+  if (!productTypeValue.value?.valueSelect?.id) {
+    return;
+  }
+
+  void fetchRequiredAttributesValues('network-only');
+});
+
 
 const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
   ruleId.value = null;
@@ -182,10 +201,6 @@ const fetchProductTypeValue = async (productTypePropertyId, fetchPolicy) => {
   if (data && data.productProperties && data.productProperties.edges && data.productProperties.edges.length == 1) {
     const value = data.productProperties.edges[0].node;
     const existingItem = values.value.find(v => v.property.id === value.property.id);
-
-    if (value.valueSelect && value.valueSelect.productpropertiesruleSet.length) {
-      ruleId.value = value.valueSelect.productpropertiesruleSet[0].id;
-    }
 
     if (existingItem) {
       existingItem.id = value.id;
@@ -234,53 +249,102 @@ const setCurrentLanguage = async (fetchPolicy) => {
 const fetchPropertiesIds = async (productTypeValueId, fetchPolicy) => {
 
   if (productTypeValueId == null) {
+    ruleId.value = null;
     return [];
   }
 
-  const {data} = await apolloClient.query({
-    query: productPropertiesRulesQuery,
-    variables: {filter: {productType: {id: {exact: productTypeValueId}}}},
-    fetchPolicy: fetchPolicy
-  })
+  const baseFilter = { productType: { id: { exact: productTypeValueId } } };
 
-  if (data && data.productPropertiesRules && data.productPropertiesRules.edges && data.productPropertiesRules.edges.length == 1) {
-    const rule = data.productPropertiesRules.edges[0].node;
-    const items = rule.items;
-    const propertyIds: string[] = []
+  const buildSalesChannelFilter = (channelId: string | null | undefined) => {
+    if (channelId === null) {
+      return { id: { isNull: true } };
+    }
+    if (channelId) {
+      return { id: { exact: channelId } };
+    }
+    return undefined;
+  };
 
-    for (const item of items) {
-      const toAdd: ProductPropertyValue = {
-        property: {
-          id: item.property.id,
-          name: item.property.name,
-          type: item.property.type,
-          isProductType: false,
-          requireType: item.type
-        },
-        valueBoolean: undefined,
-        valueInt: null,
-        valueFloat: null,
-        valueDate: null,
-        valueDateTime: null,
-        valueSelect: {id: null},
-        valueMultiSelect: null,
-        translation: {
-          language: null
-        }
-      }
-      values.value.push(toAdd);
-      propertyIds.push(item.property.id)
-
-      if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(item.property.type) && language.value == null) {
-        await setCurrentLanguage(fetchPolicy);
-      }
-
+  const fetchRule = async (channelId: string | null | undefined) => {
+    const filter: Record<string, any> = { ...baseFilter };
+    const salesChannelFilter = buildSalesChannelFilter(channelId);
+    if (salesChannelFilter) {
+      filter.salesChannel = salesChannelFilter;
     }
 
-    return propertyIds
+    const { data } = await apolloClient.query({
+      query: productPropertiesRulesQuery,
+      variables: { filter, first: 1 },
+      fetchPolicy: fetchPolicy,
+    });
+
+    return data?.productPropertiesRules?.edges?.[0]?.node ?? null;
+  };
+
+  let rule = await fetchRule(selectedRuleSalesChannelId.value ?? null);
+
+  if (!rule && selectedRuleSalesChannelId.value !== null) {
+    rule = await fetchRule(null);
+    if (rule && selectedRuleSalesChannelId.value !== null) {
+      isUpdatingSalesChannel.value = true;
+      selectedRuleSalesChannelId.value = null;
+    }
   }
 
-  return [];
+  if (!rule) {
+    rule = await fetchRule(undefined);
+    const resolvedChannelId = rule?.salesChannel?.id ?? null;
+    if (rule && resolvedChannelId !== selectedRuleSalesChannelId.value) {
+      isUpdatingSalesChannel.value = true;
+      selectedRuleSalesChannelId.value = resolvedChannelId;
+    }
+  }
+
+  if (!rule) {
+    ruleId.value = null;
+    return [];
+  }
+
+  const resolvedChannelId = rule.salesChannel?.id ?? null;
+  if (resolvedChannelId !== selectedRuleSalesChannelId.value) {
+    isUpdatingSalesChannel.value = true;
+    selectedRuleSalesChannelId.value = resolvedChannelId;
+  }
+
+  ruleId.value = rule.id;
+  const items = rule.items ?? [];
+  const propertyIds: string[] = [];
+
+  for (const item of items) {
+    const toAdd: ProductPropertyValue = {
+      property: {
+        id: item.property.id,
+        name: item.property.name,
+        type: item.property.type,
+        isProductType: false,
+        requireType: item.type,
+      },
+      valueBoolean: undefined,
+      valueInt: null,
+      valueFloat: null,
+      valueDate: null,
+      valueDateTime: null,
+      valueSelect: { id: null },
+      valueMultiSelect: null,
+      translation: {
+        language: null,
+      },
+    };
+    values.value.push(toAdd);
+    propertyIds.push(item.property.id);
+
+    if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(item.property.type) && language.value == null) {
+      await setCurrentLanguage(fetchPolicy);
+    }
+
+  }
+
+  return propertyIds;
 }
 
 const setInitialValues = async (propertiesIds, fetchPolicy) => {
@@ -579,6 +643,8 @@ const handleValueUpdate = ({id, type, value, language}) => {
             v-model:search-query="searchQuery"
             v-model:selected-property-types="selectedPropertyTypes"
             v-model:filters="filters"
+            v-model:selected-sales-channel-id="selectedRuleSalesChannelId"
+            :product-type-value-id="productTypeValue?.valueSelect?.id ?? null"
             add-filled
         />
       </FlexCell>

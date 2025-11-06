@@ -57,6 +57,9 @@ const baseColumns = computed<MatrixColumn[]>(() => [
 ])
 
 const properties = ref<PropertyInfo[]>([])
+const productTypeValueId = ref<string | null>(null)
+const selectedRuleSalesChannelId = ref<string | null>(null)
+const isUpdatingSalesChannel = ref(false)
 const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
@@ -190,7 +193,11 @@ const fetchProperties = async () => {
     variables: { filter: { isProductType: { exact: true } } },
     fetchPolicy: 'network-only',
   })
-  if (!typeData?.properties?.edges?.length) return
+  if (!typeData?.properties?.edges?.length) {
+    productTypeValueId.value = null
+    properties.value = []
+    return
+  }
   const typePropertyId = typeData.properties.edges[0].node.id
 
   const { data: valueData } = await apolloClient.query({
@@ -203,17 +210,79 @@ const fetchProperties = async () => {
     },
     fetchPolicy: 'network-only',
   })
-  if (!valueData?.productProperties?.edges?.length) return
-  const productTypeValueId = valueData.productProperties.edges[0].node.valueSelect?.id
-  if (!productTypeValueId) return
+  if (!valueData?.productProperties?.edges?.length) {
+    productTypeValueId.value = null
+    properties.value = []
+    return
+  }
+  const typeValueId = valueData.productProperties.edges[0].node.valueSelect?.id || null
+  if (!typeValueId) {
+    productTypeValueId.value = null
+    properties.value = []
+    return
+  }
 
-  const { data: ruleData } = await apolloClient.query({
-    query: productPropertiesRulesQuery,
-    variables: { filter: { productType: { id: { exact: productTypeValueId } } } },
-    fetchPolicy: 'network-only',
-  })
-  if (!ruleData?.productPropertiesRules?.edges?.length) return
-  const items = ruleData.productPropertiesRules.edges[0].node.items
+  productTypeValueId.value = typeValueId
+
+  const baseFilter = { productType: { id: { exact: typeValueId } } }
+
+  const buildSalesChannelFilter = (channelId: string | null | undefined) => {
+    if (channelId === null) {
+      return { id: { isNull: true } }
+    }
+    if (channelId) {
+      return { id: { exact: channelId } }
+    }
+    return undefined
+  }
+
+  const fetchRule = async (channelId: string | null | undefined) => {
+    const filter: Record<string, any> = { ...baseFilter }
+    const salesChannelFilter = buildSalesChannelFilter(channelId)
+    if (salesChannelFilter) {
+      filter.salesChannel = salesChannelFilter
+    }
+
+    const { data } = await apolloClient.query({
+      query: productPropertiesRulesQuery,
+      variables: { filter, first: 1 },
+      fetchPolicy: 'network-only',
+    })
+
+    return data?.productPropertiesRules?.edges?.[0]?.node ?? null
+  }
+
+  let rule = await fetchRule(selectedRuleSalesChannelId.value ?? null)
+
+  if (!rule && selectedRuleSalesChannelId.value !== null) {
+    rule = await fetchRule(null)
+    if (rule && selectedRuleSalesChannelId.value !== null) {
+      isUpdatingSalesChannel.value = true
+      selectedRuleSalesChannelId.value = null
+    }
+  }
+
+  if (!rule) {
+    rule = await fetchRule(undefined)
+    const resolvedChannelId = rule?.salesChannel?.id ?? null
+    if (rule && resolvedChannelId !== selectedRuleSalesChannelId.value) {
+      isUpdatingSalesChannel.value = true
+      selectedRuleSalesChannelId.value = resolvedChannelId
+    }
+  }
+
+  if (!rule) {
+    properties.value = []
+    return
+  }
+
+  const resolvedChannelId = rule.salesChannel?.id ?? null
+  if (resolvedChannelId !== selectedRuleSalesChannelId.value) {
+    isUpdatingSalesChannel.value = true
+    selectedRuleSalesChannelId.value = resolvedChannelId
+  }
+
+  const items = rule.items ?? []
   properties.value = items.map((item: any) => ({
     id: item.property.id,
     name: item.property.name,
@@ -302,6 +371,31 @@ watch(language, async () => {
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
   skipHistory.value = false
+})
+
+watch(selectedRuleSalesChannelId, async (newVal, oldVal) => {
+  if (isUpdatingSalesChannel.value) {
+    isUpdatingSalesChannel.value = false
+    return
+  }
+
+  if (newVal === oldVal) {
+    return
+  }
+
+  if (!productTypeValueId.value) {
+    return
+  }
+
+  loading.value = true
+  skipHistory.value = true
+  await fetchProperties()
+  await fetchVariations()
+  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  computeChanges()
+  matrixRef.value?.resetHistory(variations.value)
+  skipHistory.value = false
+  loading.value = false
 })
 
 const fetchDefaultLanguage = async () => {
@@ -795,6 +889,8 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
           v-model:search-query="searchQuery"
           v-model:selected-property-types="selectedPropertyTypes"
           v-model:filters="filters"
+          v-model:selected-sales-channel-id="selectedRuleSalesChannelId"
+          :product-type-value-id="productTypeValueId"
         />
       </template>
       <template #toolbar-right>
