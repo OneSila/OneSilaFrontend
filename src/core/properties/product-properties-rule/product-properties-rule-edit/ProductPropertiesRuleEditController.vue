@@ -22,6 +22,7 @@ import { Property } from "../../../../shared/components/organisms/product-proper
 import {Loader} from "../../../../shared/components/atoms/loader";
 import {Link} from "../../../../shared/components/atoms/link";
 import {Button} from "../../../../shared/components/atoms/button";
+import Swal, { SweetAlertOptions } from "sweetalert2";
 
 interface Item {
   id: string | null;
@@ -311,8 +312,31 @@ const handleSalesChannelUpdated = async (newValue: string) => {
   }
 
   if (hasUnsavedChanges.value) {
-    const confirmed = window.confirm(t('properties.rule.messages.unsavedChanges'));
-    if (!confirmed) {
+    const defaultSwalOptions = {
+      title: t('shared.alert.mutationAlert.title'),
+      text: t('properties.rule.messages.unsavedChanges'),
+      confirmButtonText: t('shared.alert.mutationAlert.confirmButtonTextSimpleYes'),
+      cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
+      icon: 'warning',
+      showCancelButton: true,
+      reverseButtons: true,
+      padding: '2em',
+    };
+
+    const defaultSwalClasses = {
+      popup: 'sweet-alerts',
+      confirmButton: 'btn btn-secondary',
+      cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3',
+    };
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: defaultSwalClasses,
+      buttonsStyling: false,
+    });
+
+    const result = await swalWithBootstrapButtons.fire(defaultSwalOptions as SweetAlertOptions);
+
+    if (!result.isConfirmed) {
       selectedSalesChannel.value = previousSalesChannel.value;
       return;
     }
