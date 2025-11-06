@@ -177,16 +177,19 @@ watch(
 const goToChild = (node: EbayCategoryNode) => {
   pathStack.value.push(node);
   currentParentId.value = node.remoteId;
+  search.value = '';
 };
 
 const goToLevel = (index: number | null) => {
   if (index === null) {
     pathStack.value = [];
     currentParentId.value = null;
+    search.value = '';
     return;
   }
   pathStack.value = pathStack.value.slice(0, index + 1);
   currentParentId.value = pathStack.value[index].remoteId;
+  search.value = '';
 };
 
 const goBack = () => {
