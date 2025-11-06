@@ -24,23 +24,10 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   headers: [
     t('properties.properties.labels.isProductType'),
     t('properties.properties.labels.requireEanCode'),
-    t('properties.rule.labels.salesChannel')
   ],
   fields: [
     { name: 'productType', type: FieldType.NestedText, keys: ['value'] },
     { name: 'requireEanCode', type: FieldType.Boolean },
-    {
-      name: 'salesChannel',
-      type: FieldType.Text,
-      accessor: (item) => {
-        if (!item?.salesChannel) {
-          return t('properties.rule.labels.defaultSalesChannel');
-        }
-
-        const channel = item.salesChannel;
-        return channel.name || channel.hostname || channel.type || t('properties.rule.labels.unknownSalesChannel');
-      }
-    }
   ],
   identifierKey: 'id',
   addActions: true,

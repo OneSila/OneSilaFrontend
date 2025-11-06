@@ -117,7 +117,6 @@ export const getProductPropertiesRuleSubscription = gql`
       requireEanCode
       salesChannel {
         id
-        name
         type
         hostname
       }

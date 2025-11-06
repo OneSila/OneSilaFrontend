@@ -74,13 +74,12 @@ const primaryButtonLabel = computed(() =>
 const getCacheKey = (salesChannelId: string | null | undefined) =>
   salesChannelId ?? 'default';
 
-const formatSalesChannelLabel = (channel?: { id?: string | null; name?: string | null; hostname?: string | null; type?: string | null }) => {
+const formatSalesChannelLabel = (channel?: { id?: string | null; hostname?: string | null; type?: string | null }) => {
   if (!channel) {
     return t('properties.rule.labels.defaultSalesChannel');
   }
 
   return (
-    channel.name ||
     channel.hostname ||
     channel.type ||
     channel.id ||
@@ -234,7 +233,7 @@ const loadSalesChannels = async () => {
         return;
       }
 
-      const channelId = node.saleschannelPtr?.id;
+      const channelId = node.id;
       if (!channelId || optionsMap.has(channelId)) {
         return;
       }

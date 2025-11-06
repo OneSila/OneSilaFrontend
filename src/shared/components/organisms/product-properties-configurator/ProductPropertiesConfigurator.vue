@@ -57,7 +57,6 @@ const limit = ref(10);
 const fetchPaginationData = ref({});
 const rawRequireEanCode = ref(props.requireEanCode);
 const salesChannelOptions = computed(() => props.salesChannelOptions ?? []);
-const productTypeFieldWidth = computed(() => (salesChannelOptions.value.length ? 'w-full' : undefined));
 
 fetchPaginationData.value['first'] = limit.value;
 
@@ -348,8 +347,8 @@ onMounted(fetchData);
     <div class="pb-4">
       <div class="grid gap-4 md:grid-cols-2">
         <ProductTypeField
+          class="h-10"
           :product-type="productType"
-          :width-class="productTypeFieldWidth"
           @product-type-updated="handleProductTypeUpdated"
         />
         <div v-if="salesChannelOptions.length" class="my-4">
@@ -358,6 +357,7 @@ onMounted(fetchData);
           </label>
           <Selector
             v-model="localSalesChannel"
+            class="h-10"
             :options="salesChannelOptions"
             label-by="label"
             value-by="value"
