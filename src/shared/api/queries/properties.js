@@ -395,6 +395,7 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
           value
           salesChannel {
             id
+            name
             type
             hostname
           }
@@ -438,6 +439,7 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
           requireEanCode
           salesChannel {
             id
+            name
             type
             hostname
           }
@@ -469,6 +471,7 @@ export const getProductPropertiesRuleQuery = gql`
       requireEanCode
       salesChannel {
         id
+        name
         type
         hostname
       }
