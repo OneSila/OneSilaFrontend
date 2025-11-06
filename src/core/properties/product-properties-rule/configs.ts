@@ -21,10 +21,13 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
-  headers: [t('properties.properties.labels.isProductType'), t('properties.properties.labels.requireEanCode')],
+  headers: [
+    t('properties.properties.labels.isProductType'),
+    t('properties.properties.labels.requireEanCode'),
+  ],
   fields: [
     { name: 'productType', type: FieldType.NestedText, keys: ['value'] },
-    {name: 'requireEanCode', type: FieldType.Boolean },
+    { name: 'requireEanCode', type: FieldType.Boolean },
   ],
   identifierKey: 'id',
   addActions: true,

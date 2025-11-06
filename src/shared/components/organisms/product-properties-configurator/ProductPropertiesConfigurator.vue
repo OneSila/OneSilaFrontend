@@ -34,14 +34,17 @@ export interface Property {
 const props = defineProps<{
   productType: { id: string, value: string } | null,
   requireEanCode: boolean,
-  addedProperties: Property[]
+  addedProperties: Property[],
+  salesChannelOptions?: { label: string; value: string }[],
+  selectedSalesChannel?: string,
 }>();
 
-const emit = defineEmits(['update:addedProperties', 'update:productType', 'update:requireEanCode']);
+const emit = defineEmits(['update:addedProperties', 'update:productType', 'update:requireEanCode', 'update:salesChannel']);
 const toAddProperty: Ref<Property | null> = ref(null);
 const availableProperties: Ref<Property[]> = ref([]);
-const addedPropertiesRef: Ref<Property[]> = ref(props.addedProperties);
+const addedPropertiesRef: Ref<Property[]> = ref(props.addedProperties.map((property) => ({ ...property })));
 const localProductType: Ref<{ id: string, value: string } | null> = ref(props.productType);
+const localSalesChannel = ref(props.selectedSalesChannel ?? 'default');
 const configTypes: Ref<string[]> = ref(props.addedProperties.map(property => property.configType ?? ''));
 
 const loading = ref(false);
@@ -53,8 +56,42 @@ const draggingOverItemId = ref(null);
 const limit = ref(10);
 const fetchPaginationData = ref({});
 const rawRequireEanCode = ref(props.requireEanCode);
+const salesChannelOptions = computed(() => props.salesChannelOptions ?? []);
 
 fetchPaginationData.value['first'] = limit.value;
+
+watch(
+  () => props.addedProperties,
+  (newVal) => {
+    addedPropertiesRef.value = newVal.map((property) => ({ ...property }));
+    configTypes.value = newVal.map((property) => property.configType ?? '');
+  }
+);
+
+watch(
+  () => props.selectedSalesChannel,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== localSalesChannel.value) {
+      localSalesChannel.value = newVal ?? 'default';
+    }
+  }
+);
+
+watch(
+  localSalesChannel,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      emit('update:salesChannel', newVal ?? 'default');
+    }
+  }
+);
+
+watch(
+  () => props.requireEanCode,
+  (newVal) => {
+    rawRequireEanCode.value = newVal;
+  }
+);
 
 const fetchData = async () => {
 
@@ -308,7 +345,28 @@ onMounted(fetchData);
 <template>
   <div>
     <div class="pb-4">
-      <ProductTypeField :product-type="productType" @product-type-updated="handleProductTypeUpdated"/>
+      <div class="grid gap-4 md:grid-cols-2">
+        <ProductTypeField
+          class="h-10"
+          :product-type="productType"
+          @product-type-updated="handleProductTypeUpdated"
+        />
+        <div v-if="salesChannelOptions.length" class="my-4">
+          <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">
+            {{ t('properties.rule.labels.salesChannel') }}
+          </label>
+          <Selector
+            v-model="localSalesChannel"
+            class="h-10"
+            :options="salesChannelOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('properties.rule.placeholders.salesChannel')"
+            :removable="false"
+            filterable
+          />
+        </div>
+      </div>
       <FlexCell center>
         <Flex>
           <FlexCell center>
