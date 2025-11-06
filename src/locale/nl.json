@@ -2226,10 +2226,14 @@
       },
       "labels": {
         "type": "Regel Type",
-        "propertyType": "Type Eigenschap"
+        "propertyType": "Type Eigenschap",
+        "salesChannel": "",
+        "defaultSalesChannel": "",
+        "unknownSalesChannel": ""
       },
       "placeholders": {
-        "type": "Selecteer Type Regel"
+        "type": "Selecteer Type Regel",
+        "salesChannel": ""
       },
       "help": {
         "type": "Selecteer het gedrag voor deze eigenschap"
@@ -2264,6 +2268,9 @@
         "createProductProperty": "Product eigenschap aangemaakt",
         "updateProductProperty": "Product eigenschap upgedate",
         "deleteProductProperty": "Product eigenschap verwijderd"
+      },
+      "messages": {
+        "unsavedChanges": ""
       },
       "configTypes": {
         "requiredInConfigurator": {

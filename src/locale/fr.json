@@ -915,6 +915,19 @@
         "step1": "Preparing duplicate check",
         "step2": "Searching for duplicates"
       }
+    },
+    "rule": {
+      "labels": {
+        "salesChannel": "",
+        "defaultSalesChannel": "",
+        "unknownSalesChannel": ""
+      },
+      "placeholders": {
+        "salesChannel": ""
+      },
+      "messages": {
+        "unsavedChanges": ""
+      }
     }
   },
   "settings": {

@@ -2642,10 +2642,14 @@
       },
       "labels": {
         "type": "Rule Type",
-        "propertyType": "Property Type"
+        "propertyType": "Property Type",
+        "salesChannel": "Sales Channel",
+        "defaultSalesChannel": "Default",
+        "unknownSalesChannel": "Unknown sales channel"
       },
       "placeholders": {
-        "type": "Select rule type"
+        "type": "Select rule type",
+        "salesChannel": "Select a sales channel"
       },
       "help": {
         "type": "Select how this property should be handled for the product."
@@ -2684,6 +2688,9 @@
         "createProductProperty": "Product Property Created",
         "updateProductProperty": "Product Property Updated",
         "deleteProductProperty": "Product Property Deleted"
+      },
+      "messages": {
+        "unsavedChanges": "You have unsaved changes. Switching sales channels will discard them. Continue?"
       },
       "configTypes": {
         "requiredInConfigurator": {

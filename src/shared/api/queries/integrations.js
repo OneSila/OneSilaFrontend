@@ -6,6 +6,7 @@ export const integrationsQuery = gql`
       edges {
         node {
           id
+          name
           proxyId
           hostname
           active
@@ -14,6 +15,15 @@ export const integrationsQuery = gql`
           requestsPerMinute
           maxRetries
           type
+          saleschannelPtr {
+            id
+            ... on SalesChannelType {
+              id
+              name
+              type
+              hostname
+            }
+          }
         }
         cursor
       }
