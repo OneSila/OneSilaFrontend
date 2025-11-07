@@ -25,6 +25,7 @@ export const ebayCategoriesQuery = gql`
           marketplaceDefaultTreeId
           hasChildren
           isRoot
+          configuratorProperties
           parentNode {
             remoteId
           }
