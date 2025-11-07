@@ -33,6 +33,8 @@ const loading = ref(false);
 const language: Ref<string | null> = ref(null);
 const companyLanguage: Ref<string | null> = ref(null);
 const valueInputs = ref<InstanceType<typeof ValueInput>[]>([]);
+type PropertyFiltersExpose = { fetchSalesChannels: (productTypeValueId: string | null) => Promise<void> };
+const propertiesFiltersRef = ref<PropertyFiltersExpose | null>(null);
 const setValueInputRef = (el: any) => {
   if (el) {
     valueInputs.value.push(el);
@@ -452,6 +454,7 @@ const fetchRequiredAttributesValues = async (fetchPolicy = 'cache-first') => {
   currentPage.value = 1;
   const productTypePropertyId = await fetchRequiredProductType(fetchPolicy);
   await fetchRequiredAttributes(productTypePropertyId, fetchPolicy);
+  propertiesFiltersRef.value?.fetchSalesChannels(productTypeValue.value?.valueSelect?.id ?? null);
   loading.value = false
 }
 
@@ -645,6 +648,8 @@ const handleValueUpdate = ({id, type, value, language}) => {
             v-model:filters="filters"
             v-model:selected-sales-channel-id="selectedRuleSalesChannelId"
             :product-type-value-id="productTypeValue?.valueSelect?.id ?? null"
+            :fetch-sales-channels-on-mounted="false"
+            ref="propertiesFiltersRef"
             add-filled
         />
       </FlexCell>

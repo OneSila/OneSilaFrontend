@@ -1138,6 +1138,9 @@
             "autoValue": "Auto: {value}",
             "autoValueEmpty": "Auto: —"
           }
+        },
+        "bulkEdit": {
+          "missingRuleWarning": "Define a property rule for this product type before editing variations in bulk."
         }
       },
         "properties": {
