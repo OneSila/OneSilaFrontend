@@ -1215,7 +1215,12 @@
         "removeCategory": "Remove category",
         "categoryMappingInfo": "These entries show each eBay marketplace view; the icon indicates whether a category is mapped for that view.",
         "defaultCategoryTitle": "Default category from product type",
-        "defaultCategoryInfo": "Remote ID: {id}"
+        "defaultCategoryInfo": "Remote ID: {id}",
+        "configuratorPreview": {
+          "title": "Configurator attributes",
+          "description": "eBay uses these configurator properties to build variations for this category.",
+          "empty": "No configurator properties are provided for this eBay category."
+        }
       },
       "inspector": {
         "errors": {
@@ -3053,6 +3058,11 @@
           "property": "Select the local property this marketplace property maps to.",
           "localizedName": "Name provided by the marketplace. Usually localized to the marketplace language.",
           "translatedName": "Name translated into your company language. You can adjust it."
+        },
+        "configuratorPreview": {
+          "title": "Configurator attributes",
+          "description": "eBay uses these configurator properties to build variations for this category.",
+          "empty": "No configurator properties are provided for this eBay property."
         }
       },
       "propertySelectValues": {

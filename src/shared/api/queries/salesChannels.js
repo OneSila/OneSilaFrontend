@@ -1086,6 +1086,7 @@ export const ebayPropertiesQuery = gql`
           localizedName
           type
           allowsUnmappedValues
+          configuratorProperties
           marketplace {
             id
             name
@@ -1241,6 +1242,7 @@ export const getEbayPropertyQuery = gql`
       translatedName
       type
       allowsUnmappedValues
+      configuratorProperties
       marketplace {
         id
         name

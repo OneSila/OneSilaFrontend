@@ -872,7 +872,12 @@
         "removeCategory": "",
         "categoryMappingInfo": "",
         "defaultCategoryTitle": "",
-        "defaultCategoryInfo": ""
+        "defaultCategoryInfo": "",
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        }
       },
       "inspector": {
         "labels": {
@@ -2357,6 +2362,11 @@
           "property": "",
           "localizedName": "",
           "translatedName": ""
+        },
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
         }
       },
       "template": {
