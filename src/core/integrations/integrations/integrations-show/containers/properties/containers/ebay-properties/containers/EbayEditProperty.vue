@@ -33,51 +33,6 @@ const formData = ref<Record<string, any>>({});
 const recommendations = ref<{ id: string; name: string }[]>([]);
 const loadingRecommendations = ref(false);
 const marketplaceInfo = ref<{ id: string | null; name: string }>({ id: null, name: '' });
-const configuratorProperties = ref<string[]>([]);
-const configuratorPropertiesLoaded = ref(false);
-
-const hasConfiguratorProperties = computed(
-  () => configuratorProperties.value.length > 0,
-);
-
-const parseConfiguratorProperties = (value: unknown): string[] => {
-  if (!value) {
-    return [];
-  }
-
-  if (Array.isArray(value)) {
-    return value
-      .map((item) => {
-        if (typeof item === 'string') {
-          return item.trim();
-        }
-        if (typeof item === 'number' || typeof item === 'boolean') {
-          return String(item);
-        }
-        return '';
-      })
-      .filter((item) => item.length > 0);
-  }
-
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      return [];
-    }
-
-    try {
-      const parsed = JSON.parse(trimmed);
-      if (Array.isArray(parsed)) {
-        return parseConfiguratorProperties(parsed);
-      }
-    } catch (error) {
-      // Fallback to treating the value as a single entry
-      return [trimmed];
-    }
-  }
-
-  return [];
-};
 
 const breadcrumbsLinks = computed(() => [
   { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
@@ -209,10 +164,6 @@ const handleSetData = (data: any) => {
     name: data?.ebayProperty?.marketplace?.name ?? '',
   };
 
-  configuratorProperties.value = parseConfiguratorProperties(
-    data?.ebayProperty?.configuratorProperties,
-  );
-  configuratorPropertiesLoaded.value = true;
 
   const defaultValue = propertyId || data?.ebayProperty?.localInstance?.id || null;
 
@@ -341,30 +292,6 @@ const selectRecommendation = (id: string) => {
       </Link>
     </template>
     <template #additional-fields>
-      <div
-        v-if="configuratorPropertiesLoaded"
-        class="mt-4 border border-blue-200 bg-blue-50 rounded p-4"
-      >
-        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
-          {{ t('integrations.show.properties.configuratorPreview.title') }}
-        </Label>
-        <p class="text-sm text-blue-900 mb-3">
-          {{ t('integrations.show.properties.configuratorPreview.description') }}
-        </p>
-        <ul v-if="hasConfiguratorProperties" class="space-y-2">
-          <li
-            v-for="item in configuratorProperties"
-            :key="item"
-            class="flex items-start gap-2 text-sm text-blue-900"
-          >
-            <Icon name="circle-check" class="w-4 h-4 mt-0.5 text-green-600" />
-            <span>{{ item }}</span>
-          </li>
-        </ul>
-        <p v-else class="text-sm text-blue-900">
-          {{ t('integrations.show.properties.configuratorPreview.empty') }}
-        </p>
-      </div>
 
       <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
