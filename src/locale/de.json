@@ -12,7 +12,8 @@
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "import": "Import",
-      "saveAll": "Alles speichern"
+      "saveAll": "Alles speichern",
+      "createAndContinue": ""
     },
     "colors": {
       "red": "Rot",
@@ -222,6 +223,9 @@
             "autoValue": "Auto: {value}",
             "autoValueEmpty": "Auto: —"
           }
+        },
+        "bulkEdit": {
+          "missingRuleWarning": ""
         }
       },
       "media": {
@@ -315,7 +319,12 @@
         "removeCategory": "",
         "categoryMappingInfo": "",
         "defaultCategoryTitle": "",
-        "defaultCategoryInfo": ""
+        "defaultCategoryInfo": "",
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        }
       }
     }
   },
@@ -381,6 +390,11 @@
           "property": "",
           "localizedName": "",
           "translatedName": ""
+        },
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
         }
       },
       "template": {
@@ -917,6 +931,19 @@
       "steps": {
         "step1": "Preparing duplicate check",
         "step2": "Searching for duplicates"
+      }
+    },
+    "rule": {
+      "labels": {
+        "salesChannel": "",
+        "defaultSalesChannel": "",
+        "unknownSalesChannel": ""
+      },
+      "placeholders": {
+        "salesChannel": ""
+      },
+      "messages": {
+        "unsavedChanges": ""
       }
     }
   },

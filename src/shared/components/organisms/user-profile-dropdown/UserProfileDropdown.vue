@@ -38,7 +38,6 @@ const handleSubscriptionResult = (data: any) => {
   // eBay
   const currentEbay = data?.myMultiTenantCompany?.hasEbayIntegration ?? false;
   const previousEbay = auth.user.company?.hasEbayIntegration ?? false;
-  console.log(currentEbay);
 
   if (auth.user.company && currentEbay !== previousEbay) {
     auth.user.company.hasEbayIntegration = currentEbay;

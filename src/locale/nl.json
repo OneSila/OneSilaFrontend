@@ -192,6 +192,7 @@
       "finish": "Afwerken",
       "cancel": "Annulleren",
       "saveAndContinue": "Opslaan & Verder werken",
+      "createAndContinue": "",
       "delete": "Verwijderen",
       "edit": "Bewerken",
       "show": "Tonen",
@@ -779,6 +780,9 @@
             "autoValue": "Auto: {value}",
             "autoValueEmpty": "Auto: —"
           }
+        },
+        "bulkEdit": {
+          "missingRuleWarning": ""
         }
       },
       "media": {
@@ -869,7 +873,12 @@
         "removeCategory": "",
         "categoryMappingInfo": "",
         "defaultCategoryTitle": "",
-        "defaultCategoryInfo": ""
+        "defaultCategoryInfo": "",
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        }
       },
       "inspector": {
         "labels": {
@@ -2226,10 +2235,14 @@
       },
       "labels": {
         "type": "Regel Type",
-        "propertyType": "Type Eigenschap"
+        "propertyType": "Type Eigenschap",
+        "salesChannel": "",
+        "defaultSalesChannel": "",
+        "unknownSalesChannel": ""
       },
       "placeholders": {
-        "type": "Selecteer Type Regel"
+        "type": "Selecteer Type Regel",
+        "salesChannel": ""
       },
       "help": {
         "type": "Selecteer het gedrag voor deze eigenschap"
@@ -2264,6 +2277,9 @@
         "createProductProperty": "Product eigenschap aangemaakt",
         "updateProductProperty": "Product eigenschap upgedate",
         "deleteProductProperty": "Product eigenschap verwijderd"
+      },
+      "messages": {
+        "unsavedChanges": ""
       },
       "configTypes": {
         "requiredInConfigurator": {
@@ -2347,6 +2363,11 @@
           "property": "",
           "localizedName": "",
           "translatedName": ""
+        },
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
         }
       },
       "template": {

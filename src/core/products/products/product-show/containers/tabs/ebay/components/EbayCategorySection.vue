@@ -20,6 +20,7 @@ interface EbayCategoryNode {
   fullName?: string | null;
   hasChildren: boolean;
   parentNode?: { remoteId?: string | null } | null;
+  configuratorProperties: string[];
 }
 
 const props = defineProps<{
@@ -61,16 +62,53 @@ const hasUnsavedChanges = computed(
   () => pendingNode.value !== null && pendingNode.value.remoteId !== savedRemoteId.value,
 );
 
+const selectedConfiguratorProperties = computed(
+  () => selectedNode.value?.configuratorProperties ?? [],
+);
+
+const pendingConfiguratorProperties = computed(
+  () => pendingNode.value?.configuratorProperties ?? [],
+);
+
 const resetNavigation = () => {
   pathStack.value = [];
   currentParentId.value = null;
   search.value = '';
 };
 
+const parseConfiguratorProperties = (value: unknown): string[] => {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === 'string');
+  }
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item) => typeof item === 'string');
+      }
+    } catch (error) {
+      /* ignore malformed JSON */
+    }
+  }
+  return [];
+};
+
+const normalizeCategoryNode = (node: any): EbayCategoryNode => ({
+  remoteId: node?.remoteId ?? '',
+  name: node?.name ?? '',
+  fullName: node?.fullName ?? null,
+  hasChildren: Boolean(node?.hasChildren),
+  parentNode: node?.parentNode ?? null,
+  configuratorProperties: parseConfiguratorProperties(node?.configuratorProperties),
+});
+
 const mapCategoriesConnection = (connection: any): EbayCategoryNode[] => {
   if (!connection) return [];
-  if (Array.isArray(connection)) return connection as EbayCategoryNode[];
-  return connection.edges?.map((edge: any) => edge.node) || [];
+  const list = Array.isArray(connection)
+    ? connection
+    : connection.edges?.map((edge: any) => edge.node) || [];
+  return list.map((item: any) => normalizeCategoryNode(item));
 };
 
 const fetchNodes = async () => {
@@ -177,16 +215,19 @@ watch(
 const goToChild = (node: EbayCategoryNode) => {
   pathStack.value.push(node);
   currentParentId.value = node.remoteId;
+  search.value = '';
 };
 
 const goToLevel = (index: number | null) => {
   if (index === null) {
     pathStack.value = [];
     currentParentId.value = null;
+    search.value = '';
     return;
   }
   pathStack.value = pathStack.value.slice(0, index + 1);
   currentParentId.value = pathStack.value[index].remoteId;
+  search.value = '';
 };
 
 const goBack = () => {
@@ -382,6 +423,27 @@ defineExpose({ hasUnsavedChanges });
               <div v-else-if="selectedNode">
                 <div class="text-sm font-medium">{{ selectedNode.fullName || selectedNode.name }}</div>
                 <div class="text-xs text-gray-500">{{ selectedNode.remoteId }}</div>
+                <div class="mt-3">
+                  <h6 class="font-semibold text-xs text-gray-700 mb-1">
+                    {{ t('products.products.ebay.configuratorPreview.title') }}
+                  </h6>
+                  <p class="text-xs text-gray-500 mb-2">
+                    {{ t('products.products.ebay.configuratorPreview.description') }}
+                  </p>
+                  <ul v-if="selectedConfiguratorProperties.length" class="space-y-1">
+                    <li
+                      v-for="item in selectedConfiguratorProperties"
+                      :key="item"
+                      class="flex items-center gap-2 text-xs text-gray-700"
+                    >
+                      <Icon name="circle-check" class="w-3 h-3 text-emerald-500" />
+                      <span>{{ item }}</span>
+                    </li>
+                  </ul>
+                  <div v-else class="text-xs text-gray-500">
+                    {{ t('products.products.ebay.configuratorPreview.empty') }}
+                  </div>
+                </div>
               </div>
               <div v-else>
                 <div
@@ -412,6 +474,27 @@ defineExpose({ hasUnsavedChanges });
             </h6>
             <div class="text-sm font-medium">{{ pendingNode.fullName || pendingNode.name }}</div>
             <div class="text-xs text-gray-500">{{ pendingNode.remoteId }}</div>
+            <div class="mt-3">
+              <h6 class="font-semibold text-xs text-gray-700 mb-1">
+                {{ t('products.products.ebay.configuratorPreview.title') }}
+              </h6>
+              <p class="text-xs text-gray-500 mb-2">
+                {{ t('products.products.ebay.configuratorPreview.description') }}
+              </p>
+              <ul v-if="pendingConfiguratorProperties.length" class="space-y-1">
+                <li
+                  v-for="item in pendingConfiguratorProperties"
+                  :key="item"
+                  class="flex items-center gap-2 text-xs text-gray-700"
+                >
+                  <Icon name="circle-check" class="w-3 h-3 text-emerald-500" />
+                  <span>{{ item }}</span>
+                </li>
+              </ul>
+              <div v-else class="text-xs text-gray-500">
+                {{ t('products.products.ebay.configuratorPreview.empty') }}
+              </div>
+            </div>
             <div class="mt-3 flex gap-2">
               <Button
                 class="btn btn-sm btn-primary"
