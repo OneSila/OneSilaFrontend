@@ -12,7 +12,8 @@
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "import": "Import",
-      "saveAll": "Tout enregistrer"
+      "saveAll": "Tout enregistrer",
+      "createAndContinue": ""
     },
     "colors": {
       "red": "Rouge",

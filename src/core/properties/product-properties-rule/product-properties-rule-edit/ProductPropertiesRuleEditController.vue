@@ -72,6 +72,10 @@ const primaryButtonLabel = computed(() =>
   t(currentRuleId.value ? 'shared.button.save' : 'shared.button.create')
 );
 
+const secondaryButtonLabel = computed(() =>
+  t(currentRuleId.value ? 'shared.button.saveAndContinue' : 'shared.button.createAndContinue')
+);
+
 const getCacheKey = (salesChannelId: string | null | undefined) =>
   salesChannelId ?? 'default';
 
@@ -248,9 +252,16 @@ const loadSalesChannels = async () => {
       optionsMap.set(channelId, { value: channelId, label });
     });
 
+    const existingOptions = [...rawSalesChannels.value];
+    existingOptions.forEach((option) => {
+      if (!optionsMap.has(option.value)) {
+        optionsMap.set(option.value, option);
+      }
+    });
+
     rawSalesChannels.value = Array.from(optionsMap.values());
   } catch (_error) {
-    rawSalesChannels.value = [];
+    rawSalesChannels.value = [...rawSalesChannels.value];
   }
 };
 
@@ -598,7 +609,7 @@ watch(
             </template>
           </ApolloAlertMutation>
           <SecondaryButton @click="handleSaveAndContinue">
-            {{ t('shared.button.saveAndContinue') }}
+            {{ secondaryButtonLabel }}
           </SecondaryButton>
           <PrimaryButton @click="handleSave">
             {{ primaryButtonLabel }}

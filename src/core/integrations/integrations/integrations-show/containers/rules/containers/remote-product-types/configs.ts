@@ -72,6 +72,11 @@ const amazonProductTypeFormConfig = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      queryVariables: {
+        filter: {
+          salesChannel: { id: { isNull: true } },
+        },
+      },
       formMapIdentifier: 'id',
       ...(defaultRuleId ? { default: defaultRuleId } : {}),
     },
@@ -122,6 +127,11 @@ const ebayProductTypeFormConfig = (
       isEdge: true,
       multiple: false,
       filterable: true,
+      queryVariables: {
+        filter: {
+          salesChannel: { id: { isNull: true } },
+        },
+      },
       formMapIdentifier: 'id',
     },
   ],

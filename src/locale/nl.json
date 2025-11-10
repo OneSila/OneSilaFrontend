@@ -192,6 +192,7 @@
       "finish": "Afwerken",
       "cancel": "Annulleren",
       "saveAndContinue": "Opslaan & Verder werken",
+      "createAndContinue": "",
       "delete": "Verwijderen",
       "edit": "Bewerken",
       "show": "Tonen",
