@@ -2895,6 +2895,7 @@
         "mappedRemotely": "Mapped on Amazon",
         "mappedRemotelyAmazon": "Mapped on Amazon",
         "mappedRemotelyEbay": "Mapped on eBay",
+        "mappedRemotelyShein": "Mapped on Shein",
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values"

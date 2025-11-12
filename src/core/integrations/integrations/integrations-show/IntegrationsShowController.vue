@@ -86,6 +86,10 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
+  } else if (type.value === IntegrationTypes.Shein) {
+    tabItems.value.push(
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' }
+    );
   }
 
   tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });

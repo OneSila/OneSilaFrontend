@@ -1553,6 +1553,51 @@ export const getEbayProductTypeQuery = gql`
     }
   }
 `;
+
+export const sheinProductTypesQuery = gql`
+  query SheinProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinProductTypeOrder
+    $filter: SheinProductTypeFilter
+  ) {
+    sheinProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+          mappedLocally
+          mappedRemotely
+          localInstance {
+            id
+            value
+            productType {
+              id
+              value
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
 export const amazonImportProcessesQuery = gql`
   query AmazonImportProcesses(
     $first: Int,
