@@ -35,6 +35,14 @@ export interface EbaySalesChannelImportItem {
   createdAt: string;
 }
 
+export interface SheinSalesChannelImportItem {
+  id: string;
+  type: string;
+  status: 'new' | 'pending' | 'failed' | 'success' | 'processing';
+  percentage: number;
+  createdAt: string;
+}
+
 export interface SalesChannelSubscriptionResult {
   salesChannel: {
     id: string;
@@ -43,6 +51,7 @@ export interface SalesChannelSubscriptionResult {
     saleschannelimportSet: SalesChannelImportItem[];
     amazonImports: AmazonSalesChannelImportItem[];
     ebayImports: EbaySalesChannelImportItem[];
+    sheinImports: SheinSalesChannelImportItem[];
   };
 }
 

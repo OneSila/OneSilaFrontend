@@ -1081,6 +1081,65 @@ export const ebayPropertiesQuery = gql`
   }
 `;
 
+export const sheinPropertiesQuery = gql`
+  query SheinProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinPropertyOrder
+    $filter: SheinPropertyFilter
+  ) {
+    sheinProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+          nameEn
+          mappedLocally
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getSheinPropertyQuery = gql`
+  query getSheinProperty($id: GlobalID!) {
+    sheinProperty(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      name
+      nameEn
+      type
+      allowsUnmappedValues
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const ebayInternalPropertiesQuery = gql`
   query EbayInternalProperties(
     $first: Int
@@ -1360,6 +1419,159 @@ export const ebayPropertySelectValuesQuery = gql`
   }
 `;
 
+export const sheinInternalPropertiesQuery = gql`
+  query SheinInternalProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinInternalPropertyOrder
+    $filter: SheinInternalPropertyFilter
+  ) {
+    sheinInternalProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          code
+          name
+          type
+          mappedLocally
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getSheinInternalPropertyQuery = gql`
+  query getSheinInternalProperty($id: GlobalID!) {
+    sheinInternalProperty(id: $id) {
+      id
+      code
+      name
+      type
+      mappedLocally
+      mappedRemotely
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const sheinInternalPropertyOptionsQuery = gql`
+  query SheinInternalPropertyOptions(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinInternalPropertyOptionOrder
+    $filter: SheinInternalPropertyOptionFilter
+  ) {
+    sheinInternalPropertyOptions(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          value
+          label
+          description
+          sortOrder
+          isActive
+          localInstance {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const sheinPropertySelectValuesQuery = gql`
+  query SheinPropertySelectValues(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinPropertySelectValueOrder
+    $filter: SheinPropertySelectValueFilter
+  ) {
+    sheinPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          mappedLocally
+          mappedRemotely
+          value
+          valueEn
+          remoteProperty {
+            id
+            name
+            mappedLocally
+            localInstance {
+              id
+              name
+            }
+          }
+          localInstance {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getEbayPropertySelectValueQuery = gql`
   query getEbayPropertySelectValue($id: GlobalID!) {
     ebayPropertySelectValue(id: $id) {
@@ -1376,6 +1588,31 @@ export const getEbayPropertySelectValueQuery = gql`
       }
       localizedValue
       translatedValue
+      localInstance {
+        id
+        value
+      }
+    }
+  }
+`;
+
+export const getSheinPropertySelectValueQuery = gql`
+  query getSheinPropertySelectValue($id: GlobalID!) {
+    sheinPropertySelectValue(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      value
+      valueEn
+      remoteProperty {
+        id
+        name
+        mappedLocally
+        localInstance {
+          id
+          name
+        }
+      }
       localInstance {
         id
         value
@@ -1554,6 +1791,51 @@ export const getEbayProductTypeQuery = gql`
   }
 `;
 
+export const getSheinProductTypeQuery = gql`
+  query getSheinProductType($id: GlobalID!) {
+    sheinProductType(id: $id) {
+      id
+      mappedLocally
+      mappedRemotely
+      imported
+      name
+      translatedName
+      remoteId
+      categoryId
+      marketplace {
+        id
+        name
+        remoteId
+      }
+      localInstance {
+        id
+        value
+        productType {
+          id
+          value
+        }
+      }
+      items {
+        id
+        visibility
+        attributeType
+        requirement
+        isMainAttribute
+        allowsUnmappedValues
+        remarks
+        property {
+          id
+          name
+          code
+        }
+        localInstance {
+          id
+        }
+      }
+    }
+  }
+`;
+
 export const sheinProductTypesQuery = gql`
   query SheinProductTypes(
     $first: Int
@@ -1642,6 +1924,40 @@ export const ebayImportProcessesQuery = gql`
     $filter: EbaySalesChannelImportFilter
   ) {
     ebayImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          type
+          status
+          percentage
+          createdAt
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const sheinImportProcessesQuery = gql`
+  query SheinImportProcesses(
+    $first: Int,
+    $last: Int,
+    $after: String,
+    $before: String,
+    $order: SheinSalesChannelImportOrder,
+    $filter: SheinSalesChannelImportFilter
+  ) {
+    sheinImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
       edges {
         node {
           id

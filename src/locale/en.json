@@ -2556,7 +2556,67 @@
         }
       },
       "shein": {
-        "title": "Shein Integration"
+        "title": "Shein Integration",
+        "productRules": {
+          "labels": {
+            "translatedName": "Translated Name",
+            "attributeType": "Attribute Type",
+            "requirement": "Requirement",
+            "visibility": "Visibility",
+            "remarks": "Remark Tags",
+            "allowsCustomValues": "Allows Custom Values",
+            "mainAttribute": "Main Attribute",
+            "productImage": "Product image",
+            "externalImageUrl": "External image URL",
+            "category": "Shein category"
+          },
+          "help": {
+            "translatedName": "Translated name provided by Shein for this category.",
+            "productName": "Provide a product name or media so Shein can recommend matching categories.",
+            "productImage": "Attach a product photo stored in OneSila to improve the match.",
+            "externalImageUrl": "Paste a public URL to a product image if it is not available in OneSila.",
+            "category": "Search within the Shein category tree for this marketplace."
+          },
+          "errors": {
+            "missingCriteria": "Enter a product name or attach an image before searching.",
+            "categoryLookupFailed": "Unable to load the selected Shein category. Please try again."
+          },
+          "attributeType": {
+            "sales": "Sales attribute",
+            "size": "Size attribute",
+            "composition": "Composition attribute",
+            "common": "Common attribute"
+          },
+          "requirement": {
+            "notFillable": "Not fillable",
+            "optional": "Optional",
+            "required": "Required"
+          },
+          "visibility": {
+            "display": "Display to shoppers",
+            "hidden": "Hidden from shoppers"
+          },
+          "remarks": {
+            "important": "Important",
+            "compliance": "Compliance",
+            "quality": "Quality",
+            "customs": "Customs"
+          }
+        },
+        "internalProperties": {
+          "title": "Shein Internal Fields",
+          "options": {
+            "accordionTitle": "Options",
+            "remoteValue": "Remote Option",
+            "description": "Description",
+            "localValue": "OneSila Value",
+            "empty": "No options are available for this internal field.",
+            "noDescription": "No description provided.",
+            "loadError": "Unable to load options. Please try again.",
+            "updateSuccess": "Option mapping updated successfully.",
+            "updateError": "Failed to update option mapping."
+          }
+        }
       },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
@@ -2852,6 +2912,7 @@
           "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
           "ebayProperty": "eBay Property",
+          "sheinProperty": "Shein Property",
           "marketplace": "Marketplace",
           "localProperty": "OneSila Property",
           "selectValue": "OneSila Select Value",
@@ -2862,6 +2923,7 @@
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "ebayProperty": "eBay property to which this value belongs.",
+          "sheinProperty": "Shein property to which this value belongs.",
           "marketplace": "Marketplace for this value.",
           "localProperty": "OneSila property that this remote property maps to.",
           "remoteValue": "Value exactly as defined by the marketplace.",
@@ -2869,6 +2931,7 @@
           "selectValue": "Choose the OneSila value that matches this marketplace value.",
           "selectValueAmazon": "Choose the OneSila value that matches this Amazon value.",
           "selectValueEbay": "Choose the OneSila value that matches this eBay value.",
+          "selectValueShein": "Choose the OneSila value that matches this Shein value.",
           "translatedRemoteName": "Translated name for this value.",
           "localizedValue": "Value as returned by the marketplace.",
           "translatedValue": "Translated value in the company language."
@@ -2880,6 +2943,10 @@
         "notMappedBannerEbay": {
           "title": "eBay property not mapped",
           "content": "Map the eBay property first before mapping values."
+        },
+        "notMappedBannerShein": {
+          "title": "Shein property not mapped",
+          "content": "Map the Shein property first before mapping values."
         },
         "recommendation": {
           "title": "Recommendations",

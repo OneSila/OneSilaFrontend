@@ -291,37 +291,46 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
           <Accordion v-if="items.length" :items="accordionItems">
             <template #items>
-              <div class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar overflow-x-auto">
-                <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                  <thead>
-                  <tr>
-                    <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
-                    <th v-if="showCodeColumn" class="p-2 text-left">{{
-                        t('integrations.show.properties.labels.code')
-                      }}
-                    </th>
-                    <th class="p-2 text-left">{{ t('integrations.show.mapping.mappedLocally') }}</th>
-                    <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
-                  </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="entry in mappedItems" :key="entry.item.id">
-                    <td class="p-2">
-                      <Link v-if="entry.propertyPath" :path="entry.propertyPath">
-                        {{ getItemName(entry.item) }}
-                      </Link>
-                      <span v-else>{{ getItemName(entry.item) }}</span>
-                    </td>
-                    <td v-if="showCodeColumn" class="p-2">{{ getItemCode(entry.item) }}</td>
-                    <td class="p-2">
-                      <Icon v-if="isItemMappedLocally(entry.item)" name="check-circle" class="text-green-500"/>
-                      <Icon v-else name="times-circle" class="text-red-500"/>
-                    </td>
-                    <td class="p-2">{{ configTypeChoices.find((c) => c.id === entry.item.remoteType)?.text }}</td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
+              <slot
+                name="schema"
+                :items="items"
+                :mapped-items="mappedItems"
+                :helpers="{ getItemName, getItemCode, isItemMappedLocally }"
+                :show-code-column="showCodeColumn"
+                :config-type-choices="configTypeChoices"
+              >
+                <div class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar overflow-x-auto">
+                  <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+                    <thead>
+                    <tr>
+                      <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
+                      <th v-if="showCodeColumn" class="p-2 text-left">{{
+                          t('integrations.show.properties.labels.code')
+                        }}
+                      </th>
+                      <th class="p-2 text-left">{{ t('integrations.show.mapping.mappedLocally') }}</th>
+                      <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                    <tr v-for="entry in mappedItems" :key="entry.item.id">
+                      <td class="p-2">
+                        <Link v-if="entry.propertyPath" :path="entry.propertyPath">
+                          {{ getItemName(entry.item) }}
+                        </Link>
+                        <span v-else>{{ getItemName(entry.item) }}</span>
+                      </td>
+                      <td v-if="showCodeColumn" class="p-2">{{ getItemCode(entry.item) }}</td>
+                      <td class="p-2">
+                        <Icon v-if="isItemMappedLocally(entry.item)" name="check-circle" class="text-green-500"/>
+                        <Icon v-else name="times-circle" class="text-red-500"/>
+                      </td>
+                      <td class="p-2">{{ configTypeChoices.find((c) => c.id === entry.item.remoteType)?.text }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </slot>
             </template>
           </Accordion>
         </div>

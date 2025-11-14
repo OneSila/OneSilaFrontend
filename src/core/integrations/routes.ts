@@ -58,7 +58,7 @@ export const routes = [
     path: '/integrations/:type/internal-property/:id',
     name: 'integrations.remoteInternalProperties.edit',
     meta: { title: 'integrations.show.ebay.internalProperties.title' },
-    component: () => import('./integrations/integrations-show/containers/properties/containers/ebay-properties/containers/IntegrationsEbayInternalPropertyEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/properties/containers/remote-internal-properties/IntegrationsRemoteInternalPropertyEditController.vue'),
   },
   {
     path: '/integrations/:type/property-value/:id',

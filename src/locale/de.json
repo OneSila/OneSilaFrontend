@@ -323,7 +323,67 @@
     },
     "show": {
       "shein": {
-        "title": ""
+        "title": "",
+        "productRules": {
+          "labels": {
+            "translatedName": "",
+            "attributeType": "",
+            "requirement": "",
+            "visibility": "",
+            "remarks": "",
+            "allowsCustomValues": "",
+            "mainAttribute": "",
+            "productImage": "",
+            "externalImageUrl": "",
+            "category": ""
+          },
+          "help": {
+            "translatedName": "",
+            "productName": "",
+            "productImage": "",
+            "externalImageUrl": "",
+            "category": ""
+          },
+          "errors": {
+            "missingCriteria": "",
+            "categoryLookupFailed": ""
+          },
+          "attributeType": {
+            "sales": "",
+            "size": "",
+            "composition": "",
+            "common": ""
+          },
+          "requirement": {
+            "notFillable": "",
+            "optional": "",
+            "required": ""
+          },
+          "visibility": {
+            "display": "",
+            "hidden": ""
+          },
+          "remarks": {
+            "important": "",
+            "compliance": "",
+            "quality": "",
+            "customs": ""
+          }
+        },
+        "internalProperties": {
+          "title": "",
+          "options": {
+            "accordionTitle": "",
+            "remoteValue": "",
+            "description": "",
+            "localValue": "",
+            "empty": "",
+            "noDescription": "",
+            "loadError": "",
+            "updateSuccess": "",
+            "updateError": ""
+          }
+        }
       },
       "sheinNotConnectedBanner": {
         "title": "",
@@ -533,10 +593,11 @@
       "propertySelectValues": {
         "labels": {
           "remoteName": "",
-          "remoteValue": "",
-          "amazonProperty": "",
-          "ebayProperty": "",
-          "marketplace": "",
+            "remoteValue": "",
+            "amazonProperty": "",
+            "ebayProperty": "",
+            "sheinProperty": "",
+            "marketplace": "",
           "localProperty": "",
           "selectValue": "",
           "translatedRemoteName": "",
@@ -544,20 +605,26 @@
           "translatedValue": ""
         },
         "help": {
-          "amazonProperty": "",
-          "ebayProperty": "",
-          "marketplace": "",
+            "amazonProperty": "",
+            "ebayProperty": "",
+            "sheinProperty": "",
+            "marketplace": "",
           "localProperty": "",
           "remoteValue": "",
           "remoteName": "",
           "selectValue": "",
           "selectValueAmazon": "",
-          "selectValueEbay": "",
+            "selectValueEbay": "",
+            "selectValueShein": "",
           "translatedRemoteName": "",
           "localizedValue": "",
           "translatedValue": ""
         },
         "notMappedBannerEbay": {
+          "title": "",
+          "content": ""
+        },
+        "notMappedBannerShein": {
           "title": "",
           "content": ""
         },
