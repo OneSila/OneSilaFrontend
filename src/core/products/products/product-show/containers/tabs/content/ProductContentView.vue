@@ -366,6 +366,7 @@ const shortDescriptionToolbarOptions = [
           :current-language="currentLanguage"
           :default-language-code="defaultLanguageCode"
           :short-description-toolbar-options="shortDescriptionToolbarOptions"
+          :field-limits="fieldRules.limits"
           :show-subtitle="fieldRules.subtitle"
           :show-short-description="fieldRules.shortDescription"
           :show-url-key="fieldRules.urlKey"
@@ -383,6 +384,7 @@ const shortDescriptionToolbarOptions = [
               :language-code="currentLanguage"
               :default-language-code="defaultLanguageCode"
               :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
+              :bullet-point-limit="fieldRules.limits.bulletPoints"
               @initial-bullet-points="previewBulletPoints = [...$event]"
             />
           </template>
