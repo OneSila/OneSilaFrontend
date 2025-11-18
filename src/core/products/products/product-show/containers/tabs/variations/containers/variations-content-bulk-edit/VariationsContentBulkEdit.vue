@@ -222,11 +222,6 @@ const normalizedHtml = (value: string | null | undefined) => {
   return trimmed;
 };
 
-const stripHtmlTags = (value?: string | null) => {
-  if (!value) return '';
-  return value.replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ');
-};
-
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
 const parentProductType = computed(() => parentProduct.value.type);
@@ -833,7 +828,7 @@ const textModalLimitExceeded = computed(
 
 const htmlModalLimitField = computed<ContentFieldLimitKey>(() => htmlModal.field);
 const htmlModalLimitValue = computed(() => contentFieldRules.value.limits[htmlModalLimitField.value]);
-const htmlModalCharacterCount = computed(() => stripHtmlTags(htmlModal.value).trim().length);
+const htmlModalCharacterCount = computed(() => (htmlModal.value || '').length);
 const htmlModalLimitExceeded = computed(
   () => typeof htmlModalLimitValue.value === 'number' && htmlModalCharacterCount.value > htmlModalLimitValue.value,
 );
