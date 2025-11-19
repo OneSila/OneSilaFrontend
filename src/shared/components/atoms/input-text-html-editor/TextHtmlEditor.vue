@@ -34,10 +34,21 @@ const editorOptions = computed(() => ({
   modules: {
     toolbar: finalToolbarOptions.value,
     clipboard: {
-      allowed: { tags: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'div'] },
+      matchVisual: false, // good to keep, avoids weird <br> issues
     },
   },
+  // Only allow the formats you actually need
+  formats: [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'list',
+    'bullet',
+    'blockquote',
+  ],
 }));
+
 
 const validateHtml = (value: string) => {
   const parser = new DOMParser();

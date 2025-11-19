@@ -70,16 +70,11 @@ const emit = defineEmits<{
 
 const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
 
-const stripHtmlTags = (value?: string | null) => {
-  if (!value) return '';
-  return value.replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ');
-};
-
 const fieldCharacterCounts = computed<Record<CountedField, number>>(() => ({
   name: props.form?.name?.length || 0,
   subtitle: props.form?.subtitle?.length || 0,
-  shortDescription: stripHtmlTags(props.form?.shortDescription || '').trim().length,
-  description: stripHtmlTags(props.form?.description || '').trim().length,
+  shortDescription: props.form?.shortDescription?.length || 0,
+  description: props.form?.description?.length || 0,
 }));
 
 const getFieldLimit = (field: CountedField) => props.fieldLimits?.[field];
