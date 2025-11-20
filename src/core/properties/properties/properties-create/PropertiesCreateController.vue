@@ -31,6 +31,7 @@ const remoteRuleId = route.query.remoteRuleId
   : route.query.amazonRuleId
   ? route.query.amazonRuleId.toString()
   : null;
+const remoteRuleRoute = route.query.remoteRuleRoute ? route.query.remoteRuleRoute.toString() : null;
 const translatedNameFromUrl = route.query.translatedName ? route.query.translatedName.toString() : null;
 const nameFromUrl = translatedNameFromUrl || (route.query.name ? route.query.name.toString() : '');
 const typeFromUrl = route.query.type ? route.query.type.toString() : '';
@@ -182,7 +183,7 @@ const createProperty = async () => {
       }
 
       router.push({
-        name: 'integrations.remoteProperties.edit',
+        name: remoteRuleRoute || 'integrations.remoteProperties.edit',
         params: { type: remoteIntegrationType, id: ruleId },
         query,
       });
