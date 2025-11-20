@@ -67,7 +67,7 @@ const submitFiles = async () => {
         <DropZone
           ref="dropZone"
           class="mt-2"
-          :formats="['.pdf', '.docx', '.xlsx', '.pptx']"
+          :formats="['.pdf', '.docx', '.xlsx', '.pptx', '.xlsm']"
           @uploaded="onUploaded"
           :multiple="false"
         />
