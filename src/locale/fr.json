@@ -250,6 +250,74 @@
       "labels": {
         "configuratorValue": ""
       },
+      "userSections": {
+        "title": "",
+        "subtitle": "",
+        "refreshing": "",
+        "emptyTitle": "",
+        "emptySubtitle": "",
+        "emptySection": "",
+        "cardError": "",
+        "edit": {
+          "title": "",
+          "description": "",
+          "cardCount": "",
+          "hint": "",
+          "addButton": "",
+          "titleLabel": "",
+          "titlePlaceholder": "",
+          "descriptionLabel": "",
+          "descriptionPlaceholder": "",
+          "deleteButton": "",
+          "moveUp": "",
+          "moveDown": "",
+          "dragHandle": "",
+          "configure": "",
+          "configureComingSoon": "",
+          "deleteConfirmTitle": "",
+          "deleteConfirmText": "",
+          "deleteConfirmConfirm": "",
+          "deleteConfirmCancel": "",
+          "emptyHint": "",
+          "saveButton": "",
+          "saveSuccess": "",
+          "saveError": "",
+          "sectionLabel": "",
+          "validation": {
+            "titleRequired": ""
+          },
+          "noChanges": "",
+          "unsavedTitle": "",
+          "unsavedText": "",
+          "unsavedConfirm": "",
+          "unsavedCancel": "",
+          "cards": {
+            "subtitle": "",
+            "backButton": "",
+            "saveButton": "",
+            "titleLabel": "",
+            "titlePlaceholder": "",
+            "descriptionLabel": "",
+            "descriptionPlaceholder": "",
+            "colorLabel": "",
+            "emptyState": "",
+            "dragHandle": "",
+            "deleteButton": "",
+            "deleteTitle": "",
+            "deleteText": "",
+            "saveSuccess": "",
+            "saveError": "",
+            "unsavedTitle": "",
+            "unsavedText": "",
+            "unsavedConfirm": "",
+            "unsavedCancel": ""
+          }
+        },
+        "actions": {
+          "openEditor": "",
+          "closeEditor": ""
+        }
+      },
       "amazon": {
         "asin": "ASIN",
         "asinDescription": "Provide the Amazon Standard Identification Number for this product.",
@@ -1123,6 +1191,59 @@
           "reviews": "",
           "relatedProducts": "",
           "geoOverrides": ""
+        }
+      }
+    }
+  },
+  "generalListing": {
+    "actions": {
+      "createDashboardCard": ""
+    },
+    "modal": {
+      "title": "",
+      "subtitle": "",
+      "fields": {
+        "title": "",
+        "description": "",
+        "color": "",
+        "section": "",
+        "sectionPlaceholder": ""
+      },
+      "preview": {
+        "titlePlaceholder": "",
+        "descriptionPlaceholder": ""
+      },
+      "colors": {
+        "red": "",
+        "orange": "",
+        "yellow": ""
+      },
+      "queryLabel": "",
+      "variablesLabel": "",
+      "errors": {
+        "titleRequired": "",
+        "sectionRequired": "",
+        "queryUnavailable": "",
+        "userUnavailable": ""
+      },
+      "alerts": {
+        "createSuccess": "",
+        "createError": ""
+      },
+      "sectionCreate": {
+        "title": "",
+        "fields": {
+          "title": "",
+          "titlePlaceholder": "",
+          "description": ""
+        },
+        "helper": "",
+        "openButton": "",
+        "closeButton": "",
+        "cancelButton": "",
+        "createButton": "",
+        "validation": {
+          "titleRequired": ""
         }
       }
     }

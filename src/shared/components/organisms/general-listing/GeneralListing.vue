@@ -13,11 +13,13 @@ import { Checkbox } from "../../atoms/checkbox";
 import { Icon } from "../../atoms/icon";
 import { TableRow } from "./containers/table-row";
 import { GridCard } from "./containers/grid-card";
+import FilterChipList from './components/FilterChipList.vue';
+import CreateDashboardCardModal from './components/CreateDashboardCardModal.vue';
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../modules/toast";
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
-import { DocumentNode } from 'graphql';
+import { DocumentNode, print } from 'graphql';
 
 const { t } = useI18n();
 
@@ -332,6 +334,43 @@ const clearSelected = () => {
   selectedEntities.value = []
 }
 
+const showCreateDashboardCardModal = ref(false);
+const createDashboardCardContext = ref<{ query: string; variables: Record<string, any>; queryKey: string }>({
+  query: '',
+  variables: {},
+  queryKey: ''
+});
+const queryText = computed(() => print(props.query as DocumentNode));
+
+const buildQueryVariables = (
+  filterVariables: Record<string, any> | null,
+  orderVariables: Record<string, any> | null,
+  pagination: Record<string, any>
+) => {
+  const baseFilter = filterVariables || {};
+  const baseOrder = orderVariables || {};
+  const filter = props.fixedFilterVariables !== null ? { ...baseFilter, ...props.fixedFilterVariables } : baseFilter;
+  const order = props.fixedOrderVariables !== null ? { ...baseOrder, ...props.fixedOrderVariables } : baseOrder;
+  const variables = {
+    filter,
+    order,
+    first: pagination.first,
+    last: pagination.last,
+    before: pagination.before,
+    after: pagination.after
+  };
+  return JSON.parse(JSON.stringify(variables));
+};
+
+const openCreateDashboardCardModal = (variables?: Record<string, any>) => {
+  createDashboardCardContext.value = {
+    query: queryText.value,
+    variables: variables || {},
+    queryKey: props.queryKey
+  };
+  showCreateDashboardCardModal.value = true;
+};
+
 defineExpose({
   clearSelected
 })
@@ -355,16 +394,11 @@ defineExpose({
 
           <div v-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
-            <div class="flex flex-wrap gap-2 mb-4 p-4">
-              <div
-                v-for="chip in filterChips"
-                :key="chip.key + chip.rawValue"
-                class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm"
-              >
-                <span>{{ chip.label }}: {{ chip.value }}</span>
-                <button class="ml-1" @click="removeFilter(chip.key, chip.rawValue)">×</button>
-              </div>
-            </div>
+            <FilterChipList
+              :chips="filterChips"
+              @remove="removeFilter"
+              @create="() => openCreateDashboardCardModal(buildQueryVariables(filterVariables, orderVariables, pagination))"
+            />
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 
               <span class="text-sm font-semibold text-gray-900">
@@ -516,6 +550,13 @@ defineExpose({
       </ApolloQuery>
     </template>
   </FilterManager>
+
+  <CreateDashboardCardModal
+    v-model="showCreateDashboardCardModal"
+    :query-text="createDashboardCardContext.query"
+    :variables="createDashboardCardContext.variables"
+    :query-key="createDashboardCardContext.queryKey"
+  />
 
 </template>
 

@@ -29,3 +29,12 @@ export const generateUserCredentialsQuery = gql`
     }
   }
 `;
+
+export const meQuery = gql`
+  query Me {
+    me {
+      id
+      isMultiTenantCompanyOwner
+    }
+  }
+`;
