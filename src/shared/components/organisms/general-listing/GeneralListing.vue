@@ -23,7 +23,7 @@ import type { DocumentNode, FieldNode, SelectionSetNode } from 'graphql';
 import { print, visit } from 'graphql';
 import { useAppStore } from '../../../plugins/store';
 import { Button } from "../../atoms/button";
-import { LocalLoader } from "../../atoms/local-loader";
+import { Loader } from "../../atoms/loader";
 
 const { t } = useI18n();
 const SELECT_ALL_PAGE_SIZE = 100;
@@ -638,7 +638,7 @@ watch(
                 >
                   {{ t('generalListing.actions.selectAllCount', { count: data[queryKey]?.totalCount }) }}
                 </Button>
-                <LocalLoader :loading="selectingAll" />
+                <Loader :loading="selectingAll" />
               </div>
 
               <!-- Bulk action buttons (only if any items are selected) -->
@@ -676,7 +676,6 @@ watch(
 
             <div v-if="viewType === 'table'">
               <div v-if="selectedEntities.length > 0" class="flex ml-4 items-center space-x-3 bg-white">
-                <LocalLoader :loading="selectingAll" />
                 <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
                   {{ t('shared.button.editAll') }}
