@@ -242,7 +242,7 @@ onMounted(fetchAmazonIntegrations);
           :counter="integration.productsWithIssues"
           :title="t('dashboard.cards.amazon.productsWithIssues.title')"
           :description="t('dashboard.cards.amazon.productsWithIssues.description')"
-          :hide-on-complete="!showCompletedAmazonCards"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId, active: true } }"
         />
