@@ -34,6 +34,7 @@
       "noIssues": "Keine Probleme",
       "active": "Active",
       "inactive": "Inactive",
+      "selectedOfTotal": "{selected} selected of {total}",
       "yes": "Ja",
       "no": "Nein"
     },
@@ -252,6 +253,74 @@
       },
       "labels": {
         "configuratorValue": ""
+      },
+      "userSections": {
+        "title": "",
+        "subtitle": "",
+        "refreshing": "",
+        "emptyTitle": "",
+        "emptySubtitle": "",
+        "emptySection": "",
+        "cardError": "",
+        "edit": {
+          "title": "",
+          "description": "",
+          "cardCount": "",
+          "hint": "",
+          "addButton": "",
+          "titleLabel": "",
+          "titlePlaceholder": "",
+          "descriptionLabel": "",
+          "descriptionPlaceholder": "",
+          "deleteButton": "",
+          "moveUp": "",
+          "moveDown": "",
+          "dragHandle": "",
+          "configure": "",
+          "configureComingSoon": "",
+          "deleteConfirmTitle": "",
+          "deleteConfirmText": "",
+          "deleteConfirmConfirm": "",
+          "deleteConfirmCancel": "",
+          "emptyHint": "",
+          "saveButton": "",
+          "saveSuccess": "",
+          "saveError": "",
+          "sectionLabel": "",
+          "validation": {
+            "titleRequired": ""
+          },
+          "noChanges": "",
+          "unsavedTitle": "",
+          "unsavedText": "",
+          "unsavedConfirm": "",
+          "unsavedCancel": "",
+          "cards": {
+            "subtitle": "",
+            "backButton": "",
+            "saveButton": "",
+            "titleLabel": "",
+            "titlePlaceholder": "",
+            "descriptionLabel": "",
+            "descriptionPlaceholder": "",
+            "colorLabel": "",
+            "emptyState": "",
+            "dragHandle": "",
+            "deleteButton": "",
+            "deleteTitle": "",
+            "deleteText": "",
+            "saveSuccess": "",
+            "saveError": "",
+            "unsavedTitle": "",
+            "unsavedText": "",
+            "unsavedConfirm": "",
+            "unsavedCancel": ""
+          }
+        },
+        "actions": {
+          "openEditor": "",
+          "closeEditor": ""
+        }
       },
       "amazon": {
         "asin": "ASIN",
@@ -699,8 +768,15 @@
           "wizard": {
             "steps": {
               "type": "",
+              "contentClass": "",
               "languages": "",
               "currencies": ""
+            },
+            "contentClass": {
+              "title": "",
+              "description": "",
+              "label": "",
+              "placeholder": ""
             },
             "languages": {
               "title": "",
@@ -714,6 +790,12 @@
               "noData": "",
               "fetchError": ""
             }
+          },
+          "contentClass": {
+            "title": "",
+            "description": "",
+            "label": "",
+            "placeholder": ""
           },
           "languages": {
             "title": "",
@@ -1128,6 +1210,92 @@
           "geoOverrides": ""
         }
       }
+    }
+  },
+  "generalListing": {
+    "actions": {
+      "createDashboardCard": "",
+      "selectAllCount": ""
+    },
+    "alerts": {
+      "selectAllError": ""
+    },
+    "modal": {
+      "title": "",
+      "subtitle": "",
+      "tabs": {
+        "self": "",
+        "members": ""
+      },
+      "fields": {
+        "title": "",
+        "description": "",
+        "color": "",
+        "section": "",
+        "sectionPlaceholder": ""
+      },
+      "preview": {
+        "titlePlaceholder": "",
+        "descriptionPlaceholder": ""
+      },
+      "colors": {
+        "red": "",
+        "orange": "",
+        "yellow": ""
+      },
+      "queryLabel": "",
+      "variablesLabel": "",
+      "errors": {
+        "titleRequired": "",
+        "sectionRequired": "",
+        "queryUnavailable": "",
+        "userUnavailable": "",
+        "membersUnavailable": "",
+        "memberSelectionRequired": "",
+        "memberSectionsRequired": ""
+      },
+      "alerts": {
+        "createSuccess": "",
+        "createError": ""
+      },
+      "sectionCreate": {
+        "title": "",
+        "fields": {
+          "title": "",
+          "titlePlaceholder": "",
+          "description": ""
+        },
+        "helper": "",
+        "openButton": "",
+        "closeButton": "",
+        "cancelButton": "",
+        "createButton": "",
+        "validation": {
+          "titleRequired": ""
+        }
+      },
+      "members": {
+        "title": "",
+        "subtitle": "",
+        "loading": "",
+        "retry": "",
+        "empty": "",
+        "ownerBadge": "",
+        "activeBadge": "",
+        "inactiveBadge": "",
+        "acceptedBadge": "",
+        "pendingBadge": "",
+        "sectionLabel": "",
+        "addSectionButton": "",
+        "createSectionTitle": "",
+        "unknownUser": ""
+      }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": ""
     }
   }
 }

@@ -12,6 +12,8 @@ import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import type { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import EbayInternalPropertyOptions from "../components/EbayInternalPropertyOptions.vue";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -173,6 +175,11 @@ const localInstanceId = computed<string | null>(() => {
 });
 
 const isSelectProperty = computed(() => propertyData.value?.type === PropertyTypes.SELECT);
+const remoteRuleId = computed(() =>
+  [ebayInternalPropertyId.value, integrationId, salesChannelId, type.value]
+    .map((part) => part ?? '')
+    .join('__'),
+);
 </script>
 
 <template>
@@ -192,7 +199,27 @@ const isSelectProperty = computed(() => propertyData.value?.type === PropertyTyp
           :config="formConfig"
           @set-data="handleSetData"
           @form-updated="handleFormUpdate"
-        />
+        >
+          <template #additional-button>
+            <Link
+              v-if="remoteRuleId"
+              :path="{
+                name: 'properties.properties.create',
+                query: {
+                  remoteRuleId,
+                  ...(formState.name ? { name: formState.name } : {}),
+                  ...(formState.type ? { type: formState.type } : {}),
+                  remoteWizard: isWizard ? '1' : '0',
+                  remoteRuleRoute: 'integrations.remoteInternalProperties.edit',
+                },
+              }"
+            >
+              <Button type="button" class="btn btn-info">
+                {{ t('integrations.show.generateProperty') }}
+              </Button>
+            </Link>
+          </template>
+        </GeneralForm>
         <EbayInternalPropertyOptions
           v-if="isSelectProperty && localInstanceId"
           :property-id="ebayInternalPropertyId"

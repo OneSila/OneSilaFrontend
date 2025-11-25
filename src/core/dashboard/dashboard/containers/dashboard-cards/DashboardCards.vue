@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { DashboardSectionProducts } from "./containers/dashboard-section-products";
-import { DashboardSectionGeneral } from "./containers/dashboard-section-general";
+import { DashboardUserSections } from "./containers/dashboard-user-sections";
 import { DashboardSectionAmazon } from "./containers/dashboard-section-amazon";
 import { DashboardSectionEbay } from "./containers/dashboard-section-ebay";
 import { injectAuth } from "../../../../../shared/modules/auth";
@@ -15,8 +14,7 @@ const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayInte
 
 <template>
   <div>
-    <DashboardSectionProducts />
-    <DashboardSectionGeneral />
+    <DashboardUserSections />
     <DashboardSectionAmazon v-if="hasAmazonIntegration" />
     <DashboardSectionEbay v-if="hasEbayIntegration" />
   </div>

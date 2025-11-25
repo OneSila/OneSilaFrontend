@@ -186,6 +186,74 @@
           "description": "Some select values used in products are missing translations for all required languages."
         }
       },
+      "userSections": {
+        "title": "Your dashboard",
+        "subtitle": "These sections are generated from the filters you saved as dashboard cards.",
+        "refreshing": "Updating cards…",
+        "emptyTitle": "No dashboard cards yet",
+        "emptySubtitle": "Create a dashboard card from any listing filter to see it here.",
+        "emptySection": "This section does not have any cards yet.",
+        "cardError": "We couldn’t load this card.",
+        "edit": {
+          "title": "Customize your dashboard cards",
+          "description": "Rename, reorder, or remove sections to personalize your workspace.",
+          "cardCount": "{count} cards",
+          "hint": "Drag the handle to change the order.",
+          "addButton": "Add section",
+          "titleLabel": "Title",
+          "titlePlaceholder": "Section title",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Short description",
+        "deleteButton": "Delete",
+        "moveUp": "Move section up",
+        "moveDown": "Move section down",
+        "dragHandle": "Drag section",
+        "configure": "Configure section",
+          "configureComingSoon": "Section settings are coming soon.",
+          "deleteConfirmTitle": "Delete section?",
+          "deleteConfirmText": "The section will be removed once you save your changes.",
+          "deleteConfirmConfirm": "Delete",
+          "deleteConfirmCancel": "Cancel",
+          "emptyHint": "No sections yet. Create one to get started.",
+          "saveButton": "Save",
+          "saveSuccess": "Dashboard sections updated.",
+          "saveError": "We couldn’t save your changes.",
+          "sectionLabel": "Section {position}",
+          "validation": {
+            "titleRequired": "A title is required."
+          },
+          "noChanges": "No changes to save.",
+          "unsavedTitle": "Discard changes?",
+          "unsavedText": "You have unsaved section updates. Leave without saving?",
+          "unsavedConfirm": "Discard",
+          "unsavedCancel": "Stay",
+          "cards": {
+            "subtitle": "Reorder and edit {count} cards",
+            "backButton": "Back",
+            "saveButton": "Save cards",
+            "titleLabel": "Card title",
+            "titlePlaceholder": "Card {index}",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Optional description",
+            "colorLabel": "Color",
+            "emptyState": "This section does not contain any cards yet.",
+            "dragHandle": "Drag card",
+            "deleteButton": "Delete card",
+            "deleteTitle": "Delete card?",
+            "deleteText": "The card will be removed when you save.",
+            "saveSuccess": "Cards updated.",
+            "saveError": "We couldn’t save these cards.",
+            "unsavedTitle": "Discard changes?",
+            "unsavedText": "You have unsaved card changes. Leave without saving?",
+            "unsavedConfirm": "Discard",
+            "unsavedCancel": "Stay"
+          }
+        },
+        "actions": {
+          "openEditor": "Open dashboard editor",
+          "closeEditor": "Close dashboard editor"
+        }
+      },
       "amazon": {
         "title": "Amazon integration",
         "description": "Resolve unmapped Amazon data to keep your marketplace in sync.",
@@ -417,6 +485,7 @@
       "inactive": "Inactive",
       "actions": "Actions",
       "selected": "Selected",
+      "selectedOfTotal": "{selected} selected of {total}",
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",
@@ -3589,8 +3658,15 @@
           "wizard": {
             "steps": {
               "type": "Select import type",
+              "contentClass": "Define description class",
               "languages": "Map languages",
               "currencies": "Map currencies"
+            },
+            "contentClass": {
+              "title": "Select the description wrapper",
+              "description": "Optional for product imports: enter the CSS class of the HTML element that contains the eBay description you want to import. When your listing uses a complex template, only the content nested inside that class will be imported. Leave it blank if the entire template should be imported.",
+              "label": "Content class",
+              "placeholder": "e.g. ebay-description"
             },
             "languages": {
               "title": "Map your remote languages",
@@ -3604,6 +3680,12 @@
               "noData": "No currencies available. Please try again later.",
               "fetchError": "An error occurred while fetching remote currencies."
             }
+          },
+          "contentClass": {
+            "title": "Select the description wrapper",
+            "description": "Optional for product imports: enter the CSS class of the HTML element that contains the eBay description you want to import. When your listing uses a complex template, only the content nested inside that class will be imported. Leave it blank if the entire template should be imported.",
+            "label": "Content class",
+            "placeholder": "e.g. ebay-description"
           },
           "languages": {
             "title": "Map your remote languages",
@@ -3811,6 +3893,92 @@
           "latencyP95": "p95 latency"
         }
       }
+    }
+  },
+  "generalListing": {
+    "actions": {
+      "createDashboardCard": "Create dashboard card",
+      "selectAllCount": "Select all {count}"
+    },
+    "alerts": {
+      "selectAllError": "We couldn't select every record. Try again."
+    },
+    "modal": {
+      "title": "Create dashboard card",
+      "subtitle": "Turn this filter selection into a dashboard insight.",
+      "tabs": {
+        "self": "Create for me",
+        "members": "Create for members"
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "color": "Color",
+        "section": "Section",
+        "sectionPlaceholder": "Select a dashboard section"
+      },
+      "preview": {
+        "titlePlaceholder": "Card title",
+        "descriptionPlaceholder": "Describe what this card highlights"
+      },
+      "colors": {
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow"
+      },
+      "queryLabel": "GraphQL query",
+      "variablesLabel": "Variables",
+      "errors": {
+        "titleRequired": "Please enter a title.",
+        "sectionRequired": "Please choose a dashboard section.",
+        "queryUnavailable": "We couldn't prepare the dashboard query. Reopen the modal from a listing and try again.",
+        "userUnavailable": "We couldn't detect your user account. Refresh and try again.",
+        "membersUnavailable": "We couldn't load your member list. Try again.",
+        "memberSelectionRequired": "Select at least one member.",
+        "memberSectionsRequired": "Choose a section for every selected member."
+      },
+      "alerts": {
+        "createSuccess": "Dashboard card created.",
+        "createError": "Failed to create dashboard card."
+      },
+      "sectionCreate": {
+        "title": "Create dashboard section",
+        "fields": {
+          "title": "Section title",
+          "titlePlaceholder": "e.g. Amazon prep",
+          "description": "Optional description"
+        },
+        "helper": "Need a new section?",
+        "openButton": "Add section",
+        "closeButton": "Hide form",
+        "cancelButton": "Cancel",
+        "createButton": "Create section",
+        "validation": {
+          "titleRequired": "Please enter a section title."
+        }
+      },
+      "members": {
+        "title": "Assign to team members",
+        "subtitle": "Select teammates, choose their dashboard section, and we will create identical cards for them.",
+        "loading": "Loading members...",
+        "retry": "Reload members",
+        "empty": "Invite a teammate to start sharing dashboard cards.",
+        "ownerBadge": "Owner",
+        "activeBadge": "Active",
+        "inactiveBadge": "Inactive",
+        "acceptedBadge": "Invitation accepted",
+        "pendingBadge": "Invitation pending",
+        "sectionLabel": "Target section",
+        "addSectionButton": "New section",
+        "createSectionTitle": "Create a section for {name}",
+        "unknownUser": "Team member"
+      }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": "Convert into dashboard card"
     }
   }
 }
