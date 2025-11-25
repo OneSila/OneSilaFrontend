@@ -607,6 +607,7 @@
       },
       "atoms": {
         "textHtmlEditor": {
+          "placeholder": "Type here...",
           "invalidHtml": "Contains broken HTML"
         }
       },

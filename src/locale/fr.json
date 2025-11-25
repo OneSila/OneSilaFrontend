@@ -40,6 +40,13 @@
     },
     "alert": {
       "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."
+    },
+    "components": {
+      "atoms": {
+        "textHtmlEditor": {
+          "placeholder": ""
+        }
+      }
     }
   },
   "auth": {

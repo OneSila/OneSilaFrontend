@@ -336,6 +336,7 @@
       },
       "atoms": {
         "textHtmlEditor": {
+          "placeholder": "",
           "invalidHtml": "Bevat ongeldige HTML"
         }
       },

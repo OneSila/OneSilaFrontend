@@ -40,6 +40,13 @@
     },
     "alert": {
       "noData": "Die Regel hat keine erforderlichen Konfiguratoreigenschaften, daher k\u00f6nnen keine Varianten generiert werden."
+    },
+    "components": {
+      "atoms": {
+        "textHtmlEditor": {
+          "placeholder": ""
+        }
+      }
     }
   },
   "auth": {

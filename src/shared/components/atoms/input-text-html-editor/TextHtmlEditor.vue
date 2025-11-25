@@ -1,8 +1,62 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
+import { QuillEditor, Quill } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import {useI18n} from "vue-i18n";
+import { useI18n } from 'vue-i18n';
+
+const Block: any = Quill.import('blots/block');
+
+class DivWrapperBlot extends Block {
+  static blotName = 'divWrapper';
+  static tagName = 'DIV';
+
+  static create(value: Record<string, string> | string | null) {
+    const node = super.create() as HTMLElement;
+
+    if (value && typeof value === 'object') {
+      Object.entries(value).forEach(([key, attrValue]) => {
+        node.setAttribute(key, attrValue);
+      });
+    }
+
+    return node;
+  }
+
+  static formats(node: HTMLElement) {
+    if (!node.hasAttributes()) {
+      return null;
+    }
+
+    return Array.from(node.attributes).reduce<Record<string, string>>((acc, attr) => {
+      acc[attr.name] = attr.value;
+      return acc;
+    }, {});
+  }
+
+  format(name: string, value: unknown) {
+    const node = this.domNode as HTMLElement;
+
+    if (name === DivWrapperBlot.blotName) {
+      if (!value) {
+        Array.from(node.attributes).forEach((attr) => {
+          node.removeAttribute(attr.name);
+        });
+      } else if (typeof value === 'object' && value !== null) {
+        Array.from(node.attributes).forEach((attr) => {
+          node.removeAttribute(attr.name);
+        });
+
+        Object.entries(value as Record<string, string>).forEach(([key, attrValue]) => {
+          node.setAttribute(key, attrValue);
+        });
+      }
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+
+Quill.register(DivWrapperBlot, true);
 
 const props = defineProps<{
   modelValue?: string;
@@ -46,15 +100,32 @@ const editorOptions = computed(() => ({
     'list',
     'bullet',
     'blockquote',
+    'divWrapper',
   ],
 }));
 
+
+const normalizeHtmlForComparison = (value: string) => {
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return '';
+  }
+
+  return trimmedValue
+    .replace(/\r\n/g, '\n')
+    .replace(/(\s*)([^\s=]+)=('([^']*)')/g, (_, whitespace, attrName, __, attrValue) => {
+      const escapedValue = attrValue.replace(/"/g, '&quot;');
+      return `${whitespace}${attrName}="${escapedValue}"`;
+    });
+};
 
 const validateHtml = (value: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(value, 'text/html');
   const parsed = doc.body.innerHTML.trim();
-  invalidHtml.value = parsed !== value.trim();
+  const normalizedInput = normalizeHtmlForComparison(value);
+  invalidHtml.value = parsed !== normalizedInput;
 };
 
 watch(
@@ -80,7 +151,7 @@ watch(content, (newVal) => {
       contentType="html"
       theme="snow"
       :options="editorOptions"
-      :placeholder="placeholder || 'Type here...'"
+      :placeholder="placeholder || t('shared.components.atoms.textHtmlEditor.placeholder')"
       :read-only="disabled || aiGenerating"
       style="min-height: 250px;"
     />
@@ -88,6 +159,7 @@ watch(content, (newVal) => {
       {{ t('shared.components.atoms.textHtmlEditor.invalidHtml') }}
     </p>
   </div>
+
 </template>
 
 <style scoped>
