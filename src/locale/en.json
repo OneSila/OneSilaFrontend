@@ -3955,6 +3955,10 @@
         "createButton": "Create section",
         "validation": {
           "titleRequired": "Please enter a section title."
+        },
+        "alerts": {
+          "createSuccess": "Dashboard section created.",
+          "createError": "Failed to create dashboard section."
         }
       },
       "members": {

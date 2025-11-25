@@ -1269,6 +1269,10 @@
         "createButton": "",
         "validation": {
           "titleRequired": ""
+        },
+        "alerts": {
+          "createSuccess": "",
+          "createError": ""
         }
       },
       "members": {
