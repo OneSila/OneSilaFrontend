@@ -29,6 +29,7 @@ export const useAppStore = defineStore('app', {
         isShowMainLoader: true,
         semidark: false,
         searchConfig: null,
+        dashboardCardModalTrigger: 0,
     }),
 
     actions: {
@@ -143,6 +144,9 @@ export const useAppStore = defineStore('app', {
         resetSearchConfig() {
             this.searchConfig = null; // Reset to no configuration
         },
+        triggerDashboardCardModal() {
+            this.dashboardCardModalTrigger += 1;
+        }
     },
     getters: {},
 });

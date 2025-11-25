@@ -34,6 +34,7 @@
       "noIssues": "Aucun problème",
       "active": "Active",
       "inactive": "Inactive",
+      "selectedOfTotal": "{selected} selected of {total}",
       "yes": "Oui",
       "no": "Non"
     },
@@ -764,8 +765,15 @@
           "wizard": {
             "steps": {
               "type": "",
+              "contentClass": "",
               "languages": "",
               "currencies": ""
+            },
+            "contentClass": {
+              "title": "",
+              "description": "",
+              "label": "",
+              "placeholder": ""
             },
             "languages": {
               "title": "",
@@ -779,6 +787,12 @@
               "noData": "",
               "fetchError": ""
             }
+          },
+          "contentClass": {
+            "title": "",
+            "description": "",
+            "label": "",
+            "placeholder": ""
           },
           "languages": {
             "title": "",
@@ -1197,11 +1211,19 @@
   },
   "generalListing": {
     "actions": {
-      "createDashboardCard": ""
+      "createDashboardCard": "",
+      "selectAllCount": ""
+    },
+    "alerts": {
+      "selectAllError": ""
     },
     "modal": {
       "title": "",
       "subtitle": "",
+      "tabs": {
+        "self": "",
+        "members": ""
+      },
       "fields": {
         "title": "",
         "description": "",
@@ -1224,7 +1246,10 @@
         "titleRequired": "",
         "sectionRequired": "",
         "queryUnavailable": "",
-        "userUnavailable": ""
+        "userUnavailable": "",
+        "membersUnavailable": "",
+        "memberSelectionRequired": "",
+        "memberSectionsRequired": ""
       },
       "alerts": {
         "createSuccess": "",
@@ -1245,7 +1270,29 @@
         "validation": {
           "titleRequired": ""
         }
+      },
+      "members": {
+        "title": "",
+        "subtitle": "",
+        "loading": "",
+        "retry": "",
+        "empty": "",
+        "ownerBadge": "",
+        "activeBadge": "",
+        "inactiveBadge": "",
+        "acceptedBadge": "",
+        "pendingBadge": "",
+        "sectionLabel": "",
+        "addSectionButton": "",
+        "createSectionTitle": "",
+        "unknownUser": ""
       }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": ""
     }
   }
 }

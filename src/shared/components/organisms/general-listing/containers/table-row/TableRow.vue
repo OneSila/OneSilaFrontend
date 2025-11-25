@@ -48,9 +48,9 @@ const getImageValue = (field: any, item: any) => {
     <td v-if="haveBulk"
         scope="col"
         :class="['px-4 text-left text-sm font-semibold text-gray-900',
-                 selectedEntities.includes(item.node[config.identifierKey || 'id']) ? 'border-l-2 border-indigo-600' : '']">
+                 selectedEntities.includes(String(item.node[config.identifierKey || 'id'])) ? 'border-l-2 border-indigo-600' : '']">
       <Checkbox
-        :modelValue="selectedEntities.includes(item.node[config.identifierKey || 'id'])"
+        :modelValue="selectedEntities.includes(String(item.node[config.identifierKey || 'id']))"
         @update:model-value="value => selectCheckbox(item.node[config.identifierKey || 'id'], value)" />
     </td>
     <td v-for="(field, index) in config.fields" :key="field.name + '-' + index" class="whitespace-nowrap px-3 py-4 text-sm">

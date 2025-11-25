@@ -485,6 +485,7 @@
       "inactive": "Inactive",
       "actions": "Actions",
       "selected": "Selected",
+      "selectedOfTotal": "{selected} selected of {total}",
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",
@@ -3657,8 +3658,15 @@
           "wizard": {
             "steps": {
               "type": "Select import type",
+              "contentClass": "Define description class",
               "languages": "Map languages",
               "currencies": "Map currencies"
+            },
+            "contentClass": {
+              "title": "Select the description wrapper",
+              "description": "Optional for product imports: enter the CSS class of the HTML element that contains the eBay description you want to import. When your listing uses a complex template, only the content nested inside that class will be imported. Leave it blank if the entire template should be imported.",
+              "label": "Content class",
+              "placeholder": "e.g. ebay-description"
             },
             "languages": {
               "title": "Map your remote languages",
@@ -3672,6 +3680,12 @@
               "noData": "No currencies available. Please try again later.",
               "fetchError": "An error occurred while fetching remote currencies."
             }
+          },
+          "contentClass": {
+            "title": "Select the description wrapper",
+            "description": "Optional for product imports: enter the CSS class of the HTML element that contains the eBay description you want to import. When your listing uses a complex template, only the content nested inside that class will be imported. Leave it blank if the entire template should be imported.",
+            "label": "Content class",
+            "placeholder": "e.g. ebay-description"
           },
           "languages": {
             "title": "Map your remote languages",
@@ -3883,11 +3897,19 @@
   },
   "generalListing": {
     "actions": {
-      "createDashboardCard": "Create dashboard card"
+      "createDashboardCard": "Create dashboard card",
+      "selectAllCount": "Select all {count}"
+    },
+    "alerts": {
+      "selectAllError": "We couldn't select every record. Try again."
     },
     "modal": {
       "title": "Create dashboard card",
       "subtitle": "Turn this filter selection into a dashboard insight.",
+      "tabs": {
+        "self": "Create for me",
+        "members": "Create for members"
+      },
       "fields": {
         "title": "Title",
         "description": "Description",
@@ -3910,7 +3932,10 @@
         "titleRequired": "Please enter a title.",
         "sectionRequired": "Please choose a dashboard section.",
         "queryUnavailable": "We couldn't prepare the dashboard query. Reopen the modal from a listing and try again.",
-        "userUnavailable": "We couldn't detect your user account. Refresh and try again."
+        "userUnavailable": "We couldn't detect your user account. Refresh and try again.",
+        "membersUnavailable": "We couldn't load your member list. Try again.",
+        "memberSelectionRequired": "Select at least one member.",
+        "memberSectionsRequired": "Choose a section for every selected member."
       },
       "alerts": {
         "createSuccess": "Dashboard card created.",
@@ -3931,7 +3956,29 @@
         "validation": {
           "titleRequired": "Please enter a section title."
         }
+      },
+      "members": {
+        "title": "Assign to team members",
+        "subtitle": "Select teammates, choose their dashboard section, and we will create identical cards for them.",
+        "loading": "Loading members...",
+        "retry": "Reload members",
+        "empty": "Invite a teammate to start sharing dashboard cards.",
+        "ownerBadge": "Owner",
+        "activeBadge": "Active",
+        "inactiveBadge": "Inactive",
+        "acceptedBadge": "Invitation accepted",
+        "pendingBadge": "Invitation pending",
+        "sectionLabel": "Target section",
+        "addSectionButton": "New section",
+        "createSectionTitle": "Create a section for {name}",
+        "unknownUser": "Team member"
       }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": "Convert into dashboard card"
     }
   }
 }

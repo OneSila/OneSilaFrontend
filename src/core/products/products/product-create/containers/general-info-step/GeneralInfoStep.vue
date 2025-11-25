@@ -24,6 +24,14 @@ const isGenerateDisabled = computed(() => {
   return props.form.name.length === 0;
 });
 
+const skuModel = computed({
+  get: () => props.form.sku,
+  set: (value: string) => {
+    const sanitizedValue = typeof value === 'string' ? value.trim() : '';
+    props.form.sku = sanitizedValue;
+  }
+});
+
 const fetchProductType = async () => {
 
     const {data} = await apolloClient.query({
@@ -106,7 +114,7 @@ onMounted(fetchProductType)
                 <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.sku') }}</label>
               </FlexCell>
               <FlexCell>
-                <TextInput class="w-60" v-model="form.sku" :placeholder="'SKU-123'" />
+                <TextInput class="w-60" v-model="skuModel" :placeholder="'SKU-123'" />
               </FlexCell>
             </Flex>
           </FlexCell>

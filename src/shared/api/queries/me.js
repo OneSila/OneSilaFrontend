@@ -38,3 +38,21 @@ export const meQuery = gql`
     }
   }
 `;
+
+export const myMultiTenantCompanyQuery = gql`
+  query MyMultiTenantCompany {
+    myMultiTenantCompany {
+      id
+      name
+      multitenantuserSet {
+        id
+        firstName
+        lastName
+        email
+        isActive
+        invitationAccepted
+        isMultiTenantCompanyOwner
+      }
+    }
+  }
+`;
