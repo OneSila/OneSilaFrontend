@@ -65,21 +65,21 @@ useEnterKeyboardListener(onSubmit);
 </script>
 
 <template>
-  <div>
+  <div class="text-gray-900 dark:text-gray-100">
     <template v-if="requestSent">
       <div class="mb-7">
-          <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
+          <h1 class="mb-3 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
               {{ t('auth.recover.header') }}
           </h1>
-          <p>{{ t('auth.recover.descriptionSent') }}</p>
-          <p class="mt-4">{{ t('auth.recover.descriptionCountdown') }}</p>
-        <p class="text-2xl font-bold text-primary dark:text-yellow-300 mt-2">
+          <p class="text-base leading-6 text-gray-500 dark:text-gray-400">{{ t('auth.recover.descriptionSent') }}</p>
+          <p class="mt-4 text-base leading-6 text-gray-500 dark:text-gray-400">{{ t('auth.recover.descriptionCountdown') }}</p>
+        <p class="mt-2 text-2xl font-bold text-primary dark:text-yellow-300">
           {{ countdown }}
         </p>
-        <div class="dark:text-white mt-9">
+        <div class="mt-9 text-gray-900 dark:text-white">
           {{ t('auth.recover.loginPrompt') }}
           <Link
-              class="uppercase text-primary underline transition hover:text-black dark:hover:text-white"
+              class="font-semibold text-primary underline underline-offset-2 transition hover:text-primary/80 dark:hover:text-primary/70"
               :path="{name: 'auth.login'}"
           >{{ t('auth.register.login') }}</Link>
         </div>
@@ -87,26 +87,32 @@ useEnterKeyboardListener(onSubmit);
       </template>
       <template v-else>
       <div class="mb-7">
-          <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
+          <h1 class="mb-3 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
               {{ t('auth.recover.header') }}
           </h1>
-          <p>{{ t('auth.recover.description') }}</p>
+          <p class="text-base leading-6 text-gray-500 dark:text-gray-400">{{ t('auth.recover.description') }}</p>
       </div>
       <EmailInput id="email" icon="envelope" v-model:model-value="form.email" :label="t('auth.recover.labels.email')" :placeholder="t('auth.recover.placeholders.email')" />
 
-      <div>
+      <div class="mt-4">
       <ApolloMutation :mutation="requestLoginLinkMutation" :variables="{ username: form.email }" @done="onRecoverClicked" @error="onError">
         <template v-slot="{ mutate, loading, error }">
-          <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" :disabled="loading" @click="mutate()">          {{ t('shared.button.recover') }}
+          <Button
+            ref="submitButtonRef"
+            :customClass="'flex w-full justify-center rounded-xl bg-primary px-4 py-2.5 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary dark:hover:bg-primary/80'"
+            :disabled="loading"
+            @click="mutate()"
+          >
+            {{ t('shared.button.recover') }}
           </Button>
         </template>
       </ApolloMutation>
       </div>
 
-      <div class="text-center dark:text-white mt-9">
+      <div class="mt-9 text-center text-sm text-gray-600 dark:text-white">
           {{ t('auth.recover.loginPrompt') }}
           <Link
-              class="uppercase text-primary underline transition hover:text-black dark:hover:text-white"
+              class="font-semibold text-primary underline underline-offset-2 transition hover:text-primary/80 dark:hover:text-primary/70"
               :path="{name: 'auth.login'}"
           >{{ t('auth.register.login') }}</Link>
       </div>

@@ -1,43 +1,29 @@
 <template>
-  <div>
-    <slot name="background-image"/>
-
+  <div class="flex min-h-screen items-center justify-center bg-[#f4f6fb] px-4 py-10 dark:bg-[#070c1a] sm:px-10">
     <div
-        class="relative flex min-h-screen items-center justify-center bg-[url(/src/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat px-6 py-10 dark:bg-[#060818] sm:px-16">
-
-      <slot name="foreground-images"/>
-
+      class="flex w-full max-w-[1380px] flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-2xl dark:border-white/10 dark:bg-[#0b1120] lg:min-h-[580px] lg:flex-row lg:items-stretch"
+    >
       <div
-          class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px] lg:flex-row lg:gap-10 xl:gap-0"
+        class="relative hidden w-full items-center justify-center bg-[linear-gradient(120deg,rgba(68,64,234,1)_0%,rgba(48,45,180,1)_100%)] p-6 lg:inline-flex lg:max-w-[760px] xl:-ml-20 ltr:xl:skew-x-[12deg] rtl:xl:skew-x-[-12deg]"
       >
         <div
-            class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]"
-        >
-          <div
-              class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"
-          >
-
-          </div>
-
-          <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
-            <div class="text-center">
-              <slot name="left-section"/>
-            </div>
-          </div>
+          class="absolute inset-y-0 w-8 from-white/10 via-transparent to-transparent ltr:-right-8 ltr:bg-gradient-to-r rtl:-left-8 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-16 rtl:xl:-left-16"
+        ></div>
+        <div class="w-full ltr:xl:-skew-x-[12deg] rtl:xl:skew-x-[12deg]">
+          <slot name="left-section" />
         </div>
-        <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
-          <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
-            <slot name="right-section-header"/>
-          </div>
-          <div class="w-full max-w-[440px] lg:mt-16">
-            <slot name="right-section-content"/>
-            <div class="absolute bottom-6 w-full text-center dark:text-white">
-              <slot name="footer"/>
-            </div>
+      </div>
+      <div class="relative flex w-full flex-col items-center justify-center px-6 py-12 sm:px-10 lg:max-w-[620px]">
+        <div class="flex w-full max-w-[440px] items-center justify-end gap-2 lg:absolute lg:right-10 lg:top-10 lg:max-w-full">
+          <slot name="right-section-header" />
+        </div>
+        <div class="w-full max-w-[440px] lg:mt-16">
+          <slot name="right-section-content" />
+          <div class="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
+            <slot name="footer" />
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>

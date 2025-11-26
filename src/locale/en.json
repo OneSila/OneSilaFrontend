@@ -541,7 +541,8 @@
       "code": "Code",
       "noIssues": "No Issues",
       "manual": "Manual",
-      "generate": "Generate"
+      "generate": "Generate",
+      "errors": "Errors"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -777,7 +778,7 @@
         "email": "Enter Email"
       },
       "tokenFailed": "Failed to recovery your account",
-      "loginPrompt": "Go back?"
+      "loginPrompt": "Changed your mind?"
     }
   },
   "profile": {
