@@ -122,6 +122,11 @@
     }
   },
   "products": {
+    "eanCodes": {
+      "labels": {
+        "excludeAttributeValue": ""
+      }
+    },
     "translation": {
       "messages": {
         "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
@@ -1227,6 +1232,9 @@
     }
   },
   "generalListing": {
+    "labels": {
+      "search": ""
+    },
     "actions": {
       "createDashboardCard": "",
       "selectAllCount": ""

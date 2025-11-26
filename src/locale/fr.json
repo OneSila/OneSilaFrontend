@@ -122,6 +122,11 @@
     }
   },
   "products": {
+    "eanCodes": {
+      "labels": {
+        "excludeAttributeValue": ""
+      }
+    },
     "products": {
       "create": {
         "wizard": {
@@ -1224,6 +1229,9 @@
     }
   },
   "generalListing": {
+    "labels": {
+      "search": ""
+    },
     "actions": {
       "createDashboardCard": "",
       "selectAllCount": ""

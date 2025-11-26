@@ -632,7 +632,8 @@
         "alreadyUsed": "Reeds Gebruikt",
         "prefix": "Prefix",
         "currentEanCode": "Huidige EAN Code",
-        "externalEanCode": "Externe EAN Code"
+        "externalEanCode": "Externe EAN Code",
+        "excludeAttributeValue": ""
       },
       "placeholders": {
         "eanCode": "Voer EAN Code in",
@@ -2981,6 +2982,9 @@
     }
   },
   "generalListing": {
+    "labels": {
+      "search": ""
+    },
     "actions": {
       "createDashboardCard": "",
       "selectAllCount": ""

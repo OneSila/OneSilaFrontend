@@ -182,7 +182,7 @@ const getIconColor = (requireType: string) => {
 </script>
 
 <template>
-  <Flex gap="2" wrap class="w-full items-start">
+  <Flex gap="2" wrap class="w-full items-start space-y-2">
     <FlexCell grow>
       <div class="relative w-full">
         <TextInput

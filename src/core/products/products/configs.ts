@@ -226,7 +226,7 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       addLookup: true,
       lookupKeys: ['id']
     },
-   {
+    {
       type: FieldType.Query,
       name: 'valueSelectId',
       query: propertySelectValuesQuerySelector,
@@ -238,6 +238,21 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       multiple: false,
       isEdge: true,
       addLookup: false,
+    },
+    {
+      type: FieldType.Query,
+      name: 'notValueSelectId',
+      query: propertySelectValuesQuerySelector,
+      label: t('products.eanCodes.labels.excludeAttributeValue'),
+      labelBy: "fullValueName",
+      valueBy: "id",
+      dataKey: "propertySelectValues",
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      lookupKeys: ['valueSelectId'],
+      isNot: true,
     },
     {
       type: FieldType.Query,

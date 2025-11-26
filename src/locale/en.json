@@ -982,6 +982,7 @@
         "isAssigned": "Is assigned to product?",
         "productName": "Product Name",
         "attributeValue": "Attribute Value",
+        "excludeAttributeValue": "Exclude Attribute Value",
         "internal": "Internal",
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
@@ -3905,6 +3906,9 @@
     }
   },
   "generalListing": {
+    "labels": {
+      "search": "Search"
+    },
     "actions": {
       "createDashboardCard": "Create dashboard card",
       "selectAllCount": "Select all {count}"

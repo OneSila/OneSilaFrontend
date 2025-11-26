@@ -269,6 +269,19 @@ const filterChips = computed(() => {
   const q = route.query as Record<string, any>;
   const chips: { key: string; label: string; value: string; rawValue: string }[] = [];
   let stored: Record<string, { label: string; timestamp: number }> = {};
+  const searchParam = q.search;
+  const normalisedSearchValue = Array.isArray(searchParam) ? searchParam[0] : searchParam;
+  if (typeof normalisedSearchValue === 'string') {
+    const trimmedSearchValue = normalisedSearchValue.trim();
+    if (trimmedSearchValue !== '') {
+      chips.push({
+        key: 'search',
+        label: t('generalListing.labels.search'),
+        value: trimmedSearchValue,
+        rawValue: normalisedSearchValue,
+      });
+    }
+  }
   const raw = localStorage.getItem('filterLabelMap');
   if (raw) {
     try {
