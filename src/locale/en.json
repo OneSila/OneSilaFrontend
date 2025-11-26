@@ -1291,6 +1291,13 @@
           "title": "Configurator attributes",
           "description": "eBay uses these configurator properties to build variations for this category.",
           "empty": "No configurator properties are provided for this eBay category."
+        },
+        "manualEntry": {
+          "title": "Do you know the ID? Set it manually",
+          "description": "Paste the eBay category ID to preview it without browsing the tree.",
+          "placeholder": "Category ID",
+          "button": "Load category",
+          "invalid": "We couldn't find a category with that ID for this marketplace."
         }
       },
       "inspector": {

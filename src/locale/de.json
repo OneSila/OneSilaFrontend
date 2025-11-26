@@ -400,6 +400,13 @@
           "title": "",
           "description": "",
           "empty": ""
+        },
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
         }
       }
     }

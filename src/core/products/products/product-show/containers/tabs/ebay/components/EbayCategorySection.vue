@@ -49,8 +49,12 @@ const productCategoryId = ref<string | null>(null);
 const search = ref('');
 const loadingSelected = ref(false);
 const saving = ref(false);
+const manualCategoryInput = ref('');
+const manualSelectionLoading = ref(false);
+const manualSelectionError = ref<string | null>(null);
 
 const defaultTreeId = computed(() => props.view?.defaultCategoryTreeId || null);
+const manualCategoryId = computed(() => manualCategoryInput.value.trim());
 
 const filteredNodes = computed(() =>
   nodes.value.filter((node) =>
@@ -193,6 +197,8 @@ watch(
   () => {
     resetNavigation();
     fetchSelected();
+    manualCategoryInput.value = '';
+    manualSelectionError.value = null;
   },
 );
 
@@ -210,6 +216,13 @@ watch(
     fetchNodes();
   },
   { immediate: true },
+);
+
+watch(
+  manualCategoryInput,
+  () => {
+    manualSelectionError.value = null;
+  },
 );
 
 const goToChild = (node: EbayCategoryNode) => {
@@ -249,6 +262,16 @@ const selectNode = (node: EbayCategoryNode) => {
 
 const cancelSelection = () => {
   pendingNode.value = null;
+};
+
+const copyCategoryId = async (remoteId?: string | null) => {
+  if (!remoteId) return;
+  try {
+    await navigator.clipboard.writeText(remoteId);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (error) {
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
 };
 
 const saveSelection = async () => {
@@ -323,6 +346,24 @@ const removeSelection = async () => {
     displayApolloError(error);
   } finally {
     saving.value = false;
+  }
+};
+
+const setManualCategory = async () => {
+  if (!manualCategoryId.value || manualSelectionLoading.value) {
+    return;
+  }
+  manualSelectionLoading.value = true;
+  manualSelectionError.value = null;
+  try {
+    const node = await fetchCategoryDetails(manualCategoryId.value);
+    if (!node) {
+      manualSelectionError.value = t('products.products.ebay.manualEntry.invalid');
+      return;
+    }
+    pendingNode.value = node;
+  } finally {
+    manualSelectionLoading.value = false;
   }
 };
 
@@ -409,6 +450,34 @@ defineExpose({ hasUnsavedChanges });
               </div>
             </li>
           </ul>
+          <div class="mt-6 border rounded bg-white p-4">
+            <h6 class="font-semibold text-sm mb-1">
+              {{ t('products.products.ebay.manualEntry.title') }}
+            </h6>
+            <p class="text-xs text-gray-500 mb-3">
+              {{ t('products.products.ebay.manualEntry.description') }}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input
+                v-model="manualCategoryInput"
+                type="text"
+                class="form-input flex-1"
+                :placeholder="t('products.products.ebay.manualEntry.placeholder')"
+                @keyup.enter="setManualCategory"
+              />
+              <Button
+                class="btn btn-sm btn-outline-primary"
+                :disabled="manualSelectionLoading || !manualCategoryId"
+                :loading="manualSelectionLoading"
+                @click="setManualCategory"
+              >
+                {{ t('products.products.ebay.manualEntry.button') }}
+              </Button>
+            </div>
+            <p v-if="manualSelectionError" class="text-xs text-red-600 mt-2">
+              {{ manualSelectionError }}
+            </p>
+          </div>
         </div>
 
         <div class="lg:w-1/2 space-y-4">
@@ -422,7 +491,16 @@ defineExpose({ hasUnsavedChanges });
               </div>
               <div v-else-if="selectedNode">
                 <div class="text-sm font-medium">{{ selectedNode.fullName || selectedNode.name }}</div>
-                <div class="text-xs text-gray-500">{{ selectedNode.remoteId }}</div>
+                <div class="text-xs text-gray-500 flex items-center gap-2">
+                  <span>{{ selectedNode.remoteId }}</span>
+                  <button
+                    class="p-1 rounded hover:bg-gray-100"
+                    type="button"
+                    @click="copyCategoryId(selectedNode.remoteId)"
+                  >
+                    <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
+                  </button>
+                </div>
                 <div class="mt-3">
                   <h6 class="font-semibold text-xs text-gray-700 mb-1">
                     {{ t('products.products.ebay.configuratorPreview.title') }}
@@ -457,8 +535,17 @@ defineExpose({ hasUnsavedChanges });
                   <div class="text-sm">
                     {{ defaultCategory.name || defaultCategory.remoteId }}
                   </div>
-                  <div class="text-xs text-gray-500 mt-1">
-                    {{ t('products.products.ebay.defaultCategoryInfo', { id: defaultCategory.remoteId }) }}
+                  <div class="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                    <span>
+                      {{ t('products.products.ebay.defaultCategoryInfo', { id: defaultCategory.remoteId }) }}
+                    </span>
+                    <button
+                      class="p-1 rounded hover:bg-gray-100"
+                      type="button"
+                      @click="copyCategoryId(defaultCategory.remoteId)"
+                    >
+                      <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
+                    </button>
                   </div>
                 </div>
                 <div v-else class="text-sm text-gray-500">
@@ -473,7 +560,16 @@ defineExpose({ hasUnsavedChanges });
               {{ t('products.products.ebay.pendingSelection') }}
             </h6>
             <div class="text-sm font-medium">{{ pendingNode.fullName || pendingNode.name }}</div>
-            <div class="text-xs text-gray-500">{{ pendingNode.remoteId }}</div>
+            <div class="text-xs text-gray-500 flex items-center gap-2">
+              <span>{{ pendingNode.remoteId }}</span>
+              <button
+                class="p-1 rounded hover:bg-gray-100"
+                type="button"
+                @click="copyCategoryId(pendingNode.remoteId)"
+              >
+                <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
+              </button>
+            </div>
             <div class="mt-3">
               <h6 class="font-semibold text-xs text-gray-700 mb-1">
                 {{ t('products.products.ebay.configuratorPreview.title') }}
