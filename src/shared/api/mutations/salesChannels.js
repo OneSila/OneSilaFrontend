@@ -84,6 +84,17 @@ export const updateAmazonSalesChannelMutation = gql`
   }
 `;
 
+export const syncAmazonSalesChannelMappingsMutation = gql`
+  mutation syncAmazonSalesChannelMappings($sourceId: GlobalID!, $targetId: GlobalID!) {
+    syncAmazonSalesChannelMappings(
+      sourceSalesChannel: { id: $sourceId }
+      targetSalesChannel: { id: $targetId }
+    ) {
+      success
+    }
+  }
+`;
+
 export const updateEbaySalesChannelMutation = gql`
   mutation updateEbaySalesChannel($data: EbaySalesChannelPartialInput!) {
     updateEbaySalesChannel(data: $data) {

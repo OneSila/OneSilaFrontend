@@ -705,7 +705,14 @@
         "mappedRemotelyEbay": "",
         "startMapping": "",
         "saveAndMapNext": "",
-        "allMappedSuccess": ""
+        "allMappedSuccess": "",
+        "importMapping": "",
+        "importMappingDescription": "",
+        "importMappingSelectLabel": "",
+        "importMappingPlaceholder": "",
+        "importSuccess": "",
+        "importNoSources": "",
+        "importFallbackLabel": ""
       },
       "productRules": {
         "title": "",
