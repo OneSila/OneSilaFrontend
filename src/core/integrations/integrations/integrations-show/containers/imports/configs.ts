@@ -37,6 +37,7 @@ export interface EbaySalesChannelImportItem {
 
 export interface SheinSalesChannelImportItem {
   id: string;
+  proxyId: string;
   type: string;
   status: 'new' | 'pending' | 'failed' | 'success' | 'processing';
   percentage: number;
