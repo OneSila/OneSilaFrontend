@@ -15,8 +15,10 @@ import { FilterDate } from './containers/filter-date';
 import { FilterSlider } from './containers/filter-slider';
 import { FilterCheckbox } from './containers/filter-checkbox';
 import { FilterDateRange } from './containers/filter-date-range';
+import { useAppStore } from '../../../../../plugins/store';
 
 const { t } = useI18n();
+const appStore = useAppStore();
 
 const props = defineProps<{ filters: SearchFilter[] | undefined, cols: number }>();
 const emit = defineEmits(['cancel-clicked', 'submit-clicked']);
@@ -51,6 +53,11 @@ const submit = () => {
   emit('submit-clicked', filterValues);
 };
 
+const convertToDashboardCard = () => {
+  appStore.triggerDashboardCardModal();
+  cancel();
+};
+
 </script>
 
 <template>
@@ -65,7 +72,14 @@ const submit = () => {
       />
     </div>
 
-    <div class="flex justify-end gap-4 mt-4">
+    <hr class="my-4">
+    <div class="flex justify-end gap-4">
+        <Button
+          class="text-primary hover:underline px-0 py-0 bg-transparent"
+          @click="convertToDashboardCard"
+        >
+          {{ t('generalSearch.filterModal.convertToDashboardCard') }}
+        </Button>
       <Button class="btn btn-outline-dark" @click="cancel">{{ t('shared.button.cancel') }}</Button>
       <Button class="btn btn-primary" @click="submit">{{ t('shared.button.submit') }}</Button>
     </div>

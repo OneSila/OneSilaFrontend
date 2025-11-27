@@ -119,3 +119,64 @@ export const dashboardPropertySelectValuesUsedInProductsMissingTranslations = gq
     }
   }
 `;
+
+export const dashboardSectionsQuery = gql`
+  query DashboardSections(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: DashboardSectionOrder
+    $filter: DashboardSectionFilter
+  ) {
+    dashboardSections(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          title
+          description
+        }
+      }
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+      totalCount
+    }
+  }
+`;
+
+export const dashboardSectionsWithCardsQuery = gql`
+  query DashboardSectionsWithCards {
+    dashboardSections(filters: { currentUser: true }) {
+      edges {
+        node {
+          id
+          title
+          description
+          sortOrder
+          cards {
+            id
+            title
+            description
+            color
+            query
+            variables
+            queryKey
+            url
+            sortOrder
+          }
+        }
+      }
+    }
+  }
+`;

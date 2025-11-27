@@ -83,11 +83,11 @@ const getModelValue = (field: any, item: any) => {
 
 <template>
   <div class="card bg-white rounded-xl shadow-md overflow-hidden relative"
-       :class="['px-4 text-left text-sm font-semibold text-gray-900', selectedEntities.includes(item.node[config.identifierKey || 'id']) ? 'border-2 border-indigo-600' : '']">
+       :class="['px-4 text-left text-sm font-semibold text-gray-900', selectedEntities.includes(String(item.node[config.identifierKey || 'id'])) ? 'border-2 border-indigo-600' : '']">
     <!-- Checkbox overlay in top-left corner -->
     <div v-if="haveBulk" class="absolute top-2 left-2 z-10">
       <Checkbox
-          :modelValue="selectedEntities.includes(item.node[config.identifierKey || 'id'])"
+          :modelValue="selectedEntities.includes(String(item.node[config.identifierKey || 'id']))"
           @update:model-value="value => selectCheckbox(item.node[config.identifierKey || 'id'], value)"/>
     </div>
     <div class="p-4">

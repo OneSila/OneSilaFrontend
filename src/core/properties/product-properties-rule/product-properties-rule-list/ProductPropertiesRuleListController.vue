@@ -9,13 +9,14 @@ import { GeneralListing } from "../../../../shared/components/organisms/general-
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import apolloClient from "../../../../../apollo-client";
 import {propertiesQuerySelector} from "../../../../shared/api/queries/properties.js";
-import { onMounted, ref} from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const { t } = useI18n();
 const productTypeId = ref<string | null>(null);
 
 const searchConfig = searchConfigConstructor(t);
 const listingConfig = listingConfigConstructor(t, true);
+const fixedFilters = computed(() => ({ salesChannel: { id: { isNull: true } } }));
 
 const fetchProductType = async () => {
     const {data} = await apolloClient.query({
@@ -56,6 +57,7 @@ onMounted(fetchProductType);
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
+         :fixed-filter-variables="fixedFilters"
       />
    </template>
   </GeneralTemplate>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { Wizard } from "../../../../../../../../../../../shared/components/molecules/wizard";
 import { OptionSelector } from "../../../../../../../../../../../shared/components/molecules/option-selector";
 import { Icon } from "../../../../../../../../../../../shared/components/atoms/icon";
+import { TextInput } from "../../../../../../../../../../../shared/components/atoms/input-text";
 import apolloClient from "../../../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../../../shared/modules/toast";
 import {
@@ -29,6 +30,7 @@ const loading = ref(false);
 const step = ref(0);
 const finishLoading = ref(false);
 const currentFinishStep = ref<number | null>(null);
+const contentClass = ref("");
 
 const mappedLanguages = ref<RemoteLanguage[]>([]);
 const mappedCurrencies = ref<RemoteCurrency[]>([]);
@@ -42,22 +44,46 @@ const typeChoices = computed(() => [
   },
 ]);
 
-const wizardSteps = computed(() => [
-  { title: t("integrations.imports.create.ebay.wizard.steps.type"), name: "selectType" },
-  { title: t("integrations.imports.create.ebay.wizard.steps.languages"), name: "mapLanguages" },
-  { title: t("integrations.imports.create.ebay.wizard.steps.currencies"), name: "mapCurrencies" },
-]);
+const hasContentClassStep = computed(() => importType.value === "products");
 
-const allowNextStep = computed(() => {
-  if (step.value === 0) {
-    return true;
+const wizardSteps = computed(() => {
+  const steps = [
+    { title: t("integrations.imports.create.ebay.wizard.steps.type"), name: "selectType" },
+  ];
+
+  if (hasContentClassStep.value) {
+    steps.push({
+      title: t("integrations.imports.create.ebay.wizard.steps.contentClass"),
+      name: "contentClass",
+    });
   }
 
-  if (step.value === 1) {
+  steps.push(
+    { title: t("integrations.imports.create.ebay.wizard.steps.languages"), name: "mapLanguages" },
+    { title: t("integrations.imports.create.ebay.wizard.steps.currencies"), name: "mapCurrencies" },
+  );
+
+  return steps;
+});
+
+watch(
+  wizardSteps,
+  (newSteps) => {
+    if (step.value >= newSteps.length) {
+      step.value = Math.max(newSteps.length - 1, 0);
+    }
+  },
+  { immediate: true },
+);
+
+const currentStepName = computed(() => wizardSteps.value[step.value]?.name ?? null);
+
+const allowNextStep = computed(() => {
+  if (currentStepName.value === "mapLanguages") {
     return mappedLanguages.value.some((language) => Boolean(language.localInstance));
   }
 
-  if (step.value === 2) {
+  if (currentStepName.value === "mapCurrencies") {
     return mappedCurrencies.value.some((currency) => Boolean(currency.localInstance?.id));
   }
 
@@ -140,15 +166,21 @@ const bulkUpdateCurrencies = async () => {
 };
 
 const createImport = async () => {
+  const normalizedContentClass = contentClass.value.trim();
+
+  const data: Record<string, any> = {
+    salesChannel: { id: props.integrationId },
+    type: importType.value,
+    status: "pending",
+  };
+
+  if (normalizedContentClass) {
+    data.contentClass = normalizedContentClass;
+  }
+
   await apolloClient.mutate({
     mutation: createEbayImportProcessMutation,
-    variables: {
-      data: {
-        salesChannel: { id: props.integrationId },
-        type: importType.value,
-        status: "pending",
-      },
-    },
+    variables: { data },
   });
 };
 
@@ -248,9 +280,9 @@ const handleFinish = async () => {
                   {{ t('integrations.imports.types.schemaDescription') }}
                 </p>
               </div>
-            </template>
-            <template #products>
-              <div class="flex flex-col gap-2">
+      </template>
+      <template #products>
+        <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
                   <h3 class="text-lg font-bold">
                     {{ t('integrations.imports.types.products') }}
@@ -269,6 +301,27 @@ const handleFinish = async () => {
               </div>
             </template>
           </OptionSelector>
+        </div>
+      </template>
+
+      <template #contentClass>
+        <div v-if="hasContentClassStep" class="flex flex-col gap-4 max-w-3xl">
+          <div>
+            <h1 class="text-2xl mb-2">{{ t('integrations.imports.create.ebay.contentClass.title') }}</h1>
+            <p class="text-sm text-gray-500">
+              {{ t('integrations.imports.create.ebay.contentClass.description') }}
+            </p>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-gray-700 dark:text-white-light">
+              {{ t('integrations.imports.create.ebay.contentClass.label') }}
+            </label>
+            <TextInput
+              v-model="contentClass"
+              class="w-full md:w-96"
+              :placeholder="t('integrations.imports.create.ebay.contentClass.placeholder')"
+            />
+          </div>
         </div>
       </template>
 

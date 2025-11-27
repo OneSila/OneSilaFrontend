@@ -164,6 +164,7 @@ const handleSetData = (data: any) => {
     name: data?.ebayProperty?.marketplace?.name ?? '',
   };
 
+
   const defaultValue = propertyId || data?.ebayProperty?.localInstance?.id || null;
 
   const field = {
@@ -291,6 +292,7 @@ const selectRecommendation = (id: string) => {
       </Link>
     </template>
     <template #additional-fields>
+
       <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
         <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
           {{ t('integrations.show.propertySelectValues.recommendation.title') }}

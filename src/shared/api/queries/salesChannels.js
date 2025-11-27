@@ -59,14 +59,32 @@ export const getMagentoChannelQuery = gql`
       authenticationMethod
       attributeSetSkeletonId
       eanCodeAttribute
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
       firstImportComplete
       isImporting
       integrationPtr {
         id
       }
       saleschannelPtr {
-       id
-       }
+        id
+        ... on SalesChannelType {
+          gptFeed {
+            id
+            fileUrl
+            lastSyncedAt
+            file {
+              url
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -88,6 +106,14 @@ export const getShopifyChannelQuery = gql`
       apiKey
       apiSecret
       accessToken
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
       firstImportComplete
       isImporting
       integrationPtr {
@@ -95,6 +121,16 @@ export const getShopifyChannelQuery = gql`
       }
       saleschannelPtr {
         id
+        ... on SalesChannelType {
+          gptFeed {
+            id
+            fileUrl
+            lastSyncedAt
+            file {
+              url
+            }
+          }
+        }
       }
       vendorProperty {
         id
@@ -118,6 +154,14 @@ export const getWoocommerceChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
       apiKey
       apiSecret
       firstImportComplete
@@ -127,6 +171,16 @@ export const getWoocommerceChannelQuery = gql`
       }
       saleschannelPtr {
         id
+        ... on SalesChannelType {
+          gptFeed {
+            id
+            fileUrl
+            lastSyncedAt
+            file {
+              url
+            }
+          }
+        }
       }
     }
   }
@@ -695,6 +749,7 @@ export const ebayChannelViewsQuery = gql`
           name
           active
           isDefault
+          defaultCategoryTreeId
           salesChannel {
             id
             hostname
@@ -1723,6 +1778,7 @@ export const ebayProductTypesQuery = gql`
       edges {
         node {
           id
+          remoteId
           mappedLocally
           mappedRemotely
           name

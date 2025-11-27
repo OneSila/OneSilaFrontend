@@ -115,6 +115,11 @@ export const getProductPropertiesRuleSubscription = gql`
     productPropertiesRule(pk: $pk) {
       id
       requireEanCode
+      salesChannel {
+        id
+        type
+        hostname
+      }
       productType {
         id
         value

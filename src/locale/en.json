@@ -186,6 +186,74 @@
           "description": "Some select values used in products are missing translations for all required languages."
         }
       },
+      "userSections": {
+        "title": "Your dashboard",
+        "subtitle": "These sections are generated from the filters you saved as dashboard cards.",
+        "refreshing": "Updating cards…",
+        "emptyTitle": "No dashboard cards yet",
+        "emptySubtitle": "Create a dashboard card from any listing filter to see it here.",
+        "emptySection": "This section does not have any cards yet.",
+        "cardError": "We couldn’t load this card.",
+        "edit": {
+          "title": "Customize your dashboard cards",
+          "description": "Rename, reorder, or remove sections to personalize your workspace.",
+          "cardCount": "{count} cards",
+          "hint": "Drag the handle to change the order.",
+          "addButton": "Add section",
+          "titleLabel": "Title",
+          "titlePlaceholder": "Section title",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Short description",
+        "deleteButton": "Delete",
+        "moveUp": "Move section up",
+        "moveDown": "Move section down",
+        "dragHandle": "Drag section",
+        "configure": "Configure section",
+          "configureComingSoon": "Section settings are coming soon.",
+          "deleteConfirmTitle": "Delete section?",
+          "deleteConfirmText": "The section will be removed once you save your changes.",
+          "deleteConfirmConfirm": "Delete",
+          "deleteConfirmCancel": "Cancel",
+          "emptyHint": "No sections yet. Create one to get started.",
+          "saveButton": "Save",
+          "saveSuccess": "Dashboard sections updated.",
+          "saveError": "We couldn’t save your changes.",
+          "sectionLabel": "Section {position}",
+          "validation": {
+            "titleRequired": "A title is required."
+          },
+          "noChanges": "No changes to save.",
+          "unsavedTitle": "Discard changes?",
+          "unsavedText": "You have unsaved section updates. Leave without saving?",
+          "unsavedConfirm": "Discard",
+          "unsavedCancel": "Stay",
+          "cards": {
+            "subtitle": "Reorder and edit {count} cards",
+            "backButton": "Back",
+            "saveButton": "Save cards",
+            "titleLabel": "Card title",
+            "titlePlaceholder": "Card {index}",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Optional description",
+            "colorLabel": "Color",
+            "emptyState": "This section does not contain any cards yet.",
+            "dragHandle": "Drag card",
+            "deleteButton": "Delete card",
+            "deleteTitle": "Delete card?",
+            "deleteText": "The card will be removed when you save.",
+            "saveSuccess": "Cards updated.",
+            "saveError": "We couldn’t save these cards.",
+            "unsavedTitle": "Discard changes?",
+            "unsavedText": "You have unsaved card changes. Leave without saving?",
+            "unsavedConfirm": "Discard",
+            "unsavedCancel": "Stay"
+          }
+        },
+        "actions": {
+          "openEditor": "Open dashboard editor",
+          "closeEditor": "Close dashboard editor"
+        }
+      },
       "amazon": {
         "title": "Amazon integration",
         "description": "Resolve unmapped Amazon data to keep your marketplace in sync.",
@@ -370,6 +438,7 @@
       "finish": "Finish",
       "cancel": "Cancel",
       "saveAndContinue": "Save & Continue",
+      "createAndContinue": "Create & Continue",
       "delete": "Delete",
       "edit": "Edit",
       "show": "Details",
@@ -416,6 +485,7 @@
       "inactive": "Inactive",
       "actions": "Actions",
       "selected": "Selected",
+      "selectedOfTotal": "{selected} selected of {total}",
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",
@@ -471,7 +541,8 @@
       "code": "Code",
       "noIssues": "No Issues",
       "manual": "Manual",
-      "generate": "Generate"
+      "generate": "Generate",
+      "errors": "Errors"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -537,6 +608,7 @@
       },
       "atoms": {
         "textHtmlEditor": {
+          "placeholder": "Type here...",
           "invalidHtml": "Contains broken HTML"
         }
       },
@@ -706,7 +778,7 @@
         "email": "Enter Email"
       },
       "tokenFailed": "Failed to recovery your account",
-      "loginPrompt": "Go back?"
+      "loginPrompt": "Changed your mind?"
     }
   },
   "profile": {
@@ -910,6 +982,7 @@
         "isAssigned": "Is assigned to product?",
         "productName": "Product Name",
         "attributeValue": "Attribute Value",
+        "excludeAttributeValue": "Exclude Attribute Value",
         "internal": "Internal",
         "alreadyUsed": "Already Used",
         "prefix": "Prefix",
@@ -991,6 +1064,11 @@
           "bulkDeleteError": "Failed to delete products. Please try again.",
           "copied": "Copied",
           "pasted": "Pasted",
+          "rowCopied": "Row copied",
+          "rowPasted": "Row pasted",
+          "rowClipboardEmpty": "Copy a row before pasting",
+          "rowCopyNoEditableColumns": "No editable columns available to copy from this row",
+          "rowPasteNoEditableColumns": "No editable columns available to paste into this row",
           "pasteDifferentColumn": "Cannot paste to different column",
           "pasteIncompatibleColumn": "Cannot paste into column with incompatible type",
           "undo": "Undid last change",
@@ -999,7 +1077,13 @@
           "updatedProductProperties": "Updated {count} product properties.",
           "deletedProductProperties": "Deleted {count} product properties."
         }
-    },
+      },
+      "matrix": {
+        "rowActions": {
+          "copy": "Copy row",
+          "paste": "Paste row"
+        }
+      },
       "messages": {
         "unsavedChanges": "You have unsaved changes. Are you sure you want to leave this tab?"
       },
@@ -1016,6 +1100,7 @@
         "priceLists": "Price Lists",
         "websites": "Channels",
         "amazon": "Amazon",
+        "ebay": "Ebay",
         "supplierProducts": "Supplier Products",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
@@ -1126,6 +1211,9 @@
             "autoValue": "Auto: {value}",
             "autoValueEmpty": "Auto: —"
           }
+        },
+        "bulkEdit": {
+          "missingRuleWarning": "Define a property rule for this product type before editing variations in bulk."
         }
       },
         "properties": {
@@ -1182,6 +1270,37 @@
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
         "productTypeCreated": "Product type created"
+      },
+      "ebay": {
+        "defaultMarketplace": "Default marketplace",
+        "noViews": "No eBay stores are available.",
+        "categoryTitle": "Recommended Category",
+        "categoryDescription": "Browse the eBay category tree and assign the most specific category available.",
+        "selectMarketplacePrompt": "Select a marketplace to manage its eBay category.",
+        "noDefaultTree": "This marketplace does not have a default category tree configured.",
+        "rootLabel": "Root",
+        "leafRestriction": "Only leaf categories can be selected.",
+        "currentSelection": "Current category",
+        "noSelection": "No category selected.",
+        "pendingSelection": "Pending selection",
+        "categorySaved": "eBay category saved",
+        "categoryRemoved": "eBay category removed",
+        "removeCategory": "Remove category",
+        "categoryMappingInfo": "These entries show each eBay marketplace view; the icon indicates whether a category is mapped for that view.",
+        "defaultCategoryTitle": "Default category from product type",
+        "defaultCategoryInfo": "Remote ID: {id}",
+        "configuratorPreview": {
+          "title": "Configurator attributes",
+          "description": "eBay uses these configurator properties to build variations for this category.",
+          "empty": "No configurator properties are provided for this eBay category."
+        },
+        "manualEntry": {
+          "title": "Do you know the ID? Set it manually",
+          "description": "Paste the eBay category ID to preview it without browsing the tree.",
+          "placeholder": "Category ID",
+          "button": "Load category",
+          "invalid": "We couldn't find a category with that ID for this marketplace."
+        }
       },
       "inspector": {
         "errors": {
@@ -2273,6 +2392,187 @@
         "title": "Give your brands a voice",
         "content": "Add a custom description for this brand to guide how it's represented in AI-generated content. You can create different descriptions for different languages. If the language is left empty, this will act as the default description for the brand."
       }
+    },
+    "chatGptProductFeed": {
+      "title": "ChatGPT Product Feed",
+      "form": {
+        "successUpdate": "ChatGPT feed configuration saved."
+      },
+      "messages": {
+        "loadError": "Something went wrong."
+      },
+      "labels": {
+        "conditionProperty": "Condition",
+        "condtionNewValue": "Condition value – new",
+        "condtionRefurbishedValue": "Condition value – refurbished",
+        "condtionUsdValue": "Condition value – used",
+        "brandProperty": "Brand",
+        "materialProperty": "Material",
+        "mpnProperty": "MPN",
+        "colorProperty": "Color",
+        "sizeProperty": "Size",
+        "ageGroupProperty": "Age group",
+        "ageGroupNewbornValue": "Age group value – newborn",
+        "ageGroupInfantValue": "Age group value – infant",
+        "ageGroupTodlerValue": "Age group value – toddler",
+        "ageGroupKidsValue": "Age group value – kids",
+        "ageGroupAdultValue": "Age group value – adult",
+        "lengthProperty": "Length",
+        "lengthUnit": "Length unit",
+        "widthProperty": "Width",
+        "heightProperty": "Height",
+        "weightProperty": "Weight",
+        "weightUnit": "Weight unit",
+        "expirationDateProperty": "Expiration date",
+        "pickupMethodProperty": "Pickup method",
+        "pickupMethodInStoreValue": "Pickup method value – in store",
+        "pickupMethodReserveValue": "Pickup method value – reserve",
+        "pickupMethodNotSupportedValue": "Pickup method value – not supported",
+        "sizeSystemProperty": "Size system",
+        "genderProperty": "Gender",
+        "genderMaleValue": "Gender value – male",
+        "genderFemaleValue": "Gender value – female",
+        "genderUnisexValue": "Gender value – unisex",
+        "popularityScoreProperty": "Popularity score",
+        "warningProperty": "Warning",
+        "ageRestrictionProperty": "Age restriction"
+      },
+      "placeholders": {
+        "property": "Select a property",
+        "value": "Select a value",
+        "unit": "Enter unit (e.g., cm)"
+      },
+      "info": {
+        "title": "How each feed field is populated",
+        "description": "Review how OneSila maps your catalog data to the ChatGPT Product Feed specification.",
+        "linkLabel": "Open ChatGPT Product Feed specification",
+        "sources": {
+          "product": "Product",
+          "mapping": "Mapped attribute",
+          "salesChannel": "Sales channel config",
+          "notSynced": "Not synced",
+          "bundle": "Bundle",
+          "defaultSync": "Default (sync day)"
+        },
+        "sections": {
+          "basicProductData": {
+            "title": "Basic Product Data",
+            "description": "Provide the core identifiers and descriptive text needed to uniquely reference each product. These fields establish the canonical record that ChatGPT Search uses to display and link to your product."
+          },
+          "itemInformation": {
+            "title": "Item Information",
+            "description": "Capture the physical characteristics and classification details of the product. This data helps ensure accurate categorization, filtering, and search relevance."
+          },
+          "media": {
+            "title": "Media",
+            "description": "Supply visual and rich media assets that represent the product. High-quality images and optional videos or 3D models improve user trust and engagement."
+          },
+          "priceAndPromotions": {
+            "title": "Price & Promotions",
+            "description": "Define standard and promotional pricing information. These attributes power price display, discount messaging, and offer comparisons."
+          },
+          "availabilityInventory": {
+            "title": "Availability & Inventory",
+            "description": "Describe current stock levels and key timing signals for product availability. Accurate inventory data ensures users only see items they can actually purchase."
+          },
+          "variants": {
+            "title": "Variants",
+            "description": "Specify variant relationships and distinguishing attributes such as color or size. These fields allow ChatGPT to group related SKUs and surface variant-specific details."
+          },
+          "fulfillment": {
+            "title": "Fulfillment",
+            "description": "Fulfillment data is not currently synced to ChatGPT."
+          },
+          "merchantInfo": {
+            "title": "Merchant Info",
+            "description": "Identify the seller and link to any relevant merchant policies or storefront pages. This ensures proper attribution and enables users to review seller credentials."
+          },
+          "returns": {
+            "title": "Returns",
+            "description": "Provide return policies and time windows to set clear expectations for buyers. Transparent return data builds trust and reduces post-purchase confusion."
+          },
+          "performanceSignals": {
+            "title": "Performance Signals",
+            "description": "Share popularity and return-rate metrics where available. These signals can be used to enhance ranking and highlight high-performing products."
+          },
+          "compliance": {
+            "title": "Compliance",
+            "description": "Include regulatory warnings, disclaimers, or age restrictions. Compliance fields help meet legal obligations and protect consumers."
+          },
+          "reviewsQa": {
+            "title": "Reviews and Q&A",
+            "description": "User-generated insights strengthen credibility and help shoppers make informed decisions. These fields are not yet synced."
+          },
+          "relatedProducts": {
+            "title": "Related Products",
+            "description": "List products that are commonly bought together or act as substitutes. This enables basket-building recommendations and cross-sell opportunities."
+          },
+          "geoTagging": {
+            "title": "Geo Tagging",
+            "description": "Indicate any region-specific pricing or availability overrides. Geo data allows ChatGPT to present accurate offers and stock status by location."
+          }
+        },
+        "fields": {
+          "id": "ID",
+          "gtin": "GTIN",
+          "mpn": "MPN",
+          "title": "Title",
+          "description": "Description",
+          "link": "Link",
+          "condition": "Condition",
+          "productCategory": "Product category",
+          "brand": "Brand",
+          "material": "Material",
+          "dimensions": "Dimensions",
+          "length": "Length",
+          "width": "Width",
+          "height": "Height",
+          "weight": "Weight",
+          "ageGroup": "Age group",
+          "imageLink": "Image link",
+          "additionalImageLink": "Additional image link",
+          "videoLink": "Video link",
+          "price": "Price",
+          "applicableTaxesFees": "Applicable taxes & fees",
+          "salePrice": "Sale price",
+          "salePriceEffectiveDate": "Sale price effective date",
+          "unitPricingMeasure": "Unit pricing measure",
+          "pricingTrend": "Pricing trend",
+          "availability": "Availability",
+          "availabilityDate": "Availability date",
+          "inventoryQuantity": "Inventory quantity",
+          "expirationDate": "Expiration date",
+          "pickupMethod": "Pickup method",
+          "pickupSla": "Pickup SLA",
+          "itemGroupId": "Item group ID",
+          "itemGroupTitle": "Item group title",
+          "color": "Color",
+          "size": "Size",
+          "sizeSystem": "Size system",
+          "gender": "Gender",
+          "offerId": "Offer ID",
+          "customVariant1Category": "Custom variant 1 category",
+          "customVariant1Option": "Custom variant 1 option",
+          "customVariant2Category": "Custom variant 2 category",
+          "customVariant2Option": "Custom variant 2 option",
+          "customVariant3Category": "Custom variant 3 category",
+          "customVariant3Option": "Custom variant 3 option",
+          "fulfillmentData": "Fulfillment data",
+          "sellerName": "Seller name",
+          "sellerUrl": "Seller URL",
+          "sellerPrivacyPolicy": "Seller privacy policy",
+          "sellerTos": "Seller terms of service",
+          "returnPolicy": "Return policy",
+          "returnWindow": "Return window",
+          "popularityScore": "Popularity score",
+          "returnRate": "Return rate",
+          "warning": "Warning",
+          "ageRestriction": "Age restriction",
+          "reviews": "Reviews & Q&A",
+          "relatedProducts": "Related products",
+          "geoOverrides": "Geo overrides"
+        }
+      }
     }
   },
   "network": {
@@ -2430,10 +2730,14 @@
       },
       "labels": {
         "type": "Rule Type",
-        "propertyType": "Property Type"
+        "propertyType": "Property Type",
+        "salesChannel": "Sales Channel",
+        "defaultSalesChannel": "Default",
+        "unknownSalesChannel": "Unknown sales channel"
       },
       "placeholders": {
-        "type": "Select rule type"
+        "type": "Select rule type",
+        "salesChannel": "Select a sales channel"
       },
       "help": {
         "type": "Select how this property should be handled for the product."
@@ -2472,6 +2776,9 @@
         "createProductProperty": "Product Property Created",
         "updateProductProperty": "Product Property Updated",
         "deleteProductProperty": "Product Property Deleted"
+      },
+      "messages": {
+        "unsavedChanges": "You have unsaved changes. Switching sales channels will discard them. Continue?"
       },
       "configTypes": {
         "requiredInConfigurator": {
@@ -2625,6 +2932,7 @@
       "sections": {
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
+        "gpt": "GPT settings",
         "authentication": "Authentication",
         "defaultUnits": "Default Units"
       },
@@ -2903,6 +3211,11 @@
           "property": "Select the local property this marketplace property maps to.",
           "localizedName": "Name provided by the marketplace. Usually localized to the marketplace language.",
           "translatedName": "Name translated into your company language. You can adjust it."
+        },
+        "configuratorPreview": {
+          "title": "Configurator attributes",
+          "description": "eBay uses these configurator properties to build variations for this category.",
+          "empty": "No configurator properties are provided for this eBay property."
         }
       },
       "propertySelectValues": {
@@ -3126,6 +3439,15 @@
       "apiKey": "API Key",
       "apiSecret": "API secret key",
       "accessToken": "Access Token",
+      "gptEnable": "Enable GPT product feed",
+      "gptEnableCheckout": "Enable GPT checkout",
+      "gptSellerName": "Seller display name",
+      "gptSellerUrl": "Seller URL",
+      "gptSellerPrivacyPolicy": "Privacy policy URL",
+      "gptSellerTos": "Terms of service URL",
+      "gptReturnPolicy": "Return policy URL",
+      "gptReturnWindow": "Return window",
+      "gptFeedUrl": "GPT feed URL",
       "region": "Region",
       "country": "Country",
       "fulfillmentPolicy": "Fulfillment policy",
@@ -3286,7 +3608,11 @@
         "maxRetries": "Enter a number (1–20) for retry attempts. A higher value may overcome temporary issues but might delay error alerts.",
         "hostApiKey": "Your Access Token is available in Magento under System > Integrations.",
         "password": "Using a password is not recommended. Use an Access Token instead.",
-        "shopifyVendorProperty": "This must be a property of type Select. Its selected value will be sent as the product's vendor in Shopify."
+        "shopifyVendorProperty": "This must be a property of type Select. Its selected value will be sent as the product's vendor in Shopify.",
+        "gptEnable": "Toggle to send GPT-ready product data to supported experiences.",
+        "gptSellerUrl": "Leave blank to reuse {hostname} as the seller URL.",
+        "gptReturnWindow": "Specify the number of days customers have to return an order.",
+        "gptEnableCheckout": "Enable when you are ready for GPT experiences to provide checkout flows using these policies."
       },
       "modal": {
         "logs": {
@@ -3434,8 +3760,15 @@
           "wizard": {
             "steps": {
               "type": "Select import type",
+              "contentClass": "Define description class",
               "languages": "Map languages",
               "currencies": "Map currencies"
+            },
+            "contentClass": {
+              "title": "Select the description wrapper",
+              "description": "Optional for product imports: enter the CSS class of the HTML element that contains the eBay description you want to import. When your listing uses a complex template, only the content nested inside that class will be imported. Leave it blank if the entire template should be imported.",
+              "label": "Content class",
+              "placeholder": "e.g. ebay-description"
             },
             "languages": {
               "title": "Map your remote languages",
@@ -3449,6 +3782,12 @@
               "noData": "No currencies available. Please try again later.",
               "fetchError": "An error occurred while fetching remote currencies."
             }
+          },
+          "contentClass": {
+            "title": "Select the description wrapper",
+            "description": "Optional for product imports: enter the CSS class of the HTML element that contains the eBay description you want to import. When your listing uses a complex template, only the content nested inside that class will be imported. Leave it blank if the entire template should be imported.",
+            "label": "Content class",
+            "placeholder": "e.g. ebay-description"
           },
           "languages": {
             "title": "Map your remote languages",
@@ -3656,6 +3995,99 @@
           "latencyP95": "p95 latency"
         }
       }
+    }
+  },
+  "generalListing": {
+    "labels": {
+      "search": "Search"
+    },
+    "actions": {
+      "createDashboardCard": "Create dashboard card",
+      "selectAllCount": "Select all {count}"
+    },
+    "alerts": {
+      "selectAllError": "We couldn't select every record. Try again."
+    },
+    "modal": {
+      "title": "Create dashboard card",
+      "subtitle": "Turn this filter selection into a dashboard insight.",
+      "tabs": {
+        "self": "Create for me",
+        "members": "Create for members"
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "color": "Color",
+        "section": "Section",
+        "sectionPlaceholder": "Select a dashboard section"
+      },
+      "preview": {
+        "titlePlaceholder": "Card title",
+        "descriptionPlaceholder": "Describe what this card highlights"
+      },
+      "colors": {
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow"
+      },
+      "queryLabel": "GraphQL query",
+      "variablesLabel": "Variables",
+      "errors": {
+        "titleRequired": "Please enter a title.",
+        "sectionRequired": "Please choose a dashboard section.",
+        "queryUnavailable": "We couldn't prepare the dashboard query. Reopen the modal from a listing and try again.",
+        "userUnavailable": "We couldn't detect your user account. Refresh and try again.",
+        "membersUnavailable": "We couldn't load your member list. Try again.",
+        "memberSelectionRequired": "Select at least one member.",
+        "memberSectionsRequired": "Choose a section for every selected member."
+      },
+      "alerts": {
+        "createSuccess": "Dashboard card created.",
+        "createError": "Failed to create dashboard card."
+      },
+      "sectionCreate": {
+        "title": "Create dashboard section",
+        "fields": {
+          "title": "Section title",
+          "titlePlaceholder": "e.g. Amazon prep",
+          "description": "Optional description"
+        },
+        "helper": "Need a new section?",
+        "openButton": "Add section",
+        "closeButton": "Hide form",
+        "cancelButton": "Cancel",
+        "createButton": "Create section",
+        "validation": {
+          "titleRequired": "Please enter a section title."
+        },
+        "alerts": {
+          "createSuccess": "Dashboard section created.",
+          "createError": "Failed to create dashboard section."
+        }
+      },
+      "members": {
+        "title": "Assign to team members",
+        "subtitle": "Select teammates, choose their dashboard section, and we will create identical cards for them.",
+        "loading": "Loading members...",
+        "retry": "Reload members",
+        "empty": "Invite a teammate to start sharing dashboard cards.",
+        "ownerBadge": "Owner",
+        "activeBadge": "Active",
+        "inactiveBadge": "Inactive",
+        "acceptedBadge": "Invitation accepted",
+        "pendingBadge": "Invitation pending",
+        "sectionLabel": "Target section",
+        "addSectionButton": "New section",
+        "createSectionTitle": "Create a section for {name}",
+        "unknownUser": "Team member"
+      }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": "Convert into dashboard card"
     }
   }
 }

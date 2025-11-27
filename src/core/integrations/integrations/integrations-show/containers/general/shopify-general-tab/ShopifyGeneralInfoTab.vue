@@ -24,6 +24,7 @@ import {QueryFormField} from "../../../../../../../shared/components/organisms/g
 import {
   FieldQuery
 } from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
+import GptSettingsForm from "../components/GptSettingsForm.vue";
 
 interface EditShopifyForm {
   id: string;
@@ -41,21 +42,49 @@ interface EditShopifyForm {
   apiSecret: string;
   accessToken?: string;
   state?: string;
+  gptEnable: boolean;
+  gptEnableCheckout: boolean;
+  gptSellerName: string;
+  gptSellerUrl: string;
+  gptSellerPrivacyPolicy: string;
+  gptSellerTos: string;
+  gptReturnPolicy: string;
+  gptReturnWindow: number | null;
   vendorProperty: {
     id: string;
   };
 }
 
-const props = defineProps<{ data: EditShopifyForm }>();
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
+}
+
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
+const props = defineProps<{ data: EditShopifyForm; gptFeed: SalesChannelGptFeed | null; initialGptEnable: boolean; salesChannelId: string | null }>();
 
 const { t } = useI18n();
-const omitStartingStock = (data: EditShopifyForm & { startingStock?: number | null }): EditShopifyForm => {
+const normalizeShopifyFormData = (data: any): EditShopifyForm => {
   const { startingStock, ...rest } = data;
-  return rest as EditShopifyForm;
+  return {
+    ...rest,
+    gptEnable: data.gptEnable ?? false,
+    gptEnableCheckout: data.gptEnableCheckout ?? false,
+    gptSellerName: data.gptSellerName ?? '',
+    gptSellerUrl: data.gptSellerUrl ?? '',
+    gptSellerPrivacyPolicy: data.gptSellerPrivacyPolicy ?? '',
+    gptSellerTos: data.gptSellerTos ?? '',
+    gptReturnPolicy: data.gptReturnPolicy ?? '',
+    gptReturnWindow: data.gptReturnWindow ?? null,
+  } as EditShopifyForm;
 };
 
 const formData = ref<EditShopifyForm>(
-  omitStartingStock(props.data as EditShopifyForm & { startingStock?: number | null }),
+  normalizeShopifyFormData(props.data as EditShopifyForm & { startingStock?: number | null }),
 );
 const fieldErrors = ref<Record<string, string>>({});
 const router = useRouter();
@@ -64,11 +93,12 @@ const submitContinueButtonRef = ref();
 
 const accordionItems = [
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
-  { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' }
+  { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' },
+  { name: 'gpt', label: t('integrations.show.sections.gpt'), icon: 'robot' }
 ];
 
 watch(() => props.data, (newData) => {
-  formData.value = omitStartingStock(newData as EditShopifyForm & { startingStock?: number | null });
+  formData.value = normalizeShopifyFormData(newData as EditShopifyForm & { startingStock?: number | null });
 }, { deep: true });
 
 const cleanupAndMutate = async (mutate) => {
@@ -281,6 +311,18 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
           </div>
         </div>
+      </template>
+
+      <template #gpt>
+        <GptSettingsForm
+          :form-data="formData"
+          :field-errors="fieldErrors"
+          :hostname="formData.hostname"
+          :gpt-feed="props.gptFeed"
+          :initial-gpt-enable="props.initialGptEnable"
+          :sales-channel-id="props.salesChannelId"
+          @gpt-feed-updated="emit('gpt-feed-updated', $event)"
+        />
       </template>
     </Accordion>
 

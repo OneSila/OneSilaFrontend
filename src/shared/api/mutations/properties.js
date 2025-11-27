@@ -401,6 +401,7 @@ export const completeCreateProductPropertiesRuleMutation = gql`
         property {
           id
           name
+          type
         }
         type
         sortOrder
@@ -449,6 +450,7 @@ export const completeUpdateProductPropertiesRuleMutation = gql`
         property {
           id
           name
+          type
         }
         type
         sortOrder

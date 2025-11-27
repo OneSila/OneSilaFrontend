@@ -192,6 +192,7 @@
       "finish": "Afwerken",
       "cancel": "Annulleren",
       "saveAndContinue": "Opslaan & Verder werken",
+      "createAndContinue": "",
       "delete": "Verwijderen",
       "edit": "Bewerken",
       "show": "Tonen",
@@ -233,6 +234,7 @@
       "active": "Actief",
       "inactive": "Inactive",
       "actions": "Acties",
+      "selectedOfTotal": "{selected} selected of {total}",
       "shortDescription": "Korte Omschrijving",
       "quantity": "Hoeveelheid",
       "uploading": "Uploading",
@@ -334,6 +336,7 @@
       },
       "atoms": {
         "textHtmlEditor": {
+          "placeholder": "",
           "invalidHtml": "Bevat ongeldige HTML"
         }
       },
@@ -629,7 +632,8 @@
         "alreadyUsed": "Reeds Gebruikt",
         "prefix": "Prefix",
         "currentEanCode": "Huidige EAN Code",
-        "externalEanCode": "Externe EAN Code"
+        "externalEanCode": "Externe EAN Code",
+        "excludeAttributeValue": ""
       },
       "placeholders": {
         "eanCode": "Voer EAN Code in",
@@ -682,6 +686,11 @@
         "toast": {
           "copied": "Gekopieerd",
           "pasted": "Geplakt",
+          "rowCopied": "",
+          "rowPasted": "",
+          "rowClipboardEmpty": "",
+          "rowCopyNoEditableColumns": "",
+          "rowPasteNoEditableColumns": "",
           "pasteDifferentColumn": "Kan niet plakken naar een andere kolom",
           "pasteIncompatibleColumn": "Kan niet plakken in kolom met incompatibel type",
           "undo": "Laatste wijziging ongedaan gemaakt",
@@ -689,6 +698,12 @@
           "createdProductProperties": "{count} producteigenschappen aangemaakt.",
           "updatedProductProperties": "{count} producteigenschappen bijgewerkt.",
           "deletedProductProperties": "{count} producteigenschappen verwijderd."
+        }
+      },
+      "matrix": {
+        "rowActions": {
+          "copy": "",
+          "paste": ""
         }
       },
       "tabs": {
@@ -706,7 +721,8 @@
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
-        "amazon": "Amazon"
+        "amazon": "Amazon",
+        "ebay": ""
       },
       "priceLists": {
         "add": {
@@ -767,6 +783,9 @@
             "autoValue": "Auto: {value}",
             "autoValueEmpty": "Auto: —"
           }
+        },
+        "bulkEdit": {
+          "missingRuleWarning": ""
         }
       },
       "media": {
@@ -790,7 +809,75 @@
         "properties": {
           "searchPlaceholder": "Zoek eigenschappen",
           "typePlaceholder": "Filter op type"
+      },
+      "userSections": {
+        "title": "",
+        "subtitle": "",
+        "refreshing": "",
+        "emptyTitle": "",
+        "emptySubtitle": "",
+        "emptySection": "",
+        "cardError": "",
+        "edit": {
+          "title": "",
+          "description": "",
+          "cardCount": "",
+          "hint": "",
+          "addButton": "",
+          "titleLabel": "",
+          "titlePlaceholder": "",
+          "descriptionLabel": "",
+          "descriptionPlaceholder": "",
+          "deleteButton": "",
+          "moveUp": "",
+          "moveDown": "",
+          "dragHandle": "",
+          "configure": "",
+          "configureComingSoon": "",
+          "deleteConfirmTitle": "",
+          "deleteConfirmText": "",
+          "deleteConfirmConfirm": "",
+          "deleteConfirmCancel": "",
+          "emptyHint": "",
+          "saveButton": "",
+          "saveSuccess": "",
+          "saveError": "",
+          "sectionLabel": "",
+          "validation": {
+            "titleRequired": ""
+          },
+          "noChanges": "",
+          "unsavedTitle": "",
+          "unsavedText": "",
+          "unsavedConfirm": "",
+          "unsavedCancel": "",
+          "cards": {
+            "subtitle": "",
+            "backButton": "",
+            "saveButton": "",
+            "titleLabel": "",
+            "titlePlaceholder": "",
+            "descriptionLabel": "",
+            "descriptionPlaceholder": "",
+            "colorLabel": "",
+            "emptyState": "",
+            "dragHandle": "",
+            "deleteButton": "",
+            "deleteTitle": "",
+            "deleteText": "",
+            "saveSuccess": "",
+            "saveError": "",
+            "unsavedTitle": "",
+            "unsavedText": "",
+            "unsavedConfirm": "",
+            "unsavedCancel": ""
+          }
         },
+        "actions": {
+          "openEditor": "",
+          "closeEditor": ""
+        }
+      },
       "amazon": {
         "validationIssues": "Gedetecteerde validatieproblemen",
         "validationIssuesDescription": "Waarschijnlijke Amazon-validatieproblemen op basis van de productstructuur die Amazon verwacht",
@@ -839,6 +926,37 @@
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
         "productTypeCreated": "Product type created"
+      },
+      "ebay": {
+        "defaultMarketplace": "",
+        "noViews": "",
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectMarketplacePrompt": "",
+        "noDefaultTree": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        },
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        }
       },
       "inspector": {
         "labels": {
@@ -1878,6 +1996,187 @@
         "title": "Geef je merken een stem",
         "content": "Voeg een aangepaste beschrijving toe voor dit merk om te bepalen hoe het wordt weergegeven in AI-gegenereerde inhoud. Je kunt verschillende beschrijvingen maken voor verschillende talen. Als de taal leeg blijft, wordt dit de standaardbeschrijving voor het merk."
       }
+    },
+    "chatGptProductFeed": {
+      "title": "",
+      "form": {
+        "successUpdate": ""
+      },
+      "messages": {
+        "loadError": ""
+      },
+      "labels": {
+        "conditionProperty": "",
+        "condtionNewValue": "",
+        "condtionRefurbishedValue": "",
+        "condtionUsdValue": "",
+        "brandProperty": "",
+        "materialProperty": "",
+        "mpnProperty": "",
+        "colorProperty": "",
+        "sizeProperty": "",
+        "ageGroupProperty": "",
+        "ageGroupNewbornValue": "",
+        "ageGroupInfantValue": "",
+        "ageGroupTodlerValue": "",
+        "ageGroupKidsValue": "",
+        "ageGroupAdultValue": "",
+        "lengthProperty": "",
+        "lengthUnit": "",
+        "widthProperty": "",
+        "heightProperty": "",
+        "weightProperty": "",
+        "weightUnit": "",
+        "expirationDateProperty": "",
+        "pickupMethodProperty": "",
+        "pickupMethodInStoreValue": "",
+        "pickupMethodReserveValue": "",
+        "pickupMethodNotSupportedValue": "",
+        "sizeSystemProperty": "",
+        "genderProperty": "",
+        "genderMaleValue": "",
+        "genderFemaleValue": "",
+        "genderUnisexValue": "",
+        "popularityScoreProperty": "",
+        "warningProperty": "",
+        "ageRestrictionProperty": ""
+      },
+      "placeholders": {
+        "property": "",
+        "value": "",
+        "unit": ""
+      },
+      "info": {
+        "title": "",
+        "description": "",
+        "linkLabel": "",
+        "sources": {
+          "product": "",
+          "mapping": "",
+          "salesChannel": "",
+          "notSynced": "",
+          "bundle": "",
+          "defaultSync": ""
+        },
+        "sections": {
+          "basicProductData": {
+            "title": "",
+            "description": ""
+          },
+          "itemInformation": {
+            "title": "",
+            "description": ""
+          },
+          "media": {
+            "title": "",
+            "description": ""
+          },
+          "priceAndPromotions": {
+            "title": "",
+            "description": ""
+          },
+          "availabilityInventory": {
+            "title": "",
+            "description": ""
+          },
+          "variants": {
+            "title": "",
+            "description": ""
+          },
+          "fulfillment": {
+            "title": "",
+            "description": ""
+          },
+          "merchantInfo": {
+            "title": "",
+            "description": ""
+          },
+          "returns": {
+            "title": "",
+            "description": ""
+          },
+          "performanceSignals": {
+            "title": "",
+            "description": ""
+          },
+          "compliance": {
+            "title": "",
+            "description": ""
+          },
+          "reviewsQa": {
+            "title": "",
+            "description": ""
+          },
+          "relatedProducts": {
+            "title": "",
+            "description": ""
+          },
+          "geoTagging": {
+            "title": "",
+            "description": ""
+          }
+        },
+        "fields": {
+          "id": "",
+          "gtin": "",
+          "mpn": "",
+          "title": "",
+          "description": "",
+          "link": "",
+          "condition": "",
+          "productCategory": "",
+          "brand": "",
+          "material": "",
+          "dimensions": "",
+          "length": "",
+          "width": "",
+          "height": "",
+          "weight": "",
+          "ageGroup": "",
+          "imageLink": "",
+          "additionalImageLink": "",
+          "videoLink": "",
+          "price": "",
+          "applicableTaxesFees": "",
+          "salePrice": "",
+          "salePriceEffectiveDate": "",
+          "unitPricingMeasure": "",
+          "pricingTrend": "",
+          "availability": "",
+          "availabilityDate": "",
+          "inventoryQuantity": "",
+          "expirationDate": "",
+          "pickupMethod": "",
+          "pickupSla": "",
+          "itemGroupId": "",
+          "itemGroupTitle": "",
+          "color": "",
+          "size": "",
+          "sizeSystem": "",
+          "gender": "",
+          "offerId": "",
+          "customVariant1Category": "",
+          "customVariant1Option": "",
+          "customVariant2Category": "",
+          "customVariant2Option": "",
+          "customVariant3Category": "",
+          "customVariant3Option": "",
+          "fulfillmentData": "",
+          "sellerName": "",
+          "sellerUrl": "",
+          "sellerPrivacyPolicy": "",
+          "sellerTos": "",
+          "returnPolicy": "",
+          "returnWindow": "",
+          "popularityScore": "",
+          "returnRate": "",
+          "warning": "",
+          "ageRestriction": "",
+          "reviews": "",
+          "relatedProducts": "",
+          "geoOverrides": ""
+        }
+      }
     }
   },
   "network": {
@@ -2014,10 +2313,14 @@
       },
       "labels": {
         "type": "Regel Type",
-        "propertyType": "Type Eigenschap"
+        "propertyType": "Type Eigenschap",
+        "salesChannel": "",
+        "defaultSalesChannel": "",
+        "unknownSalesChannel": ""
       },
       "placeholders": {
-        "type": "Selecteer Type Regel"
+        "type": "Selecteer Type Regel",
+        "salesChannel": ""
       },
       "help": {
         "type": "Selecteer het gedrag voor deze eigenschap"
@@ -2053,6 +2356,9 @@
         "updateProductProperty": "Product eigenschap upgedate",
         "deleteProductProperty": "Product eigenschap verwijderd"
       },
+      "messages": {
+        "unsavedChanges": ""
+      },
       "configTypes": {
         "requiredInConfigurator": {
           "title": "Verplicht in Configurator",
@@ -2077,72 +2383,12 @@
   },
   "integrations": {
     "show": {
-      "shein": {
-        "title": "",
-        "productRules": {
-          "labels": {
-            "translatedName": "",
-            "attributeType": "",
-            "requirement": "",
-            "visibility": "",
-            "remarks": "",
-            "allowsCustomValues": "",
-            "mainAttribute": "",
-            "productImage": "",
-            "externalImageUrl": "",
-            "category": ""
-          },
-          "help": {
-            "translatedName": "",
-            "productName": "",
-            "productImage": "",
-            "externalImageUrl": "",
-            "category": ""
-          },
-          "errors": {
-            "missingCriteria": "",
-            "categoryLookupFailed": ""
-          },
-          "attributeType": {
-            "sales": "",
-            "size": "",
-            "composition": "",
-            "common": ""
-          },
-          "requirement": {
-            "notFillable": "",
-            "optional": "",
-            "required": ""
-          },
-          "visibility": {
-            "display": "",
-            "hidden": ""
-          },
-          "remarks": {
-            "important": "",
-            "compliance": "",
-            "quality": "",
-            "customs": ""
-          }
-        },
-        "internalProperties": {
-          "title": "",
-          "options": {
-            "accordionTitle": "",
-            "remoteValue": "",
-            "description": "",
-            "localValue": "",
-            "empty": "",
-            "noDescription": "",
-            "loadError": "",
-            "updateSuccess": "",
-            "updateError": ""
-          }
-        }
-      },
-      "sheinNotConnectedBanner": {
-        "title": "",
-        "content": ""
+      "sections": {
+        "throttling": "",
+        "syncPreferences": "",
+        "gpt": "",
+        "authentication": "",
+        "defaultUnits": ""
       },
       "ebay": {
         "title": "",
@@ -2195,6 +2441,11 @@
           "property": "",
           "localizedName": "",
           "translatedName": ""
+        },
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
         }
       },
       "template": {
@@ -2413,11 +2664,10 @@
       "propertySelectValues": {
         "labels": {
           "remoteName": "",
-            "remoteValue": "",
-            "amazonProperty": "",
-            "ebayProperty": "",
-            "sheinProperty": "",
-            "marketplace": "",
+          "remoteValue": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
           "localProperty": "",
           "selectValue": "",
           "translatedRemoteName": "",
@@ -2425,26 +2675,20 @@
           "translatedValue": ""
         },
         "help": {
-            "amazonProperty": "",
-            "ebayProperty": "",
-            "sheinProperty": "",
-            "marketplace": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
           "localProperty": "",
           "remoteValue": "",
           "remoteName": "",
           "selectValue": "",
           "selectValueAmazon": "",
-            "selectValueEbay": "",
-            "selectValueShein": "",
+          "selectValueEbay": "",
           "translatedRemoteName": "",
           "localizedValue": "",
           "translatedValue": ""
         },
         "notMappedBannerEbay": {
-          "title": "",
-          "content": ""
-        },
-        "notMappedBannerShein": {
           "title": "",
           "content": ""
         },
@@ -2457,7 +2701,6 @@
         "mappedRemotely": "",
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
-        "mappedRemotelyShein": "",
         "startMapping": "",
         "saveAndMapNext": "",
         "allMappedSuccess": ""
@@ -2483,8 +2726,15 @@
           "wizard": {
             "steps": {
               "type": "",
+              "contentClass": "",
               "languages": "",
               "currencies": ""
+            },
+            "contentClass": {
+              "title": "",
+              "description": "",
+              "label": "",
+              "placeholder": ""
             },
             "languages": {
               "title": "",
@@ -2498,6 +2748,12 @@
               "noData": "",
               "fetchError": ""
             }
+          },
+          "contentClass": {
+            "title": "",
+            "description": "",
+            "label": "",
+            "placeholder": ""
           },
           "languages": {
             "title": "",
@@ -2522,21 +2778,7 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook",
-      "shein": ""
-    },
-    "create": {
-      "wizard": {
-        "step1": {
-          "sheinTitle": "",
-          "sheinExample": ""
-        }
-      }
-    },
-    "shein": {
-      "installed": {
-        "title": ""
-      }
+      "webhook": "Webhook"
     },
     "labels": {
       "fulfillmentPolicy": "Verzendbeleid",
@@ -2546,7 +2788,16 @@
       "lengthUnit": "Lengte-eenheid",
       "weightUnit": "Gewichtseenheid",
       "isDefaultMarketplace": "Standaardmarktplaats",
-      "startingStock": ""
+      "startingStock": "",
+      "gptEnable": "",
+      "gptEnableCheckout": "",
+      "gptSellerName": "",
+      "gptSellerUrl": "",
+      "gptSellerPrivacyPolicy": "",
+      "gptSellerTos": "",
+      "gptReturnPolicy": "",
+      "gptReturnWindow": "",
+      "gptFeedUrl": ""
     },
     "salesChannel": {
       "labels": {
@@ -2554,16 +2805,11 @@
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
       },
       "helpText": {
-        "startingStock": ""
-      },
-      "shein": {
-        "installed": {
-          "title": "",
-          "loading": "",
-          "success": "",
-          "genericError": "",
-          "missingParams": ""
-        }
+        "startingStock": "",
+        "gptEnable": "",
+        "gptSellerUrl": "",
+        "gptReturnWindow": "",
+        "gptEnableCheckout": ""
       }
     },
     "ebay": {
@@ -2733,6 +2979,99 @@
           "latencyP95": "p95 latentie"
         }
       }
+    }
+  },
+  "generalListing": {
+    "labels": {
+      "search": ""
+    },
+    "actions": {
+      "createDashboardCard": "",
+      "selectAllCount": ""
+    },
+    "alerts": {
+      "selectAllError": ""
+    },
+    "modal": {
+      "title": "",
+      "subtitle": "",
+      "tabs": {
+        "self": "",
+        "members": ""
+      },
+      "fields": {
+        "title": "",
+        "description": "",
+        "color": "",
+        "section": "",
+        "sectionPlaceholder": ""
+      },
+      "preview": {
+        "titlePlaceholder": "",
+        "descriptionPlaceholder": ""
+      },
+      "colors": {
+        "red": "",
+        "orange": "",
+        "yellow": ""
+      },
+      "queryLabel": "",
+      "variablesLabel": "",
+      "errors": {
+        "titleRequired": "",
+        "sectionRequired": "",
+        "queryUnavailable": "",
+        "userUnavailable": "",
+        "membersUnavailable": "",
+        "memberSelectionRequired": "",
+        "memberSectionsRequired": ""
+      },
+      "alerts": {
+        "createSuccess": "",
+        "createError": ""
+      },
+      "sectionCreate": {
+        "title": "",
+        "fields": {
+          "title": "",
+          "titlePlaceholder": "",
+          "description": ""
+        },
+        "helper": "",
+        "openButton": "",
+        "closeButton": "",
+        "cancelButton": "",
+        "createButton": "",
+        "validation": {
+          "titleRequired": ""
+        },
+        "alerts": {
+          "createSuccess": "",
+          "createError": ""
+        }
+      },
+      "members": {
+        "title": "",
+        "subtitle": "",
+        "loading": "",
+        "retry": "",
+        "empty": "",
+        "ownerBadge": "",
+        "activeBadge": "",
+        "inactiveBadge": "",
+        "acceptedBadge": "",
+        "pendingBadge": "",
+        "sectionLabel": "",
+        "addSectionButton": "",
+        "createSectionTitle": "",
+        "unknownUser": ""
+      }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": ""
     }
   }
 }

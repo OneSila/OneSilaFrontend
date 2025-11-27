@@ -102,6 +102,19 @@ export const updateEbaySalesChannelMutation = gql`
   }
 `;
 
+export const resyncSalesChannelGptFeedMutation = gql`
+  mutation resyncSalesChannelGptFeed($id: GlobalID!) {
+    resyncSalesChannelGptFeed(instance: { id: $id }) {
+      id
+      fileUrl
+      lastSyncedAt
+      file {
+        url
+      }
+    }
+  }
+`;
+
 export const updateSheinSalesChannelMutation = gql`
   mutation updateSheinSalesChannel($data: SheinSalesChannelPartialInput!) {
     updateSheinSalesChannel(data: $data) {

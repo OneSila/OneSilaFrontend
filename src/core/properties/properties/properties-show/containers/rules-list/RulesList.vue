@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, Ref, ref} from 'vue';
+import { computed, onMounted, Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralListing } from "../../../../../../shared/components/organisms/general-listing";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
@@ -14,6 +14,15 @@ const { t } = useI18n();
 const searchConfig = searchConfigConstructor(t);
 const listingConfig = listingConfigConstructor(t);
 const ids: Ref<any[]> = ref([]);
+const fixedFilters = computed(() => {
+  const filters: Record<string, unknown> = { salesChannel: { id: { isNull: true } } };
+
+  if (ids.value.length > 0) {
+    filters.id = { inList: ids.value };
+  }
+
+  return filters;
+});
 
 const fetchFilterIds = async () => {
 
@@ -49,7 +58,7 @@ onMounted(fetchFilterIds)
         :config="listingConfig"
         :query="listingQuery"
         :query-key="listingQueryKey"
-        :fixed-filter-variables="{'id': {'inList': ids}}"
+        :fixed-filter-variables="fixedFilters"
     />
    </template>
   </GeneralTemplate>

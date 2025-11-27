@@ -1,16 +1,8 @@
 <script lang="ts" setup>
 
 import {Ref, ref} from 'vue';
-import Logo from "../../../shared/components/molecules/logo/Logo.vue";
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
-import BackgroundImage from "../../../shared/components/atoms/background-image/BackgroundImage.vue";
-import bgGradient from '../../../assets/images/auth/bg-gradient.png';
-import comingSoonObject1 from '../../../assets/images/auth/coming-soon-object1.png';
-import comingSoonObject2 from '../../../assets/images/auth/coming-soon-object2.png';
-import comingSoonObject3 from '../../../assets/images/auth/coming-soon-object3.png';
-import polygonObject from '../../../assets/images/auth/polygon-object.svg';
-import recoverAccount from '../../../assets/images/auth/recover-account.svg';
-import Image from "../../../shared/components/atoms/image/Image.vue";
+import { Link } from "../../../shared/components/atoms/link";
 import AuthTemplate from "../AuthTemplate.vue";
 import {injectAuth, refreshUser, setAuthChangingState} from '../../../shared/modules/auth';
 import { authenticateTokenMutation } from '../../../shared/api/mutations/auth.js';
@@ -19,6 +11,7 @@ import apolloClient from '../../../../apollo-client';
 import { useI18n } from 'vue-i18n';
 import { useRouter, useRoute } from 'vue-router';
 import {displayApolloError} from "../../../shared/utils";
+import logoWhite from '../../../assets/images/auth/logo_white.png';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -61,12 +54,12 @@ const executeMutation = async () => {
 
     const graphqlError = err as { graphQLErrors: Array<{ message: string }> };
 
-    if (graphqlError.graphQLErrors) {
-      graphqlError.graphQLErrors.map(x => {
-          displayApolloError(x.message);
-          errors.value.push(x.message);
-        }
-      )
+    if (graphqlError.graphQLErrors?.length === 0) {
+      errors.value.push(t('auth.recover.tokenFailed'));
+    } else if (graphqlError.graphQLErrors) {
+      graphqlError.graphQLErrors.forEach((x) => {
+        errors.value.push(x.message);
+      });
     }
   }
 };
@@ -77,38 +70,46 @@ executeMutation();
 
 <template>
   <AuthTemplate v-if="errors.length > 0">
-    <template v-slot:background-image>
-      <BackgroundImage :src="bgGradient" alt="image" />
+    <template #left-section>
+      <div class="flex w-full items-center justify-center">
+        <img :src="logoWhite" alt="OneSila brand mark" class="max-h-[420px] w-auto object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.4)]" />
+      </div>
     </template>
 
-    <template v-slot:foreground-images>
-      <BackgroundImage :src="comingSoonObject1" alt="image" classModifier="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
-      <BackgroundImage :src="comingSoonObject2" alt="image" classModifier="absolute left-24 top-0 h-40 md:left-[30%]" />
-      <BackgroundImage :src="comingSoonObject3" alt="image" classModifier="absolute right-0 top-0 h-[300px]" />
-      <BackgroundImage :src="polygonObject" alt="image" classModifier="absolute bottom-0 end-[28%]" />
-    </template>
-
-    <template v-slot:left-section>
-      <Logo alt="Logo" class="w-1/4 h-1/4 mx-auto" to="/" />
-      <Flex class="mt-24 hidden lg:block">
-          <FlexCell class="w-full max-w-[430px] mx-auto">
-            <Image :source="recoverAccount" alt="Cover Image" class="w-full" />
-          </FlexCell>
-      </Flex>
-    </template>
-
-    <template v-slot:right-section-header>
-      <Logo alt="Logo" to="/" class="w-8 block lg:hidden" />
+    <template #right-section-header>
       <LanguageDropdown :show="true" class="ms-auto w-max"/>
     </template>
 
-    <template v-slot:right-section-content>
-      <div class="mb-7">
-        <h1 class="mb-3 text-2xl font-bold !leading-snug dark:text-white">
-          {{ t('auth.recover.tokenHeader') }}
-        </h1>
-      </div>
+    <template #right-section-content>
+      <div class="mb-7 space-y-6">
+        <div>
+          <h1 class="mb-3 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            {{ t('auth.recover.tokenHeader') }}
+          </h1>
+          <p class="text-base leading-6 text-gray-500 dark:text-gray-400">
+            {{ t('auth.recover.tokenDescription') }}
+          </p>
+        </div>
 
+        <div class="rounded-2xl border border-red-200 bg-red-50/80 p-4 text-red-800 shadow-sm dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200">
+          <p class="font-semibold">{{ t('shared.labels.errors') }}</p>
+          <ul class="mt-3 list-disc space-y-1 pl-5 text-sm">
+            <li v-for="(error, index) in errors" :key="index" class="leading-5">
+              {{ error }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="text-center text-sm text-gray-600 dark:text-white">
+          {{ t('auth.recover.loginPrompt') }}
+          <Link
+            class="font-semibold text-primary underline underline-offset-2 transition hover:text-primary/80 dark:hover:text-primary/70"
+            :path="{ name: 'auth.login' }"
+          >
+            {{ t('auth.register.login') }}
+          </Link>
+        </div>
+      </div>
     </template>
 
   </AuthTemplate>

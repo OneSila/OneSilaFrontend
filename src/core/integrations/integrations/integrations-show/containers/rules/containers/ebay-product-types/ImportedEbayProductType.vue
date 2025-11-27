@@ -101,11 +101,12 @@ const categoryField = computed<QueryFormField>(() => {
   if (marketplaceDefaultTreeId.value) {
     filter.marketplaceDefaultTreeId = { exact: marketplaceDefaultTreeId.value };
   }
+  filter.hasChildren = { exact: false };
   return {
     type: FieldType.Query,
     name: 'ebayCategoryId',
     label: t('integrations.show.productRules.labels.ebayCategory'),
-    labelBy: 'name',
+    labelBy: 'fullName',
     valueBy: 'remoteId',
     query: ebayCategoriesQuery,
     dataKey: 'ebayCategories',
@@ -207,7 +208,9 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
   return { nextId, last };
 };
 
-const fetchCategoryDetails = async (remoteId: string): Promise<{ name?: string } | null> => {
+const fetchCategoryDetails = async (
+  remoteId: string,
+): Promise<{ name?: string; fullName?: string } | null> => {
   if (!marketplaceDefaultTreeId.value) {
     return null;
   }
@@ -223,7 +226,15 @@ const fetchCategoryDetails = async (remoteId: string): Promise<{ name?: string }
     fetchPolicy: 'network-only',
   });
 
-  const categories = data?.ebayCategories || [];
+  const connection = data?.ebayCategories;
+  if (!connection) {
+    return null;
+  }
+
+  const categories = Array.isArray(connection)
+    ? connection
+    : connection.edges?.map((edge: any) => edge.node) || [];
+
   return categories.length ? categories[0] : null;
 };
 
@@ -242,7 +253,7 @@ const handleManualCategoryChange = async (value: string | null) => {
   state.categoryTreeId = marketplaceDefaultTreeId.value;
   try {
     const details = await fetchCategoryDetails(value);
-    selectedName.value = details?.name || '';
+    selectedName.value = details?.fullName || details?.name || '';
   } catch (error) {
     Toast.error(t('integrations.show.productRules.errors.categoryLookupFailed'));
   }

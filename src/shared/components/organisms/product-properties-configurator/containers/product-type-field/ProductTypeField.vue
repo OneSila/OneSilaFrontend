@@ -9,7 +9,9 @@ import { FieldQuery } from "../../../general-form/containers/form-fields/field-q
 import { Selector } from "../../../../atoms/selector";
 import apolloClient from "../../../../../../../apollo-client";
 
-const props = defineProps<{ productType: { id: string, value: string } | null }>();
+const props = withDefaults(defineProps<{ productType: { id: string, value: string } | null; widthClass?: string }>(), {
+  widthClass: 'w-96'
+});
 const localProductType = ref();
 const productTypeField: Ref<QueryFormField | null> = ref(null);
 const emit = defineEmits(['product-type-updated']);
@@ -74,8 +76,8 @@ onMounted(setField);
   <div class="my-4">
     <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{  t('properties.properties.labels.isProductType') }}</label>
     <template v-if="productType == null">
-      <FieldQuery v-if="productTypeField !== null" class="w-96" v-model="localProductType" :field="productTypeField"  />
+      <FieldQuery v-if="productTypeField !== null" :class="props.widthClass" v-model="localProductType" :field="productTypeField"  />
     </template>
-    <Selector v-else v-model="localProductType" :options="disabledChoices" value-by="id" label-by="value" disabled class="w-96" />
+    <Selector v-else v-model="localProductType" :options="disabledChoices" value-by="id" label-by="value" disabled :class="props.widthClass" />
   </div>
 </template>

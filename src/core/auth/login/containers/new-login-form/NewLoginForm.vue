@@ -55,39 +55,67 @@ const onLoginClicked = async () => {
   }
 };
 
+const goToRecover = () => {
+  router.push({ name: 'auth.recover' });
+};
+
 useEnterKeyboardListener(onLoginClicked);
 
 </script>
 
 <template>
-  <div>
-    <div class="mb-10">
-      <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.login.header') }}</h1>
-      <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.login.description') }}</p>
-    </div>
-    <TextInputPrepend id="username" v-model="form.username" :label="t('shared.labels.email')" :placeholder="t('auth.register.placeholders.email')" type="username">
-      <Icon name="envelope"/>
-    </TextInputPrepend>
-    <TextInputPrepend id="password" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
-      <Icon name="lock"/>
-    </TextInputPrepend>
-
+  <div class="text-gray-900 dark:text-gray-100">
     <div>
-      <Button :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'" @click="onLoginClicked()">
+      <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ t('auth.login.header') }}</h1>
+      <p class="mt-2 text-base leading-6 text-gray-500 dark:text-gray-400">{{ t('auth.login.description') }}</p>
+    </div>
+
+    <div class="mt-10 space-y-2">
+      <TextInputPrepend
+        id="username"
+        v-model="form.username"
+        :label="t('shared.labels.email')"
+        :placeholder="t('auth.register.placeholders.email')"
+        type="username"
+      >
+        <Icon name="envelope" />
+      </TextInputPrepend>
+
+      <TextInputPrepend
+        id="password"
+        v-model="form.password"
+        :label="t('auth.register.labels.password')"
+        :placeholder="t('auth.register.placeholders.password')"
+        type="password"
+      >
+        <Icon name="lock" />
+      </TextInputPrepend>
+    </div>
+
+    <div class="mt-8 space-y-4">
+      <Button
+        :customClass="'flex w-full justify-center rounded-xl bg-primary px-4 py-2.5 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary dark:hover:bg-primary/80'"
+        @click="onLoginClicked()"
+      >
         {{ t('shared.button.login') }}
       </Button>
 
-      <div class="mt-4"></div>
+      <Button
+        :customClass="'flex w-full justify-center rounded-xl border border-primary/40 px-4 py-2.5 text-base font-semibold text-primary transition hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-white/30 dark:text-white dark:hover:bg-white/10 dark:focus-visible:outline-white'"
+        @click="goToRecover"
+      >
+        {{ t('auth.login.recover') }}
+      </Button>
+    </div>
 
-      <div class="text-center">
-          <Link :path="{name: 'auth.recover'}" class="text-xs text-gray-600 underline transition hover:text-primary">{{ t('auth.login.recover') }}</Link>
-      </div>
-
-      <div class="text-center dark:text-white mt-9">
-        {{ t('auth.login.registerPrompt') }}
-        <Link class="uppercase text-primary underline transition hover:text-black dark:hover:text-white" :path="{ name: 'auth.register' }"
-        >{{ t('auth.login.register') }}</Link>
-      </div>
+    <div class="mt-10 text-center text-sm text-gray-600 dark:text-gray-300">
+      {{ t('auth.login.registerPrompt') }}
+      <Link
+        class="font-semibold text-primary underline underline-offset-2 transition hover:text-primary/80 dark:hover:text-primary/70"
+        :path="{ name: 'auth.register' }"
+      >
+        {{ t('auth.login.register') }}
+      </Link>
     </div>
   </div>
 </template>

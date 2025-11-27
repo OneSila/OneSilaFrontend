@@ -12,6 +12,7 @@ import PropertiesView from "../../tabs/properties/PropertiesView.vue";
 import WebsitesView from "../../tabs/websites/WebsitesView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
+import EbayView from "../../tabs/ebay/EbayView.vue";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 import Swal from 'sweetalert2';
 
@@ -25,6 +26,12 @@ const contentRef = ref<InstanceType<typeof ProductContentView> | null>(null);
 const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
 const variationsRef = ref<InstanceType<typeof VariationsView> | null>(null);
 const amazonRef = ref<InstanceType<typeof AmazonView> | null>(null);
+const ebayRef = ref<InstanceType<typeof EbayView> | null>(null);
+
+const handleWebsiteAssignChange = () => {
+  amazonRef.value?.fetchAmazonProducts('network-only');
+  ebayRef.value?.fetchEbayProductCategories('network-only');
+};
 
 const tabRefs: Record<string, any> = {
   general: generalRef,
@@ -32,6 +39,7 @@ const tabRefs: Record<string, any> = {
   properties: propertiesRef,
   variations: variationsRef,
   amazon: amazonRef,
+  ebay: ebayRef,
 };
 
 const beforeTabChange = async (newTab: string, oldTab: string) => {
@@ -74,6 +82,10 @@ const tabItems = computed(() => {
     items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
   }
 
+  if (auth.user.company?.hasEbayIntegration) {
+    items.push({ name: 'ebay', label: t('products.products.tabs.ebay'), icon: 'store' });
+  }
+
   return items;
 });
 
@@ -104,13 +116,19 @@ const tabItems = computed(() => {
       <template v-slot:websites>
         <WebsitesView
           :product="product"
-          @assign-added="amazonRef?.fetchAmazonProducts('network-only')"
-          @assign-deleted="amazonRef?.fetchAmazonProducts('network-only')"
+          @assign-added="handleWebsiteAssignChange"
+          @assign-deleted="handleWebsiteAssignChange"
         />
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView
           ref="amazonRef"
+          :product="product"
+        />
+      </template>
+      <template v-if="auth.user.company?.hasEbayIntegration" v-slot:ebay>
+        <EbayView
+          ref="ebayRef"
           :product="product"
         />
       </template>

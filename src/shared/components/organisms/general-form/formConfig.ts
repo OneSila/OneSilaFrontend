@@ -253,6 +253,8 @@ export interface FormConfig {
   deleteMutation?: string; // New addition for delete operation
   deleteUrl?: Url // url to lend after delete
   customStyle?: string;
+  fullWidth?: boolean;
+  omitNullValues?: boolean;
   afterSubmitCallback?: () => void;
   allowNull?: boolean; // allow null response (some mutations can return null on purpose)
   submitSuccessCreate?: string; // toast message after create
@@ -275,6 +277,8 @@ export const defaultFormConfig = {
   addSubmitAndContinue: true,
   addDelete: true,
   addCancel: true,
+  fullWidth: false,
+  omitNullValues: false,
 };
 
 export function getEnhancedConfig(config: Partial<FormConfig>, defaultTranslations: FormConfigDefaultTranslations): FormConfig {
@@ -308,7 +312,13 @@ const formatDateForBackend = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-export const cleanUpDataForMutation = (formData, fields, formType) => {
+export const cleanUpDataForMutation = (
+  formData,
+  fields,
+  formType,
+  omitNullValues = false,
+  initialData?: Record<string, any>
+) => {
   let cleanedData = { ...formData };
 
   fields.forEach(field => {
@@ -394,6 +404,23 @@ export const cleanUpDataForMutation = (formData, fields, formType) => {
     }
 
   });
+
+  if (omitNullValues) {
+    Object.keys(cleanedData).forEach((key) => {
+      if (cleanedData[key] === null) {
+        if (initialData) {
+          const initialValue = initialData[key];
+          if (initialValue !== undefined && initialValue !== null) {
+            return;
+          }
+        } else {
+          return;
+        }
+
+        delete cleanedData[key];
+      }
+    });
+  }
 
   return cleanedData;
 };

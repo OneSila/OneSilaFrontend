@@ -13,13 +13,20 @@ import { Checkbox } from "../../atoms/checkbox";
 import { Icon } from "../../atoms/icon";
 import { TableRow } from "./containers/table-row";
 import { GridCard } from "./containers/grid-card";
+import FilterChipList from './components/FilterChipList.vue';
+import CreateDashboardCardModal from './components/CreateDashboardCardModal.vue';
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../modules/toast";
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
-import { DocumentNode } from 'graphql';
+import type { DocumentNode, FieldNode, SelectionSetNode } from 'graphql';
+import { print, visit } from 'graphql';
+import { useAppStore } from '../../../plugins/store';
+import { Button } from "../../atoms/button";
+import { Loader } from "../../atoms/loader";
 
 const { t } = useI18n();
+const SELECT_ALL_PAGE_SIZE = 100;
 
 const props = withDefaults(
     defineProps<{
@@ -39,6 +46,8 @@ const slots = defineSlots<{
   bulkActions?: (scope: { selectedEntities: string[]; viewType: string; query: any }) => any;
   additionalButtons?: (scope: { item: any }) => any;
 }>();
+
+const identifierField = computed(() => props.config.identifierKey || 'id');
 
 
 const getShowRoute = (item) => {
@@ -74,6 +83,76 @@ const getUpdatedField = (field, item, index) => {
   return field;
 }
 
+const createFieldNode = (name: string): FieldNode => ({
+  kind: 'Field',
+  name: { kind: 'Name', value: name }
+});
+
+const createSelectionSet = (fields: string[]): SelectionSetNode => ({
+  kind: 'SelectionSet',
+  selections: fields.map((field) => createFieldNode(field))
+});
+
+const createNodeField = (identifier: string): FieldNode => ({
+  kind: 'Field',
+  name: { kind: 'Name', value: 'node' },
+  selectionSet: createSelectionSet([identifier])
+});
+
+const buildSelectAllQuery = (query: DocumentNode | null, identifier: string): DocumentNode | null => {
+  if (!query) {
+    return null;
+  }
+
+  try {
+    return visit(query, {
+      Field(node) {
+        if (node.name.value === 'edges') {
+          return {
+            ...node,
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [createNodeField(identifier)]
+            }
+          };
+        }
+
+        if (node.name.value === 'node') {
+          return {
+            ...node,
+            selectionSet: createSelectionSet([identifier])
+          };
+        }
+
+        if (node.name.value === 'pageInfo') {
+          return {
+            ...node,
+            selectionSet: createSelectionSet(['endCursor', 'hasNextPage'])
+          };
+        }
+
+        return node;
+      }
+    });
+  } catch (error) {
+    console.warn('Failed to build select-all query', error);
+    return query;
+  }
+};
+
+const selectAllQuery = computed(() => buildSelectAllQuery((props.query as DocumentNode) || null, identifierField.value));
+const selectingAll = ref(false);
+
+const shouldShowSelectAllButton = (totalCount?: number | null, currentPageLength = 0) => {
+  if (typeof totalCount !== 'number') {
+    return false;
+  }
+  if (totalCount <= currentPageLength) {
+    return false;
+  }
+  return selectedEntities.value.length < totalCount;
+};
+
 
 // Use a generic variable name so this component remains general.
 const selectedEntities = ref<string[]>([]);
@@ -82,20 +161,25 @@ const selectedEntities = ref<string[]>([]);
 const haveBulk = computed(() => props.config.addBulkEdit || (props.config.addBulkDelete && props.config.bulkDeleteMutation) || props.config.addBulkActions);
 
 // For an individual row, add or remove its ID from the selection.
-const selectCheckbox = (id: string, value: boolean) => {
+const selectCheckbox = (id: string | number, value: boolean) => {
+  const normalizedId = String(id);
   if (value) {
-    if (!selectedEntities.value.includes(id)) {
-      selectedEntities.value.push(id);
+    if (!selectedEntities.value.includes(normalizedId)) {
+      selectedEntities.value.push(normalizedId);
     }
   } else {
-    selectedEntities.value = selectedEntities.value.filter(v => v !== id);
+    selectedEntities.value = selectedEntities.value.filter(v => v !== normalizedId);
   }
 };
 
 // For the header checkbox, select all (or clear all) IDs.
 const updateSelectAll = (value: boolean, items: any[]) => {
   if (value) {
-    selectedEntities.value = items.map(edge => edge.node[props.config.identifierKey || 'id']);
+    const ids = items
+      .map(edge => edge?.node?.[identifierField.value])
+      .filter((id): id is string | number => id !== undefined && id !== null)
+      .map((id) => String(id));
+    selectedEntities.value = ids;
   } else {
     selectedEntities.value = [];
   }
@@ -103,7 +187,20 @@ const updateSelectAll = (value: boolean, items: any[]) => {
 
 // Compute whether all items are selected.
 const allSelected = (items: any[]): boolean => {
-  return items.length > 0 && selectedEntities.value.length === items.length;
+  if (items.length === 0) {
+    return false;
+  }
+  return items.every((edge) => {
+    const id = edge?.node?.[identifierField.value];
+    return id !== undefined && id !== null && selectedEntities.value.includes(String(id));
+  });
+};
+
+const getSelectedLabel = (selectedCount: number, totalCount?: number | null) => {
+  if (typeof totalCount === 'number') {
+    return t('shared.labels.selectedOfTotal', { selected: selectedCount, total: totalCount });
+  }
+  return `${selectedCount} ${t('shared.labels.selected')}`;
 };
 
 /* ------------------------------------------
@@ -172,6 +269,19 @@ const filterChips = computed(() => {
   const q = route.query as Record<string, any>;
   const chips: { key: string; label: string; value: string; rawValue: string }[] = [];
   let stored: Record<string, { label: string; timestamp: number }> = {};
+  const searchParam = q.search;
+  const normalisedSearchValue = Array.isArray(searchParam) ? searchParam[0] : searchParam;
+  if (typeof normalisedSearchValue === 'string') {
+    const trimmedSearchValue = normalisedSearchValue.trim();
+    if (trimmedSearchValue !== '') {
+      chips.push({
+        key: 'search',
+        label: t('generalListing.labels.search'),
+        value: trimmedSearchValue,
+        rawValue: normalisedSearchValue,
+      });
+    }
+  }
   const raw = localStorage.getItem('filterLabelMap');
   if (raw) {
     try {
@@ -332,9 +442,175 @@ const clearSelected = () => {
   selectedEntities.value = []
 }
 
+const showCreateDashboardCardModal = ref(false);
+const createDashboardCardContext = ref<{ query: string; variables: Record<string, any>; queryKey: string }>({
+  query: '',
+  variables: {},
+  queryKey: ''
+});
+const queryText = computed(() => print(props.query as DocumentNode));
+const appStore = useAppStore();
+type FilterStateSnapshot = {
+  filterVariables: Record<string, any> | null;
+  orderVariables: Record<string, any> | null;
+  pagination: Record<string, any>;
+};
+
+const latestFilterState = ref<FilterStateSnapshot>({
+  filterVariables: null,
+  orderVariables: null,
+  pagination: {
+    first: null,
+    last: null,
+    before: null,
+    after: null
+  }
+});
+
+const buildQueryVariables = (
+  filterVariables: Record<string, any> | null,
+  orderVariables: Record<string, any> | null,
+  pagination: Record<string, any>
+) => {
+  const baseFilter = filterVariables || {};
+  const baseOrder = orderVariables || {};
+  const filter = props.fixedFilterVariables !== null ? { ...baseFilter, ...props.fixedFilterVariables } : baseFilter;
+  const order = props.fixedOrderVariables !== null ? { ...baseOrder, ...props.fixedOrderVariables } : baseOrder;
+  const variables = {
+    filter,
+    order,
+    first: pagination.first,
+    last: pagination.last,
+    before: pagination.before,
+    after: pagination.after
+  };
+  return JSON.parse(JSON.stringify(variables));
+};
+
+const selectAllAcrossPages = async (totalCount?: number | null) => {
+
+  if (selectingAll.value) {
+    return;
+  }
+  if (typeof totalCount !== 'number' || totalCount === 0) {
+    return;
+  }
+  if (selectedEntities.value.length >= totalCount) {
+    return;
+  }
+
+  const queryDocument = selectAllQuery.value;
+  if (!queryDocument) {
+    Toast.error(t('generalListing.alerts.selectAllError'));
+    return;
+  }
+
+  const { filterVariables, orderVariables } = latestFilterState.value;
+  const baseFilter = filterVariables ? JSON.parse(JSON.stringify(filterVariables)) : {};
+  const baseOrder = orderVariables ? JSON.parse(JSON.stringify(orderVariables)) : {};
+  const computedFilter =
+    props.fixedFilterVariables !== null
+      ? { ...baseFilter, ...props.fixedFilterVariables }
+      : baseFilter;
+  const computedOrder =
+    props.fixedOrderVariables !== null
+      ? { ...baseOrder, ...props.fixedOrderVariables }
+      : baseOrder;
+
+  const aggregated = new Set<string>();
+  let hasNextPage = true;
+  let afterCursor: string | null = null;
+
+  selectingAll.value = true;
+  try {
+    while (hasNextPage) {
+      const variables = {
+        filter: computedFilter,
+        order: computedOrder,
+        first: SELECT_ALL_PAGE_SIZE,
+        after: afterCursor,
+        last: null,
+        before: null
+      };
+
+      const { data } = await apolloClient.query({
+        query: queryDocument,
+        variables,
+        fetchPolicy: 'network-only'
+      });
+
+      const connection = data?.[props.queryKey];
+      if (!connection) {
+        break;
+      }
+
+      const edges = connection.edges || [];
+      edges.forEach((edge: any) => {
+        const idValue = edge?.node?.[identifierField.value];
+        if (idValue !== undefined && idValue !== null) {
+          aggregated.add(String(idValue));
+        }
+      });
+
+      if (aggregated.size >= totalCount) {
+        break;
+      }
+
+      const pageInfo = connection.pageInfo || {};
+      hasNextPage = Boolean(pageInfo?.hasNextPage);
+      afterCursor = pageInfo?.endCursor ?? null;
+
+      if (!hasNextPage) {
+        break;
+      }
+    }
+
+    selectedEntities.value = Array.from(aggregated);
+  } catch (error) {
+    console.error('Failed to select all records', error);
+    Toast.error(t('generalListing.alerts.selectAllError'));
+  } finally {
+    selectingAll.value = false;
+  }
+};
+
+const openCreateDashboardCardModal = (variables?: Record<string, any>) => {
+  createDashboardCardContext.value = {
+    query: queryText.value,
+    variables: variables || {},
+    queryKey: props.queryKey
+  };
+  showCreateDashboardCardModal.value = true;
+};
+
 defineExpose({
   clearSelected
 })
+
+const captureFilterState = (
+  filterVariables: Record<string, any> | null,
+  orderVariables: Record<string, any> | null,
+  pagination: Record<string, any>
+) => {
+  latestFilterState.value = {
+    filterVariables,
+    orderVariables,
+    pagination
+  };
+  return true;
+};
+
+watch(
+  () => appStore.dashboardCardModalTrigger,
+  (newValue, oldValue) => {
+    if (newValue === oldValue) {
+      return;
+    }
+
+    const { filterVariables, orderVariables, pagination } = latestFilterState.value;
+    openCreateDashboardCardModal(buildQueryVariables(filterVariables, orderVariables, pagination));
+  }
+);
 
 
 </script>
@@ -344,6 +620,7 @@ defineExpose({
   <FilterManager :searchConfig="searchConfig">
 
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
+      <div v-if="captureFilterState(filterVariables, orderVariables, pagination)" class="hidden" aria-hidden="true"></div>
       <ApolloQuery :query="query" fetch-policy="cache-and-network"
                    :variables="{filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
                               order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
@@ -355,21 +632,27 @@ defineExpose({
 
           <div v-if="data" class="mt-5 p-0 border-0 "
                :class="config.isMainPage ? 'card bg-white rounded-xl panel' : ''">
-            <div class="flex flex-wrap gap-2 mb-4 p-4">
-              <div
-                v-for="chip in filterChips"
-                :key="chip.key + chip.rawValue"
-                class="flex items-center bg-gray-100 rounded-full px-3 py-2 text-sm"
-              >
-                <span>{{ chip.label }}: {{ chip.value }}</span>
-                <button class="ml-1" @click="removeFilter(chip.key, chip.rawValue)">×</button>
-              </div>
-            </div>
+            <FilterChipList
+              :chips="filterChips"
+              @remove="removeFilter"
+              @create="() => openCreateDashboardCardModal(buildQueryVariables(filterVariables, orderVariables, pagination))"
+            />
             <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
 
-              <span class="text-sm font-semibold text-gray-900">
-                {{ selectedEntities.length }} {{ t('shared.labels.selected') }}
-              </span>
+              <div class="flex items-center space-x-2">
+                <span class="text-sm font-semibold text-gray-900">
+                  {{ getSelectedLabel(selectedEntities.length, data[queryKey]?.totalCount) }}
+                </span>
+                <Button
+                  v-if="selectedEntities.length > 0 && shouldShowSelectAllButton(data[queryKey]?.totalCount, data[queryKey]?.edges?.length || 0)"
+                  class="text-primary hover:underline px-0 py-0 bg-transparent"
+                  :disabled="selectingAll"
+                  @click="selectAllAcrossPages(data[queryKey]?.totalCount)"
+                >
+                  {{ t('generalListing.actions.selectAllCount', { count: data[queryKey]?.totalCount }) }}
+                </Button>
+                <Loader :loading="selectingAll" />
+              </div>
 
               <!-- Bulk action buttons (only if any items are selected) -->
               <div v-if="selectedEntities.length > 0 && viewType === 'grid' && haveBulk" class="flex items-center space-x-3">
@@ -406,7 +689,6 @@ defineExpose({
 
             <div v-if="viewType === 'table'">
               <div v-if="selectedEntities.length > 0" class="flex ml-4 items-center space-x-3 bg-white">
-
                 <button v-if="config.addBulkEdit" type="button"
                         class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
                   {{ t('shared.button.editAll') }}
@@ -516,6 +798,13 @@ defineExpose({
       </ApolloQuery>
     </template>
   </FilterManager>
+
+  <CreateDashboardCardModal
+    v-model="showCreateDashboardCardModal"
+    :query-text="createDashboardCardContext.query"
+    :variables="createDashboardCardContext.variables"
+    :query-key="createDashboardCardContext.queryKey"
+  />
 
 </template>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, defineAsyncComponent } from 'vue';
+import { ref, onMounted, defineAsyncComponent, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
@@ -56,6 +56,8 @@ const firstImportCompleteRef = ref(true);
 const loading = ref(false);
 
 const integrationData = ref<any>(null);
+const gptFeed = ref<any>(null);
+const initialGptEnabled = ref(false);
 
 
 const tabItems = ref([
@@ -176,6 +178,8 @@ const fetchIntegrationData = async () => {
       fetchPolicy: 'cache-first'
     });
     const rawData = data[getIntegrationQueryKey()];
+    gptFeed.value = null;
+    initialGptEnabled.value = false;
 
     if (type.value === IntegrationTypes.Webhook) {
       integrationData.value = { ...rawData };
@@ -198,6 +202,8 @@ const fetchIntegrationData = async () => {
       salesChannelId.value = saleschannelPtr.id
       integrationId.value = integrationPtr.id
       firstImportCompleteRef.value = firstImportComplete
+      gptFeed.value = saleschannelPtr.gptFeed ?? null;
+      initialGptEnabled.value = cleanData.gptEnable ?? false;
     }
   } catch (error) {
     console.error("Error fetching integration data:", error);
@@ -205,6 +211,26 @@ const fetchIntegrationData = async () => {
      loading.value = false;
   }
 };
+
+const onGptFeedUpdated = (updatedFeed: any) => {
+  gptFeed.value = updatedFeed;
+};
+
+const supportsGptFeed = computed(() => [
+  IntegrationTypes.Magento,
+  IntegrationTypes.Shopify,
+  IntegrationTypes.Woocommerce,
+].includes(type.value as IntegrationTypes));
+
+const gptComponentProps = computed(() => supportsGptFeed.value ? {
+  gptFeed: gptFeed.value,
+  initialGptEnable: initialGptEnabled.value,
+  salesChannelId: salesChannelId.value,
+} : {});
+
+const gptComponentListeners = computed(() => supportsGptFeed.value ? {
+  'gpt-feed-updated': onGptFeedUpdated,
+} : {});
 
 onMounted(async () => {
   await fetchIntegrationData();
@@ -275,6 +301,8 @@ const pullData = async () => {
               v-if="!loading && integrationData"
               :is="getGeneralComponent()"
               :data="integrationData"
+              v-bind="gptComponentProps"
+              v-on="gptComponentListeners"
             />
           </template>
 

@@ -39,7 +39,7 @@ import {
 } from '../../../../../../../../../shared/api/mutations/products.js';
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js';
 import { integrationsQuery } from '../../../../../../../../../shared/api/queries/integrations.js';
-import { getContentFieldRules } from '../../../content/contentFieldRules';
+import { getContentFieldRules, type ContentFieldLimitKey } from '../../../content/contentFieldRules';
 
 interface VariationNode {
   id: string;
@@ -809,6 +809,30 @@ const saveTextModal = () => {
   closeTextModal();
 };
 
+const textModalLimitField = computed<ContentFieldLimitKey | null>(() => {
+  if (textModal.key === 'translationName') return 'name';
+  if (textModal.key === 'subtitle') return 'subtitle';
+  if (textModal.key.startsWith('bullet-')) return 'bulletPoints';
+  return null;
+});
+
+const textModalLimitValue = computed(() =>
+  textModalLimitField.value ? contentFieldRules.value.limits[textModalLimitField.value] : undefined,
+);
+
+const textModalCharacterCount = computed(() => (textModal.value || '').length);
+
+const textModalLimitExceeded = computed(
+  () => typeof textModalLimitValue.value === 'number' && textModalCharacterCount.value > textModalLimitValue.value,
+);
+
+const htmlModalLimitField = computed<ContentFieldLimitKey>(() => htmlModal.field);
+const htmlModalLimitValue = computed(() => contentFieldRules.value.limits[htmlModalLimitField.value]);
+const htmlModalCharacterCount = computed(() => (htmlModal.value || '').length);
+const htmlModalLimitExceeded = computed(
+  () => typeof htmlModalLimitValue.value === 'number' && htmlModalCharacterCount.value > htmlModalLimitValue.value,
+);
+
 const handleLanguageChange = async (newLang: string | null) => {
   if (skipLanguageWatch.value) return;
   if (!newLang) return;
@@ -1460,9 +1484,18 @@ defineExpose({ hasUnsavedChanges });
 
     <Modal v-model="textModal.visible" @closed="closeTextModal">
       <Card class="modal-content w-4/5 max-w-3xl">
-        <h3 class="text-xl font-semibold text-center mb-4">
-          {{ t('products.products.bulkEditModal.textTitle') }}
-        </h3>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold">
+            {{ t('products.products.bulkEditModal.textTitle') }}
+          </h3>
+          <span
+            v-if="typeof textModalLimitValue === 'number'"
+            class="text-xs"
+            :class="textModalLimitExceeded ? 'text-red-500' : 'text-gray-400'"
+          >
+            {{ textModalCharacterCount }} / {{ textModalLimitValue }}
+          </span>
+        </div>
         <TextEditor
           v-if="textModal.key.startsWith('bullet-')"
           v-model="textModal.value"
@@ -1480,11 +1513,20 @@ defineExpose({ hasUnsavedChanges });
     <Modal v-model="htmlModal.visible" @closed="closeHtmlModal">
       <Card class="modal-content w-3/4 max-w-4xl">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold">
-            {{ htmlModal.field === 'shortDescription'
-              ? t('products.products.variations.content.modals.shortDescriptionTitle')
-              : t('products.products.variations.content.modals.descriptionTitle') }}
-          </h3>
+          <div class="flex items-center gap-3">
+            <h3 class="text-xl font-semibold">
+              {{ htmlModal.field === 'shortDescription'
+                ? t('products.products.variations.content.modals.shortDescriptionTitle')
+                : t('products.products.variations.content.modals.descriptionTitle') }}
+            </h3>
+            <span
+              v-if="typeof htmlModalLimitValue === 'number'"
+              class="text-xs"
+              :class="htmlModalLimitExceeded ? 'text-red-500' : 'text-gray-400'"
+            >
+              {{ htmlModalCharacterCount }} / {{ htmlModalLimitValue }}
+            </span>
+          </div>
           <div class="flex gap-2">
             <Button class="btn btn-outline-dark" @click="closeHtmlModal">
               {{ t('shared.button.cancel') }}

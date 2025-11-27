@@ -11,9 +11,11 @@ const props = defineProps<{
   title: string;
   description: string;
   hideOnComplete?: boolean;
-  url?: Url;
+  url?: Url | string;
+  externalLink?: boolean;
   loading?: boolean;
   icon?: string;
+  showLoader?: boolean;
 }>();
 
 const { t } = useI18n();
@@ -69,23 +71,42 @@ const iconName = computed(() => {
   return isCompleted.value ? 'check-circle' : icon;
 });
 
+const showLoaderIndicator = computed(() => Boolean(props.showLoader && props.loading));
 const displayCounter = ref(props.counter);
+const showCompletionAnimation = ref(false);
 
-watchEffect(() => {
-  if (props.loading) {
-    const interval = setInterval(() => {
-      displayCounter.value = Math.floor(Math.random() * 100);
-    }, 50);
-
-    const stopLoading = () => {
-      if (!props.loading) {
-        clearInterval(interval);
-        displayCounter.value = props.counter;
-      }
-    };
-    watch(() => props.loading, stopLoading, { immediate: true });
-  } else {
+watchEffect((onCleanup) => {
+  if (props.showLoader) {
     displayCounter.value = props.counter;
+    return;
+  }
+
+  if (!props.loading) {
+    displayCounter.value = props.counter;
+    return;
+  }
+
+  const interval = setInterval(() => {
+    displayCounter.value = Math.floor(Math.random() * 100);
+  }, 50);
+
+  onCleanup(() => {
+    clearInterval(interval);
+  });
+});
+
+watch(() => props.loading, (loading, previous) => {
+  if (!props.showLoader) {
+    return;
+  }
+
+  if (!loading && previous && isCompleted.value) {
+    showCompletionAnimation.value = true;
+    setTimeout(() => {
+      showCompletionAnimation.value = false;
+    }, 1200);
+  } else if (loading) {
+    showCompletionAnimation.value = false;
   }
 });
 
@@ -118,14 +139,30 @@ onUnmounted(() => {
           <div class="card-front" :class="cardColorClass">
             <Icon :name="iconName" class="h-10 w-10 text-white mx-auto" />
             <h5 class="font-semibold text-lg text-white my-1">{{ title }}</h5>
-            <div class="mt-2">
+            <div class="mt-2 flex h-12 items-center justify-center">
+              <transition name="fade">
+                <div
+                  v-if="showLoaderIndicator"
+                  class="flex h-10 w-10 items-center justify-center"
+                >
+                  <span class="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                </div>
+                <div
+                  v-else-if="showCompletionAnimation"
+                  class="flex h-10 w-10 items-center justify-center"
+                >
+                  <Icon name="check-circle" class="h-8 w-8 text-green-100" />
+                </div>
                 <span
+                  v-else-if="!isCompleted"
                   class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold"
                   :class="textColorClass"
                 >
                   {{ displayCounter }}
                 </span>
-              </div>
+                <span v-else class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold text-transparent">0</span>
+              </transition>
+            </div>
           </div>
 
           <!-- Card Back -->
@@ -133,14 +170,19 @@ onUnmounted(() => {
             <div class="flex flex-col h-full">
               <!-- Top Content -->
               <div>
-                <Link v-if="url" :path="url">
+                <Link v-if="url" :path="url" :external="externalLink">
                   <p class="text-gray-800 font-semibold text-lg">{{ title }}</p>
                 </Link>
                 <p class="text-gray-600 mt-2">{{ description }}</p>
               </div>
               <!-- Spacer -->
               <div class="mt-auto mb-4">
-                <Link v-if="url" :path="url" class="text-gray-700 inline-flex items-center">
+                <Link
+                  v-if="url"
+                  :path="url"
+                  class="text-gray-700 inline-flex items-center"
+                  :external="externalLink"
+                >
                   {{ t('shared.button.details') }}
                   <Icon name="circle-arrow-right" class="ml-1" />
                 </Link>
@@ -154,19 +196,36 @@ onUnmounted(() => {
           <div class="card-mobile" :class="cardColorClass">
             <div class="p-4">
               <Icon :name="iconName" class="h-12 w-12 text-white mx-auto" />
-              <Link v-if="url" :path="url">
+              <Link v-if="url" :path="url" :external="externalLink">
                 <h4 class="text-white text-center text-xl font-semibold mt-4">{{ title }}</h4>
               </Link>
-              <p class="text-white text-center text-2xl font-bold mt-2">
-                <span
-                  class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold"
-                  :class="textColorClass"
-                >
-                  {{ displayCounter }}
-                </span>              </p>
+              <div class="text-white text-center text-2xl font-bold mt-2">
+                <transition name="fade">
+                  <div
+                    v-if="showLoaderIndicator"
+                    class="mx-auto flex h-10 w-10 items-center justify-center"
+                  >
+                    <span class="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                  </div>
+                  <div
+                    v-else-if="showCompletionAnimation"
+                    class="mx-auto flex h-10 w-10 items-center justify-center"
+                  >
+                    <Icon name="check-circle" class="h-8 w-8 text-green-100" />
+                  </div>
+                  <span
+                    v-else-if="!isCompleted"
+                    class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold"
+                    :class="textColorClass"
+                  >
+                    {{ displayCounter }}
+                  </span>
+                  <span v-else class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold text-transparent">0</span>
+                </transition>
+              </div>
               <p class="text-white mt-4">{{ description }}</p>
               <div class="mt-4">
-                <Link v-if="url" :path="url" class="text-gray-700 inline-block">
+                <Link v-if="url" :path="url" class="text-gray-700 inline-block" :external="externalLink">
                   {{ t('shared.button.details') }}
                   <Icon name="circle-arrow-right" />
                 </Link>
@@ -234,6 +293,16 @@ onUnmounted(() => {
 
 .card-back {
   transform: rotateY(180deg);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 @media (max-width: 768px) {

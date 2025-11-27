@@ -61,9 +61,9 @@ useEnterKeyboardListener(onSubmit);
 <template>
 
     <div>
-    <div class="mb-10">
-      <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.company.header') }}</h1>
-      <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.company.description') }}</p>
+    <div class="mb-10 text-gray-900 dark:text-gray-100">
+      <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ t('auth.register.company.header') }}</h1>
+      <p class="mt-2 text-base leading-6 text-gray-500 dark:text-gray-400">{{ t('auth.register.company.description') }}</p>
     </div>
       <TextInputPrepend id="companyName" v-model="form.name" :label="t('auth.register.company.labels.companyName')" :placeholder="t('auth.register.company.placeholders.companyName')" type="text" class="mb-2">
         <Icon name="building"/>
@@ -96,7 +96,7 @@ useEnterKeyboardListener(onSubmit);
     </div>
 
 
-    <div>
+    <div class="mt-4">
       <ApolloMutation
         :mutation="registerCompanyMutation"
         :variables="{
@@ -109,7 +109,9 @@ useEnterKeyboardListener(onSubmit);
         @error="onError"
       >
         <template v-slot="{ loading, error, mutate }">
-        <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
+        <Button
+          ref="submitButtonRef"
+          :customClass="'flex w-full justify-center rounded-xl bg-primary px-4 py-2.5 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary dark:hover:bg-primary/80'"
                 :disabled="loading || !isFormValid"
                 @click="mutate()"
         >

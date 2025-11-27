@@ -8,14 +8,20 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue']);
 const internalValue = ref(props.modelValue || false);
+const syncingFromProps = ref(false);
 watch(
   () => props.modelValue,
   (newVal) => {
+    syncingFromProps.value = true;
     internalValue.value = newVal;
   }
 );
 
 watch(internalValue, (newVal) => {
+  if (syncingFromProps.value) {
+    syncingFromProps.value = false;
+    return;
+  }
   emit('update:modelValue', newVal);
 });
 

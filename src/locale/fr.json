@@ -12,7 +12,8 @@
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "import": "Import",
-      "saveAll": "Tout enregistrer"
+      "saveAll": "Tout enregistrer",
+      "createAndContinue": ""
     },
     "colors": {
       "red": "Rouge",
@@ -33,11 +34,19 @@
       "noIssues": "Aucun problème",
       "active": "Active",
       "inactive": "Inactive",
+      "selectedOfTotal": "{selected} selected of {total}",
       "yes": "Oui",
       "no": "Non"
     },
     "alert": {
       "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."
+    },
+    "components": {
+      "atoms": {
+        "textHtmlEditor": {
+          "placeholder": ""
+        }
+      }
     }
   },
   "auth": {
@@ -113,6 +122,11 @@
     }
   },
   "products": {
+    "eanCodes": {
+      "labels": {
+        "excludeAttributeValue": ""
+      }
+    },
     "products": {
       "create": {
         "wizard": {
@@ -131,8 +145,33 @@
           "subtitle": ""
         }
       },
+      "alert": {
+        "toast": {
+          "copied": "",
+          "pasted": "",
+          "rowCopied": "",
+          "rowPasted": "",
+          "rowClipboardEmpty": "",
+          "rowCopyNoEditableColumns": "",
+          "rowPasteNoEditableColumns": "",
+          "pasteDifferentColumn": "",
+          "pasteIncompatibleColumn": "",
+          "undo": "",
+          "redo": "",
+          "createdProductProperties": "",
+          "updatedProductProperties": "",
+          "deletedProductProperties": ""
+        }
+      },
+      "matrix": {
+        "rowActions": {
+          "copy": "",
+          "paste": ""
+        }
+      },
       "tabs": {
-        "amazon": "Amazon"
+        "amazon": "Amazon",
+        "ebay": ""
       },
       "priceLists": {
         "add": {
@@ -194,6 +233,9 @@
             "autoValue": "Auto: {value}",
             "autoValueEmpty": "Auto: —"
           }
+        },
+        "bulkEdit": {
+          "missingRuleWarning": ""
         }
       },
       "media": {
@@ -220,6 +262,74 @@
       },
       "labels": {
         "configuratorValue": ""
+      },
+      "userSections": {
+        "title": "",
+        "subtitle": "",
+        "refreshing": "",
+        "emptyTitle": "",
+        "emptySubtitle": "",
+        "emptySection": "",
+        "cardError": "",
+        "edit": {
+          "title": "",
+          "description": "",
+          "cardCount": "",
+          "hint": "",
+          "addButton": "",
+          "titleLabel": "",
+          "titlePlaceholder": "",
+          "descriptionLabel": "",
+          "descriptionPlaceholder": "",
+          "deleteButton": "",
+          "moveUp": "",
+          "moveDown": "",
+          "dragHandle": "",
+          "configure": "",
+          "configureComingSoon": "",
+          "deleteConfirmTitle": "",
+          "deleteConfirmText": "",
+          "deleteConfirmConfirm": "",
+          "deleteConfirmCancel": "",
+          "emptyHint": "",
+          "saveButton": "",
+          "saveSuccess": "",
+          "saveError": "",
+          "sectionLabel": "",
+          "validation": {
+            "titleRequired": ""
+          },
+          "noChanges": "",
+          "unsavedTitle": "",
+          "unsavedText": "",
+          "unsavedConfirm": "",
+          "unsavedCancel": "",
+          "cards": {
+            "subtitle": "",
+            "backButton": "",
+            "saveButton": "",
+            "titleLabel": "",
+            "titlePlaceholder": "",
+            "descriptionLabel": "",
+            "descriptionPlaceholder": "",
+            "colorLabel": "",
+            "emptyState": "",
+            "dragHandle": "",
+            "deleteButton": "",
+            "deleteTitle": "",
+            "deleteText": "",
+            "saveSuccess": "",
+            "saveError": "",
+            "unsavedTitle": "",
+            "unsavedText": "",
+            "unsavedConfirm": "",
+            "unsavedCancel": ""
+          }
+        },
+        "actions": {
+          "openEditor": "",
+          "closeEditor": ""
+        }
       },
       "amazon": {
         "asin": "ASIN",
@@ -269,6 +379,37 @@
         "variationThemePlaceholder": "Sélectionner un thème de variation",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted"
+      },
+      "ebay": {
+        "defaultMarketplace": "",
+        "noViews": "",
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectMarketplacePrompt": "",
+        "noDefaultTree": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        },
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        }
       }
     }
   },
@@ -278,21 +419,7 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook",
-      "shein": ""
-    },
-    "create": {
-      "wizard": {
-        "step1": {
-          "sheinTitle": "",
-          "sheinExample": ""
-        }
-      }
-    },
-    "shein": {
-      "installed": {
-        "title": ""
-      }
+      "webhook": "Webhook"
     },
     "labels": {
       "fulfillmentPolicy": "Politique d'expédition",
@@ -302,89 +429,33 @@
       "lengthUnit": "Unité de longueur",
       "weightUnit": "Unité de poids",
       "isDefaultMarketplace": "Marketplace par défaut",
-      "startingStock": ""
+      "startingStock": "",
+      "gptEnable": "",
+      "gptEnableCheckout": "",
+      "gptSellerName": "",
+      "gptSellerUrl": "",
+      "gptSellerPrivacyPolicy": "",
+      "gptSellerTos": "",
+      "gptReturnPolicy": "",
+      "gptReturnWindow": "",
+      "gptFeedUrl": ""
     },
     "salesChannel": {
       "helpText": {
-        "startingStock": ""
-      },
-      "shein": {
-        "installed": {
-          "title": "",
-          "loading": "",
-          "success": "",
-          "genericError": "",
-          "missingParams": ""
-        }
+        "startingStock": "",
+        "gptEnable": "",
+        "gptSellerUrl": "",
+        "gptReturnWindow": "",
+        "gptEnableCheckout": ""
       }
     },
     "show": {
-      "shein": {
-        "title": "",
-        "productRules": {
-          "labels": {
-            "translatedName": "",
-            "attributeType": "",
-            "requirement": "",
-            "visibility": "",
-            "remarks": "",
-            "allowsCustomValues": "",
-            "mainAttribute": "",
-            "productImage": "",
-            "externalImageUrl": "",
-            "category": ""
-          },
-          "help": {
-            "translatedName": "",
-            "productName": "",
-            "productImage": "",
-            "externalImageUrl": "",
-            "category": ""
-          },
-          "errors": {
-            "missingCriteria": "",
-            "categoryLookupFailed": ""
-          },
-          "attributeType": {
-            "sales": "",
-            "size": "",
-            "composition": "",
-            "common": ""
-          },
-          "requirement": {
-            "notFillable": "",
-            "optional": "",
-            "required": ""
-          },
-          "visibility": {
-            "display": "",
-            "hidden": ""
-          },
-          "remarks": {
-            "important": "",
-            "compliance": "",
-            "quality": "",
-            "customs": ""
-          }
-        },
-        "internalProperties": {
-          "title": "",
-          "options": {
-            "accordionTitle": "",
-            "remoteValue": "",
-            "description": "",
-            "localValue": "",
-            "empty": "",
-            "noDescription": "",
-            "loadError": "",
-            "updateSuccess": "",
-            "updateError": ""
-          }
-        }
-      },
-      "sheinNotConnectedBanner": {
-        "title": "",
-        "content": ""
+      "sections": {
+        "throttling": "",
+        "syncPreferences": "",
+        "gpt": "",
+        "authentication": "",
+        "defaultUnits": ""
       },
       "properties": {
         "title": "",
@@ -404,6 +475,11 @@
           "property": "",
           "localizedName": "",
           "translatedName": ""
+        },
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
         }
       },
       "template": {
@@ -590,11 +666,10 @@
       "propertySelectValues": {
         "labels": {
           "remoteName": "",
-            "remoteValue": "",
-            "amazonProperty": "",
-            "ebayProperty": "",
-            "sheinProperty": "",
-            "marketplace": "",
+          "remoteValue": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
           "localProperty": "",
           "selectValue": "",
           "translatedRemoteName": "",
@@ -602,26 +677,20 @@
           "translatedValue": ""
         },
         "help": {
-            "amazonProperty": "",
-            "ebayProperty": "",
-            "sheinProperty": "",
-            "marketplace": "",
+          "amazonProperty": "",
+          "ebayProperty": "",
+          "marketplace": "",
           "localProperty": "",
           "remoteValue": "",
           "remoteName": "",
           "selectValue": "",
           "selectValueAmazon": "",
-            "selectValueEbay": "",
-            "selectValueShein": "",
+          "selectValueEbay": "",
           "translatedRemoteName": "",
           "localizedValue": "",
           "translatedValue": ""
         },
         "notMappedBannerEbay": {
-          "title": "",
-          "content": ""
-        },
-        "notMappedBannerShein": {
           "title": "",
           "content": ""
         },
@@ -634,7 +703,6 @@
         "mappedRemotely": "",
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
-        "mappedRemotelyShein": "",
         "startMapping": "",
         "saveAndMapNext": "",
         "allMappedSuccess": ""
@@ -716,8 +784,15 @@
           "wizard": {
             "steps": {
               "type": "",
+              "contentClass": "",
               "languages": "",
               "currencies": ""
+            },
+            "contentClass": {
+              "title": "",
+              "description": "",
+              "label": "",
+              "placeholder": ""
             },
             "languages": {
               "title": "",
@@ -731,6 +806,12 @@
               "noData": "",
               "fetchError": ""
             }
+          },
+          "contentClass": {
+            "title": "",
+            "description": "",
+            "label": "",
+            "placeholder": ""
           },
           "languages": {
             "title": "",
@@ -949,6 +1030,295 @@
         "step1": "Preparing duplicate check",
         "step2": "Searching for duplicates"
       }
+    },
+    "rule": {
+      "labels": {
+        "salesChannel": "",
+        "defaultSalesChannel": "",
+        "unknownSalesChannel": ""
+      },
+      "placeholders": {
+        "salesChannel": ""
+      },
+      "messages": {
+        "unsavedChanges": ""
+      }
+    }
+  },
+  "settings": {
+    "chatGptProductFeed": {
+      "title": "",
+      "form": {
+        "successUpdate": ""
+      },
+      "messages": {
+        "loadError": ""
+      },
+      "labels": {
+        "conditionProperty": "",
+        "condtionNewValue": "",
+        "condtionRefurbishedValue": "",
+        "condtionUsdValue": "",
+        "brandProperty": "",
+        "materialProperty": "",
+        "mpnProperty": "",
+        "colorProperty": "",
+        "sizeProperty": "",
+        "ageGroupProperty": "",
+        "ageGroupNewbornValue": "",
+        "ageGroupInfantValue": "",
+        "ageGroupTodlerValue": "",
+        "ageGroupKidsValue": "",
+        "ageGroupAdultValue": "",
+        "lengthProperty": "",
+        "lengthUnit": "",
+        "widthProperty": "",
+        "heightProperty": "",
+        "weightProperty": "",
+        "weightUnit": "",
+        "expirationDateProperty": "",
+        "pickupMethodProperty": "",
+        "pickupMethodInStoreValue": "",
+        "pickupMethodReserveValue": "",
+        "pickupMethodNotSupportedValue": "",
+        "sizeSystemProperty": "",
+        "genderProperty": "",
+        "genderMaleValue": "",
+        "genderFemaleValue": "",
+        "genderUnisexValue": "",
+        "popularityScoreProperty": "",
+        "warningProperty": "",
+        "ageRestrictionProperty": ""
+      },
+      "placeholders": {
+        "property": "",
+        "value": "",
+        "unit": ""
+      },
+      "info": {
+        "title": "",
+        "description": "",
+        "linkLabel": "",
+        "sources": {
+          "product": "",
+          "mapping": "",
+          "salesChannel": "",
+          "notSynced": "",
+          "bundle": "",
+          "defaultSync": ""
+        },
+        "sections": {
+          "basicProductData": {
+            "title": "",
+            "description": ""
+          },
+          "itemInformation": {
+            "title": "",
+            "description": ""
+          },
+          "media": {
+            "title": "",
+            "description": ""
+          },
+          "priceAndPromotions": {
+            "title": "",
+            "description": ""
+          },
+          "availabilityInventory": {
+            "title": "",
+            "description": ""
+          },
+          "variants": {
+            "title": "",
+            "description": ""
+          },
+          "fulfillment": {
+            "title": "",
+            "description": ""
+          },
+          "merchantInfo": {
+            "title": "",
+            "description": ""
+          },
+          "returns": {
+            "title": "",
+            "description": ""
+          },
+          "performanceSignals": {
+            "title": "",
+            "description": ""
+          },
+          "compliance": {
+            "title": "",
+            "description": ""
+          },
+          "reviewsQa": {
+            "title": "",
+            "description": ""
+          },
+          "relatedProducts": {
+            "title": "",
+            "description": ""
+          },
+          "geoTagging": {
+            "title": "",
+            "description": ""
+          }
+        },
+        "fields": {
+          "id": "",
+          "gtin": "",
+          "mpn": "",
+          "title": "",
+          "description": "",
+          "link": "",
+          "condition": "",
+          "productCategory": "",
+          "brand": "",
+          "material": "",
+          "dimensions": "",
+          "length": "",
+          "width": "",
+          "height": "",
+          "weight": "",
+          "ageGroup": "",
+          "imageLink": "",
+          "additionalImageLink": "",
+          "videoLink": "",
+          "price": "",
+          "applicableTaxesFees": "",
+          "salePrice": "",
+          "salePriceEffectiveDate": "",
+          "unitPricingMeasure": "",
+          "pricingTrend": "",
+          "availability": "",
+          "availabilityDate": "",
+          "inventoryQuantity": "",
+          "expirationDate": "",
+          "pickupMethod": "",
+          "pickupSla": "",
+          "itemGroupId": "",
+          "itemGroupTitle": "",
+          "color": "",
+          "size": "",
+          "sizeSystem": "",
+          "gender": "",
+          "offerId": "",
+          "customVariant1Category": "",
+          "customVariant1Option": "",
+          "customVariant2Category": "",
+          "customVariant2Option": "",
+          "customVariant3Category": "",
+          "customVariant3Option": "",
+          "fulfillmentData": "",
+          "sellerName": "",
+          "sellerUrl": "",
+          "sellerPrivacyPolicy": "",
+          "sellerTos": "",
+          "returnPolicy": "",
+          "returnWindow": "",
+          "popularityScore": "",
+          "returnRate": "",
+          "warning": "",
+          "ageRestriction": "",
+          "reviews": "",
+          "relatedProducts": "",
+          "geoOverrides": ""
+        }
+      }
+    }
+  },
+  "generalListing": {
+    "labels": {
+      "search": ""
+    },
+    "actions": {
+      "createDashboardCard": "",
+      "selectAllCount": ""
+    },
+    "alerts": {
+      "selectAllError": ""
+    },
+    "modal": {
+      "title": "",
+      "subtitle": "",
+      "tabs": {
+        "self": "",
+        "members": ""
+      },
+      "fields": {
+        "title": "",
+        "description": "",
+        "color": "",
+        "section": "",
+        "sectionPlaceholder": ""
+      },
+      "preview": {
+        "titlePlaceholder": "",
+        "descriptionPlaceholder": ""
+      },
+      "colors": {
+        "red": "",
+        "orange": "",
+        "yellow": ""
+      },
+      "queryLabel": "",
+      "variablesLabel": "",
+      "errors": {
+        "titleRequired": "",
+        "sectionRequired": "",
+        "queryUnavailable": "",
+        "userUnavailable": "",
+        "membersUnavailable": "",
+        "memberSelectionRequired": "",
+        "memberSectionsRequired": ""
+      },
+      "alerts": {
+        "createSuccess": "",
+        "createError": ""
+      },
+      "sectionCreate": {
+        "title": "",
+        "fields": {
+          "title": "",
+          "titlePlaceholder": "",
+          "description": ""
+        },
+        "helper": "",
+        "openButton": "",
+        "closeButton": "",
+        "cancelButton": "",
+        "createButton": "",
+        "validation": {
+          "titleRequired": ""
+        },
+        "alerts": {
+          "createSuccess": "",
+          "createError": ""
+        }
+      },
+      "members": {
+        "title": "",
+        "subtitle": "",
+        "loading": "",
+        "retry": "",
+        "empty": "",
+        "ownerBadge": "",
+        "activeBadge": "",
+        "inactiveBadge": "",
+        "acceptedBadge": "",
+        "pendingBadge": "",
+        "sectionLabel": "",
+        "addSectionButton": "",
+        "createSectionTitle": "",
+        "unknownUser": ""
+      }
+    }
+  }
+  ,
+  "generalSearch": {
+    "filterModal": {
+      "convertToDashboardCard": ""
     }
   }
 }

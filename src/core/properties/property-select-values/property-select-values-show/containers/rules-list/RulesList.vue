@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, Ref, ref} from 'vue';
+import { computed, onMounted, Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../shared/components/atoms/link";
@@ -16,6 +16,15 @@ const { t } = useI18n();
 const searchConfig = searchConfigConstructor(t);
 const listingConfig = listingConfigConstructor(t);
 const ruleId = ref(null);
+const fixedFilters = computed(() => {
+  const filters: Record<string, unknown> = { salesChannel: { id: { isNull: true } } };
+
+  if (ruleId.value) {
+    filters.id = { exact: ruleId.value };
+  }
+
+  return filters;
+});
 
 const fetchFilterIds = async () => {
 
@@ -47,7 +56,7 @@ onMounted(fetchFilterIds)
         :config="listingConfig"
         :query="listingQuery"
         :query-key="listingQueryKey"
-        :fixed-filter-variables="{'id': {'exact': ruleId}}"
+        :fixed-filter-variables="fixedFilters"
     />
    </template>
   </GeneralTemplate>

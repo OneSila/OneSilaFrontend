@@ -18,6 +18,7 @@ import { PrimaryButton } from "../../../../../../../shared/components/atoms/butt
 import { SecondaryButton } from "../../../../../../../shared/components/atoms/button-secondary";
 import { CancelButton } from "../../../../../../../shared/components/atoms/button-cancel";
 import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
+import GptSettingsForm from "../components/GptSettingsForm.vue";
 
 interface EditMagentoForm {
   hostname: string;
@@ -34,15 +35,41 @@ interface EditMagentoForm {
   authenticationMethod: string;
   hostApiUsername: string | null;
   hostApiKey: string;
+  gptEnable: boolean;
+  gptEnableCheckout: boolean;
+  gptSellerName: string;
+  gptSellerUrl: string;
+  gptSellerPrivacyPolicy: string;
+  gptSellerTos: string;
+  gptReturnPolicy: string;
+  gptReturnWindow: number | null;
+}
+
+interface SalesChannelGptFeed {
+  id: string;
+  fileUrl?: string | null;
+  lastSyncedAt?: string | null;
+  file?: {
+    url?: string | null;
+  } | null;
 }
 
 // Localization
 const {t} = useI18n();
-const props = defineProps<{ data: EditMagentoForm }>();
+const emit = defineEmits<{ (e: 'gpt-feed-updated', value: SalesChannelGptFeed | null): void }>();
+const props = defineProps<{ data: EditMagentoForm; gptFeed: SalesChannelGptFeed | null; initialGptEnable: boolean; salesChannelId: string | null }>();
 
 const formData = ref<EditMagentoForm>({
   ...props.data,
-  startingStock: props.data.startingStock ?? null
+  startingStock: props.data.startingStock ?? null,
+  gptEnable: props.data.gptEnable ?? false,
+  gptEnableCheckout: props.data.gptEnableCheckout ?? false,
+  gptSellerName: props.data.gptSellerName ?? '',
+  gptSellerUrl: props.data.gptSellerUrl ?? '',
+  gptSellerPrivacyPolicy: props.data.gptSellerPrivacyPolicy ?? '',
+  gptSellerTos: props.data.gptSellerTos ?? '',
+  gptReturnPolicy: props.data.gptReturnPolicy ?? '',
+  gptReturnWindow: props.data.gptReturnWindow ?? null
 });
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
@@ -53,6 +80,7 @@ const router = useRouter();
 const accordionItems = [
   {name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge'},
   {name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync'},
+  {name: 'gpt', label: t('integrations.show.sections.gpt'), icon: 'robot'},
   {name: 'authentication', label: t('integrations.show.sections.authentication'), icon: 'lock'}
 ];
 
@@ -62,7 +90,15 @@ watch(
     (newData) => {
       formData.value = {
         ...newData,
-        startingStock: newData.startingStock ?? null
+        startingStock: newData.startingStock ?? null,
+        gptEnable: newData.gptEnable ?? false,
+        gptEnableCheckout: newData.gptEnableCheckout ?? false,
+        gptSellerName: newData.gptSellerName ?? '',
+        gptSellerUrl: newData.gptSellerUrl ?? '',
+        gptSellerPrivacyPolicy: newData.gptSellerPrivacyPolicy ?? '',
+        gptSellerTos: newData.gptSellerTos ?? '',
+        gptReturnPolicy: newData.gptReturnPolicy ?? '',
+        gptReturnWindow: newData.gptReturnWindow ?? null
       };
     },
     {deep: true}
@@ -307,6 +343,18 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
           </div>
         </div>
+      </template>
+
+      <template #gpt>
+        <GptSettingsForm
+          :form-data="formData"
+          :field-errors="fieldErrors"
+          :hostname="formData.hostname"
+          :gpt-feed="props.gptFeed"
+          :initial-gpt-enable="props.initialGptEnable"
+          :sales-channel-id="props.salesChannelId"
+          @gpt-feed-updated="emit('gpt-feed-updated', $event)"
+        />
       </template>
 
       <!-- Authentication -->

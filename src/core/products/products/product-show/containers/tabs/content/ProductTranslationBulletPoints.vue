@@ -21,16 +21,43 @@ import {BULLET_POINT_SEPARATOR} from '../../../../../../../shared/utils/constant
 
 const {t} = useI18n();
 
-const props = defineProps<{ translationId: string | null; productId: string | number; languageCode: string | null; salesChannelId?: string; defaultLanguageCode?: string }>();
+const props = defineProps<{
+  translationId: string | null;
+  productId: string | number;
+  languageCode: string | null;
+  salesChannelId?: string;
+  defaultLanguageCode?: string;
+  bulletPointLimit?: number;
+}>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
   (e: 'initial-bullet-points', value: any[]): void;
 }>();
 
 const bulletPoints = ref<any[]>([]);
+const activeBulletIndex = ref<number | null>(null);
 const initialBulletPoints = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
 const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
+const bulletPointLimit = computed(() => props.bulletPointLimit);
+const showActiveBulletLimit = computed(
+  () => activeBulletIndex.value !== null && typeof bulletPointLimit.value === 'number',
+);
+const activeBulletDisplayIndex = computed(() =>
+  activeBulletIndex.value !== null ? activeBulletIndex.value + 1 : 0,
+);
+const activeBulletCharacterCount = computed(() => {
+  if (activeBulletIndex.value === null) return 0;
+  const point = bulletPoints.value[activeBulletIndex.value];
+  return point?.text?.length || 0;
+});
+const activeBulletLimitExceeded = computed(
+  () =>
+    !!showActiveBulletLimit.value &&
+    typeof bulletPointLimit.value === 'number' &&
+    activeBulletCharacterCount.value > bulletPointLimit.value,
+);
+const activeBulletCounterClass = computed(() => (activeBulletLimitExceeded.value ? 'text-red-500' : 'text-gray-400'));
 
 const handleGeneratedBulletPoints = (list: any[]) => {
   bulletPoints.value = list.map((bp, idx) => ({
@@ -38,6 +65,7 @@ const handleGeneratedBulletPoints = (list: any[]) => {
     text: bp.text,
     sortOrder: idx,
   }));
+  activeBulletIndex.value = null;
 };
 
 const handleTranslatedBulletPoints = (text: string) => {
@@ -49,6 +77,7 @@ const handleTranslatedBulletPoints = (text: string) => {
     text: bp,
     sortOrder: idx,
   }));
+  activeBulletIndex.value = null;
 };
 
 const fetchPoints = async () => {
@@ -67,6 +96,7 @@ const fetchPoints = async () => {
         data?.productTranslationBulletPoints.edges.map((e: any) => ({...e.node})) || [];
     initialBulletPoints.value = JSON.parse(JSON.stringify(bulletPoints.value));
     emit('initial-bullet-points', initialBulletPoints.value);
+    activeBulletIndex.value = null;
     return [...initialBulletPoints.value];
   } catch (e) {
     console.error('Failed to load bullet points', e);
@@ -88,6 +118,11 @@ const removeBulletPoint = (index: number) => {
   bulletPoints.value.forEach((bp, idx) => {
     bp.sortOrder = idx;
   });
+  if (activeBulletIndex.value === index) {
+    activeBulletIndex.value = null;
+  } else if (activeBulletIndex.value !== null && activeBulletIndex.value > index) {
+    activeBulletIndex.value -= 1;
+  }
 };
 
 const onReorder = () => {
@@ -164,7 +199,11 @@ defineExpose({save, fetchPoints, hasChanges});
   <div class="my-4">
     <Flex gap="4" middle between>
       <FlexCell>
-        <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
+        <Flex gap="2" middle>
+          <FlexCell>
+            <Label semi-bold>{{ t('products.translation.labels.bulletPoints') }}</Label>
+          </FlexCell>
+        </Flex>
       </FlexCell>
       <FlexCell grow>
         <Flex gap="2">
@@ -189,6 +228,11 @@ defineExpose({save, fetchPoints, hasChanges});
 
         </Flex>
       </FlexCell>
+                <FlexCell v-if="showActiveBulletLimit">
+            <span class="text-xs" :class="activeBulletCounterClass">
+              #{{ activeBulletDisplayIndex }} - {{ activeBulletCharacterCount }} / {{ bulletPointLimit }}
+            </span>
+          </FlexCell>
       <FlexCell>
         <div v-if="bulletPoints.length < 10">
           <Button class="btn btn-outline-primary btn-sm" @click="addBulletPoint">
@@ -203,10 +247,12 @@ defineExpose({save, fetchPoints, hasChanges});
           <Icon class="text-primary" name="fa-up-down-left-right"/>
         </FlexCell>
         <FlexCell grow>
-          <TextEditor
+         <TextEditor
             v-model="point.text"
             class="w-full min-h-[96px]"
             :scroll="true"
+            @focus="activeBulletIndex = index"
+            @blur="activeBulletIndex = null"
           />
         </FlexCell>
         <FlexCell>

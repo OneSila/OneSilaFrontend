@@ -224,7 +224,7 @@ const setPaginationVariables = (
   fetchData();
 };
 
-const debouncedFetchData = debounce(fetchData, 500);
+const debouncedFetchData = debounce(fetchData, 750);
 watch(search, debouncedFetchData);
 
 onMounted(fetchData);
