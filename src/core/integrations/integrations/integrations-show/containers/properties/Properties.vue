@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { IntegrationTypes } from '../../../integrations';
 import { AmazonProperties } from './containers/amazon-properties';
 import { EbayProperties } from './containers/ebay-properties';
+import { SheinProperties } from './containers/shein-properties';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
@@ -13,6 +14,8 @@ const currentComponent = computed(() => {
       return AmazonProperties;
     case IntegrationTypes.Ebay:
       return EbayProperties;
+    case IntegrationTypes.Shein:
+      return SheinProperties;
     default:
       return null;
   }

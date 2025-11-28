@@ -58,7 +58,7 @@ export const routes = [
     path: '/integrations/:type/internal-property/:id',
     name: 'integrations.remoteInternalProperties.edit',
     meta: { title: 'integrations.show.ebay.internalProperties.title' },
-    component: () => import('./integrations/integrations-show/containers/properties/containers/ebay-properties/containers/IntegrationsEbayInternalPropertyEditController.vue'),
+    component: () => import('./integrations/integrations-show/containers/properties/containers/remote-internal-properties/IntegrationsRemoteInternalPropertyEditController.vue'),
   },
   {
     path: '/integrations/:type/property-value/:id',
@@ -108,6 +108,12 @@ export const routes = [
     name: 'integrations.ebay.installed',
     meta: { title: 'integrations.ebay.installed.title' },
     component: () => import('./integrations/integrations-installed/ebay-installed/EbayInstalledController.vue'),
+  },
+  {
+    path: '/integrations/shein/installed',
+    name: 'integrations.shein.installed',
+    meta: { title: 'integrations.shein.installed.title' },
+    component: () => import('./integrations/integrations-installed/shein-installed/SheinInstalledController.vue'),
   }
 
 ];

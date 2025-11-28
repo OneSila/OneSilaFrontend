@@ -66,6 +66,15 @@ export const createEbaySalesChannelMutation = gql`
   }
 `;
 
+export const createSheinSalesChannelMutation = gql`
+  mutation createSheinSalesChannel($data: SheinSalesChannelInput!) {
+    createSheinSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
@@ -113,6 +122,15 @@ export const resyncSalesChannelGptFeedMutation = gql`
       file {
         url
       }
+    }
+  }
+`;
+
+export const updateSheinSalesChannelMutation = gql`
+  mutation updateSheinSalesChannel($data: SheinSalesChannelPartialInput!) {
+    updateSheinSalesChannel(data: $data) {
+      id
+      hostname
     }
   }
 `;
@@ -385,6 +403,28 @@ export const updateEbayInternalPropertyOptionMutation = gql`
   }
 `;
 
+export const updateSheinInternalPropertyMutation = gql`
+  mutation updateSheinInternalProperty($data: SheinInternalPropertyPartialInput!) {
+    updateSheinInternalProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const updateSheinInternalPropertyOptionMutation = gql`
+  mutation updateSheinInternalPropertyOption($data: SheinInternalPropertyOptionPartialInput!) {
+    updateSheinInternalPropertyOption(data: $data) {
+      id
+      localInstance {
+        id
+        value
+      }
+    }
+  }
+`;
+
 export const updateRemoteLanguageMutation = gql`
   mutation updateRemoteLanguage($data: RemoteLanguagePartialInput!) {
     updateRemoteLanguage(data: $data) {
@@ -593,6 +633,24 @@ export const getEbayRedirectUrlMutation = gql`
   }
 `;
 
+export const getSheinRedirectUrlMutation = gql`
+  mutation GetSheinRedirectUrl($data: SheinSalesChannelPartialInput!) {
+    getSheinRedirectUrl(instance: $data) {
+      ... on SheinRedirectUrlType {
+        redirectUrl
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 export const validateAmazonAuthMutation = gql`
   mutation ValidateAmazonAuth($data: AmazonValidateAuthInput!) {
     validateAmazonAuth(instance: $data) {
@@ -631,6 +689,24 @@ export const validateEbayAuthMutation = gql`
   }
 `;
 
+export const validateSheinAuthMutation = gql`
+  mutation ValidateSheinAuth($data: SheinValidateAuthInput!) {
+    validateSheinAuth(instance: $data) {
+      ... on SheinSalesChannelType {
+        id
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 // Amazon Property Mutations
 
 export const updateAmazonPropertyMutation = gql`
@@ -646,6 +722,16 @@ export const updateAmazonPropertyMutation = gql`
 export const updateEbayPropertyMutation = gql`
   mutation updateEbayProperty($data: EbayPropertyPartialInput!) {
     updateEbayProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const updateSheinPropertyMutation = gql`
+  mutation updateSheinProperty($data: SheinPropertyPartialInput!) {
+    updateSheinProperty(data: $data) {
       id
       mappedLocally
       mappedRemotely
@@ -676,6 +762,16 @@ export const bulkUpdateAmazonPropertySelectValueLocalInstanceMutation = gql`
 export const updateEbayPropertySelectValueMutation = gql`
   mutation updateEbayPropertySelectValue($data: EbayPropertySelectValuePartialInput!) {
     updateEbayPropertySelectValue(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const updateSheinPropertySelectValueMutation = gql`
+  mutation updateSheinPropertySelectValue($data: SheinPropertySelectValuePartialInput!) {
+    updateSheinPropertySelectValue(data: $data) {
       id
       mappedLocally
       mappedRemotely
@@ -729,6 +825,24 @@ export const createEbayProductTypesFromLocalRulesMutation = gql`
   }
 `;
 
+export const updateSheinProductTypeMutation = gql`
+  mutation updateSheinProductType($data: SheinProductTypePartialInput!) {
+    updateSheinProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const createSheinProductTypesFromLocalRulesMutation = gql`
+  mutation createSheinProductTypesFromLocalRules($data: SheinSalesChannelPartialInput!) {
+    createSheinProductTypesFromLocalRules(instance: $data) {
+      id
+    }
+  }
+`;
+
 export const suggestAmazonProductTypeMutation = gql`
   mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
     suggestAmazonProductType(name: $name, marketplace: $marketplace) {
@@ -750,6 +864,32 @@ export const suggestEbayCategoryMutation = gql`
         categoryName
         categoryPath
         leaf
+      }
+    }
+  }
+`;
+export const suggestSheinCategoryMutation = gql`
+  mutation suggestSheinCategory(
+    $marketplace: SalesChannelViewPartialInput!
+    $name: String
+    $image: ImagePartialInput
+    $externalImageUrl: String
+  ) {
+    suggestSheinCategory(
+      marketplace: $marketplace
+      name: $name
+      image: $image
+      externalImageUrl: $externalImageUrl
+    ) {
+      siteRemoteId
+      categories {
+        categoryId
+        productTypeId
+        categoryName
+        categoryPath
+        leaf
+        order
+        vote
       }
     }
   }
@@ -802,6 +942,36 @@ export const createEbayImportProcessMutation = gql`
 export const updateEbayImportProcessMutation = gql`
   mutation updateEbayImportProcess($data: EbaySalesChannelImportPartialInput!) {
     updateEbayImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const createSheinImportProcessMutation = gql`
+  mutation createSheinImportProcess($data: SheinSalesChannelImportInput!) {
+    createSheinImportProcess(data: $data) {
+      id
+      type
+      status
+      percentage
+      createdAt
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateSheinImportProcessMutation = gql`
+  mutation updateSheinImportProcess($data: SheinSalesChannelImportPartialInput!) {
+    updateSheinImportProcess(data: $data) {
       id
       type
       status

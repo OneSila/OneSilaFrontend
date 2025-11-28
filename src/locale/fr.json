@@ -118,6 +118,30 @@
           "title": "",
           "description": ""
         }
+      },
+      "shein": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
       }
     }
   },
@@ -770,6 +794,13 @@
             "loadError": "",
             "updateSuccess": "",
             "updateError": ""
+          }
+        }
+      },
+      "shein": {
+        "productRules": {
+          "labels": {
+            "categoryId": ""
           }
         }
       }

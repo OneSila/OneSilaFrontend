@@ -6,15 +6,19 @@ import {
   ebayProductTypesQuery,
   getAmazonProductTypeQuery,
   getEbayProductTypeQuery,
+  getSheinProductTypeQuery,
+  sheinProductTypesQuery,
 } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { productPropertiesRulesListingQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import {
   createAmazonProductTypesFromLocalRulesMutation,
   createEbayProductTypesFromLocalRulesMutation,
+  createSheinProductTypesFromLocalRulesMutation,
   suggestAmazonProductTypeMutation,
   suggestEbayCategoryMutation,
   updateAmazonProductTypeMutation,
   updateEbayProductTypeMutation,
+  updateSheinProductTypeMutation,
 } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
@@ -137,6 +141,61 @@ const ebayProductTypeFormConfig = (
   ],
 });
 
+const sheinProductTypeFormConfig = (
+  t: Function,
+  type: string,
+  productTypeId: string,
+  integrationId: string
+): FormConfig => ({
+  cols: 1,
+  type: FormType.EDIT,
+  mutation: updateSheinProductTypeMutation,
+  mutationKey: "updateSheinProductType",
+  query: getSheinProductTypeQuery,
+  queryVariables: { id: productTypeId },
+  queryDataKey: "sheinProductType",
+  submitUrl: {
+    name: 'integrations.integrations.show',
+    params: { type, id: integrationId },
+    query: { tab: 'productRules' },
+  },
+  fields: [
+    { type: FieldType.Hidden, name: 'id', value: productTypeId },
+    {
+      type: FieldType.Text,
+      label: t('shared.labels.name'),
+      name: 'name',
+      disabled: true,
+    },
+    {
+      type: FieldType.Text,
+      label: t('integrations.show.shein.productRules.labels.categoryId'),
+      name: 'categoryId',
+      disabled: true,
+    },
+    {
+      type: FieldType.Text,
+      label: t('integrations.show.shein.productRules.labels.translatedName'),
+      name: 'translatedName',
+      help: t('integrations.show.shein.productRules.help.translatedName'),
+    },
+    {
+      type: FieldType.Query,
+      name: 'localInstance',
+      label: t('integrations.show.productRules.labels.productRule'),
+      help: t('integrations.show.productRules.help.productRule'),
+      labelBy: 'value',
+      valueBy: 'id',
+      query: productPropertiesRulesListingQuery,
+      dataKey: 'productPropertiesRules',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+    },
+  ],
+});
+
 export const productTypeEditFormConfigConstructor = (
   t: Function,
   integrationType: string,
@@ -146,6 +205,10 @@ export const productTypeEditFormConfigConstructor = (
 ): FormConfig => {
   if (integrationType === IntegrationTypes.Ebay) {
     return ebayProductTypeFormConfig(t, integrationType, productTypeId, integrationId);
+  }
+
+  if (integrationType === IntegrationTypes.Shein) {
+    return sheinProductTypeFormConfig(t, integrationType, productTypeId, integrationId);
   }
 
   return amazonProductTypeFormConfig(t, integrationType, productTypeId, integrationId, defaultRuleId);
@@ -159,7 +222,9 @@ export const productTypesSearchConfigConstructor = (
   const mappedRemotelyLabel =
     integrationType === IntegrationTypes.Ebay
       ? t('integrations.show.mapping.mappedRemotelyEbay')
-      : t('integrations.show.mapping.mappedRemotelyAmazon');
+      : integrationType === IntegrationTypes.Shein
+        ? t('integrations.show.mapping.mappedRemotelyShein')
+        : t('integrations.show.mapping.mappedRemotelyAmazon');
 
   const filters: SearchFilter[] = [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
@@ -272,6 +337,42 @@ const ebayProductTypesListingConfig = (
   addPagination: true,
 });
 
+const sheinProductTypesListingConfig = (
+  t: Function,
+  specificIntegrationId: string,
+  salesChannelId: string,
+): ListingConfig => ({
+  headers: [
+    t('shared.labels.name'),
+    t('integrations.show.mapping.mappedLocally'),
+    t('integrations.show.mapping.mappedRemotelyShein'),
+    t('properties.rule.title'),
+  ],
+  fields: [
+    { name: 'name', type: FieldType.Text },
+    { name: 'mappedLocally', type: FieldType.Boolean },
+    { name: 'mappedRemotely', type: FieldType.Boolean },
+    {
+      name: 'localInstance',
+      type: FieldType.NestedText,
+      keys: ['productType', 'value'],
+      showLabel: true,
+      clickable: true,
+      clickIdentifiers: [{ id: ['id'] }],
+      clickUrl: { name: 'properties.rule.show' },
+    },
+  ],
+  identifierKey: 'id',
+  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
+  addActions: true,
+  addEdit: true,
+  addShow: true,
+  editUrlName: 'integrations.remoteProductTypes.edit',
+  showUrlName: 'integrations.remoteProductTypes.edit',
+  addDelete: false,
+  addPagination: true,
+});
+
 export const productTypesListingConfigConstructor = (
   t: Function,
   integrationType: string,
@@ -280,27 +381,51 @@ export const productTypesListingConfigConstructor = (
 ): ListingConfig =>
   integrationType === IntegrationTypes.Ebay
     ? ebayProductTypesListingConfig(t, specificIntegrationId, salesChannelId)
-    : amazonProductTypesListingConfig(t, specificIntegrationId, salesChannelId);
+    : integrationType === IntegrationTypes.Shein
+      ? sheinProductTypesListingConfig(t, specificIntegrationId, salesChannelId)
+      : amazonProductTypesListingConfig(t, specificIntegrationId, salesChannelId);
 
 export const getListingQueryKey = (integrationType: string): string =>
-  integrationType === IntegrationTypes.Ebay ? 'ebayProductTypes' : 'amazonProductTypes';
+  integrationType === IntegrationTypes.Ebay
+    ? 'ebayProductTypes'
+    : integrationType === IntegrationTypes.Shein
+      ? 'sheinProductTypes'
+      : 'amazonProductTypes';
 
 export const getListingQuery = (integrationType: string) =>
-  integrationType === IntegrationTypes.Ebay ? ebayProductTypesQuery : amazonProductTypesQuery;
+  integrationType === IntegrationTypes.Ebay
+    ? ebayProductTypesQuery
+    : integrationType === IntegrationTypes.Shein
+      ? sheinProductTypesQuery
+      : amazonProductTypesQuery;
 
 export const getProductTypeQuery = (integrationType: string) =>
-  integrationType === IntegrationTypes.Ebay ? getEbayProductTypeQuery : getAmazonProductTypeQuery;
+  integrationType === IntegrationTypes.Ebay
+    ? getEbayProductTypeQuery
+    : integrationType === IntegrationTypes.Shein
+      ? getSheinProductTypeQuery
+      : getAmazonProductTypeQuery;
 
 export const getProductTypeQueryDataKey = (integrationType: string): string =>
-  integrationType === IntegrationTypes.Ebay ? 'ebayProductType' : 'amazonProductType';
+  integrationType === IntegrationTypes.Ebay
+    ? 'ebayProductType'
+    : integrationType === IntegrationTypes.Shein
+      ? 'sheinProductType'
+      : 'amazonProductType';
 
 export const getUpdateProductTypeMutation = (integrationType: string) =>
-  integrationType === IntegrationTypes.Ebay ? updateEbayProductTypeMutation : updateAmazonProductTypeMutation;
+  integrationType === IntegrationTypes.Ebay
+    ? updateEbayProductTypeMutation
+    : integrationType === IntegrationTypes.Shein
+      ? updateSheinProductTypeMutation
+      : updateAmazonProductTypeMutation;
 
 export const getCreateProductTypesFromLocalRulesMutation = (integrationType: string) =>
   integrationType === IntegrationTypes.Ebay
     ? createEbayProductTypesFromLocalRulesMutation
-    : createAmazonProductTypesFromLocalRulesMutation;
+    : integrationType === IntegrationTypes.Shein
+      ? createSheinProductTypesFromLocalRulesMutation
+      : createAmazonProductTypesFromLocalRulesMutation;
 
 export const listingQueryKey = getListingQueryKey(IntegrationTypes.Amazon);
 export const listingQuery = getListingQuery(IntegrationTypes.Amazon);
@@ -444,6 +569,7 @@ export const ebayImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfi
 };
 
 type RemoteProductTypeState = { propertyProductTypeId: string | null };
+type SheinRemoteProductTypeState = RemoteProductTypeState;
 
 export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<RemoteProductTypeState> = {
   integrationType: IntegrationTypes.Amazon,
@@ -501,5 +627,44 @@ export const ebayMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<Re
   shouldShowAdditionalButton: shouldShowProductTypeButton,
   getAdditionalButtonConfig: buildProductTypeAdditionalButtonConfig(IntegrationTypes.Ebay, (formData) =>
     formData?.translatedName || formData?.name,
+  ),
+};
+
+export const sheinMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<SheinRemoteProductTypeState> = {
+  integrationType: IntegrationTypes.Shein,
+  listingQuery: getListingQuery(IntegrationTypes.Shein),
+  listingQueryKey: getListingQueryKey(IntegrationTypes.Shein),
+  productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Shein),
+  getIntegrationTitle,
+  editRouteName: 'integrations.remoteProductTypes.edit',
+  createState: () => ({ propertyProductTypeId: null }),
+  extractItems: (data) => data?.items || [],
+  getItemName: (item) => item?.property?.name || '',
+  getItemCode: (item) => item?.property?.code || '',
+  isItemMappedLocally: (item) => Boolean(item?.localInstance),
+  getPropertyRoute: (item, { type, integrationId, salesChannelId }) => {
+    const propertyId = item?.property?.id;
+    if (!propertyId) {
+      return null;
+    }
+
+    const query: Record<string, string> = {};
+    if (integrationId) {
+      query.integrationId = integrationId;
+    }
+    if (salesChannelId) {
+      query.salesChannelId = salesChannelId;
+    }
+
+    return {
+      name: 'integrations.remoteProperties.edit',
+      params: { type, id: propertyId },
+      ...(Object.keys(query).length ? { query } : {}),
+    };
+  },
+  shouldShowAdditionalButton: shouldShowProductTypeButton,
+  getAdditionalButtonConfig: buildProductTypeAdditionalButtonConfig(
+    IntegrationTypes.Shein,
+    (formData) => formData?.translatedName || formData?.name,
   ),
 };

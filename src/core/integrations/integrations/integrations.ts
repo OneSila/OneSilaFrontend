@@ -5,6 +5,7 @@ export enum IntegrationTypes {
   Amazon = 'amazon',
   Ebay = 'ebay',
   Webhook = 'webhook',
+  Shein = 'shein',
   None = 'none',
 }
 

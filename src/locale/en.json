@@ -305,6 +305,30 @@
           "title": "Inventory Fields",
           "description": "eBay inventory fields missing a mapped OneSila property."
         }
+      },
+      "shein": {
+        "title": "Shein integration",
+        "description": "Resolve unmapped Shein data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Shein properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Shein product types that need mapping."
+        },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to Shein."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Shein property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedInventoryFields": {
+          "title": "Internal Properties",
+          "description": "Shein internal properties missing a mapped OneSila property."
+        }
       }
     },
     "onboarding": {
@@ -2813,7 +2837,13 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook"
+      "webhook": "Webhook",
+      "shein": "Shein"
+    },
+    "shein": {
+      "installed": {
+        "title": "Shein Connected"
+      }
     },
     "show": {
       "title": "Integration",
@@ -2856,6 +2886,70 @@
           }
         }
       },
+      "shein": {
+        "title": "Shein Integration",
+        "productRules": {
+          "labels": {
+            "translatedName": "Translated Name",
+            "attributeType": "Attribute Type",
+            "requirement": "Requirement",
+            "visibility": "Visibility",
+            "remarks": "Remark Tags",
+            "allowsCustomValues": "Allows Custom Values",
+            "mainAttribute": "Main Attribute",
+            "productImage": "Product image",
+            "externalImageUrl": "External image URL",
+            "category": "Shein category",
+            "categoryId": "Category ID"
+          },
+          "help": {
+            "translatedName": "Translated name provided by Shein for this category.",
+            "productName": "Provide a product name or media so Shein can recommend matching categories.",
+            "productImage": "Attach a product photo stored in OneSila to improve the match.",
+            "externalImageUrl": "Paste a public URL to a product image if it is not available in OneSila.",
+            "category": "Search within the Shein category tree for this marketplace."
+          },
+          "errors": {
+            "missingCriteria": "Enter a product name or attach an image before searching.",
+            "categoryLookupFailed": "Unable to load the selected Shein category. Please try again."
+          },
+          "attributeType": {
+            "sales": "Sales attribute",
+            "size": "Size attribute",
+            "composition": "Composition attribute",
+            "common": "Common attribute"
+          },
+          "requirement": {
+            "notFillable": "Not fillable",
+            "optional": "Optional",
+            "required": "Required"
+          },
+          "visibility": {
+            "display": "Display to shoppers",
+            "hidden": "Hidden from shoppers"
+          },
+          "remarks": {
+            "important": "Important",
+            "compliance": "Compliance",
+            "quality": "Quality",
+            "customs": "Customs"
+          }
+        },
+        "internalProperties": {
+          "title": "Shein Internal Fields",
+          "options": {
+            "accordionTitle": "Options",
+            "remoteValue": "Remote Option",
+            "description": "Description",
+            "localValue": "OneSila Value",
+            "empty": "No options are available for this internal field.",
+            "noDescription": "No description provided.",
+            "loadError": "Unable to load options. Please try again.",
+            "updateSuccess": "Option mapping updated successfully.",
+            "updateError": "Failed to update option mapping."
+          }
+        }
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -2881,6 +2975,10 @@
       },
       "ebayNotConnectedBanner": {
         "title": "Ebay connection not completed",
+        "content": "The app authorization did not complete or was aborted. Please retry to connect."
+      },
+      "sheinNotConnectedBanner": {
+        "title": "Shein connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
       "stores": {
@@ -3152,6 +3250,7 @@
           "remoteValue": "Amazon Value",
           "amazonProperty": "Amazon Property",
           "ebayProperty": "eBay Property",
+          "sheinProperty": "Shein Property",
           "marketplace": "Marketplace",
           "localProperty": "OneSila Property",
           "selectValue": "OneSila Select Value",
@@ -3162,6 +3261,7 @@
         "help": {
           "amazonProperty": "Amazon property to which this value belongs.",
           "ebayProperty": "eBay property to which this value belongs.",
+          "sheinProperty": "Shein property to which this value belongs.",
           "marketplace": "Marketplace for this value.",
           "localProperty": "OneSila property that this remote property maps to.",
           "remoteValue": "Value exactly as defined by the marketplace.",
@@ -3169,6 +3269,7 @@
           "selectValue": "Choose the OneSila value that matches this marketplace value.",
           "selectValueAmazon": "Choose the OneSila value that matches this Amazon value.",
           "selectValueEbay": "Choose the OneSila value that matches this eBay value.",
+          "selectValueShein": "Choose the OneSila value that matches this Shein value.",
           "translatedRemoteName": "Translated name for this value.",
           "localizedValue": "Value as returned by the marketplace.",
           "translatedValue": "Translated value in the company language."
@@ -3180,6 +3281,10 @@
         "notMappedBannerEbay": {
           "title": "eBay property not mapped",
           "content": "Map the eBay property first before mapping values."
+        },
+        "notMappedBannerShein": {
+          "title": "Shein property not mapped",
+          "content": "Map the Shein property first before mapping values."
         },
         "recommendation": {
           "title": "Recommendations",
@@ -3195,6 +3300,7 @@
         "mappedRemotely": "Mapped on Amazon",
         "mappedRemotelyAmazon": "Mapped on Amazon",
         "mappedRemotelyEbay": "Mapped on eBay",
+        "mappedRemotelyShein": "Mapped on Shein",
         "startMapping": "Start Mapping",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values",
@@ -3236,6 +3342,8 @@
           "amazonExample": "Amazon integration to manage your marketplace listings.",
           "ebayTitle": "Ebay",
           "ebayExample": "Ebay integration to manage your marketplace listings.",
+          "sheinTitle": "Shein",
+          "sheinExample": "Shein integration to manage your marketplace listings.",
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "webhookTitle": "Webhook",
@@ -3500,6 +3608,15 @@
           "title": "Ebay Connected",
           "loading": "Connecting your store",
           "success": "Your Ebay store was successfully connected!",
+          "genericError": "Something went wrong while connecting your store.",
+          "missingParams": "Missing required query parameters. Please retry the installation."
+        }
+      },
+      "shein": {
+        "installed": {
+          "title": "Shein Connected",
+          "loading": "Connecting your store",
+          "success": "Your Shein store was successfully connected!",
           "genericError": "Something went wrong while connecting your store.",
           "missingParams": "Missing required query parameters. Please retry the installation."
         }

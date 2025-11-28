@@ -11,6 +11,8 @@ import ImportedAmazonProductType from './containers/amazon-product-types/Importe
 import ImportedEbayProductType from './containers/ebay-product-types/ImportedEbayProductType.vue';
 import AmazonMappedRemoteProductType from './containers/amazon-product-types/AmazonMappedRemoteProductType.vue';
 import EbayMappedRemoteProductType from './containers/ebay-product-types/EbayMappedRemoteProductType.vue';
+import ImportedSheinProductType from './containers/shein-product-types/ImportedSheinProductType.vue';
+import SheinMappedRemoteProductType from './containers/shein-product-types/SheinMappedRemoteProductType.vue';
 import { IntegrationTypes } from '../../../integrations';
 
 const route = useRoute();
@@ -27,6 +29,10 @@ const componentRegistry: Record<string, { imported: Component; mapped: Component
   [IntegrationTypes.Ebay]: {
     imported: ImportedEbayProductType,
     mapped: EbayMappedRemoteProductType,
+  },
+  [IntegrationTypes.Shein]: {
+    imported: ImportedSheinProductType,
+    mapped: SheinMappedRemoteProductType,
   },
 };
 
