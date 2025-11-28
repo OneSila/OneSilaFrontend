@@ -78,6 +78,22 @@ const marketplaceLink = computed(() => {
   };
 });
 
+const getProductTypeDataForForm = () => {
+  if (!props.productType) {
+    return null;
+  }
+
+  const baseData = {
+    ...props.productType,
+  };
+
+  if (resolvedDefaultRuleId.value) {
+    baseData.localInstance = resolvedDefaultRuleId.value
+  }
+
+  return baseData;
+};
+
 const updateItemsFromData = (data: any) => {
   items.value = props.config.extractItems(data, state);
 };
@@ -90,9 +106,12 @@ const setupFormConfig = () => {
       integrationId,
       resolvedDefaultRuleId.value,
   );
-  if (formConfig.value && props.productType) {
-    formConfig.value.queryData = {[queryDataKey.value]: props.productType};
-    updateItemsFromData(props.productType);
+  if (formConfig.value) {
+    const dataForForm = getProductTypeDataForForm() ?? props.productType;
+    if (dataForForm) {
+      formConfig.value.queryData = {[queryDataKey.value]: dataForForm};
+      updateItemsFromData(dataForForm);
+    }
   }
 };
 

@@ -305,6 +305,30 @@
           "title": "Inventory Fields",
           "description": "eBay inventory fields missing a mapped OneSila property."
         }
+      },
+      "shein": {
+        "title": "Shein integration",
+        "description": "Resolve unmapped Shein data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Shein properties that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Shein product types that need mapping."
+        },
+        "unmappedLocalProductTypes": {
+          "title": "Unmapped OneSila Product Types",
+          "description": "OneSila product types that need mapping to Shein."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Shein property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedInventoryFields": {
+          "title": "Internal Properties",
+          "description": "Shein internal properties missing a mapped OneSila property."
+        }
       }
     },
     "onboarding": {
@@ -2875,7 +2899,8 @@
             "mainAttribute": "Main Attribute",
             "productImage": "Product image",
             "externalImageUrl": "External image URL",
-            "category": "Shein category"
+            "category": "Shein category",
+            "categoryId": "Category ID"
           },
           "help": {
             "translatedName": "Translated name provided by Shein for this category.",

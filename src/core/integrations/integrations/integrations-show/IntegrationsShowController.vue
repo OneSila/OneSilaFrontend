@@ -92,7 +92,7 @@ if (type.value !== IntegrationTypes.Webhook) {
     tabItems.value.push(
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
-      { name: 'inventoryFields', label: t('integrations.show.shein.internalProperties.title'), icon: 'boxes-stacked' },
+      // { name: 'inventoryFields', label: t('integrations.show.shein.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
   }

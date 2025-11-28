@@ -438,6 +438,49 @@ export const ebayChannelsQuery = gql`
   }
 `;
 
+export const sheinChannelsQuery = gql`
+  query sheinChannelsQuery(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinSalesChannelOrder
+    $filters: SheinSalesChannelFilter
+  ) {
+    sheinChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          createdAt
+          integrationPtr {
+            id
+          }
+          saleschannelPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const ebayChannelsQuerySelector = gql`
   query EbayChannels(
     $first: Int
@@ -1603,7 +1646,6 @@ export const sheinPropertySelectValuesQuery = gql`
           remoteProperty {
             id
             name
-            mappedLocally
             localInstance {
               id
               name
@@ -1858,11 +1900,6 @@ export const getSheinProductTypeQuery = gql`
       translatedName
       remoteId
       categoryId
-      marketplace {
-        id
-        name
-        remoteId
-      }
       localInstance {
         id
         value
@@ -1882,7 +1919,6 @@ export const getSheinProductTypeQuery = gql`
         property {
           id
           name
-          code
         }
         localInstance {
           id

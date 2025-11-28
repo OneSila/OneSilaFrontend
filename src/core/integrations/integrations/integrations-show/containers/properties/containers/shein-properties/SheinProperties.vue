@@ -8,13 +8,17 @@ import {
   sheinPropertiesListingConfigConstructor,
   sheinPropertiesSearchConfigConstructor,
 } from './configs';
-
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
 const searchConfig = computed(() => sheinPropertiesSearchConfigConstructor(t));
 const listingConfig = sheinPropertiesListingConfigConstructor(t, props.id);
+const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
+  name: 'integrations.remoteProperties.edit',
+  params: { type: 'shein', id },
+  query: { integrationId, salesChannelId, wizard: '1' },
+});
 </script>
 
 <template>
@@ -25,6 +29,6 @@ const listingConfig = sheinPropertiesListingConfigConstructor(t, props.id);
     :listing-config="listingConfig"
     :listing-query="listingQuery"
     :listing-query-key="listingQueryKey"
-    @pull-data="emit('pull-data')"
+    :build-start-mapping-route="buildStartMappingRoute"
   />
 </template>

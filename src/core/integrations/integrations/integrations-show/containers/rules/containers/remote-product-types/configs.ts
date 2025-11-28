@@ -169,6 +169,12 @@ const sheinProductTypeFormConfig = (
     },
     {
       type: FieldType.Text,
+      label: t('integrations.show.shein.productRules.labels.categoryId'),
+      name: 'categoryId',
+      disabled: true,
+    },
+    {
+      type: FieldType.Text,
       label: t('integrations.show.shein.productRules.labels.translatedName'),
       name: 'translatedName',
       help: t('integrations.show.shein.productRules.help.translatedName'),
@@ -563,7 +569,7 @@ export const ebayImportedRemoteProductTypeConfig: ImportedRemoteProductTypeConfi
 };
 
 type RemoteProductTypeState = { propertyProductTypeId: string | null };
-type SheinRemoteProductTypeState = Record<string, never>;
+type SheinRemoteProductTypeState = RemoteProductTypeState;
 
 export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<RemoteProductTypeState> = {
   integrationType: IntegrationTypes.Amazon,
@@ -631,7 +637,7 @@ export const sheinMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<S
   productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Shein),
   getIntegrationTitle,
   editRouteName: 'integrations.remoteProductTypes.edit',
-  createState: () => ({}),
+  createState: () => ({ propertyProductTypeId: null }),
   extractItems: (data) => data?.items || [],
   getItemName: (item) => item?.property?.name || '',
   getItemCode: (item) => item?.property?.code || '',
@@ -656,4 +662,9 @@ export const sheinMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<S
       ...(Object.keys(query).length ? { query } : {}),
     };
   },
+  shouldShowAdditionalButton: shouldShowProductTypeButton,
+  getAdditionalButtonConfig: buildProductTypeAdditionalButtonConfig(
+    IntegrationTypes.Shein,
+    (formData) => formData?.translatedName || formData?.name,
+  ),
 };
