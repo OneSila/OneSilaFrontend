@@ -85,10 +85,10 @@ useEnterKeyboardListener(onSubmit);
 </script>
 
 <template>
-  <div>
+  <div class="text-gray-900 dark:text-gray-100">
     <div class="mb-10">
-      <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ t('auth.register.header') }}</h1>
-      <p class="text-base font-bold leading-normal text-white-dark">{{ t('auth.register.description') }}</p>
+      <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ t('auth.register.header') }}</h1>
+      <p class="mt-2 text-base leading-6 text-gray-500 dark:text-gray-400">{{ t('auth.register.description') }}</p>
     </div>
     <EmailInput id="email" class="mb-2" icon="envelope" v-model:model-value="form.username" :label="t('shared.labels.email')" :placeholder="t('auth.register.placeholders.email')" />
     <TextInputPrepend id="password" class="mb-2" v-model="form.password" :label="t('auth.register.labels.password')" :placeholder="t('auth.register.placeholders.password')" type="password">
@@ -98,7 +98,7 @@ useEnterKeyboardListener(onSubmit);
       <Icon name="lock"/>
     </TextInputPrepend>
 
-    <Checkbox v-model="form.agreedTerms">
+    <Checkbox v-model="form.agreedTerms" class="ml-0.5">
       {{ t('auth.register.agreeTerms') }}
       <Link
         class="text-primary underline hover:text-black dark:hover:text-white"
@@ -110,12 +110,15 @@ useEnterKeyboardListener(onSubmit);
       </Link>
     </Checkbox>
 
-    <div>
+    <div class="mt-4">
       <ApolloMutation :mutation="registerMutation" :variables="{ username: form.username, password: form.password, language: locale }" @done="afterRegister" @error="onError">
         <template v-slot="{ mutate, loading, error }">
-          <Button ref="submitButtonRef" :customClass="'btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]'"
-                  :disabled="loading || !isFormValid"
-                  @click="mutate()">
+          <Button
+            ref="submitButtonRef"
+            :customClass="'flex w-full justify-center rounded-xl bg-primary px-4 py-2.5 text-base font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary dark:hover:bg-primary/80'"
+            :disabled="loading || !isFormValid"
+            @click="mutate()"
+          >
             {{ t('shared.button.register') }}
           </Button>
         </template>

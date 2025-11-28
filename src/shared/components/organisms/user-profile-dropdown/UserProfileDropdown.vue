@@ -17,6 +17,7 @@ const user = ref(auth.user)
 const router = useRouter();
 const previousHasAmazon = ref<boolean | null>(null);
 const previousHasEbay = ref<boolean | null>(null);
+const previousHasShein = ref<boolean | null>(null);
 
 const logout = async () => {
 
@@ -44,6 +45,16 @@ const handleSubscriptionResult = (data: any) => {
     localStorage.setItem('auth_user', JSON.stringify(auth.user));
   }
   previousHasEbay.value = currentEbay;
+
+  // Shein
+  const currentShein = data?.myMultiTenantCompany?.hasSheinIntegration ?? false;
+  const previousShein = auth.user.company?.hasSheinIntegration ?? false;
+
+  if (auth.user.company && currentShein !== previousShein) {
+    auth.user.company.hasSheinIntegration = currentShein;
+    localStorage.setItem('auth_user', JSON.stringify(auth.user));
+  }
+  previousHasShein.value = currentShein;
 };
 
 

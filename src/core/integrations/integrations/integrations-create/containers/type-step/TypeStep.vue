@@ -8,6 +8,7 @@ import woocomerceType from "../../../../../../assets/images/integration-types/wo
 import amazonType from "../../../../../../assets/images/integration-types/amazon.png";
 import webhooksType from "../../../../../../assets/images/integration-types/webhooks.webp";
 import ebayType from "../../../../../../assets/images/integration-types/ebay.jpg";
+import sheinType from "../../../../../../assets/images/integration-types/shein.png";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
@@ -42,6 +43,7 @@ const typeChoices = [
   { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Ebay, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Shein, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Webhook, disabled: false }
 ];
 
@@ -157,6 +159,17 @@ const closeModal = () => {
           </Flex>
           <p class="mb-4">{{ t('integrations.create.wizard.step1.ebayExample') }}</p>
           <Image :source="ebayType" alt="ebay" class="w-full max-h-[35rem]" />
+        </div>
+      </template>
+      <template #shein>
+        <div>
+          <Flex gap="2">
+            <FlexCell center>
+              <h3 class="text-lg font-bold">{{ t('integrations.create.wizard.step1.sheinTitle') }}</h3>
+            </FlexCell>
+          </Flex>
+          <p class="mb-4">{{ t('integrations.create.wizard.step1.sheinExample') }}</p>
+          <Image :source="sheinType" alt="shein" class="w-full max-h-[35rem]" />
         </div>
       </template>
     </OptionSelector>

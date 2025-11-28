@@ -118,10 +118,39 @@
           "title": "",
           "description": ""
         }
+      },
+      "shein": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
       }
     }
   },
   "products": {
+    "eanCodes": {
+      "labels": {
+        "excludeAttributeValue": ""
+      }
+    },
     "translation": {
       "messages": {
         "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
@@ -703,7 +732,14 @@
         "mappedRemotelyEbay": "",
         "startMapping": "",
         "saveAndMapNext": "",
-        "allMappedSuccess": ""
+        "allMappedSuccess": "",
+        "importMapping": "",
+        "importMappingDescription": "",
+        "importMappingSelectLabel": "",
+        "importMappingPlaceholder": "",
+        "importSuccess": "",
+        "importNoSources": "",
+        "importFallbackLabel": ""
       },
       "productRules": {
         "title": "",
@@ -761,6 +797,13 @@
             "loadError": "",
             "updateSuccess": "",
             "updateError": ""
+          }
+        }
+      },
+      "shein": {
+        "productRules": {
+          "labels": {
+            "categoryId": ""
           }
         }
       }
@@ -1227,6 +1270,9 @@
     }
   },
   "generalListing": {
+    "labels": {
+      "search": ""
+    },
     "actions": {
       "createDashboardCard": "",
       "selectAllCount": ""

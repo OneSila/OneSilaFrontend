@@ -37,6 +37,7 @@ export type Company = {
   name: string;
   hasAmazonIntegration?: boolean;
   hasEbayIntegration?: boolean;
+  hasSheinIntegration?: boolean;
 };
 
 

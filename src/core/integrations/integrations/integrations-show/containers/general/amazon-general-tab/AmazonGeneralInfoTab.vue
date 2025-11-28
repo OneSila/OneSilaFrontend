@@ -20,6 +20,7 @@ import { AmazonRegions, AmazonCountries } from "../../../../integrations";
 import {FieldDate} from "../../../../../../../shared/components/organisms/general-show/containers/field-date";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import apolloClient from "../../../../../../../../apollo-client";
+import AmazonMappingImporter from "../../../components/AmazonMappingImporter.vue";
 
 interface EditAmazonForm {
   id: string;
@@ -308,6 +309,8 @@ useShiftBackspaceKeyboardListener(goBack);
           {{ t('shared.button.back') }}
         </CancelButton>
       </RouterLink>
+
+      <AmazonMappingImporter v-if="formData.id" :target-sales-channel-id="formData.id" />
 
       <ApolloMutation :mutation="updateAmazonSalesChannelMutation" @done="handleSubmitAndContinueDone" @error="handleError">
         <template #default="{ mutate, loading }">

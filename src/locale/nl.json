@@ -34,6 +34,30 @@
           "title": "",
           "description": ""
         }
+      },
+      "shein": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedLocalProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedInventoryFields": {
+          "title": "",
+          "description": ""
+        }
       }
     },
     "onboarding": {
@@ -632,7 +656,8 @@
         "alreadyUsed": "Reeds Gebruikt",
         "prefix": "Prefix",
         "currentEanCode": "Huidige EAN Code",
-        "externalEanCode": "Externe EAN Code"
+        "externalEanCode": "Externe EAN Code",
+        "excludeAttributeValue": ""
       },
       "placeholders": {
         "eanCode": "Voer EAN Code in",
@@ -2422,6 +2447,13 @@
           }
         }
       },
+      "shein": {
+        "productRules": {
+          "labels": {
+            "categoryId": ""
+          }
+        }
+      },
       "properties": {
         "title": "",
         "labels": {
@@ -2702,7 +2734,14 @@
         "mappedRemotelyEbay": "",
         "startMapping": "",
         "saveAndMapNext": "",
-        "allMappedSuccess": ""
+        "allMappedSuccess": "",
+        "importMapping": "",
+        "importMappingDescription": "",
+        "importMappingSelectLabel": "",
+        "importMappingPlaceholder": "",
+        "importSuccess": "",
+        "importNoSources": "",
+        "importFallbackLabel": ""
       },
       "tabs": {
         "reports": "Rapporten"
@@ -2981,6 +3020,9 @@
     }
   },
   "generalListing": {
+    "labels": {
+      "search": ""
+    },
     "actions": {
       "createDashboardCard": "",
       "selectAllCount": ""

@@ -29,6 +29,14 @@ export const salesChannelSubscription = gql`
         percentage
         createdAt
       }
+      sheinImports {
+        id
+        proxyId
+        type
+        status
+        percentage
+        createdAt
+      }
     }
   }
 `;
