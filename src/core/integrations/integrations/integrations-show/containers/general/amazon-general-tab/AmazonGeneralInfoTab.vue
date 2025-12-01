@@ -6,7 +6,10 @@ import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Toggle } from "../../../../../../../shared/components/atoms/toggle";
 import { Accordion } from "../../../../../../../shared/components/atoms/accordion";
 import { Selector } from "../../../../../../../shared/components/atoms/selector";
-import { amazonDefaultUnitConfiguratorsQuery } from "../../../../../../../shared/api/queries/salesChannels.js";
+import {
+  amazonChannelsQuerySelector,
+  amazonDefaultUnitConfiguratorsQuery,
+} from "../../../../../../../shared/api/queries/salesChannels.js";
 import { updateAmazonDefaultUnitConfiguratorMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { PrimaryButton } from "../../../../../../../shared/components/atoms/button-primary";
 import { SecondaryButton } from "../../../../../../../shared/components/atoms/button-secondary";
@@ -14,13 +17,16 @@ import { CancelButton } from "../../../../../../../shared/components/atoms/butto
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../../../../shared/modules/keyboard";
 import { useRouter, useRoute } from 'vue-router';
-import { updateAmazonSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
+import {
+  syncAmazonSalesChannelMappingsMutation,
+  updateAmazonSalesChannelMutation,
+} from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { AmazonRegions, AmazonCountries } from "../../../../integrations";
 import {FieldDate} from "../../../../../../../shared/components/organisms/general-show/containers/field-date";
 import { FieldType } from "../../../../../../../shared/utils/constants";
 import apolloClient from "../../../../../../../../apollo-client";
-import AmazonMappingImporter from "../../../components/AmazonMappingImporter.vue";
+import { MappingImporter } from "../../../../../../../shared/components/organisms/mapping-importer";
 
 interface EditAmazonForm {
   id: string;
@@ -310,7 +316,14 @@ useShiftBackspaceKeyboardListener(goBack);
         </CancelButton>
       </RouterLink>
 
-      <AmazonMappingImporter v-if="formData.id" :target-sales-channel-id="formData.id" />
+      <MappingImporter
+        v-if="formData.id"
+        :target-sales-channel-id="formData.id"
+        :channels-query="amazonChannelsQuerySelector"
+        channels-query-key="amazonChannels"
+        :sync-mutation="syncAmazonSalesChannelMappingsMutation"
+        channel-label-key="integrations.integrationTypes.amazon"
+      />
 
       <ApolloMutation :mutation="updateAmazonSalesChannelMutation" @done="handleSubmitAndContinueDone" @error="handleError">
         <template #default="{ mutate, loading }">

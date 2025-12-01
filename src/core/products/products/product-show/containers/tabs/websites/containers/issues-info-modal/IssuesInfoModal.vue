@@ -20,7 +20,7 @@ const emit = defineEmits(['modal-closed']);
 const localShowModal = ref(props.modelValue);
 const issues: Ref<FormattedIssue[]> = ref(props.issues ?? []);
 const { t } = useI18n();
-console.log(props.issues)
+
 const loading = ref(false);
 issues.value = props.issues ?? [];
 

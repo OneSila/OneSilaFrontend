@@ -6,12 +6,23 @@ import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { IntegrationTypes } from '../../../../../../../integrations/integrations/integrations';
 import {shortenText} from "../../../../../../../../shared/utils";
 
-const props = defineProps<{ views: any[]; amazonProducts: any[]; modelValue: string | null }>();
+const props = defineProps<{
+  views: any[];
+  amazonProducts: any[];
+  modelValue: string | null;
+  assignedViewIds: Record<string, boolean>;
+}>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
 
 const { t } = useI18n();
 
 const select = (val: string) => emit('update:modelValue', val);
+
+const hasAssignedViewData = computed(
+  () => Object.keys(props.assignedViewIds || {}).length > 0,
+);
+
+const getViewAssignmentKey = (view: any) => view?.proxyId || view?.id || null;
 
 const MARKETPLACE_KEY_SEPARATOR = '::';
 const createMarketplaceKey = (viewId: string, productId?: string | null) =>
@@ -19,6 +30,12 @@ const createMarketplaceKey = (viewId: string, productId?: string | null) =>
 
 const doesProductMatchView = (product: any, view: any) => {
   if (!view || !product?.createdMarketplaces?.length) return false;
+  if (hasAssignedViewData.value) {
+    const assignmentKey = getViewAssignmentKey(view);
+    if (!assignmentKey || !props.assignedViewIds?.[assignmentKey]) {
+      return false;
+    }
+  }
   const identifiers = [view.remoteId, view.id].filter(Boolean);
 
   return product.createdMarketplaces.some((marketplaceId: string) => {
@@ -135,4 +152,3 @@ const groupedViews = computed(() => {
     </div>
   </div>
 </template>
-

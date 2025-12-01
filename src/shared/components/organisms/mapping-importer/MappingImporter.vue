@@ -1,39 +1,64 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import type { DocumentNode } from 'graphql';
 import { useI18n } from 'vue-i18n';
-import apolloClient from '../../../../../../apollo-client';
-import { Toast } from '../../../../../shared/modules/toast';
-import { processGraphQLErrors } from '../../../../../shared/utils';
-import { Button } from '../../../../../shared/components/atoms/button';
-import { Card } from '../../../../../shared/components/atoms/card';
-import { Modal } from '../../../../../shared/components/atoms/modal';
-import { Selector } from '../../../../../shared/components/atoms/selector';
-import { amazonChannelsQuerySelector } from '../../../../../shared/api/queries/salesChannels';
-import { syncAmazonSalesChannelMappingsMutation } from '../../../../../shared/api/mutations/salesChannels';
+import apolloClient from '../../../../../apollo-client';
+import { Toast } from '../../../modules/toast';
+import { processGraphQLErrors } from '../../../utils';
+import { Button } from '../../atoms/button';
+import { Card } from '../../atoms/card';
+import { Modal } from '../../atoms/modal';
+import { Selector } from '../../atoms/selector';
 
-type AmazonChannelOption = {
+type ChannelOption = {
   id: string;
-  hostname: string | null;
+  label: string | null;
 };
 
-const props = defineProps<{ targetSalesChannelId: string }>();
+const props = withDefaults(defineProps<{
+  targetSalesChannelId: string;
+  channelsQuery: DocumentNode;
+  channelsQueryKey: string;
+  syncMutation: DocumentNode;
+  channelLabelKey: string;
+  labelField?: string;
+  queryVariables?: Record<string, any>;
+}>(), {
+  labelField: 'hostname',
+  queryVariables: () => ({}),
+});
+
 const emit = defineEmits<{
   (e: 'imported'): void;
 }>();
 
 const { t } = useI18n();
 
-const availableChannels = ref<AmazonChannelOption[]>([]);
+const availableChannels = ref<ChannelOption[]>([]);
 const selectedSourceId = ref<string | null>(null);
 const showModal = ref(false);
 const loadingChannels = ref(false);
 const submitting = ref(false);
 const initialFetchDone = ref(false);
 
+const channelLabel = computed(() => t(props.channelLabelKey));
+const fallbackLabel = computed(() =>
+  t('integrations.show.mapping.importFallbackLabel', { channelLabel: channelLabel.value })
+);
+const descriptionText = computed(() =>
+  t('integrations.show.mapping.importMappingDescription', { channelLabel: channelLabel.value })
+);
+const placeholderText = computed(() =>
+  t('integrations.show.mapping.importMappingPlaceholder', { channelLabel: channelLabel.value })
+);
+const noSourcesMessage = computed(() =>
+  t('integrations.show.mapping.importNoSources', { channelLabel: channelLabel.value })
+);
+
 const channelOptions = computed(() =>
   availableChannels.value.map((channel) => ({
     id: channel.id,
-    label: channel.hostname || t('integrations.show.mapping.importFallbackLabel'),
+    label: channel.label || fallbackLabel.value,
   }))
 );
 
@@ -44,19 +69,25 @@ const fetchChannels = async () => {
   loadingChannels.value = true;
 
   try {
-    const { data } = await apolloClient.query({
-      query: amazonChannelsQuerySelector,
+    const { data } = await apolloClient.query<Record<string, any>>({
+      query: props.channelsQuery,
+      variables: props.queryVariables,
       fetchPolicy: 'cache-first',
     });
 
-    const edges = data?.amazonChannels?.edges || [];
+    const listing = data?.[props.channelsQueryKey] || {};
+    const edges = listing?.edges || [];
+
     const nodes = edges
       .map((edge: any) => edge?.node)
       .filter((node: any) => Boolean(node?.id));
 
     availableChannels.value = nodes
       .filter((node: any) => node.id !== props.targetSalesChannelId)
-      .map((node: any) => ({ id: node.id, hostname: node.hostname || null }));
+      .map((node: any) => ({
+        id: node.id,
+        label: node[props.labelField] || null,
+      }));
   } catch (err) {
     console.error(err);
   } finally {
@@ -74,6 +105,14 @@ watch(
   }
 );
 
+watch(
+  () => props.queryVariables,
+  () => {
+    fetchChannels();
+  },
+  { deep: true }
+);
+
 const closeModal = () => {
   showModal.value = false;
   selectedSourceId.value = null;
@@ -83,7 +122,7 @@ const openModal = async () => {
   await fetchChannels();
 
   if (!hasSources.value) {
-    Toast.error(t('integrations.show.mapping.importNoSources'));
+    Toast.error(noSourcesMessage.value);
     return;
   }
 
@@ -100,7 +139,7 @@ const importMappings = async () => {
 
   try {
     await apolloClient.mutate({
-      mutation: syncAmazonSalesChannelMappingsMutation,
+      mutation: props.syncMutation,
       variables: {
         sourceId: selectedSourceId.value,
         targetId: props.targetSalesChannelId,
@@ -131,7 +170,7 @@ const importMappings = async () => {
       <Card class="modal-content w-full max-w-xl">
         <h3 class="text-xl font-semibold mb-2">{{ t('integrations.show.mapping.importMapping') }}</h3>
         <p class="text-sm text-gray-500 mb-4">
-          {{ t('integrations.show.mapping.importMappingDescription') }}
+          {{ descriptionText }}
         </p>
         <label class="text-sm font-medium text-gray-700">{{ t('integrations.show.mapping.importMappingSelectLabel') }}</label>
         <Selector
@@ -139,7 +178,7 @@ const importMappings = async () => {
           :options="channelOptions"
           label-by="label"
           value-by="id"
-          :placeholder="t('integrations.show.mapping.importMappingPlaceholder')"
+          :placeholder="placeholderText"
           :is-loading="loadingChannels"
           class="mt-2"
         />

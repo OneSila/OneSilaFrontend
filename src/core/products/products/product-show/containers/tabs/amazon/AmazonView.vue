@@ -29,10 +29,36 @@ import { displayApolloError } from '../../../../../../../shared/utils';
 import apolloClient from '../../../../../../../../apollo-client';
 import type { FetchPolicy } from '@apollo/client';
 import { ProductType } from '../../../../../../../shared/utils/constants';
+import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
+
+type AmazonViewAssignments = Record<string, boolean>;
+
+const amazonViewAssignments = computed<AmazonViewAssignments>(() => {
+  const assignments = props.product?.saleschannelviewassignSet ?? [];
+
+  return assignments.reduce((acc: AmazonViewAssignments, assign) => {
+    if (
+      assign.integrationType !== IntegrationTypes.Amazon ||
+      !assign.salesChannelView?.id
+    ) {
+      return acc;
+    }
+
+    acc[assign.salesChannelView.id] = true;
+
+    return acc;
+  }, {} as AmazonViewAssignments);
+});
+
+const hasAmazonAssignmentData = computed(
+  () => Object.keys(amazonViewAssignments.value).length > 0,
+);
+
+const getViewAssignmentKey = (view: any) => view?.proxyId || view?.id || null;
 
 const MARKETPLACE_KEY_SEPARATOR = '::';
 const createMarketplaceKey = (viewId: string, productId?: string | null) =>
@@ -40,6 +66,12 @@ const createMarketplaceKey = (viewId: string, productId?: string | null) =>
 
 const doesProductMatchView = (product: AmazonProduct, view: any) => {
   if (!view || !product?.createdMarketplaces?.length) return false;
+  if (hasAmazonAssignmentData.value) {
+    const assignmentKey = getViewAssignmentKey(view);
+    if (!assignmentKey || !amazonViewAssignments.value[assignmentKey]) {
+      return false;
+    }
+  }
   const identifiers = [view.remoteId, view.id].filter(Boolean);
 
   return product.createdMarketplaces.some((marketplaceId) => {
@@ -144,6 +176,7 @@ const fetchViews = async () => {
     fetchPolicy: 'cache-first',
   });
   views.value = data.amazonChannelViews?.edges?.map((edge: any) => edge.node) || [];
+  console.log(views.value)
   loading.value = false;
 };
 
@@ -189,7 +222,7 @@ const selectedProduct = computed(() => {
   if (productId) {
     return amazonProducts.value.find((product: AmazonProduct) => product.id === productId) || null;
   }
-
+  // console.log(selectedView.value)
   return (
     amazonProducts.value.find((product: AmazonProduct) =>
       doesProductMatchView(product, selectedView.value),
@@ -321,17 +354,12 @@ const fetchVariationValidationIssues = async () => {
       };
     });
 
-    console.log(validationIssues);
-
     validationIssues.forEach((issue: any) => {
       const remoteId = issue.remoteProduct?.localInstance?.id;
 
-      console.log(remoteId);
       if (!remoteId || !groupedValidationIssues[remoteId]) {
         return;
       }
-
-      console.log('????')
 
       groupedValidationIssues[remoteId].issues.push({
         id: issue.id,
@@ -362,14 +390,9 @@ const fetchVariationValidationIssues = async () => {
       });
     });
 
-    console.log(groupedValidationIssues)
-
-
     variationValidationIssues.value = Object.values(groupedValidationIssues).filter(
       (entry) => entry.issues.length > 0,
     );
-
-    console.log(variationValidationIssues.value)
 
     variationOtherIssues.value = Object.values(groupedOtherIssues).filter(
       (entry) => entry.issues.length > 0,
@@ -536,6 +559,7 @@ const formatDate = (dateString?: string | null) => {
           :model-value="selectedMarketplaceKey"
           :views="views"
           :amazon-products="amazonProducts"
+          :assigned-view-ids="amazonViewAssignments"
           @update:modelValue="handleMarketplaceSelection"
         />
           <div class="flex-1 p-6">
@@ -627,4 +651,3 @@ const formatDate = (dateString?: string | null) => {
       </template>
     </TabContentTemplate>
   </template>
-

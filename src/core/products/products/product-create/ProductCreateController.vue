@@ -116,8 +116,6 @@ watch(
       const product = data?.product;
       if (!product) return;
 
-      console.log('Fetched alias parent product:', product);
-
       // 1. Set product type if found in productpropertySet
       const productTypeProperty = product.productpropertySet.find(
         p => p.property?.isProductType

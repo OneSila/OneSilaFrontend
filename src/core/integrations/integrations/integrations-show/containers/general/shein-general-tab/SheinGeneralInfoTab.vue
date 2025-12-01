@@ -15,8 +15,13 @@ import {
   useShiftEnterKeyboardListener,
 } from "../../../../../../../shared/modules/keyboard";
 import { useRouter, useRoute } from 'vue-router';
-import { updateSheinSalesChannelMutation } from "../../../../../../../shared/api/mutations/salesChannels.js";
+import { sheinChannelsQuerySelector } from "../../../../../../../shared/api/queries/salesChannels.js";
+import {
+  syncSheinSalesChannelMappingsMutation,
+  updateSheinSalesChannelMutation,
+} from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
+import { MappingImporter } from "../../../../../../../shared/components/organisms/mapping-importer";
 
 interface EditSheinForm {
   id: string;
@@ -201,6 +206,15 @@ useShiftBackspaceKeyboardListener(goBack);
           {{ t('shared.button.back') }}
         </CancelButton>
       </RouterLink>
+
+      <MappingImporter
+        v-if="formData.id"
+        :target-sales-channel-id="formData.id"
+        :channels-query="sheinChannelsQuerySelector"
+        channels-query-key="sheinChannels"
+        :sync-mutation="syncSheinSalesChannelMappingsMutation"
+        channel-label-key="integrations.integrationTypes.shein"
+      />
 
       <ApolloMutation :mutation="updateSheinSalesChannelMutation" @done="handleSubmitAndContinueDone" @error="handleError">
         <template #default="{ mutate, loading }">

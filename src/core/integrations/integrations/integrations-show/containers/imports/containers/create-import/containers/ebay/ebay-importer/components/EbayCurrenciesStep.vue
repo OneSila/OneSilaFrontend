@@ -116,8 +116,6 @@ const fetchCurrencies = async () => {
           existingLocalInstance ??
           (remoteCodeKey ? localCurrencyMap[remoteCodeKey] ?? null : null);
 
-        console.log(autoMappedInstance)
-
         return {
           id: node.proxyId,
           remoteCode: node.remoteCode,

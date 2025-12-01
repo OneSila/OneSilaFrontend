@@ -63,7 +63,6 @@ const handleMediaAssign = async (media) => {
       variables: { data: variables }
     });
     emit('entries-created', data?.createMediaProductThrough ?? media)
-    console.log('Linking success:', data);
   } catch (error) {
     const validationErrors = processGraphQLErrors(error, t);
     if (validationErrors['__all__']) {
