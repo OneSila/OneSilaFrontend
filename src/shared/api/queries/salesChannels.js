@@ -339,6 +339,41 @@ export const amazonChannelsQuerySelector = gql`
   }
 `;
 
+export const sheinChannelsQuerySelector = gql`
+  query SheinChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: SheinSalesChannelOrder
+    $filters: SheinSalesChannelFilter
+  ) {
+    sheinChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getEbayChannelQuery = gql`
   query getEbayChannel($id: GlobalID!) {
     ebayChannel(id: $id) {
@@ -760,6 +795,7 @@ export const amazonChannelViewsQuery = gql`
       edges {
         node {
           id
+          proxyId
           remoteId
           name
           url

@@ -3305,12 +3305,12 @@
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values",
         "importMapping": "Import Mapping",
-        "importMappingDescription": "Copy mappings from another Amazon sales channel into this one.",
+        "importMappingDescription": "Copy mappings from another {channelLabel} sales channel into this one.",
         "importMappingSelectLabel": "Source sales channel",
-        "importMappingPlaceholder": "Select an Amazon sales channel",
+        "importMappingPlaceholder": "Select a {channelLabel} sales channel",
         "importSuccess": "Mapping import started.",
-        "importNoSources": "Add another Amazon sales channel to import mappings.",
-        "importFallbackLabel": "Unnamed Amazon channel"
+        "importNoSources": "Add another {channelLabel} sales channel to import mappings.",
+        "importFallbackLabel": "Unnamed {channelLabel} channel"
       },
       "generateProperty": "Generate Property",
       "generateProductType": "Generate Product Type",

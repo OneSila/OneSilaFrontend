@@ -131,6 +131,41 @@ const onReorder = () => {
   });
 };
 
+const moveBulletPoint = (fromIndex: number, toIndex: number) => {
+  if (toIndex < 0 || toIndex >= bulletPoints.value.length || fromIndex === toIndex) return;
+  const [movedItem] = bulletPoints.value.splice(fromIndex, 1);
+  if (!movedItem) return;
+  bulletPoints.value.splice(toIndex, 0, movedItem);
+
+  if (activeBulletIndex.value === fromIndex) {
+    activeBulletIndex.value = toIndex;
+  } else if (
+    activeBulletIndex.value !== null &&
+    fromIndex < toIndex &&
+    activeBulletIndex.value > fromIndex &&
+    activeBulletIndex.value <= toIndex
+  ) {
+    activeBulletIndex.value -= 1;
+  } else if (
+    activeBulletIndex.value !== null &&
+    fromIndex > toIndex &&
+    activeBulletIndex.value >= toIndex &&
+    activeBulletIndex.value < fromIndex
+  ) {
+    activeBulletIndex.value += 1;
+  }
+
+  onReorder();
+};
+
+const moveBulletPointUp = (index: number) => {
+  moveBulletPoint(index, index - 1);
+};
+
+const moveBulletPointDown = (index: number) => {
+  moveBulletPoint(index, index + 1);
+};
+
 const save = async (newTranslationId?: string) => {
   const tId = props.translationId || newTranslationId;
   if (!tId) return;
@@ -241,10 +276,15 @@ defineExpose({save, fetchPoints, hasChanges});
         </div>
       </FlexCell>
     </Flex>
-    <VueDraggableNext v-model="bulletPoints" class="mt-4 space-y-2" @end="onReorder">
+    <VueDraggableNext
+        v-model="bulletPoints"
+        class="mt-4 space-y-2"
+        handle=".bullet-point-drag-handle"
+        @end="onReorder"
+    >
       <Flex between middle v-for="(point, index) in bulletPoints" :key="point.id || index" class="gap-2 w-full">
         <FlexCell>
-          <Icon class="text-primary" name="fa-up-down-left-right"/>
+          <Icon class="text-primary bullet-point-drag-handle cursor-pointer cursor-grab" name="fa-up-down-left-right"/>
         </FlexCell>
         <FlexCell grow>
          <TextEditor
@@ -256,9 +296,25 @@ defineExpose({save, fetchPoints, hasChanges});
           />
         </FlexCell>
         <FlexCell>
-          <Button class="btn btn-sm btn-outline-danger" @click="removeBulletPoint(index)">
-            <Icon name="trash"/>
-          </Button>
+          <div class="flex flex-col gap-1">
+            <Button
+                class="btn btn-sm btn-outline-primary"
+                :disabled="index === 0"
+                @click="moveBulletPointUp(index)"
+            >
+              <Icon name="fa-arrow-up"/>
+            </Button>
+            <Button class="btn btn-sm btn-outline-danger" @click="removeBulletPoint(index)">
+              <Icon name="trash"/>
+            </Button>
+            <Button
+                class="btn btn-sm btn-outline-primary"
+                :disabled="index === bulletPoints.length - 1"
+                @click="moveBulletPointDown(index)"
+            >
+              <Icon name="fa-arrow-down"/>
+            </Button>
+          </div>
         </FlexCell>
       </Flex>
     </VueDraggableNext>
