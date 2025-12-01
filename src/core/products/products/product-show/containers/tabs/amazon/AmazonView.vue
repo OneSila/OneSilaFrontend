@@ -321,17 +321,12 @@ const fetchVariationValidationIssues = async () => {
       };
     });
 
-    console.log(validationIssues);
-
     validationIssues.forEach((issue: any) => {
       const remoteId = issue.remoteProduct?.localInstance?.id;
 
-      console.log(remoteId);
       if (!remoteId || !groupedValidationIssues[remoteId]) {
         return;
       }
-
-      console.log('????')
 
       groupedValidationIssues[remoteId].issues.push({
         id: issue.id,
@@ -362,14 +357,9 @@ const fetchVariationValidationIssues = async () => {
       });
     });
 
-    console.log(groupedValidationIssues)
-
-
     variationValidationIssues.value = Object.values(groupedValidationIssues).filter(
       (entry) => entry.issues.length > 0,
     );
-
-    console.log(variationValidationIssues.value)
 
     variationOtherIssues.value = Object.values(groupedOtherIssues).filter(
       (entry) => entry.issues.length > 0,

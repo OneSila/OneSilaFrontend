@@ -83,7 +83,6 @@ const submitImages = async () => {
             mutation: createMediaProductThroughMutation,
             variables: { data: variables }
           });
-          console.log('Linking success:', data);
         } catch (error) {
           const validationErrors = processGraphQLErrors(error, t);
           if (validationErrors['__all__']) {
