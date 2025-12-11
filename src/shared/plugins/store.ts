@@ -27,6 +27,7 @@ export const useAppStore = defineStore('app', {
         languageList: [] as Language[],
         rtlClass: 'rtl',
         isShowMainLoader: true,
+        isSearchLoading: false,
         semidark: false,
         searchConfig: null,
         dashboardCardModalTrigger: 0,
@@ -139,6 +140,10 @@ export const useAppStore = defineStore('app', {
         },
         setSearchConfig(newConfig) {
             this.searchConfig = newConfig;
+        },
+
+        setSearchLoading(isLoading: boolean) {
+            this.isSearchLoading = isLoading;
         },
 
         resetSearchConfig() {
