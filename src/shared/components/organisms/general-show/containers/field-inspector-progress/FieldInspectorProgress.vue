@@ -74,6 +74,17 @@ const barColor = computed(() => {
       return 'bg-gray-400';
   }
 });
+
+const visibleBlocks = computed(() => {
+  if (!props.modelValue) {
+    return [];
+  }
+  const blocks = props.modelValue.blocks || [];
+  if (props.modelValue.inspectorStatus === InspectorStatus.GREEN) {
+    return blocks;
+  }
+  return blocks.filter((block) => !block.completed);
+});
 </script>
 
 <template>
@@ -97,9 +108,9 @@ const barColor = computed(() => {
         </div>
       </template>
       <div class="bg-white p-4 rounded shadow-md text-left">
-        <ul>
+        <ul v-if="visibleBlocks.length > 0">
           <li
-            v-for="block in modelValue?.blocks"
+            v-for="block in visibleBlocks"
             :key="block.code"
             class="flex items-center gap-2 py-2 z-50 hover:bg-gray-100 border-b border-gray-200 last:border-b-0"
           >

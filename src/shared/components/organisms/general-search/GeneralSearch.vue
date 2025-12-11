@@ -2,7 +2,7 @@
 
 import {SearchInput} from "../../molecules/search-input";
 import {GeneralFilter} from "./containers/general-filter";
-import {ref, watch} from 'vue';
+import {computed, ref, watch} from 'vue';
 import {useAppStore} from '../../../plugins/store';
 import {defaultSearchConfig, SearchConfig} from './searchConfig'
 import {useRoute} from 'vue-router';
@@ -13,8 +13,7 @@ const routeKey = ref('search');
 const appStore = useAppStore();
 const searchConfig = ref<SearchConfig>(defaultSearchConfig);
 const route = useRoute();
-const isLoading = ref(false);
-let loadingTimeout: ReturnType<typeof setTimeout> | null = null;
+const isLoading = computed(() => appStore.isSearchLoading);
 
 const clearSearchInput = () => {
   search.value = '';
@@ -36,14 +35,6 @@ watch(() => route.query[routeKey.value], (newQueryValue) => {
     search.value = newQueryValue.slice(0, 100);
   }
 }, {immediate: true});
-
-watch(() => route.fullPath, () => {
-  isLoading.value = true;
-  if (loadingTimeout) clearTimeout(loadingTimeout);
-  loadingTimeout = setTimeout(() => {
-    isLoading.value = false;
-  }, 500);
-});
 
 </script>
 

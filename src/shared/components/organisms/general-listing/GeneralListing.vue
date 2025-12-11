@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { ListingConfig } from './listingConfig';
 import { Pagination } from "../../molecules/pagination";
 import { Selector } from "../../atoms/selector";
@@ -600,6 +600,14 @@ const captureFilterState = (
   return true;
 };
 
+const handleLoadingChange = (isLoading: boolean) => {
+  appStore.setSearchLoading(isLoading);
+};
+
+onBeforeUnmount(() => {
+  appStore.setSearchLoading(false);
+});
+
 watch(
   () => appStore.dashboardCardModalTrigger,
   (newValue, oldValue) => {
@@ -627,7 +635,9 @@ watch(
                               first: pagination.first,
                               last: pagination.last,
                               before: pagination.before,
-                              after: pagination.after }">
+                              after: pagination.after }"
+                   :notify-on-network-status-change="true"
+                   @loading="handleLoadingChange">
         <template v-slot="{ result: { loading, error, data }, query }">
 
           <div v-if="data" class="mt-5 p-0 border-0 "
