@@ -66,6 +66,8 @@ export const ebayPropertySelectValuesSearchConfigConstructor = (t: Function, sal
   orderKey: "sort",
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+    { type: FieldType.Boolean, name: 'ebayProperty__allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), strict: true, lookupType: 'exact' },
+    { type: FieldType.Boolean, name: 'usedInProducts', label: t('properties.values.labels.usedInProducts'), strict: true },
     {
       type: FieldType.Query,
       name: 'ebayProperty',

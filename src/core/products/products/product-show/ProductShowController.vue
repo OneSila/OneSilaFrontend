@@ -17,6 +17,7 @@ import { ApolloAlertMutation } from "../../../../shared/components/molecules/apo
 import { Badge } from "../../../../shared/components/atoms/badge";
 import { Image } from "../../../../shared/components/atoms/image";
 import { Link } from "../../../../shared/components/atoms/link";
+import { Loader } from "../../../../shared/components/atoms/loader";
 import ProductBundle from "./containers/product-type/product-bundle/ProductBundle.vue";
 import ProductConfigurable from "./containers/product-type/product-configurable/ProductConfigurable.vue";
 import ProductVariation from "./containers/product-type/product-variation/ProductVariation.vue";
@@ -155,6 +156,7 @@ const copySkuToClipboard = async (sku: string) => {
    <template v-slot:content>
    <ApolloSubscription :subscription="productSubscription" :variables="{pk: id}" ref="apolloSubRef" @result-updated="handleResultUpdated">
       <template v-slot:default="{ loading, error, result }">
+        <Loader :loading="loading" />
         <template v-if="!loading && result">
           <Card>
             <div class="grid xl:grid-cols-2 gap-8 mb-6">

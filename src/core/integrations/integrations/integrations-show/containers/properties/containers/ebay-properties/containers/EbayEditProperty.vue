@@ -15,6 +15,8 @@ import { Button } from "../../../../../../../../../shared/components/atoms/butto
 import { Label } from "../../../../../../../../../shared/components/atoms/label";
 import { checkPropertyForDuplicatesMutation } from "../../../../../../../../../shared/api/mutations/properties.js";
 import debounce from 'lodash.debounce';
+import { ebayPropertiesSearchConfigConstructor } from '../configs';
+import { buildFilterVariablesFromRouteQuery, extractPrefixedQueryParams } from '../../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -71,28 +73,47 @@ const remoteRuleId = computed(() =>
 );
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
-  const { data } = await apolloClient.query({
-    query: ebayPropertiesQuery,
-    variables: {
-      first: 2,
-      filter: {
-        salesChannel: { id: { exact: salesChannelId } },
-        mappedLocally: false,
+  const queryNext = async (filter: Record<string, any>) => {
+    const { data } = await apolloClient.query({
+      query: ebayPropertiesQuery,
+      variables: {
+        first: 2,
+        filter,
       },
-    },
-    fetchPolicy: 'network-only',
-  });
+      fetchPolicy: 'network-only',
+    });
 
-  const edges = data?.ebayProperties?.edges || [];
-  let nextId: string | null = null;
-  for (const edge of edges) {
-    if (edge.node.id !== ebayPropertyId.value) {
-      nextId = edge.node.id;
-      break;
+    const edges = data?.ebayProperties?.edges || [];
+    let nextId: string | null = null;
+    for (const edge of edges) {
+      if (edge.node.id !== ebayPropertyId.value) {
+        nextId = edge.node.id;
+        break;
+      }
     }
+    const last = edges.length === 1 && edges[0].node.id === ebayPropertyId.value;
+    return { nextId, last };
+  };
+
+  const nextFilters =
+    buildFilterVariablesFromRouteQuery(ebayPropertiesSearchConfigConstructor(t, salesChannelId), route.query, {
+      prefix: 'next__',
+      excludeKeys: ['mappedLocally'],
+    }) || {};
+
+  const baseFilter = {
+    salesChannel: { id: { exact: salesChannelId } },
+    mappedLocally: false,
+    ...nextFilters,
+  };
+
+  const primary = await queryNext(baseFilter);
+  if (primary.nextId || primary.last || !('usedInProducts' in baseFilter)) {
+    return primary;
   }
-  const last = edges.length === 1 && edges[0].node.id === ebayPropertyId.value;
-  return { nextId, last };
+
+  const { usedInProducts, ...fallbackFilter } = baseFilter as any;
+  return queryNext(fallbackFilter);
 };
 
 onMounted(async () => {
@@ -283,6 +304,7 @@ const selectRecommendation = (id: string) => {
             ...(formData.translatedName ? { translatedName: formData.translatedName } : {}),
             ...(formData.type ? { type: formData.type } : {}),
             remoteWizard: isWizard ? '1' : '0',
+            ...extractPrefixedQueryParams(route.query, 'next__'),
           },
         }"
       >

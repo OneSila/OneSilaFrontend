@@ -258,21 +258,44 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
   if (!props.config.wizard) {
     return { nextId: null, last: false };
   }
-  const { data } = await apolloClient.query({
-    query: props.config.wizard.query,
-    variables: props.config.wizard.variables(contextState.value),
-    fetchPolicy: 'network-only',
-  });
-  const edges = props.config.wizard.extractEdges(data) || [];
-  let nextId: string | null = null;
-  for (const edge of edges) {
-    if (edge?.node?.id && edge.node.id !== valueId.value) {
-      nextId = edge.node.id;
-      break;
+
+  const fetchEdges = async (variables: Record<string, any>) => {
+    const { data } = await apolloClient.query({
+      query: props.config.wizard!.query,
+      variables,
+      fetchPolicy: 'network-only',
+    });
+    return props.config.wizard!.extractEdges(data) || [];
+  };
+
+  const pickNextId = (edges: any[]) => {
+    for (const edge of edges) {
+      if (edge?.node?.id && edge.node.id !== valueId.value) {
+        return edge.node.id as string;
+      }
     }
-  }
+    return null;
+  };
+
+  const baseVariables = props.config.wizard.variables(contextState.value);
+  const edges = await fetchEdges(baseVariables);
+  const nextId = pickNextId(edges);
   const last = edges.length === 1 && edges[0]?.node?.id === valueId.value;
-  return { nextId, last };
+
+  if (nextId || last) {
+    return { nextId, last };
+  }
+
+  const baseFilter = (baseVariables?.filter || {}) as Record<string, any>;
+  if (baseFilter?.usedInProducts !== true) {
+    return { nextId, last: false };
+  }
+
+  const { usedInProducts, ...fallbackFilter } = baseFilter;
+  const fallbackEdges = await fetchEdges({ ...baseVariables, filter: fallbackFilter });
+  const fallbackNextId = pickNextId(fallbackEdges);
+  const fallbackLast = fallbackEdges.length === 1 && fallbackEdges[0]?.node?.id === valueId.value;
+  return { nextId: fallbackNextId, last: fallbackLast };
 };
 
 onMounted(async () => {

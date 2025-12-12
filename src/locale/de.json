@@ -95,10 +95,24 @@
   },
   "dashboard": {
     "cards": {
+      "amazon": {
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Amazon properties used in products that need mapping."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Amazon property values used in products that need mapping in order to be imported into OneSila."
+        }
+      },
       "ebay": {
         "title": "",
         "description": "",
         "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPropertiesUsedInProducts": {
           "title": "",
           "description": ""
         },
@@ -111,6 +125,14 @@
           "description": ""
         },
         "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValuesUsedInProducts": {
           "title": "",
           "description": ""
         },
@@ -126,6 +148,10 @@
           "title": "",
           "description": ""
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "",
+          "description": ""
+        },
         "unmappedProductTypes": {
           "title": "",
           "description": ""
@@ -135,6 +161,14 @@
           "description": ""
         },
         "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValuesUsedInProducts": {
           "title": "",
           "description": ""
         },
@@ -1063,6 +1097,16 @@
     }
   },
   "properties": {
+    "properties": {
+      "labels": {
+        "usedInProducts": ""
+      }
+    },
+    "values": {
+      "labels": {
+        "usedInProducts": ""
+      }
+    },
     "duplicateModal": {
       "title": "Properties with Similar Names Found",
       "content": "We've found properties with similar names listed below. If none of them match what you're trying to create, you can continue and add your new property.",

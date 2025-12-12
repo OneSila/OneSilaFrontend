@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter, type RouteLocationRaw } from 'vue-router';
+import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../../../apollo-client";
 import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import { buildFilterVariablesFromRouteQuery, buildNextQueryParamsFromRouteQuery } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 type RouteBuilderContext = {
   id: string;
@@ -40,6 +41,7 @@ const props = defineProps<{
 const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 
 const canStartMapping = ref(false);
 const generalListingRef = ref<any>(null);
@@ -70,24 +72,33 @@ const fetchFirstUnmapped = async (): Promise<string | null> => {
 
   const { filter: additionalFilter = {}, ...restVariables } = props.firstUnmappedQueryVariables || {};
 
-  const variables = {
+  const baseVariables = {
     first: 1,
     ...restVariables,
-    filter: {
-      ...additionalFilter,
-      ...mergedFixedFilterVariables.value,
-      mappedLocally: false,
-    },
   };
+
+  const filterFromQuery =
+    buildFilterVariablesFromRouteQuery(props.searchConfig, route.query, {
+      excludeKeys: ['mappedLocally'],
+    }) || {};
 
   const { data } = await apolloClient.query({
     query: props.listingQuery,
-    variables,
+    variables: {
+      ...baseVariables,
+      filter: {
+        ...additionalFilter,
+        ...mergedFixedFilterVariables.value,
+        ...filterFromQuery,
+        mappedLocally: false,
+      },
+    },
     fetchPolicy: 'network-only',
   });
 
   const listingData = data?.[props.listingQueryKey] ?? {};
   const edges = listingData?.edges || [];
+
   canStartMapping.value = edges.length > 0;
   return edges.length > 0 ? edges[0].node.id : null;
 };
@@ -137,13 +148,26 @@ const startMapping = async () => {
     return;
   }
 
-  router.push(
-    props.buildStartMappingRoute({
-      id,
-      integrationId: props.id,
-      salesChannelId: props.salesChannelId,
-    })
-  );
+  const baseRoute = props.buildStartMappingRoute({
+    id,
+    integrationId: props.id,
+    salesChannelId: props.salesChannelId,
+  }) as any;
+
+  const nextQuery = buildNextQueryParamsFromRouteQuery(props.searchConfig, route.query, {
+    excludeKeys: ['mappedLocally'],
+  });
+  if ((route.query as any).usedInProducts === undefined && nextQuery['next__usedInProducts'] === undefined) {
+    nextQuery['next__usedInProducts'] = true;
+  }
+
+  router.push({
+    ...baseRoute,
+    query: {
+      ...(baseRoute.query || {}),
+      ...nextQuery,
+    },
+  });
 };
 
 const clearSelection = (query?: any) => {

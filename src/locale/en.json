@@ -261,6 +261,10 @@
           "title": "Unmapped Properties",
           "description": "Amazon properties that need mapping."
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Amazon properties used in products that need mapping."
+        },
         "unmappedProductTypes": {
           "title": "Unmapped Product Types",
           "description": "Amazon product types that need mapping."
@@ -272,6 +276,14 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Amazon property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "Amazon select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Amazon property values used in products that need mapping in order to be imported into OneSila."
         },
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
@@ -289,6 +301,10 @@
           "title": "Unmapped Properties",
           "description": "eBay properties that need mapping."
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "eBay properties used in products that need mapping."
+        },
         "unmappedProductTypes": {
           "title": "Unmapped Product Types",
           "description": "eBay product types that need mapping."
@@ -300,6 +316,14 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "eBay property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "eBay select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "eBay property values used in products that need mapping in order to be imported into OneSila."
         },
         "unmappedInventoryFields": {
           "title": "Inventory Fields",
@@ -313,6 +337,10 @@
           "title": "Unmapped Properties",
           "description": "Shein properties that need mapping."
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Shein properties used in products that need mapping."
+        },
         "unmappedProductTypes": {
           "title": "Unmapped Product Types",
           "description": "Shein product types that need mapping."
@@ -324,6 +352,14 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Shein property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "Shein select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Shein property values used in products that need mapping in order to be imported into OneSila."
         },
         "unmappedInventoryFields": {
           "title": "Internal Properties",

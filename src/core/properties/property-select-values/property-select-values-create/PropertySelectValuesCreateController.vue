@@ -20,6 +20,7 @@ import { DuplicateModal } from "../../../../shared/components/molecules/duplicat
 import { Toast } from "../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../shared/utils";
 import { useEnterKeyboardListener, useShiftBackspaceKeyboardListener, useShiftEnterKeyboardListener } from "../../../../shared/modules/keyboard";
+import { extractPrefixedQueryParams } from '../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -131,6 +132,7 @@ const onError = (error) => {
 const createSelectValue = async () => {
   if (!formConfig.value) return;
   try {
+    const nextQuery = extractPrefixedQueryParams(route.query, 'next__');
     const cleanedData = cleanUpDataForMutation(form, formConfig.value.fields, FormType.CREATE);
     const { data } = await apolloClient.mutate({
       mutation: createPropertySelectValueMutation,
@@ -151,12 +153,15 @@ const createSelectValue = async () => {
         [queryParamKey]: resultData.id,
       };
     }
+    if (Object.keys(nextQuery).length) {
+      finalUrl.query = { ...(finalUrl.query || formConfig.value.submitUrl.query || {}), ...nextQuery };
+    }
 
     if (continueEditing.value && formConfig.value.submitAndContinueUrl) {
       const redirectUrl = formConfig.value.submitAndContinueUrl;
       const routePath = router.getRoutes().find(r => r.name === redirectUrl.name)?.path;
       const urlParamMatches = routePath?.match(/:(\w+)/g) || [];
-      let query = redirectUrl.query || {};
+      let query = { ...(redirectUrl.query || {}), ...nextQuery };
       let params = redirectUrl.params || {};
       let allParamsAvailable = true;
 

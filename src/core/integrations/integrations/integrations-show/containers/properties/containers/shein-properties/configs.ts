@@ -67,6 +67,8 @@ export const sheinPropertiesSearchConfigConstructor = (t: Function): SearchConfi
   orderKey: 'sort',
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+    { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), strict: true , addLookup: true},
+    { type: FieldType.Boolean, name: 'usedInProducts', label: t('properties.properties.labels.usedInProducts'), strict: true },
   ],
   orders: [],
 });
