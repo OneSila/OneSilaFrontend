@@ -3226,6 +3226,11 @@
         "labels": {
           "store": "Store",
           "excludeStores": "Exclude Stores"
+        },
+        "statuses": {
+          "partiallyListed": "Partially listed",
+          "pendingApproval": "Pending approval",
+          "approvalRejected": "Approval rejected"
         }
       },
       "productRules": {
@@ -3338,6 +3343,8 @@
         "mappedRemotelyEbay": "Mapped on eBay",
         "mappedRemotelyShein": "Mapped on Shein",
         "startMapping": "Start Mapping",
+        "autoMap": "Auto Map",
+        "autoMapHelp": "Auto Map tries to match values for you. If a marketplace property is already mapped to a OneSila property, and a marketplace value has the exact same text as an existing OneSila value in that property, it will be mapped automatically. Example: marketplace “Color” → OneSila “Color”, marketplace value “Red” → OneSila value “Red”. Runs in the background, so you can keep working.",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values",
         "importMapping": "Import Mapping",
@@ -3345,6 +3352,7 @@
         "importMappingSelectLabel": "Source sales channel",
         "importMappingPlaceholder": "Select a {channelLabel} sales channel",
         "importSuccess": "Mapping import started.",
+        "autoMapStarted": "Auto mapping started.",
         "importNoSources": "Add another {channelLabel} sales channel to import mappings.",
         "importFallbackLabel": "Unnamed {channelLabel} channel"
       },

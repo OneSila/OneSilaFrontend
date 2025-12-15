@@ -2700,6 +2700,11 @@
         "labels": {
           "store": "Winkel",
           "excludeStores": "Winkels uitsluiten"
+        },
+        "statuses": {
+          "partiallyListed": "",
+          "pendingApproval": "",
+          "approvalRejected": ""
         }
       },
       "productRules": {
@@ -2769,6 +2774,8 @@
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
         "startMapping": "",
+        "autoMap": "",
+        "autoMapHelp": "",
         "saveAndMapNext": "",
         "allMappedSuccess": "",
         "importMapping": "",
@@ -2776,6 +2783,7 @@
         "importMappingSelectLabel": "",
         "importMappingPlaceholder": "",
         "importSuccess": "",
+        "autoMapStarted": "",
         "importNoSources": "",
         "importFallbackLabel": ""
       },

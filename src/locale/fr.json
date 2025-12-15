@@ -515,6 +515,13 @@
         "authentication": "",
         "defaultUnits": ""
       },
+      "products": {
+        "statuses": {
+          "partiallyListed": "",
+          "pendingApproval": "",
+          "approvalRejected": ""
+        }
+      },
       "properties": {
         "title": "",
         "labels": {
@@ -762,6 +769,8 @@
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
         "startMapping": "",
+        "autoMap": "",
+        "autoMapHelp": "",
         "saveAndMapNext": "",
         "allMappedSuccess": "",
         "importMapping": "",
@@ -769,6 +778,7 @@
         "importMappingSelectLabel": "",
         "importMappingPlaceholder": "",
         "importSuccess": "",
+        "autoMapStarted": "",
         "importNoSources": "",
         "importFallbackLabel": ""
       },

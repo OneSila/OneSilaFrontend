@@ -105,7 +105,6 @@ const fetchCounts = async (salesChannelId: string) => {
         filter: {
           salesChannel: { id: { exact: salesChannelId } },
           mappedLocally: false,
-          remoteProperty: { allowsUnmappedValues: { exact: false } },
         },
       },
     }),
@@ -241,7 +240,7 @@ onMounted(fetchSheinIntegrations);
           :description="t('dashboard.cards.shein.unmappedPropertiesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all', usedInProducts: true } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', usedInProducts: true } }"
         />
         <DashboardCard
           :counter="integration.selectValuesUsedInProducts"
@@ -260,20 +259,12 @@ onMounted(fetchSheinIntegrations);
           :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'inventoryFields', mappedLocally: false, mappedRemotely: 'all' } }"
         />
         <DashboardCard
-          :counter="integration.predefinedSelectValues"
-          :title="t('dashboard.cards.shein.unmappedPredefinedSelectValues.title')"
-          :description="t('dashboard.cards.shein.unmappedPredefinedSelectValues.description')"
-          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
-          color="orange"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, remoteProperty__allowsUnmappedValues: false } }"
-        />
-        <DashboardCard
           :counter="integration.properties"
           :title="t('dashboard.cards.shein.unmappedProperties.title')"
           :description="t('dashboard.cards.shein.unmappedProperties.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="yellow"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all' } }"
         />
         <DashboardCard
           :counter="integration.selectValues"
