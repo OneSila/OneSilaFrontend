@@ -13,6 +13,7 @@ import {FieldBadge} from "./containers/field-badge";
 import {FieldIcon} from "./containers/field-icon";
 import {FieldIndividualFile} from "./containers/field-individual-file";
 import {FieldInspectorProgress} from "./containers/field-inspector-progress";
+import { FieldInlineItems } from "./containers/field-inline-items";
 
 export interface ShowBaseField {
   name: string;
@@ -103,7 +104,12 @@ export interface InspectorProgressField extends ShowBaseField {
   type: FieldType.InspectorProgress;
 }
 
-export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | IndividualFileField | InspectorProgressField;
+export interface InlineItemsField extends ShowBaseField {
+  type: FieldType.InlineItems;
+  color?: string;
+}
+
+export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | IndividualFileField | InspectorProgressField | InlineItemsField;
 
 export const updateField = (showConfig, fieldName, newConfig) => {
   const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
@@ -127,6 +133,7 @@ export const getFieldComponent = (type) => {
     case FieldType.Badge: return FieldBadge;
     case FieldType.IndividualFile: return FieldIndividualFile;
     case FieldType.InspectorProgress: return FieldInspectorProgress;
+    case FieldType.InlineItems: return FieldInlineItems;
     default: return null;
   }
 };

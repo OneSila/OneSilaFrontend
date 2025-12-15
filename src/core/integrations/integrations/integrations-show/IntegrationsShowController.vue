@@ -38,6 +38,7 @@ import { PropertySelectValues } from "./containers/property-select-values";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
 import { Templates } from "./containers/templates";
+import { AmazonProductIssues } from "./containers/issues";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
 
@@ -79,7 +80,8 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
-      { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' }
+      { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
+      { name: 'issues', label: t('integrations.show.tabs.issues'), icon: 'triangle-exclamation' }
     );
   } else if (type.value === IntegrationTypes.Ebay) {
     tabItems.value.push(
@@ -380,6 +382,16 @@ const pullData = async () => {
           <!-- Default Units Tab -->
           <template #defaultUnits>
             <DefaultUnitConfigurators v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
+          </template>
+
+          <!-- Amazon Product Issues Tab -->
+          <template #issues>
+            <AmazonProductIssues
+              v-if="salesChannelId && type === IntegrationTypes.Amazon"
+              :sales-channel-id="salesChannelId"
+              :integration-id="id"
+              :type="type"
+            />
           </template>
         </Tabs>
       </Card>

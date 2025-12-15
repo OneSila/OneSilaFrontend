@@ -18,6 +18,9 @@ const { t } = useI18n();
 const route = useRoute();
 const id = ref(String(route.params.id));
 const priceListId = ref(route.params.priceListId);
+const productIdFromUrl = ref(
+  typeof route.query.productId === 'string' ? route.query.productId : undefined
+);
 const formConfig: Ref<any| null> = ref(null);
 
 onMounted(async () => {
@@ -37,7 +40,8 @@ onMounted(async () => {
       priceListId.value.toString(),
       [],
       autoUpdatePrice,
-      data.salesPriceList.currency.symbol
+      data.salesPriceList.currency.symbol,
+      productIdFromUrl.value
     );
 
     formConfig.value = {

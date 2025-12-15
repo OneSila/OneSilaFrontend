@@ -29,6 +29,8 @@ export const amazonProductsQuery = gql`
             message
             severity
             isValidationIssue
+            isSuppressed
+            enforcementActions
             view {
               remoteId
               name
@@ -95,4 +97,3 @@ export const amazonChildRemoteProductsQuery = gql`
     }
   }
 `;
-

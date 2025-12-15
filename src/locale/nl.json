@@ -2443,6 +2443,71 @@
   },
   "integrations": {
     "show": {
+      "tabs": {
+        "issues": ""
+      },
+      "amazonIssues": {
+        "show": {
+          "title": "",
+          "breadcrumb": "",
+          "amazonDocsPrefix": "",
+          "amazonDocsLink": "",
+          "fields": {
+            "code": "",
+            "message": "",
+            "severity": "",
+            "categories": "",
+            "enforcementActions": "",
+            "enforcementExemptionStatus": "",
+            "enforcementExemptionExpiryDate": "",
+            "enforcementAttributeNames": "",
+            "isSuppressed": "",
+            "isValidationIssue": "",
+            "rawData": ""
+          }
+        },
+        "columns": {
+          "code": "",
+          "product": "",
+          "marketplace": "",
+          "severity": "",
+          "suppressReasons": "",
+          "isValidationIssue": "",
+          "isSuppressed": ""
+        },
+        "filters": {
+          "isValidationIssue": "",
+          "isSuppressed": "",
+          "categories": "",
+          "enforcementActions": "",
+          "enforcementExemptionStatus": "",
+          "enforcementExemptionExpiryDate": ""
+        },
+        "severity": {
+          "error": "",
+          "warning": ""
+        },
+        "categories": {
+          "MISSING_ATTRIBUTE": "",
+          "INVALID_ATTRIBUTE": "",
+          "INVALID_IMAGE": "",
+          "MISSING_IMAGE": "",
+          "QUALIFICATION_REQUIRED": "",
+          "INVALID_PRICE": "",
+          "DUPLICATE": ""
+        },
+        "enforcementActions": {
+          "CATALOG_ITEM_REMOVED": "",
+          "SEARCH_SUPPRESSED": "",
+          "LISTING_SUPPRESSED": "",
+          "ATTRIBUTE_SUPPRESSED": ""
+        },
+        "enforcementExemptionStatus": {
+          "EXEMPT": "",
+          "EXEMPT_UNTIL_EXPIRY_DATE": "",
+          "NOT_EXEMPT": ""
+        }
+      },
       "sections": {
         "throttling": "",
         "syncPreferences": "",
@@ -2861,6 +2926,53 @@
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
       "webhook": "Webhook"
+    },
+    "show": {
+      "tabs": {
+        "issues": ""
+      },
+      "amazonIssues": {
+        "columns": {
+          "code": "",
+          "product": "",
+          "marketplace": "",
+          "severity": "",
+          "isValidationIssue": "",
+          "isSuppressed": ""
+        },
+        "filters": {
+          "isValidationIssue": "",
+          "isSuppressed": "",
+          "categories": "",
+          "enforcementActions": "",
+          "enforcementExemptionStatus": "",
+          "enforcementExemptionExpiryDate": ""
+        },
+        "severity": {
+          "error": "",
+          "warning": ""
+        },
+        "categories": {
+          "MISSING_ATTRIBUTE": "",
+          "INVALID_ATTRIBUTE": "",
+          "INVALID_IMAGE": "",
+          "MISSING_IMAGE": "",
+          "QUALIFICATION_REQUIRED": "",
+          "INVALID_PRICE": "",
+          "DUPLICATE": ""
+        },
+        "enforcementActions": {
+          "CATALOG_ITEM_REMOVED": "",
+          "SEARCH_SUPPRESSED": "",
+          "LISTING_SUPPRESSED": "",
+          "ATTRIBUTE_SUPPRESSED": ""
+        },
+        "enforcementExemptionStatus": {
+          "EXEMPT": "",
+          "EXEMPT_UNTIL_EXPIRY_DATE": "",
+          "NOT_EXEMPT": ""
+        }
+      }
     },
     "labels": {
       "fulfillmentPolicy": "Verzendbeleid",

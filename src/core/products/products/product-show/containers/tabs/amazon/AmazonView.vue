@@ -106,6 +106,8 @@ interface AmazonProductIssue {
   message?: string | null;
   severity?: string | null;
   isValidationIssue?: boolean | null;
+  isSuppressed?: boolean | null;
+  enforcementActions?: string[] | null;
   view?: { remoteId: string; name?: string } | null;
   createdAt?: string | null;
   remoteProduct?: { id: string } | null;
@@ -176,7 +178,6 @@ const fetchViews = async () => {
     fetchPolicy: 'cache-first',
   });
   views.value = data.amazonChannelViews?.edges?.map((edge: any) => edge.node) || [];
-  console.log(views.value)
   loading.value = false;
 };
 
@@ -367,6 +368,8 @@ const fetchVariationValidationIssues = async () => {
         message: issue.message,
         severity: issue.severity,
         isValidationIssue: issue.isValidationIssue,
+        isSuppressed: issue.isSuppressed,
+        enforcementActions: issue.enforcementActions,
         view: issue.view,
         createdAt: issue.createdAt,
       });
@@ -385,6 +388,8 @@ const fetchVariationValidationIssues = async () => {
         message: issue.message,
         severity: issue.severity,
         isValidationIssue: issue.isValidationIssue,
+        isSuppressed: issue.isSuppressed,
+        enforcementActions: issue.enforcementActions,
         view: issue.view,
         createdAt: issue.createdAt,
       });

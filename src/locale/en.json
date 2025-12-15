@@ -2884,10 +2884,73 @@
     "show": {
       "title": "Integration",
       "tabs": {
-        "reports": "Reports"
+        "reports": "Reports",
+        "issues": "Issues"
       },
       "amazon": {
         "title": "Amazon Integration"
+      },
+      "amazonIssues": {
+        "show": {
+          "title": "Amazon issue",
+          "breadcrumb": "Issue",
+          "amazonDocsPrefix": "Need help with Amazon issue codes?",
+          "amazonDocsLink": "Open Amazon docs",
+          "fields": {
+            "code": "Code",
+            "message": "Message",
+            "severity": "Severity",
+            "categories": "Categories",
+            "enforcementActions": "Enforcement actions",
+            "enforcementExemptionStatus": "Exemption status",
+            "enforcementExemptionExpiryDate": "Exemption expiry date",
+            "enforcementAttributeNames": "Enforcement attribute names",
+            "isSuppressed": "Suppressed",
+            "isValidationIssue": "Validation issue",
+            "rawData": "Raw data"
+          }
+        },
+        "columns": {
+          "code": "Code",
+          "product": "Product",
+          "marketplace": "Marketplace",
+          "severity": "Severity",
+          "suppressReasons": "Suppress reasons",
+          "isValidationIssue": "Validation",
+          "isSuppressed": "Suppressed"
+        },
+        "filters": {
+          "isValidationIssue": "Validation issue",
+          "isSuppressed": "Suppressed",
+          "categories": "Categories",
+          "enforcementActions": "Enforcement actions",
+          "enforcementExemptionStatus": "Exemption status",
+          "enforcementExemptionExpiryDate": "Exemption expiry date"
+        },
+        "severity": {
+          "error": "Error",
+          "warning": "Warning"
+        },
+        "categories": {
+          "MISSING_ATTRIBUTE": "Missing attribute",
+          "INVALID_ATTRIBUTE": "Invalid attribute",
+          "INVALID_IMAGE": "Invalid image",
+          "MISSING_IMAGE": "Missing image",
+          "QUALIFICATION_REQUIRED": "Qualification required",
+          "INVALID_PRICE": "Invalid price",
+          "DUPLICATE": "Duplicate"
+        },
+        "enforcementActions": {
+          "CATALOG_ITEM_REMOVED": "Catalog item removed",
+          "SEARCH_SUPPRESSED": "Search suppressed",
+          "LISTING_SUPPRESSED": "Listing suppressed",
+          "ATTRIBUTE_SUPPRESSED": "Attribute suppressed"
+        },
+        "enforcementExemptionStatus": {
+          "EXEMPT": "Exempt",
+          "EXEMPT_UNTIL_EXPIRY_DATE": "Exempt until expiry date",
+          "NOT_EXEMPT": "Not exempt"
+        }
       },
       "ebay": {
         "title": "Ebay Integration",
