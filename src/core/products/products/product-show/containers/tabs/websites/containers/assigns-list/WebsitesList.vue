@@ -8,11 +8,12 @@ import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { ApolloAlertMutation } from "../../../../../../../../../shared/components/molecules/apollo-alert-mutation";
 import { deleteSalesChannelViewAssignMutation } from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import { Product } from "../../../../../../configs";
-import { AssignProgressBar } from "../../../../../../../../../shared/components/molecules/assign-progress-bar";
+import { ProgressBar } from "../../../../../../../../../shared/components/molecules/progress-bar";
 import { resyncSalesChannelViewAssignMutation } from "../../../../../../../../../shared/api/mutations/salesChannels.js";
 import { displayApolloError } from "../../../../../../../../../shared/utils";
 import { Toast} from "../../../../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../logs-info-modal";
+import { getProgressBarUiForStatus } from "../../../../../../../../../shared/utils/constants";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -53,6 +54,19 @@ const issuesModalClosed = () => {
   showIssuesModal.value = false;
 }
 
+const getAssignStatus = (item: any) => {
+  if (item.remoteProduct?.status) {
+    return item.remoteProduct.status;
+  }
+  if (item.remoteProduct?.hasErrors) {
+    return 'FAILED';
+  }
+  if (item.remoteProductPercentage === 100) {
+    return 'COMPLETED';
+  }
+  return 'PROCESSING';
+};
+
 </script>
 
 <template>
@@ -75,7 +89,12 @@ const issuesModalClosed = () => {
               <Icon v-else name="times-circle" class="ml-2 text-red-500" />
             </td>
             <td>
-              <AssignProgressBar :progress="item.remoteProductPercentage" :is-error="item.remoteProduct?.hasErrors" />
+              <ProgressBar
+                :progress="item.remoteProductPercentage"
+                :label="t(getProgressBarUiForStatus(getAssignStatus(item)).labelKey)"
+                :label-color="getProgressBarUiForStatus(getAssignStatus(item)).labelColor"
+                :bar-color="getProgressBarUiForStatus(getAssignStatus(item)).barColor"
+              />
             </td>
             <td>
               <div class="flex gap-4 items-center justify-end">

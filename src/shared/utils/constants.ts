@@ -216,3 +216,52 @@ export const getPropertyTypeOptions = (t) => [
   { name: t('properties.properties.types.select'), code: PropertyTypes.SELECT },
   { name: t('properties.properties.types.multiselect'), code: PropertyTypes.MULTISELECT }
 ];
+
+export type ProgressBarUi = {
+  labelKey: string;
+  labelColor: string;
+  barColor: string;
+};
+
+export const PROGRESS_BAR_UI_BY_STATUS: Record<string, ProgressBarUi> = {
+  new: { labelKey: 'shared.labels.new', labelColor: 'text-gray-500', barColor: 'bg-gray-400' },
+  pending: { labelKey: 'shared.labels.pending', labelColor: 'text-blue-600', barColor: 'bg-blue-500' },
+  processing: { labelKey: 'shared.labels.processing', labelColor: 'text-yellow-500', barColor: 'bg-yellow-400' },
+  failed: { labelKey: 'shared.labels.failed', labelColor: 'text-red-600', barColor: 'bg-red-500' },
+  success: { labelKey: 'shared.labels.completed', labelColor: 'text-green-600', barColor: 'bg-green-500' },
+
+  COMPLETED: { labelKey: 'shared.labels.completed', labelColor: 'text-green-600', barColor: 'bg-green-500' },
+  PROCESSING: { labelKey: 'shared.labels.processing', labelColor: 'text-yellow-500', barColor: 'bg-yellow-400' },
+  FAILED: { labelKey: 'shared.labels.failed', labelColor: 'text-red-600', barColor: 'bg-red-500' },
+  APPROVAL_REJECTED: {
+    labelKey: 'integrations.show.products.statuses.approvalRejected',
+    labelColor: 'text-red-600',
+    barColor: 'bg-red-500',
+  },
+  PARTIALLY_LISTED: {
+    labelKey: 'integrations.show.products.statuses.partiallyListed',
+    labelColor: 'text-yellow-500',
+    barColor: 'bg-yellow-400',
+  },
+  PENDING_APPROVAL: {
+    labelKey: 'integrations.show.products.statuses.pendingApproval',
+    labelColor: 'text-yellow-500',
+    barColor: 'bg-yellow-400',
+  },
+};
+
+const DEFAULT_PROGRESS_BAR_UI: ProgressBarUi = PROGRESS_BAR_UI_BY_STATUS.processing;
+
+export const getProgressBarUiForStatus = (status?: string | null): ProgressBarUi => {
+  if (!status) {
+    return DEFAULT_PROGRESS_BAR_UI;
+  }
+
+  const rawStatus = String(status);
+  return (
+    PROGRESS_BAR_UI_BY_STATUS[rawStatus] ??
+    PROGRESS_BAR_UI_BY_STATUS[rawStatus.toLowerCase()] ??
+    PROGRESS_BAR_UI_BY_STATUS[rawStatus.toUpperCase()] ??
+    DEFAULT_PROGRESS_BAR_UI
+  );
+};

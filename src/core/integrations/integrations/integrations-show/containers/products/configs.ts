@@ -7,8 +7,11 @@ import { getProductTypeBadgeMap } from "../../../../../products/products/configs
 
 const getStatusBadgeMap = (t: Function) => ({
   completed: { text: t('shared.labels.completed'), color: 'green' },
+  COMPLETED: { text: t('shared.labels.completed'), color: 'green' },
   failed: { text: t('shared.labels.failed'), color: 'red' },
+  FAILED: { text: t('shared.labels.failed'), color: 'red' },
   processing: { text: t('shared.labels.processing'), color: 'yellow' },
+  PROCESSING: { text: t('shared.labels.processing'), color: 'yellow' },
   PARTIALLY_LISTED: { text: t('integrations.show.products.statuses.partiallyListed'), color: 'yellow' },
   PENDING_APPROVAL: { text: t('integrations.show.products.statuses.pendingApproval'), color: 'yellow' },
   APPROVAL_REJECTED: { text: t('integrations.show.products.statuses.approvalRejected'), color: 'red' },
@@ -105,6 +108,9 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
       type: FieldType.Badge,
       badgeMap: getStatusBadgeMap(t),
       accessor: (node) => {
+        if (node.remoteProduct?.status) {
+          return node.remoteProduct.status;
+        }
         if (node.remoteProduct?.hasErrors) {
           return 'failed';
         }

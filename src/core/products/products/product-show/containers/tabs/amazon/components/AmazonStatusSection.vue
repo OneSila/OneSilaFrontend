@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { AssignProgressBar } from '../../../../../../../../shared/components/molecules/assign-progress-bar';
+import { ProgressBar } from '../../../../../../../../shared/components/molecules/progress-bar';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { ApolloMutation } from '@vue/apollo-components';
 import { Link } from "../../../../../../../../shared/components/atoms/link";
+import { getProgressBarUiForStatus } from '../../../../../../../../shared/utils/constants';
 
 const props = defineProps<{
   selectedProduct: any | null;
@@ -28,6 +29,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const getProgressStatus = (percentage: number) => (percentage < 100 ? 'PROCESSING' : 'COMPLETED');
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return '-';
@@ -134,7 +137,12 @@ const formatDate = (dateString?: string | null) => {
         <div>
           <span class="font-medium">{{ t('shared.labels.progress') }}:</span>
           <div class="w-48 mt-1">
-            <AssignProgressBar :progress="syncingCurrentPercentage ?? 0" />
+            <ProgressBar
+              :progress="syncingCurrentPercentage ?? 0"
+              :label="t(getProgressBarUiForStatus(getProgressStatus(syncingCurrentPercentage ?? 0)).labelKey)"
+              :label-color="getProgressBarUiForStatus(getProgressStatus(syncingCurrentPercentage ?? 0)).labelColor"
+              :bar-color="getProgressBarUiForStatus(getProgressStatus(syncingCurrentPercentage ?? 0)).barColor"
+            />
           </div>
         </div>
         <div v-if="amazonProductUrl" class="mt-2">
@@ -152,4 +160,3 @@ const formatDate = (dateString?: string | null) => {
     </div>
   </div>
 </template>
-
