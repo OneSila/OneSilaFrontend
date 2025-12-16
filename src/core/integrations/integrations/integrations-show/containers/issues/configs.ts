@@ -1,6 +1,7 @@
 import { FieldType } from "../../../../../../shared/utils/constants";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import { buildAmazonIssueLastFetchedAtBadge } from "./utils";
 
 const getSeverityBadgeMap = (t: Function) => ({
   ERROR: { text: t('integrations.show.amazonIssues.severity.error'), color: 'red' },
@@ -52,8 +53,23 @@ export const amazonProductIssuesSearchConfigConstructor = (t: Function): SearchC
     },
     {
       type: FieldType.Choice,
+      name: 'severity',
+      label: t('integrations.show.amazonIssues.filters.severity'),
+      options: [
+        { label: t('integrations.show.amazonIssues.severity.error'), value: 'ERROR' },
+        { label: t('integrations.show.amazonIssues.severity.warning'), value: 'WARNING' },
+      ],
+      labelBy: 'label',
+      valueBy: 'value',
+      multiple: false,
+      filterable: false,
+      removable: true,
+      addLookup: true
+    },
+    {
+      type: FieldType.Choice,
       name: 'enforcementAction',
-      label: t('integrations.show.amazonIssues.filters.enforcementActions'),
+      label: t('integrations.show.amazonIssues.filters.suppressReasons'),
       options: [
         { label: t('integrations.show.amazonIssues.enforcementActions.CATALOG_ITEM_REMOVED'), value: 'CATALOG_ITEM_REMOVED' },
         { label: t('integrations.show.amazonIssues.enforcementActions.SEARCH_SUPPRESSED'), value: 'SEARCH_SUPPRESSED' },
@@ -101,6 +117,7 @@ export const amazonProductIssuesListingConfigConstructor = (
     t('integrations.show.amazonIssues.columns.code'),
     t('integrations.show.amazonIssues.columns.product'),
     t('integrations.show.amazonIssues.columns.marketplace'),
+    t('integrations.show.amazonIssues.columns.lastFetchedAt'),
     t('integrations.show.amazonIssues.columns.severity'),
     t('integrations.show.amazonIssues.columns.suppressReasons'),
     t('integrations.show.amazonIssues.columns.isValidationIssue'),
@@ -117,6 +134,12 @@ export const amazonProductIssuesListingConfigConstructor = (
       clickIdentifiers: [{ id: ['localInstance', 'id'] }],
     },
     { name: 'view', type: FieldType.NestedText, keys: ['apiRegionCode'] },
+    {
+      name: 'createdAt',
+      type: FieldType.Badge,
+      badgeMap: {},
+      accessor: (node) => buildAmazonIssueLastFetchedAtBadge(t, node.createdAt),
+    },
     { name: 'severity', type: FieldType.Badge, badgeMap: getSeverityBadgeMap(t) },
     {
       name: 'enforcementActions',

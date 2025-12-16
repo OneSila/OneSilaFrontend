@@ -13,9 +13,11 @@ import { CancelButton } from "../../../../../../../shared/components/atoms/butto
 import apolloClient from "../../../../../../../../apollo-client";
 import { amazonProductIssueShowQuery } from "../../../../../../../shared/api/queries/amazonProductIssues.js";
 import { Toast } from "../../../../../../../shared/modules/toast";
+import { buildAmazonIssueLastFetchedAtBadge, formatAmazonIssueLastFetchedAt } from "../utils";
 
 type IssueNode = {
   id: string;
+  createdAt?: string | null;
   code?: string | null;
   message?: string | null;
   severity?: string | null;
@@ -43,6 +45,8 @@ const issue = ref<IssueNode | null>(null);
 
 const product = computed(() => issue.value?.remoteProduct?.localInstance ?? null);
 const marketplace = computed(() => issue.value?.view?.apiRegionCode ?? null);
+const lastFetchedAtLabel = computed(() => formatAmazonIssueLastFetchedAt(issue.value?.createdAt));
+const lastFetchedAtBadge = computed(() => buildAmazonIssueLastFetchedAtBadge(t, issue.value?.createdAt));
 
 const jsonRawData = computed(() => {
   try {
@@ -169,6 +173,14 @@ onMounted(fetchIssue);
               <dt class="text-sm font-medium text-gray-900">{{ t('integrations.show.amazonIssues.columns.marketplace') }}</dt>
               <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                 {{ marketplace || '-' }}
+              </dd>
+            </div>
+
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-900">{{ t('integrations.show.amazonIssues.show.fields.lastFetchedAt') }}</dt>
+              <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center gap-2">
+                <Badge :text="lastFetchedAtBadge.text" :color="lastFetchedAtBadge.color" :hover-text="lastFetchedAtBadge.hoverText" />
+                <span>{{ lastFetchedAtLabel }}</span>
               </dd>
             </div>
 

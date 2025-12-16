@@ -520,6 +520,7 @@
           "fields": {
             "code": "",
             "message": "",
+            "lastFetchedAt": "",
             "severity": "",
             "categories": "",
             "enforcementActions": "",
@@ -535,6 +536,7 @@
           "code": "",
           "product": "",
           "marketplace": "",
+          "lastFetchedAt": "",
           "severity": "",
           "suppressReasons": "",
           "isValidationIssue": "",
@@ -544,6 +546,8 @@
           "isValidationIssue": "",
           "isSuppressed": "",
           "categories": "",
+          "severity": "",
+          "suppressReasons": "",
           "enforcementActions": "",
           "enforcementExemptionStatus": "",
           "enforcementExemptionExpiryDate": ""
@@ -551,6 +555,16 @@
         "severity": {
           "error": "",
           "warning": ""
+        },
+        "lastFetchedAt": {
+          "hover": "",
+          "badges": {
+            "unknown": "",
+            "lte2w": "",
+            "between2w8w": "",
+            "between8w6m": "",
+            "gte6m": ""
+          }
         },
         "categories": {
           "MISSING_ATTRIBUTE": "",

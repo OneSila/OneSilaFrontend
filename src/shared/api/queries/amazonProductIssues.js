@@ -49,6 +49,7 @@ export const amazonProductIssuesListingQuery = gql`
       edges {
         node {
           id
+          createdAt
           code
           severity
           isValidationIssue
@@ -83,6 +84,7 @@ export const amazonProductIssueShowQuery = gql`
       edges {
         node {
           id
+          createdAt
           code
           message
           severity

@@ -2899,6 +2899,7 @@
           "fields": {
             "code": "Code",
             "message": "Message",
+            "lastFetchedAt": "Last fetched",
             "severity": "Severity",
             "categories": "Categories",
             "enforcementActions": "Enforcement actions",
@@ -2914,6 +2915,7 @@
           "code": "Code",
           "product": "Product",
           "marketplace": "Marketplace",
+          "lastFetchedAt": "Last fetched",
           "severity": "Severity",
           "suppressReasons": "Suppress reasons",
           "isValidationIssue": "Validation",
@@ -2923,6 +2925,8 @@
           "isValidationIssue": "Validation issue",
           "isSuppressed": "Suppressed",
           "categories": "Categories",
+          "severity": "Severity",
+          "suppressReasons": "Suppress reasons",
           "enforcementActions": "Enforcement actions",
           "enforcementExemptionStatus": "Exemption status",
           "enforcementExemptionExpiryDate": "Exemption expiry date"
@@ -2930,6 +2934,16 @@
         "severity": {
           "error": "Error",
           "warning": "Warning"
+        },
+        "lastFetchedAt": {
+          "hover": "Fetched at {date}",
+          "badges": {
+            "unknown": "Unknown",
+            "lte2w": "≤ 2 weeks",
+            "between2w8w": "2–8 weeks",
+            "between8w6m": "8 weeks–6 months",
+            "gte6m": "6 months+"
+          }
         },
         "categories": {
           "MISSING_ATTRIBUTE": "Missing attribute",
