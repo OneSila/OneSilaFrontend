@@ -35,6 +35,8 @@
       "active": "Active",
       "inactive": "Inactive",
       "selectedOfTotal": "{selected} selected of {total}",
+      "total": "",
+      "totalOfTotal": "",
       "yes": "Oui",
       "no": "Non"
     },
