@@ -5,7 +5,7 @@ import { Link } from "../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../shared/components/atoms/button";
 import { ApolloSubscription } from "../../../../../../../shared/components/molecules/apollo-subscription";
 import { DiscreteLoader } from "../../../../../../../shared/components/atoms/discrete-loader";
-import { AssignProgressBar } from "../../../../../../../shared/components/molecules/assign-progress-bar";
+import { ProgressBar } from "../../../../../../../shared/components/molecules/progress-bar";
 import { Badge } from "../../../../../../../shared/components/atoms/badge";
 import { salesChannelSubscription } from "../../../../../../../shared/api/subscriptions/salesChannels.js";
 import {
@@ -15,6 +15,7 @@ import { Toast } from "../../../../../../../shared/modules/toast";
 import { getStatusBadgeMap, SalesChannelSubscriptionResult } from "../configs";
 import apolloClient from "../../../../../../../../apollo-client";
 import {Icon} from "../../../../../../../shared/components/atoms/icon";
+import { getProgressBarUiForStatus } from "../../../../../../../shared/utils/constants";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const { t } = useI18n();
@@ -40,6 +41,8 @@ const isRetryEnabled = (importItem: any): boolean => {
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   return ['success', 'failed'].includes(importItem.status) && createdDate >= oneWeekAgo;
 };
+
+const getProgressUi = (status: string) => getProgressBarUiForStatus(status);
 
 const retryImport = async (importId: string) => {
   try {
@@ -92,7 +95,12 @@ const retryImport = async (importId: string) => {
                   <Badge :color="statusBadgeMap[importItem.status]?.color" :text="statusBadgeMap[importItem.status]?.text" />
                 </td>
                 <td class="p-2">
-                  <AssignProgressBar :progress="importItem.percentage" :is-error="importItem.status === 'failed'" />
+                  <ProgressBar
+                    :progress="importItem.percentage"
+                    :label="t(getProgressUi(importItem.status).labelKey)"
+                    :label-color="getProgressUi(importItem.status).labelColor"
+                    :bar-color="getProgressUi(importItem.status).barColor"
+                  />
                 </td>
                 <td class="p-2 text-right">
                   <Button :disabled="!isRetryEnabled(importItem)" @click="retryImport(importItem.id)">

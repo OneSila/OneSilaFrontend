@@ -616,6 +616,7 @@ export const salesChannelViewAssignsQuery = gql`
           remoteProduct {
             id
             hasErrors
+            status
           }
           salesChannelView {
             id

@@ -22,6 +22,7 @@ import {Toast} from "../../../../shared/modules/toast";
 import { createPropertyMutation, checkPropertyForDuplicatesMutation } from "../../../../shared/api/mutations/properties.js";
 import { DuplicateModal } from "../../../../shared/components/molecules/duplicate-modal";
 import {processGraphQLErrors} from "../../../../shared/utils";
+import { extractPrefixedQueryParams } from '../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -181,6 +182,8 @@ const createProperty = async () => {
       if (amazonCreateValue) {
         query.amazonCreateValue = amazonCreateValue;
       }
+
+      Object.assign(query, extractPrefixedQueryParams(route.query, 'next__'));
 
       router.push({
         name: remoteRuleRoute || 'integrations.remoteProperties.edit',

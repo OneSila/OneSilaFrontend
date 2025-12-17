@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import RemotePropertySelectValues from '../remote-property-select-values/RemotePropertySelectValues.vue';
 import BulkRemotePropertySelectValueAssigner from '../remote-property-select-values/BulkRemotePropertySelectValueAssigner.vue';
 import { amazonPropertySelectValuesSearchConfigConstructor, amazonPropertySelectValuesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
-import { bulkUpdateAmazonPropertySelectValueLocalInstanceMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
+import { bulkUpdateAmazonPropertySelectValueLocalInstanceMutation, mapAmazonPerfectMatchSelectValuesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -30,6 +30,7 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
     :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } } }"
     :first-unmapped-query-variables="{ order: { marketplace: { isDefault: 'DESC' } } }"
     :build-start-mapping-route="buildStartMappingRoute"
+    :auto-map-mutation="mapAmazonPerfectMatchSelectValuesMutation"
     @pull-data="emit('pull-data')"
   >
     <template #bulkActions="{ selectedEntities, query, clearSelection }">

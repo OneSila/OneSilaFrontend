@@ -84,6 +84,12 @@ export const routes = [
     meta: { title: 'integrations.imports.show.title' },
     component: () => import('./integrations/integrations-show/containers/imports/containers/import-show/ImportShowController.vue'),
   },
+  {
+    path: '/integrations/:type/amazon-issues/:issueId',
+    name: 'integrations.amazonProductIssues.show',
+    meta: { title: 'integrations.show.amazonIssues.show.title' },
+    component: () => import('./integrations/integrations-show/containers/issues/containers/AmazonProductIssueShowController.vue'),
+  },
   // temporary commented since we no longer to oAuth
   // {
   //   path: '/integrations/shopify/installed',

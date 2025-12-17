@@ -25,9 +25,12 @@ interface AmazonCardData {
   hostname: string;
   salesChannelId: string;
   properties: number;
+  propertiesUsedInProducts: number;
   productTypes: number;
   localProductTypes: number;
   selectValues: number;
+  selectValuesUsedInProducts: number;
+  predefinedSelectValues: number;
   unitConfigurators: number;
   productsWithIssues: number;
 }
@@ -44,12 +47,19 @@ const makeQuery = (options: any) =>
     .then(({ data }) => data)
     .catch(() => null);
 
-  const [propRes, typeRes, localTypeRes, valueRes, unitRes, issuesRes] = await Promise.all([
+  const [propRes, propUsedRes, typeRes, localTypeRes, valueRes, valueUsedRes, predefinedValueRes, unitRes, issuesRes] = await Promise.all([
     makeQuery({
       query: amazonPropertiesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
+      },
+    }),
+    makeQuery({
+      query: amazonPropertiesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false, usedInProducts: true },
       },
     }),
     makeQuery({
@@ -74,6 +84,24 @@ const makeQuery = (options: any) =>
       },
     }),
     makeQuery({
+      query: amazonPropertySelectValuesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false, usedInProducts: true },
+      },
+    }),
+    makeQuery({
+      query: amazonPropertySelectValuesQuery,
+      variables: {
+        first: 1,
+        filter: {
+          salesChannel: { id: { exact: salesChannelId } },
+          mappedLocally: false,
+          amazonProperty: { allowsUnmappedValues: { exact: false } },
+        },
+      },
+    }),
+    makeQuery({
       query: amazonDefaultUnitConfiguratorsQuery,
       variables: {
         first: 1,
@@ -90,9 +118,12 @@ const makeQuery = (options: any) =>
 
   return {
     properties: propRes?.amazonProperties?.totalCount || 0,
+    propertiesUsedInProducts: propUsedRes?.amazonProperties?.totalCount || 0,
     productTypes: typeRes?.amazonProductTypes?.totalCount || 0,
     localProductTypes: localTypeRes?.amazonProductTypes?.totalCount || 0,
     selectValues: valueRes?.amazonPropertySelectValues?.totalCount || 0,
+    selectValuesUsedInProducts: valueUsedRes?.amazonPropertySelectValues?.totalCount || 0,
+    predefinedSelectValues: predefinedValueRes?.amazonPropertySelectValues?.totalCount || 0,
     unitConfigurators: unitRes?.amazonDefaultUnitConfigurators?.totalCount || 0,
     productsWithIssues: issuesRes?.products?.totalCount || 0,
   };
@@ -215,20 +246,20 @@ onMounted(fetchAmazonIntegrations);
           :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
         <DashboardCard
-          :counter="integration.properties"
-          :title="t('dashboard.cards.amazon.unmappedProperties.title')"
-          :description="t('dashboard.cards.amazon.unmappedProperties.description')"
+          :counter="integration.propertiesUsedInProducts"
+          :title="t('dashboard.cards.amazon.unmappedPropertiesUsedInProducts.title')"
+          :description="t('dashboard.cards.amazon.unmappedPropertiesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all', usedInProducts: true } }"
         />
         <DashboardCard
-          :counter="integration.selectValues"
-          :title="t('dashboard.cards.amazon.unmappedSelectValues.title')"
-          :description="t('dashboard.cards.amazon.unmappedSelectValues.description')"
+          :counter="integration.selectValuesUsedInProducts"
+          :title="t('dashboard.cards.amazon.unmappedSelectValuesUsedInProducts.title')"
+          :description="t('dashboard.cards.amazon.unmappedSelectValuesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all', usedInProducts: true } }"
         />
         <DashboardCard
           :counter="integration.unitConfigurators"
@@ -245,6 +276,30 @@ onMounted(fetchAmazonIntegrations);
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'products.products.list', query: { amazonProductsWithIssuesForSalesChannel: integration.salesChannelId, active: true } }"
+        />
+        <DashboardCard
+          :counter="integration.predefinedSelectValues"
+          :title="t('dashboard.cards.amazon.unmappedPredefinedSelectValues.title')"
+          :description="t('dashboard.cards.amazon.unmappedPredefinedSelectValues.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="orange"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all', amazonProperty__allowsUnmappedValues: false } }"
+        />
+        <DashboardCard
+          :counter="integration.properties"
+          :title="t('dashboard.cards.amazon.unmappedProperties.title')"
+          :description="t('dashboard.cards.amazon.unmappedProperties.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="yellow"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.selectValues"
+          :title="t('dashboard.cards.amazon.unmappedSelectValues.title')"
+          :description="t('dashboard.cards.amazon.unmappedSelectValues.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="yellow"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'amazon', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, mappedRemotely: 'all' } }"
         />
       </div>
     </Card>

@@ -11,10 +11,24 @@
       "addInventory": "Voorraad Toevoegen"
     },
     "cards": {
+      "amazon": {
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Amazon properties used in products that need mapping."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Amazon property values used in products that need mapping in order to be imported into OneSila."
+        }
+      },
       "ebay": {
         "title": "",
         "description": "",
         "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPropertiesUsedInProducts": {
           "title": "",
           "description": ""
         },
@@ -27,6 +41,14 @@
           "description": ""
         },
         "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValuesUsedInProducts": {
           "title": "",
           "description": ""
         },
@@ -42,6 +64,10 @@
           "title": "",
           "description": ""
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "",
+          "description": ""
+        },
         "unmappedProductTypes": {
           "title": "",
           "description": ""
@@ -51,6 +77,14 @@
           "description": ""
         },
         "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValuesUsedInProducts": {
           "title": "",
           "description": ""
         },
@@ -2257,7 +2291,8 @@
         "addToFilters": "Toevoegen aan filters",
         "isProductType": "Product Type",
         "internalName": "Interne Naam",
-        "valueValidator": "Waarde Validator"
+        "valueValidator": "Waarde Validator",
+        "usedInProducts": ""
       },
       "placeholders": {
         "internalName": "Vul Interne naam in",
@@ -2304,7 +2339,8 @@
         "title": "Waarde"
       },
       "labels": {
-        "value": "Waarde"
+        "value": "Waarde",
+        "usedInProducts": ""
       },
       "placeholders": {
         "value": "Voeg Waarde toe"
@@ -2407,6 +2443,85 @@
   },
   "integrations": {
     "show": {
+      "tabs": {
+        "issues": ""
+      },
+      "amazonIssues": {
+        "show": {
+          "title": "",
+          "breadcrumb": "",
+          "amazonDocsPrefix": "",
+          "amazonDocsLink": "",
+          "fields": {
+            "code": "",
+            "message": "",
+            "lastFetchedAt": "",
+            "severity": "",
+            "categories": "",
+            "enforcementActions": "",
+            "enforcementExemptionStatus": "",
+            "enforcementExemptionExpiryDate": "",
+            "enforcementAttributeNames": "",
+            "isSuppressed": "",
+            "isValidationIssue": "",
+            "rawData": ""
+          }
+        },
+        "columns": {
+          "code": "",
+          "product": "",
+          "marketplace": "",
+          "lastFetchedAt": "",
+          "severity": "",
+          "suppressReasons": "",
+          "isValidationIssue": "",
+          "isSuppressed": ""
+        },
+        "filters": {
+          "isValidationIssue": "",
+          "isSuppressed": "",
+          "categories": "",
+          "severity": "",
+          "suppressReasons": "",
+          "enforcementActions": "",
+          "enforcementExemptionStatus": "",
+          "enforcementExemptionExpiryDate": ""
+        },
+        "severity": {
+          "error": "",
+          "warning": ""
+        },
+        "lastFetchedAt": {
+          "hover": "",
+          "badges": {
+            "unknown": "",
+            "lte2w": "",
+            "between2w8w": "",
+            "between8w6m": "",
+            "gte6m": ""
+          }
+        },
+        "categories": {
+          "MISSING_ATTRIBUTE": "",
+          "INVALID_ATTRIBUTE": "",
+          "INVALID_IMAGE": "",
+          "MISSING_IMAGE": "",
+          "QUALIFICATION_REQUIRED": "",
+          "INVALID_PRICE": "",
+          "DUPLICATE": ""
+        },
+        "enforcementActions": {
+          "CATALOG_ITEM_REMOVED": "",
+          "SEARCH_SUPPRESSED": "",
+          "LISTING_SUPPRESSED": "",
+          "ATTRIBUTE_SUPPRESSED": ""
+        },
+        "enforcementExemptionStatus": {
+          "EXEMPT": "",
+          "EXEMPT_UNTIL_EXPIRY_DATE": "",
+          "NOT_EXEMPT": ""
+        }
+      },
       "sections": {
         "throttling": "",
         "syncPreferences": "",
@@ -2664,6 +2779,11 @@
         "labels": {
           "store": "Winkel",
           "excludeStores": "Winkels uitsluiten"
+        },
+        "statuses": {
+          "partiallyListed": "",
+          "pendingApproval": "",
+          "approvalRejected": ""
         }
       },
       "productRules": {
@@ -2733,6 +2853,8 @@
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
         "startMapping": "",
+        "autoMap": "",
+        "autoMapHelp": "",
         "saveAndMapNext": "",
         "allMappedSuccess": "",
         "importMapping": "",
@@ -2740,6 +2862,7 @@
         "importMappingSelectLabel": "",
         "importMappingPlaceholder": "",
         "importSuccess": "",
+        "autoMapStarted": "",
         "importNoSources": "",
         "importFallbackLabel": ""
       },
@@ -2817,6 +2940,53 @@
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
       "webhook": "Webhook"
+    },
+    "show": {
+      "tabs": {
+        "issues": ""
+      },
+      "amazonIssues": {
+        "columns": {
+          "code": "",
+          "product": "",
+          "marketplace": "",
+          "severity": "",
+          "isValidationIssue": "",
+          "isSuppressed": ""
+        },
+        "filters": {
+          "isValidationIssue": "",
+          "isSuppressed": "",
+          "categories": "",
+          "enforcementActions": "",
+          "enforcementExemptionStatus": "",
+          "enforcementExemptionExpiryDate": ""
+        },
+        "severity": {
+          "error": "",
+          "warning": ""
+        },
+        "categories": {
+          "MISSING_ATTRIBUTE": "",
+          "INVALID_ATTRIBUTE": "",
+          "INVALID_IMAGE": "",
+          "MISSING_IMAGE": "",
+          "QUALIFICATION_REQUIRED": "",
+          "INVALID_PRICE": "",
+          "DUPLICATE": ""
+        },
+        "enforcementActions": {
+          "CATALOG_ITEM_REMOVED": "",
+          "SEARCH_SUPPRESSED": "",
+          "LISTING_SUPPRESSED": "",
+          "ATTRIBUTE_SUPPRESSED": ""
+        },
+        "enforcementExemptionStatus": {
+          "EXEMPT": "",
+          "EXEMPT_UNTIL_EXPIRY_DATE": "",
+          "NOT_EXEMPT": ""
+        }
+      }
     },
     "labels": {
       "fulfillmentPolicy": "Verzendbeleid",

@@ -62,6 +62,7 @@ export const ebayPropertiesSearchConfigConstructor = (t: Function, salesChannelI
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
     { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), addLookup: true, strict: true },
+    { type: FieldType.Boolean, name: 'usedInProducts', label: t('properties.properties.labels.usedInProducts'), strict: true },
     {
       type: FieldType.Choice,
       name: 'type',

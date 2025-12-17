@@ -261,6 +261,10 @@
           "title": "Unmapped Properties",
           "description": "Amazon properties that need mapping."
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Amazon properties used in products that need mapping."
+        },
         "unmappedProductTypes": {
           "title": "Unmapped Product Types",
           "description": "Amazon product types that need mapping."
@@ -272,6 +276,14 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Amazon property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "Amazon select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Amazon property values used in products that need mapping in order to be imported into OneSila."
         },
         "unmappedDefaultUnitConfigurators": {
           "title": "Default Unit Configurator",
@@ -289,6 +301,10 @@
           "title": "Unmapped Properties",
           "description": "eBay properties that need mapping."
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "eBay properties used in products that need mapping."
+        },
         "unmappedProductTypes": {
           "title": "Unmapped Product Types",
           "description": "eBay product types that need mapping."
@@ -300,6 +316,14 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "eBay property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "eBay select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "eBay property values used in products that need mapping in order to be imported into OneSila."
         },
         "unmappedInventoryFields": {
           "title": "Inventory Fields",
@@ -313,6 +337,10 @@
           "title": "Unmapped Properties",
           "description": "Shein properties that need mapping."
         },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Shein properties used in products that need mapping."
+        },
         "unmappedProductTypes": {
           "title": "Unmapped Product Types",
           "description": "Shein product types that need mapping."
@@ -324,6 +352,14 @@
         "unmappedSelectValues": {
           "title": "Unmapped Select Values",
           "description": "Shein property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "Shein select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Shein property values used in products that need mapping in order to be imported into OneSila."
         },
         "unmappedInventoryFields": {
           "title": "Internal Properties",
@@ -2848,10 +2884,87 @@
     "show": {
       "title": "Integration",
       "tabs": {
-        "reports": "Reports"
+        "reports": "Reports",
+        "issues": "Issues"
       },
       "amazon": {
         "title": "Amazon Integration"
+      },
+      "amazonIssues": {
+        "show": {
+          "title": "Amazon issue",
+          "breadcrumb": "Issue",
+          "amazonDocsPrefix": "Need help with Amazon issue codes?",
+          "amazonDocsLink": "Open Amazon docs",
+          "fields": {
+            "code": "Code",
+            "message": "Message",
+            "lastFetchedAt": "Last fetched",
+            "severity": "Severity",
+            "categories": "Categories",
+            "enforcementActions": "Enforcement actions",
+            "enforcementExemptionStatus": "Exemption status",
+            "enforcementExemptionExpiryDate": "Exemption expiry date",
+            "enforcementAttributeNames": "Enforcement attribute names",
+            "isSuppressed": "Suppressed",
+            "isValidationIssue": "Validation issue",
+            "rawData": "Raw data"
+          }
+        },
+        "columns": {
+          "code": "Code",
+          "product": "Product",
+          "marketplace": "Marketplace",
+          "lastFetchedAt": "Last fetched",
+          "severity": "Severity",
+          "suppressReasons": "Suppress reasons",
+          "isValidationIssue": "Validation",
+          "isSuppressed": "Suppressed"
+        },
+        "filters": {
+          "isValidationIssue": "Validation issue",
+          "isSuppressed": "Suppressed",
+          "categories": "Categories",
+          "severity": "Severity",
+          "suppressReasons": "Suppress reasons",
+          "enforcementActions": "Enforcement actions",
+          "enforcementExemptionStatus": "Exemption status",
+          "enforcementExemptionExpiryDate": "Exemption expiry date"
+        },
+        "severity": {
+          "error": "Error",
+          "warning": "Warning"
+        },
+        "lastFetchedAt": {
+          "hover": "Fetched at {date}",
+          "badges": {
+            "unknown": "Unknown",
+            "lte2w": "≤ 2 weeks",
+            "between2w8w": "2–8 weeks",
+            "between8w6m": "8 weeks–6 months",
+            "gte6m": "6 months+"
+          }
+        },
+        "categories": {
+          "MISSING_ATTRIBUTE": "Missing attribute",
+          "INVALID_ATTRIBUTE": "Invalid attribute",
+          "INVALID_IMAGE": "Invalid image",
+          "MISSING_IMAGE": "Missing image",
+          "QUALIFICATION_REQUIRED": "Qualification required",
+          "INVALID_PRICE": "Invalid price",
+          "DUPLICATE": "Duplicate"
+        },
+        "enforcementActions": {
+          "CATALOG_ITEM_REMOVED": "Catalog item removed",
+          "SEARCH_SUPPRESSED": "Search suppressed",
+          "LISTING_SUPPRESSED": "Listing suppressed",
+          "ATTRIBUTE_SUPPRESSED": "Attribute suppressed"
+        },
+        "enforcementExemptionStatus": {
+          "EXEMPT": "Exempt",
+          "EXEMPT_UNTIL_EXPIRY_DATE": "Exempt until expiry date",
+          "NOT_EXEMPT": "Not exempt"
+        }
       },
       "ebay": {
         "title": "Ebay Integration",
@@ -3190,6 +3303,11 @@
         "labels": {
           "store": "Store",
           "excludeStores": "Exclude Stores"
+        },
+        "statuses": {
+          "partiallyListed": "Partially listed",
+          "pendingApproval": "Pending approval",
+          "approvalRejected": "Approval rejected"
         }
       },
       "productRules": {
@@ -3302,6 +3420,8 @@
         "mappedRemotelyEbay": "Mapped on eBay",
         "mappedRemotelyShein": "Mapped on Shein",
         "startMapping": "Start Mapping",
+        "autoMap": "Auto Map",
+        "autoMapHelp": "Auto Map tries to match values for you. If a marketplace property is already mapped to a OneSila property, and a marketplace value has the exact same text as an existing OneSila value in that property, it will be mapped automatically. Example: marketplace “Color” → OneSila “Color”, marketplace value “Red” → OneSila value “Red”. Runs in the background, so you can keep working.",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values",
         "importMapping": "Import Mapping",
@@ -3309,6 +3429,7 @@
         "importMappingSelectLabel": "Source sales channel",
         "importMappingPlaceholder": "Select a {channelLabel} sales channel",
         "importSuccess": "Mapping import started.",
+        "autoMapStarted": "Auto mapping started.",
         "importNoSources": "Add another {channelLabel} sales channel to import mappings.",
         "importFallbackLabel": "Unnamed {channelLabel} channel"
       },

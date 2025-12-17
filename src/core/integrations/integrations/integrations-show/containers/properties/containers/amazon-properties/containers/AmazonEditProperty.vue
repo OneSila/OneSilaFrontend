@@ -15,6 +15,8 @@ import { amazonPropertiesQuery } from "../../../../../../../../../shared/api/que
 import { checkPropertyForDuplicatesMutation } from "../../../../../../../../../shared/api/mutations/properties.js";
 import debounce from 'lodash.debounce';
 import type { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { amazonPropertiesSearchConfigConstructor } from '../configs';
+import { buildFilterVariablesFromRouteQuery, extractPrefixedQueryParams } from '../../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -52,28 +54,47 @@ const recommendations = ref<{ id: string; name: string }[]>([]);
 const loadingRecommendations = ref(false);
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
-  const { data } = await apolloClient.query({
-    query: amazonPropertiesQuery,
-    variables: {
-      first: 2,
-      filter: {
-        salesChannel: { id: { exact: salesChannelId } },
-        mappedLocally: false,
+  const queryNext = async (filter: Record<string, any>) => {
+    const { data } = await apolloClient.query({
+      query: amazonPropertiesQuery,
+      variables: {
+        first: 2,
+        filter,
       },
-    },
-    fetchPolicy: 'network-only',
-  });
+      fetchPolicy: 'network-only',
+    });
 
-  const edges = data?.amazonProperties?.edges || [];
-  let nextId: string | null = null;
-  for (const edge of edges) {
-    if (edge.node.id !== amazonPropertyId.value) {
-      nextId = edge.node.id;
-      break;
+    const edges = data?.amazonProperties?.edges || [];
+    let nextId: string | null = null;
+    for (const edge of edges) {
+      if (edge.node.id !== amazonPropertyId.value) {
+        nextId = edge.node.id;
+        break;
+      }
     }
+    const last = edges.length === 1 && edges[0].node.id === amazonPropertyId.value;
+    return { nextId, last };
+  };
+
+  const nextFilters =
+    buildFilterVariablesFromRouteQuery(amazonPropertiesSearchConfigConstructor(t), route.query, {
+      prefix: 'next__',
+      excludeKeys: ['mappedLocally'],
+    }) || {};
+
+  const baseFilter = {
+    salesChannel: { id: { exact: salesChannelId } },
+    mappedLocally: false,
+    ...nextFilters,
+  };
+
+  const primary = await queryNext(baseFilter);
+  if (primary.nextId || primary.last || !('usedInProducts' in baseFilter)) {
+    return primary;
   }
-  const last = edges.length === 1 && edges[0].node.id === amazonPropertyId.value;
-  return { nextId, last };
+
+  const { usedInProducts, ...fallbackFilter } = baseFilter as any;
+  return queryNext(fallbackFilter);
 };
 
 onMounted(async () => {
@@ -219,6 +240,7 @@ const selectRecommendation = (id: string) => {
           type: formData.type,
           remoteWizard: isWizard ? '1' : '0',
           ...(amazonCreateValue ? { amazonCreateValue } : {}),
+          ...extractPrefixedQueryParams(route.query, 'next__'),
         } }"
       >
         <Button type="button" class="btn btn-info">

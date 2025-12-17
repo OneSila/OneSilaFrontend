@@ -24,9 +24,12 @@ interface EbayCardData {
   hostname: string;
   salesChannelId: string;
   properties: number;
+  propertiesUsedInProducts: number;
   productTypes: number;
   localProductTypes: number;
   selectValues: number;
+  selectValuesUsedInProducts: number;
+  predefinedSelectValues: number;
   inventoryFields: number;
 }
 
@@ -52,12 +55,19 @@ const fetchCounts = async (salesChannelId: string) => {
       .then(({ data }) => data)
       .catch(() => null);
 
-  const [propRes, typeRes, localTypeRes, valueRes, inventoryRes] = await Promise.all([
+  const [propRes, propUsedRes, typeRes, localTypeRes, valueRes, valueUsedRes, predefinedValueRes, inventoryRes] = await Promise.all([
     makeQuery({
       query: ebayPropertiesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
+      },
+    }),
+    makeQuery({
+      query: ebayPropertiesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false, usedInProducts: true },
       },
     }),
     makeQuery({
@@ -82,6 +92,24 @@ const fetchCounts = async (salesChannelId: string) => {
       },
     }),
     makeQuery({
+      query: ebayPropertySelectValuesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false, usedInProducts: true },
+      },
+    }),
+    makeQuery({
+      query: ebayPropertySelectValuesQuery,
+      variables: {
+        first: 1,
+        filter: {
+          salesChannel: { id: { exact: salesChannelId } },
+          mappedLocally: false,
+          ebayProperty: { allowsUnmappedValues: { exact: false } },
+        },
+      },
+    }),
+    makeQuery({
       query: ebayInternalPropertiesQuery,
       variables: {
         first: 1,
@@ -92,9 +120,12 @@ const fetchCounts = async (salesChannelId: string) => {
 
   return {
     properties: propRes?.ebayProperties?.totalCount || 0,
+    propertiesUsedInProducts: propUsedRes?.ebayProperties?.totalCount || 0,
     productTypes: typeRes?.ebayProductTypes?.totalCount || 0,
     localProductTypes: localTypeRes?.ebayProductTypes?.totalCount || 0,
     selectValues: valueRes?.ebayPropertySelectValues?.totalCount || 0,
+    selectValuesUsedInProducts: valueUsedRes?.ebayPropertySelectValues?.totalCount || 0,
+    predefinedSelectValues: predefinedValueRes?.ebayPropertySelectValues?.totalCount || 0,
     inventoryFields: inventoryRes?.ebayInternalProperties?.totalCount || 0,
   };
 };
@@ -205,20 +236,20 @@ onMounted(fetchEbayIntegrations);
           :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
         <DashboardCard
-          :counter="integration.properties"
-          :title="t('dashboard.cards.ebay.unmappedProperties.title')"
-          :description="t('dashboard.cards.ebay.unmappedProperties.description')"
+          :counter="integration.propertiesUsedInProducts"
+          :title="t('dashboard.cards.ebay.unmappedPropertiesUsedInProducts.title')"
+          :description="t('dashboard.cards.ebay.unmappedPropertiesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all', usedInProducts: true } }"
         />
         <DashboardCard
-          :counter="integration.selectValues"
-          :title="t('dashboard.cards.ebay.unmappedSelectValues.title')"
-          :description="t('dashboard.cards.ebay.unmappedSelectValues.description')"
+          :counter="integration.selectValuesUsedInProducts"
+          :title="t('dashboard.cards.ebay.unmappedSelectValuesUsedInProducts.title')"
+          :description="t('dashboard.cards.ebay.unmappedSelectValuesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, usedInProducts: true } }"
         />
         <DashboardCard
           :counter="integration.inventoryFields"
@@ -227,6 +258,30 @@ onMounted(fetchEbayIntegrations);
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'inventoryFields', mappedLocally: false, mappedRemotely: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.predefinedSelectValues"
+          :title="t('dashboard.cards.ebay.unmappedPredefinedSelectValues.title')"
+          :description="t('dashboard.cards.ebay.unmappedPredefinedSelectValues.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="orange"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, ebayProperty__allowsUnmappedValues: false } }"
+        />
+        <DashboardCard
+          :counter="integration.properties"
+          :title="t('dashboard.cards.ebay.unmappedProperties.title')"
+          :description="t('dashboard.cards.ebay.unmappedProperties.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="yellow"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.selectValues"
+          :title="t('dashboard.cards.ebay.unmappedSelectValues.title')"
+          :description="t('dashboard.cards.ebay.unmappedSelectValues.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="yellow"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'ebay', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false } }"
         />
       </div>
     </Card>

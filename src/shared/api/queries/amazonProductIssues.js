@@ -11,6 +11,8 @@ export const amazonProductIssuesQuery = gql`
           message
           severity
           isValidationIssue
+          isSuppressed
+          enforcementActions
           view {
             remoteId
             name
@@ -20,6 +22,88 @@ export const amazonProductIssuesQuery = gql`
           localInstance {
             id
           }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const amazonProductIssuesListingQuery = gql`
+  query AmazonProductIssuesListing(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonProductIssueOrder
+    $filter: AmazonProductIssueFilter
+  ) {
+    amazonProductIssues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          createdAt
+          code
+          severity
+          isValidationIssue
+          isSuppressed
+          enforcementActions
+          view {
+            apiRegionCode
+          }
+          remoteProduct {
+            localInstance {
+              id
+              name
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const amazonProductIssueShowQuery = gql`
+  query AmazonProductIssueShow($id: GlobalID!) {
+    amazonProductIssues(first: 1, filters: { id: { exact: $id } }) {
+      edges {
+        node {
+          id
+          createdAt
+          code
+          message
+          severity
+          categories
+          enforcementActions
+          enforcementExemptionStatus
+          enforcementExemptionExpiryDate
+          enforcementAttributeNames
+          isSuppressed
+          isValidationIssue
+          rawData
+          view {
+            apiRegionCode
+          }
+          remoteProduct {
+            localInstance {
+              id
+              name
+            }
           }
         }
       }

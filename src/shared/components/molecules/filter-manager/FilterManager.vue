@@ -36,18 +36,19 @@ if (props.searchConfig.orderKey) {
 props.searchConfig.filters?.forEach((filter: SearchFilter) => {
   keysToWatch.value.push(filter.name);
 
-  let l: string | null = 'exact';
+  let lookup: string | null = 'exact';
   if (filter.lookupType) {
-    if (filter.lookupType == 'none') {
-      l = null;
-    } else {
-      l = filter.lookupType;
-    }
+    lookup = filter.lookupType === 'none' ? null : filter.lookupType;
+  }
+
+  const shouldUseLookup = Boolean(filter.addLookup || filter.lookupType);
+  if (!shouldUseLookup) {
+    lookup = null;
   }
 
   filtersWithLookup.value[filter.name] = {
     keys: filter.lookupKeys || [],
-    lookup: filter.addLookup ? l : null,
+    lookup,
     isNot: filter.isNot || false,
   };
 });
@@ -62,6 +63,46 @@ const setPaginationVariables = (
   last.value = lastVal;
   before.value = beforeVal;
   after.value = afterVal;
+};
+
+const isPlainObject = (value: unknown): value is Record<string, any> => {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+};
+
+const mergeDeep = (target: Record<string, any>, source: Record<string, any>) => {
+  Object.keys(source).forEach((key) => {
+    const sourceValue = source[key];
+    const targetValue = target[key];
+
+    if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+      mergeDeep(targetValue, sourceValue);
+      return;
+    }
+
+    target[key] = sourceValue;
+  });
+};
+
+const buildNestedFilterObject = (
+  filterKey: string,
+  namePath: string[],
+  lookupKeys: string[],
+  lookup: string | null,
+  value: any,
+) => {
+  const path = [...namePath, ...lookupKeys];
+  const leafValue = lookup ? { [lookup]: value } : value;
+
+  if (path.length === 0) {
+    return { [filterKey]: leafValue };
+  }
+
+  let nested = leafValue as any;
+  for (let i = path.length - 1; i >= 0; i -= 1) {
+    nested = { [path[i]]: nested };
+  }
+
+  return { [filterKey]: nested };
 };
 
 watch(() => route.query, (newQuery) => {
@@ -87,37 +128,19 @@ watch(() => route.query, (newQuery) => {
       if (key in filtersWithLookup.value) {
         const { lookup, keys, isNot } = filtersWithLookup.value[key];
 
-        const buildObject = () => {
-          if (keys.length > 0) {
-            const nestedObject = {} as Record<string, any>;
-            let currentLevel = nestedObject;
-            keys.forEach((nestedKey: string, index: number, array: string[]) => {
-              if (index === array.length - 1) {
-                currentLevel[nestedKey] = lookup ? { [lookup]: value } : value;
-              } else {
-                currentLevel[nestedKey] = {};
-                currentLevel = currentLevel[nestedKey];
-              }
-            });
-            return nestedObject;
-          }
-          return lookup ? { [lookup]: value } : value;
-        };
-
-        const builtValue = buildObject();
+        const [filterKey, ...namePath] = key.split('__');
+        const builtValue = buildNestedFilterObject(filterKey, namePath, keys, lookup, value);
 
         if (isNot) {
           if (!updatedVariables['NOT']) {
             updatedVariables['NOT'] = {};
           }
-          if (typeof builtValue === 'object' && !Array.isArray(builtValue)) {
-            updatedVariables['NOT'] = { ...updatedVariables['NOT'], ...builtValue };
-          } else {
-            updatedVariables['NOT'][key] = builtValue;
-          }
-        } else {
-          updatedVariables[key] = builtValue;
+          mergeDeep(updatedVariables['NOT'], builtValue);
+          return;
         }
+
+        mergeDeep(updatedVariables, builtValue);
+        return;
       } else {
         // if there is no lockup used we will just add the value
         updatedVariables[key] = value;

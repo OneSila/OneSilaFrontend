@@ -24,9 +24,12 @@ interface SheinCardData {
   hostname: string;
   salesChannelId: string;
   properties: number;
+  propertiesUsedInProducts: number;
   productTypes: number;
   localProductTypes: number;
   selectValues: number;
+  selectValuesUsedInProducts: number;
+  predefinedSelectValues: number;
   inventoryFields: number;
 }
 
@@ -52,12 +55,19 @@ const fetchCounts = async (salesChannelId: string) => {
       .then(({ data }) => data)
       .catch(() => null);
 
-  const [propRes, typeRes, localTypeRes, valueRes, inventoryRes] = await Promise.all([
+  const [propRes, propUsedRes, typeRes, localTypeRes, valueRes, valueUsedRes, predefinedValueRes, inventoryRes] = await Promise.all([
     makeQuery({
       query: sheinPropertiesQuery,
       variables: {
         first: 1,
         filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false },
+      },
+    }),
+    makeQuery({
+      query: sheinPropertiesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false, usedInProducts: true },
       },
     }),
     makeQuery({
@@ -82,6 +92,23 @@ const fetchCounts = async (salesChannelId: string) => {
       },
     }),
     makeQuery({
+      query: sheinPropertySelectValuesQuery,
+      variables: {
+        first: 1,
+        filter: { salesChannel: { id: { exact: salesChannelId } }, mappedLocally: false, usedInProducts: true },
+      },
+    }),
+    makeQuery({
+      query: sheinPropertySelectValuesQuery,
+      variables: {
+        first: 1,
+        filter: {
+          salesChannel: { id: { exact: salesChannelId } },
+          mappedLocally: false,
+        },
+      },
+    }),
+    makeQuery({
       query: sheinInternalPropertiesQuery,
       variables: {
         first: 1,
@@ -92,9 +119,12 @@ const fetchCounts = async (salesChannelId: string) => {
 
   return {
     properties: propRes?.sheinProperties?.totalCount || 0,
+    propertiesUsedInProducts: propUsedRes?.sheinProperties?.totalCount || 0,
     productTypes: typeRes?.sheinProductTypes?.totalCount || 0,
     localProductTypes: localTypeRes?.sheinProductTypes?.totalCount || 0,
     selectValues: valueRes?.sheinPropertySelectValues?.totalCount || 0,
+    selectValuesUsedInProducts: valueUsedRes?.sheinPropertySelectValues?.totalCount || 0,
+    predefinedSelectValues: predefinedValueRes?.sheinPropertySelectValues?.totalCount || 0,
     inventoryFields: inventoryRes?.sheinInternalProperties?.totalCount || 0,
   };
 };
@@ -205,20 +235,20 @@ onMounted(fetchSheinIntegrations);
           :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'productRules', mappedRemotely: false, mappedLocally: 'all' } }"
         />
         <DashboardCard
-          :counter="integration.properties"
-          :title="t('dashboard.cards.shein.unmappedProperties.title')"
-          :description="t('dashboard.cards.shein.unmappedProperties.description')"
+          :counter="integration.propertiesUsedInProducts"
+          :title="t('dashboard.cards.shein.unmappedPropertiesUsedInProducts.title')"
+          :description="t('dashboard.cards.shein.unmappedPropertiesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', allowsUnmappedValues: 'all' } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all', usedInProducts: true } }"
         />
         <DashboardCard
-          :counter="integration.selectValues"
-          :title="t('dashboard.cards.shein.unmappedSelectValues.title')"
-          :description="t('dashboard.cards.shein.unmappedSelectValues.description')"
+          :counter="integration.selectValuesUsedInProducts"
+          :title="t('dashboard.cards.shein.unmappedSelectValuesUsedInProducts.title')"
+          :description="t('dashboard.cards.shein.unmappedSelectValuesUsedInProducts.description')"
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
-          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false } }"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false, usedInProducts: true } }"
         />
         <DashboardCard
           :counter="integration.inventoryFields"
@@ -227,6 +257,22 @@ onMounted(fetchSheinIntegrations);
           :hide-on-complete="!isShowingCompleted(integration.integrationId)"
           color="red"
           :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'inventoryFields', mappedLocally: false, mappedRemotely: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.properties"
+          :title="t('dashboard.cards.shein.unmappedProperties.title')"
+          :description="t('dashboard.cards.shein.unmappedProperties.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="yellow"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'properties', mappedLocally: false, mappedRemotely: 'all' } }"
+        />
+        <DashboardCard
+          :counter="integration.selectValues"
+          :title="t('dashboard.cards.shein.unmappedSelectValues.title')"
+          :description="t('dashboard.cards.shein.unmappedSelectValues.description')"
+          :hide-on-complete="!isShowingCompleted(integration.integrationId)"
+          color="yellow"
+          :url="{ name: 'integrations.integrations.show', params: { type: 'shein', id: integration.integrationId }, query: { tab: 'propertySelectValues', mappedLocally: false } }"
         />
       </div>
     </Card>

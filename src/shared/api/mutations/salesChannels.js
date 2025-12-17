@@ -798,6 +798,24 @@ export const bulkUpdateEbayPropertySelectValueLocalInstanceMutation = gql`
   }
 `;
 
+export const mapAmazonPerfectMatchSelectValuesMutation = gql`
+  mutation mapAmazonPerfectMatchSelectValues($salesChannel: AmazonSalesChannelPartialInput!) {
+    mapAmazonPerfectMatchSelectValues(salesChannel: $salesChannel)
+  }
+`;
+
+export const mapEbayPerfectMatchSelectValuesMutation = gql`
+  mutation mapEbayPerfectMatchSelectValues($salesChannel: EbaySalesChannelPartialInput!) {
+    mapEbayPerfectMatchSelectValues(salesChannel: $salesChannel)
+  }
+`;
+
+export const mapSheinPerfectMatchSelectValuesMutation = gql`
+  mutation mapSheinPerfectMatchSelectValues($salesChannel: SheinSalesChannelPartialInput!) {
+    mapSheinPerfectMatchSelectValues(salesChannel: $salesChannel)
+  }
+`;
+
 // Amazon Product Type Mutations
 
 export const updateAmazonProductTypeMutation = gql`

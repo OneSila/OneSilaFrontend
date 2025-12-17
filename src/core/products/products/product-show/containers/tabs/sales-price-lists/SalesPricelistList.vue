@@ -39,7 +39,7 @@ const handleItemAdded = () => {
       >
         <template #additionalButtons="{ item }">
           <Link
-            :path="{ name: 'sales.priceLists.items.edit', params: { priceListId: item.node.salespricelist.id, id: item.node.id } }"
+            :path="{ name: 'sales.priceLists.items.edit', params: { priceListId: item.node.salespricelist.id, id: item.node.id }, query: { productId: product.id } }"
           >
             <Button class="text-indigo-600 hover:text-indigo-900">
               {{ t('shared.button.edit') }}

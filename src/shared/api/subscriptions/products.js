@@ -79,6 +79,7 @@ export const productSubscription = gql`
           remoteProduct {
             id
             hasErrors
+            status
           }
         }
     }

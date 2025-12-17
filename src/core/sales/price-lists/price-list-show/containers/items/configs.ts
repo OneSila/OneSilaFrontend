@@ -14,8 +14,13 @@ export const baseFormConfigConstructor = (
   salesPriceListId: string,
   productsId: string[] = [],
   autoUpdatePrice: boolean = false,
-  currency: string | undefined = undefined
+  currency: string | undefined = undefined,
+  productIdFromUrl: string | undefined = undefined
 ): FormConfig => {
+  const submitUrl = productIdFromUrl
+    ? { name: 'products.products.show', params: { id: productIdFromUrl }, query: { tab: 'priceLists' } }
+    : { name: 'sales.priceLists.show', params: { id: salesPriceListId }, query: { tab: 'items' } };
+
   let fields: FormField[] = [
     {
       type: FieldType.Hidden,
@@ -37,11 +42,12 @@ export const baseFormConfigConstructor = (
             }
           }
         : undefined,
+      default: productIdFromUrl && type === FormType.CREATE ? productIdFromUrl : undefined,
       isEdge: true,
       multiple: false,
       filterable: true,
       formMapIdentifier: 'id',
-      disabled: type == FormType.EDIT
+      disabled: type === FormType.EDIT || (type === FormType.CREATE && !!productIdFromUrl)
     },
     {
       type: FieldType.Text,
@@ -88,7 +94,7 @@ export const baseFormConfigConstructor = (
     mutation: mutation,
     mutationKey: mutationKey,
     deleteMutation: deleteSalesPriceListItemMutation,
-    submitUrl: { name: 'sales.priceLists.show', params: { id: salesPriceListId }, query: { tab: 'items' } },
+    submitUrl,
     fields: fields,
     helpSections: [
       {
@@ -158,4 +164,3 @@ export const listingConfigConstructor = (t: Function, salesPriceListId: string):
 
 export const listingQueryKey = 'salesPriceListItems';
 export const listingQuery = salesPriceListItemsQuery;
-

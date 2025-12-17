@@ -3,12 +3,14 @@ import { useI18n } from 'vue-i18n';
 import { FieldType } from '../../../../../../../../shared/utils/constants';
 import RemoteSelectValueEditProperty from '../remote-property-select-values/components/RemoteSelectValueEditProperty.vue';
 import type { RemoteSelectValueEditPropertyConfig } from '../remote-property-select-values/types';
-import { ebayPropertySelectValueEditFormConfigConstructor, listingQuery } from './configs';
+import { ebayPropertySelectValueEditFormConfigConstructor, ebayPropertySelectValuesSearchConfigConstructor, listingQuery } from './configs';
 import { getEbayPropertySelectValueQuery, ebayPropertiesQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
 import { propertySelectValuesQuery } from '../../../../../../../../shared/api/queries/properties.js';
 import { checkPropertySelectValueForDuplicatesMutation } from '../../../../../../../../shared/api/mutations/properties.js';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
+import { extractPrefixedQueryParams } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
+import { buildFilterVariablesFromRouteQuery } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 const { t } = useI18n();
 
@@ -146,6 +148,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
             remoteSelectValueId: `${ctx.valueId}__${ctx.integrationId}__${ctx.salesChannelId}__${ctx.isWizard ? '1' : '0'}`,
             remoteSelectValueType: ctx.type,
             value: ctx.form.translatedValue || ctx.form.localizedValue,
+            ...extractPrefixedQueryParams(ctx.routeQuery || {}, 'next__'),
           },
         }
       : null,
@@ -156,6 +159,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
       filter: {
         salesChannel: { id: { exact: ctx.salesChannelId } },
         mappedLocally: false,
+        ...(buildFilterVariablesFromRouteQuery(ebayPropertySelectValuesSearchConfigConstructor(t, ctx.salesChannelId), ctx.routeQuery, { prefix: 'next__', excludeKeys: ['mappedLocally'] }) || {}),
       },
     }),
     extractEdges: data => data?.ebayPropertySelectValues?.edges || [],

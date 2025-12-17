@@ -3,12 +3,15 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
+import { Badge } from '../../../../../../../../shared/components/atoms/badge';
 
 interface AmazonProductIssue {
   id: string;
   message?: string | null;
   severity?: string | null;
   createdAt?: string | null;
+  enforcementActions?: string[] | null;
+  isSuppressed?: boolean | null;
 }
 
 interface VariationValidationIssues {
@@ -67,6 +70,12 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
   variation.localInstance?.sku ||
   variation.localInstance?.name ||
   t('products.products.amazon.unnamedVariation');
+
+const getEnforcementActionLabel = (value: string) => {
+  const key = `integrations.show.amazonIssues.enforcementActions.${value}`;
+  const translated = t(key);
+  return translated === key ? value : translated;
+};
 </script>
 
 <template>
@@ -80,18 +89,42 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
             <tr>
               <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
               <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+              <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                {{ t('integrations.show.amazonIssues.columns.suppressReasons') }}
+              </th>
+              <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                {{ t('integrations.show.amazonIssues.columns.isSuppressed') }}
+              </th>
               <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr v-for="issue in validationIssues" :key="issue.id">
-              <td class="break-words max-w-xs">{{ issue.message }}</td>
+              <td class="break-words max-w-xs">
+                <Link
+                  v-if="issue.id"
+                  :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                >
+                  {{ issue.message }}
+                </Link>
+                <span v-else>{{ issue.message }}</span>
+              </td>
               <td
                 class="capitalize flex items-center gap-1"
                 :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
               >
                 <Icon :name="issue.severity === 'ERROR' ? 'circle-xmark' : 'circle-exclamation'" class="w-4 h-4" />
                 {{ issue.severity }}
+              </td>
+              <td class="px-3 py-2 text-sm">
+                <div v-if="issue.enforcementActions?.length" class="flex flex-wrap gap-1">
+                  <Badge v-for="action in issue.enforcementActions" :key="action" :text="getEnforcementActionLabel(action)" color="purple" />
+                </div>
+                <span v-else>-</span>
+              </td>
+              <td class="px-3 py-2 text-sm">
+                <Icon v-if="issue.isSuppressed" name="check-circle" class="ml-2 text-green-500" />
+                <Icon v-else name="times-circle" class="ml-2 text-red-500" />
               </td>
               <td>{{ formatDate(issue.createdAt) }}</td>
             </tr>
@@ -116,7 +149,7 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
               </span>
               <Link
                 v-if="variation.localInstance?.id"
-                class="flex items-center gap-1 text-xs text-primary hover:underline"
+                class="flex items-center gap-1 text-xs"
                 :path="{ name: 'products.products.show', params: { id: variation.localInstance.id } }"
                 target="_blank"
               >
@@ -130,18 +163,42 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
                   <tr>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                      {{ t('integrations.show.amazonIssues.columns.suppressReasons') }}
+                    </th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                      {{ t('integrations.show.amazonIssues.columns.isSuppressed') }}
+                    </th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="issue in variation.issues" :key="issue.id">
-                    <td class="break-words max-w-xs">{{ issue.message }}</td>
+                    <td class="break-words max-w-xs">
+                      <Link
+                        v-if="issue.id"
+                        :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                      >
+                        {{ issue.message }}
+                      </Link>
+                      <span v-else>{{ issue.message }}</span>
+                    </td>
                     <td
                       class="capitalize flex items-center gap-1"
                       :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
                     >
                       <Icon :name="issue.severity === 'ERROR' ? 'circle-xmark' : 'circle-exclamation'" class="w-4 h-4" />
                       {{ issue.severity }}
+                    </td>
+                    <td class="px-3 py-2 text-sm">
+                      <div v-if="issue.enforcementActions?.length" class="flex flex-wrap gap-1">
+                        <Badge v-for="action in issue.enforcementActions" :key="action" :text="getEnforcementActionLabel(action)" color="purple" />
+                      </div>
+                      <span v-else>-</span>
+                    </td>
+                    <td class="px-3 py-2 text-sm">
+                      <Icon v-if="issue.isSuppressed" name="check-circle" class="ml-2 text-green-500" />
+                      <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                     </td>
                     <td>{{ formatDate(issue.createdAt) }}</td>
                   </tr>
@@ -163,7 +220,7 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
               </span>
               <Link
                 v-if="variation.localInstance?.id"
-                class="flex items-center gap-1 text-xs text-primary hover:underline"
+                class="flex items-center gap-1 text-xs"
                 :path="{ name: 'products.products.show', params: { id: variation.localInstance.id } }"
                 target="_blank"
               >
@@ -177,18 +234,42 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
                   <tr>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                      {{ t('integrations.show.amazonIssues.columns.suppressReasons') }}
+                    </th>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                      {{ t('integrations.show.amazonIssues.columns.isSuppressed') }}
+                    </th>
                     <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="issue in variation.issues" :key="issue.id">
-                    <td class="break-words max-w-xs">{{ issue.message }}</td>
+                    <td class="break-words max-w-xs">
+                      <Link
+                        v-if="issue.id"
+                        :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                      >
+                        {{ issue.message }}
+                      </Link>
+                      <span v-else>{{ issue.message }}</span>
+                    </td>
                     <td
                       class="capitalize flex items-center gap-1"
                       :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
                     >
                       <Icon :name="issue.severity === 'ERROR' ? 'circle-xmark' : 'circle-exclamation'" class="w-4 h-4" />
                       {{ issue.severity }}
+                    </td>
+                    <td class="px-3 py-2 text-sm">
+                      <div v-if="issue.enforcementActions?.length" class="flex flex-wrap gap-1">
+                        <Badge v-for="action in issue.enforcementActions" :key="action" :text="getEnforcementActionLabel(action)" color="purple" />
+                      </div>
+                      <span v-else>-</span>
+                    </td>
+                    <td class="px-3 py-2 text-sm">
+                      <Icon v-if="issue.isSuppressed" name="check-circle" class="ml-2 text-green-500" />
+                      <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                     </td>
                     <td>{{ formatDate(issue.createdAt) }}</td>
                   </tr>
@@ -211,18 +292,42 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
             <tr>
               <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
               <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.severity') }}</th>
+              <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                {{ t('integrations.show.amazonIssues.columns.suppressReasons') }}
+              </th>
+              <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                {{ t('integrations.show.amazonIssues.columns.isSuppressed') }}
+              </th>
               <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.fetchedAt') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr v-for="issue in otherIssues" :key="issue.id">
-              <td class="break-words max-w-xs">{{ issue.message }}</td>
+              <td class="break-words max-w-xs">
+                <Link
+                  v-if="issue.id"
+                  :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                >
+                  {{ issue.message }}
+                </Link>
+                <span v-else>{{ issue.message }}</span>
+              </td>
               <td
                 class="capitalize flex items-center gap-1"
                 :class="{ 'text-red-600': issue.severity === 'ERROR', 'text-yellow-600': issue.severity === 'WARNING' }"
               >
                 <Icon :name="issue.severity === 'ERROR' ? 'circle-xmark' : 'circle-exclamation'" class="w-4 h-4" />
                 {{ issue.severity }}
+              </td>
+              <td class="px-3 py-2 text-sm">
+                <div v-if="issue.enforcementActions?.length" class="flex flex-wrap gap-1">
+                  <Badge v-for="action in issue.enforcementActions" :key="action" :text="getEnforcementActionLabel(action)" color="purple" />
+                </div>
+                <span v-else>-</span>
+              </td>
+              <td class="px-3 py-2 text-sm">
+                <Icon v-if="issue.isSuppressed" name="check-circle" class="ml-2 text-green-500" />
+                <Icon v-else name="times-circle" class="ml-2 text-red-500" />
               </td>
               <td>{{ formatDate(issue.createdAt) }}</td>
             </tr>
@@ -235,4 +340,3 @@ const getVariationIdentifier = (variation: VariationValidationIssues) =>
     </div>
   </div>
 </template>
-

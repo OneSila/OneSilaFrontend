@@ -15,6 +15,9 @@ import { getSalesPriceListQuery, salesPriceListItemsProductIdsQuery } from "../.
 const route = useRoute();
 const { t } = useI18n();
 const priceListId = ref(route.params.priceListId);
+const productIdFromUrl = ref(
+  typeof route.query.productId === 'string' ? route.query.productId : undefined
+);
 const productIds = ref([]);
 const formConfig: Ref<any | null> = ref(null);
 
@@ -45,9 +48,14 @@ onMounted(async () => {
         priceListId.value.toString(),
         productIds.value,
         autoUpdatePrices,
-        data.salesPriceList.currency.symbol
+        data.salesPriceList.currency.symbol,
+        productIdFromUrl.value
       ),
-      submitAndContinueUrl: { name: 'sales.priceLists.items.edit', params: { priceListId: priceListId.value } }
+      submitAndContinueUrl: {
+        name: 'sales.priceLists.items.edit',
+        params: { priceListId: priceListId.value },
+        query: productIdFromUrl.value ? { productId: productIdFromUrl.value } : undefined
+      }
     };
   }
 });
