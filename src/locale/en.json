@@ -546,6 +546,8 @@
       "actions": "Actions",
       "selected": "Selected",
       "selectedOfTotal": "{selected} selected of {total}",
+      "total": "Total",
+      "totalOfTotal": "Total: {total}",
       "shortDescription": "Short description",
       "quantity": "Quantity",
       "uploading": "Uploading",

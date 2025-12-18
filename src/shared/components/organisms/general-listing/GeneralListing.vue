@@ -197,6 +197,12 @@ const allSelected = (items: any[]): boolean => {
 };
 
 const getSelectedLabel = (selectedCount: number, totalCount?: number | null) => {
+  if (!haveBulk.value) {
+    if (typeof totalCount === 'number') {
+      return t('shared.labels.totalOfTotal', { total: totalCount });
+    }
+    return t('shared.labels.total');
+  }
   if (typeof totalCount === 'number') {
     return t('shared.labels.selectedOfTotal', { selected: selectedCount, total: totalCount });
   }
@@ -647,7 +653,7 @@ watch(
               @remove="removeFilter"
               @create="() => openCreateDashboardCardModal(buildQueryVariables(filterVariables, orderVariables, pagination))"
             />
-            <div v-if="props.config.addGridView" class="flex justify-end items-center my-1 mx-4 space-x-4">
+            <div class="flex justify-end items-center my-1 mx-4 space-x-4">
 
               <div class="flex items-center space-x-2">
                 <span class="text-sm font-semibold text-gray-900">
@@ -664,6 +670,7 @@ watch(
                 <Loader :loading="selectingAll" />
               </div>
 
+              <template v-if="props.config.addGridView" >
               <!-- Bulk action buttons (only if any items are selected) -->
               <div v-if="selectedEntities.length > 0 && viewType === 'grid' && haveBulk" class="flex items-center space-x-3">
                 <button v-if="config.addBulkEdit" type="button"
@@ -695,6 +702,8 @@ watch(
                   <Icon name="images" size="xl"/>
                 </button>
               </div>
+              </template>
+
             </div>
 
             <div v-if="viewType === 'table'">

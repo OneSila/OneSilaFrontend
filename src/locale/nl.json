@@ -293,6 +293,8 @@
       "inactive": "Inactive",
       "actions": "Acties",
       "selectedOfTotal": "{selected} selected of {total}",
+      "total": "",
+      "totalOfTotal": "",
       "shortDescription": "Korte Omschrijving",
       "quantity": "Hoeveelheid",
       "uploading": "Uploading",
