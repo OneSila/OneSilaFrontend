@@ -510,6 +510,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "forceUpdate": "Force Update",
       "import": "Import",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -1163,6 +1164,7 @@
         "websites": "Channels",
         "amazon": "Amazon",
         "ebay": "Ebay",
+        "shein": "Shein",
         "supplierProducts": "Supplier Products",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
@@ -1362,6 +1364,54 @@
           "placeholder": "Category ID",
           "button": "Load category",
           "invalid": "We couldn't find a category with that ID for this marketplace."
+        }
+      },
+      "shein": {
+        "noChannels": "No Shein sales channels are available.",
+        "openIntegration": "Open integration",
+        "status": {
+          "title": "Status",
+          "description": "Synchronization status and available actions."
+        },
+        "issues": {
+          "title": "Issues",
+          "description": "Shows the latest audit issues fetched from Shein for the assigned storefronts.",
+          "empty": "No active Shein issues found for this product.",
+          "columns": {
+            "store": "Store",
+            "reason": "Fail reason",
+            "lastFetchedAt": "Last fetched"
+          }
+        },
+        "categoryTitle": "Recommended Category",
+        "categoryDescription": "Browse the Shein category tree and assign the most specific category available.",
+        "selectChannelPrompt": "Select a Shein sales channel to manage its category.",
+        "rootLabel": "Root",
+        "leafRestriction": "Only leaf categories can be selected.",
+        "currentSelection": "Current category",
+        "noSelection": "No category selected.",
+        "pendingSelection": "Pending selection",
+        "categorySaved": "Shein category saved",
+        "categoryRemoved": "Shein category removed",
+        "removeCategory": "Remove category",
+        "categoryMappingInfo": "These entries show each Shein sales channel; the icon indicates whether a category is mapped for that channel.",
+        "defaultCategoryTitle": "Default category from product type",
+        "defaultCategoryInfo": "Remote ID: {id}",
+        "defaultLanguage": "Default language: {code}",
+        "currency": "Currency: {code}",
+        "productTypeRemoteId": "Product type ID: {id}",
+        "productTypeIdMissing": "This category has no product type ID, so it can't be saved.",
+        "configuratorPreview": {
+          "title": "Configurator attributes",
+          "description": "Shein uses these configurator properties to validate and configure listings for this category.",
+          "empty": "No configurator properties are provided for this Shein category."
+        },
+        "manualEntry": {
+          "title": "Do you know the ID? Set it manually",
+          "description": "Paste the Shein category ID to preview it without browsing the tree.",
+          "placeholder": "Category ID",
+          "button": "Load category",
+          "invalid": "We couldn't find a category with that ID."
         }
       },
       "inspector": {
@@ -2924,6 +2974,7 @@
           "isSuppressed": "Suppressed"
         },
         "filters": {
+          "marketplace": "Marketplace",
           "isValidationIssue": "Validation issue",
           "isSuppressed": "Suppressed",
           "categories": "Categories",
@@ -3065,6 +3116,9 @@
           }
         }
       },
+      "internalProperties": {
+        "title": "Internal Properties"
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -3099,7 +3153,15 @@
       "stores": {
         "title": "Store",
         "labels": {
-          "isDefault": "Is Default Store"
+          "isDefault": "Is Default Store",
+          "siteStatus": "Site status",
+          "storeType": "Store type"
+        },
+        "shein": {
+          "storeType": {
+            "platform": "Platform type",
+            "selfOperated": "Self-operated type"
+          }
         }
       },
       "languages": {
@@ -3748,6 +3810,7 @@
         "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
         "importSuccess": "The product import process has begun. Please come later to see the results.",
         "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
+        "forceUpdateSuccess": "The product update process has begun. Please come later to see the results.",
         "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },
       "helpText": {

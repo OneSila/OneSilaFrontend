@@ -11,6 +11,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "forceUpdate": "",
       "import": "Import",
       "saveAll": "Alles speichern",
       "createAndContinue": ""
@@ -234,7 +235,8 @@
       },
       "tabs": {
         "amazon": "Amazon",
-        "ebay": ""
+        "ebay": "",
+        "shein": ""
       },
       "priceLists": {
         "add": {
@@ -473,6 +475,54 @@
           "button": "",
           "invalid": ""
         }
+      },
+      "shein": {
+        "noChannels": "",
+        "openIntegration": "",
+        "status": {
+          "title": "",
+          "description": ""
+        },
+        "issues": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "columns": {
+            "store": "",
+            "reason": "",
+            "lastFetchedAt": ""
+          }
+        },
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectChannelPrompt": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "defaultLanguage": "",
+        "currency": "",
+        "productTypeRemoteId": "",
+        "productTypeIdMissing": "",
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        },
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        }
       }
     }
   },
@@ -510,11 +560,26 @@
         "gptSellerUrl": "",
         "gptReturnWindow": "",
         "gptEnableCheckout": ""
+      },
+      "toast": {
+        "forceUpdateSuccess": ""
       }
     },
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "stores": {
+        "labels": {
+          "siteStatus": "",
+          "storeType": ""
+        },
+        "shein": {
+          "storeType": {
+            "platform": "",
+            "selfOperated": ""
+          }
+        }
       },
       "amazonIssues": {
         "show": {
@@ -548,6 +613,7 @@
           "isSuppressed": ""
         },
         "filters": {
+          "marketplace": "",
           "isValidationIssue": "",
           "isSuppressed": "",
           "categories": "",
@@ -598,6 +664,9 @@
         "gpt": "",
         "authentication": "",
         "defaultUnits": ""
+      },
+      "internalProperties": {
+        "title": ""
       },
       "products": {
         "statuses": {

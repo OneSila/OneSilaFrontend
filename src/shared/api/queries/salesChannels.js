@@ -848,6 +848,36 @@ export const ebayChannelViewsQuery = gql`
   }
 `;
 
+export const sheinChannelViewsQuery = gql`
+  query SheinChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: SheinSalesChannelViewOrder, $filter: SheinSalesChannelViewFilter) {
+    sheinSalesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          url
+          active
+          isDefault
+          siteStatus
+          storeType
+          merchantLocationKey
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getAmazonChannelViewQuery = gql`
   query getAmazonChannelView($id: GlobalID!) {
     amazonChannelView(id: $id) {
@@ -881,6 +911,25 @@ export const getEbaySalesChannelViewQuery = gql`
       lengthUnit
       weightUnit
       isDefault
+    }
+  }
+`;
+
+export const getSheinSalesChannelViewQuery = gql`
+  query getSheinSalesChannelView($id: GlobalID!) {
+    sheinSalesChannelViews(first: 1, filters: { id: { exact: $id } }) {
+      edges {
+        node {
+          id
+          name
+          url
+          siteStatus
+          storeType
+          isDefault
+          merchantLocationKey
+          merchantLocationChoices
+        }
+      }
     }
   }
 `;

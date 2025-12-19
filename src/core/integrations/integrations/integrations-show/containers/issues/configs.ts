@@ -1,6 +1,7 @@
 import { FieldType } from "../../../../../../shared/utils/constants";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import { amazonChannelViewsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
 import { buildAmazonIssueLastFetchedAtBadge } from "./utils";
 
 const getSeverityBadgeMap = (t: Function) => ({
@@ -14,10 +15,24 @@ const getEnforcementActionLabel = (t: Function, value: string) => {
   return translated === key ? value : translated;
 };
 
-export const amazonProductIssuesSearchConfigConstructor = (t: Function): SearchConfig => ({
+export const amazonProductIssuesSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
   search: true,
   orderKey: "sort",
   filters: [
+    {
+      type: FieldType.Query,
+      name: 'view',
+      label: t('integrations.show.amazonIssues.filters.marketplace'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: amazonChannelViewsQuery,
+      dataKey: 'amazonChannelViews',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id'],
+      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
+    },
     {
       type: FieldType.Boolean,
       name: 'isValidationIssue',
