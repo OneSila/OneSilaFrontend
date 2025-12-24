@@ -111,6 +111,10 @@ const resetNavigation = () => {
 };
 
 const fetchNodes = async () => {
+  if (!props.salesChannelId) {
+    nodes.value = [];
+    return;
+  }
   loadingNodes.value = true;
   try {
     const filter: Record<string, any> = {};
@@ -190,6 +194,7 @@ watch(
   () => {
     resetNavigation();
     fetchSelected();
+    fetchNodes();
     manualCategoryInput.value = '';
     manualSelectionError.value = null;
   },
