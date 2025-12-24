@@ -17,3 +17,14 @@ export const sheinProductCategoriesQuery = gql`
   }
 `;
 
+export const sheinProductsQuery = gql`
+  query SheinProducts($first: Int, $filter: SheinProductFilter) {
+    sheinProducts(first: $first, filters: $filter) {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+`;

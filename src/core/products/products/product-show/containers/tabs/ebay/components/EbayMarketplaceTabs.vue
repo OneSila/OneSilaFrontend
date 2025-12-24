@@ -46,7 +46,7 @@ const viewEntries = computed(() =>
           :class="entry.hasCategory ? 'border-emerald-400 bg-emerald-50' : 'border-gray-300 bg-gray-50'"
         >
           <Icon
-            :name="entry.hasCategory ? 'folder' : 'folder-open'"
+            :name="entry.hasCategory ? 'folder' : 'folder-plus'"
             class="w-3.5 h-3.5"
             :class="entry.hasCategory ? 'text-emerald-600' : 'text-gray-400'"
           />

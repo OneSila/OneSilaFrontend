@@ -9,7 +9,7 @@ import { LocalLoader } from '../../../../../../../shared/components/atoms/local-
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import { sheinChannelsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { sheinCategoriesQuery } from '../../../../../../../shared/api/queries/sheinCategories.js';
-import { sheinProductCategoriesQuery } from '../../../../../../../shared/api/queries/sheinProducts.js';
+import { sheinProductCategoriesQuery, sheinProductsQuery } from '../../../../../../../shared/api/queries/sheinProducts.js';
 import { sheinProductTypesForCategoryMappingQuery } from '../../../../../../../shared/api/queries/sheinProductTypes.js';
 import { sheinProductIssuesQuery } from '../../../../../../../shared/api/queries/sheinProductIssues.js';
 import SheinMarketplaceTabs from './components/SheinMarketplaceTabs.vue';
@@ -19,6 +19,7 @@ import { IntegrationTypes } from '../../../../../../integrations/integrations/in
 import { sheinChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import SheinStatusSection from './components/SheinStatusSection.vue';
 import { refreshLatestSheinIssuesMutation, forceUpdateSheinProductLegacyMutation, forceUpdateSheinProductMutation } from '../../../../../../../shared/api/mutations/salesChannels.js';
+import { createSheinProductMutation } from '../../../../../../../shared/api/mutations/sheinProducts.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
 
@@ -48,6 +49,7 @@ type SheinProductIssueNode = {
 const sheinIssuesLoading = ref(false);
 const sheinIssues = ref<{ id: string; createdAt?: string | null; failedReason?: SheinFailReasonEntry[] | null; storeName?: string | null }[]>([]);
 const sheinViewSalesChannelByViewId = ref<Record<string, string>>({});
+const sheinRemoteProductId = ref<string | null>(null);
 
 const productTypeRuleId = computed(() => {
   const typeProp = props.product?.productpropertySet?.find((property: any) => property.property?.isProductType);
@@ -142,6 +144,41 @@ const fetchSheinViewSalesChannelMap = async () => {
     sheinViewSalesChannelByViewId.value = map;
   } catch (error) {
     sheinViewSalesChannelByViewId.value = {};
+  }
+};
+
+let remoteProductRequestId = 0;
+const fetchSheinRemoteProduct = async () => {
+  if (!props.product?.id || !selectedSheinSalesChannelId.value) {
+    sheinRemoteProductId.value = null;
+    return;
+  }
+
+  const requestId = ++remoteProductRequestId;
+  sheinRemoteProductId.value = null;
+  try {
+    const { data } = await apolloClient.query({
+      query: sheinProductsQuery,
+      variables: {
+        first: 1,
+        filter: {
+          localInstance: { id: { exact: props.product.id } },
+          salesChannel: { id: { exact: selectedSheinSalesChannelId.value } },
+        },
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (requestId !== remoteProductRequestId) {
+      return;
+    }
+
+    const node = data?.sheinProducts?.edges?.[0]?.node;
+    sheinRemoteProductId.value = node?.id || null;
+  } catch (error) {
+    if (requestId === remoteProductRequestId) {
+      sheinRemoteProductId.value = null;
+    }
   }
 };
 
@@ -321,26 +358,15 @@ const selectedChannel = computed(() =>
 
 const selectedSheinSalesChannelId = computed(() => selectedChannel.value?.id ?? null);
 
-const selectedSheinRemoteProductId = computed(() => {
-  const assignments = props.product?.saleschannelviewassignSet ?? [];
-  const sheinAssignments = assignments.filter((assign: any) => assign.integrationType === IntegrationTypes.Shein);
-  const targetSalesChannelId = selectedSheinSalesChannelId.value;
+const selectedSheinRemoteProductId = computed(() => sheinRemoteProductId.value);
 
-  if (targetSalesChannelId) {
-    const match = sheinAssignments.find((assign: any) => {
-      const viewId = assign?.salesChannelView?.id;
-      const salesChannelId = viewId ? sheinViewSalesChannelByViewId.value[viewId] : null;
-      return salesChannelId === targetSalesChannelId;
-    });
-    const remoteId = match?.remoteProduct?.id;
-    if (typeof remoteId === 'string') {
-      return remoteId;
-    }
-  }
-
-  const fallback = sheinAssignments[0]?.remoteProduct?.id;
-  return typeof fallback === 'string' ? fallback : null;
-});
+watch(
+  [() => props.product?.id, selectedSheinSalesChannelId],
+  () => {
+    void fetchSheinRemoteProduct();
+  },
+  { immediate: true },
+);
 
 const selectedSheinSalesChannelViewId = computed(() => {
   const assignments = props.product?.saleschannelviewassignSet ?? [];
@@ -357,8 +383,7 @@ const selectedSheinSalesChannelViewId = computed(() => {
     return typeof viewId === 'string' ? viewId : null;
   }
 
-  const fallback = sheinAssignments[0]?.salesChannelView?.id;
-  return typeof fallback === 'string' ? fallback : null;
+  return null;
 });
 
 const selectedCategory = computed(() => resolveCategoryForChannel(selectedChannel.value));
@@ -402,6 +427,11 @@ const onForceUpdateSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.forceUpdateSuccess'));
 };
 
+const onCreateSuccess = () => {
+  Toast.success(t('shared.alert.toast.submitSuccessCreate'));
+  fetchSheinRemoteProduct();
+};
+
 const onError = (error) => {
   displayApolloError(error);
 };
@@ -438,9 +468,11 @@ const onError = (error) => {
               :sales-channel-view-id="selectedSheinSalesChannelViewId"
               :remote-product-id="selectedSheinRemoteProductId"
               :refresh-latest-shein-issues-mutation="refreshLatestSheinIssuesMutation"
+              :create-shein-product-mutation="createSheinProductMutation"
               :force-update-shein-product-mutation="forceUpdateSheinProductMutation"
               :force-update-shein-product-legacy-mutation="forceUpdateSheinProductLegacyMutation"
               @fetch-issues-success="onFetchIssuesSuccess"
+              @create-success="onCreateSuccess"
               @force-update-success="onForceUpdateSuccess"
               @error="onError"
             />

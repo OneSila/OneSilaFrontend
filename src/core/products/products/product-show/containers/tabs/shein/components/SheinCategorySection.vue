@@ -114,6 +114,9 @@ const fetchNodes = async () => {
   loadingNodes.value = true;
   try {
     const filter: Record<string, any> = {};
+    if (props.salesChannelId) {
+      filter.salesChannel = { id: { exact: props.salesChannelId } };
+    }
     if (currentParentId.value) {
       filter.parentRemoteId = { exact: currentParentId.value };
     }
@@ -134,13 +137,17 @@ const fetchNodes = async () => {
 
 const fetchCategoryDetails = async (remoteId: string) => {
   try {
+    const filter: Record<string, any> = {
+      remoteId: { exact: remoteId },
+    };
+    if (props.salesChannelId) {
+      filter.salesChannel = { id: { exact: props.salesChannelId } };
+    }
     const { data } = await apolloClient.query({
       query: sheinCategoriesQuery,
       variables: {
         first: 1,
-        filter: {
-          remoteId: { exact: remoteId },
-        },
+        filter,
       },
       fetchPolicy: 'cache-first',
     });

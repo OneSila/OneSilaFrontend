@@ -10,11 +10,13 @@ const props = defineProps<{
   salesChannelViewId: string | null;
   remoteProductId: string | null;
   refreshLatestSheinIssuesMutation: any;
+  createSheinProductMutation: any;
   forceUpdateSheinProductMutation: any;
   forceUpdateSheinProductLegacyMutation: any;
 }>();
 
 const emit = defineEmits<{
+  (e: 'create-success'): void;
   (e: 'force-update-success'): void;
   (e: 'fetch-issues-success'): void;
   (e: 'error', err: unknown): void;
@@ -22,9 +24,12 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const isRefreshingIssues = ref(false);
+const isCreating = ref(false);
 const isForcingUpdate = ref(false);
 
+const hasRemoteProduct = computed(() => Boolean(props.remoteProductId));
 const canFetchIssues = computed(() => Boolean(props.remoteProductId && props.salesChannelId));
+const canCreate = computed(() => Boolean(props.productId && props.salesChannelId));
 const canForceUpdate = computed(() => Boolean(props.productId && props.salesChannelId));
 
 const handleFetchIssues = async () => {
@@ -45,6 +50,27 @@ const handleFetchIssues = async () => {
     emit('error', error);
   } finally {
     isRefreshingIssues.value = false;
+  }
+};
+
+const handleCreateSheinProduct = async () => {
+  if (!canCreate.value || !props.productId || !props.salesChannelId) return;
+
+  isCreating.value = true;
+  try {
+    await apolloClient.mutate({
+      mutation: props.createSheinProductMutation,
+      variables: {
+        product: { id: props.productId },
+        salesChannel: { id: props.salesChannelId },
+      },
+      fetchPolicy: 'no-cache',
+    });
+    emit('create-success');
+  } catch (error) {
+    emit('error', error);
+  } finally {
+    isCreating.value = false;
   }
 };
 
@@ -103,11 +129,20 @@ const handleForceUpdate = async () => {
       <FlexCell>
         <div class="flex gap-2 sm:ml-auto">
           <Button
+            v-if="hasRemoteProduct"
             class="btn btn-sm btn-outline-primary"
             :disabled="!canForceUpdate || isForcingUpdate"
             @click.stop="handleForceUpdate"
           >
             {{ t('shared.button.forceUpdate') }}
+          </Button>
+          <Button
+            v-else
+            class="btn btn-sm btn-outline-primary"
+            :disabled="!canCreate || isCreating"
+            @click.stop="handleCreateSheinProduct"
+          >
+            {{ t('shared.button.create') }}
           </Button>
           <Button
             class="btn btn-sm btn-outline-primary"
@@ -121,4 +156,3 @@ const handleForceUpdate = async () => {
     </Flex>
   </div>
 </template>
-

@@ -945,7 +945,6 @@ export const suggestSheinCategoryMutation = gql`
       image: $image
       externalImageUrl: $externalImageUrl
     ) {
-      siteRemoteId
       categories {
         categoryId
         productTypeId
