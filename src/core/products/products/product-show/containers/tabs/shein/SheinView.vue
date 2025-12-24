@@ -22,6 +22,7 @@ import { refreshLatestSheinIssuesMutation, forceUpdateSheinProductLegacyMutation
 import { createSheinProductMutation } from '../../../../../../../shared/api/mutations/sheinProducts.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
+import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
 
@@ -416,6 +417,18 @@ const handleCategoryDeleted = () => {
 
 const hasUnsavedChanges = computed(() => categorySectionRef.value?.hasUnsavedChanges ?? false);
 
+const beforeMarketplaceTabChange = async (_newTab: string, _oldTab: string | null) => {
+  if (!hasUnsavedChanges.value) return true;
+  const res = await Swal.fire({
+    icon: 'warning',
+    text: t('products.products.messages.unsavedChanges'),
+    showCancelButton: true,
+    confirmButtonText: t('shared.button.cancel'),
+    cancelButtonText: t('shared.button.leaveTab'),
+  });
+  return res.dismiss === Swal.DismissReason.cancel;
+};
+
 defineExpose({ hasUnsavedChanges, fetchSheinProductCategories });
 
 const onFetchIssuesSuccess = () => {
@@ -458,6 +471,7 @@ const onError = (error) => {
               v-model="selectedChannelId"
               :channels="channels"
               :categories="categoriesByChannel"
+              :before-change="beforeMarketplaceTabChange"
             />
           </div>
           <div class="flex-1">

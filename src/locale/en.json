@@ -585,6 +585,7 @@
       "comingSoon": "Coming Soon",
       "remoteCode": "Remote Code",
       "pending": "Pending Processing",
+      "pendingCreation": "Pending creation",
       "progress": "Progress",
       "code": "Code",
       "data": "Data",
@@ -1165,11 +1166,15 @@
         "amazon": "Amazon",
         "ebay": "Ebay",
         "shein": "Shein",
+        "marketplace": "Marketplaces",
         "supplierProducts": "Supplier Products",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
+      },
+      "marketplaceSelector": {
+        "label": "Select marketplace"
       },
       "priceLists": {
         "add": {

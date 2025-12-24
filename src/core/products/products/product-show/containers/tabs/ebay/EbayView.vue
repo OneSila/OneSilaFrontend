@@ -12,6 +12,7 @@ import EbayMarketplaceTabs from './components/EbayMarketplaceTabs.vue';
 import EbayCategorySection from './components/EbayCategorySection.vue';
 import type { FetchPolicy } from '@apollo/client';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
+import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
 
@@ -220,6 +221,18 @@ const hasUnsavedChanges = computed(
   () => categorySectionRef.value?.hasUnsavedChanges ?? false,
 );
 
+const beforeMarketplaceTabChange = async (_newTab: string, _oldTab: string | null) => {
+  if (!hasUnsavedChanges.value) return true;
+  const res = await Swal.fire({
+    icon: 'warning',
+    text: t('products.products.messages.unsavedChanges'),
+    showCancelButton: true,
+    confirmButtonText: t('shared.button.cancel'),
+    cancelButtonText: t('shared.button.leaveTab'),
+  });
+  return res.dismiss === Swal.DismissReason.cancel;
+};
+
 defineExpose({ hasUnsavedChanges, fetchEbayProductCategories });
 </script>
 
@@ -244,6 +257,7 @@ defineExpose({ hasUnsavedChanges, fetchEbayProductCategories });
               v-model="selectedViewId"
               :views="views"
               :categories="categoriesByView"
+              :before-change="beforeMarketplaceTabChange"
             />
           </div>
           <div class="flex-1">

@@ -97,16 +97,47 @@ const tabItems = computed(() => {
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   );
 
+  const marketplaceTabs: Array<{
+    name: string;
+    label: string;
+    icon: string;
+    group: string;
+    hidden?: boolean;
+  }> = [];
+
   if (auth.user.company?.hasAmazonIntegration) {
-    items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
+    marketplaceTabs.push({
+      name: 'amazon',
+      label: t('products.products.tabs.amazon'),
+      icon: 'store',
+      group: 'marketplace',
+    });
   }
 
   if (auth.user.company?.hasEbayIntegration) {
-    items.push({ name: 'ebay', label: t('products.products.tabs.ebay'), icon: 'store' });
+    marketplaceTabs.push({
+      name: 'ebay',
+      label: t('products.products.tabs.ebay'),
+      icon: 'store',
+      group: 'marketplace',
+    });
   }
 
   if (auth.user.company?.hasSheinIntegration) {
-    items.push({ name: 'shein', label: t('products.products.tabs.shein'), icon: 'store' });
+    marketplaceTabs.push({
+      name: 'shein',
+      label: t('products.products.tabs.shein'),
+      icon: 'store',
+      group: 'marketplace',
+    });
+  }
+
+  if (marketplaceTabs.length) {
+    marketplaceTabs[0].label = t('products.products.tabs.marketplace');
+    marketplaceTabs.forEach((tab, index) => {
+      if (index > 0) tab.hidden = true;
+    });
+    items.push(...marketplaceTabs);
   }
 
   return items;

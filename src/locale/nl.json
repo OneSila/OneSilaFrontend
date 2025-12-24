@@ -334,7 +334,8 @@
       "manual": "Handmatig",
       "generate": "Genereren",
       "code": "Code",
-      "noIssues": "Geen problemen"
+      "noIssues": "Geen problemen",
+      "pendingCreation": ""
     },
     "alert": {
       "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
@@ -784,7 +785,11 @@
         "websites": "Verkoopskanalen",
         "amazon": "Amazon",
         "ebay": "",
-        "shein": ""
+        "shein": "",
+        "marketplace": ""
+      },
+      "marketplaceSelector": {
+        "label": ""
       },
       "priceLists": {
         "add": {

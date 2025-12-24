@@ -496,6 +496,18 @@ const amazonProductUrl = computed(() => {
   return `${baseUrl}/dp/${selectedExternalProductAsin.value}`;
 });
 
+const beforeMarketplaceTabChange = async (_newTab: string, _oldTab: string | null) => {
+  if (!hasUnsavedChanges.value) return true;
+  const res = await Swal.fire({
+    icon: 'warning',
+    text: t('products.products.messages.unsavedChanges'),
+    showCancelButton: true,
+    confirmButtonText: t('shared.button.cancel'),
+    cancelButtonText: t('shared.button.leaveTab'),
+  });
+  return res.dismiss === Swal.DismissReason.cancel;
+};
+
 const handleMarketplaceSelection = async (newKey: string) => {
   if (hasUnsavedChanges.value) {
     const res = await Swal.fire({
@@ -565,6 +577,7 @@ const formatDate = (dateString?: string | null) => {
           :views="views"
           :amazon-products="amazonProducts"
           :assigned-view-ids="amazonViewAssignments"
+          :before-change="beforeMarketplaceTabChange"
           @update:modelValue="handleMarketplaceSelection"
         />
           <div class="flex-1 p-6">

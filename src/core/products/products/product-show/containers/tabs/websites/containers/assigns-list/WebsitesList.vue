@@ -55,6 +55,9 @@ const issuesModalClosed = () => {
 }
 
 const getAssignStatus = (item: any) => {
+  if (item.status === 'PENDING_CREATION') {
+    return 'PENDING_CREATION';
+  }
   if (item.remoteProduct?.status) {
     return item.remoteProduct.status;
   }

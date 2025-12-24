@@ -33,6 +33,7 @@
       "data": "Daten",
       "context": "Kontext",
       "noIssues": "Keine Probleme",
+      "pendingCreation": "",
       "active": "Active",
       "inactive": "Inactive",
       "selectedOfTotal": "{selected} selected of {total}",
@@ -236,7 +237,11 @@
       "tabs": {
         "amazon": "Amazon",
         "ebay": "",
-        "shein": ""
+        "shein": "",
+        "marketplace": ""
+      },
+      "marketplaceSelector": {
+        "label": ""
       },
       "priceLists": {
         "add": {

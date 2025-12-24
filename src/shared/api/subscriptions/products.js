@@ -63,6 +63,7 @@ export const productSubscription = gql`
       allowBackorder
       saleschannelviewassignSet {
           id
+          status
           remoteId
           remoteUrl
           remoteProductPercentage
