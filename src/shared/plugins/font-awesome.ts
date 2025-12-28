@@ -161,7 +161,8 @@ import {
   faCoins,
   faRobot,
   faFolder,
-  faFolderPlus
+  faFolderPlus,
+  faBookOpen,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -323,6 +324,7 @@ library.add(faCoins as IconDefinition);
 library.add(faRobot as IconDefinition);
 library.add(faFolder as IconDefinition);
 library.add(faFolderPlus as IconDefinition);
+library.add(faBookOpen as IconDefinition);
 
 
 export default {

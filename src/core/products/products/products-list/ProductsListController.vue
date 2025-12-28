@@ -13,7 +13,8 @@ import { ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../../shared/modules/toast";
 import { assignEanCodesMutation } from "../../../../shared/api/mutations/eanCodes.js";
-import {BulkProductPropertyAssigner} from "../../../../shared/components/organisms/bulk=product-property-assigner";
+import { BulkProductPropertyAssigner } from "../../../../shared/components/organisms/bulk=product-property-assigner";
+import { BulkProductWebsiteAssigner } from "../../../../shared/components/organisms/bulk=product-website-assigner";
 
 const { t } = useI18n();
 
@@ -93,6 +94,11 @@ const handleBulkAssign = async (selectedEntities: any[]) => {
             />
 
             <BulkProductPropertyAssigner
+              :selected-entities="selectedEntities"
+              @started="clearSelection"
+            />
+
+            <BulkProductWebsiteAssigner
               :selected-entities="selectedEntities"
               @started="clearSelection"
             />

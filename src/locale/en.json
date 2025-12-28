@@ -683,6 +683,31 @@
           "assignSuccess": "Properties were successfully assigned to the selected products.",
           "overrideIfExistsCheckbox": "Override if property already exists"
         },
+        "bulkProductWebsiteAssigner": {
+          "title": "Assign to {count} product(s)",
+          "button": "Assign to Websites",
+          "description": "Select one or more website views. Each ready product will be assigned to each selected view.",
+          "disclaimer": "Products marked red in the inspector are not ready and will be skipped.",
+          "viewsLabel": "Website views",
+          "viewsPlaceholder": "Select website views",
+          "selectedViewsTitle": "Selected website views",
+          "selectedViewsEmpty": "No website views selected yet.",
+          "noActiveViews": "No active website views available.",
+          "summaryReady": "Ready products: {count}",
+          "summarySkipped": "Skipped (red): {count}",
+          "summaryExisting": "Already assigned: {count}",
+          "summaryPlanned": "Planned assignments: {count}",
+          "loadingProducts": "Loading product readiness...",
+          "noProductsSelected": "Select products to assign.",
+          "processingNote": "Assignments run in the background. Errors will be shown after processing.",
+          "missingSelection": "Select at least one website view.",
+          "nothingToAssign": "Nothing to assign. All selected products are already assigned or not ready.",
+          "assignButton": "Assign",
+          "success": "Assigned {created} product(s) to {views} website view(s).",
+          "skippedRed": "Skipped {count} product(s) with missing required data.",
+          "skippedExisting": "Skipped {count} existing assignment(s).",
+          "error": "Failed to assign {count} product(s): {skus}."
+        },
         "aiBulkTranslator": {
           "button": "AI Translate",
           "title": "Translate {count} {type}",
@@ -1406,10 +1431,40 @@
         "currency": "Currency: {code}",
         "productTypeRemoteId": "Product type ID: {id}",
         "productTypeIdMissing": "This category has no product type ID, so it can't be saved.",
-        "configuratorPreview": {
-          "title": "Configurator attributes",
-          "description": "Shein uses these configurator properties to validate and configure listings for this category.",
-          "empty": "No configurator properties are provided for this Shein category."
+        "categoryAttributes": {
+          "title": "Category attributes",
+          "description": "These attributes describe what Shein expects for this category. Sales attributes are configurable.",
+          "empty": "No category attributes are provided for this Shein category.",
+          "unknown": "Unknown",
+          "none": "None",
+          "valueMode": "Value mode: {mode}",
+          "localProperty": "Mapped property",
+          "columns": {
+            "property": "Property",
+            "type": "Type",
+            "requirement": "Requirement",
+            "main": "Main",
+            "attributeType": "Attribute type",
+            "configurable": "Configurable"
+          },
+          "requirement": {
+            "required": "Required",
+            "optional": "Optional",
+            "notFillable": "Not fillable",
+            "unknown": "Unknown"
+          },
+          "attributeType": {
+            "sales": "Sales attribute",
+            "size": "Size attribute",
+            "composition": "Composition attribute",
+            "common": "Common attribute"
+          },
+          "remarkTags": {
+            "important": "Important",
+            "compliance": "Compliance",
+            "quality": "Quality",
+            "customs": "Customs"
+          }
         },
         "manualEntry": {
           "title": "Do you know the ID? Set it manually",

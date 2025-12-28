@@ -81,6 +81,26 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
   }
 `;
 
+export const productsBulkWebsiteAssignQuery = gql`
+  query ProductsBulkWebsiteAssign($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
+    products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          inspectorStatus
+          saleschannelviewassignSet {
+            id
+            salesChannelView {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const bundleProductsQuery = gql`
   query BundleProducts($first: Int, $last: Int, $after: String, $before: String, $order: BundleProductOrder, $filter: BundleProductFilter) {
     bundleProducts(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {

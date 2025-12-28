@@ -5,9 +5,11 @@ import apolloClient from '../../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
+import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
 import { sheinCategoriesQuery } from '../../../../../../../../shared/api/queries/sheinCategories.js';
+import { sheinPropertiesByRemoteIdsQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
 import {
   createSheinProductCategoryMutation,
   updateSheinProductCategoryMutation,
@@ -22,7 +24,7 @@ interface SheinCategoryNode {
   productTypeRemoteId?: string | null;
   defaultLanguage?: string | null;
   currency?: string | null;
-  configuratorProperties: any[];
+  properties: any[];
 }
 
 const props = defineProps<{
@@ -54,6 +56,8 @@ const saving = ref(false);
 const manualCategoryInput = ref('');
 const manualSelectionLoading = ref(false);
 const manualSelectionError = ref<string | null>(null);
+const localPropertiesByRemoteId = ref<Record<string, { id: string; name: string }>>({});
+const remotePropertiesByRemoteId = ref<Record<string, { id: string; name: string }>>({});
 
 const manualCategoryId = computed(() => manualCategoryInput.value.trim());
 
@@ -67,7 +71,7 @@ const hasUnsavedChanges = computed(
   () => pendingNode.value !== null && pendingNode.value.remoteId !== savedRemoteId.value,
 );
 
-const parseConfiguratorProperties = (value: unknown): any[] => {
+const parseCategoryProperties = (value: unknown): any[] => {
   if (!value) return [];
   if (Array.isArray(value)) {
     return value;
@@ -85,6 +89,70 @@ const parseConfiguratorProperties = (value: unknown): any[] => {
   return [];
 };
 
+const normalizeRemarks = (value: unknown): string[] => {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.map((entry) => String(entry)).filter((entry) => entry);
+  }
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.map((entry) => String(entry)).filter((entry) => entry);
+      }
+    } catch (error) {
+      return value ? [value] : [];
+    }
+    return value ? [value] : [];
+  }
+  return [];
+};
+
+const normalizePropertyName = (value: unknown): string => {
+  if (!value) return '';
+  return String(value).replace(/^OPENAPI-\s*/i, '').trim();
+};
+
+const normalizeCategoryProperty = (entry: any) => {
+  if (!entry || typeof entry !== 'object') {
+    return {
+      propertyId: '',
+      name: normalizePropertyName(entry),
+      nameEn: '',
+      propertyType: '',
+      valueMode: '',
+      valueLimit: null,
+      requirement: '',
+      attributeType: '',
+      isMainAttribute: false,
+      allowsUnmappedValues: false,
+      remarks: [],
+    };
+  }
+  return {
+    propertyId: String(entry.propertyId || entry.property_id || ''),
+    name: normalizePropertyName(
+      entry.propertyName ||
+        entry.property_name ||
+        entry.attributeName ||
+        entry.attribute_name ||
+        entry.name ||
+        '',
+    ),
+    nameEn: normalizePropertyName(
+      entry.propertyNameEn || entry.property_name_en || entry.name_en || '',
+    ),
+    propertyType: entry.propertyType || entry.property_type || entry.type || '',
+    valueMode: entry.valueMode || entry.value_mode || '',
+    valueLimit: entry.valueLimit ?? entry.value_limit ?? null,
+    requirement: entry.requirement || '',
+    attributeType: entry.attributeType || entry.attribute_type || '',
+    isMainAttribute: Boolean(entry.isMainAttribute ?? entry.is_main_attribute),
+    allowsUnmappedValues: Boolean(entry.allowsUnmappedValues ?? entry.allows_unmapped_values),
+    remarks: normalizeRemarks(entry.remarks),
+  };
+};
+
 const normalizeCategoryNode = (node: any): SheinCategoryNode => ({
   remoteId: String(node?.remoteId ?? ''),
   name: String(node?.name ?? ''),
@@ -93,7 +161,7 @@ const normalizeCategoryNode = (node: any): SheinCategoryNode => ({
   productTypeRemoteId: node?.productTypeRemoteId ?? null,
   defaultLanguage: node?.defaultLanguage ?? null,
   currency: node?.currency ?? null,
-  configuratorProperties: parseConfiguratorProperties(node?.configuratorProperties),
+  properties: parseCategoryProperties(node?.properties ?? node?.configuratorProperties),
 });
 
 const mapCategoriesConnection = (connection: any): SheinCategoryNode[] => {
@@ -264,33 +332,143 @@ const copyCategoryId = async (remoteId?: string | null) => {
   }
 };
 
-const formatConfiguratorProperty = (entry: any): string => {
-  if (!entry) return '';
-  if (typeof entry === 'string') return entry;
-  if (typeof entry === 'object') {
-    return (
-      entry.propertyName ||
-      entry.property_name ||
-      entry.attributeName ||
-      entry.attribute_name ||
-      entry.name ||
-      entry.id ||
-      ''
+const formatCategoryProperties = (entries: any[]) =>
+  entries
+    .map((entry) => normalizeCategoryProperty(entry))
+    .map((entry) => ({
+      ...entry,
+      name: entry.name || entry.nameEn,
+      isConfigurator: entry.attributeType === 'sales',
+    }))
+    .filter((entry) =>
+      Boolean(
+        entry.name ||
+          entry.nameEn ||
+          entry.propertyType ||
+          entry.requirement ||
+          entry.attributeType ||
+          entry.remarks.length,
+      ),
     );
-  }
-  return '';
+
+const formatRequirementLabel = (value: string) => {
+  const labels: Record<string, string> = {
+    required: t('products.products.shein.categoryAttributes.requirement.required'),
+    optional: t('products.products.shein.categoryAttributes.requirement.optional'),
+    not_fillable: t('products.products.shein.categoryAttributes.requirement.notFillable'),
+  };
+  return labels[value] || t('products.products.shein.categoryAttributes.requirement.unknown');
 };
 
-const selectedConfiguratorProperties = computed(() =>
-  (selectedNode.value?.configuratorProperties ?? [])
-    .map((item) => formatConfiguratorProperty(item))
-    .filter((item) => Boolean(item)),
+const formatAttributeTypeLabel = (value: string) => {
+  const labels: Record<string, string> = {
+    sales: t('products.products.shein.categoryAttributes.attributeType.sales'),
+    size: t('products.products.shein.categoryAttributes.attributeType.size'),
+    composition: t('products.products.shein.categoryAttributes.attributeType.composition'),
+    common: t('products.products.shein.categoryAttributes.attributeType.common'),
+  };
+  return labels[value] || t('products.products.shein.categoryAttributes.unknown');
+};
+
+const selectedCategoryProperties = computed(() =>
+  formatCategoryProperties(selectedNode.value?.properties ?? []),
 );
 
-const pendingConfiguratorProperties = computed(() =>
-  (pendingNode.value?.configuratorProperties ?? [])
-    .map((item) => formatConfiguratorProperty(item))
-    .filter((item) => Boolean(item)),
+const pendingCategoryProperties = computed(() =>
+  formatCategoryProperties(pendingNode.value?.properties ?? []),
+);
+
+const categoryPropertyRemoteIds = computed(() => {
+  const ids = new Set<string>();
+  const addIds = (items: ReturnType<typeof formatCategoryProperties>) => {
+    items.forEach((item) => {
+      if (item.propertyId) {
+        ids.add(item.propertyId);
+      }
+    });
+  };
+  addIds(selectedCategoryProperties.value);
+  addIds(pendingCategoryProperties.value);
+  return Array.from(ids);
+});
+
+const fetchLocalProperties = async () => {
+  const ids = categoryPropertyRemoteIds.value;
+  if (!props.salesChannelId || !ids.length) {
+    localPropertiesByRemoteId.value = {};
+    remotePropertiesByRemoteId.value = {};
+    return;
+  }
+  try {
+    const { data } = await apolloClient.query({
+      query: sheinPropertiesByRemoteIdsQuery,
+      variables: {
+        first: ids.length,
+        filter: {
+          salesChannel: { id: { exact: props.salesChannelId } },
+          remoteId: { inList: ids },
+        },
+      },
+      fetchPolicy: 'cache-first',
+    });
+    const edges = data?.sheinProperties?.edges || [];
+    const localMap: Record<string, { id: string; name: string }> = {};
+    const remoteMap: Record<string, { id: string; name: string }> = {};
+    edges.forEach((edge: any) => {
+      const node = edge?.node;
+      const remoteId = node?.remoteId;
+      if (!remoteId) {
+        return;
+      }
+      remoteMap[String(remoteId)] = {
+        id: String(node?.id || ''),
+        name: String(node?.name || node?.nameEn || ''),
+      };
+      const localInstance = node?.localInstance;
+      if (localInstance?.id) {
+        localMap[String(remoteId)] = {
+          id: String(localInstance.id),
+          name: String(localInstance.name || node?.name || ''),
+        };
+      }
+    });
+    localPropertiesByRemoteId.value = localMap;
+    remotePropertiesByRemoteId.value = remoteMap;
+  } catch (error) {
+    localPropertiesByRemoteId.value = {};
+    remotePropertiesByRemoteId.value = {};
+    displayApolloError(error);
+  }
+};
+
+const getLocalProperty = (propertyId: string) =>
+  localPropertiesByRemoteId.value[propertyId] || null;
+
+const getRemoteProperty = (propertyId: string) =>
+  remotePropertiesByRemoteId.value[propertyId] || null;
+
+const remotePropertyPath = (propertyId: string) => {
+  const remoteProperty = getRemoteProperty(propertyId);
+  if (!remoteProperty?.id) {
+    return undefined;
+  }
+  const integrationId = props.channel?.integrationPtr?.id;
+  return {
+    name: 'integrations.remoteProperties.edit',
+    params: { type: 'shein', id: remoteProperty.id },
+    query: {
+      ...(integrationId ? { integrationId } : {}),
+      ...(props.salesChannelId ? { salesChannelId: props.salesChannelId } : {}),
+    },
+  };
+};
+
+watch(
+  [() => props.salesChannelId, () => categoryPropertyRemoteIds.value.join('|')],
+  () => {
+    fetchLocalProperties();
+  },
+  { immediate: true },
 );
 
 const saveSelection = async () => {
@@ -530,23 +708,90 @@ defineExpose({ hasUnsavedChanges });
 
                 <div class="mt-3">
                   <h6 class="font-semibold text-xs text-gray-700 mb-1">
-                    {{ t('products.products.shein.configuratorPreview.title') }}
+                    {{ t('products.products.shein.categoryAttributes.title') }}
                   </h6>
                   <p class="text-xs text-gray-500 mb-2">
-                    {{ t('products.products.shein.configuratorPreview.description') }}
+                    {{ t('products.products.shein.categoryAttributes.description') }}
                   </p>
-                  <ul v-if="selectedConfiguratorProperties.length" class="space-y-1">
-                    <li
-                      v-for="item in selectedConfiguratorProperties"
-                      :key="item"
-                      class="flex items-center gap-2 text-xs text-gray-700"
-                    >
-                      <Icon name="circle-check" class="w-3 h-3 text-emerald-500" />
-                      <span>{{ item }}</span>
-                    </li>
-                  </ul>
+                  <div v-if="selectedCategoryProperties.length" class="overflow-x-auto">
+                    <table class="min-w-[720px] w-full text-xs text-left">
+                      <thead class="text-gray-500 uppercase border-b">
+                        <tr>
+                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.property') }}</th>
+                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.type') }}</th>
+                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.requirement') }}</th>
+                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.configurable') }}</th>
+                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.main') }}</th>
+                          <th class="py-2">{{ t('products.products.shein.categoryAttributes.columns.attributeType') }}</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y">
+                        <tr v-for="item in selectedCategoryProperties" :key="`${item.name}-${item.propertyType}`">
+                          <td class="py-2 pr-3 text-gray-700">
+                            <div class="font-medium">
+                              <Link
+                                v-if="item.propertyId && remotePropertyPath(item.propertyId)"
+                                :path="remotePropertyPath(item.propertyId)"
+                                target="_blank"
+                              >
+                                {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
+                              </Link>
+                              <span v-else>
+                                {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
+                              </span>
+                            </div>
+                            <div v-if="item.nameEn && item.nameEn !== item.name" class="text-[11px] text-gray-500">
+                              {{ item.nameEn }}
+                            </div>
+                            <div class="text-[11px] text-gray-500 mt-1">
+                              <span class="font-semibold">
+                                {{ t('products.products.shein.categoryAttributes.localProperty') }}:
+                              </span>
+                              <template v-if="item.propertyId && getLocalProperty(item.propertyId)">
+                                <Link
+                                  class="ml-1"
+                                  target="_blank"
+                                  :path="{
+                                    name: 'properties.properties.show',
+                                    params: { id: getLocalProperty(item.propertyId)?.id },
+                                  }"
+                                >
+                                  {{ getLocalProperty(item.propertyId)?.name }}
+                                </Link>
+                              </template>
+                              <span v-else class="ml-1">-</span>
+                            </div>
+                          </td>
+                          <td class="py-2 pr-3 text-gray-700">
+                            <div>{{ item.propertyType || t('products.products.shein.categoryAttributes.unknown') }}</div>
+                            <div v-if="item.valueMode" class="text-[11px] text-gray-500">
+                              {{ t('products.products.shein.categoryAttributes.valueMode', { mode: item.valueMode }) }}
+                            </div>
+                          </td>
+                          <td class="py-2 pr-3 text-gray-700">
+                            {{ formatRequirementLabel(item.requirement) }}
+                          </td>
+                          <td class="py-2 pr-3 text-gray-700">
+                            <Icon
+                              :name="item.isConfigurator ? 'check-circle' : 'times-circle'"
+                              :class="item.isConfigurator ? 'text-green-500' : 'text-red-500'"
+                            />
+                          </td>
+                          <td class="py-2 pr-3 text-gray-700">
+                            <Icon
+                              :name="item.isMainAttribute ? 'check-circle' : 'times-circle'"
+                              :class="item.isMainAttribute ? 'text-green-500' : 'text-red-500'"
+                            />
+                          </td>
+                          <td class="py-2 text-gray-700">
+                            {{ formatAttributeTypeLabel(item.attributeType) }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                   <div v-else class="text-xs text-gray-500">
-                    {{ t('products.products.shein.configuratorPreview.empty') }}
+                    {{ t('products.products.shein.categoryAttributes.empty') }}
                   </div>
                 </div>
               </div>
@@ -608,23 +853,89 @@ defineExpose({ hasUnsavedChanges });
 
             <div class="mt-3">
               <h6 class="font-semibold text-xs text-gray-700 mb-1">
-                {{ t('products.products.shein.configuratorPreview.title') }}
+                {{ t('products.products.shein.categoryAttributes.title') }}
               </h6>
               <p class="text-xs text-gray-500 mb-2">
-                {{ t('products.products.shein.configuratorPreview.description') }}
+                {{ t('products.products.shein.categoryAttributes.description') }}
               </p>
-              <ul v-if="pendingConfiguratorProperties.length" class="space-y-1">
-                <li
-                  v-for="item in pendingConfiguratorProperties"
-                  :key="item"
-                  class="flex items-center gap-2 text-xs text-gray-700"
-                >
-                  <Icon name="circle-check" class="w-3 h-3 text-emerald-500" />
-                  <span>{{ item }}</span>
-                </li>
-              </ul>
+              <div v-if="pendingCategoryProperties.length" class="overflow-x-auto">
+                <table class="min-w-[720px] w-full text-xs text-left">
+                  <thead class="text-gray-500 uppercase border-b">
+                    <tr>
+                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.property') }}</th>
+                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.type') }}</th>
+                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.requirement') }}</th>
+                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.configurable') }}</th>
+                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.main') }}</th>
+                      <th class="py-2">{{ t('products.products.shein.categoryAttributes.columns.attributeType') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y">
+                    <tr v-for="item in pendingCategoryProperties" :key="`${item.name}-${item.propertyType}`">
+                      <td class="py-2 pr-3 text-gray-700">
+                        <div class="font-medium">
+                          <Link
+                            v-if="item.propertyId && remotePropertyPath(item.propertyId)"
+                            class="text-primary underline"
+                            :path="remotePropertyPath(item.propertyId)"
+                          >
+                            {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
+                          </Link>
+                          <span v-else>
+                            {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
+                          </span>
+                        </div>
+                        <div v-if="item.nameEn && item.nameEn !== item.name" class="text-[11px] text-gray-500">
+                          {{ item.nameEn }}
+                        </div>
+                        <div class="text-[11px] text-gray-500 mt-1">
+                          <span class="font-semibold">
+                            {{ t('products.products.shein.categoryAttributes.localProperty') }}:
+                          </span>
+                          <template v-if="item.propertyId && getLocalProperty(item.propertyId)">
+                            <Link
+                              class="ml-1 text-primary underline"
+                              :path="{
+                                name: 'properties.properties.show',
+                                params: { id: getLocalProperty(item.propertyId)?.id },
+                              }"
+                            >
+                              {{ getLocalProperty(item.propertyId)?.name }}
+                            </Link>
+                          </template>
+                          <span v-else class="ml-1">-</span>
+                        </div>
+                      </td>
+                      <td class="py-2 pr-3 text-gray-700">
+                        <div>{{ item.propertyType || t('products.products.shein.categoryAttributes.unknown') }}</div>
+                        <div v-if="item.valueMode" class="text-[11px] text-gray-500">
+                          {{ t('products.products.shein.categoryAttributes.valueMode', { mode: item.valueMode }) }}
+                        </div>
+                      </td>
+                      <td class="py-2 pr-3 text-gray-700">
+                        {{ formatRequirementLabel(item.requirement) }}
+                      </td>
+                      <td class="py-2 pr-3 text-gray-700">
+                        <Icon
+                          :name="item.isConfigurator ? 'check-circle' : 'times-circle'"
+                          :class="item.isConfigurator ? 'text-green-500' : 'text-red-500'"
+                        />
+                      </td>
+                      <td class="py-2 pr-3 text-gray-700">
+                        <Icon
+                          :name="item.isMainAttribute ? 'check-circle' : 'times-circle'"
+                          :class="item.isMainAttribute ? 'text-green-500' : 'text-red-500'"
+                        />
+                      </td>
+                      <td class="py-2 text-gray-700">
+                        {{ formatAttributeTypeLabel(item.attributeType) }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               <div v-else class="text-xs text-gray-500">
-                {{ t('products.products.shein.configuratorPreview.empty') }}
+                {{ t('products.products.shein.categoryAttributes.empty') }}
               </div>
             </div>
             <div class="mt-3 flex gap-2">

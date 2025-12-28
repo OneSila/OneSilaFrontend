@@ -403,6 +403,31 @@
         }
       },
       "organisms": {
+        "bulkProductWebsiteAssigner": {
+          "title": "",
+          "button": "",
+          "description": "",
+          "disclaimer": "",
+          "viewsLabel": "",
+          "viewsPlaceholder": "",
+          "selectedViewsTitle": "",
+          "selectedViewsEmpty": "",
+          "noActiveViews": "",
+          "summaryReady": "",
+          "summarySkipped": "",
+          "summaryExisting": "",
+          "summaryPlanned": "",
+          "loadingProducts": "",
+          "noProductsSelected": "",
+          "processingNote": "",
+          "missingSelection": "",
+          "nothingToAssign": "",
+          "assignButton": "",
+          "success": "",
+          "skippedRed": "",
+          "skippedExisting": "",
+          "error": ""
+        },
         "imageAssigner": {
           "addButton": {
             "uploadNew": "Upload nieuwe afbeelding",
@@ -1060,10 +1085,40 @@
         "currency": "",
         "productTypeRemoteId": "",
         "productTypeIdMissing": "",
-        "configuratorPreview": {
+        "categoryAttributes": {
           "title": "",
           "description": "",
-          "empty": ""
+          "empty": "",
+          "unknown": "",
+          "none": "",
+          "valueMode": "",
+          "localProperty": "",
+          "columns": {
+            "property": "",
+            "type": "",
+            "requirement": "",
+            "main": "",
+            "attributeType": "",
+            "configurable": ""
+          },
+          "requirement": {
+            "required": "",
+            "optional": "",
+            "notFillable": "",
+            "unknown": ""
+          },
+          "attributeType": {
+            "sales": "",
+            "size": "",
+            "composition": "",
+            "common": ""
+          },
+          "remarkTags": {
+            "important": "",
+            "compliance": "",
+            "quality": "",
+            "customs": ""
+          }
         },
         "manualEntry": {
           "title": "",

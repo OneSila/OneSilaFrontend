@@ -26,7 +26,7 @@ export const sheinCategoriesQuery = gql`
           productTypeRemoteId
           defaultLanguage
           currency
-          configuratorProperties
+          properties
           parent {
             remoteId
             name

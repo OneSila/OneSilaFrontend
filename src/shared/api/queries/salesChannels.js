@@ -603,6 +603,7 @@ export const salesChannelViewAssignsQuery = gql`
       edges {
         node {
           id
+          status
           remoteUrl
           remoteProductPercentage
           integrationType
@@ -1301,6 +1302,25 @@ export const sheinPropertiesQuery = gql`
         startCursor
         hasNextPage
         hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const sheinPropertiesByRemoteIdsQuery = gql`
+  query SheinPropertiesByRemoteIds($first: Int, $filter: SheinPropertyFilter) {
+    sheinProperties(first: $first, filters: $filter) {
+      edges {
+        node {
+          id
+          remoteId
+          name
+          nameEn
+          localInstance {
+            id
+            name
+          }
+        }
       }
     }
   }
