@@ -3846,7 +3846,8 @@
       },
       "labels": {
         "assignedToSalesChannelView": "Assigned To Store",
-        "notAssignedToSalesChannelView": "Not Assigned To Store"
+        "notAssignedToSalesChannelView": "Not Assigned To Store",
+        "noFrontendUrl": "This integration doesn't provide a frontend URL"
       },
       "ebay": {
         "installed": {

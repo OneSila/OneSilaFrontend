@@ -3139,7 +3139,8 @@
     "salesChannel": {
       "labels": {
         "assignedToSalesChannelView": "Toegewezen aan winkel",
-        "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+        "notAssignedToSalesChannelView": "Niet toegewezen aan winkel",
+        "noFrontendUrl": ""
       },
       "helpText": {
         "startingStock": "",

@@ -616,6 +616,9 @@
       "gptFeedUrl": ""
     },
     "salesChannel": {
+      "labels": {
+        "noFrontendUrl": ""
+      },
       "helpText": {
         "startingStock": "",
         "gptEnable": "",

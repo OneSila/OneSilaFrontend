@@ -7,12 +7,10 @@ import apolloClient from '../../../../../../../../../apollo-client';
 const props = defineProps<{
   productId: string;
   salesChannelId: string | null;
-  salesChannelViewId: string | null;
   remoteProductId: string | null;
   refreshLatestSheinIssuesMutation: any;
   createSheinProductMutation: any;
-  forceUpdateSheinProductMutation: any;
-  forceUpdateSheinProductLegacyMutation: any;
+  updateSheinProductMutation: any;
 }>();
 
 const emit = defineEmits<{
@@ -80,39 +78,17 @@ const handleForceUpdate = async () => {
   isForcingUpdate.value = true;
   try {
     await apolloClient.mutate({
-      mutation: props.forceUpdateSheinProductMutation,
+      mutation: props.updateSheinProductMutation,
       variables: {
         product: { id: props.productId },
         salesChannel: { id: props.salesChannelId },
+        forceUpdate: true,
       },
       fetchPolicy: 'no-cache',
     });
     emit('force-update-success');
-    return;
-  } catch (error: any) {
-    const message = String(error?.toString?.() ?? error ?? '');
-    const shouldRetryLegacy =
-      props.salesChannelViewId &&
-      (message.includes('Unknown argument') || message.includes('Unknown field') || message.includes('Field'));
-
-    if (!shouldRetryLegacy) {
-      emit('error', error);
-      return;
-    }
-
-    try {
-      await apolloClient.mutate({
-        mutation: props.forceUpdateSheinProductLegacyMutation,
-        variables: {
-          product: { id: props.productId },
-          view: { id: props.salesChannelViewId },
-        },
-        fetchPolicy: 'no-cache',
-      });
-      emit('force-update-success');
-    } catch (legacyError) {
-      emit('error', legacyError);
-    }
+  } catch (error) {
+    emit('error', error);
   } finally {
     isForcingUpdate.value = false;
   }

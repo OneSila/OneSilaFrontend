@@ -425,15 +425,13 @@ export const updateEbayInternalPropertyMutation = gql`
   }
 `;
 
-export const forceUpdateSheinProductMutation = gql`
-  mutation forceUpdateSheinProduct($product: ProductPartialInput!, $salesChannel: SheinSalesChannelPartialInput!) {
-    forceUpdateSheinProduct(product: $product, salesChannel: $salesChannel)
-  }
-`;
-
-export const forceUpdateSheinProductLegacyMutation = gql`
-  mutation forceUpdateSheinProductLegacy($product: ProductPartialInput!, $view: SheinSalesChannelViewPartialInput!) {
-    forceUpdateSheinProduct(product: $product, view: $view)
+export const updateSheinProductMutation = gql`
+  mutation updateSheinProduct(
+    $product: ProductPartialInput!
+    $salesChannel: SheinSalesChannelPartialInput!
+    $forceUpdate: Boolean!
+  ) {
+    updateSheinProduct(product: $product, salesChannel: $salesChannel, forceUpdate: $forceUpdate)
   }
 `;
 

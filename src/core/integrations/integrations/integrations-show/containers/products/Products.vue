@@ -64,9 +64,16 @@ const modalClosed = () => {
           </template>
         </ApolloMutation>
 
-        <Link :path="item.node.remoteUrl" external>
+        <Link v-if="item.node.remoteUrl" :path="item.node.remoteUrl" external>
           <Icon class="text-gray-500" size="xl" name="eye" />
         </Link>
+        <Button
+          v-else
+          :disabled="true"
+          :title="t('integrations.salesChannel.labels.noFrontendUrl')"
+        >
+          <Icon class="text-gray-500" size="xl" name="eye" />
+        </Button>
       </template>
     </GeneralListing>
     <LogsInfoModal

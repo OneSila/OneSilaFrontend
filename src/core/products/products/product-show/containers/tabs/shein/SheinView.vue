@@ -18,7 +18,7 @@ import SheinIssuesSection from './components/SheinIssuesSection.vue';
 import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import { sheinChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import SheinStatusSection from './components/SheinStatusSection.vue';
-import { refreshLatestSheinIssuesMutation, forceUpdateSheinProductLegacyMutation, forceUpdateSheinProductMutation } from '../../../../../../../shared/api/mutations/salesChannels.js';
+import { refreshLatestSheinIssuesMutation, updateSheinProductMutation } from '../../../../../../../shared/api/mutations/salesChannels.js';
 import { createSheinProductMutation } from '../../../../../../../shared/api/mutations/sheinProducts.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
@@ -479,12 +479,10 @@ const onError = (error) => {
               class="mb-4"
               :product-id="product.id"
               :sales-channel-id="selectedSheinSalesChannelId"
-              :sales-channel-view-id="selectedSheinSalesChannelViewId"
               :remote-product-id="selectedSheinRemoteProductId"
               :refresh-latest-shein-issues-mutation="refreshLatestSheinIssuesMutation"
               :create-shein-product-mutation="createSheinProductMutation"
-              :force-update-shein-product-mutation="forceUpdateSheinProductMutation"
-              :force-update-shein-product-legacy-mutation="forceUpdateSheinProductLegacyMutation"
+              :update-shein-product-mutation="updateSheinProductMutation"
               @fetch-issues-success="onFetchIssuesSuccess"
               @create-success="onCreateSuccess"
               @force-update-success="onForceUpdateSuccess"

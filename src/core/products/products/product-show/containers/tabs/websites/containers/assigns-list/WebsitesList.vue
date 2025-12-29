@@ -114,9 +114,16 @@ const getAssignStatus = (item: any) => {
                   </template>
                 </ApolloMutation>
 
-                <Link :path="item.remoteUrl" external>
+                <Link v-if="item.remoteUrl" :path="item.remoteUrl" external>
                   <Icon class="text-gray-500" size="xl" name="eye" />
                 </Link>
+                <Button
+                  v-else
+                  :disabled="true"
+                  :title="t('integrations.salesChannel.labels.noFrontendUrl')"
+                >
+                  <Icon class="text-gray-500" size="xl" name="eye" />
+                </Button>
                 <!-- Existing delete button -->
                 <ApolloAlertMutation
                   :mutation="deleteSalesChannelViewAssignMutation"
