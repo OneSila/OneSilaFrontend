@@ -3429,9 +3429,9 @@
           "excludeStores": "Exclude Stores"
         },
         "statuses": {
-          "partiallyListed": "Partially listed",
-          "pendingApproval": "Pending approval",
-          "approvalRejected": "Approval rejected"
+          "partiallyListed": "Approved on main marketplace",
+          "pendingApproval": "Pending external approval",
+          "approvalRejected": "Rejected by external approval"
         }
       },
       "productRules": {
