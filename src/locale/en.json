@@ -1277,6 +1277,24 @@
           "actions": {
             "createChannelGallery": "Create gallery"
           },
+          "sheinGuide": {
+            "title": "Shein image order matters",
+            "description": "Shein uses the order to assign image types. Upload images in this order:",
+            "order": {
+              "main": "1st image: {label}",
+              "square": "2nd image: {label}",
+              "detail": "3rd-(last - 1), up to 10: {label} (type 2)",
+              "color": "Last image: {label} (required for configurable products with variations, multiple SKUs; optional for simple products)",
+              "colorVariations": "Last image: {label} (required for configurable products with variations, multiple SKUs)"
+            },
+            "note": "We resize images automatically, but the order is required so we can identify each type.",
+            "labels": {
+              "main": "Main image",
+              "square": "Square image",
+              "detail": "Detail image",
+              "color": "Color image"
+            }
+          },
           "preview": {
             "channelHeading": "Preview for {channel}",
             "channelFallback": "this channel",

@@ -255,6 +255,7 @@
       "edit": "Bewerken",
       "show": "Tonen",
       "submit": "Verzenden",
+      "refresh": "",
       "add": "Toevoegen",
       "download": "Downloaden",
       "uploadNew": "Uploaden",
@@ -886,6 +887,24 @@
         },
         "actions": {
           "createChannelGallery": ""
+        },
+        "sheinGuide": {
+          "title": "",
+          "description": "",
+          "order": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": "",
+            "colorVariations": ""
+          },
+          "note": "",
+          "labels": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": ""
+          }
         },
         "preview": {
           "channelHeading": "",

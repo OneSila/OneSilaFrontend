@@ -4,6 +4,7 @@
       "login": "Anmelden",
       "register": "Registrieren",
       "recover": "Wiederherstellen",
+      "refresh": "",
       "select": "Auswählen",
       "duplicate": "Duplizieren",
       "copy": "",
@@ -341,6 +342,24 @@
         },
         "actions": {
           "createChannelGallery": ""
+        },
+        "sheinGuide": {
+          "title": "",
+          "description": "",
+          "order": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": "",
+            "colorVariations": ""
+          },
+          "note": "",
+          "labels": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": ""
+          }
         },
         "preview": {
           "channelHeading": "",

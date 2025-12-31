@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Accordion } from '../../atoms/accordion';
+import { Button } from '../../atoms/button';
 import apolloClient from '../../../../../apollo-client';
 import { productPropertiesRulesQuery, propertySelectValuesQuery } from '../../../api/queries/properties.js';
 import { ConfigTypes } from '../../../utils/constants';
@@ -32,11 +33,11 @@ const emitSelected = () => {
   emit('update:rule-id', ruleId.value);
 };
 
-const fetchValues = async (propertyId: string) => {
+const fetchValues = async (propertyId: string, fetchPolicy: 'cache-first' | 'network-only' = 'cache-first') => {
   const { data } = await apolloClient.query({
     query: propertySelectValuesQuery,
     variables: { filter: { property: { id: { exact: propertyId } } } },
-    fetchPolicy: 'cache-first'
+    fetchPolicy
   });
 
   if (data && data.propertySelectValues) {
@@ -48,26 +49,29 @@ const fetchValues = async (propertyId: string) => {
   return [];
 };
 
-const fetchData = async () => {
+const fetchData = async (options?: { forceNetwork?: boolean }) => {
   properties.value = [];
   ruleId.value = null;
   emitSelected();
 
   if (!props.productTypeId) return;
 
+  const fetchPolicy = options?.forceNetwork ? 'network-only' : 'cache-first';
   loading.value = true;
   const { data } = await apolloClient.query({
     query: productPropertiesRulesQuery,
     variables: { filter: { productType: { id: { exact: props.productTypeId } } } },
-    fetchPolicy: 'cache-first'
+    fetchPolicy
   });
 
   if (data && data.productPropertiesRules && data.productPropertiesRules.edges.length > 0) {
     const rule = data.productPropertiesRules.edges[0].node;
     ruleId.value = rule.id;
-    const requiredItems = rule.items.filter((item: any) => item.type === ConfigTypes.REQUIRED_IN_CONFIGURATOR);
-    for (const item of requiredItems) {
-      const values = await fetchValues(item.property.id);
+    const configuratorItems = rule.items.filter(
+      (item: any) => item.type === ConfigTypes.REQUIRED_IN_CONFIGURATOR || item.type === ConfigTypes.OPTIONAL_IN_CONFIGURATOR
+    );
+    for (const item of configuratorItems) {
+      const values = await fetchValues(item.property.id, fetchPolicy);
       properties.value.push({
         propertyId: item.property.id,
         propertyName: item.property.name,
@@ -80,8 +84,12 @@ const fetchData = async () => {
   emitSelected();
 };
 
-onMounted(fetchData);
-watch(() => props.productTypeId, fetchData);
+onMounted(() => {
+  fetchData();
+});
+watch(() => props.productTypeId, () => {
+  fetchData();
+});
 
 const toggleValue = (propertyIndex: number, valueId: string) => {
   const sel = properties.value[propertyIndex].selected;
@@ -121,6 +129,11 @@ const toggleAll = (idx: number) => {
         </span>
         {{ t('products.products.create.wizard.stepFour.configurable.generateDescription') }}
       </div>
+    </div>
+    <div class="mb-4 flex justify-end">
+      <Button class="btn btn-outline-dark" :disabled="loading" :loading="loading" @click="fetchData({ forceNetwork: true })">
+        {{ t('shared.button.refresh') }}
+      </Button>
     </div>
     <div v-if="loading" class="text-center my-4">{{ t('shared.labels.loading') }}</div>
     <Accordion v-else-if="properties.length"
