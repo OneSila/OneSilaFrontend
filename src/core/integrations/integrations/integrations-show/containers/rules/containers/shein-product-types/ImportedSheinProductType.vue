@@ -53,7 +53,6 @@ const loadingSuggestions = ref(false);
 const errors = ref<Record<string, string>>({});
 const selectedImage = ref<any | null>(null);
 const externalImageUrl = ref('');
-const siteRemoteId = ref('');
 
 const localInstancePath = computed(() => {
   const id = props.productType?.localInstance?.id;
@@ -108,14 +107,6 @@ watch(
 );
 
 watch(
-  () => props.productType?.marketplace?.remoteId,
-  (value) => {
-    siteRemoteId.value = value || '';
-  },
-  { immediate: true },
-);
-
-watch(
   () => externalImageUrl.value,
   (value) => {
     if (value && selectedImage.value) {
@@ -135,8 +126,8 @@ watch(
 
 const categoryField = computed<QueryFormField>(() => {
   const filter: Record<string, any> = {};
-  if (siteRemoteId.value) {
-    filter.siteRemoteId = { exact: siteRemoteId.value };
+  if (salesChannelId) {
+    filter.salesChannel = { id: { exact: salesChannelId } };
   }
   return {
     type: FieldType.Query,
@@ -150,7 +141,7 @@ const categoryField = computed<QueryFormField>(() => {
     multiple: false,
     filterable: true,
     minSearchLength: 1,
-    disabled: !siteRemoteId.value,
+    disabled: !salesChannelId,
     limit: 100,
     queryVariables: {
       filter,
@@ -164,10 +155,6 @@ const handleImageChange = (image: any | null) => {
 
 const mapSuggestions = (data: Record<string, any>): NormalizedSuggestion[] => {
   const payload = data?.suggestSheinCategory || {};
-
-  if (payload?.siteRemoteId) {
-    siteRemoteId.value = payload.siteRemoteId;
-  }
 
   const categories = payload?.categories || [];
   return categories.map((entry: any) => ({
@@ -289,7 +276,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 };
 
 const fetchCategoryDetails = async (remoteId: string): Promise<any | null> => {
-  if (!siteRemoteId.value) {
+  if (!salesChannelId) {
     return null;
   }
 
@@ -298,7 +285,7 @@ const fetchCategoryDetails = async (remoteId: string): Promise<any | null> => {
     variables: {
       first: 1,
       filter: {
-        siteRemoteId: { exact: siteRemoteId.value },
+        salesChannel: { id: { exact: salesChannelId } },
         remoteId: { exact: remoteId },
       },
     },
@@ -328,9 +315,6 @@ const handleManualCategoryChange = async (value: string | null) => {
     selectedCategoryId.value = details.remoteId || value;
     selectedRemoteId.value = details.productTypeRemoteId || details.remoteId || '';
     selectedName.value = details.name || '';
-    if (details.siteRemoteId) {
-      siteRemoteId.value = details.siteRemoteId;
-    }
   } catch {
     Toast.error(t('integrations.show.shein.productRules.errors.categoryLookupFailed'));
   }

@@ -7,7 +7,7 @@ import { amazonProductIssuesListingConfigConstructor, amazonProductIssuesSearchC
 const props = defineProps<{ salesChannelId: string; integrationId: string; type: string }>();
 const { t } = useI18n();
 
-const searchConfig = amazonProductIssuesSearchConfigConstructor(t);
+const searchConfig = amazonProductIssuesSearchConfigConstructor(t, props.salesChannelId);
 const listingConfig = amazonProductIssuesListingConfigConstructor(t, props.type, props.integrationId);
 </script>
 

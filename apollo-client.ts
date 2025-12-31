@@ -18,8 +18,16 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
       if (message.includes("not authenticated")) {
           const auth = reactive(detectAuth());
+          const router = getRouter();
+          const currentPath = router.currentRoute.value?.fullPath;
+          const loginLocation: { name: string; query?: { next: string } } = { name: 'auth.login' };
+
+          if (currentPath && currentPath.startsWith('/')) {
+            loginLocation.query = { next: currentPath };
+          }
+
           removeAuth(auth);
-          getRouter().push({ name: 'auth.login' });
+          router.push(loginLocation);
       }
 
     });

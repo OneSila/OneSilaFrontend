@@ -473,6 +473,34 @@ const latestFilterState = ref<FilterStateSnapshot>({
   }
 });
 
+const isPlainObject = (value: unknown): value is Record<string, any> => {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+};
+
+const mergeDeep = (target: Record<string, any>, source: Record<string, any>) => {
+  Object.keys(source).forEach((key) => {
+    const sourceValue = source[key];
+    const targetValue = target[key];
+
+    if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+      mergeDeep(targetValue, sourceValue);
+      return;
+    }
+
+    target[key] = sourceValue;
+  });
+};
+
+const mergeFixedVariables = (
+  baseVariables: Record<string, any> | null,
+  fixedVariables: Record<string, any> | null,
+) => {
+  const base = baseVariables ? JSON.parse(JSON.stringify(baseVariables)) : {};
+  const fixed = fixedVariables ? JSON.parse(JSON.stringify(fixedVariables)) : {};
+  mergeDeep(base, fixed);
+  return Object.keys(base).length ? base : null;
+};
+
 const buildQueryVariables = (
   filterVariables: Record<string, any> | null,
   orderVariables: Record<string, any> | null,
@@ -480,7 +508,7 @@ const buildQueryVariables = (
 ) => {
   const baseFilter = filterVariables || {};
   const baseOrder = orderVariables || {};
-  const filter = props.fixedFilterVariables !== null ? { ...baseFilter, ...props.fixedFilterVariables } : baseFilter;
+  const filter = mergeFixedVariables(baseFilter, props.fixedFilterVariables);
   const order = props.fixedOrderVariables !== null ? { ...baseOrder, ...props.fixedOrderVariables } : baseOrder;
   const variables = {
     filter,
@@ -514,10 +542,7 @@ const selectAllAcrossPages = async (totalCount?: number | null) => {
   const { filterVariables, orderVariables } = latestFilterState.value;
   const baseFilter = filterVariables ? JSON.parse(JSON.stringify(filterVariables)) : {};
   const baseOrder = orderVariables ? JSON.parse(JSON.stringify(orderVariables)) : {};
-  const computedFilter =
-    props.fixedFilterVariables !== null
-      ? { ...baseFilter, ...props.fixedFilterVariables }
-      : baseFilter;
+  const computedFilter = mergeFixedVariables(baseFilter, props.fixedFilterVariables);
   const computedOrder =
     props.fixedOrderVariables !== null
       ? { ...baseOrder, ...props.fixedOrderVariables }
@@ -636,7 +661,7 @@ watch(
     <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
       <div v-if="captureFilterState(filterVariables, orderVariables, pagination)" class="hidden" aria-hidden="true"></div>
       <ApolloQuery :query="query" fetch-policy="cache-and-network"
-                   :variables="{filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
+                   :variables="{filter: mergeFixedVariables(filterVariables, fixedFilterVariables),
                               order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                               first: pagination.first,
                               last: pagination.last,
@@ -753,7 +778,7 @@ watch(
                     :selectCheckbox="selectCheckbox"
                     :query-object="{
                        query: props.query,
-                       filter: fixedFilterVariables !== null ? { ...filterVariables, ...fixedFilterVariables } : filterVariables,
+                       filter: mergeFixedVariables(filterVariables, fixedFilterVariables),
                        order: fixedOrderVariables !== null ? { ...orderVariables, ...fixedOrderVariables } : orderVariables,
                        pagination: pagination,
                     }"

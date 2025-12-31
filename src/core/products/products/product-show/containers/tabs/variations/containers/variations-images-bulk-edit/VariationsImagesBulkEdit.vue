@@ -7,6 +7,7 @@ import MatrixEditor from "../../../../../../../../../shared/components/organisms
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
 import { Product } from "../../../../../../configs";
 import { ProductType } from "../../../../../../../../../shared/utils/constants";
+import { IntegrationTypes } from "../../../../../../../../integrations/integrations/integrations";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
 import { mediaProductThroughQuery } from "../../../../../../../../../shared/api/queries/media.js";
@@ -98,9 +99,89 @@ const isSingleUpload = computed(() => uploadContext.value?.columnIndex !== null)
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
 const parentProductType = computed(() => parentProduct.value.type);
+const isConfigurable = computed(() => parentProductType.value === ProductType.Configurable);
 const isChannelInherited = computed(
   () => currentSalesChannel.value !== 'default' && inheritedFromDefault.value
 );
+const currentSalesChannelType = computed(() => {
+  if (currentSalesChannel.value === 'default') {
+    return null;
+  }
+  return salesChannels.value.find((channel: any) => channel.id === currentSalesChannel.value)?.type ?? null;
+});
+const isSheinChannel = computed(() => currentSalesChannelType.value === IntegrationTypes.Shein);
+
+type SheinImageRole = 'main' | 'square' | 'detail' | 'color';
+
+const sheinRoleColorMap: Record<SheinImageRole, string> = {
+  main: 'bg-blue-500',
+  square: 'bg-purple-500',
+  detail: 'bg-emerald-500',
+  color: 'bg-orange-500'
+};
+
+const sheinRoleLabelKey: Record<SheinImageRole, string> = {
+  main: 'products.products.variations.media.sheinGuide.labels.main',
+  square: 'products.products.variations.media.sheinGuide.labels.square',
+  detail: 'products.products.variations.media.sheinGuide.labels.detail',
+  color: 'products.products.variations.media.sheinGuide.labels.color'
+};
+
+const getSheinRole = (index: number, total: number): SheinImageRole => {
+  if (index === 0) {
+    return 'main';
+  }
+  if (index === 1) {
+    return 'square';
+  }
+  if (isConfigurable.value && total > 2 && index === total - 1) {
+    return 'color';
+  }
+  return 'detail';
+};
+
+const getSheinRoleLabel = (index: number, total: number) => {
+  const role = getSheinRole(index, total);
+  return t(sheinRoleLabelKey[role]);
+};
+
+const getSheinRoleDotClass = (index: number, total: number) => {
+  const role = getSheinRole(index, total);
+  return sheinRoleColorMap[role];
+};
+
+const getRowImageTotal = (row: VariationRow) => {
+  let lastIndex = -1;
+  row.images.forEach((slot, index) => {
+    if (slot?.mediaId) {
+      lastIndex = index;
+    }
+  });
+  return lastIndex + 1;
+};
+
+const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
+  const total = getRowImageTotal(row);
+  if (!total || columnIndex >= total) {
+    return null;
+  }
+  return getSheinRoleLabel(columnIndex, total);
+};
+
+const getSheinRoleDotClassForRow = (row: VariationRow, columnIndex: number) => {
+  const total = getRowImageTotal(row);
+  if (!total || columnIndex >= total) {
+    return null;
+  }
+  return getSheinRoleDotClass(columnIndex, total);
+};
+
+const sheinLegend = computed(() => ([
+  { key: 'main', label: t(sheinRoleLabelKey.main), dotClass: sheinRoleColorMap.main },
+  { key: 'square', label: t(sheinRoleLabelKey.square), dotClass: sheinRoleColorMap.square },
+  { key: 'detail', label: t(sheinRoleLabelKey.detail), dotClass: sheinRoleColorMap.detail },
+  { key: 'color', label: t(sheinRoleLabelKey.color), dotClass: sheinRoleColorMap.color }
+]));
 
 const baseColumns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
@@ -803,6 +884,36 @@ defineExpose({ hasUnsavedChanges });
         >
           {{ t('products.products.variations.media.messages.inheritedFromDefault') }}
         </div>
+        <div
+          v-if="isSheinChannel"
+          class="mt-3 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
+          <div class="font-medium">{{ t('products.products.variations.media.sheinGuide.title') }}</div>
+          <p class="mt-1">{{ t('products.products.variations.media.sheinGuide.description') }}</p>
+          <ul class="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              {{ t('products.products.variations.media.sheinGuide.order.main', { label: t('products.products.variations.media.sheinGuide.labels.main') }) }}
+            </li>
+            <li>
+              {{ t('products.products.variations.media.sheinGuide.order.square', { label: t('products.products.variations.media.sheinGuide.labels.square') }) }}
+            </li>
+            <li>
+              {{ t('products.products.variations.media.sheinGuide.order.detail', { label: t('products.products.variations.media.sheinGuide.labels.detail') }) }}
+            </li>
+            <li>
+              {{ t('products.products.variations.media.sheinGuide.order.colorVariations', { label: t('products.products.variations.media.sheinGuide.labels.color') }) }}
+            </li>
+          </ul>
+          <p class="mt-2 text-xs text-red-600">
+            {{ t('products.products.variations.media.sheinGuide.note') }}
+          </p>
+          <div class="mt-3 flex flex-wrap gap-3 text-xs text-red-700">
+            <div v-for="legend in sheinLegend" :key="legend.key" class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full" :class="legend.dotClass"></span>
+              <span>{{ legend.label }}</span>
+            </div>
+          </div>
+        </div>
       </template>
       <template #toolbar-right>
         <div class="flex items-center gap-2">
@@ -935,6 +1046,16 @@ defineExpose({ hasUnsavedChanges });
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-900 bg-opacity-60 px-3 py-2 opacity-0 transition-opacity group-hover:opacity-100"
               :class="{ 'pointer-events-none': !row.images[getImageColumnIndex(column.key)] }"
             >
+              <div
+                v-if="isSheinChannel && row.images[getImageColumnIndex(column.key)] && getSheinRoleLabelForRow(row, getImageColumnIndex(column.key))"
+                class="absolute right-2 top-2 flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+              >
+                <span
+                  class="h-2.5 w-2.5 rounded-full"
+                  :class="getSheinRoleDotClassForRow(row, getImageColumnIndex(column.key))"
+                ></span>
+                <span>{{ getSheinRoleLabelForRow(row, getImageColumnIndex(column.key)) }}</span>
+              </div>
               <template v-if="row.images[getImageColumnIndex(column.key)]">
                 <Toggle
                   :model-value="row.images[getImageColumnIndex(column.key)]?.isMainImage ?? false"

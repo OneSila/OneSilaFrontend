@@ -6,6 +6,7 @@ import {
   getAmazonChannelViewQuery,
   ebayChannelViewsQuery,
   getEbaySalesChannelViewQuery,
+  sheinChannelViewsQuery,
 } from "../../../../../../shared/api/queries/salesChannels.js";
 import {
   updateSalesChannelViewMutation,
@@ -114,7 +115,7 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
     { name: 'active', type: FieldType.Boolean },
   ];
 
-  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
+  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay || type === IntegrationTypes.Shein) {
     headers.push(t('integrations.show.stores.labels.isDefault'));
     fields.push({ name: 'isDefault', type: FieldType.Boolean });
   }
@@ -143,6 +144,9 @@ export const listingQueryConstructor = (type: string) => {
   if (type === IntegrationTypes.Ebay) {
     return ebayChannelViewsQuery;
   }
+  if (type === IntegrationTypes.Shein) {
+    return sheinChannelViewsQuery;
+  }
   return salesChannelViewsQuery;
 };
 
@@ -152,6 +156,9 @@ export const listingQueryKeyConstructor = (type: string) => {
   }
   if (type === IntegrationTypes.Ebay) {
     return 'ebaySalesChannelViews';
+  }
+  if (type === IntegrationTypes.Shein) {
+    return 'sheinSalesChannelViews';
   }
   return 'salesChannelViews';
 };

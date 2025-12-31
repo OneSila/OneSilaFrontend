@@ -62,7 +62,7 @@ router.beforeEach((to, from, next) => {
     }
     // we don't have the token to redirect too so if you are authenticated but not active we will just logout and go back to login
     removeAuth(auth);
-    return next({ name: 'auth.login' });
+    return next({ name: 'auth.login', query: { next: to.fullPath } });
   }
 
   // Authenticated and trying to access a public page
@@ -76,7 +76,7 @@ router.beforeEach((to, from, next) => {
 
   // Not authenticated and trying to access a non-public page
   if (!PUBLIC_ROUTES.includes(routeName) && !isAuthenticated(auth)) {
-    return next({ name: 'auth.login' });
+    return next({ name: 'auth.login', query: { next: to.fullPath } });
   }
 
   // If authenticated but not finished onboarding, redirect to onboarding unless already on onboarding page

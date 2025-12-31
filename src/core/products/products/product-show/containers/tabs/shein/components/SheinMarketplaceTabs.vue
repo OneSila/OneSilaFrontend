@@ -7,7 +7,7 @@ import { MarketplaceTabsSelector } from '../../../../../../../../shared/componen
 import { IntegrationTypes } from '../../../../../../../integrations/integrations/integrations';
 
 const props = defineProps<{
-  views: any[];
+  channels: any[];
   modelValue: string | null;
   categories: Record<
     string,
@@ -22,12 +22,17 @@ const { t } = useI18n();
 
 const select = (val: string) => emit('update:modelValue', val);
 
-const viewEntries = computed(() =>
-  props.views.map((view: any) => ({
-    id: view.id,
-    view,
-    hasCategory: Boolean(props.categories[view.id]?.remoteId),
-  })),
+const channelEntries = computed(() =>
+  props.channels.map((channel: any) => {
+    const ptrId = channel?.saleschannelPtr?.id || null;
+    const category =
+      props.categories[channel.id] || (ptrId ? props.categories[ptrId] : null) || null;
+    return {
+      id: channel.id,
+      channel,
+      hasCategory: Boolean(category?.remoteId),
+    };
+  }),
 );
 </script>
 
@@ -36,7 +41,7 @@ const viewEntries = computed(() =>
     <MarketplaceTabsSelector class="mb-3" :before-change="beforeChange" />
     <div class="max-h-[660px] overflow-y-auto space-y-2">
       <div
-        v-for="entry in viewEntries"
+        v-for="entry in channelEntries"
         :key="entry.id"
         class="cursor-pointer flex items-center gap-3 p-3 border rounded-md"
         :class="[
@@ -56,33 +61,21 @@ const viewEntries = computed(() =>
         </div>
         <div class="flex flex-col gap-1">
           <FlexCell>
-            <Flex gap="2">
-              <FlexCell>
-                <span>{{ entry.view.name || entry.view.remoteId }}</span>
-              </FlexCell>
-              <FlexCell>
-                <Icon
-                  v-if="entry.view.isDefault"
-                  name="crown"
-                  class="w-4 h-4 text-yellow-400"
-                  :title="t('products.products.ebay.defaultMarketplace')"
-                />
-              </FlexCell>
-            </Flex>
+            <span>{{ entry.channel.hostname }}</span>
           </FlexCell>
           <Link
             class="text-xs"
             :path="{
               name: 'integrations.integrations.show',
-              params: { type: IntegrationTypes.Ebay, id: entry.view.salesChannel.id },
+              params: { type: IntegrationTypes.Shein, id: entry.channel.id },
             }"
           >
-            ({{ entry.view.salesChannel.hostname }})
+            ({{ t('products.products.shein.openIntegration') }})
           </Link>
         </div>
       </div>
-      <div v-if="!viewEntries.length" class="text-sm text-gray-500">
-        {{ t('products.products.ebay.noViews') }}
+      <div v-if="!channelEntries.length" class="text-sm text-gray-500">
+        {{ t('products.products.shein.noChannels') }}
       </div>
     </div>
   </div>

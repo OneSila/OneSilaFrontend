@@ -222,7 +222,7 @@ const handleOptionUpdate = async (option: OptionNode, rawValue: string | null | 
                 {{ t('integrations.show.shein.internalProperties.options.localValue') }}
               </label>
               <FieldQuery
-                v-model="optionMappings[option.id]"
+                :model-value="optionMappings[option.id]"
                 :field="buildField(option)"
                 @update:model-value="(value) => handleOptionUpdate(option, value as string | null)"
               />

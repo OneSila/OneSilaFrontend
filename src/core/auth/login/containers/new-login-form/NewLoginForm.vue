@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { injectAuth, refreshUser } from '../../../../../shared/modules/auth';
 import { useEnterKeyboardListener } from '../../../../../shared/modules/keyboard';
@@ -13,6 +13,7 @@ import { loginMutation } from '../../../../../shared/api/mutations/auth.js'
 import { displayApolloError } from "../../../../../shared/utils";
 
 const { t, locale } = useI18n();
+const route = useRoute();
 const router = useRouter();
 const auth = injectAuth();
 
@@ -46,7 +47,15 @@ const onLoginClicked = async () => {
 
       locale.value = user.language;
 
-      router.push({ name: 'dashboard' });
+      const nextPath = typeof route.query.next === 'string' && route.query.next.startsWith('/')
+        ? route.query.next
+        : null;
+
+      if (nextPath) {
+        router.push(nextPath);
+      } else {
+        router.push({ name: 'dashboard' });
+      }
     } else {
       throw new Error(t('auth.login.failed'));
     }

@@ -1,15 +1,15 @@
 import { gql } from 'graphql-tag';
 
-export const sheinCategoriesQuery = gql`
-  query SheinCategories(
+export const sheinProductTypesForCategoryMappingQuery = gql`
+  query SheinProductTypesForCategoryMapping(
     $first: Int
     $last: Int
     $after: String
     $before: String
-    $order: SheinCategoryOrder
-    $filter: SheinCategoryFilter
+    $order: SheinProductTypeOrder
+    $filter: SheinProductTypeFilter
   ) {
-    sheinCategories(
+    sheinProductTypes(
       first: $first
       last: $last
       after: $after
@@ -19,22 +19,11 @@ export const sheinCategoriesQuery = gql`
     ) {
       edges {
         node {
-          remoteId
+          id
           name
-          parentRemoteId
-          isLeaf
-          productTypeRemoteId
-          defaultLanguage
-          currency
-          properties
-          parent {
-            remoteId
-            name
-          }
-          children {
-            remoteId
-            name
-          }
+          translatedName
+          remoteId
+          categoryId
         }
         cursor
       }
@@ -48,3 +37,4 @@ export const sheinCategoriesQuery = gql`
     }
   }
 `;
+

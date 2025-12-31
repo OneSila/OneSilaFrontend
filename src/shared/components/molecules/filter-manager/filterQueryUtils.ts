@@ -6,6 +6,7 @@ type FiltersWithLookupEntry = {
   keys: string[];
   lookup: string | null;
   isNot: boolean;
+  filterKey?: string | null;
 };
 
 const isPlainObject = (value: unknown): value is Record<string, any> => {
@@ -66,6 +67,7 @@ const buildFiltersWithLookup = (searchConfig: SearchConfig) => {
       keys: filter.lookupKeys || [],
       lookup,
       isNot: filter.isNot || false,
+      filterKey: filter.filterKey || null,
     };
   });
 
@@ -98,9 +100,15 @@ export const buildFilterVariablesFromRouteQuery = (
       return;
     }
 
-    const { lookup, keys, isNot } = filtersWithLookup[filter.name] || { lookup: null, keys: [], isNot: false };
-    const [filterKey, ...namePath] = filter.name.split('__');
-    const builtValue = buildNestedFilterObject(filterKey, namePath, keys, lookup, value);
+    const { lookup, keys, isNot, filterKey } = filtersWithLookup[filter.name] || {
+      lookup: null,
+      keys: [],
+      isNot: false,
+      filterKey: null,
+    };
+    const [rawFilterKey, ...namePath] = filter.name.split('__');
+    const resolvedFilterKey = filterKey || rawFilterKey;
+    const builtValue = buildNestedFilterObject(resolvedFilterKey, namePath, keys, lookup, value);
 
     if (isNot) {
       if (!updatedVariables['NOT']) {

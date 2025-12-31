@@ -39,10 +39,10 @@ watch(
 
 const typeChoices = [
   { name: IntegrationTypes.Magento, disabled: false },
-  { name: IntegrationTypes.Shopify, disabled: false, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Amazon, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Shopify, disabled: false },
+  { name: IntegrationTypes.Amazon },
   { name: IntegrationTypes.Woocommerce, banner: t('shared.labels.beta') },
-  { name: IntegrationTypes.Ebay, banner: t('shared.labels.beta') },
+  { name: IntegrationTypes.Ebay },
   { name: IntegrationTypes.Shein, banner: t('shared.labels.beta') },
   { name: IntegrationTypes.Webhook, disabled: false }
 ];

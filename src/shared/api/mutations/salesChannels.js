@@ -350,6 +350,14 @@ export const refreshLatestAmazonIssuesMutation = gql`
   }
 `;
 
+export const refreshLatestSheinIssuesMutation = gql`
+  mutation refreshLatestSheinIssues($remoteProduct: RemoteProductPartialInput!, $salesChannel: SheinSalesChannelPartialInput!) {
+    refreshSheinLatestIssues(remoteProduct: $remoteProduct, salesChannel: $salesChannel) {
+      id
+    }
+  }
+`;
+
 export const updateSalesChannelViewMutation = gql`
   mutation updateSalesChannelView($data: SalesChannelViewPartialInput!) {
     updateSalesChannelView(data: $data) {
@@ -392,6 +400,21 @@ export const updateEbaySalesChannelViewMutation = gql`
   }
 `;
 
+export const updateSheinSalesChannelViewMutation = gql`
+  mutation updateSheinSalesChannelView($data: SheinSalesChannelViewPartialInput!) {
+    updateSheinSalesChannelView(data: $data) {
+      id
+      name
+      url
+      siteStatus
+      storeType
+      isDefault
+      merchantLocationKey
+      merchantLocationChoices
+    }
+  }
+`;
+
 export const updateEbayInternalPropertyMutation = gql`
   mutation updateEbayInternalProperty($data: EbayInternalPropertyPartialInput!) {
     updateEbayInternalProperty(data: $data) {
@@ -399,6 +422,16 @@ export const updateEbayInternalPropertyMutation = gql`
       mappedLocally
       mappedRemotely
     }
+  }
+`;
+
+export const updateSheinProductMutation = gql`
+  mutation updateSheinProduct(
+    $product: ProductPartialInput!
+    $salesChannel: SheinSalesChannelPartialInput!
+    $forceUpdate: Boolean!
+  ) {
+    updateSheinProduct(product: $product, salesChannel: $salesChannel, forceUpdate: $forceUpdate)
   }
 `;
 
@@ -910,7 +943,6 @@ export const suggestSheinCategoryMutation = gql`
       image: $image
       externalImageUrl: $externalImageUrl
     ) {
-      siteRemoteId
       categories {
         categoryId
         productTypeId

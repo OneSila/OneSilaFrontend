@@ -255,6 +255,7 @@
       "edit": "Bewerken",
       "show": "Tonen",
       "submit": "Verzenden",
+      "refresh": "",
       "add": "Toevoegen",
       "download": "Downloaden",
       "uploadNew": "Uploaden",
@@ -274,6 +275,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "forceUpdate": "",
       "import": "Import",
       "useAi": "Gebruik AI"
     },
@@ -333,7 +335,8 @@
       "manual": "Handmatig",
       "generate": "Genereren",
       "code": "Code",
-      "noIssues": "Geen problemen"
+      "noIssues": "Geen problemen",
+      "pendingCreation": ""
     },
     "alert": {
       "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
@@ -401,6 +404,31 @@
         }
       },
       "organisms": {
+        "bulkProductWebsiteAssigner": {
+          "title": "",
+          "button": "",
+          "description": "",
+          "disclaimer": "",
+          "viewsLabel": "",
+          "viewsPlaceholder": "",
+          "selectedViewsTitle": "",
+          "selectedViewsEmpty": "",
+          "noActiveViews": "",
+          "summaryReady": "",
+          "summarySkipped": "",
+          "summaryExisting": "",
+          "summaryPlanned": "",
+          "loadingProducts": "",
+          "noProductsSelected": "",
+          "processingNote": "",
+          "missingSelection": "",
+          "nothingToAssign": "",
+          "assignButton": "",
+          "success": "",
+          "skippedRed": "",
+          "skippedExisting": "",
+          "error": ""
+        },
         "imageAssigner": {
           "addButton": {
             "uploadNew": "Upload nieuwe afbeelding",
@@ -782,7 +810,12 @@
         "eanCodes": "EAN Codes",
         "websites": "Verkoopskanalen",
         "amazon": "Amazon",
-        "ebay": ""
+        "ebay": "",
+        "shein": "",
+        "marketplace": ""
+      },
+      "marketplaceSelector": {
+        "label": ""
       },
       "priceLists": {
         "add": {
@@ -854,6 +887,24 @@
         },
         "actions": {
           "createChannelGallery": ""
+        },
+        "sheinGuide": {
+          "title": "",
+          "description": "",
+          "order": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": "",
+            "colorVariations": ""
+          },
+          "note": "",
+          "labels": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": ""
+          }
         },
         "preview": {
           "channelHeading": "",
@@ -1009,6 +1060,84 @@
           "title": "",
           "description": "",
           "empty": ""
+        },
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        }
+      },
+      "shein": {
+        "noChannels": "",
+        "openIntegration": "",
+        "status": {
+          "title": "",
+          "description": ""
+        },
+        "issues": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "columns": {
+            "store": "",
+            "reason": "",
+            "lastFetchedAt": ""
+          }
+        },
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectChannelPrompt": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "defaultLanguage": "",
+        "currency": "",
+        "productTypeRemoteId": "",
+        "productTypeIdMissing": "",
+        "categoryAttributes": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "unknown": "",
+          "none": "",
+          "valueMode": "",
+          "localProperty": "",
+          "columns": {
+            "property": "",
+            "type": "",
+            "requirement": "",
+            "main": "",
+            "attributeType": "",
+            "configurable": ""
+          },
+          "requirement": {
+            "required": "",
+            "optional": "",
+            "notFillable": "",
+            "unknown": ""
+          },
+          "attributeType": {
+            "sales": "",
+            "size": "",
+            "composition": "",
+            "common": ""
+          },
+          "remarkTags": {
+            "important": "",
+            "compliance": "",
+            "quality": "",
+            "customs": ""
+          }
         },
         "manualEntry": {
           "title": "",
@@ -2448,6 +2577,18 @@
       "tabs": {
         "issues": ""
       },
+      "stores": {
+        "labels": {
+          "siteStatus": "",
+          "storeType": ""
+        },
+        "shein": {
+          "storeType": {
+            "platform": "",
+            "selfOperated": ""
+          }
+        }
+      },
       "amazonIssues": {
         "show": {
           "title": "",
@@ -2480,6 +2621,7 @@
           "isSuppressed": ""
         },
         "filters": {
+          "marketplace": "",
           "isValidationIssue": "",
           "isSuppressed": "",
           "categories": "",
@@ -2530,6 +2672,9 @@
         "gpt": "",
         "authentication": "",
         "defaultUnits": ""
+      },
+      "internalProperties": {
+        "title": ""
       },
       "ebay": {
         "title": "",
@@ -2957,6 +3102,7 @@
           "isSuppressed": ""
         },
         "filters": {
+          "marketplace": "",
           "isValidationIssue": "",
           "isSuppressed": "",
           "categories": "",
@@ -3012,7 +3158,8 @@
     "salesChannel": {
       "labels": {
         "assignedToSalesChannelView": "Toegewezen aan winkel",
-        "notAssignedToSalesChannelView": "Niet toegewezen aan winkel"
+        "notAssignedToSalesChannelView": "Niet toegewezen aan winkel",
+        "noFrontendUrl": ""
       },
       "helpText": {
         "startingStock": "",
@@ -3020,6 +3167,9 @@
         "gptSellerUrl": "",
         "gptReturnWindow": "",
         "gptEnableCheckout": ""
+      },
+      "toast": {
+        "forceUpdateSuccess": ""
       }
     },
     "ebay": {
