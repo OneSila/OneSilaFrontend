@@ -96,6 +96,26 @@ export const generateProductAiBulletPointsMutation = gql`
   }
 `;
 
+export const advancedContentGeneratorMutation = gql`
+  mutation advancedContentGeneratorMutation($data: AdvancedContentGeneratorInput!) {
+    advancedContentGenerator(instance: $data) {
+      ... on AiBulkContentResponse {
+        success
+        content
+        points
+      }
+      ... on OperationInfo {
+        messages {
+          kind
+          message
+          field
+          code
+        }
+      }
+    }
+  }
+`;
+
 export const createBrandCustomPromptMutation = gql`
   mutation createBrandCustomPrompt($data: BrandCustomPromptInput!) {
     createBrandCustomPrompt(data: $data) {

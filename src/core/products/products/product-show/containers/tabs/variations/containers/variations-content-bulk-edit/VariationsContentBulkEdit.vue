@@ -18,6 +18,7 @@ import type { MatrixColumn, MatrixEditorExpose } from '../../../../../../../../.
 import { AiContentGenerator } from '../../../../../../../../../shared/components/organisms/ai-content-generator';
 import { AiContentTranslator } from '../../../../../../../../../shared/components/organisms/ai-content-translator';
 import { AiBulletPointsGenerator } from '../../../../../../../../../shared/components/organisms/ai-bullet-points-generator';
+import { AdvancedContentGenerator } from '../../../../../../../../../shared/components/organisms/advanced-content-generator';
 import ProductContentPreview from '../../../content/ProductContentPreview.vue';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors, shortenText } from '../../../../../../../../../shared/utils';
@@ -107,6 +108,11 @@ const hoverPreview = reactive({
 });
 
 const aiMenuState = ref<{ rowIndex: number; key: string } | null>(null);
+
+const variationProductIds = computed(() => {
+  const ids = variations.value.map((row) => row.variation?.id).filter(Boolean);
+  return Array.from(new Set(ids));
+});
 
 const htmlModal = reactive({
   visible: false,
@@ -1102,6 +1108,12 @@ defineExpose({ hasUnsavedChanges });
     >
       <template #toolbar-right>
         <div class="flex items-center gap-2">
+          <AdvancedContentGenerator
+            :product-ids="variationProductIds"
+            :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
+            :small="false"
+            btn-class="btn-outline-primary whitespace-nowrap"
+          />
           <Selector
             v-if="salesChannelOptions.length"
             v-model="currentSalesChannel"

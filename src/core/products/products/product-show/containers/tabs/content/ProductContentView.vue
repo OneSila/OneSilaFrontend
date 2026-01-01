@@ -18,6 +18,8 @@ import { SalesChannelTabs } from "../../../../../../../shared/components/molecul
 import ProductContentPreview from "./ProductContentPreview.vue";
 import ProductContentForm from "./ProductContentForm.vue";
 import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";
+import { AdvancedContentGenerator } from "../../../../../../../shared/components/organisms/advanced-content-generator";
+import ProductContentImportModal from "./ProductContentImportModal.vue";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -260,6 +262,11 @@ const handleGeneratedShortDescriptionContent =  (newVal) => {
   form.shortDescription = newVal;
 };
 
+const handleImportCompleted = async () => {
+  if (!currentLanguage.value) return;
+  await setFormAndMutation(currentLanguage.value, currentSalesChannel.value);
+};
+
 const handleSave = async (mutate) => {
   try {
     const response = await mutate();
@@ -298,6 +305,22 @@ const shortDescriptionToolbarOptions = [
   <Flex end>
     <FlexCell class="block lg:hidden">
       <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+    </FlexCell>
+    <FlexCell>
+      <AdvancedContentGenerator
+        :product-ids="[product.id]"
+        :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
+        :small="false"
+      />
+    </FlexCell>
+    <FlexCell>
+      <ProductContentImportModal
+        :product-id="product.id"
+        :current-language="currentLanguage"
+        :current-sales-channel="currentSalesChannel"
+        :sales-channels="salesChannels"
+        @imported="handleImportCompleted"
+      />
     </FlexCell>
     <FlexCell>
       <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">

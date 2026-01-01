@@ -260,6 +260,48 @@ export const getProductContentByLanguageAndDefaultQuery = gql`
   }
 `;
 
+export const getProductContentsByChannelQuery = gql`
+  query getProductContentsByChannel($productId: GlobalID!, $salesChannelId: GlobalID!) {
+    productTranslations(filters: {
+      product: {id: {exact: $productId}},
+      salesChannel: {id: {exact: $salesChannelId}}
+    }) {
+      edges {
+        node {
+          id
+          language
+          name
+          subtitle
+          shortDescription
+          description
+          urlKey
+        }
+      }
+    }
+  }
+`;
+
+export const getProductContentsByDefaultQuery = gql`
+  query getProductContentsByDefault($productId: GlobalID!) {
+    productTranslations(filters: {
+      product: {id: {exact: $productId}},
+      salesChannel: {id: {isNull: true}}
+    }) {
+      edges {
+        node {
+          id
+          language
+          name
+          subtitle
+          shortDescription
+          description
+          urlKey
+        }
+      }
+    }
+  }
+`;
+
 
 export const configurableVariationsQuery = gql`
   query ConfigurableVariations($first: Int, $last: Int, $after: String, $before: String, $order: ConfigurableVariationOrder, $filter: ConfigurableVariationFilter) {

@@ -10,7 +10,9 @@ type ContentFieldRuleFlags = {
 };
 
 export type ContentFieldLimitKey = 'name' | 'subtitle' | 'shortDescription' | 'description' | 'bulletPoints';
-export type ContentFieldLimitConfig = Partial<Record<ContentFieldLimitKey, number>>;
+export type ContentFieldLimitRange = { min?: number; max?: number };
+export type ContentFieldLimitValue = number | ContentFieldLimitRange;
+export type ContentFieldLimitConfig = Partial<Record<ContentFieldLimitKey, ContentFieldLimitValue>>;
 
 export interface ContentFieldRules extends ContentFieldRuleFlags {
   limits: ContentFieldLimitConfig;
@@ -24,6 +26,9 @@ const baseFieldRuleFlags: ContentFieldRuleFlags = {
   urlKey: true,
   bulletPoints: false,
 };
+
+const AMAZON_MIN_TITLE_LENGTH = 150;
+const AMAZON_MIN_DESCRIPTION_LENGTH = 1000;
 
 const defaultLimits: ContentFieldLimitConfig = {
   name: 512,
@@ -47,10 +52,21 @@ export const FIELD_RULES: Record<string, ContentFieldRules> = {
   [IntegrationTypes.Shopify]: createRule({ shortDescription: false }, { name: 70, description: 5000 }),
   [IntegrationTypes.Amazon]: createRule(
     { shortDescription: false, urlKey: false, bulletPoints: true },
-    { name: 200, description: 2000 },
+    {
+      name: { min: AMAZON_MIN_TITLE_LENGTH, max: 200 },
+      description: { min: AMAZON_MIN_DESCRIPTION_LENGTH, max: 2000 },
+    },
   ),
   [IntegrationTypes.Ebay]: createRule({ subtitle: true }, { name: 80, subtitle: 55, description: 50000 }),
-  shein: createRule({}, { name: 1000, description: 5000 }),
+  [IntegrationTypes.Shein]: createRule(
+    {
+      subtitle: false,
+      shortDescription: false,
+      urlKey: false,
+      bulletPoints: false,
+    },
+    { name: 1000, description: 5000 },
+  ),
   default: createRule(),
 };
 

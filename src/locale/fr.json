@@ -77,6 +77,42 @@
           "skippedRed": "",
           "skippedExisting": "",
           "error": ""
+        },
+        "advancedContentGenerator": {
+          "button": "",
+          "title": "",
+          "startedToast": "",
+          "previewMissing": "",
+          "formTitle": "",
+          "formDescription": "",
+          "productCount": "",
+          "overrideLabel": "",
+          "overrideHelp": "",
+          "previewLabel": "",
+          "previewHelp": "",
+          "previewLimitExceeded": "",
+          "additionalInformationsLabel": "",
+          "additionalInformationsPlaceholder": "",
+          "salesChannelsLabel": "",
+          "salesChannelsEmpty": "",
+          "salesChannelsPlaceholder": "",
+          "languagesTitle": "",
+          "defaultLanguageHint": "",
+          "languagesEmpty": "",
+          "remoteLanguageColumn": "",
+          "localLanguageColumn": "",
+          "selectColumn": "",
+          "defaultColumn": "",
+          "missingSelection": "",
+          "unknownChannel": "",
+          "bulletPointPlaceholder": "",
+          "addBulletPoint": "",
+          "approveNext": "",
+          "rejectNext": "",
+          "saveApproved": "",
+          "pendingWarning": "",
+          "limitWarning": "",
+          "saveSuccess": ""
         }
       }
     }
@@ -228,6 +264,25 @@
         }
       },
       "translation": {
+        "import": {
+          "button": "",
+          "title": "",
+          "targetLabel": "",
+          "sourceLabel": "",
+          "sourcePlaceholder": "",
+          "overrideLabel": "",
+          "overrideHelp": "",
+          "allLanguagesLabel": "",
+          "allLanguagesHelp": "",
+          "currentLanguageBadge": "",
+          "availableLanguagesBadge": "",
+        "previewTitle": "",
+        "missingSource": "",
+        "missingSourceMultiLanguage": "",
+        "importAction": "",
+        "importActionWithSource": "",
+        "success": ""
+      },
         "placeholders": {
           "subtitle": ""
         },
