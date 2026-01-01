@@ -8,6 +8,7 @@ import { IntegrationTypes } from '../../../../core/integrations/integrations/int
 import { getContentFieldRules } from '../../../../core/products/products/product-show/containers/tabs/content/contentFieldRules';
 import {
   getProductContentByLanguageAndChannelQuery,
+  getProductContentByLanguageAndDefaultQuery,
   productTranslationBulletPointsQuery,
 } from '../../../api/queries/products.js';
 import {
@@ -59,7 +60,10 @@ const props = defineProps<{
   productMap: Map<string, ProductSummary>;
 }>();
 
-const emit = defineEmits<{ (e: 'close'): void }>();
+const emit = defineEmits<{
+  (e: 'close'): void;
+  (e: 'saved'): void;
+}>();
 
 const { t } = useI18n();
 
@@ -146,15 +150,17 @@ const parsePreview = (raw: any) => {
           order.push(sku);
         }
         Object.entries(languageBlock as Record<string, any>).forEach(([language, content]) => {
-          const channel = integrationByProxyId.value.get(String(integrationProxyId));
-          const key = `${sku}::${integrationProxyId}::${language}`;
+          const proxyId = String(integrationProxyId);
+          const isDefaultChannel = proxyId === 'default';
+          const channel = isDefaultChannel ? null : integrationByProxyId.value.get(proxyId);
+          const key = `${sku}::${proxyId}::${language}`;
           parsedItems.push({
             key,
             productSku: sku,
-            integrationProxyId: String(integrationProxyId),
+            integrationProxyId: proxyId,
             integrationId: channel?.id || null,
-            integrationType: channel?.type || null,
-            integrationLabel: formatIntegrationLabel(channel),
+            integrationType: channel?.type || (isDefaultChannel ? 'default' : null),
+            integrationLabel: isDefaultChannel ? t('shared.labels.default') : formatIntegrationLabel(channel || undefined),
             language,
           });
           contentByKey[key] = normalizePreviewContent(content);
@@ -294,10 +300,13 @@ const hasLimitIssues = computed(() =>
   items.value.some((item) => statusByKey[item.key] === 'approved' && hasItemLimitIssues(item)),
 );
 
-const fetchTranslationId = async (productId: string, language: string, salesChannelId: string) => {
+const fetchTranslationId = async (productId: string, language: string, salesChannelId: string | null) => {
+  const isDefault = !salesChannelId;
   const { data } = await apolloClient.query({
-    query: getProductContentByLanguageAndChannelQuery,
-    variables: { languageCode: language, productId, salesChannelId },
+    query: isDefault ? getProductContentByLanguageAndDefaultQuery : getProductContentByLanguageAndChannelQuery,
+    variables: isDefault
+      ? { languageCode: language, productId }
+      : { languageCode: language, productId, salesChannelId },
     fetchPolicy: 'network-only',
   });
   return data?.productTranslations?.edges?.[0]?.node || null;
@@ -335,8 +344,9 @@ const saveBulletPoints = async (translationId: string, bulletPoints: string[]) =
 
 const saveItem = async (item: PreviewItem) => {
   const product = props.productMap.get(item.productSku);
-  const channel = integrationByProxyId.value.get(item.integrationProxyId);
-  if (!product || !channel) {
+  const isDefaultChannel = item.integrationProxyId === 'default';
+  const channel = isDefaultChannel ? null : integrationByProxyId.value.get(item.integrationProxyId);
+  if (!product || (!channel && !isDefaultChannel)) {
     return;
   }
 
@@ -346,8 +356,10 @@ const saveItem = async (item: PreviewItem) => {
   const payload: any = {
     product: { id: product.id },
     language: item.language,
-    salesChannel: { id: channel.id },
   };
+  if (channel) {
+    payload.salesChannel = { id: channel.id };
+  }
 
   if (rules.name) payload.name = content.name || '';
   if (rules.subtitle) payload.subtitle = content.subtitle || '';
@@ -355,7 +367,7 @@ const saveItem = async (item: PreviewItem) => {
   if (rules.description) payload.description = content.description || '';
   if (rules.urlKey) payload.urlKey = content.urlKey || '';
 
-  const existingTranslation = await fetchTranslationId(product.id, item.language, channel.id);
+  const existingTranslation = await fetchTranslationId(product.id, item.language, channel?.id || null);
 
   let translationId = existingTranslation?.id;
   if (translationId) {
@@ -386,7 +398,7 @@ const saveApproved = async () => {
       await saveItem(item);
     }
     Toast.success(t('shared.components.organisms.advancedContentGenerator.saveSuccess'));
-    emit('close');
+    emit('saved');
   } catch (error) {
     const validationErrors = processGraphQLErrors(error, t);
     Object.values(validationErrors).forEach((message) => Toast.error(message));

@@ -44,20 +44,36 @@ const additionalInformations = ref('');
 const selectedChannelIds = ref<string[]>(props.initialSalesChannelIds || []);
 const channelLanguages = reactive<Record<string, { loading: boolean; languages: LanguageOption[] }>>({});
 const companyLanguageMap = ref<Record<string, string>>({});
+const companyLanguages = ref<Array<{ code: string; name?: string | null }>>([]);
 
 const activeChannels = computed(() => props.salesChannels || []);
-const salesChannelOptions = computed(() =>
-  activeChannels.value.map((channel) => ({
-    id: channel.id,
-    label: formatSalesChannelLabel(channel),
-  })),
-);
+const salesChannelOptions = computed(() => {
+  const options = [
+    { id: 'default', label: t('shared.labels.default') },
+  ];
+
+  activeChannels.value.forEach((channel) => {
+    options.push({
+      id: channel.id,
+      label: formatSalesChannelLabel(channel),
+    });
+  });
+
+  return options;
+});
 
 const formatSalesChannelLabel = (channel?: IntegrationChannel) => {
   if (!channel) {
     return t('shared.components.organisms.advancedContentGenerator.unknownChannel');
   }
   return channel.hostname || channel.type || channel.id || t('shared.components.organisms.advancedContentGenerator.unknownChannel');
+};
+
+const resolveSalesChannelLabel = (channelId: string) => {
+  if (channelId === 'default') {
+    return t('shared.labels.default');
+  }
+  return formatSalesChannelLabel(activeChannels.value.find((item) => item.id === channelId));
 };
 
 const normalizeLocalCode = (value: any): string | null => {
@@ -75,15 +91,30 @@ const fetchCompanyLanguages = async () => {
     fetchPolicy: 'cache-first',
   });
   const languages = data?.companyLanguages ?? [];
+  companyLanguages.value = languages;
   const map: Record<string, string> = {};
   languages.forEach((language: any) => {
     map[language.code] = language.name || language.code;
   });
   companyLanguageMap.value = map;
+  return languages;
 };
 
 const fetchLanguagesForChannel = async (channelId: string) => {
   channelLanguages[channelId] = { loading: true, languages: [] };
+
+  if (channelId === 'default') {
+    const languages = companyLanguages.value.length ? companyLanguages.value : await fetchCompanyLanguages();
+    const mapped = languages.map((language: any, index: number) => ({
+      id: language.code,
+      localCode: language.code,
+      selected: true,
+      isDefault: index === 0,
+    }));
+    channelLanguages[channelId] = { loading: false, languages: mapped };
+    return;
+  }
+
   try {
     const { data } = await apolloClient.query({
       query: remoteLanguagesQuery,
@@ -194,14 +225,14 @@ const toggleDefaultLanguage = (channelId: string, languageId: string, enabled: b
 };
 
 const salesChannels = computed(() => {
-  const instructions: Array<{ salesChannel: { id: string }; language: string; isDefault: boolean }> = [];
+  const instructions: Array<{ salesChannel: { id: string } | null; language: string; isDefault: boolean }> = [];
   selectedChannelIds.value.forEach((channelId) => {
     const entry = channelLanguages[channelId];
     if (!entry) return;
     entry.languages.forEach((language) => {
       if (!language.selected || !language.localCode) return;
       instructions.push({
-        salesChannel: { id: channelId },
+        salesChannel: channelId === 'default' ? null : { id: channelId },
         language: language.localCode,
         isDefault: language.isDefault,
       });
@@ -284,11 +315,11 @@ onMounted(() => {
             {{ t('shared.components.organisms.advancedContentGenerator.salesChannelsLabel') }}
           </h5>
         </div>
-        <div v-if="!activeChannels.length" class="text-sm text-gray-500">
+        <div v-if="!salesChannelOptions.length" class="text-sm text-gray-500">
           {{ t('shared.components.organisms.advancedContentGenerator.salesChannelsEmpty') }}
         </div>
         <Selector
-          v-if="activeChannels.length"
+          v-if="salesChannelOptions.length"
           v-model="selectedChannelIds"
           :options="salesChannelOptions"
           label-by="label"
@@ -344,7 +375,7 @@ onMounted(() => {
       <div class="flex items-center justify-between">
         <h6 class="text-sm font-semibold text-gray-700">
           {{ t('shared.components.organisms.advancedContentGenerator.languagesTitle', {
-            channel: formatSalesChannelLabel(activeChannels.find((item) => item.id === channelId)),
+            channel: resolveSalesChannelLabel(channelId),
           }) }}
         </h6>
         <span class="text-xs text-gray-400">

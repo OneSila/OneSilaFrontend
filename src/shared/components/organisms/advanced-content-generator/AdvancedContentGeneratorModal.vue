@@ -72,6 +72,11 @@ const closeModal = () => {
   resetState();
 };
 
+const handlePreviewSaved = () => {
+  emit('started');
+  closeModal();
+};
+
 const loadSalesChannels = async () => {
   const { data } = await apolloClient.query({
     query: integrationsQuery,
@@ -125,7 +130,6 @@ const handleSubmit = async (payload: any) => {
           salesChannels: payload.salesChannels,
           override: payload.override,
           preview: payload.preview,
-          debug: false,
           additionalInformations: payload.additionalInformations,
         },
       },
@@ -140,7 +144,6 @@ const handleSubmit = async (payload: any) => {
         return;
       }
       step.value = 'preview';
-      emit('started');
       return;
     }
 
@@ -211,6 +214,7 @@ watch(
         :sales-channels="salesChannels"
         :product-map="productMap"
         @close="closeModal"
+        @saved="handlePreviewSaved"
       />
     </Card>
   </Modal>
