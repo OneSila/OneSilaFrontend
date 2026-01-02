@@ -5,10 +5,11 @@ import apolloClient from '../../../../../apollo-client';
 import { Toggle } from '../../atoms/toggle';
 import { Checkbox } from '../../atoms/checkbox';
 import { Button } from '../../atoms/button';
-import { Selector } from '../../atoms/selector';
+import { IntegrationsSelector } from '../../molecules/integrations-selector';
 import { TextEditor } from '../../atoms/input-text-editor';
 import { remoteLanguagesQuery } from '../../../api/queries/salesChannels.js';
 import { companyLanguagesQuery } from '../../../api/queries/languages.js';
+import { formatIntegrationLabel } from '../../../utils';
 
 interface IntegrationChannel {
   id: string;
@@ -22,7 +23,6 @@ interface LanguageOption {
   id: string;
   localCode: string | null;
   selected: boolean;
-  isDefault: boolean;
 }
 
 const props = defineProps<{
@@ -46,27 +46,17 @@ const channelLanguages = reactive<Record<string, { loading: boolean; languages: 
 const companyLanguageMap = ref<Record<string, string>>({});
 const companyLanguages = ref<Array<{ code: string; name?: string | null }>>([]);
 
+const PRODUCT_LIMIT = 5;
+
 const activeChannels = computed(() => props.salesChannels || []);
-const salesChannelOptions = computed(() => {
-  const options = [
-    { id: 'default', label: t('shared.labels.default') },
-  ];
-
-  activeChannels.value.forEach((channel) => {
-    options.push({
-      id: channel.id,
-      label: formatSalesChannelLabel(channel),
-    });
-  });
-
-  return options;
-});
+const salesChannelOptionsCount = computed(() => activeChannels.value.length + 1);
 
 const formatSalesChannelLabel = (channel?: IntegrationChannel) => {
   if (!channel) {
     return t('shared.components.organisms.advancedContentGenerator.unknownChannel');
   }
-  return channel.hostname || channel.type || channel.id || t('shared.components.organisms.advancedContentGenerator.unknownChannel');
+  const label = formatIntegrationLabel(channel);
+  return label || t('shared.components.organisms.advancedContentGenerator.unknownChannel');
 };
 
 const resolveSalesChannelLabel = (channelId: string) => {
@@ -105,11 +95,10 @@ const fetchLanguagesForChannel = async (channelId: string) => {
 
   if (channelId === 'default') {
     const languages = companyLanguages.value.length ? companyLanguages.value : await fetchCompanyLanguages();
-    const mapped = languages.map((language: any, index: number) => ({
+    const mapped = languages.map((language: any) => ({
       id: language.code,
       localCode: language.code,
       selected: true,
-      isDefault: index === 0,
     }));
     channelLanguages[channelId] = { loading: false, languages: mapped };
     return;
@@ -131,42 +120,13 @@ const fetchLanguagesForChannel = async (channelId: string) => {
         id: node.id,
         localCode,
         selected: true,
-        isDefault: false,
       });
     });
 
-    const languages = Array.from(languageMap.values());
-
-    if (languages.length) {
-      languages[0].isDefault = true;
-    }
-
-    channelLanguages[channelId] = { loading: false, languages };
+    channelLanguages[channelId] = { loading: false, languages: Array.from(languageMap.values()) };
   } catch (error) {
     channelLanguages[channelId] = { loading: false, languages: [] };
   }
-};
-
-const ensureDefaultLanguage = (channelId: string) => {
-  const entry = channelLanguages[channelId];
-  if (!entry) return;
-  const selectedLanguages = entry.languages.filter((language) => language.selected);
-  if (!selectedLanguages.length) {
-    entry.languages.forEach((language) => {
-      language.isDefault = false;
-    });
-    return;
-  }
-
-  if (!selectedLanguages.some((language) => language.isDefault)) {
-    selectedLanguages[0].isDefault = true;
-  }
-
-  entry.languages.forEach((language) => {
-    if (!language.selected) {
-      language.isDefault = false;
-    }
-  });
 };
 
 const toggleLanguage = (channelId: string, languageId: string, selected: boolean) => {
@@ -175,10 +135,6 @@ const toggleLanguage = (channelId: string, languageId: string, selected: boolean
   const language = entry.languages.find((item) => item.id === languageId);
   if (!language) return;
   language.selected = selected;
-  if (!selected) {
-    language.isDefault = false;
-  }
-  ensureDefaultLanguage(channelId);
 };
 
 const isChannelFullySelected = (channelId: string) => {
@@ -192,40 +148,11 @@ const toggleAllLanguages = (channelId: string, selected: boolean) => {
   if (!entry) return;
   entry.languages.forEach((language) => {
     language.selected = selected;
-    if (!selected) {
-      language.isDefault = false;
-    }
   });
-  ensureDefaultLanguage(channelId);
-};
-
-const setDefaultLanguage = (channelId: string, languageId: string) => {
-  const entry = channelLanguages[channelId];
-  if (!entry) return;
-  entry.languages.forEach((language) => {
-    language.isDefault = language.id === languageId;
-    if (language.isDefault) {
-      language.selected = true;
-    }
-  });
-};
-
-const toggleDefaultLanguage = (channelId: string, languageId: string, enabled: boolean) => {
-  if (enabled) {
-    setDefaultLanguage(channelId, languageId);
-    return;
-  }
-
-  const entry = channelLanguages[channelId];
-  if (!entry) return;
-  const language = entry.languages.find((item) => item.id === languageId);
-  if (!language) return;
-  language.isDefault = false;
-  ensureDefaultLanguage(channelId);
 };
 
 const salesChannels = computed(() => {
-  const instructions: Array<{ salesChannel: { id: string } | null; language: string; isDefault: boolean }> = [];
+  const instructions: Array<{ salesChannel: { id: string } | null; language: string }> = [];
   selectedChannelIds.value.forEach((channelId) => {
     const entry = channelLanguages[channelId];
     if (!entry) return;
@@ -234,7 +161,6 @@ const salesChannels = computed(() => {
       instructions.push({
         salesChannel: channelId === 'default' ? null : { id: channelId },
         language: language.localCode,
-        isDefault: language.isDefault,
       });
     });
   });
@@ -246,18 +172,18 @@ const hasMissingLanguages = computed(() =>
     const entry = channelLanguages[channelId];
     if (!entry) return true;
     const selectedLanguages = entry.languages.filter((language) => language.selected);
-    if (!selectedLanguages.length) return true;
-    return !selectedLanguages.some((language) => language.isDefault);
+    return !selectedLanguages.length;
   }),
 );
 
-const previewLimitExceeded = computed(() => previewMode.value && props.productCount > 20);
+const previewDisabled = computed(() => props.productCount > PRODUCT_LIMIT);
+const previewLimitExceeded = computed(() => previewMode.value && props.productCount > PRODUCT_LIMIT);
 
 const canSubmit = computed(() => {
-  if (previewLimitExceeded.value) return false;
   if (!selectedChannelIds.value.length) return false;
   if (!salesChannels.value.length) return false;
   if (hasMissingLanguages.value) return false;
+  if (previewLimitExceeded.value) return false;
   return true;
 });
 
@@ -284,6 +210,12 @@ watch(
   { deep: true },
 );
 
+watch(previewDisabled, (exceeded) => {
+  if (exceeded && previewMode.value) {
+    previewMode.value = false;
+  }
+});
+
 onMounted(() => {
   fetchCompanyLanguages();
   selectedChannelIds.value.forEach((channelId) => {
@@ -294,147 +226,140 @@ onMounted(() => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex flex-col gap-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h4 class="text-lg font-semibold">
-            {{ t('shared.components.organisms.advancedContentGenerator.formTitle') }}
-          </h4>
-          <p class="text-sm text-gray-500">
-            {{ t('shared.components.organisms.advancedContentGenerator.formDescription') }}
-          </p>
-        </div>
-        <div class="text-sm text-gray-500">
-          {{ t('shared.components.organisms.advancedContentGenerator.productCount', { count: props.productCount }) }}
-        </div>
-      </div>
-
-      <div class="space-y-4">
+    <div class="space-y-6">
+      <div class="flex flex-col gap-4">
         <div class="flex items-center justify-between">
-          <h5 class="text-sm font-semibold text-gray-700">
-            {{ t('shared.components.organisms.advancedContentGenerator.salesChannelsLabel') }}
-          </h5>
+          <div>
+            <h4 class="text-lg font-semibold">
+              {{ t('shared.components.organisms.advancedContentGenerator.formTitle') }}
+            </h4>
+            <p class="text-sm text-gray-500">
+              {{ t('shared.components.organisms.advancedContentGenerator.formDescription') }}
+            </p>
+          </div>
+          <div class="text-sm text-gray-500">
+            {{ t('shared.components.organisms.advancedContentGenerator.productCount', { count: props.productCount }) }}
+          </div>
         </div>
-        <div v-if="!salesChannelOptions.length" class="text-sm text-gray-500">
+
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h5 class="text-sm font-semibold text-gray-700">
+              {{ t('shared.components.organisms.advancedContentGenerator.salesChannelsLabel') }}
+            </h5>
+          </div>
+        <div v-if="!salesChannelOptionsCount" class="text-sm text-gray-500">
           {{ t('shared.components.organisms.advancedContentGenerator.salesChannelsEmpty') }}
         </div>
-        <Selector
-          v-if="salesChannelOptions.length"
+        <IntegrationsSelector
+          v-if="salesChannelOptionsCount"
           v-model="selectedChannelIds"
-          :options="salesChannelOptions"
-          label-by="label"
-          value-by="id"
+          :integrations="activeChannels"
+          :add-default="true"
           :multiple="true"
           :filterable="true"
           :placeholder="t('shared.components.organisms.advancedContentGenerator.salesChannelsPlaceholder')"
         />
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
-          <div>
-            <div class="text-sm font-medium text-gray-800">
-              {{ t('shared.components.organisms.advancedContentGenerator.overrideLabel') }}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
+            <div>
+              <div class="text-sm font-medium text-gray-800">
+                {{ t('shared.components.organisms.advancedContentGenerator.overrideLabel') }}
+              </div>
+              <div class="text-xs text-gray-500">
+                {{ t('shared.components.organisms.advancedContentGenerator.overrideHelp') }}
+              </div>
             </div>
-            <div class="text-xs text-gray-500">
-              {{ t('shared.components.organisms.advancedContentGenerator.overrideHelp') }}
+            <Toggle v-model="overrideExisting" />
+          </label>
+          <label
+            class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
+            :class="previewDisabled ? 'pointer-events-none opacity-50' : ''"
+            :aria-disabled="previewDisabled"
+          >
+            <div>
+              <div class="text-sm font-medium text-gray-800">
+                {{ t('shared.components.organisms.advancedContentGenerator.previewLabel') }}
+              </div>
+              <div class="text-xs text-gray-500">
+                {{ t('shared.components.organisms.advancedContentGenerator.previewHelp') }}
+              </div>
+              <div class="text-xs text-gray-500">
+                {{ t('shared.components.organisms.advancedContentGenerator.previewNote') }}
+              </div>
             </div>
-          </div>
-          <Toggle v-model="overrideExisting" />
+            <Toggle v-model="previewMode" />
+          </label>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-sm font-semibold text-gray-700">
+          {{ t('shared.components.organisms.advancedContentGenerator.additionalInformationsLabel') }}
         </label>
-        <label class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
-          <div>
-            <div class="text-sm font-medium text-gray-800">
-              {{ t('shared.components.organisms.advancedContentGenerator.previewLabel') }}
-            </div>
-            <div class="text-xs text-gray-500">
-              {{ t('shared.components.organisms.advancedContentGenerator.previewHelp') }}
-            </div>
-          </div>
-          <Toggle v-model="previewMode" />
-        </label>
+        <p class="text-xs text-gray-500">
+          {{ t('shared.components.organisms.advancedContentGenerator.additionalInformationsHelp') }}
+        </p>
+        <TextEditor
+          v-model="additionalInformations"
+          class="w-full h-32"
+          :placeholder="t('shared.components.organisms.advancedContentGenerator.additionalInformationsPlaceholder')"
+        />
       </div>
 
-      <div v-if="previewLimitExceeded" class="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-        {{ t('shared.components.organisms.advancedContentGenerator.previewLimitExceeded') }}
-      </div>
-    </div>
+      <div v-for="channelId in selectedChannelIds" :key="channelId" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h6 class="text-sm font-semibold text-gray-700">
+            {{ t('shared.components.organisms.advancedContentGenerator.languagesTitle', {
+              channel: resolveSalesChannelLabel(channelId),
+            }) }}
+          </h6>
+        </div>
 
-    <div class="space-y-2">
-      <label class="text-sm font-semibold text-gray-700">
-        {{ t('shared.components.organisms.advancedContentGenerator.additionalInformationsLabel') }}
-      </label>
-      <TextEditor
-        v-model="additionalInformations"
-        class="w-full h-32"
-        :placeholder="t('shared.components.organisms.advancedContentGenerator.additionalInformationsPlaceholder')"
-      />
-    </div>
+        <div v-if="channelLanguages[channelId]?.loading" class="text-sm text-gray-500">
+          {{ t('shared.labels.loading') }}
+        </div>
 
-    <div v-for="channelId in selectedChannelIds" :key="channelId" class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h6 class="text-sm font-semibold text-gray-700">
-          {{ t('shared.components.organisms.advancedContentGenerator.languagesTitle', {
-            channel: resolveSalesChannelLabel(channelId),
-          }) }}
-        </h6>
-        <span class="text-xs text-gray-400">
-          {{ t('shared.components.organisms.advancedContentGenerator.defaultLanguageHint') }}
-        </span>
-      </div>
+        <div v-else-if="!(channelLanguages[channelId]?.languages || []).length" class="text-sm text-gray-500">
+          {{ t('shared.components.organisms.advancedContentGenerator.languagesEmpty') }}
+        </div>
 
-      <div v-if="channelLanguages[channelId]?.loading" class="text-sm text-gray-500">
-        {{ t('shared.labels.loading') }}
-      </div>
-
-      <div v-else-if="!(channelLanguages[channelId]?.languages || []).length" class="text-sm text-gray-500">
-        {{ t('shared.components.organisms.advancedContentGenerator.languagesEmpty') }}
-      </div>
-
-      <div v-else class="overflow-x-auto rounded-lg border border-gray-200">
-        <table class="w-full min-w-max divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-16">
-                <div class="flex items-center justify-start gap-2">
-                  <Checkbox
-                    :model-value="isChannelFullySelected(channelId)"
-                    @update:modelValue="(value) => toggleAllLanguages(channelId, value)"
-                  />
-                  <span>{{ t('shared.components.organisms.advancedContentGenerator.selectColumn') }}</span>
-                </div>
-              </th>
+        <div v-else class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full min-w-max divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500 w-16">
+                  <div class="flex items-center justify-start gap-2">
+                    <Checkbox
+                      :model-value="isChannelFullySelected(channelId)"
+                      @update:modelValue="(value) => toggleAllLanguages(channelId, value)"
+                    />
+                    <span>{{ t('shared.components.organisms.advancedContentGenerator.selectColumn') }}</span>
+                  </div>
+                </th>
               <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">
                 {{ t('shared.components.organisms.advancedContentGenerator.localLanguageColumn') }}
-              </th>
-              <th class="px-3 py-2 text-center text-xs font-semibold text-gray-500">
-                {{ t('shared.components.organisms.advancedContentGenerator.defaultColumn') }}
               </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 bg-white">
             <tr v-for="language in channelLanguages[channelId].languages" :key="language.id">
               <td class="px-3 py-2 text-center">
-                <Checkbox
-                  :model-value="language.selected"
-                  @update:modelValue="(value) => toggleLanguage(channelId, language.id, value)"
-                />
+                  <Checkbox
+                    :model-value="language.selected"
+                    @update:modelValue="(value) => toggleLanguage(channelId, language.id, value)"
+                  />
               </td>
               <td class="px-3 py-2 text-gray-700">
                 {{ companyLanguageMap[language.localCode || ''] || language.localCode }}
-              </td>
-              <td class="px-3 py-2 text-center">
-                <div :class="language.selected ? '' : 'pointer-events-none opacity-50'">
-                  <Toggle
-                    :model-value="language.isDefault"
-                    @update:modelValue="(value) => toggleDefaultLanguage(channelId, language.id, value)"
-                  />
-                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
     </div>
 
     <div class="flex items-center justify-end gap-3 pt-2">

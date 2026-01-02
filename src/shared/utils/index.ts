@@ -132,6 +132,7 @@ export const getSrcImage = (path: string) => {
   }
 };
 
+
 const matchComplexError = (message, t) => {
 
   const matchPattern = (pattern, message, translationKey, matchIndex = 1) => {
@@ -227,3 +228,5 @@ export const shortenText = (
   if (!text) return '';
   return text.length > max ? text.slice(0, max) + '…' : text;
 };
+
+export { cleanHostname, formatIntegrationLabel } from './integrations';

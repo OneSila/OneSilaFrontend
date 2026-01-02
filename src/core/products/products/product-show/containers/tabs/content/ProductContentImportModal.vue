@@ -5,11 +5,11 @@ import apolloClient from '../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../shared/components/atoms/button';
 import { Modal } from '../../../../../../../shared/components/atoms/modal';
 import { Card } from '../../../../../../../shared/components/atoms/card';
-import { Selector } from '../../../../../../../shared/components/atoms/selector';
+import { IntegrationsSelector } from '../../../../../../../shared/components/molecules/integrations-selector';
 import { Toggle } from '../../../../../../../shared/components/atoms/toggle';
 import { Badge } from '../../../../../../../shared/components/atoms/badge';
 import { Toast } from '../../../../../../../shared/modules/toast';
-import { processGraphQLErrors } from '../../../../../../../shared/utils';
+import { formatIntegrationLabel, processGraphQLErrors } from '../../../../../../../shared/utils';
 import {
   getProductContentsByChannelQuery,
   getProductContentsByDefaultQuery,
@@ -74,22 +74,15 @@ const destinationPreviewBulletPoints = ref<BulletPointNode[]>([]);
 
 const emptyHtml = '<p><br></p>';
 
-const formatChannelLabel = (channel?: SalesChannel) =>
-  channel?.hostname || channel?.type || channel?.id || t('shared.labels.default');
+const formatChannelLabel = (channel?: SalesChannel) => {
+  if (!channel) return t('shared.labels.default');
+  return formatIntegrationLabel(channel) || t('shared.labels.default');
+};
 
-const sourceChannelOptions = computed(() => {
-  const options: Array<{ id: string; label: string }> = [];
-
-  if (props.currentSalesChannel !== 'default') {
-    options.push({ id: 'default', label: t('shared.labels.default') });
-  }
-
-  props.salesChannels.forEach((channel) => {
-    if (channel.id === props.currentSalesChannel) return;
-    options.push({ id: channel.id, label: formatChannelLabel(channel) });
-  });
-
-  return options;
+const sourceChannelCount = computed(() => {
+  const addDefault = props.currentSalesChannel !== 'default';
+  const filtered = props.salesChannels.filter((channel) => channel.id !== props.currentSalesChannel);
+  return filtered.length + (addDefault ? 1 : 0);
 });
 
 const targetChannelLabel = computed(() => {
@@ -525,14 +518,14 @@ const showMultiLanguageWarning = computed(() =>
             <label class="text-sm font-semibold text-gray-700">
               {{ t('products.translation.import.sourceLabel') }}
             </label>
-            <Selector
+            <IntegrationsSelector
               v-model="selectedSourceChannel"
-              :options="sourceChannelOptions"
-              label-by="label"
-              value-by="id"
+              :integrations="props.salesChannels"
+              :exclude-ids="[props.currentSalesChannel]"
+              :add-default="props.currentSalesChannel !== 'default'"
               :placeholder="t('products.translation.import.sourcePlaceholder')"
               :removable="false"
-              :disabled="!sourceChannelOptions.length"
+              :disabled="!sourceChannelCount"
             />
           </div>
 
