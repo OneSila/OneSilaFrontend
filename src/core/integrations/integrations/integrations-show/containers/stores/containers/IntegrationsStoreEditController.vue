@@ -8,6 +8,7 @@ import {storeEditFormConfigConstructor} from "../configs";
 import {GeneralForm} from "../../../../../../../shared/components/organisms/general-form";
 import { IntegrationTypes } from "../../../../integrations";
 import EbayStoreEditView from "./EbayStoreEditView.vue";
+import SheinStoreEditView from "./SheinStoreEditView.vue";
 
 const route = useRoute();
 
@@ -18,6 +19,7 @@ const integrationId = route.query.integrationId ? route.query.integrationId.toSt
 
 const formConfig = computed(() => storeEditFormConfigConstructor(t, type.value, id.value, integrationId));
 const isEbayIntegration = computed(() => type.value === IntegrationTypes.Ebay);
+const isSheinIntegration = computed(() => type.value === IntegrationTypes.Shein);
 </script>
 
 <template>
@@ -32,6 +34,12 @@ const isEbayIntegration = computed(() => type.value === IntegrationTypes.Ebay);
     <template v-slot:content>
       <EbayStoreEditView
         v-if="isEbayIntegration"
+        :store-id="id"
+        :integration-id="integrationId"
+        :integration-type="type"
+      />
+      <SheinStoreEditView
+        v-else-if="isSheinIntegration"
         :store-id="id"
         :integration-id="integrationId"
         :integration-type="type"

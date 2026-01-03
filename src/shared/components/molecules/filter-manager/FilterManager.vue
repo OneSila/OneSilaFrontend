@@ -50,6 +50,7 @@ props.searchConfig.filters?.forEach((filter: SearchFilter) => {
     keys: filter.lookupKeys || [],
     lookup,
     isNot: filter.isNot || false,
+    filterKey: filter.filterKey || null,
   };
 });
 
@@ -126,10 +127,11 @@ watch(() => route.query, (newQuery) => {
       }
 
       if (key in filtersWithLookup.value) {
-        const { lookup, keys, isNot } = filtersWithLookup.value[key];
+        const { lookup, keys, isNot, filterKey } = filtersWithLookup.value[key];
 
-        const [filterKey, ...namePath] = key.split('__');
-        const builtValue = buildNestedFilterObject(filterKey, namePath, keys, lookup, value);
+        const [rawFilterKey, ...namePath] = key.split('__');
+        const resolvedFilterKey = filterKey || rawFilterKey;
+        const builtValue = buildNestedFilterObject(resolvedFilterKey, namePath, keys, lookup, value);
 
         if (isNot) {
           if (!updatedVariables['NOT']) {

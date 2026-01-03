@@ -4,6 +4,7 @@
       "login": "Anmelden",
       "register": "Registrieren",
       "recover": "Wiederherstellen",
+      "refresh": "",
       "select": "Auswählen",
       "duplicate": "Duplizieren",
       "copy": "",
@@ -11,6 +12,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "forceUpdate": "",
       "import": "Import",
       "saveAll": "Alles speichern",
       "createAndContinue": ""
@@ -32,6 +34,7 @@
       "data": "Daten",
       "context": "Kontext",
       "noIssues": "Keine Probleme",
+      "pendingCreation": "",
       "active": "Active",
       "inactive": "Inactive",
       "selectedOfTotal": "{selected} selected of {total}",
@@ -47,6 +50,71 @@
       "atoms": {
         "textHtmlEditor": {
           "placeholder": ""
+        }
+      },
+      "organisms": {
+        "bulkProductWebsiteAssigner": {
+          "title": "",
+          "button": "",
+          "description": "",
+          "disclaimer": "",
+          "viewsLabel": "",
+          "viewsPlaceholder": "",
+          "selectedViewsTitle": "",
+          "selectedViewsEmpty": "",
+          "noActiveViews": "",
+          "summaryReady": "",
+          "summarySkipped": "",
+          "summaryExisting": "",
+          "summaryPlanned": "",
+          "loadingProducts": "",
+          "noProductsSelected": "",
+          "processingNote": "",
+          "missingSelection": "",
+          "nothingToAssign": "",
+          "assignButton": "",
+          "success": "",
+          "skippedRed": "",
+          "skippedExisting": "",
+          "error": ""
+        },
+        "advancedContentGenerator": {
+          "button": "",
+          "title": "",
+          "startedToast": "",
+          "previewMissing": "",
+          "formTitle": "",
+          "formDescription": "",
+          "productCount": "",
+          "overrideLabel": "",
+          "overrideHelp": "",
+          "previewLabel": "",
+          "previewHelp": "",
+          "previewNote": "",
+          "previewLimitExceeded": "",
+          "additionalInformationsLabel": "",
+          "additionalInformationsHelp": "",
+          "additionalInformationsPlaceholder": "",
+          "salesChannelsLabel": "",
+          "salesChannelsEmpty": "",
+          "salesChannelsPlaceholder": "",
+          "languagesTitle": "",
+          "defaultLanguageHint": "",
+          "languagesEmpty": "",
+          "remoteLanguageColumn": "",
+          "localLanguageColumn": "",
+          "selectColumn": "",
+          "defaultColumn": "",
+          "missingSelection": "",
+          "unknownChannel": "",
+          "bulletPointPlaceholder": "",
+          "addBulletPoint": "",
+          "approveNext": "",
+          "rejectNext": "",
+          "saveApproved": "",
+          "pendingWarning": "",
+          "limitWarning": "",
+          "saveSuccess": ""
         }
       }
     }
@@ -191,6 +259,25 @@
       "messages": {
         "noSourceText": "Es gibt keinen Quelltext zum Übersetzen."
       },
+      "import": {
+        "button": "",
+        "title": "",
+        "targetLabel": "",
+        "sourceLabel": "",
+        "sourcePlaceholder": "",
+        "overrideLabel": "",
+        "overrideHelp": "",
+        "allLanguagesLabel": "",
+        "allLanguagesHelp": "",
+        "currentLanguageBadge": "",
+        "availableLanguagesBadge": "",
+        "previewTitle": "",
+        "missingSource": "",
+        "missingSourceMultiLanguage": "",
+        "importAction": "",
+        "importActionWithSource": "",
+        "success": ""
+      },
       "placeholders": {
         "subtitle": ""
       },
@@ -234,7 +321,12 @@
       },
       "tabs": {
         "amazon": "Amazon",
-        "ebay": ""
+        "ebay": "",
+        "shein": "",
+        "marketplace": ""
+      },
+      "marketplaceSelector": {
+        "label": ""
       },
       "priceLists": {
         "add": {
@@ -307,6 +399,24 @@
         },
         "actions": {
           "createChannelGallery": ""
+        },
+        "sheinGuide": {
+          "title": "",
+          "description": "",
+          "order": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": "",
+            "colorVariations": ""
+          },
+          "note": "",
+          "labels": {
+            "main": "",
+            "square": "",
+            "detail": "",
+            "color": ""
+          }
         },
         "preview": {
           "channelHeading": "",
@@ -473,6 +583,84 @@
           "button": "",
           "invalid": ""
         }
+      },
+      "shein": {
+        "noChannels": "",
+        "openIntegration": "",
+        "status": {
+          "title": "",
+          "description": ""
+        },
+        "issues": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "columns": {
+            "store": "",
+            "reason": "",
+            "lastFetchedAt": ""
+          }
+        },
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectChannelPrompt": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "defaultLanguage": "",
+        "currency": "",
+        "productTypeRemoteId": "",
+        "productTypeIdMissing": "",
+        "categoryAttributes": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "unknown": "",
+          "none": "",
+          "valueMode": "",
+          "localProperty": "",
+          "columns": {
+            "property": "",
+            "type": "",
+            "requirement": "",
+            "main": "",
+            "attributeType": "",
+            "configurable": ""
+          },
+          "requirement": {
+            "required": "",
+            "optional": "",
+            "notFillable": "",
+            "unknown": ""
+          },
+          "attributeType": {
+            "sales": "",
+            "size": "",
+            "composition": "",
+            "common": ""
+          },
+          "remarkTags": {
+            "important": "",
+            "compliance": "",
+            "quality": "",
+            "customs": ""
+          }
+        },
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        }
       }
     }
   },
@@ -504,17 +692,35 @@
       "gptFeedUrl": ""
     },
     "salesChannel": {
+      "labels": {
+        "noFrontendUrl": ""
+      },
       "helpText": {
         "startingStock": "",
         "gptEnable": "",
         "gptSellerUrl": "",
         "gptReturnWindow": "",
         "gptEnableCheckout": ""
+      },
+      "toast": {
+        "forceUpdateSuccess": ""
       }
     },
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "stores": {
+        "labels": {
+          "siteStatus": "",
+          "storeType": ""
+        },
+        "shein": {
+          "storeType": {
+            "platform": "",
+            "selfOperated": ""
+          }
+        }
       },
       "amazonIssues": {
         "show": {
@@ -548,6 +754,7 @@
           "isSuppressed": ""
         },
         "filters": {
+          "marketplace": "",
           "isValidationIssue": "",
           "isSuppressed": "",
           "categories": "",
@@ -598,6 +805,9 @@
         "gpt": "",
         "authentication": "",
         "defaultUnits": ""
+      },
+      "internalProperties": {
+        "title": ""
       },
       "products": {
         "statuses": {

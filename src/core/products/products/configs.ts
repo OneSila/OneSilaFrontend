@@ -251,7 +251,7 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       multiple: false,
       isEdge: true,
       addLookup: false,
-      lookupKeys: ['valueSelectId'],
+      filterKey: 'valueSelectId',
       isNot: true,
     },
     {

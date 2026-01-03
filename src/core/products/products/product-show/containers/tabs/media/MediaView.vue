@@ -61,6 +61,13 @@ const channelLabel = computed(() => {
   return cleanHostname(label, channel.type);
 });
 
+const currentSalesChannelType = computed(() => {
+  if (currentSalesChannel.value === 'default') {
+    return null;
+  }
+  return salesChannels.value.find((entry: any) => entry.id === currentSalesChannel.value)?.type ?? null;
+});
+
 const loadSalesChannels = async () => {
   try {
     const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
@@ -153,6 +160,7 @@ const handleCreateGallery = async () => {
             :product="product"
             :refetch-needed="refetchNeeded"
             :sales-channel-id="currentSalesChannel"
+            :sales-channel-type="currentSalesChannelType"
             :readonly-mode="isReadOnly"
             @refetched="handleRefetched"
             @update-ids="updateIds"

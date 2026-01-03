@@ -10,6 +10,8 @@ interface TabItem {
   icon?: string;
   danger?: boolean;
   alwaysRender?: boolean;
+  group?: string;
+  hidden?: boolean;
 }
 
 const props = withDefaults(
@@ -43,9 +45,15 @@ onMounted(() => {
     selectedTab.value = queryTab.toString();
   }
 });
-const isSelected = (tab) => tab === selectedTab.value;
+const isSelected = (tab: TabItem) => {
+  if (tab.name === selectedTab.value) return true;
+  if (!tab.group) return false;
+  return props.tabs.some(
+    (item) => item.group === tab.group && item.name === selectedTab.value,
+  );
+};
 const isDisabled = (tab) => props.disabledTabs.includes(tab);
-const isHighlighted = (tab: TabItem) => !isSelected(tab.name) && tab.danger;
+const isHighlighted = (tab: TabItem) => !isSelected(tab) && tab.danger;
 
 const changeTab = async (index) => {
   const newTab = props.tabs[index].name;
@@ -80,7 +88,10 @@ const defaultTabIndex = () => {
         <a
             href="javascript:;"
             class="flex gap-2 p-4 border-b border-transparent hover:border-primary hover:text-primary !outline-none"
-            :class="{ '!border-primary text-primary': isSelected(tab.name) || isHighlighted(tab) }"
+            :class="[
+              tab.hidden ? 'hidden' : '',
+              { '!border-primary text-primary': isSelected(tab) || isHighlighted(tab) },
+            ]"
         >
           <Icon :name="tab.icon" v-if="tab.icon" />
           {{ tab.label }}

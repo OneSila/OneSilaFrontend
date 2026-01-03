@@ -17,6 +17,7 @@ import ParentsView from "../../tabs/parents/ParentsView.vue";
 import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
 import EbayView from "../../tabs/ebay/EbayView.vue";
+import SheinView from "../../tabs/shein/SheinView.vue";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 import Swal from 'sweetalert2';
 
@@ -33,10 +34,12 @@ const propertiesRef = ref<InstanceType<typeof PropertiesView> | null>(null);
 const eanCodesRef = ref<InstanceType<typeof ProductEanCodesList> | null>(null);
 const amazonRef = ref<InstanceType<typeof AmazonView> | null>(null);
 const ebayRef = ref<InstanceType<typeof EbayView> | null>(null);
+const sheinRef = ref<InstanceType<typeof SheinView> | null>(null);
 
 const handleWebsiteAssignChange = () => {
   amazonRef.value?.fetchAmazonProducts('network-only');
   ebayRef.value?.fetchEbayProductCategories('network-only');
+  sheinRef.value?.fetchSheinProductCategories('network-only');
 };
 
 const tabRefs: Record<string, any> = {
@@ -47,6 +50,7 @@ const tabRefs: Record<string, any> = {
   eanCodes: eanCodesRef,
   amazon: amazonRef,
   ebay: ebayRef,
+  shein: sheinRef,
 };
 
 const beforeTabChange = async (newTab: string, oldTab: string) => {
@@ -93,12 +97,47 @@ const tabItems = computed(() => {
     { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   );
 
+  const marketplaceTabs: Array<{
+    name: string;
+    label: string;
+    icon: string;
+    group: string;
+    hidden?: boolean;
+  }> = [];
+
   if (auth.user.company?.hasAmazonIntegration) {
-    items.push({ name: 'amazon', label: t('products.products.tabs.amazon'), icon: 'store' });
+    marketplaceTabs.push({
+      name: 'amazon',
+      label: t('products.products.tabs.amazon'),
+      icon: 'store',
+      group: 'marketplace',
+    });
   }
 
   if (auth.user.company?.hasEbayIntegration) {
-    items.push({ name: 'ebay', label: t('products.products.tabs.ebay'), icon: 'store' });
+    marketplaceTabs.push({
+      name: 'ebay',
+      label: t('products.products.tabs.ebay'),
+      icon: 'store',
+      group: 'marketplace',
+    });
+  }
+
+  if (auth.user.company?.hasSheinIntegration) {
+    marketplaceTabs.push({
+      name: 'shein',
+      label: t('products.products.tabs.shein'),
+      icon: 'store',
+      group: 'marketplace',
+    });
+  }
+
+  if (marketplaceTabs.length) {
+    marketplaceTabs[0].label = t('products.products.tabs.marketplace');
+    marketplaceTabs.forEach((tab, index) => {
+      if (index > 0) tab.hidden = true;
+    });
+    items.push(...marketplaceTabs);
   }
 
   return items;
@@ -152,6 +191,12 @@ const tabItems = computed(() => {
       <template v-if="auth.user.company?.hasEbayIntegration" v-slot:ebay>
         <EbayView
           ref="ebayRef"
+          :product="product"
+        />
+      </template>
+      <template v-if="auth.user.company?.hasSheinIntegration" v-slot:shein>
+        <SheinView
+          ref="sheinRef"
           :product="product"
         />
       </template>

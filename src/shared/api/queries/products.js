@@ -81,6 +81,26 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
   }
 `;
 
+export const productsBulkWebsiteAssignQuery = gql`
+  query ProductsBulkWebsiteAssign($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
+    products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          inspectorStatus
+          saleschannelviewassignSet {
+            id
+            salesChannelView {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const bundleProductsQuery = gql`
   query BundleProducts($first: Int, $last: Int, $after: String, $before: String, $order: BundleProductOrder, $filter: BundleProductFilter) {
     bundleProducts(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
@@ -229,6 +249,48 @@ export const getProductContentByLanguageAndDefaultQuery = gql`
       edges {
         node {
           id
+          name
+          subtitle
+          shortDescription
+          description
+          urlKey
+        }
+      }
+    }
+  }
+`;
+
+export const getProductContentsByChannelQuery = gql`
+  query getProductContentsByChannel($productId: GlobalID!, $salesChannelId: GlobalID!) {
+    productTranslations(filters: {
+      product: {id: {exact: $productId}},
+      salesChannel: {id: {exact: $salesChannelId}}
+    }) {
+      edges {
+        node {
+          id
+          language
+          name
+          subtitle
+          shortDescription
+          description
+          urlKey
+        }
+      }
+    }
+  }
+`;
+
+export const getProductContentsByDefaultQuery = gql`
+  query getProductContentsByDefault($productId: GlobalID!) {
+    productTranslations(filters: {
+      product: {id: {exact: $productId}},
+      salesChannel: {id: {isNull: true}}
+    }) {
+      edges {
+        node {
+          id
+          language
           name
           subtitle
           shortDescription

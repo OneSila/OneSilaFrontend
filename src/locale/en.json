@@ -510,6 +510,7 @@
       "fullUpdate": "Full Update",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
+      "forceUpdate": "Force Update",
       "import": "Import",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -584,6 +585,7 @@
       "comingSoon": "Coming Soon",
       "remoteCode": "Remote Code",
       "pending": "Pending Processing",
+      "pendingCreation": "Pending creation",
       "progress": "Progress",
       "code": "Code",
       "data": "Data",
@@ -681,6 +683,31 @@
           "assignSuccess": "Properties were successfully assigned to the selected products.",
           "overrideIfExistsCheckbox": "Override if property already exists"
         },
+        "bulkProductWebsiteAssigner": {
+          "title": "Assign to {count} product(s)",
+          "button": "Assign to Websites",
+          "description": "Select one or more website views. Each ready product will be assigned to each selected view.",
+          "disclaimer": "Products marked red in the inspector are not ready and will be skipped.",
+          "viewsLabel": "Website views",
+          "viewsPlaceholder": "Select website views",
+          "selectedViewsTitle": "Selected website views",
+          "selectedViewsEmpty": "No website views selected yet.",
+          "noActiveViews": "No active website views available.",
+          "summaryReady": "Ready products: {count}",
+          "summarySkipped": "Skipped (red): {count}",
+          "summaryExisting": "Already assigned: {count}",
+          "summaryPlanned": "Planned assignments: {count}",
+          "loadingProducts": "Loading product readiness...",
+          "noProductsSelected": "Select products to assign.",
+          "processingNote": "Assignments run in the background. Errors will be shown after processing.",
+          "missingSelection": "Select at least one website view.",
+          "nothingToAssign": "Nothing to assign. All selected products are already assigned or not ready.",
+          "assignButton": "Assign",
+          "success": "Assigned {created} product(s) to {views} website view(s).",
+          "skippedRed": "Skipped {count} product(s) with missing required data.",
+          "skippedExisting": "Skipped {count} existing assignment(s).",
+          "error": "Failed to assign {count} product(s): {skus}."
+        },
         "aiBulkTranslator": {
           "button": "AI Translate",
           "title": "Translate {count} {type}",
@@ -721,6 +748,44 @@
           "step1": "Gathering product information",
           "step2": "Generating bullet points",
           "step3": "Finalizing"
+        },
+        "advancedContentGenerator": {
+          "button": "Generate Content",
+          "title": "Generate Content",
+          "startedToast": "Content generation started. Results will be processed in the background.",
+          "previewMissing": "Preview data was not returned. Please try again.",
+          "formTitle": "Content scope",
+          "formDescription": "Select sales channels and languages to generate or translate content in bulk.",
+          "productCount": "{count} product(s) selected",
+          "overrideLabel": "Override existing content",
+          "overrideHelp": "Replaces existing content for selected fields and bullet points.",
+          "previewLabel": "Preview mode",
+          "previewHelp": "Preview mode is limited to 5 products.",
+          "previewNote": "Approve changes manually before saving.",
+          "previewLimitExceeded": "Content generation supports up to 5 products. Reduce your selection to continue.",
+          "additionalInformationsLabel": "Additional instructions (optional)",
+          "additionalInformationsHelp": "Optional guidance for the generator. Example: Use uppercase for bullet points. Description should contain 3 paragraphs.",
+          "additionalInformationsPlaceholder": "Add optional instructions for the generated content.",
+          "salesChannelsLabel": "Sales channels",
+          "salesChannelsEmpty": "No active sales channels available.",
+          "salesChannelsPlaceholder": "Select sales channels",
+          "languagesTitle": "Languages for {channel}",
+          "defaultLanguageHint": "Choose a default language for this channel.",
+          "languagesEmpty": "No mapped languages found for this sales channel.",
+          "remoteLanguageColumn": "Remote language",
+          "localLanguageColumn": "Language",
+          "selectColumn": "Select",
+          "defaultColumn": "Default",
+          "missingSelection": "Select at least one sales channel and language.",
+          "unknownChannel": "Unknown channel",
+          "bulletPointPlaceholder": "Bullet point {index}",
+          "addBulletPoint": "Add bullet point",
+          "approveNext": "Approve & Next",
+          "rejectNext": "Reject & Next",
+          "saveApproved": "Save Approved",
+          "pendingWarning": "Approve or reject all items before saving.",
+          "limitWarning": "Some approved items are outside channel limits.",
+          "saveSuccess": "Approved content was saved successfully."
         },
         "remotePropertiesDetector": {
           "step1": "Analyzing remote attributes",
@@ -1093,6 +1158,25 @@
     "translation": {
       "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
       "successfullyUpdated": "The product translation has been successfully updated.",
+      "import": {
+        "button": "Import",
+        "title": "Import content",
+        "targetLabel": "Import to",
+        "sourceLabel": "Import from",
+        "sourcePlaceholder": "Select a channel to import from",
+        "overrideLabel": "Override existing content",
+        "overrideHelp": "When off, only empty fields are filled. When on, allowed fields are replaced with the source values.",
+        "allLanguagesLabel": "Import all languages",
+        "allLanguagesHelp": "When enabled, content is imported for every language available on the source channel.",
+        "currentLanguageBadge": "Current: {code}",
+        "availableLanguagesBadge": "{count} languages available",
+        "previewTitle": "Preview (current language)",
+        "missingSource": "No source content exists for the current language in the selected channel.",
+        "missingSourceMultiLanguage": "No source content exists for the current language. Import will run for other available languages.",
+        "importAction": "Import",
+        "importActionWithSource": "Import from {source}",
+        "success": "Content imported successfully."
+      },
       "placeholders": {
         "language": "Select a language",
         "name": "Enter name",
@@ -1163,11 +1247,16 @@
         "websites": "Channels",
         "amazon": "Amazon",
         "ebay": "Ebay",
+        "shein": "Shein",
+        "marketplace": "Marketplaces",
         "supplierProducts": "Supplier Products",
         "purchasingOrders": "Purchase Orders",
         "properties": "Properties",
         "hsCodes": "HS Codes",
         "eanCodes": "EAN Codes"
+      },
+      "marketplaceSelector": {
+        "label": "Select marketplace"
       },
       "priceLists": {
         "add": {
@@ -1244,6 +1333,24 @@
           },
           "actions": {
             "createChannelGallery": "Create gallery"
+          },
+          "sheinGuide": {
+            "title": "Shein image order matters",
+            "description": "Shein uses the order to assign image types. Upload images in this order:",
+            "order": {
+              "main": "1st image: {label}",
+              "square": "2nd image: {label}",
+              "detail": "3rd-(last - 1), up to 10: {label} (type 2)",
+              "color": "Last image: {label} (required for configurable products with variations, multiple SKUs; optional for simple products)",
+              "colorVariations": "Last image: {label} (required for configurable products with variations, multiple SKUs)"
+            },
+            "note": "We resize images automatically, but the order is required so we can identify each type.",
+            "labels": {
+              "main": "Main image",
+              "square": "Square image",
+              "detail": "Detail image",
+              "color": "Color image"
+            }
           },
           "preview": {
             "channelHeading": "Preview for {channel}",
@@ -1362,6 +1469,84 @@
           "placeholder": "Category ID",
           "button": "Load category",
           "invalid": "We couldn't find a category with that ID for this marketplace."
+        }
+      },
+      "shein": {
+        "noChannels": "No Shein sales channels are available.",
+        "openIntegration": "Open integration",
+        "status": {
+          "title": "Status",
+          "description": "Synchronization status and available actions."
+        },
+        "issues": {
+          "title": "Issues",
+          "description": "Shows the latest audit issues fetched from Shein for the assigned storefronts.",
+          "empty": "No active Shein issues found for this product.",
+          "columns": {
+            "store": "Store",
+            "reason": "Fail reason",
+            "lastFetchedAt": "Last fetched"
+          }
+        },
+        "categoryTitle": "Recommended Category",
+        "categoryDescription": "Browse the Shein category tree and assign the most specific category available.",
+        "selectChannelPrompt": "Select a Shein sales channel to manage its category.",
+        "rootLabel": "Root",
+        "leafRestriction": "Only leaf categories can be selected.",
+        "currentSelection": "Current category",
+        "noSelection": "No category selected.",
+        "pendingSelection": "Pending selection",
+        "categorySaved": "Shein category saved",
+        "categoryRemoved": "Shein category removed",
+        "removeCategory": "Remove category",
+        "categoryMappingInfo": "These entries show each Shein sales channel; the icon indicates whether a category is mapped for that channel.",
+        "defaultCategoryTitle": "Default category from product type",
+        "defaultCategoryInfo": "Remote ID: {id}",
+        "defaultLanguage": "Default language: {code}",
+        "currency": "Currency: {code}",
+        "productTypeRemoteId": "Product type ID: {id}",
+        "productTypeIdMissing": "This category has no product type ID, so it can't be saved.",
+        "categoryAttributes": {
+          "title": "Category attributes",
+          "description": "These attributes describe what Shein expects for this category. Sales attributes are configurable.",
+          "empty": "No category attributes are provided for this Shein category.",
+          "unknown": "Unknown",
+          "none": "None",
+          "valueMode": "Value mode: {mode}",
+          "localProperty": "Mapped property",
+          "columns": {
+            "property": "Property",
+            "type": "Type",
+            "requirement": "Requirement",
+            "main": "Main",
+            "attributeType": "Attribute type",
+            "configurable": "Configurable"
+          },
+          "requirement": {
+            "required": "Required",
+            "optional": "Optional",
+            "notFillable": "Not fillable",
+            "unknown": "Unknown"
+          },
+          "attributeType": {
+            "sales": "Sales attribute",
+            "size": "Size attribute",
+            "composition": "Composition attribute",
+            "common": "Common attribute"
+          },
+          "remarkTags": {
+            "important": "Important",
+            "compliance": "Compliance",
+            "quality": "Quality",
+            "customs": "Customs"
+          }
+        },
+        "manualEntry": {
+          "title": "Do you know the ID? Set it manually",
+          "description": "Paste the Shein category ID to preview it without browsing the tree.",
+          "placeholder": "Category ID",
+          "button": "Load category",
+          "invalid": "We couldn't find a category with that ID."
         }
       },
       "inspector": {
@@ -2924,6 +3109,7 @@
           "isSuppressed": "Suppressed"
         },
         "filters": {
+          "marketplace": "Marketplace",
           "isValidationIssue": "Validation issue",
           "isSuppressed": "Suppressed",
           "categories": "Categories",
@@ -3065,6 +3251,9 @@
           }
         }
       },
+      "internalProperties": {
+        "title": "Internal Properties"
+      },
       "pullData": {
         "success": "Website, languages and currencies pulled successfully.",
         "error": "Failed to pull remote data. Please try again."
@@ -3099,7 +3288,15 @@
       "stores": {
         "title": "Store",
         "labels": {
-          "isDefault": "Is Default Store"
+          "isDefault": "Is Default Store",
+          "siteStatus": "Site status",
+          "storeType": "Store type"
+        },
+        "shein": {
+          "storeType": {
+            "platform": "Platform type",
+            "selfOperated": "Self-operated type"
+          }
         }
       },
       "languages": {
@@ -3724,7 +3921,8 @@
       },
       "labels": {
         "assignedToSalesChannelView": "Assigned To Store",
-        "notAssignedToSalesChannelView": "Not Assigned To Store"
+        "notAssignedToSalesChannelView": "Not Assigned To Store",
+        "noFrontendUrl": "This integration doesn't provide a frontend URL"
       },
       "ebay": {
         "installed": {
@@ -3748,6 +3946,7 @@
         "resyncSuccess": "The product resync process has begun. Please come later to see the results.",
         "importSuccess": "The product import process has begun. Please come later to see the results.",
         "fetchIssuesSuccess": "Product issues were refreshed from the remote server.",
+        "forceUpdateSuccess": "The product update process has begun. Please come later to see the results.",
         "validateSuccess": "The product validation process has begun. Please come later to see the results."
       },
       "helpText": {

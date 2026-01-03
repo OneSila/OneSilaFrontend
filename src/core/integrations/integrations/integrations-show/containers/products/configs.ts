@@ -12,10 +12,27 @@ const getStatusBadgeMap = (t: Function) => ({
   FAILED: { text: t('shared.labels.failed'), color: 'red' },
   processing: { text: t('shared.labels.processing'), color: 'yellow' },
   PROCESSING: { text: t('shared.labels.processing'), color: 'yellow' },
-  PARTIALLY_LISTED: { text: t('integrations.show.products.statuses.partiallyListed'), color: 'yellow' },
+  PENDING_CREATION: { text: t('shared.labels.pendingCreation'), color: 'blue' },
+  PARTIALLY_LISTED: { text: t('integrations.show.products.statuses.partiallyListed'), color: 'orange' },
   PENDING_APPROVAL: { text: t('integrations.show.products.statuses.pendingApproval'), color: 'yellow' },
   APPROVAL_REJECTED: { text: t('integrations.show.products.statuses.approvalRejected'), color: 'red' },
 });
+
+const getAssignStatus = (node: any) => {
+  if (node.status === 'PENDING_CREATION') {
+    return 'PENDING_CREATION';
+  }
+  if (node.remoteProduct?.status) {
+    return node.remoteProduct.status;
+  }
+  if (node.remoteProduct?.hasErrors) {
+    return 'FAILED';
+  }
+  if (node.remoteProductPercentage === 100) {
+    return 'COMPLETED';
+  }
+  return 'PROCESSING';
+};
 
 export const productsSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
   search: true,
@@ -52,7 +69,8 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
       filterable: true,
       removable: true,
       addLookup: true,
-      lookupKeys: ['salesChannelView', 'id'],
+      filterKey: 'salesChannelView',
+      lookupKeys: ['id'],
       lookupType: 'exact',
       queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
     },
@@ -66,6 +84,7 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
         { label: t('shared.labels.completed'), value: 'completed' },
         { label: t('shared.labels.processing'), value: 'processing' },
         { label: t('shared.labels.failed'), value: 'failed' },
+        { label: t('shared.labels.pendingCreation'), value: 'PENDING_CREATION' },
         { label: t('integrations.show.products.statuses.partiallyListed'), value: 'PARTIALLY_LISTED' },
         { label: t('integrations.show.products.statuses.pendingApproval'), value: 'PENDING_APPROVAL' },
         { label: t('integrations.show.products.statuses.approvalRejected'), value: 'APPROVAL_REJECTED' },
@@ -107,18 +126,7 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
       name: 'status',
       type: FieldType.Badge,
       badgeMap: getStatusBadgeMap(t),
-      accessor: (node) => {
-        if (node.remoteProduct?.status) {
-          return node.remoteProduct.status;
-        }
-        if (node.remoteProduct?.hasErrors) {
-          return 'failed';
-        }
-        if (node.remoteProductPercentage === 100) {
-          return 'completed';
-        }
-        return 'processing';
-      },
+      accessor: (node) => getAssignStatus(node),
     },
     {
       name: 'product',

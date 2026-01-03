@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
+import { MarketplaceTabsSelector } from '../../../../../../../../shared/components/molecules/marketplace-tabs-selector';
 import { IntegrationTypes } from '../../../../../../../integrations/integrations/integrations';
 
 const props = defineProps<{
@@ -12,6 +13,7 @@ const props = defineProps<{
     string,
     { remoteId: string | null; id?: string | null; salesChannelId?: string | null }
   >;
+  beforeChange?: (newTab: string, oldTab: string | null) => Promise<boolean> | boolean;
 }>();
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -31,6 +33,7 @@ const viewEntries = computed(() =>
 
 <template>
   <div class="border-r border-gray-200 pr-4 w-full">
+    <MarketplaceTabsSelector class="mb-3" :before-change="beforeChange" />
     <div class="max-h-[660px] overflow-y-auto space-y-2">
       <div
         v-for="entry in viewEntries"
@@ -46,7 +49,7 @@ const viewEntries = computed(() =>
           :class="entry.hasCategory ? 'border-emerald-400 bg-emerald-50' : 'border-gray-300 bg-gray-50'"
         >
           <Icon
-            :name="entry.hasCategory ? 'folder' : 'folder-open'"
+            :name="entry.hasCategory ? 'folder' : 'folder-plus'"
             class="w-3.5 h-3.5"
             :class="entry.hasCategory ? 'text-emerald-600' : 'text-gray-400'"
           />

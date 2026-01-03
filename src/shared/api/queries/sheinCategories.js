@@ -21,10 +21,12 @@ export const sheinCategoriesQuery = gql`
         node {
           remoteId
           name
-          siteRemoteId
           parentRemoteId
           isLeaf
           productTypeRemoteId
+          defaultLanguage
+          currency
+          properties
           parent {
             remoteId
             name

@@ -12,6 +12,7 @@ export interface BaseFilter {
   label: string;
   default?: any;
   disabled?: boolean | null;
+  filterKey?: string;
   addLookup?: boolean;
   lookupKeys?: string[];
   lookupType?: string | null;

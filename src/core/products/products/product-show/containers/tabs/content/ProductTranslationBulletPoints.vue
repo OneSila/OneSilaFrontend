@@ -1,23 +1,20 @@
 <script setup lang="ts">
-import {ref, watch, onMounted, computed} from 'vue';
-import {useI18n} from 'vue-i18n';
+import { ref, watch, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { TextEditor } from '../../../../../../../shared/components/atoms/input-text-editor';
-import {Button} from '../../../../../../../shared/components/atoms/button';
-import {Label} from '../../../../../../../shared/components/atoms/label';
-import {Icon} from '../../../../../../../shared/components/atoms/icon';
-import {VueDraggableNext} from 'vue-draggable-next';
+import { Button } from '../../../../../../../shared/components/atoms/button';
+import { Label } from '../../../../../../../shared/components/atoms/label';
+import { Icon } from '../../../../../../../shared/components/atoms/icon';
+import { VueDraggableNext } from 'vue-draggable-next';
 import apolloClient from '../../../../../../../../apollo-client';
-import {productTranslationBulletPointsQuery} from '../../../../../../../shared/api/queries/products.js';
+import { productTranslationBulletPointsQuery } from '../../../../../../../shared/api/queries/products.js';
 import {
   createProductTranslationBulletPointsMutation,
   updateProductTranslationBulletPointMutation,
   deleteProductTranslationBulletPointsMutation,
 } from '../../../../../../../shared/api/mutations/products.js';
-import {processGraphQLErrors} from '../../../../../../../shared/utils';
-import {Toast} from '../../../../../../../shared/modules/toast';
-import {AiBulletPointsGenerator} from '../../../../../../../shared/components/organisms/ai-bullet-points-generator';
-import {AiContentTranslator} from '../../../../../../../shared/components/organisms/ai-content-translator';
-import {BULLET_POINT_SEPARATOR} from '../../../../../../../shared/utils/constants';
+import { processGraphQLErrors } from '../../../../../../../shared/utils';
+import { Toast } from '../../../../../../../shared/modules/toast';
 
 const {t} = useI18n();
 
@@ -27,7 +24,7 @@ const props = defineProps<{
   languageCode: string | null;
   salesChannelId?: string;
   defaultLanguageCode?: string;
-  bulletPointLimit?: number;
+  bulletPointLimit?: number | { min?: number; max?: number };
 }>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
@@ -38,8 +35,10 @@ const bulletPoints = ref<any[]>([]);
 const activeBulletIndex = ref<number | null>(null);
 const initialBulletPoints = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
-const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
-const bulletPointLimit = computed(() => props.bulletPointLimit);
+const bulletPointLimit = computed(() => {
+  if (typeof props.bulletPointLimit === 'number') return props.bulletPointLimit;
+  return props.bulletPointLimit?.max;
+});
 const showActiveBulletLimit = computed(
   () => activeBulletIndex.value !== null && typeof bulletPointLimit.value === 'number',
 );
@@ -58,27 +57,6 @@ const activeBulletLimitExceeded = computed(
     activeBulletCharacterCount.value > bulletPointLimit.value,
 );
 const activeBulletCounterClass = computed(() => (activeBulletLimitExceeded.value ? 'text-red-500' : 'text-gray-400'));
-
-const handleGeneratedBulletPoints = (list: any[]) => {
-  bulletPoints.value = list.map((bp, idx) => ({
-    id: null,
-    text: bp.text,
-    sortOrder: idx,
-  }));
-  activeBulletIndex.value = null;
-};
-
-const handleTranslatedBulletPoints = (text: string) => {
-  const points = text
-      ? text.split(BULLET_POINT_SEPARATOR).filter((p) => p.trim())
-      : [];
-  bulletPoints.value = points.map((bp, idx) => ({
-    id: null,
-    text: bp,
-    sortOrder: idx,
-  }));
-  activeBulletIndex.value = null;
-};
 
 const fetchPoints = async () => {
   if (!props.translationId) {
@@ -109,7 +87,7 @@ onMounted(fetchPoints);
 watch(() => props.translationId, fetchPoints);
 
 const addBulletPoint = () => {
-  if (bulletPoints.value.length >= 10) return;
+  if (bulletPoints.value.length >= 5) return;
   bulletPoints.value.push({id: null, text: '', sortOrder: bulletPoints.value.length});
 };
 
@@ -242,25 +220,6 @@ defineExpose({save, fetchPoints, hasChanges});
       </FlexCell>
       <FlexCell grow>
         <Flex gap="2">
-          <FlexCell>
-            <AiBulletPointsGenerator
-                :product-id="props.productId"
-                :language-code="props.languageCode"
-                @generated="handleGeneratedBulletPoints"
-            />
-          </FlexCell>
-          <FlexCell v-if="props.languageCode && props.languageCode !== defaultLanguage">
-            <AiContentTranslator
-                :product="{ id: props.productId }"
-                productContentType="BULLET_POINTS"
-                toTranslate=""
-                :fromLanguageCode="defaultLanguage"
-                :toLanguageCode="props.languageCode"
-                :sales-channel-id="props.salesChannelId"
-                @translated="handleTranslatedBulletPoints"
-            />
-          </FlexCell>
-
         </Flex>
       </FlexCell>
                 <FlexCell v-if="showActiveBulletLimit">
@@ -269,7 +228,7 @@ defineExpose({save, fetchPoints, hasChanges});
             </span>
           </FlexCell>
       <FlexCell>
-        <div v-if="bulletPoints.length < 10">
+        <div v-if="bulletPoints.length < 5">
           <Button class="btn btn-outline-primary btn-sm" @click="addBulletPoint">
             <Icon name="plus"/>
           </Button>

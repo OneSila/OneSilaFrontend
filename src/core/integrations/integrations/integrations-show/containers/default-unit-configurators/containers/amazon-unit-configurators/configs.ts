@@ -20,7 +20,7 @@ export const amazonDefaultUnitConfiguratorsSearchConfigConstructor = (t: Functio
       isEdge: true,
       addLookup: true,
       lookupKeys: ['id'],
-      queryVariables: { filters: { salesChannel: { id: { exact: salesChannelId } } } }
+      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } }
     }
   ],
   orders: []
