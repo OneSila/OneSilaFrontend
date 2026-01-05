@@ -3194,6 +3194,7 @@
       },
       "shein": {
         "title": "Shein Integration",
+        "reauthorize": "Re-authorize",
         "productRules": {
           "labels": {
             "translatedName": "Translated Name",

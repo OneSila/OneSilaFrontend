@@ -818,6 +818,9 @@
       "internalProperties": {
         "title": ""
       },
+      "shein": {
+        "reauthorize": ""
+      },
       "products": {
         "statuses": {
           "partiallyListed": "",
@@ -1145,6 +1148,7 @@
         }
       },
       "shein": {
+        "reauthorize": "",
         "productRules": {
           "labels": {
             "categoryId": ""

@@ -17,11 +17,13 @@ import {
 import { useRouter, useRoute } from 'vue-router';
 import { sheinChannelsQuerySelector } from "../../../../../../../shared/api/queries/salesChannels.js";
 import {
+  getSheinRedirectUrlMutation,
   syncSheinSalesChannelMappingsMutation,
   updateSheinSalesChannelMutation,
 } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { MappingImporter } from "../../../../../../../shared/components/organisms/mapping-importer";
+import apolloClient from "../../../../../../../../apollo-client";
 
 interface EditSheinForm {
   id: string;
@@ -51,6 +53,7 @@ const formData = ref<EditSheinForm>({
 const fieldErrors = ref<Record<string, string>>({});
 const submitButtonRef = ref();
 const submitContinueButtonRef = ref();
+const isReauthorizing = ref(false);
 
 watch(
   () => props.data,
@@ -93,6 +96,45 @@ const handleSubmitAndContinueDone = () => Toast.success(t('shared.alert.toast.su
 
 const onSubmitPressed = () => submitButtonRef.value?.$el.click();
 const onSubmitAndContinuePressed = () => submitContinueButtonRef.value?.$el.click();
+
+const handleReauthorize = async () => {
+  if (!formData.value.id || isReauthorizing.value) {
+    return;
+  }
+
+  isReauthorizing.value = true;
+
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: getSheinRedirectUrlMutation,
+      variables: {
+        data: {
+          id: formData.value.id,
+        },
+      },
+    });
+
+    const result = data?.getSheinRedirectUrl;
+
+    if (result?.redirectUrl) {
+      window.location.href = result.redirectUrl;
+      return;
+    }
+
+    const messages = result?.messages || [];
+    if (messages.length) {
+      messages.forEach((msg: any) => {
+        Toast.error(msg.message);
+      });
+    } else {
+      Toast.error(t('shared.alert.toast.somethingWentWrong'));
+    }
+  } catch (error) {
+    Toast.error(t('shared.alert.toast.somethingWentWrong'));
+  } finally {
+    isReauthorizing.value = false;
+  }
+};
 
 useEnterKeyboardListener(onSubmitPressed);
 useShiftEnterKeyboardListener(onSubmitAndContinuePressed);
@@ -215,6 +257,10 @@ useShiftBackspaceKeyboardListener(goBack);
         :sync-mutation="syncSheinSalesChannelMappingsMutation"
         channel-label-key="integrations.integrationTypes.shein"
       />
+
+      <SecondaryButton v-if="formData.id" :disabled="isReauthorizing" @click="handleReauthorize">
+        {{ t('integrations.show.shein.reauthorize') }}
+      </SecondaryButton>
 
       <ApolloMutation :mutation="updateSheinSalesChannelMutation" @done="handleSubmitAndContinueDone" @error="handleError">
         <template #default="{ mutate, loading }">

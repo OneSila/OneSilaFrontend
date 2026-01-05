@@ -2772,6 +2772,7 @@
         }
       },
       "shein": {
+        "reauthorize": "",
         "productRules": {
           "labels": {
             "categoryId": ""
@@ -3153,6 +3154,9 @@
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "shein": {
+        "reauthorize": ""
       },
       "amazonIssues": {
         "columns": {
