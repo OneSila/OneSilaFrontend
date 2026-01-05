@@ -1133,6 +1133,7 @@
         }
       },
       "shein": {
+        "reauthorize": "",
         "productRules": {
           "labels": {
             "categoryId": ""
