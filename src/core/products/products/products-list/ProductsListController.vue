@@ -15,6 +15,7 @@ import { ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../../shared/modules/toast";
 import { assignEanCodesMutation } from "../../../../shared/api/mutations/eanCodes.js";
+import { bulkRefreshInspectorMutation } from "../../../../shared/api/mutations/products.js";
 import { BulkProductPropertyAssigner } from "../../../../shared/components/organisms/bulk=product-property-assigner";
 import { BulkProductWebsiteAssigner } from "../../../../shared/components/organisms/bulk=product-website-assigner";
 
@@ -53,6 +54,31 @@ const handleBulkAssign = async (selectedEntities: any[]) => {
     clearSelection();
   } catch (e) {
     Toast.error(t('products.eanCodes.alert.toast.error.assignBulk'));
+    console.error(e);
+  }
+};
+
+const handleBulkRefreshInspector = async (selectedEntities: string[]) => {
+  const products = selectedEntities.map((entity) => ({
+    id: entity,
+  }));
+
+  if (!products.length) return;
+
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: bulkRefreshInspectorMutation,
+      variables: { instance: { products } },
+    });
+
+    if (data?.bulkRefreshInspector) {
+      Toast.success(t('products.products.inspector.alert.bulkRefreshSuccess'));
+      clearSelection();
+    } else {
+      Toast.error(t('products.products.inspector.alert.bulkRefreshError'));
+    }
+  } catch (e) {
+    Toast.error(t('products.products.inspector.alert.bulkRefreshError'));
     console.error(e);
   }
 };
@@ -120,6 +146,15 @@ const handleBulkAssign = async (selectedEntities: any[]) => {
             >
               <Icon name="barcode" size="sm" class="mr-2 text-blue-600" />
               {{ t('products.eanCodes.labels.assignBulk') }}
+            </button>
+
+            <button
+              class="inline-flex items-center rounded bg-amber-50 px-4 py-1 text-sm font-semibold text-amber-800 shadow-sm ring-1 ring-inset ring-amber-300 hover:bg-amber-100 disabled:opacity-50"
+              :disabled="!selectedEntities.length"
+              @click="handleBulkRefreshInspector(selectedEntities)"
+            >
+              <Icon name="refresh" size="sm" class="mr-2 text-amber-600" />
+              {{ t('products.products.inspector.actions.bulkRefresh') }}
             </button>
           </div>
         </template>

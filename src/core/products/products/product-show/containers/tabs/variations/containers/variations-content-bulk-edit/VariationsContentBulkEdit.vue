@@ -433,7 +433,7 @@ const fetchTranslation = async (variationId: string, policy: FetchPolicy = 'netw
     const { data } = await apolloClient.query({
       query: getProductContentByLanguageAndDefaultQuery,
       variables: { productId: variationId, languageCode: language.value },
-      fetchPolicy: policy,
+      fetchPolicy: 'network-only',
     });
     translationNode = data?.productTranslations?.edges?.[0]?.node || null;
   } else {
@@ -450,7 +450,7 @@ const fetchTranslation = async (variationId: string, policy: FetchPolicy = 'netw
     const { data: defData } = await apolloClient.query({
       query: getProductContentByLanguageAndDefaultQuery,
       variables: { productId: variationId, languageCode: language.value },
-      fetchPolicy: policy,
+      fetchPolicy: 'network-only',
     });
     defaultNode = defData?.productTranslations?.edges?.[0]?.node || null;
   }

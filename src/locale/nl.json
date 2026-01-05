@@ -1264,7 +1264,12 @@
           "124": ""
         },
         "alert": {
-          "refreshSuccess": "Inspector is ververst"
+          "refreshSuccess": "Inspector is ververst",
+          "bulkRefreshSuccess": "",
+          "bulkRefreshError": ""
+        },
+        "actions": {
+          "bulkRefresh": ""
         }
       },
       "labels": {
