@@ -557,6 +557,12 @@ export const refreshInspectorMutation = gql`
     }
   } 
 `;
+
+export const bulkRefreshInspectorMutation = gql`
+  mutation bulkRefreshInspector($instance: BulkRefreshInspectorInput!) {
+    bulkRefreshInspector(instance: $instance)
+  }
+`;
 export const createProductTranslationBulletPointMutation = gql`
   mutation createProductTranslationBulletPoint($data: ProductTranslationBulletPointInput!) {
     createProductTranslationBulletPoint(data: $data) {

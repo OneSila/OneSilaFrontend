@@ -1264,7 +1264,12 @@
           "124": ""
         },
         "alert": {
-          "refreshSuccess": "Inspector is ververst"
+          "refreshSuccess": "Inspector is ververst",
+          "bulkRefreshSuccess": "",
+          "bulkRefreshError": ""
+        },
+        "actions": {
+          "bulkRefresh": ""
         }
       },
       "labels": {
@@ -2767,6 +2772,7 @@
         }
       },
       "shein": {
+        "reauthorize": "",
         "productRules": {
           "labels": {
             "categoryId": ""
@@ -3148,6 +3154,9 @@
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "shein": {
+        "reauthorize": ""
       },
       "amazonIssues": {
         "columns": {

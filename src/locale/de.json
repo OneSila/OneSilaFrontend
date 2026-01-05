@@ -334,6 +334,15 @@
           "select": ""
         }
       },
+      "inspector": {
+        "alert": {
+          "bulkRefreshSuccess": "",
+          "bulkRefreshError": ""
+        },
+        "actions": {
+          "bulkRefresh": ""
+        }
+      },
       "duplicateModal": {
         "description": "",
         "createAsAlias": "",
@@ -809,6 +818,9 @@
       "internalProperties": {
         "title": ""
       },
+      "shein": {
+        "reauthorize": ""
+      },
       "products": {
         "statuses": {
           "partiallyListed": "",
@@ -1136,6 +1148,7 @@
         }
       },
       "shein": {
+        "reauthorize": "",
         "productRules": {
           "labels": {
             "categoryId": ""

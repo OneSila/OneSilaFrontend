@@ -1613,7 +1613,12 @@
           "noMissingInfo": "No Missing Information!"
         },
         "alert": {
-          "refreshSuccess": "Inspector successfully refreshed!"
+          "refreshSuccess": "Inspector successfully refreshed!",
+          "bulkRefreshSuccess": "Inspector refresh started for selected products.",
+          "bulkRefreshError": "Failed to refresh inspectors. Please try again."
+        },
+        "actions": {
+          "bulkRefresh": "Refresh inspectors"
         }
       },
       "labels": {
@@ -3189,6 +3194,7 @@
       },
       "shein": {
         "title": "Shein Integration",
+        "reauthorize": "Re-authorize",
         "productRules": {
           "labels": {
             "translatedName": "Translated Name",

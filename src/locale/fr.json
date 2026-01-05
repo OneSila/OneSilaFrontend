@@ -331,6 +331,15 @@
           "select": ""
         }
       },
+      "inspector": {
+        "alert": {
+          "bulkRefreshSuccess": "",
+          "bulkRefreshError": ""
+        },
+        "actions": {
+          "bulkRefresh": ""
+        }
+      },
       "duplicateModal": {
         "description": "",
         "createAsAlias": "",
@@ -1133,6 +1142,7 @@
         }
       },
       "shein": {
+        "reauthorize": "",
         "productRules": {
           "labels": {
             "categoryId": ""
