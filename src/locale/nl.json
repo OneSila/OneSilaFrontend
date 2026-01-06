@@ -1364,6 +1364,7 @@
         "createSuccessfully": "Product aangemaakt"
       },
       "edit": {
+        "title": "",
         "updateSuccessfully": "Wijzigingen voor het product zijn opgeslagen",
         "updateSuccessfully": "Product upgedate"
       },

@@ -295,6 +295,9 @@
           }
         }
       },
+      "edit": {
+        "title": ""
+      },
       "alert": {
         "toast": {
           "copied": "",

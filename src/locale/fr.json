@@ -265,6 +265,9 @@
           }
         }
       },
+      "edit": {
+        "title": ""
+      },
       "translation": {
         "import": {
           "button": "",

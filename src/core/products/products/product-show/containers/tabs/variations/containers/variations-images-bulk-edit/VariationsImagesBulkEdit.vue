@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch, withDefaults } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
@@ -9,7 +9,11 @@ import { Product } from "../../../../../../configs";
 import { ProductType } from "../../../../../../../../../shared/utils/constants";
 import { IntegrationTypes } from "../../../../../../../../integrations/integrations/integrations";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import { bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
+import {
+  bundleVariationsQuery,
+  configurableVariationsQuery,
+  productsWithImagesQuery,
+} from "../../../../../../../../../shared/api/queries/products.js";
 import { mediaProductThroughQuery } from "../../../../../../../../../shared/api/queries/media.js";
 import { integrationsQuery } from "../../../../../../../../../shared/api/queries/integrations.js";
 import {
@@ -52,7 +56,10 @@ interface VariationRow {
   images: (VariationImageSlot | null)[];
 }
 
-const props = defineProps<{ product: Product }>();
+const props = withDefaults(
+  defineProps<{ product?: Product | null; productIds?: string[] }>(),
+  { product: null, productIds: () => [] }
+);
 
 const { t } = useI18n();
 
@@ -96,9 +103,15 @@ const salesChannelOptions = computed(() => [
 
 const isSingleUpload = computed(() => uploadContext.value?.columnIndex !== null);
 
-const isAlias = computed(() => props.product.type === ProductType.Alias);
-const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
-const parentProductType = computed(() => parentProduct.value.type);
+const hasProductIds = computed(() => props.productIds.length > 0);
+const isAlias = computed(() => props.product?.type === ProductType.Alias);
+const parentProduct = computed(() => {
+  if (!props.product) {
+    return null;
+  }
+  return isAlias.value ? props.product.aliasParentProduct : props.product;
+});
+const parentProductType = computed(() => parentProduct.value?.type ?? null);
 const isConfigurable = computed(() => parentProductType.value === ProductType.Configurable);
 const isChannelInherited = computed(
   () => currentSalesChannel.value !== 'default' && inheritedFromDefault.value
@@ -545,6 +558,9 @@ const handleImageCtrlArrow = (
 };
 
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
+  if (!parentProduct.value || !parentProductType.value) {
+    return [];
+  }
   const isBundle = parentProductType.value === ProductType.Bundle;
   const query = isBundle ? bundleVariationsQuery : configurableVariationsQuery;
   const key = isBundle ? 'bundleVariations' : 'configurableVariations';
@@ -585,6 +601,47 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
       images: [],
     } as VariationRow;
   });
+};
+
+const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
+  const ids = props.productIds.filter(Boolean);
+  if (!ids.length) {
+    return [];
+  }
+  const pageSize = 100;
+  let after: string | null = null;
+  const nodes: any[] = [];
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: productsWithImagesQuery,
+      variables: {
+        first: pageSize,
+        after,
+        filter: { id: { inList: ids } },
+      },
+      fetchPolicy: policy,
+    });
+    const connection = data?.products;
+    if (!connection) break;
+    const edges = connection.edges ?? [];
+    edges.forEach((edge: any) => nodes.push(edge.node));
+    hasNextPage = connection.pageInfo?.hasNextPage ?? false;
+    after = connection.pageInfo?.endCursor ?? null;
+    if (!after) break;
+  }
+
+  return nodes.map((node: any) => ({
+    id: node.id,
+    variation: {
+      id: node.id,
+      sku: node.sku,
+      name: node.name,
+      active: node.active,
+    },
+    images: [],
+  })) as VariationRow[];
 };
 
 const fetchVariationImages = async (
@@ -660,7 +717,12 @@ const fetchVariationImages = async (
 const loadData = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
   try {
-    const variationRows = await fetchVariations(policy);
+    let variationRows: VariationRow[] = [];
+    if (hasProductIds.value) {
+      variationRows = await fetchProducts(policy);
+    } else if (props.product) {
+      variationRows = await fetchVariations(policy);
+    }
     const variationIds = variationRows.map((row) => row.variation.id);
     const selectedChannel = currentSalesChannel.value;
     const imagesMap = await fetchVariationImages(variationIds, selectedChannel, policy);
@@ -854,6 +916,13 @@ onMounted(async () => {
   previousSalesChannel.value = currentSalesChannel.value;
   await loadData('network-only');
 });
+
+watch(
+  () => [props.product?.id ?? null, props.productIds.join(',')],
+  async () => {
+    await loadData('network-only');
+  }
+);
 
 defineExpose({ hasUnsavedChanges });
 </script>
@@ -1092,7 +1161,7 @@ defineExpose({ hasUnsavedChanges });
     </MatrixEditor>
     <UploadMediaModal
       v-model="selectExistingModalVisible"
-      :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct.id"
+            :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct?.id"
       :ids="assignedMediaIds"
       :link-on-select="false"
       :sales-channel-id="currentSalesChannelId || undefined"

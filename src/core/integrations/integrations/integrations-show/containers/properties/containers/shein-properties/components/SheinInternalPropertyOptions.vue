@@ -200,7 +200,8 @@ const handleOptionUpdate = async (option: OptionNode, rawValue: string | null | 
         <div v-else-if="!hasOptions" class="text-sm text-gray-500">
           {{ t('integrations.show.shein.internalProperties.options.empty') }}
         </div>
-        <div v-else class="space-y-4">
+        <div v-else class="max-h-96 overflow-y-auto">
+          <div class="space-y-4">
           <div
             v-for="option in options"
             :key="option.id"
@@ -227,6 +228,7 @@ const handleOptionUpdate = async (option: OptionNode, rawValue: string | null | 
                 @update:model-value="(value) => handleOptionUpdate(option, value as string | null)"
               />
             </div>
+          </div>
           </div>
         </div>
       </div>

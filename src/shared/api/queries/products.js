@@ -81,6 +81,97 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
   }
 `;
 
+export const productsWithGeneralQuery = gql`
+  query ProductsWithGeneral($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+          allowBackorder
+          vatRate {
+            id
+            name
+            rate
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const productsWithContentQuery = gql`
+  query ProductsWithContent($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const productsWithPricesQuery = gql`
+  query ProductsWithPrices($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+          salespriceSet {
+            id
+            price
+            rrp
+            currency {
+              id
+              isoCode
+            }
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const productsWithImagesQuery = gql`
+  query ProductsWithImages($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const productsBulkWebsiteAssignQuery = gql`
   query ProductsBulkWebsiteAssign($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
     products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
