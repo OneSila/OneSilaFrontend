@@ -91,11 +91,10 @@ onMounted(fetchViews);
                   removable />
       </FlexCell>
       <FlexCell>
-        <PrimaryButton :disabled="!selectedView || product.inspector.hasMissingInformation" @click="handleCreateAssign">
+        <PrimaryButton :disabled="!selectedView" @click="handleCreateAssign">
           {{ t('shared.button.add') }}
         </PrimaryButton>
       </FlexCell>
     </Flex>
-    <p v-if="views.length > 0 && product.inspector.hasMissingInformation" class="mt-3 text-sm leading-6 text-red-500">{{ t('integrations.salesChannel.helpText.cannotAssign') }}</p>
   </div>
 </template>
