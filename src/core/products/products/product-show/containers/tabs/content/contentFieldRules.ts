@@ -57,7 +57,7 @@ export const FIELD_RULES: Record<string, ContentFieldRules> = {
       description: { min: AMAZON_MIN_DESCRIPTION_LENGTH, max: 2000 },
     },
   ),
-  [IntegrationTypes.Ebay]: createRule({ subtitle: true }, { name: 80, subtitle: 55, description: 50000 }),
+  [IntegrationTypes.Ebay]: createRule({ subtitle: true, urlKey: false }, { name: 80, subtitle: 55, description: 50000 }),
   [IntegrationTypes.Shein]: createRule(
     {
       subtitle: false,

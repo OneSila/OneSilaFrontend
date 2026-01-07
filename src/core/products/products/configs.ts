@@ -215,7 +215,7 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
      {
       type: FieldType.Query,
       name: 'vatRate',
-        query: vatRatesQuerySelector,
+      query: vatRatesQuerySelector,
       label: t('products.products.labels.vatRate'),
       labelBy: "name",
       valueBy: "id",
@@ -280,23 +280,6 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       isEdge: true,
       addLookup: false,
     },
-    ...(
-      hasAmazon
-        ? [{
-            type: FieldType.Query,
-            name: 'amazonProductsWithIssuesForSalesChannel',
-            query: amazonChannelsQuerySelector,
-            label: t('integrations.salesChannel.amazon.labels.productsWithIssuesForSalesChannel'),
-            labelBy: 'hostname',
-            valueBy: 'id',
-            dataKey: 'amazonChannels',
-            filterable: true,
-            multiple: false,
-            isEdge: true,
-            addLookup: false,
-          } as SearchFilter]
-        : []
-    ),
     {
       type: FieldType.Choice,
       name: 'type',
@@ -305,6 +288,18 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       label: t('products.products.labels.type.title'),
       filterable: false,
       addLookup: true,
+      options: getProductTypeOptions(t)
+    },
+    {
+      type: FieldType.Choice,
+      name: 'exceptType',
+      labelBy: 'name',
+      valueBy: 'code',
+      label: t('products.products.labels.type.excludeTitle'),
+      filterable: false,
+      addLookup: true,
+      isNot: true,
+      filterKey: 'type',
       options: getProductTypeOptions(t)
     },
     {

@@ -690,6 +690,8 @@
       "weightUnit": "Unité de poids",
       "isDefaultMarketplace": "Marketplace par défaut",
       "startingStock": "",
+      "minNameLength": "",
+      "minDescriptionLength": "",
       "gptEnable": "",
       "gptEnableCheckout": "",
       "gptSellerName": "",
@@ -706,6 +708,8 @@
       },
       "helpText": {
         "startingStock": "",
+        "minNameLength": "",
+        "minDescriptionLength": "",
         "gptEnable": "",
         "gptSellerUrl": "",
         "gptReturnWindow": "",

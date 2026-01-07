@@ -2,6 +2,8 @@
 import { Label } from '../../../../../../../shared/components/atoms/label';
 import { TextInput } from '../../../../../../../shared/components/atoms/input-text';
 import { TextHtmlEditor } from '../../../../../../../shared/components/atoms/input-text-html-editor';
+import { AiContentTranslator } from '../../../../../../../shared/components/organisms/ai-content-translator';
+import { AiContentGenerator } from '../../../../../../../shared/components/organisms/ai-content-generator';
 import { PropType, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ContentFieldLimitConfig, ContentFieldLimitRange } from './contentFieldRules';
@@ -61,6 +63,8 @@ const props = defineProps({
   },
 });
 
+const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
+
 const emit = defineEmits<{
   (e: 'description', val: string): void;
   (e: 'shortDescription', val: string): void;
@@ -87,6 +91,7 @@ const isFieldLimitExceeded = (field: CountedField) => {
 };
 const getFieldCounterClass = (field: CountedField) =>
   isFieldLimitExceeded(field) ? 'text-red-500' : 'text-gray-400';
+
 </script>
 
 <template>
@@ -97,6 +102,17 @@ const getFieldCounterClass = (field: CountedField) =>
           <Flex class="gap-4">
             <FlexCell center>
               <Label semi-bold>{{ t('shared.labels.name') }}</Label>
+            </FlexCell>
+            <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
+              <AiContentTranslator
+                :product="{ id: productId }"
+                productContentType="NAME"
+                toTranslate=""
+                :fromLanguageCode="defaultLanguage"
+                :toLanguageCode="currentLanguage"
+                :sales-channel-id="salesChannelId"
+                @translated="val => form.name = val"
+              />
             </FlexCell>
           </Flex>
         </FlexCell>
@@ -119,6 +135,17 @@ const getFieldCounterClass = (field: CountedField) =>
           <Flex class="gap-4">
             <FlexCell center>
               <Label semi-bold>{{ t('products.translation.labels.subtitle') }}</Label>
+            </FlexCell>
+            <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
+              <AiContentTranslator
+                :product="{ id: productId }"
+                productContentType="SUBTITLE"
+                toTranslate=""
+                :fromLanguageCode="defaultLanguage"
+                :toLanguageCode="currentLanguage"
+                :sales-channel-id="salesChannelId"
+                @translated="val => form.subtitle = val"
+              />
             </FlexCell>
           </Flex>
         </FlexCell>
@@ -146,6 +173,26 @@ const getFieldCounterClass = (field: CountedField) =>
             <FlexCell center>
               <Label semi-bold>{{ t('shared.labels.shortDescription') }}</Label>
             </FlexCell>
+            <FlexCell center>
+              <AiContentGenerator
+                :productId="productId"
+                :languageCode="currentLanguage"
+                contentAiGenerateType="SHORT_DESCRIPTION"
+                :sales-channel-type="salesChannelType"
+                @generated="val => emit('shortDescription', val)"
+              />
+            </FlexCell>
+            <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
+              <AiContentTranslator
+                :product="{ id: productId }"
+                productContentType="SHORT_DESCRIPTION"
+                toTranslate=""
+                :fromLanguageCode="defaultLanguage"
+                :toLanguageCode="currentLanguage"
+                :sales-channel-id="salesChannelId"
+                @translated="val => emit('shortDescription', val)"
+              />
+            </FlexCell>
           </Flex>
         </FlexCell>
         <FlexCell v-if="hasFieldLimit('shortDescription')" center class="text-right">
@@ -170,6 +217,26 @@ const getFieldCounterClass = (field: CountedField) =>
           <Flex class="gap-4">
             <FlexCell center>
               <Label semi-bold>{{ t('products.translation.labels.description') }}</Label>
+            </FlexCell>
+            <FlexCell center>
+              <AiContentGenerator
+                :productId="productId"
+                :languageCode="currentLanguage"
+                contentAiGenerateType="DESCRIPTION"
+                :sales-channel-type="salesChannelType"
+                @generated="val => emit('description', val)"
+              />
+            </FlexCell>
+            <FlexCell v-if="currentLanguage !== null && currentLanguage !== defaultLanguage" center>
+              <AiContentTranslator
+                :product="{ id: productId }"
+                productContentType="DESCRIPTION"
+                toTranslate=""
+                :fromLanguageCode="defaultLanguage"
+                :toLanguageCode="currentLanguage"
+                :sales-channel-id="salesChannelId"
+                @translated="val => emit('description', val)"
+              />
             </FlexCell>
           </Flex>
         </FlexCell>

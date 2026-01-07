@@ -504,6 +504,13 @@ export const bulkUpdateRemoteLanguagesMutation = gql`
   }
 `;
 
+export const bulkCreateSheinProductFromAssignsMutation = gql`
+  mutation bulkCreateSheinProductFromAssigns(
+    $assigns: [SalesChannelViewAssignPartialInput!]!
+  ) {
+    bulkCreateSheinProductFromAssigns(assigns: $assigns)
+  }
+`;
 
 export const bulkUpdateRemoteCurrenciesMutation = gql`
   mutation bulkUpdateRemoteCurrencies($data: [RemoteCurrencyPartialInput!]!) {
@@ -529,8 +536,8 @@ export const deleteSalesChannelViewAssignMutation = gql`
 `;
 
 export const deleteSalesChannelViewAssignsMutation = gql`
-  mutation deleteSalesChannelViewAssigns($ids: [GlobalID!]!) {
-    deleteSalesChannelViewAssigns(data: { ids: $ids }) {
+  mutation deleteSalesChannelViewAssigns($data: [NodeInput!]!) {
+    deleteSalesChannelViewAssigns(data: $data) {
       id
     }
   }

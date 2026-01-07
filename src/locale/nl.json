@@ -3212,6 +3212,8 @@
       "weightUnit": "Gewichtseenheid",
       "isDefaultMarketplace": "Standaardmarktplaats",
       "startingStock": "",
+      "minNameLength": "",
+      "minDescriptionLength": "",
       "gptEnable": "",
       "gptEnableCheckout": "",
       "gptSellerName": "",
@@ -3230,6 +3232,8 @@
       },
       "helpText": {
         "startingStock": "",
+        "minNameLength": "",
+        "minDescriptionLength": "",
         "gptEnable": "",
         "gptSellerUrl": "",
         "gptReturnWindow": "",

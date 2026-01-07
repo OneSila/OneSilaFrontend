@@ -2,8 +2,12 @@ import { FieldType } from "../../../../../../shared/utils/constants";
 import { salesChannelViewAssignsQuery, salesChannelViewsQuerySelector } from "../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
-import { deleteSalesChannelViewAssignMutation } from "../../../../../../shared/api/mutations/salesChannels.js";
+import {
+  deleteSalesChannelViewAssignMutation,
+  deleteSalesChannelViewAssignsMutation
+} from "../../../../../../shared/api/mutations/salesChannels.js";
 import { getProductTypeBadgeMap } from "../../../../../products/products/configs";
+import {deletePropertiesMutation} from "../../../../../../shared/api/mutations/properties";
 
 const getStatusBadgeMap = (t: Function) => ({
   completed: { text: t('shared.labels.completed'), color: 'green' },
@@ -146,6 +150,9 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
   addDelete: true,
   deleteMutation: deleteSalesChannelViewAssignMutation,
   addPagination: true,
+  addBulkActions: true,
+  addBulkDelete: true,
+  bulkDeleteMutation: deleteSalesChannelViewAssignsMutation,
 });
 
 export const listingQuery = salesChannelViewAssignsQuery;
