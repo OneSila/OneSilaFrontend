@@ -1159,9 +1159,12 @@
       "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
       "successfullyUpdated": "The product translation has been successfully updated.",
       "import": {
-        "button": "Import",
+        "button": "Import Content",
         "title": "Import content",
+        "descriptionSingle": "Copy content from one channel to another for this product. Existing translations are updated or created based on your selection.",
+        "descriptionMulti": "Copy content from one channel to another for the selected products. Items will be updated or created in the background.",
         "targetLabel": "Import to",
+        "targetPlaceholder": "Select a channel to import to",
         "sourceLabel": "Import from",
         "sourcePlaceholder": "Select a channel to import from",
         "overrideLabel": "Override existing content",
@@ -1170,12 +1173,16 @@
         "allLanguagesHelp": "When enabled, content is imported for every language available on the source channel.",
         "currentLanguageBadge": "Current: {code}",
         "availableLanguagesBadge": "{count} languages available",
+        "advancedOptionsTitle": "Advanced options",
+        "fieldsLabel": "Fields to import",
+        "fieldsHelp": "Select which fields should be copied from the source channel.",
         "previewTitle": "Preview (current language)",
         "missingSource": "No source content exists for the current language in the selected channel.",
         "missingSourceMultiLanguage": "No source content exists for the current language. Import will run for other available languages.",
         "importAction": "Import",
         "importActionWithSource": "Import from {source}",
-        "success": "Content imported successfully."
+        "success": "Content imported successfully.",
+        "multiStarted": "Import started. Eligible content will be processed in the background."
       },
       "placeholders": {
         "language": "Select a language",

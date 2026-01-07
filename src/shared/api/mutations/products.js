@@ -563,6 +563,14 @@ export const bulkRefreshInspectorMutation = gql`
     bulkRefreshInspector(instance: $instance)
   }
 `;
+
+export const importProductTranslationsMutation = gql`
+  mutation importProductTranslations($instance: ProductTranslationBulkImportInput!) {
+    importProductTranslations(instance: $instance) {
+      success
+    }
+  }
+`;
 export const createProductTranslationBulletPointMutation = gql`
   mutation createProductTranslationBulletPoint($data: ProductTranslationBulletPointInput!) {
     createProductTranslationBulletPoint(data: $data) {

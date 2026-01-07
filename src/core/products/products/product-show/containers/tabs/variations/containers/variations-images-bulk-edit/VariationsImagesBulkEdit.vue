@@ -52,6 +52,7 @@ interface VariationRow {
     sku: string;
     name: string;
     active: boolean;
+    type?: string;
   };
   images: (VariationImageSlot | null)[];
 }
@@ -140,26 +141,32 @@ const sheinRoleLabelKey: Record<SheinImageRole, string> = {
   color: 'products.products.variations.media.sheinGuide.labels.color'
 };
 
-const getSheinRole = (index: number, total: number): SheinImageRole => {
+const isSheinVariationRow = (row: VariationRow | null) =>
+  row?.variation.type === ProductType.Simple;
+
+const shouldShowSheinColor = (row: VariationRow | null) =>
+  isConfigurable.value || isSheinVariationRow(row);
+
+const getSheinRole = (index: number, total: number, showColor: boolean): SheinImageRole => {
   if (index === 0) {
     return 'main';
   }
   if (index === 1) {
     return 'square';
   }
-  if (isConfigurable.value && total > 2 && index === total - 1) {
+  if (showColor && total > 2 && index === total - 1) {
     return 'color';
   }
   return 'detail';
 };
 
-const getSheinRoleLabel = (index: number, total: number) => {
-  const role = getSheinRole(index, total);
+const getSheinRoleLabel = (index: number, total: number, showColor: boolean) => {
+  const role = getSheinRole(index, total, showColor);
   return t(sheinRoleLabelKey[role]);
 };
 
-const getSheinRoleDotClass = (index: number, total: number) => {
-  const role = getSheinRole(index, total);
+const getSheinRoleDotClass = (index: number, total: number, showColor: boolean) => {
+  const role = getSheinRole(index, total, showColor);
   return sheinRoleColorMap[role];
 };
 
@@ -178,7 +185,7 @@ const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
   if (!total || columnIndex >= total) {
     return null;
   }
-  return getSheinRoleLabel(columnIndex, total);
+  return getSheinRoleLabel(columnIndex, total, shouldShowSheinColor(row));
 };
 
 const getSheinRoleDotClassForRow = (row: VariationRow, columnIndex: number) => {
@@ -186,7 +193,7 @@ const getSheinRoleDotClassForRow = (row: VariationRow, columnIndex: number) => {
   if (!total || columnIndex >= total) {
     return null;
   }
-  return getSheinRoleDotClass(columnIndex, total);
+  return getSheinRoleDotClass(columnIndex, total, shouldShowSheinColor(row));
 };
 
 const sheinLegend = computed(() => ([
@@ -597,6 +604,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
         sku: variation.sku,
         name: variation.name,
         active: variation.active,
+        type: variation.type,
       },
       images: [],
     } as VariationRow;
@@ -639,6 +647,7 @@ const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
       sku: node.sku,
       name: node.name,
       active: node.active,
+      type: node.type ?? null,
     },
     images: [],
   })) as VariationRow[];

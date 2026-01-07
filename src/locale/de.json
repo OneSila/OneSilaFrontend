@@ -262,7 +262,10 @@
       "import": {
         "button": "",
         "title": "",
+        "descriptionSingle": "",
+        "descriptionMulti": "",
         "targetLabel": "",
+        "targetPlaceholder": "",
         "sourceLabel": "",
         "sourcePlaceholder": "",
         "overrideLabel": "",
@@ -271,12 +274,16 @@
         "allLanguagesHelp": "",
         "currentLanguageBadge": "",
         "availableLanguagesBadge": "",
+        "advancedOptionsTitle": "",
+        "fieldsLabel": "",
+        "fieldsHelp": "",
         "previewTitle": "",
         "missingSource": "",
         "missingSourceMultiLanguage": "",
         "importAction": "",
         "importActionWithSource": "",
-        "success": ""
+        "success": "",
+        "multiStarted": ""
       },
       "placeholders": {
         "subtitle": ""

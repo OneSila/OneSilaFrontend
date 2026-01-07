@@ -115,6 +115,7 @@ export const productsWithContentQuery = gql`
           sku
           name
           active
+          type
         }
       }
       pageInfo {
@@ -162,6 +163,7 @@ export const productsWithImagesQuery = gql`
           sku
           name
           active
+          type
         }
       }
       pageInfo {

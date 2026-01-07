@@ -11,13 +11,16 @@ import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, lis
 import { injectAuth } from "../../../../shared/modules/auth";
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
 import { AdvancedContentGenerator } from "../../../../shared/components/organisms/advanced-content-generator";
-import { ref } from "vue";
+import ProductContentImportModal from "../../../../shared/components/organisms/import-content/ProductContentImportModal.vue";
+import { onMounted, ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../../shared/modules/toast";
 import { assignEanCodesMutation } from "../../../../shared/api/mutations/eanCodes.js";
 import { bulkRefreshInspectorMutation } from "../../../../shared/api/mutations/products.js";
+import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import { BulkProductPropertyAssigner } from "../../../../shared/components/organisms/bulk=product-property-assigner";
 import { BulkProductWebsiteAssigner } from "../../../../shared/components/organisms/bulk=product-website-assigner";
+import { IntegrationTypes } from "../../../integrations/integrations/integrations";
 
 const { t } = useI18n();
 
@@ -25,6 +28,7 @@ const auth = injectAuth();
 const searchConfig = searchConfigConstructor(t, auth.user.company?.hasAmazonIntegration);
 const listingConfig = listingConfigConstructor(t, true);
 const generalListingRef = ref<any>(null);
+const salesChannels = ref<any[]>([]);
 
 const clearSelection = () => {
   generalListingRef.value?.clearSelected?.()
@@ -83,7 +87,20 @@ const handleBulkRefreshInspector = async (selectedEntities: string[]) => {
   }
 };
 
+const loadSalesChannels = async () => {
+  try {
+    const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
+    salesChannels.value = data?.integrations.edges
+      .map((e: any) => e.node)
+      .filter((c: any) => c.type !== IntegrationTypes.Webhook) || [];
+  } catch (e) {
+    console.error('Failed to load sales channels', e);
+  }
+};
 
+onMounted(() => {
+  loadSalesChannels();
+});
 
 </script>
 
@@ -138,6 +155,18 @@ const handleBulkRefreshInspector = async (selectedEntities: string[]) => {
                 btn-class="inline-flex items-center rounded bg-indigo-50 px-4 py-1 text-sm font-semibold text-indigo-800 shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-100 whitespace-nowrap"
                 icon-class="text-indigo-600"
                 @started="clearSelection"
+              />
+
+              <ProductContentImportModal
+                :product-ids="selectedEntities"
+                :current-language="null"
+                :current-sales-channel="null"
+                :sales-channels="salesChannels"
+                :use-default-button-styles="false"
+                btn-class="inline-flex items-center rounded bg-emerald-50 px-4 py-1 text-sm font-semibold text-emerald-800 shadow-sm ring-1 ring-inset ring-emerald-300 hover:bg-emerald-100 disabled:opacity-50 whitespace-nowrap"
+                icon-name="file-import"
+                icon-class="text-emerald-600 mr-2"
+                @imported="clearSelection"
               />
 
               <button

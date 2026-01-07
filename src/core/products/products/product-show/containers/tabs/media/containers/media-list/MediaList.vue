@@ -89,7 +89,16 @@ const isDefaultChannel = computed(() => props.salesChannelId === 'default');
 const isChannelInherited = computed(() => !isDefaultChannel.value && inheritedFromDefault.value);
 const isReadOnly = computed(() => props.readonlyMode);
 const isSheinChannel = computed(() => props.salesChannelType === IntegrationTypes.Shein);
-const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
+const resolvedProduct = computed(() => {
+  if (props.product.type === ProductType.Alias && props.product.aliasParentProduct) {
+    return props.product.aliasParentProduct;
+  }
+  return props.product;
+});
+const isSheinVariation = computed(() => resolvedProduct.value.type === ProductType.Simple);
+const shouldShowSheinColor = computed(
+  () => resolvedProduct.value.type === ProductType.Configurable || isSheinVariation.value
+);
 
 type SheinImageRole = 'main' | 'square' | 'detail' | 'color';
 
@@ -114,7 +123,7 @@ const getSheinRole = (index: number, total: number): SheinImageRole => {
   if (index === 1) {
     return 'square';
   }
-  if (isConfigurable.value && total > 2 && index === total - 1) {
+  if (shouldShowSheinColor.value && total > 2 && index === total - 1) {
     return 'color';
   }
   return 'detail';
