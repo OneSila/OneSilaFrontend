@@ -126,6 +126,25 @@ export const productsWithContentQuery = gql`
   }
 `;
 
+export const productsWithSheinQuery = gql`
+  query ProductsWithShein($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const productsWithPricesQuery = gql`
   query ProductsWithPrices($first: Int, $after: String, $filter: ProductFilter) {
     products(first: $first, after: $after, filters: $filter) {
@@ -469,6 +488,50 @@ export const bundleVariationsQuery = gql`
         startCursor
         hasNextPage
         hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const configurableVariationsWithSheinQuery = gql`
+  query ConfigurableVariationsWithShein($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsWithSheinQuery = gql`
+  query BundleVariationsWithShein($first: Int, $after: String, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
       }
     }
   }

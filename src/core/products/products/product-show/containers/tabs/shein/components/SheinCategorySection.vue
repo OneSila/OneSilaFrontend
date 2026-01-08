@@ -5,27 +5,17 @@ import apolloClient from '../../../../../../../../../apollo-client';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
-import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
 import { sheinCategoriesQuery } from '../../../../../../../../shared/api/queries/sheinCategories.js';
-import { sheinPropertiesByRemoteIdsQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
+import SheinCategoryBrowser from './SheinCategoryBrowser.vue';
+import SheinCategoryDetails from './SheinCategoryDetails.vue';
+import { normalizeCategoryNode, type SheinCategoryNode } from './sheinCategoryUtils';
 import {
   createSheinProductCategoryMutation,
   updateSheinProductCategoryMutation,
   deleteSheinProductCategoryMutation,
 } from '../../../../../../../../shared/api/mutations/sheinProducts.js';
-
-interface SheinCategoryNode {
-  remoteId: string;
-  name: string;
-  parentRemoteId?: string | null;
-  isLeaf: boolean;
-  productTypeRemoteId?: string | null;
-  defaultLanguage?: string | null;
-  currency?: string | null;
-  properties: any[];
-}
 
 const props = defineProps<{
   productId: string | null;
@@ -42,170 +32,21 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const nodes = ref<SheinCategoryNode[]>([]);
-const loadingNodes = ref(false);
-const currentParentId = ref<string | null>(null);
-const pathStack = ref<SheinCategoryNode[]>([]);
 const pendingNode = ref<SheinCategoryNode | null>(null);
 const selectedNode = ref<SheinCategoryNode | null>(null);
 const savedRemoteId = ref<string | null>(null);
 const productCategoryId = ref<string | null>(null);
-const search = ref('');
 const loadingSelected = ref(false);
 const saving = ref(false);
 const manualCategoryInput = ref('');
 const manualSelectionLoading = ref(false);
 const manualSelectionError = ref<string | null>(null);
-const localPropertiesByRemoteId = ref<Record<string, { id: string; name: string }>>({});
-const remotePropertiesByRemoteId = ref<Record<string, { id: string; name: string }>>({});
 
 const manualCategoryId = computed(() => manualCategoryInput.value.trim());
-
-const filteredNodes = computed(() =>
-  nodes.value.filter((node) =>
-    node.name.toLowerCase().includes(search.value.toLowerCase()),
-  ),
-);
 
 const hasUnsavedChanges = computed(
   () => pendingNode.value !== null && pendingNode.value.remoteId !== savedRemoteId.value,
 );
-
-const parseCategoryProperties = (value: unknown): any[] => {
-  if (!value) return [];
-  if (Array.isArray(value)) {
-    return value;
-  }
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value);
-      if (Array.isArray(parsed)) {
-        return parsed;
-      }
-    } catch (error) {
-      /* ignore malformed JSON */
-    }
-  }
-  return [];
-};
-
-const normalizeRemarks = (value: unknown): string[] => {
-  if (!value) return [];
-  if (Array.isArray(value)) {
-    return value.map((entry) => String(entry)).filter((entry) => entry);
-  }
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value);
-      if (Array.isArray(parsed)) {
-        return parsed.map((entry) => String(entry)).filter((entry) => entry);
-      }
-    } catch (error) {
-      return value ? [value] : [];
-    }
-    return value ? [value] : [];
-  }
-  return [];
-};
-
-const normalizePropertyName = (value: unknown): string => {
-  if (!value) return '';
-  return String(value).replace(/^OPENAPI-\s*/i, '').trim();
-};
-
-const normalizeCategoryProperty = (entry: any) => {
-  if (!entry || typeof entry !== 'object') {
-    return {
-      propertyId: '',
-      name: normalizePropertyName(entry),
-      nameEn: '',
-      propertyType: '',
-      valueMode: '',
-      valueLimit: null,
-      requirement: '',
-      attributeType: '',
-      isMainAttribute: false,
-      allowsUnmappedValues: false,
-      remarks: [],
-    };
-  }
-  return {
-    propertyId: String(entry.propertyId || entry.property_id || ''),
-    name: normalizePropertyName(
-      entry.propertyName ||
-        entry.property_name ||
-        entry.attributeName ||
-        entry.attribute_name ||
-        entry.name ||
-        '',
-    ),
-    nameEn: normalizePropertyName(
-      entry.propertyNameEn || entry.property_name_en || entry.name_en || '',
-    ),
-    propertyType: entry.propertyType || entry.property_type || entry.type || '',
-    valueMode: entry.valueMode || entry.value_mode || '',
-    valueLimit: entry.valueLimit ?? entry.value_limit ?? null,
-    requirement: entry.requirement || '',
-    attributeType: entry.attributeType || entry.attribute_type || '',
-    isMainAttribute: Boolean(entry.isMainAttribute ?? entry.is_main_attribute),
-    allowsUnmappedValues: Boolean(entry.allowsUnmappedValues ?? entry.allows_unmapped_values),
-    remarks: normalizeRemarks(entry.remarks),
-  };
-};
-
-const normalizeCategoryNode = (node: any): SheinCategoryNode => ({
-  remoteId: String(node?.remoteId ?? ''),
-  name: String(node?.name ?? ''),
-  parentRemoteId: node?.parentRemoteId ?? null,
-  isLeaf: Boolean(node?.isLeaf),
-  productTypeRemoteId: node?.productTypeRemoteId ?? null,
-  defaultLanguage: node?.defaultLanguage ?? null,
-  currency: node?.currency ?? null,
-  properties: parseCategoryProperties(node?.properties ?? node?.configuratorProperties),
-});
-
-const mapCategoriesConnection = (connection: any): SheinCategoryNode[] => {
-  if (!connection) return [];
-  const list = Array.isArray(connection)
-    ? connection
-    : connection.edges?.map((edge: any) => edge.node) || [];
-  return list.map((item: any) => normalizeCategoryNode(item));
-};
-
-const resetNavigation = () => {
-  pathStack.value = [];
-  currentParentId.value = null;
-  search.value = '';
-};
-
-const fetchNodes = async () => {
-  if (!props.salesChannelId) {
-    nodes.value = [];
-    return;
-  }
-  loadingNodes.value = true;
-  try {
-    const filter: Record<string, any> = {};
-    if (props.salesChannelId) {
-      filter.salesChannel = { id: { exact: props.salesChannelId } };
-    }
-    if (currentParentId.value) {
-      filter.parentRemoteId = { exact: currentParentId.value };
-    }
-
-    const { data } = await apolloClient.query({
-      query: sheinCategoriesQuery,
-      variables: { filter },
-      fetchPolicy: 'cache-first',
-    });
-    nodes.value = mapCategoriesConnection(data?.sheinCategories);
-  } catch (error) {
-    nodes.value = [];
-    displayApolloError(error);
-  } finally {
-    loadingNodes.value = false;
-  }
-};
 
 const fetchCategoryDetails = async (remoteId: string) => {
   try {
@@ -223,8 +64,8 @@ const fetchCategoryDetails = async (remoteId: string) => {
       },
       fetchPolicy: 'cache-first',
     });
-    const categories = mapCategoriesConnection(data?.sheinCategories);
-    return categories[0] || null;
+    const nodes = data?.sheinCategories?.edges?.map((edge: any) => normalizeCategoryNode(edge.node)) || [];
+    return nodes[0] || null;
   } catch (error) {
     displayApolloError(error);
     return null;
@@ -260,20 +101,11 @@ watch(
 watch(
   () => props.channel?.id,
   () => {
-    resetNavigation();
+    pendingNode.value = null;
     fetchSelected();
-    fetchNodes();
     manualCategoryInput.value = '';
     manualSelectionError.value = null;
   },
-);
-
-watch(
-  () => currentParentId.value,
-  () => {
-    fetchNodes();
-  },
-  { immediate: true },
 );
 
 watch(
@@ -283,39 +115,8 @@ watch(
   },
 );
 
-const goToChild = (node: SheinCategoryNode) => {
-  pathStack.value.push(node);
-  currentParentId.value = node.remoteId;
-  search.value = '';
-};
-
-const goToLevel = (index: number | null) => {
-  if (index === null) {
-    pathStack.value = [];
-    currentParentId.value = null;
-    search.value = '';
-    return;
-  }
-  pathStack.value = pathStack.value.slice(0, index + 1);
-  currentParentId.value = pathStack.value[index].remoteId;
-  search.value = '';
-};
-
-const goBack = () => {
-  if (!pathStack.value.length) {
-    goToLevel(null);
-    return;
-  }
-  const target = pathStack.value.length - 2;
-  goToLevel(target >= 0 ? target : null);
-};
-
-const selectNode = (node: SheinCategoryNode) => {
-  if (!node.isLeaf) {
-    Toast.info(t('products.products.shein.leafRestriction'));
-    return;
-  }
-  pendingNode.value = node;
+const handleCategorySelected = (payload: { node: SheinCategoryNode }) => {
+  pendingNode.value = payload.node;
 };
 
 const cancelSelection = () => {
@@ -332,144 +133,6 @@ const copyCategoryId = async (remoteId?: string | null) => {
   }
 };
 
-const formatCategoryProperties = (entries: any[]) =>
-  entries
-    .map((entry) => normalizeCategoryProperty(entry))
-    .map((entry) => ({
-      ...entry,
-      name: entry.name || entry.nameEn,
-      isConfigurator: entry.attributeType === 'sales',
-    }))
-    .filter((entry) =>
-      Boolean(
-        entry.name ||
-          entry.nameEn ||
-          entry.propertyType ||
-          entry.requirement ||
-          entry.attributeType ||
-          entry.remarks.length,
-      ),
-    );
-
-const formatRequirementLabel = (value: string) => {
-  const labels: Record<string, string> = {
-    required: t('products.products.shein.categoryAttributes.requirement.required'),
-    optional: t('products.products.shein.categoryAttributes.requirement.optional'),
-    not_fillable: t('products.products.shein.categoryAttributes.requirement.notFillable'),
-  };
-  return labels[value] || t('products.products.shein.categoryAttributes.requirement.unknown');
-};
-
-const formatAttributeTypeLabel = (value: string) => {
-  const labels: Record<string, string> = {
-    sales: t('products.products.shein.categoryAttributes.attributeType.sales'),
-    size: t('products.products.shein.categoryAttributes.attributeType.size'),
-    composition: t('products.products.shein.categoryAttributes.attributeType.composition'),
-    common: t('products.products.shein.categoryAttributes.attributeType.common'),
-  };
-  return labels[value] || t('products.products.shein.categoryAttributes.unknown');
-};
-
-const selectedCategoryProperties = computed(() =>
-  formatCategoryProperties(selectedNode.value?.properties ?? []),
-);
-
-const pendingCategoryProperties = computed(() =>
-  formatCategoryProperties(pendingNode.value?.properties ?? []),
-);
-
-const categoryPropertyRemoteIds = computed(() => {
-  const ids = new Set<string>();
-  const addIds = (items: ReturnType<typeof formatCategoryProperties>) => {
-    items.forEach((item) => {
-      if (item.propertyId) {
-        ids.add(item.propertyId);
-      }
-    });
-  };
-  addIds(selectedCategoryProperties.value);
-  addIds(pendingCategoryProperties.value);
-  return Array.from(ids);
-});
-
-const fetchLocalProperties = async () => {
-  const ids = categoryPropertyRemoteIds.value;
-  if (!props.salesChannelId || !ids.length) {
-    localPropertiesByRemoteId.value = {};
-    remotePropertiesByRemoteId.value = {};
-    return;
-  }
-  try {
-    const { data } = await apolloClient.query({
-      query: sheinPropertiesByRemoteIdsQuery,
-      variables: {
-        first: ids.length,
-        filter: {
-          salesChannel: { id: { exact: props.salesChannelId } },
-          remoteId: { inList: ids },
-        },
-      },
-      fetchPolicy: 'cache-first',
-    });
-    const edges = data?.sheinProperties?.edges || [];
-    const localMap: Record<string, { id: string; name: string }> = {};
-    const remoteMap: Record<string, { id: string; name: string }> = {};
-    edges.forEach((edge: any) => {
-      const node = edge?.node;
-      const remoteId = node?.remoteId;
-      if (!remoteId) {
-        return;
-      }
-      remoteMap[String(remoteId)] = {
-        id: String(node?.id || ''),
-        name: String(node?.name || node?.nameEn || ''),
-      };
-      const localInstance = node?.localInstance;
-      if (localInstance?.id) {
-        localMap[String(remoteId)] = {
-          id: String(localInstance.id),
-          name: String(localInstance.name || node?.name || ''),
-        };
-      }
-    });
-    localPropertiesByRemoteId.value = localMap;
-    remotePropertiesByRemoteId.value = remoteMap;
-  } catch (error) {
-    localPropertiesByRemoteId.value = {};
-    remotePropertiesByRemoteId.value = {};
-    displayApolloError(error);
-  }
-};
-
-const getLocalProperty = (propertyId: string) =>
-  localPropertiesByRemoteId.value[propertyId] || null;
-
-const getRemoteProperty = (propertyId: string) =>
-  remotePropertiesByRemoteId.value[propertyId] || null;
-
-const remotePropertyPath = (propertyId: string) => {
-  const remoteProperty = getRemoteProperty(propertyId);
-  if (!remoteProperty?.id) {
-    return undefined;
-  }
-  const integrationId = props.channel?.integrationPtr?.id;
-  return {
-    name: 'integrations.remoteProperties.edit',
-    params: { type: 'shein', id: remoteProperty.id },
-    query: {
-      ...(integrationId ? { integrationId } : {}),
-      ...(props.salesChannelId ? { salesChannelId: props.salesChannelId } : {}),
-    },
-  };
-};
-
-watch(
-  [() => props.salesChannelId, () => categoryPropertyRemoteIds.value.join('|')],
-  () => {
-    fetchLocalProperties();
-  },
-  { immediate: true },
-);
 
 const saveSelection = async () => {
   if (!pendingNode.value || !props.productId || !props.salesChannelId) {
@@ -593,58 +256,10 @@ defineExpose({ hasUnsavedChanges });
       </div>
       <div v-else class="flex flex-col lg:flex-row gap-6">
         <div class="lg:w-1/2">
-          <div class="flex items-center gap-2 text-sm mb-2">
-            <span class="cursor-pointer hover:underline" @click="goToLevel(null)">
-              {{ t('products.products.shein.rootLabel') }}
-            </span>
-            <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
-              <span>&gt;</span>
-              <span class="cursor-pointer hover:underline" @click="goToLevel(index)">
-                {{ crumb.name }}
-              </span>
-            </template>
-            <div v-if="pathStack.length" class="flex gap-1 ml-auto">
-              <Button class="btn btn-sm btn-outline-primary" @click="goBack">
-                {{ t('shared.button.back') }}
-              </Button>
-            </div>
-          </div>
-
-          <input
-            v-model="search"
-            type="text"
-            class="form-input w-full mb-2"
-            :placeholder="t('shared.button.search') + '...'"
+          <SheinCategoryBrowser
+            :sales-channel-id="props.salesChannelId"
+            @selected="handleCategorySelected"
           />
-
-          <div v-if="loadingNodes">
-            <LocalLoader :loading="true" />
-          </div>
-          <ul v-else class="space-y-1">
-            <li
-              v-for="node in filteredNodes"
-              :key="node.remoteId"
-              class="flex justify-between items-center py-2 px-2 border rounded hover:bg-gray-100"
-            >
-              <div
-                class="flex items-center gap-2 flex-1 cursor-pointer"
-                @click="!node.isLeaf ? goToChild(node) : selectNode(node)"
-              >
-                <Icon :name="!node.isLeaf ? 'angle-right' : 'circle'" class="w-3" />
-                <span>{{ node.name }}</span>
-              </div>
-              <div class="flex gap-2">
-                <Button
-                  class="btn btn-sm btn-outline-primary"
-                  :disabled="!node.isLeaf"
-                  :title="!node.isLeaf ? t('products.products.shein.leafRestriction') : undefined"
-                  @click.stop="selectNode(node)"
-                >
-                  {{ t('shared.button.select') }}
-                </Button>
-              </div>
-            </li>
-          </ul>
 
           <div class="mt-6 border rounded bg-white p-4">
             <h6 class="font-semibold text-sm mb-1">
@@ -686,114 +301,11 @@ defineExpose({ hasUnsavedChanges });
                 <LocalLoader :loading="true" />
               </div>
               <div v-else-if="selectedNode">
-                <div class="text-sm font-medium">{{ selectedNode.name }}</div>
-                <div class="text-xs text-gray-500 flex items-center gap-2">
-                  <span>{{ selectedNode.remoteId }}</span>
-                  <button
-                    class="p-1 rounded hover:bg-gray-100"
-                    type="button"
-                    @click="copyCategoryId(selectedNode.remoteId)"
-                  >
-                    <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
-                  </button>
-                </div>
-                <div v-if="selectedNode.defaultLanguage || selectedNode.currency" class="text-xs text-gray-500 mt-1">
-                  <span v-if="selectedNode.defaultLanguage">{{ t('products.products.shein.defaultLanguage', { code: selectedNode.defaultLanguage }) }}</span>
-                  <span v-if="selectedNode.defaultLanguage && selectedNode.currency" class="mx-1">•</span>
-                  <span v-if="selectedNode.currency">{{ t('products.products.shein.currency', { code: selectedNode.currency }) }}</span>
-                </div>
-                <div v-if="selectedNode.productTypeRemoteId" class="text-xs text-gray-500 mt-1">
-                  {{ t('products.products.shein.productTypeRemoteId', { id: selectedNode.productTypeRemoteId }) }}
-                </div>
-
-                <div class="mt-3">
-                  <h6 class="font-semibold text-xs text-gray-700 mb-1">
-                    {{ t('products.products.shein.categoryAttributes.title') }}
-                  </h6>
-                  <p class="text-xs text-gray-500 mb-2">
-                    {{ t('products.products.shein.categoryAttributes.description') }}
-                  </p>
-                  <div v-if="selectedCategoryProperties.length" class="overflow-x-auto">
-                    <table class="min-w-[720px] w-full text-xs text-left">
-                      <thead class="text-gray-500 uppercase border-b">
-                        <tr>
-                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.property') }}</th>
-                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.type') }}</th>
-                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.requirement') }}</th>
-                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.configurable') }}</th>
-                          <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.main') }}</th>
-                          <th class="py-2">{{ t('products.products.shein.categoryAttributes.columns.attributeType') }}</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y">
-                        <tr v-for="item in selectedCategoryProperties" :key="`${item.name}-${item.propertyType}`">
-                          <td class="py-2 pr-3 text-gray-700">
-                            <div class="font-medium">
-                              <Link
-                                v-if="item.propertyId && remotePropertyPath(item.propertyId)"
-                                :path="remotePropertyPath(item.propertyId)"
-                                target="_blank"
-                              >
-                                {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
-                              </Link>
-                              <span v-else>
-                                {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
-                              </span>
-                            </div>
-                            <div v-if="item.nameEn && item.nameEn !== item.name" class="text-[11px] text-gray-500">
-                              {{ item.nameEn }}
-                            </div>
-                            <div class="text-[11px] text-gray-500 mt-1">
-                              <span class="font-semibold">
-                                {{ t('products.products.shein.categoryAttributes.localProperty') }}:
-                              </span>
-                              <template v-if="item.propertyId && getLocalProperty(item.propertyId)">
-                                <Link
-                                  class="ml-1"
-                                  target="_blank"
-                                  :path="{
-                                    name: 'properties.properties.show',
-                                    params: { id: getLocalProperty(item.propertyId)?.id },
-                                  }"
-                                >
-                                  {{ getLocalProperty(item.propertyId)?.name }}
-                                </Link>
-                              </template>
-                              <span v-else class="ml-1">-</span>
-                            </div>
-                          </td>
-                          <td class="py-2 pr-3 text-gray-700">
-                            <div>{{ item.propertyType || t('products.products.shein.categoryAttributes.unknown') }}</div>
-                            <div v-if="item.valueMode" class="text-[11px] text-gray-500">
-                              {{ t('products.products.shein.categoryAttributes.valueMode', { mode: item.valueMode }) }}
-                            </div>
-                          </td>
-                          <td class="py-2 pr-3 text-gray-700">
-                            {{ formatRequirementLabel(item.requirement) }}
-                          </td>
-                          <td class="py-2 pr-3 text-gray-700">
-                            <Icon
-                              :name="item.isConfigurator ? 'check-circle' : 'times-circle'"
-                              :class="item.isConfigurator ? 'text-green-500' : 'text-red-500'"
-                            />
-                          </td>
-                          <td class="py-2 pr-3 text-gray-700">
-                            <Icon
-                              :name="item.isMainAttribute ? 'check-circle' : 'times-circle'"
-                              :class="item.isMainAttribute ? 'text-green-500' : 'text-red-500'"
-                            />
-                          </td>
-                          <td class="py-2 text-gray-700">
-                            {{ formatAttributeTypeLabel(item.attributeType) }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div v-else class="text-xs text-gray-500">
-                    {{ t('products.products.shein.categoryAttributes.empty') }}
-                  </div>
-                </div>
+                <SheinCategoryDetails
+                  :category="selectedNode"
+                  :sales-channel-id="props.salesChannelId"
+                  :channel="props.channel"
+                />
               </div>
               <div v-else>
                 <div
@@ -831,113 +343,11 @@ defineExpose({ hasUnsavedChanges });
             <h6 class="font-semibold text-sm mb-1">
               {{ t('products.products.shein.pendingSelection') }}
             </h6>
-            <div class="text-sm font-medium">{{ pendingNode.name }}</div>
-            <div class="text-xs text-gray-500 flex items-center gap-2">
-              <span>{{ pendingNode.remoteId }}</span>
-              <button
-                class="p-1 rounded hover:bg-gray-100"
-                type="button"
-                @click="copyCategoryId(pendingNode.remoteId)"
-              >
-                <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
-              </button>
-            </div>
-            <div v-if="pendingNode.defaultLanguage || pendingNode.currency" class="text-xs text-gray-500 mt-1">
-              <span v-if="pendingNode.defaultLanguage">{{ t('products.products.shein.defaultLanguage', { code: pendingNode.defaultLanguage }) }}</span>
-              <span v-if="pendingNode.defaultLanguage && pendingNode.currency" class="mx-1">•</span>
-              <span v-if="pendingNode.currency">{{ t('products.products.shein.currency', { code: pendingNode.currency }) }}</span>
-            </div>
-            <div v-if="pendingNode.productTypeRemoteId" class="text-xs text-gray-500 mt-1">
-              {{ t('products.products.shein.productTypeRemoteId', { id: pendingNode.productTypeRemoteId }) }}
-            </div>
-
-            <div class="mt-3">
-              <h6 class="font-semibold text-xs text-gray-700 mb-1">
-                {{ t('products.products.shein.categoryAttributes.title') }}
-              </h6>
-              <p class="text-xs text-gray-500 mb-2">
-                {{ t('products.products.shein.categoryAttributes.description') }}
-              </p>
-              <div v-if="pendingCategoryProperties.length" class="overflow-x-auto">
-                <table class="min-w-[720px] w-full text-xs text-left">
-                  <thead class="text-gray-500 uppercase border-b">
-                    <tr>
-                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.property') }}</th>
-                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.type') }}</th>
-                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.requirement') }}</th>
-                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.configurable') }}</th>
-                      <th class="py-2 pr-3">{{ t('products.products.shein.categoryAttributes.columns.main') }}</th>
-                      <th class="py-2">{{ t('products.products.shein.categoryAttributes.columns.attributeType') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y">
-                    <tr v-for="item in pendingCategoryProperties" :key="`${item.name}-${item.propertyType}`">
-                      <td class="py-2 pr-3 text-gray-700">
-                        <div class="font-medium">
-                          <Link
-                            v-if="item.propertyId && remotePropertyPath(item.propertyId)"
-                            class="text-primary underline"
-                            :path="remotePropertyPath(item.propertyId)"
-                          >
-                            {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
-                          </Link>
-                          <span v-else>
-                            {{ item.name || t('products.products.shein.categoryAttributes.unknown') }}
-                          </span>
-                        </div>
-                        <div v-if="item.nameEn && item.nameEn !== item.name" class="text-[11px] text-gray-500">
-                          {{ item.nameEn }}
-                        </div>
-                        <div class="text-[11px] text-gray-500 mt-1">
-                          <span class="font-semibold">
-                            {{ t('products.products.shein.categoryAttributes.localProperty') }}:
-                          </span>
-                          <template v-if="item.propertyId && getLocalProperty(item.propertyId)">
-                            <Link
-                              class="ml-1 text-primary underline"
-                              :path="{
-                                name: 'properties.properties.show',
-                                params: { id: getLocalProperty(item.propertyId)?.id },
-                              }"
-                            >
-                              {{ getLocalProperty(item.propertyId)?.name }}
-                            </Link>
-                          </template>
-                          <span v-else class="ml-1">-</span>
-                        </div>
-                      </td>
-                      <td class="py-2 pr-3 text-gray-700">
-                        <div>{{ item.propertyType || t('products.products.shein.categoryAttributes.unknown') }}</div>
-                        <div v-if="item.valueMode" class="text-[11px] text-gray-500">
-                          {{ t('products.products.shein.categoryAttributes.valueMode', { mode: item.valueMode }) }}
-                        </div>
-                      </td>
-                      <td class="py-2 pr-3 text-gray-700">
-                        {{ formatRequirementLabel(item.requirement) }}
-                      </td>
-                      <td class="py-2 pr-3 text-gray-700">
-                        <Icon
-                          :name="item.isConfigurator ? 'check-circle' : 'times-circle'"
-                          :class="item.isConfigurator ? 'text-green-500' : 'text-red-500'"
-                        />
-                      </td>
-                      <td class="py-2 pr-3 text-gray-700">
-                        <Icon
-                          :name="item.isMainAttribute ? 'check-circle' : 'times-circle'"
-                          :class="item.isMainAttribute ? 'text-green-500' : 'text-red-500'"
-                        />
-                      </td>
-                      <td class="py-2 text-gray-700">
-                        {{ formatAttributeTypeLabel(item.attributeType) }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div v-else class="text-xs text-gray-500">
-                {{ t('products.products.shein.categoryAttributes.empty') }}
-              </div>
-            </div>
+            <SheinCategoryDetails
+              :category="pendingNode"
+              :sales-channel-id="props.salesChannelId"
+              :channel="props.channel"
+            />
             <div class="mt-3 flex gap-2">
               <Button class="btn btn-sm btn-primary" :disabled="saving" @click="saveSelection">
                 {{ t('shared.button.save') }}

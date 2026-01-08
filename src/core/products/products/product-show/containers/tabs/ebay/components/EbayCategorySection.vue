@@ -422,34 +422,36 @@ defineExpose({ hasUnsavedChanges });
             :placeholder="t('shared.button.search') + '...'"
           />
 
-          <div v-if="loadingNodes">
-            <LocalLoader :loading="true" />
-          </div>
-          <ul v-else class="space-y-1">
-            <li
-              v-for="node in filteredNodes"
-              :key="node.remoteId"
-              class="flex justify-between items-center py-2 px-2 border rounded hover:bg-gray-100"
-            >
-              <div
-                class="flex items-center gap-2 flex-1 cursor-pointer"
-                @click="node.hasChildren ? goToChild(node) : selectNode(node)"
+          <div class="max-h-[420px] overflow-y-auto pr-1">
+            <div v-if="loadingNodes">
+              <LocalLoader :loading="true" />
+            </div>
+            <ul v-else class="space-y-1">
+              <li
+                v-for="node in filteredNodes"
+                :key="node.remoteId"
+                class="flex justify-between items-center py-2 px-2 border rounded hover:bg-gray-100"
               >
-                <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
-                <span>{{ node.name }}</span>
-              </div>
-              <div class="flex gap-2">
-                <Button
-                  class="btn btn-sm btn-outline-primary"
-                  :disabled="node.hasChildren"
-                  :title="node.hasChildren ? t('products.products.ebay.leafRestriction') : undefined"
-                  @click.stop="selectNode(node)"
+                <div
+                  class="flex items-center gap-2 flex-1 cursor-pointer"
+                  @click="node.hasChildren ? goToChild(node) : selectNode(node)"
                 >
-                  {{ t('shared.button.select') }}
-                </Button>
-              </div>
-            </li>
-          </ul>
+                  <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
+                  <span>{{ node.name }}</span>
+                </div>
+                <div class="flex gap-2">
+                  <Button
+                    class="btn btn-sm btn-outline-primary"
+                    :disabled="node.hasChildren"
+                    :title="node.hasChildren ? t('products.products.ebay.leafRestriction') : undefined"
+                    @click.stop="selectNode(node)"
+                  >
+                    {{ t('shared.button.select') }}
+                  </Button>
+                </div>
+              </li>
+            </ul>
+          </div>
           <div class="mt-6 border rounded bg-white p-4">
             <h6 class="font-semibold text-sm mb-1">
               {{ t('products.products.ebay.manualEntry.title') }}

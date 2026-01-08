@@ -368,7 +368,8 @@
         "tabs": {
           "list": "Liste",
           "images": "Images",
-          "general": ""
+          "general": "",
+          "shein": ""
         },
         "images": {
           "columns": {
@@ -376,6 +377,22 @@
           },
           "labels": {
             "noImage": "Aucune image"
+          }
+        },
+        "shein": {
+          "columns": {
+            "category": ""
+          },
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
           }
         },
         "general": {

@@ -19,6 +19,7 @@ import { AiContentGenerator } from '../../../../../../../../../shared/components
 import { AiContentTranslator } from '../../../../../../../../../shared/components/organisms/ai-content-translator';
 import { AiBulletPointsGenerator } from '../../../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 import { AdvancedContentGenerator } from '../../../../../../../../../shared/components/organisms/advanced-content-generator';
+import ProductContentImportModal from '../../../../../../../../../shared/components/organisms/import-content/ProductContentImportModal.vue';
 import ProductContentPreview from '../../../content/ProductContentPreview.vue';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors, shortenText } from '../../../../../../../../../shared/utils';
@@ -619,6 +620,11 @@ const loadData = async (policy: FetchPolicy = 'network-only') => {
   }
 };
 
+const handleImportCompleted = async () => {
+  if (!language.value) return;
+  await loadData('network-only');
+};
+
 const getMatrixCellValue = (rowIndex: number, key: string) => {
   const row = variations.value[rowIndex];
   if (!row) return null;
@@ -1181,6 +1187,14 @@ defineExpose({ hasUnsavedChanges });
             :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
             :small="false"
             btn-class="btn-outline-primary whitespace-nowrap"
+          />
+          <ProductContentImportModal
+            :product-ids="variationProductIds"
+            :current-language="language"
+            :current-sales-channel="currentSalesChannel"
+            :sales-channels="salesChannels"
+            btn-class="btn-outline-primary whitespace-nowrap"
+            @imported="handleImportCompleted"
           />
           <Selector
             v-if="salesChannelOptions.length"

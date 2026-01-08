@@ -686,8 +686,7 @@
         "bulkProductWebsiteAssigner": {
           "title": "Assign to {count} product(s)",
           "button": "Assign to Websites",
-          "description": "Select one or more website views. Each ready product will be assigned to each selected view.",
-          "disclaimer": "Products marked red in the inspector are not ready and will be skipped.",
+          "description": "Select one or more website views. Each selected product will be assigned to each selected view.",
           "viewsLabel": "Website views",
           "viewsPlaceholder": "Select website views",
           "selectedViewsTitle": "Selected website views",
@@ -701,7 +700,7 @@
           "noProductsSelected": "Select products to assign.",
           "processingNote": "Assignments run in the background. Errors will be shown after processing.",
           "missingSelection": "Select at least one website view.",
-          "nothingToAssign": "Nothing to assign. All selected products are already assigned or not ready.",
+          "nothingToAssign": "Nothing to assign. All selected products are already assigned.",
           "assignButton": "Assign",
           "success": "Assigned {created} product(s) to {views} website view(s).",
           "skippedRed": "Skipped {count} product(s) with missing required data.",
@@ -1276,7 +1275,8 @@
           "list": "List",
           "content": "Content",
           "images": "Images",
-          "general": "General"
+          "general": "General",
+          "shein": "Shein"
         },
         "images": {
           "columns": {
@@ -1369,6 +1369,22 @@
             "noImages": "No images available for this product yet.",
             "unsupported": "Preview unavailable",
             "untitledProduct": "Unnamed product"
+          }
+        },
+        "shein": {
+          "columns": {
+            "category": "Shein category"
+          },
+          "labels": {
+            "categoryId": "ID: {id}"
+          },
+          "actions": {
+            "set": "Set category",
+            "preview": "Preview category"
+          },
+          "modal": {
+            "title": "Select Shein category",
+            "previewTitle": "Category preview"
           }
         },
         "prices": {

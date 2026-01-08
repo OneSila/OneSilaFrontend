@@ -893,7 +893,8 @@
           "editProperties": "Eigenschappen bewerken",
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
-          "general": ""
+          "general": "",
+          "shein": ""
         },
         "content": {
           "ai": {
@@ -921,6 +922,22 @@
           },
           "labels": {
             "noImage": "Geen afbeelding"
+          }
+        },
+        "shein": {
+          "columns": {
+            "category": ""
+          },
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
           }
         },
         "prices": {

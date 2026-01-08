@@ -10,21 +10,34 @@ import VariationsGeneralBulkEdit from "../product-show/containers/tabs/variation
 import VariationsContentBulkEdit from "../product-show/containers/tabs/variations/containers/variations-content-bulk-edit/VariationsContentBulkEdit.vue";
 import VariationsPricesBulkEdit from "../product-show/containers/tabs/variations/containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "../product-show/containers/tabs/variations/containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
+import VariationsSheinBulkEdit from "../product-show/containers/tabs/variations/containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
+import { injectAuth } from "../../../../shared/modules/auth";
 
-type Mode = 'editGeneral' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages';
+type Mode = 'editGeneral' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editShein';
 
 const { t } = useI18n();
+const auth = injectAuth();
 const route = useRoute();
 const router = useRouter();
 const mode = ref<Mode>('editGeneral');
 
-const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => [
-  { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
-  { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
-  // { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
-  { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
-  { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
-]);
+const hasSheinIntegration = computed(() => Boolean(auth.user.company?.hasSheinIntegration));
+
+const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
+  const items: { key: Mode; label: string; icon: string }[] = [
+    { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
+    { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
+    // { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+    { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
+    { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
+  ];
+
+  if (hasSheinIntegration.value) {
+    items.push({ key: 'editShein', label: t('products.products.variations.tabs.shein'), icon: 'store' });
+  }
+
+  return items;
+});
 
 const normalizeMode = (value: unknown): Mode | null => {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -113,6 +126,9 @@ const productIds = computed(() => {
             </template>
             <template v-else-if="mode === 'editImages'">
               <VariationsImagesBulkEdit :product-ids="productIds" />
+            </template>
+            <template v-else-if="mode === 'editShein'">
+              <VariationsSheinBulkEdit :product-ids="productIds" />
             </template>
             <template v-else>
               <div class="py-6">
