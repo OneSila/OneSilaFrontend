@@ -947,7 +947,8 @@
       },
       "media": {
         "messages": {
-          "inheritedFromDefault": ""
+          "inheritedFromDefault": "",
+          "colorImageDisclaimer": ""
         },
         "actions": {
           "createChannelGallery": ""
@@ -2016,6 +2017,7 @@
         "imageType": "Afbeeldingstype",
         "packShot": "Packshot",
         "moodShot": "Mood Shot",
+        "colorShot": "",
         "addImages": "Afbeeldingen toevoegen",
         "title": "",
         "description": ""

@@ -8,6 +8,7 @@ export const mediaQuery = gql`
           id
           proxyId
           type
+          imageType
           updatedAt
           image {
             size
@@ -47,6 +48,7 @@ export const getMediaQuery = gql`
           id
           proxyId
           type
+          imageType
           image {
             size
             name
@@ -213,6 +215,7 @@ export const mediaProductThroughQuery = gql`
               id
               proxyId
               type
+              imageType
               updatedAt
               image {
                 size

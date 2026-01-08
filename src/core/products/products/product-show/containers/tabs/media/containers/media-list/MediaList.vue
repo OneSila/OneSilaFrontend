@@ -17,6 +17,9 @@ import {
   getFileName,
   getFileSize,
   getPath,
+  IMAGE_TYPE_COLOR,
+  IMAGE_TYPE_MOOD,
+  IMAGE_TYPE_PACK,
   TYPE_DOCUMENT,
   TYPE_IMAGE,
   TYPE_VIDEO
@@ -40,6 +43,7 @@ interface Media {
   id: string;
   type: string;
   imageWebUrl: string;
+  imageType?: string | null;
   videoUrl: string;
   updatedAt: Date;
   owner: MediaOwner | null;
@@ -116,26 +120,45 @@ const sheinRoleLabelKey: Record<SheinImageRole, string> = {
   color: 'products.products.variations.media.sheinGuide.labels.color'
 };
 
-const getSheinRole = (index: number, total: number): SheinImageRole => {
-  if (index === 0) {
+const getImageTypeLabel = (type: string | null | undefined) => {
+  if (type === IMAGE_TYPE_PACK) {
+    return t('media.images.labels.packShot');
+  }
+  if (type === IMAGE_TYPE_MOOD) {
+    return t('media.images.labels.moodShot');
+  }
+  if (type === IMAGE_TYPE_COLOR) {
+    return t('media.images.labels.colorShot');
+  }
+  return null;
+};
+
+const getSheinRoleForItem = (item: Item, entries: Item[]): SheinImageRole => {
+  if (item.isMainImage) {
     return 'main';
   }
-  if (index === 1) {
-    return 'square';
-  }
-  if (shouldShowSheinColor.value && total > 2 && index === total - 1) {
+  if (shouldShowSheinColor.value && item.media?.imageType === IMAGE_TYPE_COLOR) {
     return 'color';
+  }
+  const squareItem = entries.find(
+    (entry) =>
+      entry.media?.type === TYPE_IMAGE &&
+      !entry.isMainImage &&
+      entry.media?.imageType !== IMAGE_TYPE_COLOR
+  );
+  if (squareItem?.id === item.id) {
+    return 'square';
   }
   return 'detail';
 };
 
-const getSheinRoleLabel = (index: number, total: number) => {
-  const role = getSheinRole(index, total);
+const getSheinRoleLabel = (item: Item, entries: Item[]) => {
+  const role = getSheinRoleForItem(item, entries);
   return t(sheinRoleLabelKey[role]);
 };
 
-const getSheinRoleDotClass = (index: number, total: number) => {
-  const role = getSheinRole(index, total);
+const getSheinRoleDotClass = (item: Item, entries: Item[]) => {
+  const role = getSheinRoleForItem(item, entries);
   return sheinRoleColorMap[role];
 };
 
@@ -428,6 +451,9 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
           </div>
         </div>
       </div>
+      <div class="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+        {{ t('products.products.variations.media.messages.colorImageDisclaimer') }}
+      </div>
       <div v-if="viewType === 'table'" class="overflow-x-auto" :class="{ 'opacity-60': isChannelInherited }">
         <div class="inline-block min-w-full align-middle">
           <div class="overflow-hidden">
@@ -546,12 +572,20 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
               </div>
             </template>
 
-            <div
-              v-if="isSheinChannel && item.media.type === TYPE_IMAGE"
-              class="shein-badge absolute right-2 top-2 hidden items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
-            >
-              <span class="h-2.5 w-2.5 rounded-full" :class="getSheinRoleDotClass(index, items.length)"></span>
-              <span>{{ getSheinRoleLabel(index, items.length) }}</span>
+            <div class="entry-badges absolute right-2 top-2 hidden flex-col gap-1">
+              <div
+                v-if="isSheinChannel && item.media.type === TYPE_IMAGE"
+                class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+              >
+                <span class="h-2.5 w-2.5 rounded-full" :class="getSheinRoleDotClass(item, items)"></span>
+                <span>{{ getSheinRoleLabel(item, items) }}</span>
+              </div>
+              <div
+                v-if="item.media.type === TYPE_IMAGE && getImageTypeLabel(item.media.imageType)"
+                class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+              >
+                <span>{{ getImageTypeLabel(item.media.imageType) }}</span>
+              </div>
             </div>
             <div class="overlay-info absolute bottom-0 left-0 right-0 hidden bg-gray-700 bg-opacity-50 p-2 text-md font-medium text-white">
               <div class="flex flex-wrap items-center gap-2">
@@ -593,7 +627,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
   display: block;
 }
 
-.gallery .file-entry:hover .shein-badge {
+.gallery .file-entry:hover .entry-badges {
   display: flex;
 }
 

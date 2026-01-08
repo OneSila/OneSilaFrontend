@@ -13,7 +13,8 @@ const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id:
 
 const imageTypeOptions = {
       PACK: t('media.images.labels.packShot'),
-      MOOD: t('media.images.labels.moodShot')
+      MOOD: t('media.images.labels.moodShot'),
+      COLOR: t('media.images.labels.colorShot')
     };
 
 const copyUrlToClipboard = async () => {

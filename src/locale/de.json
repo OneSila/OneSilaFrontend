@@ -414,7 +414,8 @@
       },
       "media": {
         "messages": {
-          "inheritedFromDefault": ""
+          "inheritedFromDefault": "",
+          "colorImageDisclaimer": ""
         },
         "actions": {
           "createChannelGallery": ""
@@ -1405,6 +1406,7 @@
         "urls": "URLs"
       },
       "labels": {
+        "colorShot": "",
         "title": "",
         "description": ""
       },

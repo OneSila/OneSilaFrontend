@@ -1336,22 +1336,23 @@
         },
         "media": {
           "messages": {
-            "inheritedFromDefault": "These images are currently inherited from the default channel. Click \"Create gallery\" to create a dedicated gallery for this channel."
+            "inheritedFromDefault": "These images are currently inherited from the default channel. Click \"Create gallery\" to create a dedicated gallery for this channel.",
+            "colorImageDisclaimer": "Color images are used only for the color configurator and are ignored by integrations."
           },
           "actions": {
             "createChannelGallery": "Create gallery"
           },
           "sheinGuide": {
             "title": "Shein image order matters",
-            "description": "Shein uses the order to assign image types. Upload images in this order:",
+            "description": "Shein uses image order for square and detail image types. Main and color images are based on their settings.",
             "order": {
-              "main": "1st image: {label}",
-              "square": "2nd image: {label}",
-              "detail": "3rd-(last - 1), up to 10: {label} (type 2)",
-              "color": "Last image: {label} (required for configurable products with variations, multiple SKUs; optional for simple products)",
-              "colorVariations": "Last image: {label} (required for configurable products with variations, multiple SKUs)"
+              "main": "Main image: {label} (the image marked as main/thumbnail)",
+              "square": "First non-main image: {label}",
+              "detail": "Next images, up to 10: {label} (type 2)",
+              "color": "Color image: {label} (set the image type to Color image; order doesn't matter)",
+              "colorVariations": "Color image: {label} (set the image type to Color image; order doesn't matter)"
             },
-            "note": "We resize images automatically, but the order is required so we can identify each type.",
+            "note": "We resize images automatically, but the order is required so we can identify square and detail types.",
             "labels": {
               "main": "Main image",
               "square": "Square image",
@@ -2402,6 +2403,7 @@
         "imageType": "Image Type",
         "packShot": "Pack Shot",
         "moodShot": "Mood Shot",
+        "colorShot": "Color image",
         "addImages": "Add new images",
         "title": "Title",
         "description": "Description"

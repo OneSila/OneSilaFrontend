@@ -31,7 +31,7 @@ import { Selector } from "../../../../../../../../../shared/components/atoms/sel
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
 import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
-import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../../../media/files/media";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../../../media/files/media";
 
 interface VariationImageSlot {
   id: string | null;
@@ -145,55 +145,45 @@ const isSheinVariationRow = (row: VariationRow | null) =>
   row?.variation.type === ProductType.Simple;
 
 const shouldShowSheinColor = (row: VariationRow | null) =>
-  isConfigurable.value || isSheinVariationRow(row);
+  isConfigurable.value ||
+  isSheinVariationRow(row) ||
+  row?.variation.type === ProductType.Configurable;
 
-const getSheinRole = (index: number, total: number, showColor: boolean): SheinImageRole => {
-  if (index === 0) {
+const getSheinRoleForSlot = (row: VariationRow, slot: VariationImageSlot): SheinImageRole => {
+  if (slot.isMainImage) {
     return 'main';
   }
-  if (index === 1) {
-    return 'square';
-  }
-  if (showColor && total > 2 && index === total - 1) {
+  if (shouldShowSheinColor(row) && slot.imageType === IMAGE_TYPE_COLOR) {
     return 'color';
+  }
+  const squareSlot = row.images.find(
+    (candidate) =>
+      candidate?.mediaId &&
+      !candidate.isMainImage &&
+      candidate.imageType !== IMAGE_TYPE_COLOR
+  );
+  if (squareSlot?.mediaId === slot.mediaId) {
+    return 'square';
   }
   return 'detail';
 };
 
-const getSheinRoleLabel = (index: number, total: number, showColor: boolean) => {
-  const role = getSheinRole(index, total, showColor);
+const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
+  const slot = row.images[columnIndex];
+  if (!slot?.mediaId) {
+    return null;
+  }
+  const role = getSheinRoleForSlot(row, slot);
   return t(sheinRoleLabelKey[role]);
 };
 
-const getSheinRoleDotClass = (index: number, total: number, showColor: boolean) => {
-  const role = getSheinRole(index, total, showColor);
-  return sheinRoleColorMap[role];
-};
-
-const getRowImageTotal = (row: VariationRow) => {
-  let lastIndex = -1;
-  row.images.forEach((slot, index) => {
-    if (slot?.mediaId) {
-      lastIndex = index;
-    }
-  });
-  return lastIndex + 1;
-};
-
-const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
-  const total = getRowImageTotal(row);
-  if (!total || columnIndex >= total) {
-    return null;
-  }
-  return getSheinRoleLabel(columnIndex, total, shouldShowSheinColor(row));
-};
-
 const getSheinRoleDotClassForRow = (row: VariationRow, columnIndex: number) => {
-  const total = getRowImageTotal(row);
-  if (!total || columnIndex >= total) {
+  const slot = row.images[columnIndex];
+  if (!slot?.mediaId) {
     return null;
   }
-  return getSheinRoleDotClass(columnIndex, total, shouldShowSheinColor(row));
+  const role = getSheinRoleForSlot(row, slot);
+  return sheinRoleColorMap[role];
 };
 
 const sheinLegend = computed(() => ([
@@ -419,7 +409,7 @@ const assignMediaToRow = (
       null,
     isMainImage: currentSlot?.isMainImage ?? false,
     sortOrder: null,
-    imageType: resolvedMedia.type ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
+    imageType: resolvedMedia.imageType ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
     uploadSource: source,
   };
   setMatrixCellValue(rowIndex, `image-${targetIndex}`, slotValue);
@@ -491,8 +481,14 @@ const getImageTypeLabel = (slot: VariationImageSlot | null | undefined) => {
     return null;
   }
   const type = slot.imageType;
+  if (type === IMAGE_TYPE_PACK) {
+    return t('media.images.labels.packShot');
+  }
   if (type === IMAGE_TYPE_MOOD) {
     return t('media.images.labels.moodShot');
+  }
+  if (type === IMAGE_TYPE_COLOR) {
+    return t('media.images.labels.colorShot');
   }
   return null;
 };
@@ -700,16 +696,17 @@ const fetchVariationImages = async (
     if (!map.has(productId)) {
       map.set(productId, []);
     }
-    map.get(productId)!.push({
-      id: node.id ?? null,
-      productId,
-      mediaId,
-      mediaUrl: node.media?.imageWebUrl ?? null,
-      mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
-      isMainImage: !!node.isMainImage,
-      sortOrder: node.sortOrder ?? null,
-      uploadSource: 'existing',
-    });
+      map.get(productId)!.push({
+        id: node.id ?? null,
+        productId,
+        mediaId,
+        mediaUrl: node.media?.imageWebUrl ?? null,
+        mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
+        isMainImage: !!node.isMainImage,
+        sortOrder: node.sortOrder ?? null,
+        imageType: node.media?.imageType ?? null,
+        uploadSource: 'existing',
+      });
   });
 
   map.forEach((entries) => {
@@ -992,6 +989,9 @@ defineExpose({ hasUnsavedChanges });
             </div>
           </div>
         </div>
+        <div class="mt-3 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          {{ t('products.products.variations.media.messages.colorImageDisclaimer') }}
+        </div>
       </template>
       <template #toolbar-right>
         <div class="flex items-center gap-2">
@@ -1113,26 +1113,31 @@ defineExpose({ hasUnsavedChanges });
                   </Button>
                 </div>
               </div>
-              <div
-                v-if="getImageTypeLabel(row.images[getImageColumnIndex(column.key)])"
-                class="absolute bottom-2 left-2 rounded bg-white/80 px-2 py-1 text-xs font-medium text-gray-700"
-              >
-                {{ getImageTypeLabel(row.images[getImageColumnIndex(column.key)]) }}
-              </div>
             </div>
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-900 bg-opacity-60 px-3 py-2 opacity-0 transition-opacity group-hover:opacity-100"
               :class="{ 'pointer-events-none': !row.images[getImageColumnIndex(column.key)] }"
             >
               <div
-                v-if="isSheinChannel && row.images[getImageColumnIndex(column.key)] && getSheinRoleLabelForRow(row, getImageColumnIndex(column.key))"
-                class="absolute right-2 top-2 flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+                v-if="row.images[getImageColumnIndex(column.key)]"
+                class="absolute right-2 top-2 flex flex-col gap-1"
               >
-                <span
-                  class="h-2.5 w-2.5 rounded-full"
-                  :class="getSheinRoleDotClassForRow(row, getImageColumnIndex(column.key))"
-                ></span>
-                <span>{{ getSheinRoleLabelForRow(row, getImageColumnIndex(column.key)) }}</span>
+                <div
+                  v-if="isSheinChannel && getSheinRoleLabelForRow(row, getImageColumnIndex(column.key))"
+                  class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+                >
+                  <span
+                    class="h-2.5 w-2.5 rounded-full"
+                    :class="getSheinRoleDotClassForRow(row, getImageColumnIndex(column.key))"
+                  ></span>
+                  <span>{{ getSheinRoleLabelForRow(row, getImageColumnIndex(column.key)) }}</span>
+                </div>
+                <div
+                  v-if="getImageTypeLabel(row.images[getImageColumnIndex(column.key)])"
+                  class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+                >
+                  <span>{{ getImageTypeLabel(row.images[getImageColumnIndex(column.key)]) }}</span>
+                </div>
               </div>
               <template v-if="row.images[getImageColumnIndex(column.key)]">
                 <Toggle

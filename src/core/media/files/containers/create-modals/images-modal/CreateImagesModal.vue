@@ -13,7 +13,7 @@ import { LocalLoader } from "../../../../../../shared/components/atoms/local-loa
 import apolloClient from "../../../../../../../apollo-client";
 import { createImagesMutation, createMediaProductThroughMutation, uploadImagesFromUrlsMutation } from "../../../../../../shared/api/mutations/media.js"
 import { Toast } from "../../../../../../shared/modules/toast";
-import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../media";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../media";
 import { processGraphQLErrors } from "../../../../../../shared/utils";
 
 const props = withDefaults(
@@ -85,7 +85,8 @@ const getDefaultTitleFromUrl = (value: string) => {
 
 const imageTypeOptions = [
   { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
-  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD }
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
+  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR }
 ];
 
 watch(() => props.modelValue, (newVal) => {

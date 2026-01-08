@@ -3,6 +3,7 @@ export const TYPE_VIDEO = 'VIDEO'
 export const TYPE_DOCUMENT = 'FILE'
 export const IMAGE_TYPE_PACK = 'PACK'
 export const IMAGE_TYPE_MOOD = 'MOOD'
+export const IMAGE_TYPE_COLOR = 'COLOR'
 
 
 export const getId = (media: any) => {
