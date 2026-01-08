@@ -369,6 +369,7 @@
           "list": "Liste",
           "images": "Images",
           "general": "",
+          "ebay": "",
           "shein": ""
         },
         "images": {
@@ -393,6 +394,22 @@
           "modal": {
             "title": "",
             "previewTitle": ""
+          }
+        },
+        "ebay": {
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
+          },
+          "selectors": {
+            "salesChannel": ""
           }
         },
         "general": {

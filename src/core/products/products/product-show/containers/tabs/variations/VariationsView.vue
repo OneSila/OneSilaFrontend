@@ -14,6 +14,7 @@ import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/V
 import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
 import VariationsGeneralBulkEdit from "./containers/variations-general-bulk-edit/VariationsGeneralBulkEdit.vue";
 import VariationsSheinBulkEdit from "./containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
+import VariationsEbayBulkEdit from "./containers/variations-ebay-bulk-edit/VariationsEbayBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import { injectAuth } from "../../../../../../../shared/modules/auth";
@@ -24,7 +25,7 @@ const { t } = useI18n();
 const auth = injectAuth();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editShein' | 'editGeneral';
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editShein' | 'editEbay' | 'editGeneral';
 const mode = ref<Mode>('list');
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
 const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
@@ -32,6 +33,7 @@ const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(n
 const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(null);
 const generalEditRef = ref<InstanceType<typeof VariationsGeneralBulkEdit> | null>(null);
 const sheinEditRef = ref<InstanceType<typeof VariationsSheinBulkEdit> | null>(null);
+const ebayEditRef = ref<InstanceType<typeof VariationsEbayBulkEdit> | null>(null);
 
 const getUnsavedChangesForMode = (currentMode: Mode) => {
   if (currentMode === 'editContent') {
@@ -49,6 +51,9 @@ const getUnsavedChangesForMode = (currentMode: Mode) => {
   if (currentMode === 'editShein') {
     return sheinEditRef.value?.hasUnsavedChanges ?? false;
   }
+  if (currentMode === 'editEbay') {
+    return ebayEditRef.value?.hasUnsavedChanges ?? false;
+  }
   if (currentMode === 'editGeneral') {
     return generalEditRef.value?.hasUnsavedChanges ?? false;
   }
@@ -62,10 +67,12 @@ const hasUnsavedChanges = computed(
     (priceEditRef.value?.hasUnsavedChanges ?? false) ||
     (imageEditRef.value?.hasUnsavedChanges ?? false) ||
     (sheinEditRef.value?.hasUnsavedChanges ?? false) ||
+    (ebayEditRef.value?.hasUnsavedChanges ?? false) ||
     (generalEditRef.value?.hasUnsavedChanges ?? false)
 );
 
 const hasSheinIntegration = computed(() => Boolean(auth.user.company?.hasSheinIntegration));
+const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayIntegration));
 
 const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
   const items: { key: Mode; label: string; icon: string }[] = [
@@ -76,6 +83,10 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
     { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
   ];
+
+  if (hasEbayIntegration.value) {
+    items.push({ key: 'editEbay', label: t('products.products.variations.tabs.ebay'), icon: 'store' });
+  }
 
   if (hasSheinIntegration.value) {
     items.push({ key: 'editShein', label: t('products.products.variations.tabs.shein'), icon: 'store' });
@@ -200,6 +211,9 @@ defineExpose({ hasUnsavedChanges });
           </template>
           <template v-else-if="mode === 'editImages'">
             <VariationsImagesBulkEdit ref="imageEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editEbay'">
+            <VariationsEbayBulkEdit ref="ebayEditRef" :product="product" />
           </template>
           <template v-else-if="mode === 'editShein'">
             <VariationsSheinBulkEdit ref="sheinEditRef" :product="product" />

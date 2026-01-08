@@ -145,6 +145,25 @@ export const productsWithSheinQuery = gql`
   }
 `;
 
+export const productsWithEbayQuery = gql`
+  query ProductsWithEbay($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const productsWithPricesQuery = gql`
   query ProductsWithPrices($first: Int, $after: String, $filter: ProductFilter) {
     products(first: $first, after: $after, filters: $filter) {
@@ -515,8 +534,52 @@ export const configurableVariationsWithSheinQuery = gql`
   }
 `;
 
+export const configurableVariationsWithEbayQuery = gql`
+  query ConfigurableVariationsWithEbay($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const bundleVariationsWithSheinQuery = gql`
   query BundleVariationsWithShein($first: Int, $after: String, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsWithEbayQuery = gql`
+  query BundleVariationsWithEbay($first: Int, $after: String, $filter: BundleVariationFilter) {
     bundleVariations(first: $first, after: $after, filters: $filter) {
       edges {
         node {

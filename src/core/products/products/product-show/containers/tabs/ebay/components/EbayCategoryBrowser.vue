@@ -7,26 +7,23 @@ import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
-import { sheinCategoriesQuery } from '../../../../../../../../shared/api/queries/sheinCategories.js';
-import {
-  mapCategoriesConnection,
-  type SheinCategoryNode,
-} from './sheinCategoryUtils';
+import { ebayCategoriesQuery } from '../../../../../../../../shared/api/queries/ebayCategories.js';
+import { mapCategoriesConnection, type EbayCategoryNode } from './ebayCategoryUtils';
 
 const props = defineProps<{
-  salesChannelId: string | null;
+  defaultCategoryTreeId: string | null;
 }>();
 
 const emit = defineEmits<{
-  (e: 'selected', payload: { node: SheinCategoryNode; path: SheinCategoryNode[] }): void;
+  (e: 'selected', payload: { node: EbayCategoryNode; path: EbayCategoryNode[] }): void;
 }>();
 
 const { t } = useI18n();
 
-const nodes = ref<SheinCategoryNode[]>([]);
+const nodes = ref<EbayCategoryNode[]>([]);
 const loadingNodes = ref(false);
 const currentParentId = ref<string | null>(null);
-const pathStack = ref<SheinCategoryNode[]>([]);
+const pathStack = ref<EbayCategoryNode[]>([]);
 const search = ref('');
 
 const filteredNodes = computed(() =>
@@ -42,25 +39,27 @@ const resetNavigation = () => {
 };
 
 const fetchNodes = async () => {
-  if (!props.salesChannelId) {
+  if (!props.defaultCategoryTreeId) {
     nodes.value = [];
     return;
   }
   loadingNodes.value = true;
   try {
     const filter: Record<string, any> = {
-      salesChannel: { id: { exact: props.salesChannelId } },
+      marketplaceDefaultTreeId: { exact: props.defaultCategoryTreeId },
     };
-    if (currentParentId.value) {
-      filter.parentRemoteId = { exact: currentParentId.value };
+    if (!currentParentId.value) {
+      filter.isRoot = { exact: true };
+    } else {
+      filter.parentNode = { remoteId: { exact: currentParentId.value } };
     }
 
     const { data } = await apolloClient.query({
-      query: sheinCategoriesQuery,
+      query: ebayCategoriesQuery,
       variables: { filter },
       fetchPolicy: 'cache-first',
     });
-    nodes.value = mapCategoriesConnection(data?.sheinCategories);
+    nodes.value = mapCategoriesConnection(data?.ebayCategories);
   } catch (error) {
     nodes.value = [];
     displayApolloError(error);
@@ -70,7 +69,7 @@ const fetchNodes = async () => {
 };
 
 watch(
-  () => props.salesChannelId,
+  () => props.defaultCategoryTreeId,
   async () => {
     resetNavigation();
     await fetchNodes();
@@ -78,7 +77,7 @@ watch(
   { immediate: true },
 );
 
-const goToChild = (node: SheinCategoryNode) => {
+const goToChild = (node: EbayCategoryNode) => {
   pathStack.value.push(node);
   currentParentId.value = node.remoteId;
   search.value = '';
@@ -106,9 +105,9 @@ const goBack = () => {
   goToLevel(target >= 0 ? target : null);
 };
 
-const selectNode = (node: SheinCategoryNode) => {
-  if (!node.isLeaf) {
-    Toast.info(t('products.products.shein.leafRestriction'));
+const selectNode = (node: EbayCategoryNode) => {
+  if (node.hasChildren) {
+    Toast.info(t('products.products.ebay.leafRestriction'));
     return;
   }
   emit('selected', { node, path: [...pathStack.value, node] });
@@ -119,7 +118,7 @@ const selectNode = (node: SheinCategoryNode) => {
   <div class="flex flex-col min-h-0 h-full max-h-[65vh]">
     <div class="flex items-center gap-2 text-sm mb-2">
       <span class="cursor-pointer hover:underline" @click="goToLevel(null)">
-        {{ t('products.products.shein.rootLabel') }}
+        {{ t('products.products.ebay.rootLabel') }}
       </span>
       <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
         <span>&gt;</span>
@@ -141,7 +140,7 @@ const selectNode = (node: SheinCategoryNode) => {
       :placeholder="t('shared.button.search') + '...'"
     />
 
-    <div class="flex-1 min-h-[240px] overflow-y-auto pr-1">
+    <div class="flex-1 min-h-0 overflow-y-auto pr-1">
       <div v-if="loadingNodes" class="h-full">
         <LocalLoader :loading="true" />
       </div>
@@ -153,16 +152,16 @@ const selectNode = (node: SheinCategoryNode) => {
         >
           <div
             class="flex items-center gap-2 flex-1 cursor-pointer"
-            @click="!node.isLeaf ? goToChild(node) : selectNode(node)"
+            @click="node.hasChildren ? goToChild(node) : selectNode(node)"
           >
-            <Icon :name="!node.isLeaf ? 'angle-right' : 'circle'" class="w-3" />
+            <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
             <span>{{ node.name }}</span>
           </div>
           <div class="flex gap-2">
             <Button
               class="btn btn-sm btn-outline-primary"
-              :disabled="!node.isLeaf"
-              :title="!node.isLeaf ? t('products.products.shein.leafRestriction') : undefined"
+              :disabled="node.hasChildren"
+              :title="node.hasChildren ? t('products.products.ebay.leafRestriction') : undefined"
               @click.stop="selectNode(node)"
             >
               {{ t('shared.button.select') }}

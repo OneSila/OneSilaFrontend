@@ -894,6 +894,7 @@
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
           "general": "",
+          "ebay": "",
           "shein": ""
         },
         "content": {
@@ -938,6 +939,22 @@
           "modal": {
             "title": "",
             "previewTitle": ""
+          }
+        },
+        "ebay": {
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
+          },
+          "selectors": {
+            "salesChannel": ""
           }
         },
         "prices": {

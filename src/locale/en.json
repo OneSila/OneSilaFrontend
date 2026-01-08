@@ -1276,6 +1276,7 @@
           "content": "Content",
           "images": "Images",
           "general": "General",
+          "ebay": "eBay",
           "shein": "Shein"
         },
         "images": {
@@ -1385,6 +1386,22 @@
           "modal": {
             "title": "Select Shein category",
             "previewTitle": "Category preview"
+          }
+        },
+        "ebay": {
+          "labels": {
+            "categoryId": "ID: {id}"
+          },
+          "actions": {
+            "set": "Set category",
+            "preview": "Preview category"
+          },
+          "modal": {
+            "title": "Select eBay category",
+            "previewTitle": "Category preview"
+          },
+          "selectors": {
+            "salesChannel": "Sales channel"
           }
         },
         "prices": {
