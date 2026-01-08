@@ -254,7 +254,7 @@ defineExpose({ hasUnsavedChanges });
       <div v-if="!hasChannel" class="text-sm text-gray-600">
         {{ t('products.products.shein.selectChannelPrompt') }}
       </div>
-      <div v-else class="flex flex-col lg:flex-row gap-6">
+      <div v-else class="flex flex-col lg:flex-row lg:items-start gap-6">
         <div class="lg:w-1/2">
           <SheinCategoryBrowser
             :sales-channel-id="props.salesChannelId"
