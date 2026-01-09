@@ -1423,7 +1423,14 @@
           }
         },
         "bulkEdit": {
-          "missingRuleWarning": "Define a property rule for this product type before editing variations in bulk."
+          "missingRuleWarning": "Define a property rule for this product type before editing variations in bulk.",
+          "multipleRulesWarning": "We can only edit properties for products that share the same product rule.",
+          "labels": {
+            "productRule": "Product rule"
+          },
+          "filters": {
+            "hideFullyCompleted": "Hide fully completed"
+          }
         }
       },
         "properties": {

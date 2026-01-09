@@ -20,6 +20,7 @@ import {
   configurableVariationsWithEbayQuery,
   productsWithEbayQuery,
 } from '../../../../../../../../../shared/api/queries/products.js';
+import { propertiesQuerySelector, productTypePropertyValuesQuery } from '../../../../../../../../../shared/api/queries/properties.js';
 import { ebayCategoriesQuery } from '../../../../../../../../../shared/api/queries/ebayCategories.js';
 import { ebayProductCategoriesWithProductsQuery } from '../../../../../../../../../shared/api/queries/ebayProducts.js';
 import { ebayChannelViewsQuery } from '../../../../../../../../../shared/api/queries/salesChannels.js';
@@ -51,6 +52,7 @@ interface VariationRow {
     active: boolean;
   };
   categories: Record<string, CategorySelection>;
+  productRuleValue: string | null;
 }
 
 const props = withDefaults(
@@ -61,6 +63,7 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const viewColumnPrefix = 'ebay-view-';
+const productRuleColumnKey = 'productRule';
 
 const matrixRef = ref<MatrixEditorExpose | null>(null);
 const variations = ref<VariationRow[]>([]);
@@ -68,6 +71,8 @@ const originalVariations = ref<VariationRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 const categoryMapByView = ref<Record<string, Record<string, EbayCategoryNode>>>({});
+const productTypePropertyId = ref<string | null>(null);
+const productTypePropertyName = ref<string | null>(null);
 
 const ebayViews = ref<any[]>([]);
 const selectedSalesChannelId = ref<string | null>(null);
@@ -155,6 +160,13 @@ const getViewValueType = (viewId: string) => `ebay-category-${viewId}`;
 
 const columns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false, initialWidth: 160 },
+  {
+    key: productRuleColumnKey,
+    label: productTypePropertyName.value || t('products.products.variations.bulkEdit.labels.productRule'),
+    sticky: true,
+    editable: false,
+    initialWidth: 220,
+  },
   { key: 'name', label: t('shared.labels.name'), editable: false, initialWidth: 280 },
   { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 80 },
   ...selectedViews.value.map((view) => ({
@@ -248,6 +260,7 @@ const getMatrixCellValue = (rowIndex: number, columnKey: string) => {
   const row = variations.value[rowIndex];
   if (!row) return null;
   if (columnKey === 'sku') return row.variation.sku;
+  if (columnKey === productRuleColumnKey) return row.productRuleValue;
   if (columnKey === 'name') return row.variation.name;
   if (columnKey === 'active') return row.variation.active;
   const viewId = getViewIdFromColumnKey(columnKey);
@@ -444,6 +457,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
         active: Boolean(variationProduct.active),
       },
       categories: {},
+      productRuleValue: null,
     } as VariationRow;
   });
 };
@@ -486,7 +500,71 @@ const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
       active: Boolean(node.active),
     },
     categories: {},
+    productRuleValue: null,
   })) as VariationRow[];
+};
+
+const fetchProductTypeProperty = async (policy: FetchPolicy) => {
+  if (productTypePropertyId.value) {
+    return productTypePropertyId.value;
+  }
+  try {
+    const { data } = await apolloClient.query({
+      query: propertiesQuerySelector,
+      variables: { first: 1, filter: { isProductType: { exact: true } } },
+      fetchPolicy: policy,
+    });
+    const node = data?.properties?.edges?.[0]?.node;
+    productTypePropertyId.value = node?.id ?? null;
+    productTypePropertyName.value = node?.name ?? null;
+    return productTypePropertyId.value;
+  } catch (error) {
+    displayApolloError(error);
+    productTypePropertyId.value = null;
+    productTypePropertyName.value = null;
+    return null;
+  }
+};
+
+const fetchProductTypeValues = async (productIds: string[], policy: FetchPolicy) => {
+  const valuesByProductId = new Map<string, string | null>();
+  if (!productIds.length) {
+    return valuesByProductId;
+  }
+  const propertyId = await fetchProductTypeProperty(policy);
+  if (!propertyId) {
+    return valuesByProductId;
+  }
+  const pageSize = 100;
+  let after: string | null = null;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: productTypePropertyValuesQuery,
+      variables: {
+        first: pageSize,
+        after,
+        filter: {
+          product: { id: { inList: productIds } },
+          property: { id: { exact: propertyId } },
+        },
+      },
+      fetchPolicy: policy,
+    });
+    const edges = data?.productProperties?.edges ?? [];
+    edges.forEach((edge: any) => {
+      const node = edge?.node;
+      const productId = node?.product?.id;
+      if (!productId) return;
+      valuesByProductId.set(String(productId), node?.valueSelect?.value ?? null);
+    });
+    const pageInfo = data?.productProperties?.pageInfo;
+    hasNextPage = Boolean(pageInfo?.hasNextPage && pageInfo?.endCursor);
+    after = pageInfo?.endCursor ?? null;
+  }
+
+  return valuesByProductId;
 };
 
 const fetchProductCategories = async (productIds: string[], policy: FetchPolicy) => {
@@ -531,7 +609,10 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     }
 
     const productIds = variationRows.map((row) => row.variation.id).filter(Boolean);
-    const categoriesByProductId = await fetchProductCategories(productIds, policy);
+    const [categoriesByProductId, productTypeValuesByProductId] = await Promise.all([
+      fetchProductCategories(productIds, policy),
+      fetchProductTypeValues(productIds, policy),
+    ]);
     const remoteIdsByView: Record<string, Set<string>> = {};
 
     categoriesByProductId.forEach((viewMap) => {
@@ -569,6 +650,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
       return {
         ...row,
         categories,
+        productRuleValue: productTypeValuesByProductId.get(row.variation.id) ?? null,
       };
     });
 
@@ -797,7 +879,12 @@ defineExpose({ hasUnsavedChanges });
         </div>
       </template>
       <template #cell="{ row, column, rowIndex }">
-        <template v-if="column.key === 'name'">
+        <template v-if="column.key === productRuleColumnKey">
+          <span class="block truncate" :title="row.productRuleValue || ''">
+            {{ row.productRuleValue || '-' }}
+          </span>
+        </template>
+        <template v-else-if="column.key === 'name'">
           <Link
             :path="{ name: 'products.products.show', params: { id: row.variation.id }, query: { tab: 'ebay' } }"
             target="_blank"

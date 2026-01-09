@@ -443,7 +443,14 @@
           }
         },
         "bulkEdit": {
-          "missingRuleWarning": ""
+          "missingRuleWarning": "",
+          "multipleRulesWarning": "",
+          "labels": {
+            "productRule": ""
+          },
+          "filters": {
+            "hideFullyCompleted": ""
+          }
         }
       },
       "media": {

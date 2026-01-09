@@ -8,6 +8,7 @@ import { Icon } from "../../../../shared/components/atoms/icon";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import VariationsGeneralBulkEdit from "../product-show/containers/tabs/variations/containers/variations-general-bulk-edit/VariationsGeneralBulkEdit.vue";
 import VariationsContentBulkEdit from "../product-show/containers/tabs/variations/containers/variations-content-bulk-edit/VariationsContentBulkEdit.vue";
+import VariationsBulkEdit from "../product-show/containers/tabs/variations/containers/variations-bulk-edit/VariationsBulkEdit.vue";
 import VariationsPricesBulkEdit from "../product-show/containers/tabs/variations/containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "../product-show/containers/tabs/variations/containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
 import VariationsSheinBulkEdit from "../product-show/containers/tabs/variations/containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
@@ -29,7 +30,7 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
   const items: { key: Mode; label: string; icon: string }[] = [
     { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
     { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
-    // { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+    { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
     { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
   ];
@@ -122,11 +123,9 @@ const productIds = computed(() => {
             <template v-else-if="mode === 'editContent'">
               <VariationsContentBulkEdit :product-ids="productIds" />
             </template>
-<!--            <template v-else-if="mode === 'editProperties'">-->
-<!--              <div class="py-6">-->
-<!--                <p class="text-sm text-gray-500">{{ t('shared.labels.comingSoon') }}</p>-->
-<!--              </div>-->
-<!--            </template>-->
+            <template v-else-if="mode === 'editProperties'">
+              <VariationsBulkEdit :product-ids="productIds" />
+            </template>
             <template v-else-if="mode === 'editPrices'">
               <VariationsPricesBulkEdit :product-ids="productIds" />
             </template>

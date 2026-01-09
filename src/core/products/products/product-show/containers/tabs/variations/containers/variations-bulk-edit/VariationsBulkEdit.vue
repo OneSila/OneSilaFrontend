@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, nextTick } from 'vue'
+import { computed, ref, onMounted, watch, nextTick, withDefaults } from 'vue'
+import type { FetchPolicy } from '@apollo/client'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
-import { bundleVariationsQuery, configurableVariationsQuery } from '../../../../../../../../../shared/api/queries/products.js'
+import { bundleVariationsQuery, configurableVariationsQuery, productsForVariationsBulkEditQuery } from '../../../../../../../../../shared/api/queries/products.js'
 import { ProductType, PropertyTypes, FieldType, ConfigTypes } from '../../../../../../../../../shared/utils/constants'
 import { PropertyFilters } from '../../../../../../../../../shared/components/molecules/property-filters'
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
@@ -20,6 +21,7 @@ import { FieldQuery } from "../../../../../../../../../shared/components/organis
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
+import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
 import apolloClient from '../../../../../../../../../../apollo-client'
@@ -37,7 +39,10 @@ interface PropertyInfo {
   requireType: string
 }
 
-const props = defineProps<{ product: Product }>()
+const props = withDefaults(
+  defineProps<{ product?: Product | null; productIds?: string[] }>(),
+  { product: null, productIds: () => [] }
+)
 
 const { t } = useI18n()
 
@@ -49,6 +54,7 @@ const filters = ref<Record<string, boolean>>({
   [ConfigTypes.OPTIONAL]: true,
 })
 const selectedPropertyTypes = ref<string[]>([])
+const hideFullyCompleted = ref(false)
 
 const baseColumns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
@@ -60,6 +66,8 @@ const properties = ref<PropertyInfo[]>([])
 const productTypeValueId = ref<string | null>(null)
 const selectedRuleSalesChannelId = ref<string | null>(null)
 const isUpdatingSalesChannel = ref(false)
+const isFetchingProperties = ref(false)
+const ruleWarningType = ref<'missing' | 'multiple' | null>(null)
 const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
@@ -98,6 +106,7 @@ const filteredProperties = computed(() => {
       : ConfigTypes.OPTIONAL
     if (!filters.value[type]) return false
     if (selectedPropertyTypes.value.length && !selectedPropertyTypes.value.includes(p.type)) return false
+    if (hideFullyCompleted.value && completedPropertyIds.value.has(p.id)) return false
     if (!searchQuery.value) return true
     return p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
@@ -132,6 +141,28 @@ const getIconColor = (requireType: string) => {
 }
 const getPropertyType = (id: string) =>
   properties.value.find((property) => property.id === id)?.type
+
+const completedPropertyIds = computed(() => {
+  if (!hideFullyCompleted.value || !variations.value.length) {
+    return new Set<string>()
+  }
+  const completed = new Set<string>()
+  properties.value.forEach((property) => {
+    const allFilled = variations.value.every(
+      (row) => !isPropEmpty(row.propertyValues?.[property.id], property.type)
+    )
+    if (allFilled) {
+      completed.add(property.id)
+    }
+  })
+  return completed
+})
+
+const ruleWarningMessage = computed(() =>
+  ruleWarningType.value === 'multiple'
+    ? t('products.products.variations.bulkEdit.multipleRulesWarning')
+    : t('products.products.variations.bulkEdit.missingRuleWarning')
+)
 
 const isEditableColumn = (key: string) => !readOnlyColumns.has(key)
 
@@ -177,9 +208,16 @@ const clearMatrixCellValue = (rowIndex: number, key: string) => {
   delete row.propertyValues[key]
 }
 
-const isAlias = computed(() => props.product.type === ProductType.Alias)
-const parentId = computed(() => (isAlias.value ? props.product.aliasParentProduct.id : props.product.id))
-const parentType = computed(() => (isAlias.value ? props.product.aliasParentProduct.type : props.product.type))
+const hasProductIds = computed(() => props.productIds.length > 0)
+const isAlias = computed(() => props.product?.type === ProductType.Alias)
+const parentProduct = computed(() => {
+  if (!props.product) {
+    return null
+  }
+  return isAlias.value ? props.product.aliasParentProduct : props.product
+})
+const parentId = computed(() => parentProduct.value?.id ?? null)
+const parentType = computed(() => parentProduct.value?.type ?? null)
 const query = computed(() =>
   parentType.value === ProductType.Bundle ? bundleVariationsQuery : configurableVariationsQuery
 )
@@ -187,108 +225,199 @@ const queryKey = computed(() =>
   parentType.value === ProductType.Bundle ? 'bundleVariations' : 'configurableVariations'
 )
 
-const fetchProperties = async () => {
-  const { data: typeData } = await apolloClient.query({
-    query: propertiesQuerySelector,
-    variables: { filter: { isProductType: { exact: true } } },
-    fetchPolicy: 'network-only',
-  })
-  if (!typeData?.properties?.edges?.length) {
-    productTypeValueId.value = null
-    properties.value = []
-    return
+const getTargetProductIds = () => {
+  if (hasProductIds.value) {
+    return Array.from(new Set(props.productIds.filter(Boolean)))
   }
-  const typePropertyId = typeData.properties.edges[0].node.id
-
-  const { data: valueData } = await apolloClient.query({
-    query: productPropertiesQuery,
-    variables: {
-      filter: {
-        property: { id: { exact: typePropertyId } },
-        product: { id: { exact: parentId.value } },
-      },
-    },
-    fetchPolicy: 'network-only',
-  })
-  if (!valueData?.productProperties?.edges?.length) {
-    productTypeValueId.value = null
-    properties.value = []
-    return
+  const variationIds = variations.value
+    .map((row) => row?.variation?.id)
+    .filter(Boolean)
+  if (variationIds.length) {
+    return Array.from(new Set(variationIds))
   }
-  const typeValueId = valueData.productProperties.edges[0].node.valueSelect?.id || null
-  if (!typeValueId) {
-    productTypeValueId.value = null
-    properties.value = []
-    return
+  if (parentId.value) {
+    return [parentId.value]
   }
+  return []
+}
 
-  productTypeValueId.value = typeValueId
+const fetchProductTypeValues = async (typePropertyId: string, productIds: string[]) => {
+  const pageSize = 100
+  let after: string | null = null
+  let hasNextPage = true
+  const nodes: any[] = []
 
-  const baseFilter = { productType: { id: { exact: typeValueId } } }
-
-  const buildSalesChannelFilter = (channelId: string | null | undefined) => {
-    if (channelId === null) {
-      return { id: { isNull: true } }
-    }
-    if (channelId) {
-      return { id: { exact: channelId } }
-    }
-    return undefined
-  }
-
-  const fetchRule = async (channelId: string | null | undefined) => {
-    const filter: Record<string, any> = { ...baseFilter }
-    const salesChannelFilter = buildSalesChannelFilter(channelId)
-    if (salesChannelFilter) {
-      filter.salesChannel = salesChannelFilter
-    }
-
+  while (hasNextPage) {
     const { data } = await apolloClient.query({
-      query: productPropertiesRulesQuery,
-      variables: { filter, first: 1 },
+      query: productPropertiesQuery,
+      variables: {
+        filter: {
+          property: { id: { exact: typePropertyId } },
+          product: { id: { inList: productIds } },
+        },
+        first: pageSize,
+        after,
+      },
       fetchPolicy: 'network-only',
     })
 
-    return data?.productPropertiesRules?.edges?.[0]?.node ?? null
+    const connection = data?.productProperties
+    if (!connection) break
+    const edges = connection.edges ?? []
+    edges.forEach((edge: any) => {
+      if (edge?.node) {
+        nodes.push(edge.node)
+      }
+    })
+    hasNextPage = connection.pageInfo?.hasNextPage ?? false
+    after = connection.pageInfo?.endCursor ?? null
+    if (!after) break
   }
 
-  let rule = await fetchRule(selectedRuleSalesChannelId.value ?? null)
+  return nodes
+}
 
-  if (!rule && selectedRuleSalesChannelId.value !== null) {
-    rule = await fetchRule(null)
-    if (rule && selectedRuleSalesChannelId.value !== null) {
-      isUpdatingSalesChannel.value = true
-      selectedRuleSalesChannelId.value = null
+const fetchProperties = async () => {
+  isFetchingProperties.value = true
+  ruleWarningType.value = null
+  try {
+    const { data: typeData } = await apolloClient.query({
+      query: propertiesQuerySelector,
+      variables: { filter: { isProductType: { exact: true } } },
+      fetchPolicy: 'network-only',
+    })
+    if (!typeData?.properties?.edges?.length) {
+      productTypeValueId.value = null
+      properties.value = []
+      ruleWarningType.value = 'missing'
+      return
     }
-  }
+    const typePropertyId = typeData.properties.edges[0].node.id
 
-  if (!rule) {
-    rule = await fetchRule(undefined)
-    const resolvedChannelId = rule?.salesChannel?.id ?? null
-    if (rule && resolvedChannelId !== selectedRuleSalesChannelId.value) {
+    const targetProductIds = getTargetProductIds()
+    if (!targetProductIds.length) {
+      productTypeValueId.value = null
+      properties.value = []
+      ruleWarningType.value = 'missing'
+      return
+    }
+
+    const typeValues = await fetchProductTypeValues(typePropertyId, targetProductIds)
+    if (!typeValues.length || typeValues.length !== targetProductIds.length) {
+      productTypeValueId.value = null
+      properties.value = []
+      ruleWarningType.value = 'missing'
+      return
+    }
+    const typeValueIds = Array.from(
+      new Set(
+        typeValues
+          .map((node: any) => node?.valueSelect?.id)
+          .filter((value: string | null | undefined) => Boolean(value))
+      )
+    )
+    if (!typeValueIds.length) {
+      productTypeValueId.value = null
+      properties.value = []
+      ruleWarningType.value = 'missing'
+      return
+    }
+
+    const baseFilter = { productType: { id: { inList: typeValueIds } } }
+
+    const buildSalesChannelFilter = (channelId: string | null | undefined) => {
+      if (channelId === null) {
+        return { id: { isNull: true } }
+      }
+      if (channelId) {
+        return { id: { exact: channelId } }
+      }
+      return undefined
+    }
+
+    const fetchRules = async (channelId: string | null | undefined) => {
+      const filter: Record<string, any> = { ...baseFilter }
+      const salesChannelFilter = buildSalesChannelFilter(channelId)
+      if (salesChannelFilter) {
+        filter.salesChannel = salesChannelFilter
+      }
+
+      const { data } = await apolloClient.query({
+        query: productPropertiesRulesQuery,
+        variables: { filter, first: 100 },
+        fetchPolicy: 'network-only',
+      })
+
+      return data?.productPropertiesRules?.edges?.map((edge: any) => edge?.node).filter(Boolean) ?? []
+    }
+
+    let rules = await fetchRules(selectedRuleSalesChannelId.value ?? null)
+    let usedChannel: string | null | undefined = selectedRuleSalesChannelId.value ?? null
+    let nextSelectedChannelId: string | null | undefined = selectedRuleSalesChannelId.value ?? null
+    let shouldUpdateChannel = false
+
+    if (!rules.length && selectedRuleSalesChannelId.value !== null) {
+      rules = await fetchRules(null)
+      usedChannel = null
+      if (rules.length && selectedRuleSalesChannelId.value !== null) {
+        nextSelectedChannelId = null
+        shouldUpdateChannel = true
+      }
+    }
+
+    if (!rules.length) {
+      rules = await fetchRules(undefined)
+      usedChannel = undefined
+      if (rules.length) {
+        const resolvedChannelId = rules[0]?.salesChannel?.id ?? null
+        nextSelectedChannelId = resolvedChannelId
+        shouldUpdateChannel = resolvedChannelId !== selectedRuleSalesChannelId.value
+      }
+    }
+
+    if (!rules.length) {
+      productTypeValueId.value = null
+      properties.value = []
+      ruleWarningType.value = 'missing'
+      return
+    }
+
+    const matchedTypeIds = new Set(
+      rules.map((rule: any) => rule?.productType?.id).filter(Boolean)
+    )
+    const ruleIds = new Set(rules.map((rule: any) => rule?.id).filter(Boolean))
+
+    if (matchedTypeIds.size !== typeValueIds.length || ruleIds.size !== 1) {
+      productTypeValueId.value = null
+      properties.value = []
+      ruleWarningType.value = 'multiple'
+      return
+    }
+
+    if (shouldUpdateChannel) {
+      isUpdatingSalesChannel.value = true
+      selectedRuleSalesChannelId.value = nextSelectedChannelId ?? null
+    }
+
+    const rule = rules[0]
+    const resolvedChannelId = rule.salesChannel?.id ?? null
+    if (resolvedChannelId !== selectedRuleSalesChannelId.value) {
       isUpdatingSalesChannel.value = true
       selectedRuleSalesChannelId.value = resolvedChannelId
     }
-  }
 
-  if (!rule) {
-    properties.value = []
-    return
-  }
+    productTypeValueId.value = typeValueIds.length === 1 ? typeValueIds[0] : null
 
-  const resolvedChannelId = rule.salesChannel?.id ?? null
-  if (resolvedChannelId !== selectedRuleSalesChannelId.value) {
-    isUpdatingSalesChannel.value = true
-    selectedRuleSalesChannelId.value = resolvedChannelId
+    const items = rule.items ?? []
+    properties.value = items.map((item: any) => ({
+      id: item.property.id,
+      name: item.property.name,
+      type: item.property.type,
+      requireType: item.type,
+    }))
+  } finally {
+    isFetchingProperties.value = false
   }
-
-  const items = rule.items ?? []
-  properties.value = items.map((item: any) => ({
-    id: item.property.id,
-    name: item.property.name,
-    type: item.property.type,
-    requireType: item.type,
-  }))
 }
 
 const selectFields = computed<Record<string, QueryFormField>>(() => {
@@ -345,19 +474,66 @@ const fetchVariationProperties = async (variationId: string) => {
   return propertyValues
 }
 
-const fetchVariations = async () => {
+const fetchVariationNodes = async (policy: FetchPolicy = 'network-only') => {
+  if (!parentProduct.value || !parentType.value) {
+    pageInfo.value = null
+    return []
+  }
   const { data } = await apolloClient.query({
     query: query.value,
     variables: {
-      filter: { parent: { id: { exact: parentId.value } } },
+      filter: { parent: { id: { exact: parentProduct.value.id } } },
       ...fetchPaginationData.value,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: policy,
   })
-  const edges = data?.[queryKey.value]?.edges ?? []
-  pageInfo.value = data?.[queryKey.value]?.pageInfo ?? null
+  const connection = data?.[queryKey.value]
+  const edges = connection?.edges ?? []
+  pageInfo.value = connection?.pageInfo ?? null
+  return edges.map(({ node }: any) => node)
+}
+
+const fetchProducts = async (policy: FetchPolicy = 'network-only') => {
+  const ids = props.productIds.filter(Boolean)
+  if (!ids.length) {
+    pageInfo.value = null
+    return []
+  }
+  const { data } = await apolloClient.query({
+    query: productsForVariationsBulkEditQuery,
+    variables: {
+      filter: { id: { inList: ids } },
+      ...fetchPaginationData.value,
+    },
+    fetchPolicy: policy,
+  })
+  const connection = data?.products
+  const edges = connection?.edges ?? []
+  pageInfo.value = connection?.pageInfo ?? null
+  return edges.map(({ node }: any) => ({
+    id: node.id,
+    variation: {
+      id: node.id,
+      sku: node.sku,
+      name: node.name,
+      active: node.active,
+    },
+  }))
+}
+
+const fetchVariations = async (policy: FetchPolicy = 'network-only') => {
+  let variationNodes: any[] = []
+  if (hasProductIds.value) {
+    variationNodes = await fetchProducts(policy)
+  } else if (props.product) {
+    variationNodes = await fetchVariationNodes(policy)
+  } else {
+    pageInfo.value = null
+    variations.value = []
+    return
+  }
   variations.value = await Promise.all(
-    edges.map(async ({ node }: any) => ({
+    variationNodes.map(async (node: any) => ({
       ...node,
       propertyValues: await fetchVariationProperties(node.variation.id),
     }))
@@ -410,7 +586,8 @@ onMounted(async () => {
   loading.value = true
   await fetchDefaultLanguage()
   skipHistory.value = true
-  await Promise.all([fetchProperties(), fetchVariations()])
+  await fetchVariations()
+  await fetchProperties()
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
@@ -871,7 +1048,12 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
 
 <template>
   <div class="relative w-full min-w-0 variations-bulk-edit">
-    <template v-if="productTypeValueId">
+    <template v-if="isFetchingProperties && !productTypeValueId">
+      <div class="flex items-center justify-center py-10">
+        <LocalLoader :loading="isFetchingProperties" />
+      </div>
+    </template>
+    <template v-else-if="productTypeValueId">
       <MatrixEditor
         ref="matrixRef"
         v-model:rows="variations"
@@ -891,7 +1073,9 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
             v-model:selected-property-types="selectedPropertyTypes"
             v-model:filters="filters"
             v-model:selected-sales-channel-id="selectedRuleSalesChannelId"
+            v-model:hide-fully-completed="hideFullyCompleted"
             :product-type-value-id="productTypeValueId"
+            :show-completion-filter="true"
           />
         </template>
         <template #toolbar-right>
@@ -1068,10 +1252,17 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
     </template>
     <div
       v-else
-      class="flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900"
+      class="flex items-start gap-3 rounded-md border p-4 text-sm"
+      :class="ruleWarningType === 'multiple'
+        ? 'border-red-200 bg-red-50 text-red-900'
+        : 'border-yellow-200 bg-yellow-50 text-yellow-900'"
     >
-      <Icon name="triangle-exclamation" class="mt-1 h-5 w-5 text-yellow-500" />
-      <span>{{ t('products.products.variations.bulkEdit.missingRuleWarning') }}</span>
+      <Icon
+        name="triangle-exclamation"
+        class="mt-1 h-5 w-5"
+        :class="ruleWarningType === 'multiple' ? 'text-red-500' : 'text-yellow-500'"
+      />
+      <span>{{ ruleWarningMessage }}</span>
     </div>
     <Modal v-model="showTextModal" @closed="cancelModal">
       <Card class="modal-content w-1/2">

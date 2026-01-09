@@ -48,6 +48,9 @@ const modalColsed = () => {
 const getAssignStatus = (item: any) => {
 
   if (item.status === 'PENDING_CREATION') {
+    if (item.remoteProduct?.status === 'FAILED') {
+      return 'FAILED';
+    }
     return 'PENDING_CREATION';
   }
   if (item.remoteProduct?.status) {

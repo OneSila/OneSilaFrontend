@@ -106,6 +106,33 @@ export const productsWithGeneralQuery = gql`
   }
 `;
 
+export const productsForVariationsBulkEditQuery = gql`
+  query ProductsForVariationsBulkEdit(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $filter: ProductFilter
+  ) {
+    products(first: $first, last: $last, after: $after, before: $before, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+        }
+      }
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const productsWithContentQuery = gql`
   query ProductsWithContent($first: Int, $after: String, $filter: ProductFilter) {
     products(first: $first, after: $after, filters: $filter) {

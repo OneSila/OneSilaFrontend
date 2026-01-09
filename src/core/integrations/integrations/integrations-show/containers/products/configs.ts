@@ -24,6 +24,9 @@ const getStatusBadgeMap = (t: Function) => ({
 
 const getAssignStatus = (node: any) => {
   if (node.status === 'PENDING_CREATION') {
+    if (node.remoteProduct?.status === 'FAILED') {
+      return 'FAILED';
+    }
     return 'PENDING_CREATION';
   }
   if (node.remoteProduct?.status) {
