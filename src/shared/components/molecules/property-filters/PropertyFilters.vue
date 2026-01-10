@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Selector } from '../../atoms/selector';
+import { Toggle } from '../../atoms/toggle';
 import { Icon } from '../../atoms/icon';
 import { Flex, FlexCell } from '../../layouts/flex';
 import { TextInput } from '../../atoms/input-text';
@@ -16,9 +17,13 @@ const props = withDefaults(defineProps<{
   addFilled?: boolean;
   productTypeValueId?: string | null;
   selectedSalesChannelId?: string | null;
+  hideFullyCompleted?: boolean;
+  showCompletionFilter?: boolean;
   fetchSalesChannelsOnMounted?: boolean;
 }>(), {
   fetchSalesChannelsOnMounted: true,
+  hideFullyCompleted: false,
+  showCompletionFilter: false,
 });
 
 const emit = defineEmits<{
@@ -26,6 +31,7 @@ const emit = defineEmits<{
   (e: 'update:selectedPropertyTypes', value: string[]): void;
   (e: 'update:filters', value: Record<string, boolean>): void;
   (e: 'update:selectedSalesChannelId', value: string | null): void;
+  (e: 'update:hideFullyCompleted', value: boolean): void;
 }>();
 
 const { t } = useI18n();
@@ -43,6 +49,11 @@ const localSelectedTypes = computed<string[]>({
 const localFilters = computed<Record<string, boolean>>({
   get: () => props.filters,
   set: val => emit('update:filters', val),
+});
+
+const localHideFullyCompleted = computed({
+  get: () => props.hideFullyCompleted,
+  set: val => emit('update:hideFullyCompleted', val),
 });
 
 const DEFAULT_SALES_CHANNEL_KEY = 'default';
@@ -188,7 +199,7 @@ const getIconColor = (requireType: string) => {
         <TextInput
           v-model="localSearch"
           :placeholder="t('products.products.properties.searchPlaceholder')"
-          class="w-full pl-9"
+          class="w-full pl-9 mt-2"
         />
         <Icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
       </div>
@@ -230,6 +241,12 @@ const getIconColor = (requireType: string) => {
           <Icon name="circle-dot" :class="getIconColor(type.value)" />
         </button>
       </Flex>
+    </FlexCell>
+    <FlexCell v-if="props.showCompletionFilter">
+      <div class="flex items-center gap-2 text-sm text-gray-700 mt-1">
+        <Toggle v-model="localHideFullyCompleted" />
+        <span>{{ t('products.products.variations.bulkEdit.filters.hideFullyCompleted') }}</span>
+      </div>
     </FlexCell>
   </Flex>
 </template>

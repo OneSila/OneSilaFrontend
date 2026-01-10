@@ -15,7 +15,7 @@ const ids: Ref<any[]> = ref([]);
 const { t } = useI18n();
 
 const searchConfig = searchConfigConstructor(t);
-const listingConfig = listingConfigConstructor(t);
+const listingConfig = listingConfigConstructor(t, true);
 
 const fetchFilterIds = async () => {
   const { data } = await apolloClient.query({

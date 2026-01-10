@@ -257,6 +257,30 @@ query ProductProperties($first: Int, $last: Int, $after: String, $before: String
   }
 `;
 
+export const productTypePropertyValuesQuery = gql`
+query ProductTypePropertyValues($first: Int, $after: String, $filter: ProductPropertyFilter) {
+    productProperties(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          product {
+            id
+          }
+          valueSelect {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+  }
+  }
+`;
+
 export const productPropertiesCountQuery = gql`
   query ProductPropertiesCount($filter: ProductPropertyFilter) {
     productProperties(filters: $filter) {

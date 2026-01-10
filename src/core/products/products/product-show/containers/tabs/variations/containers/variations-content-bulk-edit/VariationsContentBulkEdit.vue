@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch, nextTick } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch, withDefaults } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import type { FetchPolicy } from '@apollo/client';
@@ -19,6 +19,7 @@ import { AiContentGenerator } from '../../../../../../../../../shared/components
 import { AiContentTranslator } from '../../../../../../../../../shared/components/organisms/ai-content-translator';
 import { AiBulletPointsGenerator } from '../../../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 import { AdvancedContentGenerator } from '../../../../../../../../../shared/components/organisms/advanced-content-generator';
+import ProductContentImportModal from '../../../../../../../../../shared/components/organisms/import-content/ProductContentImportModal.vue';
 import ProductContentPreview from '../../../content/ProductContentPreview.vue';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors, shortenText } from '../../../../../../../../../shared/utils';
@@ -29,6 +30,7 @@ import {
   configurableVariationsQuery,
   getProductContentByLanguageAndChannelQuery,
   getProductContentByLanguageAndDefaultQuery,
+  productsWithContentQuery,
   productTranslationBulletPointsQuery,
 } from '../../../../../../../../../shared/api/queries/products.js';
 import {
@@ -76,7 +78,10 @@ interface VariationContentRow {
   defaultBulletPoints: BulletPoint[];
 }
 
-const props = defineProps<{ product: Product }>();
+const props = withDefaults(
+  defineProps<{ product?: Product | null; productIds?: string[] }>(),
+  { product: null, productIds: () => [] }
+);
 const { t } = useI18n();
 
 const WEBHOOK_CHANNEL_TYPE = 'webhook';
@@ -228,9 +233,15 @@ const normalizedHtml = (value: string | null | undefined) => {
   return trimmed;
 };
 
-const isAlias = computed(() => props.product.type === ProductType.Alias);
-const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
-const parentProductType = computed(() => parentProduct.value.type);
+const hasProductIds = computed(() => props.productIds.length > 0);
+const isAlias = computed(() => props.product?.type === ProductType.Alias);
+const parentProduct = computed(() => {
+  if (!props.product) {
+    return null;
+  }
+  return isAlias.value ? props.product.aliasParentProduct : props.product;
+});
+const parentProductType = computed(() => parentProduct.value?.type ?? null);
 
 const contentFieldRules = computed(() => {
   if (currentSalesChannel.value === 'default') {
@@ -487,6 +498,9 @@ const fetchTranslation = async (variationId: string, policy: FetchPolicy = 'netw
 };
 
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
+  if (!parentProduct.value || !parentProductType.value) {
+    return [];
+  }
   const isBundle = parentProductType.value === ProductType.Bundle;
   const query = isBundle ? bundleVariationsQuery : configurableVariationsQuery;
   const key = isBundle ? 'bundleVariations' : 'configurableVariations';
@@ -526,12 +540,58 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
   return nodes;
 };
 
+const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
+  const ids = props.productIds.filter(Boolean);
+  if (!ids.length) {
+    return [];
+  }
+  const pageSize = 100;
+  let after: string | null = null;
+  const nodes: VariationNode[] = [];
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: productsWithContentQuery,
+      variables: {
+        first: pageSize,
+        after,
+        filter: { id: { inList: ids } },
+      },
+      fetchPolicy: policy,
+    });
+    const connection = data?.products;
+    const edges = connection?.edges ?? [];
+    edges.forEach((edge: any) => {
+      nodes.push({
+        id: edge.node.id,
+        variation: {
+          id: edge.node.id,
+          sku: edge.node.sku,
+          name: edge.node.name,
+          active: edge.node.active,
+        },
+      });
+    });
+    hasNextPage = connection?.pageInfo?.hasNextPage ?? false;
+    after = connection?.pageInfo?.endCursor ?? null;
+    if (!after) break;
+  }
+
+  return nodes;
+};
+
 const loadData = async (policy: FetchPolicy = 'network-only') => {
   if (!language.value) return;
   closeAiMenu();
   loading.value = true;
   try {
-    const variationNodes = await fetchVariations(policy);
+    let variationNodes: VariationNode[] = [];
+    if (hasProductIds.value) {
+      variationNodes = await fetchProducts(policy);
+    } else if (props.product) {
+      variationNodes = await fetchVariations(policy);
+    }
     const rows = await Promise.all(
       variationNodes.map(async (node) => {
         const { translation, defaultTranslation, bulletPoints, defaultBulletPoints } = await fetchTranslation(
@@ -558,6 +618,11 @@ const loadData = async (policy: FetchPolicy = 'network-only') => {
   } finally {
     loading.value = false;
   }
+};
+
+const handleImportCompleted = async () => {
+  if (!language.value) return;
+  await loadData('network-only');
 };
 
 const getMatrixCellValue = (rowIndex: number, key: string) => {
@@ -887,6 +952,15 @@ watch(currentSalesChannel, async (newChannel) => {
   await handleSalesChannelChange(newChannel);
 });
 
+watch(
+  () => [props.product?.id ?? null, props.productIds.join(',')],
+  async () => {
+    if (!language.value) return;
+    closeAiMenu();
+    await loadData('network-only');
+  }
+);
+
 const shouldCreateTranslation = (row: VariationContentRow) => {
   const translation = row.translation;
   const rules = contentFieldRules.value;
@@ -1113,6 +1187,14 @@ defineExpose({ hasUnsavedChanges });
             :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
             :small="false"
             btn-class="btn-outline-primary whitespace-nowrap"
+          />
+          <ProductContentImportModal
+            :product-ids="variationProductIds"
+            :current-language="language"
+            :current-sales-channel="currentSalesChannel"
+            :sales-channels="salesChannels"
+            btn-class="btn-outline-primary whitespace-nowrap"
+            @imported="handleImportCompleted"
           />
           <Selector
             v-if="salesChannelOptions.length"

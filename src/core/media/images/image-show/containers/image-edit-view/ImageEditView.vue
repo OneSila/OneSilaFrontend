@@ -10,7 +10,7 @@ import { TextEditor } from "../../../../../../shared/components/atoms/input-text
 import apolloClient from "../../../../../../../apollo-client";
 import { updateImageMutation } from "../../../../../../shared/api/mutations/media.js";
 import { Toast } from "../../../../../../shared/modules/toast";
-import {IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK} from "../../../../files/media";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../files/media";
 
 const { t } = useI18n();
 const props = defineProps<{ image: { imageWebUrl: string, imageType: string, id: string, title?: string | null, description?: string | null } }>();
@@ -22,7 +22,8 @@ const isSaving = ref(false);
 
 const imageTypeOptions = [
   { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
-  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD }
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
+  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR }
 ];
 
 const saveChanges = async () => {
@@ -110,4 +111,3 @@ watch(() => props.image, (newImage) => {
     </div>
   </div>
 </template>
-

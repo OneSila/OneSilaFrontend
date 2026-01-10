@@ -52,6 +52,12 @@ export const routes = [
     component: () => import('./products/product-create/ProductCreateController.vue')
   },
   {
+    path: '/products/edit',
+    name: 'products.products.edit',
+    meta: { title: 'products.products.edit.title' },
+    component: () => import('./products/products-edit/ProductsEditController.vue')
+  },
+  {
     path: '/products/product/:id',
     name: 'products.products.show',
     meta: { title: 'products.products.show.title' },

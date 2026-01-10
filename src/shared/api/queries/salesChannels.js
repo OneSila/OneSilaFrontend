@@ -242,6 +242,8 @@ export const getAmazonChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      minNameLength
+      minDescriptionLength
       accessToken
       refreshTokenExpiration
       expirationDate

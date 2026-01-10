@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch, withDefaults } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { FetchPolicy } from '@apollo/client';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
@@ -12,7 +12,11 @@ import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { processGraphQLErrors, shortenText } from "../../../../../../../../../shared/utils";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { currenciesQuery } from "../../../../../../../../../shared/api/queries/currencies.js";
-import { bundleVariationsWithPricesQuery, configurableVariationsWithPricesQuery } from "../../../../../../../../../shared/api/queries/products.js";
+import {
+  bundleVariationsWithPricesQuery,
+  configurableVariationsWithPricesQuery,
+  productsWithPricesQuery,
+} from "../../../../../../../../../shared/api/queries/products.js";
 import {
   createSalesPriceListItemsMutation,
   createSalesPricesMutation,
@@ -87,7 +91,10 @@ type ParsedPriceListColumn = {
   field: PriceListField;
 };
 
-const props = defineProps<{ product: Product }>();
+const props = withDefaults(
+  defineProps<{ product?: Product | null; productIds?: string[] }>(),
+  { product: null, productIds: () => [] }
+);
 
 const { t } = useI18n();
 
@@ -108,9 +115,15 @@ const copySkuToClipboard = async (sku: string) => {
   }
 };
 
-const isAlias = computed(() => props.product.type === ProductType.Alias);
-const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
-const parentProductType = computed(() => parentProduct.value.type);
+const hasProductIds = computed(() => props.productIds.length > 0);
+const isAlias = computed(() => props.product?.type === ProductType.Alias);
+const parentProduct = computed(() => {
+  if (!props.product) {
+    return null;
+  }
+  return isAlias.value ? props.product.aliasParentProduct : props.product;
+});
+const parentProductType = computed(() => parentProduct.value?.type ?? null);
 
 const baseColumns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
@@ -412,6 +425,9 @@ const loadCurrencies = async (policy: FetchPolicy = 'cache-first') => {
 };
 
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
+  if (!parentProduct.value || !parentProductType.value) {
+    return [];
+  }
   const isBundle = parentProductType.value === ProductType.Bundle;
   const query = isBundle ? bundleVariationsWithPricesQuery : configurableVariationsWithPricesQuery;
   const key = isBundle ? 'bundleVariations' : 'configurableVariations';
@@ -461,6 +477,63 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
         sku: variationProduct.sku,
         name: variationProduct.name,
         active: variationProduct.active,
+      },
+      prices: priceMap,
+      priceLists: {},
+    };
+  });
+};
+
+const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
+  const ids = props.productIds.filter(Boolean);
+  if (!ids.length) {
+    return [];
+  }
+  const pageSize = 100;
+  let after: string | null = null;
+  const nodes: any[] = [];
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: productsWithPricesQuery,
+      variables: {
+        first: pageSize,
+        after,
+        filter: { id: { inList: ids } },
+      },
+      fetchPolicy: policy,
+    });
+    const connection = data?.products;
+    if (!connection) break;
+    const edges = connection.edges ?? [];
+    edges.forEach((edge: any) => nodes.push(edge.node));
+    hasNextPage = connection.pageInfo?.hasNextPage ?? false;
+    after = connection.pageInfo?.endCursor ?? null;
+    if (!after) break;
+  }
+
+  return nodes.map((node: any) => {
+    const priceMap: Record<string, VariationPriceInfo> = {};
+    currencies.value.forEach((currency) => {
+      const priceEntry = (node.salespriceSet ?? []).find(
+        (price: any) => price.currency?.isoCode === currency.isoCode
+      );
+      priceMap[currency.isoCode] = {
+        id: priceEntry?.id ?? null,
+        price: priceEntry?.price != null ? String(priceEntry.price) : '',
+        rrp: priceEntry?.rrp != null ? String(priceEntry.rrp) : '',
+        currencyId: currency.id,
+        readonly: currency.readonly,
+      };
+    });
+    return {
+      id: node.id,
+      variation: {
+        id: node.id,
+        sku: node.sku,
+        name: node.name,
+        active: node.active,
       },
       prices: priceMap,
       priceLists: {},
@@ -573,7 +646,12 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     if (!currencies.value.length || policy === 'network-only') {
       await loadCurrencies(policy);
     }
-    const variationRows = await fetchVariations(policy);
+    let variationRows: VariationRow[] = [];
+    if (hasProductIds.value) {
+      variationRows = await fetchProducts(policy);
+    } else if (props.product) {
+      variationRows = await fetchVariations(policy);
+    }
     variations.value = variationRows;
     await loadPriceListItems(
       variationRows.map((item) => item.variation.id),
@@ -777,6 +855,13 @@ const save = async () => {
 onMounted(() => {
   loadData();
 });
+
+watch(
+  () => [props.product?.id ?? null, props.productIds.join(',')],
+  () => {
+    loadData('network-only');
+  }
+);
 
 defineExpose({ save, hasUnsavedChanges });
 </script>

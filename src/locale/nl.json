@@ -789,7 +789,10 @@
       "import": {
         "button": "",
         "title": "",
+        "descriptionSingle": "",
+        "descriptionMulti": "",
         "targetLabel": "",
+        "targetPlaceholder": "",
         "sourceLabel": "",
         "sourcePlaceholder": "",
         "overrideLabel": "",
@@ -798,12 +801,16 @@
         "allLanguagesHelp": "",
         "currentLanguageBadge": "",
         "availableLanguagesBadge": "",
+        "advancedOptionsTitle": "",
+        "fieldsLabel": "",
+        "fieldsHelp": "",
         "previewTitle": "",
         "missingSource": "",
         "missingSourceMultiLanguage": "",
         "importAction": "",
         "importActionWithSource": "",
-        "success": ""
+        "success": "",
+        "multiStarted": ""
       },
       "placeholders": {
         "language": "Selecteer taal",
@@ -886,7 +893,9 @@
           "editProperties": "Eigenschappen bewerken",
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
-          "general": ""
+          "general": "",
+          "ebay": "",
+          "shein": ""
         },
         "content": {
           "ai": {
@@ -916,6 +925,38 @@
             "noImage": "Geen afbeelding"
           }
         },
+        "shein": {
+          "columns": {
+            "category": ""
+          },
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
+          }
+        },
+        "ebay": {
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
+          },
+          "selectors": {
+            "salesChannel": ""
+          }
+        },
         "prices": {
           "columns": {
             "rrp": "Adviesprijs ({currency})",
@@ -935,12 +976,20 @@
           }
         },
         "bulkEdit": {
-          "missingRuleWarning": ""
+          "missingRuleWarning": "",
+          "multipleRulesWarning": "",
+          "labels": {
+            "productRule": ""
+          },
+          "filters": {
+            "hideFullyCompleted": ""
+          }
         }
       },
       "media": {
         "messages": {
-          "inheritedFromDefault": ""
+          "inheritedFromDefault": "",
+          "colorImageDisclaimer": ""
         },
         "actions": {
           "createChannelGallery": ""
@@ -1364,6 +1413,7 @@
         "createSuccessfully": "Product aangemaakt"
       },
       "edit": {
+        "title": "",
         "updateSuccessfully": "Wijzigingen voor het product zijn opgeslagen",
         "updateSuccessfully": "Product upgedate"
       },
@@ -2008,6 +2058,7 @@
         "imageType": "Afbeeldingstype",
         "packShot": "Packshot",
         "moodShot": "Mood Shot",
+        "colorShot": "",
         "addImages": "Afbeeldingen toevoegen",
         "title": "",
         "description": ""
@@ -3211,6 +3262,8 @@
       "weightUnit": "Gewichtseenheid",
       "isDefaultMarketplace": "Standaardmarktplaats",
       "startingStock": "",
+      "minNameLength": "",
+      "minDescriptionLength": "",
       "gptEnable": "",
       "gptEnableCheckout": "",
       "gptSellerName": "",
@@ -3229,6 +3282,8 @@
       },
       "helpText": {
         "startingStock": "",
+        "minNameLength": "",
+        "minDescriptionLength": "",
         "gptEnable": "",
         "gptSellerUrl": "",
         "gptReturnWindow": "",

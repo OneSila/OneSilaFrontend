@@ -23,3 +23,22 @@ export const ebayProductCategoriesQuery = gql`
     }
   }
 `;
+
+export const ebayProductCategoriesWithProductsQuery = gql`
+  query EbayProductCategoriesWithProducts($filter: EbayProductCategoryFilter) {
+    ebayProductCategories(filters: $filter) {
+      edges {
+        node {
+          id
+          remoteId
+          product {
+            id
+          }
+          view {
+            id
+          }
+        }
+      }
+    }
+  }
+`;

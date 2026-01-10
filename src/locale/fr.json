@@ -265,11 +265,17 @@
           }
         }
       },
+      "edit": {
+        "title": ""
+      },
       "translation": {
         "import": {
           "button": "",
           "title": "",
+          "descriptionSingle": "",
+          "descriptionMulti": "",
           "targetLabel": "",
+          "targetPlaceholder": "",
           "sourceLabel": "",
           "sourcePlaceholder": "",
           "overrideLabel": "",
@@ -278,12 +284,16 @@
           "allLanguagesHelp": "",
           "currentLanguageBadge": "",
           "availableLanguagesBadge": "",
+          "advancedOptionsTitle": "",
+          "fieldsLabel": "",
+          "fieldsHelp": "",
         "previewTitle": "",
         "missingSource": "",
         "missingSourceMultiLanguage": "",
         "importAction": "",
         "importActionWithSource": "",
-        "success": ""
+        "success": "",
+        "multiStarted": ""
       },
         "placeholders": {
           "subtitle": ""
@@ -358,7 +368,9 @@
         "tabs": {
           "list": "Liste",
           "images": "Images",
-          "general": ""
+          "general": "",
+          "ebay": "",
+          "shein": ""
         },
         "images": {
           "columns": {
@@ -366,6 +378,38 @@
           },
           "labels": {
             "noImage": "Aucune image"
+          }
+        },
+        "shein": {
+          "columns": {
+            "category": ""
+          },
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
+          }
+        },
+        "ebay": {
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
+          },
+          "selectors": {
+            "salesChannel": ""
           }
         },
         "general": {
@@ -396,12 +440,20 @@
           }
         },
         "bulkEdit": {
-          "missingRuleWarning": ""
+          "missingRuleWarning": "",
+          "multipleRulesWarning": "",
+          "labels": {
+            "productRule": ""
+          },
+          "filters": {
+            "hideFullyCompleted": ""
+          }
         }
       },
       "media": {
         "messages": {
-          "inheritedFromDefault": ""
+          "inheritedFromDefault": "",
+          "colorImageDisclaimer": ""
         },
         "actions": {
           "createChannelGallery": ""
@@ -687,6 +739,8 @@
       "weightUnit": "Unité de poids",
       "isDefaultMarketplace": "Marketplace par défaut",
       "startingStock": "",
+      "minNameLength": "",
+      "minDescriptionLength": "",
       "gptEnable": "",
       "gptEnableCheckout": "",
       "gptSellerName": "",
@@ -703,6 +757,8 @@
       },
       "helpText": {
         "startingStock": "",
+        "minNameLength": "",
+        "minDescriptionLength": "",
         "gptEnable": "",
         "gptSellerUrl": "",
         "gptReturnWindow": "",
@@ -1385,6 +1441,7 @@
         "urls": "URLs"
       },
       "labels": {
+        "colorShot": "",
         "title": "",
         "description": ""
       },

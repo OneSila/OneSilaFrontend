@@ -19,7 +19,7 @@ import ProductContentPreview from "./ProductContentPreview.vue";
 import ProductContentForm from "./ProductContentForm.vue";
 import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";
 import { AdvancedContentGenerator } from "../../../../../../../shared/components/organisms/advanced-content-generator";
-import ProductContentImportModal from "./ProductContentImportModal.vue";
+import ProductContentImportModal from "../../../../../../../shared/components/organisms/import-content/ProductContentImportModal.vue";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -315,7 +315,7 @@ const shortDescriptionToolbarOptions = [
     </FlexCell>
     <FlexCell>
       <ProductContentImportModal
-        :product-id="product.id"
+        :product-ids="[product.id]"
         :current-language="currentLanguage"
         :current-sales-channel="currentSalesChannel"
         :sales-channels="salesChannels"

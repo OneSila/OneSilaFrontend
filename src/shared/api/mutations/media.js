@@ -50,6 +50,7 @@ export const createImageMutation = gql`
   mutation createImage($data: ImageInput!) {
     createImage(data: $data) {
       id
+      imageType
       imageWebUrl
     }
   }
@@ -59,6 +60,7 @@ export const createImagesMutation = gql`
   mutation createImages($data: [ImageInput!]!) {
     createImages(data: $data) {
       id
+      imageType
       imageWebUrl
     }
   }
@@ -68,6 +70,7 @@ export const uploadImagesFromUrlsMutation = gql`
   mutation uploadImagesFromUrls($urls: [ImageUrlInput!]!) {
     uploadImagesFromUrls(urls: $urls) {
       id
+      imageType
       imageWebUrl
     }
   }

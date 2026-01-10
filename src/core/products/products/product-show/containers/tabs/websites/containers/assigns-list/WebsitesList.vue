@@ -38,10 +38,6 @@ const setInfoId = (id: string | null, type: string | null) => {
   showInfoModal.value = true;
 }
 
-const setIssues = (issues, id) => {
-  issuesAssignId.value = id;
-  showIssuesModal.value = true;
-}
 
 const modalColsed = () => {
   infoId.value = null;
@@ -49,13 +45,12 @@ const modalColsed = () => {
   showInfoModal.value = false;
 }
 
-const issuesModalClosed = () => {
-  issuesAssignId.value = null;
-  showIssuesModal.value = false;
-}
-
 const getAssignStatus = (item: any) => {
+
   if (item.status === 'PENDING_CREATION') {
+    if (item.remoteProduct?.status === 'FAILED') {
+      return 'FAILED';
+    }
     return 'PENDING_CREATION';
   }
   if (item.remoteProduct?.status) {

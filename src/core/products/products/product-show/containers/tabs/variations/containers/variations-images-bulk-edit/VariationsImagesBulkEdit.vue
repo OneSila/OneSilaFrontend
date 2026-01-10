@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch, withDefaults } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
@@ -9,7 +9,11 @@ import { Product } from "../../../../../../configs";
 import { ProductType } from "../../../../../../../../../shared/utils/constants";
 import { IntegrationTypes } from "../../../../../../../../integrations/integrations/integrations";
 import apolloClient from "../../../../../../../../../../apollo-client";
-import { bundleVariationsQuery, configurableVariationsQuery } from "../../../../../../../../../shared/api/queries/products.js";
+import {
+  bundleVariationsQuery,
+  configurableVariationsQuery,
+  productsWithImagesQuery,
+} from "../../../../../../../../../shared/api/queries/products.js";
 import { mediaProductThroughQuery } from "../../../../../../../../../shared/api/queries/media.js";
 import { integrationsQuery } from "../../../../../../../../../shared/api/queries/integrations.js";
 import {
@@ -27,7 +31,7 @@ import { Selector } from "../../../../../../../../../shared/components/atoms/sel
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
 import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
-import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../../../media/files/media";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../../../media/files/media";
 
 interface VariationImageSlot {
   id: string | null;
@@ -48,11 +52,15 @@ interface VariationRow {
     sku: string;
     name: string;
     active: boolean;
+    type?: string;
   };
   images: (VariationImageSlot | null)[];
 }
 
-const props = defineProps<{ product: Product }>();
+const props = withDefaults(
+  defineProps<{ product?: Product | null; productIds?: string[] }>(),
+  { product: null, productIds: () => [] }
+);
 
 const { t } = useI18n();
 
@@ -96,9 +104,15 @@ const salesChannelOptions = computed(() => [
 
 const isSingleUpload = computed(() => uploadContext.value?.columnIndex !== null);
 
-const isAlias = computed(() => props.product.type === ProductType.Alias);
-const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
-const parentProductType = computed(() => parentProduct.value.type);
+const hasProductIds = computed(() => props.productIds.length > 0);
+const isAlias = computed(() => props.product?.type === ProductType.Alias);
+const parentProduct = computed(() => {
+  if (!props.product) {
+    return null;
+  }
+  return isAlias.value ? props.product.aliasParentProduct : props.product;
+});
+const parentProductType = computed(() => parentProduct.value?.type ?? null);
 const isConfigurable = computed(() => parentProductType.value === ProductType.Configurable);
 const isChannelInherited = computed(
   () => currentSalesChannel.value !== 'default' && inheritedFromDefault.value
@@ -127,53 +141,49 @@ const sheinRoleLabelKey: Record<SheinImageRole, string> = {
   color: 'products.products.variations.media.sheinGuide.labels.color'
 };
 
-const getSheinRole = (index: number, total: number): SheinImageRole => {
-  if (index === 0) {
+const isSheinVariationRow = (row: VariationRow | null) =>
+  row?.variation.type === ProductType.Simple;
+
+const shouldShowSheinColor = (row: VariationRow | null) =>
+  isConfigurable.value ||
+  isSheinVariationRow(row) ||
+  row?.variation.type === ProductType.Configurable;
+
+const getSheinRoleForSlot = (row: VariationRow, slot: VariationImageSlot): SheinImageRole => {
+  if (slot.isMainImage) {
     return 'main';
   }
-  if (index === 1) {
-    return 'square';
-  }
-  if (isConfigurable.value && total > 2 && index === total - 1) {
+  if (shouldShowSheinColor(row) && slot.imageType === IMAGE_TYPE_COLOR) {
     return 'color';
+  }
+  const squareSlot = row.images.find(
+    (candidate) =>
+      candidate?.mediaId &&
+      !candidate.isMainImage &&
+      candidate.imageType !== IMAGE_TYPE_COLOR
+  );
+  if (squareSlot?.mediaId === slot.mediaId) {
+    return 'square';
   }
   return 'detail';
 };
 
-const getSheinRoleLabel = (index: number, total: number) => {
-  const role = getSheinRole(index, total);
+const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
+  const slot = row.images[columnIndex];
+  if (!slot?.mediaId) {
+    return null;
+  }
+  const role = getSheinRoleForSlot(row, slot);
   return t(sheinRoleLabelKey[role]);
 };
 
-const getSheinRoleDotClass = (index: number, total: number) => {
-  const role = getSheinRole(index, total);
-  return sheinRoleColorMap[role];
-};
-
-const getRowImageTotal = (row: VariationRow) => {
-  let lastIndex = -1;
-  row.images.forEach((slot, index) => {
-    if (slot?.mediaId) {
-      lastIndex = index;
-    }
-  });
-  return lastIndex + 1;
-};
-
-const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
-  const total = getRowImageTotal(row);
-  if (!total || columnIndex >= total) {
-    return null;
-  }
-  return getSheinRoleLabel(columnIndex, total);
-};
-
 const getSheinRoleDotClassForRow = (row: VariationRow, columnIndex: number) => {
-  const total = getRowImageTotal(row);
-  if (!total || columnIndex >= total) {
+  const slot = row.images[columnIndex];
+  if (!slot?.mediaId) {
     return null;
   }
-  return getSheinRoleDotClass(columnIndex, total);
+  const role = getSheinRoleForSlot(row, slot);
+  return sheinRoleColorMap[role];
 };
 
 const sheinLegend = computed(() => ([
@@ -399,7 +409,7 @@ const assignMediaToRow = (
       null,
     isMainImage: currentSlot?.isMainImage ?? false,
     sortOrder: null,
-    imageType: resolvedMedia.type ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
+    imageType: resolvedMedia.imageType ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
     uploadSource: source,
   };
   setMatrixCellValue(rowIndex, `image-${targetIndex}`, slotValue);
@@ -471,8 +481,14 @@ const getImageTypeLabel = (slot: VariationImageSlot | null | undefined) => {
     return null;
   }
   const type = slot.imageType;
+  if (type === IMAGE_TYPE_PACK) {
+    return t('media.images.labels.packShot');
+  }
   if (type === IMAGE_TYPE_MOOD) {
     return t('media.images.labels.moodShot');
+  }
+  if (type === IMAGE_TYPE_COLOR) {
+    return t('media.images.labels.colorShot');
   }
   return null;
 };
@@ -545,6 +561,9 @@ const handleImageCtrlArrow = (
 };
 
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
+  if (!parentProduct.value || !parentProductType.value) {
+    return [];
+  }
   const isBundle = parentProductType.value === ProductType.Bundle;
   const query = isBundle ? bundleVariationsQuery : configurableVariationsQuery;
   const key = isBundle ? 'bundleVariations' : 'configurableVariations';
@@ -581,10 +600,53 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
         sku: variation.sku,
         name: variation.name,
         active: variation.active,
+        type: variation.type,
       },
       images: [],
     } as VariationRow;
   });
+};
+
+const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
+  const ids = props.productIds.filter(Boolean);
+  if (!ids.length) {
+    return [];
+  }
+  const pageSize = 100;
+  let after: string | null = null;
+  const nodes: any[] = [];
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: productsWithImagesQuery,
+      variables: {
+        first: pageSize,
+        after,
+        filter: { id: { inList: ids } },
+      },
+      fetchPolicy: policy,
+    });
+    const connection = data?.products;
+    if (!connection) break;
+    const edges = connection.edges ?? [];
+    edges.forEach((edge: any) => nodes.push(edge.node));
+    hasNextPage = connection.pageInfo?.hasNextPage ?? false;
+    after = connection.pageInfo?.endCursor ?? null;
+    if (!after) break;
+  }
+
+  return nodes.map((node: any) => ({
+    id: node.id,
+    variation: {
+      id: node.id,
+      sku: node.sku,
+      name: node.name,
+      active: node.active,
+      type: node.type ?? null,
+    },
+    images: [],
+  })) as VariationRow[];
 };
 
 const fetchVariationImages = async (
@@ -634,16 +696,17 @@ const fetchVariationImages = async (
     if (!map.has(productId)) {
       map.set(productId, []);
     }
-    map.get(productId)!.push({
-      id: node.id ?? null,
-      productId,
-      mediaId,
-      mediaUrl: node.media?.imageWebUrl ?? null,
-      mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
-      isMainImage: !!node.isMainImage,
-      sortOrder: node.sortOrder ?? null,
-      uploadSource: 'existing',
-    });
+      map.get(productId)!.push({
+        id: node.id ?? null,
+        productId,
+        mediaId,
+        mediaUrl: node.media?.imageWebUrl ?? null,
+        mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
+        isMainImage: !!node.isMainImage,
+        sortOrder: node.sortOrder ?? null,
+        imageType: node.media?.imageType ?? null,
+        uploadSource: 'existing',
+      });
   });
 
   map.forEach((entries) => {
@@ -660,7 +723,12 @@ const fetchVariationImages = async (
 const loadData = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
   try {
-    const variationRows = await fetchVariations(policy);
+    let variationRows: VariationRow[] = [];
+    if (hasProductIds.value) {
+      variationRows = await fetchProducts(policy);
+    } else if (props.product) {
+      variationRows = await fetchVariations(policy);
+    }
     const variationIds = variationRows.map((row) => row.variation.id);
     const selectedChannel = currentSalesChannel.value;
     const imagesMap = await fetchVariationImages(variationIds, selectedChannel, policy);
@@ -855,6 +923,13 @@ onMounted(async () => {
   await loadData('network-only');
 });
 
+watch(
+  () => [props.product?.id ?? null, props.productIds.join(',')],
+  async () => {
+    await loadData('network-only');
+  }
+);
+
 defineExpose({ hasUnsavedChanges });
 </script>
 
@@ -913,6 +988,9 @@ defineExpose({ hasUnsavedChanges });
               <span>{{ legend.label }}</span>
             </div>
           </div>
+        </div>
+        <div class="mt-3 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          {{ t('products.products.variations.media.messages.colorImageDisclaimer') }}
         </div>
       </template>
       <template #toolbar-right>
@@ -1035,26 +1113,31 @@ defineExpose({ hasUnsavedChanges });
                   </Button>
                 </div>
               </div>
-              <div
-                v-if="getImageTypeLabel(row.images[getImageColumnIndex(column.key)])"
-                class="absolute bottom-2 left-2 rounded bg-white/80 px-2 py-1 text-xs font-medium text-gray-700"
-              >
-                {{ getImageTypeLabel(row.images[getImageColumnIndex(column.key)]) }}
-              </div>
             </div>
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-900 bg-opacity-60 px-3 py-2 opacity-0 transition-opacity group-hover:opacity-100"
               :class="{ 'pointer-events-none': !row.images[getImageColumnIndex(column.key)] }"
             >
               <div
-                v-if="isSheinChannel && row.images[getImageColumnIndex(column.key)] && getSheinRoleLabelForRow(row, getImageColumnIndex(column.key))"
-                class="absolute right-2 top-2 flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+                v-if="row.images[getImageColumnIndex(column.key)]"
+                class="absolute right-2 top-2 flex flex-col gap-1"
               >
-                <span
-                  class="h-2.5 w-2.5 rounded-full"
-                  :class="getSheinRoleDotClassForRow(row, getImageColumnIndex(column.key))"
-                ></span>
-                <span>{{ getSheinRoleLabelForRow(row, getImageColumnIndex(column.key)) }}</span>
+                <div
+                  v-if="isSheinChannel && getSheinRoleLabelForRow(row, getImageColumnIndex(column.key))"
+                  class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+                >
+                  <span
+                    class="h-2.5 w-2.5 rounded-full"
+                    :class="getSheinRoleDotClassForRow(row, getImageColumnIndex(column.key))"
+                  ></span>
+                  <span>{{ getSheinRoleLabelForRow(row, getImageColumnIndex(column.key)) }}</span>
+                </div>
+                <div
+                  v-if="getImageTypeLabel(row.images[getImageColumnIndex(column.key)])"
+                  class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+                >
+                  <span>{{ getImageTypeLabel(row.images[getImageColumnIndex(column.key)]) }}</span>
+                </div>
               </div>
               <template v-if="row.images[getImageColumnIndex(column.key)]">
                 <Toggle
@@ -1092,7 +1175,7 @@ defineExpose({ hasUnsavedChanges });
     </MatrixEditor>
     <UploadMediaModal
       v-model="selectExistingModalVisible"
-      :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct.id"
+            :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct?.id"
       :ids="assignedMediaIds"
       :link-on-select="false"
       :sales-channel-id="currentSalesChannelId || undefined"

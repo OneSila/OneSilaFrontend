@@ -1,4 +1,5 @@
-import {ShowField} from "../general-show/showConfig";
+import { ShowField } from "../general-show/showConfig";
+import { Url } from "../../../utils/constants";
 
 export interface PaginationConfig {
   alignment: 'start' | 'center' | 'end';
@@ -27,6 +28,7 @@ export interface ListingConfig {
   paginationConfig?: PaginationConfig;
   addActions?: boolean;
   addBulkEdit?: boolean;
+  bulkEditUrl?: Url;
   addBulkDelete?: boolean;
   addBulkActions?: boolean;
   bulkDeleteMutation?: any;

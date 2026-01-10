@@ -390,6 +390,26 @@ const getImageField = (item: any) => {
   return null;
 };
 
+const handleBulkEdit = () => {
+  if (!props.config.bulkEditUrl) {
+    return;
+  }
+
+  const ids = selectedEntities.value.join(',');
+  if (!ids) {
+    return;
+  }
+
+  router.push({
+    name: props.config.bulkEditUrl.name,
+    params: props.config.bulkEditUrl.params,
+    query: {
+      ...props.config.bulkEditUrl.query,
+      ids
+    }
+  });
+};
+
 const deleteAll = async (query) => {
 
   const defaultSwalOptions = {
@@ -698,12 +718,12 @@ watch(
               <template v-if="props.config.addGridView" >
               <!-- Bulk action buttons (only if any items are selected) -->
               <div v-if="selectedEntities.length > 0 && viewType === 'grid' && haveBulk" class="flex items-center space-x-3">
-                <button v-if="config.addBulkEdit" type="button"
-                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <button v-if="config.addBulkEdit && config.bulkEditUrl" type="button" @click="handleBulkEdit"
+                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 whitespace-nowrap">
                   {{ t('shared.button.editAll') }}
                 </button>
                 <button v-if="config.addBulkDelete && config.bulkDeleteMutation" type="button" @click="deleteAll(query)"
-                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 whitespace-nowrap">
                   {{ t('shared.button.deleteAll') }}
                 </button>
 
@@ -733,12 +753,12 @@ watch(
 
             <div v-if="viewType === 'table'">
               <div v-if="selectedEntities.length > 0" class="flex ml-4 items-center space-x-3 bg-white">
-                <button v-if="config.addBulkEdit" type="button"
-                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
+                <button v-if="config.addBulkEdit && config.bulkEditUrl" type="button" @click="handleBulkEdit"
+                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white whitespace-nowrap">
                   {{ t('shared.button.editAll') }}
                 </button>
                 <button v-if="config.addBulkDelete && config.bulkDeleteMutation" type="button" @click="deleteAll(query)"
-                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white">
+                        class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white whitespace-nowrap">
                   {{ t('shared.button.deleteAll') }}
                 </button>
 

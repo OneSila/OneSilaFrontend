@@ -8,8 +8,7 @@ import { Button } from '../../atoms/button';
 import apolloClient from '../../../../../apollo-client';
 import { salesChannelViewsQuerySelector } from '../../../api/queries/salesChannels.js';
 import { productsBulkWebsiteAssignQuery } from '../../../api/queries/products.js';
-import { createSalesChannelViewAssignMutation } from '../../../api/mutations/salesChannels.js';
-import { InspectorStatus } from '../../../utils/constants';
+import { createSalesChannelViewAssignsMutation } from '../../../api/mutations/salesChannels.js';
 import { Toast } from '../../../modules/toast';
 
 interface SalesChannelView {
@@ -30,7 +29,6 @@ interface SalesChannelViewAssignSummary {
 interface ProductSummary {
   id: string;
   sku: string;
-  inspectorStatus: number;
   saleschannelviewassignSet?: SalesChannelViewAssignSummary[];
 }
 
@@ -53,11 +51,6 @@ const selectedViewItems = computed(() => selectedViews.value
   .map((id) => viewsById.value.get(id))
   .filter((view): view is SalesChannelView => !!view));
 
-const readyProducts = computed(() => products.value
-  .filter((product) => product.inspectorStatus !== InspectorStatus.RED));
-const skippedProducts = computed(() => products.value
-  .filter((product) => product.inspectorStatus === InspectorStatus.RED));
-
 const existingAssignments = computed(() => {
   const set = new Set<string>();
   products.value.forEach((product) => {
@@ -71,9 +64,9 @@ const existingAssignments = computed(() => {
 });
 
 const existingAssignmentsCount = computed(() => {
-  if (!readyProducts.value.length || !selectedViews.value.length) return 0;
+  if (!products.value.length || !selectedViews.value.length) return 0;
   let count = 0;
-  readyProducts.value.forEach((product) => {
+  products.value.forEach((product) => {
     selectedViews.value.forEach((viewId) => {
       if (existingAssignments.value.has(`${product.id}:${viewId}`)) {
         count += 1;
@@ -86,7 +79,7 @@ const existingAssignmentsCount = computed(() => {
 const assignmentTargets = computed(() => {
   const targets: Array<{ productId: string; sku: string; viewId: string }> = [];
   const existing = existingAssignments.value;
-  readyProducts.value.forEach((product) => {
+  products.value.forEach((product) => {
     selectedViews.value.forEach((viewId) => {
       if (!existing.has(`${product.id}:${viewId}`)) {
         targets.push({ productId: product.id, sku: product.sku, viewId });
@@ -159,53 +152,44 @@ const handleAssign = async () => {
   }
 
   const selectedViewsCount = selectedViews.value.length;
-  const skippedRedCount = skippedProducts.value.length;
   const existingCount = existingAssignmentsCount.value;
 
   assigning.value = true;
   emit('started');
 
-  let createdCount = 0;
-  const errorSkus: string[] = [];
+  const uniqueSkus = Array.from(new Set(targets.map((target) => target.sku)));
 
-  for (const target of targets) {
-    const view = viewsById.value.get(target.viewId);
-    if (!view) continue;
+  try {
+    const dataPayload = targets
+      .map((target) => {
+        const view = viewsById.value.get(target.viewId);
+        if (!view) return null;
+        return {
+          product: { id: target.productId },
+          salesChannelView: { id: view.id },
+          salesChannel: { id: view.salesChannel.id },
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
-    try {
-      await apolloClient.mutate({
-        mutation: createSalesChannelViewAssignMutation,
-        variables: {
-          data: {
-            product: { id: target.productId },
-            salesChannelView: { id: view.id },
-            salesChannel: { id: view.salesChannel.id },
-          },
-        },
-      });
-      createdCount += 1;
-    } catch (error) {
-      errorSkus.push(target.sku);
+    const { data } = await apolloClient.mutate({
+      mutation: createSalesChannelViewAssignsMutation,
+      variables: { data: dataPayload },
+    });
+
+    const createdCount = data?.createSalesChannelViewAssigns?.length ?? 0;
+
+    if (createdCount > 0) {
+      Toast.success(t('shared.components.organisms.bulkProductWebsiteAssigner.success', { created: createdCount, views: selectedViewsCount }));
     }
-  }
 
-  assigning.value = false;
-
-  if (createdCount > 0) {
-    Toast.success(t('shared.components.organisms.bulkProductWebsiteAssigner.success', { created: createdCount, views: selectedViewsCount }));
-  }
-
-  if (skippedRedCount > 0) {
-    Toast.warning(t('shared.components.organisms.bulkProductWebsiteAssigner.skippedRed', { count: skippedRedCount }));
-  }
-
-  if (existingCount > 0) {
-    Toast.info(t('shared.components.organisms.bulkProductWebsiteAssigner.skippedExisting', { count: existingCount }));
-  }
-
-  if (errorSkus.length > 0) {
-    const uniqueSkus = Array.from(new Set(errorSkus));
+    if (existingCount > 0) {
+      Toast.info(t('shared.components.organisms.bulkProductWebsiteAssigner.skippedExisting', { count: existingCount }));
+    }
+  } catch (error) {
     Toast.error(t('shared.components.organisms.bulkProductWebsiteAssigner.error', { count: uniqueSkus.length, skus: uniqueSkus.join(', ') }));
+  } finally {
+    assigning.value = false;
   }
 };
 
@@ -262,9 +246,6 @@ onUnmounted(() => {
           <p class="text-sm text-gray-600">
             {{ t('shared.components.organisms.bulkProductWebsiteAssigner.description') }}
           </p>
-          <p class="text-sm text-red-500">
-            {{ t('shared.components.organisms.bulkProductWebsiteAssigner.disclaimer') }}
-          </p>
           <p class="text-xs text-gray-500">
             {{ t('shared.components.organisms.bulkProductWebsiteAssigner.processingNote') }}
           </p>
@@ -311,8 +292,6 @@ onUnmounted(() => {
         </div>
 
         <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600 space-y-1">
-          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryReady', { count: readyProducts.length }) }}</p>
-          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summarySkipped', { count: skippedProducts.length }) }}</p>
           <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryExisting', { count: existingAssignmentsCount }) }}</p>
           <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryPlanned', { count: plannedAssignmentsCount }) }}</p>
         </div>

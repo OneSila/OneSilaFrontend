@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch, withDefaults } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
@@ -10,6 +10,7 @@ import apolloClient from "../../../../../../../../../../apollo-client";
 import {
   bundleVariationsWithGeneralQuery,
   configurableVariationsWithGeneralQuery,
+  productsWithGeneralQuery,
 } from "../../../../../../../../../shared/api/queries/products.js";
 import { vatRatesQuery } from "../../../../../../../../../shared/api/queries/vatRates.js";
 import { updateProductMutation } from "../../../../../../../../../shared/api/mutations/products.js";
@@ -39,7 +40,10 @@ interface VariationRow {
   vatRate: VatRateOption | null;
 }
 
-const props = defineProps<{ product: Product }>();
+const props = withDefaults(
+  defineProps<{ product?: Product | null; productIds?: string[] }>(),
+  { product: null, productIds: () => [] }
+);
 const { t } = useI18n();
 
 const matrixRef = ref<MatrixEditorExpose | null>(null);
@@ -49,9 +53,15 @@ const vatRates = ref<VatRateOption[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 
-const isAlias = computed(() => props.product.type === ProductType.Alias);
-const parentProduct = computed(() => (isAlias.value ? props.product.aliasParentProduct : props.product));
-const parentProductType = computed(() => parentProduct.value.type);
+const hasProductIds = computed(() => props.productIds.length > 0);
+const isAlias = computed(() => props.product?.type === ProductType.Alias);
+const parentProduct = computed(() => {
+  if (!props.product) {
+    return null;
+  }
+  return isAlias.value ? props.product.aliasParentProduct : props.product;
+});
+const parentProductType = computed(() => parentProduct.value?.type ?? null);
 
 const columns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
@@ -200,6 +210,9 @@ const loadVatRates = async (policy: FetchPolicy = 'cache-first') => {
 };
 
 const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
+  if (!parentProduct.value || !parentProductType.value) {
+    return [];
+  }
   const isBundle = parentProductType.value === ProductType.Bundle;
   const query = isBundle ? bundleVariationsWithGeneralQuery : configurableVariationsWithGeneralQuery;
   const key = isBundle ? 'bundleVariations' : 'configurableVariations';
@@ -249,11 +262,64 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
   });
 };
 
+const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
+  const ids = props.productIds.filter(Boolean);
+  if (!ids.length) {
+    return [];
+  }
+  const pageSize = 100;
+  let after: string | null = null;
+  const nodes: any[] = [];
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: productsWithGeneralQuery,
+      variables: {
+        first: pageSize,
+        after,
+        filter: { id: { inList: ids } },
+      },
+      fetchPolicy: policy,
+    });
+    const connection = data?.products;
+    if (!connection) break;
+    const edges = connection.edges ?? [];
+    edges.forEach((edge: any) => nodes.push(edge.node));
+    hasNextPage = connection.pageInfo?.hasNextPage ?? false;
+    after = connection.pageInfo?.endCursor ?? null;
+    if (!after) break;
+  }
+
+  return nodes.map((node: any) => ({
+    id: node.id,
+    variation: {
+      id: node.id,
+      sku: node.sku,
+      name: node.name,
+    },
+    active: Boolean(node.active),
+    allowBackorder: Boolean(node.allowBackorder),
+    vatRate: node.vatRate
+      ? {
+          id: node.vatRate.id,
+          name: node.vatRate.name ?? '',
+          rate: node.vatRate.rate ?? null,
+        }
+      : null,
+  })) as VariationRow[];
+};
+
 const loadData = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
   try {
     await loadVatRates(policy);
-    const variationRows = await fetchVariations(policy);
+    let variationRows: VariationRow[] = [];
+    if (hasProductIds.value) {
+      variationRows = await fetchProducts(policy);
+    } else if (props.product) {
+      variationRows = await fetchVariations(policy);
+    }
     variations.value = variationRows;
     originalVariations.value = JSON.parse(JSON.stringify(variationRows));
     matrixRef.value?.resetHistory(variationRows);
@@ -330,9 +396,13 @@ const save = async () => {
   }
 };
 
-onMounted(() => {
-  loadData();
-});
+watch(
+  () => [props.product?.id ?? null, props.productIds.join(',')],
+  () => {
+    loadData();
+  },
+  { immediate: true }
+);
 
 defineExpose({ save, hasUnsavedChanges });
 </script>

@@ -11,7 +11,7 @@ import { Button } from "../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../apollo-client";
 import { createImageMutation } from "../../../../../../shared/api/mutations/media.js"
 import {Toast} from "../../../../../../shared/modules/toast";
-import { IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../core/media/files/media";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../core/media/files/media";
 
 const props = defineProps<{ modelValue: boolean; }>();
 const emit = defineEmits(['update:modelValue', 'entry-created']);
@@ -37,7 +37,8 @@ const dropZone: Ref<any> = ref(null)
 
 const imageTypeOptions = [
   { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
-  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD }
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
+  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR }
 ];
 
 watch(() => props.modelValue, (newVal) => {
