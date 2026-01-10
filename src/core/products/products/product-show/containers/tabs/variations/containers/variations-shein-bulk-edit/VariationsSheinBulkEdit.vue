@@ -124,7 +124,7 @@ const getChannelIdFromColumnKey = (columnKey: string) =>
 const isCategoryColumn = (columnKey: string) =>
   columnKey.startsWith(channelColumnPrefix);
 
-const getChannelValueType = (channelId: string) => `shein-category-${channelId}`;
+const getChannelValueType = (_channelId: string) => 'shein-category';
 
 const columns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false, initialWidth: 160 },
@@ -230,34 +230,81 @@ const clearCategorySelection = (row: VariationRow, channelId: string) => {
   category.path = null;
 };
 
+const pendingCategoryUpdates = new Map<string, string>();
+const pendingCategoryChecks = new Map<string, Promise<void>>();
+
+const ensureCategoryForChannel = async (channelId: string, remoteId: string) => {
+  const map = categoryMapByChannel.value[channelId] || {};
+  if (map[remoteId]) return map[remoteId];
+  const key = `${channelId}:${remoteId}`;
+  if (!pendingCategoryChecks.has(key)) {
+    const request = (async () => {
+      try {
+        await ensureCategoryMapForChannel(channelId, [remoteId], 'cache-first');
+      } catch (error) {
+        displayApolloError(error);
+      }
+    })();
+    pendingCategoryChecks.set(key, request);
+  }
+  await pendingCategoryChecks.get(key);
+  pendingCategoryChecks.delete(key);
+  return categoryMapByChannel.value[channelId]?.[remoteId] || null;
+};
+
+const applyCategorySelection = (row: VariationRow, channelId: string, node: SheinCategoryNode) => {
+  const category = ensureCategorySelection(row, channelId);
+  category.remoteId = node.remoteId;
+  category.productTypeRemoteId = node.productTypeRemoteId ?? null;
+  category.path = buildCategoryPath(node.remoteId, channelId) || node.name || node.remoteId;
+};
+
+const validateAndApplyCategory = async (
+  rowId: string,
+  channelId: string,
+  remoteId: string,
+) => {
+  const key = `${rowId}:${channelId}`;
+  pendingCategoryUpdates.set(key, remoteId);
+  const node = await ensureCategoryForChannel(channelId, remoteId);
+  if (pendingCategoryUpdates.get(key) !== remoteId) {
+    return;
+  }
+  pendingCategoryUpdates.delete(key);
+  if (!node) {
+    Toast.error(t('products.products.variations.shein.toast.categoryNotAvailable', { id: remoteId }));
+    return;
+  }
+  const row = variations.value.find((item) => item.id === rowId);
+  if (!row) return;
+  applyCategorySelection(row, channelId, node);
+};
+
 const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => {
   const row = variations.value[rowIndex];
   if (!row) return;
   const channelId = getChannelIdFromColumnKey(columnKey);
   if (!channelId) return;
 
-  if (!value) {
+  if (value === null || value === undefined || value === '') {
     clearCategorySelection(row, channelId);
     return;
   }
 
-  const category = ensureCategorySelection(row, channelId);
-  if (typeof value === 'object') {
-    const remoteId = value.remoteId ?? null;
-    category.remoteId = remoteId;
-    category.productTypeRemoteId = value.productTypeRemoteId ?? category.productTypeRemoteId ?? null;
-    category.path =
-      value.path ??
-      (remoteId ? buildCategoryPath(remoteId, channelId) : null) ??
-      category.path;
+  const remoteId = typeof value === 'object' ? value.remoteId ?? null : value;
+  if (!remoteId) {
+    clearCategorySelection(row, channelId);
     return;
   }
 
-  const remoteId = String(value);
-  const node = categoryMapByChannel.value[channelId]?.[remoteId] || null;
-  category.remoteId = remoteId;
-  category.productTypeRemoteId = node?.productTypeRemoteId ?? null;
-  category.path = node ? buildCategoryPath(remoteId, channelId) : remoteId;
+  const resolvedRemoteId = String(remoteId);
+  const node = categoryMapByChannel.value[channelId]?.[resolvedRemoteId] || null;
+  if (node) {
+    applyCategorySelection(row, channelId, node);
+    return;
+  }
+
+  void validateAndApplyCategory(row.id, channelId, resolvedRemoteId);
 };
 
 const cloneMatrixCellValue = (fromRow: number, toRow: number, columnKey: string) => {
