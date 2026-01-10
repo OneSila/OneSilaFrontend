@@ -1386,6 +1386,9 @@
           "modal": {
             "title": "Select Shein category",
             "previewTitle": "Category preview"
+          },
+          "toast": {
+            "categoryNotAvailable": "Category ID {id} is not available for this Shein channel."
           }
         },
         "ebay": {
