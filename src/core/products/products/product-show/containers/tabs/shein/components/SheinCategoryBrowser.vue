@@ -52,12 +52,14 @@ const fetchNodes = async () => {
       salesChannel: { id: { exact: props.salesChannelId } },
     };
     if (currentParentId.value) {
-      filter.parentRemoteId = { exact: currentParentId.value };
+      filter.parent = { remoteId: { exact: currentParentId.value } };
+    } else {
+      filter.parent = { id: { isNull: true } };
     }
 
     const { data } = await apolloClient.query({
       query: sheinCategoriesQuery,
-      variables: { filter },
+      variables: { filter, first: 100 },
       fetchPolicy: 'cache-first',
     });
     nodes.value = mapCategoriesConnection(data?.sheinCategories);
