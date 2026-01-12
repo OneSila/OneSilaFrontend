@@ -1486,10 +1486,20 @@
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
         "selectCurrentNode": "Select current",
+        "currentSelection": "Current browse node",
+        "pendingSelection": "Pending selection",
+        "leafRestriction": "Only leaf nodes can be selected from the list. Use Select current to choose a parent.",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
-        "productTypeCreated": "Product type created"
+        "productTypeCreated": "Product type created",
+        "manualEntry": {
+          "title": "Do you know the ID? Set it manually",
+          "description": "Paste the browse node ID to preview it without browsing the tree.",
+          "placeholder": "Browse node ID",
+          "button": "Load browse node",
+          "invalid": "We couldn't find a browse node with that ID for this marketplace."
+        }
       },
       "ebay": {
         "defaultMarketplace": "Default marketplace",
