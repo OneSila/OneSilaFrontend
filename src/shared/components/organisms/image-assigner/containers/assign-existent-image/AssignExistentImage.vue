@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import {Ref, ref, watch} from 'vue';
+import { Ref, ref, watch } from 'vue';
 import { Modal } from '../../../../../../shared/components/atoms/modal';
 import { useI18n } from "vue-i18n";
 import FilesList from "../../../../../../core/media/files/containers/FilesList.vue";
-import {SearchConfig} from "../../../general-search/searchConfig";
-import {imageQuery} from "../../../../../api/queries/media.js";
-import apolloClient from "../../../../../../../apollo-client";
+import { SearchConfig } from "../../../general-search/searchConfig";
+import { imageQuery } from "../../../../../api/queries/media.js";
 
 const props = defineProps<{ modelValue: boolean; }>();
 const emit = defineEmits(['update:modelValue', 'entry-created']);

@@ -2056,6 +2056,9 @@
         "successfullyUpdated": "Afbeelding opgeslagen",
         "updateFailed": "Afbeelding opslaan mislukt. Contacteer support."
       },
+      "edit": {
+        "title": ""
+      },
       "labels": {
         "imageUrl": "URL Afbeelding",
         "imageType": "Afbeeldingstype",

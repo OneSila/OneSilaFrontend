@@ -20,14 +20,19 @@ import {
   createMediaProductThroughsMutation,
   deleteMediaProductThroughsMutation,
   updateMediaProductThroughMutation,
+  updateImageMutation,
 } from "../../../../../../../../../shared/api/mutations/media.js";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Image as ProductImage } from "../../../../../../../../../shared/components/atoms/image";
+import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
+import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
+import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
 import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
@@ -37,8 +42,11 @@ interface VariationImageSlot {
   id: string | null;
   productId: string;
   mediaId: string;
+  mediaProxyId: string | null;
   mediaUrl: string | null;
   mediaName: string | null;
+  title?: string | null;
+  description?: string | null;
   isMainImage: boolean;
   sortOrder: number | null;
   imageType?: string | null;
@@ -80,6 +88,17 @@ const currentSalesChannel = ref<'default' | string>('default');
 const previousSalesChannel = ref<'default' | string>('default');
 const skipChannelWatch = ref(false);
 const inheritedFromDefault = ref(false);
+const imageEditModalVisible = ref(false);
+const imageEditLoading = ref(false);
+const imageEditContext = ref<{ rowIndex: number; columnIndex: number } | null>(null);
+const editMediaId = ref<string | null>(null);
+const editMediaUrl = ref<string | null>(null);
+const editTitle = ref('');
+const editDescription = ref('');
+const editImageType = ref<string | null>(null);
+const editFormTouched = ref(false);
+const syncingEditForm = ref(false);
+const editedMediaIds = ref<Set<string>>(new Set());
 
 const assignedMediaIds = computed(() =>
   variations.value.flatMap((row) =>
@@ -191,6 +210,12 @@ const sheinLegend = computed(() => ([
   { key: 'square', label: t(sheinRoleLabelKey.square), dotClass: sheinRoleColorMap.square },
   { key: 'detail', label: t(sheinRoleLabelKey.detail), dotClass: sheinRoleColorMap.detail },
   { key: 'color', label: t(sheinRoleLabelKey.color), dotClass: sheinRoleColorMap.color }
+]));
+
+const imageTypeOptions = computed(() => ([
+  { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
+  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR },
 ]));
 
 const baseColumns = computed<MatrixColumn[]>(() => [
@@ -305,8 +330,11 @@ const normalizeImageSlot = (
     id: preserveId ? value.id : null,
     productId,
     mediaId: value.mediaId,
+    mediaProxyId: value.mediaProxyId ?? value.proxyId ?? null,
     mediaUrl: value.mediaUrl ?? null,
     mediaName: value.mediaName ?? null,
+    title: value.title ?? null,
+    description: value.description ?? null,
     isMainImage: preserveId ? !!value.isMainImage : false,
     sortOrder: value.sortOrder ?? null,
     imageType: value.imageType ?? null,
@@ -395,6 +423,7 @@ const assignMediaToRow = (
     id: null,
     productId: row.variation.id,
     mediaId: resolvedMedia.id,
+    mediaProxyId: resolvedMedia.proxyId ?? resolvedMedia.mediaProxyId ?? null,
     mediaUrl:
       resolvedMedia.imageWebUrl ??
       resolvedMedia.fileUrl ??
@@ -407,6 +436,8 @@ const assignMediaToRow = (
       resolvedMedia.mediaName ??
       resolvedMedia.name ??
       null,
+    title: resolvedMedia.title ?? resolvedMedia.image?.title ?? null,
+    description: resolvedMedia.description ?? resolvedMedia.image?.description ?? null,
     isMainImage: currentSlot?.isMainImage ?? false,
     sortOrder: null,
     imageType: resolvedMedia.imageType ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
@@ -507,6 +538,85 @@ const togglePlaceholder = (rowIndex: number, columnIndex: number) => {
 const closePlaceholder = () => {
   expandedPlaceholder.value = null;
 };
+
+const normalizeTextValue = (value?: string | null) => (value ?? '').trim();
+
+const applyEditFormFromSlot = (slot: VariationImageSlot) => {
+  syncingEditForm.value = true;
+  editTitle.value = slot.title ?? '';
+  editDescription.value = slot.description ?? '';
+  editImageType.value = slot.imageType ?? null;
+  syncingEditForm.value = false;
+};
+
+const openImageEditModal = (rowIndex: number, columnIndex: number) => {
+  const row = variations.value[rowIndex];
+  const slot = row?.images[columnIndex] ?? null;
+  if (!slot || !slot.mediaId) {
+    return;
+  }
+  imageEditContext.value = { rowIndex, columnIndex };
+  editFormTouched.value = false;
+  editMediaId.value = slot.mediaId;
+  editMediaUrl.value = slot.mediaUrl ?? null;
+  applyEditFormFromSlot(slot);
+  imageEditModalVisible.value = true;
+};
+
+const closeImageEditModal = () => {
+  imageEditModalVisible.value = false;
+  imageEditContext.value = null;
+  editMediaId.value = null;
+  editMediaUrl.value = null;
+  editTitle.value = '';
+  editDescription.value = '';
+  editImageType.value = null;
+  editFormTouched.value = false;
+};
+
+const applyImageEdits = () => {
+  if (!imageEditContext.value || !editMediaId.value) {
+    closeImageEditModal();
+    return;
+  }
+  const updatedTitle = normalizeTextValue(editTitle.value) || null;
+  const updatedDescription = normalizeTextValue(editDescription.value) || null;
+  const updatedType = editImageType.value ?? null;
+
+  const hasChangesForMedia = variations.value.some((row) =>
+    row.images.some((slot) => {
+      if (!slot || slot.mediaId !== editMediaId.value) {
+        return false;
+      }
+      return (
+        normalizeTextValue(slot.title) !== normalizeTextValue(updatedTitle) ||
+        normalizeTextValue(slot.description) !== normalizeTextValue(updatedDescription) ||
+        (slot.imageType ?? null) !== updatedType
+      );
+    })
+  );
+
+  variations.value.forEach((row) => {
+    row.images.forEach((slot) => {
+      if (!slot || slot.mediaId !== editMediaId.value) {
+        return;
+      }
+      slot.title = updatedTitle;
+      slot.description = updatedDescription;
+      slot.imageType = updatedType;
+    });
+  });
+  if (hasChangesForMedia) {
+    editedMediaIds.value.add(editMediaId.value);
+  }
+  closeImageEditModal();
+};
+
+watch([editTitle, editDescription, editImageType], () => {
+  if (!syncingEditForm.value) {
+    editFormTouched.value = true;
+  }
+});
 
 watch(currentSalesChannel, async (newChannel) => {
   await handleSalesChannelChange(newChannel);
@@ -700,8 +810,11 @@ const fetchVariationImages = async (
         id: node.id ?? null,
         productId,
         mediaId,
+        mediaProxyId: node.media?.proxyId ?? null,
         mediaUrl: node.media?.imageWebUrl ?? null,
         mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
+        title: node.media?.title ?? null,
+        description: node.media?.description ?? null,
         isMainImage: !!node.isMainImage,
         sortOrder: node.sortOrder ?? null,
         imageType: node.media?.imageType ?? null,
@@ -763,6 +876,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     });
     variations.value = JSON.parse(JSON.stringify(variationRows));
     originalVariations.value = JSON.parse(JSON.stringify(variationRows));
+    editedMediaIds.value.clear();
     expandedPlaceholder.value = null;
     matrixRef.value?.resetHistory(variations.value);
     previousSalesChannel.value = currentSalesChannel.value;
@@ -800,7 +914,22 @@ const save = async () => {
 
     const toCreate: { productId: string; mediaId: string; sortOrder: number; isMainImage: boolean }[] = [];
     const toUpdate: { id: string; sortOrder: number; isMainImage: boolean }[] = [];
+    const imageUpdates = new Map<string, { imageType: string | null; title: string | null; description: string | null; mediaProxyId: string | null }>();
     const toDelete: string[] = [];
+
+    const originalMediaMap = new Map<string, { imageType: string | null; title: string | null; description: string | null }>();
+    originalVariations.value.forEach((row) => {
+      row.images.forEach((slot) => {
+        if (!slot?.mediaId || originalMediaMap.has(slot.mediaId)) {
+          return;
+        }
+        originalMediaMap.set(slot.mediaId, {
+          imageType: slot.imageType ?? null,
+          title: normalizeTextValue(slot.title),
+          description: normalizeTextValue(slot.description),
+        });
+      });
+    });
 
     variations.value.forEach((row) => {
       const original = originalMap.get(row.variation.id);
@@ -809,6 +938,14 @@ const save = async () => {
       row.images.forEach((slot, index) => {
         if (!slot || !slot.mediaId) {
           return;
+        }
+        if (!imageUpdates.has(slot.mediaId)) {
+          imageUpdates.set(slot.mediaId, {
+            imageType: slot.imageType ?? null,
+            title: normalizeTextValue(slot.title),
+            description: normalizeTextValue(slot.description),
+            mediaProxyId: slot.mediaProxyId ?? null,
+          });
         }
         if (!slot.id) {
           toCreate.push({
@@ -877,6 +1014,39 @@ const save = async () => {
               id: item.id,
               sortOrder: item.sortOrder,
               isMainImage: item.isMainImage,
+            },
+          },
+        });
+      }
+    }
+
+    const imagesToUpdate = Array.from(imageUpdates.entries())
+      .filter(([mediaId, current]) => {
+        const original = originalMediaMap.get(mediaId);
+        if (!original) {
+          return editedMediaIds.value.has(mediaId);
+        }
+        return (
+          current.imageType !== original.imageType ||
+          current.title !== original.title ||
+          current.description !== original.description
+        );
+      })
+      .map(([mediaId, current]) => ({ mediaId, ...current }));
+
+    if (imagesToUpdate.length) {
+      for (const item of imagesToUpdate) {
+        if (!item.mediaProxyId) {
+          continue;
+        }
+        await apolloClient.mutate({
+          mutation: updateImageMutation,
+          variables: {
+            data: {
+              id: item.mediaProxyId,
+              imageType: item.imageType,
+              title: item.title || null,
+              description: item.description || null,
             },
           },
         });
@@ -1164,15 +1334,95 @@ defineExpose({ hasUnsavedChanges });
                     <Icon name="chevron-right" class="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>
-                <Button class="btn btn-secondary" @click="removeImage(rowIndex, getImageColumnIndex(column.key))">
-                  {{ t('shared.button.delete') }}
-                </Button>
+                <div class="flex items-center gap-2">
+                  <Button
+                    class="rounded bg-white/80 p-2 text-primary hover:bg-white"
+                    :title="t('shared.button.edit')"
+                    :aria-label="t('shared.button.edit')"
+                    @click.stop="openImageEditModal(rowIndex, getImageColumnIndex(column.key))"
+                  >
+                    <Icon name="edit" class="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    class="rounded bg-white/80 p-2 text-red-600 hover:bg-white"
+                    :title="t('shared.button.delete')"
+                    :aria-label="t('shared.button.delete')"
+                    @click.stop="removeImage(rowIndex, getImageColumnIndex(column.key))"
+                  >
+                    <Icon name="trash" class="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </div>
               </template>
             </div>
           </div>
         </template>
       </template>
     </MatrixEditor>
+    <Modal v-model="imageEditModalVisible" @closed="closeImageEditModal">
+      <Card class="modal-content w-11/12 max-w-5xl">
+        <div class="mb-4">
+          <h3 class="text-xl font-semibold">{{ t('media.images.edit.title') }}</h3>
+        </div>
+        <div v-if="imageEditLoading" class="flex items-center justify-center py-10">
+          <span class="animate-spin border-2 border-black !border-l-transparent rounded-full w-6 h-6 inline-flex"></span>
+        </div>
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <ProductImage
+              v-if="editMediaUrl"
+              :source="editMediaUrl"
+              :alt="t('media.images.show.title')"
+              class="w-full max-w-[35rem] rounded-md"
+            />
+          </div>
+          <div class="mt-1">
+            <Flex vertical>
+              <FlexCell>
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.title') }}</label>
+                <TextInput
+                  v-model="editTitle"
+                  class="w-full"
+                  :placeholder="t('media.images.placeholders.title')"
+                />
+              </FlexCell>
+              <FlexCell class="mt-4">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.description') }}</label>
+                <TextEditor
+                  class="h-32"
+                  v-model="editDescription"
+                  :placeholder="t('media.images.placeholders.description')"
+                />
+              </FlexCell>
+              <FlexCell class="mt-4">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.imageType') }}</label>
+              </FlexCell>
+              <FlexCell>
+                <Selector
+                  class="pr-4"
+                  :model-value="editImageType"
+                  :options="imageTypeOptions"
+                  :mandatory="true"
+                  :removable="false"
+                  :label-by="'label'"
+                  :value-by="'value'"
+                  :placeholder="t('media.images.placeholders.imageType')"
+                  :dropdown-position="'bottom'"
+                  @update:model-value="(value) => { editImageType = value; }"
+                />
+              </FlexCell>
+              <FlexCell class="mt-6 flex justify-end gap-3">
+                <Button class="btn btn-outline-dark" @click="closeImageEditModal">
+                  {{ t('shared.button.cancel') }}
+                </Button>
+                <Button class="btn btn-primary" @click="applyImageEdits">
+                  {{ t('shared.button.save') }}
+                </Button>
+              </FlexCell>
+            </Flex>
+          </div>
+        </div>
+      </Card>
+    </Modal>
     <UploadMediaModal
       v-model="selectExistingModalVisible"
             :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct?.id"

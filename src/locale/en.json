@@ -2441,6 +2441,9 @@
         "successfullyUpdated": "Successfully updated the image!",
         "updateFailed": "Failed to update the image. Please contact the administrators!"
       },
+      "edit": {
+        "title": "Edit image"
+      },
       "labels": {
         "imageUrl": "Image URL",
         "imageType": "Image Type",

@@ -217,6 +217,8 @@ export const mediaProductThroughQuery = gql`
               type
               imageType
               updatedAt
+              title
+              description
               image {
                 size
                 name

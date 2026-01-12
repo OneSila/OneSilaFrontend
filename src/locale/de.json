@@ -1450,6 +1450,9 @@
         "upload": "Hochladen",
         "urls": "URLs"
       },
+      "edit": {
+        "title": ""
+      },
       "labels": {
         "colorShot": "",
         "title": "",
