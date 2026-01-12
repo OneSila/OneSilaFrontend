@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import RemotePropertySelectValues from '../remote-property-select-values/RemotePropertySelectValues.vue';
 import BulkRemotePropertySelectValueAssigner from '../remote-property-select-values/BulkRemotePropertySelectValueAssigner.vue';
 import { ebayPropertySelectValuesSearchConfigConstructor, ebayPropertySelectValuesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
-import { bulkUpdateEbayPropertySelectValueLocalInstanceMutation, mapEbayPerfectMatchSelectValuesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
+import { bulkUpdateEbayPropertySelectValueLocalInstanceMutation, mapSalesChannelPerfectMatchSelectValuesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -29,7 +29,7 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
     :listing-query-key="listingQueryKey"
     :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } } }"
     :build-start-mapping-route="buildStartMappingRoute"
-    :auto-map-mutation="mapEbayPerfectMatchSelectValuesMutation"
+    :auto-map-mutation="mapSalesChannelPerfectMatchSelectValuesMutation"
     @pull-data="emit('pull-data')"
   >
     <template #bulkActions="{ selectedEntities, query, clearSelection }">

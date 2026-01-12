@@ -7,7 +7,7 @@ import {
   sheinPropertySelectValuesListingConfigConstructor,
   sheinPropertySelectValuesSearchConfigConstructor,
 } from './configs';
-import { mapSheinPerfectMatchSelectValuesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
+import { mapSalesChannelPerfectMatchSelectValuesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -32,7 +32,7 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
     :listing-query-key="listingQueryKey"
     :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } } }"
     :build-start-mapping-route="buildStartMappingRoute"
-    :auto-map-mutation="mapSheinPerfectMatchSelectValuesMutation"
+    :auto-map-mutation="mapSalesChannelPerfectMatchSelectValuesMutation"
     @pull-data="emit('pull-data')"
   />
 </template>

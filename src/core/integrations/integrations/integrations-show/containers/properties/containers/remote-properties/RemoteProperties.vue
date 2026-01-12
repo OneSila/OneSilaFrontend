@@ -5,11 +5,14 @@ import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
+import { Icon } from "../../../../../../../../shared/components/atoms/icon";
 import { Title } from "../../../../../../../../shared/components/atoms/title";
 import apolloClient from "../../../../../../../../../apollo-client";
 import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 import { buildFilterVariablesFromRouteQuery, buildNextQueryParamsFromRouteQuery } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
+import { displayApolloError } from "../../../../../../../../shared/utils";
+import { Toast } from "../../../../../../../../shared/modules/toast";
 
 type RouteBuilderContext = {
   id: string;
@@ -32,6 +35,7 @@ const props = defineProps<{
   buildBaseFilter?: (context: BaseFilterBuilderContext) => Record<string, any>;
   buildStartMappingRoute?: (context: RouteBuilderContext) => RouteLocationRaw;
   titleKey?: string;
+  autoMapMutation?: any;
 }>();
 
 const emit = defineEmits(['pull-data']);
@@ -40,6 +44,7 @@ const router = useRouter();
 const route = useRoute();
 
 const canStartMapping = ref(false);
+const isAutoMapping = ref(false);
 
 const baseFilter = computed(() => {
   if (props.buildBaseFilter) {
@@ -60,6 +65,7 @@ const mergedFixedFilterVariables = computed(() => ({
 
 const hasStartMapping = computed(() => Boolean(props.buildStartMappingRoute));
 const hasTitle = computed(() => Boolean(props.titleKey));
+const hasAutoMap = computed(() => Boolean(props.autoMapMutation));
 
 const fetchFirstUnmapped = async (): Promise<string | null> => {
   if (!hasStartMapping.value) {
@@ -146,14 +152,61 @@ const startMapping = async () => {
     },
   });
 };
+
+const autoMapPerfectMatches = async () => {
+  if (!props.autoMapMutation || !props.salesChannelId || isAutoMapping.value) {
+    return;
+  }
+
+  isAutoMapping.value = true;
+  try {
+    await apolloClient.mutate({
+      mutation: props.autoMapMutation,
+      variables: {
+        salesChannel: { id: props.salesChannelId },
+      },
+      fetchPolicy: 'no-cache',
+    });
+
+    Toast.success(t('integrations.show.mapping.autoMapStarted'));
+  } catch (error) {
+    displayApolloError(error);
+  } finally {
+    isAutoMapping.value = false;
+  }
+};
 </script>
 
 <template>
   <GeneralTemplate>
     <template v-if="hasStartMapping" #buttons>
-      <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">
-        {{ t('integrations.show.mapping.startMapping') }}
-      </Button>
+      <div class="flex items-center gap-2">
+        <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">
+          {{ t('integrations.show.mapping.startMapping') }}
+        </Button>
+
+        <div v-if="hasAutoMap" class="flex items-center gap-2">
+          <Button
+            type="button"
+            class="btn btn-secondary"
+            :disabled="isAutoMapping || !salesChannelId"
+            :loading="isAutoMapping"
+            @click="autoMapPerfectMatches"
+          >
+            <span class="flex items-center gap-2">
+              <span>{{ t('integrations.show.mapping.autoMap') }}</span>
+              <span class="relative flex items-center group" @click.stop.prevent>
+                <Icon name="info-circle" class="text-white cursor-help" />
+                <span
+                  class="pointer-events-none absolute right-0 top-full z-50 mt-2 hidden w-96 rounded-md border border-gray-200 bg-white p-3 text-xs text-gray-700 shadow-lg group-hover:block dark:border-gray-700 dark:bg-black dark:text-white"
+                >
+                  {{ t('integrations.show.mapping.autoMapPropertiesHelp') }}
+                </span>
+              </span>
+            </span>
+          </Button>
+        </div>
+      </div>
     </template>
 
     <template #content>

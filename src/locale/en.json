@@ -3691,6 +3691,7 @@
         "startMapping": "Start Mapping",
         "autoMap": "Auto Map",
         "autoMapHelp": "Auto Map tries to match values for you. If a marketplace property is already mapped to a OneSila property, and a marketplace value has the exact same text as an existing OneSila value in that property, it will be mapped automatically. Example: marketplace “Color” → OneSila “Color”, marketplace value “Red” → OneSila value “Red”. Runs in the background, so you can keep working.",
+        "autoMapPropertiesHelp": "Auto Map tries to match properties for you. If a marketplace property has the exact same name and type as an existing OneSila property, it will be mapped automatically. Example: marketplace “Color” (type “Select”) → OneSila “Color” (type “Select”). Runs in the background, so you can keep working.",
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values",
         "importMapping": "Import Mapping",

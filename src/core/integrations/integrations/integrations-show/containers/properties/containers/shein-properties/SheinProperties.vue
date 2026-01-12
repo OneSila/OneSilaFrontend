@@ -8,6 +8,7 @@ import {
   sheinPropertiesListingConfigConstructor,
   sheinPropertiesSearchConfigConstructor,
 } from './configs';
+import { mapSalesChannelPerfectMatchPropertiesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
@@ -30,5 +31,6 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
     :listing-query="listingQuery"
     :listing-query-key="listingQueryKey"
     :build-start-mapping-route="buildStartMappingRoute"
+    :auto-map-mutation="mapSalesChannelPerfectMatchPropertiesMutation"
   />
 </template>
