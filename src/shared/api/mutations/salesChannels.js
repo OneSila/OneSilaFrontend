@@ -790,6 +790,12 @@ export const updateSheinPropertyMutation = gql`
   }
 `;
 
+export const mapSalesChannelPerfectMatchPropertiesMutation = gql`
+  mutation mapSalesChannelPerfectMatchProperties($salesChannel: SalesChannelPartialInput!) {
+    mapSalesChannelPerfectMatchProperties(salesChannel: $salesChannel)
+  }
+`;
+
 // Amazon Property Select Value Mutations
 
 export const updateAmazonPropertySelectValueMutation = gql`
@@ -838,21 +844,9 @@ export const bulkUpdateEbayPropertySelectValueLocalInstanceMutation = gql`
   }
 `;
 
-export const mapAmazonPerfectMatchSelectValuesMutation = gql`
-  mutation mapAmazonPerfectMatchSelectValues($salesChannel: AmazonSalesChannelPartialInput!) {
-    mapAmazonPerfectMatchSelectValues(salesChannel: $salesChannel)
-  }
-`;
-
-export const mapEbayPerfectMatchSelectValuesMutation = gql`
-  mutation mapEbayPerfectMatchSelectValues($salesChannel: EbaySalesChannelPartialInput!) {
-    mapEbayPerfectMatchSelectValues(salesChannel: $salesChannel)
-  }
-`;
-
-export const mapSheinPerfectMatchSelectValuesMutation = gql`
-  mutation mapSheinPerfectMatchSelectValues($salesChannel: SheinSalesChannelPartialInput!) {
-    mapSheinPerfectMatchSelectValues(salesChannel: $salesChannel)
+export const mapSalesChannelPerfectMatchSelectValuesMutation = gql`
+  mutation mapSalesChannelPerfectMatchSelectValues($salesChannel: SalesChannelPartialInput!) {
+    mapSalesChannelPerfectMatchSelectValues(salesChannel: $salesChannel)
   }
 `;
 

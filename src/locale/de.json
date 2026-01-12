@@ -1136,6 +1136,7 @@
         "startMapping": "",
         "autoMap": "",
         "autoMapHelp": "",
+        "autoMapPropertiesHelp": "",
         "saveAndMapNext": "",
         "allMappedSuccess": "",
         "importMapping": "",

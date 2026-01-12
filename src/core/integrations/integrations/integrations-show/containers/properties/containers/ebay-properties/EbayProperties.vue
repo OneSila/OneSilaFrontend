@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import RemoteProperties from "../remote-properties/RemoteProperties.vue";
 import { ebayPropertiesSearchConfigConstructor, ebayPropertiesListingConfigConstructor, listingQuery, listingQueryKey } from './configs';
+import { mapSalesChannelPerfectMatchPropertiesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
@@ -29,6 +30,7 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
       :listing-query="listingQuery"
       :listing-query-key="listingQueryKey"
       :build-start-mapping-route="buildStartMappingRoute"
+      :auto-map-mutation="mapSalesChannelPerfectMatchPropertiesMutation"
       @pull-data="emit('pull-data')"
     />
   </div>
