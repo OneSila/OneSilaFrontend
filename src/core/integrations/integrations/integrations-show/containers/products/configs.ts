@@ -1,7 +1,7 @@
 import { FieldType } from "../../../../../../shared/utils/constants";
 import { salesChannelViewAssignsQuery, salesChannelViewsQuerySelector } from "../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
-import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import { OrderType, SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
 import {
   deleteSalesChannelViewAssignMutation,
   deleteSalesChannelViewAssignsMutation
@@ -99,7 +99,18 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
       removable: true,
     },
   ],
-  orders: [],
+  orders: [
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.labels.createdAt'),
+      type: OrderType.ASC
+    },
+  ],
 });
 
 export const productsListingConfigConstructor = (t: Function): ListingConfig => ({
@@ -110,6 +121,7 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
     t('shared.labels.status'),
     t('shared.labels.sku'),
     t('integrations.show.products.labels.store'),
+    t('shared.labels.createdAt'),
   ],
   fields: [
     {
@@ -139,11 +151,16 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
       name: 'product',
       type: FieldType.NestedText,
       keys: ['sku'],
+      shortenAfter: 14,
     },
     {
       name: 'salesChannelView',
       type: FieldType.NestedText,
       keys: ['name'],
+    },
+    {
+      name: 'createdAt',
+      type: FieldType.Date,
     },
   ],
   identifierKey: 'id',

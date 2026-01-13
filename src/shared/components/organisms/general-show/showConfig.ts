@@ -26,6 +26,7 @@ export interface ShowBaseField {
   customCssClass?: string; // Custom CSS class for individual fields
   addImage?: boolean;
   accessor?: (item: any) => any;
+  shortenAfter?: number | null;
 }
 
 export interface TextField extends ShowBaseField {

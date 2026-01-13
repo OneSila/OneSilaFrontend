@@ -11,6 +11,7 @@ import {
   getProductContentByLanguageAndDefaultQuery,
   productTranslationBulletPointsQuery,
 } from '../../../api/queries/products.js';
+import { salesChannelsLimitsQuery } from '../../../api/queries/salesChannels.js';
 import {
   createProductTranslationMutation,
   updateProductTranslationMutation,
@@ -26,6 +27,8 @@ interface IntegrationChannel {
   proxyId?: string | null;
   hostname?: string | null;
   type?: string | null;
+  minNameLength?: number | null;
+  minDescriptionLength?: number | null;
 }
 
 interface ProductSummary {
@@ -43,6 +46,8 @@ interface PreviewItem {
   integrationType?: string | null;
   integrationLabel: string;
   language: string;
+  minNameLength?: number | null;
+  minDescriptionLength?: number | null;
 }
 
 interface PreviewContent {
@@ -162,6 +167,8 @@ const parsePreview = (raw: any) => {
             integrationType: channel?.type || (isDefaultChannel ? 'default' : null),
             integrationLabel: isDefaultChannel ? t('shared.labels.default') : formatIntegrationLabel(channel || undefined),
             language,
+            minNameLength: channel?.minNameLength ?? null,
+            minDescriptionLength: channel?.minDescriptionLength ?? null,
           });
           contentByKey[key] = normalizePreviewContent(content);
           statusByKey[key] = 'pending';
@@ -177,6 +184,47 @@ const parsePreview = (raw: any) => {
 
   const initialSku = order[0] || parsedItems[0]?.productSku || null;
   currentProductSku.value = initialSku;
+};
+
+const loadChannelLimits = async (ids: string[]) => {
+  if (!ids.length) return;
+  try {
+    const { data } = await apolloClient.query({
+      query: salesChannelsLimitsQuery,
+      variables: {
+        first: ids.length,
+        filter: { id: { inList: ids } },
+      },
+      fetchPolicy: 'cache-first',
+    });
+    const normalizeLimit = (value: any) => {
+      if (typeof value === 'number') return value;
+      if (value === null || value === undefined || value === '') return null;
+      const parsed = Number(value);
+      return Number.isNaN(parsed) ? null : parsed;
+    };
+    const limitsMap = new Map<string, { minNameLength?: number | null; minDescriptionLength?: number | null }>();
+    (data?.salesChannels?.edges || []).forEach((edge: any) => {
+      const node = edge.node;
+      if (!node?.id) return;
+      limitsMap.set(String(node.id), {
+        minNameLength: normalizeLimit(node.minNameLength),
+        minDescriptionLength: normalizeLimit(node.minDescriptionLength),
+      });
+    });
+
+    items.value = items.value.map((item) => {
+      const limits = limitsMap.get(item.integrationProxyId);
+      if (!limits) return item;
+      return {
+        ...item,
+        minNameLength: limits.minNameLength ?? null,
+        minDescriptionLength: limits.minDescriptionLength ?? null,
+      };
+    });
+  } catch (_error) {
+    // Ignore failed limit fetch to avoid blocking preview.
+  }
 };
 
 const itemsByProduct = computed(() => {
@@ -265,11 +313,36 @@ const getLimitRange = (limits: any, field: string) => {
   return { min: limit?.min || 0, max: limit?.max };
 };
 
+const applyMinOverride = (limit: any, minOverride?: number | null) => {
+  if (typeof minOverride !== 'number' || Number.isNaN(minOverride)) {
+    return limit;
+  }
+  if (typeof limit === 'number') {
+    return { min: minOverride, max: limit };
+  }
+  if (limit && typeof limit === 'object') {
+    return { ...limit, min: minOverride };
+  }
+  return { min: minOverride };
+};
+
+const getItemLimits = (item: PreviewItem) => {
+  const rules = getContentFieldRules(item.integrationType || 'default');
+  const limits = rules.limits || {};
+  return {
+    rules,
+    limits: {
+      ...limits,
+      name: applyMinOverride(limits.name, item.minNameLength ?? null),
+      description: applyMinOverride(limits.description, item.minDescriptionLength ?? null),
+    },
+  };
+};
+
 const hasItemLimitIssues = (item: PreviewItem) => {
   const content = contentByKey[item.key];
   if (!content) return false;
-  const rules = getContentFieldRules(item.integrationType || 'default');
-  const limits = rules.limits || {};
+  const { rules, limits } = getItemLimits(item);
 
   const checkValue = (field: keyof PreviewContent, value: string) => {
     const range = getLimitRange(limits, field);
@@ -409,13 +482,17 @@ const saveApproved = async () => {
 
 watch(
   () => props.preview,
-  (value) => {
+  async (value) => {
     items.value = [];
     productOrder.value = [];
     Object.keys(contentByKey).forEach((key) => delete contentByKey[key]);
     Object.keys(statusByKey).forEach((key) => delete statusByKey[key]);
     parsePreview(value);
     setCurrentKeyFromProduct();
+    const ids = Array.from(
+      new Set(items.value.map((item) => item.integrationProxyId).filter((id) => id && id !== 'default')),
+    );
+    await loadChannelLimits(ids);
   },
   { immediate: true },
 );

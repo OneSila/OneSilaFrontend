@@ -13,6 +13,8 @@ const props = defineProps<{
   hideImage?: boolean;
 }>();
 
+const resolveShortenLimit = () => (props.field.shortenAfter ?? 64);
+
 </script>
 
 <template>
@@ -37,8 +39,8 @@ const props = defineProps<{
         </div>
       </FlexCell>
       <FlexCell center grow>
-        <Link v-if="field.clickable" :path="field.clickUrl" :title="modelValue">{{ shortenText(modelValue, 64) }}</Link>
-        <span :title="modelValue != null ? modelValue.toString() : undefined" v-else>{{ shortenText(modelValue, 64) }}</span>
+        <Link v-if="field.clickable" :path="field.clickUrl" :title="modelValue">{{ shortenText(modelValue, resolveShortenLimit()) }}</Link>
+        <span :title="modelValue != null ? modelValue.toString() : undefined" v-else>{{ shortenText(modelValue, resolveShortenLimit()) }}</span>
       </FlexCell>
     </Flex>
   </div>

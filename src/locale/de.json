@@ -372,6 +372,7 @@
           "list": "Liste",
           "images": "Bilder",
           "general": "",
+          "amazon": "",
           "ebay": "",
           "shein": ""
         },
@@ -382,6 +383,27 @@
           "labels": {
             "noImage": "Kein Bild"
           }
+        },
+        "amazon": {
+          "selectors": {
+            "marketplace": ""
+          },
+          "labels": {
+            "browseNodeId": ""
+          },
+          "actions": {
+            "setExternalProductId": "",
+            "setBrowseNode": ""
+          },
+          "variationTheme": {
+            "notConfigurable": "",
+            "missingRule": "",
+            "missingProductType": ""
+          },
+          "warnings": {
+            "multipleRules": ""
+          },
+          "noViews": ""
         },
         "shein": {
           "columns": {
@@ -594,10 +616,20 @@
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
         "selectCurrentNode": "Select current",
+        "currentSelection": "",
+        "pendingSelection": "",
+        "leafRestriction": "",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
         "productTypeCreated": "Product type created",
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        },
         "validationIssues": "Erkannte Validierungsprobleme",
         "validationIssuesDescription": "Wahrscheinliche Amazon-Validierungsprobleme basierend auf der von Amazon erwarteten Produktstruktur",
         "variationValidationIssuesNote": "Variations linked to this configurable product can also have validation issues. Review them below.",
@@ -1449,6 +1481,9 @@
       "tabs": {
         "upload": "Hochladen",
         "urls": "URLs"
+      },
+      "edit": {
+        "title": ""
       },
       "labels": {
         "colorShot": "",

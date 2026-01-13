@@ -894,6 +894,7 @@
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
           "general": "",
+          "amazon": "",
           "ebay": "",
           "shein": ""
         },
@@ -924,6 +925,27 @@
           "labels": {
             "noImage": "Geen afbeelding"
           }
+        },
+        "amazon": {
+          "selectors": {
+            "marketplace": ""
+          },
+          "labels": {
+            "browseNodeId": ""
+          },
+          "actions": {
+            "setExternalProductId": "",
+            "setBrowseNode": ""
+          },
+          "variationTheme": {
+            "notConfigurable": "",
+            "missingRule": "",
+            "missingProductType": ""
+          },
+          "warnings": {
+            "multipleRules": ""
+          },
+          "noViews": ""
         },
         "shein": {
           "columns": {
@@ -1142,10 +1164,20 @@
         "noBrowseNodeSelected": "No browse node selected",
         "browseNodeRoot": "Root",
         "selectCurrentNode": "Select current",
+        "currentSelection": "",
+        "pendingSelection": "",
+        "leafRestriction": "",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
         "createProductTypeConfirm": "This will create and map the product type \"{type}\". Do you want to continue?",
-        "productTypeCreated": "Product type created"
+        "productTypeCreated": "Product type created",
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        }
       },
       "ebay": {
         "defaultMarketplace": "",
@@ -2055,6 +2087,9 @@
         "title": "Afbeelding",
         "successfullyUpdated": "Afbeelding opgeslagen",
         "updateFailed": "Afbeelding opslaan mislukt. Contacteer support."
+      },
+      "edit": {
+        "title": ""
       },
       "labels": {
         "imageUrl": "URL Afbeelding",

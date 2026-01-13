@@ -9,16 +9,35 @@ import { imageQuery } from "../../../../shared/api/queries/media.js";
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
-import { TYPE_IMAGE } from "../../files/media";
+import { FieldType } from "../../../../shared/utils/constants";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK, TYPE_IMAGE } from "../../files/media";
 import { deleteImagesMutation } from "../../../../shared/api/mutations/media.js"
 
 const { t } = useI18n();
 const refetchNeeded = ref(false);
 
+const imageTypeOptions = [
+  { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
+  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR }
+];
+
 const searchConfig: SearchConfig = {
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Choice,
+      name: 'imageType',
+      label: t('media.images.labels.imageType'),
+      placeholder: t('media.images.placeholders.imageType'),
+      labelBy: 'label',
+      valueBy: 'value',
+      options: imageTypeOptions,
+      addLookup: true,
+      lookupKeys: []
+    }
+  ],
   orders: []
 };
 

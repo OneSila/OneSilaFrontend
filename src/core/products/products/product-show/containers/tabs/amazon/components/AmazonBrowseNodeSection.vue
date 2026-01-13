@@ -49,8 +49,13 @@ const selectedNodeDetails = ref<BrowseNode | null>(null);
 const pendingNode = ref<BrowseNode | null>(null);
 const productBrowseNodeId = ref<string | null>(null);
 const loadingSelected = ref(false);
+const saving = ref(false);
+const manualBrowseNodeInput = ref('');
+const manualSelectionLoading = ref(false);
+const manualSelectionError = ref<string | null>(null);
 
 const displayedNode = computed(() => pendingNode.value || selectedNodeDetails.value);
+const manualBrowseNodeId = computed(() => manualBrowseNodeInput.value.trim());
 
 interface RecommendedType {
   code: string;
@@ -71,19 +76,25 @@ const filteredNodes = computed(() =>
 const fetchNodes = async () => {
   if (!props.marketplaceId) return;
   loadingNodes.value = true;
-  const filter: any = { marketplaceId: { exact: props.marketplaceId } };
-  if (!currentParentId.value) {
-    filter.isRoot = { exact: true };
-  } else {
-    filter.parentNode = { remoteId: { exact: currentParentId.value } };
+  try {
+    const filter: any = { marketplaceId: { exact: props.marketplaceId } };
+    if (!currentParentId.value) {
+      filter.isRoot = { exact: true };
+    } else {
+      filter.parentNode = { remoteId: { exact: currentParentId.value } };
+    }
+    const { data } = await apolloClient.query({
+      query: amazonBrowseNodesQuery,
+      variables: { filter },
+      fetchPolicy: 'cache-first',
+    });
+    nodes.value = data?.amazonBrowseNodes?.edges?.map((e: any) => e.node) || [];
+  } catch (error) {
+    nodes.value = [];
+    displayApolloError(error);
+  } finally {
+    loadingNodes.value = false;
   }
-  const { data } = await apolloClient.query({
-    query: amazonBrowseNodesQuery,
-    variables: { filter },
-    fetchPolicy: 'cache-first',
-  });
-  nodes.value = data?.amazonBrowseNodes?.edges?.map((e: any) => e.node) || [];
-  loadingNodes.value = false;
 };
 
 watch([
@@ -120,18 +131,27 @@ const fetchSelected = async () => {
   loadingSelected.value = false;
 };
 
-const fetchSelectedNodeDetails = async (remoteId: string) => {
+const fetchBrowseNodeDetails = async (remoteId: string) => {
   if (!props.marketplaceId) return;
-  const filter = {
-    marketplaceId: { exact: props.marketplaceId },
-    remoteId: { exact: remoteId },
-  };
-  const { data } = await apolloClient.query({
-    query: amazonBrowseNodesQuery,
-    variables: { filter },
-    fetchPolicy: 'cache-first',
-  });
-  selectedNodeDetails.value = data?.amazonBrowseNodes?.edges?.[0]?.node || null;
+  try {
+    const filter = {
+      marketplaceId: { exact: props.marketplaceId },
+      remoteId: { exact: remoteId },
+    };
+    const { data } = await apolloClient.query({
+      query: amazonBrowseNodesQuery,
+      variables: { filter },
+      fetchPolicy: 'cache-first',
+    });
+    return data?.amazonBrowseNodes?.edges?.[0]?.node || null;
+  } catch (error) {
+    displayApolloError(error);
+    return null;
+  }
+};
+
+const fetchSelectedNodeDetails = async (remoteId: string) => {
+  selectedNodeDetails.value = await fetchBrowseNodeDetails(remoteId);
 };
 
 const formatTypeName = (code: string) =>
@@ -252,14 +272,29 @@ watch([
   () => props.marketplaceId,
 ], fetchSelected, { immediate: true });
 
+watch(
+  () => props.marketplaceId,
+  () => {
+    manualBrowseNodeInput.value = '';
+    manualSelectionError.value = null;
+  },
+);
+
+watch(
+  manualBrowseNodeInput,
+  () => {
+    manualSelectionError.value = null;
+  },
+);
+
 const goToChild = (node: BrowseNode) => {
-  search.value = ''
+  search.value = '';
   pathStack.value.push(node);
   currentParentId.value = node.remoteId;
 };
 
 const goToLevel = (index: number | null) => {
-  search.value = ''
+  search.value = '';
   if (index === null) {
     pathStack.value = [];
     currentParentId.value = null;
@@ -270,7 +305,7 @@ const goToLevel = (index: number | null) => {
 };
 
 const goBack = () => {
-  search.value = ''
+  search.value = '';
   if (!pathStack.value.length) {
     goToLevel(null);
     return;
@@ -289,9 +324,38 @@ const selectNode = (node: BrowseNode) => {
   pendingNode.value = node;
 };
 
+const copyBrowseNodeId = async (remoteId?: string | null) => {
+  if (!remoteId) return;
+  try {
+    await navigator.clipboard.writeText(remoteId);
+    Toast.success(t('shared.alert.toast.clipboardSuccess'));
+  } catch (error) {
+    Toast.error(t('shared.alert.toast.clipboardFail'));
+  }
+};
+
+const setManualBrowseNode = async () => {
+  if (!manualBrowseNodeId.value || manualSelectionLoading.value) {
+    return;
+  }
+  manualSelectionLoading.value = true;
+  manualSelectionError.value = null;
+  try {
+    const node = await fetchBrowseNodeDetails(manualBrowseNodeId.value);
+    if (!node) {
+      manualSelectionError.value = t('products.products.amazon.manualEntry.invalid');
+      return;
+    }
+    pendingNode.value = node;
+  } finally {
+    manualSelectionLoading.value = false;
+  }
+};
+
 const saveSelection = async () => {
   const node = pendingNode.value;
   if (!node || !props.productId || !props.salesChannelId || !props.salesChannelViewId) return;
+  saving.value = true;
   try {
     if (productBrowseNodeId.value) {
       await apolloClient.mutate({
@@ -322,11 +386,14 @@ const saveSelection = async () => {
     Toast.success(t('products.products.amazon.browseNodeSaved'));
   } catch (error) {
     displayApolloError(error);
+  } finally {
+    saving.value = false;
   }
 };
 
 const removeSelection = async () => {
   if (!productBrowseNodeId.value) return;
+  saving.value = true;
   try {
     await apolloClient.mutate({
       mutation: deleteAmazonProductBrowseNodeMutation,
@@ -338,6 +405,8 @@ const removeSelection = async () => {
     Toast.success(t('products.products.amazon.browseNodeDeleted'));
   } catch (error) {
     displayApolloError(error);
+  } finally {
+    saving.value = false;
   }
 };
 
@@ -382,156 +451,245 @@ defineExpose({ hasUnsavedChanges });
     </p>
 
     <div class="bg-blue-50 border rounded mt-4 p-6">
-      <div v-if="displayedNode" class="mb-2">
-        <div class="flex justify-between items-start">
-          <div class="text-sm">
-            {{ displayedNode.browsePathByName.join(' > ') }}
-          </div>
-          <div
-            v-if="recommendedTypes.length"
-            class="text-sm text-gray-500 ml-4 pl-4 border-l"
-          >
-            <div>{{ t('products.products.amazon.recommendedProductTypes') }}</div>
-            <ul class="mt-1 space-y-1">
-              <li
-                v-for="type in recommendedTypes"
-                :key="type.code"
-                class="flex items-center gap-2"
+      <div class="flex flex-col lg:flex-row gap-6">
+        <div class="lg:w-1/2">
+          <div class="flex items-center gap-2 text-sm mb-2">
+            <span
+              class="cursor-pointer hover:underline"
+              @click="goToLevel(null)"
+            >
+              {{ t('products.products.amazon.browseNodeRoot') }}
+            </span>
+            <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
+              <span>&gt;</span>
+              <span
+                class="cursor-pointer hover:underline"
+                @click="goToLevel(index)"
               >
-                <Icon
-                  :name="type.exists ? 'circle-check' : 'circle-xmark'"
-                  class="w-3"
-                  :class="type.exists ? 'text-green-500' : 'text-red-500'"
-                />
-                <Link
-                  v-if="type.exists && type.id"
-                  :path="{
-                    name: 'integrations.remoteProductTypes.edit',
-                    params: { type: 'amazon', id: type.id },
-                    query: { integrationId: props.salesChannelId },
-                  }"
-                  class="hover:underline"
-                >
-                  {{ type.name }}
-                </Link>
-                <span v-else>{{ type.name }}</span>
+                {{ crumb.name }}
+              </span>
+            </template>
+            <div v-if="pathStack.length" class="flex gap-1 ml-auto">
+              <Button
+                class="btn btn-sm btn-outline-primary"
+                @click="selectCurrent"
+              >
+                {{ t('products.products.amazon.selectCurrentNode') }}
+              </Button>
+              <Button class="btn btn-sm btn-outline-primary" @click="goBack">
+                {{ t('shared.button.back') }}
+              </Button>
+            </div>
+          </div>
+
+          <input
+            v-model="search"
+            type="text"
+            class="form-input w-full mb-2"
+            :placeholder="t('shared.button.search') + '...'"
+          />
+
+          <div class="max-h-[420px] overflow-y-auto pr-1">
+            <div v-if="loadingNodes">
+              <LocalLoader :loading="true" />
+            </div>
+            <ul v-else class="space-y-1">
+              <li
+                v-for="node in filteredNodes"
+                :key="node.remoteId"
+                class="flex justify-between items-center py-2 px-2 border rounded hover:bg-gray-100"
+              >
                 <div
-                  v-if="!type.exists"
-                  class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
-                  @click.stop="confirmCreateType(type)"
+                  class="flex items-center gap-2 flex-1 cursor-pointer"
+                  @click="node.hasChildren ? goToChild(node) : selectNode(node)"
                 >
-                  <Icon name="plus" class="w-3 text-gray-600" />
+                  <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
+                  <span>{{ node.name }}</span>
+                </div>
+                <div class="flex gap-2">
+                  <Button
+                    class="btn btn-sm btn-outline-primary"
+                    :disabled="node.hasChildren"
+                    :title="node.hasChildren ? t('products.products.amazon.leafRestriction') : undefined"
+                    @click.stop="selectNode(node)"
+                  >
+                    {{ t('shared.button.select') }}
+                  </Button>
                 </div>
               </li>
             </ul>
           </div>
-        </div>
-        <div class="flex gap-2 mt-2">
-          <Button
-            v-if="pendingNode"
-            class="btn btn-sm btn-primary"
-            @click="saveSelection"
-          >
-            {{ t('shared.button.save') }}
-          </Button>
-          <Button
-            v-if="pendingNode"
-            class="btn btn-sm btn-outline-dark"
-            @click="cancelSelection"
-          >
-            {{ t('shared.button.cancel') }}
-          </Button>
-          <Button
-            v-if="productBrowseNodeId"
-            class="btn btn-sm btn-outline-danger"
-            @click="removeSelection"
-          >
-            {{ t('shared.button.delete') }}
-          </Button>
-        </div>
-      </div>
-      <div v-else class="text-sm text-gray-500">
-        {{ t('products.products.amazon.noBrowseNodeSelected') }}
-      </div>
-    </div>
 
-    <div class="p-6 border rounded">
-      <div class="mb-2 text-base font-semibold flex flex-wrap items-center gap-1 py-2">
-        <span
-          class="cursor-pointer hover:underline"
-          @click="goToLevel(null)"
-          >{{ t('products.products.amazon.browseNodeRoot') }}</span
-        >
-        <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
-          <span>&gt;</span>
-          <span
-            class="cursor-pointer hover:underline"
-            @click="goToLevel(index)"
-            >{{ crumb.name }}</span
-          >
-        </template>
-        <div v-if="pathStack.length" class="flex gap-1 ml-auto">
-          <Button
-            class="btn btn-sm btn-outline-primary"
-            @click="selectCurrent"
-          >
-            {{ t('products.products.amazon.selectCurrentNode') }}
-          </Button>
-          <Button class="btn btn-sm btn-outline-primary" @click="goBack">
-            {{ t('shared.button.back') }}
-          </Button>
-        </div>
-      </div>
-
-      <input
-        v-model="search"
-        type="text"
-        class="form-input w-full mb-2"
-        :placeholder="t('shared.button.search') + '...'"
-      />
-
-      <div v-if="loadingNodes">
-        <LocalLoader :loading="true" />
-      </div>
-      <ul v-else>
-        <li
-          v-for="node in filteredNodes"
-          :key="node.remoteId"
-          :class="[
-            'flex justify-between items-center py-1 border-b last:border-b-0',
-            node.hasChildren ? 'cursor-pointer hover:bg-gray-100' : 'cursor-not-allowed',
-          ]"
-          @click="node.hasChildren && goToChild(node)"
-        >
-          <span class="flex items-center gap-2 flex-1">
-            <Icon :name="node.hasChildren ? 'angle-right' : 'circle'" class="w-3" />
-            <span>
-              <div>{{ node.name }}</div>
-            </span>
-          </span>
-          <div class="flex gap-2">
-            <template v-if="pendingNode && pendingNode.remoteId === node.remoteId">
-              <Button class="btn btn-sm btn-primary" disabled @click.stop>
-                {{ t('shared.labels.selected') }}
-              </Button>
+          <div class="mt-6 border rounded bg-white p-4">
+            <h6 class="font-semibold text-sm mb-1">
+              {{ t('products.products.amazon.manualEntry.title') }}
+            </h6>
+            <p class="text-xs text-gray-500 mb-3">
+              {{ t('products.products.amazon.manualEntry.description') }}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input
+                v-model="manualBrowseNodeInput"
+                type="text"
+                class="form-input flex-1"
+                :placeholder="t('products.products.amazon.manualEntry.placeholder')"
+                @keyup.enter="setManualBrowseNode"
+              />
               <Button
-                class="btn btn-sm btn-outline-dark"
-                @click.stop="cancelSelection"
+                class="btn btn-sm btn-outline-primary"
+                :disabled="manualSelectionLoading || !manualBrowseNodeId"
+                :loading="manualSelectionLoading"
+                @click="setManualBrowseNode"
               >
+                {{ t('products.products.amazon.manualEntry.button') }}
+              </Button>
+            </div>
+            <p v-if="manualSelectionError" class="text-xs text-red-600 mt-2">
+              {{ manualSelectionError }}
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:w-1/2 space-y-4">
+          <div>
+            <h5 class="font-semibold text-sm mb-1">
+              {{ t('products.products.amazon.currentSelection') }}
+            </h5>
+            <div class="min-h-[56px] border rounded p-3 bg-white">
+              <div v-if="loadingSelected">
+                <LocalLoader :loading="true" />
+              </div>
+              <div v-else-if="selectedNodeDetails">
+                <div class="text-sm font-medium">{{ selectedNodeDetails.name }}</div>
+                <div class="text-xs text-gray-500 flex items-center gap-2">
+                  <span>{{ selectedNodeDetails.remoteId }}</span>
+                  <button
+                    class="p-1 rounded hover:bg-gray-100"
+                    type="button"
+                    @click="copyBrowseNodeId(selectedNodeDetails.remoteId)"
+                  >
+                    <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
+                  </button>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  {{ selectedNodeDetails.browsePathByName.join(' > ') }}
+                </div>
+                <div v-if="!pendingNode && recommendedTypes.length" class="mt-3">
+                  <h6 class="font-semibold text-xs text-gray-700 mb-1">
+                    {{ t('products.products.amazon.recommendedProductTypes') }}
+                  </h6>
+                  <ul class="space-y-1">
+                    <li
+                      v-for="type in recommendedTypes"
+                      :key="type.code"
+                      class="flex items-center gap-2 text-xs text-gray-700"
+                    >
+                      <Icon
+                        :name="type.exists ? 'circle-check' : 'circle-xmark'"
+                        class="w-3"
+                        :class="type.exists ? 'text-green-500' : 'text-red-500'"
+                      />
+                      <Link
+                        v-if="type.exists && type.id"
+                        :path="{
+                          name: 'integrations.remoteProductTypes.edit',
+                          params: { type: 'amazon', id: type.id },
+                          query: { integrationId: props.salesChannelId },
+                        }"
+                        class="hover:underline"
+                      >
+                        {{ type.name }}
+                      </Link>
+                      <span v-else>{{ type.name }}</span>
+                      <div
+                        v-if="!type.exists"
+                        class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
+                        @click.stop="confirmCreateType(type)"
+                      >
+                        <Icon name="plus" class="w-3 text-gray-600" />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div v-else class="text-sm text-gray-500">
+                {{ t('products.products.amazon.noBrowseNodeSelected') }}
+              </div>
+            </div>
+          </div>
+
+          <div v-if="pendingNode" class="border rounded p-3 bg-white">
+            <h6 class="font-semibold text-sm mb-1">
+              {{ t('products.products.amazon.pendingSelection') }}
+            </h6>
+            <div class="text-sm font-medium">{{ pendingNode.name }}</div>
+            <div class="text-xs text-gray-500 flex items-center gap-2">
+              <span>{{ pendingNode.remoteId }}</span>
+              <button
+                class="p-1 rounded hover:bg-gray-100"
+                type="button"
+                @click="copyBrowseNodeId(pendingNode.remoteId)"
+              >
+                <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
+              </button>
+            </div>
+            <div class="text-xs text-gray-500 mt-1">
+              {{ pendingNode.browsePathByName.join(' > ') }}
+            </div>
+            <div v-if="recommendedTypes.length" class="mt-3">
+              <h6 class="font-semibold text-xs text-gray-700 mb-1">
+                {{ t('products.products.amazon.recommendedProductTypes') }}
+              </h6>
+              <ul class="space-y-1">
+                <li
+                  v-for="type in recommendedTypes"
+                  :key="type.code"
+                  class="flex items-center gap-2 text-xs text-gray-700"
+                >
+                  <Icon
+                    :name="type.exists ? 'circle-check' : 'circle-xmark'"
+                    class="w-3"
+                    :class="type.exists ? 'text-green-500' : 'text-red-500'"
+                  />
+                  <Link
+                    v-if="type.exists && type.id"
+                    :path="{
+                      name: 'integrations.remoteProductTypes.edit',
+                      params: { type: 'amazon', id: type.id },
+                      query: { integrationId: props.salesChannelId },
+                    }"
+                    class="hover:underline"
+                  >
+                    {{ type.name }}
+                  </Link>
+                  <span v-else>{{ type.name }}</span>
+                  <div
+                    v-if="!type.exists"
+                    class="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer"
+                    @click.stop="confirmCreateType(type)"
+                  >
+                    <Icon name="plus" class="w-3 text-gray-600" />
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <Button class="btn btn-sm btn-primary" :disabled="saving" @click="saveSelection">
+                {{ t('shared.button.save') }}
+              </Button>
+              <Button class="btn btn-sm btn-outline-dark" :disabled="saving" @click="cancelSelection">
                 {{ t('shared.button.cancel') }}
               </Button>
-            </template>
-            <Button
-              v-else
-              class="btn btn-sm btn-outline-primary"
-              @click.stop="selectNode(node)"
-            >
-              {{ t('shared.button.select') }}
+            </div>
+          </div>
+
+          <div v-if="productBrowseNodeId" class="flex gap-2">
+            <Button class="btn btn-sm btn-outline-danger" :disabled="saving" @click="removeSelection">
+              {{ t('shared.button.delete') }}
             </Button>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
-

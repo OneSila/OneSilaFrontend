@@ -26,6 +26,28 @@ export const salesChannelsQuery = gql`
   }
 `;
 
+export const salesChannelsLimitsQuery = gql`
+  query SalesChannelsLimits($first: Int, $filter: SalesChannelFilter) {
+    salesChannels(first: $first, filters: $filter) {
+      edges {
+        node {
+          id
+          minNameLength
+          minDescriptionLength
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getSalesChannelQuery = gql`
   query getSalesChannel($id: GlobalID!) {
     salesChannel(id: $id) {
@@ -54,6 +76,8 @@ export const getMagentoChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      minNameLength
+      minDescriptionLength
       hostApiUsername
       hostApiKey
       authenticationMethod
@@ -106,6 +130,8 @@ export const getShopifyChannelQuery = gql`
       apiKey
       apiSecret
       accessToken
+      minNameLength
+      minDescriptionLength
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -154,6 +180,8 @@ export const getWoocommerceChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      minNameLength
+      minDescriptionLength
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -391,6 +419,8 @@ export const getEbayChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      minNameLength
+      minDescriptionLength
       firstImportComplete
       isImporting
       accessToken
@@ -419,6 +449,8 @@ export const getSheinChannelQuery = gql`
       syncPrices
       importOrders
       startingStock
+      minNameLength
+      minDescriptionLength
       firstImportComplete
       isImporting
       openKeyId
@@ -609,6 +641,7 @@ export const salesChannelViewAssignsQuery = gql`
           remoteUrl
           remoteProductPercentage
           integrationType
+          createdAt
           product {
             id
             name

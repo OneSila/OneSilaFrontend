@@ -13,6 +13,7 @@ import VariationsContentBulkEdit from "./containers/variations-content-bulk-edit
 import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
 import VariationsGeneralBulkEdit from "./containers/variations-general-bulk-edit/VariationsGeneralBulkEdit.vue";
+import VariationsAmazonBulkEdit from "./containers/variations-amazon-bulk-edit/VariationsAmazonBulkEdit.vue";
 import VariationsSheinBulkEdit from "./containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
 import VariationsEbayBulkEdit from "./containers/variations-ebay-bulk-edit/VariationsEbayBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
@@ -25,13 +26,14 @@ const { t } = useI18n();
 const auth = injectAuth();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editShein' | 'editEbay' | 'editGeneral';
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editAmazon' | 'editShein' | 'editEbay' | 'editGeneral';
 const mode = ref<Mode>('list');
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
 const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
 const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
 const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(null);
 const generalEditRef = ref<InstanceType<typeof VariationsGeneralBulkEdit> | null>(null);
+const amazonEditRef = ref<InstanceType<typeof VariationsAmazonBulkEdit> | null>(null);
 const sheinEditRef = ref<InstanceType<typeof VariationsSheinBulkEdit> | null>(null);
 const ebayEditRef = ref<InstanceType<typeof VariationsEbayBulkEdit> | null>(null);
 
@@ -47,6 +49,9 @@ const getUnsavedChangesForMode = (currentMode: Mode) => {
   }
   if (currentMode === 'editImages') {
     return imageEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editAmazon') {
+    return amazonEditRef.value?.hasUnsavedChanges ?? false;
   }
   if (currentMode === 'editShein') {
     return sheinEditRef.value?.hasUnsavedChanges ?? false;
@@ -66,11 +71,13 @@ const hasUnsavedChanges = computed(
     (contentEditRef.value?.hasUnsavedChanges ?? false) ||
     (priceEditRef.value?.hasUnsavedChanges ?? false) ||
     (imageEditRef.value?.hasUnsavedChanges ?? false) ||
+    (amazonEditRef.value?.hasUnsavedChanges ?? false) ||
     (sheinEditRef.value?.hasUnsavedChanges ?? false) ||
     (ebayEditRef.value?.hasUnsavedChanges ?? false) ||
     (generalEditRef.value?.hasUnsavedChanges ?? false)
 );
 
+const hasAmazonIntegration = computed(() => Boolean(auth.user.company?.hasAmazonIntegration));
 const hasSheinIntegration = computed(() => Boolean(auth.user.company?.hasSheinIntegration));
 const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayIntegration));
 
@@ -83,6 +90,10 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
     { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
   ];
+
+  if (hasAmazonIntegration.value) {
+    items.push({ key: 'editAmazon', label: t('products.products.variations.tabs.amazon'), icon: 'store' });
+  }
 
   if (hasEbayIntegration.value) {
     items.push({ key: 'editEbay', label: t('products.products.variations.tabs.ebay'), icon: 'store' });
@@ -211,6 +222,9 @@ defineExpose({ hasUnsavedChanges });
           </template>
           <template v-else-if="mode === 'editImages'">
             <VariationsImagesBulkEdit ref="imageEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editAmazon'">
+            <VariationsAmazonBulkEdit ref="amazonEditRef" :product="product" />
           </template>
           <template v-else-if="mode === 'editEbay'">
             <VariationsEbayBulkEdit ref="ebayEditRef" :product="product" />

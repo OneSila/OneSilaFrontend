@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 
-import {computed, ref, watch} from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Card } from '../../../../shared/components/atoms/card';
 import { Icon } from '../../../../shared/components/atoms/icon';
 import { Image } from "../../../../shared/components/atoms/image";
 import { Link } from "../../../../shared/components/atoms/link";
 import { Button } from "../../../../shared/components/atoms/button";
+import { Selector } from "../../../../shared/components/atoms/selector";
 import { FilterManager } from "../../../../shared/components/molecules/filter-manager";
 import { Pagination } from "../../../../shared/components/molecules/pagination";
 import { SearchInput } from "../../../../shared/components/molecules/search-input";
 import { defaultSearchConfigVals } from "../../../../shared/components/organisms/general-search/searchConfig";
-import {useI18n} from "vue-i18n";
+import { useI18n } from "vue-i18n";
 import ActionsDropdown from "./ActionsDropdown.vue";
-import { formatDate, getFileName, getFileSize, getId, getPath, TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO} from "../media";
-import {VideoListingPreview} from "../../videos/videos-list/containers/video-listing-preview";
+import { formatDate, getFileName, getFileSize, getId, getPath, IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK, TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO } from "../media";
+import { VideoListingPreview } from "../../videos/videos-list/containers/video-listing-preview";
 import Swal from "sweetalert2";
 import { SweetAlertOptions } from 'sweetalert2';
 import apolloClient from "../../../../../apollo-client";
@@ -64,6 +65,7 @@ const updateSelectAll = (value: boolean, items: any[]) => {
 
 const limit = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
 const localSearch = ref('');
+const localImageType = ref<string | null>(null);
 const firstLocal = ref(limit);
 const lastLocal = ref<number | null>(null);
 const beforeLocal = ref<string | null>(null);
@@ -102,18 +104,18 @@ watch(localSearch, () => {
   afterLocal.value = null;
 });
 
-const localVariables = computed(() => ({
-  filter: {
-    ...(localSearch.value ? { search: localSearch.value } : {}),
-    ...(props.ids && props.ids.length > 0 ? { NOT: { id: { inList: props.ids } } } : {})
-  },
-  order: {},
-  first: firstLocal.value,
-  last: lastLocal.value,
-  before: beforeLocal.value,
-  after: afterLocal.value
-}));
+watch(localImageType, () => {
+  firstLocal.value = limit;
+  lastLocal.value = null;
+  beforeLocal.value = null;
+  afterLocal.value = null;
+});
 
+const imageTypeOptions = [
+  { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
+  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
+  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR }
+];
 
 const refetchIfNecessary = (query, data, force = false) => {
   if (force || props.refetchNeeded) {
@@ -193,7 +195,22 @@ const deleteAll = async (query) => {
     </div>
 
     <div v-if="assignImages" class="px-4 mb-2">
-      <SearchInput v-model="localSearch" :updateRoute="false" />
+      <div class="flex flex-wrap items-end gap-3">
+        <div class="min-w-[220px] flex-1">
+          <SearchInput v-model="localSearch" :updateRoute="false" />
+        </div>
+        <div class="min-w-[200px] self-center">
+          <Selector
+            v-model="localImageType"
+            class="h-11"
+            :options="imageTypeOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('media.images.placeholders.imageType')"
+            :removable="true"
+          />
+        </div>
+      </div>
     </div>
 
     <hr />
@@ -202,9 +219,21 @@ const deleteAll = async (query) => {
       <FilterManager :searchConfig="searchConfig">
         <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
           <ApolloQuery :query="listQuery" fetch-policy="cache-and-network"
-                       :variables="assignImages ? localVariables : {
+                       :variables="assignImages ? {
                          filter: {
-                           ...filterVariables,
+                           ...(filterVariables || {}),
+                           ...(localSearch ? { search: localSearch } : {}),
+                           ...(localImageType ? { imageType: { exact: localImageType } } : {}),
+                           ...(ids && ids.length > 0 ? { NOT: { id: { inList: ids } } } : {})
+                         },
+                         order: orderVariables,
+                         first: firstLocal,
+                         last: lastLocal,
+                         before: beforeLocal,
+                         after: afterLocal
+                       } : {
+                         filter: {
+                           ...(filterVariables || {}),
                            ...(ids && ids.length > 0 ? { NOT: { id: { inList: ids } } } : {})
                          },
                          order: orderVariables,
