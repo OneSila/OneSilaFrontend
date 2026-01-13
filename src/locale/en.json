@@ -1276,6 +1276,7 @@
           "content": "Content",
           "images": "Images",
           "general": "General",
+          "amazon": "Amazon",
           "ebay": "eBay",
           "shein": "Shein"
         },
@@ -1371,6 +1372,27 @@
             "unsupported": "Preview unavailable",
             "untitledProduct": "Unnamed product"
           }
+        },
+        "amazon": {
+          "selectors": {
+            "marketplace": "Marketplace"
+          },
+          "labels": {
+            "browseNodeId": "ID: {id}"
+          },
+          "actions": {
+            "setExternalProductId": "Set external product ID",
+            "setBrowseNode": "Set browse node"
+          },
+          "variationTheme": {
+            "notConfigurable": "Not configurable",
+            "missingRule": "No product rule available.",
+            "missingProductType": "No mapped Amazon product type for this rule."
+          },
+          "warnings": {
+            "multipleRules": "Variation theme is hidden because configurable products use different product rules."
+          },
+          "noViews": "No Amazon marketplaces available."
         },
         "shein": {
           "columns": {

@@ -369,6 +369,7 @@
           "list": "Liste",
           "images": "Images",
           "general": "",
+          "amazon": "",
           "ebay": "",
           "shein": ""
         },
@@ -379,6 +380,27 @@
           "labels": {
             "noImage": "Aucune image"
           }
+        },
+        "amazon": {
+          "selectors": {
+            "marketplace": ""
+          },
+          "labels": {
+            "browseNodeId": ""
+          },
+          "actions": {
+            "setExternalProductId": "",
+            "setBrowseNode": ""
+          },
+          "variationTheme": {
+            "notConfigurable": "",
+            "missingRule": "",
+            "missingProductType": ""
+          },
+          "warnings": {
+            "multipleRules": ""
+          },
+          "noViews": ""
         },
         "shein": {
           "columns": {

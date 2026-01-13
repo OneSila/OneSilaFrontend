@@ -894,6 +894,7 @@
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
           "general": "",
+          "amazon": "",
           "ebay": "",
           "shein": ""
         },
@@ -924,6 +925,27 @@
           "labels": {
             "noImage": "Geen afbeelding"
           }
+        },
+        "amazon": {
+          "selectors": {
+            "marketplace": ""
+          },
+          "labels": {
+            "browseNodeId": ""
+          },
+          "actions": {
+            "setExternalProductId": "",
+            "setBrowseNode": ""
+          },
+          "variationTheme": {
+            "notConfigurable": "",
+            "missingRule": "",
+            "missingProductType": ""
+          },
+          "warnings": {
+            "multipleRules": ""
+          },
+          "noViews": ""
         },
         "shein": {
           "columns": {

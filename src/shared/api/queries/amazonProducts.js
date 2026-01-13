@@ -79,6 +79,29 @@ export const amazonProductBrowseNodesQuery = gql`
   }
 `;
 
+export const amazonProductBrowseNodesBulkQuery = gql`
+  query AmazonProductBrowseNodesBulk($first: Int, $after: String, $filter: AmazonProductBrowseNodeFilter) {
+    amazonProductBrowseNodes(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          recommendedBrowseNodeId
+          product {
+            id
+          }
+          view {
+            id
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const amazonChildRemoteProductsQuery = gql`
   query AmazonChildRemoteProducts($remoteParentProductId: GlobalID!) {
     amazonProducts(

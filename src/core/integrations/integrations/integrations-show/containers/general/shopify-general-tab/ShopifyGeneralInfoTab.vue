@@ -38,6 +38,8 @@ interface EditShopifyForm {
   syncEanCodes: boolean;
   syncPrices: boolean;
   importOrders: boolean;
+  minNameLength: number | null;
+  minDescriptionLength: number | null;
   apiKey: string;
   apiSecret: string;
   accessToken?: string;
@@ -72,6 +74,8 @@ const normalizeShopifyFormData = (data: any): EditShopifyForm => {
   const { startingStock, ...rest } = data;
   return {
     ...rest,
+    minNameLength: data.minNameLength ?? null,
+    minDescriptionLength: data.minDescriptionLength ?? null,
     gptEnable: data.gptEnable ?? false,
     gptEnableCheckout: data.gptEnableCheckout ?? false,
     gptSellerName: data.gptSellerName ?? '',
@@ -308,6 +312,54 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
             <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
               {{ t(`integrations.salesChannel.helpText.${toggleField}`) }}
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-gray-200 grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.minNameLength') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                    :model-value="formData.minNameLength ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full md:w-24"
+                    @update:modelValue="(value) => { formData.minNameLength = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['minNameLength']">{{ fieldErrors['minNameLength'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.minNameLength') }}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.minDescriptionLength') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                    :model-value="formData.minDescriptionLength ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full md:w-24"
+                    @update:modelValue="(value) => { formData.minDescriptionLength = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['minDescriptionLength']">{{ fieldErrors['minDescriptionLength'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.minDescriptionLength') }}
             </div>
           </div>
         </div>

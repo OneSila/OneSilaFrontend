@@ -172,6 +172,26 @@ export const productsWithSheinQuery = gql`
   }
 `;
 
+export const productsWithAmazonQuery = gql`
+  query ProductsWithAmazon($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+          type
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const productsWithEbayQuery = gql`
   query ProductsWithEbay($first: Int, $after: String, $filter: ProductFilter) {
     products(first: $first, after: $after, filters: $filter) {
@@ -561,6 +581,29 @@ export const configurableVariationsWithSheinQuery = gql`
   }
 `;
 
+export const configurableVariationsWithAmazonQuery = gql`
+  query ConfigurableVariationsWithAmazon($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+            type
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const configurableVariationsWithEbayQuery = gql`
   query ConfigurableVariationsWithEbay($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
     configurableVariations(first: $first, after: $after, filters: $filter) {
@@ -594,6 +637,29 @@ export const bundleVariationsWithSheinQuery = gql`
             sku
             name
             active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsWithAmazonQuery = gql`
+  query BundleVariationsWithAmazon($first: Int, $after: String, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+            type
           }
         }
       }

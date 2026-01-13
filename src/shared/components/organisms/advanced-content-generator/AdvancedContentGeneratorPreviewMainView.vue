@@ -5,7 +5,10 @@ import { TextInput } from '../../atoms/input-text';
 import { TextHtmlEditor } from '../../atoms/input-text-html-editor';
 import { Button } from '../../atoms/button';
 import { Icon } from '../../atoms/icon';
-import { getContentFieldRules } from '../../../../core/products/products/product-show/containers/tabs/content/contentFieldRules';
+import {
+  ContentFieldLimitValue,
+  getContentFieldRules,
+} from '../../../../core/products/products/product-show/containers/tabs/content/contentFieldRules';
 
 type Status = 'pending' | 'approved' | 'rejected';
 
@@ -14,6 +17,8 @@ interface PreviewItem {
   integrationLabel: string;
   integrationType?: string | null;
   language: string;
+  minNameLength?: number | null;
+  minDescriptionLength?: number | null;
 }
 
 interface PreviewContent {
@@ -39,9 +44,31 @@ const { t } = useI18n();
 const currentItem = computed(() => props.items.find((item) => item.key === props.currentKey) || null);
 const currentContent = computed(() => (props.currentKey ? props.contentByKey[props.currentKey] : null));
 
-const fieldRules = computed(() =>
-  getContentFieldRules(currentItem.value?.integrationType || 'default'),
-);
+const applyMinOverride = (limit: ContentFieldLimitValue | undefined, minOverride?: number | null) => {
+  if (typeof minOverride !== 'number' || Number.isNaN(minOverride)) {
+    return limit;
+  }
+  if (typeof limit === 'number') {
+    return { min: minOverride, max: limit };
+  }
+  if (limit && typeof limit === 'object') {
+    return { ...limit, min: minOverride };
+  }
+  return { min: minOverride };
+};
+
+const fieldRules = computed(() => {
+  const rules = getContentFieldRules(currentItem.value?.integrationType || 'default');
+  const limits = rules.limits || {};
+  return {
+    ...rules,
+    limits: {
+      ...limits,
+      name: applyMinOverride(limits.name, currentItem.value?.minNameLength ?? null),
+      description: applyMinOverride(limits.description, currentItem.value?.minDescriptionLength ?? null),
+    },
+  };
+});
 
 const getLimitRange = (field: keyof PreviewContent) => {
   const limit = fieldRules.value.limits?.[field as any];

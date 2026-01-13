@@ -21,6 +21,8 @@ interface IntegrationChannel {
   hostname?: string | null;
   type?: string | null;
   active?: boolean | null;
+  minNameLength?: number | null;
+  minDescriptionLength?: number | null;
 }
 
 interface ProductSummary {

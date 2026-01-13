@@ -15,6 +15,9 @@ import {
 } from '../../../../../../../shared/api/mutations/products.js';
 import { processGraphQLErrors } from '../../../../../../../shared/utils';
 import { Toast } from '../../../../../../../shared/modules/toast';
+import { AiBulletPointsGenerator } from '../../../../../../../shared/components/organisms/ai-bullet-points-generator';
+import { AiContentTranslator } from '../../../../../../../shared/components/organisms/ai-content-translator';
+import { BULLET_POINT_SEPARATOR } from '../../../../../../../shared/utils/constants';
 
 const {t} = useI18n();
 
@@ -35,6 +38,7 @@ const bulletPoints = ref<any[]>([]);
 const activeBulletIndex = ref<number | null>(null);
 const initialBulletPoints = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
+const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
 const bulletPointLimit = computed(() => {
   if (typeof props.bulletPointLimit === 'number') return props.bulletPointLimit;
   return props.bulletPointLimit?.max;
@@ -57,6 +61,27 @@ const activeBulletLimitExceeded = computed(
     activeBulletCharacterCount.value > bulletPointLimit.value,
 );
 const activeBulletCounterClass = computed(() => (activeBulletLimitExceeded.value ? 'text-red-500' : 'text-gray-400'));
+
+const handleGeneratedBulletPoints = (list: any[]) => {
+  bulletPoints.value = list.map((bp, idx) => ({
+    id: null,
+    text: bp.text,
+    sortOrder: idx,
+  }));
+  activeBulletIndex.value = null;
+};
+
+const handleTranslatedBulletPoints = (text: string) => {
+  const points = text
+    ? text.split(BULLET_POINT_SEPARATOR).filter((p) => p.trim())
+    : [];
+  bulletPoints.value = points.map((bp, idx) => ({
+    id: null,
+    text: bp,
+    sortOrder: idx,
+  }));
+  activeBulletIndex.value = null;
+};
 
 const fetchPoints = async () => {
   if (!props.translationId) {
@@ -220,6 +245,24 @@ defineExpose({save, fetchPoints, hasChanges});
       </FlexCell>
       <FlexCell grow>
         <Flex gap="2">
+          <FlexCell>
+            <AiBulletPointsGenerator
+              :product-id="props.productId"
+              :language-code="props.languageCode"
+              @generated="handleGeneratedBulletPoints"
+            />
+          </FlexCell>
+          <FlexCell v-if="props.languageCode && props.languageCode !== defaultLanguage">
+            <AiContentTranslator
+              :product="{ id: props.productId }"
+              product-content-type="BULLET_POINTS"
+              to-translate=""
+              :from-language-code="defaultLanguage"
+              :to-language-code="props.languageCode"
+              :sales-channel-id="props.salesChannelId"
+              @translated="handleTranslatedBulletPoints"
+            />
+          </FlexCell>
         </Flex>
       </FlexCell>
                 <FlexCell v-if="showActiveBulletLimit">

@@ -14,3 +14,22 @@ export const amazonGtinExemptionsQuery = gql`
     }
   }
 `;
+
+export const amazonGtinExemptionsBulkQuery = gql`
+  query AmazonGtinExemptionsBulk($first: Int, $after: String, $filter: AmazonGtinExemptionFilter) {
+    amazonGtinExemptions(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          value
+          product { id }
+          view { id }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;

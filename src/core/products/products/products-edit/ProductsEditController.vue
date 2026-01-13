@@ -11,11 +11,12 @@ import VariationsContentBulkEdit from "../product-show/containers/tabs/variation
 import VariationsBulkEdit from "../product-show/containers/tabs/variations/containers/variations-bulk-edit/VariationsBulkEdit.vue";
 import VariationsPricesBulkEdit from "../product-show/containers/tabs/variations/containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "../product-show/containers/tabs/variations/containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
+import VariationsAmazonBulkEdit from "../product-show/containers/tabs/variations/containers/variations-amazon-bulk-edit/VariationsAmazonBulkEdit.vue";
 import VariationsSheinBulkEdit from "../product-show/containers/tabs/variations/containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
 import VariationsEbayBulkEdit from "../product-show/containers/tabs/variations/containers/variations-ebay-bulk-edit/VariationsEbayBulkEdit.vue";
 import { injectAuth } from "../../../../shared/modules/auth";
 
-type Mode = 'editGeneral' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editShein' | 'editEbay';
+type Mode = 'editGeneral' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editAmazon' | 'editShein' | 'editEbay';
 
 const { t } = useI18n();
 const auth = injectAuth();
@@ -23,6 +24,7 @@ const route = useRoute();
 const router = useRouter();
 const mode = ref<Mode>('editGeneral');
 
+const hasAmazonIntegration = computed(() => Boolean(auth.user.company?.hasAmazonIntegration));
 const hasSheinIntegration = computed(() => Boolean(auth.user.company?.hasSheinIntegration));
 const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayIntegration));
 
@@ -34,6 +36,10 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
     { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
   ];
+
+  if (hasAmazonIntegration.value) {
+    items.push({ key: 'editAmazon', label: t('products.products.variations.tabs.amazon'), icon: 'store' });
+  }
 
   if (hasEbayIntegration.value) {
     items.push({ key: 'editEbay', label: t('products.products.variations.tabs.ebay'), icon: 'store' });
@@ -131,6 +137,9 @@ const productIds = computed(() => {
             </template>
             <template v-else-if="mode === 'editImages'">
               <VariationsImagesBulkEdit :product-ids="productIds" />
+            </template>
+            <template v-else-if="mode === 'editAmazon'">
+              <VariationsAmazonBulkEdit :product-ids="productIds" />
             </template>
             <template v-else-if="mode === 'editEbay'">
               <VariationsEbayBulkEdit :product-ids="productIds" />
