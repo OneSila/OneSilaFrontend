@@ -768,6 +768,68 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "amazon": {
+      "actions": {
+        "bulkForceUpdate": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        },
+        "bulkSync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        },
+        "bulkFetchIssues": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        }
+      },
+      "actionsInfo": {
+        "title": "",
+        "subtitle": "",
+        "items": {
+          "import": {
+            "label": "",
+            "description": ""
+          },
+          "fullUpdate": {
+            "label": "",
+            "description": ""
+          },
+          "resync": {
+            "label": "",
+            "description": ""
+          },
+          "validate": {
+            "label": "",
+            "description": ""
+          },
+          "fetchIssues": {
+            "label": "",
+            "description": ""
+          }
+        }
+      }
+    },
+    "shein": {
+      "actions": {
+        "bulkUpdate": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        }
+      }
+    },
     "labels": {
       "fulfillmentPolicy": "Versandrichtlinie",
       "paymentPolicy": "Zahlungsrichtlinie",
@@ -792,6 +854,15 @@
     "salesChannel": {
       "labels": {
         "noFrontendUrl": ""
+      },
+      "actions": {
+        "bulkResync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "noneEligible": ""
+        }
       },
       "helpText": {
         "startingStock": "",

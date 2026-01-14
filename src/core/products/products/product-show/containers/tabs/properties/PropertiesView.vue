@@ -640,8 +640,8 @@ const handleValueUpdate = ({id, type, value, language}) => {
         </div>
       </FlexCell>
     </Flex>
-    <Flex v-if="product.type !== ProductType.Configurable" center gap="2" class="my-4 items-start">
-      <FlexCell grow>
+    <Flex v-if="product.type !== ProductType.Configurable" gap="2" class="my-4 items-start">
+      <FlexCell grow center>
         <PropertyFilters
             v-model:search-query="searchQuery"
             v-model:selected-property-types="selectedPropertyTypes"

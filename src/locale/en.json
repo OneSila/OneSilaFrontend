@@ -3169,6 +3169,13 @@
           "success": "Bulk create started.",
           "noneEligible": "No eligible assignments were found (only “Pending creation” works).",
           "error": "Bulk create failed."
+        },
+        "bulkUpdate": {
+          "title": "Bulk Update",
+          "description": "This will update the selected assignments.",
+          "confirmButtonText": "Start bulk update",
+          "success": "Bulk update started.",
+          "error": "Bulk update failed."
         }
       }
     },
@@ -3978,6 +3985,55 @@
     "amazon": {
       "installed": {
         "title": "Amazon Connected"
+      },
+      "actions": {
+        "bulkForceUpdate": {
+          "title": "Force Update",
+          "description": "This will force a full update for the selected assignments.",
+          "confirmButtonText": "Start force update",
+          "success": "Force update started.",
+          "error": "Force update failed."
+        },
+        "bulkSync": {
+          "title": "Sync",
+          "description": "This will sync the selected assignments.",
+          "confirmButtonText": "Start sync",
+          "success": "Sync started.",
+          "error": "Sync failed."
+        },
+        "bulkFetchIssues": {
+          "title": "Fetch Issues",
+          "description": "This will fetch the latest issues for the selected assignments.",
+          "confirmButtonText": "Fetch issues",
+          "success": "Issue fetch started.",
+          "error": "Issue fetch failed."
+        }
+      },
+      "actionsInfo": {
+        "title": "Amazon action guide",
+        "subtitle": "Use these actions to pull from Amazon or push updates from OneSila.",
+        "items": {
+          "import": {
+            "label": "Import",
+            "description": "Pulls product information from Amazon for this product and marketplace."
+          },
+          "fullUpdate": {
+            "label": "Full Update",
+            "description": "Pushes the latest OneSila data to Amazon. For configurables, it updates all variations too. Use after adding a variation or making large changes."
+          },
+          "resync": {
+            "label": "Resync",
+            "description": "Sends a partial update for this product only. Use for small price or attribute changes."
+          },
+          "validate": {
+            "label": "Validate",
+            "description": "Sends the create/full update request in validation-only mode to check Amazon requirements before creating."
+          },
+          "fetchIssues": {
+            "label": "Fetch Issues",
+            "description": "Refreshes issues reported by Amazon after validation. Useful when a listing is suppressed or blocked."
+          }
+        }
       }
     },
     "ebay": {
@@ -4031,6 +4087,15 @@
         "assignedToSalesChannelView": "Assigned To Store",
         "notAssignedToSalesChannelView": "Not Assigned To Store",
         "noFrontendUrl": "This integration doesn't provide a frontend URL"
+      },
+      "actions": {
+        "bulkResync": {
+          "title": "Bulk Resync",
+          "description": "This will resync the selected assignments.",
+          "confirmButtonText": "Start bulk resync",
+          "success": "Bulk resync started.",
+          "noneEligible": "No eligible assignments were found."
+        }
       },
       "ebay": {
         "installed": {

@@ -342,6 +342,14 @@ export const resyncSalesChannelViewAssignMutation = gql`
   }
 `;
 
+export const resyncSalesChannelViewAssignsMutation = gql`
+  mutation resyncSalesChannelViewAssigns($assigns: [SalesChannelViewAssignPartialInput!]!) {
+    resyncSalesChannelViewAssigns(assigns: $assigns) {
+      id
+    }
+  }
+`;
+
 export const refreshLatestAmazonIssuesMutation = gql`
   mutation refreshLatestAmazonIssues($data: SalesChannelViewAssignPartialInput!) {
     refreshAmazonLatestIssues(instance: $data) {
@@ -509,6 +517,32 @@ export const bulkCreateSheinProductFromAssignsMutation = gql`
     $assigns: [SalesChannelViewAssignPartialInput!]!
   ) {
     bulkCreateSheinProductFromAssigns(assigns: $assigns)
+  }
+`;
+
+export const bulkResyncAmazonProductFromAssignsMutation = gql`
+  mutation bulkResyncAmazonProductFromAssigns(
+    $assigns: [SalesChannelViewAssignPartialInput!]!
+    $forceFullUpdate: Boolean!
+  ) {
+    bulkResyncAmazonProductFromAssigns(assigns: $assigns, forceFullUpdate: $forceFullUpdate)
+  }
+`;
+
+export const bulkRefreshAmazonLatestIssuesFromAssignsMutation = gql`
+  mutation bulkRefreshAmazonLatestIssuesFromAssigns(
+    $assigns: [SalesChannelViewAssignPartialInput!]!
+  ) {
+    bulkRefreshAmazonLatestIssuesFromAssigns(assigns: $assigns)
+  }
+`;
+
+export const bulkUpdateSheinProductFromAssignsMutation = gql`
+  mutation bulkUpdateSheinProductFromAssigns(
+    $assigns: [SalesChannelViewAssignPartialInput!]!
+    $forceUpdate: Boolean!
+  ) {
+    bulkUpdateSheinProductFromAssigns(assigns: $assigns, forceUpdate: $forceUpdate)
   }
 `;
 
