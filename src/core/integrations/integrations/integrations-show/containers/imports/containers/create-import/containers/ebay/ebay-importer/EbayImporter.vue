@@ -6,6 +6,7 @@ import { Wizard } from "../../../../../../../../../../../shared/components/molec
 import { OptionSelector } from "../../../../../../../../../../../shared/components/molecules/option-selector";
 import { Icon } from "../../../../../../../../../../../shared/components/atoms/icon";
 import { TextInput } from "../../../../../../../../../../../shared/components/atoms/input-text";
+import { ImportSettingsStep } from "../../general/import-settings";
 import apolloClient from "../../../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../../../shared/modules/toast";
 import {
@@ -31,6 +32,11 @@ const step = ref(0);
 const finishLoading = ref(false);
 const currentFinishStep = ref<number | null>(null);
 const contentClass = ref("");
+const importSettings = ref({
+  updateOnly: false,
+  overrideOnly: false,
+  skipBrokenRecords: true,
+});
 
 const mappedLanguages = ref<RemoteLanguage[]>([]);
 const mappedCurrencies = ref<RemoteCurrency[]>([]);
@@ -50,6 +56,10 @@ const wizardSteps = computed(() => {
   const steps = [
     { title: t("integrations.imports.create.ebay.wizard.steps.type"), name: "selectType" },
   ];
+
+  if (importType.value === "products") {
+    steps.push({ title: t("integrations.imports.create.wizard.generalSettings.title"), name: "importSettings" });
+  }
 
   if (hasContentClassStep.value) {
     steps.push({
@@ -172,6 +182,9 @@ const createImport = async () => {
     salesChannel: { id: props.integrationId },
     type: importType.value,
     status: "pending",
+    updateOnly: importSettings.value.updateOnly,
+    overrideOnly: importSettings.value.overrideOnly,
+    skipBrokenRecords: importSettings.value.skipBrokenRecords,
   };
 
   if (normalizedContentClass) {
@@ -266,6 +279,9 @@ const handleFinish = async () => {
       @on-finish="handleFinish"
       @update-current-step="updateStep"
     >
+      <template #importSettings>
+        <ImportSettingsStep v-model="importSettings" />
+      </template>
       <template #selectType>
         <div class="flex flex-col gap-6">
           <OptionSelector v-model="importType" :choices="typeChoices">

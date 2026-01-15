@@ -1326,6 +1326,26 @@
         }
       },
       "create": {
+        "wizard": {
+          "generalSettings": {
+            "title": "",
+            "description": "",
+            "options": {
+              "updateOnly": {
+                "title": "",
+                "description": ""
+              },
+              "overrideOnly": {
+                "title": "",
+                "description": ""
+              },
+              "skipBrokenRecords": {
+                "title": "",
+                "description": ""
+              }
+            }
+          }
+        },
         "ebay": {
           "wizard": {
             "steps": {

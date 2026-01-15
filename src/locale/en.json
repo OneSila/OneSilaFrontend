@@ -4244,6 +4244,24 @@
         "success": "Create import process success",
         "title": "Create Import",
         "wizard": {
+          "generalSettings": {
+            "title": "Import behavior",
+            "description": "Choose how this import should handle existing products and errors. These settings apply to every product in the import.",
+            "options": {
+              "updateOnly": {
+                "title": "Update only",
+                "description": "Only update products that already exist in OneSila. New products from the sales channel are skipped and logged as missing, so every record must match an existing product."
+              },
+              "overrideOnly": {
+                "title": "OneSila is the source of truth",
+                "description": "Create products when missing, but never overwrite existing values in OneSila. Existing fields stay as-is; only empty fields get filled from the sales channel (e.g., OneSila has color red and the channel has color dark red + size L, result is color red + size L)."
+              },
+              "skipBrokenRecords": {
+                "title": "Skip broken records",
+                "description": "Continue importing even if a product fails. Failed items are saved with a reason. If disabled, the first failure stops the entire import. Recommended."
+              }
+            }
+          },
           "step1": {
             "title": "Languages & Currencies",
             "content": "Please map your remote languages and currencies to the local ones. All entries are required to continue.",

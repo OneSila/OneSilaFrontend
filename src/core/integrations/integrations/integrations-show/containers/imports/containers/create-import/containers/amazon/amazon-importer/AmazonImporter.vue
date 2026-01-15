@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import { Wizard } from "../../../../../../../../../../../shared/components/molecules/wizard";
 import { OptionSelector } from "../../../../../../../../../../../shared/components/molecules/option-selector";
 import { Icon } from "../../../../../../../../../../../shared/components/atoms/icon";
+import { ImportSettingsStep } from "../../general/import-settings";
 import apolloClient from "../../../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../../../shared/modules/toast";
 import { createAmazonImportProcessMutation } from "../../../../../../../../../../../shared/api/mutations/salesChannels";
@@ -18,6 +19,11 @@ const { t } = useI18n();
 const importType = ref("schema");
 const hasFinishedSchema = ref(false);
 const loading = ref(false);
+const importSettings = ref({
+  updateOnly: true,
+  overrideOnly: false,
+  skipBrokenRecords: true,
+});
 
 const typeChoices = computed(() => [
   { name: "schema" },
@@ -62,6 +68,9 @@ const createImport = async () => {
           salesChannel: { id: props.integrationId },
           type: importType.value,
           status: "pending",
+          updateOnly: importSettings.value.updateOnly,
+          overrideOnly: importSettings.value.overrideOnly,
+          skipBrokenRecords: importSettings.value.skipBrokenRecords,
         },
       },
     });
@@ -79,9 +88,17 @@ const createImport = async () => {
   }
 };
 
-const wizardSteps = [
-  { title: t("integrations.imports.create.title"), name: "selectType" },
-];
+const wizardSteps = computed(() => {
+  const steps = [
+    { title: t("integrations.imports.create.title"), name: "selectType" },
+  ];
+
+  if (importType.value === "products") {
+    steps.push({ title: t("integrations.imports.create.wizard.generalSettings.title"), name: "importSettings" });
+  }
+
+  return steps;
+});
 </script>
 
 <template>
@@ -124,6 +141,9 @@ const wizardSteps = [
           </template>
         </OptionSelector>
       </div>
+    </template>
+    <template #importSettings>
+      <ImportSettingsStep v-model="importSettings" />
     </template>
   </Wizard>
 </template>
