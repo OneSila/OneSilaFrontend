@@ -110,7 +110,7 @@ useEnterKeyboardListener(onSubmitPressed);
 <template>
 <Flex>
     <template v-if="isFormVisible">
-      <FlexCell>
+      <FlexCell grow>
         <CreateForm :product="product" :form="form" :variation-ids="variationIdsRef" />
       </FlexCell>
       <FlexCell>

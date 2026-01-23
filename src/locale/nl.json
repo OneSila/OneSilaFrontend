@@ -3077,7 +3077,8 @@
       "products": {
         "labels": {
           "store": "Winkel",
-          "excludeStores": "Winkels uitsluiten"
+          "excludeStores": "Winkels uitsluiten",
+          "hasSyncRequests": ""
         },
         "statuses": {
           "partiallyListed": "",

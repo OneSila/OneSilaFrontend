@@ -984,6 +984,11 @@
         "reauthorize": ""
       },
       "products": {
+        "labels": {
+          "store": "",
+          "excludeStores": "",
+          "hasSyncRequests": ""
+        },
         "statuses": {
           "partiallyListed": "",
           "pendingApproval": "",

@@ -98,6 +98,12 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
       ],
       removable: true,
     },
+    {
+      type: FieldType.Boolean,
+      name: 'hasSyncRequests',
+      label: t('integrations.show.products.labels.hasSyncRequests'),
+      strict: true,
+    },
   ],
   orders: [
     {

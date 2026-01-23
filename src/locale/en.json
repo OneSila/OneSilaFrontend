@@ -3613,7 +3613,8 @@
       "products": {
         "labels": {
           "store": "Store",
-          "excludeStores": "Exclude Stores"
+          "excludeStores": "Exclude Stores",
+          "hasSyncRequests": "Needs resync"
         },
         "statuses": {
           "partiallyListed": "Approved on main marketplace",
