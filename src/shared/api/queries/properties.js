@@ -211,6 +211,73 @@ export const getPropertySelectValueQuery = gql`
   }
 `;
 
+export const remotePropertiesQuery = gql`
+  query RemoteProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: RemotePropertyOrder
+    $filter: RemotePropertyFilter
+  ) {
+    remoteProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          remoteName
+          translatedRemoteName
+          marketplace {
+            id
+            name
+          }
+          allowsUnmappedValues
+          proxyId
+          salesChannel {
+            proxyId
+            type
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const remotePropertySelectValueMirrorsQuery = gql`
+  query RemotePropertySelectValueMirrors($propertySelectValue: String!) {
+    remotePropertySelectValueMirrors(propertySelectValue: $propertySelectValue) {
+      value
+      translatedValue
+      marketplace {
+        id
+        name
+      }
+      proxyId
+      remoteProperty {
+        remoteName
+        salesChannel {
+          proxyId
+          type
+        }
+      }
+    }
+  }
+`;
+
 // Product Property Queries
 export const productPropertiesQuery = gql`
 query ProductProperties($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertyOrder, $filter: ProductPropertyFilter) {

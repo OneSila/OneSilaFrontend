@@ -177,6 +177,18 @@ const matchComplexError = (message, t) => {
   );
   if (result) return result;
 
+  const maxLengthMatch = message.match(
+    /value too long for type character varying(?:\((\d+)\))?/i
+  );
+  if (maxLengthMatch) {
+    const max = maxLengthMatch[1];
+    return {
+      __all__: max
+        ? t('shared.validationErrors.tooLong', { max })
+        : t('shared.validationErrors.tooLongGeneric'),
+    };
+  }
+
   return null;
 };
 

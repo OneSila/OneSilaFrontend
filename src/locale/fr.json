@@ -43,6 +43,14 @@
       "yes": "Oui",
       "no": "Non"
     },
+    "sort": {
+      "newest": "",
+      "oldest": ""
+    },
+    "validationErrors": {
+      "tooLong": "",
+      "tooLongGeneric": ""
+    },
     "alert": {
       "noData": "La règle ne contient aucune propriété requise dans le configurateur, nous ne pouvons donc pas générer de variations."
     },
@@ -1605,6 +1613,32 @@
     "values": {
       "labels": {
         "usedInProducts": ""
+      },
+      "sort": {
+        "mostUsed": "",
+        "leastUsed": ""
+      },
+      "integrations": {
+        "title": "",
+        "labels": {
+          "value": "",
+          "translatedValue": "",
+          "marketplace": "",
+          "remoteProperty": ""
+        }
+      }
+    },
+    "integrations": {
+      "title": "",
+      "labels": {
+        "remoteName": "",
+        "translatedRemoteName": "",
+        "marketplace": "",
+        "allowsUnmappedValues": "",
+        "proxyId": ""
+      },
+      "actions": {
+        "openIntegration": ""
       }
     },
     "duplicateModal": {

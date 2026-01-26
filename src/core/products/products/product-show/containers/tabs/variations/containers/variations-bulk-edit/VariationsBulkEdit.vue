@@ -12,7 +12,7 @@ import { TextEditor } from "../../../../../../../../../shared/components/atoms/i
 import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
 import { DateInput } from "../../../../../../../../../shared/components/atoms/input-date";
 import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
-import { shortenText } from "../../../../../../../../../shared/utils";
+import { processGraphQLErrors, shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
@@ -434,7 +434,11 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         query: propertySelectValuesQuerySimpleSelector,
         dataKey: 'propertySelectValues',
         isEdge: true,
-        queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
+        queryVariables: {
+          filter: { property: { id: { exact: p.id } } },
+          order: { usageCount: 'DESC' },
+          first: 100
+        },
         multiple: p.type === PropertyTypes.MULTISELECT,
         removable: true,
         autocompleteIfOneResult: false,
@@ -799,38 +803,56 @@ const hasChanges = computed(
 
 const hasUnsavedChanges = hasChanges
 
+const displayGraphqlErrors = (error: unknown) => {
+  const validationErrors = processGraphQLErrors(error, t)
+  const messages = Object.values(validationErrors).filter(Boolean)
+  if (messages.length) {
+    messages.forEach((message) => {
+      Toast.error(String(message))
+    })
+    return
+  }
+  Toast.error(t('shared.alert.toast.unexpectedResult'))
+}
+
 const save = async () => {
   skipHistory.value = true
   const createdCount = toCreate.value.length
   const updatedCount = toUpdate.value.length
   const deletedCount = toDelete.value.length
-  if (createdCount) {
-    const { data } = await apolloClient.mutate({
-      mutation: bulkCreateProductPropertiesMutation,
-      variables: { data: toCreate.value },
-    })
-    const created = data?.bulkCreateProductProperties || []
-    created.forEach((pp: any) => {
-      const variation = variations.value.find(
-        (v: any) => v.variation.id === pp.product.id
-      )
-      if (!variation) return
-      if (!variation.propertyValues) variation.propertyValues = {}
-      if (!variation.propertyValues[pp.property.id])
-        variation.propertyValues[pp.property.id] = {}
-      variation.propertyValues[pp.property.id].id = pp.id
-    })
+  try {
+    if (createdCount) {
+      const { data } = await apolloClient.mutate({
+        mutation: bulkCreateProductPropertiesMutation,
+        variables: { data: toCreate.value },
+      })
+      const created = data?.bulkCreateProductProperties || []
+      created.forEach((pp: any) => {
+        const variation = variations.value.find(
+          (v: any) => v.variation.id === pp.product.id
+        )
+        if (!variation) return
+        if (!variation.propertyValues) variation.propertyValues = {}
+        if (!variation.propertyValues[pp.property.id])
+          variation.propertyValues[pp.property.id] = {}
+        variation.propertyValues[pp.property.id].id = pp.id
+      })
+    }
+    if (updatedCount)
+      await apolloClient.mutate({
+        mutation: bulkUpdateProductPropertiesMutation,
+        variables: { data: toUpdate.value },
+      })
+    if (deletedCount)
+      await apolloClient.mutate({
+        mutation: deleteProductPropertiesMutation,
+        variables: { data: toDelete.value },
+      })
+  } catch (error) {
+    displayGraphqlErrors(error)
+    skipHistory.value = false
+    return
   }
-  if (updatedCount)
-    await apolloClient.mutate({
-      mutation: bulkUpdateProductPropertiesMutation,
-      variables: { data: toUpdate.value },
-    })
-  if (deletedCount)
-    await apolloClient.mutate({
-      mutation: deleteProductPropertiesMutation,
-      variables: { data: toDelete.value },
-    })
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)

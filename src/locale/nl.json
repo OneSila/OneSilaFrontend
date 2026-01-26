@@ -212,7 +212,9 @@
   },
   "shared": {
     "validationErrors": {
-      "required": "Dit veld is verplicht."
+      "required": "Dit veld is verplicht.",
+      "tooLong": "",
+      "tooLongGeneric": ""
     },
     "alert": {
       "mutationAlert": {
@@ -337,6 +339,10 @@
       "code": "Code",
       "noIssues": "Geen problemen",
       "pendingCreation": ""
+    },
+    "sort": {
+      "newest": "",
+      "oldest": ""
     },
     "alert": {
       "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
@@ -2640,6 +2646,32 @@
         "confirm": "Samenvoegen",
         "success": "Waardes succesvol samengevoegd.",
         "error": "Samenvoegen mislukt."
+      },
+      "sort": {
+        "mostUsed": "",
+        "leastUsed": ""
+      },
+      "integrations": {
+        "title": "",
+        "labels": {
+          "value": "",
+          "translatedValue": "",
+          "marketplace": "",
+          "remoteProperty": ""
+        }
+      }
+    },
+    "integrations": {
+      "title": "",
+      "labels": {
+        "remoteName": "",
+        "translatedRemoteName": "",
+        "marketplace": "",
+        "allowsUnmappedValues": "",
+        "proxyId": ""
+      },
+      "actions": {
+        "openIntegration": ""
       }
     },
     "rule": {

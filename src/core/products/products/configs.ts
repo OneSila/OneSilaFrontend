@@ -361,12 +361,12 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
     },
     {
       name: 'createdAt',
-      label: t('shared.labels.createdAt'),
+      label: t('shared.sort.oldest'),
       type: OrderType.ASC
     },
     {
       name: 'createdAt',
-      label: t('shared.labels.createdAt'),
+      label: t('shared.sort.newest'),
       type: OrderType.DESC
     },
     {

@@ -11,6 +11,7 @@ import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {FieldType, flagMapping, PropertyTypes} from "../../../../shared/utils/constants";
 import ProductList from "./containers/products-list/ProductsList.vue"
 import ValuesList from "./containers/values-list/ValuesList.vue"
+import IntegrationsList from "./containers/integrations-list/IntegrationsList.vue"
 import {Loader} from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
 import {ShowField} from "../../../../shared/components/organisms/general-show/showConfig";
@@ -37,6 +38,7 @@ tabItems.value = [
     { name: 'products', label: t('products.title'), icon: 'box' },
     { name: 'configurators', label: t('properties.rule.title'), icon: 'cog' },
     { name: 'values', label: t('properties.values.title'), icon: 'sitemap' },
+    { name: 'integrations', label: t('properties.integrations.title'), icon: 'globe' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);
@@ -113,6 +115,9 @@ const onDataFetched = (data) => {
           </template>
           <template v-slot:values>
             <ValuesList v-if="showValues && !loading" :id="id" :add-grid="hasImage" />
+          </template>
+          <template v-slot:integrations>
+            <IntegrationsList v-if="!loading" :id="id" />
           </template>
         </Tabs>
       </Card>

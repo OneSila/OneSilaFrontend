@@ -454,7 +454,9 @@
   },
   "shared": {
     "validationErrors": {
-      "required": "This field is required."
+      "required": "This field is required.",
+      "tooLong": "Value is too long. Maximum {max} characters.",
+      "tooLongGeneric": "Value is too long."
     },
     "alert": {
       "mutationAlert": {
@@ -607,6 +609,10 @@
       "manual": "Manual",
       "generate": "Generate",
       "errors": "Errors"
+    },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -3056,6 +3062,32 @@
         "confirm": "Merge",
         "success": "Property values merged successfully.",
         "error": "Failed to merge property values."
+      },
+      "sort": {
+        "mostUsed": "Most used",
+        "leastUsed": "Least used"
+      },
+      "integrations": {
+        "title": "Integrations",
+        "labels": {
+          "value": "Value",
+          "translatedValue": "Translated value",
+          "marketplace": "Marketplace",
+          "remoteProperty": "Remote property"
+        }
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "labels": {
+        "remoteName": "Remote name",
+        "translatedRemoteName": "Translated remote name",
+        "marketplace": "Marketplace",
+        "allowsUnmappedValues": "Allows unmapped values",
+        "proxyId": "Proxy ID"
+      },
+      "actions": {
+        "openIntegration": "Open in integration"
       }
     },
     "rule": {
