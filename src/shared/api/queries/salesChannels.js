@@ -1324,6 +1324,7 @@ export const sheinPropertiesQuery = gql`
           name
           nameEn
           mappedLocally
+          type
           localInstance {
             id
             name

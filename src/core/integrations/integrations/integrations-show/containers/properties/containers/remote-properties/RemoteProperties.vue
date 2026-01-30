@@ -5,6 +5,7 @@ import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { GeneralListing } from "../../../../../../../../shared/components/organisms/general-listing";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
+import { Link } from "../../../../../../../../shared/components/atoms/link";
 import { Icon } from "../../../../../../../../shared/components/atoms/icon";
 import { Title } from "../../../../../../../../shared/components/atoms/title";
 import apolloClient from "../../../../../../../../../apollo-client";
@@ -13,6 +14,8 @@ import type { SearchConfig } from "../../../../../../../../shared/components/org
 import { buildFilterVariablesFromRouteQuery, buildNextQueryParamsFromRouteQuery } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 import { displayApolloError } from "../../../../../../../../shared/utils";
 import { Toast } from "../../../../../../../../shared/modules/toast";
+import { PropertyTypes } from "../../../../../../../../shared/utils/constants";
+import { IntegrationTypes } from "../../../../../integrations";
 
 type RouteBuilderContext = {
   id: string;
@@ -45,6 +48,37 @@ const route = useRoute();
 
 const canStartMapping = ref(false);
 const isAutoMapping = ref(false);
+const integrationType = computed(() => String(route.params.type || ''));
+
+const selectValuesFilterKey = computed(() => {
+  switch (integrationType.value) {
+    case IntegrationTypes.Amazon:
+      return 'amazonProperty';
+    case IntegrationTypes.Ebay:
+      return 'ebayProperty';
+    case IntegrationTypes.Shein:
+      return 'remoteProperty';
+    default:
+      return null;
+  }
+});
+
+const isSelectPropertyType = (type?: string) => {
+  return type === PropertyTypes.SELECT || type === PropertyTypes.MULTISELECT;
+};
+
+const canSeeValues = (item: any) => {
+  return Boolean(selectValuesFilterKey.value && item?.node?.id && isSelectPropertyType(item?.node?.type));
+};
+
+const buildSelectValuesRoute = (item: any): RouteLocationRaw => ({
+  name: 'integrations.integrations.show',
+  params: { type: integrationType.value, id: props.id },
+  query: {
+    tab: 'propertySelectValues',
+    [selectValuesFilterKey.value as string]: item?.node?.id,
+  },
+});
 
 const baseFilter = computed(() => {
   if (props.buildBaseFilter) {
@@ -221,7 +255,18 @@ const autoMapPerfectMatches = async () => {
           :query-key="listingQueryKey"
           :fixed-filter-variables="mergedFixedFilterVariables"
           @pull-data="emit('pull-data')"
-        />
+        >
+          <template #additionalButtons="{ item }">
+            <Link
+              v-if="canSeeValues(item)"
+              :path="buildSelectValuesRoute(item)"
+            >
+              <Button class="text-indigo-600 hover:text-indigo-900">
+                {{ t('integrations.show.properties.actions.seeValues') }}
+              </Button>
+            </Link>
+          </template>
+        </GeneralListing>
       </div>
     </template>
   </GeneralTemplate>

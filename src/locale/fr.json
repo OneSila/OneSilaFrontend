@@ -999,6 +999,9 @@
       },
       "properties": {
         "title": "",
+        "actions": {
+          "seeValues": ""
+        },
         "labels": {
           "code": "",
           "type": "",

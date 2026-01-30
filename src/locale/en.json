@@ -3682,6 +3682,9 @@
       },
       "properties": {
         "title": "Amazon Properties",
+        "actions": {
+          "seeValues": "See values"
+        },
         "labels": {
           "code": "Code",
           "type": "Type",
