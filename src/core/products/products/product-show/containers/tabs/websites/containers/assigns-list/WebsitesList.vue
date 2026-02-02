@@ -46,12 +46,11 @@ const modalColsed = () => {
 }
 
 const getAssignStatus = (item: any) => {
-
   if (item.status === 'PENDING_CREATION') {
     if (item.remoteProduct?.status === 'FAILED') {
       return 'FAILED';
     }
-    return 'PENDING_CREATION';
+    return item.remoteProduct?.status || 'PENDING_CREATION';
   }
   if (item.remoteProduct?.status) {
     return item.remoteProduct.status;

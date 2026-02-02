@@ -27,7 +27,7 @@ const getAssignStatus = (node: any) => {
     if (node.remoteProduct?.status === 'FAILED') {
       return 'FAILED';
     }
-    return 'PENDING_CREATION';
+    return node.remoteProduct?.status || 'PENDING_CREATION';
   }
   if (node.remoteProduct?.status) {
     return node.remoteProduct.status;
