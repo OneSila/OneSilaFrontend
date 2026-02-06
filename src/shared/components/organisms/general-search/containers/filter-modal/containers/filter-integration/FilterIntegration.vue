@@ -97,6 +97,7 @@ watchEffect(() => {
     <Label>{{ filter.label }}</Label>
     <p v-if="filter.helpText" class="mt-1 text-xs text-gray-500">{{ filter.helpText }}</p>
     <IntegrationsSelector
+      class="h-9"
       :model-value="Array.isArray(selectedValue) ? selectedValue.map(toUiValue) : toUiValue(selectedValue)"
       :integrations="integrations"
       :placeholder="filter.placeholder"
