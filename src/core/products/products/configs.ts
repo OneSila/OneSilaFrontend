@@ -406,7 +406,7 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       filterKey: 'inspector',
       label: t('products.products.filters.labels.missingInformation'),
       helpText: t('products.products.filters.help.missingInformation'),
-      addLookup: true,
+      addLookup: false,
     },
     {
       type: FieldType.Choice,
