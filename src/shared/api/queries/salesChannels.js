@@ -26,6 +26,28 @@ export const salesChannelsQuery = gql`
   }
 `;
 
+export const salesChannelsQuerySelector = gql`
+  query SalesChannels($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelOrder, $filter: SalesChannelFilter) {
+    salesChannels(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          hostname
+          type
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const salesChannelsLimitsQuery = gql`
   query SalesChannelsLimits($first: Int, $filter: SalesChannelFilter) {
     salesChannels(first: $first, filters: $filter) {

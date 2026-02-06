@@ -63,6 +63,41 @@ export const amazonBrowseNodesQuery = gql`
   }
 `;
 
+export const amazonBrowseNodesQuerySelector = gql`
+  query AmazonBrowseNodes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: AmazonBrowseNodeOrder
+    $filter: AmazonBrowseNodeFilter
+  ) {
+    amazonBrowseNodes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const amazonProductBrowseNodesQuery = gql`
   query AmazonProductBrowseNodes($filter: AmazonProductBrowseNodeFilter) {
     amazonProductBrowseNodes(filters: $filter) {

@@ -47,6 +47,26 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
   }
 `;
 
+export const productsSkusQuerySelector = gql`
+query ProductsSkus($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
+    products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          sku
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const productsQuery = gql`  
 query Products($first: Int, $last: Int, $after: String, $before: String, $order: ProductOrder, $filter: ProductFilter) {
     products(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {

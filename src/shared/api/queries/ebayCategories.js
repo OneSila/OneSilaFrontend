@@ -42,3 +42,39 @@ export const ebayCategoriesQuery = gql`
     }
   }
 `;
+
+export const ebayCategoriesQuerySelector = gql`
+  query EbayCategories(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: EbayCategoryOrder
+    $filter: EbayCategoryFilter
+  ) {
+    ebayCategories(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+          fullName
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;

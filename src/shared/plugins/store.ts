@@ -3,6 +3,7 @@ import apolloClient from '../../../apollo-client';
 import appSetting from './../../app-setting';
 import { interfaceLanguagesQuery } from '../api/queries/languages.js';
 import { DEFAULT_LANGUAGE } from '../utils/constants'
+import type { SearchConfig } from '../components/organisms/general-search/searchConfig';
 
 interface Language {
   name: string;
@@ -29,7 +30,7 @@ export const useAppStore = defineStore('app', {
         isShowMainLoader: true,
         isSearchLoading: false,
         semidark: false,
-        searchConfig: null,
+        searchConfig: null as SearchConfig | null,
         dashboardCardModalTrigger: 0,
     }),
 

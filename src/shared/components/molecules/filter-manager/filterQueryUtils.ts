@@ -7,6 +7,7 @@ type FiltersWithLookupEntry = {
   lookup: string | null;
   isNot: boolean;
   filterKey?: string | null;
+  fixedFilter?: Record<string, any> | null;
 };
 
 const isPlainObject = (value: unknown): value is Record<string, any> => {
@@ -25,6 +26,19 @@ const mergeDeep = (target: Record<string, any>, source: Record<string, any>) => 
 
     target[key] = sourceValue;
   });
+};
+
+const mergeFixedFilter = (
+  builtValue: Record<string, any>,
+  filterKey: string,
+  fixedFilter: Record<string, any> | null,
+) => {
+  if (!fixedFilter || !builtValue[filterKey] || !isPlainObject(builtValue[filterKey])) {
+    return builtValue;
+  }
+
+  mergeDeep(builtValue[filterKey], fixedFilter);
+  return builtValue;
 };
 
 const buildNestedFilterObject = (
@@ -68,6 +82,7 @@ const buildFiltersWithLookup = (searchConfig: SearchConfig) => {
       lookup,
       isNot: filter.isNot || false,
       filterKey: filter.filterKey || null,
+      fixedFilter: filter.fixedFilter || null,
     };
   });
 
@@ -100,15 +115,17 @@ export const buildFilterVariablesFromRouteQuery = (
       return;
     }
 
-    const { lookup, keys, isNot, filterKey } = filtersWithLookup[filter.name] || {
+    const { lookup, keys, isNot, filterKey, fixedFilter } = filtersWithLookup[filter.name] || {
       lookup: null,
       keys: [],
       isNot: false,
       filterKey: null,
+      fixedFilter: null,
     };
     const [rawFilterKey, ...namePath] = filter.name.split('__');
     const resolvedFilterKey = filterKey || rawFilterKey;
-    const builtValue = buildNestedFilterObject(resolvedFilterKey, namePath, keys, lookup, value);
+    let builtValue = buildNestedFilterObject(resolvedFilterKey, namePath, keys, lookup, value);
+    builtValue = mergeFixedFilter(builtValue, resolvedFilterKey, fixedFilter || null);
 
     if (isNot) {
       if (!updatedVariables['NOT']) {

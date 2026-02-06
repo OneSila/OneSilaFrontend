@@ -22,15 +22,16 @@ watch(checked, (newValue) => {
 </script>
 
 <template>
-  <Flex class="filter-item">
-    <FlexCell>
-      <Label class="mr-2">{{ filter.label }}</Label>
-    </FlexCell>
-    <FlexCell>
-      <Toggle v-model="checked" :disabled="filter.disabled"/>
-    </FlexCell>
-
-  </Flex>
+  <div class="filter-item space-y-1">
+    <Flex class="items-center">
+      <FlexCell>
+        <Label class="mr-2">{{ filter.label }}</Label>
+      </FlexCell>
+      <FlexCell>
+        <Toggle v-model="checked" :disabled="filter.disabled"/>
+      </FlexCell>
+    </Flex>
+    <p v-if="filter.helpText" class="text-xs text-gray-500">{{ filter.helpText }}</p>
+  </div>
 </template>
-
 

@@ -24,7 +24,9 @@ watch(
   (newValue) => {
     if (typeof newValue === 'string' && newValue.includes(',')) {
       const [start, end] = newValue.split(',');
-      dateRange.value = [start ? new Date(start) : null, end ? new Date(end) : null];
+      const startValue = start && start !== 'None' ? new Date(start) : null;
+      const endValue = end && end !== 'None' ? new Date(end) : null;
+      dateRange.value = [startValue, endValue];
     } else if (newValue === undefined) {
       dateRange.value = null;
     }
@@ -33,19 +35,27 @@ watch(
 );
 
 watchEffect(() => {
-  if (Array.isArray(dateRange.value) && dateRange.value[0] && dateRange.value[1]) {
-    const start = formatDate(dateRange.value[0]);
-    const end = formatDate(dateRange.value[1]);
-    emit('update-value', `${start},${end}`);
-  } else {
+  if (!Array.isArray(dateRange.value)) {
     emit('update-value', null);
+    return;
   }
+
+  const [startValue, endValue] = dateRange.value;
+  if (!startValue && !endValue) {
+    emit('update-value', null);
+    return;
+  }
+
+  const start = startValue ? formatDate(startValue) : 'None';
+  const end = endValue ? formatDate(endValue) : 'None';
+  emit('update-value', `${start},${end}`);
 });
 </script>
 
 <template>
   <div class="filter-item">
     <Label>{{ filter.label }}</Label>
+    <p v-if="filter.helpText" class="mt-1 text-xs text-gray-500">{{ filter.helpText }}</p>
     <RangeDateInput v-model:model-value="dateRange" class="mb-2" />
   </div>
 </template>

@@ -51,6 +51,7 @@ props.searchConfig.filters?.forEach((filter: SearchFilter) => {
     lookup,
     isNot: filter.isNot || false,
     filterKey: filter.filterKey || null,
+    fixedFilter: filter.fixedFilter || null,
   };
 });
 
@@ -82,6 +83,19 @@ const mergeDeep = (target: Record<string, any>, source: Record<string, any>) => 
 
     target[key] = sourceValue;
   });
+};
+
+const mergeFixedFilter = (
+  builtValue: Record<string, any>,
+  filterKey: string,
+  fixedFilter: Record<string, any> | null,
+) => {
+  if (!fixedFilter || !builtValue[filterKey] || !isPlainObject(builtValue[filterKey])) {
+    return builtValue;
+  }
+
+  mergeDeep(builtValue[filterKey], fixedFilter);
+  return builtValue;
 };
 
 const buildNestedFilterObject = (
@@ -127,11 +141,12 @@ watch(() => route.query, (newQuery) => {
       }
 
       if (key in filtersWithLookup.value) {
-        const { lookup, keys, isNot, filterKey } = filtersWithLookup.value[key];
+        const { lookup, keys, isNot, filterKey, fixedFilter } = filtersWithLookup.value[key];
 
         const [rawFilterKey, ...namePath] = key.split('__');
         const resolvedFilterKey = filterKey || rawFilterKey;
-        const builtValue = buildNestedFilterObject(resolvedFilterKey, namePath, keys, lookup, value);
+        let builtValue = buildNestedFilterObject(resolvedFilterKey, namePath, keys, lookup, value);
+        builtValue = mergeFixedFilter(builtValue, resolvedFilterKey, fixedFilter);
 
         if (isNot) {
           if (!updatedVariables['NOT']) {

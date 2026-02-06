@@ -37,6 +37,7 @@ const disabled = ref(props.filter.disabled === true);
 <template>
   <div class="filter-item">
   <Label>{{ filter.label }}</Label>
+  <p v-if="filter.helpText" class="mt-1 text-xs text-gray-500">{{ filter.helpText }}</p>
   <div>
     <Selector
       v-model="selectedValue"
