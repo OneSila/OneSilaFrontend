@@ -30,6 +30,7 @@ watchEffect(() => {
 <template>
   <div class="filter-item">
     <Label>{{ filter.label }}</Label>
+    <p v-if="filter.helpText" class="mt-1 text-xs text-gray-500">{{ filter.helpText }}</p>
     <div>
       <TextInput
         v-model="inputValue"

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 
 
-import {Wizard} from "../../../../../../../../../../../shared/components/molecules/wizard";
-import {DefaultRuleStep} from "../default-rule";
-import {AttributesStep} from "../attributes";
-import {LanguagesAndCurrenciesStep} from "../../general/languages-and-currencies";
-import {computed, onMounted, ref} from "vue";
+import { Wizard } from "../../../../../../../../../../../shared/components/molecules/wizard";
+import { DefaultRuleStep } from "../default-rule";
+import { AttributesStep } from "../attributes";
+import { LanguagesAndCurrenciesStep } from "../../general/languages-and-currencies";
+import { ImportSettingsStep } from "../../general/import-settings";
+import { computed, onMounted, ref } from "vue";
 import {
   EanCodeAttribute,
   IntegrationData,
@@ -25,9 +26,9 @@ import {
   createRemoteEanCodeAttributeMutation,
   createSalesChannelImportMutation, updateMagentoSalesChannelMutation, updateSalesChannelImportMutation
 } from "../../../../../../../../../../../shared/api/mutations/salesChannels";
-import {Toast} from "../../../../../../../../../../../shared/modules/toast";
-import {useI18n} from "vue-i18n";
-import {useRoute, useRouter} from "vue-router";
+import { Toast } from "../../../../../../../../../../../shared/modules/toast";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps<{ integrationId: string; type: string }>();
 
@@ -61,22 +62,27 @@ const mappedData = ref<{
   languages: [],
   currencies: [],
 });
+const importSettings = ref({
+  updateOnly: false,
+  overrideOnly: false,
+  skipBrokenRecords: true,
+});
 
 const allowNextStep = computed(() => {
-  if (step.value === 0) {
+  if (step.value === 1) {
     const langsValid = mappedData.value.languages.length > 0 &&
       mappedData.value.languages.every((l) => l.localInstance?.id);
     const currenciesValid = mappedData.value.currencies.length > 0 &&
       mappedData.value.currencies.every((c) => c.localInstance?.id);
     return langsValid && currenciesValid;
   }
-  if (step.value === 1) {
+  if (step.value === 2) {
     const hasSelectedAttributes = selectedAttributes.value.length > 0;
     const eanCodeValid = !integrationData.value?.syncEanCodes || eanCodeAttribute.value !== null;
     return hasSelectedAttributes && eanCodeValid;
   }
 
-  if (step.value === 2) {
+  if (step.value === 3) {
   return selectedAttributeSetId.value !== null;
 }
 
@@ -89,6 +95,7 @@ const updateMappedData = (data) => {
 };
 
 const wizardSteps = [
+  { title: t("integrations.imports.create.wizard.generalSettings.title"), name: "importSettings" },
   { title: t('integrations.imports.create.wizard.step1.title'), name: 'generalStep' },
   { title: t('integrations.imports.create.wizard.step2.title'), name: 'attributesStep' },
   { title: t('integrations.imports.create.wizard.step3.title'), name: 'defaultRuleStep' },
@@ -206,6 +213,9 @@ const createImport = async () => {
       variables: {
         data: {
           salesChannel: { id: salesChannelId.value },
+          updateOnly: importSettings.value.updateOnly,
+          overrideOnly: importSettings.value.overrideOnly,
+          skipBrokenRecords: importSettings.value.skipBrokenRecords,
         },
       },
     });
@@ -392,6 +402,9 @@ const handleFinish = async () => {
     </div>
 
     <Wizard :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
+        <template #importSettings>
+          <ImportSettingsStep v-model="importSettings" />
+        </template>
         <template #generalStep>
           <LanguagesAndCurrenciesStep v-if="salesChannelId" :sales-channel-id="salesChannelId" @update:mappedData="updateMappedData" />
         </template>

@@ -163,6 +163,7 @@ import {
   faFolder,
   faFolderPlus,
   faBookOpen,
+  faBroom
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -325,6 +326,7 @@ library.add(faRobot as IconDefinition);
 library.add(faFolder as IconDefinition);
 library.add(faFolderPlus as IconDefinition);
 library.add(faBookOpen as IconDefinition);
+library.add(faBroom as IconDefinition);
 
 
 export default {

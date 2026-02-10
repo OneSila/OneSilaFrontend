@@ -1,6 +1,6 @@
 import { CreateOnTheFly, FormConfig, FormField, FormType } from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, getPropertyTypeOptions, PropertyTypes} from '../../../shared/utils/constants';
-import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
+import { OrderType, SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import { ListingConfig } from "../../../shared/components/organisms/general-listing/listingConfig";
 import {getPropertyQuery, propertiesQuery} from "../../../shared/api/queries/properties.js";
 import {
@@ -214,7 +214,18 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
         addLookup: true
       },
     ],
-  orders: []
+  orders: [
+    {
+      name: 'createdAt',
+      label: t('shared.sort.newest'),
+      type: OrderType.DESC
+    },
+    {
+      name: 'createdAt',
+      label: t('shared.sort.oldest'),
+      type: OrderType.ASC
+    },
+  ]
 });
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({

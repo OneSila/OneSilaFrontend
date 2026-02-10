@@ -193,18 +193,18 @@ const getIconColor = (requireType: string) => {
 </script>
 
 <template>
-  <Flex gap="2" wrap class="w-full items-start space-y-2">
+  <Flex gap="2" wrap class="w-full items-start">
     <FlexCell grow>
       <div class="relative w-full">
         <TextInput
           v-model="localSearch"
           :placeholder="t('products.products.properties.searchPlaceholder')"
-          class="w-full pl-9 mt-2"
+          class="w-full pl-9"
         />
         <Icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
       </div>
     </FlexCell>
-    <FlexCell>
+    <FlexCell center>
       <Selector
         v-model="localSelectedTypes"
         :options="propertyTypeOptions"
@@ -215,7 +215,7 @@ const getIconColor = (requireType: string) => {
         valueBy="code"
       />
     </FlexCell>
-    <FlexCell v-if="salesChannelOptions.length > 1">
+    <FlexCell v-if="salesChannelOptions.length > 1" center>
       <Selector
         :model-value="internalSelectedSalesChannelId"
         @update:modelValue="updateSelectedSalesChannelId"
@@ -228,7 +228,7 @@ const getIconColor = (requireType: string) => {
         :is-loading="isFetchingSalesChannels"
       />
     </FlexCell>
-    <FlexCell>
+    <FlexCell center>
       <Flex gap="2">
         <button
           v-for="type in requireTypes"
@@ -242,7 +242,7 @@ const getIconColor = (requireType: string) => {
         </button>
       </Flex>
     </FlexCell>
-    <FlexCell v-if="props.showCompletionFilter">
+    <FlexCell v-if="props.showCompletionFilter" center>
       <div class="flex items-center gap-2 text-sm text-gray-700 mt-1">
         <Toggle v-model="localHideFullyCompleted" />
         <span>{{ t('products.products.variations.bulkEdit.filters.hideFullyCompleted') }}</span>

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import RemotePropertyEdit from "../../remote-properties/components/RemotePropertyEdit.vue";
 import { amazonPropertyEditFormConfigConstructor } from "../configs";
-import { FieldType } from "../../../../../../../../../shared/utils/constants";
+import { FieldType, PropertyTypes } from "../../../../../../../../../shared/utils/constants";
 import { propertiesQuerySelector } from "../../../../../../../../../shared/api/queries/properties.js";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
@@ -36,6 +36,7 @@ const remoteRuleId = computed(() =>
 );
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
+const propertyType = ref<string | null>(null);
 
 const breadcrumbsLinks = computed(() => [
   { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
@@ -52,6 +53,21 @@ const breadcrumbsLinks = computed(() => [
 
 const recommendations = ref<{ id: string; name: string }[]>([]);
 const loadingRecommendations = ref(false);
+
+const isSelectPropertyType = (type?: string | null) => {
+  return type === PropertyTypes.SELECT || type === PropertyTypes.MULTISELECT;
+};
+
+const canSeeValues = computed(() => isSelectPropertyType(propertyType.value));
+
+const selectValuesRoute = computed(() => ({
+  name: 'integrations.integrations.show',
+  params: { type: type.value, id: integrationId },
+  query: {
+    tab: 'propertySelectValues',
+    amazonProperty: amazonPropertyId.value,
+  },
+}));
 
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   const queryNext = async (filter: Record<string, any>) => {
@@ -150,10 +166,12 @@ onMounted(async () => {
 });
 
 const handleSetData = (data: any) => {
-  const propertyType = data?.amazonProperty?.type;
-  if (!formConfig.value || !propertyType) {
+  const nextPropertyType = data?.amazonProperty?.type;
+  if (!formConfig.value || !nextPropertyType) {
     return;
   }
+
+  propertyType.value = nextPropertyType;
 
   const field = {
     type: FieldType.Query,
@@ -163,7 +181,7 @@ const handleSetData = (data: any) => {
     labelBy: 'name',
     valueBy: 'id',
     query: propertiesQuerySelector,
-    queryVariables: { filter: { type: { exact: propertyType } } },
+    queryVariables: { filter: { type: { exact: nextPropertyType } } },
     dataKey: 'properties',
     isEdge: true,
     multiple: false,
@@ -233,20 +251,27 @@ const selectRecommendation = (id: string) => {
     @form-updated="handleFormUpdate"
   >
     <template #additional-button>
-      <Link
-        :path="{ name: 'properties.properties.create', query: {
-          remoteRuleId,
-          name: formData.name,
-          type: formData.type,
-          remoteWizard: isWizard ? '1' : '0',
-          ...(amazonCreateValue ? { amazonCreateValue } : {}),
-          ...extractPrefixedQueryParams(route.query, 'next__'),
-        } }"
-      >
-        <Button type="button" class="btn btn-info">
-          {{ t('integrations.show.generateProperty') }}
-        </Button>
-      </Link>
+      <div class="flex items-center gap-2">
+        <Link
+          :path="{ name: 'properties.properties.create', query: {
+            remoteRuleId,
+            name: formData.name,
+            type: formData.type,
+            remoteWizard: isWizard ? '1' : '0',
+            ...(amazonCreateValue ? { amazonCreateValue } : {}),
+            ...extractPrefixedQueryParams(route.query, 'next__'),
+          } }"
+        >
+          <Button type="button" class="btn btn-info">
+            {{ t('integrations.show.generateProperty') }}
+          </Button>
+        </Link>
+        <Link v-if="canSeeValues" :path="selectValuesRoute">
+          <Button type="button" class="btn btn-secondary">
+            {{ t('integrations.show.properties.actions.seeValues') }}
+          </Button>
+        </Link>
+      </div>
     </template>
     <template #additional-fields>
       <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">

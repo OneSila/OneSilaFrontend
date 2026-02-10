@@ -12,7 +12,7 @@ import { TextEditor } from "../../../../../../../../../shared/components/atoms/i
 import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
 import { DateInput } from "../../../../../../../../../shared/components/atoms/input-date";
 import DateTimeInput from "../../../../../../../../../shared/components/atoms/input-date-time/DateTimeInput.vue";
-import { shortenText } from "../../../../../../../../../shared/utils";
+import { processGraphQLErrors, shortenText } from "../../../../../../../../../shared/utils";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
@@ -31,6 +31,7 @@ import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutatio
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { format } from 'date-fns'
 import {selectValueOnTheFlyConfig} from "../../../../../../../../properties/property-select-values/configs";
+import { AiContentTranslator } from "../../../../../../../../../shared/components/organisms/ai-content-translator";
 
 interface PropertyInfo {
   id: string
@@ -47,6 +48,7 @@ const props = withDefaults(
 const { t } = useI18n()
 
 const language = ref<string | null>(null)
+const defaultLanguageCode = ref<string | null>(null)
 
 const searchQuery = ref('')
 const filters = ref<Record<string, boolean>>({
@@ -432,7 +434,11 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         query: propertySelectValuesQuerySimpleSelector,
         dataKey: 'propertySelectValues',
         isEdge: true,
-        queryVariables: { filter: { property: { id: { exact: p.id } } }, first: 100 },
+        queryVariables: {
+          filter: { property: { id: { exact: p.id } } },
+          order: { usageCount: 'DESC' },
+          first: 100
+        },
         multiple: p.type === PropertyTypes.MULTISELECT,
         removable: true,
         autocompleteIfOneResult: false,
@@ -579,7 +585,8 @@ const fetchDefaultLanguage = async () => {
       query: translationLanguagesQuery,
       fetchPolicy: 'cache-first',
     })
-  language.value = data?.translationLanguages?.defaultLanguage?.code || null
+  defaultLanguageCode.value = data?.translationLanguages?.defaultLanguage?.code || null
+  language.value = defaultLanguageCode.value
 }
 
 onMounted(async () => {
@@ -796,38 +803,56 @@ const hasChanges = computed(
 
 const hasUnsavedChanges = hasChanges
 
+const displayGraphqlErrors = (error: unknown) => {
+  const validationErrors = processGraphQLErrors(error, t)
+  const messages = Object.values(validationErrors).filter(Boolean)
+  if (messages.length) {
+    messages.forEach((message) => {
+      Toast.error(String(message))
+    })
+    return
+  }
+  Toast.error(t('shared.alert.toast.unexpectedResult'))
+}
+
 const save = async () => {
   skipHistory.value = true
   const createdCount = toCreate.value.length
   const updatedCount = toUpdate.value.length
   const deletedCount = toDelete.value.length
-  if (createdCount) {
-    const { data } = await apolloClient.mutate({
-      mutation: bulkCreateProductPropertiesMutation,
-      variables: { data: toCreate.value },
-    })
-    const created = data?.bulkCreateProductProperties || []
-    created.forEach((pp: any) => {
-      const variation = variations.value.find(
-        (v: any) => v.variation.id === pp.product.id
-      )
-      if (!variation) return
-      if (!variation.propertyValues) variation.propertyValues = {}
-      if (!variation.propertyValues[pp.property.id])
-        variation.propertyValues[pp.property.id] = {}
-      variation.propertyValues[pp.property.id].id = pp.id
-    })
+  try {
+    if (createdCount) {
+      const { data } = await apolloClient.mutate({
+        mutation: bulkCreateProductPropertiesMutation,
+        variables: { data: toCreate.value },
+      })
+      const created = data?.bulkCreateProductProperties || []
+      created.forEach((pp: any) => {
+        const variation = variations.value.find(
+          (v: any) => v.variation.id === pp.product.id
+        )
+        if (!variation) return
+        if (!variation.propertyValues) variation.propertyValues = {}
+        if (!variation.propertyValues[pp.property.id])
+          variation.propertyValues[pp.property.id] = {}
+        variation.propertyValues[pp.property.id].id = pp.id
+      })
+    }
+    if (updatedCount)
+      await apolloClient.mutate({
+        mutation: bulkUpdateProductPropertiesMutation,
+        variables: { data: toUpdate.value },
+      })
+    if (deletedCount)
+      await apolloClient.mutate({
+        mutation: deleteProductPropertiesMutation,
+        variables: { data: toDelete.value },
+      })
+  } catch (error) {
+    displayGraphqlErrors(error)
+    skipHistory.value = false
+    return
   }
-  if (updatedCount)
-    await apolloClient.mutate({
-      mutation: bulkUpdateProductPropertiesMutation,
-      variables: { data: toUpdate.value },
-    })
-  if (deletedCount)
-    await apolloClient.mutate({
-      mutation: deleteProductPropertiesMutation,
-      variables: { data: toDelete.value },
-    })
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
@@ -870,11 +895,26 @@ const showDescriptionModal = ref(false)
 const selectedIndex = ref<number | null>(null)
 const selectedColKey = ref('')
 const modalValue = ref('')
+const sourceText = ref('')
+
+const activeVariationId = computed(() => {
+  if (selectedIndex.value === null) return null
+  return variations.value[selectedIndex.value]?.variation?.id ?? null
+})
+
+const showTranslator = computed(() => {
+  const type = getPropertyType(selectedColKey.value)
+  if (![PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(type || '')) return false
+  if (!language.value || !defaultLanguageCode.value) return false
+  if (language.value === defaultLanguageCode.value) return false
+  return modalValue.value === ''
+})
 
 const resetModalState = () => {
   selectedIndex.value = null
   selectedColKey.value = ''
   modalValue.value = ''
+  sourceText.value = ''
 }
 
 const openTextModal = (index: number, key: string) => {
@@ -882,6 +922,7 @@ const openTextModal = (index: number, key: string) => {
   selectedColKey.value = key
   const propertyValue = variations.value[index]?.propertyValues?.[key]
   modalValue.value = propertyValue?.translation?.valueText ?? ''
+  sourceText.value = ''
   showTextModal.value = true
 }
 
@@ -890,6 +931,7 @@ const openDescriptionModal = (index: number, key: string) => {
   selectedColKey.value = key
   const propertyValue = variations.value[index]?.propertyValues?.[key]
   modalValue.value = propertyValue?.translation?.valueDescription ?? ''
+  sourceText.value = ''
   showDescriptionModal.value = true
 }
 
@@ -933,6 +975,42 @@ const saveModal = () => {
     item.propertyValues[key].translation.valueDescription = modalValue.value
   }
   cancelModal()
+}
+
+const fetchSourceText = async () => {
+  if (!defaultLanguageCode.value) return ''
+  if (selectedIndex.value === null) return ''
+  const propertyValue = variations.value[selectedIndex.value]?.propertyValues?.[selectedColKey.value]
+  const productPropertyId = propertyValue?.id
+  if (!productPropertyId) return ''
+  const { data } = await apolloClient.query({
+    query: productPropertyTextTranslationsQuery,
+    variables: {
+      filter: {
+        productProperty: { id: { exact: productPropertyId } },
+        language: { exact: defaultLanguageCode.value },
+      },
+    },
+    fetchPolicy: 'network-only',
+  })
+  const node = data?.productPropertyTextTranslations?.edges?.[0]?.node
+  const type = getPropertyType(selectedColKey.value)
+  if (!node || !type) return ''
+  return type === PropertyTypes.TEXT ? node.valueText || '' : node.valueDescription || ''
+}
+
+const prepareTranslation = async () => {
+  const text = await fetchSourceText()
+  if (!text) {
+    Toast.error(t('products.translation.messages.noSourceText'))
+    return false
+  }
+  sourceText.value = text
+  return true
+}
+
+const handleTranslated = (text: string) => {
+  modalValue.value = text
 }
 
 const ensureProp = (index: number, key: string) => {
@@ -1270,7 +1348,17 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
           {{ t('products.products.bulkEditModal.textTitle') }}
         </h3>
         <TextInput class="w-full" v-model="modalValue" />
-        <div class="flex justify-end gap-4 mt-4">
+        <div class="flex flex-wrap items-center justify-end gap-4 mt-4">
+          <AiContentTranslator
+            v-if="showTranslator"
+            :product="activeVariationId ? { id: activeVariationId } : undefined"
+            :to-translate="sourceText"
+            :from-language-code="defaultLanguageCode || ''"
+            :to-language-code="language || ''"
+            :before-start="prepareTranslation"
+            :small="false"
+            @translated="handleTranslated"
+          />
           <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
           <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
         </div>
@@ -1282,7 +1370,17 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
           {{ t('products.products.bulkEditModal.descriptionTitle') }}
         </h3>
         <TextEditor class="h-64" v-model="modalValue" />
-        <div class="flex justify-end gap-4 mt-4">
+        <div class="flex flex-wrap items-center justify-end gap-4 mt-4">
+          <AiContentTranslator
+            v-if="showTranslator"
+            :product="activeVariationId ? { id: activeVariationId } : undefined"
+            :to-translate="sourceText"
+            :from-language-code="defaultLanguageCode || ''"
+            :to-language-code="language || ''"
+            :before-start="prepareTranslation"
+            :small="false"
+            @translated="handleTranslated"
+          />
           <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
           <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
         </div>

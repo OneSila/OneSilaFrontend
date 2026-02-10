@@ -247,6 +247,20 @@ const getLabel = (option: any): string | null => {
   return null;
 };
 
+const MAX_SELECTED_LABEL_LENGTH = 86;
+
+const truncateLabel = (label: string | null | undefined, max = MAX_SELECTED_LABEL_LENGTH) => {
+  if (!label) return '';
+  if (label.length <= max) return label;
+  const trimmed = label.slice(0, Math.max(0, max - 3));
+  return `${trimmed}...`;
+};
+
+const getTruncatedLabel = (option: any) => {
+  const label = getLabel(option);
+  return label ? truncateLabel(label) : null;
+};
+
 
 </script>
 
@@ -280,8 +294,8 @@ const getLabel = (option: any): string | null => {
   <span
     class="inline-flex items-center rounded-full bg-gray-100 text-sm text-gray-800 px-3 py-1 mr-1 mb-1 border border-gray-400 transition-colors duration-200 hover:bg-gray-200 cursor-pointer"
   >
-    <span v-if="getLabel(option) != null">
-      {{ getLabel(option) }}
+    <span v-if="getLabel(option) != null" :title="getLabel(option) || undefined">
+      {{ getTruncatedLabel(option) }}
     </span>
     <span v-else class="text-gray-400 italic flex items-center gap-1">
       <Icon name="spinner" class="animate-spin" />
@@ -304,6 +318,11 @@ const getLabel = (option: any): string | null => {
     <span class="text-gray-400 italic flex items-center gap-1">
       <Icon name="spinner" class="animate-spin" />
       {{ t('shared.labels.loading') }}
+    </span>
+  </template>
+  <template v-else #selected-option>
+    <span v-if="getLabel(modelValue) != null" :title="getLabel(modelValue) || undefined">
+      {{ getTruncatedLabel(modelValue) }}
     </span>
   </template>
 

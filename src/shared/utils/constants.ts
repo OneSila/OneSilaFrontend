@@ -17,6 +17,7 @@ export enum FieldType {
   RangeDate = "RangeDate",
   Slider = "Slider",
   Checkbox = "Checkbox",
+  Integration = "Integration",
   Hidden = "Hidden",
   ProxyChoice = "ProxyChoice",
   Image = "Image",

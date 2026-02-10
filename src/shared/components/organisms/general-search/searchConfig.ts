@@ -10,9 +10,11 @@ export interface BaseFilter {
   type: FieldType;
   name: string;
   label: string;
+  helpText?: string;
   default?: any;
   disabled?: boolean | null;
   filterKey?: string;
+  fixedFilter?: Record<string, any>;
   addLookup?: boolean;
   lookupKeys?: string[];
   lookupType?: string | null;
@@ -70,6 +72,22 @@ export interface QueryFilter extends BaseFilter {
   removable?: boolean;
   limit?: number;
   minSearchLength?: number;
+  skipFilterParam?: boolean;
+}
+
+export interface IntegrationFilter extends BaseFilter {
+  type: FieldType.Integration;
+  query: string;
+  dataKey: string;
+  queryVariables?: Record<string, any>;
+  placeholder?: string;
+  multiple?: boolean;
+  filterable?: boolean;
+  removable?: boolean;
+  addDefault?: boolean;
+  excludeIds?: string[];
+  isEdge?: boolean;
+  skipFilterParam?: boolean;
 }
 
 
@@ -83,6 +101,9 @@ export interface DateRangeFilter extends BaseFilter {
 
 export interface SliderFilter extends BaseFilter {
   type: FieldType.Slider;
+  min?: number;
+  max?: number;
+  step?: number;
 }
 
 export interface CheckboxFilter extends BaseFilter {
@@ -97,15 +118,22 @@ export interface OrderCriteria {
   type: OrderType;
 }
 
-export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | DateFilter | DateRangeFilter | SliderFilter | CheckboxFilter;
+export type SearchFilter = BooleanFilter | ValueFilter | ChoiceFilter | QueryFilter | IntegrationFilter | DateFilter | DateRangeFilter | SliderFilter | CheckboxFilter;
 
 export interface SearchConfig {
   search: boolean;
   cols?: number;
   orderKey?: string;
   filters?: SearchFilter[];
+  filterSections?: FilterSection[];
   orders?: OrderCriteria[];
   limitPerPage?: number;
+}
+
+export interface FilterSection {
+  title: string;
+  helpText?: string;
+  filters: string[];
 }
 
 

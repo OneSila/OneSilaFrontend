@@ -149,6 +149,18 @@ const isValidEan13 = (ean: string): boolean => {
   return calculatedCheck === checkDigit;
 };
 
+const displayGraphqlErrors = (error: unknown) => {
+  const validationErrors = processGraphQLErrors(error, t);
+  errors.value = validationErrors;
+  const messages = Object.values(validationErrors).filter(Boolean);
+  if (messages.length) {
+    messages.forEach((message) => {
+      Toast.error(String(message));
+    });
+    return;
+  }
+  Toast.error(t('shared.alert.toast.unexpectedResult'));
+};
 
 const handleSave = async () => {
   errors.value = {};
@@ -181,7 +193,7 @@ const handleSave = async () => {
       await handleCreate();
     }
   } catch (err) {
-    errors.value = processGraphQLErrors(err, t);
+    displayGraphqlErrors(err);
   }
 };
 
@@ -216,9 +228,9 @@ defineExpose({ hasUnsavedChanges });
 
                 <!-- Error Message -->
                 <FlexCell>
-                  <div v-if="errors.eanCode" class="text-danger text-small blink-animation ml-1 mb-1">
+                  <div v-if="errors.__all__ || errors.eanCode" class="text-danger text-small blink-animation ml-1 mb-1">
                     <Icon size="sm" name="exclamation-circle" />
-                    <span class="ml-1">{{ errors.eanCode }}</span>
+                    <span class="ml-1">{{ errors.__all__ || errors.eanCode }}</span>
                   </div>
                 </FlexCell>
 

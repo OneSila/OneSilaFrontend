@@ -454,7 +454,9 @@
   },
   "shared": {
     "validationErrors": {
-      "required": "This field is required."
+      "required": "This field is required.",
+      "tooLong": "Value is too long. Maximum {max} characters.",
+      "tooLongGeneric": "Value is too long."
     },
     "alert": {
       "mutationAlert": {
@@ -607,6 +609,10 @@
       "manual": "Manual",
       "generate": "Generate",
       "errors": "Errors"
+    },
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest"
     },
     "validations": {
       "quantity": "Please enter a valid quantity"
@@ -1733,6 +1739,158 @@
         "vatRate": "Add a vat rate",
         "productionTime": "Enter time in seconds",
         "salesChannelView": "Add Store"
+      },
+      "filters": {
+        "sections": {
+          "general": {
+            "title": "General",
+            "help": "Core identifiers, pricing, and lifecycle filters."
+          },
+          "contentQuality": {
+            "title": "Content Quality",
+            "help": "Focus on inspector status and missing information."
+          },
+          "integrations": {
+            "title": "Integrations",
+            "help": "Store assignment, marketplace presence, and channel issues."
+          },
+          "properties": {
+            "title": "Properties",
+            "help": "Filter by attribute values and assignments."
+          },
+          "content": {
+            "title": "Content",
+            "help": "Content field availability per sales channel."
+          },
+          "media": {
+            "title": "Media",
+            "help": "Media availability per sales channel."
+          }
+        },
+        "labels": {
+          "sku": "SKU",
+          "vatRate": "VAT Rate",
+          "type": "Type",
+          "excludeType": "Exclude Type",
+          "active": "Active",
+          "backorder": "Backorder",
+          "hasEanCodes": "Has Ean Codes",
+          "usedInMultipleConfigurables": "Used In Multiple Configurables",
+          "isMultipleParent": "Is Multiple Parent",
+          "hasAliasProducts": "Has Alias Products",
+          "aliasParentProduct": "Alias Parent Product",
+          "variationOfProduct": "Variation Of Product",
+          "skus": "Skus",
+          "excludeSkus": "Exclude Skus",
+          "hasPrices": "Has Prices",
+          "missingPrices": "Missing Prices",
+          "createdDateRange": "Created Date Range",
+          "updatedDateRange": "Updated Date Range",
+          "priceList": "Price List",
+          "missingPriceList": "Missing Price List",
+          "missingRequiredInformation": "Missing Required Information",
+          "missingInformation": "Missing Information",
+          "inspectorError": "Product Inspector Error",
+          "excludeInspectorError": "Exclude Inspector Error",
+          "assignedToStore": "Assigned To Store",
+          "notAssignedToStore": "Not Assigned To Store",
+          "presentOnStore": "Present On Channel",
+          "notPresentOnStore": "Not Present On Channel",
+          "amazonBrowseNode": "Amazon Browser Node",
+          "excludeAmazonBrowseNode": "Exclude Amazon Browser Node",
+          "ebayProductCategory": "Ebay Product Category",
+          "excludeEbayProductCategory": "Exclude Ebay Product Category",
+          "sheinProductCategory": "Shein Product Category",
+          "excludeSheinProductCategory": "Exclude Shein Product Category",
+          "hasAmazonIssues": "Has Amazon Issues",
+          "hasSheinIssues": "Has Shein Issues",
+          "attributeValue": "Attribute Value",
+          "excludeAttributeValue": "Exclude Attribute Value",
+          "hasAttribute": "Has Attribute",
+          "missingAttribute": "Missing Attribute",
+          "hasTitleInSalesChannel": "Has Title In Sales Channel In Language",
+          "missingTitleInSalesChannel": "Missing Title In Sales Channel In Language",
+          "hasSubtitleInSalesChannel": "Has SubTitle In Sales Channel In Language",
+          "missingSubtitleInSalesChannel": "Missing SubTitle In Sales Channel In Language",
+          "hasDescriptionInSalesChannel": "Has Description In Sales Channel In Language",
+          "missingDescriptionInSalesChannel": "Missing Description In Sales Channel In Language",
+          "hasShortDescriptionInSalesChannel": "Has Short Description In Sales Channel In Language",
+          "missingShortDescriptionInSalesChannel": "Missing Short Description In Sales Channel In Language",
+          "hasUrlKeyInSalesChannel": "Has Url Key In Sales Channel In Language",
+          "missingUrlKeyInSalesChannel": "Missing Url Key In Sales Channel In Language",
+          "hasBulletPointsInSalesChannel": "Has Bullet Points In Sales Channel In Language",
+          "missingBulletPointsInSalesChannel": "Missing Bullet Points In Sales Channel In Language",
+          "language": "Language",
+          "hasImagesInSalesChannel": "Has Images In Sales Channel",
+          "missingImagesInSalesChannel": "Missing Images In Sales Channel",
+          "hasDocumentsInSalesChannel": "Has Documents In Sales Channel",
+          "missingDocumentsInSalesChannel": "Missing Documents In Sales Channel",
+          "hasVideosInSalesChannel": "Has Videos In Sales Channel",
+          "missingVideosInSalesChannel": "Missing Videos In Sales Channel"
+        },
+        "placeholders": {
+          "sku": "Enter SKU",
+          "hasEanCodes": "Enter value",
+          "hasAliasProducts": "Enter value",
+          "aliasParentProduct": "Select alias parent product",
+          "variationOfProduct": "Select variation product",
+          "skus": "Select SKUs",
+          "excludeSkus": "Select SKUs to exclude",
+          "hasPrices": "Enter value",
+          "missingPrices": "Enter value",
+          "priceList": "Enter value",
+          "missingPriceList": "Enter value",
+          "missingInformation": "Enter value",
+          "presentOnStore": "Enter value",
+          "notPresentOnStore": "Enter value",
+          "amazonBrowseNode": "Enter browse node",
+          "excludeAmazonBrowseNode": "Enter browse node",
+          "ebayProductCategory": "Enter category",
+          "excludeEbayProductCategory": "Enter category",
+          "sheinProductCategory": "Enter category",
+          "excludeSheinProductCategory": "Enter category",
+          "hasAmazonIssues": "Enter value",
+          "hasSheinIssues": "Enter value",
+          "hasAttribute": "Enter value",
+          "missingAttribute": "Enter value",
+          "hasTitleInSalesChannel": "Select content view",
+          "missingTitleInSalesChannel": "Select content view",
+          "hasSubtitleInSalesChannel": "Select content view",
+          "missingSubtitleInSalesChannel": "Select content view",
+          "hasDescriptionInSalesChannel": "Select content view",
+          "missingDescriptionInSalesChannel": "Select content view",
+          "hasShortDescriptionInSalesChannel": "Select content view",
+          "missingShortDescriptionInSalesChannel": "Select content view",
+          "hasUrlKeyInSalesChannel": "Select content view",
+          "missingUrlKeyInSalesChannel": "Select content view",
+          "hasBulletPointsInSalesChannel": "Select content view",
+          "missingBulletPointsInSalesChannel": "Select content view",
+          "language": "Any (default)",
+          "hasImagesInSalesChannel": "Enter value",
+          "missingImagesInSalesChannel": "Enter value",
+          "hasDocumentsInSalesChannel": "Enter value",
+          "missingDocumentsInSalesChannel": "Enter value",
+          "hasVideosInSalesChannel": "Enter value",
+          "missingVideosInSalesChannel": "Enter value"
+        },
+        "help": {
+          "skus": "",
+          "excludeSkus": "",
+          "missingRequiredInformation": "Missing required fields tracked by the inspector.",
+          "missingInformation": "Missing any information (required or optional).",
+          "assignedToStore": "Assigned in OneSila to a store view.",
+          "notAssignedToStore": "Not assigned in OneSila to a store view.",
+          "amazonBrowseNode": "Prefer remote IDs when selecting browse nodes (names can repeat).",
+          "excludeAmazonBrowseNode": "Prefer remote IDs when excluding browse nodes (names can repeat).",
+          "ebayProductCategory": "Prefer remote IDs when selecting categories (names can repeat).",
+          "excludeEbayProductCategory": "Prefer remote IDs when excluding categories (names can repeat).",
+          "sheinProductCategory": "Prefer remote IDs when selecting categories (names can repeat).",
+          "excludeSheinProductCategory": "Prefer remote IDs when excluding categories (names can repeat).",
+          "presentOnStore": "Listing exists on the sales channel, including variations.",
+          "notPresentOnStore": "Variations included.",
+          "hasAttribute": "Product has the attribute assigned (any value).",
+          "missingAttribute": "Product is missing the attribute assignment."
+        }
       },
       "create": {
         "title": "Create Product",
@@ -3056,6 +3214,32 @@
         "confirm": "Merge",
         "success": "Property values merged successfully.",
         "error": "Failed to merge property values."
+      },
+      "sort": {
+        "mostUsed": "Most used",
+        "leastUsed": "Least used"
+      },
+      "integrations": {
+        "title": "Integrations",
+        "labels": {
+          "value": "Value",
+          "translatedValue": "Translated value",
+          "marketplace": "Marketplace",
+          "remoteProperty": "Remote property"
+        }
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "labels": {
+        "remoteName": "Remote name",
+        "translatedRemoteName": "Translated remote name",
+        "marketplace": "Marketplace",
+        "allowsUnmappedValues": "Allows unmapped values",
+        "proxyId": "Proxy ID"
+      },
+      "actions": {
+        "openIntegration": "Open in integration"
       }
     },
     "rule": {
@@ -3169,6 +3353,13 @@
           "success": "Bulk create started.",
           "noneEligible": "No eligible assignments were found (only “Pending creation” works).",
           "error": "Bulk create failed."
+        },
+        "bulkUpdate": {
+          "title": "Bulk Update",
+          "description": "This will update the selected assignments.",
+          "confirmButtonText": "Start bulk update",
+          "success": "Bulk update started.",
+          "error": "Bulk update failed."
         }
       }
     },
@@ -3606,7 +3797,8 @@
       "products": {
         "labels": {
           "store": "Store",
-          "excludeStores": "Exclude Stores"
+          "excludeStores": "Exclude Stores",
+          "hasSyncRequests": "Needs resync"
         },
         "statuses": {
           "partiallyListed": "Approved on main marketplace",
@@ -3642,6 +3834,9 @@
       },
       "properties": {
         "title": "Amazon Properties",
+        "actions": {
+          "seeValues": "See values"
+        },
         "labels": {
           "code": "Code",
           "type": "Type",
@@ -3978,6 +4173,55 @@
     "amazon": {
       "installed": {
         "title": "Amazon Connected"
+      },
+      "actions": {
+        "bulkForceUpdate": {
+          "title": "Force Update",
+          "description": "This will force a full update for the selected assignments.",
+          "confirmButtonText": "Start force update",
+          "success": "Force update started.",
+          "error": "Force update failed."
+        },
+        "bulkSync": {
+          "title": "Sync",
+          "description": "This will sync the selected assignments.",
+          "confirmButtonText": "Start sync",
+          "success": "Sync started.",
+          "error": "Sync failed."
+        },
+        "bulkFetchIssues": {
+          "title": "Fetch Issues",
+          "description": "This will fetch the latest issues for the selected assignments.",
+          "confirmButtonText": "Fetch issues",
+          "success": "Issue fetch started.",
+          "error": "Issue fetch failed."
+        }
+      },
+      "actionsInfo": {
+        "title": "Amazon action guide",
+        "subtitle": "Use these actions to pull from Amazon or push updates from OneSila.",
+        "items": {
+          "import": {
+            "label": "Import",
+            "description": "Pulls product information from Amazon for this product and marketplace."
+          },
+          "fullUpdate": {
+            "label": "Full Update",
+            "description": "Pushes the latest OneSila data to Amazon. For configurables, it updates all variations too. Use after adding a variation or making large changes."
+          },
+          "resync": {
+            "label": "Resync",
+            "description": "Sends a partial update for this product only. Use for small price or attribute changes."
+          },
+          "validate": {
+            "label": "Validate",
+            "description": "Sends the create/full update request in validation-only mode to check Amazon requirements before creating."
+          },
+          "fetchIssues": {
+            "label": "Fetch Issues",
+            "description": "Refreshes issues reported by Amazon after validation. Useful when a listing is suppressed or blocked."
+          }
+        }
       }
     },
     "ebay": {
@@ -4031,6 +4275,15 @@
         "assignedToSalesChannelView": "Assigned To Store",
         "notAssignedToSalesChannelView": "Not Assigned To Store",
         "noFrontendUrl": "This integration doesn't provide a frontend URL"
+      },
+      "actions": {
+        "bulkResync": {
+          "title": "Bulk Resync",
+          "description": "This will resync the selected assignments.",
+          "confirmButtonText": "Start bulk resync",
+          "success": "Bulk resync started.",
+          "noneEligible": "No eligible assignments were found."
+        }
       },
       "ebay": {
         "installed": {
@@ -4179,6 +4432,24 @@
         "success": "Create import process success",
         "title": "Create Import",
         "wizard": {
+          "generalSettings": {
+            "title": "Import behavior",
+            "description": "Choose how this import should handle existing products and errors. These settings apply to every product in the import.",
+            "options": {
+              "updateOnly": {
+                "title": "Update only",
+                "description": "Only update products that already exist in OneSila. New products from the sales channel are skipped and logged as missing, so every record must match an existing product."
+              },
+              "overrideOnly": {
+                "title": "OneSila is the source of truth",
+                "description": "Create products when missing, but never overwrite existing values in OneSila. Existing fields stay as-is; only empty fields get filled from the sales channel (e.g., OneSila has color red and the channel has color dark red + size L, result is color red + size L)."
+              },
+              "skipBrokenRecords": {
+                "title": "Skip broken records",
+                "description": "Continue importing even if a product fails. Failed items are saved with a reason. If disabled, the first failure stops the entire import. Recommended."
+              }
+            }
+          },
           "step1": {
             "title": "Languages & Currencies",
             "content": "Please map your remote languages and currencies to the local ones. All entries are required to continue.",

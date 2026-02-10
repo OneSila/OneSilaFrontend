@@ -212,7 +212,9 @@
   },
   "shared": {
     "validationErrors": {
-      "required": "Dit veld is verplicht."
+      "required": "Dit veld is verplicht.",
+      "tooLong": "",
+      "tooLongGeneric": ""
     },
     "alert": {
       "mutationAlert": {
@@ -337,6 +339,10 @@
       "code": "Code",
       "noIssues": "Geen problemen",
       "pendingCreation": ""
+    },
+    "sort": {
+      "newest": "",
+      "oldest": ""
     },
     "alert": {
       "noData": "De regel bevat geen vereiste configuratoreigenschappen waardoor er geen variaties kunnen worden gegenereerd."
@@ -1382,6 +1388,158 @@
         "vatRate": "Voeg BTW Tarief toe",
         "productionTime": "Tijd in seconden",
         "salesChannelView": "Verkoopskanaal toevoegen"
+      },
+      "filters": {
+        "sections": {
+          "general": {
+            "title": "",
+            "help": ""
+          },
+          "contentQuality": {
+            "title": "",
+            "help": ""
+          },
+          "integrations": {
+            "title": "",
+            "help": ""
+          },
+          "properties": {
+            "title": "",
+            "help": ""
+          },
+          "content": {
+            "title": "",
+            "help": ""
+          },
+          "media": {
+            "title": "",
+            "help": ""
+          }
+        },
+        "labels": {
+          "sku": "",
+          "vatRate": "",
+          "type": "",
+          "excludeType": "",
+          "active": "",
+          "backorder": "",
+          "hasEanCodes": "",
+          "usedInMultipleConfigurables": "",
+          "isMultipleParent": "",
+          "hasAliasProducts": "",
+          "aliasParentProduct": "",
+          "variationOfProduct": "",
+          "skus": "",
+          "excludeSkus": "",
+          "hasPrices": "",
+          "missingPrices": "",
+          "createdDateRange": "",
+          "updatedDateRange": "",
+          "priceList": "",
+          "missingPriceList": "",
+          "missingRequiredInformation": "",
+          "missingInformation": "",
+          "inspectorError": "",
+          "excludeInspectorError": "",
+          "assignedToStore": "",
+          "notAssignedToStore": "",
+          "presentOnStore": "",
+          "notPresentOnStore": "",
+          "amazonBrowseNode": "",
+          "excludeAmazonBrowseNode": "",
+          "ebayProductCategory": "",
+          "excludeEbayProductCategory": "",
+          "sheinProductCategory": "",
+          "excludeSheinProductCategory": "",
+          "hasAmazonIssues": "",
+          "hasSheinIssues": "",
+          "attributeValue": "",
+          "excludeAttributeValue": "",
+          "hasAttribute": "",
+          "missingAttribute": "",
+          "hasTitleInSalesChannel": "",
+          "missingTitleInSalesChannel": "",
+          "hasSubtitleInSalesChannel": "",
+          "missingSubtitleInSalesChannel": "",
+          "hasDescriptionInSalesChannel": "",
+          "missingDescriptionInSalesChannel": "",
+          "hasShortDescriptionInSalesChannel": "",
+          "missingShortDescriptionInSalesChannel": "",
+          "hasUrlKeyInSalesChannel": "",
+          "missingUrlKeyInSalesChannel": "",
+          "hasBulletPointsInSalesChannel": "",
+          "missingBulletPointsInSalesChannel": "",
+          "language": "",
+          "hasImagesInSalesChannel": "",
+          "missingImagesInSalesChannel": "",
+          "hasDocumentsInSalesChannel": "",
+          "missingDocumentsInSalesChannel": "",
+          "hasVideosInSalesChannel": "",
+          "missingVideosInSalesChannel": ""
+        },
+        "placeholders": {
+          "sku": "",
+          "hasEanCodes": "",
+          "hasAliasProducts": "",
+          "aliasParentProduct": "",
+          "variationOfProduct": "",
+          "skus": "",
+          "excludeSkus": "",
+          "hasPrices": "",
+          "missingPrices": "",
+          "priceList": "",
+          "missingPriceList": "",
+          "missingInformation": "",
+          "presentOnStore": "",
+          "notPresentOnStore": "",
+          "amazonBrowseNode": "",
+          "excludeAmazonBrowseNode": "",
+          "ebayProductCategory": "",
+          "excludeEbayProductCategory": "",
+          "sheinProductCategory": "",
+          "excludeSheinProductCategory": "",
+          "hasAmazonIssues": "",
+          "hasSheinIssues": "",
+          "hasAttribute": "",
+          "missingAttribute": "",
+          "hasTitleInSalesChannel": "",
+          "missingTitleInSalesChannel": "",
+          "hasSubtitleInSalesChannel": "",
+          "missingSubtitleInSalesChannel": "",
+          "hasDescriptionInSalesChannel": "",
+          "missingDescriptionInSalesChannel": "",
+          "hasShortDescriptionInSalesChannel": "",
+          "missingShortDescriptionInSalesChannel": "",
+          "hasUrlKeyInSalesChannel": "",
+          "missingUrlKeyInSalesChannel": "",
+          "hasBulletPointsInSalesChannel": "",
+          "missingBulletPointsInSalesChannel": "",
+          "language": "",
+          "hasImagesInSalesChannel": "",
+          "missingImagesInSalesChannel": "",
+          "hasDocumentsInSalesChannel": "",
+          "missingDocumentsInSalesChannel": "",
+          "hasVideosInSalesChannel": "",
+          "missingVideosInSalesChannel": ""
+        },
+        "help": {
+          "skus": "",
+          "excludeSkus": "",
+          "missingRequiredInformation": "",
+          "missingInformation": "",
+          "assignedToStore": "",
+          "notAssignedToStore": "",
+          "amazonBrowseNode": "",
+          "excludeAmazonBrowseNode": "",
+          "ebayProductCategory": "",
+          "excludeEbayProductCategory": "",
+          "sheinProductCategory": "",
+          "excludeSheinProductCategory": "",
+          "presentOnStore": "",
+          "notPresentOnStore": "",
+          "hasAttribute": "",
+          "missingAttribute": ""
+        }
       },
       "create": {
         "title": "Product aanmaken",
@@ -2640,6 +2798,32 @@
         "confirm": "Samenvoegen",
         "success": "Waardes succesvol samengevoegd.",
         "error": "Samenvoegen mislukt."
+      },
+      "sort": {
+        "mostUsed": "",
+        "leastUsed": ""
+      },
+      "integrations": {
+        "title": "",
+        "labels": {
+          "value": "",
+          "translatedValue": "",
+          "marketplace": "",
+          "remoteProperty": ""
+        }
+      }
+    },
+    "integrations": {
+      "title": "",
+      "labels": {
+        "remoteName": "",
+        "translatedRemoteName": "",
+        "marketplace": "",
+        "allowsUnmappedValues": "",
+        "proxyId": ""
+      },
+      "actions": {
+        "openIntegration": ""
       }
     },
     "rule": {
@@ -2870,6 +3054,9 @@
       },
       "properties": {
         "title": "",
+        "actions": {
+          "seeValues": ""
+        },
         "labels": {
           "code": "",
           "type": "",
@@ -3077,7 +3264,8 @@
       "products": {
         "labels": {
           "store": "Winkel",
-          "excludeStores": "Winkels uitsluiten"
+          "excludeStores": "Winkels uitsluiten",
+          "hasSyncRequests": ""
         },
         "statuses": {
           "partiallyListed": "",
@@ -3183,6 +3371,26 @@
         }
       },
       "create": {
+        "wizard": {
+          "generalSettings": {
+            "title": "",
+            "description": "",
+            "options": {
+              "updateOnly": {
+                "title": "",
+                "description": ""
+              },
+              "overrideOnly": {
+                "title": "",
+                "description": ""
+              },
+              "skipBrokenRecords": {
+                "title": "",
+                "description": ""
+              }
+            }
+          }
+        },
         "ebay": {
           "wizard": {
             "steps": {
@@ -3240,6 +3448,68 @@
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
       "webhook": "Webhook"
+    },
+    "amazon": {
+      "actions": {
+        "bulkForceUpdate": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        },
+        "bulkSync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        },
+        "bulkFetchIssues": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        }
+      },
+      "actionsInfo": {
+        "title": "",
+        "subtitle": "",
+        "items": {
+          "import": {
+            "label": "",
+            "description": ""
+          },
+          "fullUpdate": {
+            "label": "",
+            "description": ""
+          },
+          "resync": {
+            "label": "",
+            "description": ""
+          },
+          "validate": {
+            "label": "",
+            "description": ""
+          },
+          "fetchIssues": {
+            "label": "",
+            "description": ""
+          }
+        }
+      }
+    },
+    "shein": {
+      "actions": {
+        "bulkUpdate": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        }
+      }
     },
     "show": {
       "tabs": {
@@ -3318,6 +3588,15 @@
         "assignedToSalesChannelView": "Toegewezen aan winkel",
         "notAssignedToSalesChannelView": "Niet toegewezen aan winkel",
         "noFrontendUrl": ""
+      },
+      "actions": {
+        "bulkResync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "noneEligible": ""
+        }
       },
       "helpText": {
         "startingStock": "",

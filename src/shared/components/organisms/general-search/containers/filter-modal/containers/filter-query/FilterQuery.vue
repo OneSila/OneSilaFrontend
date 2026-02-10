@@ -50,6 +50,7 @@ const selectedValue = ref(
 );
 
 async function ensureSelectedValuesArePresent(dataset: any[] = cleanedData.value) {
+  if (props.filter.skipFilterParam) return [];
   if (!props.filter.valueBy || !selectedValue.value) return [];
 
   const extractId = (item: any): string | number | undefined => {
@@ -90,15 +91,18 @@ async function ensureSelectedValuesArePresent(dataset: any[] = cleanedData.value
 const fetchData = async (searchValue: string | null = null, ensureSelected: boolean = false) => {
   const variables: any = {
     ...props.filter.queryVariables,
-    filter: {
-      ...(props.filter.queryVariables?.filter ?? {}),
-    },
   };
 
-  if (searchValue) {
-    variables.filter.search = searchValue;
-  } else {
-    delete variables.filter.search;
+  if (!props.filter.skipFilterParam) {
+    variables.filter = {
+      ...(props.filter.queryVariables?.filter ?? {}),
+    };
+
+    if (searchValue) {
+      variables.filter.search = searchValue;
+    } else {
+      delete variables.filter.search;
+    }
   }
 
   try {
@@ -178,6 +182,9 @@ const debouncedFetchSlow = debounce(async (searchValue: string) => {
 }, 1000);
 
 const handleInput = (searchValue: string) => {
+  if (props.filter.skipFilterParam) {
+    return;
+  }
   if (searchValue.length < minSearchLength.value) {
     debouncedFetchFast.cancel();
     debouncedFetchSlow(searchValue);
@@ -207,6 +214,7 @@ const disabled = ref(props.filter.disabled === true);
 <template>
   <div class="filter-item">
     <Label>{{ filter.label }}</Label>
+        <p v-if="filter.helpText" class="mt-1 text-xs text-gray-500">{{ filter.helpText }}</p>
         <Selector
           class="h-9"
           v-model="selectedValue"

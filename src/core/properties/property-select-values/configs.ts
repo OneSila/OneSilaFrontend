@@ -5,7 +5,7 @@ import {
     FormType
 } from '../../../shared/components/organisms/general-form/formConfig';
 import {FieldType, PropertyTypes} from '../../../shared/utils/constants';
-import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
+import { OrderType, SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import {
     getPropertySelectValueQuery,
@@ -269,7 +269,28 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
             strict: true,
         },
     ],
-    orders: []
+    orders: [
+        {
+            name: 'createdAt',
+            label: t('shared.sort.newest'),
+            type: OrderType.DESC
+        },
+        {
+            name: 'createdAt',
+            label: t('shared.sort.oldest'),
+            type: OrderType.ASC
+        },
+        {
+            name: 'usageCount',
+            label: t('properties.values.sort.mostUsed'),
+            type: OrderType.DESC
+        },
+        {
+            name: 'usageCount',
+            label: t('properties.values.sort.leastUsed'),
+            type: OrderType.ASC
+        },
+    ]
 });
 
 export const listingConfigConstructor = (t: Function, addActions: boolean = true, isMainPage: boolean = false, addGrid: boolean = false): ListingConfig => ({

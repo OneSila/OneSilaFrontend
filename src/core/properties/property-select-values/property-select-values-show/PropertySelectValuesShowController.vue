@@ -15,6 +15,7 @@ import { Loader } from "../../../../shared/components/atoms/loader";
 import RulesList from "./containers/rules-list/RulesList.vue";
 import { TextInput } from "../../../../shared/components/atoms/input-text";
 import PropertySelectValueMerge from './PropertySelectValueMerge.vue';
+import IntegrationsList from "./containers/integrations-list/IntegrationsList.vue";
 
 interface TranslatableField {
   language: string;
@@ -36,6 +37,7 @@ tabItems.value = [
     { name: 'translations', label: t('shared.tabs.translations'), icon: 'language' },
     { name: 'products', label: t('products.title'), icon: 'box' },
     { name: 'configurators', label: t('properties.rule.title'), icon: 'cog' },
+    { name: 'integrations', label: t('properties.integrations.title'), icon: 'globe' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);
@@ -101,6 +103,9 @@ const onDataFetched = (data) => {
           </template>
           <template v-slot:configurators>
             <RulesList v-if="isProductType" :id="id" />
+          </template>
+          <template v-slot:integrations>
+            <IntegrationsList v-if="!loading" :id="id" />
           </template>
         </Tabs>
       </Card>

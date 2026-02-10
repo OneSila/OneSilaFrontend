@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import RemotePropertyEdit from "../../remote-properties/components/RemotePropertyEdit.vue";
 import { ebayPropertyEditFormConfigConstructor } from "../configs";
-import { FieldType } from "../../../../../../../../../shared/utils/constants";
+import { FieldType, PropertyTypes } from "../../../../../../../../../shared/utils/constants";
 import { propertiesQuerySelector } from "../../../../../../../../../shared/api/queries/properties.js";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
@@ -32,9 +32,25 @@ const returnTab = route.query.fromTab?.toString() || 'properties';
 
 const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
+const propertyType = ref<string | null>(null);
 const recommendations = ref<{ id: string; name: string }[]>([]);
 const loadingRecommendations = ref(false);
 const marketplaceInfo = ref<{ id: string | null; name: string }>({ id: null, name: '' });
+
+const isSelectPropertyType = (type?: string | null) => {
+  return type === PropertyTypes.SELECT || type === PropertyTypes.MULTISELECT;
+};
+
+const canSeeValues = computed(() => isSelectPropertyType(propertyType.value));
+
+const selectValuesRoute = computed(() => ({
+  name: 'integrations.integrations.show',
+  params: { type: type.value, id: integrationId },
+  query: {
+    tab: 'propertySelectValues',
+    ebayProperty: ebayPropertyId.value,
+  },
+}));
 
 const breadcrumbsLinks = computed(() => [
   { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
@@ -175,10 +191,12 @@ const handleSetData = (data: any) => {
     return;
   }
 
-  const propertyType = data?.ebayProperty?.type;
-  if (!propertyType) {
+  const nextPropertyType = data?.ebayProperty?.type;
+  if (!nextPropertyType) {
     return;
   }
+
+  propertyType.value = nextPropertyType;
 
   marketplaceInfo.value = {
     id: data?.ebayProperty?.marketplace?.id ?? null,
@@ -196,7 +214,7 @@ const handleSetData = (data: any) => {
     labelBy: 'name',
     valueBy: 'id',
     query: propertiesQuerySelector,
-    queryVariables: { filter: { type: { exact: propertyType } } },
+    queryVariables: { filter: { type: { exact: nextPropertyType } } },
     dataKey: 'properties',
     isEdge: true,
     multiple: false,
@@ -294,24 +312,31 @@ const selectRecommendation = (id: string) => {
       </div>
     </template>
     <template #additional-button>
-      <Link
-        v-if="remoteRuleId"
-        :path="{
-          name: 'properties.properties.create',
-          query: {
-            remoteRuleId,
-            ...(formData.localizedName ? { name: formData.localizedName } : {}),
-            ...(formData.translatedName ? { translatedName: formData.translatedName } : {}),
-            ...(formData.type ? { type: formData.type } : {}),
-            remoteWizard: isWizard ? '1' : '0',
-            ...extractPrefixedQueryParams(route.query, 'next__'),
-          },
-        }"
-      >
-        <Button type="button" class="btn btn-info">
-          {{ t('integrations.show.generateProperty') }}
-        </Button>
-      </Link>
+      <div class="flex items-center gap-2">
+        <Link
+          v-if="remoteRuleId"
+          :path="{
+            name: 'properties.properties.create',
+            query: {
+              remoteRuleId,
+              ...(formData.localizedName ? { name: formData.localizedName } : {}),
+              ...(formData.translatedName ? { translatedName: formData.translatedName } : {}),
+              ...(formData.type ? { type: formData.type } : {}),
+              remoteWizard: isWizard ? '1' : '0',
+              ...extractPrefixedQueryParams(route.query, 'next__'),
+            },
+          }"
+        >
+          <Button type="button" class="btn btn-info">
+            {{ t('integrations.show.generateProperty') }}
+          </Button>
+        </Link>
+        <Link v-if="canSeeValues" :path="selectValuesRoute">
+          <Button type="button" class="btn btn-secondary">
+            {{ t('integrations.show.properties.actions.seeValues') }}
+          </Button>
+        </Link>
+      </div>
     </template>
     <template #additional-fields>
 

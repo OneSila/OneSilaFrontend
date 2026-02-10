@@ -43,6 +43,14 @@
       "yes": "Ja",
       "no": "Nein"
     },
+    "sort": {
+      "newest": "",
+      "oldest": ""
+    },
+    "validationErrors": {
+      "tooLong": "",
+      "tooLongGeneric": ""
+    },
     "alert": {
       "noData": "Die Regel hat keine erforderlichen Konfiguratoreigenschaften, daher k\u00f6nnen keine Varianten generiert werden."
     },
@@ -342,6 +350,158 @@
         "add": {
           "placeholder": "",
           "select": ""
+        }
+      },
+      "filters": {
+        "sections": {
+          "general": {
+            "title": "",
+            "help": ""
+          },
+          "contentQuality": {
+            "title": "",
+            "help": ""
+          },
+          "integrations": {
+            "title": "",
+            "help": ""
+          },
+          "properties": {
+            "title": "",
+            "help": ""
+          },
+          "content": {
+            "title": "",
+            "help": ""
+          },
+          "media": {
+            "title": "",
+            "help": ""
+          }
+        },
+        "labels": {
+          "sku": "",
+          "vatRate": "",
+          "type": "",
+          "excludeType": "",
+          "active": "",
+          "backorder": "",
+          "hasEanCodes": "",
+          "usedInMultipleConfigurables": "",
+          "isMultipleParent": "",
+          "hasAliasProducts": "",
+          "aliasParentProduct": "",
+          "variationOfProduct": "",
+          "skus": "",
+          "excludeSkus": "",
+          "hasPrices": "",
+          "missingPrices": "",
+          "createdDateRange": "",
+          "updatedDateRange": "",
+          "priceList": "",
+          "missingPriceList": "",
+          "missingRequiredInformation": "",
+          "missingInformation": "",
+          "inspectorError": "",
+          "excludeInspectorError": "",
+          "assignedToStore": "",
+          "notAssignedToStore": "",
+          "presentOnStore": "",
+          "notPresentOnStore": "",
+          "amazonBrowseNode": "",
+          "excludeAmazonBrowseNode": "",
+          "ebayProductCategory": "",
+          "excludeEbayProductCategory": "",
+          "sheinProductCategory": "",
+          "excludeSheinProductCategory": "",
+          "hasAmazonIssues": "",
+          "hasSheinIssues": "",
+          "attributeValue": "",
+          "excludeAttributeValue": "",
+          "hasAttribute": "",
+          "missingAttribute": "",
+          "hasTitleInSalesChannel": "",
+          "missingTitleInSalesChannel": "",
+          "hasSubtitleInSalesChannel": "",
+          "missingSubtitleInSalesChannel": "",
+          "hasDescriptionInSalesChannel": "",
+          "missingDescriptionInSalesChannel": "",
+          "hasShortDescriptionInSalesChannel": "",
+          "missingShortDescriptionInSalesChannel": "",
+          "hasUrlKeyInSalesChannel": "",
+          "missingUrlKeyInSalesChannel": "",
+          "hasBulletPointsInSalesChannel": "",
+          "missingBulletPointsInSalesChannel": "",
+          "language": "",
+          "hasImagesInSalesChannel": "",
+          "missingImagesInSalesChannel": "",
+          "hasDocumentsInSalesChannel": "",
+          "missingDocumentsInSalesChannel": "",
+          "hasVideosInSalesChannel": "",
+          "missingVideosInSalesChannel": ""
+        },
+        "placeholders": {
+          "sku": "",
+          "hasEanCodes": "",
+          "hasAliasProducts": "",
+          "aliasParentProduct": "",
+          "variationOfProduct": "",
+          "skus": "",
+          "excludeSkus": "",
+          "hasPrices": "",
+          "missingPrices": "",
+          "priceList": "",
+          "missingPriceList": "",
+          "missingInformation": "",
+          "presentOnStore": "",
+          "notPresentOnStore": "",
+          "amazonBrowseNode": "",
+          "excludeAmazonBrowseNode": "",
+          "ebayProductCategory": "",
+          "excludeEbayProductCategory": "",
+          "sheinProductCategory": "",
+          "excludeSheinProductCategory": "",
+          "hasAmazonIssues": "",
+          "hasSheinIssues": "",
+          "hasAttribute": "",
+          "missingAttribute": "",
+          "hasTitleInSalesChannel": "",
+          "missingTitleInSalesChannel": "",
+          "hasSubtitleInSalesChannel": "",
+          "missingSubtitleInSalesChannel": "",
+          "hasDescriptionInSalesChannel": "",
+          "missingDescriptionInSalesChannel": "",
+          "hasShortDescriptionInSalesChannel": "",
+          "missingShortDescriptionInSalesChannel": "",
+          "hasUrlKeyInSalesChannel": "",
+          "missingUrlKeyInSalesChannel": "",
+          "hasBulletPointsInSalesChannel": "",
+          "missingBulletPointsInSalesChannel": "",
+          "language": "",
+          "hasImagesInSalesChannel": "",
+          "missingImagesInSalesChannel": "",
+          "hasDocumentsInSalesChannel": "",
+          "missingDocumentsInSalesChannel": "",
+          "hasVideosInSalesChannel": "",
+          "missingVideosInSalesChannel": ""
+        },
+        "help": {
+          "skus": "",
+          "excludeSkus": "",
+          "missingRequiredInformation": "",
+          "missingInformation": "",
+          "assignedToStore": "",
+          "notAssignedToStore": "",
+          "amazonBrowseNode": "",
+          "excludeAmazonBrowseNode": "",
+          "ebayProductCategory": "",
+          "excludeEbayProductCategory": "",
+          "sheinProductCategory": "",
+          "excludeSheinProductCategory": "",
+          "presentOnStore": "",
+          "notPresentOnStore": "",
+          "hasAttribute": "",
+          "missingAttribute": ""
         }
       },
       "inspector": {
@@ -768,6 +928,68 @@
       "amazon": "Amazon",
       "webhook": "Webhook"
     },
+    "amazon": {
+      "actions": {
+        "bulkForceUpdate": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        },
+        "bulkSync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        },
+        "bulkFetchIssues": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        }
+      },
+      "actionsInfo": {
+        "title": "",
+        "subtitle": "",
+        "items": {
+          "import": {
+            "label": "",
+            "description": ""
+          },
+          "fullUpdate": {
+            "label": "",
+            "description": ""
+          },
+          "resync": {
+            "label": "",
+            "description": ""
+          },
+          "validate": {
+            "label": "",
+            "description": ""
+          },
+          "fetchIssues": {
+            "label": "",
+            "description": ""
+          }
+        }
+      }
+    },
+    "shein": {
+      "actions": {
+        "bulkUpdate": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "error": ""
+        }
+      }
+    },
     "labels": {
       "fulfillmentPolicy": "Versandrichtlinie",
       "paymentPolicy": "Zahlungsrichtlinie",
@@ -792,6 +1014,15 @@
     "salesChannel": {
       "labels": {
         "noFrontendUrl": ""
+      },
+      "actions": {
+        "bulkResync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "noneEligible": ""
+        }
       },
       "helpText": {
         "startingStock": "",
@@ -913,6 +1144,11 @@
         "reauthorize": ""
       },
       "products": {
+        "labels": {
+          "store": "",
+          "excludeStores": "",
+          "hasSyncRequests": ""
+        },
         "statuses": {
           "partiallyListed": "",
           "pendingApproval": "",
@@ -921,6 +1157,9 @@
       },
       "properties": {
         "title": "",
+        "actions": {
+          "seeValues": ""
+        },
         "labels": {
           "code": "",
           "type": "",
@@ -1261,6 +1500,26 @@
         }
       },
       "create": {
+        "wizard": {
+          "generalSettings": {
+            "title": "",
+            "description": "",
+            "options": {
+              "updateOnly": {
+                "title": "",
+                "description": ""
+              },
+              "overrideOnly": {
+                "title": "",
+                "description": ""
+              },
+              "skipBrokenRecords": {
+                "title": "",
+                "description": ""
+              }
+            }
+          }
+        },
         "ebay": {
           "wizard": {
             "steps": {
@@ -1515,6 +1774,32 @@
     "values": {
       "labels": {
         "usedInProducts": ""
+      },
+      "sort": {
+        "mostUsed": "",
+        "leastUsed": ""
+      },
+      "integrations": {
+        "title": "",
+        "labels": {
+          "value": "",
+          "translatedValue": "",
+          "marketplace": "",
+          "remoteProperty": ""
+        }
+      }
+    },
+    "integrations": {
+      "title": "",
+      "labels": {
+        "remoteName": "",
+        "translatedRemoteName": "",
+        "marketplace": "",
+        "allowsUnmappedValues": "",
+        "proxyId": ""
+      },
+      "actions": {
+        "openIntegration": ""
       }
     },
     "duplicateModal": {

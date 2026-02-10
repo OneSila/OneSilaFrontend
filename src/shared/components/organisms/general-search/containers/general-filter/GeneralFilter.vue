@@ -85,7 +85,7 @@ const resetFilters = () => {
       <Button
           custom-class="flex items-center ml-2 p-2 w-10 h-10 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60 bg-red-50"
           @click="resetFilters">
-        <Icon name="arrow-rotate-right" class="mx-auto"/>
+        <Icon name="broom" class="mx-auto"/>
       </Button>
     </FlexCell>
   </Flex>
@@ -95,6 +95,7 @@ const resetFilters = () => {
     <FilterModal
         :filters="props.searchConfig.filters"
         :cols="props.searchConfig.cols !== undefined ? props.searchConfig.cols : 1"
+        :sections="props.searchConfig.filterSections"
         @cancel-clicked="handleCancel"
         @submit-clicked="handleSubmit"
     />

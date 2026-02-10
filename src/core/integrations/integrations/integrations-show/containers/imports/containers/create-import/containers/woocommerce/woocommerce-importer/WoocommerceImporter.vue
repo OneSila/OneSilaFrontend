@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
 
-import {Wizard} from "../../../../../../../../../../../shared/components/molecules/wizard";
-import {LanguagesAndCurrenciesStep} from "../../general/languages-and-currencies";
-import {computed, onMounted, ref} from "vue";
+import { Wizard } from "../../../../../../../../../../../shared/components/molecules/wizard";
+import { LanguagesAndCurrenciesStep } from "../../general/languages-and-currencies";
+import { ImportSettingsStep } from "../../general/import-settings";
+import { computed, onMounted, ref } from "vue";
 import { RemoteCurrency, RemoteLanguage } from "../../../../../configs";
 import apolloClient from "../../../../../../../../../../../../apollo-client";
 import { getWoocommerceChannelQuery } from "../../../../../../../../../../../shared/api/queries/salesChannels";
@@ -12,10 +13,10 @@ import {
   bulkUpdateRemoteLanguagesMutation,
   createSalesChannelImportMutation
 } from "../../../../../../../../../../../shared/api/mutations/salesChannels";
-import {Toast} from "../../../../../../../../../../../shared/modules/toast";
-import {useI18n} from "vue-i18n";
-import {useRoute, useRouter} from "vue-router";
-import {processGraphQLErrors} from "../../../../../../../../../../../shared/utils";
+import { Toast } from "../../../../../../../../../../../shared/modules/toast";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+import { processGraphQLErrors } from "../../../../../../../../../../../shared/utils";
 
 const props = defineProps<{ integrationId: string; type: string }>();
 
@@ -36,9 +37,14 @@ const mappedData = ref<{
   languages: [],
   currencies: [],
 });
+const importSettings = ref({
+  updateOnly: false,
+  overrideOnly: false,
+  skipBrokenRecords: true,
+});
 
 const allowNextStep = computed(() => {
-  if (step.value === 0) {
+  if (step.value === 1) {
     const langsValid = mappedData.value.languages.length > 0 &&
       mappedData.value.languages.every((l) => l.localInstance?.id);
     const currenciesValid = mappedData.value.currencies.length > 0 &&
@@ -56,6 +62,7 @@ const updateMappedData = (data) => {
 };
 
 const wizardSteps = [
+  { title: t("integrations.imports.create.wizard.generalSettings.title"), name: "importSettings" },
   { title: t('integrations.imports.create.wizard.step1.title'), name: 'generalStep' },
 ];
 
@@ -141,6 +148,9 @@ const createImport = async () => {
         data: {
           salesChannel: { id: salesChannelId.value },
           status: 'pending',
+          updateOnly: importSettings.value.updateOnly,
+          overrideOnly: importSettings.value.overrideOnly,
+          skipBrokenRecords: importSettings.value.skipBrokenRecords,
         },
       },
     });
@@ -219,6 +229,9 @@ const handleFinish = async () => {
     </div>
 
     <Wizard :steps="wizardSteps" :allow-next-step="allowNextStep" :show-buttons="true" @on-finish="handleFinish" @update-current-step="updateStep">
+        <template #importSettings>
+          <ImportSettingsStep v-model="importSettings" />
+        </template>
         <template #generalStep>
           <LanguagesAndCurrenciesStep v-if="salesChannelId" :sales-channel-id="salesChannelId" @update:mappedData="updateMappedData" />
         </template>

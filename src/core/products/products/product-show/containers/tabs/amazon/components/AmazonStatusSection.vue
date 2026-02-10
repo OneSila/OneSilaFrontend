@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { ProgressBar } from '../../../../../../../../shared/components/molecules/progress-bar';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
+import { AmazonButtonsInfo } from '../../../../../../../../shared/components/atoms/amazon-buttons-info';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { ApolloMutation } from '@vue/apollo-components';
 import { Link } from "../../../../../../../../shared/components/atoms/link";
@@ -122,6 +123,7 @@ const formatDate = (dateString?: string | null) => {
             </Button>
           </template>
         </ApolloMutation>
+        <AmazonButtonsInfo class="self-center" />
       </div>
       </FlexCell>
     </Flex>
