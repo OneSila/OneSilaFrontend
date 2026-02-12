@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { FieldType } from '../../../../../../../../shared/utils/constants';
+import { FieldType, PropertyTypes } from '../../../../../../../../shared/utils/constants';
 import RemoteSelectValueEditProperty from '../remote-property-select-values/components/RemoteSelectValueEditProperty.vue';
 import type { RemoteSelectValueEditPropertyConfig } from '../remote-property-select-values/types';
 import { amazonPropertySelectValueEditFormConfigConstructor, amazonPropertySelectValuesSearchConfigConstructor, listingQuery } from './configs';
@@ -23,6 +23,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
     remoteValue: '',
     remoteName: '',
     translatedRemoteName: '',
+    boolValue: null,
     localInstance: {
       id: ctx.routeQuery?.createPropertySelectValueId ? ctx.routeQuery.createPropertySelectValueId.toString() : null,
     },
@@ -39,9 +40,13 @@ const config: RemoteSelectValueEditPropertyConfig = {
       remoteValue: valueData?.remoteValue || '',
       remoteName: valueData?.remoteName || '',
       translatedRemoteName: valueData?.translatedRemoteName || '',
+      boolValue: valueData?.boolValue ?? null,
     },
     propertyId: valueData?.amazonProperty?.id || null,
     propertyName: valueData?.amazonProperty?.name || '',
+    propertyType: valueData?.amazonProperty?.type || null,
+    propertyOriginalType: valueData?.amazonProperty?.originalType || null,
+    localPropertyType: valueData?.amazonProperty?.localInstance?.type || null,
     marketplaceId: valueData?.marketplace?.id || null,
     marketplaceName: valueData?.marketplace?.name || '',
     localInstanceId: valueData?.localInstance?.id || null,
@@ -82,7 +87,20 @@ const config: RemoteSelectValueEditPropertyConfig = {
     mapped: propertyData?.mappedLocally ?? true,
     localPropertyId: propertyData?.localInstance?.id || null,
     localPropertyName: propertyData?.localInstance?.name || '',
+    localPropertyType: propertyData?.localInstance?.type || null,
+    propertyType: propertyData?.type || null,
+    propertyOriginalType: propertyData?.originalType || null,
   }),
+  boolValueField: {
+    labelKey: 'integrations.show.propertySelectValues.labels.boolValue',
+    helpKey: 'integrations.show.propertySelectValues.help.boolValue',
+    placeholderKey: 'integrations.show.propertySelectValues.placeholders.boolValue',
+    shouldShow: ctx => {
+      const localType = ctx.localPropertyType || ctx.propertyType || '';
+      return [PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(ctx.propertyOriginalType || '') &&
+        localType === PropertyTypes.BOOLEAN;
+    },
+  },
   buildLocalInstanceField: ({ localPropertyId, t }) => ({
     type: FieldType.Query,
     name: 'localInstance',

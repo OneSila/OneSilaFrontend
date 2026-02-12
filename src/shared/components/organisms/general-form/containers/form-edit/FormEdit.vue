@@ -31,7 +31,9 @@ const initialFormUpdate = (data: any) => {
 
   emit('setData', data);
 
-  const dataToEdit = props.config.queryDataKey ? data[props.config.queryDataKey] : data;
+  const dataToEdit = props.config.queryDataKey
+    ? (data?.[props.config.queryDataKey] ?? null)
+    : (data ?? null);
 
   props.config.fields.forEach(field => {
     if (field.type === FieldType.Hidden) {

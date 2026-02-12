@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { FieldType } from '../../../../../../../../shared/utils/constants';
+import { FieldType, PropertyTypes } from '../../../../../../../../shared/utils/constants';
 import RemoteSelectValueEditProperty from '../remote-property-select-values/components/RemoteSelectValueEditProperty.vue';
 import type { RemoteSelectValueEditPropertyConfig } from '../remote-property-select-values/types';
 import { ebayPropertySelectValueEditFormConfigConstructor, ebayPropertySelectValuesSearchConfigConstructor, listingQuery } from './configs';
@@ -22,6 +22,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
     marketplace: '',
     localizedValue: '',
     translatedValue: '',
+    boolValue: null,
     localInstance: {
       id: ctx.routeQuery?.createPropertySelectValueId ? ctx.routeQuery.createPropertySelectValueId.toString() : null,
     },
@@ -37,9 +38,13 @@ const config: RemoteSelectValueEditPropertyConfig = {
       marketplace: valueData?.marketplace?.name || '',
       localizedValue: valueData?.localizedValue || '',
       translatedValue: valueData?.translatedValue || '',
+      boolValue: valueData?.boolValue ?? null,
     },
     propertyId: valueData?.ebayProperty?.id || null,
     propertyName: valueData?.ebayProperty?.localizedName || '',
+    propertyType: valueData?.ebayProperty?.type || null,
+    propertyOriginalType: valueData?.ebayProperty?.originalType || null,
+    localPropertyType: valueData?.ebayProperty?.localInstance?.type || null,
     marketplaceId: valueData?.marketplace?.id || null,
     marketplaceName: valueData?.marketplace?.name || '',
     localInstanceId: valueData?.localInstance?.id || null,
@@ -85,7 +90,20 @@ const config: RemoteSelectValueEditPropertyConfig = {
       mapped: node?.mappedLocally ?? true,
       localPropertyId: node?.localInstance?.id || null,
       localPropertyName: node?.localInstance?.name || '',
+      localPropertyType: node?.localInstance?.type || null,
+      propertyType: node?.type || null,
+      propertyOriginalType: node?.originalType || null,
     };
+  },
+  boolValueField: {
+    labelKey: 'integrations.show.propertySelectValues.labels.boolValue',
+    helpKey: 'integrations.show.propertySelectValues.help.boolValue',
+    placeholderKey: 'integrations.show.propertySelectValues.placeholders.boolValue',
+    shouldShow: ctx => {
+      const localType = ctx.localPropertyType || ctx.propertyType || '';
+      return [PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(ctx.propertyOriginalType || '') &&
+        localType === PropertyTypes.BOOLEAN;
+    },
   },
   buildLocalInstanceField: ({ localPropertyId, t }) => ({
     type: FieldType.Query,

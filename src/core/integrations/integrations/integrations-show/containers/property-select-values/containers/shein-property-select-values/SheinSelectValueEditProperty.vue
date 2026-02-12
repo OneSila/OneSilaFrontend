@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { FieldType } from '../../../../../../../../shared/utils/constants';
+import { FieldType, PropertyTypes } from '../../../../../../../../shared/utils/constants';
 import RemoteSelectValueEditProperty from '../remote-property-select-values/components/RemoteSelectValueEditProperty.vue';
 import type { RemoteSelectValueEditPropertyConfig } from '../remote-property-select-values/types';
 import { sheinPropertySelectValueEditFormConfigConstructor, sheinPropertySelectValuesSearchConfigConstructor, listingQuery } from './configs';
@@ -19,8 +19,10 @@ const config: RemoteSelectValueEditPropertyConfig = {
   formDefaults: ctx => ({
     id: ctx.valueId,
     remoteProperty: '',
+    remoteId: '',
     value: '',
     valueEn: '',
+    boolValue: null,
     localInstance: {
       id: ctx.routeQuery?.createPropertySelectValueId ? ctx.routeQuery.createPropertySelectValueId.toString() : null,
     },
@@ -32,11 +34,16 @@ const config: RemoteSelectValueEditPropertyConfig = {
   mapValueData: valueData => ({
     form: {
       remoteProperty: valueData?.remoteProperty?.name || '',
+      remoteId: valueData?.remoteId || '',
       value: valueData?.value || '',
       valueEn: valueData?.valueEn || '',
+      boolValue: valueData?.boolValue ?? null,
     },
     propertyId: valueData?.remoteProperty?.id || null,
     propertyName: valueData?.remoteProperty?.name || '',
+    propertyType: valueData?.remoteProperty?.type || null,
+    propertyOriginalType: valueData?.remoteProperty?.originalType || null,
+    localPropertyType: valueData?.remoteProperty?.localInstance?.type || null,
     localInstanceId: valueData?.localInstance?.id || null,
   }),
   propertyLabelKey: 'integrations.show.propertySelectValues.labels.sheinProperty',
@@ -50,6 +57,13 @@ const config: RemoteSelectValueEditPropertyConfig = {
         }
       : null,
   remoteFields: [
+    {
+      key: 'remoteId',
+      labelKey: 'integrations.show.propertySelectValues.labels.remoteId',
+      helpKey: 'integrations.show.propertySelectValues.help.remoteId',
+      disabled: true,
+      includeInSubmit: false,
+    },
     {
       key: 'value',
       labelKey: 'integrations.show.propertySelectValues.labels.localizedValue',
@@ -75,7 +89,20 @@ const config: RemoteSelectValueEditPropertyConfig = {
       mapped: node?.mappedLocally ?? true,
       localPropertyId: node?.localInstance?.id || null,
       localPropertyName: node?.localInstance?.name || '',
+      localPropertyType: node?.localInstance?.type || null,
+      propertyType: node?.type || null,
+      propertyOriginalType: node?.originalType || null,
     };
+  },
+  boolValueField: {
+    labelKey: 'integrations.show.propertySelectValues.labels.boolValue',
+    helpKey: 'integrations.show.propertySelectValues.help.boolValue',
+    placeholderKey: 'integrations.show.propertySelectValues.placeholders.boolValue',
+    shouldShow: ctx => {
+      const localType = ctx.localPropertyType || ctx.propertyType || '';
+      return [PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(ctx.propertyOriginalType || '') &&
+        localType === PropertyTypes.BOOLEAN;
+    },
   },
   localPropertyLabelKey: 'integrations.show.propertySelectValues.labels.localProperty',
   localPropertyHelpKey: 'integrations.show.propertySelectValues.help.selectValueShein',

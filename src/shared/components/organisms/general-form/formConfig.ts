@@ -23,8 +23,12 @@ export interface BaseFormField {
   optional?: boolean;
   label?: string;
   disabled?: boolean;
+  addInMutation?: boolean;
   default?: any;
   help?: string;
+  helpClass?: string;
+  secondaryHelp?: string;
+  secondaryHelpClass?: string;
   customCss?: string; // Custom CSS for individual form fields
   customCssClass?: string; // Custom CSS class for individual form fields
 }
@@ -322,6 +326,11 @@ export const cleanUpDataForMutation = (
   let cleanedData = { ...formData };
 
   fields.forEach(field => {
+    if (field.addInMutation === false) {
+      delete cleanedData[field.name];
+      return;
+    }
+
     const fieldValue = cleanedData[field.name];
 
     if (field.type === FieldType.ProxyChoice) {

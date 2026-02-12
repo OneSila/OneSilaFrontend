@@ -9,6 +9,7 @@ query Properties($first: Int, $last: Int, $after: String, $before: String, $orde
           id
           name
           type
+          usageCount
           isPublicInformation
           addToFilters
           hasImage
@@ -36,6 +37,7 @@ query Properties($first: Int, $last: Int, $after: String, $before: String, $orde
         node {
           id
           name
+          type
         }
         cursor
       }
@@ -107,6 +109,7 @@ query PropertySelectValues($first: Int, $last: Int, $after: String, $before: Str
         node {
           id
           value
+          usageCount
           thumbnailUrl
           property {
             id
@@ -524,6 +527,7 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
               id
               name
               type
+              usageCount
             }
           }
           requireEanCode
@@ -575,6 +579,7 @@ export const getProductPropertiesRuleQuery = gql`
           id
           name
           type
+          usageCount
         }
       }
     }

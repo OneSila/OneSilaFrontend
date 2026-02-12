@@ -7,6 +7,7 @@ import { ListingConfig } from "../../../../../../../../shared/components/organis
 import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { updateSheinPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
+import { getPropertyTypeBadgeMap } from "../../../../../../../properties/properties/configs";
 
 export const sheinPropertyEditFormConfigConstructor = (
   t: Function,
@@ -41,15 +42,34 @@ export const sheinPropertyEditFormConfigConstructor = (
       help: t('integrations.show.properties.help.translatedName'),
     },
     {
+      type: FieldType.Text,
+      name: 'remoteId',
+      label: t('integrations.show.properties.labels.remoteId'),
+      help: t('integrations.show.properties.help.remoteId'),
+      disabled: true,
+      addInMutation: false,
+    },
+    {
       type: FieldType.Choice,
-      name: 'type',
-      label: t('products.products.labels.type.title'),
+      name: 'originalType',
+      label: t('integrations.show.properties.labels.originalType'),
       labelBy: 'name',
       valueBy: 'code',
       options: getPropertyTypeOptions(t),
       disabled: true,
       removable: false,
-      help: t('integrations.show.properties.help.type'),
+      help: t('integrations.show.properties.help.originalType'),
+    },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('integrations.show.properties.labels.currentType'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      disabled: true,
+      removable: false,
+      help: t('integrations.show.properties.help.currentType'),
     },
     {
       type: FieldType.Boolean,
@@ -69,6 +89,15 @@ export const sheinPropertiesSearchConfigConstructor = (t: Function): SearchConfi
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
     { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), strict: true , addLookup: true},
     { type: FieldType.Boolean, name: 'usedInProducts', label: t('properties.properties.labels.usedInProducts'), strict: true },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('products.products.labels.type.title'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      addLookup: true,
+    },
   ],
   orders: [],
 });
@@ -77,9 +106,10 @@ export const sheinPropertiesListingConfigConstructor = (
   t: Function,
   integrationId: string,
 ): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('properties.properties.title')],
+  headers: [t('shared.labels.name'), t('integrations.show.properties.labels.originalType'), t('properties.properties.title')],
   fields: [
     { name: 'name', type: FieldType.Text },
+    { name: 'originalType', type: FieldType.Badge, badgeMap: getPropertyTypeBadgeMap(t) },
     {
       name: 'localInstance',
       type: FieldType.NestedText,

@@ -10,14 +10,16 @@ import {
   Label,
   Flex,
   FlexCell,
+  FieldChoice,
   FieldQuery,
   SubmitButtons,
   getEnhancedConfig,
   Link,
   Toast,
   apolloClient,
+  FieldType,
 } from '../sharedImports';
-import type { FormConfig, QueryFormField } from '../sharedImports';
+import type { FormConfig, QueryFormField, ChoiceFormField } from '../sharedImports';
 import type {
   MapPropertyDataResult,
   MapValueDataResult,
@@ -40,10 +42,13 @@ const isWizard = route.query.wizard === '1';
 
 const propertyId = ref<string | null>(null);
 const propertyName = ref('');
+const propertyType = ref<string | null>(null);
+const propertyOriginalType = ref<string | null>(null);
 const marketplaceId = ref<string | null>(null);
 const marketplaceName = ref('');
 const localPropertyId = ref<string | null>(null);
 const localPropertyName = ref('');
+const localPropertyType = ref<string | null>(null);
 const propertyMapped = ref(true);
 
 const placeholderContext: RemoteSelectValueEditPropertyContext = {
@@ -54,10 +59,13 @@ const placeholderContext: RemoteSelectValueEditPropertyContext = {
   isWizard,
   propertyId: null,
   propertyName: '',
+  propertyType: null,
+  propertyOriginalType: null,
   marketplaceId: null,
   marketplaceName: '',
   localPropertyId: null,
   localPropertyName: '',
+  localPropertyType: null,
   form: {} as Record<string, any>,
   routeQuery: route.query,
 };
@@ -79,10 +87,13 @@ const createContext = (): RemoteSelectValueEditPropertyContext => ({
   isWizard,
   propertyId: propertyId.value,
   propertyName: propertyName.value,
+  propertyType: propertyType.value,
+  propertyOriginalType: propertyOriginalType.value,
   marketplaceId: marketplaceId.value,
   marketplaceName: marketplaceName.value,
   localPropertyId: localPropertyId.value,
   localPropertyName: localPropertyName.value,
+  localPropertyType: localPropertyType.value,
   form,
   routeQuery: route.query,
 });
@@ -106,11 +117,46 @@ const loadingRecommendations = ref(false);
 
 const remoteFields = computed(() => props.config.remoteFields);
 const contextState = computed(() => createContext());
+const showBoolValueField = computed(() => {
+  if (!props.config.boolValueField) {
+    return false;
+  }
+  if (props.config.boolValueField.shouldShow) {
+    return props.config.boolValueField.shouldShow(contextState.value);
+  }
+  return true;
+});
+const isBooleanMapping = computed(() => showBoolValueField.value);
+
+const boolValueField = computed<ChoiceFormField | null>(() => {
+  if (!props.config.boolValueField) {
+    return null;
+  }
+  const placeholderKey = props.config.boolValueField.placeholderKey || 'shared.components.molecules.selector.defaultPlaceholder';
+  return {
+    type: FieldType.Choice,
+    name: 'boolValue',
+    label: t(props.config.boolValueField.labelKey),
+    options: [
+      { id: true, name: t('shared.labels.yes') },
+      { id: false, name: t('shared.labels.no') },
+    ],
+    labelBy: 'name',
+    valueBy: 'id',
+    placeholder: t(placeholderKey),
+    removable: true,
+  } as ChoiceFormField;
+});
 
 const propertyEditPath = computed(() => (props.config.propertyEditPath ? props.config.propertyEditPath(contextState.value) : null));
 const marketplaceEditPath = computed(() => (props.config.marketplaceEditPath ? props.config.marketplaceEditPath(contextState.value) : null));
 const localPropertyEditPath = computed(() => (props.config.localPropertyEditPath ? props.config.localPropertyEditPath(contextState.value) : null));
-const generateValuePath = computed(() => (props.config.generateValuePath ? props.config.generateValuePath(contextState.value) : null));
+const generateValuePath = computed(() => {
+  if (isBooleanMapping.value) {
+    return null;
+  }
+  return props.config.generateValuePath ? props.config.generateValuePath(contextState.value) : null;
+});
 const notMappedBannerLink = computed(() => (props.config.notMappedBanner ? props.config.notMappedBanner.linkPath(contextState.value) : null));
 
 const breadcrumbsLinks = computed(() => [
@@ -121,13 +167,18 @@ const breadcrumbsLinks = computed(() => [
 
 const updatableForm = computed(() => {
   const result: Record<string, any> = { id: form.id };
-  const localInstance = form[props.config.localInstanceFieldKey] || { id: null };
-  result[props.config.localInstanceFieldKey] = { id: localInstance?.id || null };
+  if (!isBooleanMapping.value) {
+    const localInstance = form[props.config.localInstanceFieldKey] || { id: null };
+    result[props.config.localInstanceFieldKey] = { id: localInstance?.id || null };
+  }
   for (const field of remoteFields.value) {
     const include = field.includeInSubmit !== undefined ? field.includeInSubmit : !field.disabled;
     if (include) {
       result[field.key] = form[field.key];
     }
+  }
+  if (showBoolValueField.value) {
+    result.boolValue = form.boolValue ?? null;
   }
   return result;
 });
@@ -161,6 +212,15 @@ const applyValueData = (result: MapValueDataResult | null | undefined) => {
     propertyName.value = result.propertyName || '';
     form[props.config.propertyFieldKey] = result.propertyName || '';
   }
+  if (result.propertyType !== undefined) {
+    propertyType.value = result.propertyType || null;
+  }
+  if (result.propertyOriginalType !== undefined) {
+    propertyOriginalType.value = result.propertyOriginalType || null;
+  }
+  if (result.localPropertyType !== undefined) {
+    localPropertyType.value = result.localPropertyType || null;
+  }
   if (result.marketplaceId !== undefined) {
     marketplaceId.value = result.marketplaceId;
   }
@@ -185,6 +245,15 @@ const applyPropertyData = (result: MapPropertyDataResult | null | undefined) => 
   if (result.localPropertyName !== undefined) {
     localPropertyName.value = result.localPropertyName || '';
   }
+  if (result.localPropertyType !== undefined) {
+    localPropertyType.value = result.localPropertyType || null;
+  }
+  if (result.propertyType !== undefined) {
+    propertyType.value = result.propertyType || null;
+  }
+  if (result.propertyOriginalType !== undefined) {
+    propertyOriginalType.value = result.propertyOriginalType || null;
+  }
   if (localPropertyId.value && props.config.buildLocalInstanceField) {
     localInstanceField.value = props.config.buildLocalInstanceField({ localPropertyId: localPropertyId.value, t, ctx: contextState.value });
   } else {
@@ -193,7 +262,7 @@ const applyPropertyData = (result: MapPropertyDataResult | null | undefined) => 
 };
 
 const fetchRecommendations = async () => {
-  if (!props.config.recommendations || !localPropertyId.value) {
+  if (isBooleanMapping.value || !props.config.recommendations || !localPropertyId.value) {
     recommendations.value = [];
     return;
   }
@@ -230,7 +299,7 @@ watch(localPropertyId, () => {
   if (props.config.recommendations) {
     debouncedFetchRecommendations?.();
   }
-  if (localPropertyId.value && props.config.buildLocalInstanceField) {
+  if (!isBooleanMapping.value && localPropertyId.value && props.config.buildLocalInstanceField) {
     localInstanceField.value = props.config.buildLocalInstanceField({ localPropertyId: localPropertyId.value, t, ctx: contextState.value });
   } else {
     localInstanceField.value = null;
@@ -414,6 +483,19 @@ onMounted(async () => {
                     </FlexCell>
                   </Flex>
                 </div>
+                <div v-if="showBoolValueField && boolValueField" class="col-span-full">
+                  <Flex vertical>
+                    <FlexCell>
+                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.boolValueField!.labelKey) }}</Label>
+                    </FlexCell>
+                    <FlexCell>
+                      <FieldChoice v-model="form.boolValue" :field="boolValueField" />
+                    </FlexCell>
+                    <FlexCell v-if="props.config.boolValueField?.helpKey">
+                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.boolValueField.helpKey) }}</p>
+                    </FlexCell>
+                  </Flex>
+                </div>
                 <div
                   v-if="props.config.notMappedBanner && !propertyMapped"
                   class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
@@ -426,7 +508,7 @@ onMounted(async () => {
                     {{ t(props.config.notMappedBanner.contentKey) }}
                   </Link>
                 </div>
-                <div v-else-if="localInstanceField" class="col-span-full">
+                <div v-else-if="localInstanceField && !isBooleanMapping" class="col-span-full">
                   <Flex vertical>
                     <FlexCell>
                       <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
@@ -442,7 +524,7 @@ onMounted(async () => {
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.localPropertyHelpKey ?? 'integrations.show.propertySelectValues.help.selectValue') }}</p>
                     </FlexCell>
                   </Flex>
-                  <div v-if="props.config.recommendations" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+                  <div v-if="props.config.recommendations && !isBooleanMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
                     <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
                     <div v-if="loadingRecommendations" class="flex items-center gap-2">
                       <div class="loader-mini"></div>

@@ -2732,7 +2732,8 @@
         "isProductType": "Product Type",
         "internalName": "Interne Naam",
         "valueValidator": "Waarde Validator",
-        "usedInProducts": ""
+        "usedInProducts": "",
+        "usageCount": ""
       },
       "placeholders": {
         "internalName": "Vul Interne naam in",
@@ -2780,7 +2781,8 @@
       },
       "labels": {
         "value": "Waarde",
-        "usedInProducts": ""
+        "usedInProducts": "",
+        "usageCount": ""
       },
       "placeholders": {
         "value": "Voeg Waarde toe"
@@ -2838,6 +2840,7 @@
         "title": "Product Eigenschap Regel"
       },
       "labels": {
+        "usageCount": "",
         "type": "Regel Type",
         "propertyType": "Type Eigenschap",
         "salesChannel": "",
@@ -3060,6 +3063,9 @@
         "labels": {
           "code": "",
           "type": "",
+          "originalType": "",
+          "currentType": "",
+          "remoteId": "",
           "allowsUnmappedValues": "",
           "property": "",
           "localizedName": "",
@@ -3068,6 +3074,9 @@
         "help": {
           "code": "",
           "type": "",
+          "originalType": "",
+          "currentType": "",
+          "remoteId": "",
           "allowsUnmappedValues": "",
           "name": "",
           "property": "",
@@ -3303,10 +3312,12 @@
         "labels": {
           "remoteName": "",
           "remoteValue": "",
+          "remoteId": "",
           "amazonProperty": "",
           "ebayProperty": "",
           "marketplace": "",
           "localProperty": "",
+          "boolValue": "",
           "selectValue": "",
           "translatedRemoteName": "",
           "localizedValue": "",
@@ -3319,12 +3330,17 @@
           "localProperty": "",
           "remoteValue": "",
           "remoteName": "",
+          "remoteId": "",
+          "boolValue": "",
           "selectValue": "",
           "selectValueAmazon": "",
           "selectValueEbay": "",
           "translatedRemoteName": "",
           "localizedValue": "",
           "translatedValue": ""
+        },
+        "placeholders": {
+          "boolValue": ""
         },
         "notMappedBannerEbay": {
           "title": "",
@@ -3343,6 +3359,59 @@
         "autoMap": "",
         "autoMapHelp": "",
         "autoMapPropertiesHelp": "",
+        "typeCompatibility": {
+          "title": "",
+          "summary": "",
+          "compatibleDetail": "",
+          "incompatibleDetail": "",
+          "fieldCompatible": "",
+          "fieldIncompatible": "",
+          "alertCompatibleTitle": "",
+          "alertIncompatibleTitle": "",
+          "alertIntro": "",
+          "warnings": {
+            "decimalsRemoved": "",
+            "integerOnlyNumeric": "",
+            "integerOnlyText": "",
+            "selectNumericOnly": "",
+            "numericOnlyText": "",
+            "decimalAsTextOnly": "",
+            "longTextMayBeRejected": "",
+            "shortTextToLongField": "",
+            "booleanTextMapping": "",
+            "dateAsTextIso": "",
+            "datetimeAsTextIso": "",
+            "selectLabelAsText": "",
+            "multiselectAsCommaText": "",
+            "dateToDatetimeMidnight": "",
+            "datetimeToDateDropTime": "",
+            "selectCustomNumber": "",
+            "selectCustomText": "",
+            "selectCustomLongText": "",
+            "selectToBooleanMapping": "",
+            "selectCustomDate": "",
+            "selectCustomDatetime": "",
+            "selectCustomMultiselect": "",
+            "multiselectCustomNumber": "",
+            "multiselectCustomText": "",
+            "multiselectCustomLongText": "",
+            "multiselectCustomDate": "",
+            "multiselectCustomDatetime": "",
+            "multiselectToSelectSingle": ""
+          }
+        },
+        "booleanText": {
+          "labels": {
+            "yesText": "",
+            "noText": ""
+          },
+          "help": {
+            "yesText": "",
+            "noText": "",
+            "yesTextSelectFallback": "",
+            "noTextSelectFallback": ""
+          }
+        },
         "saveAndMapNext": "",
         "allMappedSuccess": "",
         "importMapping": "",

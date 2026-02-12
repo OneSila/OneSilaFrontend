@@ -3,10 +3,12 @@ export { Breadcrumbs } from '../../../../../../../../shared/components/molecules
 export { TextInput } from '../../../../../../../../shared/components/atoms/input-text';
 export { Label } from '../../../../../../../../shared/components/atoms/label';
 export { Flex, FlexCell } from '../../../../../../../../shared/components/layouts/flex';
+export { FieldChoice } from '../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-choice';
 export { FieldQuery } from '../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query';
 export { SubmitButtons } from '../../../../../../../../shared/components/organisms/general-form/containers/submit-buttons';
 export { getEnhancedConfig } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
-export type { FormConfig, QueryFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
+export type { FormConfig, QueryFormField, ChoiceFormField } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 export { Link } from '../../../../../../../../shared/components/atoms/link';
 export { Toast } from '../../../../../../../../shared/modules/toast';
 export { default as apolloClient } from '../../../../../../../../../apollo-client';
+export { FieldType } from '../../../../../../../../shared/utils/constants';

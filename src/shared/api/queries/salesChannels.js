@@ -1256,10 +1256,12 @@ export const amazonPropertiesQuery = gql`
           code
           name
           type
+          originalType
           allowsUnmappedValues
           localInstance {
             id
             name
+            type
           }
         }
         cursor
@@ -1300,6 +1302,7 @@ export const ebayPropertiesQuery = gql`
           mappedRemotely
           localizedName
           type
+          originalType
           allowsUnmappedValues
           marketplace {
             id
@@ -1308,6 +1311,7 @@ export const ebayPropertiesQuery = gql`
           localInstance {
             id
             name
+            type
           }
         }
         cursor
@@ -1347,6 +1351,7 @@ export const sheinPropertiesQuery = gql`
           nameEn
           mappedLocally
           type
+          originalType
           localInstance {
             id
             name
@@ -1390,13 +1395,18 @@ export const getSheinPropertyQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      remoteId
       name
       nameEn
       type
+      originalType
       allowsUnmappedValues
+      yesTextValue
+      noTextValue
       localInstance {
         id
         name
+        type
       }
     }
   }
@@ -1516,10 +1526,14 @@ export const getAmazonPropertyQuery = gql`
       code
       name
       type
+      originalType
       allowsUnmappedValues
+      yesTextValue
+      noTextValue
       localInstance {
         id
         name
+        type
       }
     }
   }
@@ -1534,7 +1548,10 @@ export const getEbayPropertyQuery = gql`
       localizedName
       translatedName
       type
+      originalType
       allowsUnmappedValues
+      yesTextValue
+      noTextValue
       marketplace {
         id
         name
@@ -1542,6 +1559,7 @@ export const getEbayPropertyQuery = gql`
       localInstance {
         id
         name
+        type
       }
     }
   }
@@ -1608,11 +1626,18 @@ export const getAmazonPropertySelectValueQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      boolValue
       amazonProperty {
         id
         name
         code
         type
+        originalType
+        localInstance {
+          id
+          name
+          type
+        }
       }
       marketplace {
         id
@@ -1839,9 +1864,17 @@ export const getEbayPropertySelectValueQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      boolValue
       ebayProperty {
         id
         localizedName
+        type
+        originalType
+        localInstance {
+          id
+          name
+          type
+        }
       }
       marketplace {
         id
@@ -1863,15 +1896,20 @@ export const getSheinPropertySelectValueQuery = gql`
       id
       mappedLocally
       mappedRemotely
+      remoteId
+      boolValue
       value
       valueEn
       remoteProperty {
         id
         name
+        type
+        originalType
         mappedLocally
         localInstance {
           id
           name
+          type
         }
       }
       localInstance {

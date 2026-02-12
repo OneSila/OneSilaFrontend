@@ -21,10 +21,13 @@ export interface RemoteSelectValueEditPropertyContext {
   isWizard: boolean;
   propertyId: string | null;
   propertyName: string;
+  propertyType?: string | null;
+  propertyOriginalType?: string | null;
   marketplaceId: string | null;
   marketplaceName: string;
   localPropertyId: string | null;
   localPropertyName: string;
+  localPropertyType?: string | null;
   form: Record<string, any>;
   routeQuery: RouteLocationNormalizedLoaded['query'];
 }
@@ -33,15 +36,21 @@ export interface MapValueDataResult {
   form?: Record<string, any>;
   propertyId?: string | null;
   propertyName?: string;
+  propertyType?: string | null;
+  propertyOriginalType?: string | null;
   marketplaceId?: string | null;
   marketplaceName?: string;
   localInstanceId?: string | null;
+  localPropertyType?: string | null;
 }
 
 export interface MapPropertyDataResult {
   mapped?: boolean;
   localPropertyId?: string | null;
   localPropertyName?: string;
+  localPropertyType?: string | null;
+  propertyType?: string | null;
+  propertyOriginalType?: string | null;
 }
 
 export interface RemoteSelectValueEditPropertyConfig {
@@ -71,6 +80,12 @@ export interface RemoteSelectValueEditPropertyConfig {
   localPropertyHelpKey?: string;
   localPropertyEditPath?: (ctx: RemoteSelectValueEditPropertyContext) => Url | null;
   buildLocalInstanceField?: (args: { localPropertyId: string; t: Function; ctx: RemoteSelectValueEditPropertyContext }) => QueryFormField | null;
+  boolValueField?: {
+    labelKey: string;
+    helpKey?: string;
+    placeholderKey?: string;
+    shouldShow?: (ctx: RemoteSelectValueEditPropertyContext) => boolean;
+  };
   notMappedBanner?: {
     titleKey: string;
     contentKey: string;
