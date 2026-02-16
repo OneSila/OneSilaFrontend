@@ -1506,6 +1506,7 @@ export const getEbayInternalPropertyQuery = gql`
       code
       name
       type
+      allowedTypes
       isRoot
       mappedLocally
       mappedRemotely
@@ -1755,6 +1756,7 @@ export const getSheinInternalPropertyQuery = gql`
       code
       name
       type
+      allowedTypes
       mappedLocally
       mappedRemotely
       localInstance {
