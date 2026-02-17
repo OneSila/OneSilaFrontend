@@ -144,6 +144,16 @@ interface MarketplaceEntry {
   productId: string | null;
 }
 
+const pickPreferredProductForView = (products: AmazonProduct[]) => {
+  if (!products.length) return null;
+
+  return [...products].sort((a, b) => {
+    const byMarketplaces = (a.createdMarketplaces?.length || 0) - (b.createdMarketplaces?.length || 0);
+    if (byMarketplaces !== 0) return byMarketplaces;
+    return String(a.id).localeCompare(String(b.id));
+  })[0];
+};
+
 const marketplaceEntries = computed<MarketplaceEntry[]>(() => {
   const entries: MarketplaceEntry[] = [];
   views.value.forEach((view: any) => {
@@ -151,13 +161,13 @@ const marketplaceEntries = computed<MarketplaceEntry[]>(() => {
       doesProductMatchView(product, view),
     );
 
-    if (matchingProducts.length) {
-      matchingProducts.forEach((product) => {
-        entries.push({
-          key: createMarketplaceKey(view.id, product.id),
-          viewId: view.id,
-          productId: product.id,
-        });
+    const preferredProduct = pickPreferredProductForView(matchingProducts);
+
+    if (preferredProduct) {
+      entries.push({
+        key: createMarketplaceKey(view.id, preferredProduct.id),
+        viewId: view.id,
+        productId: preferredProduct.id,
       });
     } else {
       entries.push({
