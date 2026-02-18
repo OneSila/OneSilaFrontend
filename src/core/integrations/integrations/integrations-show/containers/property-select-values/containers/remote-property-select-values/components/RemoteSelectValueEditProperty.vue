@@ -114,6 +114,7 @@ const enhancedConfig = ref<FormConfig>(getEnhancedConfig(buildFormConfig(), defa
 const localInstanceField = ref<QueryFormField | null>(null);
 const recommendations = ref<Recommendation[]>([]);
 const loadingRecommendations = ref(false);
+const formErrors = ref<Record<string, any>>({});
 
 const remoteFields = computed(() => props.config.remoteFields);
 const contextState = computed(() => createContext());
@@ -323,6 +324,17 @@ const selectRecommendation = (id: string) => {
   recommendations.value = recommendations.value.filter(recommendation => recommendation.id !== id);
 };
 
+const handleSubmitErrors = (errors: Record<string, any>) => {
+  formErrors.value = errors || {};
+  const messages = Object.values(formErrors.value).filter(Boolean);
+  if (!messages.length) {
+    return;
+  }
+  messages.forEach(message => {
+    Toast.error(String(message));
+  });
+};
+
 const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boolean }> => {
   if (!props.config.wizard) {
     return { nextId: null, last: false };
@@ -481,6 +493,9 @@ onMounted(async () => {
                     <FlexCell v-if="field.helpKey">
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(field.helpKey) }}</p>
                     </FlexCell>
+                    <FlexCell v-if="formErrors[field.key]">
+                      <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[field.key] }}</p>
+                    </FlexCell>
                   </Flex>
                 </div>
                 <div v-if="showBoolValueField && boolValueField" class="col-span-full">
@@ -523,6 +538,9 @@ onMounted(async () => {
                     <FlexCell>
                       <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.localPropertyHelpKey ?? 'integrations.show.propertySelectValues.help.selectValue') }}</p>
                     </FlexCell>
+                    <FlexCell v-if="formErrors[props.config.localInstanceFieldKey]">
+                      <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[props.config.localInstanceFieldKey] }}</p>
+                    </FlexCell>
                   </Flex>
                   <div v-if="props.config.recommendations && !isBooleanMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
                     <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
@@ -548,7 +566,10 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <SubmitButtons :config="enhancedConfig" :form="updatableForm">
+            <div v-if="formErrors.__all__" class="px-8 pb-3">
+              <p class="text-sm leading-6 text-red-600">{{ formErrors.__all__ }}</p>
+            </div>
+            <SubmitButtons :config="enhancedConfig" :form="updatableForm" @update-errors="handleSubmitErrors">
               <template #additional-button>
                 <slot name="additional-button" :generate-value-path="generateValuePath" :context="contextState" />
               </template>

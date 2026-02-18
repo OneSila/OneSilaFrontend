@@ -248,7 +248,7 @@ const setCurrentLanguage = async (fetchPolicy) => {
 
 };
 
-const fetchPropertiesIds = async (productTypeValueId, fetchPolicy) => {
+const fetchPropertiesIds = async (productTypeValueId, fetchPolicy, populateValues = true) => {
 
   if (productTypeValueId == null) {
     ruleId.value = null;
@@ -315,6 +315,9 @@ const fetchPropertiesIds = async (productTypeValueId, fetchPolicy) => {
 
   ruleId.value = rule.id;
   const items = rule.items ?? [];
+  if (!populateValues) {
+    return [];
+  }
   const propertyIds: string[] = [];
 
   for (const item of items) {
@@ -437,6 +440,7 @@ const fetchRequiredAttributes = async (productTypePropertyId, fetchPolicy) => {
   const productTypeValueId = await fetchProductTypeValue(productTypePropertyId, fetchPolicy);
 
   if (props.product.type == ProductType.Configurable) {
+    await fetchPropertiesIds(productTypeValueId, fetchPolicy, false);
     lastSavedValues.value = values.value;
     return
   }
