@@ -254,6 +254,9 @@ const updateCurrentTypeHelp = () => {
   field.secondaryHelpClass = 'text-orange-600';
 };
 
+const getEffectiveCurrentType = (fallback?: string | null) =>
+  localPropertyType.value || fallback || initialCurrentType.value || null;
+
 const insertFieldsAfter = (afterName: string, fieldsToAdd: any[]) => {
   if (!formConfig.value) {
     return;
@@ -357,6 +360,24 @@ onMounted(async () => {
   if (!formConfig.value) {
     return;
   }
+
+  formConfig.value.transformSubmitData = (cleanedData: Record<string, any>) => ({
+    ...cleanedData,
+    type: getEffectiveCurrentType(cleanedData.type),
+  });
+
+  formConfig.value.afterSubmitCallback = () => {
+    const nextType = getEffectiveCurrentType(formData.value?.type);
+    if (!nextType) {
+      return;
+    }
+    initialCurrentType.value = nextType;
+    if (formData.value) {
+      formData.value.type = nextType;
+    }
+    updateCurrentTypeHelp();
+    syncBooleanTextFields(nextType);
+  };
 
   formConfig.value.cancelUrl = {
     name: 'integrations.integrations.show',
