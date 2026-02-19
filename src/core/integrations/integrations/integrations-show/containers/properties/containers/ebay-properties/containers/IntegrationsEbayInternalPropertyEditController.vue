@@ -116,12 +116,10 @@ const handleSetData = (data: any) => {
   }
 
   propertyData.value = data?.ebayInternalProperty ?? null;
-  const propertyType = data?.ebayInternalProperty?.type;
-  if (!propertyType) {
-    return;
-  }
-
   const defaultValue = propertyId || data?.ebayInternalProperty?.localInstance?.id || null;
+  const allowedTypes = Array.isArray(data?.ebayInternalProperty?.allowedTypes)
+    ? data.ebayInternalProperty.allowedTypes.filter((entry: unknown) => typeof entry === 'string')
+    : [];
 
   const field = {
     type: FieldType.Query,
@@ -131,7 +129,7 @@ const handleSetData = (data: any) => {
     labelBy: 'name',
     valueBy: 'id',
     query: propertiesQuerySelector,
-    queryVariables: { filter: { type: { exact: propertyType } } },
+    ...(allowedTypes.length ? { queryVariables: { filter: { type: { inList: allowedTypes } } } } : {}),
     dataKey: 'properties',
     isEdge: true,
     multiple: false,

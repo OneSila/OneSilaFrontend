@@ -3139,7 +3139,8 @@
         "valueValidator": "Value Validator",
         "missingMainTranslation": "Missing Main Translation",
         "missingTranslations": "Missing Translations",
-        "usedInProducts": "Used In Products"
+        "usedInProducts": "Used In Products",
+        "usageCount": "Usage count"
       },
       "placeholders": {
         "internalName": "Enter internal name",
@@ -3190,7 +3191,8 @@
         "value": "Value",
         "missingMainTranslation": "Missing Main Translation",
         "missingTranslations": "Missing Translations",
-        "usedInProducts": "Used In Products"
+        "usedInProducts": "Used In Products",
+        "usageCount": "Usage count"
       },
       "placeholders": {
         "value": "Enter value"
@@ -3254,6 +3256,7 @@
         "title": "Product Rule"
       },
       "labels": {
+        "usageCount": "Usage count",
         "type": "Rule Type",
         "propertyType": "Property Type",
         "salesChannel": "Sales Channel",
@@ -3840,6 +3843,9 @@
         "labels": {
           "code": "Code",
           "type": "Type",
+          "originalType": "Original type",
+          "currentType": "Current type",
+          "remoteId": "Remote ID",
           "allowsUnmappedValues": "Allow Unmapped Values",
           "property": "Property",
           "localizedName": "Marketplace Name",
@@ -3848,6 +3854,9 @@
         "help": {
           "code": "Marketplace code for this property.",
           "type": "Type mapped from the marketplace. Cannot be changed.",
+          "originalType": "Type from the marketplace before mapping.",
+          "currentType": "Current mapped type based on the selected OneSila property.",
+          "remoteId": "Remote identifier provided by the marketplace.",
           "allowsUnmappedValues": "Allow values that have not been mapped locally.",
           "name": "Name provided by the marketplace. You can modify it.",
           "property": "Select the local property this marketplace property maps to.",
@@ -3865,11 +3874,13 @@
         "labels": {
           "remoteName": "Amazon Name",
           "remoteValue": "Amazon Value",
+          "remoteId": "Remote ID",
           "amazonProperty": "Amazon Property",
           "ebayProperty": "eBay Property",
           "sheinProperty": "Shein Property",
           "marketplace": "Marketplace",
           "localProperty": "OneSila Property",
+          "boolValue": "Boolean mapping",
           "selectValue": "OneSila Select Value",
           "translatedRemoteName": "Translated Name",
           "localizedValue": "Localized Value",
@@ -3883,6 +3894,8 @@
           "localProperty": "OneSila property that this remote property maps to.",
           "remoteValue": "Value exactly as defined by the marketplace.",
           "remoteName": "Name from the marketplace. You can change it.",
+          "remoteId": "Remote identifier for this value as provided by the marketplace.",
+          "boolValue": "Choose whether this remote value should be treated as True or False.",
           "selectValue": "Choose the OneSila value that matches this marketplace value.",
           "selectValueAmazon": "Choose the OneSila value that matches this Amazon value.",
           "selectValueEbay": "Choose the OneSila value that matches this eBay value.",
@@ -3890,6 +3903,9 @@
           "translatedRemoteName": "Translated name for this value.",
           "localizedValue": "Value as returned by the marketplace.",
           "translatedValue": "Translated value in the company language."
+        },
+        "placeholders": {
+          "boolValue": "Select True or False"
         },
         "notMappedBanner": {
           "title": "Amazon property not mapped",
@@ -3922,6 +3938,59 @@
         "autoMap": "Auto Map",
         "autoMapHelp": "Auto Map tries to match values for you. If a marketplace property is already mapped to a OneSila property, and a marketplace value has the exact same text as an existing OneSila value in that property, it will be mapped automatically. Example: marketplace “Color” → OneSila “Color”, marketplace value “Red” → OneSila value “Red”. Runs in the background, so you can keep working.",
         "autoMapPropertiesHelp": "Auto Map tries to match properties for you. If a marketplace property has the exact same name and type as an existing OneSila property, it will be mapped automatically. Example: marketplace “Color” (type “Select”) → OneSila “Color” (type “Select”). Runs in the background, so you can keep working.",
+        "typeCompatibility": {
+          "title": "Type compatibility",
+          "summary": "Original type {originalType} mapped to {mappedType}.",
+          "compatibleDetail": "This mapping is compatible, but there are limitations.",
+          "incompatibleDetail": "This mapping is not compatible. Saving will fail.",
+          "fieldCompatible": "{originalType} mapped to {mappedType}. Compatible, but there are limitations.",
+          "fieldIncompatible": "{originalType} mapped to {mappedType}. Not compatible. Saving will fail.",
+          "alertCompatibleTitle": "Compatible mapping",
+          "alertIncompatibleTitle": "Incompatible mapping",
+          "alertIntro": "{originalType} mapped to {mappedType}.",
+          "warnings": {
+            "decimalsRemoved": "Only whole numbers can be used. You’ll be limited to integers even though the integration accepts decimals.",
+            "integerOnlyNumeric": "Only whole numbers are allowed. Decimal values will be rejected by the integration.",
+            "integerOnlyText": "Only whole numbers can be sent as text. Non-numeric text or decimals will be rejected.",
+            "selectNumericOnly": "Only numeric values can be mapped. Non-numeric values will be rejected.",
+            "numericOnlyText": "Only numeric values can be sent. Non-numeric text won't be available.",
+            "decimalAsTextOnly": "Only numeric values can be sent as text (for example 12.5). Free text won't be available.",
+            "longTextMayBeRejected": "This integration field expects short text. Long descriptions may be rejected.",
+            "shortTextToLongField": "This mapping uses a shorter OneSila text field. The integration supports longer text, but only the short value will be sent.",
+            "booleanTextMapping": "Define the text values that represent True and False (for example \"Yes\" and \"No\").",
+            "dateAsTextIso": "Dates will be sent as text in ISO format (YYYY-MM-DD).",
+            "datetimeAsTextIso": "Date and time will be sent as text in ISO format.",
+            "selectLabelAsText": "The selected option label will be sent as text in the correct language.",
+            "multiselectAsCommaText": "Multiple values will be sent as comma-separated text.",
+            "dateToDatetimeMidnight": "Time will be set to 00:00.",
+            "datetimeToDateDropTime": "Time information will be removed.",
+            "selectCustomNumber": "The number will be sent as a custom option.",
+            "selectCustomText": "Text will be sent as a custom option.",
+            "selectCustomLongText": "Text will be sent as a custom option. Very long values may be rejected.",
+            "selectToBooleanMapping": "Mark which remote values represent True and False.",
+            "selectCustomDate": "Dates will be sent as a custom option in ISO format.",
+            "selectCustomDatetime": "Date and time will be sent as a custom option in ISO format.",
+            "selectCustomMultiselect": "Multiple values will be sent as a single comma-separated option.",
+            "multiselectCustomNumber": "The number will be sent as a value in the multiselect field.",
+            "multiselectCustomText": "Text will be sent as a value in the multiselect field.",
+            "multiselectCustomLongText": "Text will be sent as a value. Very long values may be rejected.",
+            "multiselectCustomDate": "Dates will be sent as a value in ISO format.",
+            "multiselectCustomDatetime": "Date and time will be sent as a value in ISO format.",
+            "multiselectToSelectSingle": "Only one value will be sent. The integration supports multiple values, but this mapping can send just one."
+          }
+        },
+        "booleanText": {
+          "labels": {
+            "yesText": "Text for True",
+            "noText": "Text for False"
+          },
+          "help": {
+            "yesText": "Text value that should be treated as True.",
+            "noText": "Text value that should be treated as False.",
+            "yesTextSelectFallback": "Used when no remote option is mapped to True. Explicit True/False mappings take priority.",
+            "noTextSelectFallback": "Used when no remote option is mapped to False. Explicit True/False mappings take priority."
+          }
+        },
         "saveAndMapNext": "Save & Map Next",
         "allMappedSuccess": "You mapped all the values",
         "importMapping": "Import Mapping",

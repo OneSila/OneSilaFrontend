@@ -1,10 +1,11 @@
-import {FieldType, getPropertyTypeOptions} from "../../../../../../../../shared/utils/constants";
+import { FieldType, getPropertyTypeOptions } from "../../../../../../../../shared/utils/constants";
 import { amazonPropertiesQuery, getAmazonPropertyQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { propertiesQuerySelector } from "../../../../../../../../shared/api/queries/properties.js";
 import { updateAmazonPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { FormConfig, FormType } from '../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import { getPropertyTypeBadgeMap } from "../../../../../../../properties/properties/configs";
 
 export const amazonPropertyEditFormConfigConstructor = (
   t: Function,
@@ -26,14 +27,25 @@ export const amazonPropertyEditFormConfigConstructor = (
     { type: FieldType.Text, name: 'code', label: t('integrations.show.properties.labels.code'), disabled: true, help: t('integrations.show.properties.help.code') },
     {
       type: FieldType.Choice,
-      name: 'type',
-      label: t('products.products.labels.type.title'),
+      name: 'originalType',
+      label: t('integrations.show.properties.labels.originalType'),
       labelBy: 'name',
       valueBy: 'code',
       options: getPropertyTypeOptions(t),
       disabled: true,
       removable: false,
-      help: t('integrations.show.properties.help.type')
+      help: t('integrations.show.properties.help.originalType')
+    },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('integrations.show.properties.labels.currentType'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      disabled: true,
+      removable: false,
+      help: t('integrations.show.properties.help.currentType')
     },
     { type: FieldType.Boolean, name: 'allowsUnmappedValues', label: t('integrations.show.properties.labels.allowsUnmappedValues'), disabled: true, strict: true, help: t('integrations.show.properties.help.allowsUnmappedValues') },
     { type: FieldType.Text, name: 'name', label: t('shared.labels.name'), help: t('integrations.show.properties.help.name') }
@@ -77,12 +89,14 @@ export const amazonPropertiesListingConfigConstructor = (t: Function, specificIn
   headers: [
     t('shared.labels.name'),
     t('integrations.show.properties.labels.code'),
+    t('integrations.show.properties.labels.originalType'),
     t('integrations.show.mapping.mappedLocally'),
     t('properties.properties.title')
   ],
   fields: [
     { name: 'name', type: FieldType.Text },
     { name: 'code', type: FieldType.Text },
+    { name: 'originalType', type: FieldType.Badge, badgeMap: getPropertyTypeBadgeMap(t) },
     { name: 'mappedLocally', type: FieldType.Boolean },
     { name: 'localInstance',
       type: FieldType.NestedText,

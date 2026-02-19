@@ -27,6 +27,7 @@ export interface Property {
   id: string;
   name: string;
   type: string;
+  usageCount?: number | null;
   configType?: string | null;
   sortOrder: number;
 }
@@ -418,6 +419,7 @@ onMounted(fetchData);
             <tr>
               <th>{{ t('shared.labels.name') }}</th>
               <th>{{ t('properties.rule.labels.propertyType') }}</th>
+              <th>{{ t('properties.rule.labels.usageCount') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -444,6 +446,9 @@ onMounted(fetchData);
                 <Badge :color="getPropertyTypeBadgeMap(t)[property.type].color"
                        :text="getPropertyTypeBadgeMap(t)[property.type].text"/>
               </td>
+              <td>
+                {{ property.usageCount ?? 0 }}
+              </td>
             </tr>
             </tbody>
           </table>
@@ -462,6 +467,7 @@ onMounted(fetchData);
           <tr>
             <th>{{ t('shared.labels.name') }}</th>
             <th>{{ t('properties.rule.labels.propertyType') }}</th>
+            <th>{{ t('properties.rule.labels.usageCount') }}</th>
             <th>{{ t('properties.rule.labels.type') }}</th>
             <th>{{ t('shared.labels.actions') }}</th>
           </tr>
@@ -489,6 +495,9 @@ onMounted(fetchData);
             <td>
               <Badge :color="getPropertyTypeBadgeMap(t)[item.type].color"
                      :text="getPropertyTypeBadgeMap(t)[item.type].text"/>
+            </td>
+            <td>
+              {{ item.usageCount ?? 0 }}
             </td>
             <td class="w-60">
               <Selector class="w-full"

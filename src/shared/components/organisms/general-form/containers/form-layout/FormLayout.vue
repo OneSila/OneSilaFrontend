@@ -37,7 +37,8 @@ const computedStyle = computed(() => props.config.customStyle || '');
           <div v-if="field.type !== FieldType.Checkbox" class="mt-2" >
             <component v-model="form[field.name]" :is="getFieldComponent(field.type)" :field="field" />
           </div>
-          <p v-if="field.help" class="mt-1 text-sm leading-6 text-gray-400">{{ field.help }}</p>
+          <p v-if="field.help" :class="['mt-1 text-sm leading-6', field.helpClass || 'text-gray-400']">{{ field.help }}</p>
+          <p v-if="field.secondaryHelp" :class="['mt-1 text-sm leading-6', field.secondaryHelpClass || 'text-gray-400']">{{ field.secondaryHelp }}</p>
       </div>
     </template>
 </template>

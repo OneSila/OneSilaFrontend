@@ -229,11 +229,17 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('products.products.labels.type.title'), t('properties.properties.labels.isPublicInformation')],
+  headers: [
+    t('shared.labels.name'),
+    t('products.products.labels.type.title'),
+    t('properties.properties.labels.usageCount'),
+    t('properties.properties.labels.isPublicInformation'),
+  ],
   fields: [
     { name: 'name', type: FieldType.Text },
     { name: 'type', type: FieldType.Badge, badgeMap: getPropertyTypeBadgeMap(t) },
-    { name: 'isPublicInformation', type: FieldType.Boolean }
+    { name: 'usageCount', type: FieldType.Text },
+    { name: 'isPublicInformation', type: FieldType.Boolean },
   ],
   identifierKey: 'id',
   addActions: true,
@@ -280,6 +286,11 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       name: 'type',
       type: FieldType.Badge,
       badgeMap: getPropertyTypeBadgeMap(t)
+    },
+    {
+      label: t('properties.properties.labels.usageCount'),
+      name: 'usageCount',
+      type: FieldType.Text
     },
     {
       label: t('properties.properties.labels.isPublicInformation'),

@@ -5,6 +5,7 @@ import { ListingConfig } from "../../../../../../../../shared/components/organis
 import { FormConfig, FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
 import { updateEbayPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
+import { getPropertyTypeBadgeMap } from "../../../../../../../properties/properties/configs";
 
 export const ebayPropertyEditFormConfigConstructor = (
   t: Function,
@@ -36,14 +37,25 @@ export const ebayPropertyEditFormConfigConstructor = (
     },
     {
       type: FieldType.Choice,
-      name: 'type',
-      label: t('products.products.labels.type.title'),
+      name: 'originalType',
+      label: t('integrations.show.properties.labels.originalType'),
       labelBy: 'name',
       valueBy: 'code',
       options: getPropertyTypeOptions(t),
       disabled: true,
       removable: false,
-      help: t('integrations.show.properties.help.type'),
+      help: t('integrations.show.properties.help.originalType'),
+    },
+    {
+      type: FieldType.Choice,
+      name: 'type',
+      label: t('integrations.show.properties.labels.currentType'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      disabled: true,
+      removable: false,
+      help: t('integrations.show.properties.help.currentType'),
     },
     {
       type: FieldType.Boolean,
@@ -106,12 +118,14 @@ export const ebayPropertiesSearchConfigConstructor = (t: Function, salesChannelI
 export const ebayPropertiesListingConfigConstructor = (t: Function, specificIntegrationId): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
+    t('integrations.show.properties.labels.originalType'),
     t('integrations.show.mapping.mappedLocally'),
     t('properties.properties.title'),
     t('integrations.show.propertySelectValues.labels.marketplace'),
   ],
   fields: [
     { name: 'localizedName', type: FieldType.Text },
+    { name: 'originalType', type: FieldType.Badge, badgeMap: getPropertyTypeBadgeMap(t) },
     { name: 'mappedLocally', type: FieldType.Boolean },
     {
       name: 'localInstance',

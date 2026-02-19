@@ -1157,6 +1157,9 @@
         "labels": {
           "code": "",
           "type": "",
+          "originalType": "",
+          "currentType": "",
+          "remoteId": "",
           "allowsUnmappedValues": "",
           "property": "",
           "localizedName": "",
@@ -1165,6 +1168,9 @@
         "help": {
           "code": "",
           "type": "",
+          "originalType": "",
+          "currentType": "",
+          "remoteId": "",
           "allowsUnmappedValues": "",
           "name": "",
           "property": "",
@@ -1362,10 +1368,12 @@
         "labels": {
           "remoteName": "",
           "remoteValue": "",
+          "remoteId": "",
           "amazonProperty": "",
           "ebayProperty": "",
           "marketplace": "",
           "localProperty": "",
+          "boolValue": "",
           "selectValue": "",
           "translatedRemoteName": "",
           "localizedValue": "",
@@ -1378,12 +1386,17 @@
           "localProperty": "",
           "remoteValue": "",
           "remoteName": "",
+          "remoteId": "",
+          "boolValue": "",
           "selectValue": "",
           "selectValueAmazon": "",
           "selectValueEbay": "",
           "translatedRemoteName": "",
           "localizedValue": "",
           "translatedValue": ""
+        },
+        "placeholders": {
+          "boolValue": ""
         },
         "notMappedBannerEbay": {
           "title": "",
@@ -1402,6 +1415,59 @@
         "autoMap": "",
         "autoMapHelp": "",
         "autoMapPropertiesHelp": "",
+        "typeCompatibility": {
+          "title": "",
+          "summary": "",
+          "compatibleDetail": "",
+          "incompatibleDetail": "",
+          "fieldCompatible": "",
+          "fieldIncompatible": "",
+          "alertCompatibleTitle": "",
+          "alertIncompatibleTitle": "",
+          "alertIntro": "",
+          "warnings": {
+            "decimalsRemoved": "",
+            "integerOnlyNumeric": "",
+            "integerOnlyText": "",
+            "selectNumericOnly": "",
+            "numericOnlyText": "",
+            "decimalAsTextOnly": "",
+            "longTextMayBeRejected": "",
+            "shortTextToLongField": "",
+            "booleanTextMapping": "",
+            "dateAsTextIso": "",
+            "datetimeAsTextIso": "",
+            "selectLabelAsText": "",
+            "multiselectAsCommaText": "",
+            "dateToDatetimeMidnight": "",
+            "datetimeToDateDropTime": "",
+            "selectCustomNumber": "",
+            "selectCustomText": "",
+            "selectCustomLongText": "",
+            "selectToBooleanMapping": "",
+            "selectCustomDate": "",
+            "selectCustomDatetime": "",
+            "selectCustomMultiselect": "",
+            "multiselectCustomNumber": "",
+            "multiselectCustomText": "",
+            "multiselectCustomLongText": "",
+            "multiselectCustomDate": "",
+            "multiselectCustomDatetime": "",
+            "multiselectToSelectSingle": ""
+          }
+        },
+        "booleanText": {
+          "labels": {
+            "yesText": "",
+            "noText": ""
+          },
+          "help": {
+            "yesText": "",
+            "noText": "",
+            "yesTextSelectFallback": "",
+            "noTextSelectFallback": ""
+          }
+        },
         "saveAndMapNext": "",
         "allMappedSuccess": "",
         "importMapping": "",
@@ -1762,12 +1828,14 @@
   "properties": {
     "properties": {
       "labels": {
-        "usedInProducts": ""
+        "usedInProducts": "",
+        "usageCount": ""
       }
     },
     "values": {
       "labels": {
-        "usedInProducts": ""
+        "usedInProducts": "",
+        "usageCount": ""
       },
       "sort": {
         "mostUsed": "",
@@ -1807,6 +1875,7 @@
     },
     "rule": {
       "labels": {
+        "usageCount": "",
         "salesChannel": "",
         "defaultSalesChannel": "",
         "unknownSalesChannel": ""

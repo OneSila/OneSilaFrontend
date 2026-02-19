@@ -294,7 +294,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 });
 
 export const listingConfigConstructor = (t: Function, addActions: boolean = true, isMainPage: boolean = false, addGrid: boolean = false): ListingConfig => ({
-    headers: [t('properties.values.show.title'), t('properties.properties.show.title')],
+    headers: [t('properties.values.show.title'), t('properties.properties.show.title'), t('properties.values.labels.usageCount')],
     fields: [
         {
             name: 'value',
@@ -308,6 +308,10 @@ export const listingConfigConstructor = (t: Function, addActions: boolean = true
             clickable: true,
             clickIdentifiers: [{id: ['id']}],
             clickUrl: {name: 'properties.properties.show'}
+        },
+        {
+            name: 'usageCount',
+            type: FieldType.Text,
         },
     ],
     identifierKey: 'id',
@@ -351,6 +355,11 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
         {
             label: t('properties.values.show.title'),
             name: 'value',
+            type: FieldType.Text
+        },
+        {
+            label: t('properties.values.labels.usageCount'),
+            name: 'usageCount',
             type: FieldType.Text
         }
     ]

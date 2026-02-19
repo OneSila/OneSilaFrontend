@@ -161,6 +161,7 @@ const transformRuleNode = (node: any): RuleCacheEntry => {
     id: item.property.id,
     name: item.property.name,
     type: item.property.type,
+    usageCount: item.property.usageCount ?? null,
     configType: item.type,
     sortOrder: item.sortOrder ?? index + 1,
   }));

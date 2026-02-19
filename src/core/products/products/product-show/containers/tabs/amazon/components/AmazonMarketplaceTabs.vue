@@ -52,6 +52,17 @@ const doesProductMatchView = (product: any, view: any) => {
   });
 };
 
+const pickPreferredProductForView = (products: any[]) => {
+  if (!products.length) return null;
+
+  return [...products].sort((a: any, b: any) => {
+    const byMarketplaces =
+      (a.createdMarketplaces?.length || 0) - (b.createdMarketplaces?.length || 0);
+    if (byMarketplaces !== 0) return byMarketplaces;
+    return String(a.id).localeCompare(String(b.id));
+  })[0];
+};
+
 const groupedViews = computed(() => {
   const groups: Record<string, any[]> = {};
   props.views.forEach((view: any) => {
@@ -62,13 +73,13 @@ const groupedViews = computed(() => {
       doesProductMatchView(product, view),
     );
 
-    if (matchingProducts.length) {
-      matchingProducts.forEach((product: any) => {
-        groups[scId].push({
-          key: createMarketplaceKey(view.id, product.id),
-          view,
-          product,
-        });
+    const preferredProduct = pickPreferredProductForView(matchingProducts);
+
+    if (preferredProduct) {
+      groups[scId].push({
+        key: createMarketplaceKey(view.id, preferredProduct.id),
+        view,
+        product: preferredProduct,
       });
     } else {
       groups[scId].push({

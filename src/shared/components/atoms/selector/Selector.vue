@@ -187,7 +187,7 @@ const onModelValueUpdated = (value) => {
 
 
 
-  if (!value) {
+  if (value === null || value === undefined) {
     emit('deselected', value);
   }
 
@@ -213,7 +213,7 @@ const handleKeydown = (event) => {
 
 
 const getLabel = (option: any): string | null => {
-  if (!option && !props.boolean) return null;
+  if ((option === null || option === undefined) && !props.boolean) return null;
 
   if (props.valueBy && typeof option !== 'object') {
     const match = dropdownOptions.value.find(opt => {
