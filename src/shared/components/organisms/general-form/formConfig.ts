@@ -259,6 +259,7 @@ export interface FormConfig {
   customStyle?: string;
   fullWidth?: boolean;
   omitNullValues?: boolean;
+  transformSubmitData?: (cleanedData: Record<string, any>, formData: Record<string, any>) => Record<string, any>;
   afterSubmitCallback?: () => void;
   allowNull?: boolean; // allow null response (some mutations can return null on purpose)
   submitSuccessCreate?: string; // toast message after create

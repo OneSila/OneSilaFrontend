@@ -181,7 +181,10 @@ const handleInlineFieldsCreate = async (response) => {
 
 const cleanupAndMutate = async (mutate) => {
   const cleanedData = cleanUpDataForMutation(props.form, props.config.fields, props.config.type);
-  const result = await mutate({ variables: { data: cleanedData } });
+  const finalData = props.config.transformSubmitData
+    ? props.config.transformSubmitData(cleanedData, props.form)
+    : cleanedData;
+  const result = await mutate({ variables: { data: finalData } });
 };
 
 const handleDelete = (response) => {
