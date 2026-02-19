@@ -40,6 +40,7 @@ const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
 const propertyType = ref<string | null>(null);
 const originalType = ref<string | null>(null);
+const initialCurrentType = ref<string | null>(null);
 const originalAllowsUnmappedValues = ref<boolean | null>(null);
 const localPropertyType = ref<string | null>(null);
 const localTypeCache = new Map<string, string>();
@@ -230,6 +231,28 @@ const updateLocalInstanceHelp = () => {
   field.secondaryHelpClass = typeCompatibility.value.compatible ? 'text-orange-600' : 'text-red-600';
 };
 
+const updateCurrentTypeHelp = () => {
+  if (!formConfig.value) {
+    return;
+  }
+
+  const field = formConfig.value.fields.find((item) => item.name === 'type');
+  if (!field) {
+    return;
+  }
+
+  if (!initialCurrentType.value || !localPropertyType.value || initialCurrentType.value === localPropertyType.value) {
+    delete field.secondaryHelp;
+    delete field.secondaryHelpClass;
+    return;
+  }
+
+  field.secondaryHelp = t('integrations.show.properties.help.currentTypeWillBecome', {
+    type: mappedTypeLabel.value,
+  });
+  field.secondaryHelpClass = 'text-orange-600';
+};
+
 const insertFieldsAfter = (afterName: string, fieldsToAdd: any[]) => {
   if (!formConfig.value) {
     return;
@@ -391,6 +414,7 @@ const handleSetData = (data: any) => {
   }
 
   originalType.value = propertyData?.originalType || currentType;
+  initialCurrentType.value = currentType;
   originalAllowsUnmappedValues.value = propertyData?.allowsUnmappedValues ?? null;
   propertyType.value = originalType.value;
   if (formData.value) {
@@ -422,6 +446,7 @@ const handleSetData = (data: any) => {
 
   syncBooleanTextFields(currentType);
   updateLocalInstanceHelp();
+  updateCurrentTypeHelp();
 };
 
 const handleFormUpdate = (form: Record<string, any>) => {
@@ -431,10 +456,8 @@ const handleFormUpdate = (form: Record<string, any>) => {
 watch(localInstanceId, async (nextId) => {
   if (!nextId) {
     localPropertyType.value = null;
-    if (originalType.value) {
-      formData.value.type = originalType.value;
-    }
     updateLocalInstanceHelp();
+    updateCurrentTypeHelp();
     syncBooleanTextFields();
     hasInitializedLocalInstance.value = true;
     return;
@@ -460,20 +483,15 @@ watch(localInstanceId, async (nextId) => {
   if (compatibility && !compatibility.compatible) {
     formData.value.localInstance = null;
     localPropertyType.value = null;
-    if (originalType.value) {
-      formData.value.type = originalType.value;
-    }
     updateLocalInstanceHelp();
+    updateCurrentTypeHelp();
     syncBooleanTextFields();
     hasInitializedLocalInstance.value = true;
     return;
   }
 
-  if (nextType) {
-    formData.value.type = nextType;
-  }
-
   updateLocalInstanceHelp();
+  updateCurrentTypeHelp();
   syncBooleanTextFields();
   hasInitializedLocalInstance.value = true;
 });
@@ -552,7 +570,7 @@ const selectRecommendation = (id: string) => {
           :path="{ name: 'properties.properties.create', query: {
             remoteRuleId,
             name: formData.name,
-            type: formData.type,
+            type: localPropertyType || formData.type,
             remoteWizard: isWizard ? '1' : '0',
             ...(amazonCreateValue ? { amazonCreateValue } : {}),
             ...extractPrefixedQueryParams(route.query, 'next__'),

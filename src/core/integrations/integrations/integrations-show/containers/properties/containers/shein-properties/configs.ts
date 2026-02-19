@@ -92,7 +92,16 @@ export const sheinPropertiesSearchConfigConstructor = (t: Function): SearchConfi
     {
       type: FieldType.Choice,
       name: 'type',
-      label: t('products.products.labels.type.title'),
+      label: t('integrations.show.properties.labels.currentType'),
+      labelBy: 'name',
+      valueBy: 'code',
+      options: getPropertyTypeOptions(t),
+      addLookup: true,
+    },
+    {
+      type: FieldType.Choice,
+      name: 'originalType',
+      label: t('integrations.show.properties.labels.originalType'),
       labelBy: 'name',
       valueBy: 'code',
       options: getPropertyTypeOptions(t),

@@ -73,6 +73,7 @@ const ruleWarningType = ref<'missing' | 'multiple' | null>(null)
 const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
+const saving = ref(false)
 const skipHistory = ref(false)
 const matrixRef = ref<MatrixEditorExpose | null>(null)
 const readOnlyColumns = new Set(['sku', 'name', 'active'])
@@ -816,74 +817,80 @@ const displayGraphqlErrors = (error: unknown) => {
 }
 
 const save = async () => {
-  skipHistory.value = true
-  const createdCount = toCreate.value.length
-  const updatedCount = toUpdate.value.length
-  const deletedCount = toDelete.value.length
+  if (!hasChanges.value || saving.value) return
+  saving.value = true
   try {
-    if (createdCount) {
-      const { data } = await apolloClient.mutate({
-        mutation: bulkCreateProductPropertiesMutation,
-        variables: { data: toCreate.value },
-      })
-      const created = data?.bulkCreateProductProperties || []
-      created.forEach((pp: any) => {
-        const variation = variations.value.find(
-          (v: any) => v.variation.id === pp.product.id
-        )
-        if (!variation) return
-        if (!variation.propertyValues) variation.propertyValues = {}
-        if (!variation.propertyValues[pp.property.id])
-          variation.propertyValues[pp.property.id] = {}
-        variation.propertyValues[pp.property.id].id = pp.id
-      })
+    skipHistory.value = true
+    const createdCount = toCreate.value.length
+    const updatedCount = toUpdate.value.length
+    const deletedCount = toDelete.value.length
+    try {
+      if (createdCount) {
+        const { data } = await apolloClient.mutate({
+          mutation: bulkCreateProductPropertiesMutation,
+          variables: { data: toCreate.value },
+        })
+        const created = data?.bulkCreateProductProperties || []
+        created.forEach((pp: any) => {
+          const variation = variations.value.find(
+            (v: any) => v.variation.id === pp.product.id
+          )
+          if (!variation) return
+          if (!variation.propertyValues) variation.propertyValues = {}
+          if (!variation.propertyValues[pp.property.id])
+            variation.propertyValues[pp.property.id] = {}
+          variation.propertyValues[pp.property.id].id = pp.id
+        })
+      }
+      if (updatedCount)
+        await apolloClient.mutate({
+          mutation: bulkUpdateProductPropertiesMutation,
+          variables: { data: toUpdate.value },
+        })
+      if (deletedCount)
+        await apolloClient.mutate({
+          mutation: deleteProductPropertiesMutation,
+          variables: { data: toDelete.value },
+        })
+    } catch (error) {
+      displayGraphqlErrors(error)
+      skipHistory.value = false
+      return
     }
-    if (updatedCount)
-      await apolloClient.mutate({
-        mutation: bulkUpdateProductPropertiesMutation,
-        variables: { data: toUpdate.value },
-      })
-    if (deletedCount)
-      await apolloClient.mutate({
-        mutation: deleteProductPropertiesMutation,
-        variables: { data: toDelete.value },
-      })
-  } catch (error) {
-    displayGraphqlErrors(error)
+    originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+    computeChanges()
+    matrixRef.value?.resetHistory(variations.value)
+    await nextTick()
     skipHistory.value = false
-    return
-  }
-  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
-  computeChanges()
-  matrixRef.value?.resetHistory(variations.value)
-  await nextTick()
-  skipHistory.value = false
-  const messages: any[] = []
+    const messages: any[] = []
 
-  if (createdCount) {
-    messages.push(
-      t('products.products.alert.toast.createdProductProperties', {
-        count: createdCount,
-      })
-    )
-  }
-  if (updatedCount) {
-    messages.push(
-      t('products.products.alert.toast.updatedProductProperties', {
-        count: updatedCount,
-      })
-    )
-  }
-  if (deletedCount) {
-    messages.push(
-      t('products.products.alert.toast.deletedProductProperties', {
-        count: deletedCount,
-      })
-    )
-  }
+    if (createdCount) {
+      messages.push(
+        t('products.products.alert.toast.createdProductProperties', {
+          count: createdCount,
+        })
+      )
+    }
+    if (updatedCount) {
+      messages.push(
+        t('products.products.alert.toast.updatedProductProperties', {
+          count: updatedCount,
+        })
+      )
+    }
+    if (deletedCount) {
+      messages.push(
+        t('products.products.alert.toast.deletedProductProperties', {
+          count: deletedCount,
+        })
+      )
+    }
 
-  if (messages.length) {
-    Toast.success(messages.join('<br>'))
+    if (messages.length) {
+      Toast.success(messages.join('<br>'))
+    }
+  } finally {
+    saving.value = false
   }
 }
 
@@ -1137,6 +1144,7 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
         v-model:rows="variations"
         :columns="columns"
         :loading="loading"
+        :saving="saving"
         :has-changes="hasChanges"
         row-key="id"
         :get-cell-value="getMatrixCellValue"
