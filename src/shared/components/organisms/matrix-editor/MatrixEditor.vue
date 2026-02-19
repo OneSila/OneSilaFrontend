@@ -25,6 +25,7 @@ const props = withDefaults(
     rows: any[]
     rowKey?: string
     loading?: boolean
+    saving?: boolean
     hasChanges?: boolean
     getCellValue: (rowIndex: number, columnKey: string) => any
     setCellValue: (rowIndex: number, columnKey: string, value: any) => void
@@ -35,6 +36,7 @@ const props = withDefaults(
   {
     rowKey: 'id',
     loading: false,
+    saving: false,
     hasChanges: false,
   }
 )
@@ -434,6 +436,8 @@ const isInDragRange = (row: number, col: string) => {
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
+  if (props.loading || props.saving) return
+
   const target = event.target as HTMLElement
   if (
     ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
@@ -828,10 +832,10 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
         <slot name="filters" />
       </FlexCell>
       <FlexCell class="flex">
-        <Button class="btn btn-secondary" :disabled="!canUndo" @click="undo">
+        <Button class="btn btn-secondary" :disabled="!canUndo || loading || saving" @click="undo">
           <Icon name="arrow-left" />
         </Button>
-        <Button class="btn btn-secondary ml-2" :disabled="!canRedo" @click="redo">
+        <Button class="btn btn-secondary ml-2" :disabled="!canRedo || loading || saving" @click="redo">
           <Icon name="arrow-right" />
         </Button>
       </FlexCell>
@@ -839,12 +843,17 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
         <slot name="toolbar-right" />
       </FlexCell>
       <FlexCell>
-        <Button class="btn btn-primary" :disabled="!hasChanges" @click="$emit('save')">
+        <Button
+          class="btn btn-primary"
+          :loading="saving"
+          :disabled="!hasChanges || loading || saving"
+          @click="$emit('save')"
+        >
           {{ t('shared.button.save') }}
         </Button>
       </FlexCell>
     </Flex>
-    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full">
+    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full" :class="{ 'pointer-events-none': saving }">
       <table v-if="rows.length" class="min-w-max border border-gray-300 border-collapse select-none">
         <thead class="bg-gray-100 sticky top-0">
           <tr>
