@@ -12,16 +12,16 @@ import {PrimaryButton} from "../../../../shared/components/atoms/button-primary"
 import {SecondaryButton} from "../../../../shared/components/atoms/button-secondary";
 import {Toast} from "../../../../shared/modules/toast";
 import apolloClient from "../../../../../apollo-client";
-import { getProductPropertiesRuleQuery, productPropertiesRulesQuery } from "../../../../shared/api/queries/properties.js";
+import { getProductPropertiesRuleQuery, productPropertiesRulesWithUsageCountQuery } from "../../../../shared/api/queries/properties.js";
 import { completeCreateProductPropertiesRuleMutation, completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
 import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
 import {FormType} from "../../../../shared/components/organisms/general-form/formConfig";
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
 import { Property } from "../../../../shared/components/organisms/product-properties-configurator/ProductPropertiesConfigurator.vue";
-import {Loader} from "../../../../shared/components/atoms/loader";
 import {Link} from "../../../../shared/components/atoms/link";
 import {Button} from "../../../../shared/components/atoms/button";
+import { LocalLoader } from "../../../../shared/components/atoms/local-loader";
 import Swal, { SweetAlertOptions } from "sweetalert2";
 
 interface Item {
@@ -55,7 +55,9 @@ const initialProductType = ref<{ id: string; value: string } | null>(null);
 const initialItems: Ref<Property[]> = ref([]);
 const updatedAddedProperties: Ref<Property[]> = ref([]);
 const propertiesItemsMap: Ref<Record<string, Item>> = ref({});
-const loading = ref(false);
+const integrationsLoading = ref(false);
+const rightLoading = ref(false);
+const saveLoading = ref(false);
 const requireEanCode = ref(false);
 const selectedSalesChannel = ref<'default' | string>('default');
 const previousSalesChannel = ref<'default' | string>('default');
@@ -74,6 +76,10 @@ const primaryButtonLabel = computed(() =>
 
 const secondaryButtonLabel = computed(() =>
   t(currentRuleId.value ? 'shared.button.saveAndContinue' : 'shared.button.createAndContinue')
+);
+
+const disableActions = computed(() =>
+  integrationsLoading.value || rightLoading.value || saveLoading.value
 );
 
 const getCacheKey = (salesChannelId: string | null | undefined) =>
@@ -207,7 +213,7 @@ const fetchRuleBySalesChannel = async (channelKey: string): Promise<RuleCacheEnt
   }
 
   const { data } = await apolloClient.query({
-    query: productPropertiesRulesQuery,
+    query: productPropertiesRulesWithUsageCountQuery,
     variables: { filter, first: 1 },
     fetchPolicy: 'network-only',
   });
@@ -233,6 +239,7 @@ const ensureDefaultRule = async () => {
 };
 
 const loadSalesChannels = async () => {
+  integrationsLoading.value = true;
   try {
     const { data } = await apolloClient.query({ query: integrationsQuery, fetchPolicy: 'cache-first' });
     const nodes = data?.integrations?.edges?.map((edge: any) => edge.node) ?? [];
@@ -263,6 +270,8 @@ const loadSalesChannels = async () => {
     rawSalesChannels.value = Array.from(optionsMap.values());
   } catch (_error) {
     rawSalesChannels.value = [...rawSalesChannels.value];
+  } finally {
+    integrationsLoading.value = false;
   }
 };
 
@@ -322,6 +331,10 @@ const hasUnsavedChanges = computed(() => {
 });
 
 const handleSalesChannelUpdated = async (newValue: string) => {
+  if (disableActions.value) {
+    return;
+  }
+
   const normalizedValue = newValue && newValue !== '' ? newValue : 'default';
 
   if (normalizedValue === selectedSalesChannel.value) {
@@ -362,7 +375,8 @@ const handleSalesChannelUpdated = async (newValue: string) => {
   selectedSalesChannel.value = normalizedValue;
   previousSalesChannel.value = normalizedValue;
 
-  loading.value = true;
+  integrationsLoading.value = true;
+  rightLoading.value = true;
   try {
     let entry: RuleCacheEntry | null = rulesCache.value[normalizedValue] ?? null;
     if (!entry) {
@@ -404,7 +418,8 @@ const handleSalesChannelUpdated = async (newValue: string) => {
       await updateRouteId(entry.id);
     }
   } finally {
-    loading.value = false;
+    integrationsLoading.value = false;
+    rightLoading.value = false;
   }
 };
 
@@ -467,7 +482,7 @@ const persistRule = async (): Promise<RuleCacheEntry | null> => {
 };
 
 const fetchData = async () => {
-  loading.value = true;
+  rightLoading.value = true;
   propertiesItemsMap.value = {};
   initialItems.value = [];
   updatedAddedProperties.value = [];
@@ -497,33 +512,41 @@ const fetchData = async () => {
       await ensureDefaultRule();
     }
   } finally {
-    loading.value = false;
+    rightLoading.value = false;
   }
 };
 
 const handleSave = () => saveMutations(false);
 const handleSaveAndContinue = () => saveMutations(true);
 const saveMutations = async (continueEditing = false) => {
+  if (disableActions.value) {
+    return;
+  }
 
   if (initialProductType.value == null) {
     Toast.error(t('properties.rule.error.noProductType'));
     return
   }
 
-  const isCreateAction = !currentRuleId.value;
-  const entry = await persistRule();
+  saveLoading.value = true;
+  try {
+    const isCreateAction = !currentRuleId.value;
+    const entry = await persistRule();
 
-  if (!entry) {
-    Toast.error(t('shared.alert.toast.unexpectedResult'));
-    return;
+    if (!entry) {
+      Toast.error(t('shared.alert.toast.unexpectedResult'));
+      return;
+    }
+
+    Toast.success(t(isCreateAction ? 'properties.rule.alert.createSuccess' : 'properties.rule.alert.updateSuccess'))
+    if (continueEditing) {
+      return
+    }
+
+    router.push({name: 'properties.rule.list'});
+  } finally {
+    saveLoading.value = false;
   }
-
-  Toast.success(t(isCreateAction ? 'properties.rule.alert.createSuccess' : 'properties.rule.alert.updateSuccess'))
-  if (continueEditing) {
-    return
-  }
-
-  router.push({name: 'properties.rule.list'});
 
 };
 
@@ -575,9 +598,11 @@ watch(
                    { path: { name: 'properties.rule.edit' }, name: t('properties.rule.edit.title') }]" />
     </template>
 
-    <template v-slot:content>
+   <template v-slot:content>
       <Card class="mt-2 p-4">
-        <Loader :loading="loading" />
+        <div v-if="!initialProductType" class="py-12 flex items-center justify-center">
+          <LocalLoader :loading="rightLoading || integrationsLoading" />
+        </div>
         <ProductPropertiesConfigurator
             v-if="initialProductType"
             :added-properties="initialItems"
@@ -585,17 +610,19 @@ watch(
             :require-ean-code="requireEanCode"
             :sales-channel-options="salesChannelOptions"
             :selected-sales-channel="selectedSalesChannel"
+            :integrations-loading="integrationsLoading"
+            :right-loading="rightLoading || saveLoading"
             @update:added-properties="handleAddedProperties"
             @update:require-ean-code="handleRequireEanCodeUpdated"
             @update:sales-channel="handleSalesChannelUpdated"
              />
 
         <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-          <CancelButton @click="() => router.push({ name: 'properties.rule.list' })">
+          <CancelButton :disabled="disableActions" @click="() => router.push({ name: 'properties.rule.list' })">
             {{ t('shared.button.cancel') }}
           </CancelButton>
           <Link v-if="currentRuleId" :path="{ name: 'properties.rule.show', params: { id: currentRuleId } }">
-            <Button type="button" class="button rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm btn-info ">
+            <Button type="button" :disabled="disableActions" class="button rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm btn-info ">
               {{ t('shared.button.show') }}
             </Button>
           </Link>
@@ -606,13 +633,13 @@ watch(
             @done="handleDelete"
           >
             <template v-slot="{ loading: deleting, confirmAndMutate }">
-              <DangerButton ref="deleteButtonRef" :disabled="deleting" @click="confirmAndMutate">{{ t('shared.button.delete') }}</DangerButton>
+              <DangerButton ref="deleteButtonRef" :disabled="deleting || disableActions" @click="confirmAndMutate">{{ t('shared.button.delete') }}</DangerButton>
             </template>
           </ApolloAlertMutation>
-          <SecondaryButton @click="handleSaveAndContinue">
+          <SecondaryButton :disabled="disableActions" :loading="saveLoading" @click="handleSaveAndContinue">
             {{ secondaryButtonLabel }}
           </SecondaryButton>
-          <PrimaryButton @click="handleSave">
+          <PrimaryButton :disabled="disableActions" :loading="saveLoading" @click="handleSave">
             {{ primaryButtonLabel }}
           </PrimaryButton>
         </div>

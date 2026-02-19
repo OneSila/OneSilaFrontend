@@ -1876,12 +1876,16 @@
     "rule": {
       "labels": {
         "usageCount": "",
+        "usageCountPending": "",
         "salesChannel": "",
         "defaultSalesChannel": "",
         "unknownSalesChannel": ""
       },
       "placeholders": {
         "salesChannel": ""
+      },
+      "tooltips": {
+        "usageCountPending": ""
       },
       "messages": {
         "unsavedChanges": ""

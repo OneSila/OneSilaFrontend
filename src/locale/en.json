@@ -3257,6 +3257,7 @@
       },
       "labels": {
         "usageCount": "Usage count",
+        "usageCountPending": "Pending",
         "type": "Rule Type",
         "propertyType": "Property Type",
         "salesChannel": "Sales Channel",
@@ -3269,6 +3270,9 @@
       },
       "help": {
         "type": "Select how this property should be handled for the product."
+      },
+      "tooltips": {
+        "usageCountPending": "Usage count is recalculated after saving this rule."
       },
       "preview": {
         "previewTitle": "Preview of Configuration",

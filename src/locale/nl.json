@@ -2841,6 +2841,7 @@
       },
       "labels": {
         "usageCount": "",
+        "usageCountPending": "",
         "type": "Regel Type",
         "propertyType": "Type Eigenschap",
         "salesChannel": "",
@@ -2850,6 +2851,9 @@
       "placeholders": {
         "type": "Selecteer Type Regel",
         "salesChannel": ""
+      },
+      "tooltips": {
+        "usageCountPending": ""
       },
       "help": {
         "type": "Selecteer het gedrag voor deze eigenschap"
