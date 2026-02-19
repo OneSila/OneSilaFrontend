@@ -288,11 +288,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       badgeMap: getPropertyTypeBadgeMap(t)
     },
     {
-      label: t('properties.properties.labels.usageCount'),
-      name: 'usageCount',
-      type: FieldType.Text
-    },
-    {
       label: t('properties.properties.labels.isPublicInformation'),
       name: 'isPublicInformation',
       type: FieldType.Boolean

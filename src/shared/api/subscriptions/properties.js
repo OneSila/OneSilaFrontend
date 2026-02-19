@@ -7,7 +7,6 @@ export const getPropertySubscription = gql`
       id
       name
       type
-      usageCount
       isPublicInformation
       addToFilters
       hasImage
@@ -39,7 +38,6 @@ export const getPropertySelectValueSubscription = gql`
     propertySelectValue(pk: $pk) {
       id
       value
-      usageCount
       propertyselectvaluetranslationSet {
         language
         value

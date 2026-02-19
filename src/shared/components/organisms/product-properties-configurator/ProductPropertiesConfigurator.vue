@@ -19,6 +19,7 @@ import {Accordion} from "../../atoms/accordion";
 import {Label} from "../../atoms/label";
 import {useRouter} from "vue-router";
 import {Toggle} from "../../atoms/toggle";
+import { LocalLoader } from "../../atoms/local-loader";
 
 const {t} = useI18n();
 const router = useRouter();
@@ -38,6 +39,8 @@ const props = defineProps<{
   addedProperties: Property[],
   salesChannelOptions?: { label: string; value: string }[],
   selectedSalesChannel?: string,
+  integrationsLoading?: boolean,
+  rightLoading?: boolean,
 }>();
 
 const emit = defineEmits(['update:addedProperties', 'update:productType', 'update:requireEanCode', 'update:salesChannel']);
@@ -48,16 +51,18 @@ const localProductType: Ref<{ id: string, value: string } | null> = ref(props.pr
 const localSalesChannel = ref(props.selectedSalesChannel ?? 'default');
 const configTypes: Ref<string[]> = ref(props.addedProperties.map(property => property.configType ?? ''));
 
-const loading = ref(false);
+const leftLoading = ref(false);
 const showPropertyModal = ref(false);
 const search = ref('');
 const pageInfo = ref(null);
 const draggingItemId = ref(null);
 const draggingOverItemId = ref(null);
-const limit = ref(10);
+const limit = ref(30);
 const fetchPaginationData = ref({});
 const rawRequireEanCode = ref(props.requireEanCode);
 const salesChannelOptions = computed(() => props.salesChannelOptions ?? []);
+const integrationsLoading = computed(() => props.integrationsLoading ?? false);
+const rightLoading = computed(() => props.rightLoading ?? false);
 
 fetchPaginationData.value['first'] = limit.value;
 
@@ -98,7 +103,7 @@ const fetchData = async () => {
 
   const excludedIds = addedPropertiesRef.value.map(property => property.id);
 
-  loading.value = true;
+  leftLoading.value = true;
   let filters = {
     NOT: {id: {inList: excludedIds}},
     isProductType: {exact: false},
@@ -113,20 +118,22 @@ const fetchData = async () => {
     ...fetchPaginationData.value
   };
 
-  const {data} = await apolloClient.query({
-    query: propertiesQuery,
-    variables: variables,
-    fetchPolicy: 'cache-first'
-  });
+  try {
+    const {data} = await apolloClient.query({
+      query: propertiesQuery,
+      variables: variables,
+      fetchPolicy: 'cache-first'
+    });
 
-  if (data && data.properties) {
-    availableProperties.value = data.properties.edges.map(edge => edge.node);
-    if (data.properties.pageInfo) {
-      pageInfo.value = data.properties.pageInfo;
+    if (data && data.properties) {
+      availableProperties.value = data.properties.edges.map(edge => edge.node);
+      if (data.properties.pageInfo) {
+        pageInfo.value = data.properties.pageInfo;
+      }
     }
+  } finally {
+    leftLoading.value = false;
   }
-
-  loading.value = false;
 };
 
 const dragStart = (id) => {
@@ -352,7 +359,7 @@ onMounted(fetchData);
           :product-type="productType"
           @product-type-updated="handleProductTypeUpdated"
         />
-        <div v-if="salesChannelOptions.length" class="my-4">
+        <div v-if="salesChannelOptions.length" class="my-4 relative">
           <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">
             {{ t('properties.rule.labels.salesChannel') }}
           </label>
@@ -366,6 +373,12 @@ onMounted(fetchData);
             :removable="false"
             filterable
           />
+          <div
+            v-if="integrationsLoading"
+            class="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-white/70"
+          >
+            <LocalLoader :loading="integrationsLoading" />
+          </div>
         </div>
       </div>
       <FlexCell center>
@@ -391,17 +404,17 @@ onMounted(fetchData);
               class="search-input pl-9 w-full"
               v-model="search"
               :placeholder="t('shared.button.search')"
-              :disabled="loading"
+              :disabled="leftLoading || integrationsLoading || rightLoading"
           />
         </label>
       </FlexCell>
       <FlexCell center>
-        <Button class="btn-primary p-2.5 rounded-full" @click="openInNewTab">
+        <Button class="btn-primary p-2.5 rounded-full" :disabled="leftLoading || integrationsLoading || rightLoading" @click="openInNewTab">
           <Icon name="plus"/>
         </Button>
       </FlexCell>
       <FlexCell center>
-        <Button :customClass="'btn btn-primary p-2.5 rounded-full'" @click="fetchData">
+        <Button :customClass="'btn btn-primary p-2.5 rounded-full'" :disabled="leftLoading || integrationsLoading || rightLoading" @click="fetchData">
           <Icon name="arrows-rotate"/>
         </Button>
       </FlexCell>
@@ -409,9 +422,15 @@ onMounted(fetchData);
 
     <div class="my-4 grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-4">
       <div>
-        <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop"
+        <div class="relative p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop"
              @drop="handleDropAvailable">
-          <div v-if="availableProperties.length === 0">
+          <div
+            v-if="leftLoading"
+            class="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-white/70"
+          >
+            <LocalLoader :loading="leftLoading" />
+          </div>
+          <div v-if="!leftLoading && availableProperties.length === 0">
             <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.noPropertiesLeft') }}</p>
           </div>
           <table v-else class="table-auto w-full mt-2">
@@ -419,7 +438,6 @@ onMounted(fetchData);
             <tr>
               <th>{{ t('shared.labels.name') }}</th>
               <th>{{ t('properties.rule.labels.propertyType') }}</th>
-              <th>{{ t('properties.rule.labels.usageCount') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -433,7 +451,7 @@ onMounted(fetchData);
                 <Flex>
                   <FlexCell center>
                     <Icon name="plus" size="xl" class="text-primary cursor-pointer mr-3"
-                          @click="handleAddProperty(property)" :disabled="loading"/>
+                          @click="handleAddProperty(property)" :disabled="leftLoading || integrationsLoading || rightLoading"/>
                   </FlexCell>
                   <FlexCell center>
                     <Flex class="gap-4">
@@ -446,9 +464,6 @@ onMounted(fetchData);
                 <Badge :color="getPropertyTypeBadgeMap(t)[property.type].color"
                        :text="getPropertyTypeBadgeMap(t)[property.type].text"/>
               </td>
-              <td>
-                {{ property.usageCount ?? 0 }}
-              </td>
             </tr>
             </tbody>
           </table>
@@ -457,8 +472,14 @@ onMounted(fetchData);
                     @query-changed="handleQueryChanged"/>
       </div>
 
-      <div class="p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300 mb-12"
+      <div class="relative p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300 mb-12"
            @dragover.prevent="allowDrop" @drop="handleDrop">
+        <div
+          v-if="rightLoading || integrationsLoading"
+          class="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-white/70"
+        >
+          <LocalLoader :loading="rightLoading || integrationsLoading" />
+        </div>
         <div v-if="addedPropertiesRef.length === 0">
           <p class="text-xl text-center mt-5 font-medium">{{ t('properties.rule.error.dragAndDrop') }}</p>
         </div>
@@ -497,7 +518,17 @@ onMounted(fetchData);
                      :text="getPropertyTypeBadgeMap(t)[item.type].text"/>
             </td>
             <td>
-              {{ item.usageCount ?? 0 }}
+              <template v-if="item.usageCount === null || item.usageCount === undefined">
+                <span class="text-danger font-semibold">{{ t('properties.rule.labels.usageCountPending') }}</span>
+                <Icon
+                  class="ml-1 text-danger inline-block"
+                  name="circle-info"
+                  :title="t('properties.rule.tooltips.usageCountPending')"
+                />
+              </template>
+              <template v-else>
+                {{ item.usageCount }}
+              </template>
             </td>
             <td class="w-60">
               <Selector class="w-full"

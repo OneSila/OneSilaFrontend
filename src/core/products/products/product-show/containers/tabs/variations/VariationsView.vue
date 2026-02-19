@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { Product } from "../../../../configs";
 import TabContentTemplate from "../TabContentTemplate.vue";
 import { SearchConfig } from "../../../../../../../shared/components/organisms/general-search/searchConfig";
@@ -19,15 +19,19 @@ import VariationsEbayBulkEdit from "./containers/variations-ebay-bulk-edit/Varia
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import { injectAuth } from "../../../../../../../shared/modules/auth";
+import { useRoute, useRouter } from "vue-router";
 
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
 const auth = injectAuth();
+const route = useRoute();
+const router = useRouter();
 const ids = ref([]);
 const refetchNeeded = ref(false);
 type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editAmazon' | 'editShein' | 'editEbay' | 'editGeneral';
 const mode = ref<Mode>('list');
+const modeQueryKey = 'variationView';
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
 const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
 const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
@@ -105,6 +109,7 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
 
   return items;
 });
+const availableModes = computed<Mode[]>(() => tabs.value.map(tab => tab.key));
 
 const searchConfig: SearchConfig = {
   search: true,
@@ -172,8 +177,85 @@ const changeMode = async (newMode: Mode) => {
       return;
     }
   }
-  mode.value = newMode;
+
+  const normalizedMode = availableModes.value.includes(newMode) ? newMode : 'list';
+  if (normalizedMode === mode.value) {
+    return;
+  }
+
+  mode.value = normalizedMode;
+  await updateModeQuery(normalizedMode);
 };
+
+const getModeFromQuery = (queryMode: unknown): Mode => {
+  const candidate = Array.isArray(queryMode) ? queryMode[0] : queryMode;
+  if (typeof candidate !== 'string') {
+    return 'list';
+  }
+
+  return availableModes.value.includes(candidate as Mode) ? candidate as Mode : 'list';
+};
+
+const updateModeQuery = async (newMode: Mode, replace: boolean = false) => {
+  if (route.query[modeQueryKey] === newMode) {
+    return;
+  }
+
+  const nextQuery = {
+    ...route.query,
+    [modeQueryKey]: newMode,
+  };
+
+  if (replace) {
+    await router.replace({ query: nextQuery });
+    return;
+  }
+
+  await router.push({ query: nextQuery });
+};
+
+onMounted(async () => {
+  const initialMode = getModeFromQuery(route.query[modeQueryKey]);
+  if (mode.value !== initialMode) {
+    mode.value = initialMode;
+  }
+
+  if (route.query[modeQueryKey] !== initialMode) {
+    await updateModeQuery(initialMode, true);
+  }
+});
+
+watch(
+  () => route.query[modeQueryKey],
+  async (queryMode) => {
+    const nextMode = getModeFromQuery(queryMode);
+    if (nextMode === mode.value) {
+      if (queryMode !== nextMode) {
+        await updateModeQuery(nextMode, true);
+      }
+      return;
+    }
+
+    const currentMode = mode.value;
+    await changeMode(nextMode);
+
+    if (mode.value !== nextMode) {
+      await updateModeQuery(currentMode, true);
+    }
+  }
+);
+
+watch(
+  availableModes,
+  async () => {
+    if (availableModes.value.includes(mode.value)) {
+      return;
+    }
+
+    mode.value = 'list';
+    await updateModeQuery('list', true);
+  }
+);
 
 defineExpose({ hasUnsavedChanges });
 

@@ -356,11 +356,6 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
             label: t('properties.values.show.title'),
             name: 'value',
             type: FieldType.Text
-        },
-        {
-            label: t('properties.values.labels.usageCount'),
-            name: 'usageCount',
-            type: FieldType.Text
         }
     ]
 });
