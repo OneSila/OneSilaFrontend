@@ -28,6 +28,7 @@ export const mediaQuery = gql`
               code
             }
           }
+          documentLanguage
           owner {
             firstName
             lastName
@@ -273,6 +274,7 @@ export const mediaProductThroughQuery = gql`
                   code
                 }
               }
+              documentLanguage
               owner {
                 firstName
                 lastName
