@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
 import { Image } from "../../../../../../shared/components/atoms/image";
+import { Link } from "../../../../../../shared/components/atoms/link";
 import { Toast } from "../../../../../../shared/modules/toast";
 import {getFileName, getFileSize, truncateText} from "../../../../files/media";
 
@@ -17,9 +18,12 @@ const imageTypeOptions = {
       COLOR: t('media.images.labels.colorShot')
     };
 
-const copyUrlToClipboard = async () => {
+const copyUrlToClipboard = async (value?: string | null) => {
+  if (!value) {
+    return;
+  }
   try {
-    await navigator.clipboard.writeText(props.image.imageWebUrl);
+    await navigator.clipboard.writeText(value);
     Toast.success(t('shared.alert.toast.clipboardSuccess'));
   } catch (err) {
     console.error('Failed to copy:', err);
@@ -38,8 +42,11 @@ const copyUrlToClipboard = async () => {
       <FlexCell>
         <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.imageUrl') }}</label>
         <div class="flex items-center">
-          <span class="flex-grow text-gray-900">{{ truncateText(props.image.imageUrl, 50) }}</span>
-          <Button @click="copyUrlToClipboard" class="ml-4">
+          <Link v-if="props.image.imageUrl" :path="props.image.imageUrl" external selectable class="min-w-0 flex-grow">
+            <span class="block max-w-full truncate text-gray-900">{{ truncateText(props.image.imageUrl, 70) }}</span>
+          </Link>
+          <span v-else class="flex-grow text-gray-900">—</span>
+          <Button :disabled="!props.image.imageUrl" @click="copyUrlToClipboard(props.image.imageUrl)" class="ml-4">
             <Icon name="clipboard" class="h-5 w-5 text-gray-500" aria-hidden="true" />
           </Button>
         </div>

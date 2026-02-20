@@ -20,6 +20,8 @@ import { deleteVideoMutation } from "../../../../shared/api/mutations/media.js";
 import { ApolloAlertMutation } from "../../../../shared/components/molecules/apollo-alert-mutation";
 import IconTrash from "../../../../shared/components/atoms/icons/icon-trash.vue";
 import { TYPE_VIDEO } from "../../files/media";
+import { Tabs } from "../../../../shared/components/molecules/tabs";
+import { ProductsTabView } from "../../images/image-show/containers/products-tab-view";
 
 const router = useRouter();
 const route = useRoute();
@@ -28,6 +30,8 @@ const { t } = useI18n();
 type Video = {
   id: string;
   videoUrl: string;
+  title?: string | null;
+  description?: string | null;
 };
 
 type VideoSubscriptionResult = {
@@ -35,8 +39,13 @@ type VideoSubscriptionResult = {
 }
 
 const editView = ref(route.query.editView === '1')
+const selectedTab = ref('general');
+const tabItems = ref([
+  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
+  { name: 'products', label: t('products.title'), icon: 'box' }
+]);
 const activeTab = TYPE_VIDEO;
-const id = route.params.id;
+const id = ref(String(route.params.id));
 const toggleEditView = () => {
   editView.value = !editView.value;
 };
@@ -51,6 +60,13 @@ const handleDeleteSuccess = () => {
 
 const getVideo = (result: VideoSubscriptionResult) => {
   return result.video;
+};
+
+const onTabChanged = (newValue) => {
+  selectedTab.value = newValue;
+  if (newValue !== 'general') {
+    editView.value = false;
+  }
 };
 
 </script>
@@ -83,7 +99,7 @@ const getVideo = (result: VideoSubscriptionResult) => {
                             <FlexCell>
                               <Flex center>
                                 <FlexCell class="mr-2">
-                                  <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView">
+                                  <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView" :disabled="selectedTab !== 'general'">
                                     <IconPencilPaper v-if="!editView"/>
                                     <IconX v-else/>
                                   </Button>
@@ -102,17 +118,24 @@ const getVideo = (result: VideoSubscriptionResult) => {
                             </FlexCell>
                           </Flex>
 
-                        <ApolloSubscription :subscription="videoSubscription" :variables="{pk: id}" >
-                          <template v-slot:default="{ loading, error, result }">
-                              <div v-if="result">
-                                <VideoEditView v-if="editView" :video="getVideo(result)" @show-view="handleShowView" />
-                                <VideoShowView v-else :video="getVideo(result)" />
-                              </div>
-                              <div v-else>
-                                <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
-                              </div>
+                          <Tabs :tabs="tabItems" @tab-changed="onTabChanged">
+                            <template v-slot:general>
+                              <ApolloSubscription :subscription="videoSubscription" :variables="{pk: id}" >
+                                <template v-slot:default="{ result }">
+                                  <div v-if="result">
+                                    <VideoEditView v-if="editView" :video="getVideo(result)" @show-view="handleShowView" />
+                                    <VideoShowView v-else :video="getVideo(result)" />
+                                  </div>
+                                  <div v-else>
+                                    <span class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
+                                  </div>
+                                </template>
+                              </ApolloSubscription>
                             </template>
-                          </ApolloSubscription>
+                            <template v-slot:products>
+                              <ProductsTabView :id="id" />
+                            </template>
+                          </Tabs>
                         </Card>
                     </div>
                 </div>

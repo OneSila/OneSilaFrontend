@@ -12,6 +12,8 @@ import VariationsBulkEdit from "./containers/variations-bulk-edit/VariationsBulk
 import VariationsContentBulkEdit from "./containers/variations-content-bulk-edit/VariationsContentBulkEdit.vue";
 import VariationsPricesBulkEdit from "./containers/variations-prices-bulk-edit/VariationsPricesBulkEdit.vue";
 import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/VariationsImagesBulkEdit.vue";
+import VariationsDocumentsBulkEdit from "./containers/variations-documents-bulk-edit/VariationsDocumentsBulkEdit.vue";
+import VariationsVideosBulkEdit from "./containers/variations-videos-bulk-edit/VariationsVideosBulkEdit.vue";
 import VariationsGeneralBulkEdit from "./containers/variations-general-bulk-edit/VariationsGeneralBulkEdit.vue";
 import VariationsAmazonBulkEdit from "./containers/variations-amazon-bulk-edit/VariationsAmazonBulkEdit.vue";
 import VariationsSheinBulkEdit from "./containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
@@ -29,13 +31,15 @@ const route = useRoute();
 const router = useRouter();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editAmazon' | 'editShein' | 'editEbay' | 'editGeneral';
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editDocuments' | 'editVideos' | 'editAmazon' | 'editShein' | 'editEbay' | 'editGeneral';
 const mode = ref<Mode>('list');
 const modeQueryKey = 'variationView';
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
 const contentEditRef = ref<InstanceType<typeof VariationsContentBulkEdit> | null>(null);
 const priceEditRef = ref<InstanceType<typeof VariationsPricesBulkEdit> | null>(null);
 const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(null);
+const documentEditRef = ref<InstanceType<typeof VariationsDocumentsBulkEdit> | null>(null);
+const videoEditRef = ref<InstanceType<typeof VariationsVideosBulkEdit> | null>(null);
 const generalEditRef = ref<InstanceType<typeof VariationsGeneralBulkEdit> | null>(null);
 const amazonEditRef = ref<InstanceType<typeof VariationsAmazonBulkEdit> | null>(null);
 const sheinEditRef = ref<InstanceType<typeof VariationsSheinBulkEdit> | null>(null);
@@ -53,6 +57,12 @@ const getUnsavedChangesForMode = (currentMode: Mode) => {
   }
   if (currentMode === 'editImages') {
     return imageEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editDocuments') {
+    return documentEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editVideos') {
+    return videoEditRef.value?.hasUnsavedChanges ?? false;
   }
   if (currentMode === 'editAmazon') {
     return amazonEditRef.value?.hasUnsavedChanges ?? false;
@@ -75,6 +85,8 @@ const hasUnsavedChanges = computed(
     (contentEditRef.value?.hasUnsavedChanges ?? false) ||
     (priceEditRef.value?.hasUnsavedChanges ?? false) ||
     (imageEditRef.value?.hasUnsavedChanges ?? false) ||
+    (documentEditRef.value?.hasUnsavedChanges ?? false) ||
+    (videoEditRef.value?.hasUnsavedChanges ?? false) ||
     (amazonEditRef.value?.hasUnsavedChanges ?? false) ||
     (sheinEditRef.value?.hasUnsavedChanges ?? false) ||
     (ebayEditRef.value?.hasUnsavedChanges ?? false) ||
@@ -88,11 +100,13 @@ const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayInte
 const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
   const items: { key: Mode; label: string; icon: string }[] = [
     { key: 'list', label: t('products.products.variations.tabs.list'), icon: 'list' },
+    { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
     { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
     { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
     { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
-    { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
+    { key: 'editDocuments', label: t('products.products.variations.tabs.documents'), icon: 'file-text' },
+    { key: 'editVideos', label: t('products.products.variations.tabs.videos'), icon: 'video' },
   ];
 
   if (hasAmazonIntegration.value) {
@@ -304,6 +318,12 @@ defineExpose({ hasUnsavedChanges });
           </template>
           <template v-else-if="mode === 'editImages'">
             <VariationsImagesBulkEdit ref="imageEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editDocuments'">
+            <VariationsDocumentsBulkEdit ref="documentEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editVideos'">
+            <VariationsVideosBulkEdit ref="videoEditRef" :product="product" />
           </template>
           <template v-else-if="mode === 'editAmazon'">
             <VariationsAmazonBulkEdit ref="amazonEditRef" :product="product" />

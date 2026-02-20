@@ -899,6 +899,8 @@
           "editProperties": "Eigenschappen bewerken",
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
+          "documents": "",
+          "videos": "",
           "general": "",
           "amazon": "",
           "ebay": "",
@@ -930,6 +932,44 @@
           },
           "labels": {
             "noImage": "Geen afbeelding"
+          }
+        },
+        "documents": {
+          "columns": {
+            "upload": "",
+            "document": ""
+          },
+          "labels": {
+            "noDocument": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
+          }
+        },
+        "videos": {
+          "columns": {
+            "upload": "",
+            "video": ""
+          },
+          "labels": {
+            "noVideo": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
           }
         },
         "amazon": {
@@ -1018,12 +1058,19 @@
         }
       },
       "media": {
+        "filters": {
+          "all": "",
+          "images": "",
+          "documents": "",
+          "videos": ""
+        },
         "messages": {
           "inheritedFromDefault": "",
           "colorImageDisclaimer": ""
         },
         "actions": {
-          "createChannelGallery": ""
+          "createChannelGallery": "",
+          "addMedia": ""
         },
         "sheinGuide": {
           "title": "",
@@ -1049,7 +1096,10 @@
           "description": "",
           "mainImageAlt": "",
           "thumbnailAlt": "",
+          "noMedia": "",
           "noImages": "",
+          "noVideos": "",
+          "noDocuments": "",
           "unsupported": "",
           "untitledProduct": ""
         }
@@ -2225,7 +2275,8 @@
         "recentFiles": "Recente Bestanden",
         "addExistingFiles": "Toevoegen van bestaande media",
         "images": "",
-        "fileThumbnail": "Bestandsminiatuur"
+        "fileThumbnail": "Bestandsminiatuur",
+        "sortByCreatedAt": ""
       }
     },
     "images": {
@@ -2286,14 +2337,37 @@
         "successfullyDeleted": "Video verwijderd"
       },
       "labels": {
-        "videoUrl": "Video URL"
+        "videoUrl": "Video URL",
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
       }
     },
     "documents": {
       "title": "Documenten",
       "upload": "Documenten uploaden",
       "labels": {
-        "addDocuments": "Documenten toevoegen"
+        "addDocuments": "Documenten toevoegen",
+        "title": "",
+        "description": "",
+        "fileUrl": "",
+        "isImage": "",
+        "isImageReadOnlyHelp": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": "",
+        "documentType": "",
+        "documentLanguage": ""
+      },
+      "filters": {
+        "documentType": "",
+        "documentKind": "",
+        "imageDocuments": "",
+        "fileDocuments": ""
       },
       "create": {
         "successfullyCreated": "Documenten opgeslagen"
@@ -2303,7 +2377,9 @@
       },
       "uploadDocument": "",
       "show": {
-        "title": ""
+        "title": "",
+        "successfullyUpdated": "",
+        "updateFailed": ""
       }
     }
   },
@@ -2393,6 +2469,24 @@
       "placeholders": {
         "name": "Naam",
         "rate": "Tarief invoegen"
+      }
+    },
+    "documentTypes": {
+      "title": "",
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "labels": {
+        "code": ""
+      },
+      "placeholders": {
+        "description": ""
+      },
+      "actions": {
+        "showDocuments": ""
       }
     },
     "units": {

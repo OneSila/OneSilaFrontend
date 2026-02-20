@@ -22,6 +22,8 @@ export const getRouteName = (type: string) => {
       return 'media.images.show';
     case TYPE_VIDEO:
       return 'media.videos.show';
+    case TYPE_DOCUMENT:
+      return 'media.documents.show';
 
   }
 };

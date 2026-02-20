@@ -531,6 +531,8 @@
         "tabs": {
           "list": "Liste",
           "images": "Bilder",
+          "documents": "",
+          "videos": "",
           "general": "",
           "amazon": "",
           "ebay": "",
@@ -542,6 +544,44 @@
           },
           "labels": {
             "noImage": "Kein Bild"
+          }
+        },
+        "documents": {
+          "columns": {
+            "upload": "",
+            "document": ""
+          },
+          "labels": {
+            "noDocument": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
+          }
+        },
+        "videos": {
+          "columns": {
+            "upload": "",
+            "video": ""
+          },
+          "labels": {
+            "noVideo": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
           }
         },
         "amazon": {
@@ -639,12 +679,19 @@
         }
       },
       "media": {
+        "filters": {
+          "all": "",
+          "images": "",
+          "documents": "",
+          "videos": ""
+        },
         "messages": {
           "inheritedFromDefault": "",
           "colorImageDisclaimer": ""
         },
         "actions": {
-          "createChannelGallery": ""
+          "createChannelGallery": "",
+          "addMedia": ""
         },
         "sheinGuide": {
           "title": "",
@@ -670,7 +717,10 @@
           "description": "",
           "mainImageAlt": "",
           "thumbnailAlt": "",
+          "noMedia": "",
           "noImages": "",
+          "noVideos": "",
+          "noDocuments": "",
           "unsupported": "",
           "untitledProduct": ""
         }
@@ -1826,9 +1876,45 @@
         }
       }
     },
+    "videos": {
+      "labels": {
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
+      }
+    },
     "media": {
       "labels": {
-        "fileThumbnail": "Datei-Miniaturansicht"
+        "fileThumbnail": "Datei-Miniaturansicht",
+        "sortByCreatedAt": ""
+      }
+    },
+    "documents": {
+      "labels": {
+        "title": "",
+        "description": "",
+        "fileUrl": "",
+        "isImage": "",
+        "isImageReadOnlyHelp": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": "",
+        "documentType": "",
+        "documentLanguage": ""
+      },
+      "filters": {
+        "documentType": "",
+        "documentKind": "",
+        "imageDocuments": "",
+        "fileDocuments": ""
+      },
+      "show": {
+        "successfullyUpdated": "",
+        "updateFailed": ""
       }
     }
   },
@@ -1900,6 +1986,24 @@
     }
   },
   "settings": {
+    "documentTypes": {
+      "title": "",
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "labels": {
+        "code": ""
+      },
+      "placeholders": {
+        "description": ""
+      },
+      "actions": {
+        "showDocuments": ""
+      }
+    },
     "chatGptProductFeed": {
       "title": "",
       "form": {

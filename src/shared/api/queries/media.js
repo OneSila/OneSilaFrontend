@@ -20,6 +20,14 @@ export const mediaQuery = gql`
             size
             url
           }
+          documentImageThumbnailUrl
+          documentType {
+            id
+            ... on DocumentTypeType {
+              name
+              code
+            }
+          }
           owner {
             firstName
             lastName
@@ -150,6 +158,8 @@ export const getVideoQuery = gql`
       id
       type
       videoUrl
+      title
+      description
     }
   }
 `;
@@ -167,6 +177,14 @@ export const fileQuery = gql`
             name
             size
             url
+          }
+          documentImageThumbnailUrl
+          documentType {
+            id
+            ... on DocumentTypeType {
+              name
+              code
+            }
           }
           owner {
             firstName
@@ -191,6 +209,24 @@ export const getFileQuery = gql`
     file(id: $id) {
       id
       fileUrl
+      imageWebUrl
+      isDocumentImage
+      title
+      description
+      documentLanguage
+      documentType {
+        id
+        ... on DocumentTypeType {
+          name
+          code
+        }
+      }
+      documentImageThumbnailUrl
+      file {
+        size
+        name
+        url
+      }
     }
   }
 `;
@@ -228,6 +264,14 @@ export const mediaProductThroughQuery = gql`
                 name
                 size
                 url
+              }
+              documentImageThumbnailUrl
+              documentType {
+                id
+                ... on DocumentTypeType {
+                  name
+                  code
+                }
               }
               owner {
                 firstName

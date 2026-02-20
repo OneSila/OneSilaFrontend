@@ -1281,6 +1281,8 @@
           "list": "List",
           "content": "Content",
           "images": "Images",
+          "documents": "Documents",
+          "videos": "Videos",
           "general": "General",
           "amazon": "Amazon",
           "ebay": "eBay",
@@ -1300,6 +1302,44 @@
             "addExisting": "Add existing",
             "moveLeft": "Move image left",
             "moveRight": "Move image right"
+          }
+        },
+        "documents": {
+          "columns": {
+            "upload": "Upload",
+            "document": "Document #{index}"
+          },
+          "labels": {
+            "noDocument": "No document"
+          },
+          "buttons": {
+            "openUploadMenu": "Add documents",
+            "uploadNew": "Upload new",
+            "addExisting": "Add existing",
+            "moveLeft": "Move document left",
+            "moveRight": "Move document right"
+          },
+          "messages": {
+            "inheritedFromDefault": "These documents are currently inherited from the default channel. Upload or add existing files to create a dedicated document gallery for this channel."
+          }
+        },
+        "videos": {
+          "columns": {
+            "upload": "Upload",
+            "video": "Video #{index}"
+          },
+          "labels": {
+            "noVideo": "No video"
+          },
+          "buttons": {
+            "openUploadMenu": "Add videos",
+            "uploadNew": "Upload new",
+            "addExisting": "Add existing",
+            "moveLeft": "Move video left",
+            "moveRight": "Move video right"
+          },
+          "messages": {
+            "inheritedFromDefault": "These videos are currently inherited from the default channel. Upload or add existing videos to create a dedicated video gallery for this channel."
           }
         },
         "content": {
@@ -1343,12 +1383,19 @@
           "optionLabel": "{name} ({rate}%)"
         },
         "media": {
+          "filters": {
+            "all": "All",
+            "images": "Images",
+            "documents": "Documents",
+            "videos": "Videos"
+          },
           "messages": {
             "inheritedFromDefault": "These images are currently inherited from the default channel. Click \"Create gallery\" to create a dedicated gallery for this channel.",
             "colorImageDisclaimer": "Color images are used only for the color configurator and are ignored by integrations."
           },
           "actions": {
-            "createChannelGallery": "Create gallery"
+            "createChannelGallery": "Create gallery",
+            "addMedia": "Add media"
           },
           "sheinGuide": {
             "title": "Shein image order matters",
@@ -1374,7 +1421,10 @@
             "description": "See how your media gallery appears on the selected channel.",
             "mainImageAlt": "Main product image preview",
             "thumbnailAlt": "Gallery thumbnail",
+            "noMedia": "No media available for this product yet.",
             "noImages": "No images available for this product yet.",
+            "noVideos": "No videos available for this product yet.",
+            "noDocuments": "No documents available for this product yet.",
             "unsupported": "Preview unavailable",
             "untitledProduct": "Unnamed product"
           }
@@ -2604,7 +2654,8 @@
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add existing media",
         "images": "Images",
-        "fileThumbnail": "File thumbnail"
+        "fileThumbnail": "File thumbnail",
+        "sortByCreatedAt": "Sort by created at"
       },
       "alert": {
         "toast": {
@@ -2673,7 +2724,13 @@
         "successfullyDeleted": "Video was successfully deleted!"
       },
       "labels": {
-        "videoUrl": "Video URL"
+        "videoUrl": "Video URL",
+        "title": "Title",
+        "description": "Description"
+      },
+      "placeholders": {
+        "title": "Enter a title",
+        "description": "Add a description"
       },
       "alert": {
         "toast": {
@@ -2687,7 +2744,24 @@
       "upload": "Upload New Documents",
       "uploadDocument": "Upload New Document",
       "labels": {
-        "addDocuments": "Add New Documents"
+        "addDocuments": "Add New Documents",
+        "title": "Title",
+        "description": "Description",
+        "fileUrl": "File URL",
+        "isImage": "Is Image",
+        "isImageReadOnlyHelp": "Auto-detected from the uploaded file and read-only."
+      },
+      "placeholders": {
+        "title": "Enter a title",
+        "description": "Add a description",
+        "documentType": "Select a document type",
+        "documentLanguage": "Select a language"
+      },
+      "filters": {
+        "documentType": "Document type",
+        "documentKind": "Document content",
+        "imageDocuments": "Image documents",
+        "fileDocuments": "File documents"
       },
       "create": {
         "successfullyCreated": "Documents were successfully uploaded!"
@@ -2696,7 +2770,9 @@
         "successfullyDeleted": "Document was successfully deleted!"
       },
       "show": {
-        "title": "Document"
+        "title": "Document",
+        "successfullyUpdated": "Successfully updated the document!",
+        "updateFailed": "Failed to update the document. Please contact the administrators!"
       },
       "alert": {
         "toast": {
@@ -2792,6 +2868,24 @@
       "placeholders": {
         "name": "Name",
         "rate": "Enter rate"
+      }
+    },
+    "documentTypes": {
+      "title": "Document Types",
+      "create": {
+        "title": "Create Document Type"
+      },
+      "edit": {
+        "title": "Edit Document Type"
+      },
+      "labels": {
+        "code": "Code"
+      },
+      "placeholders": {
+        "description": "Enter description"
+      },
+      "actions": {
+        "showDocuments": "Show documents"
       }
     },
     "units": {

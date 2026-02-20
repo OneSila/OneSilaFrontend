@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {ref, watch} from 'vue';
+import { computed, ref, watch, withDefaults } from 'vue';
 import {Modal} from '../../../../../../shared/components/atoms/modal';
 import {Card} from '../../../../../../shared/components/atoms/card';
 import {WebsiteInput} from "../../../../../../shared/components/atoms/input-website";
+import { TextInput } from "../../../../../../shared/components/atoms/input-text";
 import {useI18n} from "vue-i18n";
 import {Icon} from "../../../../../../shared/components/atoms/icon";
 import {Button} from "../../../../../../shared/components/atoms/button";
@@ -12,35 +13,75 @@ import {Toast} from "../../../../../../shared/modules/toast";
 import {VideoPreview} from "../../../../videos/video-show/containers/video-preview";
 import apolloClient from "../../../../../../../apollo-client";
 
-const props = defineProps<{ modelValue: boolean; productId?: string; salesChannelId?: string }>();
+const props = withDefaults(
+  defineProps<{ modelValue: boolean; productId?: string; salesChannelId?: string; singleUpload?: boolean }>(),
+  {
+    singleUpload: false,
+  }
+);
 const emit = defineEmits(['update:modelValue', 'entries-created']);
-const websites = ref(['']);
+type VideoEntry = {
+  videoUrl: string;
+  title: string;
+  description: string;
+};
+const websites = ref<VideoEntry[]>([{ videoUrl: '', title: '', description: '' }]);
 
 const localShowModal = ref(props.modelValue);
 const {t} = useI18n();
+const singleUpload = computed(() => props.singleUpload ?? false);
+
+const stripExtension = (value: string) => value.replace(/\.[^/.]+$/, '');
+
+const getDefaultTitleFromUrl = (value: string) => {
+  if (!value) {
+    return '';
+  }
+  try {
+    const parsed = new URL(value);
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    const lastSegment = segments.pop();
+    if (!lastSegment) {
+      return stripExtension(parsed.hostname);
+    }
+    const decoded = decodeURIComponent(lastSegment);
+    const stripped = stripExtension(decoded);
+    return stripped || decoded;
+  } catch (error) {
+    const fallbackSegments = value.split('/').filter(Boolean);
+    const lastSegment = fallbackSegments.pop();
+    if (!lastSegment) {
+      return value;
+    }
+    const stripped = stripExtension(lastSegment);
+    return stripped || lastSegment;
+  }
+};
 
 
 watch(() => props.modelValue, (newVal) => {
   localShowModal.value = newVal;
 });
 
-const openModal = () => {
-  localShowModal.value = true;
-};
-
 const updateWebsite = (index, value) => {
-  websites.value[index] = value;
+  websites.value[index].videoUrl = value;
+  if (!websites.value[index].title.trim()) {
+    websites.value[index].title = getDefaultTitleFromUrl(value);
+  }
 };
 
 const closeModal = () => {
   localShowModal.value = false;
-  websites.value = [''];
+  websites.value = [{ videoUrl: '', title: '', description: '' }];
   emit('update:modelValue', false);
 };
 
 const addWebsiteInput = () => {
-  if (websites.value[websites.value.length - 1]) {
-    websites.value.push('');
+  if (singleUpload.value) {
+    return;
+  }
+  if (websites.value[websites.value.length - 1]?.videoUrl?.trim()) {
+    websites.value.push({ videoUrl: '', title: '', description: '' });
   }
 };
 
@@ -79,7 +120,7 @@ const onVideosCreated = async (d) => {
     }
   }
 
-  emit('entries-created');
+  emit('entries-created', d.data.createVideos);
   Toast.success(t('media.videos.create.successfullyCreated'));
   closeModal();
 };
@@ -88,7 +129,7 @@ const removeWebsite = (index: number) => {
   if (websites.value.length > 1) {
     websites.value.splice(index, 1);
   } else {
-    websites.value[0] = '';
+    websites.value[0] = { videoUrl: '', title: '', description: '' };
   }
 };
 
@@ -103,8 +144,8 @@ const removeWebsite = (index: number) => {
           <h3 class="text-xl font-semibold leading-7 text-gray-900">{{ t('media.videos.upload') }}</h3>
         </div>
         <div v-for="(website, index) in websites" :key="index">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-            <VideoPreview :videoUrl="website"/>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <VideoPreview :videoUrl="website.videoUrl"/>
 
             <div class="mt-1 w-full">
               <Flex vertical>
@@ -119,7 +160,7 @@ const removeWebsite = (index: number) => {
                     <FlexCell grow>
                       <WebsiteInput
                           class="w-full"
-                          v-model:model-value="websites[index]"
+                          v-model:model-value="websites[index].videoUrl"
                           @update:model-value="updateWebsite(index, $event)"
                       />
                     </FlexCell>
@@ -130,20 +171,50 @@ const removeWebsite = (index: number) => {
                     </FlexCell>
                   </Flex>
                 </FlexCell>
+                <FlexCell class="mt-2">
+                  <label class="font-semibold block text-sm leading-6 text-gray-900">
+                    {{ t('media.videos.labels.title') }}
+                  </label>
+                  <TextInput
+                    class="w-full"
+                    v-model="websites[index].title"
+                    :placeholder="t('media.videos.placeholders.title')"
+                  />
+                </FlexCell>
+                <FlexCell class="mt-2">
+                  <label class="font-semibold block text-sm leading-6 text-gray-900">
+                    {{ t('media.videos.labels.description') }}
+                  </label>
+                  <TextInput
+                    class="w-full"
+                    v-model="websites[index].description"
+                    :placeholder="t('media.videos.placeholders.description')"
+                  />
+                </FlexCell>
               </Flex>
             </div>
           </div>
 
         </div>
-        <button class="btn bg-primary text-white mt-2" @click="addWebsiteInput">
+        <button v-if="!singleUpload" class="btn bg-primary text-white mt-2" @click="addWebsiteInput">
           <Icon name="circle-plus"/>
         </button>
-        <ApolloMutation :mutation="createVideosMutation" :variables="{ data: websites.map(url => ({ videoUrl: url })) }"
+        <ApolloMutation
+          :mutation="createVideosMutation"
+          :variables="{
+            data: websites
+              .filter((entry) => entry.videoUrl.trim().length > 0)
+              .map((entry) => ({
+                videoUrl: entry.videoUrl.trim(),
+                title: entry.title.trim() || null,
+                description: entry.description.trim() || null,
+              }))
+          }"
                         @done="onVideosCreated" @error="onError">
           <template v-slot="{ mutate, loading, error }">
             <div class="flex justify-end gap-4 mt-4">
               <Button class="btn btn-outline-dark" @click="closeModal">{{ t('shared.button.cancel') }}</Button>
-              <Button class="btn btn-primary" :disabled="loading || !websites.every(url => url.trim().length > 0)"
+              <Button class="btn btn-primary" :disabled="loading || !websites.every((entry) => entry.videoUrl.trim().length > 0)"
                       @click="mutate">{{ t('shared.button.submit') }}
               </Button>
             </div>

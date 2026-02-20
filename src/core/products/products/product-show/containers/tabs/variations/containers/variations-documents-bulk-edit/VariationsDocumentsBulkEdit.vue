@@ -7,7 +7,6 @@ import MatrixEditor from "../../../../../../../../../shared/components/organisms
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
 import { Product } from "../../../../../../configs";
 import { ProductType } from "../../../../../../../../../shared/utils/constants";
-import { IntegrationTypes } from "../../../../../../../../integrations/integrations/integrations";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {
   bundleVariationsQuery,
@@ -20,8 +19,10 @@ import {
   createMediaProductThroughsMutation,
   deleteMediaProductThroughsMutation,
   updateMediaProductThroughMutation,
-  updateImageMutation,
+  updateFileMutation,
 } from "../../../../../../../../../shared/api/mutations/media.js";
+import { documentTypesQuerySelector } from "../../../../../../../../../shared/api/queries/documentTypes.js";
+import { companyLanguagesQuery } from "../../../../../../../../../shared/api/queries/languages.js";
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
@@ -29,16 +30,15 @@ import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import { Image as ProductImage } from "../../../../../../../../../shared/components/atoms/image";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
-import { Toggle } from "../../../../../../../../../shared/components/atoms/toggle";
 import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import { TextEditor } from "../../../../../../../../../shared/components/atoms/input-text-editor";
 import { TextInput } from "../../../../../../../../../shared/components/atoms/input-text";
 import { shortenText } from "../../../../../../../../../shared/utils";
-import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
+import { CreateDocumentsModal } from "../../../../../../../../media/files/containers/create-modals/documents-modal";
 import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
-import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK, TYPE_IMAGE } from "../../../../../../../../media/files/media";
+import { TYPE_DOCUMENT } from "../../../../../../../../media/files/media";
 
-interface VariationImageSlot {
+interface VariationDocumentSlot {
   id: string | null;
   productId: string;
   mediaId: string;
@@ -47,9 +47,10 @@ interface VariationImageSlot {
   mediaName: string | null;
   title?: string | null;
   description?: string | null;
-  isMainImage: boolean;
+  documentTypeId?: string | null;
+  documentTypeName?: string | null;
+  documentLanguage?: string | null;
   sortOrder: number | null;
-  imageType?: string | null;
   uploadSource?: 'existing' | 'uploaded';
 }
 
@@ -62,7 +63,7 @@ interface VariationRow {
     active: boolean;
     type?: string;
   };
-  images: (VariationImageSlot | null)[];
+  documents: (VariationDocumentSlot | null)[];
 }
 
 const props = withDefaults(
@@ -81,28 +82,31 @@ const loading = ref(false);
 const saving = ref(false);
 const uploadContext = ref<{ rowIndex: number; columnIndex: number | null } | null>(null);
 const selectExistingModalVisible = ref(false);
-const uploadImagesModalVisible = ref(false);
+const uploadDocumentsModalVisible = ref(false);
 const expandedPlaceholder = ref<{ rowIndex: number; columnIndex: number } | null>(null);
 const salesChannels = ref<any[]>([]);
 const currentSalesChannel = ref<'default' | string>('default');
 const previousSalesChannel = ref<'default' | string>('default');
 const skipChannelWatch = ref(false);
 const inheritedFromDefault = ref(false);
-const imageEditModalVisible = ref(false);
-const imageEditLoading = ref(false);
-const imageEditContext = ref<{ rowIndex: number; columnIndex: number } | null>(null);
+
+const documentEditModalVisible = ref(false);
+const documentEditContext = ref<{ rowIndex: number; columnIndex: number } | null>(null);
 const editMediaId = ref<string | null>(null);
 const editMediaUrl = ref<string | null>(null);
 const editTitle = ref('');
 const editDescription = ref('');
-const editImageType = ref<string | null>(null);
-const editFormTouched = ref(false);
+const editDocumentTypeId = ref<string | null>(null);
+const editDocumentLanguage = ref<string | null>(null);
 const syncingEditForm = ref(false);
 const editedMediaIds = ref<Set<string>>(new Set());
 
+const documentTypeOptions = ref<{ label: string; value: string }[]>([]);
+const documentLanguageOptions = ref<{ label: string; value: string }[]>([]);
+
 const assignedMediaIds = computed(() =>
   variations.value.flatMap((row) =>
-    row.images
+    row.documents
       .map((slot) => slot?.mediaId)
       .filter((id): id is string => Boolean(id))
   )
@@ -132,118 +136,36 @@ const parentProduct = computed(() => {
   return isAlias.value ? props.product.aliasParentProduct : props.product;
 });
 const parentProductType = computed(() => parentProduct.value?.type ?? null);
-const isConfigurable = computed(() => parentProductType.value === ProductType.Configurable);
 const isChannelInherited = computed(
   () => currentSalesChannel.value !== 'default' && inheritedFromDefault.value
 );
-const currentSalesChannelType = computed(() => {
-  if (currentSalesChannel.value === 'default') {
-    return null;
-  }
-  return salesChannels.value.find((channel: any) => channel.id === currentSalesChannel.value)?.type ?? null;
-});
-const isSheinChannel = computed(() => currentSalesChannelType.value === IntegrationTypes.Shein);
-
-type SheinImageRole = 'main' | 'square' | 'detail' | 'color';
-
-const sheinRoleColorMap: Record<SheinImageRole, string> = {
-  main: 'bg-blue-500',
-  square: 'bg-purple-500',
-  detail: 'bg-emerald-500',
-  color: 'bg-orange-500'
-};
-
-const sheinRoleLabelKey: Record<SheinImageRole, string> = {
-  main: 'products.products.variations.media.sheinGuide.labels.main',
-  square: 'products.products.variations.media.sheinGuide.labels.square',
-  detail: 'products.products.variations.media.sheinGuide.labels.detail',
-  color: 'products.products.variations.media.sheinGuide.labels.color'
-};
-
-const isSheinVariationRow = (row: VariationRow | null) =>
-  row?.variation.type === ProductType.Simple;
-
-const shouldShowSheinColor = (row: VariationRow | null) =>
-  isConfigurable.value ||
-  isSheinVariationRow(row) ||
-  row?.variation.type === ProductType.Configurable;
-
-const getSheinRoleForSlot = (row: VariationRow, slot: VariationImageSlot): SheinImageRole => {
-  if (slot.isMainImage) {
-    return 'main';
-  }
-  if (shouldShowSheinColor(row) && slot.imageType === IMAGE_TYPE_COLOR) {
-    return 'color';
-  }
-  const squareSlot = row.images.find(
-    (candidate) =>
-      candidate?.mediaId &&
-      !candidate.isMainImage &&
-      candidate.imageType !== IMAGE_TYPE_COLOR
-  );
-  if (squareSlot?.mediaId === slot.mediaId) {
-    return 'square';
-  }
-  return 'detail';
-};
-
-const getSheinRoleLabelForRow = (row: VariationRow, columnIndex: number) => {
-  const slot = row.images[columnIndex];
-  if (!slot?.mediaId) {
-    return null;
-  }
-  const role = getSheinRoleForSlot(row, slot);
-  return t(sheinRoleLabelKey[role]);
-};
-
-const getSheinRoleDotClassForRow = (row: VariationRow, columnIndex: number) => {
-  const slot = row.images[columnIndex];
-  if (!slot?.mediaId) {
-    return null;
-  }
-  const role = getSheinRoleForSlot(row, slot);
-  return sheinRoleColorMap[role];
-};
-
-const sheinLegend = computed(() => ([
-  { key: 'main', label: t(sheinRoleLabelKey.main), dotClass: sheinRoleColorMap.main },
-  { key: 'square', label: t(sheinRoleLabelKey.square), dotClass: sheinRoleColorMap.square },
-  { key: 'detail', label: t(sheinRoleLabelKey.detail), dotClass: sheinRoleColorMap.detail },
-  { key: 'color', label: t(sheinRoleLabelKey.color), dotClass: sheinRoleColorMap.color }
-]));
-
-const imageTypeOptions = computed(() => ([
-  { label: t('media.images.labels.packShot'), value: IMAGE_TYPE_PACK },
-  { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
-  { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR },
-]));
 
 const baseColumns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false },
   { key: 'name', label: t('shared.labels.name'), editable: false },
   { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 60 },
-  { key: 'upload', label: t('products.products.variations.images.columns.upload'), editable: false, initialWidth: 160 },
+  { key: 'upload', label: t('products.products.variations.documents.columns.upload'), editable: false, initialWidth: 160 },
 ]);
 
-const imageColumnCount = computed(() => {
-  const maxColumns = variations.value.reduce((max, row) => Math.max(max, row.images.length), 0);
+const documentColumnCount = computed(() => {
+  const maxColumns = variations.value.reduce((max, row) => Math.max(max, row.documents.length), 0);
   return Math.max(maxColumns, 1);
 });
 
-const imageColumns = computed<MatrixColumn[]>(() =>
-  Array.from({ length: imageColumnCount.value }, (_, index) => ({
-    key: `image-${index}`,
-    label: t('products.products.variations.images.columns.image', { index: index + 1 }),
+const documentColumns = computed<MatrixColumn[]>(() =>
+  Array.from({ length: documentColumnCount.value }, (_, index) => ({
+    key: `document-${index}`,
+    label: t('products.products.variations.documents.columns.document', { index: index + 1 }),
     editable: true,
     initialWidth: 200,
-    beforeInsert: () => insertImageColumn(index),
-    afterInsert: () => insertImageColumn(index + 1),
+    beforeInsert: () => insertDocumentColumn(index),
+    afterInsert: () => insertDocumentColumn(index + 1),
   }))
 );
 
 const columns = computed<MatrixColumn[]>(() => [
   ...baseColumns.value,
-  ...imageColumns.value,
+  ...documentColumns.value,
 ]);
 
 const hasChanges = computed(
@@ -273,52 +195,38 @@ const copySkuToClipboard = async (sku: string) => {
   }
 };
 
-const parseImageColumnKey = (key: string) => {
-  if (!key.startsWith('image-')) return null;
-  const index = Number(key.replace('image-', ''));
+const parseDocumentColumnKey = (key: string) => {
+  if (!key.startsWith('document-')) return null;
+  const index = Number(key.replace('document-', ''));
   if (Number.isNaN(index)) return null;
   return index;
 };
 
-const ensureImageCapacity = (row: VariationRow, index: number) => {
-  while (row.images.length <= index) {
-    row.images.push(null);
+const ensureDocumentCapacity = (row: VariationRow, index: number) => {
+  while (row.documents.length <= index) {
+    row.documents.push(null);
   }
 };
 
-const ensureRowHasMainImage = (row: VariationRow) => {
-  if (row.images.some((image) => image?.isMainImage)) {
-    return;
-  }
-  const firstImageIndex = row.images.findIndex((image) => Boolean(image));
-  if (firstImageIndex === -1) {
-    return;
-  }
-  const firstImage = row.images[firstImageIndex];
-  if (firstImage) {
-    firstImage.isMainImage = true;
-  }
-};
-
-const insertImageColumn = (insertIndex: number) => {
+const insertDocumentColumn = (insertIndex: number) => {
   variations.value.forEach((row) => {
-    while (row.images.length < insertIndex) {
-      row.images.push(null);
+    while (row.documents.length < insertIndex) {
+      row.documents.push(null);
     }
-    row.images.splice(insertIndex, 0, null);
+    row.documents.splice(insertIndex, 0, null);
   });
   if (expandedPlaceholder.value) {
     closePlaceholder();
   }
 };
 
-const getImageColumnIndex = (columnKey: string) => parseImageColumnKey(columnKey) ?? 0;
+const getDocumentColumnIndex = (columnKey: string) => parseDocumentColumnKey(columnKey) ?? 0;
 
-const normalizeImageSlot = (
+const normalizeDocumentSlot = (
   value: any,
   productId: string,
   currentSlotId?: string | null
-): VariationImageSlot | null => {
+): VariationDocumentSlot | null => {
   if (!value || !value.mediaId) {
     return null;
   }
@@ -330,41 +238,41 @@ const normalizeImageSlot = (
     id: preserveId ? value.id : null,
     productId,
     mediaId: value.mediaId,
-    mediaProxyId: value.mediaProxyId ?? value.proxyId ?? null,
+    mediaProxyId: value.mediaProxyId ?? value.proxyId ?? value.mediaId ?? null,
     mediaUrl: value.mediaUrl ?? null,
     mediaName: value.mediaName ?? null,
     title: value.title ?? null,
     description: value.description ?? null,
-    isMainImage: preserveId ? !!value.isMainImage : false,
+    documentTypeId: value.documentTypeId ?? value.documentType?.id ?? null,
+    documentTypeName: value.documentTypeName ?? value.documentType?.name ?? null,
+    documentLanguage: value.documentLanguage ?? null,
     sortOrder: value.sortOrder ?? null,
-    imageType: value.imageType ?? null,
     uploadSource: value.uploadSource,
   };
 };
 
 const getMatrixCellValue = (rowIndex: number, columnKey: string) => {
-  const columnIndex = parseImageColumnKey(columnKey);
+  const columnIndex = parseDocumentColumnKey(columnKey);
   if (columnIndex === null) {
     return null;
   }
   const row = variations.value[rowIndex];
   if (!row) return null;
-  const slot = row.images[columnIndex];
+  const slot = row.documents[columnIndex];
   return slot ? JSON.parse(JSON.stringify(slot)) : null;
 };
 
 const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => {
-  const columnIndex = parseImageColumnKey(columnKey);
+  const columnIndex = parseDocumentColumnKey(columnKey);
   if (columnIndex === null) {
     return;
   }
   const row = variations.value[rowIndex];
   if (!row) return;
-  ensureImageCapacity(row, columnIndex);
-  const currentSlot = row.images[columnIndex];
-  const slot = normalizeImageSlot(value, row.variation.id, currentSlot?.id ?? null);
-  row.images.splice(columnIndex, 1, slot);
-  ensureRowHasMainImage(row);
+  ensureDocumentCapacity(row, columnIndex);
+  const currentSlot = row.documents[columnIndex];
+  const slot = normalizeDocumentSlot(value, row.variation.id, currentSlot?.id ?? null);
+  row.documents.splice(columnIndex, 1, slot);
   if (slot && isPlaceholderExpanded(rowIndex, columnIndex)) {
     closePlaceholder();
   }
@@ -376,30 +284,29 @@ const cloneMatrixCellValue = (fromRow: number, toRow: number, columnKey: string)
 };
 
 const clearMatrixCellValue = (rowIndex: number, columnKey: string) => {
-  const columnIndex = parseImageColumnKey(columnKey);
+  const columnIndex = parseDocumentColumnKey(columnKey);
   if (columnIndex === null) {
     return;
   }
   const row = variations.value[rowIndex];
   if (!row) return;
-  if (row.images.length > columnIndex) {
-    row.images.splice(columnIndex, 1, null);
+  if (row.documents.length > columnIndex) {
+    row.documents.splice(columnIndex, 1, null);
   }
-  ensureRowHasMainImage(row);
 };
 
 const resolveTargetIndex = (row: VariationRow, columnIndex: number | null) => {
   if (columnIndex != null) {
-    ensureImageCapacity(row, columnIndex);
+    ensureDocumentCapacity(row, columnIndex);
     return columnIndex;
   }
-  const emptyIndex = row.images.findIndex((slot) => !slot);
+  const emptyIndex = row.documents.findIndex((slot) => !slot);
   if (emptyIndex !== -1) {
-    ensureImageCapacity(row, emptyIndex);
+    ensureDocumentCapacity(row, emptyIndex);
     return emptyIndex;
   }
-  const targetIndex = row.images.length;
-  ensureImageCapacity(row, targetIndex);
+  const targetIndex = row.documents.length;
+  ensureDocumentCapacity(row, targetIndex);
   return targetIndex;
 };
 
@@ -418,32 +325,26 @@ const assignMediaToRow = (
     return;
   }
   const targetIndex = resolveTargetIndex(row, columnIndex);
-  const currentSlot = row.images[targetIndex];
-  const slotValue: VariationImageSlot = {
+  const slotValue: VariationDocumentSlot = {
     id: null,
     productId: row.variation.id,
     mediaId: resolvedMedia.id,
-    mediaProxyId: resolvedMedia.proxyId ?? resolvedMedia.mediaProxyId ?? null,
-    mediaUrl:
-      resolvedMedia.imageWebUrl ??
-      resolvedMedia.fileUrl ??
-      resolvedMedia.videoUrl ??
-      resolvedMedia.mediaUrl ??
-      null,
+    mediaProxyId: resolvedMedia.proxyId ?? resolvedMedia.mediaProxyId ?? resolvedMedia.id ?? null,
+    mediaUrl: resolvedMedia.documentImageThumbnailUrl ?? null,
     mediaName:
-      resolvedMedia.image?.name ??
       resolvedMedia.file?.name ??
       resolvedMedia.mediaName ??
       resolvedMedia.name ??
       null,
-    title: resolvedMedia.title ?? resolvedMedia.image?.title ?? null,
-    description: resolvedMedia.description ?? resolvedMedia.image?.description ?? null,
-    isMainImage: currentSlot?.isMainImage ?? false,
+    title: resolvedMedia.title ?? null,
+    description: resolvedMedia.description ?? null,
+    documentTypeId: resolvedMedia.documentType?.id ?? null,
+    documentTypeName: resolvedMedia.documentType?.name ?? null,
+    documentLanguage: resolvedMedia.documentLanguage ?? null,
     sortOrder: null,
-    imageType: resolvedMedia.imageType ?? (source === 'uploaded' ? IMAGE_TYPE_PACK : null),
     uploadSource: source,
   };
-  setMatrixCellValue(rowIndex, `image-${targetIndex}`, slotValue);
+  setMatrixCellValue(rowIndex, `document-${targetIndex}`, slotValue);
 };
 
 const openSelectExistingModal = (rowIndex: number, columnIndex: number | null = null) => {
@@ -451,9 +352,9 @@ const openSelectExistingModal = (rowIndex: number, columnIndex: number | null = 
   selectExistingModalVisible.value = true;
 };
 
-const openUploadImagesModal = (rowIndex: number, columnIndex: number | null = null) => {
+const openUploadDocumentsModal = (rowIndex: number, columnIndex: number | null = null) => {
   uploadContext.value = { rowIndex, columnIndex };
-  uploadImagesModalVisible.value = true;
+  uploadDocumentsModalVisible.value = true;
 };
 
 const handlePlaceholderAction = (
@@ -462,7 +363,7 @@ const handlePlaceholderAction = (
   columnIndex: number
 ) => {
   if (action === 'upload') {
-    openUploadImagesModal(rowIndex, columnIndex);
+    openUploadDocumentsModal(rowIndex, columnIndex);
   } else {
     openSelectExistingModal(rowIndex, columnIndex);
   }
@@ -470,7 +371,7 @@ const handlePlaceholderAction = (
 };
 
 const resetUploadContext = () => {
-  if (!selectExistingModalVisible.value && !uploadImagesModalVisible.value) {
+  if (!selectExistingModalVisible.value && !uploadDocumentsModalVisible.value) {
     uploadContext.value = null;
   }
 };
@@ -484,45 +385,28 @@ const handleExistingSelected = (media: any) => {
   selectExistingModalVisible.value = false;
 };
 
-const handleImagesCreated = (images: any[]) => {
+const handleDocumentsCreated = (documents: any[]) => {
   if (!uploadContext.value) {
-    uploadImagesModalVisible.value = false;
+    uploadDocumentsModalVisible.value = false;
     return;
   }
-  const createdImages = Array.isArray(images) ? images : images ? [images] : [];
-  if (!createdImages.length) {
-    uploadImagesModalVisible.value = false;
+  const createdDocuments = Array.isArray(documents) ? documents : documents ? [documents] : [];
+  if (!createdDocuments.length) {
+    uploadDocumentsModalVisible.value = false;
     return;
   }
   const { rowIndex, columnIndex } = uploadContext.value;
   if (columnIndex != null) {
-    assignMediaToRow(rowIndex, columnIndex, createdImages[0], 'uploaded');
+    assignMediaToRow(rowIndex, columnIndex, createdDocuments[0], 'uploaded');
   } else {
-    createdImages.forEach((image) => {
-      assignMediaToRow(rowIndex, null, image, 'uploaded');
+    createdDocuments.forEach((document) => {
+      assignMediaToRow(rowIndex, null, document, 'uploaded');
     });
   }
-  uploadImagesModalVisible.value = false;
+  uploadDocumentsModalVisible.value = false;
 };
 
-const isUnsavedSlot = (slot: VariationImageSlot | null | undefined) => !!slot && !slot.id;
-
-const getImageTypeLabel = (slot: VariationImageSlot | null | undefined) => {
-  if (!slot) {
-    return null;
-  }
-  const type = slot.imageType;
-  if (type === IMAGE_TYPE_PACK) {
-    return t('media.images.labels.packShot');
-  }
-  if (type === IMAGE_TYPE_MOOD) {
-    return t('media.images.labels.moodShot');
-  }
-  if (type === IMAGE_TYPE_COLOR) {
-    return t('media.images.labels.colorShot');
-  }
-  return null;
-};
+const isUnsavedSlot = (slot: VariationDocumentSlot | null | undefined) => !!slot && !slot.id;
 
 const isPlaceholderExpanded = (rowIndex: number, columnIndex: number) =>
   expandedPlaceholder.value?.rowIndex === rowIndex && expandedPlaceholder.value?.columnIndex === columnIndex;
@@ -541,80 +425,87 @@ const closePlaceholder = () => {
 
 const normalizeTextValue = (value?: string | null) => (value ?? '').trim();
 
-const applyEditFormFromSlot = (slot: VariationImageSlot) => {
+const applyEditFormFromSlot = (slot: VariationDocumentSlot) => {
   syncingEditForm.value = true;
   editTitle.value = slot.title ?? '';
   editDescription.value = slot.description ?? '';
-  editImageType.value = slot.imageType ?? null;
+  editDocumentTypeId.value = slot.documentTypeId ?? null;
+  editDocumentLanguage.value = slot.documentLanguage ?? null;
   syncingEditForm.value = false;
 };
 
-const openImageEditModal = (rowIndex: number, columnIndex: number) => {
+const openDocumentEditModal = (rowIndex: number, columnIndex: number) => {
   const row = variations.value[rowIndex];
-  const slot = row?.images[columnIndex] ?? null;
+  const slot = row?.documents[columnIndex] ?? null;
   if (!slot || !slot.mediaId) {
     return;
   }
-  imageEditContext.value = { rowIndex, columnIndex };
-  editFormTouched.value = false;
+  documentEditContext.value = { rowIndex, columnIndex };
   editMediaId.value = slot.mediaId;
   editMediaUrl.value = slot.mediaUrl ?? null;
   applyEditFormFromSlot(slot);
-  imageEditModalVisible.value = true;
+  documentEditModalVisible.value = true;
 };
 
-const closeImageEditModal = () => {
-  imageEditModalVisible.value = false;
-  imageEditContext.value = null;
+const closeDocumentEditModal = () => {
+  documentEditModalVisible.value = false;
+  documentEditContext.value = null;
   editMediaId.value = null;
   editMediaUrl.value = null;
   editTitle.value = '';
   editDescription.value = '';
-  editImageType.value = null;
-  editFormTouched.value = false;
+  editDocumentTypeId.value = null;
+  editDocumentLanguage.value = null;
 };
 
-const applyImageEdits = () => {
-  if (!imageEditContext.value || !editMediaId.value) {
-    closeImageEditModal();
+const applyDocumentEdits = () => {
+  if (!documentEditContext.value || !editMediaId.value) {
+    closeDocumentEditModal();
     return;
   }
   const updatedTitle = normalizeTextValue(editTitle.value) || null;
   const updatedDescription = normalizeTextValue(editDescription.value) || null;
-  const updatedType = editImageType.value ?? null;
+  const updatedTypeId = editDocumentTypeId.value ?? null;
+  const updatedTypeName = documentTypeOptions.value.find((option) => option.value === updatedTypeId)?.label ?? null;
+  const updatedLanguage = editDocumentLanguage.value ?? null;
 
   const hasChangesForMedia = variations.value.some((row) =>
-    row.images.some((slot) => {
+    row.documents.some((slot) => {
       if (!slot || slot.mediaId !== editMediaId.value) {
         return false;
       }
       return (
         normalizeTextValue(slot.title) !== normalizeTextValue(updatedTitle) ||
         normalizeTextValue(slot.description) !== normalizeTextValue(updatedDescription) ||
-        (slot.imageType ?? null) !== updatedType
+        (slot.documentTypeId ?? null) !== updatedTypeId ||
+        (slot.documentLanguage ?? null) !== updatedLanguage
       );
     })
   );
 
   variations.value.forEach((row) => {
-    row.images.forEach((slot) => {
+    row.documents.forEach((slot) => {
       if (!slot || slot.mediaId !== editMediaId.value) {
         return;
       }
       slot.title = updatedTitle;
       slot.description = updatedDescription;
-      slot.imageType = updatedType;
+      slot.documentTypeId = updatedTypeId;
+      slot.documentTypeName = updatedTypeName;
+      slot.documentLanguage = updatedLanguage;
     });
   });
+
   if (hasChangesForMedia) {
     editedMediaIds.value.add(editMediaId.value);
   }
-  closeImageEditModal();
+
+  closeDocumentEditModal();
 };
 
-watch([editTitle, editDescription, editImageType], () => {
-  if (!syncingEditForm.value) {
-    editFormTouched.value = true;
+watch([editTitle, editDescription, editDocumentTypeId, editDocumentLanguage], () => {
+  if (!syncingEditForm.value && editMediaId.value) {
+    editedMediaIds.value.add(editMediaId.value);
   }
 });
 
@@ -622,51 +513,32 @@ watch(currentSalesChannel, async (newChannel) => {
   await handleSalesChannelChange(newChannel);
 });
 watch(selectExistingModalVisible, resetUploadContext);
-watch(uploadImagesModalVisible, resetUploadContext);
+watch(uploadDocumentsModalVisible, resetUploadContext);
 
-const handleMainToggle = (rowIndex: number, columnIndex: number, value: boolean) => {
-  const row = variations.value[rowIndex];
-  if (!row) return;
-  ensureImageCapacity(row, columnIndex);
-  const slot = row.images[columnIndex];
-  if (!slot) return;
-  if (value) {
-    row.images.forEach((image, index) => {
-      if (image) {
-        image.isMainImage = index === columnIndex;
-      }
-    });
-  } else {
-    slot.isMainImage = false;
-  }
-  ensureRowHasMainImage(row);
-};
-
-const moveImage = (rowIndex: number, columnIndex: number, direction: -1 | 1) => {
+const moveDocument = (rowIndex: number, columnIndex: number, direction: -1 | 1) => {
   const row = variations.value[rowIndex];
   if (!row) return;
   const targetIndex = columnIndex + direction;
   if (targetIndex < 0) {
     return;
   }
-  ensureImageCapacity(row, targetIndex);
-  const currentSlot = row.images[columnIndex] ?? null;
-  const targetSlot = row.images[targetIndex] ?? null;
-  row.images.splice(columnIndex, 1, targetSlot);
-  row.images.splice(targetIndex, 1, currentSlot);
-  ensureRowHasMainImage(row);
+  ensureDocumentCapacity(row, targetIndex);
+  const currentSlot = row.documents[columnIndex] ?? null;
+  const targetSlot = row.documents[targetIndex] ?? null;
+  row.documents.splice(columnIndex, 1, targetSlot);
+  row.documents.splice(targetIndex, 1, currentSlot);
 };
 
-const handleImageCtrlArrow = (
+const handleDocumentCtrlArrow = (
   rowIndex: number,
   columnKey: string,
   direction: 'left' | 'right'
 ) => {
-  const columnIndex = parseImageColumnKey(columnKey);
+  const columnIndex = parseDocumentColumnKey(columnKey);
   if (columnIndex === null) {
     return false;
   }
-  moveImage(rowIndex, columnIndex, direction === 'left' ? -1 : 1);
+  moveDocument(rowIndex, columnIndex, direction === 'left' ? -1 : 1);
   return true;
 };
 
@@ -712,7 +584,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
         active: variation.active,
         type: variation.type,
       },
-      images: [],
+      documents: [],
     } as VariationRow;
   });
 };
@@ -755,17 +627,17 @@ const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
       active: node.active,
       type: node.type ?? null,
     },
-    images: [],
+    documents: [],
   })) as VariationRow[];
 };
 
-const fetchVariationImages = async (
+const fetchVariationDocuments = async (
   variationIds: string[],
   salesChannelId: 'default' | string,
   policy: FetchPolicy = 'cache-first'
 ) => {
   if (!variationIds.length) {
-    return new Map<string, VariationImageSlot[]>();
+    return new Map<string, VariationDocumentSlot[]>();
   }
   const pageSize = 100;
   let after: string | null = null;
@@ -780,7 +652,7 @@ const fetchVariationImages = async (
         after,
         filter: {
           product: { id: { inList: variationIds } },
-          media: { type: { exact: 'IMAGE' } },
+          media: { type: { exact: 'FILE' } },
           salesChannel:
             salesChannelId === 'default'
               ? { id: { isNull: true } }
@@ -798,7 +670,7 @@ const fetchVariationImages = async (
     if (!after) break;
   }
 
-  const map = new Map<string, VariationImageSlot[]>();
+  const map = new Map<string, VariationDocumentSlot[]>();
   nodes.forEach((node: any) => {
     const productId = node.productId ?? node.product?.id;
     const mediaId = node.media?.id;
@@ -806,20 +678,21 @@ const fetchVariationImages = async (
     if (!map.has(productId)) {
       map.set(productId, []);
     }
-      map.get(productId)!.push({
-        id: node.id ?? null,
-        productId,
-        mediaId,
-        mediaProxyId: node.media?.proxyId ?? null,
-        mediaUrl: node.media?.imageWebUrl ?? null,
-        mediaName: node.media?.image?.name ?? node.media?.file?.name ?? null,
-        title: node.media?.title ?? null,
-        description: node.media?.description ?? null,
-        isMainImage: !!node.isMainImage,
-        sortOrder: node.sortOrder ?? null,
-        imageType: node.media?.imageType ?? null,
-        uploadSource: 'existing',
-      });
+    map.get(productId)!.push({
+      id: node.id ?? null,
+      productId,
+      mediaId,
+      mediaProxyId: node.media?.proxyId ?? mediaId,
+      mediaUrl: node.media?.documentImageThumbnailUrl ?? null,
+      mediaName: node.media?.file?.name ?? null,
+      title: node.media?.title ?? null,
+      description: node.media?.description ?? null,
+      documentTypeId: node.media?.documentType?.id ?? null,
+      documentTypeName: node.media?.documentType?.name ?? null,
+      documentLanguage: node.media?.documentLanguage ?? null,
+      sortOrder: node.sortOrder ?? null,
+      uploadSource: 'existing',
+    });
   });
 
   map.forEach((entries) => {
@@ -844,24 +717,24 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     }
     const variationIds = variationRows.map((row) => row.variation.id);
     const selectedChannel = currentSalesChannel.value;
-    const imagesMap = await fetchVariationImages(variationIds, selectedChannel, policy);
-    let defaultMap: Map<string, VariationImageSlot[]> | null = null;
+    const documentsMap = await fetchVariationDocuments(variationIds, selectedChannel, policy);
+    let defaultMap: Map<string, VariationDocumentSlot[]> | null = null;
 
     if (selectedChannel !== 'default') {
-      const needsDefault = variationRows.some((row) => (imagesMap.get(row.variation.id) ?? []).length === 0);
+      const needsDefault = variationRows.some((row) => (documentsMap.get(row.variation.id) ?? []).length === 0);
       if (needsDefault) {
-        defaultMap = await fetchVariationImages(variationIds, 'default', policy);
+        defaultMap = await fetchVariationDocuments(variationIds, 'default', policy);
       }
     }
 
     let channelInherited = false;
     variationRows.forEach((row) => {
-      const entries = imagesMap.get(row.variation.id) ?? [];
+      const entries = documentsMap.get(row.variation.id) ?? [];
       if (entries.length || selectedChannel === 'default') {
-        row.images = entries.map((slot) => ({ ...slot }));
+        row.documents = entries.map((slot) => ({ ...slot }));
       } else {
         const fallback = defaultMap?.get(row.variation.id) ?? [];
-        row.images = fallback.map((slot, index) => ({
+        row.documents = fallback.map((slot, index) => ({
           ...slot,
           id: null,
           productId: row.variation.id,
@@ -872,7 +745,6 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
           channelInherited = true;
         }
       }
-      ensureRowHasMainImage(row);
     });
     variations.value = JSON.parse(JSON.stringify(variationRows));
     originalVariations.value = JSON.parse(JSON.stringify(variationRows));
@@ -899,6 +771,37 @@ const loadSalesChannels = async () => {
   }
 };
 
+const loadSelectorOptions = async () => {
+  try {
+    const [{ data: documentTypesData }, { data: languagesData }] = await Promise.all([
+      apolloClient.query({
+        query: documentTypesQuerySelector,
+        variables: { first: 100 },
+        fetchPolicy: 'cache-first',
+      }),
+      apolloClient.query({
+        query: companyLanguagesQuery,
+        fetchPolicy: 'cache-first',
+      }),
+    ]);
+
+    documentTypeOptions.value =
+      documentTypesData?.documentTypes?.edges?.map((edge: any) => ({
+        label: edge.node.name,
+        value: edge.node.id,
+      })) || [];
+
+    documentLanguageOptions.value =
+      languagesData?.companyLanguages?.map((language: any) => ({
+        label: language.name,
+        value: language.code,
+      })) || [];
+  } catch (error) {
+    documentTypeOptions.value = [];
+    documentLanguageOptions.value = [];
+  }
+};
+
 const save = async () => {
   if (!hasChanges.value || saving.value) {
     return;
@@ -912,21 +815,35 @@ const save = async () => {
       originalMap.set(row.variation.id, row);
     });
 
-    const toCreate: { productId: string; mediaId: string; sortOrder: number; isMainImage: boolean }[] = [];
-    const toUpdate: { id: string; sortOrder: number; isMainImage: boolean }[] = [];
-    const imageUpdates = new Map<string, { imageType: string | null; title: string | null; description: string | null; mediaProxyId: string | null }>();
+    const toCreate: { productId: string; mediaId: string; sortOrder: number }[] = [];
+    const toUpdate: { id: string; sortOrder: number }[] = [];
     const toDelete: string[] = [];
+    const fileUpdates = new Map<string, {
+      title: string | null;
+      description: string | null;
+      documentTypeId: string | null;
+      documentLanguage: string | null;
+      mediaProxyId: string | null;
+      mediaId: string;
+    }>();
 
-    const originalMediaMap = new Map<string, { imageType: string | null; title: string | null; description: string | null }>();
+    const originalMediaMap = new Map<string, {
+      title: string | null;
+      description: string | null;
+      documentTypeId: string | null;
+      documentLanguage: string | null;
+    }>();
+
     originalVariations.value.forEach((row) => {
-      row.images.forEach((slot) => {
+      row.documents.forEach((slot) => {
         if (!slot?.mediaId || originalMediaMap.has(slot.mediaId)) {
           return;
         }
         originalMediaMap.set(slot.mediaId, {
-          imageType: slot.imageType ?? null,
-          title: normalizeTextValue(slot.title),
-          description: normalizeTextValue(slot.description),
+          title: normalizeTextValue(slot.title) || null,
+          description: normalizeTextValue(slot.description) || null,
+          documentTypeId: slot.documentTypeId ?? null,
+          documentLanguage: slot.documentLanguage ?? null,
         });
       });
     });
@@ -935,16 +852,18 @@ const save = async () => {
       const original = originalMap.get(row.variation.id);
       const currentIds = new Set<string>();
 
-      row.images.forEach((slot, index) => {
+      row.documents.forEach((slot, index) => {
         if (!slot || !slot.mediaId) {
           return;
         }
-        if (!imageUpdates.has(slot.mediaId)) {
-          imageUpdates.set(slot.mediaId, {
-            imageType: slot.imageType ?? null,
-            title: normalizeTextValue(slot.title),
-            description: normalizeTextValue(slot.description),
-            mediaProxyId: slot.mediaProxyId ?? null,
+        if (!fileUpdates.has(slot.mediaId)) {
+          fileUpdates.set(slot.mediaId, {
+            title: normalizeTextValue(slot.title) || null,
+            description: normalizeTextValue(slot.description) || null,
+            documentTypeId: slot.documentTypeId ?? null,
+            documentLanguage: slot.documentLanguage ?? null,
+            mediaProxyId: slot.mediaProxyId ?? slot.mediaId ?? null,
+            mediaId: slot.mediaId,
           });
         }
         if (!slot.id) {
@@ -952,21 +871,19 @@ const save = async () => {
             productId: row.variation.id,
             mediaId: slot.mediaId,
             sortOrder: index,
-            isMainImage: !!slot.isMainImage,
           });
           return;
         }
         currentIds.add(slot.id);
-        const originalSlot = original?.images.find((item) => item?.id === slot.id) ?? null;
+        const originalSlot = original?.documents.find((item) => item?.id === slot.id) ?? null;
         const originalSort = originalSlot?.sortOrder ?? null;
-        const originalMain = originalSlot?.isMainImage ?? false;
-        if (originalSort !== index || originalMain !== slot.isMainImage) {
-          toUpdate.push({ id: slot.id, sortOrder: index, isMainImage: !!slot.isMainImage });
+        if (originalSort !== index) {
+          toUpdate.push({ id: slot.id, sortOrder: index });
         }
       });
 
       const originalIds = new Set(
-        (original?.images ?? [])
+        (original?.documents ?? [])
           .map((slot) => slot?.id)
           .filter((id): id is string => Boolean(id))
       );
@@ -977,12 +894,10 @@ const save = async () => {
       });
     });
 
-    const inputDataInput = toDelete.map(id => ({ id }));
-
     if (toDelete.length) {
       await apolloClient.mutate({
         mutation: deleteMediaProductThroughsMutation,
-        variables: { data: inputDataInput },
+        variables: { data: toDelete.map((id) => ({ id })) },
       });
     }
 
@@ -992,7 +907,6 @@ const save = async () => {
           product: { id: item.productId },
           media: { id: item.mediaId },
           sortOrder: item.sortOrder,
-          isMainImage: item.isMainImage,
         };
         if (!isDefaultChannel) {
           input.salesChannel = { id: selectedChannel };
@@ -1013,40 +927,42 @@ const save = async () => {
             data: {
               id: item.id,
               sortOrder: item.sortOrder,
-              isMainImage: item.isMainImage,
             },
           },
         });
       }
     }
 
-    const imagesToUpdate = Array.from(imageUpdates.entries())
+    const filesToUpdate = Array.from(fileUpdates.entries())
       .filter(([mediaId, current]) => {
         const original = originalMediaMap.get(mediaId);
         if (!original) {
           return editedMediaIds.value.has(mediaId);
         }
         return (
-          current.imageType !== original.imageType ||
           current.title !== original.title ||
-          current.description !== original.description
+          current.description !== original.description ||
+          current.documentTypeId !== original.documentTypeId ||
+          current.documentLanguage !== original.documentLanguage
         );
       })
-      .map(([mediaId, current]) => ({ mediaId, ...current }));
+      .map(([, current]) => current);
 
-    if (imagesToUpdate.length) {
-      for (const item of imagesToUpdate) {
-        if (!item.mediaProxyId) {
+    if (filesToUpdate.length) {
+      for (const item of filesToUpdate) {
+        const updateId = item.mediaProxyId || item.mediaId;
+        if (!updateId) {
           continue;
         }
         await apolloClient.mutate({
-          mutation: updateImageMutation,
+          mutation: updateFileMutation,
           variables: {
             data: {
-              id: item.mediaProxyId,
-              imageType: item.imageType,
-              title: item.title || null,
-              description: item.description || null,
+              id: updateId,
+              title: item.title,
+              description: item.description,
+              documentType: item.documentTypeId ? { id: item.documentTypeId } : null,
+              documentLanguage: item.documentLanguage,
             },
           },
         });
@@ -1082,13 +998,13 @@ const handleSalesChannelChange = async (newChannel: 'default' | string) => {
   await loadData('network-only');
 };
 
-const removeImage = (rowIndex: number, columnIndex: number) => {
-  const columnKey = `image-${columnIndex}`;
+const removeDocument = (rowIndex: number, columnIndex: number) => {
+  const columnKey = `document-${columnIndex}`;
   clearMatrixCellValue(rowIndex, columnKey);
 };
 
 onMounted(async () => {
-  await loadSalesChannels();
+  await Promise.all([loadSalesChannels(), loadSelectorOptions()]);
   previousSalesChannel.value = currentSalesChannel.value;
   await loadData('network-only');
 });
@@ -1105,8 +1021,8 @@ defineExpose({ hasUnsavedChanges });
 
 <template>
   <div
-    class="relative w-full min-w-0 variations-images-bulk-edit"
-    :class="{ 'variations-images-bulk-edit--inherited': isChannelInherited }"
+    class="relative w-full min-w-0 variations-documents-bulk-edit"
+    :class="{ 'variations-documents-bulk-edit--inherited': isChannelInherited }"
   >
     <MatrixEditor
       ref="matrixRef"
@@ -1120,7 +1036,7 @@ defineExpose({ hasUnsavedChanges });
       :set-cell-value="setMatrixCellValue"
       :clone-cell-value="cloneMatrixCellValue"
       :clear-cell-value="clearMatrixCellValue"
-      :on-ctrl-arrow="handleImageCtrlArrow"
+      :on-ctrl-arrow="handleDocumentCtrlArrow"
       @save="save"
     >
       <template #filters>
@@ -1128,40 +1044,7 @@ defineExpose({ hasUnsavedChanges });
           v-if="isChannelInherited"
           class="rounded border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700"
         >
-          {{ t('products.products.variations.media.messages.inheritedFromDefault') }}
-        </div>
-        <div
-          v-if="isSheinChannel"
-          class="mt-3 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
-          <div class="font-medium">{{ t('products.products.variations.media.sheinGuide.title') }}</div>
-          <p class="mt-1">{{ t('products.products.variations.media.sheinGuide.description') }}</p>
-          <ul class="mt-2 list-disc space-y-1 pl-5">
-            <li>
-              {{ t('products.products.variations.media.sheinGuide.order.main', { label: t('products.products.variations.media.sheinGuide.labels.main') }) }}
-            </li>
-            <li>
-              {{ t('products.products.variations.media.sheinGuide.order.square', { label: t('products.products.variations.media.sheinGuide.labels.square') }) }}
-            </li>
-            <li>
-              {{ t('products.products.variations.media.sheinGuide.order.detail', { label: t('products.products.variations.media.sheinGuide.labels.detail') }) }}
-            </li>
-            <li>
-              {{ t('products.products.variations.media.sheinGuide.order.colorVariations', { label: t('products.products.variations.media.sheinGuide.labels.color') }) }}
-            </li>
-          </ul>
-          <p class="mt-2 text-xs text-red-600">
-            {{ t('products.products.variations.media.sheinGuide.note') }}
-          </p>
-          <div class="mt-3 flex flex-wrap gap-3 text-xs text-red-700">
-            <div v-for="legend in sheinLegend" :key="legend.key" class="flex items-center gap-2">
-              <span class="h-2.5 w-2.5 rounded-full" :class="legend.dotClass"></span>
-              <span>{{ legend.label }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="mt-3 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-          {{ t('products.products.variations.media.messages.colorImageDisclaimer') }}
+          {{ t('products.products.variations.documents.messages.inheritedFromDefault') }}
         </div>
       </template>
       <template #toolbar-right>
@@ -1210,17 +1093,17 @@ defineExpose({ hasUnsavedChanges });
               class="btn btn-secondary flex w-full items-center justify-center gap-2 px-3 py-1.5 text-sm"
             >
               <Icon name="cloud-upload" class="h-3 w-3" aria-hidden="true" />
-              <span>{{ t('products.products.variations.images.buttons.openUploadMenu') }}</span>
+              <span>{{ t('products.products.variations.documents.buttons.openUploadMenu') }}</span>
             </Button>
             <template #content="{ close }">
               <ul class="w-48 rounded-md border border-gray-300 bg-white py-1 text-dark">
                 <li>
                   <Button
                     class="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-100"
-                    @click="() => { openUploadImagesModal(rowIndex); close(); }"
+                    @click="() => { openUploadDocumentsModal(rowIndex); close(); }"
                   >
                     <Icon name="upload" class="h-4 w-4" aria-hidden="true" />
-                    {{ t('products.products.variations.images.buttons.uploadNew') }}
+                    {{ t('products.products.variations.documents.buttons.uploadNew') }}
                   </Button>
                 </li>
                 <li>
@@ -1229,7 +1112,7 @@ defineExpose({ hasUnsavedChanges });
                     @click="() => { openSelectExistingModal(rowIndex); close(); }"
                   >
                     <Icon name="images" class="h-4 w-4" aria-hidden="true" />
-                    {{ t('products.products.variations.images.buttons.addExisting') }}
+                    {{ t('products.products.variations.documents.buttons.addExisting') }}
                   </Button>
                 </li>
               </ul>
@@ -1241,96 +1124,77 @@ defineExpose({ hasUnsavedChanges });
             <div
               class="relative flex h-36 w-36 flex-col items-center justify-center overflow-hidden rounded-md border bg-white p-2 md:h-40 md:w-40"
               :class="{
-                'border-dashed border-gray-300 bg-gray-50': !row.images[getImageColumnIndex(column.key)],
-                'border-sky-200 bg-sky-50': isUnsavedSlot(row.images[getImageColumnIndex(column.key)]),
+                'border-dashed border-gray-300 bg-gray-50': !row.documents[getDocumentColumnIndex(column.key)],
+                'border-sky-200 bg-sky-50': isUnsavedSlot(row.documents[getDocumentColumnIndex(column.key)]),
               }"
             >
               <ProductImage
-                v-if="row.images[getImageColumnIndex(column.key)]"
-                :source="row.images[getImageColumnIndex(column.key)]?.mediaUrl || ''"
-                :alt="row.images[getImageColumnIndex(column.key)]?.mediaName || row.variation.name"
+                v-if="row.documents[getDocumentColumnIndex(column.key)]?.mediaUrl"
+                :source="row.documents[getDocumentColumnIndex(column.key)]?.mediaUrl || ''"
+                :alt="row.documents[getDocumentColumnIndex(column.key)]?.mediaName || row.variation.name"
                 class="h-full w-full object-contain"
               />
+              <div
+                v-else-if="row.documents[getDocumentColumnIndex(column.key)]"
+                class="flex h-full w-full items-center justify-center rounded-md bg-gray-100"
+              >
+                <Icon name="file-text" class="h-10 w-10 text-gray-500" aria-hidden="true" />
+              </div>
               <div v-else class="flex w-full flex-col items-center gap-3 px-3 py-2 text-center">
-                <template v-if="!isPlaceholderExpanded(rowIndex, getImageColumnIndex(column.key))">
+                <template v-if="!isPlaceholderExpanded(rowIndex, getDocumentColumnIndex(column.key))">
                   <span class="text-xs text-gray-500">
-                    {{ t('products.products.variations.images.labels.noImage') }}
+                    {{ t('products.products.variations.documents.labels.noDocument') }}
                   </span>
                 </template>
                 <Button
                   class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-500 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
-                  :aria-label="t('products.products.variations.images.buttons.openUploadMenu')"
-                  @click.stop="togglePlaceholder(rowIndex, getImageColumnIndex(column.key))"
+                  :aria-label="t('products.products.variations.documents.buttons.openUploadMenu')"
+                  @click.stop="togglePlaceholder(rowIndex, getDocumentColumnIndex(column.key))"
                 >
                   <Icon name="plus" class="h-4 w-4" aria-hidden="true" />
                 </Button>
                 <div
-                  v-if="isPlaceholderExpanded(rowIndex, getImageColumnIndex(column.key))"
+                  v-if="isPlaceholderExpanded(rowIndex, getDocumentColumnIndex(column.key))"
                   class="flex w-full flex-col gap-2"
                 >
                   <Button
                     class="flex items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
-                    @click.stop="handlePlaceholderAction('upload', rowIndex, getImageColumnIndex(column.key))"
+                    @click.stop="handlePlaceholderAction('upload', rowIndex, getDocumentColumnIndex(column.key))"
                   >
                     <Icon name="upload" class="h-3 w-3" aria-hidden="true" />
-                    {{ t('products.products.variations.images.buttons.uploadNew') }}
+                    {{ t('products.products.variations.documents.buttons.uploadNew') }}
                   </Button>
                   <Button
                     class="flex items-center justify-center gap-2 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
-                    @click.stop="handlePlaceholderAction('existing', rowIndex, getImageColumnIndex(column.key))"
+                    @click.stop="handlePlaceholderAction('existing', rowIndex, getDocumentColumnIndex(column.key))"
                   >
                     <Icon name="images" class="h-3 w-3" aria-hidden="true" />
-                    {{ t('products.products.variations.images.buttons.addExisting') }}
+                    {{ t('products.products.variations.documents.buttons.addExisting') }}
                   </Button>
                 </div>
               </div>
             </div>
             <div
               class="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-900 bg-opacity-60 px-3 py-2 opacity-0 transition-opacity group-hover:opacity-100"
-              :class="{ 'pointer-events-none': !row.images[getImageColumnIndex(column.key)] }"
+              :class="{ 'pointer-events-none': !row.documents[getDocumentColumnIndex(column.key)] }"
             >
-              <div
-                v-if="row.images[getImageColumnIndex(column.key)]"
-                class="absolute right-2 top-2 flex flex-col gap-1"
-              >
-                <div
-                  v-if="isSheinChannel && getSheinRoleLabelForRow(row, getImageColumnIndex(column.key))"
-                  class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
-                >
-                  <span
-                    class="h-2.5 w-2.5 rounded-full"
-                    :class="getSheinRoleDotClassForRow(row, getImageColumnIndex(column.key))"
-                  ></span>
-                  <span>{{ getSheinRoleLabelForRow(row, getImageColumnIndex(column.key)) }}</span>
-                </div>
-                <div
-                  v-if="getImageTypeLabel(row.images[getImageColumnIndex(column.key)])"
-                  class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
-                >
-                  <span>{{ getImageTypeLabel(row.images[getImageColumnIndex(column.key)]) }}</span>
-                </div>
-              </div>
-              <template v-if="row.images[getImageColumnIndex(column.key)]">
-                <Toggle
-                  :model-value="row.images[getImageColumnIndex(column.key)]?.isMainImage ?? false"
-                  @update:model-value="(value) => handleMainToggle(rowIndex, getImageColumnIndex(column.key), value)"
-                />
+              <template v-if="row.documents[getDocumentColumnIndex(column.key)]">
                 <div class="flex items-center gap-2">
                   <Button
-                    v-if="getImageColumnIndex(column.key) > 0"
+                    v-if="getDocumentColumnIndex(column.key) > 0"
                     class="btn btn-secondary p-2"
-                    :aria-label="t('products.products.variations.images.buttons.moveLeft')"
-                    :title="t('products.products.variations.images.buttons.moveLeft')"
-                    @click="moveImage(rowIndex, getImageColumnIndex(column.key), -1)"
+                    :aria-label="t('products.products.variations.documents.buttons.moveLeft')"
+                    :title="t('products.products.variations.documents.buttons.moveLeft')"
+                    @click="moveDocument(rowIndex, getDocumentColumnIndex(column.key), -1)"
                   >
                     <Icon name="chevron-left" class="h-4 w-4" aria-hidden="true" />
                   </Button>
                   <Button
-                    v-if="getImageColumnIndex(column.key) < imageColumnCount - 1"
+                    v-if="getDocumentColumnIndex(column.key) < documentColumnCount - 1"
                     class="btn btn-secondary p-2"
-                    :aria-label="t('products.products.variations.images.buttons.moveRight')"
-                    :title="t('products.products.variations.images.buttons.moveRight')"
-                    @click="moveImage(rowIndex, getImageColumnIndex(column.key), 1)"
+                    :aria-label="t('products.products.variations.documents.buttons.moveRight')"
+                    :title="t('products.products.variations.documents.buttons.moveRight')"
+                    @click="moveDocument(rowIndex, getDocumentColumnIndex(column.key), 1)"
                   >
                     <Icon name="chevron-right" class="h-4 w-4" aria-hidden="true" />
                   </Button>
@@ -1340,7 +1204,7 @@ defineExpose({ hasUnsavedChanges });
                     class="rounded bg-white/80 p-2 text-primary hover:bg-white"
                     :title="t('shared.button.edit')"
                     :aria-label="t('shared.button.edit')"
-                    @click.stop="openImageEditModal(rowIndex, getImageColumnIndex(column.key))"
+                    @click.stop="openDocumentEditModal(rowIndex, getDocumentColumnIndex(column.key))"
                   >
                     <Icon name="edit" class="h-4 w-4" aria-hidden="true" />
                   </Button>
@@ -1348,7 +1212,7 @@ defineExpose({ hasUnsavedChanges });
                     class="rounded bg-white/80 p-2 text-red-600 hover:bg-white"
                     :title="t('shared.button.delete')"
                     :aria-label="t('shared.button.delete')"
-                    @click.stop="removeImage(rowIndex, getImageColumnIndex(column.key))"
+                    @click.stop="removeDocument(rowIndex, getDocumentColumnIndex(column.key))"
                   >
                     <Icon name="trash" class="h-4 w-4" aria-hidden="true" />
                   </Button>
@@ -1359,63 +1223,77 @@ defineExpose({ hasUnsavedChanges });
         </template>
       </template>
     </MatrixEditor>
-    <Modal v-model="imageEditModalVisible" @closed="closeImageEditModal">
+    <Modal v-model="documentEditModalVisible" @closed="closeDocumentEditModal">
       <Card class="modal-content w-11/12 max-w-5xl">
         <div class="mb-4">
-          <h3 class="text-xl font-semibold">{{ t('media.images.edit.title') }}</h3>
+          <h3 class="text-xl font-semibold">{{ t('media.documents.show.title') }}</h3>
         </div>
-        <div v-if="imageEditLoading" class="flex items-center justify-center py-10">
-          <span class="animate-spin border-2 border-black !border-l-transparent rounded-full w-6 h-6 inline-flex"></span>
-        </div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <ProductImage
               v-if="editMediaUrl"
               :source="editMediaUrl"
-              :alt="t('media.images.show.title')"
+              :alt="t('media.documents.title')"
               class="w-full max-w-[35rem] rounded-md"
             />
+            <div
+              v-else
+              class="flex h-64 items-center justify-center rounded-md border border-gray-200 bg-gray-100"
+            >
+              <Icon name="file-text" class="h-14 w-14 text-gray-500" aria-hidden="true" />
+            </div>
           </div>
           <div class="mt-1">
             <Flex vertical>
               <FlexCell>
-                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.title') }}</label>
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.documents.labels.title') }}</label>
                 <TextInput
                   v-model="editTitle"
                   class="w-full"
-                  :placeholder="t('media.images.placeholders.title')"
+                  :placeholder="t('media.documents.placeholders.title')"
                 />
               </FlexCell>
               <FlexCell class="mt-4">
-                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.description') }}</label>
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.documents.labels.description') }}</label>
                 <TextEditor
                   class="h-32"
                   v-model="editDescription"
-                  :placeholder="t('media.images.placeholders.description')"
+                  :placeholder="t('media.documents.placeholders.description')"
                 />
               </FlexCell>
               <FlexCell class="mt-4">
-                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.images.labels.imageType') }}</label>
-              </FlexCell>
-              <FlexCell>
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('media.documents.filters.documentType') }}</label>
                 <Selector
-                  class="pr-4"
-                  :model-value="editImageType"
-                  :options="imageTypeOptions"
-                  :mandatory="true"
+                  v-model="editDocumentTypeId"
+                  :options="documentTypeOptions"
+                  class="w-full"
                   :removable="false"
+                  :filterable="true"
                   :label-by="'label'"
                   :value-by="'value'"
-                  :placeholder="t('media.images.placeholders.imageType')"
+                  :placeholder="t('media.documents.placeholders.documentType')"
                   :dropdown-position="'bottom'"
-                  @update:model-value="(value) => { editImageType = value; }"
+                />
+              </FlexCell>
+              <FlexCell class="mt-4">
+                <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.language') }}</label>
+                <Selector
+                  v-model="editDocumentLanguage"
+                  :options="documentLanguageOptions"
+                  class="w-full"
+                  :removable="false"
+                  :filterable="true"
+                  :label-by="'label'"
+                  :value-by="'value'"
+                  :placeholder="t('media.documents.placeholders.documentLanguage')"
+                  :dropdown-position="'bottom'"
                 />
               </FlexCell>
               <FlexCell class="mt-6 flex justify-end gap-3">
-                <Button class="btn btn-outline-dark" @click="closeImageEditModal">
+                <Button class="btn btn-outline-dark" @click="closeDocumentEditModal">
                   {{ t('shared.button.cancel') }}
                 </Button>
-                <Button class="btn btn-primary" @click="applyImageEdits">
+                <Button class="btn btn-primary" @click="applyDocumentEdits">
                   {{ t('shared.button.save') }}
                 </Button>
               </FlexCell>
@@ -1429,25 +1307,25 @@ defineExpose({ hasUnsavedChanges });
       :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct?.id"
       :ids="assignedMediaIds"
       :link-on-select="false"
-      :media-type="TYPE_IMAGE"
+      :media-type="TYPE_DOCUMENT"
       :sales-channel-id="currentSalesChannelId || undefined"
       @entries-created="handleExistingSelected"
     />
-    <CreateImagesModal
-      v-model="uploadImagesModalVisible"
+    <CreateDocumentsModal
+      v-model="uploadDocumentsModalVisible"
       :single-upload="isSingleUpload"
       :sales-channel-id="currentSalesChannelId || undefined"
-      @entries-created="handleImagesCreated"
+      @entries-created="handleDocumentsCreated"
     />
   </div>
 </template>
 
 <style scoped>
-.variations-images-bulk-edit--inherited :deep(.overflow-x-auto) {
+.variations-documents-bulk-edit--inherited :deep(.overflow-x-auto) {
   opacity: 0.6;
 }
 
-.variations-images-bulk-edit .group:hover .group-hover\:opacity-100 {
+.variations-documents-bulk-edit .group:hover .group-hover\:opacity-100 {
   opacity: 1;
 }
 </style>

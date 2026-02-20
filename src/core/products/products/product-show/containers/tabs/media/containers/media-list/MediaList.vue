@@ -12,6 +12,7 @@ import { Image } from '../../../../../../../../../shared/components/atoms/image'
 import { Toggle } from '../../../../../../../../../shared/components/atoms/toggle';
 import { ApolloAlertMutation } from '../../../../../../../../../shared/components/molecules/apollo-alert-mutation';
 import { VideoListingPreview } from '../../../../../../../../media/videos/videos-list/containers/video-listing-preview';
+import PreviewDocument from "../../../../../../../../media/files/containers/PreviewDocument.vue";
 import {
   formatDate,
   getFileName,
@@ -44,7 +45,19 @@ interface Media {
   type: string;
   imageWebUrl: string;
   imageType?: string | null;
+  documentImageThumbnailUrl?: string | null;
+  documentType?: {
+    id?: string | null;
+    name?: string | null;
+    code?: string | null;
+  } | null;
   videoUrl: string;
+  fileUrl?: string | null;
+  file?: {
+    name?: string | null;
+    size?: string | number | null;
+    url?: string | null;
+  } | null;
   updatedAt: Date;
   owner: MediaOwner | null;
 }
@@ -55,6 +68,8 @@ interface SalesChannelInfo {
   hostname?: string | null;
   name?: string | null;
 }
+
+type MediaTypeFilter = 'ALL' | typeof TYPE_IMAGE | typeof TYPE_VIDEO | typeof TYPE_DOCUMENT;
 
 type Item = {
   id: string;
@@ -71,6 +86,7 @@ const props = defineProps<{
   refetchNeeded: boolean;
   salesChannelId: string;
   salesChannelType?: string | null;
+  mediaTypeFilter: MediaTypeFilter;
   readonlyMode: boolean;
 }>();
 
@@ -84,15 +100,22 @@ const { t } = useI18n();
 
 const viewType = ref<'gallery' | 'table'>('gallery');
 const items: Ref<Item[]> = ref([]);
+const filteredItems: Ref<Item[]> = ref([]);
 const defaultItems: Ref<Item[]> = ref([]);
 const inheritedFromDefault = ref(false);
 const isMainImageMap = ref<Record<string, boolean>>({});
 const deleteVariables = reactive<Record<string, { id: string }>>({});
+const previewModalVisible = ref(false);
+const previewDocumentUrl = ref<string | null>(null);
+const previewDocumentName = ref<string>('');
 
 const isDefaultChannel = computed(() => props.salesChannelId === 'default');
 const isChannelInherited = computed(() => !isDefaultChannel.value && inheritedFromDefault.value);
 const isReadOnly = computed(() => props.readonlyMode);
 const isSheinChannel = computed(() => props.salesChannelType === IntegrationTypes.Shein);
+const isImageFilterActive = computed(
+  () => props.mediaTypeFilter === 'ALL' || props.mediaTypeFilter === TYPE_IMAGE
+);
 const resolvedProduct = computed(() => {
   if (props.product.type === ProductType.Alias && props.product.aliasParentProduct) {
     return props.product.aliasParentProduct;
@@ -133,6 +156,20 @@ const getImageTypeLabel = (type: string | null | undefined) => {
   return null;
 };
 
+const getDocumentTypeLabel = (media: Media) => {
+  if (media.type !== TYPE_DOCUMENT) {
+    return null;
+  }
+  return media.documentType?.name || media.documentType?.code || null;
+};
+
+const getDocumentThumbnailSource = (media: Media) => {
+  if (media.type !== TYPE_DOCUMENT) {
+    return null;
+  }
+  return media.documentImageThumbnailUrl || null;
+};
+
 const getSheinRoleForItem = (item: Item, entries: Item[]): SheinImageRole => {
   if (item.isMainImage) {
     return 'main';
@@ -169,6 +206,35 @@ const sheinLegend = computed(() => ([
   { key: 'color', label: t(sheinRoleLabelKey.color), dotClass: sheinRoleColorMap.color }
 ]));
 
+const removeQueryAndHash = (value: string) => value.split('#')[0].split('?')[0];
+
+const isPdfPath = (value?: string | null) => {
+  if (!value) {
+    return false;
+  }
+  return removeQueryAndHash(value).toLowerCase().endsWith('.pdf');
+};
+
+const isPdfDocument = (media: Media) => {
+  if (media.type !== TYPE_DOCUMENT) {
+    return false;
+  }
+  return isPdfPath(media.file?.name) || isPdfPath(media.fileUrl) || isPdfPath(media.file?.url);
+};
+
+const openDocumentPreview = (media: Media) => {
+  if (!isPdfDocument(media)) {
+    return;
+  }
+  const url = media.fileUrl || media.file?.url || null;
+  if (!url) {
+    return;
+  }
+  previewDocumentUrl.value = url;
+  previewDocumentName.value = media.file?.name || getFileName(media);
+  previewModalVisible.value = true;
+};
+
 const extractNodes = (connection: any): Item[] => {
   if (!connection?.edges?.length) {
     return [];
@@ -196,6 +262,14 @@ const syncMainImageMap = (entries: Item[]) => {
     map[entry.media.id] = entry.isMainImage;
   });
   isMainImageMap.value = map;
+};
+
+const refreshFilteredItems = () => {
+  if (props.mediaTypeFilter === 'ALL') {
+    filteredItems.value = items.value.slice();
+    return;
+  }
+  filteredItems.value = items.value.filter((entry) => entry.media.type === props.mediaTypeFilter);
 };
 
 const loadDefaultItems = async (policy: FetchPolicy = 'cache-first') => {
@@ -243,6 +317,7 @@ const fetchData = async (policy: FetchPolicy = 'cache-first') => {
   Object.keys(deleteVariables).forEach((key) => {
     delete deleteVariables[key];
   });
+  refreshFilteredItems();
   emitState();
 };
 
@@ -259,6 +334,7 @@ const ensureChannelSpecificSet = async (): Promise<boolean> => {
     inheritedFromDefault.value = false;
     items.value = [];
     syncMainImageMap(items.value);
+    refreshFilteredItems();
     emitState();
     return false;
   }
@@ -289,6 +365,10 @@ onMounted(() => {
 
 watch(() => props.salesChannelId, () => {
   fetchData('network-only');
+});
+
+watch(() => props.mediaTypeFilter, () => {
+  refreshFilteredItems();
 });
 
 watch(() => props.refetchNeeded, (newValue) => {
@@ -329,12 +409,29 @@ const persistSortOrder = async (orderedMediaIds: string[]) => {
   await fetchData('network-only');
 };
 
+const buildOrderedMediaIdsForPersist = () => {
+  const reorderedFilteredIds = filteredItems.value.map((entry) => entry.media.id);
+  if (props.mediaTypeFilter === 'ALL') {
+    return reorderedFilteredIds;
+  }
+
+  const filteredIdsSet = new Set(reorderedFilteredIds);
+  const orderedFilteredQueue = [...reorderedFilteredIds];
+
+  return items.value.map((entry) => {
+    if (!filteredIdsSet.has(entry.media.id)) {
+      return entry.media.id;
+    }
+    return orderedFilteredQueue.shift() || entry.media.id;
+  });
+};
+
 const handleEnd = async () => {
   if (isReadOnly.value) {
     return;
   }
 
-  const orderedMediaIds = items.value.map((entry) => entry.media.id);
+  const orderedMediaIds = buildOrderedMediaIdsForPersist();
 
   if (!isDefaultChannel.value && inheritedFromDefault.value) {
     const duplicated = await ensureChannelSpecificSet();
@@ -422,7 +519,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
         {{ t('products.products.variations.media.messages.inheritedFromDefault') }}
       </div>
       <div
-        v-if="isSheinChannel"
+        v-if="isSheinChannel && isImageFilterActive"
         class="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
       >
         <div class="font-medium">{{ t('products.products.variations.media.sheinGuide.title') }}</div>
@@ -451,7 +548,10 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
           </div>
         </div>
       </div>
-      <div class="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+      <div
+        v-if="isImageFilterActive"
+        class="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700"
+      >
         {{ t('products.products.variations.media.messages.colorImageDisclaimer') }}
       </div>
       <div v-if="viewType === 'table'" class="overflow-x-auto" :class="{ 'opacity-60': isChannelInherited }">
@@ -482,17 +582,14 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
               </thead>
               <VueDraggableNext
                 tag="tbody"
-                :list="items"
+                :list="filteredItems"
                 class="dragArea divide-y divide-gray-200 dark:divide-gray-600"
                 :disabled="isReadOnly"
                 @end="handleEnd"
               >
-                <tr v-for="item in items" :key="item.id">
+                <tr v-for="item in filteredItems" :key="item.id">
                   <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
-                    <span v-if="item.media.type === TYPE_DOCUMENT">
-                      {{ getFileName(item.media) }}
-                    </span>
-                    <Link v-else :path="getPath(item.media)">
+                    <Link :path="getPath(item.media)">
                       {{ getFileName(item.media) }}
                     </Link>
                   </td>
@@ -543,13 +640,27 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
       </div>
       <div v-else>
         <VueDraggableNext
-          :list="items"
+          :list="filteredItems"
           class="dragArea gallery grid gap-4 p-4"
           :class="{ 'opacity-60': isChannelInherited }"
           :disabled="isReadOnly"
           @end="handleEnd"
         >
-          <div v-for="(item, index) in items" :key="item.media.id" class="file-entry relative">
+          <div v-for="item in filteredItems" :key="item.media.id" class="file-entry relative">
+            <div
+              v-if="item.media.type === TYPE_DOCUMENT && getDocumentTypeLabel(item.media)"
+              class="absolute left-2 top-2 z-10 max-w-[70%] truncate rounded-full bg-black/70 px-2 py-1 text-xs text-white"
+            >
+              {{ getDocumentTypeLabel(item.media) }}
+            </div>
+            <Button
+              v-if="isPdfDocument(item.media)"
+              class="absolute top-2 right-2 z-10 rounded-md border border-gray-300 bg-gray-100 p-2 shadow-sm hover:bg-gray-200"
+              :disabled="isReadOnly"
+              @click.stop="openDocumentPreview(item.media)"
+            >
+              <Icon name="arrows-up-down-left-right" class="h-4 w-4 text-blue-900" />
+            </Button>
             <template v-if="item.media.type === TYPE_IMAGE">
               <Link :path="getPath(item.media)">
                 <div class="flex h-48 w-56 items-center justify-center overflow-hidden rounded-md">
@@ -567,9 +678,17 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
               </Link>
             </template>
             <template v-else-if="item.media.type === TYPE_DOCUMENT">
-              <div class="flex h-48 items-center justify-center rounded-md bg-gray-200 px-28">
-                <Icon name="file-text" size="2xl" class="text-gray-600" />
-              </div>
+              <Link :path="getPath(item.media)">
+                <div class="flex h-48 w-56 items-center justify-center overflow-hidden rounded-md bg-gray-200">
+                  <Image
+                    v-if="getDocumentThumbnailSource(item.media)"
+                    :source="getDocumentThumbnailSource(item.media)"
+                    :alt="t('media.media.labels.fileThumbnail')"
+                    class="h-full w-full object-contain"
+                  />
+                  <Icon v-else name="file-text" size="2xl" class="text-gray-600" />
+                </div>
+              </Link>
             </template>
 
             <div class="entry-badges absolute right-2 top-2 hidden flex-col gap-1">
@@ -577,8 +696,8 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
                 v-if="isSheinChannel && item.media.type === TYPE_IMAGE"
                 class="flex items-center gap-2 rounded-full bg-black/70 px-2 py-1 text-xs text-white"
               >
-                <span class="h-2.5 w-2.5 rounded-full" :class="getSheinRoleDotClass(item, items)"></span>
-                <span>{{ getSheinRoleLabel(item, items) }}</span>
+                <span class="h-2.5 w-2.5 rounded-full" :class="getSheinRoleDotClass(item, filteredItems)"></span>
+                <span>{{ getSheinRoleLabel(item, filteredItems) }}</span>
               </div>
               <div
                 v-if="item.media.type === TYPE_IMAGE && getImageTypeLabel(item.media.imageType)"
@@ -620,6 +739,11 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
       </div>
     </div>
   </div>
+  <PreviewDocument
+    v-model="previewModalVisible"
+    :document-url="previewDocumentUrl"
+    :document-name="previewDocumentName"
+  />
 </template>
 
 <style scoped>
