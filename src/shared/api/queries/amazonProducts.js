@@ -104,7 +104,7 @@ export const amazonProductBrowseNodesQuery = gql`
       edges {
         node {
           id
-          remoteId
+          recommendedBrowseNodeId
           view {
             id
           }
@@ -120,7 +120,7 @@ export const amazonProductBrowseNodesBulkQuery = gql`
       edges {
         node {
           id
-          remoteId
+          recommendedBrowseNodeId
           product {
             id
           }

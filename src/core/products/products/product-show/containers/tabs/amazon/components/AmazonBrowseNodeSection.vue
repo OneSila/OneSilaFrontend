@@ -122,7 +122,7 @@ const fetchSelected = async () => {
   const node = data?.amazonProductBrowseNodes?.edges?.[0]?.node;
   if (node) {
     productBrowseNodeId.value = node.id;
-    await fetchSelectedNodeDetails(node.remoteId);
+    await fetchSelectedNodeDetails(node.recommendedBrowseNodeId);
   } else {
     productBrowseNodeId.value = null;
     selectedNodeDetails.value = null;
@@ -363,7 +363,7 @@ const saveSelection = async () => {
         variables: {
           data: {
             id: productBrowseNodeId.value,
-            remoteId: node.remoteId,
+            recommendedBrowseNodeId: node.remoteId,
           },
         },
       });
@@ -375,7 +375,7 @@ const saveSelection = async () => {
             product: { id: props.productId },
             salesChannel: { id: props.salesChannelId },
             view: { id: props.salesChannelViewId },
-            remoteId: node.remoteId,
+            recommendedBrowseNodeId: node.remoteId,
           },
         },
       });
