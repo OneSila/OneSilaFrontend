@@ -44,7 +44,7 @@ export const createAmazonProductBrowseNodeMutation = gql`
   mutation createAmazonProductBrowseNode($data: AmazonProductBrowseNodeInput!) {
     createAmazonProductBrowseNode(data: $data) {
       id
-      recommendedBrowseNodeId
+      remoteId
     }
   }
 `;
@@ -55,7 +55,7 @@ export const updateAmazonProductBrowseNodeMutation = gql`
   ) {
     updateAmazonProductBrowseNode(data: $data) {
       id
-      recommendedBrowseNodeId
+      remoteId
     }
   }
 `;
