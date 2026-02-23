@@ -36,7 +36,7 @@ const updateValue = (value: CategoryId[]) => {
 };
 
 const componentProps = computed(() =>
-  props.type === 'ebay'
+  props.type === 'ebay' || props.type === 'amazon' || props.type === 'shein'
     ? {
       salesChannelId: props.salesChannelId ?? null,
       errorMessage: props.errorMessage ?? '',

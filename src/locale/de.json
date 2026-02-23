@@ -1587,10 +1587,14 @@
           "missingTree": "",
           "noMarketplaces": "",
           "missingTreeForMarketplace": "",
+          "missingMarketplaceIdForMarketplace": "",
           "currentMarketplace": "",
+          "selectMarketplace": "",
           "marketplaceFallback": "",
           "categoryId": "",
+          "amazonPickerTitle": "",
           "ebayPickerTitle": "",
+          "sheinPickerTitle": "",
           "outdatedCategoryDetected": ""
         }
       },

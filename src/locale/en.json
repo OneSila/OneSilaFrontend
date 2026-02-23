@@ -3956,12 +3956,16 @@
         "categories": {
           "empty": "No categories selected yet.",
           "missingTree": "No default eBay category tree found for this sales channel.",
-          "noMarketplaces": "No eBay marketplaces/views found for this sales channel.",
+          "noMarketplaces": "No marketplace views found for this sales channel.",
           "missingTreeForMarketplace": "No default eBay category tree configured for {marketplace}.",
+          "missingMarketplaceIdForMarketplace": "No Amazon marketplace ID configured for {marketplace}.",
           "currentMarketplace": "current marketplace",
+          "selectMarketplace": "Select Marketplace",
           "marketplaceFallback": "Marketplace {index}",
           "categoryId": "Category ID: {id}",
+          "amazonPickerTitle": "Browse Amazon categories",
           "ebayPickerTitle": "Browse eBay categories",
+          "sheinPickerTitle": "Browse Shein categories",
           "outdatedCategoryDetected": "Outdated category detected - DELETE"
         }
       },

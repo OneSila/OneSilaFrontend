@@ -491,16 +491,23 @@ const setManualCategory = async () => {
         {{ t('integrations.show.documentTypes.categories.noMarketplaces') }}
       </div>
       <template v-else>
-        <div v-if="hasMultipleViews" class="mb-3 flex flex-wrap gap-2">
-          <Button
-            v-for="(view, index) in marketplaceViews"
-            :key="view.id"
-            :class="selectedViewId === view.id ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-primary'"
-            type="button"
-            @click="selectMarketplaceView(view.id)"
-          >
-            {{ formatViewLabel(view, index) }}
-          </Button>
+        <div v-if="hasMultipleViews" class="my-4">
+          <hr class="border-gray-200" />
+          <p class="mt-3 text-sm font-semibold text-gray-900">
+            {{ t('integrations.show.documentTypes.categories.selectMarketplace') }}
+          </p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <Button
+              v-for="(view, index) in marketplaceViews"
+              :key="view.id"
+              :class="selectedViewId === view.id ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-primary'"
+              type="button"
+              @click="selectMarketplaceView(view.id)"
+            >
+              {{ formatViewLabel(view, index) }}
+            </Button>
+          </div>
+          <hr class="border-gray-200 mt-4" />
         </div>
 
         <div v-if="!activeCategoryTreeId" class="rounded border border-dashed border-gray-300 bg-gray-50 p-3 text-sm text-gray-500">
