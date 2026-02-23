@@ -1922,6 +1922,64 @@ export const getSheinPropertySelectValueQuery = gql`
   }
 `;
 
+export const remoteDocumentTypesQuery = gql`
+  query RemoteDocumentTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: RemoteDocumentTypeOrder
+    $filter: RemoteDocumentTypeFilter
+  ) {
+    remoteDocumentTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+          translatedName
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getRemoteDocumentTypeQuery = gql`
+  query getRemoteDocumentType($id: GlobalID!) {
+    remoteDocumentType(id: $id) {
+      id
+      name
+      translatedName
+      remoteId
+      description
+      requiredCategories
+      optionalCategories
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
 // Amazon Product Type Queries
 export const amazonProductTypesQuery = gql`
   query AmazonProductTypes(

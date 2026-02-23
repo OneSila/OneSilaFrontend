@@ -884,6 +884,28 @@ export const mapSalesChannelPerfectMatchSelectValuesMutation = gql`
   }
 `;
 
+export const updateRemoteDocumentTypeMutation = gql`
+  mutation updateRemoteDocumentType($data: RemoteDocumentTypePartialInput!) {
+    updateRemoteDocumentType(data: $data) {
+      id
+      translatedName
+      description
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const updateEbayDocumentTypeMutation = gql`
+  mutation updateEbayDocumentType($data: EbayDocumentTypePartialInput!) {
+    updateEbayDocumentType(data: $data) {
+      id
+    }
+  }
+`;
+
 // Amazon Product Type Mutations
 
 export const updateAmazonProductTypeMutation = gql`

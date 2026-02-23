@@ -35,6 +35,7 @@ import { Rules } from "./containers/rules";
 import { Properties } from "./containers/properties";
 import { InventoryFields } from "./containers/inventory-fields";
 import { PropertySelectValues } from "./containers/property-select-values";
+import { DocumentTypes } from "./containers/document-types";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
 import { Templates } from "./containers/templates";
@@ -78,6 +79,7 @@ if (type.value !== IntegrationTypes.Webhook) {
   if (type.value === IntegrationTypes.Amazon) {
     tabItems.value.push(
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
       { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
@@ -87,6 +89,7 @@ if (type.value !== IntegrationTypes.Webhook) {
     tabItems.value.push(
       { name: 'inventoryFields', label: t('integrations.show.ebay.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
@@ -94,6 +97,7 @@ if (type.value !== IntegrationTypes.Webhook) {
     tabItems.value.push(
       { name: 'inventoryFields', label: t('integrations.show.shein.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
@@ -377,6 +381,11 @@ const pullData = async () => {
           <!-- Property Select Values Tab -->
           <template #propertySelectValues>
             <PropertySelectValues v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
+          </template>
+
+          <!-- Document Types Tab -->
+          <template #documentTypes>
+            <DocumentTypes v-if="salesChannelId" :id="id" :sales-channel-id="salesChannelId" :type="type" @pull-data="pullData()" />
           </template>
 
           <!-- Default Units Tab -->

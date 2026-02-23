@@ -49,6 +49,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/rules/IntegrationsRemoteProductTypeEditController.vue'),
   },
   {
+    path: '/integrations/:type/document-type/:id',
+    name: 'integrations.remoteDocumentTypes.edit',
+    meta: { title: 'integrations.show.documentTypes.title' },
+    component: () => import('./integrations/integrations-show/containers/document-types/containers/remote-document-types/IntegrationsRemoteDocumentTypeEditController.vue'),
+  },
+  {
     path: '/integrations/:type/property/:id',
     name: 'integrations.remoteProperties.edit',
     meta: { title: 'integrations.show.properties.title' },

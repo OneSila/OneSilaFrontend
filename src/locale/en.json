@@ -3933,6 +3933,38 @@
           "noSelection": "Select a category before saving."
         }
       },
+      "documentTypes": {
+        "title": "Document Types",
+        "editTitle": "Map document type",
+        "labels": {
+          "remoteId": "Remote ID",
+          "translatedName": "Translated Name",
+          "localInstance": "OneSila Document Type",
+          "description": "Description",
+          "requiredCategories": "Required categories",
+          "optionalCategories": "Optional categories"
+        },
+        "help": {
+          "translatedName": "Translated label for this remote document type.",
+          "localInstance": "Select the local document type to map.",
+          "description": "Description provided by the marketplace. You can edit it.",
+          "requiredCategories": "For these categories, this document type is required. If the document is missing, the product inspector turns red.",
+          "optionalCategories": "For these categories, this document type is optional. Missing it will not turn the product inspector red."
+        },
+        "toBeContinued": "To be continued: category mapping UI will be added in a follow-up frontend task.",
+        "count": "{count} item(s)",
+        "categories": {
+          "empty": "No categories selected yet.",
+          "missingTree": "No default eBay category tree found for this sales channel.",
+          "noMarketplaces": "No eBay marketplaces/views found for this sales channel.",
+          "missingTreeForMarketplace": "No default eBay category tree configured for {marketplace}.",
+          "currentMarketplace": "current marketplace",
+          "marketplaceFallback": "Marketplace {index}",
+          "categoryId": "Category ID: {id}",
+          "ebayPickerTitle": "Browse eBay categories",
+          "outdatedCategoryDetected": "Outdated category detected - DELETE"
+        }
+      },
       "properties": {
         "title": "Amazon Properties",
         "actions": {

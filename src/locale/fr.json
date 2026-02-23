@@ -1556,6 +1556,38 @@
           "noSelection": ""
         }
       },
+      "documentTypes": {
+        "title": "",
+        "editTitle": "",
+        "labels": {
+          "remoteId": "",
+          "translatedName": "",
+          "localInstance": "",
+          "description": "",
+          "requiredCategories": "",
+          "optionalCategories": ""
+        },
+        "help": {
+          "translatedName": "",
+          "localInstance": "",
+          "description": "",
+          "requiredCategories": "",
+          "optionalCategories": ""
+        },
+        "toBeContinued": "",
+        "count": "",
+        "categories": {
+          "empty": "",
+          "missingTree": "",
+          "noMarketplaces": "",
+          "missingTreeForMarketplace": "",
+          "currentMarketplace": "",
+          "marketplaceFallback": "",
+          "categoryId": "",
+          "ebayPickerTitle": "",
+          "outdatedCategoryDetected": ""
+        }
+      },
       "tabs": {
         "reports": "Rapports"
       },
