@@ -2033,6 +2033,17 @@
       },
       "messages": {
         "unsavedChanges": ""
+      },
+      "duplicate": {
+        "title": "",
+        "description": "",
+        "placeholder": "",
+        "validation": {
+          "nameRequired": ""
+        },
+        "error": {
+          "failed": ""
+        }
       }
     }
   },

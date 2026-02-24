@@ -3022,6 +3022,17 @@
         },
         "helpText": "De Verplicht- en Optioneel in Configurator zijn enkel relevant voor Configureerbare Producten.  Op andere product-types worden ze gezien als verplicht.",
         "title": "Hoe moet deze eigenschap zich gedragen op het product-type?"
+      },
+      "duplicate": {
+        "title": "",
+        "description": "",
+        "placeholder": "",
+        "validation": {
+          "nameRequired": ""
+        },
+        "error": {
+          "failed": ""
+        }
       }
     }
   },
