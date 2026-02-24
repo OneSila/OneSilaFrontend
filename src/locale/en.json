@@ -3335,6 +3335,17 @@
         },
         "helpText": "The Required in Configurator and Optional in Configurator are relevant only for Configurable products only.  On other product-types they will simply act as a required properties.",
         "title": "How should the property behave for this product-type?"
+      },
+      "duplicate": {
+        "title": "Duplicate rule",
+        "description": "Only default rules can be created when duplicating. The duplicated rule will be created as a default rule. Provide a new name.",
+        "placeholder": "Enter the new rule name",
+        "validation": {
+          "nameRequired": "Please provide a name."
+        },
+        "error": {
+          "failed": "Failed to duplicate rule. Please try again."
+        }
       }
     }
   },
