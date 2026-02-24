@@ -58,7 +58,7 @@ const submitDuplicate = async () => {
       mutation: duplicatePropertiesRuleMutation,
       variables: {
         name: ruleName.value.trim(),
-        rule: { id: id.value },
+        propertyRule: { id: id.value, salesChannel: null },
       },
       fetchPolicy: 'network-only',
     });
@@ -115,15 +115,15 @@ const onDataFetched = (data) => {
       <Card>
         <Loader :loading="loading" />
 
-        <div class="flex justify-end mb-4">
-          <Button class="btn btn-sm btn-outline-primary" @click="openDuplicateModal">
-            {{ t('shared.button.duplicate') }}
-          </Button>
-        </div>
-
         <Tabs :tabs="tabItems">
           <template v-slot:general>
-            <GeneralShow :config="showConfig" @data-fetched="onDataFetched" />
+            <GeneralShow :config="showConfig" @data-fetched="onDataFetched">
+              <template v-slot:buttons>
+                <Button class="btn btn-outline-primary" @click="openDuplicateModal">
+                  {{ t('shared.button.duplicate') }}
+                </Button>
+              </template>
+            </GeneralShow>
           </template>
           <template v-slot:products>
             <ProductList v-if="productTypeId" :id="productTypeId" />

@@ -13,7 +13,7 @@ import {SecondaryButton} from "../../../../shared/components/atoms/button-second
 import {Toast} from "../../../../shared/modules/toast";
 import apolloClient from "../../../../../apollo-client";
 import { getProductPropertiesRuleQuery, productPropertiesRulesWithUsageCountQuery } from "../../../../shared/api/queries/properties.js";
-import { completeCreateProductPropertiesRuleMutation, completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
+import { completeCreateProductPropertiesRuleMutation, completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRuleMutation, duplicatePropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
 import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
 import {FormType} from "../../../../shared/components/organisms/general-form/formConfig";
@@ -22,6 +22,8 @@ import { Property } from "../../../../shared/components/organisms/product-proper
 import {Link} from "../../../../shared/components/atoms/link";
 import {Button} from "../../../../shared/components/atoms/button";
 import { LocalLoader } from "../../../../shared/components/atoms/local-loader";
+import { Modal } from "../../../../shared/components/atoms/modal";
+import { TextInput } from "../../../../shared/components/atoms/input-text";
 import Swal, { SweetAlertOptions } from "sweetalert2";
 
 interface Item {
@@ -58,12 +60,15 @@ const propertiesItemsMap: Ref<Record<string, Item>> = ref({});
 const integrationsLoading = ref(false);
 const rightLoading = ref(false);
 const saveLoading = ref(false);
+const duplicateLoading = ref(false);
 const requireEanCode = ref(false);
+const ruleName = ref('');
 const selectedSalesChannel = ref<'default' | string>('default');
 const previousSalesChannel = ref<'default' | string>('default');
 const rulesCache: Ref<Record<string, RuleCacheEntry>> = ref({});
 const rawSalesChannels = ref<{ label: string; value: string }[]>([]);
 const ignoreNextRouteChange = ref(false);
+const showDuplicateModal = ref(false);
 
 const salesChannelOptions = computed(() => [
   { label: t('properties.rule.labels.defaultSalesChannel'), value: 'default' },
@@ -562,6 +567,59 @@ const handleDelete = () => {
    router.push({name: 'properties.rule.list'});
 }
 
+const openDuplicateModal = () => {
+  ruleName.value = '';
+  showDuplicateModal.value = true;
+};
+
+const closeDuplicateModal = () => {
+  if (duplicateLoading.value) {
+    return;
+  }
+
+  showDuplicateModal.value = false;
+  ruleName.value = '';
+};
+
+const submitDuplicate = async () => {
+  if (!currentRuleId.value) {
+    Toast.error(t('shared.alert.toast.unexpectedResult'));
+    return;
+  }
+
+  if (!ruleName.value.trim()) {
+    Toast.error(t('properties.rule.duplicate.validation.nameRequired'));
+    return;
+  }
+
+  duplicateLoading.value = true;
+
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: duplicatePropertiesRuleMutation,
+      variables: {
+        name: ruleName.value.trim(),
+        propertyRule: { id: currentRuleId.value, salesChannel: null },
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    const duplicatedId = data?.duplicatePropertiesRule?.id;
+    if (duplicatedId) {
+      showDuplicateModal.value = false;
+      await router.push({ name: 'properties.rule.show', params: { id: duplicatedId } });
+      return;
+    }
+
+    Toast.error(t('properties.rule.duplicate.error.failed'));
+  } catch (error: any) {
+    const graphQLError = error?.graphQLErrors?.[0]?.message;
+    Toast.error(graphQLError || t('properties.rule.duplicate.error.failed'));
+  } finally {
+    duplicateLoading.value = false;
+  }
+};
+
 onMounted(async () => {
   await Promise.all([fetchData(), loadSalesChannels()]);
 });
@@ -626,6 +684,15 @@ watch(
               {{ t('shared.button.show') }}
             </Button>
           </Link>
+          <Button
+            v-if="currentRuleId"
+            type="button"
+            :disabled="disableActions"
+            class="btn btn-outline-primary"
+            @click="openDuplicateModal"
+          >
+            {{ t('shared.button.duplicate') }}
+          </Button>
           <ApolloAlertMutation
             v-if="currentRuleId"
             :mutation="deleteProductPropertiesRuleMutation"
@@ -646,4 +713,28 @@ watch(
       </Card>
    </template>
   </GeneralTemplate>
+
+  <Modal v-model="showDuplicateModal" @closed="closeDuplicateModal">
+    <Card class="modal-content w-full max-w-lg">
+      <h3 class="text-lg font-semibold mb-2">{{ t('properties.rule.duplicate.title') }}</h3>
+      <p class="text-sm text-gray-600 mb-4">{{ t('properties.rule.duplicate.description') }}</p>
+
+      <TextInput
+        :model-value="ruleName"
+        :disabled="duplicateLoading"
+        :placeholder="t('properties.rule.duplicate.placeholder')"
+        class="w-full"
+        @update:modelValue="ruleName = String($event || '')"
+      />
+
+      <div class="flex justify-end gap-2 mt-6">
+        <SecondaryButton :disabled="duplicateLoading" @click="closeDuplicateModal">
+          {{ t('shared.button.cancel') }}
+        </SecondaryButton>
+        <PrimaryButton :loading="duplicateLoading" :disabled="duplicateLoading" @click="submitDuplicate">
+          {{ t('shared.button.submit') }}
+        </PrimaryButton>
+      </div>
+    </Card>
+  </Modal>
 </template>

@@ -476,10 +476,9 @@ export const deleteProductPropertiesRulesMutation = gql`
 `;
 
 export const duplicatePropertiesRuleMutation = gql`
-  mutation duplicatePropertiesRule($name: String!, $rule: ProductPropertiesRulePartialInput!) {
-    duplicatePropertiesRule(name: $name, rule: $rule) {
+  mutation duplicatePropertiesRule($name: String!, $propertyRule: ProductPropertiesRulePartialInput!) {
+    duplicatePropertiesRule(name: $name, propertyRule: $propertyRule) {
       id
-      name
     }
   }
 `;

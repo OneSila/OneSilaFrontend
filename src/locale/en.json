@@ -3338,7 +3338,7 @@
       },
       "duplicate": {
         "title": "Duplicate rule",
-        "description": "Create a duplicate of this rule by providing a new name.",
+        "description": "Only default rules can be created when duplicating. The duplicated rule will be created as a default rule. Provide a new name.",
         "placeholder": "Enter the new rule name",
         "validation": {
           "nameRequired": "Please provide a name."
