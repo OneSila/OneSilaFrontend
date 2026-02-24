@@ -254,6 +254,18 @@
           "title": "",
           "description": ""
         }
+      },
+      "products": {
+        "inspector": {
+          "127": {
+            "title": "",
+            "description": ""
+          },
+          "128": {
+            "title": "",
+            "description": ""
+          }
+        }
       }
     }
   },
@@ -508,6 +520,15 @@
         },
         "actions": {
           "bulkRefresh": ""
+        },
+        "errors": {
+          "127": "",
+          "128": ""
+        },
+        "help": {
+          "127": "",
+          "128": "",
+          "generic": ""
         }
       },
       "duplicateModal": {

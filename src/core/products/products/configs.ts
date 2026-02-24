@@ -58,6 +58,8 @@ export const getInspectorErrors = (t) => [
   { code: "121", name: t(`dashboard.cards.products.inspector.121.title`) },
   { code: "123", name: t(`dashboard.cards.products.inspector.123.title`) },
   { code: "124", name: t(`dashboard.cards.products.inspector.124.title`) },
+  { code: "127", name: t(`dashboard.cards.products.inspector.127.title`) },
+  { code: "128", name: t(`dashboard.cards.products.inspector.128.title`) },
   // { code: "125", name: t(`dashboard.cards.products.inspector.125.title`) },
   // { code: "126", name: t(`dashboard.cards.products.inspector.126.title`) },
 ];
@@ -1260,7 +1262,7 @@ export interface ProductWithAliasFields extends Product {
   percentageInspectorStatus?: {
     percentage: number;
     inspectorStatus: number;
-    blocks: { code: string | number; completed: boolean }[];
+    blocks: { code: string | number; completed: boolean; fixingMessage?: string | null }[];
   };
 }
 

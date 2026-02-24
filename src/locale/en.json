@@ -122,6 +122,14 @@
           "126": {
             "title": "Products with Amazon Remote Issues",
             "description": "Check the Amazon tab for remote issues reported by Amazon and resolve them."
+          },
+          "127": {
+            "title": "Products Missing Required Document Types",
+            "description": "Required document types are missing for one or more assigned marketplaces."
+          },
+          "128": {
+            "title": "Products Missing Optional Document Types",
+            "description": "Optional document types are missing for one or more assigned marketplaces."
           }
         }
       },
@@ -1715,7 +1723,9 @@
           "123": "Some variations are duplicates",
           "124": "Product type rule is not configured for a configurable product",
           "125": "Product has Amazon validation issues",
-          "126": "Product on Amazon has remote issues"
+          "126": "Product on Amazon has remote issues",
+          "127": "Product is missing required document types",
+          "128": "Product is missing optional document types"
         },
         "help": {
           "101": "add at least one image to the product",
@@ -1743,7 +1753,10 @@
           "123": "ensure all variations have a different configuration on their configurable properties",
           "124": "define at least one configurator required item on the product type rule",
           "125": "Review the Amazon tab for validation issues and resolve them",
-          "126": "Check the Amazon tab for remote issues reported by Amazon"
+          "126": "Check the Amazon tab for remote issues reported by Amazon",
+          "127": "upload the required documents in the Media tab to clear the inspector issue",
+          "128": "upload the optional documents in the Media tab if needed",
+          "generic": "open the relevant product section and resolve the missing data"
         },
         "labels": {
           "missingInfo": "Missing Information",

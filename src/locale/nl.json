@@ -92,6 +92,18 @@
           "title": "",
           "description": ""
         }
+      },
+      "products": {
+        "inspector": {
+          "127": {
+            "title": "",
+            "description": ""
+          },
+          "128": {
+            "title": "",
+            "description": ""
+          }
+        }
       }
     },
     "onboarding": {
@@ -1375,7 +1387,9 @@
           "121": "Niet alle variaties hebben alle verplichte informatie ingevuld staan",
           "122": "Niet alle materialen hebben alle verplichte info ingevuld staan",
           "123": "Configureerbaar product heeft duplicate variaties",
-          "124": "Configureerbaar product kon geen product eigenschap regel vinden"
+          "124": "Configureerbaar product kon geen product eigenschap regel vinden",
+          "127": "",
+          "128": ""
         },
         "help": {
           "101": "Voeg op minimaal één afbeelding toe",
@@ -1401,7 +1415,10 @@
           "121": "",
           "122": "",
           "123": "",
-          "124": ""
+          "124": "",
+          "127": "",
+          "128": "",
+          "generic": ""
         },
         "alert": {
           "refreshSuccess": "Inspector is ververst",
