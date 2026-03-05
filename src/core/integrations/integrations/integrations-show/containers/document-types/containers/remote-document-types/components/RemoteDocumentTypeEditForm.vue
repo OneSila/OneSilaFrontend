@@ -10,16 +10,19 @@ import { TextInput } from '../../../../../../../../../shared/components/atoms/in
 import { Button } from '../../../../../../../../../shared/components/atoms/button';
 import { SecondaryButton } from '../../../../../../../../../shared/components/atoms/button-secondary';
 import { FieldQuery } from '../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query';
-import type { QueryFormField } from '../../../../../../../../../shared/components/organisms/general-form/formConfig';
+import type { CreateOnTheFly, QueryFormField } from '../../../../../../../../../shared/components/organisms/general-form/formConfig';
+import { FormType } from '../../../../../../../../../shared/components/organisms/general-form/formConfig';
 import { FieldType } from '../../../../../../../../../shared/utils/constants';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../../../../../shared/utils';
 import { documentTypesQuerySelector } from '../../../../../../../../../shared/api/queries/documentTypes.js';
 import { getRemoteDocumentTypeQuery } from '../../../../../../../../../shared/api/queries/salesChannels.js';
+import { createDocumentTypeMutation } from '../../../../../../../../../shared/api/mutations/documentTypes.js';
 import {
   updateEbayDocumentTypeMutation,
   updateRemoteDocumentTypeMutation,
 } from '../../../../../../../../../shared/api/mutations/salesChannels.js';
+import { baseFormConfigConstructor as documentTypeBaseFormConfigConstructor } from '../../../../../../../../settings/document-types/configs';
 import RemoteDocumentTypeCategoriesList from './categories-lists/RemoteDocumentTypeCategoriesList.vue';
 
 type CategoryId = string | number;
@@ -85,6 +88,20 @@ const breadcrumbsLinks = computed(() => [
   { name: t('integrations.show.documentTypes.editTitle') },
 ]);
 
+const localDocumentTypeCreateOnTheFlyConfig = computed<CreateOnTheFly>(() => {
+  const defaultName = (form.value.translatedName || form.value.name || '').trim();
+
+  return {
+    config: documentTypeBaseFormConfigConstructor(
+      t,
+      FormType.CREATE,
+      createDocumentTypeMutation,
+      'createDocumentType',
+    ),
+    ...(defaultName ? { defaults: { name: defaultName } } : {}),
+  };
+});
+
 const localInstanceField = computed<QueryFormField>(() => ({
   type: FieldType.Query,
   name: 'localInstance',
@@ -97,6 +114,7 @@ const localInstanceField = computed<QueryFormField>(() => ({
   isEdge: true,
   multiple: false,
   filterable: true,
+  createOnFlyConfig: localDocumentTypeCreateOnTheFlyConfig.value,
 }));
 
 const localInstanceInitialOptions = computed(() =>

@@ -438,7 +438,7 @@ const setManualCategory = async () => {
       </Button>
     </div>
 
-    <div class="mt-3 space-y-2">
+    <div class="mt-3 space-y-2 max-h-72 overflow-y-auto pr-1 category-list-scroll">
       <div
         v-for="item in categoryItems"
         :key="item.key"
@@ -584,5 +584,29 @@ const setManualCategory = async () => {
   50% {
     opacity: 0;
   }
+}
+
+.category-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.category-list-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.category-list-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 9999px;
+}
+
+.category-list-scroll::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 9999px;
+  border: 2px solid #f1f5f9;
+}
+
+.category-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 </style>
