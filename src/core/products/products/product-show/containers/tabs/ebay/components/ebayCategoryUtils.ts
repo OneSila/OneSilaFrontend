@@ -7,6 +7,8 @@ export interface EbayCategoryNode {
   configuratorProperties: string[];
 }
 
+export type EbayCategoryTarget = 'main' | 'secondary';
+
 const parseConfiguratorProperties = (value: unknown): string[] => {
   if (!value) return [];
   if (Array.isArray(value)) {
@@ -40,4 +42,14 @@ export const mapCategoriesConnection = (connection: any): EbayCategoryNode[] => 
     ? connection
     : connection.edges?.map((edge: any) => edge.node) || [];
   return list.map((item: any) => normalizeCategoryNode(item));
+};
+
+export const resolveDefaultCategoryTarget = (
+  remoteId: string | null | undefined,
+  secondaryCategoryId: string | null | undefined,
+): EbayCategoryTarget => {
+  if (remoteId && !secondaryCategoryId) {
+    return 'secondary';
+  }
+  return 'main';
 };

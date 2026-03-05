@@ -22,6 +22,7 @@ const { t } = useI18n();
 
 const localPropertiesByRemoteId = ref<Record<string, { id: string; name: string }>>({});
 const remotePropertiesByRemoteId = ref<Record<string, { id: string; name: string }>>({});
+const SHEIN_PROPERTIES_BATCH_SIZE = 100;
 
 const normalizeRemarks = (value: unknown): string[] => {
   if (!value) return [];
@@ -147,38 +148,44 @@ const fetchLocalProperties = async () => {
     return;
   }
   try {
-    const { data } = await apolloClient.query({
-      query: sheinPropertiesByRemoteIdsQuery,
-      variables: {
-        first: ids.length,
-        filter: {
-          salesChannel: { id: { exact: props.salesChannelId } },
-          remoteId: { inList: ids },
-        },
-      },
-      fetchPolicy: 'cache-first',
-    });
-    const edges = data?.sheinProperties?.edges || [];
     const localMap: Record<string, { id: string; name: string }> = {};
     const remoteMap: Record<string, { id: string; name: string }> = {};
-    edges.forEach((edge: any) => {
-      const node = edge?.node;
-      const remoteId = node?.remoteId;
-      if (!remoteId) {
-        return;
-      }
-      remoteMap[String(remoteId)] = {
-        id: String(node?.id || ''),
-        name: String(node?.name || node?.nameEn || ''),
-      };
-      const localInstance = node?.localInstance;
-      if (localInstance?.id) {
-        localMap[String(remoteId)] = {
-          id: String(localInstance.id),
-          name: String(localInstance.name || node?.name || ''),
+
+    for (let i = 0; i < ids.length; i += SHEIN_PROPERTIES_BATCH_SIZE) {
+      const batch = ids.slice(i, i + SHEIN_PROPERTIES_BATCH_SIZE);
+      const { data } = await apolloClient.query({
+        query: sheinPropertiesByRemoteIdsQuery,
+        variables: {
+          first: batch.length,
+          filter: {
+            salesChannel: { id: { exact: props.salesChannelId } },
+            remoteId: { inList: batch },
+          },
+        },
+        fetchPolicy: 'cache-first',
+      });
+
+      const edges = data?.sheinProperties?.edges || [];
+      edges.forEach((edge: any) => {
+        const node = edge?.node;
+        const remoteId = node?.remoteId;
+        if (!remoteId) {
+          return;
+        }
+        remoteMap[String(remoteId)] = {
+          id: String(node?.id || ''),
+          name: String(node?.name || node?.nameEn || ''),
         };
-      }
-    });
+        const localInstance = node?.localInstance;
+        if (localInstance?.id) {
+          localMap[String(remoteId)] = {
+            id: String(localInstance.id),
+            name: String(localInstance.name || node?.name || ''),
+          };
+        }
+      });
+    }
+
     localPropertiesByRemoteId.value = localMap;
     remotePropertiesByRemoteId.value = remoteMap;
   } catch (error) {

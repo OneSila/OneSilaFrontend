@@ -22,7 +22,12 @@ const loadingViews = ref(false);
 const views = ref<any[]>([]);
 const selectedViewId = ref<string | null>(null);
 const categoriesByView = ref<
-  Record<string, { id: string | null; remoteId: string | null; salesChannelId: string | null }>
+  Record<string, {
+    id: string | null;
+    remoteId: string | null;
+    secondaryCategoryId: string | null;
+    salesChannelId: string | null;
+  }>
 >({});
 const categorySectionRef = ref<InstanceType<typeof EbayCategorySection> | null>(null);
 const defaultCategoriesByView = ref<
@@ -64,7 +69,12 @@ const fetchEbayProductCategories = async (fetchPolicy: FetchPolicy = 'cache-firs
     },
     fetchPolicy,
   });
-  const map: Record<string, { id: string | null; remoteId: string | null; salesChannelId: string | null }> = {};
+  const map: Record<string, {
+    id: string | null;
+    remoteId: string | null;
+    secondaryCategoryId: string | null;
+    salesChannelId: string | null;
+  }> = {};
   const edges = data?.ebayProductCategories?.edges || [];
   edges.forEach((edge: any) => {
     const node = edge?.node;
@@ -73,6 +83,7 @@ const fetchEbayProductCategories = async (fetchPolicy: FetchPolicy = 'cache-firs
       map[viewId] = {
         id: node.id,
         remoteId: node.remoteId,
+        secondaryCategoryId: node.secondaryCategoryId || null,
         salesChannelId: node.salesChannel?.id || null,
       };
     }
@@ -196,7 +207,7 @@ const selectedDefaultCategory = computed(() => {
 });
 
 const handleCategorySaved = (
-  payload: { id: string; remoteId: string; salesChannelId: string | null }
+  payload: { id: string; remoteId: string; secondaryCategoryId: string | null; salesChannelId: string | null }
 ) => {
   if (!selectedView.value) return;
   categoriesByView.value = {
@@ -204,6 +215,7 @@ const handleCategorySaved = (
     [selectedView.value.id]: {
       id: payload.id,
       remoteId: payload.remoteId,
+      secondaryCategoryId: payload.secondaryCategoryId,
       salesChannelId: payload.salesChannelId || selectedView.value.salesChannel?.id || null,
     },
   };
@@ -213,7 +225,12 @@ const handleCategoryDeleted = () => {
   if (!selectedView.value) return;
   categoriesByView.value = {
     ...categoriesByView.value,
-    [selectedView.value.id]: { id: null, remoteId: null, salesChannelId: null },
+    [selectedView.value.id]: {
+      id: null,
+      remoteId: null,
+      secondaryCategoryId: null,
+      salesChannelId: null,
+    },
   };
 };
 

@@ -30,17 +30,22 @@ import {
   updateEbayProductCategoryMutation,
 } from '../../../../../../../../../shared/api/mutations/ebayProducts.js';
 import EbayCategoryBrowser from '../../../ebay/components/EbayCategoryBrowser.vue';
+import EbayCategoryDualSelectionPreview from '../../../ebay/components/EbayCategoryDualSelectionPreview.vue';
 import EbayCategoryDetails from '../../../ebay/components/EbayCategoryDetails.vue';
 import {
   mapCategoriesConnection,
   normalizeCategoryNode,
+  resolveDefaultCategoryTarget,
   type EbayCategoryNode,
+  type EbayCategoryTarget,
 } from '../../../ebay/components/ebayCategoryUtils';
 
 interface CategorySelection {
   productCategoryId: string | null;
   remoteId: string | null;
+  secondaryCategoryId: string | null;
   path: string | null;
+  secondaryPath: string | null;
 }
 
 interface VariationRow {
@@ -81,14 +86,38 @@ const selectionModal = reactive({
   visible: false,
   rowIndex: -1,
   viewId: null as string | null,
+  target: 'main' as EbayCategoryTarget,
 });
-const modalSelection = ref<EbayCategoryNode | null>(null);
-const modalSelectionPath = ref<string | null>(null);
+const modalMainNode = ref<EbayCategoryNode | null>(null);
+const modalSecondaryNode = ref<EbayCategoryNode | null>(null);
+const modalOriginalMainNode = ref<EbayCategoryNode | null>(null);
+const modalOriginalSecondaryNode = ref<EbayCategoryNode | null>(null);
+const modalSlotErrors = ref<{ main: string | null; secondary: string | null }>({
+  main: null,
+  secondary: null,
+});
 
 const previewVisible = ref(false);
-const previewNode = ref<EbayCategoryNode | null>(null);
+const previewMainNode = ref<EbayCategoryNode | null>(null);
+const previewSecondaryNode = ref<EbayCategoryNode | null>(null);
 const previewRow = ref<VariationRow | null>(null);
-const previewViewId = ref<string | null>(null);
+
+const duplicateCategoryErrorText = computed(
+  () => t('products.products.ebay.selectionSlots.sameCategoryError'),
+);
+const modalHasDuplicateCategorySelection = computed(
+  () => Boolean(
+    modalMainNode.value?.remoteId &&
+    modalSecondaryNode.value?.remoteId &&
+    modalMainNode.value.remoteId === modalSecondaryNode.value.remoteId,
+  ),
+);
+const modalMainError = computed(
+  () => modalSlotErrors.value.main || (modalHasDuplicateCategorySelection.value ? duplicateCategoryErrorText.value : null),
+);
+const modalSecondaryError = computed(
+  () => modalSlotErrors.value.secondary || (modalHasDuplicateCategorySelection.value ? duplicateCategoryErrorText.value : null),
+);
 
 const hasProductIds = computed(() => props.productIds.length > 0);
 const isAlias = computed(() => props.product?.type === ProductType.Alias);
@@ -193,9 +222,15 @@ const hasChanges = computed(() => {
       const viewId = view.id;
       const currentRemoteId = row.categories[viewId]?.remoteId ?? null;
       const originalRemoteId = original.categories[viewId]?.remoteId ?? null;
+      const currentSecondaryCategoryId = row.categories[viewId]?.secondaryCategoryId ?? null;
+      const originalSecondaryCategoryId = original.categories[viewId]?.secondaryCategoryId ?? null;
       const currentCategoryId = row.categories[viewId]?.productCategoryId ?? null;
       const originalCategoryId = original.categories[viewId]?.productCategoryId ?? null;
-      return currentRemoteId !== originalRemoteId || currentCategoryId !== originalCategoryId;
+      return (
+        currentRemoteId !== originalRemoteId ||
+        currentSecondaryCategoryId !== originalSecondaryCategoryId ||
+        currentCategoryId !== originalCategoryId
+      );
     });
   });
 });
@@ -205,7 +240,9 @@ const hasUnsavedChanges = hasChanges;
 const createEmptyCategory = (): CategorySelection => ({
   productCategoryId: null,
   remoteId: null,
+  secondaryCategoryId: null,
   path: null,
+  secondaryPath: null,
 });
 
 const ensureCategorySelection = (row: VariationRow, viewId: string) => {
@@ -239,12 +276,18 @@ const buildCategoryPath = (remoteId: string, viewId: string) => {
   return parts.length ? parts.join(' > ') : null;
 };
 
-const getCategoryDisplayPath = (row: VariationRow, columnKey: string) => {
+const getCategoryDisplayPath = (
+  row: VariationRow,
+  columnKey: string,
+  target: EbayCategoryTarget,
+) => {
   const viewId = getViewIdFromColumnKey(columnKey);
   if (!viewId) return null;
   const selection = row.categories[viewId];
-  if (!selection?.remoteId) return null;
-  return selection.path || buildCategoryPath(selection.remoteId, viewId) || selection.remoteId;
+  const remoteId = target === 'secondary' ? selection?.secondaryCategoryId : selection?.remoteId;
+  if (!remoteId) return null;
+  const savedPath = target === 'secondary' ? selection?.secondaryPath : selection?.path;
+  return savedPath || buildCategoryPath(remoteId, viewId) || remoteId;
 };
 
 const copySkuToClipboard = async (sku: string) => {
@@ -269,14 +312,18 @@ const getMatrixCellValue = (rowIndex: number, columnKey: string) => {
   if (!category?.remoteId) return null;
   return {
     remoteId: category.remoteId,
+    secondaryCategoryId: category.secondaryCategoryId,
     path: category.path,
+    secondaryPath: category.secondaryPath,
   };
 };
 
 const clearCategorySelection = (row: VariationRow, viewId: string) => {
   const category = ensureCategorySelection(row, viewId);
   category.remoteId = null;
+  category.secondaryCategoryId = null;
   category.path = null;
+  category.secondaryPath = null;
 };
 
 const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => {
@@ -293,18 +340,26 @@ const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => 
   const category = ensureCategorySelection(row, viewId);
   if (typeof value === 'object') {
     const remoteId = value.remoteId ?? null;
+    const secondaryCategoryId = value.secondaryCategoryId ?? null;
     category.remoteId = remoteId;
+    category.secondaryCategoryId = remoteId ? secondaryCategoryId : null;
     category.path =
       value.path ??
       (remoteId ? buildCategoryPath(remoteId, viewId) : null) ??
       category.path;
+    category.secondaryPath =
+      value.secondaryPath ??
+      (category.secondaryCategoryId ? buildCategoryPath(category.secondaryCategoryId, viewId) : null) ??
+      category.secondaryPath;
     return;
   }
 
   const remoteId = String(value);
   const node = categoryMapByView.value[viewId]?.[remoteId] || null;
   category.remoteId = remoteId;
+  category.secondaryCategoryId = null;
   category.path = node ? (node.fullName || node.name || remoteId) : remoteId;
+  category.secondaryPath = null;
 };
 
 const cloneMatrixCellValue = (fromRow: number, toRow: number, columnKey: string) => {
@@ -569,7 +624,11 @@ const fetchProductTypeValues = async (productIds: string[], policy: FetchPolicy)
 
 const fetchProductCategories = async (productIds: string[], policy: FetchPolicy) => {
   if (!productIds.length) {
-    return new Map<string, Map<string, { id: string; remoteId: string }>>();
+    return new Map<string, Map<string, {
+      id: string;
+      remoteId: string | null;
+      secondaryCategoryId: string | null;
+    }>>();
   }
   const { data } = await apolloClient.query({
     query: ebayProductCategoriesWithProductsQuery,
@@ -581,15 +640,27 @@ const fetchProductCategories = async (productIds: string[], policy: FetchPolicy)
     fetchPolicy: policy,
   });
 
-  const categoryMap = new Map<string, Map<string, { id: string; remoteId: string }>>();
+  const categoryMap = new Map<string, Map<string, {
+    id: string;
+    remoteId: string | null;
+    secondaryCategoryId: string | null;
+  }>>();
   const edges = data?.ebayProductCategories?.edges || [];
   edges.forEach((edge: any) => {
     const node = edge?.node;
     const productId = node?.product?.id;
     const viewId = node?.view?.id;
-    if (!productId || !viewId || !node?.remoteId) return;
-    const productMap = categoryMap.get(String(productId)) || new Map<string, { id: string; remoteId: string }>();
-    productMap.set(String(viewId), { id: String(node.id), remoteId: String(node.remoteId) });
+    if (!productId || !viewId || !node?.id) return;
+    const productMap = categoryMap.get(String(productId)) || new Map<string, {
+      id: string;
+      remoteId: string | null;
+      secondaryCategoryId: string | null;
+    }>();
+    productMap.set(String(viewId), {
+      id: String(node.id),
+      remoteId: node?.remoteId ? String(node.remoteId) : null,
+      secondaryCategoryId: node?.secondaryCategoryId ? String(node.secondaryCategoryId) : null,
+    });
     categoryMap.set(String(productId), productMap);
   });
   return categoryMap;
@@ -623,6 +694,9 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
         if (entry.remoteId) {
           remoteIdsByView[viewId].add(entry.remoteId);
         }
+        if (entry.secondaryCategoryId) {
+          remoteIdsByView[viewId].add(entry.secondaryCategoryId);
+        }
       });
     });
 
@@ -639,12 +713,18 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
       ebayViews.value.forEach((view) => {
         const entry = productMap.get(view.id) || null;
         const remoteId = entry?.remoteId ?? null;
+        const secondaryCategoryId = entry?.secondaryCategoryId ?? null;
         const map = categoryMapByView.value[view.id] || {};
         const node = remoteId ? map[remoteId] : null;
+        const secondaryNode = secondaryCategoryId ? map[secondaryCategoryId] : null;
         categories[view.id] = {
           productCategoryId: entry?.id ?? null,
           remoteId,
+          secondaryCategoryId,
           path: remoteId ? (node ? (node.fullName || node.name || remoteId) : remoteId) : null,
+          secondaryPath: secondaryCategoryId
+            ? (secondaryNode ? (secondaryNode.fullName || secondaryNode.name || secondaryCategoryId) : secondaryCategoryId)
+            : null,
         };
       });
       return {
@@ -682,11 +762,17 @@ const save = async () => {
         const current = row.categories[viewId] || createEmptyCategory();
         const originalCategory = original?.categories[viewId] || createEmptyCategory();
         const currentRemoteId = current.remoteId;
+        const currentSecondaryCategoryId = current.secondaryCategoryId;
         const originalRemoteId = originalCategory.remoteId;
+        const originalSecondaryCategoryId = originalCategory.secondaryCategoryId;
         const productCategoryId = current.productCategoryId;
         const originalCategoryId = originalCategory.productCategoryId;
 
-        if (currentRemoteId === originalRemoteId && productCategoryId === originalCategoryId) {
+        if (
+          currentRemoteId === originalRemoteId &&
+          currentSecondaryCategoryId === originalSecondaryCategoryId &&
+          productCategoryId === originalCategoryId
+        ) {
           continue;
         }
 
@@ -708,6 +794,7 @@ const save = async () => {
               data: {
                 id: productCategoryId,
                 remoteId: currentRemoteId,
+                secondaryCategoryId: currentSecondaryCategoryId || null,
               },
             },
           });
@@ -720,6 +807,7 @@ const save = async () => {
                 salesChannel: { id: view.salesChannel.id },
                 view: { id: viewId },
                 remoteId: currentRemoteId,
+                secondaryCategoryId: currentSecondaryCategoryId || null,
               },
             },
           });
@@ -737,12 +825,58 @@ const save = async () => {
   }
 };
 
-const openSelectionModal = (rowIndex: number, viewId: string | null) => {
+const createFallbackNode = (remoteId: string, path: string | null) => ({
+  remoteId,
+  name: path || remoteId,
+  fullName: path || remoteId,
+  hasChildren: false,
+  parentNode: null,
+  configuratorProperties: [],
+} as EbayCategoryNode);
+
+const resolveNodeFromSelection = async (
+  viewId: string,
+  remoteId: string | null,
+  path: string | null,
+) => {
+  if (!remoteId) return null;
+  const map = categoryMapByView.value[viewId] || {};
+  if (map[remoteId]) {
+    return map[remoteId];
+  }
+  const fetched = await fetchCategoryDetails(remoteId, viewId, 'cache-first');
+  if (!fetched) {
+    return createFallbackNode(remoteId, path);
+  }
+  categoryMapByView.value = {
+    ...categoryMapByView.value,
+    [viewId]: {
+      ...map,
+      [remoteId]: fetched,
+    },
+  };
+  return fetched;
+};
+
+const openSelectionModal = async (rowIndex: number, viewId: string | null) => {
   if (!viewId) return;
-  modalSelection.value = null;
-  modalSelectionPath.value = null;
+  const row = variations.value[rowIndex];
+  const selection = row?.categories[viewId] || null;
   selectionModal.rowIndex = rowIndex;
   selectionModal.viewId = viewId;
+  modalMainNode.value = await resolveNodeFromSelection(viewId, selection?.remoteId || null, selection?.path || null);
+  modalSecondaryNode.value = await resolveNodeFromSelection(
+    viewId,
+    selection?.secondaryCategoryId || null,
+    selection?.secondaryPath || null,
+  );
+  modalOriginalMainNode.value = modalMainNode.value;
+  modalOriginalSecondaryNode.value = modalSecondaryNode.value;
+  modalSlotErrors.value = { main: null, secondary: null };
+  selectionModal.target = resolveDefaultCategoryTarget(
+    modalMainNode.value?.remoteId || null,
+    modalSecondaryNode.value?.remoteId || null,
+  );
   selectionModal.visible = true;
 };
 
@@ -750,32 +884,69 @@ const closeSelectionModal = () => {
   selectionModal.visible = false;
   selectionModal.rowIndex = -1;
   selectionModal.viewId = null;
-  modalSelection.value = null;
-  modalSelectionPath.value = null;
+  selectionModal.target = 'main';
+  modalMainNode.value = null;
+  modalSecondaryNode.value = null;
+  modalOriginalMainNode.value = null;
+  modalOriginalSecondaryNode.value = null;
+  modalSlotErrors.value = { main: null, secondary: null };
+};
+
+const setModalTarget = (target: EbayCategoryTarget) => {
+  modalSlotErrors.value = { main: null, secondary: null };
+  if (target === 'secondary' && !modalMainNode.value?.remoteId) {
+    return;
+  }
+  selectionModal.target = target;
 };
 
 const handleModalSelection = (payload: { node: EbayCategoryNode; path: EbayCategoryNode[] }) => {
-  modalSelection.value = payload.node;
-  modalSelectionPath.value =
-    payload.node.fullName ||
-    payload.path.map((node) => node.name).filter(Boolean).join(' > ');
   if (!selectionModal.viewId) return;
+  modalSlotErrors.value = { main: null, secondary: null };
+  const selectedNode = {
+    ...payload.node,
+    fullName: payload.node.fullName || payload.path.map((node) => node.name).filter(Boolean).join(' > '),
+  };
+
   categoryMapByView.value = {
     ...categoryMapByView.value,
     [selectionModal.viewId]: {
       ...(categoryMapByView.value[selectionModal.viewId] || {}),
-      [payload.node.remoteId]: payload.node,
+      [payload.node.remoteId]: selectedNode,
     },
   };
+
+  if (selectionModal.target === 'secondary') {
+    if (!modalMainNode.value?.remoteId) {
+      selectionModal.target = 'main';
+      modalMainNode.value = selectedNode;
+      return;
+    }
+    modalSecondaryNode.value = selectedNode;
+    return;
+  }
+
+  modalMainNode.value = selectedNode;
 };
 
 const applyModalSelection = () => {
-  if (!modalSelection.value || selectionModal.rowIndex < 0 || !selectionModal.viewId) return;
+  if (selectionModal.rowIndex < 0 || !selectionModal.viewId) return;
+  if (modalHasDuplicateCategorySelection.value) {
+    modalSlotErrors.value = {
+      main: duplicateCategoryErrorText.value,
+      secondary: duplicateCategoryErrorText.value,
+    };
+    return;
+  }
   const row = variations.value[selectionModal.rowIndex];
   if (!row) return;
   const category = ensureCategorySelection(row, selectionModal.viewId);
-  category.remoteId = modalSelection.value.remoteId;
-  category.path = modalSelectionPath.value || modalSelection.value.fullName || modalSelection.value.name;
+  category.remoteId = modalMainNode.value?.remoteId || null;
+  category.path = modalMainNode.value?.fullName || modalMainNode.value?.name || modalMainNode.value?.remoteId || null;
+  category.secondaryCategoryId = modalMainNode.value?.remoteId ? (modalSecondaryNode.value?.remoteId || null) : null;
+  category.secondaryPath = category.secondaryCategoryId
+    ? (modalSecondaryNode.value?.fullName || modalSecondaryNode.value?.name || modalSecondaryNode.value?.remoteId || null)
+    : null;
   closeSelectionModal();
 };
 
@@ -784,32 +955,21 @@ const openPreview = async (rowIndex: number, viewId: string | null) => {
   const row = variations.value[rowIndex];
   const category = row?.categories[viewId];
   if (!category?.remoteId) return;
-  const remoteId = category.remoteId;
-  const map = categoryMapByView.value[viewId] || {};
-  let node: EbayCategoryNode | null = map[remoteId] ?? null;
-  if (!node) {
-    node = await fetchCategoryDetails(remoteId, viewId, 'cache-first');
-    if (node) {
-      categoryMapByView.value = {
-        ...categoryMapByView.value,
-        [viewId]: {
-          ...map,
-          [remoteId]: node,
-        },
-      };
-    }
-  }
   previewRow.value = row;
-  previewNode.value = node;
-  previewViewId.value = viewId;
+  previewMainNode.value = await resolveNodeFromSelection(viewId, category.remoteId, category.path);
+  previewSecondaryNode.value = await resolveNodeFromSelection(
+    viewId,
+    category.secondaryCategoryId,
+    category.secondaryPath,
+  );
   previewVisible.value = true;
 };
 
 const closePreview = () => {
   previewVisible.value = false;
-  previewNode.value = null;
+  previewMainNode.value = null;
+  previewSecondaryNode.value = null;
   previewRow.value = null;
-  previewViewId.value = null;
 };
 
 watch(
@@ -912,14 +1072,29 @@ defineExpose({ hasUnsavedChanges });
         <template v-else-if="isCategoryColumn(column.key)">
           <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div class="min-w-0">
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                {{ t('products.products.ebay.selectionSlots.mainTitle') }}
+              </div>
               <div
                 class="text-sm font-medium whitespace-normal break-words"
-                :title="getCategoryDisplayPath(row, column.key) || t('products.products.ebay.noSelection')"
+                :title="getCategoryDisplayPath(row, column.key, 'main') || t('products.products.ebay.noSelection')"
               >
-                {{ getCategoryDisplayPath(row, column.key) || t('products.products.ebay.noSelection') }}
+                {{ getCategoryDisplayPath(row, column.key, 'main') || t('products.products.ebay.noSelection') }}
               </div>
               <div v-if="getCategorySelection(row, column.key)?.remoteId" class="text-xs text-gray-500">
                 {{ t('products.products.variations.ebay.labels.categoryId', { id: getCategorySelection(row, column.key)?.remoteId }) }}
+              </div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide mt-2 mb-1">
+                {{ t('products.products.ebay.selectionSlots.secondaryTitle') }}
+              </div>
+              <div
+                class="text-sm whitespace-normal break-words"
+                :title="getCategoryDisplayPath(row, column.key, 'secondary') || t('products.products.ebay.noSelection')"
+              >
+                {{ getCategoryDisplayPath(row, column.key, 'secondary') || t('products.products.ebay.noSelection') }}
+              </div>
+              <div v-if="getCategorySelection(row, column.key)?.secondaryCategoryId" class="text-xs text-gray-500">
+                {{ t('products.products.variations.ebay.labels.categoryId', { id: getCategorySelection(row, column.key)?.secondaryCategoryId }) }}
               </div>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -933,7 +1108,7 @@ defineExpose({ hasUnsavedChanges });
                 <Icon name="edit" class="h-4 w-4" aria-hidden="true" />
               </Button>
               <Button
-                v-if="getCategorySelection(row, column.key)?.remoteId"
+                v-if="getCategorySelection(row, column.key)?.remoteId || getCategorySelection(row, column.key)?.secondaryCategoryId"
                 class="p-2 text-gray-600 hover:bg-gray-100 rounded"
                 :title="t('products.products.variations.ebay.actions.preview')"
                 :aria-label="t('products.products.variations.ebay.actions.preview')"
@@ -969,26 +1144,27 @@ defineExpose({ hasUnsavedChanges });
               />
             </div>
             <div class="rounded border bg-white p-4 overflow-y-auto min-h-0 h-full max-h-[65vh]">
-              <div v-if="modalSelectionPath" class="text-xs text-gray-500 mb-2">
-                {{ modalSelectionPath }}
-              </div>
-              <EbayCategoryDetails
-                v-if="modalSelection"
-                :category="modalSelection"
+              <EbayCategoryDualSelectionPreview
+                :main-category="modalMainNode"
+                :secondary-category="modalSecondaryNode"
+                :previous-main-category="modalOriginalMainNode"
+                :previous-secondary-category="modalOriginalSecondaryNode"
+                :main-error="modalMainError"
+                :secondary-error="modalSecondaryError"
+                :selected-target="selectionModal.target"
+                :secondary-disabled="!modalMainNode?.remoteId"
+                @target-change="setModalTarget"
               />
-              <div v-else class="text-sm text-gray-500">
-                {{ t('products.products.ebay.noSelection') }}
-              </div>
             </div>
           </div>
         </div>
         <div class="flex justify-end gap-2 mt-4">
           <Button
             class="btn btn-sm btn-primary"
-            :disabled="!modalSelection"
+            :disabled="!modalMainNode?.remoteId"
             @click="applyModalSelection"
           >
-            {{ t('products.products.variations.ebay.actions.set') }}
+            {{ t('shared.button.save') }}
           </Button>
           <Button class="btn btn-sm btn-outline-dark" @click="closeSelectionModal">
             {{ t('shared.button.cancel') }}
@@ -1013,12 +1189,38 @@ defineExpose({ hasUnsavedChanges });
           </Button>
         </div>
         <div class="flex-1 min-h-0 overflow-y-auto max-h-[75vh]">
-          <EbayCategoryDetails
-            v-if="previewNode"
-            :category="previewNode"
+          <EbayCategoryDualSelectionPreview
+            :main-category="previewMainNode"
+            :secondary-category="previewSecondaryNode"
+            :selected-target="'main'"
+            :secondary-disabled="!previewMainNode?.remoteId"
+            :read-only="true"
           />
-          <div v-else class="text-sm text-gray-500">
-            {{ t('products.products.ebay.noSelection') }}
+          <div class="mt-4 space-y-3">
+            <div class="rounded border bg-white p-3">
+              <h6 class="font-semibold text-sm mb-2">
+                {{ t('products.products.ebay.selectionSlots.mainTitle') }}
+              </h6>
+              <EbayCategoryDetails
+                v-if="previewMainNode"
+                :category="previewMainNode"
+              />
+              <div v-else class="text-sm text-gray-500">
+                {{ t('products.products.ebay.noSelection') }}
+              </div>
+            </div>
+            <div class="rounded border bg-white p-3">
+              <h6 class="font-semibold text-sm mb-2">
+                {{ t('products.products.ebay.selectionSlots.secondaryTitle') }}
+              </h6>
+              <EbayCategoryDetails
+                v-if="previewSecondaryNode"
+                :category="previewSecondaryNode"
+              />
+              <div v-else class="text-sm text-gray-500">
+                {{ t('products.products.ebay.noSelection') }}
+              </div>
+            </div>
           </div>
         </div>
       </Card>

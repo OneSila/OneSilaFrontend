@@ -898,6 +898,15 @@
         "categoryMappingInfo": "",
         "defaultCategoryTitle": "",
         "defaultCategoryInfo": "",
+        "selectionSlots": {
+          "targetHint": "",
+          "mainTitle": "",
+          "secondaryTitle": "",
+          "secondaryDisabled": "",
+          "sameCategoryError": "",
+          "changeTitle": "",
+          "changePattern": ""
+        },
         "configuratorPreview": {
           "title": "",
           "description": "",

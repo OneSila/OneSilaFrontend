@@ -7,6 +7,7 @@ export const ebayProductCategoriesQuery = gql`
         node {
           id
           remoteId
+          secondaryCategoryId
           salesChannel {
             id
             hostname
@@ -31,6 +32,7 @@ export const ebayProductCategoriesWithProductsQuery = gql`
         node {
           id
           remoteId
+          secondaryCategoryId
           product {
             id
           }

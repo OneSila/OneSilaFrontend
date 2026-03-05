@@ -5,6 +5,7 @@ export const createEbayProductCategoryMutation = gql`
     createEbayProductCategory(data: $data) {
       id
       remoteId
+      secondaryCategoryId
     }
   }
 `;
@@ -14,6 +15,7 @@ export const updateEbayProductCategoryMutation = gql`
     updateEbayProductCategory(data: $data) {
       id
       remoteId
+      secondaryCategoryId
     }
   }
 `;

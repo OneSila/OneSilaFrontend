@@ -1605,6 +1605,15 @@
         "categoryMappingInfo": "These entries show each eBay marketplace view; the icon indicates whether a category is mapped for that view.",
         "defaultCategoryTitle": "Default category from product type",
         "defaultCategoryInfo": "Remote ID: {id}",
+        "selectionSlots": {
+          "targetHint": "Selections from the left panel are applied to the highlighted slot.",
+          "mainTitle": "Main category",
+          "secondaryTitle": "Secondary category",
+          "secondaryDisabled": "Select a main category first.",
+          "sameCategoryError": "Primary and secondary eBay categories cannot be the same.",
+          "changeTitle": "Pending changes",
+          "changePattern": "{from} -> {to}"
+        },
         "configuratorPreview": {
           "title": "Configurator attributes",
           "description": "eBay uses these configurator properties to build variations for this category.",
