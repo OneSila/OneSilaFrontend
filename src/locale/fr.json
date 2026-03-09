@@ -644,6 +644,7 @@
         },
         "ebay": {
           "columns": {
+            "category": "",
             "storeCategory": ""
           },
           "labels": {
@@ -925,6 +926,15 @@
           "placeholder": "",
           "button": "",
           "invalid": ""
+        },
+        "suggestion": {
+          "title": "",
+          "description": "",
+          "openButton": "",
+          "placeholder": "",
+          "button": "",
+          "empty": "",
+          "error": ""
         },
         "storeCategories": {
           "title": "",

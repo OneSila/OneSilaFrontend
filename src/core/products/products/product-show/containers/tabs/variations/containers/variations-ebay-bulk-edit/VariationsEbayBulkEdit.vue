@@ -39,6 +39,7 @@ import {
 import EbayCategoryBrowser from '../../../ebay/components/EbayCategoryBrowser.vue';
 import EbayCategoryDualSelectionPreview from '../../../ebay/components/EbayCategoryDualSelectionPreview.vue';
 import EbayCategoryDetails from '../../../ebay/components/EbayCategoryDetails.vue';
+import EbayCategorySuggestion from '../../../ebay/components/EbayCategorySuggestion.vue';
 import EbayStoreCategoryBrowser from '../../../ebay/components/EbayStoreCategoryBrowser.vue';
 import EbayStoreCategoryDetails from '../../../ebay/components/EbayStoreCategoryDetails.vue';
 import {
@@ -234,6 +235,10 @@ const selectedViews = computed(() =>
 const selectionModalView = computed(() =>
   selectionModal.viewId ? viewById.value[selectionModal.viewId] : null,
 );
+const selectionModalName = computed(() => {
+  const row = selectionModal.rowIndex >= 0 ? variations.value[selectionModal.rowIndex] : null;
+  return row?.variation?.name || (parentProduct.value as any)?.name || parentProduct.value?.sku || '';
+});
 const storeSelectionModalSalesChannel = computed(() =>
   storeSelectionModal.salesChannelId
     ? salesChannelOptions.value.find((option) => option.id === storeSelectionModal.salesChannelId) || null
@@ -272,7 +277,9 @@ const columns = computed<MatrixColumn[]>(() => [
   }] : []),
   ...selectedViews.value.map((view) => ({
     key: buildViewColumnKey(view.id),
-    label: view.name || view.remoteId || '-',
+    label: t('products.products.variations.ebay.columns.category', {
+      view: view.name || view.remoteId || view.salesChannel?.hostname || '-',
+    }),
     editable: true,
     initialWidth: 560,
     valueType: getViewValueType(view.id),
@@ -1399,6 +1406,18 @@ const handleModalSelection = (payload: { node: EbayCategoryNode; path: EbayCateg
   }
 };
 
+const handleSuggestedModalCategory = async (categoryId: string) => {
+  if (!selectionModal.viewId) return;
+
+  const node = await resolveNodeFromSelection(selectionModal.viewId, categoryId, null);
+  if (!node) {
+    Toast.error(t('products.products.ebay.manualEntry.invalid'));
+    return;
+  }
+
+  handleModalSelection({ node, path: [] });
+};
+
 const applyModalSelection = () => {
   if (selectionModal.rowIndex < 0 || !selectionModal.viewId) return;
   if (modalHasDuplicateCategorySelection.value) {
@@ -1836,9 +1855,16 @@ defineExpose({ hasUnsavedChanges });
         <div class="flex-1 min-h-0">
           <div class="grid gap-4 lg:grid-cols-2 h-full min-h-0">
             <div class="rounded border bg-white p-4 min-h-0 h-full max-h-[65vh] overflow-hidden flex flex-col">
-              <EbayCategoryBrowser
-                :default-category-tree-id="selectionModalView?.defaultCategoryTreeId || null"
-                @selected="handleModalSelection"
+              <div class="flex-1 min-h-0 overflow-hidden">
+                <EbayCategoryBrowser
+                  :default-category-tree-id="selectionModalView?.defaultCategoryTreeId || null"
+                  @selected="handleModalSelection"
+                />
+              </div>
+              <EbayCategorySuggestion
+                :marketplace-id="selectionModalView?.id || null"
+                :name="selectionModalName"
+                @select="handleSuggestedModalCategory"
               />
             </div>
             <div class="rounded border bg-white p-4 overflow-y-auto min-h-0 h-full max-h-[65vh]">

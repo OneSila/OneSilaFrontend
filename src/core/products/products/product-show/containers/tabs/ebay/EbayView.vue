@@ -254,6 +254,10 @@ const selectedStoreCategory = computed(() => {
   return storeCategoriesBySalesChannel.value[salesChannelId] || null;
 });
 
+const productSuggestionName = computed(() =>
+  (props.product as any)?.name || props.product?.sku || null,
+);
+
 const handleCategorySaved = (
   payload: { id: string; remoteId: string; secondaryCategoryId: string | null; salesChannelId: string | null }
 ) => {
@@ -359,6 +363,7 @@ defineExpose({ hasUnsavedChanges, fetchEbayProductCategories, fetchEbayProductSt
               ref="categorySectionRef"
               :product-id="product.id"
               :sales-channel-id="selectedCategory?.salesChannelId || selectedView?.salesChannel?.id || null"
+              :product-name="productSuggestionName"
               :view="selectedView"
               :category="selectedCategory"
               :default-category="selectedDefaultCategory"

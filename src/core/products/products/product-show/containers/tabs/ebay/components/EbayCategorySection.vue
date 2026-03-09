@@ -15,6 +15,7 @@ import {
 } from '../../../../../../../../shared/api/mutations/ebayProducts.js';
 import EbayCategoryDetails from './EbayCategoryDetails.vue';
 import EbayCategoryDualSelectionPreview from './EbayCategoryDualSelectionPreview.vue';
+import EbayCategorySuggestion from './EbayCategorySuggestion.vue';
 import {
   mapCategoriesConnection,
   resolveDefaultCategoryTarget,
@@ -25,6 +26,7 @@ import {
 const props = defineProps<{
   productId: string | null;
   salesChannelId: string | null;
+  productName?: string | null;
   view: any | null;
   category: {
     id: string | null;
@@ -468,6 +470,20 @@ const setManualCategory = async () => {
   }
 };
 
+const handleSuggestedCategory = async (categoryId: string) => {
+  if (!categoryId) {
+    return;
+  }
+
+  const node = await fetchCategoryDetails(categoryId);
+  if (!node) {
+    Toast.error(t('products.products.ebay.manualEntry.invalid'));
+    return;
+  }
+
+  applySelectedNode(node);
+};
+
 const hasView = computed(() => Boolean(props.view));
 
 defineExpose({ hasUnsavedChanges });
@@ -581,6 +597,12 @@ defineExpose({ hasUnsavedChanges });
               {{ manualSelectionError }}
             </p>
           </div>
+
+          <EbayCategorySuggestion
+            :marketplace-id="view?.id || null"
+            :name="productName || null"
+            @select="handleSuggestedCategory"
+          />
         </div>
 
         <div class="lg:w-1/2 space-y-4">

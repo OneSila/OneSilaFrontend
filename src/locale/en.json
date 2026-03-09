@@ -1479,6 +1479,7 @@
         },
         "ebay": {
           "columns": {
+            "category": "eBay Category · {view}",
             "storeCategory": "eBay store category"
           },
           "labels": {
@@ -1635,6 +1636,15 @@
           "placeholder": "Category ID",
           "button": "Load category",
           "invalid": "We couldn't find a category with that ID for this marketplace."
+        },
+        "suggestion": {
+          "title": "Need inspiration?",
+          "description": "Try an eBay suggestion based on the current product name, then pick the closest matching category.",
+          "openButton": "Get suggestion",
+          "placeholder": "Enter a product name",
+          "button": "Suggest",
+          "empty": "No category suggestions found.",
+          "error": "Failed to load eBay category suggestions."
         },
         "storeCategories": {
           "title": "Store categories",
