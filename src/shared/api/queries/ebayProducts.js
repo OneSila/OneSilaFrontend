@@ -44,3 +44,81 @@ export const ebayProductCategoriesWithProductsQuery = gql`
     }
   }
 `;
+
+export const ebayProductStoreCategoriesQuery = gql`
+  query EbayProductStoreCategories($filter: EbayProductStoreCategoryFilter) {
+    ebayProductStoreCategories(filters: $filter) {
+      edges {
+        node {
+          id
+          product {
+            id
+          }
+          primaryStoreCategory {
+            id
+            remoteId
+            name
+            fullPath
+            order
+            level
+            isLeaf
+            salesChannel {
+              id
+            }
+          }
+          secondaryStoreCategory {
+            id
+            remoteId
+            name
+            fullPath
+            order
+            level
+            isLeaf
+            salesChannel {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const ebayProductStoreCategoriesWithProductsQuery = gql`
+  query EbayProductStoreCategoriesWithProducts($filter: EbayProductStoreCategoryFilter) {
+    ebayProductStoreCategories(filters: $filter) {
+      edges {
+        node {
+          id
+          product {
+            id
+          }
+          primaryStoreCategory {
+            id
+            remoteId
+            name
+            fullPath
+            order
+            level
+            isLeaf
+            salesChannel {
+              id
+            }
+          }
+          secondaryStoreCategory {
+            id
+            remoteId
+            name
+            fullPath
+            order
+            level
+            isLeaf
+            salesChannel {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`;

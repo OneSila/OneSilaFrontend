@@ -2,13 +2,20 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
-import type { EbayCategoryNode, EbayCategoryTarget } from './ebayCategoryUtils';
+import type { EbayCategoryTarget } from './ebayCategoryUtils';
+
+interface EbayPreviewCategoryNode {
+  remoteId: string;
+  name: string;
+  fullName?: string | null;
+  fullPath?: string | null;
+}
 
 const props = withDefaults(defineProps<{
-  mainCategory: EbayCategoryNode | null;
-  secondaryCategory: EbayCategoryNode | null;
-  previousMainCategory?: EbayCategoryNode | null;
-  previousSecondaryCategory?: EbayCategoryNode | null;
+  mainCategory: EbayPreviewCategoryNode | null;
+  secondaryCategory: EbayPreviewCategoryNode | null;
+  previousMainCategory?: EbayPreviewCategoryNode | null;
+  previousSecondaryCategory?: EbayPreviewCategoryNode | null;
   selectedTarget: EbayCategoryTarget;
   secondaryDisabled: boolean;
   mainError?: string | null;
@@ -26,6 +33,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   (e: 'target-change', target: EbayCategoryTarget): void;
+  (e: 'clear-secondary'): void;
 }>();
 
 const { t } = useI18n();
@@ -33,7 +41,7 @@ const { t } = useI18n();
 const mainDisplay = computed(() => {
   if (props.mainCategory) {
     return {
-      title: props.mainCategory.fullName || props.mainCategory.name || props.mainCategory.remoteId,
+      title: props.mainCategory.fullName || props.mainCategory.fullPath || props.mainCategory.name || props.mainCategory.remoteId,
       remoteId: props.mainCategory.remoteId,
       isDefault: false,
     };
@@ -54,11 +62,16 @@ const selectTarget = (target: EbayCategoryTarget) => {
   emit('target-change', target);
 };
 
-const getCategoryLabel = (category: EbayCategoryNode | null | undefined) => {
+const clearSecondary = () => {
+  if (props.readOnly || !props.secondaryCategory) return;
+  emit('clear-secondary');
+};
+
+const getCategoryLabel = (category: EbayPreviewCategoryNode | null | undefined) => {
   if (!category?.remoteId) {
     return t('products.products.ebay.noSelection');
   }
-  return category.fullName || category.name || category.remoteId;
+  return category.fullName || category.fullPath || category.name || category.remoteId;
 };
 
 const hasMainChanged = computed(
@@ -152,16 +165,28 @@ const getCardClass = (target: EbayCategoryTarget) => {
         <h6 class="font-semibold text-sm text-gray-800">
           {{ t('products.products.ebay.selectionSlots.secondaryTitle') }}
         </h6>
-        <Icon
-          v-if="selectedTarget === 'secondary'"
-          name="check-circle"
-          class="w-4 h-4 text-blue-500"
-        />
+        <div class="flex items-center gap-2">
+          <Icon
+            v-if="selectedTarget === 'secondary'"
+            name="check-circle"
+            class="w-4 h-4 text-blue-500"
+          />
+          <button
+            v-if="!readOnly && secondaryCategory"
+            type="button"
+            class="h-4 w-4 rounded-full bg-red-500 text-white text-[10px] leading-none flex items-center justify-center hover:bg-red-600"
+            :title="t('shared.button.remove')"
+            :aria-label="t('shared.button.remove')"
+            @click.stop="clearSecondary"
+          >
+            x
+          </button>
+        </div>
       </div>
 
       <div v-if="secondaryCategory" class="mt-2">
         <div class="text-sm text-gray-900">
-          {{ secondaryCategory.fullName || secondaryCategory.name || secondaryCategory.remoteId }}
+          {{ secondaryCategory.fullName || secondaryCategory.fullPath || secondaryCategory.name || secondaryCategory.remoteId }}
         </div>
         <div class="text-xs text-gray-500">
           {{ t('products.products.ebay.defaultCategoryInfo', { id: secondaryCategory.remoteId }) }}

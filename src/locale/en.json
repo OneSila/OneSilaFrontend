@@ -1478,19 +1478,29 @@
           }
         },
         "ebay": {
+          "columns": {
+            "storeCategory": "eBay store category"
+          },
           "labels": {
             "categoryId": "ID: {id}"
           },
           "actions": {
             "set": "Set category",
-            "preview": "Preview category"
+            "preview": "Preview category",
+            "setStoreCategory": "Set store category",
+            "previewStoreCategory": "Preview store category"
           },
           "modal": {
             "title": "Select eBay category",
-            "previewTitle": "Category preview"
+            "previewTitle": "Category preview",
+            "storeTitle": "Select eBay store category",
+            "storePreviewTitle": "Store category preview"
           },
           "selectors": {
             "salesChannel": "Sales channel"
+          },
+          "toast": {
+            "storeCategoryNotAvailable": "Store category ID {id} is not available for this eBay sales channel."
           }
         },
         "prices": {
@@ -1625,6 +1635,21 @@
           "placeholder": "Category ID",
           "button": "Load category",
           "invalid": "We couldn't find a category with that ID for this marketplace."
+        },
+        "storeCategories": {
+          "title": "Store categories",
+          "description": "Assign one primary and optional secondary eBay Store category for this sales channel.",
+          "selectSalesChannelPrompt": "Select a marketplace to manage eBay Store categories.",
+          "leafRestriction": "Only leaf store categories can be selected.",
+          "pullButton": "Pull store categories",
+          "pullHint": "Use this to refresh the latest category tree from eBay.",
+          "pullSuccess": "Store categories updated.",
+          "detailsMeta": "Level {level} • Order {order}",
+          "remove": "Remove store categories",
+          "manualEntry": {
+            "description": "Paste an eBay Store category ID to preview it without browsing the tree.",
+            "invalid": "We couldn't find a store category with that ID for this sales channel."
+          }
         }
       },
       "shein": {

@@ -6,10 +6,11 @@ import { Product } from '../../../../configs';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
 import apolloClient from '../../../../../../../../apollo-client';
 import { ebayChannelViewsQuery, ebayProductTypesQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
-import { ebayProductCategoriesQuery } from '../../../../../../../shared/api/queries/ebayProducts.js';
+import { ebayProductCategoriesQuery, ebayProductStoreCategoriesQuery } from '../../../../../../../shared/api/queries/ebayProducts.js';
 import { ebayCategoriesQuery } from '../../../../../../../shared/api/queries/ebayCategories.js';
 import EbayMarketplaceTabs from './components/EbayMarketplaceTabs.vue';
 import EbayCategorySection from './components/EbayCategorySection.vue';
+import EbayStoreCategorySection from './components/EbayStoreCategorySection.vue';
 import type { FetchPolicy } from '@apollo/client';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import Swal from 'sweetalert2';
@@ -30,8 +31,16 @@ const categoriesByView = ref<
   }>
 >({});
 const categorySectionRef = ref<InstanceType<typeof EbayCategorySection> | null>(null);
+const storeCategorySectionRef = ref<InstanceType<typeof EbayStoreCategorySection> | null>(null);
 const defaultCategoriesByView = ref<
   Record<string, { remoteId: string | null; name: string | null }>
+>({});
+const storeCategoriesBySalesChannel = ref<
+  Record<string, {
+    id: string | null;
+    primaryRemoteId: string | null;
+    secondaryRemoteId: string | null;
+  }>
 >({});
 
 const productTypeRuleId = computed(() => {
@@ -89,6 +98,38 @@ const fetchEbayProductCategories = async (fetchPolicy: FetchPolicy = 'cache-firs
     }
   });
   categoriesByView.value = map;
+};
+
+const fetchEbayProductStoreCategories = async (fetchPolicy: FetchPolicy = 'cache-first') => {
+  if (!props.product.id) {
+    return;
+  }
+  const { data } = await apolloClient.query({
+    query: ebayProductStoreCategoriesQuery,
+    variables: {
+      filter: {
+        product: { id: { exact: props.product.id } },
+      },
+    },
+    fetchPolicy,
+  });
+  const map: Record<string, {
+    id: string | null;
+    primaryRemoteId: string | null;
+    secondaryRemoteId: string | null;
+  }> = {};
+  const edges = data?.ebayProductStoreCategories?.edges || [];
+  edges.forEach((edge: any) => {
+    const node = edge?.node;
+    const salesChannelId = node?.primaryStoreCategory?.salesChannel?.id;
+    if (!salesChannelId) return;
+    map[salesChannelId] = {
+      id: node?.id || null,
+      primaryRemoteId: node?.primaryStoreCategory?.remoteId || null,
+      secondaryRemoteId: node?.secondaryStoreCategory?.remoteId || null,
+    };
+  });
+  storeCategoriesBySalesChannel.value = map;
 };
 
 let defaultCategoriesRequestId = 0;
@@ -166,6 +207,7 @@ const fetchDefaultCategories = async () => {
 onMounted(() => {
   fetchViews();
   fetchEbayProductCategories();
+  fetchEbayProductStoreCategories();
 });
 
 watch(
@@ -206,6 +248,12 @@ const selectedDefaultCategory = computed(() => {
   return defaultCategoriesByView.value[selectedView.value.id] || null;
 });
 
+const selectedStoreCategory = computed(() => {
+  const salesChannelId = selectedView.value?.salesChannel?.id;
+  if (!salesChannelId) return null;
+  return storeCategoriesBySalesChannel.value[salesChannelId] || null;
+});
+
 const handleCategorySaved = (
   payload: { id: string; remoteId: string; secondaryCategoryId: string | null; salesChannelId: string | null }
 ) => {
@@ -234,8 +282,37 @@ const handleCategoryDeleted = () => {
   };
 };
 
+const handleStoreCategorySaved = (
+  payload: { id: string; salesChannelId: string | null; primaryRemoteId: string; secondaryRemoteId: string | null },
+) => {
+  if (!payload.salesChannelId) return;
+  storeCategoriesBySalesChannel.value = {
+    ...storeCategoriesBySalesChannel.value,
+    [payload.salesChannelId]: {
+      id: payload.id,
+      primaryRemoteId: payload.primaryRemoteId,
+      secondaryRemoteId: payload.secondaryRemoteId,
+    },
+  };
+};
+
+const handleStoreCategoryDeleted = () => {
+  const salesChannelId = selectedView.value?.salesChannel?.id;
+  if (!salesChannelId) return;
+  storeCategoriesBySalesChannel.value = {
+    ...storeCategoriesBySalesChannel.value,
+    [salesChannelId]: {
+      id: null,
+      primaryRemoteId: null,
+      secondaryRemoteId: null,
+    },
+  };
+};
+
 const hasUnsavedChanges = computed(
-  () => categorySectionRef.value?.hasUnsavedChanges ?? false,
+  () =>
+    (categorySectionRef.value?.hasUnsavedChanges ?? false) ||
+    (storeCategorySectionRef.value?.hasUnsavedChanges ?? false),
 );
 
 const beforeMarketplaceTabChange = async (_newTab: string, _oldTab: string | null) => {
@@ -250,7 +327,7 @@ const beforeMarketplaceTabChange = async (_newTab: string, _oldTab: string | nul
   return res.dismiss === Swal.DismissReason.cancel;
 };
 
-defineExpose({ hasUnsavedChanges, fetchEbayProductCategories });
+defineExpose({ hasUnsavedChanges, fetchEbayProductCategories, fetchEbayProductStoreCategories });
 </script>
 
 <template>
@@ -288,6 +365,16 @@ defineExpose({ hasUnsavedChanges, fetchEbayProductCategories });
               @saved="handleCategorySaved"
               @deleted="handleCategoryDeleted"
             />
+            <div class="mt-6">
+              <EbayStoreCategorySection
+                ref="storeCategorySectionRef"
+                :product-id="product.id"
+                :sales-channel-id="selectedView?.salesChannel?.id || null"
+                :category="selectedStoreCategory"
+                @saved="handleStoreCategorySaved"
+                @deleted="handleStoreCategoryDeleted"
+              />
+            </div>
           </div>
         </div>
       </div>

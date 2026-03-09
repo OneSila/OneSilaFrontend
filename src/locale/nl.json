@@ -1025,19 +1025,29 @@
           }
         },
         "ebay": {
+          "columns": {
+            "storeCategory": ""
+          },
           "labels": {
             "categoryId": ""
           },
           "actions": {
             "set": "",
-            "preview": ""
+            "preview": "",
+            "setStoreCategory": "",
+            "previewStoreCategory": ""
           },
           "modal": {
             "title": "",
-            "previewTitle": ""
+            "previewTitle": "",
+            "storeTitle": "",
+            "storePreviewTitle": ""
           },
           "selectors": {
             "salesChannel": ""
+          },
+          "toast": {
+            "storeCategoryNotAvailable": ""
           }
         },
         "prices": {
@@ -1245,6 +1255,21 @@
           "placeholder": "",
           "button": "",
           "invalid": ""
+        },
+        "storeCategories": {
+          "title": "",
+          "description": "",
+          "selectSalesChannelPrompt": "",
+          "leafRestriction": "",
+          "pullButton": "",
+          "pullHint": "",
+          "pullSuccess": "",
+          "detailsMeta": "",
+          "remove": "",
+          "manualEntry": {
+            "description": "",
+            "invalid": ""
+          }
         }
       },
       "ebay": {

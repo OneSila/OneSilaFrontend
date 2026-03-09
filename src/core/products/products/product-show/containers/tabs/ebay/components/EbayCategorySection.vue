@@ -310,14 +310,24 @@ const applySelectedNode = (node: EbayCategoryNode) => {
   if (selectedTarget.value === 'secondary') {
     if (secondaryDisabled.value) {
       Toast.info(t('products.products.ebay.selectionSlots.secondaryDisabled'));
-      selectedTarget.value = 'main';
       mainNode.value = node;
+      selectedTarget.value = 'secondary';
       return;
     }
     secondaryNode.value = node;
     return;
   }
+  const hadMainSelection = Boolean(mainNode.value?.remoteId);
+  const hadSecondarySelection = Boolean(secondaryNode.value?.remoteId);
   mainNode.value = node;
+  if (!hadMainSelection && !hadSecondarySelection) {
+    selectedTarget.value = 'secondary';
+  }
+};
+
+const clearSecondarySelection = () => {
+  clearSlotErrors();
+  secondaryNode.value = null;
 };
 
 const selectNode = (node: EbayCategoryNode) => {
@@ -590,6 +600,7 @@ defineExpose({ hasUnsavedChanges });
               :selected-target="selectedTarget"
               :secondary-disabled="secondaryDisabled"
               @target-change="setSelectedTarget"
+              @clear-secondary="clearSecondarySelection"
             />
           </div>
 
