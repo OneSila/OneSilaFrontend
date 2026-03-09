@@ -2831,6 +2831,10 @@
         "successfullyUpdated": "Successfully updated the document!",
         "updateFailed": "Failed to update the document. Please contact the administrators!"
       },
+      "preview": {
+        "openInNewTab": "Open in new tab",
+        "unavailable": "This document can't be embedded here. Open it in a new tab to view it."
+      },
       "alert": {
         "toast": {
           "bulkDeleteSuccess": "Documents deleted successfully.",

@@ -2441,6 +2441,10 @@
         "title": "",
         "successfullyUpdated": "",
         "updateFailed": ""
+      },
+      "preview": {
+        "openInNewTab": "",
+        "unavailable": ""
       }
     }
   },

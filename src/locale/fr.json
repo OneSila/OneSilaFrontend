@@ -2010,6 +2010,10 @@
       "show": {
         "successfullyUpdated": "",
         "updateFailed": ""
+      },
+      "preview": {
+        "openInNewTab": "",
+        "unavailable": ""
       }
     }
   },
