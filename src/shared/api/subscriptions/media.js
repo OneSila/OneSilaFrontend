@@ -31,6 +31,20 @@ export const fileSubscription = gql`
   subscription getFileSubscription($pk: String!) {
     file(pk: $pk) {
       id
+      fileUrl
+      title
+      description
+      documentLanguage
+      documentType {
+        id
+        name
+        code
+      }
+      file {
+        size
+        name
+        url
+      }
     }
   }
 `;
@@ -40,6 +54,8 @@ export const videoSubscription = gql`
     video(pk: $pk) {
       id
       videoUrl
+      title
+      description
     }
   }
 `;

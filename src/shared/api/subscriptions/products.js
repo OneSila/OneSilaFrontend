@@ -51,6 +51,15 @@ export const productSubscription = gql`
         thumbnailUrl
         inspectorStatus
       }
+      percentageInspectorStatus {
+        percentage
+        inspectorStatus
+        blocks {
+          code
+          completed
+          fixingMessage
+        }
+      }
       inspector {
         id
         hasMissingInformation

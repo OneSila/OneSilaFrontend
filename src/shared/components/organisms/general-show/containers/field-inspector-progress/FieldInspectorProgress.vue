@@ -11,7 +11,7 @@ const props = defineProps<{
   modelValue: {
     percentage: number;
     inspectorStatus: number;
-    blocks: { code: string | number; completed: boolean }[];
+    blocks: { code: string | number; completed: boolean; fixingMessage?: string | null }[];
   } | null;
 }>();
 
@@ -85,6 +85,12 @@ const visibleBlocks = computed(() => {
   }
   return blocks.filter((block) => !block.completed);
 });
+
+const getBlockTitle = (block: { code: string | number }) =>
+  t(`dashboard.cards.products.inspector.${block.code}.title`);
+
+const getBlockDescription = (block: { code: string | number }) =>
+  t(`dashboard.cards.products.inspector.${block.code}.description`);
 </script>
 
 <template>
@@ -116,7 +122,12 @@ const visibleBlocks = computed(() => {
           >
             <Icon :name="block.completed ? 'circle-check' : 'circle-xmark'" size="sm"
                   :class="block.completed ? 'text-green-600' : 'text-red-600'" />
-            <span>{{ t(`dashboard.cards.products.inspector.${block.code}.title`) }}</span>
+            <div class="min-w-0">
+              <div>{{ getBlockTitle(block) }}</div>
+              <div class="text-xs text-gray-500">
+                {{ getBlockDescription(block) }}
+              </div>
+            </div>
           </li>
         </ul>
       </div>

@@ -36,6 +36,24 @@ export const routes = [
         meta: { title: 'settings.title' },
         component: () => import('./vat-rates/vat-rate-edit/VatRateEditController.vue')
     },
+    {
+        path: '/settings/document-types',
+        name: 'settings.documentTypes.list',
+        meta: { title: 'settings.title' },
+        component: () => import('./document-types/document-types-list/DocumentTypesListController.vue')
+    },
+    {
+        path: '/settings/document-type/create',
+        name: 'settings.documentType.create',
+        meta: { title: 'settings.title' },
+        component: () => import('./document-types/document-type-create/DocumentTypeCreateController.vue')
+    },
+    {
+        path: '/settings/document-type/edit/:id',
+        name: 'settings.documentType.edit',
+        meta: { title: 'settings.title' },
+        component: () => import('./document-types/document-type-edit/DocumentTypeEditController.vue')
+    },
 
     {
         path: '/settings/brand-identity',

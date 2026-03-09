@@ -5,7 +5,10 @@ import { ref } from "vue";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { SearchConfig } from "../../../../shared/components/organisms/general-search/searchConfig";
+import { FieldType } from "../../../../shared/utils/constants";
 import { fileQuery } from "../../../../shared/api/queries/media.js";
+import { documentTypesQuerySelector } from "../../../../shared/api/queries/documentTypes.js";
+import { companyLanguagesQuery } from "../../../../shared/api/queries/languages.js";
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
@@ -18,7 +21,49 @@ const refetchNeeded = ref(false);
 const searchConfig: SearchConfig = {
   search: true,
   orderKey: "sort",
-  filters: [],
+  filters: [
+    {
+      type: FieldType.Query,
+      query: documentTypesQuerySelector,
+      dataKey: 'documentTypes',
+      name: 'documentType',
+      label: t('media.documents.filters.documentType'),
+      labelBy: 'name',
+      valueBy: 'id',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id']
+    },
+    {
+      type: FieldType.Query,
+      query: companyLanguagesQuery,
+      dataKey: 'companyLanguages',
+      name: 'documentLanguage',
+      label: t('shared.labels.language'),
+      labelBy: 'name',
+      valueBy: 'code',
+      filterable: true,
+      isEdge: false,
+      addLookup: true,
+      lookupKeys: []
+    },
+    {
+      type: FieldType.Choice,
+      name: 'isDocumentImage',
+      label: t('media.documents.filters.documentKind'),
+      options: [
+        { name: t('media.documents.filters.imageDocuments'), code: 'true' },
+        { name: t('media.documents.filters.fileDocuments'), code: 'false' },
+      ],
+      labelBy: 'name',
+      valueBy: 'code',
+      filterable: false,
+      removable: true,
+      addLookup: true,
+      lookupKeys: []
+    },
+  ],
   orders: []
 };
 

@@ -12,8 +12,8 @@ import { useRouter } from 'vue-router';
 import { TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO} from "../media";
 
 const router = useRouter();
-const props = defineProps<{ id: string; type: string; dark?: boolean ; item: any}>();
-const emit = defineEmits(['trigger-refetch']);
+const props = defineProps<{ id: string; type: string; dark?: boolean; item: any; canPreview?: boolean }>();
+const emit = defineEmits(['trigger-refetch', 'preview']);
 
 const { t } = useI18n();
 
@@ -55,6 +55,8 @@ const getRouteName = () => {
       return 'media.images.show';
     case TYPE_VIDEO:
       return 'media.videos.show';
+    case TYPE_DOCUMENT:
+      return 'media.documents.show';
     default:
       throw 'Wrong routes';
   }
@@ -157,6 +159,11 @@ const downloadResource = (close) => {
   }
 };
 
+const previewResource = (close) => {
+  close();
+  emit('preview', props.item);
+};
+
 </script>
 
 <template>
@@ -172,10 +179,16 @@ const downloadResource = (close) => {
         </Button>
         <template #content="{ close }">
           <ul class="text-dark dark:text-white-dark !py-0 dark:text-white-light/90 bg-white border border-gray-300 rounded-md">
-            <li v-if="type !== TYPE_DOCUMENT">
+            <li>
               <Button class="flex items-center w-full px-4 py-2 hover:bg-gray-100" @click="goToEditPage">
                 <Icon name="edit" class="w-4.5 h-4.5 mr-2 shrink-0" />
                 {{ t('shared.button.edit') }}
+              </Button>
+            </li>
+            <li v-if="canPreview">
+              <Button class="flex items-center w-full px-4 py-2 hover:bg-gray-100" @click="previewResource(close)">
+                <Icon name="eye" class="w-4.5 h-4.5 mr-2 shrink-0" />
+                {{ t('shared.labels.preview') }}
               </Button>
             </li>
             <li v-if="type !== TYPE_VIDEO">

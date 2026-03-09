@@ -105,6 +105,23 @@ export const createFileMutation = gql`
   mutation createFile($data: FileInput!) {
     createFile(data: $data) {
       id
+      title
+      description
+      fileUrl
+      documentImageThumbnailUrl
+      documentLanguage
+      documentType {
+        id
+        ... on DocumentTypeType {
+          name
+          code
+        }
+      }
+      file {
+        name
+        size
+        url
+      }
     }
   }
 `;
@@ -113,6 +130,23 @@ export const createFilesMutation = gql`
   mutation createFiles($data: [FileInput!]!) {
     createFiles(data: $data) {
       id
+      title
+      description
+      fileUrl
+      documentImageThumbnailUrl
+      documentLanguage
+      documentType {
+        id
+        ... on DocumentTypeType {
+          name
+          code
+        }
+      }
+      file {
+        name
+        size
+        url
+      }
     }
   }
 `;
@@ -146,6 +180,8 @@ export const createVideoMutation = gql`
     createVideo(data: $data) {
       id
       videoUrl
+      title
+      description
     }
   }
 `;
@@ -155,6 +191,8 @@ export const createVideosMutation = gql`
     createVideos(data: $data) {
       id
       videoUrl
+      title
+      description
     }
   }
 `;

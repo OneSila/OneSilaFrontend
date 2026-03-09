@@ -12,23 +12,51 @@ import apolloClient from "../../../../../../../apollo-client";
 import { refreshInspectorMutation } from "../../../../../../shared/api/mutations/products.js";
 import {Toast} from "../../../../../../shared/modules/toast";
 import {useRoute, useRouter} from "vue-router";
-import {ref, Ref} from "vue";
+import { computed, ref, Ref } from "vue";
 
 interface InspectorSubscriptionResult {
   inspector: {
     hasMissingInformation: boolean;
     hasMissingOptionalInformation: boolean;
     color: string | number;
-    errors: string[];
+    errors: InspectorErrorItem[];
   };
 }
+
+interface InspectorErrorBlock {
+  code: string | number;
+  fixingMessage?: string | null;
+  message?: string | null;
+  error_message?: string | null;
+  errorCode?: string | number;
+}
+
+type InspectorErrorItem = string | number | InspectorErrorBlock;
 
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const props = defineProps<{ product: Product }>();
 const color: Ref<string | number> = ref('');
-const errors: Ref<string[]> = ref([]);
+const errors: Ref<InspectorErrorItem[]> = ref([]);
+const fixingMessageByCode = computed(() => {
+  const blocks = (props.product as Product & {
+    percentageInspectorStatus?: {
+      blocks?: Array<{ code?: string | number; fixingMessage?: string | null }>;
+    };
+  }).percentageInspectorStatus?.blocks ?? [];
+  const map = new Map<number, string>();
+
+  for (const block of blocks) {
+    const code = Number(block.code);
+    const fixingMessage = (block.fixingMessage ?? '').toString().trim();
+    if (!Number.isNaN(code) && fixingMessage) {
+      map.set(code, fixingMessage);
+    }
+  }
+
+  return map;
+});
 
 const getColor = (hasMissingInformation, hasMissingOptionalInformation) => {
   const STATUS_RED = 1;
@@ -105,6 +133,43 @@ function getInspectorLabel(color) {
   }
 }
 
+function getErrorCode(error: InspectorErrorItem): number {
+  const rawCode = typeof error === 'object' && error !== null
+    ? (error.code ?? error.errorCode ?? 0)
+    : error;
+  const parsed = Number(rawCode);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function normalizeMessage(value: unknown): string | null {
+  const message = (value ?? '').toString().trim();
+  return message || null;
+}
+
+function getFixingMessage(error: InspectorErrorItem): string | null {
+  if (typeof error === 'object' && error !== null) {
+    const directMessage = normalizeMessage(error.fixingMessage)
+      || normalizeMessage(error.message)
+      || normalizeMessage(error.error_message);
+    if (directMessage) {
+      return directMessage;
+    }
+  }
+  return fixingMessageByCode.value.get(getErrorCode(error)) ?? null;
+}
+
+function getErrorTitle(error: InspectorErrorItem): string {
+  return t(`products.products.inspector.errors.${getErrorCode(error)}`);
+}
+
+function getErrorHelp(error: InspectorErrorItem): string {
+  return getFixingMessage(error) || t('products.products.inspector.help.generic');
+}
+
+function getErrorKey(error: InspectorErrorItem, index: number): string {
+  return `${getErrorCode(error)}-${index}`;
+}
+
 const urlMap: Record<number, Url> = {
   // 101: { name: 'products.products.show', params: { id: props.product.id }, query: { tab: 'media' } },
 };
@@ -134,6 +199,8 @@ const tabMap: Record<number, string> = {
   124: 'properties',
   125: 'amazon',
   126: 'amazon',
+  127: 'media',
+  128: 'media',
 };
 
 function setTab(tabName: string) {
@@ -182,31 +249,31 @@ const refreshInspector = async () => {
             </template>
             <template v-else>
             <div class="custom-scrollbar overflow-y-auto max-h-48 space-y-4">
-                <div v-for="errorCode in errors" :key="errorCode" class="rounded-md p-3 my-1 flex items-start justify-between bg-white group" :class="bgColorHoverClass(color)">
+                <div v-for="(errorItem, index) in errors" :key="getErrorKey(errorItem, index)" class="rounded-md p-3 my-1 flex items-start justify-between bg-white group" :class="bgColorHoverClass(color)">
                   <div class="flex items-start">
                     <Icon name="circle-exclamation" class="h-6 w-6" :class="iconColorClass(color)" />
                     <div class="ml-4">
                       <div class="text-sm font-medium" :class="textColorClass(color)">
-                        {{ t(`products.products.inspector.errors.${errorCode}`) }}
+                        {{ getErrorTitle(errorItem) }}
                       </div>
                     <div class="mt-0.5 text-sm hidden group-hover:block" :class="textColorClass(color)">
-                      {{ t(`products.products.inspector.help.${errorCode}`) }}
+                      {{ getErrorHelp(errorItem) }}
                     </div>
                     </div>
                   </div>
-                  <div v-if="urlMap[errorCode] || tabMap[errorCode]" class="mt-4 sm:mt-0 sm:flex-shrink-0">
+                  <div v-if="urlMap[getErrorCode(errorItem)] || tabMap[getErrorCode(errorItem)]" class="mt-4 sm:mt-0 sm:flex-shrink-0">
                     <Button
-                      v-if="urlMap[errorCode]"
+                      v-if="urlMap[getErrorCode(errorItem)]"
                       class="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm border"
                       :class="buttonColorClass(color)"
                     >
-                      <Link :path="urlMap[errorCode]">
+                      <Link :path="urlMap[getErrorCode(errorItem)]">
                         {{ t('shared.button.fix') }}
                       </Link>
                     </Button>
                     <Button
-                      v-else-if="tabMap[errorCode]"
-                      @click="setTab(tabMap[errorCode])"
+                      v-else-if="tabMap[getErrorCode(errorItem)]"
+                      @click="setTab(tabMap[getErrorCode(errorItem)])"
                       class="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm border"
                       :class="buttonColorClass(color)"
                     >

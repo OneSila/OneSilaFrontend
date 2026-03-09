@@ -122,6 +122,14 @@
           "126": {
             "title": "Products with Amazon Remote Issues",
             "description": "Check the Amazon tab for remote issues reported by Amazon and resolve them."
+          },
+          "127": {
+            "title": "Products Missing Required Document Types",
+            "description": "Required document types are missing for one or more assigned marketplaces."
+          },
+          "128": {
+            "title": "Products Missing Optional Document Types",
+            "description": "Optional document types are missing for one or more assigned marketplaces."
           }
         }
       },
@@ -1281,6 +1289,8 @@
           "list": "List",
           "content": "Content",
           "images": "Images",
+          "documents": "Documents",
+          "videos": "Videos",
           "general": "General",
           "amazon": "Amazon",
           "ebay": "eBay",
@@ -1300,6 +1310,44 @@
             "addExisting": "Add existing",
             "moveLeft": "Move image left",
             "moveRight": "Move image right"
+          }
+        },
+        "documents": {
+          "columns": {
+            "upload": "Upload",
+            "document": "Document #{index}"
+          },
+          "labels": {
+            "noDocument": "No document"
+          },
+          "buttons": {
+            "openUploadMenu": "Add documents",
+            "uploadNew": "Upload new",
+            "addExisting": "Add existing",
+            "moveLeft": "Move document left",
+            "moveRight": "Move document right"
+          },
+          "messages": {
+            "inheritedFromDefault": "These documents are currently inherited from the default channel. Upload or add existing files to create a dedicated document gallery for this channel."
+          }
+        },
+        "videos": {
+          "columns": {
+            "upload": "Upload",
+            "video": "Video #{index}"
+          },
+          "labels": {
+            "noVideo": "No video"
+          },
+          "buttons": {
+            "openUploadMenu": "Add videos",
+            "uploadNew": "Upload new",
+            "addExisting": "Add existing",
+            "moveLeft": "Move video left",
+            "moveRight": "Move video right"
+          },
+          "messages": {
+            "inheritedFromDefault": "These videos are currently inherited from the default channel. Upload or add existing videos to create a dedicated video gallery for this channel."
           }
         },
         "content": {
@@ -1343,12 +1391,19 @@
           "optionLabel": "{name} ({rate}%)"
         },
         "media": {
+          "filters": {
+            "all": "All",
+            "images": "Images",
+            "documents": "Documents",
+            "videos": "Videos"
+          },
           "messages": {
             "inheritedFromDefault": "These images are currently inherited from the default channel. Click \"Create gallery\" to create a dedicated gallery for this channel.",
             "colorImageDisclaimer": "Color images are used only for the color configurator and are ignored by integrations."
           },
           "actions": {
-            "createChannelGallery": "Create gallery"
+            "createChannelGallery": "Create gallery",
+            "addMedia": "Add media"
           },
           "sheinGuide": {
             "title": "Shein image order matters",
@@ -1374,7 +1429,10 @@
             "description": "See how your media gallery appears on the selected channel.",
             "mainImageAlt": "Main product image preview",
             "thumbnailAlt": "Gallery thumbnail",
+            "noMedia": "No media available for this product yet.",
             "noImages": "No images available for this product yet.",
+            "noVideos": "No videos available for this product yet.",
+            "noDocuments": "No documents available for this product yet.",
             "unsupported": "Preview unavailable",
             "untitledProduct": "Unnamed product"
           }
@@ -1420,19 +1478,30 @@
           }
         },
         "ebay": {
+          "columns": {
+            "category": "eBay Category · {view}",
+            "storeCategory": "eBay store category"
+          },
           "labels": {
             "categoryId": "ID: {id}"
           },
           "actions": {
             "set": "Set category",
-            "preview": "Preview category"
+            "preview": "Preview category",
+            "setStoreCategory": "Set store category",
+            "previewStoreCategory": "Preview store category"
           },
           "modal": {
             "title": "Select eBay category",
-            "previewTitle": "Category preview"
+            "previewTitle": "Category preview",
+            "storeTitle": "Select eBay store category",
+            "storePreviewTitle": "Store category preview"
           },
           "selectors": {
             "salesChannel": "Sales channel"
+          },
+          "toast": {
+            "storeCategoryNotAvailable": "Store category ID {id} is not available for this eBay sales channel."
           }
         },
         "prices": {
@@ -1547,6 +1616,15 @@
         "categoryMappingInfo": "These entries show each eBay marketplace view; the icon indicates whether a category is mapped for that view.",
         "defaultCategoryTitle": "Default category from product type",
         "defaultCategoryInfo": "Remote ID: {id}",
+        "selectionSlots": {
+          "targetHint": "Selections from the left panel are applied to the highlighted slot.",
+          "mainTitle": "Main category",
+          "secondaryTitle": "Secondary category",
+          "secondaryDisabled": "Select a main category first.",
+          "sameCategoryError": "Primary and secondary eBay categories cannot be the same.",
+          "changeTitle": "Pending changes",
+          "changePattern": "{from} -> {to}"
+        },
         "configuratorPreview": {
           "title": "Configurator attributes",
           "description": "eBay uses these configurator properties to build variations for this category.",
@@ -1558,6 +1636,30 @@
           "placeholder": "Category ID",
           "button": "Load category",
           "invalid": "We couldn't find a category with that ID for this marketplace."
+        },
+        "suggestion": {
+          "title": "Need inspiration?",
+          "description": "Try an eBay suggestion based on the current product name, then pick the closest matching category.",
+          "openButton": "Get suggestion",
+          "placeholder": "Enter a product name",
+          "button": "Suggest",
+          "empty": "No category suggestions found.",
+          "error": "Failed to load eBay category suggestions."
+        },
+        "storeCategories": {
+          "title": "Store categories",
+          "description": "Assign one primary and optional secondary eBay Store category for this sales channel.",
+          "selectSalesChannelPrompt": "Select a marketplace to manage eBay Store categories.",
+          "leafRestriction": "Only leaf store categories can be selected.",
+          "pullButton": "Pull store categories",
+          "pullHint": "Use this to refresh the latest category tree from eBay.",
+          "pullSuccess": "Store categories updated.",
+          "detailsMeta": "Level {level} • Order {order}",
+          "remove": "Remove store categories",
+          "manualEntry": {
+            "description": "Paste an eBay Store category ID to preview it without browsing the tree.",
+            "invalid": "We couldn't find a store category with that ID for this sales channel."
+          }
         }
       },
       "shein": {
@@ -1665,7 +1767,9 @@
           "123": "Some variations are duplicates",
           "124": "Product type rule is not configured for a configurable product",
           "125": "Product has Amazon validation issues",
-          "126": "Product on Amazon has remote issues"
+          "126": "Product on Amazon has remote issues",
+          "127": "Product is missing required document types",
+          "128": "Product is missing optional document types"
         },
         "help": {
           "101": "add at least one image to the product",
@@ -1693,7 +1797,10 @@
           "123": "ensure all variations have a different configuration on their configurable properties",
           "124": "define at least one configurator required item on the product type rule",
           "125": "Review the Amazon tab for validation issues and resolve them",
-          "126": "Check the Amazon tab for remote issues reported by Amazon"
+          "126": "Check the Amazon tab for remote issues reported by Amazon",
+          "127": "upload the required documents in the Media tab to clear the inspector issue",
+          "128": "upload the optional documents in the Media tab if needed",
+          "generic": "open the relevant product section and resolve the missing data"
         },
         "labels": {
           "missingInfo": "Missing Information",
@@ -2604,7 +2711,8 @@
         "recentFiles": "Recent Files",
         "addExistingFiles": "Add existing media",
         "images": "Images",
-        "fileThumbnail": "File thumbnail"
+        "fileThumbnail": "File thumbnail",
+        "sortByCreatedAt": "Sort by created at"
       },
       "alert": {
         "toast": {
@@ -2673,7 +2781,13 @@
         "successfullyDeleted": "Video was successfully deleted!"
       },
       "labels": {
-        "videoUrl": "Video URL"
+        "videoUrl": "Video URL",
+        "title": "Title",
+        "description": "Description"
+      },
+      "placeholders": {
+        "title": "Enter a title",
+        "description": "Add a description"
       },
       "alert": {
         "toast": {
@@ -2687,7 +2801,24 @@
       "upload": "Upload New Documents",
       "uploadDocument": "Upload New Document",
       "labels": {
-        "addDocuments": "Add New Documents"
+        "addDocuments": "Add New Documents",
+        "title": "Title",
+        "description": "Description",
+        "fileUrl": "File URL",
+        "isImage": "Is Image",
+        "isImageReadOnlyHelp": "Auto-detected from the uploaded file and read-only."
+      },
+      "placeholders": {
+        "title": "Enter a title",
+        "description": "Add a description",
+        "documentType": "Select a document type",
+        "documentLanguage": "Select a language"
+      },
+      "filters": {
+        "documentType": "Document type",
+        "documentKind": "Document content",
+        "imageDocuments": "Image documents",
+        "fileDocuments": "File documents"
       },
       "create": {
         "successfullyCreated": "Documents were successfully uploaded!"
@@ -2696,7 +2827,13 @@
         "successfullyDeleted": "Document was successfully deleted!"
       },
       "show": {
-        "title": "Document"
+        "title": "Document",
+        "successfullyUpdated": "Successfully updated the document!",
+        "updateFailed": "Failed to update the document. Please contact the administrators!"
+      },
+      "preview": {
+        "openInNewTab": "Open in new tab",
+        "unavailable": "This document can't be embedded here. Open it in a new tab to view it."
       },
       "alert": {
         "toast": {
@@ -2792,6 +2929,24 @@
       "placeholders": {
         "name": "Name",
         "rate": "Enter rate"
+      }
+    },
+    "documentTypes": {
+      "title": "Document Types",
+      "create": {
+        "title": "Create Document Type"
+      },
+      "edit": {
+        "title": "Edit Document Type"
+      },
+      "labels": {
+        "code": "Code"
+      },
+      "placeholders": {
+        "description": "Enter description"
+      },
+      "actions": {
+        "showDocuments": "Show documents"
       }
     },
     "units": {
@@ -3848,6 +4003,42 @@
           "missingMarketplace": "Marketplace information is missing for this product type.",
           "categoryLookupFailed": "Unable to load the selected eBay category. Please try again.",
           "noSelection": "Select a category before saving."
+        }
+      },
+      "documentTypes": {
+        "title": "Document Types",
+        "editTitle": "Map document type",
+        "labels": {
+          "remoteId": "Remote ID",
+          "translatedName": "Translated Name",
+          "localInstance": "OneSila Document Type",
+          "description": "Description",
+          "requiredCategories": "Required categories",
+          "optionalCategories": "Optional categories"
+        },
+        "help": {
+          "translatedName": "Translated label for this remote document type.",
+          "localInstance": "Select the local document type to map.",
+          "description": "Description provided by the marketplace. You can edit it.",
+          "requiredCategories": "For these categories, this document type is required. If the document is missing, the product inspector turns red.",
+          "optionalCategories": "For these categories, this document type is optional. Missing it will not turn the product inspector red."
+        },
+        "toBeContinued": "To be continued: category mapping UI will be added in a follow-up frontend task.",
+        "count": "{count} item(s)",
+        "categories": {
+          "empty": "No categories selected yet.",
+          "missingTree": "No default eBay category tree found for this sales channel.",
+          "noMarketplaces": "No marketplace views found for this sales channel.",
+          "missingTreeForMarketplace": "No default eBay category tree configured for {marketplace}.",
+          "missingMarketplaceIdForMarketplace": "No Amazon marketplace ID configured for {marketplace}.",
+          "currentMarketplace": "current marketplace",
+          "selectMarketplace": "Select Marketplace",
+          "marketplaceFallback": "Marketplace {index}",
+          "categoryId": "Category ID: {id}",
+          "amazonPickerTitle": "Browse Amazon categories",
+          "ebayPickerTitle": "Browse eBay categories",
+          "sheinPickerTitle": "Browse Shein categories",
+          "outdatedCategoryDetected": "Outdated category detected - DELETE"
         }
       },
       "properties": {

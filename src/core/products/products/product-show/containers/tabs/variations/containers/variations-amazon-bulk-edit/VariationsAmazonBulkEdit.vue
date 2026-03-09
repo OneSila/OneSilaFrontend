@@ -882,11 +882,11 @@ const fetchProductBrowseNodes = async (
       const productId = node?.product?.id;
       const rawViewId = node?.view?.id;
       const resolvedViewId = rawViewId ? (viewKeyById.value[rawViewId] || rawViewId) : null;
-      if (!productId || !resolvedViewId || !node?.recommendedBrowseNodeId) return;
+      if (!productId || !resolvedViewId || !node?.remoteId) return;
       const productMap = map.get(String(productId)) || new Map();
       productMap.set(String(resolvedViewId), {
         id: node.id,
-        remoteId: node.recommendedBrowseNodeId,
+        remoteId: node.remoteId,
       });
       map.set(String(productId), productMap);
     });
@@ -1207,7 +1207,7 @@ const save = async () => {
               variables: {
                 data: {
                   id: currentBrowseNode.id,
-                  recommendedBrowseNodeId: currentBrowseNode.remoteId,
+                  remoteId: currentBrowseNode.remoteId,
                 },
               },
             });
@@ -1219,7 +1219,7 @@ const save = async () => {
                   product: { id: row.variation.id },
                   salesChannel: { id: view.salesChannel.id },
                   view: { id: viewId },
-                  recommendedBrowseNodeId: currentBrowseNode.remoteId,
+                  remoteId: currentBrowseNode.remoteId,
                 },
               },
             });

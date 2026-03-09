@@ -3,6 +3,9 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import { shortenText } from '../../../../../../../shared/utils';
+import { TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO } from '../../../../../../media/files/media';
+
+type MediaTypeFilter = 'ALL' | typeof TYPE_IMAGE | typeof TYPE_VIDEO | typeof TYPE_DOCUMENT;
 
 type MediaItem = {
   id: string;
@@ -22,6 +25,7 @@ const props = defineProps<{
   channelLabel: string;
   defaultLabel: string;
   items: MediaItem[];
+  mediaTypeFilter: MediaTypeFilter;
   isInherited: boolean;
 }>();
 
@@ -66,6 +70,27 @@ const previewTitle = computed(() => {
 const channelDisplay = computed(() => props.channelLabel || props.defaultLabel);
 
 const hasItems = computed(() => orderedItems.value.length > 0);
+const emptyStateMessage = computed(() => {
+  if (props.mediaTypeFilter === TYPE_VIDEO) {
+    return t('products.products.variations.media.preview.noVideos');
+  }
+  if (props.mediaTypeFilter === TYPE_DOCUMENT) {
+    return t('products.products.variations.media.preview.noDocuments');
+  }
+  if (props.mediaTypeFilter === TYPE_IMAGE) {
+    return t('products.products.variations.media.preview.noImages');
+  }
+  return t('products.products.variations.media.preview.noMedia');
+});
+const emptyStateIcon = computed(() => {
+  if (props.mediaTypeFilter === TYPE_VIDEO) {
+    return 'video';
+  }
+  if (props.mediaTypeFilter === TYPE_DOCUMENT) {
+    return 'file-text';
+  }
+  return 'image';
+});
 
 const mediaType = computed(() => activeItem.value?.media?.type || '');
 const imageSource = computed(() => activeItem.value?.media?.imageWebUrl || activeItem.value?.media?.onesilaThumbnailUrl || '');
@@ -136,8 +161,8 @@ const setActiveIndex = (index: number) => {
         </div>
       </div>
       <div v-else class="flex h-64 flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-center">
-        <Icon name="image" class="mb-3 h-8 w-8 text-gray-400" />
-        <p class="text-sm text-gray-500">{{ t('products.products.variations.media.preview.noImages') }}</p>
+        <Icon :name="emptyStateIcon" class="mb-3 h-8 w-8 text-gray-400" />
+        <p class="text-sm text-gray-500">{{ emptyStateMessage }}</p>
       </div>
     </div>
   </div>

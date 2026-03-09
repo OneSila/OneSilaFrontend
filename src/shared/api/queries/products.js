@@ -84,6 +84,7 @@ query Products($first: Int, $last: Int, $after: String, $before: String, $order:
             blocks {
               code
               completed
+              fixingMessage
             }
           }
 

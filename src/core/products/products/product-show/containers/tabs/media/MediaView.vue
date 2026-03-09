@@ -8,6 +8,8 @@ import { SalesChannelTabs } from '../../../../../../../shared/components/molecul
 import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
 import { Product } from '../../../../configs';
 import { Button } from '../../../../../../../shared/components/atoms/button';
+import { Icon } from '../../../../../../../shared/components/atoms/icon';
+import { TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO } from '../../../../../../media/files/media';
 import TabContentTemplate from '../TabContentTemplate.vue';
 import { MediaCreate } from './containers/media-create';
 import { MediaList } from './containers/media-list';
@@ -16,6 +18,7 @@ import ProductMediaPreview from './ProductMediaPreview.vue';
 type MediaListExpose = {
   ensureChannelSpecificSet: () => Promise<boolean>;
 };
+type MediaTypeFilter = 'ALL' | typeof TYPE_IMAGE | typeof TYPE_VIDEO | typeof TYPE_DOCUMENT;
 
 const props = defineProps<{ product: Product }>();
 
@@ -25,15 +28,44 @@ const ids = ref<string[]>([]);
 const refetchNeeded = ref(false);
 const salesChannels = ref<any[]>([]);
 const currentSalesChannel = ref<'default' | string>('default');
-const previewItems = ref<any[]>([]);
+const allPreviewItems = ref<any[]>([]);
 const inheritedFromDefault = ref(false);
 const mediaListRef = ref<MediaListExpose | null>(null);
 const creatingGallery = ref(false);
+const mediaTypeFilter = ref<MediaTypeFilter>('ALL');
 
 const defaultChannelLabel = window.location.hostname;
 const productName = computed(() => (props.product as any)?.name ?? '');
 const isDefaultChannel = computed(() => currentSalesChannel.value === 'default');
 const isReadOnly = computed(() => !isDefaultChannel.value && inheritedFromDefault.value);
+const mediaFilterOptions = computed(() => ([
+  {
+    value: 'ALL' as MediaTypeFilter,
+    icon: 'folder',
+    label: t('products.products.variations.media.filters.all')
+  },
+  {
+    value: TYPE_IMAGE as MediaTypeFilter,
+    icon: 'image',
+    label: t('products.products.variations.media.filters.images')
+  },
+  {
+    value: TYPE_DOCUMENT as MediaTypeFilter,
+    icon: 'file-text',
+    label: t('products.products.variations.media.filters.documents')
+  },
+  {
+    value: TYPE_VIDEO as MediaTypeFilter,
+    icon: 'video',
+    label: t('products.products.variations.media.filters.videos')
+  }
+]));
+const filteredPreviewItems = computed(() => {
+  if (mediaTypeFilter.value === 'ALL') {
+    return allPreviewItems.value;
+  }
+  return allPreviewItems.value.filter((item: any) => item.media?.type === mediaTypeFilter.value);
+});
 
 const cleanHostname = (hostname: string, type: string) => {
   if (!hostname) return '';
@@ -97,7 +129,7 @@ const updateIds = (newIds: string[]) => {
 };
 
 const handleItemsLoaded = ({ items, inherited }: { items: any[]; inherited: boolean }) => {
-  previewItems.value = items;
+  allPreviewItems.value = items;
   inheritedFromDefault.value = inherited;
 };
 
@@ -134,6 +166,21 @@ const handleCreateGallery = async () => {
           :channels="salesChannels"
         />
         <div class="space-y-4">
+          <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            <button
+              v-for="filterOption in mediaFilterOptions"
+              :key="filterOption.value"
+              type="button"
+              class="flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors"
+              :class="mediaTypeFilter === filterOption.value
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-primary/60 hover:text-primary'"
+              @click="mediaTypeFilter = filterOption.value"
+            >
+              <Icon :name="filterOption.icon" class="h-4 w-4" />
+              <span>{{ filterOption.label }}</span>
+            </button>
+          </div>
           <Flex class="items-center justify-end">
             <FlexCell grow></FlexCell>
             <FlexCell v-if="isReadOnly" class="mr-2">
@@ -150,6 +197,7 @@ const handleCreateGallery = async () => {
                 :product="product"
                 :media-ids="ids"
                 :sales-channel-id="currentSalesChannel"
+                :media-type-filter="mediaTypeFilter"
                 :disabled="isReadOnly"
                 @media-added="handleMediaAdded"
               />
@@ -161,6 +209,7 @@ const handleCreateGallery = async () => {
             :refetch-needed="refetchNeeded"
             :sales-channel-id="currentSalesChannel"
             :sales-channel-type="currentSalesChannelType"
+            :media-type-filter="mediaTypeFilter"
             :readonly-mode="isReadOnly"
             @refetched="handleRefetched"
             @update-ids="updateIds"
@@ -172,7 +221,8 @@ const handleCreateGallery = async () => {
           :product-name="productName"
           :channel-label="channelLabel"
           :default-label="defaultChannelLabel"
-          :items="previewItems"
+          :items="filteredPreviewItems"
+          :media-type-filter="mediaTypeFilter"
           :is-inherited="inheritedFromDefault"
         />
       </div>

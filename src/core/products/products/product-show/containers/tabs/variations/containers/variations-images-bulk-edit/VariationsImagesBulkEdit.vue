@@ -36,7 +36,7 @@ import { TextInput } from "../../../../../../../../../shared/components/atoms/in
 import { shortenText } from "../../../../../../../../../shared/utils";
 import { CreateImagesModal } from "../../../../../../../../media/files/containers/create-modals/images-modal";
 import { UploadMediaModal } from "../../../media/containers/upload-media-modal";
-import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK } from "../../../../../../../../media/files/media";
+import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK, TYPE_IMAGE } from "../../../../../../../../media/files/media";
 
 interface VariationImageSlot {
   id: string | null;
@@ -1426,9 +1426,10 @@ defineExpose({ hasUnsavedChanges });
     </Modal>
     <UploadMediaModal
       v-model="selectExistingModalVisible"
-            :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct?.id"
+      :product-id="uploadContext ? variations[uploadContext.rowIndex]?.variation.id : parentProduct?.id"
       :ids="assignedMediaIds"
       :link-on-select="false"
+      :media-type="TYPE_IMAGE"
       :sales-channel-id="currentSalesChannelId || undefined"
       @entries-created="handleExistingSelected"
     />

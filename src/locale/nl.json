@@ -92,6 +92,18 @@
           "title": "",
           "description": ""
         }
+      },
+      "products": {
+        "inspector": {
+          "127": {
+            "title": "",
+            "description": ""
+          },
+          "128": {
+            "title": "",
+            "description": ""
+          }
+        }
       }
     },
     "onboarding": {
@@ -899,6 +911,8 @@
           "editProperties": "Eigenschappen bewerken",
           "editPrices": "Prijzen",
           "images": "Afbeeldingen",
+          "documents": "",
+          "videos": "",
           "general": "",
           "amazon": "",
           "ebay": "",
@@ -930,6 +944,44 @@
           },
           "labels": {
             "noImage": "Geen afbeelding"
+          }
+        },
+        "documents": {
+          "columns": {
+            "upload": "",
+            "document": ""
+          },
+          "labels": {
+            "noDocument": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
+          }
+        },
+        "videos": {
+          "columns": {
+            "upload": "",
+            "video": ""
+          },
+          "labels": {
+            "noVideo": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
           }
         },
         "amazon": {
@@ -973,19 +1025,30 @@
           }
         },
         "ebay": {
+          "columns": {
+            "category": "",
+            "storeCategory": ""
+          },
           "labels": {
             "categoryId": ""
           },
           "actions": {
             "set": "",
-            "preview": ""
+            "preview": "",
+            "setStoreCategory": "",
+            "previewStoreCategory": ""
           },
           "modal": {
             "title": "",
-            "previewTitle": ""
+            "previewTitle": "",
+            "storeTitle": "",
+            "storePreviewTitle": ""
           },
           "selectors": {
             "salesChannel": ""
+          },
+          "toast": {
+            "storeCategoryNotAvailable": ""
           }
         },
         "prices": {
@@ -1018,12 +1081,19 @@
         }
       },
       "media": {
+        "filters": {
+          "all": "",
+          "images": "",
+          "documents": "",
+          "videos": ""
+        },
         "messages": {
           "inheritedFromDefault": "",
           "colorImageDisclaimer": ""
         },
         "actions": {
-          "createChannelGallery": ""
+          "createChannelGallery": "",
+          "addMedia": ""
         },
         "sheinGuide": {
           "title": "",
@@ -1049,7 +1119,10 @@
           "description": "",
           "mainImageAlt": "",
           "thumbnailAlt": "",
+          "noMedia": "",
           "noImages": "",
+          "noVideos": "",
+          "noDocuments": "",
           "unsupported": "",
           "untitledProduct": ""
         }
@@ -1183,6 +1256,21 @@
           "placeholder": "",
           "button": "",
           "invalid": ""
+        },
+        "storeCategories": {
+          "title": "",
+          "description": "",
+          "selectSalesChannelPrompt": "",
+          "leafRestriction": "",
+          "pullButton": "",
+          "pullHint": "",
+          "pullSuccess": "",
+          "detailsMeta": "",
+          "remove": "",
+          "manualEntry": {
+            "description": "",
+            "invalid": ""
+          }
         }
       },
       "ebay": {
@@ -1203,6 +1291,15 @@
         "categoryMappingInfo": "",
         "defaultCategoryTitle": "",
         "defaultCategoryInfo": "",
+        "selectionSlots": {
+          "targetHint": "",
+          "mainTitle": "",
+          "secondaryTitle": "",
+          "secondaryDisabled": "",
+          "sameCategoryError": "",
+          "changeTitle": "",
+          "changePattern": ""
+        },
         "configuratorPreview": {
           "title": "",
           "description": "",
@@ -1214,6 +1311,15 @@
           "placeholder": "",
           "button": "",
           "invalid": ""
+        },
+        "suggestion": {
+          "title": "",
+          "description": "",
+          "openButton": "",
+          "placeholder": "",
+          "button": "",
+          "empty": "",
+          "error": ""
         }
       },
       "shein": {
@@ -1325,7 +1431,9 @@
           "121": "Niet alle variaties hebben alle verplichte informatie ingevuld staan",
           "122": "Niet alle materialen hebben alle verplichte info ingevuld staan",
           "123": "Configureerbaar product heeft duplicate variaties",
-          "124": "Configureerbaar product kon geen product eigenschap regel vinden"
+          "124": "Configureerbaar product kon geen product eigenschap regel vinden",
+          "127": "",
+          "128": ""
         },
         "help": {
           "101": "Voeg op minimaal één afbeelding toe",
@@ -1351,7 +1459,10 @@
           "121": "",
           "122": "",
           "123": "",
-          "124": ""
+          "124": "",
+          "127": "",
+          "128": "",
+          "generic": ""
         },
         "alert": {
           "refreshSuccess": "Inspector is ververst",
@@ -2225,7 +2336,8 @@
         "recentFiles": "Recente Bestanden",
         "addExistingFiles": "Toevoegen van bestaande media",
         "images": "",
-        "fileThumbnail": "Bestandsminiatuur"
+        "fileThumbnail": "Bestandsminiatuur",
+        "sortByCreatedAt": ""
       }
     },
     "images": {
@@ -2286,14 +2398,37 @@
         "successfullyDeleted": "Video verwijderd"
       },
       "labels": {
-        "videoUrl": "Video URL"
+        "videoUrl": "Video URL",
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
       }
     },
     "documents": {
       "title": "Documenten",
       "upload": "Documenten uploaden",
       "labels": {
-        "addDocuments": "Documenten toevoegen"
+        "addDocuments": "Documenten toevoegen",
+        "title": "",
+        "description": "",
+        "fileUrl": "",
+        "isImage": "",
+        "isImageReadOnlyHelp": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": "",
+        "documentType": "",
+        "documentLanguage": ""
+      },
+      "filters": {
+        "documentType": "",
+        "documentKind": "",
+        "imageDocuments": "",
+        "fileDocuments": ""
       },
       "create": {
         "successfullyCreated": "Documenten opgeslagen"
@@ -2303,7 +2438,13 @@
       },
       "uploadDocument": "",
       "show": {
-        "title": ""
+        "title": "",
+        "successfullyUpdated": "",
+        "updateFailed": ""
+      },
+      "preview": {
+        "openInNewTab": "",
+        "unavailable": ""
       }
     }
   },
@@ -2393,6 +2534,24 @@
       "placeholders": {
         "name": "Naam",
         "rate": "Tarief invoegen"
+      }
+    },
+    "documentTypes": {
+      "title": "",
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "labels": {
+        "code": ""
+      },
+      "placeholders": {
+        "description": ""
+      },
+      "actions": {
+        "showDocuments": ""
       }
     },
     "units": {
@@ -3322,6 +3481,42 @@
           "missingMarketplace": "",
           "categoryLookupFailed": "",
           "noSelection": ""
+        }
+      },
+      "documentTypes": {
+        "title": "",
+        "editTitle": "",
+        "labels": {
+          "remoteId": "",
+          "translatedName": "",
+          "localInstance": "",
+          "description": "",
+          "requiredCategories": "",
+          "optionalCategories": ""
+        },
+        "help": {
+          "translatedName": "",
+          "localInstance": "",
+          "description": "",
+          "requiredCategories": "",
+          "optionalCategories": ""
+        },
+        "toBeContinued": "",
+        "count": "",
+        "categories": {
+          "empty": "",
+          "missingTree": "",
+          "noMarketplaces": "",
+          "missingTreeForMarketplace": "",
+          "missingMarketplaceIdForMarketplace": "",
+          "currentMarketplace": "",
+          "selectMarketplace": "",
+          "marketplaceFallback": "",
+          "categoryId": "",
+          "amazonPickerTitle": "",
+          "ebayPickerTitle": "",
+          "sheinPickerTitle": "",
+          "outdatedCategoryDetected": ""
         }
       },
       "propertySelectValues": {

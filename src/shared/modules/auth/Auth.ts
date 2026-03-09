@@ -35,6 +35,7 @@ export const defaultUserPreferences: UserPreferences = {
 export type Company = {
   id: string;
   name: string;
+  language?: string;
   hasAmazonIntegration?: boolean;
   hasEbayIntegration?: boolean;
   hasSheinIntegration?: boolean;

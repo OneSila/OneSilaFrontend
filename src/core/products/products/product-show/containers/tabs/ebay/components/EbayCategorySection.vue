@@ -6,33 +6,39 @@ import { Button } from '../../../../../../../../shared/components/atoms/button';
 import { LocalLoader } from '../../../../../../../../shared/components/atoms/local-loader';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Toast } from '../../../../../../../../shared/modules/toast';
-import { displayApolloError } from '../../../../../../../../shared/utils';
+import { displayApolloError, processGraphQLErrors } from '../../../../../../../../shared/utils';
 import { ebayCategoriesQuery } from '../../../../../../../../shared/api/queries/ebayCategories.js';
 import {
   createEbayProductCategoryMutation,
   updateEbayProductCategoryMutation,
   deleteEbayProductCategoryMutation,
 } from '../../../../../../../../shared/api/mutations/ebayProducts.js';
-
-interface EbayCategoryNode {
-  remoteId: string;
-  name: string;
-  fullName?: string | null;
-  hasChildren: boolean;
-  parentNode?: { remoteId?: string | null } | null;
-  configuratorProperties: string[];
-}
+import EbayCategoryDetails from './EbayCategoryDetails.vue';
+import EbayCategoryDualSelectionPreview from './EbayCategoryDualSelectionPreview.vue';
+import EbayCategorySuggestion from './EbayCategorySuggestion.vue';
+import {
+  mapCategoriesConnection,
+  resolveDefaultCategoryTarget,
+  type EbayCategoryNode,
+  type EbayCategoryTarget,
+} from './ebayCategoryUtils';
 
 const props = defineProps<{
   productId: string | null;
   salesChannelId: string | null;
+  productName?: string | null;
   view: any | null;
-  category: { id: string | null; remoteId: string | null; salesChannelId?: string | null } | null;
+  category: {
+    id: string | null;
+    remoteId: string | null;
+    secondaryCategoryId?: string | null;
+    salesChannelId?: string | null;
+  } | null;
   defaultCategory: { remoteId: string | null; name: string | null } | null;
 }>();
 
 const emit = defineEmits<{
-  (e: 'saved', payload: { id: string; remoteId: string; salesChannelId: string | null }): void;
+  (e: 'saved', payload: { id: string; remoteId: string; secondaryCategoryId: string | null; salesChannelId: string | null }): void;
   (e: 'deleted'): void;
 }>();
 
@@ -42,19 +48,42 @@ const nodes = ref<EbayCategoryNode[]>([]);
 const loadingNodes = ref(false);
 const currentParentId = ref<string | null>(null);
 const pathStack = ref<EbayCategoryNode[]>([]);
-const pendingNode = ref<EbayCategoryNode | null>(null);
-const selectedNode = ref<EbayCategoryNode | null>(null);
+const mainNode = ref<EbayCategoryNode | null>(null);
+const secondaryNode = ref<EbayCategoryNode | null>(null);
+const savedMainNode = ref<EbayCategoryNode | null>(null);
+const savedSecondaryNode = ref<EbayCategoryNode | null>(null);
 const savedRemoteId = ref<string | null>(null);
+const savedSecondaryCategoryId = ref<string | null>(null);
 const productCategoryId = ref<string | null>(null);
+const selectedTarget = ref<EbayCategoryTarget>('main');
 const search = ref('');
 const loadingSelected = ref(false);
 const saving = ref(false);
 const manualCategoryInput = ref('');
 const manualSelectionLoading = ref(false);
 const manualSelectionError = ref<string | null>(null);
+const slotErrors = ref<{ main: string | null; secondary: string | null }>({
+  main: null,
+  secondary: null,
+});
 
 const defaultTreeId = computed(() => props.view?.defaultCategoryTreeId || null);
 const manualCategoryId = computed(() => manualCategoryInput.value.trim());
+const mainRemoteId = computed(() => mainNode.value?.remoteId || null);
+const secondaryRemoteId = computed(() => secondaryNode.value?.remoteId || null);
+const secondaryDisabled = computed(() => !mainRemoteId.value);
+const duplicateCategoryErrorText = computed(
+  () => t('products.products.ebay.selectionSlots.sameCategoryError'),
+);
+const hasDuplicateCategorySelection = computed(
+  () => Boolean(mainRemoteId.value && secondaryRemoteId.value && mainRemoteId.value === secondaryRemoteId.value),
+);
+const mainValidationError = computed(
+  () => slotErrors.value.main || (hasDuplicateCategorySelection.value ? duplicateCategoryErrorText.value : null),
+);
+const secondaryValidationError = computed(
+  () => slotErrors.value.secondary || (hasDuplicateCategorySelection.value ? duplicateCategoryErrorText.value : null),
+);
 
 const filteredNodes = computed(() =>
   nodes.value.filter((node) =>
@@ -63,15 +92,15 @@ const filteredNodes = computed(() =>
 );
 
 const hasUnsavedChanges = computed(
-  () => pendingNode.value !== null && pendingNode.value.remoteId !== savedRemoteId.value,
+  () => mainRemoteId.value !== savedRemoteId.value || secondaryRemoteId.value !== savedSecondaryCategoryId.value,
 );
 
-const selectedConfiguratorProperties = computed(
-  () => selectedNode.value?.configuratorProperties ?? [],
+const pendingActiveCategoryNode = computed(() =>
+  selectedTarget.value === 'secondary' ? secondaryNode.value : mainNode.value,
 );
 
-const pendingConfiguratorProperties = computed(
-  () => pendingNode.value?.configuratorProperties ?? [],
+const currentActiveCategoryNode = computed(() =>
+  selectedTarget.value === 'secondary' ? savedSecondaryNode.value : savedMainNode.value,
 );
 
 const resetNavigation = () => {
@@ -80,40 +109,18 @@ const resetNavigation = () => {
   search.value = '';
 };
 
-const parseConfiguratorProperties = (value: unknown): string[] => {
-  if (!value) return [];
-  if (Array.isArray(value)) {
-    return value.filter((item) => typeof item === 'string');
-  }
-  if (typeof value === 'string') {
-    try {
-      const parsed = JSON.parse(value);
-      if (Array.isArray(parsed)) {
-        return parsed.filter((item) => typeof item === 'string');
-      }
-    } catch (error) {
-      /* ignore malformed JSON */
-    }
-  }
-  return [];
+const clearSlotErrors = () => {
+  slotErrors.value = { main: null, secondary: null };
 };
 
-const normalizeCategoryNode = (node: any): EbayCategoryNode => ({
-  remoteId: node?.remoteId ?? '',
-  name: node?.name ?? '',
-  fullName: node?.fullName ?? null,
-  hasChildren: Boolean(node?.hasChildren),
-  parentNode: node?.parentNode ?? null,
-  configuratorProperties: parseConfiguratorProperties(node?.configuratorProperties),
+const createFallbackNode = (remoteId: string): EbayCategoryNode => ({
+  remoteId,
+  name: remoteId,
+  fullName: remoteId,
+  hasChildren: false,
+  parentNode: null,
+  configuratorProperties: [],
 });
-
-const mapCategoriesConnection = (connection: any): EbayCategoryNode[] => {
-  if (!connection) return [];
-  const list = Array.isArray(connection)
-    ? connection
-    : connection.edges?.map((edge: any) => edge.node) || [];
-  return list.map((item: any) => normalizeCategoryNode(item));
-};
 
 const fetchNodes = async () => {
   if (!defaultTreeId.value) {
@@ -166,19 +173,39 @@ const fetchCategoryDetails = async (remoteId: string) => {
   }
 };
 
+const resolveNodeByRemoteId = async (remoteId: string) => {
+  if (!remoteId) return null;
+  const category = await fetchCategoryDetails(remoteId);
+  return category || createFallbackNode(remoteId);
+};
+
 const fetchSelected = async () => {
   savedRemoteId.value = props.category?.remoteId || null;
+  savedSecondaryCategoryId.value = props.category?.secondaryCategoryId || null;
   productCategoryId.value = props.category?.id || null;
-  pendingNode.value = null;
 
-  if (!savedRemoteId.value || !defaultTreeId.value) {
-    selectedNode.value = null;
+  if (!savedRemoteId.value && !savedSecondaryCategoryId.value) {
+    mainNode.value = null;
+    secondaryNode.value = null;
+    savedMainNode.value = null;
+    savedSecondaryNode.value = null;
+    clearSlotErrors();
+    selectedTarget.value = resolveDefaultCategoryTarget(null, null);
     return;
   }
 
   loadingSelected.value = true;
   try {
-    selectedNode.value = await fetchCategoryDetails(savedRemoteId.value);
+    const [main, secondary] = await Promise.all([
+      savedRemoteId.value ? resolveNodeByRemoteId(savedRemoteId.value) : null,
+      savedSecondaryCategoryId.value ? resolveNodeByRemoteId(savedSecondaryCategoryId.value) : null,
+    ]);
+    mainNode.value = main;
+    secondaryNode.value = secondary;
+    savedMainNode.value = main;
+    savedSecondaryNode.value = secondary;
+    clearSlotErrors();
+    selectedTarget.value = resolveDefaultCategoryTarget(savedRemoteId.value, savedSecondaryCategoryId.value);
   } finally {
     loadingSelected.value = false;
   }
@@ -187,7 +214,7 @@ const fetchSelected = async () => {
 watch(
   () => props.category,
   () => {
-    fetchSelected();
+    void fetchSelected();
   },
   { immediate: true },
 );
@@ -196,7 +223,7 @@ watch(
   () => props.view?.id,
   () => {
     resetNavigation();
-    fetchSelected();
+    void fetchSelected();
     manualCategoryInput.value = '';
     manualSelectionError.value = null;
   },
@@ -206,14 +233,14 @@ watch(
   () => defaultTreeId.value,
   () => {
     resetNavigation();
-    fetchSelected();
+    void fetchSelected();
   },
 );
 
 watch(
   () => [defaultTreeId.value, currentParentId.value],
   () => {
-    fetchNodes();
+    void fetchNodes();
   },
   { immediate: true },
 );
@@ -222,6 +249,25 @@ watch(
   manualCategoryInput,
   () => {
     manualSelectionError.value = null;
+  },
+);
+
+watch(
+  [mainRemoteId, secondaryRemoteId],
+  ([mainValue]) => {
+    clearSlotErrors();
+    if (!mainValue && selectedTarget.value === 'secondary') {
+      selectedTarget.value = 'main';
+    }
+  },
+);
+
+watch(
+  mainRemoteId,
+  (mainValue) => {
+    if (!mainValue && secondaryNode.value) {
+      secondaryNode.value = null;
+    }
   },
 );
 
@@ -252,36 +298,70 @@ const goBack = () => {
   goToLevel(target >= 0 ? target : null);
 };
 
+const setSelectedTarget = (target: EbayCategoryTarget) => {
+  clearSlotErrors();
+  if (target === 'secondary' && secondaryDisabled.value) {
+    Toast.info(t('products.products.ebay.selectionSlots.secondaryDisabled'));
+    return;
+  }
+  selectedTarget.value = target;
+};
+
+const applySelectedNode = (node: EbayCategoryNode) => {
+  clearSlotErrors();
+  if (selectedTarget.value === 'secondary') {
+    if (secondaryDisabled.value) {
+      Toast.info(t('products.products.ebay.selectionSlots.secondaryDisabled'));
+      mainNode.value = node;
+      selectedTarget.value = 'secondary';
+      return;
+    }
+    secondaryNode.value = node;
+    return;
+  }
+  const hadMainSelection = Boolean(mainNode.value?.remoteId);
+  const hadSecondarySelection = Boolean(secondaryNode.value?.remoteId);
+  mainNode.value = node;
+  if (!hadMainSelection && !hadSecondarySelection) {
+    selectedTarget.value = 'secondary';
+  }
+};
+
+const clearSecondarySelection = () => {
+  clearSlotErrors();
+  secondaryNode.value = null;
+};
+
 const selectNode = (node: EbayCategoryNode) => {
   if (node.hasChildren) {
     Toast.info(t('products.products.ebay.leafRestriction'));
     return;
   }
-  pendingNode.value = node;
+  applySelectedNode(node);
 };
 
 const cancelSelection = () => {
-  pendingNode.value = null;
-};
-
-const copyCategoryId = async (remoteId?: string | null) => {
-  if (!remoteId) return;
-  try {
-    await navigator.clipboard.writeText(remoteId);
-    Toast.success(t('shared.alert.toast.clipboardSuccess'));
-  } catch (error) {
-    Toast.error(t('shared.alert.toast.clipboardFail'));
-  }
+  void fetchSelected();
 };
 
 const saveSelection = async () => {
-  if (!pendingNode.value || !props.productId || !props.salesChannelId || !props.view?.id) {
+  if (!mainRemoteId.value || !props.productId || !props.salesChannelId || !props.view?.id) {
+    return;
+  }
+  if (hasDuplicateCategorySelection.value) {
+    slotErrors.value = {
+      main: duplicateCategoryErrorText.value,
+      secondary: duplicateCategoryErrorText.value,
+    };
     return;
   }
 
   saving.value = true;
+  clearSlotErrors();
   try {
-    const remoteId = pendingNode.value.remoteId;
+    const remoteId = mainRemoteId.value;
+    const secondaryCategoryId = secondaryRemoteId.value;
+
     if (productCategoryId.value) {
       await apolloClient.mutate({
         mutation: updateEbayProductCategoryMutation,
@@ -289,6 +369,7 @@ const saveSelection = async () => {
           data: {
             id: productCategoryId.value,
             remoteId,
+            secondaryCategoryId,
           },
         },
       });
@@ -301,6 +382,7 @@ const saveSelection = async () => {
             salesChannel: { id: props.salesChannelId },
             view: { id: props.view.id },
             remoteId,
+            secondaryCategoryId,
           },
         },
       });
@@ -308,17 +390,33 @@ const saveSelection = async () => {
     }
 
     savedRemoteId.value = remoteId;
-    selectedNode.value = pendingNode.value;
-    pendingNode.value = null;
+    savedSecondaryCategoryId.value = secondaryCategoryId;
+    savedMainNode.value = mainNode.value;
+    savedSecondaryNode.value = secondaryNode.value;
+    selectedTarget.value = resolveDefaultCategoryTarget(savedRemoteId.value, savedSecondaryCategoryId.value);
     Toast.success(t('products.products.ebay.categorySaved'));
     if (productCategoryId.value) {
       emit('saved', {
         id: productCategoryId.value,
         remoteId,
+        secondaryCategoryId,
         salesChannelId: props.salesChannelId || null,
       });
     }
   } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t) as Record<string, any>;
+    const mappedMainError = validationErrors.remoteId || null;
+    const mappedSecondaryError = validationErrors.secondaryCategoryId || null;
+    const allMessage = validationErrors.__all__ ? String(validationErrors.__all__) : '';
+    const sameCategoryInAll = allMessage.toLowerCase().includes('primary and secondary ebay categories cannot be the same');
+
+    if (mappedMainError || mappedSecondaryError || sameCategoryInAll) {
+      slotErrors.value = {
+        main: mappedMainError || (sameCategoryInAll ? duplicateCategoryErrorText.value : null),
+        secondary: mappedSecondaryError || (sameCategoryInAll ? duplicateCategoryErrorText.value : null),
+      };
+      return;
+    }
     displayApolloError(error);
   } finally {
     saving.value = false;
@@ -338,8 +436,13 @@ const removeSelection = async () => {
     });
     productCategoryId.value = null;
     savedRemoteId.value = null;
-    selectedNode.value = null;
-    pendingNode.value = null;
+    savedSecondaryCategoryId.value = null;
+    savedMainNode.value = null;
+    savedSecondaryNode.value = null;
+    mainNode.value = null;
+    secondaryNode.value = null;
+    clearSlotErrors();
+    selectedTarget.value = 'main';
     Toast.success(t('products.products.ebay.categoryRemoved'));
     emit('deleted');
   } catch (error) {
@@ -361,10 +464,24 @@ const setManualCategory = async () => {
       manualSelectionError.value = t('products.products.ebay.manualEntry.invalid');
       return;
     }
-    pendingNode.value = node;
+    applySelectedNode(node);
   } finally {
     manualSelectionLoading.value = false;
   }
+};
+
+const handleSuggestedCategory = async (categoryId: string) => {
+  if (!categoryId) {
+    return;
+  }
+
+  const node = await fetchCategoryDetails(categoryId);
+  if (!node) {
+    Toast.error(t('products.products.ebay.manualEntry.invalid'));
+    return;
+  }
+
+  applySelectedNode(node);
 };
 
 const hasView = computed(() => Boolean(props.view));
@@ -480,131 +597,73 @@ defineExpose({ hasUnsavedChanges });
               {{ manualSelectionError }}
             </p>
           </div>
+
+          <EbayCategorySuggestion
+            :marketplace-id="view?.id || null"
+            :name="productName || null"
+            @select="handleSuggestedCategory"
+          />
         </div>
 
         <div class="lg:w-1/2 space-y-4">
-          <div>
-            <h5 class="font-semibold text-sm mb-1">
+          <div class="min-h-[56px] border rounded p-3 bg-white">
+            <div v-if="loadingSelected">
+              <LocalLoader :loading="true" />
+            </div>
+            <EbayCategoryDualSelectionPreview
+              v-else
+              :main-category="mainNode"
+              :secondary-category="secondaryNode"
+              :previous-main-category="savedMainNode"
+              :previous-secondary-category="savedSecondaryNode"
+              :main-error="mainValidationError"
+              :secondary-error="secondaryValidationError"
+              :default-category="defaultCategory"
+              :selected-target="selectedTarget"
+              :secondary-disabled="secondaryDisabled"
+              @target-change="setSelectedTarget"
+              @clear-secondary="clearSecondarySelection"
+            />
+          </div>
+
+          <div class="border rounded p-3 bg-white">
+            <h6 class="font-semibold text-sm mb-2">
               {{ t('products.products.ebay.currentSelection') }}
-            </h5>
-            <div class="min-h-[56px] border rounded p-3 bg-white">
-              <div v-if="loadingSelected">
-                <LocalLoader :loading="true" />
-              </div>
-              <div v-else-if="selectedNode">
-                <div class="text-sm font-medium">{{ selectedNode.fullName || selectedNode.name }}</div>
-                <div class="text-xs text-gray-500 flex items-center gap-2">
-                  <span>{{ selectedNode.remoteId }}</span>
-                  <button
-                    class="p-1 rounded hover:bg-gray-100"
-                    type="button"
-                    @click="copyCategoryId(selectedNode.remoteId)"
-                  >
-                    <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
-                  </button>
-                </div>
-                <div class="mt-3">
-                  <h6 class="font-semibold text-xs text-gray-700 mb-1">
-                    {{ t('products.products.ebay.configuratorPreview.title') }}
-                  </h6>
-                  <p class="text-xs text-gray-500 mb-2">
-                    {{ t('products.products.ebay.configuratorPreview.description') }}
-                  </p>
-                  <ul v-if="selectedConfiguratorProperties.length" class="space-y-1">
-                    <li
-                      v-for="item in selectedConfiguratorProperties"
-                      :key="item"
-                      class="flex items-center gap-2 text-xs text-gray-700"
-                    >
-                      <Icon name="circle-check" class="w-3 h-3 text-emerald-500" />
-                      <span>{{ item }}</span>
-                    </li>
-                  </ul>
-                  <div v-else class="text-xs text-gray-500">
-                    {{ t('products.products.ebay.configuratorPreview.empty') }}
-                  </div>
-                </div>
-              </div>
-              <div v-else>
-                <div
-                  v-if="defaultCategory?.remoteId"
-                  class="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700"
-                >
-                  <div class="font-semibold text-gray-900 mb-1 flex items-center gap-2">
-                    <Icon name="folder" class="w-4 h-4 text-gray-500" />
-                    {{ t('products.products.ebay.defaultCategoryTitle') }}
-                  </div>
-                  <div class="text-sm">
-                    {{ defaultCategory.name || defaultCategory.remoteId }}
-                  </div>
-                  <div class="text-xs text-gray-500 mt-1 flex items-center gap-2">
-                    <span>
-                      {{ t('products.products.ebay.defaultCategoryInfo', { id: defaultCategory.remoteId }) }}
-                    </span>
-                    <button
-                      class="p-1 rounded hover:bg-gray-100"
-                      type="button"
-                      @click="copyCategoryId(defaultCategory.remoteId)"
-                    >
-                      <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
-                    </button>
-                  </div>
-                </div>
-                <div v-else class="text-sm text-gray-500">
-                  {{ t('products.products.ebay.noSelection') }}
-                </div>
-              </div>
+            </h6>
+            <EbayCategoryDetails v-if="currentActiveCategoryNode" :category="currentActiveCategoryNode" />
+            <div v-else class="text-sm text-gray-500">
+              {{ t('products.products.ebay.noSelection') }}
             </div>
           </div>
 
-          <div v-if="pendingNode" class="border rounded p-3 bg-white">
-            <h6 class="font-semibold text-sm mb-1">
+          <div class="border rounded p-3 bg-white">
+            <h6 class="font-semibold text-sm mb-2">
               {{ t('products.products.ebay.pendingSelection') }}
             </h6>
-            <div class="text-sm font-medium">{{ pendingNode.fullName || pendingNode.name }}</div>
-            <div class="text-xs text-gray-500 flex items-center gap-2">
-              <span>{{ pendingNode.remoteId }}</span>
-              <button
-                class="p-1 rounded hover:bg-gray-100"
-                type="button"
-                @click="copyCategoryId(pendingNode.remoteId)"
-              >
-                <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
-              </button>
+            <EbayCategoryDetails
+              v-if="hasUnsavedChanges && pendingActiveCategoryNode"
+              :category="pendingActiveCategoryNode"
+            />
+            <div v-else class="text-sm text-gray-500">
+              {{ t('products.products.ebay.noSelection') }}
             </div>
-            <div class="mt-3">
-              <h6 class="font-semibold text-xs text-gray-700 mb-1">
-                {{ t('products.products.ebay.configuratorPreview.title') }}
-              </h6>
-              <p class="text-xs text-gray-500 mb-2">
-                {{ t('products.products.ebay.configuratorPreview.description') }}
-              </p>
-              <ul v-if="pendingConfiguratorProperties.length" class="space-y-1">
-                <li
-                  v-for="item in pendingConfiguratorProperties"
-                  :key="item"
-                  class="flex items-center gap-2 text-xs text-gray-700"
-                >
-                  <Icon name="circle-check" class="w-3 h-3 text-emerald-500" />
-                  <span>{{ item }}</span>
-                </li>
-              </ul>
-              <div v-else class="text-xs text-gray-500">
-                {{ t('products.products.ebay.configuratorPreview.empty') }}
-              </div>
-            </div>
-            <div class="mt-3 flex gap-2">
-              <Button
-                class="btn btn-sm btn-primary"
-                :disabled="saving"
-                @click="saveSelection"
-              >
-                {{ t('shared.button.save') }}
-              </Button>
-              <Button class="btn btn-sm btn-outline-dark" :disabled="saving" @click="cancelSelection">
-                {{ t('shared.button.cancel') }}
-              </Button>
-            </div>
+          </div>
+
+          <div class="mt-3 flex gap-2">
+            <Button
+              class="btn btn-sm btn-primary"
+              :disabled="saving || !hasUnsavedChanges || !mainRemoteId"
+              @click="saveSelection"
+            >
+              {{ t('shared.button.save') }}
+            </Button>
+            <Button
+              class="btn btn-sm btn-outline-dark"
+              :disabled="saving || !hasUnsavedChanges"
+              @click="cancelSelection"
+            >
+              {{ t('shared.button.cancel') }}
+            </Button>
           </div>
 
           <div v-if="productCategoryId" class="flex gap-2">

@@ -254,6 +254,18 @@
           "title": "",
           "description": ""
         }
+      },
+      "products": {
+        "inspector": {
+          "127": {
+            "title": "",
+            "description": ""
+          },
+          "128": {
+            "title": "",
+            "description": ""
+          }
+        }
       }
     }
   },
@@ -508,6 +520,15 @@
         },
         "actions": {
           "bulkRefresh": ""
+        },
+        "errors": {
+          "127": "",
+          "128": ""
+        },
+        "help": {
+          "127": "",
+          "128": "",
+          "generic": ""
         }
       },
       "duplicateModal": {
@@ -528,6 +549,8 @@
         "tabs": {
           "list": "Liste",
           "images": "Images",
+          "documents": "",
+          "videos": "",
           "general": "",
           "amazon": "",
           "ebay": "",
@@ -539,6 +562,44 @@
           },
           "labels": {
             "noImage": "Aucune image"
+          }
+        },
+        "documents": {
+          "columns": {
+            "upload": "",
+            "document": ""
+          },
+          "labels": {
+            "noDocument": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
+          }
+        },
+        "videos": {
+          "columns": {
+            "upload": "",
+            "video": ""
+          },
+          "labels": {
+            "noVideo": ""
+          },
+          "buttons": {
+            "openUploadMenu": "",
+            "uploadNew": "",
+            "addExisting": "",
+            "moveLeft": "",
+            "moveRight": ""
+          },
+          "messages": {
+            "inheritedFromDefault": ""
           }
         },
         "amazon": {
@@ -582,19 +643,30 @@
           }
         },
         "ebay": {
+          "columns": {
+            "category": "",
+            "storeCategory": ""
+          },
           "labels": {
             "categoryId": ""
           },
           "actions": {
             "set": "",
-            "preview": ""
+            "preview": "",
+            "setStoreCategory": "",
+            "previewStoreCategory": ""
           },
           "modal": {
             "title": "",
-            "previewTitle": ""
+            "previewTitle": "",
+            "storeTitle": "",
+            "storePreviewTitle": ""
           },
           "selectors": {
             "salesChannel": ""
+          },
+          "toast": {
+            "storeCategoryNotAvailable": ""
           }
         },
         "general": {
@@ -636,12 +708,19 @@
         }
       },
       "media": {
+        "filters": {
+          "all": "",
+          "images": "",
+          "documents": "",
+          "videos": ""
+        },
         "messages": {
           "inheritedFromDefault": "",
           "colorImageDisclaimer": ""
         },
         "actions": {
-          "createChannelGallery": ""
+          "createChannelGallery": "",
+          "addMedia": ""
         },
         "sheinGuide": {
           "title": "",
@@ -667,7 +746,10 @@
           "description": "",
           "mainImageAlt": "",
           "thumbnailAlt": "",
+          "noMedia": "",
           "noImages": "",
+          "noVideos": "",
+          "noDocuments": "",
           "unsupported": "",
           "untitledProduct": ""
         }
@@ -824,6 +906,15 @@
         "categoryMappingInfo": "",
         "defaultCategoryTitle": "",
         "defaultCategoryInfo": "",
+        "selectionSlots": {
+          "targetHint": "",
+          "mainTitle": "",
+          "secondaryTitle": "",
+          "secondaryDisabled": "",
+          "sameCategoryError": "",
+          "changeTitle": "",
+          "changePattern": ""
+        },
         "configuratorPreview": {
           "title": "",
           "description": "",
@@ -835,6 +926,30 @@
           "placeholder": "",
           "button": "",
           "invalid": ""
+        },
+        "suggestion": {
+          "title": "",
+          "description": "",
+          "openButton": "",
+          "placeholder": "",
+          "button": "",
+          "empty": "",
+          "error": ""
+        },
+        "storeCategories": {
+          "title": "",
+          "description": "",
+          "selectSalesChannelPrompt": "",
+          "leafRestriction": "",
+          "pullButton": "",
+          "pullHint": "",
+          "pullSuccess": "",
+          "detailsMeta": "",
+          "remove": "",
+          "manualEntry": {
+            "description": "",
+            "invalid": ""
+          }
         }
       },
       "shein": {
@@ -1506,6 +1621,42 @@
           "noSelection": ""
         }
       },
+      "documentTypes": {
+        "title": "",
+        "editTitle": "",
+        "labels": {
+          "remoteId": "",
+          "translatedName": "",
+          "localInstance": "",
+          "description": "",
+          "requiredCategories": "",
+          "optionalCategories": ""
+        },
+        "help": {
+          "translatedName": "",
+          "localInstance": "",
+          "description": "",
+          "requiredCategories": "",
+          "optionalCategories": ""
+        },
+        "toBeContinued": "",
+        "count": "",
+        "categories": {
+          "empty": "",
+          "missingTree": "",
+          "noMarketplaces": "",
+          "missingTreeForMarketplace": "",
+          "missingMarketplaceIdForMarketplace": "",
+          "currentMarketplace": "",
+          "selectMarketplace": "",
+          "marketplaceFallback": "",
+          "categoryId": "",
+          "amazonPickerTitle": "",
+          "ebayPickerTitle": "",
+          "sheinPickerTitle": "",
+          "outdatedCategoryDetected": ""
+        }
+      },
       "tabs": {
         "reports": "Rapports"
       },
@@ -1820,9 +1971,49 @@
         }
       }
     },
+    "videos": {
+      "labels": {
+        "title": "",
+        "description": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": ""
+      }
+    },
     "media": {
       "labels": {
-        "fileThumbnail": "Vignette du fichier"
+        "fileThumbnail": "Vignette du fichier",
+        "sortByCreatedAt": ""
+      }
+    },
+    "documents": {
+      "labels": {
+        "title": "",
+        "description": "",
+        "fileUrl": "",
+        "isImage": "",
+        "isImageReadOnlyHelp": ""
+      },
+      "placeholders": {
+        "title": "",
+        "description": "",
+        "documentType": "",
+        "documentLanguage": ""
+      },
+      "filters": {
+        "documentType": "",
+        "documentKind": "",
+        "imageDocuments": "",
+        "fileDocuments": ""
+      },
+      "show": {
+        "successfullyUpdated": "",
+        "updateFailed": ""
+      },
+      "preview": {
+        "openInNewTab": "",
+        "unavailable": ""
       }
     }
   },
@@ -1905,6 +2096,24 @@
     }
   },
   "settings": {
+    "documentTypes": {
+      "title": "",
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "labels": {
+        "code": ""
+      },
+      "placeholders": {
+        "description": ""
+      },
+      "actions": {
+        "showDocuments": ""
+      }
+    },
     "chatGptProductFeed": {
       "title": "",
       "form": {

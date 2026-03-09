@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { Card } from '../../../../shared/components/atoms/card';
 import { Icon } from '../../../../shared/components/atoms/icon';
 import { Image } from "../../../../shared/components/atoms/image";
@@ -20,6 +20,9 @@ import { SweetAlertOptions } from 'sweetalert2';
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../../shared/modules/toast";
 import { Checkbox } from "../../../../shared/components/atoms/checkbox";
+import { documentTypesQuerySelector } from "../../../../shared/api/queries/documentTypes.js";
+import { companyLanguagesQuery } from "../../../../shared/api/queries/languages.js";
+import PreviewDocument from "./PreviewDocument.vue";
 
 const { t } = useI18n();
 const props = defineProps<{
@@ -31,6 +34,8 @@ const props = defineProps<{
   refetchNeeded?: boolean;
   assignImages?: boolean;
   ids?: any[]
+  fixedMediaType?: string | null;
+  fixedFilter?: Record<string, any> | null;
   bulkDeleteMutation?: any;
   bulkDeleteSuccessAlert?: string;
   bulkDeleteErrorAlert?: string;
@@ -65,11 +70,53 @@ const updateSelectAll = (value: boolean, items: any[]) => {
 
 const limit = props.searchConfig.limitPerPage ?? defaultSearchConfigVals.limitPerPage;
 const localSearch = ref('');
+const ALL_MEDIA_TYPES = 'ALL';
+const localMediaType = ref<string>(props.fixedMediaType || ALL_MEDIA_TYPES);
 const localImageType = ref<string | null>(null);
+const localDocumentType = ref<string | null>(null);
+const localDocumentLanguage = ref<string | null>(null);
+const ALL_DOCUMENT_IMAGE_FILTER = 'ALL';
+const localDocumentImageFilter = ref<string>(ALL_DOCUMENT_IMAGE_FILTER);
+const localCreatedAtSort = ref<'ASC' | 'DESC' | null>(null);
+const documentTypeOptions = ref<{ label: string; value: string }[]>([]);
+const documentLanguageOptions = ref<{ label: string; value: string }[]>([]);
+const previewModalVisible = ref(false);
+const previewDocumentUrl = ref<string | null>(null);
+const previewDocumentName = ref<string>('');
 const firstLocal = ref(limit);
 const lastLocal = ref<number | null>(null);
 const beforeLocal = ref<string | null>(null);
 const afterLocal = ref<string | null>(null);
+const isMediaTypeLocked = computed(() => Boolean(props.fixedMediaType));
+const resolvedMediaTypeFilter = computed(() => {
+  if (props.fixedMediaType) {
+    return props.fixedMediaType;
+  }
+  return localMediaType.value === ALL_MEDIA_TYPES ? null : localMediaType.value;
+});
+const showImageTypeFilter = computed(() => resolvedMediaTypeFilter.value === TYPE_IMAGE);
+const showDocumentFilters = computed(() => resolvedMediaTypeFilter.value === TYPE_DOCUMENT);
+const mediaTypeOptions = computed(() => {
+  const allOptions = [
+    { label: t('products.products.variations.media.filters.all'), value: ALL_MEDIA_TYPES },
+    { label: t('media.images.title'), value: TYPE_IMAGE },
+    { label: t('media.documents.title'), value: TYPE_DOCUMENT },
+    { label: t('media.videos.title'), value: TYPE_VIDEO },
+  ];
+  if (!isMediaTypeLocked.value) {
+    return allOptions;
+  }
+  return allOptions.filter((option) => option.value === props.fixedMediaType);
+});
+const createdAtSortOptions = computed(() => ([
+  { label: t('shared.sort.newest'), value: 'DESC' as const },
+  { label: t('shared.sort.oldest'), value: 'ASC' as const },
+]));
+const documentImageFilterOptions = computed(() => ([
+  { label: t('products.products.variations.media.filters.all'), value: ALL_DOCUMENT_IMAGE_FILTER },
+  { label: t('media.documents.filters.imageDocuments'), value: 'true' },
+  { label: t('media.documents.filters.fileDocuments'), value: 'false' },
+]));
 
 const handleLocalPagination = (nQ) => {
   if (!props.assignImages) return;
@@ -97,18 +144,51 @@ const handleLocalPagination = (nQ) => {
   }
 };
 
-watch(localSearch, () => {
+const resetLocalPagination = () => {
   firstLocal.value = limit;
   lastLocal.value = null;
   beforeLocal.value = null;
   afterLocal.value = null;
+};
+
+watch(localSearch, () => {
+  resetLocalPagination();
 });
 
 watch(localImageType, () => {
-  firstLocal.value = limit;
-  lastLocal.value = null;
-  beforeLocal.value = null;
-  afterLocal.value = null;
+  resetLocalPagination();
+});
+
+watch(localDocumentType, () => {
+  resetLocalPagination();
+});
+
+watch(localDocumentLanguage, () => {
+  resetLocalPagination();
+});
+
+watch(localDocumentImageFilter, () => {
+  resetLocalPagination();
+});
+
+watch(localCreatedAtSort, () => {
+  resetLocalPagination();
+});
+
+watch(() => props.fixedMediaType, (newValue) => {
+  localMediaType.value = newValue || ALL_MEDIA_TYPES;
+});
+
+watch(localMediaType, (newValue) => {
+  if (newValue !== TYPE_IMAGE) {
+    localImageType.value = null;
+  }
+  if (newValue !== TYPE_DOCUMENT) {
+    localDocumentType.value = null;
+    localDocumentLanguage.value = null;
+    localDocumentImageFilter.value = ALL_DOCUMENT_IMAGE_FILTER;
+  }
+  resetLocalPagination();
 });
 
 const imageTypeOptions = [
@@ -116,6 +196,77 @@ const imageTypeOptions = [
   { label: t('media.images.labels.moodShot'), value: IMAGE_TYPE_MOOD },
   { label: t('media.images.labels.colorShot'), value: IMAGE_TYPE_COLOR }
 ];
+
+const loadDocumentTypeOptions = async () => {
+  if (!props.assignImages) {
+    return;
+  }
+  try {
+    const { data } = await apolloClient.query({
+      query: documentTypesQuerySelector,
+      variables: { first: 100 },
+      fetchPolicy: 'cache-first',
+    });
+    documentTypeOptions.value =
+      data?.documentTypes?.edges?.map((edge: any) => ({
+        label: edge.node.name,
+        value: edge.node.id
+      })) || [];
+  } catch (error) {
+    documentTypeOptions.value = [];
+  }
+};
+
+const loadDocumentLanguageOptions = async () => {
+  if (!props.assignImages) {
+    return;
+  }
+  try {
+    const { data } = await apolloClient.query({
+      query: companyLanguagesQuery,
+      fetchPolicy: 'cache-first',
+    });
+    documentLanguageOptions.value =
+      data?.companyLanguages?.map((language: any) => ({
+        label: language.name,
+        value: language.code
+      })) || [];
+  } catch (error) {
+    documentLanguageOptions.value = [];
+  }
+};
+
+onMounted(() => {
+  if (!props.assignImages) {
+    return;
+  }
+  loadDocumentTypeOptions();
+  loadDocumentLanguageOptions();
+});
+
+const buildAssignFilter = (filterVariables: Record<string, any> | null) => ({
+  ...(props.fixedFilter || {}),
+  ...(filterVariables || {}),
+  ...(resolvedMediaTypeFilter.value ? { type: { exact: resolvedMediaTypeFilter.value } } : {}),
+  ...(localSearch.value ? { search: localSearch.value } : {}),
+  ...(showImageTypeFilter.value && localImageType.value ? { imageType: { exact: localImageType.value } } : {}),
+  ...(showDocumentFilters.value && localDocumentType.value
+    ? { documentType: { id: { exact: localDocumentType.value } } }
+    : {}),
+  ...(showDocumentFilters.value && localDocumentLanguage.value
+    ? { documentLanguage: { exact: localDocumentLanguage.value } }
+    : {}),
+  ...(showDocumentFilters.value && localDocumentImageFilter.value !== ALL_DOCUMENT_IMAGE_FILTER
+    ? { isDocumentImage: { exact: localDocumentImageFilter.value === 'true' } }
+    : {}),
+  ...(props.ids && props.ids.length > 0 ? { NOT: { id: { inList: props.ids } } } : {})
+});
+
+const buildListingFilter = (filterVariables: Record<string, any> | null) => ({
+  ...(props.fixedFilter || {}),
+  ...(filterVariables || {}),
+  ...(props.ids && props.ids.length > 0 ? { NOT: { id: { inList: props.ids } } } : {})
+});
 
 const refetchIfNecessary = (query, data, force = false) => {
   if (force || props.refetchNeeded) {
@@ -128,6 +279,46 @@ const refetchIfNecessary = (query, data, force = false) => {
 const assignMedia = (media) => {
  emit('assign-media', media)
 }
+
+const removeQueryAndHash = (value: string) => value.split('#')[0].split('?')[0];
+
+const isPdfPath = (value?: string | null) => {
+  if (!value) {
+    return false;
+  }
+  return removeQueryAndHash(value).toLowerCase().endsWith('.pdf');
+};
+
+const isPdfDocument = (media: any) => {
+  if (media?.type !== TYPE_DOCUMENT) {
+    return false;
+  }
+  return isPdfPath(media?.file?.name) || isPdfPath(media?.fileUrl) || isPdfPath(media?.file?.url);
+};
+
+const openDocumentPreview = (media: any) => {
+  if (!isPdfDocument(media)) {
+    return;
+  }
+  const url = media?.fileUrl || media?.file?.url || null;
+  if (!url) {
+    return;
+  }
+  previewDocumentUrl.value = url;
+  previewDocumentName.value = media?.file?.name || getFileName(media);
+  previewModalVisible.value = true;
+};
+
+const getDocumentThumbnailSource = (media: any): string | null => {
+  return media?.documentImageThumbnailUrl || null;
+};
+
+const getDocumentTypeLabel = (media: any): string | null => {
+  if (media?.type !== TYPE_DOCUMENT) {
+    return null;
+  }
+  return media?.documentType?.name || media?.documentType?.code || null;
+};
 
 const deleteAll = async (query) => {
   const defaultSwalOptions = {
@@ -199,7 +390,19 @@ const deleteAll = async (query) => {
         <div class="min-w-[220px] flex-1">
           <SearchInput v-model="localSearch" :updateRoute="false" />
         </div>
-        <div class="min-w-[200px] self-center">
+        <div v-if="!isMediaTypeLocked" class="min-w-[180px] self-center">
+          <Selector
+            v-model="localMediaType"
+            class="h-11"
+            :options="mediaTypeOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.labels.type')"
+            :filterable="!isMediaTypeLocked"
+            :removable="false"
+          />
+        </div>
+        <div v-if="showImageTypeFilter" class="min-w-[200px] self-center">
           <Selector
             v-model="localImageType"
             class="h-11"
@@ -207,6 +410,54 @@ const deleteAll = async (query) => {
             label-by="label"
             value-by="value"
             :placeholder="t('media.images.placeholders.imageType')"
+            :removable="true"
+          />
+        </div>
+        <div v-if="showDocumentFilters" class="min-w-[220px] self-center">
+          <Selector
+            v-model="localDocumentType"
+            class="h-11"
+            :options="documentTypeOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('media.documents.filters.documentType')"
+            :filterable="true"
+            :removable="true"
+          />
+        </div>
+        <div v-if="showDocumentFilters" class="min-w-[220px] self-center">
+          <Selector
+            v-model="localDocumentLanguage"
+            class="h-11"
+            :options="documentLanguageOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('shared.labels.language')"
+            :filterable="true"
+            :removable="true"
+          />
+        </div>
+        <div v-if="showDocumentFilters" class="min-w-[220px] self-center">
+          <Selector
+            v-model="localDocumentImageFilter"
+            class="h-11"
+            :options="documentImageFilterOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('media.documents.filters.documentKind')"
+            :filterable="false"
+            :removable="false"
+          />
+        </div>
+        <div class="min-w-[180px] self-center">
+          <Selector
+            v-model="localCreatedAtSort"
+            class="h-11"
+            :options="createdAtSortOptions"
+            label-by="label"
+            value-by="value"
+            :placeholder="t('media.media.labels.sortByCreatedAt')"
+            :filterable="false"
             :removable="true"
           />
         </div>
@@ -220,22 +471,14 @@ const deleteAll = async (query) => {
         <template v-slot:variables="{ filterVariables, orderVariables, pagination }">
           <ApolloQuery :query="listQuery" fetch-policy="cache-and-network"
                        :variables="assignImages ? {
-                         filter: {
-                           ...(filterVariables || {}),
-                           ...(localSearch ? { search: localSearch } : {}),
-                           ...(localImageType ? { imageType: { exact: localImageType } } : {}),
-                           ...(ids && ids.length > 0 ? { NOT: { id: { inList: ids } } } : {})
-                         },
-                         order: orderVariables,
+                         filter: buildAssignFilter(filterVariables),
+                         order: localCreatedAtSort ? { createdAt: localCreatedAtSort } : orderVariables,
                          first: firstLocal,
                          last: lastLocal,
                          before: beforeLocal,
                          after: afterLocal
                        } : {
-                         filter: {
-                           ...(filterVariables || {}),
-                           ...(ids && ids.length > 0 ? { NOT: { id: { inList: ids } } } : {})
-                         },
+                         filter: buildListingFilter(filterVariables),
                          order: orderVariables,
                          first: pagination.first,
                          last: pagination.last,
@@ -288,10 +531,7 @@ const deleteAll = async (query) => {
                                 </Button>
                               </template>
                               <template v-else>
-                                <span v-if="item.node.type === TYPE_DOCUMENT">
-                                  {{ getFileName(item.node) }}
-                                </span>
-                                <Link v-else :path="getPath(item.node)">
+                                <Link :path="getPath(item.node)">
                                   {{ getFileName(item.node) }}
                                 </Link>
                               </template>
@@ -305,6 +545,8 @@ const deleteAll = async (query) => {
                             </td>
                             <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400 flex justify-center items-center">
                               <ActionsDropdown :id="getId(item.node)" :type="item.node.type" :item="item.node"
+                                               :can-preview="!assignImages && isPdfDocument(item.node)"
+                                               @preview="openDocumentPreview"
                                                @trigger-refetch="refetchIfNecessary(query, data, true)" />
                             </td>
                           </tr>
@@ -323,6 +565,22 @@ const deleteAll = async (query) => {
                     <Checkbox class="absolute top-2 left-2 z-10" v-if="haveBulkDelete"
                               :modelValue="selectedEntities.includes(item.node.id)"
                               @update:model-value="value => selectCheckbox(item.node.id, value)" />
+                    <div
+                      v-if="item.node.type === TYPE_DOCUMENT && getDocumentTypeLabel(item.node)"
+                      :class="[
+                        'absolute left-2 z-10 max-w-[70%] truncate rounded-full bg-black/70 px-2 py-1 text-xs text-white',
+                        haveBulkDelete ? 'top-10' : 'top-2'
+                      ]"
+                    >
+                      {{ getDocumentTypeLabel(item.node) }}
+                    </div>
+                    <Button
+                      v-if="!assignImages && isPdfDocument(item.node)"
+                      class="absolute top-2 right-2 z-10 rounded-md border border-gray-300 bg-gray-100 p-2 shadow-sm hover:bg-gray-200"
+                      @click.stop="openDocumentPreview(item.node)"
+                    >
+                      <Icon name="arrows-up-down-left-right" class="h-4 w-4 text-blue-900" />
+                    </Button>
 
                     <template v-if="item.node.type === TYPE_IMAGE">
                       <Button v-if="assignImages" @click="assignMedia(item.node)">
@@ -348,13 +606,27 @@ const deleteAll = async (query) => {
 
                     <template v-else-if="item.node.type === TYPE_DOCUMENT">
                       <Button v-if="assignImages" @click="assignMedia(item.node)">
-                        <div class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
-                          <Icon name="file-text" size="2xl" class="text-gray-600" />
+                        <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center bg-gray-200">
+                          <Image
+                            v-if="getDocumentThumbnailSource(item.node)"
+                            :source="getDocumentThumbnailSource(item.node)"
+                            :alt="t('media.media.labels.fileThumbnail')"
+                            class="w-full h-full object-contain"
+                          />
+                          <Icon v-else name="file-text" size="2xl" class="text-gray-600" />
                         </div>
                       </Button>
-                      <div v-else class="flex justify-center items-center h-48 bg-gray-200 px-28 rounded-md">
-                        <Icon name="file-text" size="2xl" class="text-gray-600" />
-                      </div>
+                      <Link v-else :path="getPath(item.node)">
+                        <div class="w-56 h-48 rounded-md overflow-hidden flex items-center justify-center bg-gray-200">
+                          <Image
+                            v-if="getDocumentThumbnailSource(item.node)"
+                            :source="getDocumentThumbnailSource(item.node)"
+                            :alt="t('media.media.labels.fileThumbnail')"
+                            class="w-full h-full object-contain"
+                          />
+                          <Icon v-else name="file-text" size="2xl" class="text-gray-600" />
+                        </div>
+                      </Link>
                     </template>
 
                     <div class="overlay-info absolute bottom-0 left-0 right-0 bg-gray-700 bg-opacity-50 text-white p-2 text-md font-medium hidden">
@@ -364,7 +636,10 @@ const deleteAll = async (query) => {
                         </FlexCell>
                         <FlexCell center>
                           <ActionsDropdown :id="getId(item.node)" :type="item.node.type" :dark="true"
-                                           :item="item.node" @trigger-refetch="refetchIfNecessary(query, data, true)" />
+                                           :item="item.node"
+                                           :can-preview="!assignImages && isPdfDocument(item.node)"
+                                           @preview="openDocumentPreview"
+                                           @trigger-refetch="refetchIfNecessary(query, data, true)" />
                         </FlexCell>
                       </Flex>
                     </div>
@@ -384,6 +659,11 @@ const deleteAll = async (query) => {
       </FilterManager>
     </div>
   </Card>
+  <PreviewDocument
+    v-model="previewModalVisible"
+    :document-url="previewDocumentUrl"
+    :document-name="previewDocumentName"
+  />
 </template>
 
 

@@ -13,7 +13,14 @@ import { Toast } from "../../../../../../../../../shared/modules/toast";
 
 
 const props = withDefaults(
-  defineProps<{ modelValue: boolean; productId?: string; ids?: any[]; linkOnSelect?: boolean; salesChannelId?: string }>(),
+  defineProps<{
+    modelValue: boolean;
+    productId?: string;
+    ids?: any[];
+    linkOnSelect?: boolean;
+    salesChannelId?: string;
+    mediaType?: string;
+  }>(),
   {
     ids: () => [],
     linkOnSelect: true,
@@ -79,13 +86,14 @@ const handleMediaAssign = async (media) => {
 <template>
   <div>
     <Modal v-model="localShowModal" @closed="closeModal" >
-      <div class="w-2/3">
+      <div class="w-[90vw] max-w-7xl">
         <FilesList :search-config="searchConfig"
            :list-query="mediaQuery"
            :query-key="queryKey"
            :default-view-type="defaultView"
            :label="t('media.media.labels.files')"
            :ids="ids"
+           :fixed-media-type="mediaType"
            :assign-images="true"
            @assign-media="handleMediaAssign"
           />
