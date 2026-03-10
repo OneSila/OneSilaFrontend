@@ -541,6 +541,34 @@ const closePlaceholder = () => {
 
 const normalizeTextValue = (value?: string | null) => (value ?? '').trim();
 
+const getDedupedImagesForSave = (row: VariationRow) => {
+  const mediaMap = new Map<string, { slot: VariationImageSlot; sortOrder: number; isMainImage: boolean }>();
+
+  row.images.forEach((slot, index) => {
+    if (!slot?.mediaId) {
+      return;
+    }
+
+    const existing = mediaMap.get(slot.mediaId);
+    if (!existing) {
+      mediaMap.set(slot.mediaId, {
+        slot,
+        sortOrder: index,
+        isMainImage: !!slot.isMainImage,
+      });
+      return;
+    }
+
+    existing.sortOrder = Math.min(existing.sortOrder, index);
+    existing.isMainImage = existing.isMainImage || !!slot.isMainImage;
+    if (!existing.slot.id && slot.id) {
+      existing.slot = slot;
+    }
+  });
+
+  return Array.from(mediaMap.values()).sort((a, b) => a.sortOrder - b.sortOrder);
+};
+
 const applyEditFormFromSlot = (slot: VariationImageSlot) => {
   syncingEditForm.value = true;
   editTitle.value = slot.title ?? '';
@@ -934,8 +962,9 @@ const save = async () => {
     variations.value.forEach((row) => {
       const original = originalMap.get(row.variation.id);
       const currentIds = new Set<string>();
+      const dedupedImages = getDedupedImagesForSave(row);
 
-      row.images.forEach((slot, index) => {
+      dedupedImages.forEach(({ slot, sortOrder, isMainImage }) => {
         if (!slot || !slot.mediaId) {
           return;
         }
@@ -951,8 +980,8 @@ const save = async () => {
           toCreate.push({
             productId: row.variation.id,
             mediaId: slot.mediaId,
-            sortOrder: index,
-            isMainImage: !!slot.isMainImage,
+            sortOrder,
+            isMainImage,
           });
           return;
         }
@@ -960,8 +989,8 @@ const save = async () => {
         const originalSlot = original?.images.find((item) => item?.id === slot.id) ?? null;
         const originalSort = originalSlot?.sortOrder ?? null;
         const originalMain = originalSlot?.isMainImage ?? false;
-        if (originalSort !== index || originalMain !== slot.isMainImage) {
-          toUpdate.push({ id: slot.id, sortOrder: index, isMainImage: !!slot.isMainImage });
+        if (originalSort !== sortOrder || originalMain !== isMainImage) {
+          toUpdate.push({ id: slot.id, sortOrder, isMainImage });
         }
       });
 
