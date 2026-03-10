@@ -21,6 +21,7 @@ export const sheinCategoriesQuery = gql`
         node {
           remoteId
           name
+          fullPath
           parentRemoteId
           isLeaf
           productTypeRemoteId

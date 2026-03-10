@@ -32,12 +32,10 @@ export const remoteDocumentTypesListingConfigConstructor = (
 ): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
-    t('integrations.show.documentTypes.labels.translatedName'),
     t('integrations.show.documentTypes.labels.localInstance'),
   ],
   fields: [
-    { name: 'name', type: FieldType.Text },
-    { name: 'translatedName', type: FieldType.Text },
+    { name: 'effectiveName', type: FieldType.Text },
     {
       name: 'localInstance',
       type: FieldType.NestedText,
