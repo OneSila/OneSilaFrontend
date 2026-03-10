@@ -13,6 +13,7 @@ import { normalizeCategoryNode, type SheinCategoryNode } from '../../../../../..
 
 type CategoryId = string | number;
 interface SheinCategorySelectionNode extends SheinCategoryNode {
+  fullPath?: string | null;
   parentRemoteId?: string | null;
 }
 
@@ -102,6 +103,7 @@ const emptyMessage = computed(() =>
 
 const normalizeSheinNode = (node: any): SheinCategorySelectionNode => ({
   ...normalizeCategoryNode(node),
+  fullPath: node?.fullPath ?? null,
   parentRemoteId: node?.parentRemoteId ?? node?.parent?.remoteId ?? null,
 });
 
@@ -159,32 +161,6 @@ const fetchCategoryByRemoteId = async (remoteId: string): Promise<SheinCategoryS
   }
 };
 
-const buildPathFromNode = async (node: SheinCategorySelectionNode): Promise<string> => {
-  const names: string[] = [];
-  if (node.name) {
-    names.unshift(node.name);
-  }
-
-  let parentRemoteId = node.parentRemoteId ? String(node.parentRemoteId) : null;
-  const visited = new Set<string>([node.remoteId]);
-  let guard = 0;
-
-  while (parentRemoteId && guard < 30 && !visited.has(parentRemoteId)) {
-    visited.add(parentRemoteId);
-    const parentNode = await fetchCategoryByRemoteId(parentRemoteId);
-    if (!parentNode) {
-      break;
-    }
-    if (parentNode.name) {
-      names.unshift(parentNode.name);
-    }
-    parentRemoteId = parentNode.parentRemoteId ? String(parentNode.parentRemoteId) : null;
-    guard += 1;
-  }
-
-  return names.join(' > ') || node.name || node.remoteId;
-};
-
 const decodeCategories = async () => {
   const requestId = ++decodeRequestId;
   const ids = Array.from(new Set(remoteIds.value));
@@ -234,17 +210,13 @@ const decodeCategories = async () => {
           return;
         }
         mapped[node.remoteId] = node;
+        pathMap[node.remoteId] = node.fullPath || node.name || node.remoteId;
         unresolvedIds.delete(node.remoteId);
         nodeCache.value = {
           ...nodeCache.value,
           [node.remoteId]: node,
         };
       });
-    }
-
-    for (const remoteId of Object.keys(mapped)) {
-      const path = await buildPathFromNode(mapped[remoteId]);
-      pathMap[remoteId] = path;
     }
   } catch (error) {
     displayApolloError(error);
@@ -274,7 +246,7 @@ const formatPath = (node: SheinCategorySelectionNode | null, remoteId: string): 
   if (!node) {
     return remoteId;
   }
-  return decodedPaths.value[remoteId] || node.name || remoteId;
+  return decodedPaths.value[remoteId] || node.fullPath || node.name || remoteId;
 };
 
 const addCategory = (node: SheinCategorySelectionNode, path: string) => {
@@ -352,7 +324,7 @@ const setManualCategory = async () => {
       return;
     }
 
-    const path = await buildPathFromNode(node);
+    const path = node.fullPath || node.name || node.remoteId;
     addCategory(node, path);
     manualCategoryInput.value = '';
     resetSelectionPreview();

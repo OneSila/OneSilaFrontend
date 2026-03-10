@@ -1942,8 +1942,7 @@ export const remoteDocumentTypesQuery = gql`
       edges {
         node {
           id
-          name
-          translatedName
+          effectiveName
           localInstance {
             id
             name
