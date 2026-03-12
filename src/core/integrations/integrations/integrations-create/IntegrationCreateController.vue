@@ -52,17 +52,20 @@ import { createWebhookIntegrationMutation } from '../../../../shared/api/mutatio
 import { Toast } from '../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../shared/utils';
 import apolloClient from '../../../../../apollo-client';
-import {
-  DEFAULT_MIRAKL_SUB_TYPE,
-  getMiraklSubType,
-  getMiraklSubtypeLabel,
-  isKnownMiraklSubType,
-} from '../miraklSubtypes';
 
 const { t } = useI18n();
 const router = useRouter();
+const DEFAULT_MIRAKL_SUB_TYPE = IntegrationTypes.Mirakl;
+
+interface SelectedIntegrationDefinition {
+  key: string;
+  type: string;
+  subtype: string | null;
+  name: string;
+}
 
 const selectedIntegrationChoice = ref<string>(IntegrationTypes.None);
+const selectedIntegrationDefinition = ref<SelectedIntegrationDefinition | null>(null);
 const wizardRef = ref();
 const step = ref(0);
 const loading = ref(false);
@@ -70,8 +73,8 @@ const showInfoModal = ref(false);
 const infoComponent = ref();
 
 const resolvedIntegrationType = computed<IntegrationTypes>(() => {
-  if (isKnownMiraklSubType(selectedIntegrationChoice.value)) {
-    return IntegrationTypes.Mirakl;
+  if (selectedIntegrationDefinition.value?.type) {
+    return selectedIntegrationDefinition.value.type as IntegrationTypes;
   }
 
   return selectedIntegrationChoice.value as IntegrationTypes;
@@ -82,12 +85,12 @@ const selectedMiraklSubType = computed(() => {
     return null;
   }
 
-  return getMiraklSubType(selectedIntegrationChoice.value) || DEFAULT_MIRAKL_SUB_TYPE;
+  return selectedIntegrationDefinition.value?.subtype || DEFAULT_MIRAKL_SUB_TYPE;
 });
 
 const selectedIntegrationDisplayName = computed(() => {
-  if (resolvedIntegrationType.value === IntegrationTypes.Mirakl) {
-    return getMiraklSubtypeLabel(selectedMiraklSubType.value) || t('integrations.integrationTypes.mirakl');
+  if (selectedIntegrationDefinition.value?.name) {
+    return selectedIntegrationDefinition.value.name;
   }
 
   switch (resolvedIntegrationType.value) {
@@ -692,6 +695,7 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
           <TypeStep
             :type="selectedIntegrationChoice"
             @update:type="val => selectedIntegrationChoice = val"
+            @update:selection="val => selectedIntegrationDefinition = val"
             @go-next="wizardRef?.nextStep()"
           />
         </template>

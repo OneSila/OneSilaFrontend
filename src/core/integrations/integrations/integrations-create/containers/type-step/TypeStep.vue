@@ -6,17 +6,21 @@ import magentoType from '../../../../../../assets/images/integration-types/magen
 import shopifyType from '../../../../../../assets/images/integration-types/shopify.png';
 import woocommerceType from '../../../../../../assets/images/integration-types/woo-commerce.jpg';
 import amazonType from '../../../../../../assets/images/integration-types/amazon.png';
+import abbType from '../../../../../../assets/images/integration-types/abb.png';
 import webhooksType from '../../../../../../assets/images/integration-types/webhooks.webp';
 import ebayType from '../../../../../../assets/images/integration-types/ebay.jpg';
 import sheinType from '../../../../../../assets/images/integration-types/shein.png';
 import miraklType from '../../../../../../assets/images/integration-types/mirakl.png';
+import noImageType from '../../../../../../assets/images/integration-types/no_image.jpg';
 import magentoIcon from '../../../../../../assets/images/integration-types/icons/magento.svg';
 import shopifyIcon from '../../../../../../assets/images/integration-types/icons/shopify.svg';
 import woocommerceIcon from '../../../../../../assets/images/integration-types/icons/woocommerce.svg';
 import amazonIcon from '../../../../../../assets/images/integration-types/icons/amazon.svg';
+import abbIcon from '../../../../../../assets/images/integration-types/icons/abb.svg';
 import ebayIcon from '../../../../../../assets/images/integration-types/icons/ebay.svg';
 import sheinIcon from '../../../../../../assets/images/integration-types/icons/shein.svg';
 import miraklIcon from '../../../../../../assets/images/integration-types/icons/mirakl.svg';
+import noImageIcon from '../../../../../../assets/images/integration-types/icons/no_image.svg';
 import openAiIcon from '../../../../../../assets/images/integration-types/icons/openai.png';
 import { Badge } from '../../../../../../shared/components/atoms/badge';
 import { Button } from '../../../../../../shared/components/atoms/button';
@@ -26,19 +30,20 @@ import { Modal } from '../../../../../../shared/components/atoms/modal';
 import { PrimaryButton } from '../../../../../../shared/components/atoms/button-primary';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { SearchInput } from '../../../../../../shared/components/molecules/search-input';
-import {
-  DEFAULT_MIRAKL_SUB_TYPE,
-  MIRAKL_SUB_TYPE_CHOICES,
-} from '../../../miraklSubtypes';
+import apolloClient from '../../../../../../../apollo-client';
+import { publicIntegrationTypesQuery } from '../../../../../../shared/api/queries/publicIntegrationTypes.js';
 import { MagentoInfoCard, ShopifyInfoCard, WebhookInfoCard, WoocommerceInfoCard } from './info-cards';
 
 type IntegrationCategory = 'storefronts' | 'marketplaces' | 'webhooks';
+type BackendIntegrationCategory = 'storefront' | 'marketplace' | 'webhooks';
 type FilterType = 'all' | IntegrationCategory;
 type InfoVariant = 'magento' | 'shopify' | 'woocommerce' | 'webhook' | 'mirakl';
 
 interface TypeCard {
   value: string;
+  key: string;
   baseType: IntegrationTypes;
+  subtype: string | null;
   category: IntegrationCategory;
   title: string;
   description: string;
@@ -48,22 +53,42 @@ interface TypeCard {
   beta?: boolean;
   supportsOpenAiFeed?: boolean;
   infoVariant?: InfoVariant;
-  searchText: string;
 }
 
-const MIRAKL_IMAGE_MAP = import.meta.glob(
-  '../../../../../../assets/images/integration-types/mirakl/*.png',
-  { eager: true, import: 'default' }
-) as Record<string, string>;
+interface PublicIntegrationTypeNode {
+  id: string;
+  key: string;
+  type: string;
+  subtype: string | null;
+  category: BackendIntegrationCategory;
+  active: boolean;
+  isBeta: boolean;
+  supportsOpenAiProductFeed: boolean;
+  sortOrder: number;
+  name: string;
+  description: string;
+  iconSvgUrl: string | null;
+  logoPngUrl: string | null;
+  basedTo?: {
+    id: string;
+    key: string;
+    type: string;
+    subtype: string | null;
+    name: string;
+  } | null;
+}
 
-const MIRAKL_ICON_MAP = import.meta.glob(
-  '../../../../../../assets/images/integration-types/icons/mirakl/*.svg',
-  { eager: true, import: 'default' }
-) as Record<string, string>;
+interface SelectedIntegrationDefinition {
+  key: string;
+  type: string;
+  subtype: string | null;
+  name: string;
+}
 
 const props = defineProps<{ type: string }>();
 const emit = defineEmits<{
   (e: 'update:type', value: string): void;
+  (e: 'update:selection', value: SelectedIntegrationDefinition | null): void;
   (e: 'go-next'): void;
 }>();
 
@@ -76,13 +101,11 @@ const showBeta = ref(true);
 const showInfoModal = ref(false);
 const selectedInfoCard = ref<TypeCard | null>(null);
 const showStickySelection = ref(true);
+const integrationCards = ref<TypeCard[]>([]);
+const loadingCards = ref(false);
+const cardLoadError = ref(false);
+const selectedCardCache = ref<TypeCard | null>(null);
 let wizardActionsObserver: IntersectionObserver | null = null;
-
-const getMiraklSubtypeImage = (value: string) =>
-  MIRAKL_IMAGE_MAP[`../../../../../../assets/images/integration-types/mirakl/${value}.png`] || miraklType;
-
-const getMiraklSubtypeIcon = (value: string) =>
-  MIRAKL_ICON_MAP[`../../../../../../assets/images/integration-types/icons/mirakl/${value}.svg`] || miraklIcon;
 
 const getCardFilter = (category: IntegrationCategory) => {
   return t(`integrations.create.wizard.step1.filters.${category}`);
@@ -149,143 +172,196 @@ const infoComponent = computed(() => {
   }
 });
 
-const integrationCards = computed<TypeCard[]>(() => {
-  const storefrontCards: TypeCard[] = [
-    {
-      value: IntegrationTypes.Magento,
-      baseType: IntegrationTypes.Magento,
-      category: 'storefronts',
-      title: t('integrations.create.wizard.step1.magentoTitle'),
-      description: t('integrations.create.wizard.step1.magentoExample'),
-      image: magentoType,
-      icon: magentoIcon,
-      supportsOpenAiFeed: true,
-      infoVariant: 'magento',
-      searchText: 'magento storefront store',
-    },
-    {
-      value: IntegrationTypes.Shopify,
-      baseType: IntegrationTypes.Shopify,
-      category: 'storefronts',
-      title: t('integrations.create.wizard.step1.shopifyTitle'),
-      description: t('integrations.create.wizard.step1.shopifyExample'),
-      image: shopifyType,
-      icon: shopifyIcon,
-      supportsOpenAiFeed: true,
-      infoVariant: 'shopify',
-      searchText: 'shopify storefront store',
-    },
-    {
-      value: IntegrationTypes.Woocommerce,
-      baseType: IntegrationTypes.Woocommerce,
-      category: 'storefronts',
-      title: t('integrations.create.wizard.step1.woocommerceTitle'),
-      description: t('integrations.create.wizard.step1.woocommerceExample'),
-      image: woocommerceType,
-      icon: woocommerceIcon,
-      iconClass: 'scale-125',
-      beta: true,
-      supportsOpenAiFeed: true,
-      infoVariant: 'woocommerce',
-      searchText: 'woocommerce woo commerce storefront store',
-    },
-  ];
+const BACKEND_CATEGORY_BY_FILTER: Record<IntegrationCategory, BackendIntegrationCategory> = {
+  storefronts: 'storefront',
+  marketplaces: 'marketplace',
+  webhooks: 'webhooks',
+};
 
-  const marketplaceCards: TypeCard[] = [
-    {
-      value: IntegrationTypes.Amazon,
-      baseType: IntegrationTypes.Amazon,
-      category: 'marketplaces',
-      title: t('integrations.create.wizard.step1.amazonTitle'),
-      description: t('integrations.create.wizard.step1.amazonExample'),
-      image: amazonType,
-      icon: amazonIcon,
-      searchText: 'amazon marketplace',
-    },
-    {
-      value: IntegrationTypes.Ebay,
-      baseType: IntegrationTypes.Ebay,
-      category: 'marketplaces',
-      title: t('integrations.create.wizard.step1.ebayTitle'),
-      description: t('integrations.create.wizard.step1.ebayExample'),
-      image: ebayType,
-      icon: ebayIcon,
-      searchText: 'ebay marketplace',
-    },
-    {
-      value: IntegrationTypes.Shein,
-      baseType: IntegrationTypes.Shein,
-      category: 'marketplaces',
-      title: t('integrations.create.wizard.step1.sheinTitle'),
-      description: t('integrations.create.wizard.step1.sheinExample'),
-      image: sheinType,
-      icon: sheinIcon,
-      beta: true,
-      searchText: 'shein marketplace',
-    },
-    {
-      value: IntegrationTypes.Mirakl,
-      baseType: IntegrationTypes.Mirakl,
-      category: 'marketplaces',
-      title: t('integrations.create.wizard.step1.miraklTitle'),
-      description: t('integrations.create.wizard.step1.miraklExample'),
-      image: miraklType,
-      icon: miraklIcon,
-      beta: true,
-      searchText: 'mirakl marketplace schema mapping',
-    },
-    ...MIRAKL_SUB_TYPE_CHOICES
-      .filter(({ value }) => value !== DEFAULT_MIRAKL_SUB_TYPE)
-      .map(({ value, label }) => ({
-        value,
-        baseType: IntegrationTypes.Mirakl,
-        category: 'marketplaces' as const,
-        title: label,
-        description: t('integrations.create.wizard.step1.miraklSubtypeExample', { marketplace: label }),
-        image: getMiraklSubtypeImage(value),
-        icon: getMiraklSubtypeIcon(value),
-        beta: true,
-        infoVariant: 'mirakl' as const,
-        searchText: `${label.toLowerCase()} mirakl marketplace`,
-      })),
-  ];
+const UI_CATEGORY_BY_BACKEND: Record<BackendIntegrationCategory, IntegrationCategory> = {
+  storefront: 'storefronts',
+  marketplace: 'marketplaces',
+  webhooks: 'webhooks',
+};
 
-  const webhookCards: TypeCard[] = [
-    {
-      value: IntegrationTypes.Webhook,
-      baseType: IntegrationTypes.Webhook,
-      category: 'webhooks',
-      title: t('integrations.create.wizard.step1.webhookTitle'),
-      description: t('integrations.create.wizard.step1.webhookExample'),
-      image: webhooksType,
-      icon: webhooksType,
-      infoVariant: 'webhook',
-      searchText: 'webhook events api',
-    },
-  ];
+const CARD_IMAGE_BY_KEY: Record<string, string> = {
+  magento: magentoType,
+  shopify: shopifyType,
+  woocommerce: woocommerceType,
+  amazon: amazonType,
+  abb: abbType,
+  ebay: ebayType,
+  shein: sheinType,
+  mirakl: miraklType,
+  webhook: webhooksType,
+};
 
-  return [...storefrontCards, ...marketplaceCards, ...webhookCards];
+const CARD_ICON_BY_KEY: Record<string, string> = {
+  magento: magentoIcon,
+  shopify: shopifyIcon,
+  woocommerce: woocommerceIcon,
+  amazon: amazonIcon,
+  abb: abbIcon,
+  ebay: ebayIcon,
+  shein: sheinIcon,
+  mirakl: miraklIcon,
+  webhook: webhooksType,
+};
+
+const CARD_ICON_CLASS_BY_KEY: Record<string, string> = {
+  woocommerce: 'scale-125',
+};
+
+const resolveCardValue = (node: PublicIntegrationTypeNode) => node.subtype || node.type || node.key;
+
+const resolveCardImage = (node: PublicIntegrationTypeNode) => {
+  if (node.logoPngUrl) {
+    return node.logoPngUrl;
+  }
+
+  const directFallback = CARD_IMAGE_BY_KEY[node.key] || CARD_IMAGE_BY_KEY[node.subtype || ''];
+  if (directFallback) {
+    return directFallback;
+  }
+
+  if (node.subtype) {
+    return noImageType;
+  }
+
+  return CARD_IMAGE_BY_KEY[node.type] || noImageType;
+};
+
+const resolveCardIcon = (node: PublicIntegrationTypeNode) => {
+  if (node.iconSvgUrl) {
+    return node.iconSvgUrl;
+  }
+
+  const directFallback = CARD_ICON_BY_KEY[node.key] || CARD_ICON_BY_KEY[node.subtype || ''];
+  if (directFallback) {
+    return directFallback;
+  }
+
+  if (node.subtype) {
+    return noImageIcon;
+  }
+
+  return CARD_ICON_BY_KEY[node.type] || noImageIcon;
+};
+
+const resolveInfoVariant = (node: PublicIntegrationTypeNode): InfoVariant | undefined => {
+  if (node.type === IntegrationTypes.Magento) {
+    return 'magento';
+  }
+  if (node.type === IntegrationTypes.Shopify) {
+    return 'shopify';
+  }
+  if (node.type === IntegrationTypes.Woocommerce) {
+    return 'woocommerce';
+  }
+  if (node.type === IntegrationTypes.Webhook) {
+    return 'webhook';
+  }
+  if (node.type === IntegrationTypes.Mirakl && node.subtype && node.subtype !== IntegrationTypes.Mirakl) {
+    return 'mirakl';
+  }
+  return undefined;
+};
+
+const buildCardFromNode = (node: PublicIntegrationTypeNode): TypeCard => ({
+  value: resolveCardValue(node),
+  key: node.key,
+  baseType: node.type as IntegrationTypes,
+  subtype: node.subtype,
+  category: UI_CATEGORY_BY_BACKEND[node.category],
+  title: node.name,
+  description: node.description,
+  image: resolveCardImage(node),
+  icon: resolveCardIcon(node),
+  iconClass: CARD_ICON_CLASS_BY_KEY[node.key] || CARD_ICON_CLASS_BY_KEY[node.type],
+  beta: node.isBeta,
+  supportsOpenAiFeed: node.supportsOpenAiProductFeed,
+  infoVariant: resolveInfoVariant(node),
 });
 
-const visibleCards = computed(() => {
-  const query = searchTerm.value.trim().toLowerCase();
+const fetchIntegrationCards = async () => {
+  loadingCards.value = true;
+  cardLoadError.value = false;
 
-  return integrationCards.value.filter((card) => {
-    const matchesFilter = activeFilter.value === 'all' || card.category === activeFilter.value;
-    const matchesBeta = showBeta.value || !Boolean(card.beta);
-    const matchesSearch =
-      query.length === 0 ||
-      card.title.toLowerCase().includes(query) ||
-      card.searchText.includes(query);
+  try {
+    const filter: Record<string, any> = {
+      active: { exact: true },
+    };
 
-    return matchesFilter && matchesBeta && matchesSearch;
-  });
-});
+    const trimmedSearch = searchTerm.value.trim();
+    if (activeFilter.value !== 'all') {
+      filter.category = { exact: BACKEND_CATEGORY_BY_FILTER[activeFilter.value] };
+    }
+    if (!showBeta.value) {
+      filter.isBeta = { exact: false };
+    }
+    if (trimmedSearch) {
+      filter.search = trimmedSearch;
+    }
 
+    const edges: Array<{ node: PublicIntegrationTypeNode }> = [];
+    let after: string | null = null;
+    let hasNextPage = true;
+
+    while (hasNextPage) {
+      const { data } = await apolloClient.query({
+        query: publicIntegrationTypesQuery,
+        variables: {
+          first: 100,
+          after,
+          filter,
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      const connection = data?.publicIntegrationTypes;
+      const currentEdges = connection?.edges || [];
+
+      edges.push(...currentEdges);
+      hasNextPage = Boolean(connection?.pageInfo?.hasNextPage);
+      after = connection?.pageInfo?.endCursor || null;
+    }
+
+    integrationCards.value = edges.map((edge) => buildCardFromNode(edge.node));
+  } catch (error) {
+    integrationCards.value = [];
+    cardLoadError.value = true;
+    console.error('Failed to load public integration types', error);
+  } finally {
+    loadingCards.value = false;
+  }
+};
+
+let fetchDebounce: ReturnType<typeof setTimeout> | null = null;
+
+const scheduleCardFetch = () => {
+  if (fetchDebounce) {
+    clearTimeout(fetchDebounce);
+  }
+
+  fetchDebounce = setTimeout(() => {
+    fetchIntegrationCards();
+  }, 250);
+};
+
+const visibleCards = computed(() => integrationCards.value);
 const filteredCount = computed(() => visibleCards.value.length);
-const selectedCard = computed(() =>
-  integrationCards.value.find((card) => card.value === selectedType.value) || null
-);
+const selectedCard = computed(() => {
+  const currentCard = integrationCards.value.find((card) => card.value === selectedType.value) || null;
+  if (currentCard) {
+    return currentCard;
+  }
+
+  if (selectedCardCache.value?.value === selectedType.value) {
+    return selectedCardCache.value;
+  }
+
+  return null;
+});
 
 const visibleSections = computed(() => {
   return categories.value
@@ -314,19 +390,51 @@ const setFilter = (filter: FilterType) => {
 const isCategoryActive = (category: IntegrationCategory) => activeFilter.value === category;
 
 const selectCard = (card: TypeCard) => {
-  selectedType.value = selectedType.value === card.value ? IntegrationTypes.None : card.value;
+  if (selectedType.value === card.value) {
+    selectedType.value = IntegrationTypes.None;
+    selectedCardCache.value = null;
+    return;
+  }
+
+  selectedType.value = card.value;
+  selectedCardCache.value = card;
 };
 
 watch(selectedType, (newValue) => {
   emit('update:type', newValue);
 });
 
+watch(selectedCard, (card) => {
+  emit('update:selection', card
+    ? {
+        key: card.key,
+        type: card.baseType,
+        subtype: card.subtype,
+        name: card.title,
+      }
+    : null);
+}, { immediate: true });
+
 watch(
   () => props.type,
   (newValue) => {
     selectedType.value = newValue;
+    if (newValue === IntegrationTypes.None) {
+      selectedCardCache.value = null;
+    }
   }
 );
+
+watch([searchTerm, activeFilter, showBeta], () => {
+  scheduleCardFetch();
+}, { immediate: true });
+
+watch(integrationCards, (cards) => {
+  const matchingCard = cards.find((card) => card.value === selectedType.value) || null;
+  if (matchingCard) {
+    selectedCardCache.value = matchingCard;
+  }
+});
 
 onMounted(() => {
   const wizardActions = document.querySelector('.wizard-actions');
@@ -347,6 +455,9 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  if (fetchDebounce) {
+    clearTimeout(fetchDebounce);
+  }
   wizardActionsObserver?.disconnect();
 });
 </script>
@@ -456,10 +567,14 @@ onBeforeUnmount(() => {
               class="flex min-h-[28rem] flex-col items-center justify-center rounded-[2rem] border border-dashed border-slate-300 bg-white/70 px-6 text-center"
             >
               <p class="text-2xl font-semibold text-slate-900">
-                {{ t('integrations.create.wizard.step1.empty.title') }}
+                {{ loadingCards ? t('shared.labels.loading') : t('integrations.create.wizard.step1.empty.title') }}
               </p>
               <p class="mt-3 max-w-xl text-base leading-7 text-slate-500">
-                {{ t('integrations.create.wizard.step1.empty.description') }}
+                {{ loadingCards
+                  ? t('integrations.create.wizard.step1.heroDescription')
+                  : cardLoadError
+                    ? t('shared.labels.error')
+                    : t('integrations.create.wizard.step1.empty.description') }}
               </p>
             </div>
 
