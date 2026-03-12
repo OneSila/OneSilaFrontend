@@ -51,6 +51,9 @@ const identifierField = computed(() => props.config.identifierKey || 'id');
 
 
 const getShowRoute = (item) => {
+  if (props.config.showRouteResolver) {
+    return props.config.showRouteResolver(item);
+  }
 
   if (props.config.identifierKey === undefined) {
     return undefined;

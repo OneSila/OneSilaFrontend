@@ -2714,6 +2714,13 @@
         "fileThumbnail": "File thumbnail",
         "sortByCreatedAt": "Sort by created at"
       },
+      "selection": {
+        "selectMultiple": "Select multiple",
+        "selectedMedia": "Selected media",
+        "selectedCount": "{count} selected",
+        "emptyTitle": "Selected files will appear here.",
+        "emptyDescription": "Turn on multi-select and choose media from the list to queue them before submitting."
+      },
       "alert": {
         "toast": {
           "bulkDeleteSuccess": "Files deleted successfully.",
@@ -3511,8 +3518,10 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
+      "ebay": "Ebay",
       "webhook": "Webhook",
-      "shein": "Shein"
+      "shein": "Shein",
+      "mirakl": "Mirakl"
     },
     "shein": {
       "installed": {
@@ -3720,6 +3729,16 @@
           }
         }
       },
+      "mirakl": {
+        "title": "Mirakl Integration",
+        "internalProperties": {
+          "title": "Mirakl Internal Properties",
+          "labels": {
+            "acceptedValues": "Accepted Values",
+            "isCondition": "Condition Property"
+          }
+        }
+      },
       "internalProperties": {
         "title": "Internal Properties"
       },
@@ -3728,6 +3747,7 @@
         "error": "Failed to pull remote data. Please try again."
       },
       "sections": {
+        "credentials": "Credentials",
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
         "gpt": "GPT settings",
@@ -3754,10 +3774,15 @@
         "title": "Shein connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
+      "miraklNotConnectedBanner": {
+        "title": "Mirakl connection not completed",
+        "content": "Mirakl is connected only when the hostname, shop ID and API key are all valid."
+      },
       "stores": {
         "title": "Store",
         "labels": {
           "isDefault": "Is Default Store",
+          "description": "Description",
           "siteStatus": "Site status",
           "storeType": "Store type"
         },
@@ -3770,12 +3795,14 @@
       },
       "languages": {
         "labels": {
-          "remoteCode": "Remote Language Code"
+          "remoteCode": "Remote Language Code",
+          "label": "Mirakl Language"
         }
       },
       "currencies": {
         "labels": {
-          "remoteCode": "Remote Currency Code"
+          "remoteCode": "Remote Currency Code",
+          "label": "Mirakl Currency"
         }
       },
       "priceLists": {
@@ -4231,6 +4258,43 @@
         "step1": {
           "title": "Select Integration Type",
           "content": "Please select the type of integration you would like to create.",
+          "heroTitle": "Choose the integration path that matches your channel strategy",
+          "heroDescription": "Set up the integration that matches the channel you want to connect next, then continue with the credentials and sync configuration for that flow.",
+          "resultsLabel": "Visible integrations",
+          "searchPlaceholder": "Search integrations by type",
+          "filters": {
+            "all": "All",
+            "storefronts": "Storefronts",
+            "marketplaces": "Marketplaces",
+            "webhooks": "Webhooks",
+            "betaOnly": "Beta only",
+            "completedOnly": "Completed only",
+            "showBeta": "Show Beta"
+          },
+          "categories": {
+            "storefronts": {
+              "title": "Storefronts",
+              "description": "Connect directly to your commerce stack and keep full control over catalog, content, pricing and operational data from your own store."
+            },
+            "marketplaces": {
+              "title": "Marketplaces",
+              "description": "Launch marketplace channels with schema mapping, remote requirement alignment and marketplace-specific operational flows."
+            },
+            "webhooks": {
+              "title": "Webhooks",
+              "description": "Push structured integration events into external systems whenever your operation needs custom automation outside native channels."
+            }
+          },
+          "empty": {
+            "title": "No integrations match this filter",
+            "description": "Try another search term or expand the active filters to surface more integration types."
+          },
+          "selection": {
+            "title": "Selected Integration",
+            "description": "{integration} is selected. Continue to the next step to configure the connection details and sync setup.",
+            "clear": "Clear Selection"
+          },
+          "openAiFeedSupport": "Supports Open AI Product Feed",
           "magentoTitle": "Magento",
           "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
           "shopifyTitle": "Shopify",
@@ -4241,6 +4305,15 @@
           "ebayExample": "Ebay integration to manage your marketplace listings.",
           "sheinTitle": "Shein",
           "sheinExample": "Shein integration to manage your marketplace listings.",
+          "miraklTitle": "Mirakl",
+          "miraklExample": "Mirakl integration to connect OneSila with hundreds of marketplace channels from a single setup.",
+          "miraklSubtypeExample": "{marketplace} integration to manage your marketplace listings.",
+          "miraklInfoModal": {
+            "title": "{marketplace} via Mirakl",
+            "description": "{marketplace} is connected through Mirakl. If you do not already have access, contact Mirakl first and request the permissions required for this marketplace.",
+            "instructions": "Use the Mirakl contact flow below, mention {marketplace}, and follow Mirakl's instructions to get access approved for that specific marketplace before finishing the integration setup.",
+            "cta": "Talk to Mirakl"
+          },
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "webhookTitle": "Webhook",
@@ -4275,6 +4348,11 @@
             "integrationStep1": "Go to WooCommerce → Settings → Advanced → REST API",
             "integrationStep2": "Click 'Add Key' and create a new API key",
             "integrationStep3": "Set the permissions to 'Read/Write'",
+            "integrationStep4": "Save the key and copy the generated Consumer Key and Consumer Secret.",
+            "integrationStep5": "Keep those credentials ready for the connection step in this wizard.",
+            "integrationStep6": "Make sure REST API access stays enabled for the store you are connecting.",
+            "integrationStep7": "If the store uses HTTPS, verify SSL is configured correctly before you finish the setup.",
+            "integrationStep8": "After the integration is created, run an initial import to sync your existing WooCommerce catalog.",
             "apiSettingsTitle": "Configure your WooCommerce API settings",
             "apiSettingsDescription": "Ensure your WooCommerce store has the following settings:",
             "apiSetting1": "Enable REST API access",
@@ -4343,6 +4421,18 @@
             "title": "Ebay Channel Details",
             "content": "Provide Ebay-specific configuration to connect your marketplace."
           },
+          "shein": {
+            "title": "Shein Channel Details",
+            "content": "Provide Shein-specific configuration to connect your marketplace."
+          },
+          "mirakl": {
+            "title": "Mirakl Channel Details",
+            "content": "Provide your Mirakl shop ID and API key to connect your channel."
+          },
+          "marketplace": {
+            "title": "{marketplace} Channel Details",
+            "content": "Provide your {marketplace} Mirakl shop ID and API key to connect this marketplace channel."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -4367,6 +4457,7 @@
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
+      "shopId": "Shop ID",
       "apiKey": "API Key",
       "apiSecret": "API secret key",
       "accessToken": "Access Token",
@@ -4403,6 +4494,7 @@
     "placeholders": {
       "hostApiUsername": "Enter API Username",
       "hostApiKey": "Enter Access Token",
+      "shopId": "Enter shop ID",
       "apiKey": "Enter API Key",
       "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
@@ -4692,6 +4784,19 @@
         "schemaDescription": "Initial setup required to enable product imports.",
         "productsDescription": "Imports actual product data from Amazon.",
         "schemaRequired": "Please complete the schema import first."
+      },
+      "mirakl": {
+        "title": "Mirakl Imports",
+        "help": "Use this section to follow Mirakl import activity, including progress, processed files, and any errors that need attention.",
+        "oneSilaTitle": "OneSila Imports",
+        "oneSilaHelp": "These are the existing OneSila-side import processes available for this channel.",
+        "oneSilaEmpty": "No OneSila imports found for this channel yet.",
+        "empty": "No Mirakl imports found for this channel yet.",
+        "remoteImportId": "Remote import ID",
+        "sourceFileName": "Source file",
+        "files": "Generated files",
+        "errorReport": "Error report",
+        "transformedFile": "Transformed file"
       },
       "brokenRecords": {
         "codes": {

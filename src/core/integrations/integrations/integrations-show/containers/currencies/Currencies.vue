@@ -5,18 +5,21 @@ import { GeneralListing } from "../../../../../../shared/components/organisms/ge
 import {
   currenciesSearchConfigConstructor,
   currenciesListingConfigConstructor,
-  listingQuery,
-  listingQueryKey
+  listingQueryConstructor,
+  listingQueryKeyConstructor
 } from "./configs";
 import { Button } from "../../../../../../shared/components/atoms/button";
+import { useRoute } from 'vue-router';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
+const route = useRoute();
 
 const { t } = useI18n();
+const integrationType = String(route.params.type);
 
 const searchConfig = currenciesSearchConfigConstructor(t);
-const listingConfig = currenciesListingConfigConstructor(t, props.id);
+const listingConfig = currenciesListingConfigConstructor(t, props.id, integrationType);
 </script>
 
 <template>
@@ -32,8 +35,8 @@ const listingConfig = currenciesListingConfigConstructor(t, props.id);
       <GeneralListing
         :search-config="searchConfig"
         :config="listingConfig"
-        :query="listingQuery"
-        :query-key="listingQueryKey"
+        :query="listingQueryConstructor(integrationType)"
+        :query-key="listingQueryKeyConstructor(integrationType)"
         :fixed-filter-variables="{'salesChannel': {'id': {exact: salesChannelId}}}"
       />
     </template>

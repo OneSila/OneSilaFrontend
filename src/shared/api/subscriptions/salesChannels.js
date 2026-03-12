@@ -37,6 +37,18 @@ export const salesChannelSubscription = gql`
         percentage
         createdAt
       }
+      miraklImports {
+        id
+        proxyId
+        status
+        percentage
+        createdAt
+        remoteImportId
+        sourceFileName
+        hasErrorReport
+        hasTransformedFile
+        summaryData
+      }
     }
   }
 `;

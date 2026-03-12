@@ -2338,6 +2338,13 @@
         "images": "",
         "fileThumbnail": "Bestandsminiatuur",
         "sortByCreatedAt": ""
+      },
+      "selection": {
+        "selectMultiple": "",
+        "selectedMedia": "",
+        "selectedCount": "",
+        "emptyTitle": "",
+        "emptyDescription": ""
       }
     },
     "images": {
@@ -3727,7 +3734,9 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook"
+      "ebay": "Ebay",
+      "webhook": "Webhook",
+      "mirakl": ""
     },
     "amazon": {
       "actions": {
@@ -3791,9 +3800,176 @@
         }
       }
     },
+    "create": {
+      "wizard": {
+        "step1": {
+          "heroTitle": "",
+          "heroDescription": "",
+          "resultsLabel": "",
+          "searchPlaceholder": "",
+          "filters": {
+            "all": "",
+            "storefronts": "",
+            "marketplaces": "",
+            "webhooks": "",
+            "betaOnly": "",
+            "completedOnly": "",
+            "showBeta": ""
+          },
+          "categories": {
+            "storefronts": {
+              "title": "",
+              "description": ""
+            },
+            "marketplaces": {
+              "title": "",
+              "description": ""
+            },
+            "webhooks": {
+              "title": "",
+              "description": ""
+            }
+          },
+          "empty": {
+            "title": "",
+            "description": ""
+          },
+          "selection": {
+            "title": "",
+            "description": "",
+            "clear": ""
+          },
+          "openAiFeedSupport": "",
+          "magentoInfoModal": {
+            "title": "",
+            "tabs": {
+              "instructions": "",
+              "video": ""
+            },
+            "section": {
+              "integrationTitle": "",
+              "integrationDescription": "",
+              "integrationStep1": "",
+              "integrationStep2": "",
+              "apiSettingsTitle": "",
+              "apiSettingsDescription": "",
+              "apiSetting1": "",
+              "apiSetting2": "",
+              "legacyAuthTitle": "",
+              "legacyAuthWarning": "",
+              "importTitle": "",
+              "importRecommendation": "",
+              "eanTitle": "",
+              "eanDescription": ""
+            }
+          },
+          "woocommerceInfoModal": {
+            "title": "",
+            "integrationTitle": "",
+            "integrationDescription": "",
+            "integrationStep1": "",
+            "integrationStep2": "",
+            "integrationStep3": "",
+            "integrationStep4": "",
+            "integrationStep5": "",
+            "integrationStep6": "",
+            "integrationStep7": "",
+            "integrationStep8": "",
+            "apiSettingsTitle": "",
+            "apiSettingsDescription": "",
+            "apiSetting1": "",
+            "apiSetting2": "",
+            "importTitle": "",
+            "importRecommendation": "",
+            "eanTitle": "",
+            "eanDescription": ""
+          },
+          "shopifyInfoModal": {
+            "title": "",
+            "section": {
+              "integrationTitle": "",
+              "integrationDescription": "",
+              "integrationStep1": "",
+              "integrationStep2": "",
+              "integrationStep3": "",
+              "integrationStep4": "",
+              "integrationStep5Part1": "",
+              "integrationStep5Part2": "",
+              "integrationStep5Part3": "",
+              "integrationStep6Part1": "",
+              "integrationStep6Part2": "",
+              "integrationStep7": "",
+              "integrationStep8": "",
+              "appUrlLabel": "",
+              "allowedRedirectUrlLabel": "",
+              "customAppTitle": "",
+              "detectWebsiteUrlTitle": "",
+              "configureDistributionTitle": "",
+              "configureUrlsTitle": "",
+              "finishWizardTitle": ""
+            }
+          },
+          "miraklTitle": "",
+          "miraklExample": "",
+          "miraklSubtypeExample": "",
+          "miraklInfoModal": {
+            "title": "",
+            "description": "",
+            "instructions": "",
+            "cta": ""
+          }
+        },
+        "step4": {
+          "shein": {
+            "title": "",
+            "content": ""
+          },
+          "mirakl": {
+            "title": "",
+            "content": ""
+          },
+          "marketplace": {
+            "title": "",
+            "content": ""
+          }
+        }
+      }
+    },
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "mirakl": {
+        "title": "",
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "acceptedValues": "",
+            "isCondition": ""
+          }
+        }
+      },
+      "sections": {
+        "credentials": ""
+      },
+      "miraklNotConnectedBanner": {
+        "title": "",
+        "content": ""
+      },
+      "stores": {
+        "labels": {
+          "description": ""
+        }
+      },
+      "languages": {
+        "labels": {
+          "label": ""
+        }
+      },
+      "currencies": {
+        "labels": {
+          "label": ""
+        }
       },
       "shein": {
         "reauthorize": ""
@@ -3843,6 +4019,7 @@
       }
     },
     "labels": {
+      "shopId": "",
       "fulfillmentPolicy": "Verzendbeleid",
       "paymentPolicy": "Betaalbeleid",
       "returnPolicy": "Retourbeleid",
@@ -3862,6 +4039,9 @@
       "gptReturnPolicy": "",
       "gptReturnWindow": "",
       "gptFeedUrl": ""
+    },
+    "placeholders": {
+      "shopId": ""
     },
     "salesChannel": {
       "labels": {
@@ -3903,6 +4083,21 @@
         "kilogram": "Kilogram",
         "ounce": "Ons",
         "pound": "Pond"
+      }
+    },
+    "imports": {
+      "mirakl": {
+        "title": "",
+        "help": "",
+        "oneSilaTitle": "",
+        "oneSilaHelp": "",
+        "oneSilaEmpty": "",
+        "empty": "",
+        "remoteImportId": "",
+        "sourceFileName": "",
+        "files": "",
+        "errorReport": "",
+        "transformedFile": ""
       }
     }
   },

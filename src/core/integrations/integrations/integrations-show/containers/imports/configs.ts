@@ -44,6 +44,19 @@ export interface SheinSalesChannelImportItem {
   createdAt: string;
 }
 
+export interface MiraklImportProcessItem {
+  id: string;
+  proxyId: string;
+  status: 'new' | 'pending' | 'failed' | 'success' | 'processing';
+  percentage: number;
+  createdAt: string;
+  remoteImportId?: string | null;
+  sourceFileName?: string | null;
+  hasErrorReport?: boolean;
+  hasTransformedFile?: boolean;
+  summaryData?: string | null;
+}
+
 export interface SalesChannelSubscriptionResult {
   salesChannel: {
     id: string;
@@ -53,6 +66,7 @@ export interface SalesChannelSubscriptionResult {
     amazonImports: AmazonSalesChannelImportItem[];
     ebayImports: EbaySalesChannelImportItem[];
     sheinImports: SheinSalesChannelImportItem[];
+    miraklImports: MiraklImportProcessItem[];
   };
 }
 

@@ -14,7 +14,8 @@ import {
   getWoocommerceChannelQuery,
   getAmazonChannelQuery,
   getEbayChannelQuery,
-  getSheinChannelQuery
+  getSheinChannelQuery,
+  getMiraklChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { getWebhookIntegrationQuery } from "../../../../shared/api/queries/webhookIntegrations.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
@@ -24,6 +25,7 @@ import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-gene
 import { WebhookGeneralInfoTab } from "./containers/general/webhook-general-tab";
 import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
 import { SheinGeneralInfoTab } from "./containers/general/shein-general-tab";
+import { MiraklGeneralInfoTab } from "./containers/general/mirakl-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -101,6 +103,12 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
+  } else if (type.value === IntegrationTypes.Mirakl) {
+    tabItems.value.push(
+      { name: 'inventoryFields', label: t('integrations.show.mirakl.internalProperties.title'), icon: 'boxes-stacked' },
+      { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
+      { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
+    );
   }
 
   tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
@@ -126,6 +134,8 @@ const getIntegrationQuery = () => {
       return getEbayChannelQuery;
     case IntegrationTypes.Shein:
       return getSheinChannelQuery;
+    case IntegrationTypes.Mirakl:
+      return getMiraklChannelQuery;
     case IntegrationTypes.Webhook:
       return getWebhookIntegrationQuery;
     default:
@@ -149,6 +159,8 @@ const getIntegrationQueryKey = () => {
       return "ebayChannel";
     case IntegrationTypes.Shein:
       return "sheinChannel";
+    case IntegrationTypes.Mirakl:
+      return "miraklChannel";
     default:
       return "salesChannel";
   }
@@ -170,6 +182,8 @@ const getGeneralComponent = () => {
       return EbayGeneralInfoTab;
     case IntegrationTypes.Shein:
       return SheinGeneralInfoTab;
+    case IntegrationTypes.Mirakl:
+      return MiraklGeneralInfoTab;
     default:
       return null;
   }

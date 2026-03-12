@@ -7,6 +7,7 @@ import { Image } from "../../../../shared/components/atoms/image";
 import { Link } from "../../../../shared/components/atoms/link";
 import { Button } from "../../../../shared/components/atoms/button";
 import { Selector } from "../../../../shared/components/atoms/selector";
+import { Toggle } from "../../../../shared/components/atoms/toggle";
 import { FilterManager } from "../../../../shared/components/molecules/filter-manager";
 import { Pagination } from "../../../../shared/components/molecules/pagination";
 import { SearchInput } from "../../../../shared/components/molecules/search-input";
@@ -33,6 +34,7 @@ const props = defineProps<{
   defaultViewType?: string;
   refetchNeeded?: boolean;
   assignImages?: boolean;
+  allowMultiAssign?: boolean;
   ids?: any[]
   fixedMediaType?: string | null;
   fixedFilter?: Record<string, any> | null;
@@ -42,10 +44,13 @@ const props = defineProps<{
 }>();
 
 
-const emit = defineEmits(['refetched', 'assign-media']);
+const emit = defineEmits(['refetched', 'assign-media', 'assign-medias']);
 const viewType = ref(props.defaultViewType || 'table');
 const selectedEntities = ref<string[]>([]);
+const selectedAssignedMedia = ref<any[]>([]);
+const isMultiAssignEnabled = ref(false);
 const haveBulkDelete = computed(() => !!props.bulkDeleteMutation);
+const canUseMultiAssign = computed(() => Boolean(props.assignImages && props.allowMultiAssign));
 const allSelected = (items: any[]): boolean =>
   items.length > 0 && selectedEntities.value.length === items.length;
 
@@ -117,6 +122,20 @@ const documentImageFilterOptions = computed(() => ([
   { label: t('media.documents.filters.imageDocuments'), value: 'true' },
   { label: t('media.documents.filters.fileDocuments'), value: 'false' },
 ]));
+const selectedAssignCount = computed(() => selectedAssignedMedia.value.length);
+
+watch(canUseMultiAssign, (enabled) => {
+  if (!enabled) {
+    isMultiAssignEnabled.value = false;
+    selectedAssignedMedia.value = [];
+  }
+});
+
+watch(isMultiAssignEnabled, (enabled) => {
+  if (!enabled) {
+    selectedAssignedMedia.value = [];
+  }
+});
 
 const handleLocalPagination = (nQ) => {
   if (!props.assignImages) return;
@@ -276,9 +295,47 @@ const refetchIfNecessary = (query, data, force = false) => {
   return true;
 }
 
+const isMediaSelectedForAssign = (mediaId: string) =>
+  selectedAssignedMedia.value.some((media) => media?.id === mediaId);
+
+const addSelectedMedia = (media: any) => {
+  if (!media?.id || isMediaSelectedForAssign(media.id)) {
+    return;
+  }
+  selectedAssignedMedia.value = [...selectedAssignedMedia.value, media];
+};
+
+const removeSelectedMedia = (mediaId: string) => {
+  selectedAssignedMedia.value = selectedAssignedMedia.value.filter((media) => media?.id !== mediaId);
+};
+
 const assignMedia = (media) => {
- emit('assign-media', media)
-}
+  if (canUseMultiAssign.value && isMultiAssignEnabled.value) {
+    addSelectedMedia(media);
+    return;
+  }
+  emit('assign-media', media);
+};
+
+const submitSelectedMedia = () => {
+  if (!selectedAssignedMedia.value.length) {
+    return;
+  }
+  emit('assign-medias', [...selectedAssignedMedia.value]);
+};
+
+const getSelectedMediaThumbnailSource = (media: any): string | null => {
+  if (media?.type === TYPE_IMAGE) {
+    return media?.imageWebUrl || null;
+  }
+  if (media?.type === TYPE_VIDEO) {
+    return media?.onesilaThumbnailUrl || null;
+  }
+  if (media?.type === TYPE_DOCUMENT) {
+    return getDocumentThumbnailSource(media);
+  }
+  return null;
+};
 
 const removeQueryAndHash = (value: string) => value.split('#')[0].split('?')[0];
 
@@ -372,7 +429,7 @@ const deleteAll = async (query) => {
 </script>
 
 <template>
-  <Card :class="['card', 'overflow-auto', { 'max-h-[50rem]': assignImages }]">
+  <Card :class="['card', 'overflow-auto', { 'max-h-[50rem]': assignImages && !canUseMultiAssign, 'max-h-[56rem]': canUseMultiAssign }]">
     <div class="card-header flex justify-between items-center py-2 mb-2">
       <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-300">{{ props.label }}</h4>
       <div class="bg-gray-100 px-2 py-1 rounded-lg">
@@ -518,7 +575,13 @@ const deleteAll = async (query) => {
                           </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                          <tr v-for="item in data[queryKey].edges" :key="item.node.id">
+                          <tr
+                            v-for="item in data[queryKey].edges"
+                            :key="item.node.id"
+                            :class="{
+                              'bg-blue-50/70 dark:bg-blue-950/30': canUseMultiAssign && isMultiAssignEnabled && isMediaSelectedForAssign(item.node.id)
+                            }"
+                          >
                             <td v-if="haveBulkDelete" class="px-2">
                               <Checkbox
                                 :modelValue="selectedEntities.includes(item.node.id)"
@@ -560,7 +623,13 @@ const deleteAll = async (query) => {
 
 
                   <div v-for="item in data[queryKey].edges" :key="item.node.id"
-                       :class="['file-entry relative', selectedEntities.includes(item.node.id) ? 'border-2 border-indigo-600 rounded-md' : '']">
+                       :class="[
+                         'file-entry relative',
+                         selectedEntities.includes(item.node.id) ? 'border-2 border-indigo-600 rounded-md' : '',
+                         canUseMultiAssign && isMultiAssignEnabled && isMediaSelectedForAssign(item.node.id)
+                           ? 'border-2 border-indigo-600 rounded-md bg-blue-50/70 dark:bg-blue-950/30'
+                           : ''
+                       ]">
 
                     <Checkbox class="absolute top-2 left-2 z-10" v-if="haveBulkDelete"
                               :modelValue="selectedEntities.includes(item.node.id)"
@@ -658,6 +727,63 @@ const deleteAll = async (query) => {
         </template>
       </FilterManager>
     </div>
+    <div v-if="canUseMultiAssign" class="mt-4 border-t border-gray-200 px-4 py-4">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="min-h-[6.5rem] flex-1 rounded-xl bg-gray-100 px-4 py-3">
+          <div class="mb-2 flex items-center justify-between gap-3">
+            <span class="text-sm font-semibold text-gray-900">{{ t('media.media.selection.selectedMedia') }}</span>
+            <span class="text-xs text-gray-500">
+              {{ t('media.media.selection.selectedCount', { count: selectedAssignCount }) }}
+            </span>
+          </div>
+          <div v-if="selectedAssignedMedia.length" class="flex flex-wrap items-center gap-3">
+            <div
+              v-for="media in selectedAssignedMedia"
+              :key="media.id"
+              class="selected-media-chip relative h-16 w-16"
+            >
+              <div class="flex h-full w-full items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+                <Image
+                  v-if="getSelectedMediaThumbnailSource(media)"
+                  :source="getSelectedMediaThumbnailSource(media)"
+                  :alt="getFileName(media)"
+                  class="h-full w-full object-contain"
+                />
+                <div v-else class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
+                  <Icon
+                    :name="media.type === TYPE_DOCUMENT ? 'file-text' : media.type === TYPE_VIDEO ? 'play' : 'image'"
+                    class="text-gray-500"
+                  />
+                </div>
+              </div>
+              <Button
+                class="absolute -right-2 -top-2 z-10 rounded-full bg-white text-red-500 shadow-sm"
+                @click="removeSelectedMedia(media.id)"
+              >
+                <Icon name="circle-xmark" size="lg" />
+              </Button>
+            </div>
+          </div>
+          <div v-else class="flex min-h-[3.5rem] items-center justify-center text-center text-base font-medium text-gray-500">
+            <span>{{ t('media.media.selection.emptyTitle') }}</span>
+          </div>
+        </div>
+        <div class="flex min-w-[15rem] flex-wrap items-center justify-end gap-3">
+          <div class="flex items-center gap-3 text-sm font-medium text-gray-900">
+            <span>{{ t('media.media.selection.selectMultiple') }}</span>
+            <Toggle v-model="isMultiAssignEnabled" />
+          </div>
+          <Button
+            v-if="isMultiAssignEnabled"
+            class="btn btn-primary"
+            :disabled="!selectedAssignedMedia.length"
+            @click="submitSelectedMedia"
+          >
+            {{ t('shared.button.submit') }}
+          </Button>
+        </div>
+      </div>
+    </div>
   </Card>
   <PreviewDocument
     v-model="previewModalVisible"
@@ -683,5 +809,27 @@ const deleteAll = async (query) => {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@keyframes selected-media-sway {
+  0%, 100% {
+    transform: translate(-2px, -2px) rotate(-3deg);
+  }
+  50% {
+    transform: translate(2px, -6px) rotate(3deg);
+  }
+}
+
+.selected-media-chip {
+  animation: selected-media-sway 2.2s ease-in-out infinite;
+}
+
+.selected-media-chip:nth-child(2n) {
+  animation-duration: 2.5s;
+  animation-direction: alternate-reverse;
+}
+
+.selected-media-chip:nth-child(3n) {
+  animation-duration: 2.8s;
 }
 </style>

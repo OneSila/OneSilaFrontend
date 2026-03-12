@@ -6,20 +6,23 @@ import { GeneralListing } from "../../../../../../shared/components/organisms/ge
 import {
   languagesSearchConfigConstructor,
   languagesListingConfigConstructor,
-  languagesListingQueryKey,
-  languagesListingQuery
+  listingQueryKeyConstructor,
+  listingQueryConstructor
 } from "./configs";
 import apolloClient from "../../../../../../../apollo-client";
 import { companyLanguagesQuery } from "../../../../../../shared/api/queries/languages.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { Button } from "../../../../../../shared/components/atoms/button";
+import { useRoute } from 'vue-router';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 const emit = defineEmits(['pull-data']);
+const route = useRoute();
 
 const badgeMap = ref({});
 const listingConfig = ref<ListingConfig | null>(null);
 const { t } = useI18n();
+const integrationType = ref(String(route.params.type));
 
 const fetchLanguages = async () => {
   const {data} = await apolloClient.query({
@@ -33,7 +36,7 @@ const fetchLanguages = async () => {
       });
       badgeMap.value = map;
   }
-  listingConfig.value = languagesListingConfigConstructor(t, badgeMap.value, props.id);
+  listingConfig.value = languagesListingConfigConstructor(t, badgeMap.value, props.id, integrationType.value);
 }
 
 onMounted(fetchLanguages);
@@ -55,8 +58,8 @@ const searchConfig = languagesSearchConfigConstructor(t);
         v-if="listingConfig"
         :search-config="searchConfig"
         :config="listingConfig"
-        :query="languagesListingQuery"
-        :query-key="languagesListingQueryKey"
+        :query="listingQueryConstructor(integrationType)"
+        :query-key="listingQueryKeyConstructor(integrationType)"
         :fixed-filter-variables="{'salesChannel': {'id': {exact: salesChannelId}}}"
       />
     </template>
