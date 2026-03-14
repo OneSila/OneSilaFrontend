@@ -120,7 +120,10 @@ const config: RemoteSelectValueEditPropertyConfig = {
   propertyQueryDataKey: 'miraklProperties',
   propertyQueryVariables: ({ propertyId }) => ({
     first: 1,
-    filter: { id: { exact: propertyId } },
+    filter: {
+      id: { exact: propertyId },
+      showProperty: true,
+    },
   }),
   mapPropertyData: propertyData => {
     const node = propertyData?.edges?.[0]?.node;

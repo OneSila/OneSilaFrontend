@@ -66,6 +66,7 @@ export const miraklPropertySelectValuesSearchConfigConstructor = (t: Function): 
       lookupKeys: ['id'],
       queryVariables: {
         filter: {
+          showProperty: true,
           isPropertyValue: true,
         },
       },

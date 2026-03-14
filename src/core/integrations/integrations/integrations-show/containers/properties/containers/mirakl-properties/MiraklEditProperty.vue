@@ -19,6 +19,7 @@ import debounce from 'lodash.debounce';
 import { buildFilterVariablesFromRouteQuery, extractPrefixedQueryParams } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 import { getTypeCompatibility } from '../../../../../../../../shared/utils/propertyTypeCompatibility';
 import {
+  getMiraklRepresentationTypeOptions,
   getMiraklRepresentationTypeGroup,
   usesMiraklBooleanCurrentType,
   usesMiraklDefaultValueInput,
@@ -127,9 +128,15 @@ const isSelectPropertyType = (value?: string | null) =>
 const currentRepresentationType = computed(() =>
   formData.value.representationType || representationType.value || propertyMetadata.value?.representationType || null,
 );
-const usesLocalPropertyMapping = computed(() => usesMiraklLocalPropertyMapping(currentRepresentationType.value));
-const usesDefaultValueInput = computed(() => usesMiraklDefaultValueInput(currentRepresentationType.value));
+const isRepresentationTypeDecided = computed(() => Boolean(propertyMetadata.value?.representationTypeDecided));
+const usesLocalPropertyMapping = computed(() =>
+  isRepresentationTypeDecided.value || usesMiraklLocalPropertyMapping(currentRepresentationType.value),
+);
+const usesDefaultValueInput = computed(() =>
+  !isRepresentationTypeDecided.value && usesMiraklDefaultValueInput(currentRepresentationType.value),
+);
 const canSeeValues = computed(() => usesLocalPropertyMapping.value && isSelectPropertyType(propertyType.value));
+const showRepresentationGuide = computed(() => !isRepresentationTypeDecided.value);
 const representationTypeLabel = computed(() =>
   currentRepresentationType.value
     ? t(`integrations.show.mirakl.representationTypes.options.${currentRepresentationType.value}`)
@@ -306,6 +313,7 @@ const fetchNextUnmapped = async (): Promise<{ nextId: string | null; last: boole
 
   const baseFilter = {
     salesChannel: { id: { exact: salesChannelId } },
+    showProperty: true,
     mappedLocally: false,
     ...nextFilters,
   };
@@ -455,8 +463,20 @@ const buildDefaultValueField = (defaultValue?: string | null) => ({
   ...(defaultValue != null ? { default: defaultValue } : {}),
 });
 
+const buildRepresentationTypeField = () => ({
+  type: FieldType.Choice,
+  name: 'representationType',
+  label: t('integrations.show.mirakl.properties.labels.representationType'),
+  labelBy: 'name',
+  valueBy: 'code',
+  options: getMiraklRepresentationTypeOptions(t),
+  disabled: false,
+  removable: false,
+  help: t('integrations.show.mirakl.properties.help.representationType'),
+});
+
 const getForcedRepresentationCurrentType = () => {
-  if (!usesMiraklBooleanCurrentType(currentRepresentationType.value)) {
+  if (isRepresentationTypeDecided.value || !usesMiraklBooleanCurrentType(currentRepresentationType.value)) {
     return null;
   }
 
@@ -502,6 +522,14 @@ const removeFieldsByName = (names: string[]) => {
 const syncRepresentationFields = () => {
   if (!formConfig.value) {
     return;
+  }
+
+  formConfig.value.haveCustomHelpSection = showRepresentationGuide.value;
+
+  if (showRepresentationGuide.value) {
+    insertFieldsAfter('allowsUnmappedValues', [buildRepresentationTypeField() as any]);
+  } else {
+    removeFieldsByName(['representationType']);
   }
 
   removeFieldsByName(['localInstance', 'defaultValue', 'yesTextValue', 'noTextValue']);
@@ -616,6 +644,10 @@ onMounted(async () => {
         delete nextData.localInstance;
         delete nextData.yesTextValue;
         delete nextData.noTextValue;
+      }
+
+      if (isRepresentationTypeDecided.value) {
+        delete nextData.representationType;
       }
 
       if (!usesDefaultValueInput.value) {
@@ -838,7 +870,7 @@ watch(currentRepresentationType, () => {
     @form-updated="handleFormUpdate"
   >
     <template #help-section>
-      <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div v-if="showRepresentationGuide" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div class="bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-5 border-b border-slate-200">
           <div class="flex items-start justify-between gap-3">
             <div>

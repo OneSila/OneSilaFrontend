@@ -54,6 +54,8 @@ export const miraklCategoriesQuery = gql`
             id
             remoteId
             name
+            readyToPush
+            templateUrl
             items {
               id
               required

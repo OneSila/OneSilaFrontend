@@ -75,7 +75,7 @@ const canSeeValues = (item: any) => {
   }
 
   if (integrationType.value === IntegrationTypes.Mirakl) {
-    return item?.node?.representationType === MIRAKL_REPRESENTATION_TYPE_PROPERTY;
+    return item?.node?.representationTypeDecided || item?.node?.representationType === MIRAKL_REPRESENTATION_TYPE_PROPERTY;
   }
 
   return true;

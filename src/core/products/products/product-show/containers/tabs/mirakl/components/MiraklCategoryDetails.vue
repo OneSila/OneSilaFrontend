@@ -5,6 +5,7 @@ import { Accordion } from '../../../../../../../../shared/components/atoms/accor
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Toast } from '../../../../../../../../shared/modules/toast';
+import { IntegrationTypes } from '../../../../../../../integrations/integrations/integrations';
 import type { MiraklCategoryNode } from './miraklCategoryUtils';
 
 const props = defineProps<{
@@ -25,6 +26,45 @@ const accordionItems = computed(() =>
 
 const getProductTypeSlotName = (productType: MiraklCategoryNode['productTypes'][number]) =>
   productType.id || productType.remoteId;
+
+const getProductTypeStatusClass = (productType: MiraklCategoryNode['productTypes'][number]) =>
+  productType.readyToPush
+    ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+    : 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
+
+const getProductTypeStatusIcon = (productType: MiraklCategoryNode['productTypes'][number]) =>
+  productType.readyToPush ? 'circle-check' : 'triangle-exclamation';
+
+const getProductTypeStatusLabel = (productType: MiraklCategoryNode['productTypes'][number]) =>
+  productType.readyToPush
+    ? t('products.products.mirakl.details.readyToPush')
+    : t('products.products.mirakl.details.notReadyToPush');
+
+const isTemplateMissing = (productType: MiraklCategoryNode['productTypes'][number]) =>
+  !productType.readyToPush && !productType.templateUrl;
+
+const productTypePath = (productType: MiraklCategoryNode['productTypes'][number]) => {
+  if (!productType.id) {
+    return undefined;
+  }
+
+  const query: Record<string, string> = {};
+  const integrationId = props.channel?.integrationPtr?.id;
+
+  if (integrationId) {
+    query.integrationId = integrationId;
+  }
+
+  if (props.salesChannelId) {
+    query.salesChannelId = props.salesChannelId;
+  }
+
+  return {
+    name: 'integrations.remoteProductTypes.edit',
+    params: { type: IntegrationTypes.Mirakl, id: productType.id },
+    ...(Object.keys(query).length ? { query } : {}),
+  };
+};
 
 const remotePropertyPath = (propertyId?: string | null) => {
   if (!propertyId) {
@@ -97,12 +137,52 @@ const copyCategoryId = async (remoteId?: string | null) => {
       <Accordion v-else :items="accordionItems" :default-active="accordionItems[0]?.name">
         <template
           v-for="productType in category.productTypes"
+          :key="`${productType.id || productType.remoteId}-actions`"
+          v-slot:[`${getProductTypeSlotName(productType)}-actions`]
+        >
+          <div
+            class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold"
+            :class="getProductTypeStatusClass(productType)"
+          >
+            <Icon :name="getProductTypeStatusIcon(productType)" class="h-3 w-3" />
+            <span>{{ getProductTypeStatusLabel(productType) }}</span>
+          </div>
+        </template>
+        <template
+          v-for="productType in category.productTypes"
           :key="productType.id || productType.remoteId"
           v-slot:[getProductTypeSlotName(productType)]
         >
           <div class="space-y-4">
-            <div class="text-xs text-gray-500">
-              {{ t('products.products.mirakl.details.productTypeId', { id: productType.remoteId }) }}
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="text-xs text-gray-500">
+                {{ t('products.products.mirakl.details.productTypeId', { id: productType.remoteId }) }}
+              </div>
+              <div
+                class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold"
+                :class="getProductTypeStatusClass(productType)"
+              >
+                <Icon :name="getProductTypeStatusIcon(productType)" class="h-3 w-3" />
+                <span>{{ getProductTypeStatusLabel(productType) }}</span>
+              </div>
+            </div>
+
+            <div
+              v-if="isTemplateMissing(productType)"
+              class="flex flex-col gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+            >
+              <div class="flex items-start gap-3">
+                <Icon name="triangle-exclamation" class="mt-0.5 h-4 w-4 text-amber-500" />
+                <span>{{ t('products.products.mirakl.details.templateMissingWarning') }}</span>
+              </div>
+              <div v-if="productTypePath(productType)">
+                <Link
+                  :path="productTypePath(productType)"
+                  class="inline-flex items-center rounded bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+                >
+                  {{ t('products.products.mirakl.details.openProductType') }}
+                </Link>
+              </div>
             </div>
 
             <div v-if="!productType.items.length" class="text-sm text-gray-500">

@@ -1450,6 +1450,10 @@
           "productTypes": "",
           "noProductTypes": "",
           "productTypeId": "",
+          "readyToPush": "",
+          "notReadyToPush": "",
+          "templateMissingWarning": "",
+          "openProductType": "",
           "noItems": "",
           "columns": {
             "property": "",
@@ -3637,6 +3641,7 @@
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
         "mappedRemotelyMirakl": "",
+        "readyToPush": "",
         "startMapping": "",
         "autoMap": "",
         "autoMapHelp": "",

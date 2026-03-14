@@ -1790,6 +1790,10 @@
           "productTypes": "Product types",
           "noProductTypes": "No Mirakl product types are linked to this category.",
           "productTypeId": "Product type ID: {id}",
+          "readyToPush": "Ready to push",
+          "notReadyToPush": "Not ready to push",
+          "templateMissingWarning": "This Mirakl product type is not ready to push because the CSV template is missing.",
+          "openProductType": "Open product type",
           "noItems": "No configurable items found for this product type.",
           "columns": {
             "property": "Property",
@@ -4500,6 +4504,7 @@
         "mappedRemotelyEbay": "Mapped on eBay",
         "mappedRemotelyMirakl": "Mapped on Mirakl",
         "mappedRemotelyShein": "Mapped on Shein",
+        "readyToPush": "Ready to push",
         "startMapping": "Start Mapping",
         "autoMap": "Auto Map",
         "autoMapHelp": "Auto Map tries to match values for you. If a marketplace property is already mapped to a OneSila property, and a marketplace value has the exact same text as an existing OneSila value in that property, it will be mapped automatically. Example: marketplace “Color” → OneSila “Color”, marketplace value “Red” → OneSila value “Red”. Runs in the background, so you can keep working.",

@@ -1603,6 +1603,7 @@ export const miraklPropertiesQuery = gql`
           code
           name
           representationType
+          representationTypeDecided
           mappedLocally
           mappedRemotely
           type
@@ -1677,6 +1678,7 @@ export const getMiraklPropertyQuery = gql`
       code
       name
       representationType
+      representationTypeDecided
       description
       example
       hierarchyCode
@@ -2425,7 +2427,7 @@ export const miraklProductTypesQuery = gql`
           name
           imported
           mappedLocally
-          mappedRemotely
+          readyToPush
           localInstance {
             id
             value

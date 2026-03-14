@@ -289,6 +289,18 @@ export const productTypesSearchConfigConstructor = (
   integrationType: string,
   salesChannelId: string,
 ): SearchConfig => {
+  if (integrationType === IntegrationTypes.Mirakl) {
+    return {
+      search: true,
+      orderKey: 'sort',
+      filters: [
+        { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+        { type: FieldType.Boolean, name: 'readyToPush', label: t('integrations.show.mapping.readyToPush'), strict: true },
+      ],
+      orders: [],
+    };
+  }
+
   const mappedRemotelyLabel =
     integrationType === IntegrationTypes.Ebay
       ? t('integrations.show.mapping.mappedRemotelyEbay')
@@ -453,13 +465,13 @@ const miraklProductTypesListingConfig = (
   headers: [
     t('shared.labels.name'),
     t('integrations.show.mapping.mappedLocally'),
-    t('integrations.show.mapping.mappedRemotelyMirakl'),
+    t('integrations.show.mapping.readyToPush'),
     t('properties.rule.title'),
   ],
   fields: [
     { name: 'name', type: FieldType.Text },
     { name: 'mappedLocally', type: FieldType.Boolean },
-    { name: 'mappedRemotely', type: FieldType.Boolean },
+    { name: 'readyToPush', type: FieldType.Boolean },
     {
       name: 'localInstance',
       type: FieldType.NestedText,

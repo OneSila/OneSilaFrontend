@@ -32,6 +32,7 @@ const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: str
     :listing-config="listingConfig"
     :listing-query="miraklPropertiesListingQuery"
     :listing-query-key="miraklPropertiesListingQueryKey"
+    :fixed-filter-variables="{ showProperty: true }"
     :build-start-mapping-route="buildStartMappingRoute"
     :auto-map-mutation="mapSalesChannelPerfectMatchPropertiesMutation"
     @pull-data="emit('pull-data')"

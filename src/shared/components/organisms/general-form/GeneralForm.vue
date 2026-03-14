@@ -49,7 +49,7 @@ watch(() => props.config, (newConfig) => {
         'grid grid-cols-1 gap-x-8 gap-y-8',
         {
           'md:grid-cols-5': !enhancedConfig.fullWidth && enhancedConfig.haveCustomHelpSection,
-          'md:grid-cols-3': !enhancedConfig.fullWidth && !enhancedConfig.haveCustomHelpSection && (enhancedConfig.helpSections?.length || 0) > 0,
+          'md:grid-cols-3': !enhancedConfig.fullWidth && !enhancedConfig.haveCustomHelpSection,
         },
       ]"
     >
@@ -83,7 +83,10 @@ watch(() => props.config, (newConfig) => {
           </template>
         </FormEdit>
       </div>
-      <HelpSection :config="enhancedConfig">
+      <HelpSection
+        v-if="(enhancedConfig.helpSections?.length || 0) > 0 || enhancedConfig.haveCustomHelpSection"
+        :config="enhancedConfig"
+      >
         <slot name="help-section" />
       </HelpSection>
     </div>

@@ -28,6 +28,8 @@ export interface MiraklProductTypeNode {
   id: string;
   remoteId: string;
   name: string;
+  readyToPush: boolean;
+  templateUrl?: string | null;
   items: MiraklProductTypeItemNode[];
 }
 
@@ -65,6 +67,8 @@ export const normalizeMiraklCategoryNode = (node: any): MiraklCategoryNode => ({
         id: String(productType?.id ?? ''),
         remoteId: String(productType?.remoteId ?? ''),
         name: String(productType?.name ?? ''),
+        readyToPush: Boolean(productType?.readyToPush),
+        templateUrl: productType?.templateUrl ?? null,
         items: Array.isArray(productType?.items)
           ? productType.items.map((item: any) => ({
               id: String(item?.id ?? ''),
