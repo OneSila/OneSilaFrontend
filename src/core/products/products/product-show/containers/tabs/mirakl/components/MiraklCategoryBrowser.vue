@@ -161,17 +161,16 @@ const selectNode = (node: MiraklCategoryNode) => {
         <li
           v-for="node in filteredNodes"
           :key="node.id || node.remoteId"
-          class="flex justify-between items-center py-2 px-2 border rounded hover:bg-gray-100"
+          class="flex items-center gap-2 py-2 px-2 border rounded hover:bg-gray-100 min-w-0"
         >
           <div
-            class="flex items-center gap-2 flex-1 cursor-pointer"
+            class="flex items-center gap-2 flex-1 min-w-0 cursor-pointer"
             @click="!node.isLeaf ? goToChild(node) : selectNode(node)"
           >
-            <Icon :name="!node.isLeaf ? 'angle-right' : 'circle'" class="w-3" />
-            <span>{{ node.name }}</span>
-            <span class="text-xs text-gray-500">{{ node.remoteId }}</span>
+            <Icon :name="!node.isLeaf ? 'angle-right' : 'circle'" class="w-3 flex-shrink-0" />
+            <span class="truncate">{{ node.name }}</span>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-2 flex-shrink-0">
             <Button
               class="btn btn-sm btn-outline-primary"
               :disabled="!node.isLeaf"

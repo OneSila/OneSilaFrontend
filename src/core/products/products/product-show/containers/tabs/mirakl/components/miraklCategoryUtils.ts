@@ -2,6 +2,7 @@ export interface MiraklProductTypeItemNode {
   id: string;
   required: boolean;
   variant: boolean;
+  requirementLevel?: string | null;
   remoteProperty: {
     id: string;
     code: string;
@@ -74,6 +75,7 @@ export const normalizeMiraklCategoryNode = (node: any): MiraklCategoryNode => ({
               id: String(item?.id ?? ''),
               required: Boolean(item?.required),
               variant: Boolean(item?.variant),
+              requirementLevel: item?.requirementLevel ?? null,
               remoteProperty: item?.remoteProperty
                 ? {
                     id: String(item.remoteProperty.id ?? ''),

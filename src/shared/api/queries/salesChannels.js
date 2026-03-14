@@ -1681,16 +1681,11 @@ export const getMiraklPropertyQuery = gql`
       representationTypeDecided
       description
       example
-      hierarchyCode
-      uniqueCode
       mappedLocally
       mappedRemotely
-      required
-      variant
       type
       originalType
       allowsUnmappedValues
-      requirementLevel
       defaultValue
       valueListCode
       valueListLabel
@@ -2475,8 +2470,7 @@ export const getMiraklProductTypeQuery = gql`
         id
         required
         variant
-        roleData
-        rawData
+        requirementLevel
         remoteProperty {
           id
           code

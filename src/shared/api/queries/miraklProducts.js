@@ -60,6 +60,7 @@ export const miraklCategoriesQuery = gql`
               id
               required
               variant
+              requirementLevel
               remoteProperty {
                 id
                 code

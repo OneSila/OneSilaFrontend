@@ -61,7 +61,7 @@ watch(() => props.data, (newData) => {
 const openAccordionItem = computed(() => String(route.query.accordion || ''));
 
 const accordionItems = [
-  { name: 'credentials', label: t('integrations.show.sections.credentials'), icon: 'key' },
+  { name: 'credentials', label: t('integrations.show.sections.credentials'), icon: 'lock' },
   { name: 'throttling', label: t('integrations.show.sections.throttling'), icon: 'gauge' },
   { name: 'sync', label: t('integrations.show.sections.syncPreferences'), icon: 'sync' },
 ];

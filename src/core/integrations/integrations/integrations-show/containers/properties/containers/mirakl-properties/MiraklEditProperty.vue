@@ -234,14 +234,9 @@ const representationGuide = computed(() => {
   };
 });
 
-const metadataFields = computed(() => [
+const metadataFields = computed<Array<{ key: string; label: string; boolean?: boolean }>>(() => [
   { key: 'description', label: t('integrations.show.mirakl.properties.labels.description') },
   { key: 'example', label: t('integrations.show.mirakl.properties.labels.example') },
-  { key: 'hierarchyCode', label: t('integrations.show.mirakl.properties.labels.hierarchyCode') },
-  { key: 'uniqueCode', label: t('integrations.show.mirakl.properties.labels.uniqueCode') },
-  { key: 'required', label: t('integrations.show.mirakl.productRules.labels.required'), boolean: true },
-  { key: 'variant', label: t('integrations.show.mirakl.productRules.labels.variant'), boolean: true },
-  { key: 'requirementLevel', label: t('integrations.show.mirakl.properties.labels.requirementLevel') },
   { key: 'defaultValue', label: t('integrations.show.mirakl.properties.labels.defaultValue') },
   { key: 'valueListCode', label: t('integrations.show.mirakl.properties.labels.valueListCode') },
   { key: 'valueListLabel', label: t('integrations.show.mirakl.properties.labels.valueListLabel') },
@@ -524,6 +519,13 @@ const syncRepresentationFields = () => {
     return;
   }
 
+  const existingLocalInstance =
+    formData.value?.localInstance ??
+    propertyId ??
+    propertyMetadata.value?.localInstance?.id ??
+    null;
+  const existingDefaultValue = formData.value?.defaultValue ?? propertyMetadata.value?.defaultValue ?? '';
+
   formConfig.value.haveCustomHelpSection = showRepresentationGuide.value;
 
   if (showRepresentationGuide.value) {
@@ -536,8 +538,9 @@ const syncRepresentationFields = () => {
 
   if (usesLocalPropertyMapping.value) {
     insertFieldsAfter('name', [
-      buildLocalInstanceField(propertyId || propertyMetadata.value?.localInstance?.id || null) as any,
+      buildLocalInstanceField(existingLocalInstance) as any,
     ]);
+    formData.value.localInstance = existingLocalInstance;
     syncBooleanTextFields(getEffectiveCurrentType(formData.value.type));
     updateLocalInstanceHelp();
     return;
@@ -545,8 +548,9 @@ const syncRepresentationFields = () => {
 
   if (usesDefaultValueInput.value) {
     insertFieldsAfter('name', [
-      buildDefaultValueField(propertyMetadata.value?.defaultValue ?? formData.value.defaultValue ?? '') as any,
+      buildDefaultValueField(existingDefaultValue) as any,
     ]);
+    formData.value.defaultValue = existingDefaultValue;
   }
 
   localPropertyType.value = getForcedRepresentationCurrentType();

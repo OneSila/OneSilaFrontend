@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Accordion } from '../../../../../../../../shared/components/atoms/accordion';
 import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Toast } from '../../../../../../../../shared/modules/toast';
@@ -15,30 +13,6 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-
-const accordionItems = computed(() =>
-  (props.category?.productTypes || []).map((productType) => ({
-    name: productType.id || productType.remoteId,
-    label: productType.name || productType.remoteId,
-    icon: 'layer-group',
-  })),
-);
-
-const getProductTypeSlotName = (productType: MiraklCategoryNode['productTypes'][number]) =>
-  productType.id || productType.remoteId;
-
-const getProductTypeStatusClass = (productType: MiraklCategoryNode['productTypes'][number]) =>
-  productType.readyToPush
-    ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
-    : 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
-
-const getProductTypeStatusIcon = (productType: MiraklCategoryNode['productTypes'][number]) =>
-  productType.readyToPush ? 'circle-check' : 'triangle-exclamation';
-
-const getProductTypeStatusLabel = (productType: MiraklCategoryNode['productTypes'][number]) =>
-  productType.readyToPush
-    ? t('products.products.mirakl.details.readyToPush')
-    : t('products.products.mirakl.details.notReadyToPush');
 
 const isTemplateMissing = (productType: MiraklCategoryNode['productTypes'][number]) =>
   !productType.readyToPush && !productType.templateUrl;
@@ -95,12 +69,12 @@ const copyCategoryId = async (remoteId?: string | null) => {
 </script>
 
 <template>
-  <div v-if="category">
-    <div class="text-sm font-medium">{{ category.name }}</div>
-    <div class="text-xs text-gray-500 flex items-center gap-2">
-      <span>{{ category.remoteId }}</span>
+  <div v-if="category" class="min-w-0 max-w-full overflow-hidden">
+    <div class="text-sm font-medium break-words">{{ category.name }}</div>
+    <div class="text-xs text-gray-500 flex items-center gap-2 min-w-0">
+      <span class="truncate">{{ category.remoteId }}</span>
       <button
-        class="p-1 rounded hover:bg-gray-100"
+        class="flex-shrink-0 p-1 rounded hover:bg-gray-100"
         type="button"
         @click="copyCategoryId(category.remoteId)"
       >
@@ -108,131 +82,96 @@ const copyCategoryId = async (remoteId?: string | null) => {
       </button>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
-      <div class="rounded border border-gray-200 bg-gray-50 px-3 py-2">
-        <div class="text-xs text-gray-500">{{ t('products.products.mirakl.details.level') }}</div>
-        <div class="text-sm font-medium">{{ category.level }}</div>
-      </div>
-      <div class="rounded border border-gray-200 bg-gray-50 px-3 py-2">
-        <div class="text-xs text-gray-500">{{ t('products.products.mirakl.details.parentCode') }}</div>
-        <div class="text-sm font-medium">{{ category.parentCode || '—' }}</div>
-      </div>
-      <div class="rounded border border-gray-200 bg-gray-50 px-3 py-2">
-        <div class="text-xs text-gray-500">{{ t('products.products.mirakl.details.leaf') }}</div>
-        <div class="text-sm font-medium">
-          {{ category.isLeaf ? t('products.products.mirakl.details.yes') : t('products.products.mirakl.details.no') }}
-        </div>
-      </div>
-    </div>
-
     <div class="mt-4">
       <div class="font-semibold text-sm mb-2">
         {{ t('products.products.mirakl.details.productTypes') }}
       </div>
 
-      <div v-if="!accordionItems.length" class="text-sm text-gray-500">
+      <div v-if="!category.productTypes.length" class="text-sm text-gray-500">
         {{ t('products.products.mirakl.details.noProductTypes') }}
       </div>
-
-      <Accordion v-else :items="accordionItems" :default-active="accordionItems[0]?.name">
-        <template
-          v-for="productType in category.productTypes"
-          :key="`${productType.id || productType.remoteId}-actions`"
-          v-slot:[`${getProductTypeSlotName(productType)}-actions`]
-        >
-          <div
-            class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold"
-            :class="getProductTypeStatusClass(productType)"
-          >
-            <Icon :name="getProductTypeStatusIcon(productType)" class="h-3 w-3" />
-            <span>{{ getProductTypeStatusLabel(productType) }}</span>
-          </div>
-        </template>
-        <template
+      <div v-else class="space-y-6 min-w-0">
+        <div
           v-for="productType in category.productTypes"
           :key="productType.id || productType.remoteId"
-          v-slot:[getProductTypeSlotName(productType)]
+          class="space-y-4 rounded-md border border-gray-200 bg-white p-4 min-w-0"
         >
-          <div class="space-y-4">
-            <div class="flex flex-wrap items-center gap-2">
-              <div class="text-xs text-gray-500">
-                {{ t('products.products.mirakl.details.productTypeId', { id: productType.remoteId }) }}
-              </div>
-              <div
-                class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold"
-                :class="getProductTypeStatusClass(productType)"
-              >
-                <Icon :name="getProductTypeStatusIcon(productType)" class="h-3 w-3" />
-                <span>{{ getProductTypeStatusLabel(productType) }}</span>
-              </div>
+          <div class="min-w-0">
+            <div class="text-sm font-semibold text-gray-900 break-words">
+              {{ productType.name || productType.remoteId }}
             </div>
-
-            <div
-              v-if="isTemplateMissing(productType)"
-              class="flex flex-col gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
-            >
-              <div class="flex items-start gap-3">
-                <Icon name="triangle-exclamation" class="mt-0.5 h-4 w-4 text-amber-500" />
-                <span>{{ t('products.products.mirakl.details.templateMissingWarning') }}</span>
-              </div>
-              <div v-if="productTypePath(productType)">
-                <Link
-                  :path="productTypePath(productType)"
-                  class="inline-flex items-center rounded bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700"
-                >
-                  {{ t('products.products.mirakl.details.openProductType') }}
-                </Link>
-              </div>
-            </div>
-
-            <div v-if="!productType.items.length" class="text-sm text-gray-500">
-              {{ t('products.products.mirakl.details.noItems') }}
-            </div>
-
-            <div v-else class="overflow-x-auto">
-              <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
-                <thead>
-                  <tr>
-                    <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.property') }}</th>
-                    <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.code') }}</th>
-                    <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.required') }}</th>
-                    <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.variant') }}</th>
-                    <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.localProperty') }}</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white">
-                  <tr v-for="item in productType.items" :key="item.id">
-                    <td class="p-2">
-                      <Link
-                        v-if="item.remoteProperty?.id"
-                        :path="remotePropertyPath(item.remoteProperty.id)"
-                        class="font-medium"
-                      >
-                        {{ item.remoteProperty?.name || item.remoteProperty?.code || '—' }}
-                      </Link>
-                      <span v-else class="font-medium">
-                        {{ item.remoteProperty?.name || item.remoteProperty?.code || '—' }}
-                      </span>
-                    </td>
-                    <td class="p-2">{{ item.remoteProperty?.code || '—' }}</td>
-                    <td class="p-2">
-                      <Icon v-if="item.required" name="check-circle" class="text-green-500" />
-                      <Icon v-else name="times-circle" class="text-red-500" />
-                    </td>
-                    <td class="p-2">
-                      <Icon v-if="item.variant" name="check-circle" class="text-green-500" />
-                      <Icon v-else name="times-circle" class="text-red-500" />
-                    </td>
-                    <td class="p-2">
-                      {{ item.localInstance?.property?.name || item.remoteProperty?.localInstance?.name || t('products.products.mirakl.details.noLocalProperty') }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="text-xs text-gray-500 break-all">
+              {{ t('products.products.mirakl.details.productTypeId', { id: productType.remoteId }) }}
             </div>
           </div>
-        </template>
-      </Accordion>
+
+          <div
+            v-if="isTemplateMissing(productType)"
+            class="flex flex-col gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          >
+            <div class="flex items-start gap-3">
+              <Icon name="triangle-exclamation" class="mt-0.5 h-4 w-4 text-amber-500" />
+              <span>{{ t('products.products.mirakl.details.templateMissingWarning') }}</span>
+            </div>
+            <div v-if="productTypePath(productType)">
+              <Link
+                :path="productTypePath(productType)"
+                class="inline-flex items-center rounded bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+              >
+                {{ t('products.products.mirakl.details.openProductType') }}
+              </Link>
+            </div>
+          </div>
+
+          <div v-if="!productType.items.length" class="text-sm text-gray-500">
+            {{ t('products.products.mirakl.details.noItems') }}
+          </div>
+
+          <div v-else class="w-full max-w-full overflow-x-auto rounded-md border border-gray-200 custom-scrollbar">
+            <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
+              <thead>
+                <tr>
+                  <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.property') }}</th>
+                  <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.code') }}</th>
+                  <th class="p-2 text-left">{{ t('integrations.show.mirakl.properties.labels.requirementLevel') }}</th>
+                  <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.required') }}</th>
+                  <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.variant') }}</th>
+                  <th class="p-2 text-left">{{ t('products.products.mirakl.details.columns.localProperty') }}</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                <tr v-for="item in productType.items" :key="item.id">
+                  <td class="p-2">
+                    <Link
+                      v-if="item.remoteProperty?.id"
+                      :path="remotePropertyPath(item.remoteProperty.id)"
+                      class="font-medium"
+                    >
+                      {{ item.remoteProperty?.name || item.remoteProperty?.code || '—' }}
+                    </Link>
+                    <span v-else class="font-medium">
+                      {{ item.remoteProperty?.name || item.remoteProperty?.code || '—' }}
+                    </span>
+                  </td>
+                  <td class="p-2">{{ item.remoteProperty?.code || '—' }}</td>
+                  <td class="p-2">{{ item.requirementLevel || '—' }}</td>
+                  <td class="p-2">
+                    <Icon v-if="item.required" name="check-circle" class="text-green-500" />
+                    <Icon v-else name="times-circle" class="text-red-500" />
+                  </td>
+                  <td class="p-2">
+                    <Icon v-if="item.variant" name="check-circle" class="text-green-500" />
+                    <Icon v-else name="times-circle" class="text-red-500" />
+                  </td>
+                  <td class="p-2">
+                    {{ item.localInstance?.property?.name || item.remoteProperty?.localInstance?.name || t('products.products.mirakl.details.noLocalProperty') }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

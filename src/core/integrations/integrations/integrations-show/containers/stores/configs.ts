@@ -89,10 +89,7 @@ export const storeEditFormConfigConstructor = (
     if (type === IntegrationTypes.Mirakl) {
       return [
         baseFields[0],
-        {
-          ...baseFields[1],
-          disabled: true,
-        },
+        baseFields[1],
         {
           type: FieldType.Text,
           name: 'description',

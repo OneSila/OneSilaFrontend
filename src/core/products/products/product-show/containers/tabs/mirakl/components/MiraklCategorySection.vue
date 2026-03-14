@@ -259,8 +259,8 @@ defineExpose({ hasUnsavedChanges });
       <div v-if="!hasChannel" class="text-sm text-gray-600">
         {{ t('products.products.mirakl.selectChannelPrompt') }}
       </div>
-      <div v-else class="flex flex-col lg:flex-row lg:items-start gap-6">
-        <div class="lg:w-1/2">
+      <div v-else class="flex flex-col lg:grid lg:grid-cols-2 lg:items-start gap-6 min-w-0">
+        <div class="min-w-0">
           <MiraklCategoryBrowser
             :sales-channel-id="props.salesChannelId"
             @selected="handleCategorySelected"
@@ -296,7 +296,7 @@ defineExpose({ hasUnsavedChanges });
           </div>
         </div>
 
-        <div class="lg:w-1/2 space-y-4">
+        <div class="min-w-0 space-y-4">
           <div>
             <h5 class="font-semibold text-sm mb-1">
               {{ t('products.products.mirakl.currentSelection') }}
