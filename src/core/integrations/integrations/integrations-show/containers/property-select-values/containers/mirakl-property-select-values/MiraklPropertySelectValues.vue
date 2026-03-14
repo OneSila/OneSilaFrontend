@@ -8,12 +8,23 @@ import {
   miraklPropertySelectValuesListingConfigConstructor,
   miraklPropertySelectValuesSearchConfigConstructor,
 } from './configs';
+import { mapSalesChannelPerfectMatchSelectValuesMutation } from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
+const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
 const searchConfig = computed(() => miraklPropertySelectValuesSearchConfigConstructor(t));
-const listingConfig = computed(() => miraklPropertySelectValuesListingConfigConstructor(t));
+const listingConfig = computed(() => miraklPropertySelectValuesListingConfigConstructor(t, props.id));
+const fixedFilterVariables = computed(() => ({
+  isPropertyValue: true,
+}));
+
+const buildStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
+  name: 'integrations.remotePropertySelectValues.edit',
+  params: { type: 'mirakl', id },
+  query: { integrationId, salesChannelId, wizard: '1' },
+});
 </script>
 
 <template>
@@ -24,5 +35,9 @@ const listingConfig = computed(() => miraklPropertySelectValuesListingConfigCons
     :listing-config="listingConfig"
     :listing-query="listingQuery"
     :listing-query-key="listingQueryKey"
+    :fixed-filter-variables="fixedFilterVariables"
+    :build-start-mapping-route="buildStartMappingRoute"
+    :auto-map-mutation="mapSalesChannelPerfectMatchSelectValuesMutation"
+    @pull-data="emit('pull-data')"
   />
 </template>

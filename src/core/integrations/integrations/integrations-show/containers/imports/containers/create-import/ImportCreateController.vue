@@ -10,6 +10,7 @@ import { WoocommerceImporter } from "./containers/woocommerce/woocommerce-import
 import { AmazonImporter } from "./containers/amazon/amazon-importer";
 import { EbayImporter } from "./containers/ebay/ebay-importer";
 import { SheinImporter } from "./containers/shein/shein-importer";
+import { MiraklImporter } from "./containers/mirakl/mirakl-importer";
 import {IntegrationTypes} from "../../../../../integrations";
 
 
@@ -39,6 +40,7 @@ const type = ref(String(route.params.type));
       <AmazonImporter v-else-if="type == IntegrationTypes.Amazon" :integration-id="integrationId" :type="type" />
       <EbayImporter v-else-if="type == IntegrationTypes.Ebay" :integration-id="integrationId" :type="type" />
       <SheinImporter v-else-if="type == IntegrationTypes.Shein" :integration-id="integrationId" :type="type" />
+      <MiraklImporter v-else-if="type == IntegrationTypes.Mirakl" :integration-id="integrationId" :type="type" />
       <WoocommerceImporter v-else-if="type == IntegrationTypes.Woocommerce" :integration-id="integrationId" :type="type" />
     </template>
   </GeneralTemplate>

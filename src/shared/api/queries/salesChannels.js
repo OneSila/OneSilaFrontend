@@ -1600,11 +1600,15 @@ export const miraklPropertiesQuery = gql`
       edges {
         node {
           id
+          code
           name
+          representationType
           mappedLocally
           mappedRemotely
           type
           originalType
+          allowsUnmappedValues
+          defaultValue
           localInstance {
             id
             name
@@ -1670,11 +1674,32 @@ export const getMiraklPropertyQuery = gql`
   query getMiraklProperty($id: GlobalID!) {
     miraklProperty(id: $id) {
       id
+      code
       name
+      representationType
+      description
+      example
+      hierarchyCode
+      uniqueCode
       mappedLocally
       mappedRemotely
+      required
+      variant
       type
       originalType
+      allowsUnmappedValues
+      requirementLevel
+      defaultValue
+      valueListCode
+      valueListLabel
+      yesTextValue
+      noTextValue
+      descriptionTranslations
+      labelTranslations
+      typeParameters
+      validations
+      transformations
+      rawData
       localInstance {
         id
         name
@@ -2043,7 +2068,6 @@ export const miraklInternalPropertiesQuery = gql`
           id
           name
           type
-          acceptedValues
           isCondition
           mappedLocally
           mappedRemotely
@@ -2089,7 +2113,6 @@ export const getMiraklInternalPropertyQuery = gql`
       id
       name
       type
-      acceptedValues
       isCondition
       mappedLocally
       mappedRemotely
@@ -2220,6 +2243,7 @@ export const miraklPropertySelectValuesQuery = gql`
           remoteProperty {
             id
             name
+            representationType
             localInstance {
               id
               name
@@ -2229,6 +2253,43 @@ export const miraklPropertySelectValuesQuery = gql`
             id
             value
           }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const miraklPropertySelectValuesQuerySelector = gql`
+  query MiraklPropertySelectValuesSelector(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklPropertySelectValueOrder
+    $filter: MiraklPropertySelectValueFilter
+  ) {
+    miraklPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          code
+          value
+          label
         }
         cursor
       }
@@ -2309,12 +2370,21 @@ export const getMiraklPropertySelectValueQuery = gql`
   query getMiraklPropertySelectValue($id: GlobalID!) {
     miraklPropertySelectValue(id: $id) {
       id
+      code
+      value
       label
+      boolValue
       mappedLocally
       mappedRemotely
+      labelTranslations
+      valueLabelTranslations
+      valueListCode
+      valueListLabel
+      rawData
       remoteProperty {
         id
         name
+        representationType
         type
         originalType
         localInstance {
@@ -2326,6 +2396,100 @@ export const getMiraklPropertySelectValueQuery = gql`
       localInstance {
         id
         value
+      }
+    }
+  }
+`;
+
+export const miraklProductTypesQuery = gql`
+  query MiraklProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklProductTypeOrder
+    $filter: MiraklProductTypeFilter
+  ) {
+    miraklProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          remoteId
+          name
+          imported
+          mappedLocally
+          mappedRemotely
+          localInstance {
+            id
+            value
+            productType {
+              id
+              value
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getMiraklProductTypeQuery = gql`
+  query getMiraklProductType($id: GlobalID!) {
+    miraklProductType(id: $id) {
+      id
+      remoteId
+      name
+      template {
+        name
+        url
+      }
+      imported
+      mappedLocally
+      mappedRemotely
+      localInstance {
+        id
+        value
+        productType {
+          id
+          value
+        }
+      }
+      items {
+        id
+        required
+        variant
+        roleData
+        rawData
+        remoteProperty {
+          id
+          code
+          name
+          mappedLocally
+        }
+        localInstance {
+          id
+          type
+          sortOrder
+          property {
+            id
+            name
+          }
+        }
       }
     }
   }

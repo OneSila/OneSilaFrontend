@@ -39,6 +39,7 @@ export type Company = {
   hasAmazonIntegration?: boolean;
   hasEbayIntegration?: boolean;
   hasSheinIntegration?: boolean;
+  hasMiraklIntegration?: boolean;
 };
 
 

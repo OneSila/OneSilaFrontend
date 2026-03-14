@@ -18,6 +18,7 @@ const router = useRouter();
 const previousHasAmazon = ref<boolean | null>(null);
 const previousHasEbay = ref<boolean | null>(null);
 const previousHasShein = ref<boolean | null>(null);
+const previousHasMirakl = ref<boolean | null>(null);
 
 const logout = async () => {
 
@@ -55,6 +56,16 @@ const handleSubscriptionResult = (data: any) => {
     localStorage.setItem('auth_user', JSON.stringify(auth.user));
   }
   previousHasShein.value = currentShein;
+
+  // Mirakl
+  const currentMirakl = data?.myMultiTenantCompany?.hasMiraklIntegration ?? false;
+  const previousMirakl = auth.user.company?.hasMiraklIntegration ?? false;
+
+  if (auth.user.company && currentMirakl !== previousMirakl) {
+    auth.user.company.hasMiraklIntegration = currentMirakl;
+    localStorage.setItem('auth_user', JSON.stringify(auth.user));
+  }
+  previousHasMirakl.value = currentMirakl;
 };
 
 

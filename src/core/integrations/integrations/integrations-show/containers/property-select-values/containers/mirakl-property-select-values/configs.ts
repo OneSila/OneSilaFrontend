@@ -1,18 +1,83 @@
 import { FieldType } from "../../../../../../../../shared/utils/constants";
-import { miraklPropertySelectValuesQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
+import {
+  getMiraklPropertySelectValueQuery,
+  miraklPropertiesQuery,
+  miraklPropertySelectValuesQuery,
+} from "../../../../../../../../shared/api/queries/salesChannels.js";
+import { updateMiraklPropertySelectValueMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import type { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
 import type { SearchConfig } from "../../../../../../../../shared/components/organisms/general-search/searchConfig";
+import type { FormConfig } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
+
+export const miraklPropertySelectValueEditFormConfigConstructor = (
+  t: Function,
+  type: string,
+  valueId: string,
+  integrationId: string,
+): FormConfig => ({
+  cols: 1,
+  type: FormType.EDIT,
+  mutation: updateMiraklPropertySelectValueMutation,
+  mutationKey: "updateMiraklPropertySelectValue",
+  query: getMiraklPropertySelectValueQuery,
+  queryVariables: { id: valueId },
+  queryDataKey: "miraklPropertySelectValue",
+  submitUrl: {
+    name: 'integrations.integrations.show',
+    params: { type, id: integrationId },
+    query: { tab: 'propertySelectValues' },
+  },
+  fields: [
+    { type: FieldType.Hidden, name: 'id', value: valueId },
+    {
+      type: FieldType.Text,
+      name: 'remoteProperty',
+      label: t('integrations.show.propertySelectValues.labels.remoteProperty'),
+      disabled: true,
+      help: t('integrations.show.propertySelectValues.help.remoteProperty'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'label',
+      label: t('integrations.show.propertySelectValues.labels.localizedValue'),
+      disabled: true,
+      help: t('integrations.show.propertySelectValues.help.localizedValue'),
+    },
+  ],
+});
 
 export const miraklPropertySelectValuesSearchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
   orderKey: 'sort',
   filters: [
     { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+    {
+      type: FieldType.Query,
+      name: 'remoteProperty',
+      label: t('integrations.show.propertySelectValues.labels.remoteProperty'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: miraklPropertiesQuery,
+      dataKey: 'miraklProperties',
+      filterable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id'],
+      queryVariables: {
+        filter: {
+          isPropertyValue: true,
+        },
+      },
+    },
   ],
   orders: [],
 });
 
-export const miraklPropertySelectValuesListingConfigConstructor = (t: Function): ListingConfig => ({
+export const miraklPropertySelectValuesListingConfigConstructor = (
+  t: Function,
+  specificIntegrationId: string,
+): ListingConfig => ({
   headers: [
     t('integrations.show.propertySelectValues.labels.localizedValue'),
     t('integrations.show.propertySelectValues.labels.remoteProperty'),
@@ -34,9 +99,12 @@ export const miraklPropertySelectValuesListingConfigConstructor = (t: Function):
     },
   ],
   identifierKey: 'id',
-  addActions: false,
-  addEdit: false,
-  addShow: false,
+  addActions: true,
+  addEdit: true,
+  addShow: true,
+  urlQueryParams: { integrationId: specificIntegrationId },
+  editUrlName: 'integrations.remotePropertySelectValues.edit',
+  showUrlName: 'integrations.remotePropertySelectValues.edit',
   addDelete: false,
   addPagination: true,
 });

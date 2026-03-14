@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import { IntegrationTypes } from '../../../integrations';
 import { EbayInventoryProperties } from '../properties/containers/ebay-properties';
 import { SheinInternalProperties } from '../properties/containers/shein-properties';
-import { MiraklInternalProperties } from '../properties/containers/mirakl-properties';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
@@ -14,8 +13,6 @@ const currentComponent = computed(() => {
       return EbayInventoryProperties;
     case IntegrationTypes.Shein:
       return SheinInternalProperties;
-    case IntegrationTypes.Mirakl:
-      return MiraklInternalProperties;
     default:
       return null;
   }

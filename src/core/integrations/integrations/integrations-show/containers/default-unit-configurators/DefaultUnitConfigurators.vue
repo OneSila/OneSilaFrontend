@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { IntegrationTypes } from '../../../integrations';
 import { AmazonDefaultUnitConfigurators } from './containers/amazon-unit-configurators';
+import { MiraklDefaultUnitConfigurators } from './containers/mirakl-unit-configurators';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
@@ -10,6 +11,8 @@ const currentComponent = computed(() => {
   switch (props.type) {
     case IntegrationTypes.Amazon:
       return AmazonDefaultUnitConfigurators;
+    case IntegrationTypes.Mirakl:
+      return MiraklDefaultUnitConfigurators;
     default:
       return null;
   }

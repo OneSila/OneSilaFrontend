@@ -16,6 +16,7 @@ import { displayApolloError } from "../../../../../../../../shared/utils";
 import { Toast } from "../../../../../../../../shared/modules/toast";
 import { PropertyTypes } from "../../../../../../../../shared/utils/constants";
 import { IntegrationTypes } from "../../../../../integrations";
+import { MIRAKL_REPRESENTATION_TYPE_PROPERTY } from "../mirakl-properties/representationTypes";
 
 type RouteBuilderContext = {
   id: string;
@@ -57,6 +58,7 @@ const selectValuesFilterKey = computed(() => {
     case IntegrationTypes.Ebay:
       return 'ebayProperty';
     case IntegrationTypes.Shein:
+    case IntegrationTypes.Mirakl:
       return 'remoteProperty';
     default:
       return null;
@@ -68,7 +70,15 @@ const isSelectPropertyType = (type?: string) => {
 };
 
 const canSeeValues = (item: any) => {
-  return Boolean(selectValuesFilterKey.value && item?.node?.id && isSelectPropertyType(item?.node?.type));
+  if (!selectValuesFilterKey.value || !item?.node?.id || !isSelectPropertyType(item?.node?.type)) {
+    return false;
+  }
+
+  if (integrationType.value === IntegrationTypes.Mirakl) {
+    return item?.node?.representationType === MIRAKL_REPRESENTATION_TYPE_PROPERTY;
+  }
+
+  return true;
 };
 
 const buildSelectValuesRoute = (item: any): RouteLocationRaw => ({

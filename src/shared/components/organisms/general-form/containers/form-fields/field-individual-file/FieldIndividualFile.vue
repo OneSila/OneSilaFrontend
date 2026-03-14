@@ -18,6 +18,6 @@ const updateValue = (event) => {
 
 <template>
   <div class="field-item">
-    <FileUploader :model-value="modelValue" @update:model-value="updateValue"/>
+    <FileUploader :model-value="modelValue" :formats="field.formats" @update:model-value="updateValue"/>
   </div>
 </template>

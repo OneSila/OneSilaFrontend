@@ -80,8 +80,8 @@ if (type.value !== IntegrationTypes.Webhook) {
 
   if (type.value === IntegrationTypes.Amazon) {
     tabItems.value.push(
-      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
       { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
@@ -89,9 +89,9 @@ if (type.value !== IntegrationTypes.Webhook) {
     );
   } else if (type.value === IntegrationTypes.Ebay) {
     tabItems.value.push(
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'inventoryFields', label: t('integrations.show.ebay.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
-      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
@@ -105,7 +105,9 @@ if (type.value !== IntegrationTypes.Webhook) {
     );
   } else if (type.value === IntegrationTypes.Mirakl) {
     tabItems.value.push(
-      { name: 'inventoryFields', label: t('integrations.show.mirakl.internalProperties.title'), icon: 'boxes-stacked' },
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
+      { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );

@@ -47,6 +47,9 @@ const handleFormUpdated = (form: Record<string, any>) => {
         <template #before-fields>
           <slot name="before-form" />
         </template>
+        <template #help-section>
+          <slot name="help-section" />
+        </template>
         <template #additional-button>
           <slot name="additional-button" />
         </template>

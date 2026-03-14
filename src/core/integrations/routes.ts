@@ -79,6 +79,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/default-unit-configurators/containers/amazon-unit-configurators/containers/IntegrationsAmazonDefaultUnitConfiguratorEditController.vue'),
   },
   {
+    path: '/integrations/:type/mirakl-default-unit-configurator/:id',
+    name: 'integrations.miraklDefaultUnitConfigurators.edit',
+    meta: { title: 'integrations.show.sections.defaultUnits' },
+    component: () => import('./integrations/integrations-show/containers/default-unit-configurators/containers/mirakl-unit-configurators/containers/IntegrationsMiraklDefaultUnitConfiguratorEditController.vue'),
+  },
+  {
     path: '/integrations/:type/import/:integrationId',
     name: 'integrations.imports.create',
     meta: { title: 'integrations.imports.create.title' },

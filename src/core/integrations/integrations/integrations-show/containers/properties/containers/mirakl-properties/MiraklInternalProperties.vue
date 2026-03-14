@@ -13,7 +13,7 @@ const props = defineProps<{ id: string; salesChannelId: string }>();
 const { t } = useI18n();
 
 const searchConfig = computed(() => miraklInternalPropertiesSearchConfigConstructor(t));
-const listingConfig = computed(() => miraklInternalPropertiesListingConfigConstructor(t));
+const listingConfig = computed(() => miraklInternalPropertiesListingConfigConstructor(t, props.id));
 </script>
 
 <template>

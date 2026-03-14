@@ -89,12 +89,24 @@ export const storeEditFormConfigConstructor = (
     if (type === IntegrationTypes.Mirakl) {
       return [
         baseFields[0],
-        baseFields[1],
+        {
+          ...baseFields[1],
+          disabled: true,
+        },
         {
           type: FieldType.Text,
           name: 'description',
           label: t('integrations.show.stores.labels.description'),
           number: false,
+          disabled: true,
+          optional: true,
+        },
+        {
+          type: FieldType.Checkbox,
+          name: 'active',
+          label: t('shared.labels.active'),
+          uncheckedValue: 'false',
+          default: false,
           optional: true,
         },
       ];
@@ -160,8 +172,8 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
     secondIdentifierKey: 'type',
     secondIdentifierParam: 'type',
     addActions: true,
-    addEdit: type !== IntegrationTypes.Mirakl,
-    addShow: type !== IntegrationTypes.Mirakl,
+    addEdit: true,
+    addShow: true,
     addDelete: false,
     addPagination: true,
   };

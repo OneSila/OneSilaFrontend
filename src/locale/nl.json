@@ -894,6 +894,7 @@
         "amazon": "Amazon",
         "ebay": "",
         "shein": "",
+        "mirakl": "",
         "marketplace": ""
       },
       "marketplaceSelector": {
@@ -1022,6 +1023,22 @@
           },
           "toast": {
             "categoryNotAvailable": ""
+          }
+        },
+        "mirakl": {
+          "columns": {
+            "category": ""
+          },
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
           }
         },
         "ebay": {
@@ -1398,6 +1415,50 @@
           "placeholder": "",
           "button": "",
           "invalid": ""
+        }
+      },
+      "mirakl": {
+        "noChannels": "",
+        "openIntegration": "",
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectChannelPrompt": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        },
+        "details": {
+          "level": "",
+          "parentCode": "",
+          "leaf": "",
+          "yes": "",
+          "no": "",
+          "productTypes": "",
+          "noProductTypes": "",
+          "productTypeId": "",
+          "noItems": "",
+          "columns": {
+            "property": "",
+            "code": "",
+            "required": "",
+            "variant": "",
+            "localProperty": ""
+          },
+          "noLocalProperty": ""
         }
       },
       "inspector": {
@@ -3531,6 +3592,7 @@
           "remoteName": "",
           "remoteValue": "",
           "remoteId": "",
+          "remoteProperty": "",
           "amazonProperty": "",
           "ebayProperty": "",
           "marketplace": "",
@@ -3542,6 +3604,7 @@
           "translatedValue": ""
         },
         "help": {
+          "remoteProperty": "",
           "amazonProperty": "",
           "ebayProperty": "",
           "marketplace": "",
@@ -3573,6 +3636,7 @@
         "mappedRemotely": "",
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
+        "mappedRemotelyMirakl": "",
         "startMapping": "",
         "autoMap": "",
         "autoMapHelp": "",
@@ -3939,6 +4003,42 @@
       "tabs": {
         "issues": ""
       },
+      "properties": {
+        "title": "",
+        "actions": {
+          "seeValues": ""
+        },
+        "labels": {
+          "code": "",
+          "type": "",
+          "originalType": "",
+          "currentType": "",
+          "remoteId": "",
+          "allowsUnmappedValues": "",
+          "property": "",
+          "rawData": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "help": {
+          "code": "",
+          "type": "",
+          "originalType": "",
+          "currentType": "",
+          "currentTypeWillBecome": "",
+          "remoteId": "",
+          "allowsUnmappedValues": "",
+          "name": "",
+          "property": "",
+          "localizedName": "",
+          "translatedName": ""
+        },
+        "configuratorPreview": {
+          "title": "",
+          "description": "",
+          "empty": ""
+        }
+      },
       "mirakl": {
         "title": "",
         "internalProperties": {
@@ -3946,6 +4046,173 @@
           "labels": {
             "acceptedValues": "",
             "isCondition": ""
+          }
+        },
+        "properties": {
+          "sections": {
+            "metadata": "",
+            "translations": ""
+          },
+          "help": {
+            "defaultValue": "",
+            "representationType": ""
+          },
+          "labels": {
+            "description": "",
+            "example": "",
+            "isCommon": "",
+            "representationType": "",
+            "hierarchyCode": "",
+            "uniqueCode": "",
+            "requirementLevel": "",
+            "defaultValue": "",
+            "valueListCode": "",
+            "valueListLabel": "",
+            "typeParameters": "",
+            "validations": "",
+            "transformations": "",
+            "labelTranslations": "",
+            "descriptionTranslations": ""
+          }
+        },
+        "selectValues": {
+          "labels": {
+            "value": "",
+            "valueLabelTranslations": ""
+          }
+        },
+        "productRules": {
+          "help": {
+            "template": ""
+          },
+          "labels": {
+            "category": "",
+            "required": "",
+            "variant": "",
+            "roleData": "",
+            "template": ""
+          }
+        },
+        "defaultUnits": {
+          "labels": {
+            "selectedUnit": "",
+            "currentValue": "",
+            "currentLabel": ""
+          }
+        },
+        "representationTypes": {
+          "options": {
+            "property": "",
+            "unit": "",
+            "default_value": "",
+            "product_title": "",
+            "product_subtitle": "",
+            "product_description": "",
+            "product_short_description": "",
+            "product_bullet_point": "",
+            "product_sku": "",
+            "product_internal_id": "",
+            "product_category": "",
+            "product_configurable_sku": "",
+            "product_configurable_id": "",
+            "product_active": "",
+            "product_url_key": "",
+            "product_ean": "",
+            "thumbnail_image": "",
+            "image": "",
+            "image_color": "",
+            "video": "",
+            "document": "",
+            "price": "",
+            "discounted_price": "",
+            "stock": "",
+            "vat_rate": "",
+            "allow_backorder": "",
+            "condition": ""
+          }
+        },
+        "representationGuide": {
+          "eyebrow": "",
+          "badges": {
+            "special": "",
+            "product": "",
+            "media": "",
+            "commercial": ""
+          },
+          "cards": {
+            "general": {
+              "title": ""
+            },
+            "current": {
+              "title": ""
+            }
+          },
+          "empty": {
+            "title": "",
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "special": {
+            "property": {
+              "description": "",
+              "summary": "",
+              "source": "",
+              "fill": ""
+            },
+            "unit": {
+              "description": "",
+              "summary": "",
+              "source": "",
+              "fill": ""
+            },
+            "default_value": {
+              "description": "",
+              "summary": "",
+              "source": "",
+              "fill": ""
+            }
+          },
+          "product": {
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "media": {
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "commercial": {
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "types": {
+            "product_category": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_configurable_sku": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_configurable_id": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_internal_id": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_short_description": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_description": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_bullet_point": { "description": "", "summary": "", "source": "", "fill": "" },
+            "thumbnail_image": { "description": "", "summary": "", "source": "", "fill": "" },
+            "image": { "description": "", "summary": "", "source": "", "fill": "" },
+            "image_color": { "description": "", "summary": "", "source": "", "fill": "" },
+            "video": { "description": "", "summary": "", "source": "", "fill": "" },
+            "price": { "description": "", "summary": "", "source": "", "fill": "" },
+            "discounted_price": { "description": "", "summary": "", "source": "", "fill": "" },
+            "vat_rate": { "description": "", "summary": "", "source": "", "fill": "" },
+            "stock": { "description": "", "summary": "", "source": "", "fill": "" },
+            "allow_backorder": { "description": "", "summary": "", "source": "", "fill": "" },
+            "condition": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_active": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_url_key": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_ean": { "description": "", "summary": "", "source": "", "fill": "" }
           }
         }
       },

@@ -1049,6 +1049,16 @@ export const createSheinProductTypesFromLocalRulesMutation = gql`
   }
 `;
 
+export const updateMiraklProductTypeMutation = gql`
+  mutation updateMiraklProductType($data: MiraklProductTypePartialInput!) {
+    updateMiraklProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
 export const suggestAmazonProductTypeMutation = gql`
   mutation suggestAmazonProductType($name: String, $marketplace: SalesChannelViewPartialInput!) {
     suggestAmazonProductType(name: $name, marketplace: $marketplace) {
