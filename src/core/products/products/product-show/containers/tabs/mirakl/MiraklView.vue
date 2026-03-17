@@ -8,11 +8,13 @@ import { Product } from '../../../../configs';
 import apolloClient from '../../../../../../../../apollo-client';
 import { LocalLoader } from '../../../../../../../shared/components/atoms/local-loader';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
-import { miraklChannelsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
+import { miraklChannelsQuery, miraklChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { miraklProductCategoriesQuery } from '../../../../../../../shared/api/queries/miraklProducts.js';
 import { miraklProductTypesForCategoryMappingQuery } from '../../../../../../../shared/api/queries/miraklProductTypes.js';
+import { miraklProductIssuesQuery } from '../../../../../../../shared/api/queries/miraklProductIssues.js';
 import MiraklMarketplaceTabs from './components/MiraklMarketplaceTabs.vue';
 import MiraklCategorySection from './components/MiraklCategorySection.vue';
+import MiraklIssuesSection from './components/MiraklIssuesSection.vue';
 
 const props = defineProps<{ product: Product }>();
 
@@ -178,12 +180,130 @@ const selectedChannel = computed(() =>
   channels.value.find((channel: any) => channel.id === selectedChannelId.value) || null,
 );
 
+const selectedChannelSalesChannelId = computed(() =>
+  selectedChannel.value?.saleschannelPtr?.id || selectedChannel.value?.id || null,
+);
+
+const selectedChannelIntegrationId = computed(() =>
+  selectedChannel.value?.integrationPtr?.id || null,
+);
+
 const selectedCategory = computed(() => resolveCategoryForChannel(selectedChannel.value));
 
 const selectedDefaultCategory = computed(() => {
   if (!selectedChannel.value) return null;
   return defaultCategoriesByChannel.value[selectedChannel.value.id] || null;
 });
+
+const miraklIssuesLoading = ref(false);
+const miraklIssues = ref<any[]>([]);
+const selectedChannelViewIds = ref<string[]>([]);
+let selectedChannelViewsRequestId = 0;
+let miraklIssuesRequestId = 0;
+
+const selectedChannelRemoteProductIds = computed(() => {
+  if (!selectedChannelViewIds.value.length) {
+    return [];
+  }
+
+  const assignments = props.product?.saleschannelviewassignSet ?? [];
+
+  return Array.from(
+    new Set(
+      assignments
+        .filter((assign: any) =>
+          assign?.integrationType === 'mirakl' &&
+          selectedChannelViewIds.value.includes(assign?.salesChannelView?.id) &&
+          assign?.remoteProduct?.id,
+        )
+        .map((assign: any) => assign.remoteProduct.id),
+    ),
+  );
+});
+
+const fetchSelectedChannelViews = async () => {
+  if (!selectedChannelSalesChannelId.value) {
+    selectedChannelViewIds.value = [];
+    return;
+  }
+
+  const requestId = ++selectedChannelViewsRequestId;
+
+  try {
+    const { data } = await apolloClient.query({
+      query: miraklChannelViewsQuery,
+      variables: {
+        filter: {
+          salesChannel: { id: { exact: selectedChannelSalesChannelId.value } },
+        },
+      },
+      fetchPolicy: 'cache-first',
+    });
+
+    if (requestId !== selectedChannelViewsRequestId) {
+      return;
+    }
+
+    selectedChannelViewIds.value = data?.miraklSalesChannelViews?.edges?.map((edge: any) => edge.node.id) || [];
+  } catch (_error) {
+    if (requestId === selectedChannelViewsRequestId) {
+      selectedChannelViewIds.value = [];
+    }
+  }
+};
+
+const fetchMiraklIssues = async () => {
+  if (!selectedChannelViewIds.value.length || !selectedChannelRemoteProductIds.value.length) {
+    miraklIssues.value = [];
+    return;
+  }
+
+  miraklIssuesLoading.value = true;
+  const requestId = ++miraklIssuesRequestId;
+
+  try {
+    const { data } = await apolloClient.query({
+      query: miraklProductIssuesQuery,
+      variables: {
+        filter: {
+          remoteProduct: { id: { inList: selectedChannelRemoteProductIds.value } },
+          views: { id: { inList: selectedChannelViewIds.value } },
+        },
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (requestId !== miraklIssuesRequestId) {
+      return;
+    }
+
+    miraklIssues.value = data?.miraklProductIssues?.edges?.map((edge: any) => edge.node) || [];
+  } catch (_error) {
+    if (requestId === miraklIssuesRequestId) {
+      miraklIssues.value = [];
+    }
+  } finally {
+    if (requestId === miraklIssuesRequestId) {
+      miraklIssuesLoading.value = false;
+    }
+  }
+};
+
+watch(
+  selectedChannelSalesChannelId,
+  () => {
+    void fetchSelectedChannelViews();
+  },
+  { immediate: true },
+);
+
+watch(
+  [selectedChannelViewIds, () => props.product?.saleschannelviewassignSet],
+  () => {
+    void fetchMiraklIssues();
+  },
+  { immediate: true, deep: true },
+);
 
 const handleCategorySaved = (payload: { id: string; remoteId: string; salesChannelId: string | null }) => {
   if (!selectedChannel.value) return;
@@ -248,6 +368,18 @@ defineExpose({ hasUnsavedChanges, fetchMiraklProductCategories });
             />
           </div>
           <div class="flex-1">
+            <div class="mb-4">
+              <LocalLoader :loading="miraklIssuesLoading" />
+              <MiraklIssuesSection
+                :issues="miraklIssues"
+                :integration-id="selectedChannelIntegrationId"
+                :last-differential-issues-fetch="selectedChannel?.lastDifferentialIssuesFetch"
+                :last-full-fetch="selectedChannel?.lastFullIssuesFetch"
+              />
+            </div>
+
+            <div class="border-t my-4"></div>
+
             <MiraklCategorySection
               ref="categorySectionRef"
               :product-id="product.id"

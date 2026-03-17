@@ -1,7 +1,7 @@
 import { FieldType } from "../../../../../../shared/utils/constants";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
-import { SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
-import { amazonChannelViewsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
+import { OrderType, SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import { amazonChannelViewsQuery, miraklChannelViewsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
 import { buildAmazonIssueLastFetchedAtBadge } from "./utils";
 
 const getSeverityBadgeMap = (t: Function) => ({
@@ -173,6 +173,154 @@ export const amazonProductIssuesListingConfigConstructor = (
   addEdit: false,
   addShow: true,
   showUrlName: 'integrations.amazonProductIssues.show',
+  addDelete: false,
+  addPagination: true,
+});
+
+const getMiraklSeverityBadgeMap = (t: Function) => ({
+  ERROR: { text: t('integrations.show.miraklIssues.severity.error'), color: 'red' },
+  WARNING: { text: t('integrations.show.miraklIssues.severity.warning'), color: 'yellow' },
+  INFO: { text: t('integrations.show.miraklIssues.severity.info'), color: 'blue' },
+});
+
+const getRejectedBadgeMap = (t: Function) => ({
+  true: { text: t('integrations.show.miraklIssues.rejected.yes'), color: 'red' },
+  false: { text: t('integrations.show.miraklIssues.rejected.no'), color: 'green' },
+});
+
+export const miraklProductIssuesSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
+  search: true,
+  orderKey: "sort",
+  filters: [
+    {
+      type: FieldType.Query,
+      name: 'views',
+      label: t('integrations.show.miraklIssues.filters.views'),
+      labelBy: 'name',
+      valueBy: 'id',
+      query: miraklChannelViewsQuery,
+      dataKey: 'miraklSalesChannelViews',
+      filterable: true,
+      removable: true,
+      isEdge: true,
+      addLookup: true,
+      lookupKeys: ['id'],
+      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
+    },
+    {
+      type: FieldType.Choice,
+      name: 'severity',
+      label: t('integrations.show.miraklIssues.filters.severity'),
+      options: [
+        { label: t('integrations.show.miraklIssues.severity.error'), value: 'ERROR' },
+        { label: t('integrations.show.miraklIssues.severity.warning'), value: 'WARNING' },
+        { label: t('integrations.show.miraklIssues.severity.info'), value: 'INFO' },
+      ],
+      labelBy: 'label',
+      valueBy: 'value',
+      multiple: false,
+      filterable: false,
+      removable: true,
+      addLookup: true,
+    },
+    {
+      type: FieldType.Boolean,
+      name: 'isRejected',
+      label: t('integrations.show.miraklIssues.filters.isRejected'),
+      strict: true,
+      lookupType: 'exact',
+    },
+    {
+      type: FieldType.Text,
+      name: 'mainCode',
+      label: t('integrations.show.miraklIssues.filters.mainCode'),
+      addLookup: true,
+      lookupType: 'icontains',
+    },
+    {
+      type: FieldType.Text,
+      name: 'code',
+      label: t('integrations.show.miraklIssues.filters.code'),
+      addLookup: true,
+      lookupType: 'icontains',
+    },
+    {
+      type: FieldType.Text,
+      name: 'reasonLabel',
+      label: t('integrations.show.miraklIssues.filters.reasonLabel'),
+      addLookup: true,
+      lookupType: 'icontains',
+    },
+    {
+      type: FieldType.Text,
+      name: 'attributeCode',
+      label: t('integrations.show.miraklIssues.filters.attributeCode'),
+      addLookup: true,
+      lookupType: 'icontains',
+    },
+  ],
+  orders: [
+    { name: 'id', label: t('shared.labels.id'), type: OrderType.ASC },
+    { name: 'mainCode', label: t('integrations.show.miraklIssues.columns.mainCode'), type: OrderType.ASC },
+    { name: 'code', label: t('integrations.show.miraklIssues.columns.code'), type: OrderType.ASC },
+    { name: 'severity', label: t('integrations.show.miraklIssues.columns.severity'), type: OrderType.ASC },
+    { name: 'isRejected', label: t('integrations.show.miraklIssues.columns.isRejected'), type: OrderType.DESC },
+  ],
+});
+
+export const miraklProductIssuesListingConfigConstructor = (
+  t: Function,
+  type: string,
+  integrationId: string,
+): ListingConfig => ({
+  headers: [
+    t('integrations.show.miraklIssues.columns.code'),
+    t('shared.labels.message'),
+    t('integrations.show.miraklIssues.columns.product'),
+    t('integrations.show.miraklIssues.columns.views'),
+    t('integrations.show.miraklIssues.columns.severity'),
+    t('integrations.show.miraklIssues.columns.isRejected'),
+  ],
+  fields: [
+    {
+      name: 'code',
+      type: FieldType.Text,
+      accessor: (node) => node.code || node.mainCode || '-',
+      shortenAfter: 40,
+    },
+    {
+      name: 'message',
+      type: FieldType.Text,
+      accessor: (node) => node.message || '-',
+      shortenAfter: 96,
+    },
+    {
+      name: 'remoteProduct',
+      type: FieldType.Text,
+      accessor: (node) => node.remoteProduct?.localInstance?.name || node.remoteProduct?.remoteSku || '-',
+    },
+    {
+      name: 'views',
+      type: FieldType.InlineItems,
+      color: 'gray',
+      accessor: (node) => (node.views ?? []).map((view) => view?.name).filter(Boolean),
+    },
+    { name: 'severity', type: FieldType.Badge, badgeMap: getMiraklSeverityBadgeMap(t) },
+    {
+      name: 'isRejected',
+      type: FieldType.Badge,
+      badgeMap: {},
+      accessor: (node) => getRejectedBadgeMap(t)[String(Boolean(node.isRejected))],
+    },
+  ],
+  identifierVariables: { type },
+  identifierKey: 'id',
+  paramIdentifier: 'issueId',
+  urlQueryParams: { integrationId },
+  addActions: false,
+  addEdit: false,
+  addShow: true,
+  showUrlName: 'integrations.miraklProductIssues.show',
   addDelete: false,
   addPagination: true,
 });

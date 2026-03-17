@@ -93,6 +93,42 @@
           "description": ""
         }
       },
+      "mirakl": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "productTypesNotReadyToPush": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedDefaultUnitConfigurators": {
+          "title": "",
+          "description": ""
+        }
+      },
       "products": {
         "inspector": {
           "127": {
@@ -1420,6 +1456,13 @@
       "mirakl": {
         "noChannels": "",
         "openIntegration": "",
+        "issues": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "lastDifferentialIssuesFetch": "",
+          "lastFullFetch": ""
+        },
         "categoryTitle": "",
         "categoryDescription": "",
         "selectChannelPrompt": "",
@@ -3250,6 +3293,49 @@
           "NOT_EXEMPT": ""
         }
       },
+      "miraklIssues": {
+        "show": {
+          "title": "",
+          "breadcrumb": "",
+          "fields": {
+            "mainCode": "",
+            "code": "",
+            "message": "",
+            "severity": "",
+            "reasonLabel": "",
+            "attributeCode": "",
+            "isRejected": "",
+            "rawData": "",
+            "remoteSku": ""
+          }
+        },
+        "columns": {
+          "mainCode": "",
+          "code": "",
+          "product": "",
+          "views": "",
+          "severity": "",
+          "isRejected": ""
+        },
+        "filters": {
+          "views": "",
+          "severity": "",
+          "isRejected": "",
+          "mainCode": "",
+          "code": "",
+          "reasonLabel": "",
+          "attributeCode": ""
+        },
+        "severity": {
+          "error": "",
+          "warning": "",
+          "info": ""
+        },
+        "rejected": {
+          "yes": "",
+          "no": ""
+        }
+      },
       "sections": {
         "throttling": "",
         "syncPreferences": "",
@@ -4364,12 +4450,129 @@
         "oneSilaTitle": "",
         "oneSilaHelp": "",
         "oneSilaEmpty": "",
+        "comingSoonTitle": "",
+        "comingSoonDescription": "",
         "empty": "",
         "remoteImportId": "",
         "sourceFileName": "",
         "files": "",
         "errorReport": "",
         "transformedFile": ""
+      },
+      "miraklFeeds": {
+        "heading": "",
+        "description": "",
+        "showTitle": "",
+        "showDescription": "",
+        "fetchError": "",
+        "resyncSuccess": "",
+        "resyncError": "",
+        "resyncDisabled": "",
+        "tableTitle": "",
+        "empty": "",
+        "productsDescription": "",
+        "productsEmpty": "",
+        "fileAvailable": "",
+        "fileMissing": "",
+        "noFile": "",
+        "filters": {
+          "allStatuses": "",
+          "allImportStatuses": ""
+        },
+        "summary": {
+          "total": "",
+          "active": "",
+          "concluded": "",
+          "withReports": ""
+        },
+        "tabs": {
+          "products": ""
+        },
+        "sections": {
+          "productContext": "",
+          "files": "",
+          "fourCardLayout": "",
+          "integrationDetails": "",
+          "transformCounters": "",
+          "payloadData": "",
+          "rawData": ""
+        },
+        "labels": {
+          "importStatus": "",
+          "remoteId": "",
+          "productType": "",
+          "view": "",
+          "counts": "",
+          "stage": "",
+          "productRemoteId": "",
+          "offerRemoteId": "",
+          "reasonStatus": "",
+          "remoteDateCreated": "",
+          "remoteShopId": "",
+          "conversionType": "",
+          "lastSubmittedAt": "",
+          "lastPolledAt": "",
+          "lastSyncedAt": "",
+          "transformLinesRead": "",
+          "transformLinesInSuccess": "",
+          "transformLinesInError": "",
+          "transformLinesWithWarning": "",
+          "salesChannel": "",
+          "aiEnrichment": "",
+          "aiRewrite": "",
+          "invalidProducts": "",
+          "productsNotAcceptedInTime": "",
+          "productsNotSynchronizedInTime": "",
+          "productsReimported": "",
+          "productsSuccessfullySynchronized": "",
+          "productsWithSynchronizationIssues": "",
+          "productsWithWrongIdentifiers": "",
+          "rejectedProducts": ""
+        },
+        "counts": {
+          "items": "",
+          "rows": ""
+        },
+        "files": {
+          "sourceFile": "",
+          "errorReport": "",
+          "newProductReport": "",
+          "transformedFile": "",
+          "transformationErrorReport": ""
+        },
+        "fileStatus": {
+          "available": "",
+          "missing": ""
+        },
+        "template": {
+          "available": "",
+          "missing": "",
+          "download": ""
+        },
+        "status": {
+          "new": "",
+          "pending": "",
+          "gathering_products": "",
+          "gathering_offers": "",
+          "ready_to_render": "",
+          "submitted": "",
+          "processing": "",
+          "success": "",
+          "partial": "",
+          "failed": "",
+          "cancelled": ""
+        },
+        "importStatus": {
+          "TRANSFORMATION_WAITING": "",
+          "TRANSFORMATION_RUNNING": "",
+          "TRANSFORMATION_FAILED": "",
+          "WAITING": "",
+          "RUNNING": "",
+          "SENT": "",
+          "COMPLETE": "",
+          "CANCELLED": "",
+          "FAILED": ""
+        }
       }
     }
   },

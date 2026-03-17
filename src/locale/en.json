@@ -373,6 +373,42 @@
           "title": "Internal Properties",
           "description": "Shein internal properties missing a mapped OneSila property."
         }
+      },
+      "mirakl": {
+        "title": "Mirakl integration",
+        "description": "Resolve unmapped Mirakl data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Mirakl properties that need mapping."
+        },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Mirakl properties used in products that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Mirakl product types that need mapping."
+        },
+        "productTypesNotReadyToPush": {
+          "title": "Product Types Not Ready To Push",
+          "description": "Mirakl product types that are still missing required setup."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Mirakl property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "Mirakl select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Mirakl property values used in products that need mapping in order to be imported into OneSila."
+        },
+        "unmappedDefaultUnitConfigurators": {
+          "title": "Default Unit Configurator",
+          "description": "Mirakl unit configurators missing a default unit."
+        }
       }
     },
     "onboarding": {
@@ -1760,6 +1796,13 @@
       "mirakl": {
         "noChannels": "No Mirakl channels available.",
         "openIntegration": "Open integration",
+        "issues": {
+          "title": "Issues",
+          "description": "Current Mirakl issues for the selected channel.",
+          "empty": "No Mirakl issues found for this product and channel.",
+          "lastDifferentialIssuesFetch": "Last differential issue fetch",
+          "lastFullFetch": "Last full fetch"
+        },
         "categoryTitle": "Category",
         "categoryDescription": "Browse the Mirakl category tree and assign the most specific leaf category available.",
         "selectChannelPrompt": "Select a Mirakl channel to manage its category.",
@@ -3696,6 +3739,49 @@
           "NOT_EXEMPT": "Not exempt"
         }
       },
+      "miraklIssues": {
+        "show": {
+          "title": "Mirakl issue",
+          "breadcrumb": "Issue",
+          "fields": {
+            "mainCode": "Main code",
+            "code": "Code",
+            "message": "Message",
+            "severity": "Severity",
+            "reasonLabel": "Reason label",
+            "attributeCode": "Attribute code",
+            "isRejected": "Rejected",
+            "rawData": "Raw data",
+            "remoteSku": "Remote SKU"
+          }
+        },
+        "columns": {
+          "mainCode": "Main code",
+          "code": "Code",
+          "product": "Product",
+          "views": "Views",
+          "severity": "Severity",
+          "isRejected": "Rejected"
+        },
+        "filters": {
+          "views": "Views",
+          "severity": "Severity",
+          "isRejected": "Rejected",
+          "mainCode": "Main code",
+          "code": "Code",
+          "reasonLabel": "Reason label",
+          "attributeCode": "Attribute code"
+        },
+        "severity": {
+          "error": "Error",
+          "warning": "Warning",
+          "info": "Info"
+        },
+        "rejected": {
+          "yes": "Rejected",
+          "no": "Accepted"
+        }
+      },
       "ebay": {
         "title": "Ebay Integration",
         "productRules": {
@@ -5128,12 +5214,129 @@
         "oneSilaTitle": "OneSila Imports",
         "oneSilaHelp": "These are the existing OneSila-side import processes available for this channel.",
         "oneSilaEmpty": "No OneSila imports found for this channel yet.",
+        "comingSoonTitle": "To be continued",
+        "comingSoonDescription": "This tab will be connected to the new Mirakl import model and API in a follow-up change.",
         "empty": "No Mirakl imports found for this channel yet.",
         "remoteImportId": "Remote import ID",
         "sourceFileName": "Source file",
         "files": "Generated files",
         "errorReport": "Error report",
         "transformedFile": "Transformed file"
+      },
+      "miraklFeeds": {
+        "heading": "Mirakl Feed Activity",
+        "description": "Track submitted Mirakl feeds, inspect synchronized files, and resync concluded feeds when Mirakl needs another pass.",
+        "showTitle": "Mirakl Feed",
+        "showDescription": "Detailed Mirakl feed diagnostics, files, product context, and product coverage.",
+        "fetchError": "Unable to load Mirakl feeds.",
+        "resyncSuccess": "Mirakl feed resync started.",
+        "resyncError": "Mirakl feed resync failed.",
+        "resyncDisabled": "Only concluded feeds can be resynced.",
+        "tableTitle": "Submitted feeds",
+        "empty": "No Mirakl feeds matched the selected filters.",
+        "productsDescription": "Products linked to this Mirakl feed through its items.",
+        "productsEmpty": "No products are linked to this feed.",
+        "fileAvailable": "File is ready for download.",
+        "fileMissing": "File is not available for this feed.",
+        "noFile": "No file",
+        "filters": {
+          "allStatuses": "All local statuses",
+          "allImportStatuses": "All Mirakl statuses"
+        },
+        "summary": {
+          "total": "Total feeds",
+          "active": "Active feeds",
+          "concluded": "Concluded feeds",
+          "withReports": "Feeds with reports"
+        },
+        "tabs": {
+          "products": "Products"
+        },
+        "sections": {
+          "productContext": "Product Context",
+          "files": "Files",
+          "fourCardLayout": "4-file overview",
+          "integrationDetails": "Integration Details",
+          "transformCounters": "Transform Counters",
+          "payloadData": "Payload Data",
+          "rawData": "Raw Data"
+        },
+        "labels": {
+          "importStatus": "Mirakl status",
+          "remoteId": "Remote ID",
+          "productType": "Product type",
+          "view": "Channel view",
+          "counts": "Counts",
+          "stage": "Stage",
+          "productRemoteId": "Product remote ID",
+          "offerRemoteId": "Offer remote ID",
+          "reasonStatus": "Reason status",
+          "remoteDateCreated": "Remote date created",
+          "remoteShopId": "Remote shop ID",
+          "conversionType": "Conversion type",
+          "lastSubmittedAt": "Last submitted",
+          "lastPolledAt": "Last polled",
+          "lastSyncedAt": "Last synced",
+          "transformLinesRead": "Lines read",
+          "transformLinesInSuccess": "Lines in success",
+          "transformLinesInError": "Lines in error",
+          "transformLinesWithWarning": "Lines with warning",
+          "salesChannel": "Sales channel",
+          "aiEnrichment": "AI enrichment",
+          "aiRewrite": "AI rewrite",
+          "invalidProducts": "Invalid products",
+          "productsNotAcceptedInTime": "Products not accepted in time",
+          "productsNotSynchronizedInTime": "Products not synchronized in time",
+          "productsReimported": "Products reimported",
+          "productsSuccessfullySynchronized": "Products synchronized successfully",
+          "productsWithSynchronizationIssues": "Products with synchronization issues",
+          "productsWithWrongIdentifiers": "Products with wrong identifiers",
+          "rejectedProducts": "Rejected products"
+        },
+        "counts": {
+          "items": "{count} items",
+          "rows": "{count} rows"
+        },
+        "files": {
+          "sourceFile": "Source file",
+          "errorReport": "Error report",
+          "newProductReport": "New product report",
+          "transformedFile": "Transformed file",
+          "transformationErrorReport": "Transformation error report"
+        },
+        "fileStatus": {
+          "available": "Available",
+          "missing": "Missing"
+        },
+        "template": {
+          "available": "Template ready",
+          "missing": "Template missing",
+          "download": "Download template"
+        },
+        "status": {
+          "new": "New",
+          "pending": "Pending",
+          "gathering_products": "Gathering products",
+          "gathering_offers": "Gathering offers",
+          "ready_to_render": "Ready to render",
+          "submitted": "Submitted",
+          "processing": "Processing",
+          "success": "Success",
+          "partial": "Partial",
+          "failed": "Failed",
+          "cancelled": "Cancelled"
+        },
+        "importStatus": {
+          "TRANSFORMATION_WAITING": "Transformation waiting",
+          "TRANSFORMATION_RUNNING": "Transformation running",
+          "TRANSFORMATION_FAILED": "Transformation failed",
+          "WAITING": "Waiting",
+          "RUNNING": "Running",
+          "SENT": "Sent",
+          "COMPLETE": "Complete",
+          "CANCELLED": "Cancelled",
+          "FAILED": "Failed"
+        }
       },
       "brokenRecords": {
         "codes": {

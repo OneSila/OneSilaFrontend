@@ -41,7 +41,7 @@ import { DocumentTypes } from "./containers/document-types";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
 import { Templates } from "./containers/templates";
-import { AmazonProductIssues } from "./containers/issues";
+import { AmazonProductIssues, MiraklProductIssues } from "./containers/issues";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
 
@@ -109,7 +109,8 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
-      { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
+      { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
+      { name: 'issues', label: t('integrations.show.tabs.issues'), icon: 'triangle-exclamation' }
     );
   }
 
@@ -413,6 +414,12 @@ const pullData = async () => {
           <template #issues>
             <AmazonProductIssues
               v-if="salesChannelId && type === IntegrationTypes.Amazon"
+              :sales-channel-id="salesChannelId"
+              :integration-id="id"
+              :type="type"
+            />
+            <MiraklProductIssues
+              v-else-if="salesChannelId && type === IntegrationTypes.Mirakl"
               :sales-channel-id="salesChannelId"
               :integration-id="id"
               :type="type"

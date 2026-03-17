@@ -9,6 +9,7 @@ import { DiscreteLoader } from "../../../../../../../../shared/components/atoms/
 import { Badge } from "../../../../../../../../shared/components/atoms/badge";
 import { Breadcrumbs } from "../../../../../../../../shared/components/molecules/breadcrumbs";
 import AmazonImportBrokenRecordsListing from "./components/AmazonImportBrokenRecordsListing.vue";
+import MiraklFeedShow from "./components/MiraklFeedShow.vue";
 import { getSalesChannelImportQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { getStatusBadgeMap } from "../../configs";
 import { IntegrationTypes } from "../../../../../integrations";
@@ -38,8 +39,11 @@ const fetchImport = async () => {
   }
 };
 
-onMounted(fetchImport);
-
+onMounted(() => {
+  if (type.value !== IntegrationTypes.Mirakl) {
+    void fetchImport();
+  }
+});
 const statusBadgeMap = getStatusBadgeMap(t);
 
 const tabItems = ref([
@@ -64,7 +68,8 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
-  <GeneralTemplate>
+  <MiraklFeedShow v-if="type === IntegrationTypes.Mirakl" />
+  <GeneralTemplate v-else>
     <template #breadcrumbs>
       <Breadcrumbs
         v-if="integrationId"

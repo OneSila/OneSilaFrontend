@@ -9,6 +9,7 @@ export const salesChannelSubscription = gql`
       isImporting
       saleschannelimportSet {
         id
+        name
         status
         percentage
         createdAt
@@ -40,14 +41,10 @@ export const salesChannelSubscription = gql`
       miraklImports {
         id
         proxyId
+        type
         status
         percentage
         createdAt
-        remoteImportId
-        sourceFileName
-        hasErrorReport
-        hasTransformedFile
-        summaryData
       }
     }
   }

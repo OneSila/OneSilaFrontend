@@ -102,6 +102,12 @@ export const routes = [
     meta: { title: 'integrations.show.amazonIssues.show.title' },
     component: () => import('./integrations/integrations-show/containers/issues/containers/AmazonProductIssueShowController.vue'),
   },
+  {
+    path: '/integrations/:type/mirakl-issues/:issueId',
+    name: 'integrations.miraklProductIssues.show',
+    meta: { title: 'integrations.show.miraklIssues.show.title' },
+    component: () => import('./integrations/integrations-show/containers/issues/containers/MiraklProductIssueShowController.vue'),
+  },
   // temporary commented since we no longer to oAuth
   // {
   //   path: '/integrations/shopify/installed',

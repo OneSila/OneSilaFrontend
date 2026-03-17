@@ -8,7 +8,7 @@ import { Icon } from "../../../../../../../../../../../shared/components/atoms/i
 import { ImportSettingsStep } from "../../general/import-settings";
 import apolloClient from "../../../../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../../../../shared/modules/toast";
-import { createSalesChannelImportMutation } from "../../../../../../../../../../../shared/api/mutations/salesChannels";
+import { createMiraklImportProcessMutation } from "../../../../../../../../../../../shared/api/mutations/salesChannels";
 import { getMiraklChannelQuery } from "../../../../../../../../../../../shared/api/queries/salesChannels";
 import { processGraphQLErrors } from "../../../../../../../../../../../shared/utils";
 
@@ -59,11 +59,12 @@ onMounted(fetchIntegrationData);
 const createImport = async () => {
   try {
     await apolloClient.mutate({
-      mutation: createSalesChannelImportMutation,
+      mutation: createMiraklImportProcessMutation,
       variables: {
         data: {
           salesChannel: { id: salesChannelId.value },
           name: importType.value,
+          type: importType.value,
           status: "pending",
           updateOnly: importSettings.value.updateOnly,
           overrideOnly: importSettings.value.overrideOnly,

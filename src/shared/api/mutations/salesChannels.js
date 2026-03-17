@@ -673,6 +673,32 @@ export const updateSalesChannelImportMutation = gql`
   }
 `;
 
+export const createMiraklImportProcessMutation = gql`
+  mutation createMiraklImportProcess($data: MiraklSalesChannelImportInput!) {
+    createMiraklImportProcess(data: $data) {
+      id
+      status
+      percentage
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateMiraklImportProcessMutation = gql`
+  mutation updateMiraklImportProcess($data: MiraklSalesChannelImportPartialInput!) {
+    updateMiraklImportProcess(data: $data) {
+      id
+      status
+      percentage
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
 
 
 export const createImportPropertiesMutation = gql`

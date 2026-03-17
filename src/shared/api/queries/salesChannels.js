@@ -492,6 +492,9 @@ export const getMiraklChannelQuery = gql`
       id
       hostname
       active
+      lastDifferentialIssuesFetch
+      lastFullIssuesFetch
+      lastProductImportsRequestDate
       requestsPerMinute
       maxRetries
       useConfigurableName
@@ -627,6 +630,9 @@ export const miraklChannelsQuery = gql`
           active
           shopId
           connected
+          lastDifferentialIssuesFetch
+          lastFullIssuesFetch
+          lastProductImportsRequestDate
           createdAt
           integrationPtr {
             id
@@ -1344,6 +1350,7 @@ export const salesChannelImportsQuery = gql`
       edges {
         node {
           id
+          name
           status
           percentage
           createdAt
@@ -2505,14 +2512,10 @@ export const miraklImportProcessesQuery = gql`
         node {
           id
           proxyId
+          type
           status
           percentage
           createdAt
-          remoteImportId
-          sourceFileName
-          hasErrorReport
-          hasTransformedFile
-          summaryData
         }
         cursor
       }
