@@ -1325,10 +1325,28 @@
           "miraklExample": "",
           "miraklSubtypeExample": "",
           "miraklInfoModal": {
+            "defaultTitle": "",
             "title": "",
             "description": "",
             "instructions": "",
-            "cta": ""
+            "cta": "",
+            "tabs": {
+              "learnMirakl": ""
+            },
+            "credentials": {
+              "title": "",
+              "description": "",
+              "apiKeyTitle": "",
+              "apiKeyIntro": "",
+              "apiKeySteps": {
+                "step1": "",
+                "step2": "",
+                "step3": "",
+                "step4": ""
+              },
+              "shopIdTitle": "",
+              "shopIdDescription": ""
+            }
           }
         },
         "step4": {
@@ -1402,6 +1420,11 @@
       "tabs": {
         "issues": ""
       },
+      "properties": {
+        "actions": {
+          "seeValues": ""
+        }
+      },
       "mirakl": {
         "title": "",
         "internalProperties": {
@@ -1418,12 +1441,14 @@
           },
           "help": {
             "defaultValue": "",
+            "language": "",
             "representationType": ""
           },
           "labels": {
             "description": "",
             "example": "",
             "isCommon": "",
+            "language": "",
             "representationType": "",
             "hierarchyCode": "",
             "uniqueCode": "",
@@ -1447,6 +1472,18 @@
         "productRules": {
           "help": {
             "template": ""
+          },
+          "templateHelp": {
+            "eyebrow": "",
+            "title": "",
+            "description": "",
+            "steps": {
+              "step1": "",
+              "step2": "",
+              "step3": "",
+              "step4": ""
+            },
+            "imageAlt": ""
           },
           "labels": {
             "category": "",
@@ -1756,6 +1793,9 @@
         "actions": {
           "seeValues": ""
         },
+        "bulkAssign": "",
+        "bulkAssignTitle": "",
+        "assignSuccess": "",
         "labels": {
           "code": "",
           "type": "",

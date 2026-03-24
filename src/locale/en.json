@@ -3896,12 +3896,14 @@
           },
           "help": {
             "defaultValue": "Use a fixed value when this Mirakl field is mapped as a default value.",
+            "language": "Select the Mirakl remote language code that should be used for this field.",
             "representationType": "Choose how OneSila should populate this Mirakl field."
           },
           "labels": {
             "description": "Description",
             "example": "Example",
             "isCommon": "Common property",
+            "language": "Language",
             "representationType": "Representation type",
             "hierarchyCode": "Hierarchy code",
             "uniqueCode": "Unique code",
@@ -3925,6 +3927,18 @@
         "productRules": {
           "help": {
             "template": "Upload a CSV template file for this Mirakl product rule."
+          },
+          "templateHelp": {
+            "eyebrow": "Template guide",
+            "title": "How to get the Mirakl CSV/XML template",
+            "description": "Download the category template from Mirakl, then upload that file back into OneSila on this page.",
+            "steps": {
+              "step1": "Open the Price and Stock sidebar in Mirakl and go to File imports.",
+              "step2": "In the right section, find Products and offers and click CSV/XML template.",
+              "step3": "In the modal that opens, use the CSV section, click the category you want, and download the CSV file.",
+              "step4": "Once you have the file, upload it in OneSila here as the template for this Mirakl product type."
+            },
+            "imageAlt": "Mirakl CSV/XML template download flow screenshot"
           },
           "labels": {
             "category": "Category",
@@ -4491,6 +4505,9 @@
         "actions": {
           "seeValues": "See values"
         },
+        "bulkAssign": "Assign Property",
+        "bulkAssignTitle": "Assign to {count} propertie(s)",
+        "assignSuccess": "Properties were successfully assigned",
         "labels": {
           "code": "Code",
           "type": "Type",
@@ -4732,10 +4749,28 @@
           "miraklExample": "Mirakl integration to connect OneSila with hundreds of marketplace channels from a single setup.",
           "miraklSubtypeExample": "{marketplace} integration to manage your marketplace listings.",
           "miraklInfoModal": {
+            "defaultTitle": "How to connect your Mirakl marketplace",
             "title": "{marketplace} via Mirakl",
             "description": "{marketplace} is connected through Mirakl. If you do not already have access, contact Mirakl first and request the permissions required for this marketplace.",
             "instructions": "Use the Mirakl contact flow below, mention {marketplace}, and follow Mirakl's instructions to get access approved for that specific marketplace before finishing the integration setup.",
-            "cta": "Talk to Mirakl"
+            "cta": "Talk to Mirakl",
+            "tabs": {
+              "learnMirakl": "Learn about Mirakl"
+            },
+            "credentials": {
+              "title": "Mirakl credentials",
+              "description": "To finish this integration, you need the store API key and the shop ID from your Mirakl back office.",
+              "apiKeyTitle": "Get your store API key",
+              "apiKeyIntro": "If there is no store API key generated yet on your platform:",
+              "apiKeySteps": {
+                "step1": "In the back office top bar, click the profile icon and select Personal settings in the top-right corner of the page.",
+                "step2": "Open the API key tab.",
+                "step3": "Click Generate new key.",
+                "step4": "Click Validate."
+              },
+              "shopIdTitle": "Find your shop ID",
+              "shopIdDescription": "Open the Mirakl dashboard and look for the identifier shown as ID: xxxx. This is your 4-digit shop ID."
+            }
           },
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",

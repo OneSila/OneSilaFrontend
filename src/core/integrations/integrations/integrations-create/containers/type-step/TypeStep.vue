@@ -32,7 +32,7 @@ import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { SearchInput } from '../../../../../../shared/components/molecules/search-input';
 import apolloClient from '../../../../../../../apollo-client';
 import { publicIntegrationTypesQuery } from '../../../../../../shared/api/queries/publicIntegrationTypes.js';
-import { MagentoInfoCard, ShopifyInfoCard, WebhookInfoCard, WoocommerceInfoCard } from './info-cards';
+import { MagentoInfoCard, MiraklInfoCard, ShopifyInfoCard, WebhookInfoCard, WoocommerceInfoCard } from './info-cards';
 
 type IntegrationCategory = 'storefronts' | 'marketplaces' | 'webhooks';
 type BackendIntegrationCategory = 'storefront' | 'marketplace' | 'webhooks';
@@ -161,6 +161,8 @@ const infoComponent = computed(() => {
   switch (selectedInfoCard.value.infoVariant) {
     case 'magento':
       return MagentoInfoCard;
+    case 'mirakl':
+      return MiraklInfoCard;
     case 'shopify':
       return ShopifyInfoCard;
     case 'woocommerce':
@@ -170,6 +172,18 @@ const infoComponent = computed(() => {
     default:
       return null;
   }
+});
+
+const infoComponentProps = computed(() => {
+  if (!selectedInfoCard.value || selectedInfoCard.value.infoVariant !== 'mirakl') {
+    return {};
+  }
+
+  return {
+    marketplace: selectedInfoCard.value.title,
+    icon: selectedInfoCard.value.icon,
+    isDefaultMirakl: !selectedInfoCard.value.subtype || selectedInfoCard.value.subtype === IntegrationTypes.Mirakl,
+  };
 });
 
 const BACKEND_CATEGORY_BY_FILTER: Record<IntegrationCategory, BackendIntegrationCategory> = {
@@ -261,7 +275,7 @@ const resolveInfoVariant = (node: PublicIntegrationTypeNode): InfoVariant | unde
   if (node.type === IntegrationTypes.Webhook) {
     return 'webhook';
   }
-  if (node.type === IntegrationTypes.Mirakl && node.subtype && node.subtype !== IntegrationTypes.Mirakl) {
+  if (node.type === IntegrationTypes.Mirakl) {
     return 'mirakl';
   }
   return undefined;
@@ -747,49 +761,9 @@ onBeforeUnmount(() => {
       <component
         v-if="infoComponent"
         :is="infoComponent"
+        v-bind="infoComponentProps"
         @close="closeInfoModal"
       />
-
-      <div
-        v-else-if="selectedInfoCard"
-        class="w-[min(42rem,calc(100vw-2rem))] rounded-[2rem] bg-white p-8"
-      >
-        <div class="flex items-start gap-4">
-          <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
-            <Image :source="selectedInfoCard.icon" :alt="selectedInfoCard.title" class="h-8 w-8 object-contain" />
-          </div>
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
-              {{ t('integrations.integrationTypes.mirakl') }}
-            </p>
-            <h2 class="mt-2 text-2xl font-semibold text-slate-900">
-              {{ t('integrations.create.wizard.step1.miraklInfoModal.title', { marketplace: selectedInfoCard.title }) }}
-            </h2>
-            <p class="mt-4 text-base leading-7 text-slate-600">
-              {{ t('integrations.create.wizard.step1.miraklInfoModal.description', { marketplace: selectedInfoCard.title }) }}
-            </p>
-            <p class="mt-4 text-base leading-7 text-slate-600">
-              {{ t('integrations.create.wizard.step1.miraklInfoModal.instructions', { marketplace: selectedInfoCard.title }) }}
-            </p>
-          </div>
-        </div>
-
-        <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Button class="btn btn-outline-dark" @click="closeInfoModal">
-            {{ t('shared.button.cancel') }}
-          </Button>
-
-          <a
-            class="btn btn-primary inline-flex items-center justify-center gap-2"
-            href="https://www.mirakl.com/lets-talk"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>{{ t('integrations.create.wizard.step1.miraklInfoModal.cta') }}</span>
-            <Icon name="arrow-up-right-from-square" size="sm" />
-          </a>
-        </div>
-      </div>
     </Modal>
   </div>
 </template>

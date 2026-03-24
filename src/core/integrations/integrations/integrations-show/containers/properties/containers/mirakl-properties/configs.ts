@@ -152,7 +152,11 @@ export const miraklPropertyEditFormConfigConstructor = (
   ],
 });
 
-export const miraklPropertiesListingConfigConstructor = (t: Function, specificIntegrationId: string): ListingConfig => ({
+export const miraklPropertiesListingConfigConstructor = (
+  t: Function,
+  specificIntegrationId: string,
+  salesChannelId: string,
+): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
     t('integrations.show.properties.labels.code'),
@@ -176,7 +180,7 @@ export const miraklPropertiesListingConfigConstructor = (t: Function, specificIn
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -184,6 +188,7 @@ export const miraklPropertiesListingConfigConstructor = (t: Function, specificIn
   showUrlName: 'integrations.remoteProperties.edit',
   addDelete: false,
   addPagination: true,
+  addBulkActions: true,
 });
 
 export const miraklInternalPropertiesSearchConfigConstructor = (t: Function): SearchConfig => ({

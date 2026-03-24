@@ -1684,6 +1684,7 @@ export const getMiraklPropertyQuery = gql`
       id
       code
       name
+      language
       representationType
       representationTypeDecided
       description

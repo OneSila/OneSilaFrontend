@@ -280,7 +280,6 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
 
     <template #content>
       <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData">
-
         <template v-if="marketplaceName" #before-fields>
           <div class="mb-6">
             <Label class="font-semibold block text-sm leading-6 text-gray-900">
@@ -304,6 +303,10 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
             </Button>
           </Link>
         </template>
+
+        <template #help-section>
+          <slot name="help-section" />
+        </template>
       </GeneralForm>
 
       <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 mt-4">
@@ -324,7 +327,7 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
                     <tr>
                       <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
                       <th v-if="showCodeColumn" class="p-2 text-left">{{
-                          t('integrations.show.properties.labels.code')
+                          t('shared.labels.code')
                         }}
                       </th>
                       <th class="p-2 text-left">{{ t('integrations.show.mapping.mappedLocally') }}</th>

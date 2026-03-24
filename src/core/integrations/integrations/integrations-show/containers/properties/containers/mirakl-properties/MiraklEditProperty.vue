@@ -9,7 +9,7 @@ import { FieldType, PropertyTypes } from "../../../../../../../../shared/utils/c
 import { getPropertyQuery, propertiesQuerySelector } from "../../../../../../../../shared/api/queries/properties.js";
 import apolloClient from "../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../shared/modules/toast";
-import { miraklPropertiesQuery } from "../../../../../../../../shared/api/queries/salesChannels";
+import { miraklPropertiesQuery, miraklRemoteLanguagesQuery } from "../../../../../../../../shared/api/queries/salesChannels";
 import type { FormConfig } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Link } from "../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
@@ -23,6 +23,7 @@ import {
   getMiraklRepresentationTypeGroup,
   usesMiraklBooleanCurrentType,
   usesMiraklDefaultValueInput,
+  usesMiraklLanguageSelection,
   usesMiraklLocalPropertyMapping,
 } from './representationTypes';
 
@@ -135,6 +136,9 @@ const usesLocalPropertyMapping = computed(() =>
 const usesDefaultValueInput = computed(() =>
   !isRepresentationTypeDecided.value && usesMiraklDefaultValueInput(currentRepresentationType.value),
 );
+const showLanguageField = computed(() =>
+  !isRepresentationTypeDecided.value && usesMiraklLanguageSelection(currentRepresentationType.value),
+);
 const canSeeValues = computed(() => usesLocalPropertyMapping.value && isSelectPropertyType(propertyType.value));
 const showRepresentationGuide = computed(() => !isRepresentationTypeDecided.value);
 const representationTypeLabel = computed(() =>
@@ -237,6 +241,9 @@ const representationGuide = computed(() => {
 const metadataFields = computed<Array<{ key: string; label: string; boolean?: boolean }>>(() => [
   { key: 'description', label: t('integrations.show.mirakl.properties.labels.description') },
   { key: 'example', label: t('integrations.show.mirakl.properties.labels.example') },
+  ...(showLanguageField.value
+    ? [{ key: 'language', label: t('integrations.show.mirakl.properties.labels.language') }]
+    : []),
   { key: 'defaultValue', label: t('integrations.show.mirakl.properties.labels.defaultValue') },
   { key: 'valueListCode', label: t('integrations.show.mirakl.properties.labels.valueListCode') },
   { key: 'valueListLabel', label: t('integrations.show.mirakl.properties.labels.valueListLabel') },
@@ -458,6 +465,25 @@ const buildDefaultValueField = (defaultValue?: string | null) => ({
   ...(defaultValue != null ? { default: defaultValue } : {}),
 });
 
+const buildLanguageField = () => ({
+  type: FieldType.Query,
+  name: 'language',
+  label: t('integrations.show.mirakl.properties.labels.language'),
+  help: t('integrations.show.mirakl.properties.help.language'),
+  labelBy: 'name',
+  valueBy: 'remoteCode',
+  query: miraklRemoteLanguagesQuery,
+  dataKey: 'miraklRemoteLanguages',
+  queryVariables: salesChannelId
+    ? { filter: { salesChannel: { id: { exact: salesChannelId } } } }
+    : undefined,
+  isEdge: true,
+  multiple: false,
+  filterable: true,
+  removable: true,
+  optional: true,
+});
+
 const buildRepresentationTypeField = () => ({
   type: FieldType.Choice,
   name: 'representationType',
@@ -525,6 +551,7 @@ const syncRepresentationFields = () => {
     propertyMetadata.value?.localInstance?.id ??
     null;
   const existingDefaultValue = formData.value?.defaultValue ?? propertyMetadata.value?.defaultValue ?? '';
+  const existingLanguage = formData.value?.language ?? propertyMetadata.value?.language ?? null;
 
   formConfig.value.haveCustomHelpSection = showRepresentationGuide.value;
 
@@ -534,7 +561,7 @@ const syncRepresentationFields = () => {
     removeFieldsByName(['representationType']);
   }
 
-  removeFieldsByName(['localInstance', 'defaultValue', 'yesTextValue', 'noTextValue']);
+  removeFieldsByName(['localInstance', 'defaultValue', 'language', 'yesTextValue', 'noTextValue']);
 
   if (usesLocalPropertyMapping.value) {
     insertFieldsAfter('name', [
@@ -542,6 +569,15 @@ const syncRepresentationFields = () => {
     ]);
     formData.value.localInstance = existingLocalInstance;
     syncBooleanTextFields(getEffectiveCurrentType(formData.value.type));
+    if (showLanguageField.value) {
+      const languageAnchor = formConfig.value.fields.some((item) => item.name === 'noTextValue')
+        ? 'noTextValue'
+        : formConfig.value.fields.some((item) => item.name === 'yesTextValue')
+          ? 'yesTextValue'
+          : 'localInstance';
+      insertFieldsAfter(languageAnchor, [buildLanguageField() as any]);
+      formData.value.language = existingLanguage;
+    }
     updateLocalInstanceHelp();
     return;
   }
@@ -551,6 +587,12 @@ const syncRepresentationFields = () => {
       buildDefaultValueField(existingDefaultValue) as any,
     ]);
     formData.value.defaultValue = existingDefaultValue;
+  }
+
+  if (showLanguageField.value) {
+    const languageAnchor = usesDefaultValueInput.value ? 'defaultValue' : 'name';
+    insertFieldsAfter(languageAnchor, [buildLanguageField() as any]);
+    formData.value.language = existingLanguage;
   }
 
   localPropertyType.value = getForcedRepresentationCurrentType();
@@ -658,6 +700,10 @@ onMounted(async () => {
         delete nextData.defaultValue;
       }
 
+      if (!showLanguageField.value) {
+        delete nextData.language;
+      }
+
       if (!usesLocalPropertyMapping.value && nextData.localInstance?.id === null) {
         nextData.localInstance = null;
       }
@@ -747,6 +793,7 @@ const handleSetData = (data: any) => {
     formData.value.originalType = originalType.value;
     formData.value.representationType = representationType.value;
     formData.value.defaultValue = propertyData?.defaultValue ?? '';
+    formData.value.language = propertyData?.language ?? null;
   }
   syncRepresentationFields();
 };

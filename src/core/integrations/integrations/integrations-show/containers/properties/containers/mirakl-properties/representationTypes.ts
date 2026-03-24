@@ -105,5 +105,15 @@ export const usesMiraklDefaultValueInput = (representationType?: string | null) 
 export const usesMiraklUnitSelection = (representationType?: string | null) =>
   representationType === MIRAKL_REPRESENTATION_TYPE_UNIT;
 
+export const usesMiraklLanguageSelection = (representationType?: string | null) =>
+  [
+    MIRAKL_REPRESENTATION_TYPE_PROPERTY,
+    'product_title',
+    'product_subtitle',
+    'product_description',
+    'product_short_description',
+    'product_bullet_point',
+  ].includes(representationType || '');
+
 export const usesMiraklBooleanCurrentType = (representationType?: string | null) =>
   ['product_active', 'allow_backorder'].includes(representationType || '');

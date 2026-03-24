@@ -107,6 +107,7 @@ export const miraklPropertySelectValuesListingConfigConstructor = (
   showUrlName: 'integrations.remotePropertySelectValues.edit',
   addDelete: false,
   addPagination: true,
+  addBulkActions: true,
 });
 
 export const listingQueryKey = 'miraklPropertySelectValues';

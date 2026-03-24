@@ -48,6 +48,7 @@ const router = useRouter();
 const route = useRoute();
 
 const canStartMapping = ref(false);
+const generalListingRef = ref<any>(null);
 const isAutoMapping = ref(false);
 const integrationType = computed(() => String(route.params.type || ''));
 
@@ -197,6 +198,11 @@ const startMapping = async () => {
   });
 };
 
+const clearSelection = (query?: any) => {
+  generalListingRef.value?.clearSelected?.();
+  query?.refetch?.();
+};
+
 const autoMapPerfectMatches = async () => {
   if (!props.autoMapMutation || !props.salesChannelId || isAutoMapping.value) {
     return;
@@ -259,6 +265,7 @@ const autoMapPerfectMatches = async () => {
           {{ t(props.titleKey as string) }}
         </Title>
         <GeneralListing
+          ref="generalListingRef"
           :search-config="searchConfig"
           :config="listingConfig"
           :query="listingQuery"
@@ -266,6 +273,9 @@ const autoMapPerfectMatches = async () => {
           :fixed-filter-variables="mergedFixedFilterVariables"
           @pull-data="emit('pull-data')"
         >
+          <template v-if="$slots.bulkActions" #bulkActions="slotProps">
+            <slot name="bulkActions" v-bind="{ ...slotProps, clearSelection }" />
+          </template>
           <template #additionalButtons="{ item }">
             <Link
               v-if="canSeeValues(item)"

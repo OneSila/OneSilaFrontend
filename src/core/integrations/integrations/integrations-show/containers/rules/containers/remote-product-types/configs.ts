@@ -206,6 +206,7 @@ const miraklProductTypeFormConfig = (
   integrationId: string
 ): FormConfig => ({
   cols: 1,
+  haveCustomHelpSection: true,
   type: FormType.EDIT,
   mutation: updateMiraklProductTypeMutation,
   mutationKey: "updateMiraklProductType",

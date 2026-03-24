@@ -14,7 +14,9 @@ import { selectValueOnTheFlyConfig } from '../../../../../../../properties/prope
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../../../../shared/utils';
 
-const props = defineProps<{ selectedEntities: string[]; mutation: DocumentNode }>();
+const props = withDefaults(defineProps<{ selectedEntities: string[]; mutation: DocumentNode; mode?: 'bulk' | 'single' }>(), {
+  mode: 'bulk',
+});
 const emit = defineEmits<{ (e: 'started'): void }>();
 
 const { t } = useI18n();
@@ -73,15 +75,36 @@ const onAssignSubmit = async () => {
   if (!selectedValue.value) return;
 
   try {
-    await apolloClient.mutate({
-      mutation: props.mutation,
-      variables: {
-        data: {
-          ids: props.selectedEntities,
-          localInstanceId: selectedValue.value,
+    if (props.mode === 'single') {
+      const results = await Promise.allSettled(
+        props.selectedEntities.map((id) =>
+          apolloClient.mutate({
+            mutation: props.mutation,
+            variables: {
+              data: {
+                id,
+                localInstance: { id: selectedValue.value },
+              },
+            },
+          }),
+        ),
+      );
+
+      const successCount = results.filter((result) => result.status === 'fulfilled').length;
+      if (!successCount) {
+        throw new Error('No select values could be assigned.');
+      }
+    } else {
+      await apolloClient.mutate({
+        mutation: props.mutation,
+        variables: {
+          data: {
+            ids: props.selectedEntities,
+            localInstanceId: selectedValue.value,
+          },
         },
-      },
-    });
+      });
+    }
     Toast.success(t('integrations.show.propertySelectValues.assignSuccess'));
     emit('started');
     showPanel.value = false;
