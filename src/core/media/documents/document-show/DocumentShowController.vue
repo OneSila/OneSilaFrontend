@@ -36,6 +36,7 @@ type DocumentData = {
   description?: string | null;
   documentLanguage?: string | null;
   documentType?: { id: string; name: string; code?: string | null } | null;
+  image?: { size?: number | string | null; name?: string | null; url?: string | null } | null;
   file?: { size?: number | string | null; name?: string | null; url?: string | null } | null;
 };
 

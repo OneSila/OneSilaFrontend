@@ -173,7 +173,13 @@ export const fileQuery = gql`
           id
           type
           fileUrl
+          isDocumentImage
           updatedAt
+          image {
+            name
+            size
+            url
+          }
           file {
             name
             size
@@ -212,6 +218,11 @@ export const getFileQuery = gql`
       fileUrl
       imageWebUrl
       isDocumentImage
+      image {
+        size
+        name
+        url
+      }
       title
       description
       documentLanguage
@@ -252,6 +263,7 @@ export const mediaProductThroughQuery = gql`
               id
               proxyId
               type
+              isDocumentImage
               imageType
               updatedAt
               title

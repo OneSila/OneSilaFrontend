@@ -28,18 +28,53 @@ export const getRouteName = (type: string) => {
   }
 };
 
-export const getFileName = (media: any) => {
-  const cleanFileName = (name) => name.replace(/^images\//, '');
+const cleanFileName = (name?: string | null) => (name || '').replace(/^images\//, '');
 
-  if (media.type === TYPE_IMAGE) return truncateText(cleanFileName(media.image.name), 25);
-  if (media.type === TYPE_DOCUMENT) return truncateText(cleanFileName(media.file.name), 25);
-  if (media.type === TYPE_VIDEO) return truncateText(media.videoUrl, 25);
+const getNameFromUrl = (value?: string | null) => {
+  if (!value) {
+    return '';
+  }
+  const cleanValue = value.split('#')[0].split('?')[0];
+  return cleanValue.split('/').pop() || cleanValue;
+};
+
+const getDocumentBinary = (media: any) => {
+  if (media?.type !== TYPE_DOCUMENT) {
+    return null;
+  }
+
+  if (media?.file) {
+    return media.file;
+  }
+
+  if (media?.isDocumentImage && media?.image) {
+    return media.image;
+  }
+
+  return null;
+};
+
+export const getFileName = (media: any) => {
+  if (media?.type === TYPE_IMAGE) {
+    const fileName = cleanFileName(media?.image?.name) || cleanFileName(getNameFromUrl(media?.imageWebUrl));
+    return fileName ? truncateText(fileName, 25) : '-';
+  }
+  if (media?.type === TYPE_DOCUMENT) {
+    const documentBinary = getDocumentBinary(media);
+    const fileName = cleanFileName(documentBinary?.name)
+      || cleanFileName(getNameFromUrl(documentBinary?.url || media?.fileUrl))
+      || cleanFileName(media?.title);
+    return fileName ? truncateText(fileName, 25) : '-';
+  }
+  if (media?.type === TYPE_VIDEO) {
+    return media?.videoUrl ? truncateText(media.videoUrl, 25) : '-';
+  }
   return '-';
 };
 
 export const getFileSize = (media: any) => {
-  if (media.type === TYPE_IMAGE) return humanFileSize(media.image.size);
-  if (media.type === TYPE_DOCUMENT) return humanFileSize(media.file.size);
+  if (media?.type === TYPE_IMAGE) return humanFileSize(media?.image?.size);
+  if (media?.type === TYPE_DOCUMENT) return humanFileSize(getDocumentBinary(media)?.size);
   return '-';
 };
 
@@ -52,10 +87,19 @@ export const formatDate = (dateString) => {
 };
 
 export const humanFileSize = (bytes, si=false, dp=1) => {
+  if (bytes === null || bytes === undefined || bytes === '') {
+    return '-';
+  }
+
+  let normalizedBytes = typeof bytes === 'number' ? bytes : Number(bytes);
+  if (Number.isNaN(normalizedBytes)) {
+    return '-';
+  }
+
   const thresh = si ? 1000 : 1024;
 
-  if (Math.abs(bytes) < thresh) {
-    return bytes + ' B';
+  if (Math.abs(normalizedBytes) < thresh) {
+    return normalizedBytes + ' B';
   }
 
   const units = si
@@ -65,10 +109,10 @@ export const humanFileSize = (bytes, si=false, dp=1) => {
   const r = 10**dp;
 
   do {
-    bytes /= thresh;
+    normalizedBytes /= thresh;
     ++u;
-  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+  } while (Math.round(Math.abs(normalizedBytes) * r) / r >= thresh && u < units.length - 1);
 
 
-  return bytes.toFixed(dp) + ' ' + units[u];
+  return normalizedBytes.toFixed(dp) + ' ' + units[u];
 }

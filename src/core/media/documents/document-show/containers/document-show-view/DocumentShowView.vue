@@ -5,7 +5,7 @@ import { Button } from "../../../../../../shared/components/atoms/button";
 import { Icon } from "../../../../../../shared/components/atoms/icon";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { Link } from "../../../../../../shared/components/atoms/link";
-import { humanFileSize, truncateText } from "../../../../files/media";
+import { getFileName, getFileSize, truncateText } from "../../../../files/media";
 import { Toast } from "../../../../../../shared/modules/toast";
 import PreviewDocument from "../../../../files/containers/PreviewDocument.vue";
 
@@ -21,6 +21,7 @@ const props = defineProps<{
     description?: string | null;
     documentLanguage?: string | null;
     documentType?: { id: string; name: string; code?: string | null } | null;
+    image?: { size?: number | string | null; name?: string | null; url?: string | null } | null;
     file?: { size?: number | string | null; name?: string | null } | null;
   }
 }>();
@@ -46,7 +47,7 @@ const openPreview = () => {
     return;
   }
   previewDocumentUrl.value = props.document.fileUrl;
-  previewDocumentName.value = props.document.file?.name || '';
+  previewDocumentName.value = getFileName(props.document);
   previewModalVisible.value = true;
 };
 
@@ -58,8 +59,9 @@ const downloadDocument = () => {
   link.href = props.document.fileUrl;
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
-  if (props.document.file?.name) {
-    link.download = props.document.file.name;
+  const fileName = getFileName(props.document);
+  if (fileName !== '-') {
+    link.download = fileName;
   }
   window.document.body.appendChild(link);
   link.click();
@@ -95,11 +97,11 @@ const downloadDocument = () => {
     <Flex vertical>
       <FlexCell>
         <label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('shared.labels.name') }}</label>
-        <span class="text-gray-900">{{ document.file?.name || '—' }}</span>
+        <span class="text-gray-900">{{ getFileName(document) }}</span>
       </FlexCell>
       <FlexCell>
         <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('media.media.labels.fileSize') }}</label>
-        <span class="text-gray-900">{{ document.file?.size ? humanFileSize(document.file.size) : '—' }}</span>
+        <span class="text-gray-900">{{ getFileSize(document) }}</span>
       </FlexCell>
       <FlexCell>
         <label class="mt-2 font-semibold block text-sm leading-6 text-gray-900">{{ t('media.documents.labels.fileUrl') }}</label>
