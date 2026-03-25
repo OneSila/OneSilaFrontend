@@ -12,7 +12,7 @@ import {PrimaryButton} from "../../../../shared/components/atoms/button-primary"
 import {SecondaryButton} from "../../../../shared/components/atoms/button-secondary";
 import {Toast} from "../../../../shared/modules/toast";
 import apolloClient from "../../../../../apollo-client";
-import { getProductPropertiesRuleQuery, productPropertiesRulesWithUsageCountQuery } from "../../../../shared/api/queries/properties.js";
+import { getProductPropertiesRuleQuery, productPropertiesRulesQuery } from "../../../../shared/api/queries/properties.js";
 import { completeCreateProductPropertiesRuleMutation, completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRuleMutation, duplicatePropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
 import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
@@ -172,7 +172,6 @@ const transformRuleNode = (node: any): RuleCacheEntry => {
     id: item.property.id,
     name: item.property.name,
     type: item.property.type,
-    usageCount: item.property.usageCount ?? null,
     configType: item.type,
     sortOrder: item.sortOrder ?? index + 1,
   }));
@@ -218,7 +217,7 @@ const fetchRuleBySalesChannel = async (channelKey: string): Promise<RuleCacheEnt
   }
 
   const { data } = await apolloClient.query({
-    query: productPropertiesRulesWithUsageCountQuery,
+    query: productPropertiesRulesQuery,
     variables: { filter, first: 1 },
     fetchPolicy: 'network-only',
   });

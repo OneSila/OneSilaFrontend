@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import GeneralTemplate from "../../../../../../../../shared/templates/GeneralTemplate.vue";
@@ -9,6 +9,7 @@ import { DiscreteLoader } from "../../../../../../../../shared/components/atoms/
 import { Badge } from "../../../../../../../../shared/components/atoms/badge";
 import { Breadcrumbs } from "../../../../../../../../shared/components/molecules/breadcrumbs";
 import AmazonImportBrokenRecordsListing from "./components/AmazonImportBrokenRecordsListing.vue";
+import MiraklFeedShow from "./components/MiraklFeedShow.vue";
 import { getSalesChannelImportQuery } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { getStatusBadgeMap } from "../../configs";
 import { IntegrationTypes } from "../../../../../integrations";
@@ -19,6 +20,9 @@ const { t } = useI18n();
 const id = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = ref('');
+const isMiraklFeedRoute = computed(() =>
+  type.value === IntegrationTypes.Mirakl && typeof route.query.integrationId === 'string'
+);
 
 const result = ref<any>(null);
 const loading = ref(false);
@@ -38,8 +42,11 @@ const fetchImport = async () => {
   }
 };
 
-onMounted(fetchImport);
-
+onMounted(() => {
+  if (!isMiraklFeedRoute.value) {
+    void fetchImport();
+  }
+});
 const statusBadgeMap = getStatusBadgeMap(t);
 
 const tabItems = ref([
@@ -64,7 +71,8 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
-  <GeneralTemplate>
+  <MiraklFeedShow v-if="isMiraklFeedRoute" />
+  <GeneralTemplate v-else>
     <template #breadcrumbs>
       <Breadcrumbs
         v-if="integrationId"

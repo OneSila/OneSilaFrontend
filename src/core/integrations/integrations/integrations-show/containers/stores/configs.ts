@@ -7,11 +7,14 @@ import {
   ebayChannelViewsQuery,
   getEbaySalesChannelViewQuery,
   sheinChannelViewsQuery,
+  miraklChannelViewsQuery,
+  getMiraklSalesChannelViewQuery,
 } from "../../../../../../shared/api/queries/salesChannels.js";
 import {
   updateSalesChannelViewMutation,
   updateAmazonSalesChannelViewMutation,
   updateEbaySalesChannelViewMutation,
+  updateMiraklSalesChannelViewMutation,
 } from "../../../../../../shared/api/mutations/salesChannels.js";
 import { IntegrationTypes } from "../../../integrations";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
@@ -32,18 +35,24 @@ export const storeEditFormConfigConstructor = (
       ? updateAmazonSalesChannelViewMutation
       : type === IntegrationTypes.Ebay
         ? updateEbaySalesChannelViewMutation
+        : type === IntegrationTypes.Mirakl
+          ? updateMiraklSalesChannelViewMutation
         : updateSalesChannelViewMutation,
   mutationKey:
     type === IntegrationTypes.Amazon
       ? 'updateAmazonSalesChannelView'
       : type === IntegrationTypes.Ebay
         ? 'updateEbaySalesChannelView'
+        : type === IntegrationTypes.Mirakl
+          ? 'updateMiraklSalesChannelView'
         : 'updateSalesChannelView',
   query:
     type === IntegrationTypes.Amazon
       ? getAmazonChannelViewQuery
       : type === IntegrationTypes.Ebay
         ? getEbaySalesChannelViewQuery
+        : type === IntegrationTypes.Mirakl
+          ? getMiraklSalesChannelViewQuery
         : getSalesChannelViewQuery,
   queryVariables: { id: storeId },
   queryDataKey:
@@ -51,6 +60,8 @@ export const storeEditFormConfigConstructor = (
       ? 'amazonChannelView'
       : type === IntegrationTypes.Ebay
         ? 'ebaySalesChannelView'
+        : type === IntegrationTypes.Mirakl
+          ? 'miraklSalesChannelView'
         : 'salesChannelView',
   submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'stores' } },
   fields: (() => {
@@ -74,6 +85,29 @@ export const storeEditFormConfigConstructor = (
         number: false,
       },
     ];
+
+    if (type === IntegrationTypes.Mirakl) {
+      return [
+        baseFields[0],
+        baseFields[1],
+        {
+          type: FieldType.Text,
+          name: 'description',
+          label: t('integrations.show.stores.labels.description'),
+          number: false,
+          disabled: true,
+          optional: true,
+        },
+        {
+          type: FieldType.Checkbox,
+          name: 'active',
+          label: t('shared.labels.active'),
+          uncheckedValue: 'false',
+          default: false,
+          optional: true,
+        },
+      ];
+    }
 
     if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
       baseFields.push({
@@ -120,6 +154,11 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
     fields.push({ name: 'isDefault', type: FieldType.Boolean });
   }
 
+  if (type === IntegrationTypes.Mirakl) {
+    headers.splice(1, 0, t('integrations.show.stores.labels.description'));
+    fields.splice(1, 0, { name: 'description', type: FieldType.Text });
+  }
+
   return {
     headers,
     fields,
@@ -147,6 +186,9 @@ export const listingQueryConstructor = (type: string) => {
   if (type === IntegrationTypes.Shein) {
     return sheinChannelViewsQuery;
   }
+  if (type === IntegrationTypes.Mirakl) {
+    return miraklChannelViewsQuery;
+  }
   return salesChannelViewsQuery;
 };
 
@@ -159,6 +201,9 @@ export const listingQueryKeyConstructor = (type: string) => {
   }
   if (type === IntegrationTypes.Shein) {
     return 'sheinSalesChannelViews';
+  }
+  if (type === IntegrationTypes.Mirakl) {
+    return 'miraklSalesChannelViews';
   }
   return 'salesChannelViews';
 };

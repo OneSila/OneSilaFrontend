@@ -45,11 +45,17 @@ const imageField = computed(() => {
 
 // Local getShowRoute for grid view.
 const getShowRoute = (item: any) => {
+  if (props.config.showRouteResolver) {
+    return props.config.showRouteResolver(item);
+  }
   if (!props.config.identifierKey) return undefined;
   const params = {
     ...props.config.identifierVariables,
     [props.config.paramIdentifier || 'id']: item.node[props.config.identifierKey]
   };
+  if (props.config.secondIdentifierKey && props.config.secondIdentifierParam) {
+    params[props.config.secondIdentifierParam] = item.node[props.config.secondIdentifierKey];
+  }
   return {
     name: props.config.showUrlName,
     params,

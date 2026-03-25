@@ -67,7 +67,7 @@ export const FIELD_RULES: Record<string, ContentFieldRules> = {
     },
     { name: 1000, description: 5000 },
   ),
-  default: createRule(),
+  default: createRule({ subtitle: true, bulletPoints: true }),
 };
 
 export function getContentFieldRules(type?: string): ContentFieldRules {

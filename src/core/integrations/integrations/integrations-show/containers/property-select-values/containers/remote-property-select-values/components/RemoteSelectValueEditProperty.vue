@@ -564,6 +564,9 @@ onMounted(async () => {
                     </div>
                   </div>
                 </div>
+                <div class="col-span-full">
+                  <slot name="additional-fields" :form="form" :context="contextState" />
+                </div>
               </div>
             </div>
             <div v-if="formErrors.__all__" class="px-8 pb-3">

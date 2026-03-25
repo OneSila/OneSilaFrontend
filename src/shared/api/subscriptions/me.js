@@ -59,6 +59,7 @@ export const aiPointsSubscriptions = gql`
       hasAmazonIntegration
       hasEbayIntegration
       hasSheinIntegration
+      hasMiraklIntegration
   }
  }
 `;

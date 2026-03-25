@@ -373,6 +373,42 @@
           "title": "Internal Properties",
           "description": "Shein internal properties missing a mapped OneSila property."
         }
+      },
+      "mirakl": {
+        "title": "Mirakl integration",
+        "description": "Resolve unmapped Mirakl data to keep your marketplace in sync.",
+        "unmappedProperties": {
+          "title": "Unmapped Properties",
+          "description": "Mirakl properties that need mapping."
+        },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "Unmapped Properties Used In Products",
+          "description": "Mirakl properties used in products that need mapping."
+        },
+        "unmappedProductTypes": {
+          "title": "Unmapped Product Types",
+          "description": "Mirakl product types that need mapping."
+        },
+        "productTypesNotReadyToPush": {
+          "title": "Product Types Not Ready To Push",
+          "description": "Mirakl product types that are still missing required setup."
+        },
+        "unmappedSelectValues": {
+          "title": "Unmapped Select Values",
+          "description": "Mirakl property values that need mapping in order to be imported into OneSila."
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "Unmapped Predefined Select Values",
+          "description": "Mirakl select values for properties that don’t allow unmapped values."
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "Unmapped Select Values Used In Products",
+          "description": "Mirakl property values used in products that need mapping in order to be imported into OneSila."
+        },
+        "unmappedDefaultUnitConfigurators": {
+          "title": "Default Unit Configurator",
+          "description": "Mirakl unit configurators missing a default unit."
+        }
       }
     },
     "onboarding": {
@@ -1268,6 +1304,7 @@
         "amazon": "Amazon",
         "ebay": "Ebay",
         "shein": "Shein",
+        "mirakl": "Mirakl",
         "marketplace": "Marketplaces",
         "supplierProducts": "Supplier Products",
         "purchasingOrders": "Purchase Orders",
@@ -1475,6 +1512,22 @@
           },
           "toast": {
             "categoryNotAvailable": "Category ID {id} is not available for this Shein channel."
+          }
+        },
+        "mirakl": {
+          "columns": {
+            "category": "Mirakl category"
+          },
+          "labels": {
+            "categoryId": "ID: {id}"
+          },
+          "actions": {
+            "set": "Set category",
+            "preview": "Preview category"
+          },
+          "modal": {
+            "title": "Select Mirakl category",
+            "previewTitle": "Category preview"
           }
         },
         "ebay": {
@@ -1738,6 +1791,61 @@
           "placeholder": "Category ID",
           "button": "Load category",
           "invalid": "We couldn't find a category with that ID."
+        }
+      },
+      "mirakl": {
+        "noChannels": "No Mirakl channels available.",
+        "openIntegration": "Open integration",
+        "issues": {
+          "title": "Issues",
+          "description": "Current Mirakl issues for the selected channel.",
+          "empty": "No Mirakl issues found for this product and channel.",
+          "lastDifferentialIssuesFetch": "Last differential issue fetch",
+          "lastFullFetch": "Last full fetch"
+        },
+        "categoryTitle": "Category",
+        "categoryDescription": "Browse the Mirakl category tree and assign the most specific leaf category available.",
+        "selectChannelPrompt": "Select a Mirakl channel to manage its category.",
+        "rootLabel": "Root",
+        "leafRestriction": "Only leaf categories can be selected.",
+        "currentSelection": "Current category",
+        "noSelection": "No category selected.",
+        "pendingSelection": "Pending selection",
+        "categorySaved": "Mirakl category saved",
+        "categoryRemoved": "Mirakl category removed",
+        "removeCategory": "Remove category",
+        "categoryMappingInfo": "Choose the Mirakl category for this product. The preview shows the product types and configurable fields linked to that category.",
+        "defaultCategoryTitle": "Recommended category",
+        "defaultCategoryInfo": "Recommended from your mapped product rule. ID: {id}",
+        "manualEntry": {
+          "title": "Do you know the ID? Set it manually",
+          "description": "Paste the Mirakl category ID to preview it without browsing the tree.",
+          "placeholder": "Category ID",
+          "button": "Load category",
+          "invalid": "We couldn't find a category with that ID for this Mirakl channel."
+        },
+        "details": {
+          "level": "Level",
+          "parentCode": "Parent code",
+          "leaf": "Leaf category",
+          "yes": "Yes",
+          "no": "No",
+          "productTypes": "Product types",
+          "noProductTypes": "No Mirakl product types are linked to this category.",
+          "productTypeId": "Product type ID: {id}",
+          "readyToPush": "Ready to push",
+          "notReadyToPush": "Not ready to push",
+          "templateMissingWarning": "This Mirakl product type is not ready to push because the CSV template is missing.",
+          "openProductType": "Open product type",
+          "noItems": "No configurable items found for this product type.",
+          "columns": {
+            "property": "Property",
+            "code": "Code",
+            "required": "Required",
+            "variant": "Variant",
+            "localProperty": "Local property"
+          },
+          "noLocalProperty": "Not mapped"
         }
       },
       "inspector": {
@@ -2714,6 +2822,13 @@
         "fileThumbnail": "File thumbnail",
         "sortByCreatedAt": "Sort by created at"
       },
+      "selection": {
+        "selectMultiple": "Select multiple",
+        "selectedMedia": "Selected media",
+        "selectedCount": "{count} selected",
+        "emptyTitle": "Selected files will appear here.",
+        "emptyDescription": "Turn on multi-select and choose media from the list to queue them before submitting."
+      },
       "alert": {
         "toast": {
           "bulkDeleteSuccess": "Files deleted successfully.",
@@ -3411,8 +3526,6 @@
         "title": "Product Rule"
       },
       "labels": {
-        "usageCount": "Usage count",
-        "usageCountPending": "Pending",
         "type": "Rule Type",
         "propertyType": "Property Type",
         "salesChannel": "Sales Channel",
@@ -3425,9 +3538,6 @@
       },
       "help": {
         "type": "Select how this property should be handled for the product."
-      },
-      "tooltips": {
-        "usageCountPending": "Usage count is recalculated after saving this rule."
       },
       "preview": {
         "previewTitle": "Preview of Configuration",
@@ -3511,8 +3621,10 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
+      "ebay": "Ebay",
       "webhook": "Webhook",
-      "shein": "Shein"
+      "shein": "Shein",
+      "mirakl": "Mirakl"
     },
     "shein": {
       "installed": {
@@ -3622,6 +3734,49 @@
           "NOT_EXEMPT": "Not exempt"
         }
       },
+      "miraklIssues": {
+        "show": {
+          "title": "Mirakl issue",
+          "breadcrumb": "Issue",
+          "fields": {
+            "mainCode": "Main code",
+            "code": "Code",
+            "message": "Message",
+            "severity": "Severity",
+            "reasonLabel": "Reason label",
+            "attributeCode": "Attribute code",
+            "isRejected": "Rejected",
+            "rawData": "Raw data",
+            "remoteSku": "Remote SKU"
+          }
+        },
+        "columns": {
+          "mainCode": "Main code",
+          "code": "Code",
+          "product": "Product",
+          "views": "Views",
+          "severity": "Severity",
+          "isRejected": "Rejected"
+        },
+        "filters": {
+          "views": "Views",
+          "severity": "Severity",
+          "isRejected": "Rejected",
+          "mainCode": "Main code",
+          "code": "Code",
+          "reasonLabel": "Reason label",
+          "attributeCode": "Attribute code"
+        },
+        "severity": {
+          "error": "Error",
+          "warning": "Warning",
+          "info": "Info"
+        },
+        "rejected": {
+          "yes": "Rejected",
+          "no": "Accepted"
+        }
+      },
       "ebay": {
         "title": "Ebay Integration",
         "productRules": {
@@ -3720,6 +3875,305 @@
           }
         }
       },
+      "mirakl": {
+        "title": "Mirakl Integration",
+        "internalProperties": {
+          "title": "Mirakl Internal Properties",
+          "labels": {
+            "acceptedValues": "Accepted Values",
+            "isCondition": "Condition Property"
+          }
+        },
+        "properties": {
+          "sections": {
+            "metadata": "Mirakl Metadata",
+            "translations": "Translations"
+          },
+          "help": {
+            "defaultValue": "Use a fixed value when this Mirakl field is mapped as a default value.",
+            "language": "Select the Mirakl remote language code that should be used for this field.",
+            "representationType": "Choose how OneSila should populate this Mirakl field."
+          },
+          "labels": {
+            "description": "Description",
+            "example": "Example",
+            "isCommon": "Common property",
+            "language": "Language",
+            "representationType": "Representation type",
+            "hierarchyCode": "Hierarchy code",
+            "uniqueCode": "Unique code",
+            "requirementLevel": "Requirement level",
+            "defaultValue": "Default value",
+            "valueListCode": "Value list code",
+            "valueListLabel": "Value list label",
+            "typeParameters": "Type parameters",
+            "validations": "Validations",
+            "transformations": "Transformations",
+            "rawData": "Raw data",
+            "labelTranslations": "Label translations",
+            "descriptionTranslations": "Description translations"
+          }
+        },
+        "selectValues": {
+          "labels": {
+            "value": "Value",
+            "valueLabelTranslations": "Value label translations"
+          }
+        },
+        "productRules": {
+          "help": {
+            "template": "Upload a CSV template file for this Mirakl product rule."
+          },
+          "templateHelp": {
+            "eyebrow": "Template guide",
+            "title": "How to get the Mirakl CSV/XML template",
+            "description": "Download the category template from Mirakl, then upload that file back into OneSila on this page.",
+            "steps": {
+              "step1": "Open the Price and Stock sidebar in Mirakl and go to File imports.",
+              "step2": "In the right section, find Products and offers and click CSV/XML template.",
+              "step3": "In the modal that opens, use the CSV section, click the category you want, and download the CSV file.",
+              "step4": "Once you have the file, upload it in OneSila here as the template for this Mirakl product type."
+            },
+            "imageAlt": "Mirakl CSV/XML template download flow screenshot"
+          },
+          "labels": {
+            "category": "Category",
+            "required": "Required",
+            "variant": "Variant",
+            "roleData": "Role data",
+            "template": "Template"
+          }
+        },
+        "defaultUnits": {
+          "labels": {
+            "selectedUnit": "Selected unit",
+            "currentValue": "Saved value",
+            "currentLabel": "Saved label"
+          }
+        },
+        "representationTypes": {
+          "options": {
+            "property": "Property",
+            "unit": "Unit",
+            "default_value": "Default value",
+            "product_title": "Product title",
+            "product_subtitle": "Product subtitle",
+            "product_description": "Product description",
+            "product_short_description": "Product short description",
+            "product_bullet_point": "Product bullet point",
+            "product_sku": "Product SKU",
+            "product_internal_id": "Product internal ID",
+            "product_category": "Product category",
+            "product_configurable_sku": "Product configurable SKU",
+            "product_configurable_id": "Product configurable ID",
+            "product_active": "Product active",
+            "product_url_key": "Product URL key",
+            "product_ean": "Product EAN",
+            "thumbnail_image": "Thumbnail image",
+            "image": "Image",
+            "image_color": "Image color",
+            "video": "Video",
+            "document": "Document",
+            "price": "Price",
+            "discounted_price": "Discounted price",
+            "stock": "Stock",
+            "vat_rate": "VAT rate",
+            "allow_backorder": "Allow backorder",
+            "condition": "Condition",
+            "logistic_class": "Logistic class"
+          }
+        },
+        "representationGuide": {
+          "eyebrow": "Representation guide",
+          "badges": {
+            "special": "Special mapping",
+            "product": "Product data",
+            "media": "Media data",
+            "commercial": "Commercial data"
+          },
+          "cards": {
+            "general": {
+              "title": "How this mapping works"
+            },
+            "current": {
+              "title": "Current Mirakl fill logic"
+            }
+          },
+          "empty": {
+            "title": "Choose a representation type",
+            "description": "Each Mirakl field can be filled from a different place in OneSila. The representation type tells the integration which source it should use.",
+            "summary": "Once you choose a representation type, this panel explains what data source will be used and how the Mirakl field will be filled.",
+            "source": "No source is selected yet.",
+            "fill": "Pick a representation type to see the Mirakl fill behavior."
+          },
+          "special": {
+            "property": {
+              "description": "Use this when the Mirakl field should come from a mapped OneSila property. This is the most flexible option for catalog attributes that need manual mapping.",
+              "summary": "You select a local property, and Mirakl will receive the value that OneSila stores in that mapped property.",
+              "source": "Source in OneSila: the local property selected in the Property field, together with its mapped select values when relevant.",
+              "fill": "Mirakl fill logic: the chosen OneSila property value is sent into this Mirakl field for each exported product."
+            },
+            "unit": {
+              "description": "Use this when Mirakl expects a unit selection instead of a mapped property.",
+              "summary": "Once this field is set to Unit, it will appear in the Default Units tab so you can choose which unit should be used.",
+              "source": "Source in OneSila: the unit selected later in the Default Units tab for this Mirakl field.",
+              "fill": "Mirakl fill logic: after this representation type is set to Unit, OneSila will use the unit configured for this field from the Default Units tab."
+            },
+            "default_value": {
+              "description": "Use this when the Mirakl field should receive a fixed value instead of pulling data from a mapped property.",
+              "summary": "The default value is set directly on this page, and in many cases it will already be filled automatically by OneSila.",
+              "source": "Source in OneSila: the value shown in the Default value field on this page.",
+              "fill": "Mirakl fill logic: OneSila sends the configured default value into this Mirakl field for every relevant product."
+            }
+          },
+          "product": {
+            "description": "{field} is filled from product data already maintained in OneSila, so no separate property mapping is needed.",
+            "summary": "This representation connects the Mirakl field directly to the matching product information in OneSila.",
+            "source": "Source in OneSila: the matching product-level data maintained on the product record or its configuration.",
+            "fill": "Mirakl fill logic: OneSila automatically sends the matching product data into this Mirakl field."
+          },
+          "media": {
+            "description": "{field} is filled from the product media stored in OneSila, such as images, videos, or documents attached to the product.",
+            "summary": "This representation uses product media rather than a mapped property.",
+            "source": "Source in OneSila: the relevant product media attached to the product record.",
+            "fill": "Mirakl fill logic: OneSila selects the matching media asset and sends it to Mirakl for this field."
+          },
+          "commercial": {
+            "description": "{field} is filled from the commercial or operational data that OneSila already manages for the product.",
+            "summary": "This representation maps the Mirakl field to existing pricing, stock, or operational values in OneSila.",
+            "source": "Source in OneSila: the corresponding commercial data such as stock, price, VAT, or related system values.",
+            "fill": "Mirakl fill logic: the matching commercial value from OneSila is sent into this Mirakl field."
+          },
+          "types": {
+            "product_category": {
+              "description": "Use this when the Mirakl field should be filled from the category selected in the Mirakl product tab.",
+              "summary": "OneSila first uses the category selected for the product in the Mirakl product tab. If no direct category is selected, it falls back to the category linked through the mapped product rule.",
+              "source": "Source in OneSila: the selected Mirakl category on the product, with fallback to the mapped product rule when available.",
+              "fill": "Mirakl fill logic: the resolved Mirakl category is sent for this field during export."
+            },
+            "product_configurable_sku": {
+              "description": "Use this only when Mirakl expects the parent configurable SKU instead of the SKU of the current product.",
+              "summary": "This is only relevant when the product belongs to a parent configurable product.",
+              "source": "Source in OneSila: the SKU of the parent configurable product, when a parent exists.",
+              "fill": "Mirakl fill logic: OneSila sends the configurable parent SKU for products that belong to a parent."
+            },
+            "product_configurable_id": {
+              "description": "Use this only when Mirakl expects the internal ID of the parent configurable product instead of the current product.",
+              "summary": "This is only relevant when the product belongs to a parent configurable product.",
+              "source": "Source in OneSila: the internal ID of the parent configurable product, when a parent exists.",
+              "fill": "Mirakl fill logic: OneSila sends the configurable parent internal ID for products that belong to a parent."
+            },
+            "product_internal_id": {
+              "description": "Use this when Mirakl should receive a unique internal ID for the current product.",
+              "summary": "This is the product's own internal ID in OneSila. It is separate from the SKU. If you need the configurable parent's ID, use Product configurable ID instead.",
+              "source": "Source in OneSila: the internal unique ID assigned to the current product record.",
+              "fill": "Mirakl fill logic: OneSila sends the product's internal unique ID for this field."
+            },
+            "product_short_description": {
+              "description": "Use this for Mirakl fields that expect a shorter product description or summary.",
+              "summary": "This representation uses the product short description maintained in OneSila.",
+              "source": "Source in OneSila: the Short description field in the product content.",
+              "fill": "Mirakl fill logic: OneSila sends the product short description into this field."
+            },
+            "product_description": {
+              "description": "Use this for Mirakl fields that expect the main product description.",
+              "summary": "This representation uses the full product description maintained in OneSila.",
+              "source": "Source in OneSila: the main Description field in the product content.",
+              "fill": "Mirakl fill logic: OneSila sends the full product description into this field."
+            },
+            "product_bullet_point": {
+              "description": "Use this for Mirakl fields that expect bullet-point style product highlights.",
+              "summary": "This representation uses the bullet points maintained in the product content.",
+              "source": "Source in OneSila: the Bullet points configured for the product content.",
+              "fill": "Mirakl fill logic: OneSila sends the product bullet-point content into this field."
+            },
+            "thumbnail_image": {
+              "description": "Use this when Mirakl expects the main thumbnail image of the product.",
+              "summary": "This representation uses the product image marked as the thumbnail or main image in OneSila.",
+              "source": "Source in OneSila: the main product image selected for the product.",
+              "fill": "Mirakl fill logic: OneSila sends the thumbnail image for this field."
+            },
+            "image": {
+              "description": "Use this when Mirakl expects a standard product image.",
+              "summary": "This representation uses the product image gallery managed in OneSila.",
+              "source": "Source in OneSila: the product images attached to the product record.",
+              "fill": "Mirakl fill logic: OneSila sends the relevant product image for this field."
+            },
+            "image_color": {
+              "description": "Use this when Mirakl expects the image that represents the product color.",
+              "summary": "This representation uses the product image marked as a color image in OneSila.",
+              "source": "Source in OneSila: the product image flagged as the color image.",
+              "fill": "Mirakl fill logic: OneSila sends the product image marked for color use into this field."
+            },
+            "video": {
+              "description": "Use this when Mirakl expects a product video asset.",
+              "summary": "This representation uses the videos attached to the product in OneSila.",
+              "source": "Source in OneSila: the product videos stored on the product record.",
+              "fill": "Mirakl fill logic: OneSila sends the relevant product video for this field."
+            },
+            "price": {
+              "description": "Use this when Mirakl should receive the main offer price from OneSila.",
+              "summary": "This field is already part of the Mirakl offer by default. Change it only if you know exactly why this marketplace field should use the main price.",
+              "source": "Source in OneSila: the main product price used for the offer.",
+              "fill": "Mirakl fill logic: OneSila sends the main offer price into this field."
+            },
+            "discounted_price": {
+              "description": "Use this when Mirakl should receive a discounted offer price.",
+              "summary": "This field is already part of the Mirakl offer by default. If the product has an RRP, the main price becomes the discount price, so only change this if you know exactly what you are doing.",
+              "source": "Source in OneSila: the offer pricing logic, where the main price becomes the discounted price when an RRP is present.",
+              "fill": "Mirakl fill logic: OneSila sends the discounted offer price into this field based on the product pricing setup."
+            },
+            "vat_rate": {
+              "description": "Use this when Mirakl should receive the VAT rate assigned to the product.",
+              "summary": "This representation uses the tax rate from the configured VAT rate on the product.",
+              "source": "Source in OneSila: the VAT rate configured on the product.",
+              "fill": "Mirakl fill logic: OneSila sends the product VAT rate into this field."
+            },
+            "stock": {
+              "description": "Use this when Mirakl should receive the stock value configured for the sales channel.",
+              "summary": "This representation uses the sales channel starting stock configuration.",
+              "source": "Source in OneSila: the Starting stock value configured on the sales channel.",
+              "fill": "Mirakl fill logic: OneSila sends the sales channel starting stock into this field."
+            },
+            "allow_backorder": {
+              "description": "Use this when Mirakl expects a backorder yes or no value.",
+              "summary": "When the original type is a select, OneSila treats this as a boolean-style field so it can be mapped correctly.",
+              "source": "Source in OneSila: the product backorder state mapped into Mirakl's expected values.",
+              "fill": "Mirakl fill logic: OneSila sends whether backorders are allowed for this product."
+            },
+            "condition": {
+              "description": "Use this when Mirakl expects the product condition from OneSila.",
+              "summary": "Condition is handled as a OneSila property, but Mirakl has its own special values for it, so it needs to be mapped carefully.",
+              "source": "Source in OneSila: the mapped condition property and its selected value.",
+              "fill": "Mirakl fill logic: OneSila sends the mapped condition value into Mirakl's condition field."
+            },
+            "logistic_class": {
+              "description": "Use this when Mirakl expects the offer logistic class from OneSila.",
+              "summary": "Logistic class is handled as a OneSila property, but Mirakl uses its own special logistic class values for offers, so it needs to be mapped carefully.",
+              "source": "Source in OneSila: the mapped logistic class property and its selected value.",
+              "fill": "Mirakl fill logic: OneSila sends the mapped logistic class value into Mirakl's logistic class field when it is provided."
+            },
+            "product_active": {
+              "description": "Use this when Mirakl expects the active state of the product.",
+              "summary": "When the original type is a select, OneSila treats this as a boolean-style field so it can be mapped correctly.",
+              "source": "Source in OneSila: the active state of the product record.",
+              "fill": "Mirakl fill logic: OneSila sends whether the product is active."
+            },
+            "product_url_key": {
+              "description": "Use this when Mirakl expects the editable URL key of the product.",
+              "summary": "This representation uses the URL key maintained in the product content.",
+              "source": "Source in OneSila: the URL key field in the product content tab.",
+              "fill": "Mirakl fill logic: OneSila sends the product URL key into this field."
+            },
+            "product_ean": {
+              "description": "Use this when Mirakl expects the EAN code of the product.",
+              "summary": "A product cannot have multiple EANs for this field. If no EAN exists, the field is skipped.",
+              "source": "Source in OneSila: the product EAN code assigned to the product.",
+              "fill": "Mirakl fill logic: OneSila sends the product EAN when one exists; otherwise the field is left empty."
+            }
+          }
+        }
+      },
       "internalProperties": {
         "title": "Internal Properties"
       },
@@ -3728,6 +4182,7 @@
         "error": "Failed to pull remote data. Please try again."
       },
       "sections": {
+        "credentials": "Credentials",
         "throttling": "Throttling",
         "syncPreferences": "Sync Preferences",
         "gpt": "GPT settings",
@@ -3754,10 +4209,15 @@
         "title": "Shein connection not completed",
         "content": "The app authorization did not complete or was aborted. Please retry to connect."
       },
+      "miraklNotConnectedBanner": {
+        "title": "Mirakl connection not completed",
+        "content": "Mirakl is connected only when the hostname, shop ID and API key are all valid."
+      },
       "stores": {
         "title": "Store",
         "labels": {
           "isDefault": "Is Default Store",
+          "description": "Description",
           "siteStatus": "Site status",
           "storeType": "Store type"
         },
@@ -3770,12 +4230,14 @@
       },
       "languages": {
         "labels": {
-          "remoteCode": "Remote Language Code"
+          "remoteCode": "Remote Language Code",
+          "label": "Mirakl Language"
         }
       },
       "currencies": {
         "labels": {
-          "remoteCode": "Remote Currency Code"
+          "remoteCode": "Remote Currency Code",
+          "label": "Mirakl Currency"
         }
       },
       "priceLists": {
@@ -4046,6 +4508,9 @@
         "actions": {
           "seeValues": "See values"
         },
+        "bulkAssign": "Assign Property",
+        "bulkAssignTitle": "Assign to {count} propertie(s)",
+        "assignSuccess": "Properties were successfully assigned",
         "labels": {
           "code": "Code",
           "type": "Type",
@@ -4054,6 +4519,7 @@
           "remoteId": "Remote ID",
           "allowsUnmappedValues": "Allow Unmapped Values",
           "property": "Property",
+          "rawData": "Raw data",
           "localizedName": "Marketplace Name",
           "translatedName": "Translated Name"
         },
@@ -4082,6 +4548,7 @@
           "remoteName": "Amazon Name",
           "remoteValue": "Amazon Value",
           "remoteId": "Remote ID",
+          "remoteProperty": "Remote Property",
           "amazonProperty": "Amazon Property",
           "ebayProperty": "eBay Property",
           "sheinProperty": "Shein Property",
@@ -4094,6 +4561,7 @@
           "translatedValue": "Translated Value"
         },
         "help": {
+          "remoteProperty": "Marketplace property to which this value belongs.",
           "amazonProperty": "Amazon property to which this value belongs.",
           "ebayProperty": "eBay property to which this value belongs.",
           "sheinProperty": "Shein property to which this value belongs.",
@@ -4140,7 +4608,9 @@
         "mappedRemotely": "Mapped on Amazon",
         "mappedRemotelyAmazon": "Mapped on Amazon",
         "mappedRemotelyEbay": "Mapped on eBay",
+        "mappedRemotelyMirakl": "Mapped on Mirakl",
         "mappedRemotelyShein": "Mapped on Shein",
+        "readyToPush": "Ready to push",
         "startMapping": "Start Mapping",
         "autoMap": "Auto Map",
         "autoMapHelp": "Auto Map tries to match values for you. If a marketplace property is already mapped to a OneSila property, and a marketplace value has the exact same text as an existing OneSila value in that property, it will be mapped automatically. Example: marketplace “Color” → OneSila “Color”, marketplace value “Red” → OneSila value “Red”. Runs in the background, so you can keep working.",
@@ -4231,6 +4701,43 @@
         "step1": {
           "title": "Select Integration Type",
           "content": "Please select the type of integration you would like to create.",
+          "heroTitle": "Choose the integration path that matches your channel strategy",
+          "heroDescription": "Set up the integration that matches the channel you want to connect next, then continue with the credentials and sync configuration for that flow.",
+          "resultsLabel": "Visible integrations",
+          "searchPlaceholder": "Search integrations by type",
+          "filters": {
+            "all": "All",
+            "storefronts": "Storefronts",
+            "marketplaces": "Marketplaces",
+            "webhooks": "Webhooks",
+            "betaOnly": "Beta only",
+            "completedOnly": "Completed only",
+            "showBeta": "Show Beta"
+          },
+          "categories": {
+            "storefronts": {
+              "title": "Storefronts",
+              "description": "Connect directly to your commerce stack and keep full control over catalog, content, pricing and operational data from your own store."
+            },
+            "marketplaces": {
+              "title": "Marketplaces",
+              "description": "Launch marketplace channels with schema mapping, remote requirement alignment and marketplace-specific operational flows."
+            },
+            "webhooks": {
+              "title": "Webhooks",
+              "description": "Push structured integration events into external systems whenever your operation needs custom automation outside native channels."
+            }
+          },
+          "empty": {
+            "title": "No integrations match this filter",
+            "description": "Try another search term or expand the active filters to surface more integration types."
+          },
+          "selection": {
+            "title": "Selected Integration",
+            "description": "{integration} is selected. Continue to the next step to configure the connection details and sync setup.",
+            "clear": "Clear Selection"
+          },
+          "openAiFeedSupport": "Supports Open AI Product Feed",
           "magentoTitle": "Magento",
           "magentoExample": "Integrate with Magento to manage your online store seamlessly.",
           "shopifyTitle": "Shopify",
@@ -4241,6 +4748,33 @@
           "ebayExample": "Ebay integration to manage your marketplace listings.",
           "sheinTitle": "Shein",
           "sheinExample": "Shein integration to manage your marketplace listings.",
+          "miraklTitle": "Mirakl",
+          "miraklExample": "Mirakl integration to connect OneSila with hundreds of marketplace channels from a single setup.",
+          "miraklSubtypeExample": "{marketplace} integration to manage your marketplace listings.",
+          "miraklInfoModal": {
+            "defaultTitle": "How to connect your Mirakl marketplace",
+            "title": "{marketplace} via Mirakl",
+            "description": "{marketplace} is connected through Mirakl. If you do not already have access, contact Mirakl first and request the permissions required for this marketplace.",
+            "instructions": "Use the Mirakl contact flow below, mention {marketplace}, and follow Mirakl's instructions to get access approved for that specific marketplace before finishing the integration setup.",
+            "cta": "Talk to Mirakl",
+            "tabs": {
+              "learnMirakl": "Learn about Mirakl"
+            },
+            "credentials": {
+              "title": "Mirakl credentials",
+              "description": "To finish this integration, you need the store API key and the shop ID from your Mirakl back office.",
+              "apiKeyTitle": "Get your store API key",
+              "apiKeyIntro": "If there is no store API key generated yet on your platform:",
+              "apiKeySteps": {
+                "step1": "In the back office top bar, click the profile icon and select Personal settings in the top-right corner of the page.",
+                "step2": "Open the API key tab.",
+                "step3": "Click Generate new key.",
+                "step4": "Click Validate."
+              },
+              "shopIdTitle": "Find your shop ID",
+              "shopIdDescription": "Open the Mirakl dashboard and look for the identifier shown as ID: xxxx. This is your 4-digit shop ID."
+            }
+          },
           "woocommerceTitle": "Woocommerce",
           "woocommerceExample": "WooCommerce integration to manage your products.",
           "webhookTitle": "Webhook",
@@ -4275,6 +4809,11 @@
             "integrationStep1": "Go to WooCommerce → Settings → Advanced → REST API",
             "integrationStep2": "Click 'Add Key' and create a new API key",
             "integrationStep3": "Set the permissions to 'Read/Write'",
+            "integrationStep4": "Save the key and copy the generated Consumer Key and Consumer Secret.",
+            "integrationStep5": "Keep those credentials ready for the connection step in this wizard.",
+            "integrationStep6": "Make sure REST API access stays enabled for the store you are connecting.",
+            "integrationStep7": "If the store uses HTTPS, verify SSL is configured correctly before you finish the setup.",
+            "integrationStep8": "After the integration is created, run an initial import to sync your existing WooCommerce catalog.",
             "apiSettingsTitle": "Configure your WooCommerce API settings",
             "apiSettingsDescription": "Ensure your WooCommerce store has the following settings:",
             "apiSetting1": "Enable REST API access",
@@ -4343,6 +4882,18 @@
             "title": "Ebay Channel Details",
             "content": "Provide Ebay-specific configuration to connect your marketplace."
           },
+          "shein": {
+            "title": "Shein Channel Details",
+            "content": "Provide Shein-specific configuration to connect your marketplace."
+          },
+          "mirakl": {
+            "title": "Mirakl Channel Details",
+            "content": "Provide your Mirakl shop ID and API key to connect your channel."
+          },
+          "marketplace": {
+            "title": "{marketplace} Channel Details",
+            "content": "Provide your {marketplace} Mirakl shop ID and API key to connect this marketplace channel."
+          },
           "title": "Specific Channel Info"
         }
       }
@@ -4367,6 +4918,7 @@
       "attributeSetSkeletonId": "Attribute Set Skeleton ID",
       "eanCodeAttribute": "EAN Code Attribute",
       "vendorProperty": "Vendor Property",
+      "shopId": "Shop ID",
       "apiKey": "API Key",
       "apiSecret": "API secret key",
       "accessToken": "Access Token",
@@ -4403,6 +4955,7 @@
     "placeholders": {
       "hostApiUsername": "Enter API Username",
       "hostApiKey": "Enter Access Token",
+      "shopId": "Enter shop ID",
       "apiKey": "Enter API Key",
       "apiSecret": "Enter API Secret",
       "attributeSetSkeletonId": "Enter attribute set skeleton ID",
@@ -4690,8 +5243,138 @@
         "schema": "Schema",
         "products": "Products",
         "schemaDescription": "Initial setup required to enable product imports.",
-        "productsDescription": "Imports actual product data from Amazon.",
+        "productsDescription": "Imports actual product data from the marketplace.",
         "schemaRequired": "Please complete the schema import first."
+      },
+      "mirakl": {
+        "title": "Mirakl Imports",
+        "help": "Use this section to follow Mirakl import activity, including progress, processed files, and any errors that need attention.",
+        "oneSilaTitle": "OneSila Imports",
+        "oneSilaHelp": "These are the existing OneSila-side import processes available for this channel.",
+        "oneSilaEmpty": "No OneSila imports found for this channel yet.",
+        "comingSoonTitle": "To be continued",
+        "comingSoonDescription": "This tab will be connected to the new Mirakl import model and API in a follow-up change.",
+        "empty": "No Mirakl imports found for this channel yet.",
+        "remoteImportId": "Remote import ID",
+        "sourceFileName": "Source file",
+        "files": "Generated files",
+        "errorReport": "Error report",
+        "transformedFile": "Transformed file"
+      },
+      "miraklFeeds": {
+        "heading": "Mirakl Feed Activity",
+        "description": "Track submitted Mirakl feeds, inspect synchronized files, and resync concluded feeds when Mirakl needs another pass.",
+        "showTitle": "Mirakl Feed",
+        "showDescription": "Detailed Mirakl feed diagnostics, files, product context, and product coverage.",
+        "fetchError": "Unable to load Mirakl feeds.",
+        "resyncSuccess": "Mirakl feed resync started.",
+        "resyncError": "Mirakl feed resync failed.",
+        "resyncDisabled": "Only concluded feeds can be resynced.",
+        "tableTitle": "Submitted feeds",
+        "empty": "No Mirakl feeds matched the selected filters.",
+        "productsDescription": "Products linked to this Mirakl feed through its items.",
+        "productsEmpty": "No products are linked to this feed.",
+        "fileAvailable": "File is ready for download.",
+        "fileMissing": "File is not available for this feed.",
+        "noFile": "No file",
+        "filters": {
+          "allStatuses": "All local statuses",
+          "allImportStatuses": "All Mirakl statuses"
+        },
+        "summary": {
+          "total": "Total feeds",
+          "active": "Active feeds",
+          "concluded": "Concluded feeds",
+          "withReports": "Feeds with reports"
+        },
+        "tabs": {
+          "products": "Products"
+        },
+        "sections": {
+          "productContext": "Product Context",
+          "files": "Files",
+          "fourCardLayout": "4-file overview",
+          "integrationDetails": "Integration Details",
+          "transformCounters": "Transform Counters",
+          "payloadData": "Payload Data",
+          "rawData": "Raw Data"
+        },
+        "labels": {
+          "importStatus": "Mirakl status",
+          "remoteId": "Remote ID",
+          "productType": "Product type",
+          "view": "Channel view",
+          "counts": "Counts",
+          "stage": "Stage",
+          "productRemoteId": "Product remote ID",
+          "offerRemoteId": "Offer remote ID",
+          "reasonStatus": "Reason status",
+          "remoteDateCreated": "Remote date created",
+          "remoteShopId": "Remote shop ID",
+          "conversionType": "Conversion type",
+          "lastSubmittedAt": "Last submitted",
+          "lastPolledAt": "Last polled",
+          "lastSyncedAt": "Last synced",
+          "transformLinesRead": "Lines read",
+          "transformLinesInSuccess": "Lines in success",
+          "transformLinesInError": "Lines in error",
+          "transformLinesWithWarning": "Lines with warning",
+          "salesChannel": "Sales channel",
+          "aiEnrichment": "AI enrichment",
+          "aiRewrite": "AI rewrite",
+          "invalidProducts": "Invalid products",
+          "productsNotAcceptedInTime": "Products not accepted in time",
+          "productsNotSynchronizedInTime": "Products not synchronized in time",
+          "productsReimported": "Products reimported",
+          "productsSuccessfullySynchronized": "Products synchronized successfully",
+          "productsWithSynchronizationIssues": "Products with synchronization issues",
+          "productsWithWrongIdentifiers": "Products with wrong identifiers",
+          "rejectedProducts": "Rejected products"
+        },
+        "counts": {
+          "items": "{count} items",
+          "rows": "{count} rows"
+        },
+        "files": {
+          "sourceFile": "Source file",
+          "errorReport": "Error report",
+          "newProductReport": "New product report",
+          "transformedFile": "Transformed file",
+          "transformationErrorReport": "Transformation error report"
+        },
+        "fileStatus": {
+          "available": "Available",
+          "missing": "Missing"
+        },
+        "template": {
+          "available": "Template ready",
+          "missing": "Template missing",
+          "download": "Download template"
+        },
+        "status": {
+          "new": "New",
+          "pending": "Pending",
+          "gathering_products": "Gathering products",
+          "gathering_offers": "Gathering offers",
+          "ready_to_render": "Ready to render",
+          "submitted": "Submitted",
+          "processing": "Processing",
+          "success": "Success",
+          "partial": "Partial",
+          "failed": "Failed",
+          "cancelled": "Cancelled"
+        },
+        "importStatus": {
+          "TRANSFORMATION_WAITING": "Transformation waiting",
+          "TRANSFORMATION_RUNNING": "Transformation running",
+          "TRANSFORMATION_FAILED": "Transformation failed",
+          "WAITING": "Waiting",
+          "RUNNING": "Running",
+          "SENT": "Sent",
+          "COMPLETE": "Complete",
+          "CANCELLED": "Cancelled",
+          "FAILED": "Failed"
+        }
       },
       "brokenRecords": {
         "codes": {

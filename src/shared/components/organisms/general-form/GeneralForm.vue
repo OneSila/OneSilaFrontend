@@ -44,9 +44,21 @@ watch(() => props.config, (newConfig) => {
 
 <template>
   <div v-if="enhancedConfig" class="space-y-10 divide-y divide-gray-900/10 mt-4">
-    <div :class="['grid grid-cols-1 gap-x-8 gap-y-8', { 'md:grid-cols-3': !enhancedConfig.fullWidth }]">
-      <HelpSection :config="enhancedConfig" />
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+    <div
+      :class="[
+        'grid grid-cols-1 gap-x-8 gap-y-8',
+        {
+          'md:grid-cols-5': !enhancedConfig.fullWidth && enhancedConfig.haveCustomHelpSection,
+          'md:grid-cols-3': !enhancedConfig.fullWidth && !enhancedConfig.haveCustomHelpSection,
+        },
+      ]"
+    >
+      <div
+        :class="[
+          'bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl',
+          enhancedConfig.haveCustomHelpSection ? 'md:col-span-3' : 'md:col-span-2',
+        ]"
+      >
         <FormCreate v-if="enhancedConfig.type === FormType.CREATE" :config="enhancedConfig" :fields-to-clear="fieldsToClear"  @submit="emit('submit')" @form-updated="handleFormUpdate" >
           <template #before-fields>
             <slot name="before-fields" />
@@ -71,6 +83,12 @@ watch(() => props.config, (newConfig) => {
           </template>
         </FormEdit>
       </div>
+      <HelpSection
+        v-if="(enhancedConfig.helpSections?.length || 0) > 0 || enhancedConfig.haveCustomHelpSection"
+        :config="enhancedConfig"
+      >
+        <slot name="help-section" />
+      </HelpSection>
     </div>
   </div>
 </template>

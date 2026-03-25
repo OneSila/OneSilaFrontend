@@ -8,9 +8,10 @@ import { useI18n } from "vue-i18n";
 import { Button } from "../../../../../../shared/components/atoms/button";
 import {Toast} from "../../../../../../shared/modules/toast";
 
-const props = defineProps<{ modelValue: boolean; }>();
+const props = defineProps<{ modelValue: boolean; formats?: string[] }>();
 const emit = defineEmits(['update:modelValue', 'entry-created']);
 const localShowModal = ref(props.modelValue);
+const allowedFormats = props.formats?.length ? props.formats : ['.pdf', '.docx', '.xlsx', '.pptx', '.xlsm'];
 
 const { t } = useI18n();
 
@@ -67,7 +68,7 @@ const submitFiles = async () => {
         <DropZone
           ref="dropZone"
           class="mt-2"
-          :formats="['.pdf', '.docx', '.xlsx', '.pptx', '.xlsm']"
+          :formats="allowedFormats"
           @uploaded="onUploaded"
           :multiple="false"
         />

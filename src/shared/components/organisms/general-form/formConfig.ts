@@ -118,6 +118,7 @@ export interface ProxyChoiceFormField extends BaseFormField {
 
 export interface IndividualFileFormField extends BaseFormField {
   type: FieldType.IndividualFile;
+  formats?: string[];
 }
 
 export interface CreateOnTheFly {
@@ -266,6 +267,7 @@ export interface FormConfig {
   submitSuccessUpdate?: string; // toast message after update
   fields: FormField[];
   helpSections?: HelpSection[];
+  haveCustomHelpSection?: boolean;
   addIdAsQueryParamInSubmitUrl?: boolean // on the submit url add the ID as query param
 }
 
@@ -284,6 +286,7 @@ export const defaultFormConfig = {
   addCancel: true,
   fullWidth: false,
   omitNullValues: false,
+  haveCustomHelpSection: false,
 };
 
 export function getEnhancedConfig(config: Partial<FormConfig>, defaultTranslations: FormConfigDefaultTranslations): FormConfig {

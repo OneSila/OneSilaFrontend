@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { IntegrationTypes } from '../../../integrations';
 import { AmazonProductTypes } from './containers/amazon-product-types';
 import { EbayProductTypes } from './containers/ebay-product-types';
+import { MiraklProductTypes } from './containers/mirakl-product-types';
 import { SheinProductTypes } from './containers/shein-product-types';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
@@ -16,6 +17,8 @@ const currentComponent = computed(() => {
       return EbayProductTypes;
     case IntegrationTypes.Shein:
       return SheinProductTypes;
+    case IntegrationTypes.Mirakl:
+      return MiraklProductTypes;
     default:
       return null;
   }

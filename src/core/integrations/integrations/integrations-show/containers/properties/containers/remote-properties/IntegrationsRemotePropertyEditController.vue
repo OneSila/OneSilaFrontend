@@ -5,6 +5,7 @@ import { IntegrationTypes } from "../../../../../integrations";
 import AmazonEditProperty from "../amazon-properties/containers/AmazonEditProperty.vue";
 import EbayEditProperty from "../ebay-properties/containers/EbayEditProperty.vue";
 import SheinEditProperty from "../shein-properties/containers/SheinEditProperty.vue";
+import MiraklEditProperty from "../mirakl-properties/MiraklEditProperty.vue";
 
 const route = useRoute();
 
@@ -14,6 +15,7 @@ const componentMap: Record<string, any> = {
   [IntegrationTypes.Amazon]: AmazonEditProperty,
   [IntegrationTypes.Ebay]: EbayEditProperty,
   [IntegrationTypes.Shein]: SheinEditProperty,
+  [IntegrationTypes.Mirakl]: MiraklEditProperty,
 };
 
 const currentComponent = computed(() => componentMap[type.value] || null);

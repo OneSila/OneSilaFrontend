@@ -4,6 +4,7 @@ import {integrationsQuery} from "../../../shared/api/queries/integrations.js";
 import {SearchConfig} from "../../../shared/components/organisms/general-search/searchConfig";
 import {IntegrationTypes} from "./integrations";
 import {deleteIntegrationMutation} from "../../../shared/api/mutations/salesChannels";
+import { getMiraklSubtypeBadge, isKnownMiraklSubType } from "./miraklSubtypes";
 
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
@@ -34,8 +35,32 @@ export const listingIntegrationTypeBadgeMap = (t: Function) => ({
   [IntegrationTypes.Amazon]: { text: 'Amazon', color: 'yellow' },
   [IntegrationTypes.Webhook]: { text: t('integrations.integrationTypes.webhook'), color: 'indigo' },
   [IntegrationTypes.Ebay]: { text: 'Ebay', color: 'purple' },
-  [IntegrationTypes.Shein]: { text: 'Shein', color: 'pink' }
+  [IntegrationTypes.Shein]: { text: 'Shein', color: 'pink' },
+  [IntegrationTypes.Mirakl]: { text: 'Mirakl', color: 'indigo' }
 });
+
+const getIntegrationListingBadge = (item: any, t: Function) => {
+  const miraklSubtypeBadge = getMiraklSubtypeBadge(item?.type);
+  if (miraklSubtypeBadge) {
+    return miraklSubtypeBadge;
+  }
+  return listingIntegrationTypeBadgeMap(t)[item?.type] || { text: item?.type || '-', color: 'gray' };
+};
+
+const getIntegrationShowRoute = (item: any) => {
+  const integrationType = item?.node?.type;
+  const isMiraklLike =
+    integrationType === IntegrationTypes.Mirakl ||
+    isKnownMiraklSubType(integrationType);
+
+  return {
+    name: 'integrations.integrations.show',
+    params: {
+      id: item.node.proxyId,
+      type: isMiraklLike ? IntegrationTypes.Mirakl : integrationType
+    }
+  };
+};
 
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
   headers: [
@@ -48,13 +73,19 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   ],
   fields: [
     { name: 'hostname', type: FieldType.Text },
-    { name: 'type', type: FieldType.Badge, badgeMap: listingIntegrationTypeBadgeMap(t) },
+    {
+      name: 'type',
+      type: FieldType.Badge,
+      badgeMap: listingIntegrationTypeBadgeMap(t),
+      accessor: (item: any) => getIntegrationListingBadge(item, t)
+    },
     { name: 'active', type: FieldType.Boolean },
     { name: 'verifySsl', type: FieldType.Boolean },
     { name: 'connected', type: FieldType.Boolean },
     { name: 'requestsPerMinute', type: FieldType.Text },
   ],
   showUrlName: 'integrations.integrations.show',
+  showRouteResolver: getIntegrationShowRoute,
   deleteMutation: deleteIntegrationMutation,
   identifierKey: 'proxyId',
   deleteIdentifierKey: 'id',

@@ -30,6 +30,7 @@ mutation Login($username: String!, $password: String!) {
       id
       language
       name
+      hasMiraklIntegration
     }
   }
 }`;
@@ -47,6 +48,7 @@ mutation GoToStep($onboardingStatus: String!) {
     multiTenantCompany {
       id
       language
+      hasMiraklIntegration
     }
   }
 }`;
@@ -64,6 +66,7 @@ mutation authenticateToken($token: String!) {
     multiTenantCompany {
       id
       language
+      hasMiraklIntegration
     }
   }
 }`;
@@ -81,6 +84,7 @@ mutation acceptUserInvitation($language: String!, $password: String!) {
     multiTenantCompany {
       id
       language
+      hasMiraklIntegration
     }
   }
 }`;

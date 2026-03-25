@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import AmazonSelectValueEditProperty from '../amazon-property-select-values/AmazonSelectValueEditProperty.vue';
 import EbaySelectValueEditProperty from '../ebay-property-select-values/EbaySelectValueEditProperty.vue';
 import SheinSelectValueEditProperty from '../shein-property-select-values/SheinSelectValueEditProperty.vue';
+import MiraklSelectValueEditProperty from '../mirakl-property-select-values/MiraklSelectValueEditProperty.vue';
 
 const route = useRoute();
 const type = computed(() => String(route.params.type));
@@ -12,6 +13,7 @@ const componentMap = {
   amazon: AmazonSelectValueEditProperty,
   ebay: EbaySelectValueEditProperty,
   shein: SheinSelectValueEditProperty,
+  mirakl: MiraklSelectValueEditProperty,
 } as const;
 
 const selectedComponent = computed(() => componentMap[type.value as keyof typeof componentMap] ?? null);

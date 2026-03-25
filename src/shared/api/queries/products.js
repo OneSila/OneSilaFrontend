@@ -525,6 +525,15 @@ export const configurableVariationsQuery = gql`
             type
             thumbnailUrl
             inspectorStatus
+            percentageInspectorStatus {
+              percentage
+              inspectorStatus
+              blocks {
+                code
+                completed
+                fixingMessage
+              }
+            }
           }
           configuratorValue
         }
@@ -564,6 +573,15 @@ export const bundleVariationsQuery = gql`
             name
             thumbnailUrl
             inspectorStatus
+            percentageInspectorStatus {
+              percentage
+              inspectorStatus
+              blocks {
+                code
+                completed
+                fixingMessage
+              }
+            }
           }
           quantity
         }
@@ -614,6 +632,24 @@ export const configurableVariationsWithAmazonQuery = gql`
             name
             active
             type
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const configurableVariationsForIssuesQuery = gql`
+  query ConfigurableVariationsForIssues($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          variation {
+            id
           }
         }
       }

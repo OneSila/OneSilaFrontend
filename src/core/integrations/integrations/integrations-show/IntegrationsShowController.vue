@@ -14,7 +14,8 @@ import {
   getWoocommerceChannelQuery,
   getAmazonChannelQuery,
   getEbayChannelQuery,
-  getSheinChannelQuery
+  getSheinChannelQuery,
+  getMiraklChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { getWebhookIntegrationQuery } from "../../../../shared/api/queries/webhookIntegrations.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
@@ -24,6 +25,7 @@ import { WoocommerceGeneralInfoTab } from "./containers/general/woocommerce-gene
 import { WebhookGeneralInfoTab } from "./containers/general/webhook-general-tab";
 import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
 import { SheinGeneralInfoTab } from "./containers/general/shein-general-tab";
+import { MiraklGeneralInfoTab } from "./containers/general/mirakl-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -39,7 +41,7 @@ import { DocumentTypes } from "./containers/document-types";
 import { DefaultUnitConfigurators } from "./containers/default-unit-configurators";
 import { Imports } from "./containers/imports";
 import { Templates } from "./containers/templates";
-import { AmazonProductIssues } from "./containers/issues";
+import { AmazonProductIssues, MiraklProductIssues } from "./containers/issues";
 import { refreshSalesChannelWebsitesMutation } from "../../../../shared/api/mutations/salesChannels";
 import {Toast} from "../../../../shared/modules/toast";
 
@@ -61,8 +63,15 @@ const integrationData = ref<any>(null);
 const gptFeed = ref<any>(null);
 const initialGptEnabled = ref(false);
 
+type IntegrationTabItem = {
+  name: string;
+  label: string;
+  icon: string;
+  group?: string;
+  hidden?: boolean;
+};
 
-const tabItems = ref([
+const tabItems = ref<IntegrationTabItem[]>([
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' }
 ]);
 
@@ -78,8 +87,8 @@ if (type.value !== IntegrationTypes.Webhook) {
 
   if (type.value === IntegrationTypes.Amazon) {
     tabItems.value.push(
-      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
       { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
@@ -87,9 +96,9 @@ if (type.value !== IntegrationTypes.Webhook) {
     );
   } else if (type.value === IntegrationTypes.Ebay) {
     tabItems.value.push(
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'inventoryFields', label: t('integrations.show.ebay.internalProperties.title'), icon: 'boxes-stacked' },
       { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
-      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
@@ -101,9 +110,25 @@ if (type.value !== IntegrationTypes.Webhook) {
       { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
       { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' }
     );
+  } else if (type.value === IntegrationTypes.Mirakl) {
+    tabItems.value.push(
+      { name: 'documentTypes', label: t('integrations.show.documentTypes.title'), icon: 'file-text' },
+      { name: 'defaultUnits', label: t('integrations.show.sections.defaultUnits'), icon: 'weight-hanging' },
+      { name: 'productRules', label: t('properties.rule.title'), icon: 'cog' },
+      { name: 'properties', label: t('properties.title'), icon: 'screwdriver-wrench' },
+      { name: 'propertySelectValues', label: t('properties.values.title'), icon: 'sitemap' },
+      { name: 'issues', label: t('integrations.show.tabs.issues'), icon: 'triangle-exclamation' }
+    );
   }
 
-  tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+  if (type.value === IntegrationTypes.Mirakl) {
+    tabItems.value.push(
+      { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import', group: 'imports' },
+      { name: 'miraklImports', label: t('shared.tabs.imports'), icon: 'file-import', group: 'imports', hidden: true },
+    );
+  } else {
+    tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+  }
 } else {
   tabItems.value.push(
     { name: 'monitor', label: t('webhooks.monitor.title'), icon: 'wave-square' },
@@ -126,6 +151,8 @@ const getIntegrationQuery = () => {
       return getEbayChannelQuery;
     case IntegrationTypes.Shein:
       return getSheinChannelQuery;
+    case IntegrationTypes.Mirakl:
+      return getMiraklChannelQuery;
     case IntegrationTypes.Webhook:
       return getWebhookIntegrationQuery;
     default:
@@ -149,6 +176,8 @@ const getIntegrationQueryKey = () => {
       return "ebayChannel";
     case IntegrationTypes.Shein:
       return "sheinChannel";
+    case IntegrationTypes.Mirakl:
+      return "miraklChannel";
     default:
       return "salesChannel";
   }
@@ -170,6 +199,8 @@ const getGeneralComponent = () => {
       return EbayGeneralInfoTab;
     case IntegrationTypes.Shein:
       return SheinGeneralInfoTab;
+    case IntegrationTypes.Mirakl:
+      return MiraklGeneralInfoTab;
     default:
       return null;
   }
@@ -352,6 +383,10 @@ const pullData = async () => {
             <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
           </template>
 
+          <template #miraklImports>
+            <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
+          </template>
+
           <!-- Template Tab -->
           <template #template>
             <Templates v-if="salesChannelId" :sales-channel-id="salesChannelId" />
@@ -397,6 +432,12 @@ const pullData = async () => {
           <template #issues>
             <AmazonProductIssues
               v-if="salesChannelId && type === IntegrationTypes.Amazon"
+              :sales-channel-id="salesChannelId"
+              :integration-id="id"
+              :type="type"
+            />
+            <MiraklProductIssues
+              v-else-if="salesChannelId && type === IntegrationTypes.Mirakl"
               :sales-channel-id="salesChannelId"
               :integration-id="id"
               :type="type"
