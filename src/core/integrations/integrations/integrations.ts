@@ -4,6 +4,7 @@ export enum IntegrationTypes {
   Woocommerce = 'woocommerce',
   Amazon = 'amazon',
   Ebay = 'ebay',
+  Mirakl = 'mirakl',
   Webhook = 'webhook',
   Shein = 'shein',
   None = 'none',
@@ -123,6 +124,12 @@ export interface EbayChannelInfo extends SpecificChannelInfo {
   listingOwner?: boolean;
 }
 
+export interface MiraklChannelInfo extends SpecificChannelInfo {
+  shopId: number | null;
+  apiKey: string;
+  subType?: string | null;
+}
+
 
 /**
  * The complete integration create wizard form.
@@ -185,6 +192,14 @@ export function getWebhookDefaultFields(): WebhookChannelInfo {
   };
 }
 
+export function getMiraklDefaultFields(): MiraklChannelInfo {
+  return {
+    shopId: null,
+    apiKey: '',
+    subType: null,
+  };
+}
+
 export const getDefaultFields = (type: IntegrationTypes) => {
   switch (type) {
     case IntegrationTypes.Magento:
@@ -197,6 +212,8 @@ export const getDefaultFields = (type: IntegrationTypes) => {
       return getAmazonDefaultFields();
     case IntegrationTypes.Ebay:
       return getEbayDefaultFields();
+    case IntegrationTypes.Mirakl:
+      return getMiraklDefaultFields();
     case IntegrationTypes.Webhook:
       return getWebhookDefaultFields();
     default:

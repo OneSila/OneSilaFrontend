@@ -480,7 +480,14 @@ const handleExistingSelected = (media: any) => {
     selectExistingModalVisible.value = false;
     return;
   }
-  assignMediaToRow(uploadContext.value.rowIndex, uploadContext.value.columnIndex, media, 'existing');
+  const { rowIndex, columnIndex } = uploadContext.value;
+  const selectedMedia = Array.isArray(media) ? media : media ? [media] : [];
+  selectedMedia.forEach((entry, index) => {
+    const targetColumnIndex = columnIndex != null
+      ? columnIndex + index
+      : null;
+    assignMediaToRow(rowIndex, targetColumnIndex, entry, 'existing');
+  });
   selectExistingModalVisible.value = false;
 };
 

@@ -41,6 +41,10 @@ const items = computed<MarketplaceOption[]>(() => {
     options.push({ name: 'shein', label: t('products.products.tabs.shein'), icon: 'store' });
   }
 
+  if (auth.user.company?.hasMiraklIntegration) {
+    options.push({ name: 'mirakl', label: t('products.products.tabs.mirakl'), icon: 'store' });
+  }
+
   return options;
 });
 

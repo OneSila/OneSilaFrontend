@@ -14,6 +14,7 @@ export const integrationsQuery = gql`
           requestsPerMinute
           maxRetries
           type
+          iconSvgUrl
         }
         cursor
       }

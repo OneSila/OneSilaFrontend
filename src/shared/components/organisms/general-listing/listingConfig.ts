@@ -17,6 +17,7 @@ export interface ListingConfig {
   paramIdentifier?: string; // most times it will be 'id'
   secondIdentifierKey?: string;
   secondIdentifierParam?: string;
+  showRouteResolver?: (item: any) => Url | undefined;
   addEdit?: boolean;
   editUrlName?: string;
   addShow?: boolean;

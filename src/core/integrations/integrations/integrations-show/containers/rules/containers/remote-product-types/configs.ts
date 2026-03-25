@@ -6,7 +6,9 @@ import {
   ebayProductTypesQuery,
   getAmazonProductTypeQuery,
   getEbayProductTypeQuery,
+  getMiraklProductTypeQuery,
   getSheinProductTypeQuery,
+  miraklProductTypesQuery,
   sheinProductTypesQuery,
 } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { productPropertiesRulesListingQuery } from "../../../../../../../../shared/api/queries/properties.js";
@@ -18,6 +20,7 @@ import {
   suggestEbayCategoryMutation,
   updateAmazonProductTypeMutation,
   updateEbayProductTypeMutation,
+  updateMiraklProductTypeMutation,
   updateSheinProductTypeMutation,
 } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import { ListingConfig } from "../../../../../../../../shared/components/organisms/general-listing/listingConfig";
@@ -196,6 +199,70 @@ const sheinProductTypeFormConfig = (
   ],
 });
 
+const miraklProductTypeFormConfig = (
+  t: Function,
+  type: string,
+  productTypeId: string,
+  integrationId: string
+): FormConfig => ({
+  cols: 1,
+  haveCustomHelpSection: true,
+  type: FormType.EDIT,
+  mutation: updateMiraklProductTypeMutation,
+  mutationKey: "updateMiraklProductType",
+  query: getMiraklProductTypeQuery,
+  queryVariables: { id: productTypeId },
+  queryDataKey: "miraklProductType",
+  submitUrl: {
+    name: 'integrations.integrations.show',
+    params: { type, id: integrationId },
+    query: { tab: 'productRules' },
+  },
+  fields: [
+    { type: FieldType.Hidden, name: 'id', value: productTypeId },
+    {
+      type: FieldType.Text,
+      label: t('integrations.show.productRules.labels.productTypeCode'),
+      name: 'remoteId',
+      disabled: true,
+      help: t('integrations.show.productRules.help.productTypeCode'),
+    },
+    {
+      type: FieldType.Text,
+      label: t('shared.labels.name'),
+      name: 'name',
+      help: t('integrations.show.productRules.help.name'),
+    },
+    {
+      type: FieldType.Query,
+      name: 'localInstance',
+      label: t('integrations.show.productRules.labels.productRule'),
+      help: t('integrations.show.productRules.help.productRule'),
+      labelBy: 'value',
+      valueBy: 'id',
+      query: productPropertiesRulesListingQuery,
+      dataKey: 'productPropertiesRules',
+      isEdge: true,
+      multiple: false,
+      filterable: true,
+      formMapIdentifier: 'id',
+      queryVariables: {
+        filter: {
+          salesChannel: { id: { isNull: true } },
+        },
+      },
+    },
+    {
+      type: FieldType.IndividualFile,
+      name: 'template',
+      label: t('integrations.show.mirakl.productRules.labels.template'),
+      help: t('integrations.show.mirakl.productRules.help.template'),
+      optional: true,
+      formats: ['.csv'],
+    },
+  ],
+});
+
 export const productTypeEditFormConfigConstructor = (
   t: Function,
   integrationType: string,
@@ -211,6 +278,10 @@ export const productTypeEditFormConfigConstructor = (
     return sheinProductTypeFormConfig(t, integrationType, productTypeId, integrationId);
   }
 
+  if (integrationType === IntegrationTypes.Mirakl) {
+    return miraklProductTypeFormConfig(t, integrationType, productTypeId, integrationId);
+  }
+
   return amazonProductTypeFormConfig(t, integrationType, productTypeId, integrationId, defaultRuleId);
 };
 
@@ -219,11 +290,25 @@ export const productTypesSearchConfigConstructor = (
   integrationType: string,
   salesChannelId: string,
 ): SearchConfig => {
+  if (integrationType === IntegrationTypes.Mirakl) {
+    return {
+      search: true,
+      orderKey: 'sort',
+      filters: [
+        { type: FieldType.Boolean, name: 'mappedLocally', label: t('integrations.show.mapping.mappedLocally'), strict: true },
+        { type: FieldType.Boolean, name: 'readyToPush', label: t('integrations.show.mapping.readyToPush'), strict: true },
+      ],
+      orders: [],
+    };
+  }
+
   const mappedRemotelyLabel =
     integrationType === IntegrationTypes.Ebay
       ? t('integrations.show.mapping.mappedRemotelyEbay')
       : integrationType === IntegrationTypes.Shein
         ? t('integrations.show.mapping.mappedRemotelyShein')
+        : integrationType === IntegrationTypes.Mirakl
+          ? t('integrations.show.mapping.mappedRemotelyMirakl')
         : t('integrations.show.mapping.mappedRemotelyAmazon');
 
   const filters: SearchFilter[] = [
@@ -373,6 +458,42 @@ const sheinProductTypesListingConfig = (
   addPagination: true,
 });
 
+const miraklProductTypesListingConfig = (
+  t: Function,
+  specificIntegrationId: string,
+  salesChannelId: string,
+): ListingConfig => ({
+  headers: [
+    t('shared.labels.name'),
+    t('integrations.show.mapping.mappedLocally'),
+    t('integrations.show.mapping.readyToPush'),
+    t('properties.rule.title'),
+  ],
+  fields: [
+    { name: 'name', type: FieldType.Text },
+    { name: 'mappedLocally', type: FieldType.Boolean },
+    { name: 'readyToPush', type: FieldType.Boolean },
+    {
+      name: 'localInstance',
+      type: FieldType.NestedText,
+      keys: ['productType', 'value'],
+      showLabel: true,
+      clickable: true,
+      clickIdentifiers: [{ id: ['id'] }],
+      clickUrl: { name: 'properties.rule.show' },
+    },
+  ],
+  identifierKey: 'id',
+  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
+  addActions: true,
+  addEdit: true,
+  addShow: true,
+  editUrlName: 'integrations.remoteProductTypes.edit',
+  showUrlName: 'integrations.remoteProductTypes.edit',
+  addDelete: false,
+  addPagination: true,
+});
+
 export const productTypesListingConfigConstructor = (
   t: Function,
   integrationType: string,
@@ -383,6 +504,8 @@ export const productTypesListingConfigConstructor = (
     ? ebayProductTypesListingConfig(t, specificIntegrationId, salesChannelId)
     : integrationType === IntegrationTypes.Shein
       ? sheinProductTypesListingConfig(t, specificIntegrationId, salesChannelId)
+      : integrationType === IntegrationTypes.Mirakl
+        ? miraklProductTypesListingConfig(t, specificIntegrationId, salesChannelId)
       : amazonProductTypesListingConfig(t, specificIntegrationId, salesChannelId);
 
 export const getListingQueryKey = (integrationType: string): string =>
@@ -390,6 +513,8 @@ export const getListingQueryKey = (integrationType: string): string =>
     ? 'ebayProductTypes'
     : integrationType === IntegrationTypes.Shein
       ? 'sheinProductTypes'
+      : integrationType === IntegrationTypes.Mirakl
+        ? 'miraklProductTypes'
       : 'amazonProductTypes';
 
 export const getListingQuery = (integrationType: string) =>
@@ -397,6 +522,8 @@ export const getListingQuery = (integrationType: string) =>
     ? ebayProductTypesQuery
     : integrationType === IntegrationTypes.Shein
       ? sheinProductTypesQuery
+      : integrationType === IntegrationTypes.Mirakl
+        ? miraklProductTypesQuery
       : amazonProductTypesQuery;
 
 export const getProductTypeQuery = (integrationType: string) =>
@@ -404,6 +531,8 @@ export const getProductTypeQuery = (integrationType: string) =>
     ? getEbayProductTypeQuery
     : integrationType === IntegrationTypes.Shein
       ? getSheinProductTypeQuery
+      : integrationType === IntegrationTypes.Mirakl
+        ? getMiraklProductTypeQuery
       : getAmazonProductTypeQuery;
 
 export const getProductTypeQueryDataKey = (integrationType: string): string =>
@@ -411,6 +540,8 @@ export const getProductTypeQueryDataKey = (integrationType: string): string =>
     ? 'ebayProductType'
     : integrationType === IntegrationTypes.Shein
       ? 'sheinProductType'
+      : integrationType === IntegrationTypes.Mirakl
+        ? 'miraklProductType'
       : 'amazonProductType';
 
 export const getUpdateProductTypeMutation = (integrationType: string) =>
@@ -418,6 +549,8 @@ export const getUpdateProductTypeMutation = (integrationType: string) =>
     ? updateEbayProductTypeMutation
     : integrationType === IntegrationTypes.Shein
       ? updateSheinProductTypeMutation
+      : integrationType === IntegrationTypes.Mirakl
+        ? updateMiraklProductTypeMutation
       : updateAmazonProductTypeMutation;
 
 export const getCreateProductTypesFromLocalRulesMutation = (integrationType: string) =>
@@ -425,6 +558,8 @@ export const getCreateProductTypesFromLocalRulesMutation = (integrationType: str
     ? createEbayProductTypesFromLocalRulesMutation
     : integrationType === IntegrationTypes.Shein
       ? createSheinProductTypesFromLocalRulesMutation
+      : integrationType === IntegrationTypes.Mirakl
+        ? null
       : createAmazonProductTypesFromLocalRulesMutation;
 
 export const listingQueryKey = getListingQueryKey(IntegrationTypes.Amazon);
@@ -667,4 +802,39 @@ export const sheinMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<S
     IntegrationTypes.Shein,
     (formData) => formData?.translatedName || formData?.name,
   ),
+};
+
+export const miraklMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<RemoteProductTypeState> = {
+  integrationType: IntegrationTypes.Mirakl,
+  listingQuery: getListingQuery(IntegrationTypes.Mirakl),
+  listingQueryKey: getListingQueryKey(IntegrationTypes.Mirakl),
+  productTypeQueryDataKey: getProductTypeQueryDataKey(IntegrationTypes.Mirakl),
+  getIntegrationTitle,
+  editRouteName: 'integrations.remoteProductTypes.edit',
+  createState: () => ({ propertyProductTypeId: null }),
+  extractItems: (data) => data?.items || [],
+  getItemName: (item) => item?.remoteProperty?.name || '',
+  getItemCode: (item) => item?.remoteProperty?.code || '',
+  isItemMappedLocally: (item) => Boolean(item?.localInstance),
+  getPropertyRoute: (item, { type, integrationId, salesChannelId }) => {
+    const propertyId = item?.remoteProperty?.id;
+    if (!propertyId) {
+      return null;
+    }
+
+    const query: Record<string, string> = {};
+    if (integrationId) {
+      query.integrationId = integrationId;
+    }
+    if (salesChannelId) {
+      query.salesChannelId = salesChannelId;
+    }
+
+    return {
+      name: 'integrations.remoteProperties.edit',
+      params: { type, id: propertyId },
+      ...(Object.keys(query).length ? { query } : {}),
+    };
+  },
+  shouldShowAdditionalButton: () => false,
 };

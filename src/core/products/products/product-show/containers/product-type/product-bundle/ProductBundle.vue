@@ -19,6 +19,7 @@ import AliasProductsView from "../../tabs/alias-parents/AliasProductsView.vue";
 import AmazonView from "../../tabs/amazon/AmazonView.vue";
 import EbayView from "../../tabs/ebay/EbayView.vue";
 import SheinView from "../../tabs/shein/SheinView.vue";
+import MiraklView from "../../tabs/mirakl/MiraklView.vue";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 import Swal from 'sweetalert2';
 
@@ -37,11 +38,13 @@ const eanCodesRef = ref<InstanceType<typeof ProductEanCodesList> | null>(null);
 const amazonRef = ref<InstanceType<typeof AmazonView> | null>(null);
 const ebayRef = ref<InstanceType<typeof EbayView> | null>(null);
 const sheinRef = ref<InstanceType<typeof SheinView> | null>(null);
+const miraklRef = ref<InstanceType<typeof MiraklView> | null>(null);
 
 const handleWebsiteAssignChange = () => {
   amazonRef.value?.fetchAmazonProducts('network-only');
   ebayRef.value?.fetchEbayProductCategories('network-only');
   sheinRef.value?.fetchSheinProductCategories('network-only');
+  miraklRef.value?.fetchMiraklProductCategories('network-only');
 };
 
 const tabRefs: Record<string, any> = {
@@ -54,6 +57,7 @@ const tabRefs: Record<string, any> = {
   amazon: amazonRef,
   ebay: ebayRef,
   shein: sheinRef,
+  mirakl: miraklRef,
 };
 
 const beforeTabChange = async (newTab: string, oldTab: string) => {
@@ -138,6 +142,15 @@ const tabItems = computed(() => {
     });
   }
 
+  if (auth.user.company?.hasMiraklIntegration) {
+    marketplaceTabs.push({
+      name: 'mirakl',
+      label: t('products.products.tabs.mirakl'),
+      icon: 'store',
+      group: 'marketplace',
+    });
+  }
+
   if (marketplaceTabs.length) {
     marketplaceTabs[0].label = t('products.products.tabs.marketplace');
     marketplaceTabs.forEach((tab, index) => {
@@ -210,6 +223,12 @@ const tabItems = computed(() => {
       <template v-if="auth.user.company?.hasSheinIntegration" v-slot:shein>
         <SheinView
           ref="sheinRef"
+          :product="product"
+        />
+      </template>
+      <template v-if="auth.user.company?.hasMiraklIntegration" v-slot:mirakl>
+        <MiraklView
+          ref="miraklRef"
           :product="product"
         />
       </template>

@@ -8,6 +8,8 @@ import woocommerceIcon from '../../../../assets/images/integration-types/icons/w
 import amazonIcon from '../../../../assets/images/integration-types/icons/amazon.svg';
 import ebayIcon from '../../../../assets/images/integration-types/icons/ebay.svg';
 import sheinIcon from '../../../../assets/images/integration-types/icons/shein.svg';
+import miraklIcon from '../../../../assets/images/integration-types/icons/mirakl.svg';
+import noImageIcon from '../../../../assets/images/integration-types/icons/no_image.svg';
 
 const props = defineProps<{ channels: any[]; modelValue: string }>();
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>();
@@ -33,9 +35,14 @@ const integrationTypeIcons: Record<string, string> = {
   woocommerce: woocommerceIcon,
   amazon: amazonIcon,
   ebay: ebayIcon,
-  shein: sheinIcon
+  shein: sheinIcon,
+  mirakl: miraklIcon,
 };
 
+const resolveIcon = (channel: any) => {
+  if (!channel) return '';
+  return channel.iconSvgUrl || integrationTypeIcons[channel.type] || noImageIcon;
+};
 
 const resolveLabel = (channel: any) => {
   if (!channel) return '';
@@ -74,7 +81,7 @@ const select = (val: string) => emit('update:modelValue', val);
       >
         <Icon v-if="channel.type == 'default'" :name="channel.type" class="w-4 h-4" />
         <img v-else class="w-4 h-4"
-          :src="integrationTypeIcons[channel.type]"
+          :src="resolveIcon(channel)"
           :alt="channel.type"
         />
         {{ resolveLabel(channel) }}

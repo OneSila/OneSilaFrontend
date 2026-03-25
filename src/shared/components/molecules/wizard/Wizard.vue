@@ -111,7 +111,7 @@ useEnterKeyboardListener(onNextPressed);
   <div class="tab-content mt-4">
     <slot :name="steps[currentStep].name"></slot>
   </div>
-  <div v-if="showButtons" class="flex justify-between items-center mt-8">
+  <div v-if="showButtons" class="wizard-actions flex justify-between items-center mt-8">
     <div>
       <slot name="additionalButtons"></slot>
     </div>

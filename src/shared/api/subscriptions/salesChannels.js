@@ -9,6 +9,7 @@ export const salesChannelSubscription = gql`
       isImporting
       saleschannelimportSet {
         id
+        name
         status
         percentage
         createdAt
@@ -30,6 +31,14 @@ export const salesChannelSubscription = gql`
         createdAt
       }
       sheinImports {
+        id
+        proxyId
+        type
+        status
+        percentage
+        createdAt
+      }
+      miraklImports {
         id
         proxyId
         type

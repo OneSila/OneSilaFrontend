@@ -16,6 +16,7 @@ import { displayApolloError } from "../../../../../../../../shared/utils";
 import { Toast } from "../../../../../../../../shared/modules/toast";
 import { PropertyTypes } from "../../../../../../../../shared/utils/constants";
 import { IntegrationTypes } from "../../../../../integrations";
+import { MIRAKL_REPRESENTATION_TYPE_PROPERTY } from "../mirakl-properties/representationTypes";
 
 type RouteBuilderContext = {
   id: string;
@@ -47,6 +48,7 @@ const router = useRouter();
 const route = useRoute();
 
 const canStartMapping = ref(false);
+const generalListingRef = ref<any>(null);
 const isAutoMapping = ref(false);
 const integrationType = computed(() => String(route.params.type || ''));
 
@@ -57,6 +59,7 @@ const selectValuesFilterKey = computed(() => {
     case IntegrationTypes.Ebay:
       return 'ebayProperty';
     case IntegrationTypes.Shein:
+    case IntegrationTypes.Mirakl:
       return 'remoteProperty';
     default:
       return null;
@@ -68,7 +71,15 @@ const isSelectPropertyType = (type?: string) => {
 };
 
 const canSeeValues = (item: any) => {
-  return Boolean(selectValuesFilterKey.value && item?.node?.id && isSelectPropertyType(item?.node?.type));
+  if (!selectValuesFilterKey.value || !item?.node?.id || !isSelectPropertyType(item?.node?.type)) {
+    return false;
+  }
+
+  if (integrationType.value === IntegrationTypes.Mirakl) {
+    return item?.node?.representationTypeDecided || item?.node?.representationType === MIRAKL_REPRESENTATION_TYPE_PROPERTY;
+  }
+
+  return true;
 };
 
 const buildSelectValuesRoute = (item: any): RouteLocationRaw => ({
@@ -187,6 +198,11 @@ const startMapping = async () => {
   });
 };
 
+const clearSelection = (query?: any) => {
+  generalListingRef.value?.clearSelected?.();
+  query?.refetch?.();
+};
+
 const autoMapPerfectMatches = async () => {
   if (!props.autoMapMutation || !props.salesChannelId || isAutoMapping.value) {
     return;
@@ -249,6 +265,7 @@ const autoMapPerfectMatches = async () => {
           {{ t(props.titleKey as string) }}
         </Title>
         <GeneralListing
+          ref="generalListingRef"
           :search-config="searchConfig"
           :config="listingConfig"
           :query="listingQuery"
@@ -256,6 +273,9 @@ const autoMapPerfectMatches = async () => {
           :fixed-filter-variables="mergedFixedFilterVariables"
           @pull-data="emit('pull-data')"
         >
+          <template v-if="$slots.bulkActions" #bulkActions="slotProps">
+            <slot name="bulkActions" v-bind="{ ...slotProps, clearSelection }" />
+          </template>
           <template #additionalButtons="{ item }">
             <Link
               v-if="canSeeValues(item)"

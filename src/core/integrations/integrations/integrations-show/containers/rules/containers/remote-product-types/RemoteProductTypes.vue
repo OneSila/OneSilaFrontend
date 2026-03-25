@@ -30,6 +30,7 @@ const pulling = ref(false);
 const listingQueryKey = computed(() => getListingQueryKey(type.value));
 const listingQuery = computed(() => getListingQuery(type.value));
 const pullMutation = computed(() => getCreateProductTypesFromLocalRulesMutation(type.value));
+const canPullLocalRules = computed(() => Boolean(pullMutation.value));
 const searchConfig = computed(() => productTypesSearchConfigConstructor(t, type.value, salesChannelId.value));
 const listingConfig = computed(() => productTypesListingConfigConstructor(t, type.value, integrationId.value, salesChannelId.value));
 
@@ -64,6 +65,9 @@ const startMapping = async () => {
 };
 
 const pullLocalRules = async () => {
+  if (!pullMutation.value) {
+    return;
+  }
   pulling.value = true;
   try {
     await apolloClient.mutate({
@@ -86,7 +90,7 @@ const pullLocalRules = async () => {
 <template>
   <GeneralTemplate>
     <template v-slot:buttons>
-      <Button type="button" class="btn btn-primary" :disabled="pulling" @click="pullLocalRules">
+      <Button v-if="canPullLocalRules" type="button" class="btn btn-primary" :disabled="pulling" @click="pullLocalRules">
         {{ t('integrations.show.pullLocalRules') }}
       </Button>
       <Button type="button" class="btn btn-secondary" :disabled="!canStartMapping" @click="startMapping">

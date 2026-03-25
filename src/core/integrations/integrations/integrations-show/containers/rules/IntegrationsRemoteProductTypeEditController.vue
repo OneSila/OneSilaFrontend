@@ -11,7 +11,9 @@ import ImportedAmazonProductType from './containers/amazon-product-types/Importe
 import ImportedEbayProductType from './containers/ebay-product-types/ImportedEbayProductType.vue';
 import AmazonMappedRemoteProductType from './containers/amazon-product-types/AmazonMappedRemoteProductType.vue';
 import EbayMappedRemoteProductType from './containers/ebay-product-types/EbayMappedRemoteProductType.vue';
+import ImportedMiraklProductType from './containers/mirakl-product-types/ImportedMiraklProductType.vue';
 import ImportedSheinProductType from './containers/shein-product-types/ImportedSheinProductType.vue';
+import MiraklMappedRemoteProductType from './containers/mirakl-product-types/MiraklMappedRemoteProductType.vue';
 import SheinMappedRemoteProductType from './containers/shein-product-types/SheinMappedRemoteProductType.vue';
 import { IntegrationTypes } from '../../../integrations';
 
@@ -33,6 +35,10 @@ const componentRegistry: Record<string, { imported: Component; mapped: Component
   [IntegrationTypes.Shein]: {
     imported: ImportedSheinProductType,
     mapped: SheinMappedRemoteProductType,
+  },
+  [IntegrationTypes.Mirakl]: {
+    imported: ImportedMiraklProductType,
+    mapped: MiraklMappedRemoteProductType,
   },
 };
 

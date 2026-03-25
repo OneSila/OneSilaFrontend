@@ -341,6 +341,7 @@ export const amazonChannelsQuery = gql`
           }
           saleschannelPtr {
             id
+            proxyId
           }
         }
         cursor
@@ -486,6 +487,40 @@ export const getSheinChannelQuery = gql`
   }
 `;
 
+export const getMiraklChannelQuery = gql`
+  query getMiraklChannel($id: GlobalID!) {
+    miraklChannel(id: $id) {
+      id
+      hostname
+      active
+      lastDifferentialIssuesFetch
+      lastFullIssuesFetch
+      lastProductImportsRequestDate
+      requestsPerMinute
+      maxRetries
+      useConfigurableName
+      syncContents
+      syncEanCodes
+      syncPrices
+      importOrders
+      startingStock
+      minNameLength
+      minDescriptionLength
+      shopId
+      apiKey
+      connected
+      firstImportComplete
+      isImporting
+      integrationPtr {
+        id
+      }
+      saleschannelPtr {
+        id
+      }
+    }
+  }
+`;
+
 export const ebayChannelsQuery = gql`
   query ebayChannelsQuery(
     $first: Int
@@ -551,6 +586,54 @@ export const sheinChannelsQuery = gql`
           id
           hostname
           active
+          createdAt
+          integrationPtr {
+            id
+          }
+          saleschannelPtr {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const miraklChannelsQuery = gql`
+  query miraklChannelsQuery(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklSalesChannelOrder
+    $filters: MiraklSalesChannelFilter
+  ) {
+    miraklChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          shopId
+          connected
+          lastDifferentialIssuesFetch
+          lastFullIssuesFetch
+          lastProductImportsRequestDate
           createdAt
           integrationPtr {
             id
@@ -936,6 +1019,32 @@ export const sheinChannelViewsQuery = gql`
   }
 `;
 
+export const miraklChannelViewsQuery = gql`
+  query MiraklChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: MiraklSalesChannelViewOrder, $filter: MiraklSalesChannelViewFilter) {
+    miraklSalesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          description
+          active
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getAmazonChannelViewQuery = gql`
   query getAmazonChannelView($id: GlobalID!) {
     amazonChannelView(id: $id) {
@@ -988,6 +1097,17 @@ export const getSheinSalesChannelViewQuery = gql`
           merchantLocationChoices
         }
       }
+    }
+  }
+`;
+
+export const getMiraklSalesChannelViewQuery = gql`
+  query getMiraklSalesChannelView($id: GlobalID!) {
+    miraklSalesChannelView(id: $id) {
+      id
+      name
+      description
+      active
     }
   }
 `;
@@ -1047,6 +1167,38 @@ export const remoteLanguagesQuery = gql`
   }
 `;
 
+export const miraklRemoteLanguagesQuery = gql`
+  query MiraklRemoteLanguages(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklRemoteLanguageOrder
+    $filter: MiraklRemoteLanguageFilter
+  ) {
+    miraklRemoteLanguages(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          remoteCode
+          name: label
+          label
+          isDefault
+          localInstance
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const remoteCurrenciesQuery = gql`
   query RemoteCurrencies(
     $first: Int, 
@@ -1077,6 +1229,71 @@ export const remoteCurrenciesQuery = gql`
         startCursor
         hasNextPage
         hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const miraklRemoteCurrenciesQuery = gql`
+  query MiraklRemoteCurrencies(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklRemoteCurrencyOrder
+    $filter: MiraklRemoteCurrencyFilter
+  ) {
+    miraklRemoteCurrencies(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          remoteCode
+          name: label
+          label
+          isDefault
+          localInstance {
+            id
+            name
+            symbol
+            isoCode
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getMiraklRemoteLanguageQuery = gql`
+  query getMiraklRemoteLanguage($id: GlobalID!) {
+    miraklRemoteLanguage(id: $id) {
+      id
+      remoteCode
+      label
+      isDefault
+      localInstance
+    }
+  }
+`;
+
+export const getMiraklRemoteCurrencyQuery = gql`
+  query getMiraklRemoteCurrency($id: GlobalID!) {
+    miraklRemoteCurrency(id: $id) {
+      id
+      remoteCode
+      label
+      isDefault
+      localInstance {
+        id
+        symbol
+        isoCode
       }
     }
   }
@@ -1134,6 +1351,7 @@ export const salesChannelImportsQuery = gql`
       edges {
         node {
           id
+          name
           status
           percentage
           createdAt
@@ -1370,6 +1588,55 @@ export const sheinPropertiesQuery = gql`
   }
 `;
 
+export const miraklPropertiesQuery = gql`
+  query MiraklProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklPropertyOrder
+    $filter: MiraklPropertyFilter
+  ) {
+    miraklProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          code
+          name
+          representationType
+          representationTypeDecided
+          mappedLocally
+          mappedRemotely
+          type
+          originalType
+          allowsUnmappedValues
+          defaultValue
+          localInstance {
+            id
+            name
+            type
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const sheinPropertiesByRemoteIdsQuery = gql`
   query SheinPropertiesByRemoteIds($first: Int, $filter: SheinPropertyFilter) {
     sheinProperties(first: $first, filters: $filter) {
@@ -1403,6 +1670,42 @@ export const getSheinPropertyQuery = gql`
       allowsUnmappedValues
       yesTextValue
       noTextValue
+      localInstance {
+        id
+        name
+        type
+      }
+    }
+  }
+`;
+
+export const getMiraklPropertyQuery = gql`
+  query getMiraklProperty($id: GlobalID!) {
+    miraklProperty(id: $id) {
+      id
+      code
+      name
+      language
+      representationType
+      representationTypeDecided
+      description
+      example
+      mappedLocally
+      mappedRemotely
+      type
+      originalType
+      allowsUnmappedValues
+      defaultValue
+      valueListCode
+      valueListLabel
+      yesTextValue
+      noTextValue
+      descriptionTranslations
+      labelTranslations
+      typeParameters
+      validations
+      transformations
+      rawData
       localInstance {
         id
         name
@@ -1749,6 +2052,49 @@ export const sheinInternalPropertiesQuery = gql`
   }
 `;
 
+export const miraklInternalPropertiesQuery = gql`
+  query MiraklInternalProperties(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklInternalPropertyOrder
+    $filter: MiraklInternalPropertyFilter
+  ) {
+    miraklInternalProperties(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          name
+          type
+          isCondition
+          mappedLocally
+          mappedRemotely
+          localInstance {
+            id
+            name
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getSheinInternalPropertyQuery = gql`
   query getSheinInternalProperty($id: GlobalID!) {
     sheinInternalProperty(id: $id) {
@@ -1757,6 +2103,23 @@ export const getSheinInternalPropertyQuery = gql`
       name
       type
       allowedTypes
+      mappedLocally
+      mappedRemotely
+      localInstance {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const getMiraklInternalPropertyQuery = gql`
+  query getMiraklInternalProperty($id: GlobalID!) {
+    miraklInternalProperty(id: $id) {
+      id
+      name
+      type
+      isCondition
       mappedLocally
       mappedRemotely
       localInstance {
@@ -1860,6 +2223,93 @@ export const sheinPropertySelectValuesQuery = gql`
   }
 `;
 
+export const miraklPropertySelectValuesQuery = gql`
+  query MiraklPropertySelectValues(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklPropertySelectValueOrder
+    $filter: MiraklPropertySelectValueFilter
+  ) {
+    miraklPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          label
+          mappedLocally
+          mappedRemotely
+          remoteProperty {
+            id
+            name
+            representationType
+            localInstance {
+              id
+              name
+            }
+          }
+          localInstance {
+            id
+            value
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const miraklPropertySelectValuesQuerySelector = gql`
+  query MiraklPropertySelectValuesSelector(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklPropertySelectValueOrder
+    $filter: MiraklPropertySelectValueFilter
+  ) {
+    miraklPropertySelectValues(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          code
+          value
+          label
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getEbayPropertySelectValueQuery = gql`
   query getEbayPropertySelectValue($id: GlobalID!) {
     ebayPropertySelectValue(id: $id) {
@@ -1917,6 +2367,169 @@ export const getSheinPropertySelectValueQuery = gql`
       localInstance {
         id
         value
+      }
+    }
+  }
+`;
+
+export const getMiraklPropertySelectValueQuery = gql`
+  query getMiraklPropertySelectValue($id: GlobalID!) {
+    miraklPropertySelectValue(id: $id) {
+      id
+      code
+      value
+      label
+      boolValue
+      mappedLocally
+      mappedRemotely
+      labelTranslations
+      valueLabelTranslations
+      valueListCode
+      valueListLabel
+      rawData
+      remoteProperty {
+        id
+        name
+        representationType
+        type
+        originalType
+        localInstance {
+          id
+          name
+          type
+        }
+      }
+      localInstance {
+        id
+        value
+      }
+    }
+  }
+`;
+
+export const miraklProductTypesQuery = gql`
+  query MiraklProductTypes(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklProductTypeOrder
+    $filter: MiraklProductTypeFilter
+  ) {
+    miraklProductTypes(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filter
+    ) {
+      edges {
+        node {
+          id
+          remoteId
+          name
+          imported
+          mappedLocally
+          readyToPush
+          localInstance {
+            id
+            value
+            productType {
+              id
+              value
+            }
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const getMiraklProductTypeQuery = gql`
+  query getMiraklProductType($id: GlobalID!) {
+    miraklProductType(id: $id) {
+      id
+      remoteId
+      name
+      salesChannel {
+        proxyId
+      }
+      template {
+        name
+        url
+      }
+      imported
+      mappedLocally
+      mappedRemotely
+      localInstance {
+        id
+        value
+        productType {
+          id
+          value
+        }
+      }
+      items {
+        id
+        required
+        variant
+        requirementLevel
+        remoteProperty {
+          id
+          code
+          name
+          mappedLocally
+        }
+        localInstance {
+          id
+          type
+          sortOrder
+          property {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const miraklImportProcessesQuery = gql`
+  query MiraklImportProcesses(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: MiraklImportProcessOrder
+    $filter: MiraklImportProcessFilter
+  ) {
+    miraklImportProcesses(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          proxyId
+          type
+          status
+          percentage
+          createdAt
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
       }
     }
   }

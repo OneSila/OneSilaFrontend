@@ -4,6 +4,7 @@ import { IntegrationTypes } from '../../../integrations';
 import { AmazonPropertySelectValues } from './containers/amazon-property-select-values';
 import { EbayPropertySelectValues } from './containers/ebay-property-select-values';
 import { SheinPropertySelectValues } from './containers/shein-property-select-values';
+import { MiraklPropertySelectValues } from './containers/mirakl-property-select-values';
 
 const props = defineProps<{ id: string; salesChannelId: string; type: string }>();
 const emit = defineEmits(['pull-data']);
@@ -16,6 +17,8 @@ const currentComponent = computed(() => {
       return EbayPropertySelectValues;
     case IntegrationTypes.Shein:
       return SheinPropertySelectValues;
+    case IntegrationTypes.Mirakl:
+      return MiraklPropertySelectValues;
     default:
       return null;
   }

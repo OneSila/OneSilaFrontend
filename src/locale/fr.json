@@ -255,6 +255,42 @@
           "description": ""
         }
       },
+      "mirakl": {
+        "title": "",
+        "description": "",
+        "unmappedProperties": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPropertiesUsedInProducts": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedProductTypes": {
+          "title": "",
+          "description": ""
+        },
+        "productTypesNotReadyToPush": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedPredefinedSelectValues": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedSelectValuesUsedInProducts": {
+          "title": "",
+          "description": ""
+        },
+        "unmappedDefaultUnitConfigurators": {
+          "title": "",
+          "description": ""
+        }
+      },
       "products": {
         "inspector": {
           "127": {
@@ -350,6 +386,7 @@
         "amazon": "Amazon",
         "ebay": "",
         "shein": "",
+        "mirakl": "",
         "marketplace": ""
       },
       "marketplaceSelector": {
@@ -640,6 +677,22 @@
           },
           "toast": {
             "categoryNotAvailable": ""
+          }
+        },
+        "mirakl": {
+          "columns": {
+            "category": ""
+          },
+          "labels": {
+            "categoryId": ""
+          },
+          "actions": {
+            "set": "",
+            "preview": ""
+          },
+          "modal": {
+            "title": "",
+            "previewTitle": ""
           }
         },
         "ebay": {
@@ -1029,6 +1082,61 @@
           "button": "",
           "invalid": ""
         }
+      },
+      "mirakl": {
+        "noChannels": "",
+        "openIntegration": "",
+        "issues": {
+          "title": "",
+          "description": "",
+          "empty": "",
+          "lastDifferentialIssuesFetch": "",
+          "lastFullFetch": ""
+        },
+        "categoryTitle": "",
+        "categoryDescription": "",
+        "selectChannelPrompt": "",
+        "rootLabel": "",
+        "leafRestriction": "",
+        "currentSelection": "",
+        "noSelection": "",
+        "pendingSelection": "",
+        "categorySaved": "",
+        "categoryRemoved": "",
+        "removeCategory": "",
+        "categoryMappingInfo": "",
+        "defaultCategoryTitle": "",
+        "defaultCategoryInfo": "",
+        "manualEntry": {
+          "title": "",
+          "description": "",
+          "placeholder": "",
+          "button": "",
+          "invalid": ""
+        },
+        "details": {
+          "level": "",
+          "parentCode": "",
+          "leaf": "",
+          "yes": "",
+          "no": "",
+          "productTypes": "",
+          "noProductTypes": "",
+          "productTypeId": "",
+          "readyToPush": "",
+          "notReadyToPush": "",
+          "templateMissingWarning": "",
+          "openProductType": "",
+          "noItems": "",
+          "columns": {
+            "property": "",
+            "code": "",
+            "required": "",
+            "variant": "",
+            "localProperty": ""
+          },
+          "noLocalProperty": ""
+        }
       }
     }
   },
@@ -1038,7 +1146,9 @@
       "shopify": "Shopify",
       "woocommerce": "Woocommerce",
       "amazon": "Amazon",
-      "webhook": "Webhook"
+      "ebay": "Ebay",
+      "webhook": "Webhook",
+      "mirakl": ""
     },
     "amazon": {
       "actions": {
@@ -1102,6 +1212,159 @@
         }
       }
     },
+    "create": {
+      "wizard": {
+        "step1": {
+          "heroTitle": "",
+          "heroDescription": "",
+          "resultsLabel": "",
+          "searchPlaceholder": "",
+          "filters": {
+            "all": "",
+            "storefronts": "",
+            "marketplaces": "",
+            "webhooks": "",
+            "betaOnly": "",
+            "completedOnly": "",
+            "showBeta": ""
+          },
+          "categories": {
+            "storefronts": {
+              "title": "",
+              "description": ""
+            },
+            "marketplaces": {
+              "title": "",
+              "description": ""
+            },
+            "webhooks": {
+              "title": "",
+              "description": ""
+            }
+          },
+          "empty": {
+            "title": "",
+            "description": ""
+          },
+          "selection": {
+            "title": "",
+            "description": "",
+            "clear": ""
+          },
+          "openAiFeedSupport": "",
+          "magentoInfoModal": {
+            "title": "",
+            "tabs": {
+              "instructions": "",
+              "video": ""
+            },
+            "section": {
+              "integrationTitle": "",
+              "integrationDescription": "",
+              "integrationStep1": "",
+              "integrationStep2": "",
+              "apiSettingsTitle": "",
+              "apiSettingsDescription": "",
+              "apiSetting1": "",
+              "apiSetting2": "",
+              "legacyAuthTitle": "",
+              "legacyAuthWarning": "",
+              "importTitle": "",
+              "importRecommendation": "",
+              "eanTitle": "",
+              "eanDescription": ""
+            }
+          },
+          "woocommerceInfoModal": {
+            "title": "",
+            "integrationTitle": "",
+            "integrationDescription": "",
+            "integrationStep1": "",
+            "integrationStep2": "",
+            "integrationStep3": "",
+            "integrationStep4": "",
+            "integrationStep5": "",
+            "integrationStep6": "",
+            "integrationStep7": "",
+            "integrationStep8": "",
+            "apiSettingsTitle": "",
+            "apiSettingsDescription": "",
+            "apiSetting1": "",
+            "apiSetting2": "",
+            "importTitle": "",
+            "importRecommendation": "",
+            "eanTitle": "",
+            "eanDescription": ""
+          },
+          "shopifyInfoModal": {
+            "title": "",
+            "section": {
+              "integrationTitle": "",
+              "integrationDescription": "",
+              "integrationStep1": "",
+              "integrationStep2": "",
+              "integrationStep3": "",
+              "integrationStep4": "",
+              "integrationStep5Part1": "",
+              "integrationStep5Part2": "",
+              "integrationStep5Part3": "",
+              "integrationStep6Part1": "",
+              "integrationStep6Part2": "",
+              "integrationStep7": "",
+              "integrationStep8": "",
+              "appUrlLabel": "",
+              "allowedRedirectUrlLabel": "",
+              "customAppTitle": "",
+              "detectWebsiteUrlTitle": "",
+              "configureDistributionTitle": "",
+              "configureUrlsTitle": "",
+              "finishWizardTitle": ""
+            }
+          },
+          "miraklTitle": "",
+          "miraklExample": "",
+          "miraklSubtypeExample": "",
+          "miraklInfoModal": {
+            "defaultTitle": "",
+            "title": "",
+            "description": "",
+            "instructions": "",
+            "cta": "",
+            "tabs": {
+              "learnMirakl": ""
+            },
+            "credentials": {
+              "title": "",
+              "description": "",
+              "apiKeyTitle": "",
+              "apiKeyIntro": "",
+              "apiKeySteps": {
+                "step1": "",
+                "step2": "",
+                "step3": "",
+                "step4": ""
+              },
+              "shopIdTitle": "",
+              "shopIdDescription": ""
+            }
+          }
+        },
+        "step4": {
+          "shein": {
+            "title": "",
+            "content": ""
+          },
+          "mirakl": {
+            "title": "",
+            "content": ""
+          },
+          "marketplace": {
+            "title": "",
+            "content": ""
+          }
+        }
+      }
+    },
     "labels": {
       "fulfillmentPolicy": "Politique d'expédition",
       "paymentPolicy": "Politique de paiement",
@@ -1110,6 +1373,7 @@
       "lengthUnit": "Unité de longueur",
       "weightUnit": "Unité de poids",
       "isDefaultMarketplace": "Marketplace par défaut",
+      "shopId": "",
       "startingStock": "",
       "minNameLength": "",
       "minDescriptionLength": "",
@@ -1122,6 +1386,9 @@
       "gptReturnPolicy": "",
       "gptReturnWindow": "",
       "gptFeedUrl": ""
+    },
+    "placeholders": {
+      "shopId": ""
     },
     "salesChannel": {
       "labels": {
@@ -1153,8 +1420,208 @@
       "tabs": {
         "issues": ""
       },
+      "properties": {
+        "actions": {
+          "seeValues": ""
+        }
+      },
+      "mirakl": {
+        "title": "",
+        "internalProperties": {
+          "title": "",
+          "labels": {
+            "acceptedValues": "",
+            "isCondition": ""
+          }
+        },
+        "properties": {
+          "sections": {
+            "metadata": "",
+            "translations": ""
+          },
+          "help": {
+            "defaultValue": "",
+            "language": "",
+            "representationType": ""
+          },
+          "labels": {
+            "description": "",
+            "example": "",
+            "isCommon": "",
+            "language": "",
+            "representationType": "",
+            "hierarchyCode": "",
+            "uniqueCode": "",
+            "requirementLevel": "",
+            "defaultValue": "",
+            "valueListCode": "",
+            "valueListLabel": "",
+            "typeParameters": "",
+            "validations": "",
+            "transformations": "",
+            "rawData": "",
+            "labelTranslations": "",
+            "descriptionTranslations": ""
+          }
+        },
+        "selectValues": {
+          "labels": {
+            "value": "",
+            "valueLabelTranslations": ""
+          }
+        },
+        "productRules": {
+          "help": {
+            "template": ""
+          },
+          "templateHelp": {
+            "eyebrow": "",
+            "title": "",
+            "description": "",
+            "steps": {
+              "step1": "",
+              "step2": "",
+              "step3": "",
+              "step4": ""
+            },
+            "imageAlt": ""
+          },
+          "labels": {
+            "category": "",
+            "required": "",
+            "variant": "",
+            "roleData": "",
+            "template": ""
+          }
+        },
+        "defaultUnits": {
+          "labels": {
+            "selectedUnit": "",
+            "currentValue": "",
+            "currentLabel": ""
+          }
+        },
+        "representationTypes": {
+          "options": {
+            "property": "",
+            "unit": "",
+            "default_value": "",
+            "product_title": "",
+            "product_subtitle": "",
+            "product_description": "",
+            "product_short_description": "",
+            "product_bullet_point": "",
+            "product_sku": "",
+            "product_internal_id": "",
+            "product_category": "",
+            "product_configurable_sku": "",
+            "product_configurable_id": "",
+            "product_active": "",
+            "product_url_key": "",
+            "product_ean": "",
+            "thumbnail_image": "",
+            "image": "",
+            "image_color": "",
+            "video": "",
+            "document": "",
+            "price": "",
+            "discounted_price": "",
+            "stock": "",
+            "vat_rate": "",
+            "allow_backorder": "",
+            "condition": "",
+            "logistic_class": ""
+          }
+        },
+        "representationGuide": {
+          "eyebrow": "",
+          "badges": {
+            "special": "",
+            "product": "",
+            "media": "",
+            "commercial": ""
+          },
+          "cards": {
+            "general": {
+              "title": ""
+            },
+            "current": {
+              "title": ""
+            }
+          },
+          "empty": {
+            "title": "",
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "special": {
+            "property": {
+              "description": "",
+              "summary": "",
+              "source": "",
+              "fill": ""
+            },
+            "unit": {
+              "description": "",
+              "summary": "",
+              "source": "",
+              "fill": ""
+            },
+            "default_value": {
+              "description": "",
+              "summary": "",
+              "source": "",
+              "fill": ""
+            }
+          },
+          "product": {
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "media": {
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "commercial": {
+            "description": "",
+            "summary": "",
+            "source": "",
+            "fill": ""
+          },
+          "types": {
+            "product_category": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_configurable_sku": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_configurable_id": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_internal_id": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_short_description": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_description": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_bullet_point": { "description": "", "summary": "", "source": "", "fill": "" },
+            "thumbnail_image": { "description": "", "summary": "", "source": "", "fill": "" },
+            "image": { "description": "", "summary": "", "source": "", "fill": "" },
+            "image_color": { "description": "", "summary": "", "source": "", "fill": "" },
+            "video": { "description": "", "summary": "", "source": "", "fill": "" },
+            "price": { "description": "", "summary": "", "source": "", "fill": "" },
+            "discounted_price": { "description": "", "summary": "", "source": "", "fill": "" },
+            "vat_rate": { "description": "", "summary": "", "source": "", "fill": "" },
+            "stock": { "description": "", "summary": "", "source": "", "fill": "" },
+            "allow_backorder": { "description": "", "summary": "", "source": "", "fill": "" },
+            "condition": { "description": "", "summary": "", "source": "", "fill": "" },
+            "logistic_class": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_active": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_url_key": { "description": "", "summary": "", "source": "", "fill": "" },
+            "product_ean": { "description": "", "summary": "", "source": "", "fill": "" }
+          }
+        }
+      },
       "stores": {
         "labels": {
+          "description": "",
           "siteStatus": "",
           "storeType": ""
         },
@@ -1164,6 +1631,23 @@
             "selfOperated": ""
           }
         }
+      },
+      "languages": {
+        "labels": {
+          "label": ""
+        }
+      },
+      "currencies": {
+        "labels": {
+          "label": ""
+        }
+      },
+      "sections": {
+        "credentials": ""
+      },
+      "miraklNotConnectedBanner": {
+        "title": "",
+        "content": ""
       },
       "amazonIssues": {
         "show": {
@@ -1242,6 +1726,49 @@
           "NOT_EXEMPT": ""
         }
       },
+      "miraklIssues": {
+        "show": {
+          "title": "",
+          "breadcrumb": "",
+          "fields": {
+            "mainCode": "",
+            "code": "",
+            "message": "",
+            "severity": "",
+            "reasonLabel": "",
+            "attributeCode": "",
+            "isRejected": "",
+            "rawData": "",
+            "remoteSku": ""
+          }
+        },
+        "columns": {
+          "mainCode": "",
+          "code": "",
+          "product": "",
+          "views": "",
+          "severity": "",
+          "isRejected": ""
+        },
+        "filters": {
+          "views": "",
+          "severity": "",
+          "isRejected": "",
+          "mainCode": "",
+          "code": "",
+          "reasonLabel": "",
+          "attributeCode": ""
+        },
+        "severity": {
+          "error": "",
+          "warning": "",
+          "info": ""
+        },
+        "rejected": {
+          "yes": "",
+          "no": ""
+        }
+      },
       "sections": {
         "throttling": "",
         "syncPreferences": "",
@@ -1269,6 +1796,9 @@
         "actions": {
           "seeValues": ""
         },
+        "bulkAssign": "",
+        "bulkAssignTitle": "",
+        "assignSuccess": "",
         "labels": {
           "code": "",
           "type": "",
@@ -1277,6 +1807,7 @@
           "remoteId": "",
           "allowsUnmappedValues": "",
           "property": "",
+          "rawData": "",
           "localizedName": "",
           "translatedName": ""
         },
@@ -1485,6 +2016,7 @@
           "remoteName": "",
           "remoteValue": "",
           "remoteId": "",
+          "remoteProperty": "",
           "amazonProperty": "",
           "ebayProperty": "",
           "marketplace": "",
@@ -1496,6 +2028,7 @@
           "translatedValue": ""
         },
         "help": {
+          "remoteProperty": "",
           "amazonProperty": "",
           "ebayProperty": "",
           "marketplace": "",
@@ -1527,6 +2060,8 @@
         "mappedRemotely": "",
         "mappedRemotelyAmazon": "",
         "mappedRemotelyEbay": "",
+        "mappedRemotelyMirakl": "",
+        "readyToPush": "",
         "startMapping": "",
         "autoMap": "",
         "autoMapHelp": "",
@@ -1945,6 +2480,138 @@
           "latencyP95": "Latence p95"
         }
       }
+    },
+    "imports": {
+      "mirakl": {
+        "title": "",
+        "help": "",
+        "oneSilaTitle": "",
+        "oneSilaHelp": "",
+        "oneSilaEmpty": "",
+        "comingSoonTitle": "",
+        "comingSoonDescription": "",
+        "empty": "",
+        "remoteImportId": "",
+        "sourceFileName": "",
+        "files": "",
+        "errorReport": "",
+        "transformedFile": ""
+      },
+      "miraklFeeds": {
+        "heading": "",
+        "description": "",
+        "showTitle": "",
+        "showDescription": "",
+        "fetchError": "",
+        "resyncSuccess": "",
+        "resyncError": "",
+        "resyncDisabled": "",
+        "tableTitle": "",
+        "empty": "",
+        "productsDescription": "",
+        "productsEmpty": "",
+        "fileAvailable": "",
+        "fileMissing": "",
+        "noFile": "",
+        "filters": {
+          "allStatuses": "",
+          "allImportStatuses": ""
+        },
+        "summary": {
+          "total": "",
+          "active": "",
+          "concluded": "",
+          "withReports": ""
+        },
+        "tabs": {
+          "products": ""
+        },
+        "sections": {
+          "productContext": "",
+          "files": "",
+          "fourCardLayout": "",
+          "integrationDetails": "",
+          "transformCounters": "",
+          "payloadData": "",
+          "rawData": ""
+        },
+        "labels": {
+          "importStatus": "",
+          "remoteId": "",
+          "productType": "",
+          "view": "",
+          "counts": "",
+          "stage": "",
+          "productRemoteId": "",
+          "offerRemoteId": "",
+          "reasonStatus": "",
+          "remoteDateCreated": "",
+          "remoteShopId": "",
+          "conversionType": "",
+          "lastSubmittedAt": "",
+          "lastPolledAt": "",
+          "lastSyncedAt": "",
+          "transformLinesRead": "",
+          "transformLinesInSuccess": "",
+          "transformLinesInError": "",
+          "transformLinesWithWarning": "",
+          "salesChannel": "",
+          "aiEnrichment": "",
+          "aiRewrite": "",
+          "invalidProducts": "",
+          "productsNotAcceptedInTime": "",
+          "productsNotSynchronizedInTime": "",
+          "productsReimported": "",
+          "productsSuccessfullySynchronized": "",
+          "productsWithSynchronizationIssues": "",
+          "productsWithWrongIdentifiers": "",
+          "rejectedProducts": ""
+        },
+        "counts": {
+          "items": "",
+          "rows": ""
+        },
+        "files": {
+          "sourceFile": "",
+          "errorReport": "",
+          "newProductReport": "",
+          "transformedFile": "",
+          "transformationErrorReport": ""
+        },
+        "fileStatus": {
+          "available": "",
+          "missing": ""
+        },
+        "template": {
+          "available": "",
+          "missing": "",
+          "download": ""
+        },
+        "status": {
+          "new": "",
+          "pending": "",
+          "gathering_products": "",
+          "gathering_offers": "",
+          "ready_to_render": "",
+          "submitted": "",
+          "processing": "",
+          "success": "",
+          "partial": "",
+          "failed": "",
+          "cancelled": ""
+        },
+        "importStatus": {
+          "TRANSFORMATION_WAITING": "",
+          "TRANSFORMATION_RUNNING": "",
+          "TRANSFORMATION_FAILED": "",
+          "WAITING": "",
+          "RUNNING": "",
+          "SENT": "",
+          "COMPLETE": "",
+          "CANCELLED": "",
+          "FAILED": ""
+        }
+      }
     }
   },
   "media": {
@@ -1985,6 +2652,13 @@
       "labels": {
         "fileThumbnail": "Vignette du fichier",
         "sortByCreatedAt": ""
+      },
+      "selection": {
+        "selectMultiple": "",
+        "selectedMedia": "",
+        "selectedCount": "",
+        "emptyTitle": "",
+        "emptyDescription": ""
       }
     },
     "documents": {
@@ -2067,17 +2741,12 @@
     },
     "rule": {
       "labels": {
-        "usageCount": "",
-        "usageCountPending": "",
         "salesChannel": "",
         "defaultSalesChannel": "",
         "unknownSalesChannel": ""
       },
       "placeholders": {
         "salesChannel": ""
-      },
-      "tooltips": {
-        "usageCountPending": ""
       },
       "messages": {
         "unsavedChanges": ""

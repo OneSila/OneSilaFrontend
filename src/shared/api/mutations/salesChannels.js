@@ -75,6 +75,15 @@ export const createSheinSalesChannelMutation = gql`
   }
 `;
 
+export const createMiraklSalesChannelMutation = gql`
+  mutation createMiraklSalesChannel($data: MiraklSalesChannelInput!) {
+    createMiraklSalesChannel(data: $data) {
+      id
+      hostname
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
@@ -142,6 +151,17 @@ export const updateSheinSalesChannelMutation = gql`
     updateSheinSalesChannel(data: $data) {
       id
       hostname
+    }
+  }
+`;
+
+export const updateMiraklSalesChannelMutation = gql`
+  mutation updateMiraklSalesChannel($data: MiraklSalesChannelPartialInput!) {
+    updateMiraklSalesChannel(data: $data) {
+      id
+      hostname
+      shopId
+      apiKey
     }
   }
 `;
@@ -423,6 +443,17 @@ export const updateSheinSalesChannelViewMutation = gql`
   }
 `;
 
+export const updateMiraklSalesChannelViewMutation = gql`
+  mutation updateMiraklSalesChannelView($data: MiraklSalesChannelViewPartialInput!) {
+    updateMiraklSalesChannelView(data: $data) {
+      id
+      name
+      description
+      active
+    }
+  }
+`;
+
 export const updateEbayInternalPropertyMutation = gql`
   mutation updateEbayInternalProperty($data: EbayInternalPropertyPartialInput!) {
     updateEbayInternalProperty(data: $data) {
@@ -465,6 +496,16 @@ export const updateSheinInternalPropertyMutation = gql`
   }
 `;
 
+export const updateMiraklInternalPropertyMutation = gql`
+  mutation updateMiraklInternalProperty($data: MiraklInternalPropertyPartialInput!) {
+    updateMiraklInternalProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
 export const updateSheinInternalPropertyOptionMutation = gql`
   mutation updateSheinInternalPropertyOption($data: SheinInternalPropertyOptionPartialInput!) {
     updateSheinInternalPropertyOption(data: $data) {
@@ -487,6 +528,17 @@ export const updateRemoteLanguageMutation = gql`
   }
 `;
 
+export const updateMiraklRemoteLanguageMutation = gql`
+  mutation updateMiraklRemoteLanguage($data: MiraklRemoteLanguagePartialInput!) {
+    updateMiraklRemoteLanguage(data: $data) {
+      id
+      label
+      isDefault
+      localInstance
+    }
+  }
+`;
+
 export const updateRemoteCurrencyMutation = gql`
   mutation updateRemoteCurrency($data: RemoteCurrencyPartialInput!) {
     updateRemoteCurrency(data: $data) {
@@ -497,6 +549,21 @@ export const updateRemoteCurrencyMutation = gql`
         isoCode
       }
       remoteCode
+    }
+  }
+`;
+
+export const updateMiraklRemoteCurrencyMutation = gql`
+  mutation updateMiraklRemoteCurrency($data: MiraklRemoteCurrencyPartialInput!) {
+    updateMiraklRemoteCurrency(data: $data) {
+      id
+      label
+      isDefault
+      localInstance {
+        id
+        symbol
+        isoCode
+      }
     }
   }
 `;
@@ -596,6 +663,32 @@ export const createSalesChannelImportMutation = gql`
 export const updateSalesChannelImportMutation = gql`
   mutation updateSalesImportProcess($data: SalesChannelImportPartialInput!) {
     updateSalesImportProcess(data: $data) {
+      id
+      status
+      percentage
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const createMiraklImportProcessMutation = gql`
+  mutation createMiraklImportProcess($data: MiraklSalesChannelImportInput!) {
+    createMiraklImportProcess(data: $data) {
+      id
+      status
+      percentage
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateMiraklImportProcessMutation = gql`
+  mutation updateMiraklImportProcess($data: MiraklSalesChannelImportPartialInput!) {
+    updateMiraklImportProcess(data: $data) {
       id
       status
       percentage
@@ -824,6 +917,16 @@ export const updateSheinPropertyMutation = gql`
   }
 `;
 
+export const updateMiraklPropertyMutation = gql`
+  mutation updateMiraklProperty($data: MiraklPropertyPartialInput!) {
+    updateMiraklProperty(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
 export const mapSalesChannelPerfectMatchPropertiesMutation = gql`
   mutation mapSalesChannelPerfectMatchProperties($salesChannel: SalesChannelPartialInput!) {
     mapSalesChannelPerfectMatchProperties(salesChannel: $salesChannel)
@@ -863,6 +966,16 @@ export const updateEbayPropertySelectValueMutation = gql`
 export const updateSheinPropertySelectValueMutation = gql`
   mutation updateSheinPropertySelectValue($data: SheinPropertySelectValuePartialInput!) {
     updateSheinPropertySelectValue(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
+    }
+  }
+`;
+
+export const updateMiraklPropertySelectValueMutation = gql`
+  mutation updateMiraklPropertySelectValue($data: MiraklPropertySelectValuePartialInput!) {
+    updateMiraklPropertySelectValue(data: $data) {
       id
       mappedLocally
       mappedRemotely
@@ -958,6 +1071,16 @@ export const createSheinProductTypesFromLocalRulesMutation = gql`
   mutation createSheinProductTypesFromLocalRules($data: SheinSalesChannelPartialInput!) {
     createSheinProductTypesFromLocalRules(instance: $data) {
       id
+    }
+  }
+`;
+
+export const updateMiraklProductTypeMutation = gql`
+  mutation updateMiraklProductType($data: MiraklProductTypePartialInput!) {
+    updateMiraklProductType(data: $data) {
+      id
+      mappedLocally
+      mappedRemotely
     }
   }
 `;

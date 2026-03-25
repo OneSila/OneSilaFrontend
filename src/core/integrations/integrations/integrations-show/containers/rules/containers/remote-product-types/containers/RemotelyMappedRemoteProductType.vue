@@ -36,6 +36,7 @@ const integrationId = route.query.integrationId ? route.query.integrationId.toSt
 const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
 const isWizard = route.query.wizard === '1';
 const defaultRuleId = route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null;
+const integrationShowId = computed(() => props.productType?.salesChannel?.proxyId || integrationId);
 const resolvedDefaultRuleId = ref<string | null>(null);
 const formData = ref<Record<string, any>>({});
 const formConfig = ref<FormConfig | null>(null);
@@ -67,8 +68,8 @@ const marketplaceLink = computed(() => {
   }
 
   const query: Record<string, string> = {};
-  if (integrationId) {
-    query.integrationId = integrationId;
+  if (integrationShowId.value) {
+    query.integrationId = integrationShowId.value;
   }
 
   return {
@@ -103,7 +104,7 @@ const setupFormConfig = () => {
       t,
       props.config.integrationType,
       productTypeId.value,
-      integrationId,
+      integrationShowId.value,
       resolvedDefaultRuleId.value,
   );
   if (formConfig.value) {
@@ -184,7 +185,7 @@ onMounted(async () => {
   formConfig.value.addSubmitAndContinue = false;
   formConfig.value.cancelUrl = {
     name: 'integrations.integrations.show',
-    params: {type: type.value, id: integrationId},
+    params: {type: type.value, id: integrationShowId.value},
     query: {tab: 'productRules'},
   };
 
@@ -192,20 +193,20 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: props.config.editRouteName,
       params: {type: type.value, id: nextId},
-      query: {integrationId, salesChannelId, wizard: '1'},
+      query: {integrationId: integrationShowId.value, salesChannelId, wizard: '1'},
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   } else if (last) {
     formConfig.value.submitUrl = {
       name: 'integrations.integrations.show',
-      params: {type: type.value, id: integrationId},
+      params: {type: type.value, id: integrationShowId.value},
       query: {tab: 'productRules'},
     };
   } else {
     Toast.success(t('integrations.show.mapping.allMappedSuccess'));
     router.push({
       name: 'integrations.integrations.show',
-      params: {type: type.value, id: integrationId},
+      params: {type: type.value, id: integrationShowId.value},
       query: {tab: 'productRules'},
     });
   }
@@ -221,7 +222,7 @@ const handleFormUpdate = (form: any) => {
 
 const buildPropertyPath = (item: any) =>
     props.config.getPropertyRoute
-        ? props.config.getPropertyRoute(item, {type: type.value, integrationId, salesChannelId}, state)
+        ? props.config.getPropertyRoute(item, {type: type.value, integrationId: integrationShowId.value, salesChannelId}, state)
         : null;
 
 const mappedItems = computed(() =>
@@ -243,7 +244,7 @@ const additionalButton = computed<AdditionalButtonConfig | null>(() => {
   return (
       props.config.getAdditionalButtonConfig({
         productTypeId: productTypeId.value,
-        integrationId,
+        integrationId: integrationShowId.value,
         salesChannelId,
         isWizard,
         formData: formData.value,
@@ -268,7 +269,7 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
           {
             path: {
               name: 'integrations.integrations.show',
-              params: { id: integrationId, type: type },
+              params: { id: integrationShowId, type: type },
               query: { tab: 'productRules' },
             },
             name: integrationTitle,
@@ -280,7 +281,6 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
 
     <template #content>
       <GeneralForm v-if="formConfig" :config="formConfig" @form-updated="handleFormUpdate" @set-data="handleSetData">
-
         <template v-if="marketplaceName" #before-fields>
           <div class="mb-6">
             <Label class="font-semibold block text-sm leading-6 text-gray-900">
@@ -304,6 +304,10 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
             </Button>
           </Link>
         </template>
+
+        <template #help-section>
+          <slot name="help-section" />
+        </template>
       </GeneralForm>
 
       <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 mt-4">
@@ -324,7 +328,7 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
                     <tr>
                       <th class="p-2 text-left">{{ t('shared.labels.name') }}</th>
                       <th v-if="showCodeColumn" class="p-2 text-left">{{
-                          t('integrations.show.properties.labels.code')
+                          t('shared.labels.code')
                         }}
                       </th>
                       <th class="p-2 text-left">{{ t('integrations.show.mapping.mappedLocally') }}</th>
