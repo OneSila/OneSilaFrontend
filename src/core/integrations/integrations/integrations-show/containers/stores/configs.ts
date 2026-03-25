@@ -98,14 +98,6 @@ export const storeEditFormConfigConstructor = (
           disabled: true,
           optional: true,
         },
-        {
-          type: FieldType.Checkbox,
-          name: 'active',
-          label: t('shared.labels.active'),
-          uncheckedValue: 'false',
-          default: false,
-          optional: true,
-        },
       ];
     }
 
