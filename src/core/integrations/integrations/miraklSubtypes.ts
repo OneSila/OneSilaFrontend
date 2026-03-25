@@ -226,7 +226,7 @@ const MIRAKL_SUB_TYPE_CHOICES_RAW: Array<[string, string]> = [
   ['bluediamondgrowersus-prod', 'Blue Diamond Growers'],
   ['bobsdiscount-prod', "Bob's Discount Furniture (SOLEX)"],
   ['middleton-prod', 'Boelter (ex: Food Service Exchange LLC)'],
-  ['debenhamsuk-prod', 'Boohoo - Debenhams'],
+  ['debenhamsuk-prod', 'Debenhams'],
   ['bootsuk1-prod', 'Boots UK'],
   ['blg-prod', 'Boulanger'],
   ['bandquk-prod', 'B&Q'],
