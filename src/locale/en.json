@@ -4732,6 +4732,10 @@
             "title": "No integrations match this filter",
             "description": "Try another search term or expand the active filters to surface more integration types."
           },
+          "loadingMore": {
+            "title": "Loading more integrations",
+            "description": "{loaded} of {total} integration types loaded."
+          },
           "selection": {
             "title": "Selected Integration",
             "description": "{integration} is selected. Continue to the next step to configure the connection details and sync setup.",

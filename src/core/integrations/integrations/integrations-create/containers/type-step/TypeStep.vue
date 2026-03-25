@@ -105,7 +105,10 @@ const integrationCards = ref<TypeCard[]>([]);
 const loadingCards = ref(false);
 const cardLoadError = ref(false);
 const selectedCardCache = ref<TypeCard | null>(null);
+const totalIntegrationCards = ref<number | null>(null);
+const hasLoadedFirstPage = ref(false);
 let wizardActionsObserver: IntersectionObserver | null = null;
+let activeFetchRequestId = 0;
 
 const getCardFilter = (category: IntegrationCategory) => {
   return t(`integrations.create.wizard.step1.filters.${category}`);
@@ -298,8 +301,12 @@ const buildCardFromNode = (node: PublicIntegrationTypeNode): TypeCard => ({
 });
 
 const fetchIntegrationCards = async () => {
+  const requestId = ++activeFetchRequestId;
   loadingCards.value = true;
   cardLoadError.value = false;
+  integrationCards.value = [];
+  totalIntegrationCards.value = null;
+  hasLoadedFirstPage.value = false;
 
   try {
     const filter: Record<string, any> = {
@@ -332,21 +339,34 @@ const fetchIntegrationCards = async () => {
         fetchPolicy: 'network-only',
       });
 
+      if (requestId !== activeFetchRequestId) {
+        return;
+      }
+
       const connection = data?.publicIntegrationTypes;
       const currentEdges = connection?.edges || [];
 
       edges.push(...currentEdges);
+      integrationCards.value = edges.map((edge) => buildCardFromNode(edge.node));
+      totalIntegrationCards.value = connection?.totalCount ?? edges.length;
+      hasLoadedFirstPage.value = true;
       hasNextPage = Boolean(connection?.pageInfo?.hasNextPage);
       after = connection?.pageInfo?.endCursor || null;
     }
-
-    integrationCards.value = edges.map((edge) => buildCardFromNode(edge.node));
   } catch (error) {
+    if (requestId !== activeFetchRequestId) {
+      return;
+    }
+
     integrationCards.value = [];
+    totalIntegrationCards.value = null;
+    hasLoadedFirstPage.value = true;
     cardLoadError.value = true;
     console.error('Failed to load public integration types', error);
   } finally {
-    loadingCards.value = false;
+    if (requestId === activeFetchRequestId) {
+      loadingCards.value = false;
+    }
   }
 };
 
@@ -364,6 +384,8 @@ const scheduleCardFetch = () => {
 
 const visibleCards = computed(() => integrationCards.value);
 const filteredCount = computed(() => visibleCards.value.length);
+const showInlineLoadingState = computed(() => loadingCards.value && hasLoadedFirstPage.value && visibleCards.value.length > 0);
+const loadingProgressTotal = computed(() => totalIntegrationCards.value ?? filteredCount.value);
 const selectedCard = computed(() => {
   const currentCard = integrationCards.value.find((card) => card.value === selectedType.value) || null;
   if (currentCard) {
@@ -508,6 +530,7 @@ onBeforeUnmount(() => {
             <SearchInput
               v-model="searchTerm"
               :placeholder="t('integrations.create.wizard.step1.searchPlaceholder')"
+              :loading="loadingCards"
             />
 
             <div class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm sm:flex-row sm:items-center">
@@ -593,6 +616,21 @@ onBeforeUnmount(() => {
             </div>
 
             <div v-else class="space-y-10">
+              <div
+                v-if="showInlineLoadingState"
+                class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-600 shadow-sm"
+              >
+                <Icon name="circle-notch" size="sm" spin class="text-primary" />
+                <div class="min-w-0">
+                  <p class="font-medium text-slate-800">
+                    {{ t('integrations.create.wizard.step1.loadingMore.title') }}
+                  </p>
+                  <p class="text-xs text-slate-500">
+                    {{ t('integrations.create.wizard.step1.loadingMore.description', { loaded: filteredCount, total: loadingProgressTotal }) }}
+                  </p>
+                </div>
+              </div>
+
               <section
                 v-for="section in visibleSections"
                 :key="section.key"
