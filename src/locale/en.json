@@ -3526,8 +3526,6 @@
         "title": "Product Rule"
       },
       "labels": {
-        "usageCount": "Usage count",
-        "usageCountPending": "Pending",
         "type": "Rule Type",
         "propertyType": "Property Type",
         "salesChannel": "Sales Channel",
@@ -3540,9 +3538,6 @@
       },
       "help": {
         "type": "Select how this property should be handled for the product."
-      },
-      "tooltips": {
-        "usageCountPending": "Usage count is recalculated after saving this rule."
       },
       "preview": {
         "previewTitle": "Preview of Configuration",
@@ -3914,6 +3909,7 @@
             "typeParameters": "Type parameters",
             "validations": "Validations",
             "transformations": "Transformations",
+            "rawData": "Raw data",
             "labelTranslations": "Label translations",
             "descriptionTranslations": "Description translations"
           }
@@ -3983,7 +3979,8 @@
             "stock": "Stock",
             "vat_rate": "VAT rate",
             "allow_backorder": "Allow backorder",
-            "condition": "Condition"
+            "condition": "Condition",
+            "logistic_class": "Logistic class"
           }
         },
         "representationGuide": {
@@ -4149,6 +4146,12 @@
               "summary": "Condition is handled as a OneSila property, but Mirakl has its own special values for it, so it needs to be mapped carefully.",
               "source": "Source in OneSila: the mapped condition property and its selected value.",
               "fill": "Mirakl fill logic: OneSila sends the mapped condition value into Mirakl's condition field."
+            },
+            "logistic_class": {
+              "description": "Use this when Mirakl expects the offer logistic class from OneSila.",
+              "summary": "Logistic class is handled as a OneSila property, but Mirakl uses its own special logistic class values for offers, so it needs to be mapped carefully.",
+              "source": "Source in OneSila: the mapped logistic class property and its selected value.",
+              "fill": "Mirakl fill logic: OneSila sends the mapped logistic class value into Mirakl's logistic class field when it is provided."
             },
             "product_active": {
               "description": "Use this when Mirakl expects the active state of the product.",
@@ -5240,7 +5243,7 @@
         "schema": "Schema",
         "products": "Products",
         "schemaDescription": "Initial setup required to enable product imports.",
-        "productsDescription": "Imports actual product data from Amazon.",
+        "productsDescription": "Imports actual product data from the marketplace.",
         "schemaRequired": "Please complete the schema import first."
       },
       "mirakl": {

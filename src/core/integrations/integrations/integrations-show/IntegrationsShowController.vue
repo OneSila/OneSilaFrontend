@@ -63,8 +63,15 @@ const integrationData = ref<any>(null);
 const gptFeed = ref<any>(null);
 const initialGptEnabled = ref(false);
 
+type IntegrationTabItem = {
+  name: string;
+  label: string;
+  icon: string;
+  group?: string;
+  hidden?: boolean;
+};
 
-const tabItems = ref([
+const tabItems = ref<IntegrationTabItem[]>([
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' }
 ]);
 
@@ -114,7 +121,14 @@ if (type.value !== IntegrationTypes.Webhook) {
     );
   }
 
-  tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+  if (type.value === IntegrationTypes.Mirakl) {
+    tabItems.value.push(
+      { name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import', group: 'imports' },
+      { name: 'miraklImports', label: t('shared.tabs.imports'), icon: 'file-import', group: 'imports', hidden: true },
+    );
+  } else {
+    tabItems.value.push({ name: 'imports', label: t('shared.tabs.imports'), icon: 'file-import' });
+  }
 } else {
   tabItems.value.push(
     { name: 'monitor', label: t('webhooks.monitor.title'), icon: 'wave-square' },
@@ -366,6 +380,10 @@ const pullData = async () => {
 
           <!-- Imports Tab -->
           <template #imports>
+            <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
+          </template>
+
+          <template #miraklImports>
             <Imports v-if="salesChannelId && integrationId" :id="id" :sales-channel-id="salesChannelId" />
           </template>
 

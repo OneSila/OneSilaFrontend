@@ -1,29 +1,34 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Link } from "../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../shared/components/atoms/button";
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { DiscreteLoader } from "../../../../../../../shared/components/atoms/discrete-loader";
 import { Badge } from "../../../../../../../shared/components/atoms/badge";
+import { ProgressBar } from "../../../../../../../shared/components/molecules/progress-bar";
 import { ApolloSubscription } from "../../../../../../../shared/components/molecules/apollo-subscription";
 import { salesChannelSubscription } from "../../../../../../../shared/api/subscriptions/salesChannels.js";
 import { miraklFeedsQuery } from "../../../../../../../shared/api/queries/miraklFeeds.js";
 import { resyncMiraklFeedMutation } from "../../../../../../../shared/api/mutations/miraklFeeds.js";
+import { updateMiraklImportProcessMutation } from "../../../../../../../shared/api/mutations/salesChannels";
 import { Toast } from "../../../../../../../shared/modules/toast";
 import {
   concludedMiraklFeedStatuses,
   getMiraklFeedImportStatusLabel,
   getMiraklFeedStatusBadgeMap,
+  getStatusBadgeMap,
   MiraklFeedListItem,
   SalesChannelSubscriptionResult,
 } from "../configs";
 import apolloClient from "../../../../../../../../apollo-client";
+import { getProgressBarUiForStatus } from "../../../../../../../shared/utils/constants";
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
 
 const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
 
 const activeSection = ref<'oneSila' | 'mirakl'>('oneSila');
@@ -33,6 +38,7 @@ const selectedStatus = ref<string>('all');
 const selectedImportStatus = ref<string>('all');
 const resyncingFeedId = ref<string | null>(null);
 
+const statusBadgeMap = getStatusBadgeMap(t);
 const miraklFeedStatusBadgeMap = computed(() => getMiraklFeedStatusBadgeMap(t));
 
 const miraklFeedStatusOptions = computed(() => [
@@ -91,6 +97,15 @@ const summary = computed(() => ({
     ),
   ).length,
 }));
+
+const isRetryEnabled = (importItem: any): boolean => {
+  const createdDate = new Date(importItem.createdAt);
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  return ['success', 'failed'].includes(importItem.status) && createdDate >= oneWeekAgo;
+};
+
+const getProgressUi = (status: string) => getProgressBarUiForStatus(status);
 
 const buildFeedFilters = () => {
   const filter: Record<string, any> = {
@@ -152,11 +167,51 @@ const resyncFeed = async (feedId: string) => {
   }
 };
 
+const retryImport = async (importId: string) => {
+  try {
+    await apolloClient.mutate({
+      mutation: updateMiraklImportProcessMutation,
+      variables: { data: { id: importId, status: 'pending' } },
+    });
+    Toast.success(t('integrations.imports.retry.success'));
+  } catch (error) {
+    Toast.error(t('integrations.imports.retry.error'));
+    console.error('Retry failed:', error);
+  }
+};
+
+const setActiveSection = async (section: 'oneSila' | 'mirakl') => {
+  if (activeSection.value === section) {
+    return;
+  }
+
+  activeSection.value = section;
+  await router.push({
+    query: {
+      ...route.query,
+      tab: section === 'mirakl' ? 'miraklImports' : 'imports',
+    },
+  });
+};
+
 watch([selectedStatus, selectedImportStatus], () => {
   if (activeSection.value === 'mirakl') {
     void fetchMiraklFeeds();
   }
 });
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    if (tab === 'miraklImports') {
+      activeSection.value = 'mirakl';
+      return;
+    }
+
+    activeSection.value = 'oneSila';
+  },
+  { immediate: true },
+);
 
 watch(activeSection, (value) => {
   if (value === 'mirakl' && !feeds.value.length) {
@@ -181,7 +236,7 @@ onMounted(() => {
           :class="activeSection === 'oneSila'
             ? 'border-primary bg-primary/5 text-primary'
             : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'"
-          @click="activeSection = 'oneSila'"
+          @click="setActiveSection('oneSila')"
         >
           {{ t('integrations.imports.mirakl.oneSilaTitle') }}
         </button>
@@ -191,7 +246,7 @@ onMounted(() => {
           :class="activeSection === 'mirakl'
             ? 'border-primary bg-primary/5 text-primary'
             : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'"
-          @click="activeSection = 'mirakl'"
+          @click="setActiveSection('mirakl')"
         >
           {{ t('integrations.imports.mirakl.title') }}
         </button>
@@ -205,8 +260,15 @@ onMounted(() => {
             <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
               <div></div>
               <div>
-                <Link :path="{ name: 'integrations.imports.create', params: { integrationId: id } }">
-                  <Button type="button" class="btn btn-primary">
+                <Link
+                  :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
+                  :path="{ name: 'integrations.imports.create', params: { integrationId: id } }"
+                >
+                  <Button
+                    :disabled="(result as SalesChannelSubscriptionResult).salesChannel.isImporting"
+                    type="button"
+                    class="btn btn-primary"
+                  >
                     {{ t('integrations.imports.create.title') }}
                   </Button>
                 </Link>
@@ -220,6 +282,7 @@ onMounted(() => {
                     <th class="p-2 text-left">{{ t('shared.labels.type') }}</th>
                     <th class="p-2 text-left">{{ t('shared.labels.status') }}</th>
                     <th class="p-2 text-left">{{ t('shared.labels.progress') }}</th>
+                    <th class="p-2 text-left">{{ t('shared.labels.actions') }}</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
@@ -235,9 +298,21 @@ onMounted(() => {
                     </td>
                     <td class="p-2">{{ t(`integrations.imports.types.${importItem.type}`) }}</td>
                     <td class="p-2">
-                      <Badge color="gray" :text="importItem.status" />
+                      <Badge :color="statusBadgeMap[importItem.status]?.color" :text="statusBadgeMap[importItem.status]?.text" />
                     </td>
-                    <td class="p-2">{{ importItem.percentage }}%</td>
+                    <td class="p-2">
+                      <ProgressBar
+                        :progress="importItem.percentage"
+                        :label="t(getProgressUi(importItem.status).labelKey)"
+                        :label-color="getProgressUi(importItem.status).labelColor"
+                        :bar-color="getProgressUi(importItem.status).barColor"
+                      />
+                    </td>
+                    <td class="p-2 text-right">
+                      <Button :disabled="!isRetryEnabled(importItem)" @click="retryImport(importItem.id)">
+                        <Icon name="clock-rotate-left" size="lg" class="text-gray-500" />
+                      </Button>
+                    </td>
                   </tr>
                 </tbody>
               </table>

@@ -184,8 +184,8 @@ const getMiraklSeverityBadgeMap = (t: Function) => ({
 });
 
 const getRejectedBadgeMap = (t: Function) => ({
-  true: { text: t('integrations.show.miraklIssues.rejected.yes'), color: 'red' },
-  false: { text: t('integrations.show.miraklIssues.rejected.no'), color: 'green' },
+  true: { text: t('shared.labels.yes'), color: 'red' },
+  false: { text: t('shared.labels.no'), color: 'green' },
 });
 
 export const miraklProductIssuesSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
@@ -275,7 +275,6 @@ export const miraklProductIssuesListingConfigConstructor = (
 ): ListingConfig => ({
   headers: [
     t('integrations.show.miraklIssues.columns.code'),
-    t('shared.labels.message'),
     t('integrations.show.miraklIssues.columns.product'),
     t('integrations.show.miraklIssues.columns.views'),
     t('integrations.show.miraklIssues.columns.severity'),
@@ -289,15 +288,12 @@ export const miraklProductIssuesListingConfigConstructor = (
       shortenAfter: 40,
     },
     {
-      name: 'message',
-      type: FieldType.Text,
-      accessor: (node) => node.message || '-',
-      shortenAfter: 96,
-    },
-    {
       name: 'remoteProduct',
-      type: FieldType.Text,
-      accessor: (node) => node.remoteProduct?.localInstance?.name || node.remoteProduct?.remoteSku || '-',
+      type: FieldType.NestedText,
+      keys: ['localInstance', 'name'],
+      clickable: true,
+      clickUrl: { name: 'products.products.show' },
+      clickIdentifiers: [{ id: ['localInstance', 'id'] }],
     },
     {
       name: 'views',
@@ -308,9 +304,7 @@ export const miraklProductIssuesListingConfigConstructor = (
     { name: 'severity', type: FieldType.Badge, badgeMap: getMiraklSeverityBadgeMap(t) },
     {
       name: 'isRejected',
-      type: FieldType.Badge,
-      badgeMap: {},
-      accessor: (node) => getRejectedBadgeMap(t)[String(Boolean(node.isRejected))],
+      type: FieldType.Boolean,
     },
   ],
   identifierVariables: { type },

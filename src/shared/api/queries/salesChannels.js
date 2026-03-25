@@ -341,6 +341,7 @@ export const amazonChannelsQuery = gql`
           }
           saleschannelPtr {
             id
+            proxyId
           }
         }
         cursor
@@ -2459,6 +2460,9 @@ export const getMiraklProductTypeQuery = gql`
       id
       remoteId
       name
+      salesChannel {
+        proxyId
+      }
       template {
         name
         url

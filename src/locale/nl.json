@@ -3114,8 +3114,6 @@
         "title": "Product Eigenschap Regel"
       },
       "labels": {
-        "usageCount": "",
-        "usageCountPending": "",
         "type": "Regel Type",
         "propertyType": "Type Eigenschap",
         "salesChannel": "",
@@ -3125,9 +3123,6 @@
       "placeholders": {
         "type": "Selecteer Type Regel",
         "salesChannel": ""
-      },
-      "tooltips": {
-        "usageCountPending": ""
       },
       "help": {
         "type": "Selecteer het gedrag voor deze eigenschap"
@@ -4185,6 +4180,7 @@
             "typeParameters": "",
             "validations": "",
             "transformations": "",
+            "rawData": "",
             "labelTranslations": "",
             "descriptionTranslations": ""
           }
@@ -4254,7 +4250,8 @@
             "stock": "",
             "vat_rate": "",
             "allow_backorder": "",
-            "condition": ""
+            "condition": "",
+            "logistic_class": ""
           }
         },
         "representationGuide": {
@@ -4336,6 +4333,7 @@
             "stock": { "description": "", "summary": "", "source": "", "fill": "" },
             "allow_backorder": { "description": "", "summary": "", "source": "", "fill": "" },
             "condition": { "description": "", "summary": "", "source": "", "fill": "" },
+            "logistic_class": { "description": "", "summary": "", "source": "", "fill": "" },
             "product_active": { "description": "", "summary": "", "source": "", "fill": "" },
             "product_url_key": { "description": "", "summary": "", "source": "", "fill": "" },
             "product_ean": { "description": "", "summary": "", "source": "", "fill": "" }

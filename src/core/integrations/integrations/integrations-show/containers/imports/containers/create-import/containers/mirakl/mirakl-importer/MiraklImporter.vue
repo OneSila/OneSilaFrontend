@@ -22,7 +22,7 @@ const loading = ref(false);
 const salesChannelId = ref<string | null>(null);
 const importSettings = ref({
   updateOnly: false,
-  overrideOnly: false,
+  overrideOnly: true,
   skipBrokenRecords: true,
 });
 

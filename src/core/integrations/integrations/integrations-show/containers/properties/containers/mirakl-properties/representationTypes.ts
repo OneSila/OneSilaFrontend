@@ -2,6 +2,7 @@ export const MIRAKL_REPRESENTATION_TYPE_PROPERTY = 'property';
 export const MIRAKL_REPRESENTATION_TYPE_UNIT = 'unit';
 export const MIRAKL_REPRESENTATION_TYPE_DEFAULT_VALUE = 'default_value';
 export const MIRAKL_REPRESENTATION_TYPE_CONDITION = 'condition';
+export const MIRAKL_REPRESENTATION_TYPE_LOGISTIC_CLASS = 'logistic_class';
 
 export const MIRAKL_REPRESENTATION_TYPE_CHOICES = [
   MIRAKL_REPRESENTATION_TYPE_PROPERTY,
@@ -30,6 +31,7 @@ export const MIRAKL_REPRESENTATION_TYPE_CHOICES = [
   'vat_rate',
   'allow_backorder',
   MIRAKL_REPRESENTATION_TYPE_CONDITION,
+  MIRAKL_REPRESENTATION_TYPE_LOGISTIC_CLASS,
 ] as const;
 
 export const getMiraklRepresentationTypeOptions = (t: Function) =>
@@ -69,6 +71,7 @@ export const MIRAKL_COMMERCIAL_REPRESENTATION_TYPES = [
   'vat_rate',
   'allow_backorder',
   'condition',
+  'logistic_class',
 ] as const;
 
 export const getMiraklRepresentationTypeGroup = (representationType?: string | null) => {
@@ -95,6 +98,7 @@ export const usesMiraklLocalPropertyMapping = (representationType?: string | nul
   [
     MIRAKL_REPRESENTATION_TYPE_PROPERTY,
     MIRAKL_REPRESENTATION_TYPE_CONDITION,
+    MIRAKL_REPRESENTATION_TYPE_LOGISTIC_CLASS,
     'product_active',
     'allow_backorder',
   ].includes(representationType || '');

@@ -11,10 +11,12 @@ import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import { miraklChannelsQuery, miraklChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import { miraklProductCategoriesQuery } from '../../../../../../../shared/api/queries/miraklProducts.js';
 import { miraklProductTypesForCategoryMappingQuery } from '../../../../../../../shared/api/queries/miraklProductTypes.js';
-import { miraklProductIssuesQuery } from '../../../../../../../shared/api/queries/miraklProductIssues.js';
+import { miraklProductIssuesListingQuery } from '../../../../../../../shared/api/queries/miraklProductIssues.js';
+import { configurableVariationsForIssuesQuery } from '../../../../../../../shared/api/queries/products.js';
 import MiraklMarketplaceTabs from './components/MiraklMarketplaceTabs.vue';
 import MiraklCategorySection from './components/MiraklCategorySection.vue';
 import MiraklIssuesSection from './components/MiraklIssuesSection.vue';
+import { ProductType } from '../../../../../../../shared/utils/constants';
 
 const props = defineProps<{ product: Product }>();
 
@@ -185,7 +187,7 @@ const selectedChannelSalesChannelId = computed(() =>
 );
 
 const selectedChannelIntegrationId = computed(() =>
-  selectedChannel.value?.integrationPtr?.id || null,
+  selectedChannel.value?.saleschannelPtr?.proxyId || selectedChannel.value?.integrationPtr?.id || null,
 );
 
 const selectedCategory = computed(() => resolveCategoryForChannel(selectedChannel.value));
@@ -198,28 +200,72 @@ const selectedDefaultCategory = computed(() => {
 const miraklIssuesLoading = ref(false);
 const miraklIssues = ref<any[]>([]);
 const selectedChannelViewIds = ref<string[]>([]);
+const selectedIssueProductIds = ref<string[]>([]);
 let selectedChannelViewsRequestId = 0;
+let selectedIssueProductIdsRequestId = 0;
 let miraklIssuesRequestId = 0;
 
-const selectedChannelRemoteProductIds = computed(() => {
-  if (!selectedChannelViewIds.value.length) {
-    return [];
+const issueSourceProduct = computed(() => {
+  if (props.product?.type === ProductType.Alias && props.product?.aliasParentProduct?.id) {
+    return props.product.aliasParentProduct;
+  }
+  return props.product;
+});
+
+const fetchSelectedIssueProductIds = async () => {
+  const sourceProduct = issueSourceProduct.value;
+
+  if (!sourceProduct?.id) {
+    selectedIssueProductIds.value = [];
+    return;
   }
 
-  const assignments = props.product?.saleschannelviewassignSet ?? [];
+  if (sourceProduct.type !== ProductType.Configurable) {
+    selectedIssueProductIds.value = [sourceProduct.id];
+    return;
+  }
 
-  return Array.from(
-    new Set(
-      assignments
-        .filter((assign: any) =>
-          assign?.integrationType === 'mirakl' &&
-          selectedChannelViewIds.value.includes(assign?.salesChannelView?.id) &&
-          assign?.remoteProduct?.id,
-        )
-        .map((assign: any) => assign.remoteProduct.id),
-    ),
-  );
-});
+  const requestId = ++selectedIssueProductIdsRequestId;
+  const variationIds: string[] = [];
+  let after: string | null = null;
+  let hasNextPage = true;
+
+  try {
+    while (hasNextPage) {
+      const { data } = await apolloClient.query({
+        query: configurableVariationsForIssuesQuery,
+        variables: {
+          first: 100,
+          after,
+          filter: { parent: { id: { exact: sourceProduct.id } } },
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      if (requestId !== selectedIssueProductIdsRequestId) {
+        return;
+      }
+
+      const connection = data?.configurableVariations;
+      const edges = connection?.edges ?? [];
+
+      variationIds.push(
+        ...edges
+          .map((edge: any) => edge?.node?.variation?.id)
+          .filter((id: string | null | undefined): id is string => Boolean(id)),
+      );
+
+      hasNextPage = Boolean(connection?.pageInfo?.hasNextPage);
+      after = connection?.pageInfo?.endCursor ?? null;
+    }
+
+    selectedIssueProductIds.value = Array.from(new Set(variationIds));
+  } catch (_error) {
+    if (requestId === selectedIssueProductIdsRequestId) {
+      selectedIssueProductIds.value = [];
+    }
+  }
+};
 
 const fetchSelectedChannelViews = async () => {
   if (!selectedChannelSalesChannelId.value) {
@@ -253,7 +299,7 @@ const fetchSelectedChannelViews = async () => {
 };
 
 const fetchMiraklIssues = async () => {
-  if (!selectedChannelViewIds.value.length || !selectedChannelRemoteProductIds.value.length) {
+  if (!selectedChannelViewIds.value.length || !selectedIssueProductIds.value.length) {
     miraklIssues.value = [];
     return;
   }
@@ -263,10 +309,13 @@ const fetchMiraklIssues = async () => {
 
   try {
     const { data } = await apolloClient.query({
-      query: miraklProductIssuesQuery,
+      query: miraklProductIssuesListingQuery,
       variables: {
+        first: 100,
         filter: {
-          remoteProduct: { id: { inList: selectedChannelRemoteProductIds.value } },
+          remoteProduct: {
+            localInstance: { id: { inList: selectedIssueProductIds.value } },
+          },
           views: { id: { inList: selectedChannelViewIds.value } },
         },
       },
@@ -290,6 +339,14 @@ const fetchMiraklIssues = async () => {
 };
 
 watch(
+  () => [issueSourceProduct.value?.id, issueSourceProduct.value?.type],
+  () => {
+    void fetchSelectedIssueProductIds();
+  },
+  { immediate: true },
+);
+
+watch(
   selectedChannelSalesChannelId,
   () => {
     void fetchSelectedChannelViews();
@@ -298,7 +355,7 @@ watch(
 );
 
 watch(
-  [selectedChannelViewIds, () => props.product?.saleschannelviewassignSet],
+  [selectedChannelViewIds, selectedIssueProductIds],
   () => {
     void fetchMiraklIssues();
   },
@@ -375,6 +432,7 @@ defineExpose({ hasUnsavedChanges, fetchMiraklProductCategories });
                 :integration-id="selectedChannelIntegrationId"
                 :last-differential-issues-fetch="selectedChannel?.lastDifferentialIssuesFetch"
                 :last-full-fetch="selectedChannel?.lastFullIssuesFetch"
+                :show-variation-sku="issueSourceProduct?.type === ProductType.Configurable"
               />
             </div>
 

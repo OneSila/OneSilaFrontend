@@ -67,7 +67,7 @@ const channelEntries = computed(() =>
             class="text-xs"
             :path="{
               name: 'integrations.integrations.show',
-              params: { type: IntegrationTypes.Mirakl, id: entry.channel.id },
+              params: { type: IntegrationTypes.Mirakl, id: entry.channel.saleschannelPtr?.proxyId || entry.channel.id },
             }"
           >
             ({{ t('products.products.mirakl.openIntegration') }})

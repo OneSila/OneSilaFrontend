@@ -59,12 +59,6 @@ const severityBadge = computed(() => {
   return issue.value?.severity ? { text: issue.value.severity, color: 'gray' } : null;
 });
 
-const rejectedBadge = computed(() =>
-  issue.value?.isRejected
-    ? { text: t('integrations.show.miraklIssues.rejected.yes'), color: 'red' }
-    : { text: t('integrations.show.miraklIssues.rejected.no'), color: 'green' },
-);
-
 const jsonRawData = computed(() => {
   try {
     return JSON.stringify(issue.value?.rawData ?? {}, null, 2);
@@ -207,7 +201,8 @@ onMounted(fetchIssue);
             <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
               <dt class="text-sm font-medium text-gray-900">{{ t('integrations.show.miraklIssues.show.fields.isRejected') }}</dt>
               <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                <Badge :text="rejectedBadge.text" :color="rejectedBadge.color" />
+                  <Icon v-if="issue.isRejected" name="check-circle" class="ml-2 text-green-500" />
+                  <Icon v-else name="times-circle" class="ml-2 text-red-500" />
               </dd>
             </div>
 

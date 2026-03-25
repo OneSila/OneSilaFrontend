@@ -34,6 +34,7 @@ const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
+const integrationShowId = computed(() => props.productType?.salesChannel?.proxyId || integrationId);
 
 const state = reactive(props.config.createState());
 
@@ -214,17 +215,17 @@ const save = async () => {
     Toast.success(t('shared.alert.toast.submitSuccessUpdate'));
 
     if (!isWizard) {
-      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationShowId.value }, query: { tab: 'productRules' } });
       return;
     }
 
     const { nextId, last } = await fetchNextUnmapped();
     if (nextId) {
-      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { integrationId, salesChannelId, wizard: '1' } });
+      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { integrationId: integrationShowId.value, salesChannelId, wizard: '1' } });
     } else if (last) {
-      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationShowId.value }, query: { tab: 'productRules' } });
     } else {
-      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationId }, query: { tab: 'productRules' } });
+      router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationShowId.value }, query: { tab: 'productRules' } });
     }
   } catch (error) {
     const validationErrors = processGraphQLErrors(error, t);
@@ -240,7 +241,7 @@ const save = async () => {
 <template>
   <GeneralTemplate>
     <template #breadcrumbs>
-      <Breadcrumbs :links="[{ path: { name: 'integrations.integrations.list' }, name: t('integrations.title') }, { path: { name: 'integrations.integrations.show', params: {id: integrationId, type: type}, query: {tab: 'productRules'} }, name: integrationTitle }, { name: t('integrations.show.mapProductType') }]" />
+      <Breadcrumbs :links="[{ path: { name: 'integrations.integrations.list' }, name: t('integrations.title') }, { path: { name: 'integrations.integrations.show', params: {id: integrationShowId, type: type}, query: {tab: 'productRules'} }, name: integrationTitle }, { name: t('integrations.show.mapProductType') }]" />
     </template>
     <template #content>
       <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
@@ -329,7 +330,7 @@ const save = async () => {
             </div>
             <hr />
             <div class="flex items-center justify-end gap-x-3 px-4 py-4 sm:px-8">
-              <Link :path="{ name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'productRules' } }">
+              <Link :path="{ name: 'integrations.integrations.show', params: { type: type, id: integrationShowId }, query: { tab: 'productRules' } }">
                 <CancelButton>
                   {{ t('shared.button.back') }}
                 </CancelButton>

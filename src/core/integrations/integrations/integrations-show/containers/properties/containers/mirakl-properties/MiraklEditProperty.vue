@@ -14,6 +14,7 @@ import type { FormConfig } from "../../../../../../../../shared/components/organ
 import { Link } from "../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
 import { Label } from "../../../../../../../../shared/components/atoms/label";
+import { Accordion } from "../../../../../../../../shared/components/atoms/accordion";
 import { checkPropertyForDuplicatesMutation } from "../../../../../../../../shared/api/mutations/properties.js";
 import debounce from 'lodash.debounce';
 import { buildFilterVariablesFromRouteQuery, extractPrefixedQueryParams } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
@@ -253,8 +254,11 @@ const jsonSections = computed(() => [
   { key: 'typeParameters', label: t('integrations.show.mirakl.properties.labels.typeParameters') },
   { key: 'validations', label: t('integrations.show.mirakl.properties.labels.validations') },
   { key: 'transformations', label: t('integrations.show.mirakl.properties.labels.transformations') },
-  { key: 'rawData', label: t('integrations.show.properties.labels.rawData') },
+  { key: 'rawData', label: t('integrations.show.mirakl.properties.labels.rawData') },
 ]);
+const rawDataAccordionItems = computed(() => ([
+  { name: 'rawData', label: t('integrations.show.mirakl.properties.labels.rawData'), icon: 'cog' },
+]));
 
 const selectValuesRoute = computed(() => ({
   name: 'integrations.integrations.show',
@@ -1109,17 +1113,16 @@ watch(currentRepresentationType, () => {
           </div>
         </div>
 
-        <div class="border border-gray-300 bg-gray-50 rounded p-4">
-          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-3">
-            {{ t('integrations.show.properties.labels.rawData') }}
-          </Label>
-          <div class="space-y-4">
-            <div v-for="section in jsonSections" :key="section.key" class="space-y-2">
-              <p class="text-sm font-medium text-gray-900">{{ section.label }}</p>
-              <pre class="whitespace-pre-wrap break-words text-xs text-gray-700">{{ formatJson(propertyMetadata?.[section.key]) }}</pre>
+        <Accordion :items="rawDataAccordionItems">
+          <template #rawData>
+            <div class="space-y-4">
+              <div v-for="section in jsonSections" :key="section.key" class="space-y-2">
+                <p class="text-sm font-medium text-gray-900">{{ section.label }}</p>
+                <pre class="whitespace-pre-wrap break-words text-xs text-gray-700">{{ formatJson(propertyMetadata?.[section.key]) }}</pre>
+              </div>
             </div>
-          </div>
-        </div>
+          </template>
+        </Accordion>
       </div>
     </template>
   </RemotePropertyEdit>

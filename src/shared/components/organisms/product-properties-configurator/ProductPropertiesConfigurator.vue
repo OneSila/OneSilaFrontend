@@ -28,7 +28,6 @@ export interface Property {
   id: string;
   name: string;
   type: string;
-  usageCount?: number | null;
   configType?: string | null;
   sortOrder: number;
 }
@@ -488,7 +487,6 @@ onMounted(fetchData);
           <tr>
             <th>{{ t('shared.labels.name') }}</th>
             <th>{{ t('properties.rule.labels.propertyType') }}</th>
-            <th>{{ t('properties.rule.labels.usageCount') }}</th>
             <th>{{ t('properties.rule.labels.type') }}</th>
             <th>{{ t('shared.labels.actions') }}</th>
           </tr>
@@ -516,19 +514,6 @@ onMounted(fetchData);
             <td>
               <Badge :color="getPropertyTypeBadgeMap(t)[item.type].color"
                      :text="getPropertyTypeBadgeMap(t)[item.type].text"/>
-            </td>
-            <td>
-              <template v-if="item.usageCount === null || item.usageCount === undefined">
-                <span class="text-danger font-semibold">{{ t('properties.rule.labels.usageCountPending') }}</span>
-                <Icon
-                  class="ml-1 text-danger inline-block"
-                  name="circle-info"
-                  :title="t('properties.rule.tooltips.usageCountPending')"
-                />
-              </template>
-              <template v-else>
-                {{ item.usageCount }}
-              </template>
             </td>
             <td class="w-60">
               <Selector class="w-full"

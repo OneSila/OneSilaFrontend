@@ -10,6 +10,7 @@ import { propertySelectValuesQuery } from '../../../../../../../../shared/api/qu
 import { checkPropertySelectValueForDuplicatesMutation } from '../../../../../../../../shared/api/mutations/properties.js';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 import { Button } from '../../../../../../../../shared/components/atoms/button';
+import { Accordion } from '../../../../../../../../shared/components/atoms/accordion';
 import { buildFilterVariablesFromRouteQuery, extractPrefixedQueryParams } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 
 const { t } = useI18n();
@@ -227,6 +228,9 @@ const config: RemoteSelectValueEditPropertyConfig = {
 const getLabelTranslations = (form: Record<string, any>) => normalizeTranslations(form.labelTranslations);
 const getValueLabelTranslations = (form: Record<string, any>) => normalizeTranslations(form.valueLabelTranslations);
 const hasMetadata = computed(() => true);
+const rawDataAccordionItems = computed(() => ([
+  { name: 'rawData', label: t('integrations.show.mirakl.properties.labels.rawData'), icon: 'cog' },
+]));
 </script>
 
 <template>
@@ -284,12 +288,11 @@ const hasMetadata = computed(() => true);
           </div>
         </div>
 
-        <div class="border border-gray-300 bg-gray-50 rounded p-4">
-          <h3 class="font-semibold text-sm leading-6 text-gray-900 mb-3">
-            {{ t('integrations.show.mirakl.properties.labels.rawData') }}
-          </h3>
-          <pre class="whitespace-pre-wrap break-words text-xs text-gray-700">{{ formatJson(form.rawData) }}</pre>
-        </div>
+        <Accordion :items="rawDataAccordionItems">
+          <template #rawData>
+            <pre class="whitespace-pre-wrap break-words text-xs text-gray-700">{{ formatJson(form.rawData) }}</pre>
+          </template>
+        </Accordion>
       </div>
     </template>
   </RemoteSelectValueEditProperty>

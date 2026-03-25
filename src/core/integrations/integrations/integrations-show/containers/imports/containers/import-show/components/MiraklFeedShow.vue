@@ -285,7 +285,7 @@ onMounted(async () => {
       <Breadcrumbs
         :links="[
           { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
-          { path: integrationId ? { name: 'integrations.integrations.show', params: { id: integrationId, type }, query: { tab: 'imports' } } : undefined, name: t('integrations.show.title') },
+          { path: integrationId ? { name: 'integrations.integrations.show', params: { id: integrationId, type }, query: { tab: 'miraklImports' } } : undefined, name: t('integrations.show.title') },
           { name: t('integrations.imports.miraklFeeds.showTitle') }
         ]"
       />

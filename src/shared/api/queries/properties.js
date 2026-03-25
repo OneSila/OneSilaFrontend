@@ -556,50 +556,6 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
   }
 `;
 
-export const productPropertiesRulesWithUsageCountQuery = gql`
-query ProductPropertiesRulesWithUsageCount($first: Int, $last: Int, $after: String, $before: String, $order: ProductPropertiesRuleOrder, $filter: ProductPropertiesRuleFilter) {
-    productPropertiesRules(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
-      edges {
-        node {
-          id
-          items {
-            id
-            type
-            sortOrder
-            property {
-              id
-              name
-              type
-              usageCount
-            }
-          }
-          requireEanCode
-          salesChannel {
-            id
-            type
-            hostname
-          }
-          productType {
-            id
-            value
-            property {
-              id
-            }
-          }
-        }
-        cursor
-      }
-      totalCount
-      pageInfo {
-        endCursor
-        startCursor
-        hasNextPage
-        hasPreviousPage
-      }
-    }
-  }
-`;
-
 export const getProductPropertiesRuleQuery = gql`
   query getProductPropertiesRule($id: GlobalID!) {
     productPropertiesRule(id: $id) {
@@ -622,7 +578,6 @@ export const getProductPropertiesRuleQuery = gql`
           id
           name
           type
-          usageCount
         }
       }
     }

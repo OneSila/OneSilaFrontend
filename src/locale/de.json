@@ -1462,6 +1462,7 @@
             "typeParameters": "",
             "validations": "",
             "transformations": "",
+            "rawData": "",
             "labelTranslations": "",
             "descriptionTranslations": ""
           }
@@ -1531,7 +1532,8 @@
             "stock": "",
             "vat_rate": "",
             "allow_backorder": "",
-            "condition": ""
+            "condition": "",
+            "logistic_class": ""
           }
         },
         "representationGuide": {
@@ -1613,6 +1615,7 @@
             "stock": { "description": "", "summary": "", "source": "", "fill": "" },
             "allow_backorder": { "description": "", "summary": "", "source": "", "fill": "" },
             "condition": { "description": "", "summary": "", "source": "", "fill": "" },
+            "logistic_class": { "description": "", "summary": "", "source": "", "fill": "" },
             "product_active": { "description": "", "summary": "", "source": "", "fill": "" },
             "product_url_key": { "description": "", "summary": "", "source": "", "fill": "" },
             "product_ean": { "description": "", "summary": "", "source": "", "fill": "" }
@@ -2744,17 +2747,12 @@
     },
     "rule": {
       "labels": {
-        "usageCount": "",
-        "usageCountPending": "",
         "salesChannel": "",
         "defaultSalesChannel": "",
         "unknownSalesChannel": ""
       },
       "placeholders": {
         "salesChannel": ""
-      },
-      "tooltips": {
-        "usageCountPending": ""
       },
       "messages": {
         "unsavedChanges": ""

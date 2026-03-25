@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-import {getInspectorStatusIconMap, Product} from "../../../../../../configs";
+import { Product } from "../../../../../../configs";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import {useI18n} from "vue-i18n";
 import {SearchConfig} from "../../../../../../../../../shared/components/organisms/general-search/searchConfig";
-import {ProductType} from "../../../../../../../../../shared/utils/constants";
+import { FieldType, ProductType } from "../../../../../../../../../shared/utils/constants";
 import {Pagination} from "../../../../../../../../../shared/components/molecules/pagination";
 import {Icon} from "../../../../../../../../../shared/components/atoms/icon";
 import {FilterManager} from "../../../../../../../../../shared/components/molecules/filter-manager";
@@ -23,30 +23,22 @@ import {ref, computed} from "vue";
 import debounce from 'lodash.debounce'
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {Toast} from "../../../../../../../../../shared/modules/toast";
+import type { InspectorProgressField } from "../../../../../../../../../shared/components/organisms/general-show/showConfig";
+import { FieldInspectorProgress } from "../../../../../../../../../shared/components/organisms/general-show/containers/field-inspector-progress";
 
 const { t } = useI18n();
 const props = defineProps<{ product: Product, searchConfig: SearchConfig,  listQuery: any; queryKey: any, refetchNeeded: boolean}>();
 const emit = defineEmits(['refetched', 'update-ids']);
 const localQuantities = ref<{ [key: string]: number }>({});
 
+const inspectorProgressField: InspectorProgressField = {
+  name: 'percentageInspectorStatus',
+  type: FieldType.InspectorProgress,
+};
+
 const isAlias = computed(() => props.product.type === ProductType.Alias);
 const parentId = computed(() => isAlias.value ? props.product.aliasParentProduct.id : props.product.id);
 const parentType = computed(() => isAlias.value ? props.product.aliasParentProduct.type : props.product.type);
-
-function iconColorClass(color?: string) {
-  switch (color) {
-    case 'green':
-      return 'text-green-500';
-    case 'yellow':
-      return 'text-yellow-500';
-    case 'orange':
-      return 'text-orange-500';
-    case 'red':
-      return 'text-red-500';
-    default:
-      return '';
-  }
-}
 
 const initializeLocalQuantities = (data) => {
   if (
@@ -140,7 +132,7 @@ const handleQuantityChanged = debounce(async (event, id) => {
                                 after: pagination.after }">
         <template v-slot="{ result: { data }, query }">
           <div v-if="data && refetchIfNecessary(query, data)" class="mt-5 p-0 border-0 overflow-hidden">
-            <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll' : ''">
+            <div :class="data[queryKey].edges.length > 0 ? 'table-responsive custom-table-scroll max-h-[65vh] pb-2' : ''">
               <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                 <thead>
                 <tr>
@@ -186,10 +178,9 @@ const handleQuantityChanged = debounce(async (event, id) => {
                     <Icon v-else name="times-circle" class="ml-2 text-red-500" />
                   </td>
                   <td>
-                    <Icon
-                      :name="getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].name"
-                      :class="iconColorClass(getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].color)"
-                      :title="getInspectorStatusIconMap(t)[item.node.variation.inspectorStatus].hoverText"
+                    <FieldInspectorProgress
+                      :field="inspectorProgressField"
+                      :model-value="item.node.variation.percentageInspectorStatus"
                     />
                   </td>
                   <td v-if="parentType != ProductType.Configurable">
@@ -238,3 +229,31 @@ const handleQuantityChanged = debounce(async (event, id) => {
     </template>
   </FilterManager>
 </template>
+
+<style scoped>
+.custom-table-scroll {
+  overflow-x: auto;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #e5e7eb;
+}
+
+.custom-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-table-scroll::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 9999px;
+}
+
+.custom-table-scroll::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 9999px;
+}
+
+.custom-table-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+</style>

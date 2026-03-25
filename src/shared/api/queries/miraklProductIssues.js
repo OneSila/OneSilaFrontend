@@ -68,6 +68,7 @@ export const miraklProductIssuesListingQuery = gql`
             localInstance {
               id
               name
+              sku
             }
           }
         }
@@ -85,7 +86,7 @@ export const miraklProductIssuesListingQuery = gql`
 `;
 
 export const miraklProductIssueShowQuery = gql`
-  query MiraklProductIssueShow($id: ID!) {
+  query MiraklProductIssueShow($id: GlobalID!) {
     miraklProductIssue(id: $id) {
       id
       mainCode

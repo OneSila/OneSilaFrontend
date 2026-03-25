@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Badge } from '../../../../../../../../shared/components/atoms/badge';
+import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import { Link } from '../../../../../../../../shared/components/atoms/link';
 
 interface MiraklIssue {
@@ -11,6 +12,11 @@ interface MiraklIssue {
   message?: string | null;
   severity?: string | null;
   isRejected?: boolean | null;
+  remoteProduct?: {
+    localInstance?: {
+      sku?: string | null;
+    } | null;
+  } | null;
 }
 
 const props = defineProps<{
@@ -18,6 +24,7 @@ const props = defineProps<{
   integrationId?: string | null;
   lastDifferentialIssuesFetch?: string | null;
   lastFullIssuesFetch?: string | null;
+  showVariationSku?: boolean;
 }>();
 
 const { t } = useI18n();
@@ -50,10 +57,6 @@ const severityBadge = (severity?: string | null) => {
   return { text: severity || '-', color: 'gray' };
 };
 
-const rejectionBadge = (isRejected?: boolean | null) =>
-  isRejected
-    ? { text: t('integrations.show.miraklIssues.rejected.yes'), color: 'red' }
-    : { text: t('integrations.show.miraklIssues.rejected.no'), color: 'green' };
 </script>
 
 <template>
@@ -76,6 +79,7 @@ const rejectionBadge = (isRejected?: boolean | null) =>
         <thead>
           <tr>
             <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('integrations.show.miraklIssues.columns.code') }}</th>
+            <th v-if="showVariationSku" class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.sku') }}</th>
             <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('shared.labels.message') }}</th>
             <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('integrations.show.miraklIssues.columns.severity') }}</th>
             <th class="px-3 py-2 text-left text-sm font-semibold text-gray-900">{{ t('integrations.show.miraklIssues.columns.isRejected') }}</th>
@@ -94,16 +98,20 @@ const rejectionBadge = (isRejected?: boolean | null) =>
                 {{ issue.code || issue.mainCode || '-' }}
               </Link>
             </td>
+            <td v-if="showVariationSku" class="px-3 py-2 text-sm whitespace-nowrap">
+              {{ issue.remoteProduct?.localInstance?.sku || '-' }}
+            </td>
             <td class="px-3 py-2 text-sm max-w-md">
               <span :title="issue.message || undefined">
-                {{ issue.message?.length && issue.message.length > 120 ? `${issue.message.slice(0, 117)}...` : issue.message || '-' }}
+                {{ issue.message?.length && issue.message.length > 80 ? `${issue.message.slice(0, 77)}...` : issue.message || '-' }}
               </span>
             </td>
             <td class="px-3 py-2 text-sm">
               <Badge :text="severityBadge(issue.severity).text" :color="severityBadge(issue.severity).color" />
             </td>
             <td class="px-3 py-2 text-sm">
-              <Badge :text="rejectionBadge(issue.isRejected).text" :color="rejectionBadge(issue.isRejected).color" />
+              <Icon v-if="issue.isRejected" name="check-circle" class="text-green-500" />
+              <Icon v-else name="times-circle" class="text-red-500" />
             </td>
           </tr>
         </tbody>
