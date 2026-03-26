@@ -2492,9 +2492,7 @@ export const getMiraklProductTypeQuery = gql`
       remoteId
       name
       salesChannel {
-        saleschannelPtr {
-          proxyId
-        }
+        id
       }
       template {
         name

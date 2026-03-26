@@ -36,7 +36,7 @@ const integrationId = route.query.integrationId ? route.query.integrationId.toSt
 const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
 const isWizard = route.query.wizard === '1';
 const defaultRuleId = route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null;
-const integrationShowId = computed(() => props.productType?.salesChannel?.saleschannelPtr?.proxyId || integrationId);
+const integrationShowId = computed(() => integrationId || props.productType?.salesChannel?.id || '');
 const resolvedDefaultRuleId = ref<string | null>(null);
 const formData = ref<Record<string, any>>({});
 const formConfig = ref<FormConfig | null>(null);
