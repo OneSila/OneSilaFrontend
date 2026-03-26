@@ -1393,6 +1393,37 @@ export const getSalesChannelImportQuery = gql`
   }
 `;
 
+export const getMiraklImportProcessQuery = gql`
+  query getMiraklImportProcess($id: GlobalID!) {
+    miraklImportProcess(id: $id) {
+      id
+      proxyId
+      type
+      status
+      percentage
+      createdAt
+      name
+      createOnly
+      updateOnly
+      skipBrokenRecords
+      totalRecords
+      processedRecords
+      errorTraceback
+      salesChannel {
+        id
+      }
+      exportFiles {
+        id
+        fileUrl
+        file {
+          name
+          url
+        }
+      }
+    }
+  }
+`;
+
 export const amazonImportBrokenRecordsQuery = gql`
   query AmazonImportBrokenRecords(
     $first: Int
@@ -2461,7 +2492,9 @@ export const getMiraklProductTypeQuery = gql`
       remoteId
       name
       salesChannel {
-        proxyId
+        saleschannelPtr {
+          proxyId
+        }
       }
       template {
         name

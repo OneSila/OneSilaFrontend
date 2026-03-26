@@ -5256,6 +5256,10 @@
         "oneSilaTitle": "OneSila Imports",
         "oneSilaHelp": "These are the existing OneSila-side import processes available for this channel.",
         "oneSilaEmpty": "No OneSila imports found for this channel yet.",
+        "uploadedFilesTitle": "Uploaded export files",
+        "uploadedFilesDescription": "These source XLSX exports were uploaded when the OneSila import was created.",
+        "uploadedFilesEmpty": "No export files were uploaded for this import.",
+        "uploadedFilesUnavailable": "Unavailable",
         "comingSoonTitle": "To be continued",
         "comingSoonDescription": "This tab will be connected to the new Mirakl import model and API in a follow-up change.",
         "empty": "No Mirakl imports found for this channel yet.",
@@ -5394,6 +5398,24 @@
       "create": {
         "success": "Create import process success",
         "title": "Create Import",
+        "mirakl": {
+          "filesTitle": "Upload Mirakl export files",
+          "filesDescription": "Upload every XLSX export generated from Mirakl Catalog Management for this product import.",
+          "filesRequired": "At least one XLSX export file is required for a product import.",
+          "filesEmpty": "No XLSX files selected yet.",
+          "filesCount": "{count} file(s)",
+          "uploadFailed": "The import could not be completed with the uploaded export files.",
+          "tutorial": {
+            "title": "How to generate the Mirakl export files",
+            "description": "Repeat this process until you have exported the full catalog, then upload all generated XLSX files here.",
+            "steps": {
+              "step1": "Go to Catalog Management.",
+              "step2": "Select as many products per page as possible (100).",
+              "step3": "Click the square to select all products on the page, then click Generate file export.",
+              "step4": "When Download last generated export file appears, download it, go to the next page, and repeat until all products are covered."
+            }
+          }
+        },
         "wizard": {
           "generalSettings": {
             "title": "Import behavior",
