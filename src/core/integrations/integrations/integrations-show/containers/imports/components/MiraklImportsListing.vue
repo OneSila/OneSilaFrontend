@@ -292,7 +292,7 @@ onMounted(() => {
                     class="border-b dark:border-[#191e3a]"
                   >
                     <td class="p-2">
-                      <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: importItem.proxyId } }">
+                      <Link :path="{ name: 'integrations.miraklImports.show', params: { type: route.params.type, id: importItem.id } }">
                         {{ formatDate(importItem.createdAt) }}
                       </Link>
                     </td>

@@ -97,6 +97,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/imports/containers/import-show/ImportShowController.vue'),
   },
   {
+    path: '/integrations/:type/mirakl-import-process/:id',
+    name: 'integrations.miraklImports.show',
+    meta: { title: 'integrations.imports.show.title' },
+    component: () => import('./integrations/integrations-show/containers/imports/containers/import-show/MiraklImportShowController.vue'),
+  },
+  {
     path: '/integrations/:type/amazon-issues/:issueId',
     name: 'integrations.amazonProductIssues.show',
     meta: { title: 'integrations.show.amazonIssues.show.title' },

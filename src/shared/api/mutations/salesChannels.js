@@ -686,6 +686,22 @@ export const createMiraklImportProcessMutation = gql`
   }
 `;
 
+export const createMiraklImportExportFileMutation = gql`
+  mutation createMiraklImportExportFile($data: MiraklSalesChannelImportExportFileInput!) {
+    createMiraklImportExportFile(data: $data) {
+      id
+      fileUrl
+      file {
+        name
+        url
+      }
+      importProcess {
+        id
+      }
+    }
+  }
+`;
+
 export const updateMiraklImportProcessMutation = gql`
   mutation updateMiraklImportProcess($data: MiraklSalesChannelImportPartialInput!) {
     updateMiraklImportProcess(data: $data) {

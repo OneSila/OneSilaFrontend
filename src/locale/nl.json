@@ -3811,6 +3811,24 @@
         }
       },
       "create": {
+        "mirakl": {
+          "filesTitle": "",
+          "filesDescription": "",
+          "filesRequired": "",
+          "filesEmpty": "",
+          "filesCount": "",
+          "uploadFailed": "",
+          "tutorial": {
+            "title": "",
+            "description": "",
+            "steps": {
+              "step1": "",
+              "step2": "",
+              "step3": "",
+              "step4": ""
+            }
+          }
+        },
         "wizard": {
           "generalSettings": {
             "title": "",
@@ -4487,6 +4505,10 @@
         "oneSilaTitle": "",
         "oneSilaHelp": "",
         "oneSilaEmpty": "",
+        "uploadedFilesTitle": "",
+        "uploadedFilesDescription": "",
+        "uploadedFilesEmpty": "",
+        "uploadedFilesUnavailable": "",
         "comingSoonTitle": "",
         "comingSoonDescription": "",
         "empty": "",
