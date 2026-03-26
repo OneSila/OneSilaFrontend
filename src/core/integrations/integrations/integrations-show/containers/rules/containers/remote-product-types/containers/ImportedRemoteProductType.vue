@@ -34,7 +34,7 @@ const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId?.toString() || '';
 const salesChannelId = route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
-const integrationShowId = computed(() => props.productType?.salesChannel?.saleschannelPtr?.proxyId || integrationId);
+const integrationShowId = computed(() => integrationId || props.productType?.salesChannel?.id || '');
 
 const state = reactive(props.config.createState());
 
