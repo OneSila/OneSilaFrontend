@@ -16,7 +16,6 @@ import { displayApolloError } from "../../../../../../../../shared/utils";
 import { Toast } from "../../../../../../../../shared/modules/toast";
 import { PropertyTypes } from "../../../../../../../../shared/utils/constants";
 import { IntegrationTypes } from "../../../../../integrations";
-import { MIRAKL_REPRESENTATION_TYPE_PROPERTY } from "../mirakl-properties/representationTypes";
 
 type RouteBuilderContext = {
   id: string;
@@ -76,7 +75,7 @@ const canSeeValues = (item: any) => {
   }
 
   if (integrationType.value === IntegrationTypes.Mirakl) {
-    return item?.node?.representationTypeDecided || item?.node?.representationType === MIRAKL_REPRESENTATION_TYPE_PROPERTY;
+    return Boolean(item?.node?.representationTypeDecided);
   }
 
   return true;

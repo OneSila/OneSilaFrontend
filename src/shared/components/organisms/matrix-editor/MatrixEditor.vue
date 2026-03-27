@@ -27,6 +27,9 @@ const props = withDefaults(
     loading?: boolean
     saving?: boolean
     hasChanges?: boolean
+    enableCellClipboard?: boolean
+    enableRowClipboard?: boolean
+    enableDragFill?: boolean
     getCellValue: (rowIndex: number, columnKey: string) => any
     setCellValue: (rowIndex: number, columnKey: string, value: any) => void
     cloneCellValue: (fromRow: number, toRow: number, columnKey: string) => void
@@ -38,6 +41,9 @@ const props = withDefaults(
     loading: false,
     saving: false,
     hasChanges: false,
+    enableCellClipboard: true,
+    enableRowClipboard: true,
+    enableDragFill: true,
   }
 )
 
@@ -371,6 +377,7 @@ const isEditableColumn = (columnKey: string) => {
 }
 
 const startDragFill = (row: number, col: string) => {
+  if (!props.enableDragFill) return
   if (!isEditableColumn(col)) return
   const columns = getColumnsForOperation(row, col).filter((columnKey) =>
     isEditableColumn(columnKey)
@@ -477,7 +484,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     }
   }
 
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c') {
+  if (props.enableCellClipboard && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c') {
     if (isEditableColumn(col)) {
       const value = props.getCellValue(row, col)
       clipboard.value = {
@@ -488,7 +495,7 @@ const handleKeydown = (event: KeyboardEvent) => {
       Toast.success(t('products.products.alert.toast.copied'))
     }
     event.preventDefault()
-  } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v') {
+  } else if (props.enableCellClipboard && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v') {
     if (clipboard.value) {
       const columns = getColumnsForOperation(row, col).filter((columnKey) =>
         isEditableColumn(columnKey)
@@ -939,7 +946,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
                 </span>
               </slot>
               <div
-                v-if="columnIndex === 0 && hoveredRowForActions === rowIndex"
+                v-if="props.enableRowClipboard && columnIndex === 0 && hoveredRowForActions === rowIndex"
                 class="mt-2 flex flex-col space-y-2"
               >
                 <Button
@@ -961,7 +968,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
                 class="absolute inset-0 border-2 border-blue-500 pointer-events-none"
               />
               <div
-                v-if="isDragHandleCell(rowIndex, column.key)"
+                v-if="props.enableDragFill && isDragHandleCell(rowIndex, column.key)"
                 class="absolute w-2 h-2 bg-blue-500 bottom-0 right-0 pointer-events-auto cursor-row-resize"
                 @mousedown.stop="startDragFill(rowIndex, column.key)"
               />

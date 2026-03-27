@@ -12,7 +12,6 @@ import { getPropertyTypeBadgeMap } from "../../../../../../../properties/propert
 import { updateMiraklPropertyMutation, updateMiraklInternalPropertyMutation } from "../../../../../../../../shared/api/mutations/salesChannels.js";
 import type { FormConfig } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { FormType } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
-import { getMiraklRepresentationTypeOptions } from "./representationTypes";
 
 export const miraklPropertiesSearchConfigConstructor = (t: Function): SearchConfig => ({
   search: true,
@@ -32,15 +31,6 @@ export const miraklPropertiesSearchConfigConstructor = (t: Function): SearchConf
       label: t('integrations.show.properties.labels.allowsUnmappedValues'),
       addLookup: true,
       strict: true,
-    },
-    {
-      type: FieldType.Choice,
-      name: 'representationType',
-      label: t('integrations.show.mirakl.properties.labels.representationType'),
-      labelBy: 'name',
-      valueBy: 'code',
-      options: getMiraklRepresentationTypeOptions(t),
-      addLookup: true,
     },
     { type: FieldType.Boolean, name: 'usedInProducts', label: t('properties.properties.labels.usedInProducts'), strict: true },
     {
@@ -91,7 +81,7 @@ export const miraklPropertyEditFormConfigConstructor = (
   query: getMiraklPropertyQuery,
   queryVariables: { id: propertyId },
   queryDataKey: "miraklProperty",
-  haveCustomHelpSection: true,
+  haveCustomHelpSection: false,
   submitUrl: { name: 'integrations.integrations.show', params: { type, id: integrationId }, query: { tab: 'properties' } },
   fields: [
     { type: FieldType.Hidden, name: 'id', value: propertyId },
@@ -131,17 +121,6 @@ export const miraklPropertyEditFormConfigConstructor = (
       disabled: true,
       strict: true,
       help: t('integrations.show.properties.help.allowsUnmappedValues'),
-    },
-    {
-      type: FieldType.Choice,
-      name: 'representationType',
-      label: t('integrations.show.mirakl.properties.labels.representationType'),
-      labelBy: 'name',
-      valueBy: 'code',
-      options: getMiraklRepresentationTypeOptions(t),
-      disabled: false,
-      removable: false,
-      help: t('integrations.show.mirakl.properties.help.representationType'),
     },
     {
       type: FieldType.Text,

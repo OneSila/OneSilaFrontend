@@ -83,6 +83,20 @@ export const assignEanCodeMutation = gql`
   }
 `;
 
+export const manualAssignEanCodeMutation = gql`
+  mutation manualAssignEanCode($data: ManualAssignEancodeInput!) {
+    manualAssignEanCode(data: $data) {
+      id
+      eanCode
+      product {
+        id
+        sku
+        name
+      }
+    }
+  }
+`;
+
 export const assignEanCodesMutation = gql`
     mutation assignEanCodes($data: BulkAssignEancodesInput!) {
       assignEanCodes(instance: $data) {

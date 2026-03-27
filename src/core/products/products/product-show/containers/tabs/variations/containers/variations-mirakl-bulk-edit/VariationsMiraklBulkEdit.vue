@@ -12,34 +12,33 @@ import { Card } from '../../../../../../../../../shared/components/atoms/card';
 import { Icon } from '../../../../../../../../../shared/components/atoms/icon';
 import { Modal } from '../../../../../../../../../shared/components/atoms/modal';
 import { Link } from '../../../../../../../../../shared/components/atoms/link';
+import { Selector } from '../../../../../../../../../shared/components/atoms/selector';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { displayApolloError, shortenText } from '../../../../../../../../../shared/utils';
 import {
-  bundleVariationsWithSheinQuery,
-  configurableVariationsWithSheinQuery,
-  productsWithSheinQuery,
+  bundleVariationsWithMiraklQuery,
+  configurableVariationsWithMiraklQuery,
+  productsWithMiraklQuery,
 } from '../../../../../../../../../shared/api/queries/products.js';
 import { propertiesQuerySelector, productTypePropertyValuesQuery } from '../../../../../../../../../shared/api/queries/properties.js';
-import { sheinCategoriesQuery } from '../../../../../../../../../shared/api/queries/sheinCategories.js';
-import { sheinProductCategoriesWithProductsQuery } from '../../../../../../../../../shared/api/queries/sheinProducts.js';
-import { sheinChannelsQuery } from '../../../../../../../../../shared/api/queries/salesChannels.js';
+import { miraklCategoriesQuery, miraklProductCategoriesQuery } from '../../../../../../../../../shared/api/queries/miraklProducts.js';
+import { miraklChannelsQuery } from '../../../../../../../../../shared/api/queries/salesChannels.js';
 import {
-  createSheinProductCategoryMutation,
-  deleteSheinProductCategoryMutation,
-  updateSheinProductCategoryMutation,
-} from '../../../../../../../../../shared/api/mutations/sheinProducts.js';
-import SheinCategoryBrowser from '../../../shein/components/SheinCategoryBrowser.vue';
-import SheinCategoryDetails from '../../../shein/components/SheinCategoryDetails.vue';
+  createMiraklProductCategoryMutation,
+  deleteMiraklProductCategoryMutation,
+  updateMiraklProductCategoryMutation,
+} from '../../../../../../../../../shared/api/mutations/miraklProducts.js';
+import MiraklCategoryBrowser from '../../../mirakl/components/MiraklCategoryBrowser.vue';
+import MiraklCategoryDetails from '../../../mirakl/components/MiraklCategoryDetails.vue';
 import {
-  mapCategoriesConnection,
-  normalizeCategoryNode,
-  type SheinCategoryNode,
-} from '../../../shein/components/sheinCategoryUtils';
+  mapMiraklCategoriesConnection,
+  normalizeMiraklCategoryNode,
+  type MiraklCategoryNode,
+} from '../../../mirakl/components/miraklCategoryUtils';
 
 interface CategorySelection {
   productCategoryId: string | null;
   remoteId: string | null;
-  productTypeRemoteId: string | null;
   path: string | null;
 }
 
@@ -62,30 +61,31 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const channelColumnPrefix = 'shein-channel-';
 const productRuleColumnKey = 'productRule';
+const categoryColumnKey = 'category';
 
 const matrixRef = ref<MatrixEditorExpose | null>(null);
 const variations = ref<VariationRow[]>([]);
 const originalVariations = ref<VariationRow[]>([]);
 const loading = ref(false);
 const saving = ref(false);
-const categoryMapByChannel = ref<Record<string, Record<string, SheinCategoryNode>>>({});
+const categoryMapByChannel = ref<Record<string, Record<string, MiraklCategoryNode>>>({});
 const productTypePropertyId = ref<string | null>(null);
 const productTypePropertyName = ref<string | null>(null);
 
-const sheinChannels = ref<any[]>([]);
+const miraklChannels = ref<any[]>([]);
+const selectedChannelId = ref<string | null>(null);
 
 const selectionModal = reactive({
   visible: false,
   rowIndex: -1,
   channelId: null as string | null,
 });
-const modalSelection = ref<SheinCategoryNode | null>(null);
+const modalSelection = ref<MiraklCategoryNode | null>(null);
 const modalSelectionPath = ref<string | null>(null);
 
 const previewVisible = ref(false);
-const previewNode = ref<SheinCategoryNode | null>(null);
+const previewNode = ref<MiraklCategoryNode | null>(null);
 const previewRow = ref<VariationRow | null>(null);
 const previewChannelId = ref<string | null>(null);
 
@@ -100,8 +100,20 @@ const parentProduct = computed(() => {
 const parentProductType = computed(() => parentProduct.value?.type ?? null);
 
 const channelById = computed(() =>
-  sheinChannels.value.reduce<Record<string, any>>((acc, channel) => {
+  miraklChannels.value.reduce<Record<string, any>>((acc, channel) => {
     acc[channel.id] = channel;
+    return acc;
+  }, {}),
+);
+
+const channelIdAliasMap = computed(() =>
+  miraklChannels.value.reduce<Record<string, string>>((acc, channel) => {
+    if (channel?.id) {
+      acc[channel.id] = channel.id;
+    }
+    if (channel?.saleschannelPtr?.id) {
+      acc[channel.saleschannelPtr.id] = channel.id;
+    }
     return acc;
   }, {}),
 );
@@ -109,22 +121,26 @@ const channelById = computed(() =>
 const selectionModalChannel = computed(() =>
   selectionModal.channelId ? channelById.value[selectionModal.channelId] : null,
 );
-
 const previewChannel = computed(() =>
   previewChannelId.value ? channelById.value[previewChannelId.value] : null,
 );
+const selectionModalSalesChannelId = computed(() =>
+  selectionModal.channelId ? getEffectiveSalesChannelId(selectionModal.channelId) : null,
+);
+const previewSalesChannelId = computed(() =>
+  previewChannelId.value ? getEffectiveSalesChannelId(previewChannelId.value) : null,
+);
 
-const buildChannelColumnKey = (channelId: string) => `${channelColumnPrefix}${channelId}`;
+const selectedChannel = computed(() =>
+  selectedChannelId.value ? channelById.value[selectedChannelId.value] || null : null,
+);
 
-const getChannelIdFromColumnKey = (columnKey: string) =>
-  columnKey.startsWith(channelColumnPrefix)
-    ? columnKey.slice(channelColumnPrefix.length)
-    : null;
-
-const isCategoryColumn = (columnKey: string) =>
-  columnKey.startsWith(channelColumnPrefix);
-
-const getChannelValueType = (_channelId: string) => 'shein-category';
+const channelOptions = computed(() =>
+  miraklChannels.value.map((channel) => ({
+    id: channel.id,
+    name: channel.hostname || '-',
+  })),
+);
 
 const columns = computed<MatrixColumn[]>(() => [
   { key: 'sku', label: t('shared.labels.sku'), sticky: true, editable: false, initialWidth: 160 },
@@ -137,13 +153,13 @@ const columns = computed<MatrixColumn[]>(() => [
   },
   { key: 'name', label: t('shared.labels.name'), editable: false, initialWidth: 280 },
   { key: 'active', label: t('shared.labels.active'), editable: false, initialWidth: 80 },
-  ...sheinChannels.value.map((channel) => ({
-    key: buildChannelColumnKey(channel.id),
-    label: channel.hostname || '-',
+  {
+    key: categoryColumnKey,
+    label: selectedChannel.value?.hostname || t('products.products.variations.mirakl.columns.category'),
     editable: true,
     initialWidth: 600,
-    valueType: getChannelValueType(channel.id),
-  })),
+    valueType: 'mirakl-category',
+  },
 ]);
 
 const hasChanges = computed(() => {
@@ -157,7 +173,7 @@ const hasChanges = computed(() => {
   return variations.value.some((row) => {
     const original = originalMap.get(row.id);
     if (!original) return true;
-    return sheinChannels.value.some((channel) => {
+    return miraklChannels.value.some((channel) => {
       const channelId = channel.id;
       const currentRemoteId = row.categories[channelId]?.remoteId ?? null;
       const originalRemoteId = original.categories[channelId]?.remoteId ?? null;
@@ -171,7 +187,6 @@ const hasUnsavedChanges = hasChanges;
 const createEmptyCategory = (): CategorySelection => ({
   productCategoryId: null,
   remoteId: null,
-  productTypeRemoteId: null,
   path: null,
 });
 
@@ -182,14 +197,18 @@ const ensureCategorySelection = (row: VariationRow, channelId: string) => {
   return row.categories[channelId];
 };
 
-const getCategorySelection = (row: VariationRow, columnKey: string) => {
-  const channelId = getChannelIdFromColumnKey(columnKey);
+const resolveDisplayChannelId = (salesChannelId: string | null | undefined) =>
+  salesChannelId ? channelIdAliasMap.value[salesChannelId] || null : null;
+
+const getEffectiveSalesChannelId = (channelId: string) =>
+  channelById.value[channelId]?.saleschannelPtr?.id || channelId;
+
+const getCategorySelection = (row: VariationRow, channelId: string | null = selectedChannelId.value) => {
   if (!channelId) return null;
   return row.categories[channelId] || null;
 };
 
-const getCategoryDisplayPath = (row: VariationRow, columnKey: string) => {
-  const channelId = getChannelIdFromColumnKey(columnKey);
+const getCategoryDisplayPath = (row: VariationRow, channelId: string | null = selectedChannelId.value) => {
   if (!channelId) return null;
   const selection = row.categories[channelId];
   if (!selection?.remoteId) return null;
@@ -212,13 +231,13 @@ const getMatrixCellValue = (rowIndex: number, columnKey: string) => {
   if (columnKey === productRuleColumnKey) return row.productRuleValue;
   if (columnKey === 'name') return row.variation.name;
   if (columnKey === 'active') return row.variation.active;
-  const channelId = getChannelIdFromColumnKey(columnKey);
+  if (columnKey !== categoryColumnKey) return null;
+  const channelId = selectedChannelId.value;
   if (!channelId) return null;
   const category = row.categories[channelId];
   if (!category?.remoteId) return null;
   return {
     remoteId: category.remoteId,
-    productTypeRemoteId: category.productTypeRemoteId,
     path: category.path,
   };
 };
@@ -226,7 +245,6 @@ const getMatrixCellValue = (rowIndex: number, columnKey: string) => {
 const clearCategorySelection = (row: VariationRow, channelId: string) => {
   const category = ensureCategorySelection(row, channelId);
   category.remoteId = null;
-  category.productTypeRemoteId = null;
   category.path = null;
 };
 
@@ -252,10 +270,9 @@ const ensureCategoryForChannel = async (channelId: string, remoteId: string) => 
   return categoryMapByChannel.value[channelId]?.[remoteId] || null;
 };
 
-const applyCategorySelection = (row: VariationRow, channelId: string, node: SheinCategoryNode) => {
+const applyCategorySelection = (row: VariationRow, channelId: string, node: MiraklCategoryNode) => {
   const category = ensureCategorySelection(row, channelId);
   category.remoteId = node.remoteId;
-  category.productTypeRemoteId = node.productTypeRemoteId ?? null;
   category.path = buildCategoryPath(node.remoteId, channelId) || node.name || node.remoteId;
 };
 
@@ -272,7 +289,7 @@ const validateAndApplyCategory = async (
   }
   pendingCategoryUpdates.delete(key);
   if (!node) {
-    Toast.error(t('products.products.variations.shein.toast.categoryNotAvailable', { id: remoteId }));
+    Toast.error(t('products.products.mirakl.manualEntry.invalid'));
     return;
   }
   const row = variations.value.find((item) => item.id === rowId);
@@ -283,7 +300,8 @@ const validateAndApplyCategory = async (
 const setMatrixCellValue = (rowIndex: number, columnKey: string, value: any) => {
   const row = variations.value[rowIndex];
   if (!row) return;
-  const channelId = getChannelIdFromColumnKey(columnKey);
+  if (columnKey !== categoryColumnKey) return;
+  const channelId = selectedChannelId.value;
   if (!channelId) return;
 
   if (value === null || value === undefined || value === '') {
@@ -315,7 +333,8 @@ const cloneMatrixCellValue = (fromRow: number, toRow: number, columnKey: string)
 
 const clearMatrixCellValue = (rowIndex: number, columnKey: string) => {
   const row = variations.value[rowIndex];
-  const channelId = getChannelIdFromColumnKey(columnKey);
+  if (columnKey !== categoryColumnKey) return;
+  const channelId = selectedChannelId.value;
   if (!row || !channelId) return;
   clearCategorySelection(row, channelId);
 };
@@ -325,12 +344,15 @@ const buildCategoryPath = (remoteId: string, channelId: string) => {
   const parts: string[] = [];
   let current = map[remoteId];
   const visited = new Set<string>();
+
   while (current && !visited.has(current.remoteId)) {
     parts.unshift(current.name || current.remoteId);
     visited.add(current.remoteId);
-    if (!current.parentRemoteId) break;
-    current = map[current.parentRemoteId];
+    const parentRemoteId = current.parent?.remoteId;
+    if (!parentRemoteId) break;
+    current = map[parentRemoteId];
   }
+
   return parts.length ? parts.join(' > ') : null;
 };
 
@@ -339,7 +361,9 @@ const ensureCategoryMapForChannel = async (
   remoteIds: string[],
   policy: FetchPolicy,
 ) => {
-  if (!channelId || !remoteIds.length) return;
+  const effectiveSalesChannelId = getEffectiveSalesChannelId(channelId);
+  if (!effectiveSalesChannelId || !remoteIds.length) return;
+
   const map = { ...(categoryMapByChannel.value[channelId] || {}) };
   const pending = new Set<string>(remoteIds.filter((id) => id && !map[id]));
   const processed = new Set<string>(Object.keys(map));
@@ -347,25 +371,28 @@ const ensureCategoryMapForChannel = async (
   while (pending.size) {
     const batch = Array.from(pending).slice(0, 50);
     batch.forEach((id) => pending.delete(id));
+
     const { data } = await apolloClient.query({
-      query: sheinCategoriesQuery,
+      query: miraklCategoriesQuery,
       variables: {
         first: batch.length,
         filter: {
-          salesChannel: { id: { exact: channelId } },
+          salesChannel: { id: { exact: effectiveSalesChannelId } },
           remoteId: { inList: batch },
         },
       },
       fetchPolicy: policy,
     });
-    const nodes = mapCategoriesConnection(data?.sheinCategories);
+
+    const nodes = mapMiraklCategoriesConnection(data?.miraklCategories);
     nodes.forEach((node) => {
       map[node.remoteId] = node;
       processed.add(node.remoteId);
     });
     nodes.forEach((node) => {
-      if (node.parentRemoteId && !map[node.parentRemoteId] && !processed.has(node.parentRemoteId)) {
-        pending.add(node.parentRemoteId);
+      const parentRemoteId = node.parent?.remoteId;
+      if (parentRemoteId && !map[parentRemoteId] && !processed.has(parentRemoteId)) {
+        pending.add(parentRemoteId);
       }
     });
   }
@@ -381,36 +408,41 @@ const fetchCategoryDetails = async (
   channelId: string,
   policy: FetchPolicy,
 ) => {
+  const effectiveSalesChannelId = getEffectiveSalesChannelId(channelId);
+  if (!effectiveSalesChannelId) {
+    return null;
+  }
+
   try {
     const { data } = await apolloClient.query({
-      query: sheinCategoriesQuery,
+      query: miraklCategoriesQuery,
       variables: {
         first: 1,
         filter: {
-          salesChannel: { id: { exact: channelId } },
+          salesChannel: { id: { exact: effectiveSalesChannelId } },
           remoteId: { exact: remoteId },
         },
       },
       fetchPolicy: policy,
     });
-    const node = data?.sheinCategories?.edges?.[0]?.node;
-    return node ? normalizeCategoryNode(node) : null;
+    const node = data?.miraklCategories?.edges?.[0]?.node;
+    return node ? normalizeMiraklCategoryNode(node) : null;
   } catch (error) {
     displayApolloError(error);
     return null;
   }
 };
 
-const fetchSheinChannels = async () => {
+const fetchMiraklChannels = async () => {
   try {
     const { data } = await apolloClient.query({
-      query: sheinChannelsQuery,
+      query: miraklChannelsQuery,
       fetchPolicy: 'cache-first',
     });
-    const list = data?.sheinChannels?.edges?.map((edge: any) => edge.node) || [];
-    sheinChannels.value = list.sort((a: any, b: any) => (a.hostname || '').localeCompare(b.hostname || ''));
+    const list = data?.miraklChannels?.edges?.map((edge: any) => edge.node) || [];
+    miraklChannels.value = list.sort((a: any, b: any) => (a.hostname || '').localeCompare(b.hostname || ''));
   } catch (error) {
-    sheinChannels.value = [];
+    miraklChannels.value = [];
     displayApolloError(error);
   }
 };
@@ -420,7 +452,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
     return [];
   }
   const isBundle = parentProductType.value === ProductType.Bundle;
-  const query = isBundle ? bundleVariationsWithSheinQuery : configurableVariationsWithSheinQuery;
+  const query = isBundle ? bundleVariationsWithMiraklQuery : configurableVariationsWithMiraklQuery;
   const key = isBundle ? 'bundleVariations' : 'configurableVariations';
   const pageSize = 100;
   let after: string | null = null;
@@ -474,7 +506,7 @@ const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
 
   while (hasNextPage) {
     const { data } = await apolloClient.query({
-      query: productsWithSheinQuery,
+      query: productsWithMiraklQuery,
       variables: {
         first: pageSize,
         after,
@@ -571,8 +603,9 @@ const fetchProductCategories = async (productIds: string[], policy: FetchPolicy)
   if (!productIds.length) {
     return new Map<string, Map<string, { id: string; remoteId: string }>>();
   }
+
   const { data } = await apolloClient.query({
-    query: sheinProductCategoriesWithProductsQuery,
+    query: miraklProductCategoriesQuery,
     variables: {
       filter: {
         product: { id: { inList: productIds } },
@@ -582,11 +615,12 @@ const fetchProductCategories = async (productIds: string[], policy: FetchPolicy)
   });
 
   const categoryMap = new Map<string, Map<string, { id: string; remoteId: string }>>();
-  const edges = data?.sheinProductCategories?.edges || [];
+  const edges = data?.miraklProductCategories?.edges || [];
   edges.forEach((edge: any) => {
     const node = edge?.node;
     const productId = node?.product?.id;
-    const channelId = node?.salesChannel?.id;
+    const rawSalesChannelId = node?.salesChannel?.id;
+    const channelId = resolveDisplayChannelId(rawSalesChannelId);
     if (!productId || !channelId || !node?.remoteId) return;
     const productMap = categoryMap.get(String(productId)) || new Map<string, { id: string; remoteId: string }>();
     productMap.set(String(channelId), { id: String(node.id), remoteId: String(node.remoteId) });
@@ -598,8 +632,8 @@ const fetchProductCategories = async (productIds: string[], policy: FetchPolicy)
 const loadData = async (policy: FetchPolicy = 'cache-first') => {
   loading.value = true;
   try {
-    if (!sheinChannels.value.length) {
-      await fetchSheinChannels();
+    if (!miraklChannels.value.length) {
+      await fetchMiraklChannels();
     }
     let variationRows: VariationRow[] = [];
     if (hasProductIds.value) {
@@ -636,16 +670,14 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
     const rowsWithCategories = variationRows.map((row) => {
       const productMap = categoriesByProductId.get(row.variation.id) || new Map();
       const categories: Record<string, CategorySelection> = {};
-      sheinChannels.value.forEach((channel) => {
+      miraklChannels.value.forEach((channel) => {
         const entry = productMap.get(channel.id) || null;
         const remoteId = entry?.remoteId ?? null;
         const map = categoryMapByChannel.value[channel.id] || {};
-        const node = remoteId ? map[remoteId] : null;
         categories[channel.id] = {
           productCategoryId: entry?.id ?? null,
           remoteId,
-          productTypeRemoteId: node?.productTypeRemoteId ?? null,
-          path: remoteId ? (node ? buildCategoryPath(remoteId, channel.id) : remoteId) : null,
+          path: remoteId ? buildCategoryPath(remoteId, channel.id) || map[remoteId]?.name || remoteId : null,
         };
       });
       return {
@@ -663,29 +695,10 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
   }
 };
 
-const resolveProductTypeRemoteId = async (
-  channelId: string,
-  remoteId: string,
-  fallback: string | null,
-) => {
-  if (fallback) return fallback;
-  const map = categoryMapByChannel.value[channelId] || {};
-  if (map[remoteId]?.productTypeRemoteId) {
-    return map[remoteId].productTypeRemoteId;
-  }
-  const node = await fetchCategoryDetails(remoteId, channelId, 'cache-first');
-  if (!node) return null;
-  categoryMapByChannel.value = {
-    ...categoryMapByChannel.value,
-    [channelId]: { ...map, [remoteId]: node },
-  };
-  return node.productTypeRemoteId || null;
-};
-
 const save = async () => {
   if (!hasChanges.value || saving.value) return;
-  if (!sheinChannels.value.length) {
-    Toast.error(t('products.products.shein.noChannels'));
+  if (!miraklChannels.value.length) {
+    Toast.error(t('products.products.mirakl.noChannels'));
     return;
   }
   saving.value = true;
@@ -697,8 +710,9 @@ const save = async () => {
 
     for (const row of variations.value) {
       const original = originalMap.get(row.id);
-      for (const channel of sheinChannels.value) {
+      for (const channel of miraklChannels.value) {
         const channelId = channel.id;
+        const effectiveSalesChannelId = getEffectiveSalesChannelId(channelId);
         const current = row.categories[channelId] || createEmptyCategory();
         const originalCategory = original?.categories[channelId] || createEmptyCategory();
         const currentRemoteId = current.remoteId;
@@ -713,7 +727,7 @@ const save = async () => {
         if (!currentRemoteId) {
           if (productCategoryId) {
             await apolloClient.mutate({
-              mutation: deleteSheinProductCategoryMutation,
+              mutation: deleteMiraklProductCategoryMutation,
               variables: { data: { id: productCategoryId } },
             });
             current.productCategoryId = null;
@@ -721,41 +735,28 @@ const save = async () => {
           continue;
         }
 
-        const productTypeRemoteId = await resolveProductTypeRemoteId(
-          channelId,
-          currentRemoteId,
-          current.productTypeRemoteId,
-        );
-        if (!productTypeRemoteId) {
-          Toast.error(t('products.products.shein.productTypeIdMissing'));
-          continue;
-        }
-        current.productTypeRemoteId = productTypeRemoteId;
-
         if (productCategoryId) {
           await apolloClient.mutate({
-            mutation: updateSheinProductCategoryMutation,
+            mutation: updateMiraklProductCategoryMutation,
             variables: {
               data: {
                 id: productCategoryId,
                 remoteId: currentRemoteId,
-                productTypeRemoteId,
               },
             },
           });
-        } else {
+        } else if (effectiveSalesChannelId) {
           const { data } = await apolloClient.mutate({
-            mutation: createSheinProductCategoryMutation,
+            mutation: createMiraklProductCategoryMutation,
             variables: {
               data: {
                 product: { id: row.variation.id },
-                salesChannel: { id: channelId },
+                salesChannel: { id: effectiveSalesChannelId },
                 remoteId: currentRemoteId,
-                productTypeRemoteId,
               },
             },
           });
-          current.productCategoryId = data?.createSheinProductCategory?.id || null;
+          current.productCategoryId = data?.createMiraklProductCategory?.id || null;
         }
       }
     }
@@ -786,7 +787,7 @@ const closeSelectionModal = () => {
   modalSelectionPath.value = null;
 };
 
-const handleModalSelection = (payload: { node: SheinCategoryNode; path: SheinCategoryNode[] }) => {
+const handleModalSelection = (payload: { node: MiraklCategoryNode; path: MiraklCategoryNode[] }) => {
   modalSelection.value = payload.node;
   modalSelectionPath.value = payload.path.map((node) => node.name).filter(Boolean).join(' > ');
   if (!selectionModal.channelId) return;
@@ -805,7 +806,6 @@ const applyModalSelection = () => {
   if (!row) return;
   const category = ensureCategorySelection(row, selectionModal.channelId);
   category.remoteId = modalSelection.value.remoteId;
-  category.productTypeRemoteId = modalSelection.value.productTypeRemoteId ?? null;
   category.path = modalSelectionPath.value || modalSelection.value.name;
   closeSelectionModal();
 };
@@ -817,7 +817,7 @@ const openPreview = async (rowIndex: number, channelId: string | null) => {
   if (!category?.remoteId) return;
   const remoteId = category.remoteId;
   const map = categoryMapByChannel.value[channelId] || {};
-  let node: SheinCategoryNode | null = map[remoteId] ?? null;
+  let node: MiraklCategoryNode | null = map[remoteId] ?? null;
   if (!node) {
     node = await fetchCategoryDetails(remoteId, channelId, 'cache-first');
     if (node) {
@@ -844,9 +844,24 @@ const closePreview = () => {
 };
 
 onMounted(async () => {
-  await fetchSheinChannels();
+  await fetchMiraklChannels();
   await loadData('network-only');
 });
+
+watch(
+  miraklChannels,
+  (list) => {
+    if (!list.length) {
+      selectedChannelId.value = null;
+      return;
+    }
+    if (selectedChannelId.value && list.some((channel) => channel.id === selectedChannelId.value)) {
+      return;
+    }
+    selectedChannelId.value = list[0].id;
+  },
+  { immediate: true },
+);
 
 watch(
   () => [props.product?.id ?? null, props.productIds.join(',')],
@@ -875,11 +890,24 @@ defineExpose({ hasUnsavedChanges });
       @save="save"
     >
       <template #filters>
-        <div
-          v-if="!sheinChannels.length"
-          class="rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700"
-        >
-          {{ t('products.products.shein.noChannels') }}
+        <div class="flex flex-wrap items-center gap-3">
+          <Selector
+            v-if="channelOptions.length"
+            v-model="selectedChannelId"
+            :options="channelOptions"
+            class="w-64"
+            :placeholder="t('products.products.variations.mirakl.selectors.salesChannel')"
+            :removable="false"
+            labelBy="name"
+            valueBy="id"
+            filterable
+          />
+          <div
+            v-else
+            class="rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700"
+          >
+            {{ t('products.products.mirakl.noChannels') }}
+          </div>
         </div>
       </template>
       <template #cell="{ row, column, rowIndex }">
@@ -890,7 +918,7 @@ defineExpose({ hasUnsavedChanges });
         </template>
         <template v-else-if="column.key === 'name'">
           <Link
-            :path="{ name: 'products.products.show', params: { id: row.variation.id }, query: { tab: 'shein' } }"
+            :path="{ name: 'products.products.show', params: { id: row.variation.id }, query: { tab: 'mirakl' } }"
             target="_blank"
           >
             <span class="block truncate" :title="row.variation.name">
@@ -912,36 +940,36 @@ defineExpose({ hasUnsavedChanges });
           <Icon v-if="row.variation.active" name="check-circle" class="text-green-500" />
           <Icon v-else name="times-circle" class="text-red-500" />
         </template>
-        <template v-else-if="isCategoryColumn(column.key)">
+        <template v-else-if="column.key === categoryColumnKey">
           <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div class="min-w-0">
               <div
                 class="text-sm font-medium whitespace-normal break-words"
-                :title="getCategoryDisplayPath(row, column.key) || t('products.products.shein.noSelection')"
+                :title="getCategoryDisplayPath(row) || t('products.products.mirakl.noSelection')"
               >
-                {{ getCategoryDisplayPath(row, column.key) || t('products.products.shein.noSelection') }}
+                {{ getCategoryDisplayPath(row) || t('products.products.mirakl.noSelection') }}
               </div>
-              <div v-if="getCategorySelection(row, column.key)?.remoteId" class="text-xs text-gray-500">
-                {{ t('products.products.variations.shein.labels.categoryId', { id: getCategorySelection(row, column.key)?.remoteId }) }}
+              <div v-if="getCategorySelection(row)?.remoteId" class="text-xs text-gray-500">
+                {{ t('products.products.variations.mirakl.labels.categoryId', { id: getCategorySelection(row)?.remoteId }) }}
               </div>
             </div>
             <div class="flex flex-wrap gap-2">
               <Button
                 class="p-2 text-primary hover:bg-blue-50 rounded"
-                :title="t('products.products.variations.shein.actions.set')"
-                :aria-label="t('products.products.variations.shein.actions.set')"
-                :disabled="saving"
-                @click="openSelectionModal(rowIndex, getChannelIdFromColumnKey(column.key))"
+                :title="t('products.products.variations.mirakl.actions.set')"
+                :aria-label="t('products.products.variations.mirakl.actions.set')"
+                :disabled="saving || !selectedChannelId"
+                @click="openSelectionModal(rowIndex, selectedChannelId)"
               >
                 <Icon name="edit" class="h-4 w-4" aria-hidden="true" />
               </Button>
               <Button
-                v-if="getCategorySelection(row, column.key)?.remoteId"
+                v-if="getCategorySelection(row)?.remoteId"
                 class="p-2 text-gray-600 hover:bg-gray-100 rounded"
-                :title="t('products.products.variations.shein.actions.preview')"
-                :aria-label="t('products.products.variations.shein.actions.preview')"
-                :disabled="saving"
-                @click="openPreview(rowIndex, getChannelIdFromColumnKey(column.key))"
+                :title="t('products.products.variations.mirakl.actions.preview')"
+                :aria-label="t('products.products.variations.mirakl.actions.preview')"
+                :disabled="saving || !selectedChannelId"
+                @click="openPreview(rowIndex, selectedChannelId)"
               >
                 <Icon name="eye" class="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -955,7 +983,7 @@ defineExpose({ hasUnsavedChanges });
       <Card class="modal-content w-[90vw] max-w-[90vw] h-[85vh] flex flex-col min-h-0 overflow-hidden">
         <div class="mb-4">
           <h3 class="text-xl font-semibold">
-            {{ t('products.products.variations.shein.modal.title') }}
+            {{ t('products.products.variations.mirakl.modal.title') }}
           </h3>
           <div v-if="selectionModalChannel?.hostname" class="text-xs text-gray-500 mt-1">
             {{ selectionModalChannel.hostname }}
@@ -964,8 +992,8 @@ defineExpose({ hasUnsavedChanges });
         <div class="flex-1 min-h-0">
           <div class="grid gap-4 lg:grid-cols-2 h-full min-h-0">
             <div class="rounded border bg-white p-4 min-h-0 h-full max-h-[65vh] overflow-hidden flex flex-col">
-              <SheinCategoryBrowser
-                :sales-channel-id="selectionModal.channelId"
+              <MiraklCategoryBrowser
+                :sales-channel-id="selectionModalSalesChannelId"
                 @selected="handleModalSelection"
               />
             </div>
@@ -973,14 +1001,14 @@ defineExpose({ hasUnsavedChanges });
               <div v-if="modalSelectionPath" class="text-xs text-gray-500 mb-2">
                 {{ modalSelectionPath }}
               </div>
-              <SheinCategoryDetails
+              <MiraklCategoryDetails
                 v-if="modalSelection"
                 :category="modalSelection"
-                :sales-channel-id="selectionModal.channelId"
+                :sales-channel-id="selectionModalSalesChannelId"
                 :channel="selectionModalChannel"
               />
               <div v-else class="text-sm text-gray-500">
-                {{ t('products.products.shein.noSelection') }}
+                {{ t('products.products.mirakl.noSelection') }}
               </div>
             </div>
           </div>
@@ -991,7 +1019,7 @@ defineExpose({ hasUnsavedChanges });
             :disabled="!modalSelection"
             @click="applyModalSelection"
           >
-            {{ t('products.products.variations.shein.actions.set') }}
+            {{ t('products.products.variations.mirakl.actions.set') }}
           </Button>
           <Button class="btn btn-sm btn-outline-dark" @click="closeSelectionModal">
             {{ t('shared.button.cancel') }}
@@ -1005,7 +1033,7 @@ defineExpose({ hasUnsavedChanges });
         <div class="flex justify-between items-center mb-4">
           <div>
             <h3 class="text-xl font-semibold">
-              {{ t('products.products.variations.shein.modal.previewTitle') }}
+              {{ t('products.products.variations.mirakl.modal.previewTitle') }}
             </h3>
             <div v-if="previewRow" class="text-xs text-gray-500 mt-1">
               {{ previewRow.variation.sku }}
@@ -1016,14 +1044,14 @@ defineExpose({ hasUnsavedChanges });
           </Button>
         </div>
         <div class="flex-1 min-h-0 overflow-y-auto max-h-[75vh]">
-          <SheinCategoryDetails
+          <MiraklCategoryDetails
             v-if="previewNode"
             :category="previewNode"
-            :sales-channel-id="previewChannelId"
+            :sales-channel-id="previewSalesChannelId"
             :channel="previewChannel"
           />
           <div v-else class="text-sm text-gray-500">
-            {{ t('products.products.shein.noSelection') }}
+            {{ t('products.products.mirakl.noSelection') }}
           </div>
         </div>
       </Card>

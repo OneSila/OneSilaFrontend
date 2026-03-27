@@ -804,6 +804,10 @@
       "edit": {
         "title": "Bewerk EAN Code"
       },
+      "messages": {
+        "matchingExisting": "",
+        "matchExistingBlocked": ""
+      },
       "labels": {
         "eanCode": "EAN Code",
         "isAssigned": "Toegewezen aan product?",
@@ -953,7 +957,8 @@
           "general": "",
           "amazon": "",
           "ebay": "",
-          "shein": ""
+          "shein": "",
+          "mirakl": ""
         },
         "content": {
           "ai": {
@@ -974,6 +979,22 @@
             "updated": ""
           },
           "optionLabel": ""
+        },
+        "eanCodes": {
+          "labels": {
+            "disabledForConfigurable": ""
+          },
+          "status": {
+            "toBeAssigned": "",
+            "toBeReleased": "",
+            "toBeDeleted": "",
+            "willCreate": "",
+            "willUpdate": ""
+          },
+          "toast": {
+            "saved": "",
+            "failed": ""
+          }
         },
         "images": {
           "columns": {
@@ -1068,14 +1089,17 @@
           "labels": {
             "categoryId": ""
           },
-          "actions": {
-            "set": "",
-            "preview": ""
-          },
-          "modal": {
-            "title": "",
-            "previewTitle": ""
-          }
+        "actions": {
+          "set": "",
+          "preview": ""
+        },
+        "selectors": {
+          "salesChannel": ""
+        },
+        "modal": {
+          "title": "",
+          "previewTitle": ""
+        }
         },
         "ebay": {
           "columns": {
@@ -4189,6 +4213,13 @@
           "sections": {
             "metadata": "",
             "translations": ""
+          },
+          "setupRequired": {
+            "eyebrow": "",
+            "title": "",
+            "description": "",
+            "contact": "",
+            "details": ""
           },
           "help": {
             "defaultValue": "",

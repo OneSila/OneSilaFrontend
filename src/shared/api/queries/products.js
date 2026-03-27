@@ -193,6 +193,25 @@ export const productsWithSheinQuery = gql`
   }
 `;
 
+export const productsWithMiraklQuery = gql`
+  query ProductsWithMirakl($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const productsWithAmazonQuery = gql`
   query ProductsWithAmazon($first: Int, $after: String, $filter: ProductFilter) {
     products(first: $first, after: $after, filters: $filter) {
@@ -250,6 +269,26 @@ export const productsWithPricesQuery = gql`
               isoCode
             }
           }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const productsWithEanCodesQuery = gql`
+  query ProductsWithEanCodes($first: Int, $after: String, $filter: ProductFilter) {
+    products(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          sku
+          name
+          active
+          type
         }
       }
       pageInfo {
@@ -620,6 +659,28 @@ export const configurableVariationsWithSheinQuery = gql`
   }
 `;
 
+export const configurableVariationsWithMiraklQuery = gql`
+  query ConfigurableVariationsWithMirakl($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
 export const configurableVariationsWithAmazonQuery = gql`
   query ConfigurableVariationsWithAmazon($first: Int, $after: String, $filter: ConfigurableVariationFilter) {
     configurableVariations(first: $first, after: $after, filters: $filter) {
@@ -685,6 +746,28 @@ export const configurableVariationsWithEbayQuery = gql`
 
 export const bundleVariationsWithSheinQuery = gql`
   query BundleVariationsWithShein($first: Int, $after: String, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, after: $after, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsWithMiraklQuery = gql`
+  query BundleVariationsWithMirakl($first: Int, $after: String, $filter: BundleVariationFilter) {
     bundleVariations(first: $first, after: $after, filters: $filter) {
       edges {
         node {
