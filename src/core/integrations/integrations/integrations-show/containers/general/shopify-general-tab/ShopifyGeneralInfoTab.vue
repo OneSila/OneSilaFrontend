@@ -16,7 +16,6 @@ import {
   updateShopifySalesChannelMutation
 } from "../../../../../../../shared/api/mutations/salesChannels.js";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
-import { cleanShopHostname } from "../../../../configs";
 import apolloClient from "../../../../../../../../apollo-client";
 import {FieldType, PropertyTypes} from "../../../../../../../shared/utils/constants";
 import {propertiesQuerySelector} from "../../../../../../../shared/api/queries/properties";
@@ -40,8 +39,6 @@ interface EditShopifyForm {
   importOrders: boolean;
   minNameLength: number | null;
   minDescriptionLength: number | null;
-  apiKey: string;
-  apiSecret: string;
   accessToken?: string;
   state?: string;
   gptEnable: boolean;
@@ -111,6 +108,7 @@ const cleanupAndMutate = async (mutate) => {
   const payload = { ...formData.value };
 
   delete (payload as any).startingStock;
+  delete (payload as any).accessToken;
 
   if (!payload.vendorProperty?.id) {
     delete (payload as any).vendorProperty;
@@ -236,30 +234,6 @@ useShiftBackspaceKeyboardListener(goBack);
           </div>
         </FlexCell>
       </Flex>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-12 gap-4">
-    <div class="md:col-span-6 col-span-12">
-      <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-        {{ t('integrations.labels.apiKey') }}
-      </Label>
-      <TextInput v-model="formData.apiKey" disabled class="w-full" />
-    </div>
-    <div class="md:col-span-6 col-span-12">
-      <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-        {{ t('integrations.labels.apiSecret') }}
-      </Label>
-      <TextInput v-model="formData.apiSecret" disabled :secret="true" class="w-full" />
-    </div>
-  </div>
-
-  <div class="grid grid-cols-12 gap-4">
-    <div class="md:col-span-12 col-span-12">
-      <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
-        {{ t('integrations.labels.accessToken') }}
-      </Label>
-      <TextInput v-model="formData.accessToken" secret class="w-full" />
     </div>
   </div>
 

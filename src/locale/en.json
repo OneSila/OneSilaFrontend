@@ -4839,10 +4839,10 @@
               "integrationStep5Part1": "Open the new app and go to 'Configuration'.",
               "integrationStep5Part2": "Under 'Admin API integration' click 'Configure' and enable these scopes:",
               "integrationStep5Part3": "Click 'Save'.",
-              "integrationStep6Part1": "In 'API credentials' select 'Install app' and confirm. ",
-              "integrationStep6Part2": "Now the API key, API secret key and Admin API access token are ready for the last step of this wizard.",
+              "integrationStep6Part1": "In 'Configuration', set your app URL and allowed redirection URL so OneSila can send the Shopify authorization response back to the correct callback page.",
+              "integrationStep6Part2": "Use the backend-provided Shopify callback URL for the allowed redirection URL. OAuth will issue the access token after authorization, so you no longer need to copy API credentials into this wizard.",
               "integrationStep7": "From the Sales channels sidebar choose 'View your online store' and copy the URL from your browser and paste it in the step 2 of this wizard.",
-              "integrationStep8": "During step 4 of the wizard paste the API key, secret key and access token, then click Finish.",
+              "integrationStep8": "During step 4 of the wizard review the Shopify-specific settings and click Finish. OneSila will then redirect you to Shopify to authorize the connection.",
               "appUrlLabel": "App URL",
               "allowedRedirectUrlLabel": "Allowed redirection URL(s)",
               "customAppTitle": "Create Custom App",
@@ -4868,7 +4868,7 @@
           },
           "shopify": {
             "title": "Shopify Channel Details",
-            "content": "Provide Shopify-specific configuration to connect your store."
+            "content": "Review the Shopify-specific settings. When you finish, OneSila will redirect you to Shopify to authorize the connection."
           },
           "woocommerce": {
             "title": "WooCommerce Channel Details",
@@ -5072,6 +5072,14 @@
       },
       "installed": {
         "title": "Ebay Connected"
+      }
+    },
+    "shopify": {
+      "entry": {
+        "title": "Connect Shopify"
+      },
+      "installed": {
+        "title": "Shopify Connected"
       }
     },
     "salesChannel": {

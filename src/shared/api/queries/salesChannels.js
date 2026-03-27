@@ -149,8 +149,6 @@ export const getShopifyChannelQuery = gql`
       syncEanCodes
       syncPrices
       importOrders
-      apiKey
-      apiSecret
       accessToken
       minNameLength
       minDescriptionLength

@@ -1150,6 +1150,14 @@
       "webhook": "Webhook",
       "mirakl": ""
     },
+    "shopify": {
+      "entry": {
+        "title": ""
+      },
+      "installed": {
+        "title": ""
+      }
+    },
     "amazon": {
       "actions": {
         "bulkForceUpdate": {
