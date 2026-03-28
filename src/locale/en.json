@@ -5446,12 +5446,12 @@
           "uploadFailed": "The import could not be completed with the uploaded export files.",
           "tutorial": {
             "title": "How to generate the Mirakl export files",
-            "description": "Repeat this process until you have exported the full catalog, then upload all generated XLSX files here.",
+            "description": "Use Mirakl's select-all action to export the full catalog in one go, then upload the generated XLSX file here.",
             "steps": {
               "step1": "Go to Catalog Management.",
-              "step2": "Select as many products per page as possible (100).",
-              "step3": "Click the square to select all products on the page, then click Generate file export.",
-              "step4": "When Download last generated export file appears, download it, go to the next page, and repeat until all products are covered."
+              "step2": "Select any product in the list.",
+              "step3": "Click Select all to select your full catalog, then click Generate file export.",
+              "step4": "When Download last generated export file appears, download it and upload that XLSX file here."
             }
           }
         },
