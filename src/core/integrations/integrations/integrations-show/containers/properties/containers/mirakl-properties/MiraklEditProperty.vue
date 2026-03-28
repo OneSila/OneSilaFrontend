@@ -9,7 +9,7 @@ import { FieldType, PropertyTypes } from "../../../../../../../../shared/utils/c
 import { getPropertyQuery, propertiesQuerySelector } from "../../../../../../../../shared/api/queries/properties.js";
 import apolloClient from "../../../../../../../../../apollo-client";
 import { Toast } from "../../../../../../../../shared/modules/toast";
-import { miraklPropertiesQuery, miraklRemoteLanguagesQuery } from "../../../../../../../../shared/api/queries/salesChannels";
+import { miraklPropertiesQuery } from "../../../../../../../../shared/api/queries/salesChannels";
 import type { FormConfig } from "../../../../../../../../shared/components/organisms/general-form/formConfig";
 import { Link } from "../../../../../../../../shared/components/atoms/link";
 import { Button } from "../../../../../../../../shared/components/atoms/button";
@@ -19,26 +19,8 @@ import { checkPropertyForDuplicatesMutation } from "../../../../../../../../shar
 import debounce from 'lodash.debounce';
 import { buildFilterVariablesFromRouteQuery, extractPrefixedQueryParams } from '../../../../../../../../shared/components/molecules/filter-manager/filterQueryUtils';
 import { getTypeCompatibility } from '../../../../../../../../shared/utils/propertyTypeCompatibility';
-import {
-  getMiraklRepresentationTypeOptions,
-  getMiraklRepresentationTypeGroup,
-  usesMiraklBooleanCurrentType,
-  usesMiraklDefaultValueInput,
-  usesMiraklLanguageSelection,
-  usesMiraklLocalPropertyMapping,
-} from './representationTypes';
 
-const miraklRepresentationImages = import.meta.glob(
-  '../../../../../../../../assets/images/integrations/mirakl/representation-types/*.png',
-  { eager: true, import: 'default' },
-) as Record<string, string>;
-
-const miraklRepresentationTypesWithoutImage = new Set([
-  'product_internal_id',
-  'product_configurable_id',
-]);
-
-const { t, te } = useI18n();
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 
@@ -54,7 +36,6 @@ const formConfig = ref<FormConfig | null>(null);
 const formData = ref<Record<string, any>>({});
 const propertyMetadata = ref<Record<string, any> | null>(null);
 const propertyType = ref<string | null>(null);
-const representationType = ref<string | null>(null);
 const originalType = ref<string | null>(null);
 const initialCurrentType = ref<string | null>(null);
 const originalAllowsUnmappedValues = ref<boolean | null>(null);
@@ -127,124 +108,16 @@ const typeCompatibilityStatus = computed(() => {
 const isSelectPropertyType = (value?: string | null) =>
   value === PropertyTypes.SELECT || value === PropertyTypes.MULTISELECT;
 
-const currentRepresentationType = computed(() =>
-  formData.value.representationType || representationType.value || propertyMetadata.value?.representationType || null,
-);
 const isRepresentationTypeDecided = computed(() => Boolean(propertyMetadata.value?.representationTypeDecided));
-const usesLocalPropertyMapping = computed(() =>
-  isRepresentationTypeDecided.value || usesMiraklLocalPropertyMapping(currentRepresentationType.value),
-);
-const usesDefaultValueInput = computed(() =>
-  !isRepresentationTypeDecided.value && usesMiraklDefaultValueInput(currentRepresentationType.value),
-);
-const showLanguageField = computed(() =>
-  !isRepresentationTypeDecided.value && usesMiraklLanguageSelection(currentRepresentationType.value),
-);
-const canSeeValues = computed(() => usesLocalPropertyMapping.value && isSelectPropertyType(propertyType.value));
-const showRepresentationGuide = computed(() => !isRepresentationTypeDecided.value);
-const representationTypeLabel = computed(() =>
-  currentRepresentationType.value
-    ? t(`integrations.show.mirakl.representationTypes.options.${currentRepresentationType.value}`)
-    : t('integrations.show.mirakl.representationGuide.empty.title'),
-);
-const representationTypeGroup = computed(() => getMiraklRepresentationTypeGroup(currentRepresentationType.value));
-const representationGuideImage = computed(() => {
-  const currentType = currentRepresentationType.value;
-
-  if (!currentType || miraklRepresentationTypesWithoutImage.has(currentType)) {
-    return null;
-  }
-
-  const match = Object.entries(miraklRepresentationImages).find(([path]) =>
-    path.endsWith(`/${currentType}.png`),
-  );
-
-  return match?.[1] || null;
-});
+const canEditMapping = computed(() => isRepresentationTypeDecided.value);
+const canSeeValues = computed(() => canEditMapping.value && isSelectPropertyType(propertyType.value));
+const showDeveloperAlert = computed(() => propertyMetadata.value !== null && !isRepresentationTypeDecided.value);
 const labelTranslations = computed(() => normalizeTranslations(propertyMetadata.value?.labelTranslations));
 const descriptionTranslations = computed(() => normalizeTranslations(propertyMetadata.value?.descriptionTranslations));
-const representationGuide = computed(() => {
-  const currentType = currentRepresentationType.value;
-  if (!currentType) {
-    return {
-      title: t('integrations.show.mirakl.representationGuide.empty.title'),
-      description: t('integrations.show.mirakl.representationGuide.empty.description'),
-      summary: t('integrations.show.mirakl.representationGuide.empty.summary'),
-      source: t('integrations.show.mirakl.representationGuide.empty.source'),
-      fill: t('integrations.show.mirakl.representationGuide.empty.fill'),
-      badge: t('integrations.show.mirakl.representationGuide.badges.special'),
-    };
-  }
-
-  if (usesLocalPropertyMapping.value) {
-    return {
-      title: representationTypeLabel.value,
-      description: t('integrations.show.mirakl.representationGuide.special.property.description'),
-      summary: t('integrations.show.mirakl.representationGuide.special.property.summary'),
-      source: t('integrations.show.mirakl.representationGuide.special.property.source'),
-      fill: t('integrations.show.mirakl.representationGuide.special.property.fill'),
-      badge: t('integrations.show.mirakl.representationGuide.badges.special'),
-    };
-  }
-
-  if (usesDefaultValueInput.value) {
-    return {
-      title: representationTypeLabel.value,
-      description: t('integrations.show.mirakl.representationGuide.special.default_value.description'),
-      summary: t('integrations.show.mirakl.representationGuide.special.default_value.summary'),
-      source: t('integrations.show.mirakl.representationGuide.special.default_value.source'),
-      fill: t('integrations.show.mirakl.representationGuide.special.default_value.fill'),
-      badge: t('integrations.show.mirakl.representationGuide.badges.special'),
-    };
-  }
-
-  if (currentType === 'unit') {
-    return {
-      title: representationTypeLabel.value,
-      description: t('integrations.show.mirakl.representationGuide.special.unit.description'),
-      summary: t('integrations.show.mirakl.representationGuide.special.unit.summary'),
-      source: t('integrations.show.mirakl.representationGuide.special.unit.source'),
-      fill: t('integrations.show.mirakl.representationGuide.special.unit.fill'),
-      badge: t('integrations.show.mirakl.representationGuide.badges.special'),
-    };
-  }
-
-  const specificBaseKey = `integrations.show.mirakl.representationGuide.types.${currentType}`;
-  if (te(`${specificBaseKey}.description`)) {
-    return {
-      title: representationTypeLabel.value,
-      description: t(`${specificBaseKey}.description`),
-      summary: t(`${specificBaseKey}.summary`),
-      source: t(`${specificBaseKey}.source`),
-      fill: t(`${specificBaseKey}.fill`),
-      badge: t(`integrations.show.mirakl.representationGuide.badges.${representationTypeGroup.value}`),
-    };
-  }
-
-  return {
-    title: representationTypeLabel.value,
-    description: t(`integrations.show.mirakl.representationGuide.${representationTypeGroup.value}.description`, {
-      field: representationTypeLabel.value,
-    }),
-    summary: t(`integrations.show.mirakl.representationGuide.${representationTypeGroup.value}.summary`, {
-      field: representationTypeLabel.value,
-    }),
-    source: t(`integrations.show.mirakl.representationGuide.${representationTypeGroup.value}.source`, {
-      field: representationTypeLabel.value,
-    }),
-    fill: t(`integrations.show.mirakl.representationGuide.${representationTypeGroup.value}.fill`, {
-      field: representationTypeLabel.value,
-    }),
-    badge: t(`integrations.show.mirakl.representationGuide.badges.${representationTypeGroup.value}`),
-  };
-});
 
 const metadataFields = computed<Array<{ key: string; label: string; boolean?: boolean }>>(() => [
   { key: 'description', label: t('integrations.show.mirakl.properties.labels.description') },
   { key: 'example', label: t('integrations.show.mirakl.properties.labels.example') },
-  ...(showLanguageField.value
-    ? [{ key: 'language', label: t('integrations.show.mirakl.properties.labels.language') }]
-    : []),
   { key: 'defaultValue', label: t('integrations.show.mirakl.properties.labels.defaultValue') },
   { key: 'valueListCode', label: t('integrations.show.mirakl.properties.labels.valueListCode') },
   { key: 'valueListLabel', label: t('integrations.show.mirakl.properties.labels.valueListLabel') },
@@ -262,10 +135,13 @@ const rawDataAccordionItems = computed(() => ([
 
 const selectValuesRoute = computed(() => ({
   name: 'integrations.integrations.show',
-  params: { type: type.value, id: integrationId },
+  params: {
+    type: route.params.type?.toString() || type.value,
+    id: route.query.integrationId?.toString() || integrationId,
+  },
   query: {
     tab: 'propertySelectValues',
-    remoteProperty: miraklPropertyId.value,
+    remoteProperty: route.params.id?.toString() || miraklPropertyId.value,
   },
 }));
 
@@ -461,57 +337,6 @@ const buildLocalInstanceField = (defaultValue?: string | null) => ({
   ...(defaultValue ? { default: defaultValue } : {}),
 });
 
-const buildDefaultValueField = (defaultValue?: string | null) => ({
-  type: FieldType.Text,
-  name: 'defaultValue',
-  label: t('integrations.show.mirakl.properties.labels.defaultValue'),
-  help: t('integrations.show.mirakl.properties.help.defaultValue'),
-  ...(defaultValue != null ? { default: defaultValue } : {}),
-});
-
-const buildLanguageField = () => ({
-  type: FieldType.Query,
-  name: 'language',
-  label: t('integrations.show.mirakl.properties.labels.language'),
-  help: t('integrations.show.mirakl.properties.help.language'),
-  labelBy: 'name',
-  valueBy: 'remoteCode',
-  query: miraklRemoteLanguagesQuery,
-  dataKey: 'miraklRemoteLanguages',
-  queryVariables: salesChannelId
-    ? { filter: { salesChannel: { id: { exact: salesChannelId } } } }
-    : undefined,
-  isEdge: true,
-  multiple: false,
-  filterable: true,
-  removable: true,
-  optional: true,
-});
-
-const buildRepresentationTypeField = () => ({
-  type: FieldType.Choice,
-  name: 'representationType',
-  label: t('integrations.show.mirakl.properties.labels.representationType'),
-  labelBy: 'name',
-  valueBy: 'code',
-  options: getMiraklRepresentationTypeOptions(t),
-  disabled: false,
-  removable: false,
-  help: t('integrations.show.mirakl.properties.help.representationType'),
-});
-
-const getForcedRepresentationCurrentType = () => {
-  if (isRepresentationTypeDecided.value || !usesMiraklBooleanCurrentType(currentRepresentationType.value)) {
-    return null;
-  }
-
-  if (![PropertyTypes.SELECT, PropertyTypes.MULTISELECT].includes(originalType.value || '')) {
-    return null;
-  }
-
-  return PropertyTypes.BOOLEAN;
-};
-
 const insertFieldsAfter = (afterName: string, fieldsToAdd: any[]) => {
   if (!formConfig.value) {
     return;
@@ -544,7 +369,7 @@ const removeFieldsByName = (names: string[]) => {
   }
 };
 
-const syncRepresentationFields = () => {
+const syncEditableFields = () => {
   if (!formConfig.value) {
     return;
   }
@@ -554,62 +379,39 @@ const syncRepresentationFields = () => {
     propertyId ??
     propertyMetadata.value?.localInstance?.id ??
     null;
-  const existingDefaultValue = formData.value?.defaultValue ?? propertyMetadata.value?.defaultValue ?? '';
-  const existingLanguage = formData.value?.language ?? propertyMetadata.value?.language ?? null;
+  formConfig.value.haveCustomHelpSection = showDeveloperAlert.value;
 
-  formConfig.value.haveCustomHelpSection = showRepresentationGuide.value;
+  removeFieldsByName(['localInstance', 'yesTextValue', 'noTextValue']);
 
-  if (showRepresentationGuide.value) {
-    insertFieldsAfter('allowsUnmappedValues', [buildRepresentationTypeField() as any]);
-  } else {
-    removeFieldsByName(['representationType']);
-  }
-
-  removeFieldsByName(['localInstance', 'defaultValue', 'language', 'yesTextValue', 'noTextValue']);
-
-  if (usesLocalPropertyMapping.value) {
-    insertFieldsAfter('name', [
-      buildLocalInstanceField(existingLocalInstance) as any,
-    ]);
-    formData.value.localInstance = existingLocalInstance;
-    syncBooleanTextFields(getEffectiveCurrentType(formData.value.type));
-    if (showLanguageField.value) {
-      const languageAnchor = formConfig.value.fields.some((item) => item.name === 'noTextValue')
-        ? 'noTextValue'
-        : formConfig.value.fields.some((item) => item.name === 'yesTextValue')
-          ? 'yesTextValue'
-          : 'localInstance';
-      insertFieldsAfter(languageAnchor, [buildLanguageField() as any]);
-      formData.value.language = existingLanguage;
+  if (!canEditMapping.value) {
+    localPropertyType.value = null;
+    recommendations.value = [];
+    if (formData.value) {
+      formData.value.type = getEffectiveCurrentType(formData.value.type);
     }
     updateLocalInstanceHelp();
+    updateCurrentTypeHelp();
     return;
   }
 
-  if (usesDefaultValueInput.value) {
-    insertFieldsAfter('name', [
-      buildDefaultValueField(existingDefaultValue) as any,
-    ]);
-    formData.value.defaultValue = existingDefaultValue;
-  }
-
-  if (showLanguageField.value) {
-    const languageAnchor = usesDefaultValueInput.value ? 'defaultValue' : 'name';
-    insertFieldsAfter(languageAnchor, [buildLanguageField() as any]);
-    formData.value.language = existingLanguage;
-  }
-
-  localPropertyType.value = getForcedRepresentationCurrentType();
-  if (formData.value) {
-    formData.value.type = getEffectiveCurrentType(formData.value.type);
-  }
+  insertFieldsAfter('name', [
+    buildLocalInstanceField(existingLocalInstance) as any,
+  ]);
+  formData.value.localInstance = existingLocalInstance;
+  syncBooleanTextFields(getEffectiveCurrentType(formData.value.type));
   updateLocalInstanceHelp();
   updateCurrentTypeHelp();
 };
 
+const clearBlockedMappingData = (data: Record<string, any>) => {
+  delete data.localInstance;
+  delete data.yesTextValue;
+  delete data.noTextValue;
+};
+
 const syncBooleanTextFields = (currentTypeOverride?: string | null) => {
   const fieldNames = ['yesTextValue', 'noTextValue'];
-  if (!usesLocalPropertyMapping.value) {
+  if (!canEditMapping.value) {
     removeFieldsByName(fieldNames);
     return;
   }
@@ -690,25 +492,11 @@ onMounted(async () => {
         type: getEffectiveCurrentType(cleanedData.type),
       };
 
-      if (!usesLocalPropertyMapping.value) {
-        delete nextData.localInstance;
-        delete nextData.yesTextValue;
-        delete nextData.noTextValue;
+      if (!canEditMapping.value) {
+        clearBlockedMappingData(nextData);
       }
 
-      if (isRepresentationTypeDecided.value) {
-        delete nextData.representationType;
-      }
-
-      if (!usesDefaultValueInput.value) {
-        delete nextData.defaultValue;
-      }
-
-      if (!showLanguageField.value) {
-        delete nextData.language;
-      }
-
-      if (!usesLocalPropertyMapping.value && nextData.localInstance?.id === null) {
+      if (!canEditMapping.value && nextData.localInstance?.id === null) {
         nextData.localInstance = null;
       }
 
@@ -787,19 +575,14 @@ const handleSetData = (data: any) => {
     return;
   }
   propertyMetadata.value = propertyData || null;
-  representationType.value = propertyData?.representationType || null;
-
   originalType.value = propertyData?.originalType || currentType;
   initialCurrentType.value = currentType;
   originalAllowsUnmappedValues.value = propertyData?.allowsUnmappedValues ?? null;
   propertyType.value = currentType;
   if (formData.value) {
     formData.value.originalType = originalType.value;
-    formData.value.representationType = representationType.value;
-    formData.value.defaultValue = propertyData?.defaultValue ?? '';
-    formData.value.language = propertyData?.language ?? null;
   }
-  syncRepresentationFields();
+  syncEditableFields();
 };
 
 const handleFormUpdate = (form: Record<string, any>) => {
@@ -807,10 +590,11 @@ const handleFormUpdate = (form: Record<string, any>) => {
 };
 
 watch(localInstanceId, async (nextId) => {
-  if (!usesLocalPropertyMapping.value) {
+  if (!canEditMapping.value) {
     localPropertyType.value = null;
     updateLocalInstanceHelp();
     updateCurrentTypeHelp();
+    syncBooleanTextFields();
     return;
   }
 
@@ -857,7 +641,7 @@ watch(localInstanceId, async (nextId) => {
 });
 
 const fetchRecommendations = async () => {
-  if (!usesLocalPropertyMapping.value) {
+  if (!canEditMapping.value) {
     recommendations.value = [];
     return;
   }
@@ -892,7 +676,7 @@ const debouncedFetchRecommendations = debounce(fetchRecommendations, 500);
 watch(
   () => formData.value.name,
   () => {
-    if (!usesLocalPropertyMapping.value) {
+    if (!canEditMapping.value) {
       recommendations.value = [];
       return;
     }
@@ -912,8 +696,8 @@ const selectRecommendation = (id: string) => {
   recommendations.value = recommendations.value.filter((r) => r.id !== id);
 };
 
-watch(currentRepresentationType, () => {
-  syncRepresentationFields();
+watch(isRepresentationTypeDecided, () => {
+  syncEditableFields();
 });
 </script>
 
@@ -925,63 +709,27 @@ watch(currentRepresentationType, () => {
     @form-updated="handleFormUpdate"
   >
     <template #help-section>
-      <div v-if="showRepresentationGuide" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div class="bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-5 border-b border-slate-200">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700">
-                {{ t('integrations.show.mirakl.representationGuide.eyebrow') }}
-              </p>
-              <h2 class="mt-2 text-xl font-semibold text-slate-900">
-                {{ representationGuide.title }}
-              </h2>
-              <p class="mt-2 text-sm leading-6 text-slate-600">
-                {{ representationGuide.summary }}
-              </p>
-            </div>
-            <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-800 whitespace-nowrap">
-              {{ representationGuide.badge }}
-            </span>
-          </div>
-        </div>
-
-        <div class="space-y-5 p-5">
-          <img
-            v-if="representationGuideImage"
-            :src="representationGuideImage"
-            :alt="representationTypeLabel"
-            class="h-auto w-full rounded-xl border border-slate-200 bg-white object-cover shadow-sm"
-          />
-
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-              {{ t('integrations.show.mirakl.representationGuide.cards.general.title') }}
-            </p>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              {{ representationGuide.description }}
-            </p>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              {{ representationGuide.summary }}
-            </p>
-          </div>
-
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-              {{ t('integrations.show.mirakl.representationGuide.cards.current.title') }}
-            </p>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              {{ representationGuide.source }}
-            </p>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              {{ representationGuide.fill }}
-            </p>
-          </div>
+      <div v-if="showDeveloperAlert" class="rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">
+          {{ t('integrations.show.mirakl.properties.setupRequired.eyebrow') }}
+        </p>
+        <h2 class="mt-2 text-xl font-semibold text-amber-950">
+          {{ t('integrations.show.mirakl.properties.setupRequired.title') }}
+        </h2>
+        <p class="mt-3 text-sm leading-6 text-amber-900">
+          {{ t('integrations.show.mirakl.properties.setupRequired.description') }}
+        </p>
+        <p class="mt-3 text-sm leading-6 text-amber-800">
+          {{ t('integrations.show.mirakl.properties.setupRequired.contact') }}
+        </p>
+        <div class="mt-4 rounded-xl border border-amber-200 bg-white/70 p-4 text-sm leading-6 text-amber-950">
+          {{ t('integrations.show.mirakl.properties.setupRequired.details') }}
         </div>
       </div>
     </template>
     <template #before-form>
       <div
-        v-if="showTypeDisclaimer"
+        v-if="canEditMapping && showTypeDisclaimer"
         :class="[
           'mb-6 border rounded p-4',
           typeCompatibilityIsCompatible ? 'border-orange-200 bg-orange-50' : 'border-red-200 bg-red-50',
@@ -1000,7 +748,7 @@ watch(currentRepresentationType, () => {
       </div>
     </template>
     <template #additional-button>
-      <div v-if="usesLocalPropertyMapping" class="flex items-center gap-2">
+      <div v-if="canEditMapping" class="flex items-center gap-2">
         <Link
           v-if="remoteRuleId"
           :path="{
@@ -1026,8 +774,8 @@ watch(currentRepresentationType, () => {
       </div>
     </template>
     <template #additional-fields>
-      <div class="space-y-4">
-        <div v-if="usesLocalPropertyMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+      <div v-if="canEditMapping" class="space-y-4">
+        <div class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
           <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">
             {{ t('integrations.show.propertySelectValues.recommendation.title') }}
           </Label>

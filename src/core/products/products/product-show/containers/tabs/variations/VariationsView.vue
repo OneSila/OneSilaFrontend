@@ -15,9 +15,11 @@ import VariationsImagesBulkEdit from "./containers/variations-images-bulk-edit/V
 import VariationsDocumentsBulkEdit from "./containers/variations-documents-bulk-edit/VariationsDocumentsBulkEdit.vue";
 import VariationsVideosBulkEdit from "./containers/variations-videos-bulk-edit/VariationsVideosBulkEdit.vue";
 import VariationsGeneralBulkEdit from "./containers/variations-general-bulk-edit/VariationsGeneralBulkEdit.vue";
+import VariationsEanCodesBulkEdit from "./containers/variations-ean-codes-bulk-edit/VariationsEanCodesBulkEdit.vue";
 import VariationsAmazonBulkEdit from "./containers/variations-amazon-bulk-edit/VariationsAmazonBulkEdit.vue";
 import VariationsSheinBulkEdit from "./containers/variations-shein-bulk-edit/VariationsSheinBulkEdit.vue";
 import VariationsEbayBulkEdit from "./containers/variations-ebay-bulk-edit/VariationsEbayBulkEdit.vue";
+import VariationsMiraklBulkEdit from "./containers/variations-mirakl-bulk-edit/VariationsMiraklBulkEdit.vue";
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import { injectAuth } from "../../../../../../../shared/modules/auth";
@@ -31,7 +33,7 @@ const route = useRoute();
 const router = useRouter();
 const ids = ref([]);
 const refetchNeeded = ref(false);
-type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editDocuments' | 'editVideos' | 'editAmazon' | 'editShein' | 'editEbay' | 'editGeneral';
+type Mode = 'list' | 'editContent' | 'editProperties' | 'editPrices' | 'editImages' | 'editDocuments' | 'editVideos' | 'editAmazon' | 'editShein' | 'editEbay' | 'editMirakl' | 'editGeneral' | 'editEanCodes';
 const mode = ref<Mode>('list');
 const modeQueryKey = 'variationView';
 const bulkEditRef = ref<InstanceType<typeof VariationsBulkEdit> | null>(null);
@@ -41,9 +43,11 @@ const imageEditRef = ref<InstanceType<typeof VariationsImagesBulkEdit> | null>(n
 const documentEditRef = ref<InstanceType<typeof VariationsDocumentsBulkEdit> | null>(null);
 const videoEditRef = ref<InstanceType<typeof VariationsVideosBulkEdit> | null>(null);
 const generalEditRef = ref<InstanceType<typeof VariationsGeneralBulkEdit> | null>(null);
+const eanCodesEditRef = ref<InstanceType<typeof VariationsEanCodesBulkEdit> | null>(null);
 const amazonEditRef = ref<InstanceType<typeof VariationsAmazonBulkEdit> | null>(null);
 const sheinEditRef = ref<InstanceType<typeof VariationsSheinBulkEdit> | null>(null);
 const ebayEditRef = ref<InstanceType<typeof VariationsEbayBulkEdit> | null>(null);
+const miraklEditRef = ref<InstanceType<typeof VariationsMiraklBulkEdit> | null>(null);
 
 const getUnsavedChangesForMode = (currentMode: Mode) => {
   if (currentMode === 'editContent') {
@@ -73,8 +77,14 @@ const getUnsavedChangesForMode = (currentMode: Mode) => {
   if (currentMode === 'editEbay') {
     return ebayEditRef.value?.hasUnsavedChanges ?? false;
   }
+  if (currentMode === 'editMirakl') {
+    return miraklEditRef.value?.hasUnsavedChanges ?? false;
+  }
   if (currentMode === 'editGeneral') {
     return generalEditRef.value?.hasUnsavedChanges ?? false;
+  }
+  if (currentMode === 'editEanCodes') {
+    return eanCodesEditRef.value?.hasUnsavedChanges ?? false;
   }
   return false;
 };
@@ -87,15 +97,18 @@ const hasUnsavedChanges = computed(
     (imageEditRef.value?.hasUnsavedChanges ?? false) ||
     (documentEditRef.value?.hasUnsavedChanges ?? false) ||
     (videoEditRef.value?.hasUnsavedChanges ?? false) ||
+    (eanCodesEditRef.value?.hasUnsavedChanges ?? false) ||
     (amazonEditRef.value?.hasUnsavedChanges ?? false) ||
     (sheinEditRef.value?.hasUnsavedChanges ?? false) ||
     (ebayEditRef.value?.hasUnsavedChanges ?? false) ||
+    (miraklEditRef.value?.hasUnsavedChanges ?? false) ||
     (generalEditRef.value?.hasUnsavedChanges ?? false)
 );
 
 const hasAmazonIntegration = computed(() => Boolean(auth.user.company?.hasAmazonIntegration));
 const hasSheinIntegration = computed(() => Boolean(auth.user.company?.hasSheinIntegration));
 const hasEbayIntegration = computed(() => Boolean(auth.user.company?.hasEbayIntegration));
+const hasMiraklIntegration = computed(() => Boolean(auth.user.company?.hasMiraklIntegration));
 
 const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
   const items: { key: Mode; label: string; icon: string }[] = [
@@ -103,6 +116,7 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
     { key: 'editGeneral', label: t('products.products.variations.tabs.general'), icon: 'sliders' },
     { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
     { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
+    { key: 'editEanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
     { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
     { key: 'editDocuments', label: t('products.products.variations.tabs.documents'), icon: 'file-text' },
@@ -119,6 +133,10 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
 
   if (hasSheinIntegration.value) {
     items.push({ key: 'editShein', label: t('products.products.variations.tabs.shein'), icon: 'store' });
+  }
+
+  if (hasMiraklIntegration.value) {
+    items.push({ key: 'editMirakl', label: t('products.products.variations.tabs.mirakl'), icon: 'store' });
   }
 
   return items;
@@ -316,6 +334,9 @@ defineExpose({ hasUnsavedChanges });
           <template v-else-if="mode === 'editPrices'">
             <VariationsPricesBulkEdit ref="priceEditRef" :product="product" />
           </template>
+          <template v-else-if="mode === 'editEanCodes'">
+            <VariationsEanCodesBulkEdit ref="eanCodesEditRef" :product="product" />
+          </template>
           <template v-else-if="mode === 'editImages'">
             <VariationsImagesBulkEdit ref="imageEditRef" :product="product" />
           </template>
@@ -333,6 +354,9 @@ defineExpose({ hasUnsavedChanges });
           </template>
           <template v-else-if="mode === 'editShein'">
             <VariationsSheinBulkEdit ref="sheinEditRef" :product="product" />
+          </template>
+          <template v-else-if="mode === 'editMirakl'">
+            <VariationsMiraklBulkEdit ref="miraklEditRef" :product="product" />
           </template>
           <template v-else>
             <VariationsGeneralBulkEdit ref="generalEditRef" :product="product" />

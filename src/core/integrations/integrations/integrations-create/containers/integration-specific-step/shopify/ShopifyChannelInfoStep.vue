@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
-import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
 import { ShopifyChannelInfo } from '../../../../integrations';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { Button } from "../../../../../../../shared/components/atoms/button";
@@ -14,7 +13,7 @@ import {
   FieldQuery
 } from "../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
 
-const props = defineProps<{
+defineProps<{
   channelInfo: ShopifyChannelInfo
 }>();
 
@@ -48,74 +47,40 @@ const propertyField = computed(() => ({
 <template>
   <div>
     <h1 class="text-2xl text-center mb-2">
-      {{ t('integrations.create.wizard.step4.magento.content') }}
+      {{ t('integrations.create.wizard.step4.shopify.content') }}
     </h1>
     <hr/>
     <Flex vertical>
       <FlexCell>
         <Flex class="mt-4 gap-4" center>
           <FlexCell center>
-            <Flex vertical class="gap-2">
+            <Flex vertical class="gap-4">
               <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.apiKey') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <TextInput
-                    class="w-96"
-                    v-model="channelInfo.apiKey"
-                    :placeholder="t('integrations.placeholders.apiKey')"
-                />
+                <div class="w-96 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-900">
+                  {{ t('integrations.create.wizard.step1.shopifyInfoModal.section.integrationStep8') }}
+                </div>
               </FlexCell>
               <FlexCell>
                 <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.apiSecret') }}
+                  {{ t('integrations.labels.vendorProperty') }}
                 </Label>
               </FlexCell>
-              <FlexCell>
-                <TextInput
-                    class="w-96"
-                    v-model="channelInfo.apiSecret"
-                    :placeholder="t('integrations.placeholders.apiSecret')"
-                    :secret="true"
-                />
-              </FlexCell>
-              <FlexCell>
-                <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                  {{ t('integrations.labels.accessToken') }}
-                </Label>
-              </FlexCell>
-              <FlexCell>
-                <TextInput
-                    class="w-96"
-                    v-model="channelInfo.accessToken"
-                    :placeholder="t('integrations.placeholders.accessToken')"
-                    secret
-                />
-              </FlexCell>
-
               <FlexCell>
                 <Flex between>
                   <FlexCell grow>
-                    <Label class="font-semibold block text-sm leading-6 text-gray-900">
-                      {{ t('integrations.labels.vendorProperty') }}
-                    </Label>
+                    <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
+                      <p>{{ t('integrations.salesChannel.helpText.shopifyVendorProperty') }}</p>
+                    </div>
                   </FlexCell>
-                    <FlexCell center>
-                      <Button class="btn-primary px-1.5 py-1 rounded-full" @click="openInNewTab">
-                        <Icon name="plus"/>
-                      </Button>
-                    </FlexCell>
+                  <FlexCell center>
+                    <Button class="btn-primary px-1.5 py-1 rounded-full" @click="openInNewTab">
+                      <Icon name="plus"/>
+                    </Button>
+                  </FlexCell>
                 </Flex>
-
               </FlexCell>
               <FlexCell>
                 <FieldQuery v-model="channelInfo.vendorProperty.id" :field="propertyField as QueryFormField" />
-
-                <div class="mt-1 text-sm leading-6 text-gray-400 w-96">
-                  <p>{{ t('integrations.salesChannel.helpText.shopifyVendorProperty') }}</p>
-                </div>
               </FlexCell>
             </Flex>
           </FlexCell>

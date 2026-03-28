@@ -1706,7 +1706,7 @@ defineExpose({ hasUnsavedChanges });
     </Modal>
 
     <Modal v-model="browseNodeModal.visible" @closed="closeBrowseNodeModal">
-      <Card class="modal-content w-11/12 max-w-6xl max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
+      <Card class="modal-content w-[90vw] max-w-[90vw] max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
         <div class="mb-4">
           <h3 class="text-xl font-semibold">
             {{ t('products.products.amazon.browseNode') }}

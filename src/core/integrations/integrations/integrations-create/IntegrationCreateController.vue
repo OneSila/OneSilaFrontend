@@ -45,8 +45,8 @@ import {
   createWoocommerceSalesChannelMutation,
   getAmazonRedirectUrlMutation,
   getEbayRedirectUrlMutation,
+  getShopifyRedirectUrlMutation,
   getSheinRedirectUrlMutation,
-  refreshSalesChannelWebsitesMutation,
 } from '../../../../shared/api/mutations/salesChannels.js';
 import { createWebhookIntegrationMutation } from '../../../../shared/api/mutations/webhookIntegrations.js';
 import { Toast } from '../../../../shared/modules/toast';
@@ -479,7 +479,7 @@ const handleFinish = async () => {
     if (data && data[mutationKey]) {
       Toast.success(t('integrations.create.success'));
       loading.value = false;
-      handleSalesChannelSuccess(data[mutationKey], resolvedIntegrationType.value);
+      await handleSalesChannelSuccess(data[mutationKey], resolvedIntegrationType.value);
     }
   } catch (err) {
     loading.value = false;
@@ -498,7 +498,6 @@ const handleFinish = async () => {
 const handleShopifySalesChannelSuccess = async (channelData: any) => {
   const id = channelData.id;
 
-  /*
   const { data } = await apolloClient.mutate({
     mutation: getShopifyRedirectUrlMutation,
     variables: {
@@ -513,29 +512,15 @@ const handleShopifySalesChannelSuccess = async (channelData: any) => {
     return;
   }
 
-  // If we have errors from OperationInfo
   const messages = result?.messages || [];
-  messages.forEach((msg: any) => {
-    Toast.error(msg.message);
-  });
-  */
-  try {
-    loading.value = true;
-    await apolloClient.mutate({
-      mutation: refreshSalesChannelWebsitesMutation,
-      variables: {
-        data: { id },
-      },
+  if (messages.length) {
+    messages.forEach((msg: any) => {
+      Toast.error(msg.message);
     });
-    Toast.success(t("integrations.show.pullData.success"));
-  } catch (error) {
-    Toast.error(t("integrations.show.pullData.error"));
-    console.error("Pull data failed:", error);
-  } finally {
-    loading.value = false;
+  } else {
+    Toast.error(t('integrations.salesChannel.shopify.installed.genericError'));
   }
 
-  // Redirect to show page anyway
   router.push({
     name: 'integrations.integrations.show',
     params: { type: IntegrationTypes.Shopify, id },

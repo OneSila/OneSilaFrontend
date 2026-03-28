@@ -1841,7 +1841,7 @@ defineExpose({ hasUnsavedChanges });
     </MatrixEditor>
 
     <Modal v-model="selectionModal.visible" @closed="closeSelectionModal">
-      <Card class="modal-content w-11/12 max-w-6xl max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
+      <Card class="modal-content w-[90vw] max-w-[90vw] max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
         <div class="mb-4">
           <h3 class="text-xl font-semibold">
             {{ t('products.products.variations.ebay.modal.title') }}
@@ -1952,7 +1952,7 @@ defineExpose({ hasUnsavedChanges });
     </Modal>
 
     <Modal v-model="storeSelectionModal.visible" @closed="closeStoreSelectionModal">
-      <Card class="modal-content w-11/12 max-w-6xl max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
+      <Card class="modal-content w-[90vw] max-w-[90vw] max-h-[85vh] flex flex-col min-h-0 overflow-hidden">
         <div class="mb-4">
           <h3 class="text-xl font-semibold">
             {{ t('products.products.variations.ebay.modal.storeTitle') }}

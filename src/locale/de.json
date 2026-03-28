@@ -307,6 +307,10 @@
   },
   "products": {
     "eanCodes": {
+      "messages": {
+        "matchingExisting": "",
+        "matchExistingBlocked": ""
+      },
       "labels": {
         "excludeAttributeValue": ""
       }
@@ -594,7 +598,24 @@
           "general": "",
           "amazon": "",
           "ebay": "",
-          "shein": ""
+          "shein": "",
+          "mirakl": ""
+        },
+        "eanCodes": {
+          "labels": {
+            "disabledForConfigurable": ""
+          },
+          "status": {
+            "toBeAssigned": "",
+            "toBeReleased": "",
+            "toBeDeleted": "",
+            "willCreate": "",
+            "willUpdate": ""
+          },
+          "toast": {
+            "saved": "",
+            "failed": ""
+          }
         },
         "images": {
           "columns": {
@@ -689,14 +710,17 @@
           "labels": {
             "categoryId": ""
           },
-          "actions": {
-            "set": "",
-            "preview": ""
-          },
-          "modal": {
-            "title": "",
-            "previewTitle": ""
-          }
+        "actions": {
+          "set": "",
+          "preview": ""
+        },
+        "selectors": {
+          "salesChannel": ""
+        },
+        "modal": {
+          "title": "",
+          "previewTitle": ""
+        }
         },
         "ebay": {
           "columns": {
@@ -1153,6 +1177,14 @@
       "webhook": "Webhook",
       "mirakl": ""
     },
+    "shopify": {
+      "entry": {
+        "title": ""
+      },
+      "installed": {
+        "title": ""
+      }
+    },
     "amazon": {
       "actions": {
         "bulkForceUpdate": {
@@ -1445,6 +1477,13 @@
           "sections": {
             "metadata": "",
             "translations": ""
+          },
+          "setupRequired": {
+            "eyebrow": "",
+            "title": "",
+            "description": "",
+            "contact": "",
+            "details": ""
           },
           "help": {
             "defaultValue": "",
