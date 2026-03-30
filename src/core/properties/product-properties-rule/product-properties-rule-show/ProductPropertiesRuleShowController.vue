@@ -19,6 +19,7 @@ import { PrimaryButton } from "../../../../shared/components/atoms/button-primar
 import { Toast } from "../../../../shared/modules/toast";
 import apolloClient from "../../../../../apollo-client";
 import { duplicatePropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
+import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -82,6 +83,7 @@ const submitDuplicate = async () => {
 tabItems.value = [
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
   { name: 'products', label: t('products.title'), icon: 'box' },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' },
 ];
 
 const showConfig = showConfigConstructor(t, id.value);
@@ -127,6 +129,9 @@ const onDataFetched = (data) => {
           </template>
           <template v-slot:products>
             <ProductList v-if="productTypeId" :id="productTypeId" />
+          </template>
+          <template v-slot:collaboration>
+            <CollaborationTab :target-id="id" />
           </template>
         </Tabs>
       </Card>

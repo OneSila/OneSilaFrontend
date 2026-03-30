@@ -386,10 +386,12 @@
           "paste": ""
         }
       },
-      "tabs": {
-        "amazon": "Amazon",
-        "ebay": "",
-        "shein": "",
+    "tabs": {
+      "mapping": "",
+      "collaboration": "",
+      "amazon": "Amazon",
+      "ebay": "",
+      "shein": "",
         "mirakl": "",
         "marketplace": ""
       },
@@ -3115,6 +3117,147 @@
         "createSectionTitle": "",
         "unknownUser": ""
       }
+    }
+  }
+  ,
+  "profile": {
+    "dropdown": {
+      "profile": "",
+      "company": "",
+      "signOut": ""
+    },
+    "notifications": {
+      "title": "",
+      "description": "",
+      "summary": "",
+      "dropdown": {
+        "description": "",
+        "badge": ""
+      },
+      "actions": {
+        "open": "",
+        "markAsOpened": "",
+        "viewAll": "",
+        "markAllAsRead": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "openFailed": "",
+        "markAllFailed": ""
+      }
+    },
+    "tabs": {
+      "general": "",
+      "security": ""
+    },
+    "labels": {
+      "joined": "",
+      "phone": "",
+      "whatsApp": "",
+      "telegram": "",
+      "timezone": "",
+      "updateButton": "",
+      "editProfile": "",
+      "mobileNumber": "",
+      "whatsappNumber": "",
+      "telegramNumber": "",
+      "firstName": "",
+      "lastName": "",
+      "generalInformation": "",
+      "changePassword": "",
+      "newPassword": "",
+      "confirmNewPassword": ""
+    },
+    "placeholders": {
+      "mobileNumber": "",
+      "whatsappNumber": "",
+      "telegramNumber": "",
+      "firstName": "",
+      "lastName": "",
+      "newPassword": "",
+      "confirmNewPassword": ""
+    },
+    "unsavedChanges": "",
+    "changesMade": "",
+    "messages": {
+      "changePasswordMatch": ""
+    }
+  },
+  "collaboration": {
+    "title": "",
+    "description": "",
+    "subtitle": "",
+    "summary": "",
+    "actions": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": "",
+      "submit": ""
+    },
+    "types": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "labels": {
+      "unknownUser": "",
+      "entryType": "",
+      "comment": "",
+      "allMembers": "",
+      "mentionSuggestions": "",
+      "mentions": "",
+      "selectedMentions": ""
+    },
+    "placeholders": {
+      "entryType": "",
+      "comment": ""
+    },
+    "help": {
+      "mentions": ""
+    },
+    "hints": {
+      "mentions": "",
+      "allMention": ""
+    },
+    "validation": {
+      "commentRequired": "",
+      "askApprovalMentionRequired": "",
+      "mentionRequired": ""
+    },
+    "timeline": {
+      "title": "",
+      "orderHint": "",
+      "comment": "",
+      "askApproval": "",
+      "askApprovalWithMentions": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "composer": {
+      "title": "",
+      "subtitle": ""
+    },
+    "members": {
+      "loading": "",
+      "error": "",
+      "empty": ""
+    },
+    "button": {
+      "submit": ""
+    },
+    "empty": {
+      "title": "",
+      "description": ""
+    },
+    "messages": {
+      "loadFailed": "",
+      "membersFailed": "",
+      "createFailed": ""
     }
   }
   ,

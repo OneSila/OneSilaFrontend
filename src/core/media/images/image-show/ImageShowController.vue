@@ -21,6 +21,7 @@ import { Tabs } from "../../../../shared/components/molecules/tabs";
 import {ProductsTabView} from "./containers/products-tab-view";
 import { TYPE_IMAGE } from "../../files/media";
 import {SelectValuesTabView} from "./containers/select-values-tab-view";
+import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
 
 const router = useRouter();
 const route = useRoute();
@@ -29,7 +30,8 @@ const editView = ref(route.query.editView === '1');
 const tabItems = ref([
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
   { name: 'products', label: t('products.title'), icon: 'box' },
-  { name: 'values', label: t('properties.values.title'), icon: 'list' }
+  { name: 'values', label: t('properties.values.title'), icon: 'list' },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' }
 ]);
 
 const selectedTab = ref('general');
@@ -137,6 +139,9 @@ const onTabChanged = (newValue) => {
                     </template>
                     <template v-slot:values>
                       <SelectValuesTabView :id="id" />
+                    </template>
+                    <template v-slot:collaboration>
+                      <CollaborationTab :target-id="id" />
                     </template>
                   </Tabs>
                 </Card>

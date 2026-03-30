@@ -10,6 +10,7 @@ import { Tabs} from "../../../../shared/components/molecules/tabs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ItemsList from "./containers/items/items-list/ItemsList.vue";
 import {updateField} from "../../../../shared/components/organisms/general-show/showConfig";
+import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -20,6 +21,7 @@ const tabItems = ref();
 tabItems.value = [
     { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
     { name: 'items', label: t('shared.tabs.items'), icon: 'sitemap' },
+    { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' },
   ];
 
 const showConfig = showConfigConstructor(t, id.value);
@@ -43,6 +45,9 @@ const showConfig = showConfigConstructor(t, id.value);
           </template>
           <template v-slot:items>
             <ItemsList :id="id" :add-edit="addEdit" />
+          </template>
+          <template v-slot:collaboration>
+            <CollaborationTab :target-id="id" />
           </template>
         </Tabs>
       </Card>

@@ -51,10 +51,10 @@ const tabs = computed<{ key: Mode; label: string; icon: string }[]>(() => {
     { key: 'editContent', label: t('products.products.variations.tabs.content'), icon: 'file-lines' },
     { key: 'editProperties', label: t('products.products.tabs.properties'), icon: 'screwdriver-wrench' },
     { key: 'editPrices', label: t('products.products.tabs.prices'), icon: 'coins' },
-    { key: 'editEanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
     { key: 'editImages', label: t('products.products.variations.tabs.images'), icon: 'images' },
     { key: 'editDocuments', label: t('products.products.variations.tabs.documents'), icon: 'file-text' },
     { key: 'editVideos', label: t('products.products.variations.tabs.videos'), icon: 'video' },
+    { key: 'editEanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   ];
 
   if (hasAmazonIntegration.value) {

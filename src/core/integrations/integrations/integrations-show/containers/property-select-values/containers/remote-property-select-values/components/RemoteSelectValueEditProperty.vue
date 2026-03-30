@@ -19,6 +19,8 @@ import {
   apolloClient,
   FieldType,
 } from '../sharedImports';
+import { Tabs } from '../../../../../../../../../shared/components/molecules/tabs';
+import { CollaborationTab } from '../../../../../../../../../shared/components/organisms/collaboration-tab';
 import type { FormConfig, QueryFormField, ChoiceFormField } from '../sharedImports';
 import type {
   MapPropertyDataResult,
@@ -165,6 +167,11 @@ const breadcrumbsLinks = computed(() => [
   { path: props.config.listRoute(contextState.value), name: t(props.config.integrationTitleKey) },
   { name: t('integrations.show.mapSelectValue') },
 ]);
+
+const tabItems = computed(() => ([
+  { name: 'mapping', label: t('shared.tabs.mapping'), icon: 'circle-info', alwaysRender: true },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' },
+]));
 
 const updatableForm = computed(() => {
   const result: Record<string, any> = { id: form.id };
@@ -444,142 +451,151 @@ onMounted(async () => {
       <Breadcrumbs :links="breadcrumbsLinks" />
     </template>
     <template #content>
-      <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
-        <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
-          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-            <div class="px-4 py-6 sm:p-8">
-              <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                <div class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.propertyLabelKey) }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="propertyEditPath" :path="propertyEditPath">{{ propertyName }}</Link>
-                      <span v-else>{{ propertyName }}</span>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-if="localPropertyName" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.localPropertyLabelKey ?? 'integrations.show.propertySelectValues.labels.localProperty') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="localPropertyEditPath" :path="localPropertyEditPath">{{ localPropertyName }}</Link>
-                      <span v-else>{{ localPropertyName }}</span>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-if="marketplaceName" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.marketplaceLabelKey ?? 'integrations.show.propertySelectValues.labels.marketplace') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="marketplaceEditPath" :path="marketplaceEditPath">{{ marketplaceName }}</Link>
-                      <span v-else>{{ marketplaceName }}</span>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-for="field in remoteFields" :key="field.key" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(field.labelKey) }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <TextInput v-model="form[field.key]" :disabled="field.disabled" class="w-full" />
-                    </FlexCell>
-                    <FlexCell v-if="field.helpKey">
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(field.helpKey) }}</p>
-                    </FlexCell>
-                    <FlexCell v-if="formErrors[field.key]">
-                      <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[field.key] }}</p>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-if="showBoolValueField && boolValueField" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.boolValueField!.labelKey) }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <FieldChoice v-model="form.boolValue" :field="boolValueField" />
-                    </FlexCell>
-                    <FlexCell v-if="props.config.boolValueField?.helpKey">
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.boolValueField.helpKey) }}</p>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div
-                  v-if="props.config.notMappedBanner && !propertyMapped"
-                  class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                  role="alert"
-                >
-                  <span class="font-medium flex items-center gap-1">
-                    ⚠️ {{ t(props.config.notMappedBanner.titleKey) }}
-                  </span>
-                  <Link v-if="notMappedBannerLink" :path="notMappedBannerLink" class="underline">
-                    {{ t(props.config.notMappedBanner.contentKey) }}
-                  </Link>
-                </div>
-                <div v-else-if="localInstanceField && !isBooleanMapping" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <FieldQuery
-                        :field="localInstanceField as QueryFormField"
-                        v-model="form[props.config.localInstanceFieldKey].id"
-                        @update:modelValue="form[props.config.localInstanceFieldKey].id = $event"
-                      />
-                    </FlexCell>
-                    <FlexCell>
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.localPropertyHelpKey ?? 'integrations.show.propertySelectValues.help.selectValue') }}</p>
-                    </FlexCell>
-                    <FlexCell v-if="formErrors[props.config.localInstanceFieldKey]">
-                      <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[props.config.localInstanceFieldKey] }}</p>
-                    </FlexCell>
-                  </Flex>
-                  <div v-if="props.config.recommendations && !isBooleanMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
-                    <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
-                    <div v-if="loadingRecommendations" class="flex items-center gap-2">
-                      <div class="loader-mini"></div>
-                      <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
+      <Tabs :tabs="tabItems">
+        <template #mapping>
+          <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
+            <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+              <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+                <div class="px-4 py-6 sm:p-8">
+                  <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+                    <div class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.propertyLabelKey) }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <Link v-if="propertyEditPath" :path="propertyEditPath">{{ propertyName }}</Link>
+                          <span v-else>{{ propertyName }}</span>
+                        </FlexCell>
+                      </Flex>
                     </div>
-                    <div v-else>
-                      <div v-if="recommendations.length" class="flex flex-wrap gap-2">
-                        <button
-                          v-for="item in recommendations"
-                          :key="item.id"
-                          type="button"
-                          class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
-                          @click="selectRecommendation(item.id)"
-                        >
-                          {{ item.value }}
-                        </button>
+                    <div v-if="localPropertyName" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.localPropertyLabelKey ?? 'integrations.show.propertySelectValues.labels.localProperty') }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <Link v-if="localPropertyEditPath" :path="localPropertyEditPath">{{ localPropertyName }}</Link>
+                          <span v-else>{{ localPropertyName }}</span>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div v-if="marketplaceName" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.marketplaceLabelKey ?? 'integrations.show.propertySelectValues.labels.marketplace') }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <Link v-if="marketplaceEditPath" :path="marketplaceEditPath">{{ marketplaceName }}</Link>
+                          <span v-else>{{ marketplaceName }}</span>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div v-for="field in remoteFields" :key="field.key" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(field.labelKey) }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <TextInput v-model="form[field.key]" :disabled="field.disabled" class="w-full" />
+                        </FlexCell>
+                        <FlexCell v-if="field.helpKey">
+                          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(field.helpKey) }}</p>
+                        </FlexCell>
+                        <FlexCell v-if="formErrors[field.key]">
+                          <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[field.key] }}</p>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div v-if="showBoolValueField && boolValueField" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.boolValueField!.labelKey) }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <FieldChoice v-model="form.boolValue" :field="boolValueField" />
+                        </FlexCell>
+                        <FlexCell v-if="props.config.boolValueField?.helpKey">
+                          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.boolValueField.helpKey) }}</p>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div
+                      v-if="props.config.notMappedBanner && !propertyMapped"
+                      class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                      role="alert"
+                    >
+                      <span class="font-medium flex items-center gap-1">
+                        ⚠️ {{ t(props.config.notMappedBanner.titleKey) }}
+                      </span>
+                      <Link v-if="notMappedBannerLink" :path="notMappedBannerLink" class="underline">
+                        {{ t(props.config.notMappedBanner.contentKey) }}
+                      </Link>
+                    </div>
+                    <div v-else-if="localInstanceField && !isBooleanMapping" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <FieldQuery
+                            :field="localInstanceField as QueryFormField"
+                            v-model="form[props.config.localInstanceFieldKey].id"
+                            @update:modelValue="form[props.config.localInstanceFieldKey].id = $event"
+                          />
+                        </FlexCell>
+                        <FlexCell>
+                          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.localPropertyHelpKey ?? 'integrations.show.propertySelectValues.help.selectValue') }}</p>
+                        </FlexCell>
+                        <FlexCell v-if="formErrors[props.config.localInstanceFieldKey]">
+                          <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[props.config.localInstanceFieldKey] }}</p>
+                        </FlexCell>
+                      </Flex>
+                      <div v-if="props.config.recommendations && !isBooleanMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+                        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
+                        <div v-if="loadingRecommendations" class="flex items-center gap-2">
+                          <div class="loader-mini"></div>
+                          <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
+                        </div>
+                        <div v-else>
+                          <div v-if="recommendations.length" class="flex flex-wrap gap-2">
+                            <button
+                              v-for="item in recommendations"
+                              :key="item.id"
+                              type="button"
+                              class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
+                              @click="selectRecommendation(item.id)"
+                            >
+                              {{ item.value }}
+                            </button>
+                          </div>
+                          <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+                        </div>
                       </div>
-                      <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+                    </div>
+                    <div class="col-span-full">
+                      <slot name="additional-fields" :form="form" :context="contextState" />
                     </div>
                   </div>
                 </div>
-                <div class="col-span-full">
-                  <slot name="additional-fields" :form="form" :context="contextState" />
+                <div v-if="formErrors.__all__" class="px-8 pb-3">
+                  <p class="text-sm leading-6 text-red-600">{{ formErrors.__all__ }}</p>
                 </div>
+                <SubmitButtons :config="enhancedConfig" :form="updatableForm" @update-errors="handleSubmitErrors">
+                  <template #additional-button>
+                    <slot name="additional-button" :generate-value-path="generateValuePath" :context="contextState" />
+                  </template>
+                </SubmitButtons>
               </div>
             </div>
-            <div v-if="formErrors.__all__" class="px-8 pb-3">
-              <p class="text-sm leading-6 text-red-600">{{ formErrors.__all__ }}</p>
-            </div>
-            <SubmitButtons :config="enhancedConfig" :form="updatableForm" @update-errors="handleSubmitErrors">
-              <template #additional-button>
-                <slot name="additional-button" :generate-value-path="generateValuePath" :context="contextState" />
-              </template>
-            </SubmitButtons>
           </div>
-        </div>
-      </div>
+        </template>
+        <template #collaboration>
+          <div class="mt-4">
+            <CollaborationTab :target-id="valueId" />
+          </div>
+        </template>
+      </Tabs>
     </template>
   </GeneralTemplate>
 </template>

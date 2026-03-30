@@ -21,6 +21,7 @@ import { DocumentEditView } from "./containers/document-edit-view";
 import { DocumentShowView } from "./containers/document-show-view";
 import { Tabs } from "../../../../shared/components/molecules/tabs";
 import { ProductsTabView } from "../../images/image-show/containers/products-tab-view";
+import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
 
 const router = useRouter();
 const route = useRoute();
@@ -48,7 +49,8 @@ const editView = ref(route.query.editView === '1');
 const selectedTab = ref('general');
 const tabItems = ref([
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-  { name: 'products', label: t('products.title'), icon: 'box' }
+  { name: 'products', label: t('products.title'), icon: 'box' },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' }
 ]);
 const activeTab = TYPE_DOCUMENT;
 const id = ref(String(route.params.id));
@@ -148,6 +150,9 @@ const handleShowViewAndRefresh = (query: { refetch?: () => void }) => {
                           </template>
                           <template v-slot:products>
                             <ProductsTabView :id="id" />
+                          </template>
+                          <template v-slot:collaboration>
+                            <CollaborationTab :target-id="id" />
                           </template>
                         </Tabs>
                       </Card>

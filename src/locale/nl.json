@@ -428,6 +428,8 @@
     },
     "tabs": {
       "general": "Algemeen",
+      "mapping": "",
+      "collaboration": "",
       "items": "Artikelen",
       "translations": "Vertalingen",
       "advanced": "Geavanceerd",
@@ -635,8 +637,33 @@
       "company": "Bedrijf",
       "signOut": "Uitloggen"
     },
+    "notifications": {
+      "title": "",
+      "description": "",
+      "summary": "",
+      "dropdown": {
+        "description": "",
+        "badge": ""
+      },
+      "actions": {
+        "open": "",
+        "markAsOpened": "",
+        "viewAll": "",
+        "markAllAsRead": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "openFailed": "",
+        "markAllFailed": ""
+      }
+    },
     "tabs": {
       "general": "Algemeen",
+      "mapping": "",
+      "collaboration": "",
       "security": "Veiligheid"
     },
     "labels": {
@@ -668,6 +695,80 @@
     },
     "unsavedChanges": "U heeft niet opgeslagen wijzigingen.  Zeker dat u verder wilt gaan?",
     "changesMade": "Er zijn veranderingen"
+  },
+  "collaboration": {
+    "title": "",
+    "description": "",
+    "subtitle": "",
+    "summary": "",
+    "actions": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": "",
+      "submit": ""
+    },
+    "types": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "labels": {
+      "unknownUser": "",
+      "entryType": "",
+      "comment": "",
+      "allMembers": "",
+      "mentionSuggestions": "",
+      "mentions": "",
+      "selectedMentions": ""
+    },
+    "placeholders": {
+      "entryType": "",
+      "comment": ""
+    },
+    "help": {
+      "mentions": ""
+    },
+    "hints": {
+      "mentions": "",
+      "allMention": ""
+    },
+    "validation": {
+      "commentRequired": "",
+      "askApprovalMentionRequired": "",
+      "mentionRequired": ""
+    },
+    "timeline": {
+      "title": "",
+      "orderHint": "",
+      "comment": "",
+      "askApproval": "",
+      "askApprovalWithMentions": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "composer": {
+      "title": "",
+      "subtitle": ""
+    },
+    "members": {
+      "loading": "",
+      "error": "",
+      "empty": ""
+    },
+    "button": {
+      "submit": ""
+    },
+    "empty": {
+      "title": "",
+      "description": ""
+    },
+    "messages": {
+      "loadFailed": "",
+      "membersFailed": "",
+      "createFailed": ""
+    }
   },
   "companyProfile": {
     "labels": {

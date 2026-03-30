@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
@@ -11,12 +11,17 @@ import { getEanCodeQuery } from "../../../../shared/api/queries/eanCodes.js";
 import { baseFormConfigConstructor } from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
-
+import { Card } from "../../../../shared/components/atoms/card";
+import { Tabs } from "../../../../shared/components/molecules/tabs";
+import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
 
 const { t } = useI18n();
-const router = useRouter();
 const route = useRoute();
 const id = ref(String(route.params.id));
+const tabItems = [
+  { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info', alwaysRender: true },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' },
+];
 
 const baseForm = baseFormConfigConstructor(
   t,
@@ -50,10 +55,19 @@ const formConfig = {
       <Breadcrumbs
           :links="[{ path: { name: 'products.eanCodes.list' }, name: t('products.eanCodes.title') },
                    { path: { name: 'products.eanCodes.edit' }, name: t('products.eanCodes.edit.title') }]" />
-    </template>
+   </template>
 
    <template v-slot:content>
-     <GeneralForm :config="formConfig as FormConfig" />
+     <Card>
+       <Tabs :tabs="tabItems">
+         <template #general>
+           <GeneralForm :config="formConfig as FormConfig" />
+         </template>
+         <template #collaboration>
+           <CollaborationTab :target-id="id" />
+         </template>
+       </Tabs>
+     </Card>
    </template>
   </GeneralTemplate>
 </template>

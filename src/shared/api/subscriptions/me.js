@@ -3,6 +3,7 @@ import { gql } from 'graphql-tag';
 export const meSubscription = gql`
   subscription me {
       me {
+       id
        username
         lastName
         firstName
@@ -14,6 +15,17 @@ export const meSubscription = gql`
         isActive
         dateJoined
         avatarResizedFullUrl
+        notifications {
+          id
+          type
+          title
+          message
+          url
+          opened
+          metadata
+          createdAt
+          updatedAt
+        }
       }
   }
 `;

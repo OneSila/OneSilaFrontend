@@ -6,6 +6,12 @@ export const routes = [
         component: () => import('./user/UserProfileController.vue')
     },
     {
+        path: '/profile/notifications',
+        name: 'profile.notifications',
+        meta: { title: 'profile.notifications.title'},
+        component: () => import('./notifications/UserNotificationsController.vue')
+    },
+    {
         path: '/company/profile',
         name: 'profile.company',
         meta: { title: 'profile.dropdown.company'},
