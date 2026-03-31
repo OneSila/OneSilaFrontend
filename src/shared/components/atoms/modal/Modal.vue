@@ -12,7 +12,7 @@ const isOpen = ref(props.modelValue);
 
 const close = () => {
   isOpen.value = false;
-
+  emit('update:modelValue', false);
   emit('closed');
 };
 

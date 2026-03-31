@@ -566,6 +566,7 @@ onMounted(loadMembers);
           <Selector
             :options="entryTypeOptions"
             :model-value="selectedType"
+            :removable="false"
             label-by="name"
             value-by="id"
             :placeholder="t('collaboration.placeholders.entryType')"

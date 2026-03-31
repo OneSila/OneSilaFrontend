@@ -3,14 +3,12 @@ import {ref, computed, watch, onMounted, onUnmounted} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {Icon} from '../../atoms/icon';
 import {Label} from '../../atoms/label';
-import {Selector} from '../../atoms/selector';
 import {TextInput} from '../../atoms/input-text';
 import {TextEditor} from '../../atoms/input-text-editor';
 import {Toggle} from '../../atoms/toggle';
 import {DateInput} from '../../atoms/input-date';
 import {format} from 'date-fns';
 import {propertiesQuery, propertiesQuerySelector, propertySelectValuesQuerySimpleSelector} from '../../../api/queries/properties';
-import {translationLanguagesQuery} from '../../../api/queries/languages';
 import apolloClient from "../../../../../apollo-client";
 import {FieldType, PropertyTypes} from "../../../utils/constants";
 import {selectValueOnTheFlyConfig} from "../../../../core/properties/property-select-values/configs";
@@ -22,6 +20,7 @@ import {Toast} from "../../../modules/toast";
 import {processGraphQLErrors} from "../../../utils";
 import {bulkCreateProductPropertiesMutation} from "../../../api/mutations/properties.js";
 import {Checkbox} from "../../atoms/checkbox";
+import LanguageSelector from "../../molecules/language-selector/LanguageSelector.vue";
 
 const props = defineProps<{ selectedEntities: string[] }>();
 const emit = defineEmits<{ (e: 'started'): void }>();
@@ -297,12 +296,10 @@ const onAssignSubmit = async () => {
           <Label class="block font-semibold text-sm text-gray-700 mb-1">
             {{ t('shared.labels.language') }}
           </Label>
-          <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
-            <template v-slot="{ result: { data } }">
-              <Selector v-if="data" v-model="language" :options="data.translationLanguages.languages" labelBy="name"
-                        valueBy="code" filterable/>
-            </template>
-          </ApolloQuery>
+          <LanguageSelector
+            v-model="language"
+            selector-class="w-full min-w-[12rem] sm:min-w-[14rem]"
+          />
         </FlexCell>
       </Flex>
 

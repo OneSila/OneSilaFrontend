@@ -27,6 +27,7 @@ const props = defineProps<{
   items: MediaItem[];
   mediaTypeFilter: MediaTypeFilter;
   isInherited: boolean;
+  sticky?: boolean;
 }>();
 
 const { t } = useI18n();
@@ -103,7 +104,10 @@ const setActiveIndex = (index: number) => {
 </script>
 
 <template>
-  <div class="sticky top-20 h-fit max-h-[580px] overflow-x-hidden overflow-y-auto rounded border bg-white shadow">
+  <div
+    class="h-fit overflow-x-hidden overflow-y-auto rounded border bg-white shadow"
+    :class="props.sticky !== false ? 'sticky top-20 max-h-[580px]' : 'max-h-[75vh]'"
+  >
     <div class="border-b bg-gray-100 px-5 py-3 text-sm text-gray-500">
       {{
         t('products.products.variations.media.preview.channelHeading', {

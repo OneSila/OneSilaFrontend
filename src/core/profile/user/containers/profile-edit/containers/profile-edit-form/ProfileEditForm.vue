@@ -96,12 +96,16 @@ const onUploaded = async (files: any[]) => {
 
 
 <template>
-  <div class="rounded-md p-4 mb-5 bg-white dark:bg-[#182434]">
-      <h6 class="text-lg font-bold mb-5">{{ t('profile.labels.generalInformation') }}</h6>
-      <div class="flex flex-col sm:flex-row">
-        <div class="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
-          <Image class="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" :source="meData.avatarResizedFullUrl" />
-          <DropZone ref="dropZone" class="mt-2" :formats="fileFormats" @uploaded="onUploaded" :multipl="false" />
+  <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/40 sm:p-6">
+      <div class="flex flex-col gap-6 lg:flex-row">
+        <div class="w-full lg:w-56">
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <Image class="mx-auto h-24 w-24 rounded-full object-cover md:h-32 md:w-32" :source="meData.avatarResizedFullUrl" />
+            <p class="mt-4 text-sm font-semibold text-slate-900 dark:text-white-light">
+              {{ t('profile.labels.avatar') }}
+            </p>
+            <DropZone ref="dropZone" class="mt-3" :formats="fileFormats" @uploaded="onUploaded" :multipl="false" />
+          </div>
         </div>
         <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
@@ -132,9 +136,7 @@ const onUploaded = async (files: any[]) => {
               </template>
             </ApolloQuery>
           </div>
-          <hr />
-
-          <div class="flex items-center justify-end mt-4">
+          <div class="flex items-center justify-end mt-2 sm:col-span-2">
             <Button :disabled="loading" custom-class="btn btn-primary" @click="executeMutation()">
               {{ t('shared.button.update') }}
             </Button>

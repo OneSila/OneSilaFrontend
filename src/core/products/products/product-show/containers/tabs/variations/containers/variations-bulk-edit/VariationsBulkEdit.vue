@@ -27,6 +27,7 @@ import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../.
 import apolloClient from '../../../../../../../../../../apollo-client'
 import { propertiesQuerySelector, productPropertiesQuery, productPropertiesRulesQuery, productPropertyTextTranslationsQuery, propertySelectValuesQuerySimpleSelector } from '../../../../../../../../../shared/api/queries/properties.js'
 import { translationLanguagesQuery } from '../../../../../../../../../shared/api/queries/languages.js'
+import LanguageSelector from "../../../../../../../../../shared/components/molecules/language-selector/LanguageSelector.vue";
 import { bulkCreateProductPropertiesMutation, bulkUpdateProductPropertiesMutation, deleteProductPropertiesMutation } from '../../../../../../../../../shared/api/mutations/properties.js'
 import { Toast } from "../../../../../../../../../shared/modules/toast";
 import { format } from 'date-fns'
@@ -1165,22 +1166,10 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
           />
         </template>
         <template #toolbar-right>
-          <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
-            <template v-slot="{ result: { data } }">
-              <Selector
-                v-if="data"
-                v-model="language"
-                :options="data.translationLanguages.languages"
-                :placeholder="t('products.translation.placeholders.language')"
-                class="w-32 mr-2"
-                labelBy="name"
-                valueBy="code"
-                :removable="false"
-                mandatory
-                filterable
-              />
-            </template>
-          </ApolloQuery>
+          <LanguageSelector
+            v-model="language"
+            selector-class="mr-2 w-full min-w-[11rem] sm:min-w-[12rem]"
+          />
         </template>
         <template #cell="{ row, column, rowIndex }">
           <template v-if="column.key === 'name'">

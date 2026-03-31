@@ -323,6 +323,7 @@
       "abort": "Afbreken",
       "resync": "Resync",
       "fullUpdate": "Full Update",
+      "preview": "Preview",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "",
@@ -632,6 +633,10 @@
     }
   },
   "profile": {
+    "actions": {
+      "editDetails": "",
+      "closeEditor": ""
+    },
     "dropdown": {
       "profile": "Profiel",
       "company": "Bedrijf",
@@ -667,6 +672,8 @@
       "security": "Veiligheid"
     },
     "labels": {
+      "profileDetails": "",
+      "editDetails": "",
       "joined": "Aangesloten",
       "phone": "Telefoonnummer",
       "whatsApp": "WhatsApp",
@@ -679,6 +686,7 @@
       "telegramNumber": "Telegram Number",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
+      "avatar": "",
       "generalInformation": "Algemene Informatie",
       "changePassword": "Wachtwoord wijzigen",
       "newPassword": "Nieuw wachtwoord",
@@ -772,7 +780,10 @@
   },
   "companyProfile": {
     "labels": {
+      "companyDetails": "",
+      "editCompanyDetails": "",
       "companyName": "Bedrijfsnaam",
+      "address": "",
       "email": "E-mail",
       "phoneNumber": "Telefoonnummer",
       "address1": "Adreslijn 1",
@@ -784,6 +795,13 @@
       "updateButton": "Update bedrijf",
       "editProfile": "Profiel bewerken",
       "members": "Gebruikers"
+    },
+    "actions": {
+      "editCompanyDetails": "",
+      "closeEditor": ""
+    },
+    "descriptions": {
+      "companyProfile": ""
     },
     "placeholders": {
       "companyName": "Voer bedrijfsnaam in",
@@ -3839,6 +3857,28 @@
         "notMappedBannerEbay": {
           "title": "",
           "content": ""
+        },
+        "notMappedBannerMirakl": {
+          "title": "",
+          "content": ""
+        },
+        "duplicate": {
+          "eyebrow": "",
+          "selectorLabel": "",
+          "submitting": "",
+          "error": "",
+          "validation": {
+            "required": "",
+            "sameValue": ""
+          },
+          "mirakl": {
+            "title": "",
+            "description": "",
+            "prompt": "",
+            "help": "",
+            "submit": "",
+            "success": ""
+          }
         },
         "bulkAssign": "",
         "bulkAssignTitle": "",

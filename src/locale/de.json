@@ -14,6 +14,7 @@
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "",
       "import": "Import",
+      "preview": "",
       "saveAll": "Alles speichern",
       "createAndContinue": ""
     },
@@ -2102,6 +2103,28 @@
           "title": "",
           "content": ""
         },
+        "notMappedBannerMirakl": {
+          "title": "",
+          "content": ""
+        },
+        "duplicate": {
+          "eyebrow": "",
+          "selectorLabel": "",
+          "submitting": "",
+          "error": "",
+          "validation": {
+            "required": "",
+            "sameValue": ""
+          },
+          "mirakl": {
+            "title": "",
+            "description": "",
+            "prompt": "",
+            "help": "",
+            "submit": "",
+            "success": ""
+          }
+        },
         "bulkAssign": "",
         "bulkAssignTitle": "",
         "assignSuccess": ""
@@ -3127,6 +3150,10 @@
   }
   ,
   "profile": {
+    "actions": {
+      "editDetails": "",
+      "closeEditor": ""
+    },
     "dropdown": {
       "profile": "",
       "company": "",
@@ -3160,6 +3187,8 @@
       "security": ""
     },
     "labels": {
+      "profileDetails": "",
+      "editDetails": "",
       "joined": "",
       "phone": "",
       "whatsApp": "",
@@ -3172,6 +3201,7 @@
       "telegramNumber": "",
       "firstName": "",
       "lastName": "",
+      "avatar": "",
       "generalInformation": "",
       "changePassword": "",
       "newPassword": "",
@@ -3190,6 +3220,53 @@
     "changesMade": "",
     "messages": {
       "changePasswordMatch": ""
+    }
+  },
+  "companyProfile": {
+    "labels": {
+      "companyDetails": "",
+      "editCompanyDetails": "",
+      "companyName": "",
+      "address": "",
+      "email": "",
+      "phoneNumber": "",
+      "address1": "",
+      "address2": "",
+      "postcode": "",
+      "city": "",
+      "vatNumber": "",
+      "defaultLanguage": "",
+      "companyLanguages": "",
+      "website": "",
+      "updateButton": "",
+      "editProfile": "",
+      "members": ""
+    },
+    "actions": {
+      "editCompanyDetails": "",
+      "closeEditor": ""
+    },
+    "descriptions": {
+      "companyProfile": ""
+    },
+    "placeholders": {
+      "companyName": "",
+      "email": "",
+      "phoneNumber": "",
+      "address1": "",
+      "address2": "",
+      "postcode": "",
+      "city": "",
+      "vatNumber": "",
+      "defaultLanguage": "",
+      "companyLanguages": "",
+      "website": ""
+    },
+    "messages": {
+      "unsavedChanges": "",
+      "changePasswordMatch": "",
+      "changesMade": "",
+      "joined": ""
     }
   },
   "collaboration": {

@@ -13,7 +13,7 @@ import { TYPE_DOCUMENT, TYPE_IMAGE, TYPE_VIDEO } from '../../../../../../media/f
 import TabContentTemplate from '../TabContentTemplate.vue';
 import { MediaCreate } from './containers/media-create';
 import { MediaList } from './containers/media-list';
-import ProductMediaPreview from './ProductMediaPreview.vue';
+import ProductPreviewTrigger from '../shared/ProductPreviewTrigger.vue';
 
 type MediaListExpose = {
   ensureChannelSpecificSet: () => Promise<boolean>;
@@ -28,14 +28,10 @@ const ids = ref<string[]>([]);
 const refetchNeeded = ref(false);
 const salesChannels = ref<any[]>([]);
 const currentSalesChannel = ref<'default' | string>('default');
-const allPreviewItems = ref<any[]>([]);
 const inheritedFromDefault = ref(false);
 const mediaListRef = ref<MediaListExpose | null>(null);
 const creatingGallery = ref(false);
 const mediaTypeFilter = ref<MediaTypeFilter>('ALL');
-
-const defaultChannelLabel = window.location.hostname;
-const productName = computed(() => (props.product as any)?.name ?? '');
 const isDefaultChannel = computed(() => currentSalesChannel.value === 'default');
 const isReadOnly = computed(() => !isDefaultChannel.value && inheritedFromDefault.value);
 const mediaFilterOptions = computed(() => ([
@@ -60,39 +56,6 @@ const mediaFilterOptions = computed(() => ([
     label: t('products.products.variations.media.filters.videos')
   }
 ]));
-const filteredPreviewItems = computed(() => {
-  if (mediaTypeFilter.value === 'ALL') {
-    return allPreviewItems.value;
-  }
-  return allPreviewItems.value.filter((item: any) => item.media?.type === mediaTypeFilter.value);
-});
-
-const cleanHostname = (hostname: string, type: string) => {
-  if (!hostname) return '';
-  if (type === IntegrationTypes.Amazon || type === IntegrationTypes.Ebay) {
-    return hostname;
-  }
-  try {
-    const url = new URL(hostname.startsWith('http') ? hostname : `https://${hostname}`);
-    const clean = url.hostname.replace(/^www\./i, '');
-    return clean.split('.')[0];
-  } catch {
-    return hostname;
-  }
-};
-
-const channelLabel = computed(() => {
-  if (currentSalesChannel.value === 'default') {
-    return defaultChannelLabel;
-  }
-  const channel = salesChannels.value.find((entry: any) => entry.id === currentSalesChannel.value);
-  if (!channel) {
-    return '';
-  }
-  const label = channel.hostname || channel.name || '';
-  return cleanHostname(label, channel.type);
-});
-
 const currentSalesChannelType = computed(() => {
   if (currentSalesChannel.value === 'default') {
     return null;
@@ -129,7 +92,6 @@ const updateIds = (newIds: string[]) => {
 };
 
 const handleItemsLoaded = ({ items, inherited }: { items: any[]; inherited: boolean }) => {
-  allPreviewItems.value = items;
   inheritedFromDefault.value = inherited;
 };
 
@@ -160,7 +122,7 @@ const handleCreateGallery = async () => {
 <template>
   <TabContentTemplate>
     <template #content>
-      <div class="grid gap-6 lg:grid-cols-[220px_1fr] xl:grid-cols-[220px_1fr_380px]">
+      <div class="grid gap-6 lg:grid-cols-[220px_1fr] xl:grid-cols-[360px_1fr] 2xl:grid-cols-[420px_1fr]">
         <SalesChannelTabs
           v-model="currentSalesChannel"
           :channels="salesChannels"
@@ -181,9 +143,16 @@ const handleCreateGallery = async () => {
               <span>{{ filterOption.label }}</span>
             </button>
           </div>
-          <Flex class="items-center justify-end">
-            <FlexCell grow></FlexCell>
-            <FlexCell v-if="isReadOnly" class="mr-2">
+          <div class="flex flex-wrap items-center justify-end gap-2">
+            <div>
+              <ProductPreviewTrigger
+                :product="product"
+                :sales-channel-id="currentSalesChannel"
+                :sales-channels="salesChannels"
+                :media-type-filter="mediaTypeFilter"
+              />
+            </div>
+            <div v-if="isReadOnly">
               <Button
                 class="btn btn-primary"
                 :disabled="creatingGallery"
@@ -191,8 +160,8 @@ const handleCreateGallery = async () => {
               >
                 {{ t('products.products.variations.media.actions.createChannelGallery') }}
               </Button>
-            </FlexCell>
-            <FlexCell>
+            </div>
+            <div>
               <MediaCreate
                 :product="product"
                 :media-ids="ids"
@@ -201,8 +170,8 @@ const handleCreateGallery = async () => {
                 :disabled="isReadOnly"
                 @media-added="handleMediaAdded"
               />
-            </FlexCell>
-          </Flex>
+            </div>
+          </div>
           <MediaList
             ref="mediaListRef"
             :product="product"
@@ -216,15 +185,6 @@ const handleCreateGallery = async () => {
             @items-loaded="handleItemsLoaded"
           />
         </div>
-        <ProductMediaPreview
-          class="lg:col-span-2 xl:col-span-1"
-          :product-name="productName"
-          :channel-label="channelLabel"
-          :default-label="defaultChannelLabel"
-          :items="filteredPreviewItems"
-          :media-type-filter="mediaTypeFilter"
-          :is-inherited="inheritedFromDefault"
-        />
       </div>
     </template>
   </TabContentTemplate>

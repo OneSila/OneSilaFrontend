@@ -7,19 +7,18 @@ import apolloClient from "../../../../../../../../apollo-client";
 import { getProductContentByLanguageAndChannelQuery, getProductContentByLanguageAndDefaultQuery } from "../../../../../../../shared/api/queries/products.js";
 import { createProductTranslationMutation, updateProductTranslationMutation } from "../../../../../../../shared/api/mutations/products.js";
 import { integrationsQuery } from "../../../../../../../shared/api/queries/integrations.js";
-import { Selector} from "../../../../../../../shared/components/atoms/selector";
 import { reactive, watch, ref, onMounted, computed, nextTick } from "vue";
-import { translationLanguagesQuery } from '../../../../../../../shared/api/queries/languages.js';
 import { Toast } from "../../../../../../../shared/modules/toast";
 import { processGraphQLErrors } from "../../../../../../../shared/utils";
 import { IntegrationTypes } from "../../../../../../integrations/integrations/integrations";
 import { getContentFieldRules } from './contentFieldRules';
 import { SalesChannelTabs } from "../../../../../../../shared/components/molecules/sales-channel-tabs";
-import ProductContentPreview from "./ProductContentPreview.vue";
+import LanguageSelector from "../../../../../../../shared/components/molecules/language-selector/LanguageSelector.vue";
 import ProductContentForm from "./ProductContentForm.vue";
 import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";
 import { AdvancedContentGenerator } from "../../../../../../../shared/components/organisms/advanced-content-generator";
 import ProductContentImportModal from "../../../../../../../shared/components/organisms/import-content/ProductContentImportModal.vue";
+import ProductPreviewTrigger from "../shared/ProductPreviewTrigger.vue";
 
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
@@ -40,11 +39,8 @@ const translationId = ref(null);
 const oldLang = ref(currentLanguage.value);
 const oldChannel = ref(currentSalesChannel.value);
 const salesChannels = ref<any[]>([]);
-const previewContent = ref<any | null>(null);
-const defaultPreviewContent = ref<any | null>(null);
 const fieldErrors = ref<Record<string, string>>({});
 const bulletPointsRef = ref<any>(null);
-const previewBulletPoints = ref<any[]>([]);
 const defaultLanguageCode = ref('en');
 
 const currentChannelType = computed(() => {
@@ -56,16 +52,16 @@ const currentChannelType = computed(() => {
 const fieldRules = computed(() => getContentFieldRules(currentChannelType.value));
 
 
-const cleanedData = (rawData) => {
-  if (rawData && rawData.languages.length > 0) {
-
-    if (currentLanguage.value === null) {
-      currentLanguage.value = rawData.defaultLanguage.code;
-    }
-    defaultLanguageCode.value = rawData.defaultLanguage.code || 'en';
-    return rawData.languages;
+const handleLanguageOptionsLoaded = (rawData) => {
+  if (!rawData?.languages?.length) {
+    return;
   }
-  return [];
+
+  if (currentLanguage.value === null && rawData.defaultLanguage?.code) {
+    currentLanguage.value = rawData.defaultLanguage.code;
+  }
+
+  defaultLanguageCode.value = rawData.defaultLanguage?.code || 'en';
 };
 
 
@@ -106,7 +102,6 @@ const setFormAndMutation = async (language, channel) => {
         form.urlKey = translation.urlKey;
         translationId.value = translation.id;
         mutation.value = updateProductTranslationMutation;
-        previewContent.value = translation;
       } else {
         form.name = '';
         form.subtitle = '';
@@ -115,9 +110,7 @@ const setFormAndMutation = async (language, channel) => {
         form.urlKey = '';
         translationId.value = null;
         mutation.value = createProductTranslationMutation;
-        previewContent.value = null;
       }
-      defaultPreviewContent.value = null;
 
     } else {
       // Query with specific salesChannelId
@@ -140,7 +133,6 @@ const setFormAndMutation = async (language, channel) => {
         form.urlKey = translation.urlKey;
         translationId.value = translation.id;
         mutation.value = updateProductTranslationMutation;
-        previewContent.value = translation;
       } else {
         form.name = '';
         form.subtitle = '';
@@ -149,23 +141,10 @@ const setFormAndMutation = async (language, channel) => {
         form.urlKey = '';
         translationId.value = null;
         mutation.value = createProductTranslationMutation;
-        previewContent.value = null;
       }
-
-      // Fetch default translation for preview/fallback
-      const { data: def } = await apolloClient.query({
-        query: getProductContentByLanguageAndDefaultQuery,
-        variables: { languageCode: language, productId: props.product.id },
-        fetchPolicy: 'network-only'
-      });
-      defaultPreviewContent.value = def?.productTranslations.edges[0]?.node || null;
     }
   } catch (error) {
     console.error("Error fetching translation:", error);
-  }
-
-  if (fieldRules.value.bulletPoints && bulletPointsRef.value?.fetchPoints) {
-    previewBulletPoints.value = await bulletPointsRef.value.fetchPoints();
   }
 
   await nextTick();
@@ -189,7 +168,7 @@ watch(currentSalesChannel, async (newChannel, oldChannelVal) => {
 
 watch(currentChannelType, (newType) => {
   if (!getContentFieldRules(newType).bulletPoints) {
-    previewBulletPoints.value = [];
+    return;
   }
 });
 
@@ -243,15 +222,12 @@ const onMutationCompleted = async (response) => {
     translationId.value = data.id;
     mutation.value = updateProductTranslationMutation;
   }
-  let latestBulletPoints = [];
   try {
-    latestBulletPoints = await bulletPointsRef.value?.save(translationId.value) || [];
+    await bulletPointsRef.value?.save(translationId.value);
   } catch (e) { /* errors handled in component */ }
-  previewBulletPoints.value = latestBulletPoints;
   Toast.success(t('products.translation.successfullyUpdated'));
   initialForm.value = {...form};
   fieldErrors.value = {};
-  previewContent.value = {...form};
 };
 
 const handleGeneratedDescriptionContent =  (newVal) => {
@@ -302,9 +278,14 @@ const shortDescriptionToolbarOptions = [
 
 <template>
 
-  <Flex end>
-    <FlexCell class="block lg:hidden">
-      <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+  <Flex end class="gap-2 flex-wrap">
+    <FlexCell>
+      <ProductPreviewTrigger
+        :product="product"
+        :sales-channel-id="currentSalesChannel"
+        :sales-channels="salesChannels"
+        :language-code="currentLanguage"
+      />
     </FlexCell>
     <FlexCell>
       <AdvancedContentGenerator
@@ -325,28 +306,19 @@ const shortDescriptionToolbarOptions = [
     <FlexCell>
       <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
         <template v-slot="{ mutate, loading }">
-          <Button :customClass="'btn btn-primary mx-2'" :disabled="loading" @click="handleSave(mutate)">
+          <Button :customClass="'btn btn-primary'" :disabled="loading" @click="handleSave(mutate)">
             {{ t('shared.button.save') }}
           </Button>
         </template>
       </ApolloMutation>
     </FlexCell>
     <FlexCell>
-      <ApolloQuery :query="translationLanguagesQuery" fetch-policy="cache-and-network">
-        <template v-slot="{ result: { data } }">
-          <Selector v-if="data"
-                    v-model="currentLanguage"
-                    :options="cleanedData(data.translationLanguages)"
-                    :removable="false"
-                    :placeholder="t('products.translation.placeholders.language')"
-                    @update:modelValue="handleLanguageSelection"
-                    class="w-40"
-                    labelBy="name"
-                    valueBy="code"
-                    mandatory
-                    filterable/>
-        </template>
-      </ApolloQuery>
+      <LanguageSelector
+        v-model="currentLanguage"
+        selector-class="w-full min-w-[12rem] sm:min-w-[14rem]"
+        @loaded="handleLanguageOptionsLoaded"
+        @update:modelValue="handleLanguageSelection"
+      />
     </FlexCell>
   </Flex>
 
@@ -366,19 +338,19 @@ const shortDescriptionToolbarOptions = [
       mt-4
       grid gap-4
       grid-cols-1
-      lg:grid-cols-12
-      xl:grid-cols-10
-      2xl:grid-cols-10
+      lg:grid-cols-[220px_minmax(0,1fr)]
+      xl:grid-cols-[360px_minmax(0,1fr)]
+      2xl:grid-cols-[420px_minmax(0,1fr)]
     "
   >
+    <div>
+      <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+    </div>
 
     <!-- Product Content Form -->
     <div
       class="
         col-span-1
-        lg:col-span-6
-        xl:col-span-5
-        2xl:col-span-5
       "
     >
       <div class="p-2 bg-white">
@@ -408,44 +380,18 @@ const shortDescriptionToolbarOptions = [
               :default-language-code="defaultLanguageCode"
               :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
               :bullet-point-limit="fieldRules.limits.bulletPoints"
-              @initial-bullet-points="previewBulletPoints = [...$event]"
             />
           </template>
         </ProductContentForm>
       </div>
     </div>
-
-    <!-- Product Content Preview -->
-    <div
-      class="
-        col-span-1
-        lg:col-span-6
-        xl:col-span-5
-        2xl:col-span-5
-      "
-    >
-      <Flex vertical gap="4">
-      <FlexCell class="hidden lg:block ml-auto w-52">
-          <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
-        </FlexCell>
-        <FlexCell class="w-full">
-          <ProductContentPreview
-            :content="previewContent"
-            :default-content="defaultPreviewContent"
-            :current-channel="currentSalesChannel"
-            :channels="salesChannels"
-            :bullet-points="fieldRules.bulletPoints ? previewBulletPoints : []"
-          />
-        <Flex v-if="currentSalesChannel !== 'default'" class="mt-2 hidden lg:block">
-          <FlexCell>
-            <div class="text-xs text-orange-700">
-              {{ t('products.translation.warning.inheritFromDefault') }}
-            </div>
-          </FlexCell>
-        </Flex>
-        </FlexCell>
-      </Flex>
-    </div>
   </div>
 
+  <Flex v-if="currentSalesChannel !== 'default'" class="mt-2 hidden lg:block">
+    <FlexCell>
+      <div class="text-xs text-orange-700">
+        {{ t('products.translation.warning.inheritFromDefault') }}
+      </div>
+    </FlexCell>
+  </Flex>
 </template>

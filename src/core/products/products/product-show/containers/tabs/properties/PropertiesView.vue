@@ -19,6 +19,7 @@ import {Icon} from "../../../../../../../shared/components/atoms/icon";
 import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import {PropertyFilters} from "../../../../../../../shared/components/molecules/property-filters";
+import LanguageSelector from "../../../../../../../shared/components/molecules/language-selector/LanguageSelector.vue";
 
 
 const {t} = useI18n();
@@ -658,20 +659,11 @@ const handleValueUpdate = ({id, type, value, language}) => {
         />
       </FlexCell>
       <FlexCell>
-        <ApolloQuery v-if="language" :query="translationLanguagesQuery" fetch-policy="cache-and-network">
-          <template v-slot="{ result: { data } }">
-            <Selector v-if="data"
-                      v-model="language"
-                      :options="data.translationLanguages.languages"
-                      :removable="false"
-                      :placeholder="t('products.translation.placeholders.language')"
-                      class="w-32"
-                      labelBy="name"
-                      valueBy="code"
-                      mandatory
-                      filterable/>
-          </template>
-        </ApolloQuery>
+        <LanguageSelector
+          v-if="language"
+          v-model="language"
+          selector-class="w-full min-w-[11rem] sm:min-w-[12rem]"
+        />
       </FlexCell>
       <FlexCell>
         <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">

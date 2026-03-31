@@ -21,6 +21,7 @@ import {
 } from '../sharedImports';
 import { Tabs } from '../../../../../../../../../shared/components/molecules/tabs';
 import { CollaborationTab } from '../../../../../../../../../shared/components/organisms/collaboration-tab';
+import { duplicateSalesChannelSelectValueMappingMutation } from '../../../../../../../../../shared/api/mutations/salesChannels.js';
 import type { FormConfig, QueryFormField, ChoiceFormField } from '../sharedImports';
 import type {
   MapPropertyDataResult,
@@ -39,9 +40,11 @@ const { t } = useI18n();
 const valueId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
-const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
+const routeSalesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
 const isWizard = route.query.wizard === '1';
 
+const valueProxyId = ref<string | null>(null);
+const resolvedSalesChannelId = ref<string | null>(routeSalesChannelId || null);
 const propertyId = ref<string | null>(null);
 const propertyName = ref('');
 const propertyType = ref<string | null>(null);
@@ -56,8 +59,9 @@ const propertyMapped = ref(true);
 const placeholderContext: RemoteSelectValueEditPropertyContext = {
   type: type.value,
   valueId: valueId.value,
+  valueProxyId: null,
   integrationId,
-  salesChannelId,
+  salesChannelId: routeSalesChannelId,
   isWizard,
   propertyId: null,
   propertyName: '',
@@ -84,8 +88,9 @@ placeholderContext.form = form;
 const createContext = (): RemoteSelectValueEditPropertyContext => ({
   type: type.value,
   valueId: valueId.value,
+  valueProxyId: valueProxyId.value,
   integrationId,
-  salesChannelId,
+  salesChannelId: resolvedSalesChannelId.value || routeSalesChannelId,
   isWizard,
   propertyId: propertyId.value,
   propertyName: propertyName.value,
@@ -117,6 +122,10 @@ const localInstanceField = ref<QueryFormField | null>(null);
 const recommendations = ref<Recommendation[]>([]);
 const loadingRecommendations = ref(false);
 const formErrors = ref<Record<string, any>>({});
+const showDuplicateMapping = ref(false);
+const duplicateLocalInstanceId = ref<string | null>(null);
+const duplicateErrors = ref<Record<string, any>>({});
+const duplicatingMapping = ref(false);
 
 const remoteFields = computed(() => props.config.remoteFields);
 const contextState = computed(() => createContext());
@@ -161,6 +170,31 @@ const generateValuePath = computed(() => {
   return props.config.generateValuePath ? props.config.generateValuePath(contextState.value) : null;
 });
 const notMappedBannerLink = computed(() => (props.config.notMappedBanner ? props.config.notMappedBanner.linkPath(contextState.value) : null));
+const duplicateSectionVisible = computed(() => {
+  if (
+    !props.config.duplicateMapping ||
+    !localInstanceField.value ||
+    !valueProxyId.value ||
+    !resolvedSalesChannelId.value ||
+    !form[props.config.localInstanceFieldKey]?.id
+  ) {
+    return false;
+  }
+  if (props.config.duplicateMapping.isVisible) {
+    return props.config.duplicateMapping.isVisible(contextState.value);
+  }
+  return !isBooleanMapping.value;
+});
+const duplicateLocalInstanceField = computed<QueryFormField | null>(() => {
+  if (!localInstanceField.value) {
+    return null;
+  }
+
+  return {
+    ...localInstanceField.value,
+    name: 'duplicateLocalInstance',
+  } as QueryFormField;
+});
 
 const breadcrumbsLinks = computed(() => [
   { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
@@ -194,6 +228,12 @@ const updatableForm = computed(() => {
 const applyValueData = (result: MapValueDataResult | null | undefined) => {
   if (!result) {
     return;
+  }
+  if (result.valueProxyId !== undefined) {
+    valueProxyId.value = result.valueProxyId;
+  }
+  if (result.salesChannelId !== undefined && result.salesChannelId) {
+    resolvedSalesChannelId.value = result.salesChannelId;
   }
   if (result.form) {
     Object.entries(result.form).forEach(([key, value]) => {
@@ -316,11 +356,20 @@ watch(localPropertyId, () => {
 
 watch(
   () => form[props.config.localInstanceFieldKey]?.id,
-  () => {
-    const currentId = form[props.config.localInstanceFieldKey]?.id;
+  (currentId) => {
     recommendations.value = recommendations.value.filter(recommendation => recommendation.id !== currentId);
+    if (duplicateLocalInstanceId.value && duplicateLocalInstanceId.value === currentId) {
+      duplicateLocalInstanceId.value = null;
+    }
+    delete duplicateErrors.value.localInstance;
   }
 );
+
+watch(duplicateSectionVisible, (visible) => {
+  if (!visible) {
+    resetDuplicateSection();
+  }
+});
 
 const selectRecommendation = (id: string) => {
   if (!form[props.config.localInstanceFieldKey]) {
@@ -329,6 +378,64 @@ const selectRecommendation = (id: string) => {
   }
   form[props.config.localInstanceFieldKey].id = id;
   recommendations.value = recommendations.value.filter(recommendation => recommendation.id !== id);
+};
+
+const resetDuplicateSection = () => {
+  showDuplicateMapping.value = false;
+  duplicateLocalInstanceId.value = null;
+  duplicateErrors.value = {};
+};
+
+const submitDuplicateMapping = async () => {
+  if (!props.config.duplicateMapping || !valueProxyId.value || !resolvedSalesChannelId.value) {
+    return;
+  }
+
+  duplicateErrors.value = {};
+
+  if (!duplicateLocalInstanceId.value) {
+    duplicateErrors.value.localInstance = t('integrations.show.propertySelectValues.duplicate.validation.required');
+    return;
+  }
+
+  if (duplicateLocalInstanceId.value === form[props.config.localInstanceFieldKey]?.id) {
+    duplicateErrors.value.localInstance = t('integrations.show.propertySelectValues.duplicate.validation.sameValue');
+    return;
+  }
+
+  try {
+    duplicatingMapping.value = true;
+    const { data } = await apolloClient.mutate({
+      mutation: duplicateSalesChannelSelectValueMappingMutation,
+      variables: {
+        salesChannel: { id: resolvedSalesChannelId.value },
+        remotePropertySelectValue: { id: valueProxyId.value },
+        localInstance: { id: duplicateLocalInstanceId.value },
+      },
+    });
+
+    const newMappingId = data?.duplicateSalesChannelSelectValueMapping?.id;
+    if (!newMappingId) {
+      throw new Error(t('integrations.show.propertySelectValues.duplicate.error'));
+    }
+
+    if (props.config.duplicateMapping.successMessageKey) {
+      Toast.success(t(props.config.duplicateMapping.successMessageKey));
+    }
+
+    await router.push({
+      name: 'integrations.remotePropertySelectValues.edit',
+      params: { type: type.value, id: newMappingId },
+      query: { integrationId, salesChannelId: resolvedSalesChannelId.value },
+    });
+  } catch (error: any) {
+    const graphQLError = error?.graphQLErrors?.[0]?.message;
+    const message = graphQLError || error?.message || t('integrations.show.propertySelectValues.duplicate.error');
+    duplicateErrors.value.__all__ = message;
+    Toast.error(String(message));
+  } finally {
+    duplicatingMapping.value = false;
+  }
 };
 
 const handleSubmitErrors = (errors: Record<string, any>) => {
@@ -429,7 +536,7 @@ onMounted(async () => {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { integrationId, salesChannelId: resolvedSalesChannelId.value || routeSalesChannelId, wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t(props.config.wizardSubmitLabelKey ?? 'integrations.show.mapping.saveAndMapNext');
     return;
@@ -570,6 +677,66 @@ onMounted(async () => {
                             </button>
                           </div>
                           <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+                        </div>
+                      </div>
+                      <div
+                        v-if="duplicateSectionVisible && duplicateLocalInstanceField && props.config.duplicateMapping"
+                        class="mt-5 rounded border border-gray-200 bg-gray-50 p-5"
+                      >
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                          <div class="space-y-2">
+                            <div class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">
+                              {{ t('integrations.show.propertySelectValues.duplicate.eyebrow') }}
+                            </div>
+                            <div>
+                              <h3 class="text-base font-semibold text-gray-900">{{ t(props.config.duplicateMapping.titleKey) }}</h3>
+                              <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">{{ t(props.config.duplicateMapping.descriptionKey) }}</p>
+                            </div>
+                          </div>
+                          <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                            <button
+                              type="button"
+                              class="inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition"
+                              :class="showDuplicateMapping ? 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50' : 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100'"
+                              @click="showDuplicateMapping = true"
+                            >
+                              {{ t('shared.labels.yes') }}
+                            </button>
+                            <button
+                              type="button"
+                              class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+                              @click="resetDuplicateSection"
+                            >
+                              {{ t('shared.labels.no') }}
+                            </button>
+                          </div>
+                        </div>
+
+                        <div v-if="showDuplicateMapping" class="mt-4 space-y-3 border-t border-gray-200 pt-4">
+                          <div>
+                            <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.duplicate.selectorLabel') }}</Label>
+                            <p class="mt-1 text-sm leading-6 text-gray-500">{{ t(props.config.duplicateMapping.promptKey) }}</p>
+                          </div>
+                          <FieldQuery
+                            :field="duplicateLocalInstanceField as QueryFormField"
+                            v-model="duplicateLocalInstanceId"
+                            @update:modelValue="duplicateLocalInstanceId = $event"
+                          />
+                          <p v-if="props.config.duplicateMapping.selectorHelpKey" class="mt-2 text-sm leading-6 text-gray-400">
+                            {{ t(props.config.duplicateMapping.selectorHelpKey) }}
+                          </p>
+                          <p v-if="duplicateErrors.localInstance" class="mt-2 text-sm leading-6 text-red-600">{{ duplicateErrors.localInstance }}</p>
+                          <p v-if="duplicateErrors.__all__" class="mt-2 text-sm leading-6 text-red-600">{{ duplicateErrors.__all__ }}</p>
+                          <div class="flex justify-end">
+                            <button
+                              type="button"
+                              class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                              :disabled="duplicatingMapping || !duplicateLocalInstanceId"
+                              @click="submitDuplicateMapping"
+                            >
+                              {{ duplicatingMapping ? t('integrations.show.propertySelectValues.duplicate.submitting') : t(props.config.duplicateMapping.submitLabelKey) }}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

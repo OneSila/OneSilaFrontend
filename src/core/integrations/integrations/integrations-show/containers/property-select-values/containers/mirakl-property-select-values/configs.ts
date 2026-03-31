@@ -77,6 +77,7 @@ export const miraklPropertySelectValuesSearchConfigConstructor = (t: Function): 
 export const miraklPropertySelectValuesListingConfigConstructor = (
   t: Function,
   specificIntegrationId: string,
+  salesChannelId: string,
 ): ListingConfig => ({
   headers: [
     t('integrations.show.propertySelectValues.labels.localizedValue'),
@@ -102,7 +103,7 @@ export const miraklPropertySelectValuesListingConfigConstructor = (
   addActions: true,
   addEdit: true,
   addShow: true,
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
   editUrlName: 'integrations.remotePropertySelectValues.edit',
   showUrlName: 'integrations.remotePropertySelectValues.edit',
   addDelete: false,

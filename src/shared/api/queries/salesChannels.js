@@ -2405,6 +2405,10 @@ export const getMiraklPropertySelectValueQuery = gql`
   query getMiraklPropertySelectValue($id: GlobalID!) {
     miraklPropertySelectValue(id: $id) {
       id
+      proxyId
+      salesChannel {
+        id
+      }
       code
       value
       label

@@ -192,32 +192,38 @@ const openNotification = async (notification: FrontendNotification, close: () =>
       <template #content="{ close }">
         <div class="w-[420px] overflow-hidden rounded-[28px] border border-slate-200 bg-white text-dark shadow-2xl dark:text-white-dark dark:text-white-light/90">
           <div class="border-b border-slate-200 bg-gradient-to-br from-slate-50 via-white to-indigo-50/70 px-5 py-5">
-            <div class="flex items-start gap-4">
-              <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-900 text-sm font-semibold text-white shadow-sm">
-                <img
-                  v-if="user.avatarResizedFullUrl"
-                  :src="user.avatarResizedFullUrl"
-                  :alt="userFullName"
-                  class="h-full w-full object-cover"
-                />
-                <span v-else>{{ userInitials }}</span>
-              </div>
+            <Link
+              :path="{ name: 'profile.user' }"
+              block
+              @click="close()"
+            >
+              <div class="flex items-start gap-4 rounded-2xl px-3 py-3 text-left transition hover:bg-slate-100/90">
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-900 text-sm font-semibold text-white shadow-sm">
+                  <img
+                    v-if="user.avatarResizedFullUrl"
+                    :src="user.avatarResizedFullUrl"
+                    :alt="userFullName"
+                    class="h-full w-full object-cover"
+                  />
+                  <span v-else>{{ userInitials }}</span>
+                </div>
 
-              <div class="min-w-0 flex-1">
-                <h4 class="truncate text-base font-semibold text-slate-900">
-                  {{ userFullName }}
-                </h4>
-                <p
-                  v-if="user.company?.name"
-                  class="mt-0.5 truncate text-sm text-slate-500"
-                >
-                  {{ user.company?.name }}
-                </p>
-                <span class="mt-0.5 block truncate text-sm text-slate-500">
-                  {{ user.username }}
-                </span>
+                <div class="min-w-0 flex-1">
+                  <h4 class="truncate text-base font-semibold text-slate-900">
+                    {{ userFullName }}
+                  </h4>
+                  <p
+                    v-if="user.company?.name"
+                    class="mt-0.5 truncate text-sm text-slate-500"
+                  >
+                    {{ user.company?.name }}
+                  </p>
+                  <span class="mt-0.5 block truncate text-sm text-slate-500">
+                    {{ user.username }}
+                  </span>
+                </div>
               </div>
-            </div>
+            </Link>
 
             <div class="mt-4 grid gap-3 sm:grid-cols-2">
               <div class="rounded-2xl border border-indigo-100 bg-white/80 px-4 py-3 shadow-sm backdrop-blur">
@@ -357,7 +363,7 @@ const openNotification = async (notification: FrontendNotification, close: () =>
             <ul class="space-y-2 rounded-2xl bg-slate-50 p-2">
             <li>
               <Link :path="{ name: 'profile.user' }" @click="close()" block>
-                <div class="flex items-center rounded-xl px-4 py-3 text-slate-700 transition hover:bg-white hover:shadow-sm">
+                <div class="flex items-center rounded-xl px-4 py-3 text-slate-700 transition hover:shadow-sm">
                   <Icon name="user" class="mr-3 h-4.5 w-4.5 shrink-0 text-slate-400" />
                   {{ t('profile.dropdown.profile') }}
                 </div>
@@ -365,7 +371,7 @@ const openNotification = async (notification: FrontendNotification, close: () =>
             </li>
             <li>
               <Link :path="{ name: 'profile.company' }" @click="close()" block>
-                <div class="flex items-center rounded-xl px-4 py-3 text-slate-700 transition hover:bg-white hover:shadow-sm">
+                <div class="flex items-center rounded-xl px-4 py-3 text-slate-700 transition  hover:shadow-sm">
                   <Icon name="building" class="mr-3 h-4.5 w-4.5 shrink-0 text-slate-400" />
                   {{ t('profile.dropdown.company') }}
                 </div>
@@ -373,7 +379,7 @@ const openNotification = async (notification: FrontendNotification, close: () =>
             </li>
             <li>
               <Link :path="{ name: 'settings.currencies.list' }" @click="close()" block>
-                <div class="flex items-center rounded-xl px-4 py-3 text-slate-700 transition hover:bg-white hover:shadow-sm">
+                <div class="flex items-center rounded-xl px-4 py-3 text-slate-700 transition  hover:shadow-sm">
                   <Icon name="cog" class="mr-3 h-4.5 w-4.5 shrink-0 text-slate-400" />
                   {{ t('settings.title') }}
                 </div>

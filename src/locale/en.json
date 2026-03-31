@@ -558,6 +558,7 @@
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "Force Update",
       "import": "Import",
+      "preview": "Preview",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
@@ -960,6 +961,10 @@
     }
   },
   "profile": {
+    "actions": {
+      "editDetails": "Edit details",
+      "closeEditor": "Close editor"
+    },
     "dropdown": {
       "profile": "Profile",
       "company": "Company",
@@ -993,6 +998,8 @@
       "security": "Security"
     },
     "labels": {
+      "profileDetails": "Profile details",
+      "editDetails": "Edit details",
       "joined": "Joined",
       "phone": "Phone",
       "whatsApp": "WhatsApp",
@@ -1005,6 +1012,7 @@
       "telegramNumber": "Telegram Number",
       "firstName": "First Name",
       "lastName": "Last Name",
+      "avatar": "Profile photo",
       "generalInformation": "General Information",
       "changePassword": "Change password",
       "newPassword": "New Password",
@@ -1101,7 +1109,10 @@
   },
   "companyProfile": {
     "labels": {
+      "companyDetails": "Company details",
+      "editCompanyDetails": "Edit company details",
       "companyName": "Company Name",
+      "address": "Address",
       "email": "Email",
       "phoneNumber": "Phone Number",
       "address1": "Address Line 1",
@@ -1115,6 +1126,13 @@
       "updateButton": "Update Company",
       "editProfile": "Edit Profile",
       "members": "Members"
+    },
+    "actions": {
+      "editCompanyDetails": "Edit details",
+      "closeEditor": "Close editor"
+    },
+    "descriptions": {
+      "companyProfile": "Keep your company contact details, languages, and billing information up to date for the team."
     },
     "placeholders": {
       "companyName": "Enter company name",
@@ -4724,10 +4742,32 @@
           "title": "Shein property not mapped",
           "content": "Map the Shein property first before mapping values."
         },
+        "notMappedBannerMirakl": {
+          "title": "Mirakl property not mapped",
+          "content": "Map the Mirakl property first before mapping values."
+        },
         "recommendation": {
           "title": "Recommendations",
           "searching": "Searching for suggestions...",
           "none": "No suggestion found"
+        },
+        "duplicate": {
+          "eyebrow": "Additional mapping",
+          "selectorLabel": "Select another OneSila value",
+          "submitting": "Creating mapping...",
+          "error": "Unable to create the additional mapping.",
+          "validation": {
+            "required": "Select a OneSila value first.",
+            "sameValue": "Choose a different OneSila value."
+          },
+          "mirakl": {
+            "title": "Need another OneSila select value for this Mirakl value?",
+            "description": "Keep the current Mirakl value and attach one more local select value to it without leaving this screen.",
+            "prompt": "Pick the extra OneSila select value you want to connect to this Mirakl value.",
+            "help": "This creates a second Mirakl mapping for the same remote value and sends you straight to the new mapping.",
+            "submit": "Create extra mapping",
+            "success": "Additional Mirakl select value mapping created."
+          }
         },
         "bulkAssign": "Assign Select Value",
         "bulkAssignTitle": "Assign to {count} value(s)",
