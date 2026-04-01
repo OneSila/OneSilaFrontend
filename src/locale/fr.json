@@ -3164,6 +3164,7 @@
       "actions": {
         "open": "",
         "markAsOpened": "",
+        "markAsUnseen": "",
         "viewAll": "",
         "markAllAsRead": "",
         "enableDesktopNotifications": "",
@@ -3179,6 +3180,7 @@
       },
       "messages": {
         "openFailed": "",
+        "markAsUnreadFailed": "",
         "markAllFailed": "",
         "desktopNotificationsEnabled": "",
         "desktopNotificationsDisabled": "",

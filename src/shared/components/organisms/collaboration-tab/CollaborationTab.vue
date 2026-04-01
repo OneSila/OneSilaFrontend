@@ -63,6 +63,7 @@ const props = defineProps<{
 const { t } = useI18n();
 const route = useRoute();
 const auth = injectAuth();
+const mentionSymbol = '@';
 
 const loadingThread = ref(true);
 const submitting = ref(false);
@@ -124,8 +125,8 @@ const mentionSuggestions = computed<MentionSuggestion[]>(() => {
     suggestions.push({
       id: ALL_MENTIONS_ID,
       kind: 'all',
-      label: t('collaboration.labels.allMembers'),
-      description: t('collaboration.hints.allMention'),
+      label: t('collaboration.labels.allMembers', { symbol: mentionSymbol }),
+      description: t('collaboration.hints.allMention', { symbol: mentionSymbol }),
     });
   }
 
@@ -514,7 +515,10 @@ onMounted(loadMembers);
                     {{ getEntrySummary(entry) }}
                   </p>
 
-                  <p v-if="entry.comment" class="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-600">
+                  <p
+                    v-if="entry.comment"
+                    class="mt-3 rounded-xl border border-slate-200 bg-slate-50/90 px-4 py-3 whitespace-pre-wrap text-sm leading-6 text-slate-700 shadow-sm"
+                  >
                     {{ entry.comment }}
                   </p>
 
@@ -558,7 +562,7 @@ onMounted(loadMembers);
       <div class="space-y-5 px-5 py-6">
         <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
           <p class="text-sm font-medium text-slate-800">{{ t('collaboration.description') }}</p>
-          <p class="mt-1 text-xs text-slate-500">{{ t('collaboration.hints.allMention') }}</p>
+          <p class="mt-1 text-xs text-slate-500">{{ t('collaboration.hints.allMention', { symbol: mentionSymbol }) }}</p>
         </div>
 
         <div>
@@ -581,7 +585,7 @@ onMounted(loadMembers);
               ref="textareaRef"
               rows="6"
               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100"
-              :placeholder="t('collaboration.placeholders.comment')"
+              :placeholder="t('collaboration.placeholders.comment', { symbol: mentionSymbol })"
               :value="comment"
               @input="handleCommentInput"
               @click="handleTextareaInteraction"

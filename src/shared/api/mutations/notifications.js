@@ -13,6 +13,16 @@ export const openNotificationMutation = gql`
   }
 `;
 
+export const markNotificationAsUnreadMutation = gql`
+  mutation MarkNotificationAsUnread($id: GlobalID!) {
+    markNotificationAsUnread(data: { id: $id }) {
+      id
+      opened
+      url
+    }
+  }
+`;
+
 export const markAllNotificationsAsViewMutation = gql`
   mutation MarkAllNotificationsAsView {
     markAllNotificationsAsView
