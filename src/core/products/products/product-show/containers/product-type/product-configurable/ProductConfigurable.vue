@@ -85,7 +85,6 @@ const tabItems = computed(() => {
   items.push(
     { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
     { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
-    { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' }
   );
 
   const marketplaceTabs: Array<{
@@ -139,6 +138,8 @@ const tabItems = computed(() => {
     });
     items.push(...marketplaceTabs);
   }
+
+    items.push({ name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' })
 
   return items;
 });
