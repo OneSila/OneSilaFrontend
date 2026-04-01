@@ -1061,26 +1061,26 @@
       "approved": "Approved",
       "rejected": "Rejected"
     },
-    "labels": {
-      "unknownUser": "Unknown user",
-      "entryType": "Update type",
-      "comment": "Comment",
-      "allMembers": "@all",
-      "mentionSuggestions": "Mention a teammate",
-      "mentions": "Mentions",
-      "selectedMentions": "Selected teammates"
-    },
-    "placeholders": {
-      "entryType": "Select an update type",
-      "comment": "Write a comment or type @ to mention a teammate..."
-    },
-    "help": {
-      "mentions": "Type @ in the comment box to mention a teammate, then select them from the list."
-    },
-    "hints": {
-      "mentions": "Mentions are sent explicitly with the selected teammates.",
-      "allMention": "Type @all to notify every teammate except you."
-    },
+      "labels": {
+        "unknownUser": "Unknown user",
+        "entryType": "Update type",
+        "comment": "Comment",
+        "allMembers": "'@all'",
+        "mentionSuggestions": "Mention a teammate",
+        "mentions": "Mentions",
+        "selectedMentions": "Selected teammates"
+      },
+      "placeholders": {
+        "entryType": "Select an update type",
+        "comment": "Write a comment or type '@' to mention a teammate..."
+      },
+      "help": {
+        "mentions": "Type '@' in the comment box to mention a teammate, then select them from the list."
+      },
+      "hints": {
+        "mentions": "Mentions are sent explicitly with the selected teammates.",
+        "allMention": "Type '@all' to notify every teammate except you."
+      },
     "validation": {
       "commentRequired": "Comments need a message before you can post them.",
       "askApprovalMentionRequired": "Select at least one teammate before asking for approval.",
