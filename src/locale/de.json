@@ -3171,7 +3171,13 @@
         "open": "",
         "markAsOpened": "",
         "viewAll": "",
-        "markAllAsRead": ""
+        "markAllAsRead": "",
+        "enableDesktopNotifications": "",
+        "disableDesktopNotifications": ""
+      },
+      "browser": {
+        "defaultTitle": "",
+        "enabledBadge": ""
       },
       "empty": {
         "title": "",
@@ -3179,7 +3185,11 @@
       },
       "messages": {
         "openFailed": "",
-        "markAllFailed": ""
+        "markAllFailed": "",
+        "desktopNotificationsEnabled": "",
+        "desktopNotificationsDisabled": "",
+        "desktopNotificationsDenied": "",
+        "desktopNotificationsFailed": ""
       }
     },
     "tabs": {

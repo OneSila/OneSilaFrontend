@@ -13,9 +13,14 @@ import { Toast } from '../../../modules/toast';
 import {
   FrontendNotification,
   mergeNotificationOpenedState,
+  navigateToNotificationUrl,
   openNotificationAndNavigate,
   sortNotificationsNewestFirst,
 } from '../../../modules/notifications';
+import {
+  areDesktopNotificationsEnabled,
+  showBrowserNotification,
+} from '../../../modules/browser-notifications';
 
 const { t } = useI18n();
 const auth = injectAuth();
@@ -104,12 +109,26 @@ const handleMeSubscriptionResult = (data: any) => {
   const nextNotificationIds = nextNotifications.map((notification) => notification.id);
 
   if (hasHydratedNotifications.value) {
-    const hasNewNotification = nextNotificationIds.some(
-      (notificationId) => !knownNotificationIds.value.includes(notificationId),
+    const newNotifications = nextNotifications.filter(
+      (notification) => !knownNotificationIds.value.includes(notification.id),
     );
 
-    if (hasNewNotification) {
+    if (newNotifications.length > 0) {
       void playNotificationSound();
+
+      if (areDesktopNotificationsEnabled()) {
+        for (const notification of newNotifications) {
+          showBrowserNotification(
+            notification,
+            t('profile.notifications.browser.defaultTitle'),
+            notification.url
+              ? () => {
+                  void navigateToNotificationUrl(router, notification.url as string);
+                }
+              : undefined,
+          );
+        }
+      }
     }
   } else {
     hasHydratedNotifications.value = true;

@@ -20,6 +20,11 @@ import {
   openNotificationAndNavigate,
   sortNotificationsNewestFirst,
 } from '../../../shared/modules/notifications';
+import {
+  areDesktopNotificationsEnabled,
+  askNotificationPermission,
+  setDesktopNotificationsEnabled,
+} from '../../../shared/modules/browser-notifications';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -39,6 +44,9 @@ const markingAllAsRead = ref(false);
 const loading = ref(true);
 const pageInfo = ref<NotificationPageInfo | null>(null);
 const totalCount = ref(0);
+const desktopNotificationsSupported = ref(false);
+const desktopNotificationsEnabled = ref(false);
+const desktopNotificationsLoading = ref(false);
 
 const sortedNotifications = computed(() =>
   sortNotificationsNewestFirst(
@@ -78,6 +86,46 @@ const loadNotifications = async (variables: {
     console.error('Failed to load notifications', error);
   } finally {
     loading.value = false;
+  }
+};
+
+const syncDesktopNotificationsState = () => {
+  desktopNotificationsSupported.value = typeof window !== 'undefined' && 'Notification' in window;
+  desktopNotificationsEnabled.value = areDesktopNotificationsEnabled();
+};
+
+const toggleDesktopNotifications = async () => {
+  if (!desktopNotificationsSupported.value || desktopNotificationsLoading.value) {
+    return;
+  }
+
+  try {
+    desktopNotificationsLoading.value = true;
+
+    if (desktopNotificationsEnabled.value) {
+      setDesktopNotificationsEnabled(false);
+      desktopNotificationsEnabled.value = false;
+      Toast.success(t('profile.notifications.messages.desktopNotificationsDisabled'));
+      return;
+    }
+
+    const permissionGranted = await askNotificationPermission();
+
+    if (!permissionGranted) {
+      setDesktopNotificationsEnabled(false);
+      desktopNotificationsEnabled.value = false;
+      Toast.error(t('profile.notifications.messages.desktopNotificationsDenied'));
+      return;
+    }
+
+    setDesktopNotificationsEnabled(true);
+    desktopNotificationsEnabled.value = true;
+    Toast.success(t('profile.notifications.messages.desktopNotificationsEnabled'));
+  } catch (error) {
+    console.error('Failed to update desktop notifications preference', error);
+    Toast.error(t('profile.notifications.messages.desktopNotificationsFailed'));
+  } finally {
+    desktopNotificationsLoading.value = false;
   }
 };
 
@@ -172,6 +220,7 @@ const openNotification = async (notification: FrontendNotification) => {
 };
 
 onMounted(() => {
+  syncDesktopNotificationsState();
   void loadNotifications();
 });
 </script>
@@ -199,7 +248,14 @@ onMounted(() => {
                 {{ t('profile.notifications.description') }}
               </p>
             </div>
-            <div class="flex items-center gap-3 self-start sm:self-center">
+            <div class="flex flex-wrap items-center gap-3 self-start sm:self-center">
+              <span
+                v-if="desktopNotificationsSupported && desktopNotificationsEnabled"
+                class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200"
+              >
+                <span class="h-2 w-2 rounded-full bg-emerald-500" />
+                {{ t('profile.notifications.browser.enabledBadge') }}
+              </span>
               <Badge
                 :text="t('profile.notifications.summary', { count: unreadCount })"
                 color="blue"
@@ -211,6 +267,18 @@ onMounted(() => {
                 @click="markAllAsRead"
               >
                 {{ t('profile.notifications.actions.markAllAsRead') }}
+              </Button>
+              <Button
+                class="btn btn-outline-dark"
+                :disabled="desktopNotificationsLoading || (!desktopNotificationsSupported && !desktopNotificationsEnabled)"
+                :loading="desktopNotificationsLoading"
+                @click="toggleDesktopNotifications"
+              >
+                {{
+                  desktopNotificationsEnabled
+                    ? t('profile.notifications.actions.disableDesktopNotifications')
+                    : t('profile.notifications.actions.enableDesktopNotifications')
+                }}
               </Button>
             </div>
           </div>

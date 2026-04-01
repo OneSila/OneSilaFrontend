@@ -982,7 +982,13 @@
         "open": "Open",
         "markAsOpened": "Mark as opened",
         "viewAll": "View all notifications",
-        "markAllAsRead": "Mark all as read"
+        "markAllAsRead": "Mark all as read",
+        "enableDesktopNotifications": "Enable desktop notifications",
+        "disableDesktopNotifications": "Disable desktop notifications"
+      },
+      "browser": {
+        "defaultTitle": "New notification",
+        "enabledBadge": "Desktop notifications on"
       },
       "empty": {
         "title": "No notifications yet",
@@ -990,7 +996,11 @@
       },
       "messages": {
         "openFailed": "We could not open that notification. Please try again.",
-        "markAllFailed": "We could not mark all notifications as read. Please try again."
+        "markAllFailed": "We could not mark all notifications as read. Please try again.",
+        "desktopNotificationsEnabled": "Desktop notifications are enabled.",
+        "desktopNotificationsDisabled": "Desktop notifications are disabled.",
+        "desktopNotificationsDenied": "Browser notifications are blocked. Please allow them in your browser settings.",
+        "desktopNotificationsFailed": "We could not update desktop notifications. Please try again."
       }
     },
     "tabs": {
