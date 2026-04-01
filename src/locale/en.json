@@ -1065,21 +1065,21 @@
         "unknownUser": "Unknown user",
         "entryType": "Update type",
         "comment": "Comment",
-        "allMembers": "'@all'",
+        "allMembers": "All teammates",
         "mentionSuggestions": "Mention a teammate",
         "mentions": "Mentions",
         "selectedMentions": "Selected teammates"
       },
       "placeholders": {
         "entryType": "Select an update type",
-        "comment": "Write a comment or type '@' to mention a teammate..."
+        "comment": "Write a comment to mention a teammate..."
       },
       "help": {
-        "mentions": "Type '@' in the comment box to mention a teammate, then select them from the list."
+        "mentions": "Use the mention list to add a teammate to your comment."
       },
       "hints": {
         "mentions": "Mentions are sent explicitly with the selected teammates.",
-        "allMention": "Type '@all' to notify every teammate except you."
+        "allMention": "Use the all teammates option to notify everyone except you."
       },
     "validation": {
       "commentRequired": "Comments need a message before you can post them.",
