@@ -16,7 +16,7 @@ const emit = defineEmits(['pull-data']);
 const { t } = useI18n();
 
 const searchConfig = computed(() => miraklPropertySelectValuesSearchConfigConstructor(t));
-const listingConfig = computed(() => miraklPropertySelectValuesListingConfigConstructor(t, props.id));
+const listingConfig = computed(() => miraklPropertySelectValuesListingConfigConstructor(t, props.id, props.salesChannelId));
 const fixedFilterVariables = computed(() => ({
   isPropertyValue: true,
 }));

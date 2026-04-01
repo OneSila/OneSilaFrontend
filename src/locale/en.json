@@ -558,6 +558,7 @@
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "Force Update",
       "import": "Import",
+      "preview": "Preview",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
       "uploadNew": "Upload New",
@@ -691,6 +692,8 @@
     },
     "tabs": {
       "general": "General",
+      "mapping": "Mapping",
+      "collaboration": "Collaboration",
       "items": "Items",
       "shippings": "Shipments",
       "translations": "Translations",
@@ -958,16 +961,55 @@
     }
   },
   "profile": {
+    "actions": {
+      "editDetails": "Edit details",
+      "closeEditor": "Close editor"
+    },
     "dropdown": {
       "profile": "Profile",
       "company": "Company",
       "signOut": "Sign Out"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Review the latest updates shared with your account.",
+      "summary": "{count} unread notifications",
+      "dropdown": {
+        "description": "Your latest account updates.",
+        "badge": "{count} unread"
+      },
+      "actions": {
+        "open": "Open",
+        "markAsOpened": "Mark as opened",
+        "viewAll": "View all notifications",
+        "markAllAsRead": "Mark all as read",
+        "enableDesktopNotifications": "Enable desktop notifications",
+        "disableDesktopNotifications": "Disable desktop notifications"
+      },
+      "browser": {
+        "defaultTitle": "New notification",
+        "enabledBadge": "Desktop notifications on"
+      },
+      "empty": {
+        "title": "No notifications yet",
+        "description": "New updates will appear here as soon as they are available."
+      },
+      "messages": {
+        "openFailed": "We could not open that notification. Please try again.",
+        "markAllFailed": "We could not mark all notifications as read. Please try again.",
+        "desktopNotificationsEnabled": "Desktop notifications are enabled.",
+        "desktopNotificationsDisabled": "Desktop notifications are disabled.",
+        "desktopNotificationsDenied": "Browser notifications are blocked. Please allow them in your browser settings.",
+        "desktopNotificationsFailed": "We could not update desktop notifications. Please try again."
+      }
     },
     "tabs": {
       "general": "General",
       "security": "Security"
     },
     "labels": {
+      "profileDetails": "Profile details",
+      "editDetails": "Edit details",
       "joined": "Joined",
       "phone": "Phone",
       "whatsApp": "WhatsApp",
@@ -980,6 +1022,7 @@
       "telegramNumber": "Telegram Number",
       "firstName": "First Name",
       "lastName": "Last Name",
+      "avatar": "Profile photo",
       "generalInformation": "General Information",
       "changePassword": "Change password",
       "newPassword": "New Password",
@@ -1000,9 +1043,86 @@
       "changePasswordMatch": "The passwords should match in order to update!"
     }
   },
+  "collaboration": {
+    "title": "Collaboration",
+    "description": "Discuss this record, request approval, and capture decisions in one timeline.",
+    "subtitle": "Keep approvals, comments, and decisions visible to the team.",
+    "summary": "{count} entries",
+    "actions": {
+      "comment": "Comment",
+      "askApproval": "Ask approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "submit": "Post update"
+    },
+    "types": {
+      "comment": "Comment",
+      "askApproval": "Ask approval",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "labels": {
+      "unknownUser": "Unknown user",
+      "entryType": "Update type",
+      "comment": "Comment",
+      "allMembers": "@all",
+      "mentionSuggestions": "Mention a teammate",
+      "mentions": "Mentions",
+      "selectedMentions": "Selected teammates"
+    },
+    "placeholders": {
+      "entryType": "Select an update type",
+      "comment": "Write a comment or type @ to mention a teammate..."
+    },
+    "help": {
+      "mentions": "Type @ in the comment box to mention a teammate, then select them from the list."
+    },
+    "hints": {
+      "mentions": "Mentions are sent explicitly with the selected teammates.",
+      "allMention": "Type @all to notify every teammate except you."
+    },
+    "validation": {
+      "commentRequired": "Comments need a message before you can post them.",
+      "askApprovalMentionRequired": "Select at least one teammate before asking for approval.",
+      "mentionRequired": "Select at least one teammate before asking for approval."
+    },
+    "timeline": {
+      "title": "Activity",
+      "orderHint": "Oldest first",
+      "comment": "{user} commented",
+      "askApproval": "{name} asked approval for {mentions}",
+      "askApprovalWithMentions": "{user} asked approval from {mentions}",
+      "approved": "{name} approved",
+      "rejected": "{name} rejected"
+    },
+    "composer": {
+      "title": "Add an update",
+      "subtitle": "Post a comment or capture an approval decision."
+    },
+    "members": {
+      "loading": "Loading teammates...",
+      "error": "We could not load your teammate list.",
+      "empty": "No teammates selected."
+    },
+    "button": {
+      "submit": "Post update"
+    },
+    "empty": {
+      "title": "No collaboration yet",
+      "description": "Start the conversation here and future updates will build a shared timeline."
+    },
+    "messages": {
+      "loadFailed": "We could not load the collaboration thread. Please refresh and try again.",
+      "membersFailed": "We could not load your teammate list. Please refresh and try again.",
+      "createFailed": "We could not post that collaboration update. Please try again."
+    }
+  },
   "companyProfile": {
     "labels": {
+      "companyDetails": "Company details",
+      "editCompanyDetails": "Edit company details",
       "companyName": "Company Name",
+      "address": "Address",
       "email": "Email",
       "phoneNumber": "Phone Number",
       "address1": "Address Line 1",
@@ -1016,6 +1136,13 @@
       "updateButton": "Update Company",
       "editProfile": "Edit Profile",
       "members": "Members"
+    },
+    "actions": {
+      "editCompanyDetails": "Edit details",
+      "closeEditor": "Close editor"
+    },
+    "descriptions": {
+      "companyProfile": "Keep your company contact details, languages, and billing information up to date for the team."
     },
     "placeholders": {
       "companyName": "Enter company name",
@@ -4625,10 +4752,32 @@
           "title": "Shein property not mapped",
           "content": "Map the Shein property first before mapping values."
         },
+        "notMappedBannerMirakl": {
+          "title": "Mirakl property not mapped",
+          "content": "Map the Mirakl property first before mapping values."
+        },
         "recommendation": {
           "title": "Recommendations",
           "searching": "Searching for suggestions...",
           "none": "No suggestion found"
+        },
+        "duplicate": {
+          "eyebrow": "Additional mapping",
+          "selectorLabel": "Select another OneSila value",
+          "submitting": "Creating mapping...",
+          "error": "Unable to create the additional mapping.",
+          "validation": {
+            "required": "Select a OneSila value first.",
+            "sameValue": "Choose a different OneSila value."
+          },
+          "mirakl": {
+            "title": "Need another OneSila select value for this Mirakl value?",
+            "description": "Keep the current Mirakl value and attach one more local select value to it without leaving this screen.",
+            "prompt": "Pick the extra OneSila select value you want to connect to this Mirakl value.",
+            "help": "This creates a second Mirakl mapping for the same remote value and sends you straight to the new mapping.",
+            "submit": "Create extra mapping",
+            "success": "Additional Mirakl select value mapping created."
+          }
         },
         "bulkAssign": "Assign Select Value",
         "bulkAssignTitle": "Assign to {count} value(s)",
@@ -5446,12 +5595,12 @@
           "uploadFailed": "The import could not be completed with the uploaded export files.",
           "tutorial": {
             "title": "How to generate the Mirakl export files",
-            "description": "Repeat this process until you have exported the full catalog, then upload all generated XLSX files here.",
+            "description": "Use Mirakl's select-all action to export the full catalog in one go, then upload the generated XLSX file here.",
             "steps": {
               "step1": "Go to Catalog Management.",
-              "step2": "Select as many products per page as possible (100).",
-              "step3": "Click the square to select all products on the page, then click Generate file export.",
-              "step4": "When Download last generated export file appears, download it, go to the next page, and repeat until all products are covered."
+              "step2": "Select any product in the list.",
+              "step3": "Click Select all to select your full catalog, then click Generate file export.",
+              "step4": "When Download last generated export file appears, download it and upload that XLSX file here."
             }
           }
         },

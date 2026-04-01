@@ -10,14 +10,17 @@ export type UserPreferences = {
 };
 
 export type User = {
+  id?: string;
   username: string;
   language: string;
   firstName: string;
   lastName: string;
+  avatarResizedFullUrl?: string | null;
   onboardingStatus: string | null;
   company: Company | null;
   companyOwner: boolean;
   active: boolean;
+  notifications?: Array<Record<string, any>>;
   preferences?: UserPreferences;
 };
 

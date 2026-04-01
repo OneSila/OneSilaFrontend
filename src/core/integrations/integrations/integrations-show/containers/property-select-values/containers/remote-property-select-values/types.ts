@@ -16,6 +16,7 @@ export interface RemoteFieldConfig {
 export interface RemoteSelectValueEditPropertyContext {
   type: string;
   valueId: string;
+  valueProxyId: string | null;
   integrationId: string;
   salesChannelId: string;
   isWizard: boolean;
@@ -34,6 +35,8 @@ export interface RemoteSelectValueEditPropertyContext {
 
 export interface MapValueDataResult {
   form?: Record<string, any>;
+  valueProxyId?: string | null;
+  salesChannelId?: string | null;
   propertyId?: string | null;
   propertyName?: string;
   propertyType?: string | null;
@@ -99,6 +102,15 @@ export interface RemoteSelectValueEditPropertyConfig {
     mapResult: (data: any, currentId: string | null) => Recommendation[];
   };
   generateValuePath?: (ctx: RemoteSelectValueEditPropertyContext) => Url | null;
+  duplicateMapping?: {
+    titleKey: string;
+    descriptionKey: string;
+    promptKey: string;
+    selectorHelpKey?: string;
+    submitLabelKey: string;
+    successMessageKey?: string;
+    isVisible?: (ctx: RemoteSelectValueEditPropertyContext) => boolean;
+  };
   listRoute: (ctx: RemoteSelectValueEditPropertyContext) => Url;
   wizard?: {
     query: DocumentNode;

@@ -19,6 +19,9 @@ import {
   apolloClient,
   FieldType,
 } from '../sharedImports';
+import { Tabs } from '../../../../../../../../../shared/components/molecules/tabs';
+import { CollaborationTab } from '../../../../../../../../../shared/components/organisms/collaboration-tab';
+import { duplicateSalesChannelSelectValueMappingMutation } from '../../../../../../../../../shared/api/mutations/salesChannels.js';
 import type { FormConfig, QueryFormField, ChoiceFormField } from '../sharedImports';
 import type {
   MapPropertyDataResult,
@@ -37,9 +40,11 @@ const { t } = useI18n();
 const valueId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
-const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
+const routeSalesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
 const isWizard = route.query.wizard === '1';
 
+const valueProxyId = ref<string | null>(null);
+const resolvedSalesChannelId = ref<string | null>(routeSalesChannelId || null);
 const propertyId = ref<string | null>(null);
 const propertyName = ref('');
 const propertyType = ref<string | null>(null);
@@ -54,8 +59,9 @@ const propertyMapped = ref(true);
 const placeholderContext: RemoteSelectValueEditPropertyContext = {
   type: type.value,
   valueId: valueId.value,
+  valueProxyId: null,
   integrationId,
-  salesChannelId,
+  salesChannelId: routeSalesChannelId,
   isWizard,
   propertyId: null,
   propertyName: '',
@@ -82,8 +88,9 @@ placeholderContext.form = form;
 const createContext = (): RemoteSelectValueEditPropertyContext => ({
   type: type.value,
   valueId: valueId.value,
+  valueProxyId: valueProxyId.value,
   integrationId,
-  salesChannelId,
+  salesChannelId: resolvedSalesChannelId.value || routeSalesChannelId,
   isWizard,
   propertyId: propertyId.value,
   propertyName: propertyName.value,
@@ -115,6 +122,10 @@ const localInstanceField = ref<QueryFormField | null>(null);
 const recommendations = ref<Recommendation[]>([]);
 const loadingRecommendations = ref(false);
 const formErrors = ref<Record<string, any>>({});
+const showDuplicateMapping = ref(false);
+const duplicateLocalInstanceId = ref<string | null>(null);
+const duplicateErrors = ref<Record<string, any>>({});
+const duplicatingMapping = ref(false);
 
 const remoteFields = computed(() => props.config.remoteFields);
 const contextState = computed(() => createContext());
@@ -159,12 +170,42 @@ const generateValuePath = computed(() => {
   return props.config.generateValuePath ? props.config.generateValuePath(contextState.value) : null;
 });
 const notMappedBannerLink = computed(() => (props.config.notMappedBanner ? props.config.notMappedBanner.linkPath(contextState.value) : null));
+const duplicateSectionVisible = computed(() => {
+  if (
+    !props.config.duplicateMapping ||
+    !localInstanceField.value ||
+    !valueProxyId.value ||
+    !resolvedSalesChannelId.value ||
+    !form[props.config.localInstanceFieldKey]?.id
+  ) {
+    return false;
+  }
+  if (props.config.duplicateMapping.isVisible) {
+    return props.config.duplicateMapping.isVisible(contextState.value);
+  }
+  return !isBooleanMapping.value;
+});
+const duplicateLocalInstanceField = computed<QueryFormField | null>(() => {
+  if (!localInstanceField.value) {
+    return null;
+  }
+
+  return {
+    ...localInstanceField.value,
+    name: 'duplicateLocalInstance',
+  } as QueryFormField;
+});
 
 const breadcrumbsLinks = computed(() => [
   { path: { name: 'integrations.integrations.list' }, name: t('integrations.title') },
   { path: props.config.listRoute(contextState.value), name: t(props.config.integrationTitleKey) },
   { name: t('integrations.show.mapSelectValue') },
 ]);
+
+const tabItems = computed(() => ([
+  { name: 'mapping', label: t('shared.tabs.mapping'), icon: 'circle-info', alwaysRender: true },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' },
+]));
 
 const updatableForm = computed(() => {
   const result: Record<string, any> = { id: form.id };
@@ -187,6 +228,12 @@ const updatableForm = computed(() => {
 const applyValueData = (result: MapValueDataResult | null | undefined) => {
   if (!result) {
     return;
+  }
+  if (result.valueProxyId !== undefined) {
+    valueProxyId.value = result.valueProxyId;
+  }
+  if (result.salesChannelId !== undefined && result.salesChannelId) {
+    resolvedSalesChannelId.value = result.salesChannelId;
   }
   if (result.form) {
     Object.entries(result.form).forEach(([key, value]) => {
@@ -309,11 +356,20 @@ watch(localPropertyId, () => {
 
 watch(
   () => form[props.config.localInstanceFieldKey]?.id,
-  () => {
-    const currentId = form[props.config.localInstanceFieldKey]?.id;
+  (currentId) => {
     recommendations.value = recommendations.value.filter(recommendation => recommendation.id !== currentId);
+    if (duplicateLocalInstanceId.value && duplicateLocalInstanceId.value === currentId) {
+      duplicateLocalInstanceId.value = null;
+    }
+    delete duplicateErrors.value.localInstance;
   }
 );
+
+watch(duplicateSectionVisible, (visible) => {
+  if (!visible) {
+    resetDuplicateSection();
+  }
+});
 
 const selectRecommendation = (id: string) => {
   if (!form[props.config.localInstanceFieldKey]) {
@@ -322,6 +378,64 @@ const selectRecommendation = (id: string) => {
   }
   form[props.config.localInstanceFieldKey].id = id;
   recommendations.value = recommendations.value.filter(recommendation => recommendation.id !== id);
+};
+
+const resetDuplicateSection = () => {
+  showDuplicateMapping.value = false;
+  duplicateLocalInstanceId.value = null;
+  duplicateErrors.value = {};
+};
+
+const submitDuplicateMapping = async () => {
+  if (!props.config.duplicateMapping || !valueProxyId.value || !resolvedSalesChannelId.value) {
+    return;
+  }
+
+  duplicateErrors.value = {};
+
+  if (!duplicateLocalInstanceId.value) {
+    duplicateErrors.value.localInstance = t('integrations.show.propertySelectValues.duplicate.validation.required');
+    return;
+  }
+
+  if (duplicateLocalInstanceId.value === form[props.config.localInstanceFieldKey]?.id) {
+    duplicateErrors.value.localInstance = t('integrations.show.propertySelectValues.duplicate.validation.sameValue');
+    return;
+  }
+
+  try {
+    duplicatingMapping.value = true;
+    const { data } = await apolloClient.mutate({
+      mutation: duplicateSalesChannelSelectValueMappingMutation,
+      variables: {
+        salesChannel: { id: resolvedSalesChannelId.value },
+        remotePropertySelectValue: { id: valueProxyId.value },
+        localInstance: { id: duplicateLocalInstanceId.value },
+      },
+    });
+
+    const newMappingId = data?.duplicateSalesChannelSelectValueMapping?.id;
+    if (!newMappingId) {
+      throw new Error(t('integrations.show.propertySelectValues.duplicate.error'));
+    }
+
+    if (props.config.duplicateMapping.successMessageKey) {
+      Toast.success(t(props.config.duplicateMapping.successMessageKey));
+    }
+
+    await router.push({
+      name: 'integrations.remotePropertySelectValues.edit',
+      params: { type: type.value, id: newMappingId },
+      query: { integrationId, salesChannelId: resolvedSalesChannelId.value },
+    });
+  } catch (error: any) {
+    const graphQLError = error?.graphQLErrors?.[0]?.message;
+    const message = graphQLError || error?.message || t('integrations.show.propertySelectValues.duplicate.error');
+    duplicateErrors.value.__all__ = message;
+    Toast.error(String(message));
+  } finally {
+    duplicatingMapping.value = false;
+  }
 };
 
 const handleSubmitErrors = (errors: Record<string, any>) => {
@@ -422,7 +536,7 @@ onMounted(async () => {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { integrationId, salesChannelId: resolvedSalesChannelId.value || routeSalesChannelId, wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t(props.config.wizardSubmitLabelKey ?? 'integrations.show.mapping.saveAndMapNext');
     return;
@@ -444,142 +558,211 @@ onMounted(async () => {
       <Breadcrumbs :links="breadcrumbsLinks" />
     </template>
     <template #content>
-      <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
-        <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
-          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-            <div class="px-4 py-6 sm:p-8">
-              <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                <div class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.propertyLabelKey) }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="propertyEditPath" :path="propertyEditPath">{{ propertyName }}</Link>
-                      <span v-else>{{ propertyName }}</span>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-if="localPropertyName" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.localPropertyLabelKey ?? 'integrations.show.propertySelectValues.labels.localProperty') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="localPropertyEditPath" :path="localPropertyEditPath">{{ localPropertyName }}</Link>
-                      <span v-else>{{ localPropertyName }}</span>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-if="marketplaceName" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.marketplaceLabelKey ?? 'integrations.show.propertySelectValues.labels.marketplace') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <Link v-if="marketplaceEditPath" :path="marketplaceEditPath">{{ marketplaceName }}</Link>
-                      <span v-else>{{ marketplaceName }}</span>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-for="field in remoteFields" :key="field.key" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(field.labelKey) }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <TextInput v-model="form[field.key]" :disabled="field.disabled" class="w-full" />
-                    </FlexCell>
-                    <FlexCell v-if="field.helpKey">
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(field.helpKey) }}</p>
-                    </FlexCell>
-                    <FlexCell v-if="formErrors[field.key]">
-                      <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[field.key] }}</p>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div v-if="showBoolValueField && boolValueField" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.boolValueField!.labelKey) }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <FieldChoice v-model="form.boolValue" :field="boolValueField" />
-                    </FlexCell>
-                    <FlexCell v-if="props.config.boolValueField?.helpKey">
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.boolValueField.helpKey) }}</p>
-                    </FlexCell>
-                  </Flex>
-                </div>
-                <div
-                  v-if="props.config.notMappedBanner && !propertyMapped"
-                  class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                  role="alert"
-                >
-                  <span class="font-medium flex items-center gap-1">
-                    ⚠️ {{ t(props.config.notMappedBanner.titleKey) }}
-                  </span>
-                  <Link v-if="notMappedBannerLink" :path="notMappedBannerLink" class="underline">
-                    {{ t(props.config.notMappedBanner.contentKey) }}
-                  </Link>
-                </div>
-                <div v-else-if="localInstanceField && !isBooleanMapping" class="col-span-full">
-                  <Flex vertical>
-                    <FlexCell>
-                      <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
-                    </FlexCell>
-                    <FlexCell>
-                      <FieldQuery
-                        :field="localInstanceField as QueryFormField"
-                        v-model="form[props.config.localInstanceFieldKey].id"
-                        @update:modelValue="form[props.config.localInstanceFieldKey].id = $event"
-                      />
-                    </FlexCell>
-                    <FlexCell>
-                      <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.localPropertyHelpKey ?? 'integrations.show.propertySelectValues.help.selectValue') }}</p>
-                    </FlexCell>
-                    <FlexCell v-if="formErrors[props.config.localInstanceFieldKey]">
-                      <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[props.config.localInstanceFieldKey] }}</p>
-                    </FlexCell>
-                  </Flex>
-                  <div v-if="props.config.recommendations && !isBooleanMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
-                    <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
-                    <div v-if="loadingRecommendations" class="flex items-center gap-2">
-                      <div class="loader-mini"></div>
-                      <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
+      <Tabs :tabs="tabItems">
+        <template #mapping>
+          <div class="space-y-10 divide-y divide-gray-900/10 mt-4">
+            <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+              <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+                <div class="px-4 py-6 sm:p-8">
+                  <div class="grid max-w grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+                    <div class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.propertyLabelKey) }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <Link v-if="propertyEditPath" :path="propertyEditPath">{{ propertyName }}</Link>
+                          <span v-else>{{ propertyName }}</span>
+                        </FlexCell>
+                      </Flex>
                     </div>
-                    <div v-else>
-                      <div v-if="recommendations.length" class="flex flex-wrap gap-2">
-                        <button
-                          v-for="item in recommendations"
-                          :key="item.id"
-                          type="button"
-                          class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
-                          @click="selectRecommendation(item.id)"
-                        >
-                          {{ item.value }}
-                        </button>
+                    <div v-if="localPropertyName" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.localPropertyLabelKey ?? 'integrations.show.propertySelectValues.labels.localProperty') }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <Link v-if="localPropertyEditPath" :path="localPropertyEditPath">{{ localPropertyName }}</Link>
+                          <span v-else>{{ localPropertyName }}</span>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div v-if="marketplaceName" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.marketplaceLabelKey ?? 'integrations.show.propertySelectValues.labels.marketplace') }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <Link v-if="marketplaceEditPath" :path="marketplaceEditPath">{{ marketplaceName }}</Link>
+                          <span v-else>{{ marketplaceName }}</span>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div v-for="field in remoteFields" :key="field.key" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(field.labelKey) }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <TextInput v-model="form[field.key]" :disabled="field.disabled" class="w-full" />
+                        </FlexCell>
+                        <FlexCell v-if="field.helpKey">
+                          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(field.helpKey) }}</p>
+                        </FlexCell>
+                        <FlexCell v-if="formErrors[field.key]">
+                          <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[field.key] }}</p>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div v-if="showBoolValueField && boolValueField" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t(props.config.boolValueField!.labelKey) }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <FieldChoice v-model="form.boolValue" :field="boolValueField" />
+                        </FlexCell>
+                        <FlexCell v-if="props.config.boolValueField?.helpKey">
+                          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.boolValueField.helpKey) }}</p>
+                        </FlexCell>
+                      </Flex>
+                    </div>
+                    <div
+                      v-if="props.config.notMappedBanner && !propertyMapped"
+                      class="col-span-full p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                      role="alert"
+                    >
+                      <span class="font-medium flex items-center gap-1">
+                        ⚠️ {{ t(props.config.notMappedBanner.titleKey) }}
+                      </span>
+                      <Link v-if="notMappedBannerLink" :path="notMappedBannerLink" class="underline">
+                        {{ t(props.config.notMappedBanner.contentKey) }}
+                      </Link>
+                    </div>
+                    <div v-else-if="localInstanceField && !isBooleanMapping" class="col-span-full">
+                      <Flex vertical>
+                        <FlexCell>
+                          <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('properties.values.title') }}</Label>
+                        </FlexCell>
+                        <FlexCell>
+                          <FieldQuery
+                            :field="localInstanceField as QueryFormField"
+                            v-model="form[props.config.localInstanceFieldKey].id"
+                            @update:modelValue="form[props.config.localInstanceFieldKey].id = $event"
+                          />
+                        </FlexCell>
+                        <FlexCell>
+                          <p class="mt-1 text-sm leading-6 text-gray-400">{{ t(props.config.localPropertyHelpKey ?? 'integrations.show.propertySelectValues.help.selectValue') }}</p>
+                        </FlexCell>
+                        <FlexCell v-if="formErrors[props.config.localInstanceFieldKey]">
+                          <p class="mt-1 text-sm leading-6 text-red-600">{{ formErrors[props.config.localInstanceFieldKey] }}</p>
+                        </FlexCell>
+                      </Flex>
+                      <div v-if="props.config.recommendations && !isBooleanMapping" class="mt-4 border border-gray-300 bg-gray-50 rounded p-4">
+                        <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-2">{{ t('integrations.show.propertySelectValues.recommendation.title') }}</Label>
+                        <div v-if="loadingRecommendations" class="flex items-center gap-2">
+                          <div class="loader-mini"></div>
+                          <span class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.searching') }}</span>
+                        </div>
+                        <div v-else>
+                          <div v-if="recommendations.length" class="flex flex-wrap gap-2">
+                            <button
+                              v-for="item in recommendations"
+                              :key="item.id"
+                              type="button"
+                              class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm hover:bg-purple-200"
+                              @click="selectRecommendation(item.id)"
+                            >
+                              {{ item.value }}
+                            </button>
+                          </div>
+                          <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+                        </div>
                       </div>
-                      <p v-else class="text-sm text-gray-500">{{ t('integrations.show.propertySelectValues.recommendation.none') }}</p>
+                      <div
+                        v-if="duplicateSectionVisible && duplicateLocalInstanceField && props.config.duplicateMapping"
+                        class="mt-5 rounded border border-gray-200 bg-gray-50 p-5"
+                      >
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                          <div class="space-y-2">
+                            <div class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">
+                              {{ t('integrations.show.propertySelectValues.duplicate.eyebrow') }}
+                            </div>
+                            <div>
+                              <h3 class="text-base font-semibold text-gray-900">{{ t(props.config.duplicateMapping.titleKey) }}</h3>
+                              <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">{{ t(props.config.duplicateMapping.descriptionKey) }}</p>
+                            </div>
+                          </div>
+                          <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                            <button
+                              type="button"
+                              class="inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition"
+                              :class="showDuplicateMapping ? 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50' : 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100'"
+                              @click="showDuplicateMapping = true"
+                            >
+                              {{ t('shared.labels.yes') }}
+                            </button>
+                            <button
+                              type="button"
+                              class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+                              @click="resetDuplicateSection"
+                            >
+                              {{ t('shared.labels.no') }}
+                            </button>
+                          </div>
+                        </div>
+
+                        <div v-if="showDuplicateMapping" class="mt-4 space-y-3 border-t border-gray-200 pt-4">
+                          <div>
+                            <Label class="font-semibold block text-sm leading-6 text-gray-900">{{ t('integrations.show.propertySelectValues.duplicate.selectorLabel') }}</Label>
+                            <p class="mt-1 text-sm leading-6 text-gray-500">{{ t(props.config.duplicateMapping.promptKey) }}</p>
+                          </div>
+                          <FieldQuery
+                            :field="duplicateLocalInstanceField as QueryFormField"
+                            v-model="duplicateLocalInstanceId"
+                            @update:modelValue="duplicateLocalInstanceId = $event"
+                          />
+                          <p v-if="props.config.duplicateMapping.selectorHelpKey" class="mt-2 text-sm leading-6 text-gray-400">
+                            {{ t(props.config.duplicateMapping.selectorHelpKey) }}
+                          </p>
+                          <p v-if="duplicateErrors.localInstance" class="mt-2 text-sm leading-6 text-red-600">{{ duplicateErrors.localInstance }}</p>
+                          <p v-if="duplicateErrors.__all__" class="mt-2 text-sm leading-6 text-red-600">{{ duplicateErrors.__all__ }}</p>
+                          <div class="flex justify-end">
+                            <button
+                              type="button"
+                              class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                              :disabled="duplicatingMapping || !duplicateLocalInstanceId"
+                              @click="submitDuplicateMapping"
+                            >
+                              {{ duplicatingMapping ? t('integrations.show.propertySelectValues.duplicate.submitting') : t(props.config.duplicateMapping.submitLabelKey) }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-span-full">
+                      <slot name="additional-fields" :form="form" :context="contextState" />
                     </div>
                   </div>
                 </div>
-                <div class="col-span-full">
-                  <slot name="additional-fields" :form="form" :context="contextState" />
+                <div v-if="formErrors.__all__" class="px-8 pb-3">
+                  <p class="text-sm leading-6 text-red-600">{{ formErrors.__all__ }}</p>
                 </div>
+                <SubmitButtons :config="enhancedConfig" :form="updatableForm" @update-errors="handleSubmitErrors">
+                  <template #additional-button>
+                    <slot name="additional-button" :generate-value-path="generateValuePath" :context="contextState" />
+                  </template>
+                </SubmitButtons>
               </div>
             </div>
-            <div v-if="formErrors.__all__" class="px-8 pb-3">
-              <p class="text-sm leading-6 text-red-600">{{ formErrors.__all__ }}</p>
-            </div>
-            <SubmitButtons :config="enhancedConfig" :form="updatableForm" @update-errors="handleSubmitErrors">
-              <template #additional-button>
-                <slot name="additional-button" :generate-value-path="generateValuePath" :context="contextState" />
-              </template>
-            </SubmitButtons>
           </div>
-        </div>
-      </div>
+        </template>
+        <template #collaboration>
+          <div class="mt-4">
+            <CollaborationTab :target-id="valueId" />
+          </div>
+        </template>
+      </Tabs>
     </template>
   </GeneralTemplate>
 </template>

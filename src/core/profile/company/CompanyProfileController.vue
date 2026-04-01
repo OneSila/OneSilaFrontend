@@ -68,13 +68,29 @@ const getUsers = (result) => {
           <ApolloSubscription :subscription="meCompanySubscription" ref="apolloSubRef">
             <template v-slot:default="{ loading, error, result }">
               <template v-if="!loading && result">
-              <div class="panel">
-                <div class="flex items-center justify-between mb-5">
-                  <h5 class="font-semibold text-lg dark:text-white-light">{{ t('companyProfile.labels.editProfile') }}</h5>
-                  <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView">
-                    <IconPencilPaper v-if="!editView"/>
-                    <IconX v-else/>
-                  </Button>
+              <div class="panel overflow-hidden">
+                <div class="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-indigo-50/80 px-6 py-5 dark:border-slate-700/60 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+                  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="max-w-2xl">
+                      <h5 class="text-xl font-semibold text-slate-900 dark:text-white-light">
+                        {{ editView ? t('companyProfile.labels.editCompanyDetails') : t('companyProfile.labels.companyDetails') }}
+                      </h5>
+                      <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-300">
+                        {{ t('companyProfile.descriptions.companyProfile') }}
+                      </p>
+                    </div>
+
+                    <Button
+                      :customClass="'inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-white-light dark:hover:bg-slate-800'"
+                      @click="toggleEditView"
+                    >
+                      <IconPencilPaper v-if="!editView"/>
+                      <IconX v-else/>
+                      <span>
+                        {{ editView ? t('companyProfile.actions.closeEditor') : t('companyProfile.actions.editCompanyDetails') }}
+                      </span>
+                    </Button>
+                  </div>
                 </div>
                   <div v-if="!editView">
                     <ShowCompanyProfile :company-data="getCompany(result)"/>

@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../../../shared/components/molecules/breadcrumbs";
 import { GeneralForm } from "../../../../../../../../../shared/components/organisms/general-form";
 import type { FormConfig } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
+import { Tabs } from "../../../../../../../../../shared/components/molecules/tabs";
+import { CollaborationTab } from "../../../../../../../../../shared/components/organisms/collaboration-tab";
 
 interface BreadcrumbLink {
   path?: {
@@ -17,6 +22,13 @@ const props = defineProps<{
   breadcrumbsLinks: BreadcrumbLink[];
   formConfig: FormConfig | null;
 }>();
+const { t } = useI18n();
+const route = useRoute();
+const targetId = ref(String(route.params.id));
+const tabItems = [
+  { name: 'general', label: t('shared.tabs.mapping'), icon: 'circle-info', alwaysRender: true },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' },
+];
 
 const emit = defineEmits<{
   (e: 'set-data', value: any): void;
@@ -38,25 +50,32 @@ const handleFormUpdated = (form: Record<string, any>) => {
       <Breadcrumbs :links="props.breadcrumbsLinks" />
     </template>
     <template #content>
-      <GeneralForm
-        v-if="props.formConfig"
-        :config="props.formConfig"
-        @set-data="handleSetData"
-        @form-updated="handleFormUpdated"
-      >
-        <template #before-fields>
-          <slot name="before-form" />
+      <Tabs :tabs="tabItems">
+        <template #general>
+          <GeneralForm
+            v-if="props.formConfig"
+            :config="props.formConfig"
+            @set-data="handleSetData"
+            @form-updated="handleFormUpdated"
+          >
+            <template #before-fields>
+              <slot name="before-form" />
+            </template>
+            <template #help-section>
+              <slot name="help-section" />
+            </template>
+            <template #additional-button>
+              <slot name="additional-button" />
+            </template>
+            <template #additional-fields>
+              <slot name="additional-fields" />
+            </template>
+          </GeneralForm>
         </template>
-        <template #help-section>
-          <slot name="help-section" />
+        <template #collaboration>
+          <CollaborationTab :target-id="targetId" />
         </template>
-        <template #additional-button>
-          <slot name="additional-button" />
-        </template>
-        <template #additional-fields>
-          <slot name="additional-fields" />
-        </template>
-      </GeneralForm>
+      </Tabs>
     </template>
   </GeneralTemplate>
 </template>

@@ -17,13 +17,16 @@ const { t } = useI18n();
 const isTemplateMissing = (productType: MiraklCategoryNode['productTypes'][number]) =>
   !productType.readyToPush && !productType.templateUrl;
 
+const getMiraklIntegrationShowId = () =>
+  props.channel?.id || props.channel?.saleschannelPtr?.proxyId || props.channel?.integrationPtr?.id || null;
+
 const productTypePath = (productType: MiraklCategoryNode['productTypes'][number]) => {
   if (!productType.id) {
     return undefined;
   }
 
   const query: Record<string, string> = {};
-  const integrationId = props.channel?.integrationPtr?.id;
+  const integrationId = getMiraklIntegrationShowId();
 
   if (integrationId) {
     query.integrationId = integrationId;
@@ -45,7 +48,7 @@ const remotePropertyPath = (propertyId?: string | null) => {
     return undefined;
   }
 
-  const integrationId = props.channel?.integrationPtr?.id;
+  const integrationId = getMiraklIntegrationShowId();
   return {
     name: 'integrations.remoteProperties.edit',
     params: { type: 'mirakl', id: propertyId },

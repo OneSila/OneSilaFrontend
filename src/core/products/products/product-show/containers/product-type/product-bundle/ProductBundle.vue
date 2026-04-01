@@ -22,6 +22,7 @@ import SheinView from "../../tabs/shein/SheinView.vue";
 import MiraklView from "../../tabs/mirakl/MiraklView.vue";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 import Swal from 'sweetalert2';
+import { CollaborationTab } from "../../../../../../../shared/components/organisms/collaboration-tab";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -104,7 +105,7 @@ const tabItems = computed(() => {
     { name: 'price', label: t('products.products.tabs.price'), icon: 'tag' },
     { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
     { name: 'priceLists', label: t('products.products.tabs.priceLists'), icon: 'money-bill' },
-    { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' }
+    { name: 'eanCodes', label: t('products.products.tabs.eanCodes'), icon: 'qrcode' },
   );
 
   const marketplaceTabs: Array<{
@@ -159,6 +160,8 @@ const tabItems = computed(() => {
     items.push(...marketplaceTabs);
   }
 
+  items.push({ name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' })
+
   return items;
 });
 
@@ -207,6 +210,9 @@ const tabItems = computed(() => {
 <!--      </template>-->
       <template v-slot:eanCodes>
         <ProductEanCodesList ref="eanCodesRef" :product="product" />
+      </template>
+      <template v-slot:collaboration>
+        <CollaborationTab :target-id="product.id" />
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView

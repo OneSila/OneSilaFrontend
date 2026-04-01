@@ -55,6 +55,8 @@ const config: RemoteSelectValueEditPropertyConfig = {
   valueQuery: getMiraklPropertySelectValueQuery,
   valueDataKey: 'miraklPropertySelectValue',
   mapValueData: valueData => ({
+    valueProxyId: valueData?.proxyId || null,
+    salesChannelId: valueData?.salesChannel?.id || null,
     form: {
       remoteProperty: valueData?.remoteProperty?.name || '',
       boolValue: valueData?.boolValue ?? null,
@@ -182,8 +184,8 @@ const config: RemoteSelectValueEditPropertyConfig = {
     },
   },
   notMappedBanner: {
-    titleKey: 'integrations.show.propertySelectValues.notMappedBanner.title',
-    contentKey: 'integrations.show.propertySelectValues.notMappedBanner.content',
+    titleKey: 'integrations.show.propertySelectValues.notMappedBannerMirakl.title',
+    contentKey: 'integrations.show.propertySelectValues.notMappedBannerMirakl.content',
     linkPath: ctx => ({
       name: 'integrations.remoteProperties.edit',
       params: { type: ctx.type, id: ctx.propertyId! },
@@ -205,6 +207,15 @@ const config: RemoteSelectValueEditPropertyConfig = {
           },
         }
       : null,
+  duplicateMapping: {
+    titleKey: 'integrations.show.propertySelectValues.duplicate.mirakl.title',
+    descriptionKey: 'integrations.show.propertySelectValues.duplicate.mirakl.description',
+    promptKey: 'integrations.show.propertySelectValues.duplicate.mirakl.prompt',
+    selectorHelpKey: 'integrations.show.propertySelectValues.duplicate.mirakl.help',
+    submitLabelKey: 'integrations.show.propertySelectValues.duplicate.mirakl.submit',
+    successMessageKey: 'integrations.show.propertySelectValues.duplicate.mirakl.success',
+    isVisible: ctx => Boolean(ctx.salesChannelId && ctx.valueProxyId && ctx.localPropertyId),
+  },
   listRoute: ctx => ({
     name: 'integrations.integrations.show',
     params: { type: ctx.type, id: ctx.integrationId },

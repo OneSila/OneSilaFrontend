@@ -90,8 +90,8 @@ const openFilteredExistingModal = () => {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
-    <Popper v-if="!hasSpecificTypeFilter" :placement="'bottom-end'" offsetDistance="8" class="!block">
+  <div class="inline-flex items-center">
+    <Popper v-if="!hasSpecificTypeFilter" :placement="'bottom-end'" offsetDistance="8" class="!inline-block">
       <Button class="btn btn-primary" :disabled="disabled">
         <Icon class="mr-2" name="plus" />
         {{ t('shared.button.add') }}

@@ -323,6 +323,7 @@
       "abort": "Afbreken",
       "resync": "Resync",
       "fullUpdate": "Full Update",
+      "preview": "Preview",
       "validate": "Validate",
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "",
@@ -428,6 +429,8 @@
     },
     "tabs": {
       "general": "Algemeen",
+      "mapping": "",
+      "collaboration": "",
       "items": "Artikelen",
       "translations": "Vertalingen",
       "advanced": "Geavanceerd",
@@ -630,16 +633,57 @@
     }
   },
   "profile": {
+    "actions": {
+      "editDetails": "",
+      "closeEditor": ""
+    },
     "dropdown": {
       "profile": "Profiel",
       "company": "Bedrijf",
       "signOut": "Uitloggen"
     },
+    "notifications": {
+      "title": "",
+      "description": "",
+      "summary": "",
+      "dropdown": {
+        "description": "",
+        "badge": ""
+      },
+      "actions": {
+        "open": "",
+        "markAsOpened": "",
+        "viewAll": "",
+        "markAllAsRead": "",
+        "enableDesktopNotifications": "",
+        "disableDesktopNotifications": ""
+      },
+      "browser": {
+        "defaultTitle": "",
+        "enabledBadge": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "openFailed": "",
+        "markAllFailed": "",
+        "desktopNotificationsEnabled": "",
+        "desktopNotificationsDisabled": "",
+        "desktopNotificationsDenied": "",
+        "desktopNotificationsFailed": ""
+      }
+    },
     "tabs": {
       "general": "Algemeen",
+      "mapping": "",
+      "collaboration": "",
       "security": "Veiligheid"
     },
     "labels": {
+      "profileDetails": "",
+      "editDetails": "",
       "joined": "Aangesloten",
       "phone": "Telefoonnummer",
       "whatsApp": "WhatsApp",
@@ -652,6 +696,7 @@
       "telegramNumber": "Telegram Number",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
+      "avatar": "",
       "generalInformation": "Algemene Informatie",
       "changePassword": "Wachtwoord wijzigen",
       "newPassword": "Nieuw wachtwoord",
@@ -669,9 +714,86 @@
     "unsavedChanges": "U heeft niet opgeslagen wijzigingen.  Zeker dat u verder wilt gaan?",
     "changesMade": "Er zijn veranderingen"
   },
+  "collaboration": {
+    "title": "",
+    "description": "",
+    "subtitle": "",
+    "summary": "",
+    "actions": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": "",
+      "submit": ""
+    },
+    "types": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "labels": {
+      "unknownUser": "",
+      "entryType": "",
+      "comment": "",
+      "allMembers": "",
+      "mentionSuggestions": "",
+      "mentions": "",
+      "selectedMentions": ""
+    },
+    "placeholders": {
+      "entryType": "",
+      "comment": ""
+    },
+    "help": {
+      "mentions": ""
+    },
+    "hints": {
+      "mentions": "",
+      "allMention": ""
+    },
+    "validation": {
+      "commentRequired": "",
+      "askApprovalMentionRequired": "",
+      "mentionRequired": ""
+    },
+    "timeline": {
+      "title": "",
+      "orderHint": "",
+      "comment": "",
+      "askApproval": "",
+      "askApprovalWithMentions": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "composer": {
+      "title": "",
+      "subtitle": ""
+    },
+    "members": {
+      "loading": "",
+      "error": "",
+      "empty": ""
+    },
+    "button": {
+      "submit": ""
+    },
+    "empty": {
+      "title": "",
+      "description": ""
+    },
+    "messages": {
+      "loadFailed": "",
+      "membersFailed": "",
+      "createFailed": ""
+    }
+  },
   "companyProfile": {
     "labels": {
+      "companyDetails": "",
+      "editCompanyDetails": "",
       "companyName": "Bedrijfsnaam",
+      "address": "",
       "email": "E-mail",
       "phoneNumber": "Telefoonnummer",
       "address1": "Adreslijn 1",
@@ -683,6 +805,13 @@
       "updateButton": "Update bedrijf",
       "editProfile": "Profiel bewerken",
       "members": "Gebruikers"
+    },
+    "actions": {
+      "editCompanyDetails": "",
+      "closeEditor": ""
+    },
+    "descriptions": {
+      "companyProfile": ""
     },
     "placeholders": {
       "companyName": "Voer bedrijfsnaam in",
@@ -3738,6 +3867,28 @@
         "notMappedBannerEbay": {
           "title": "",
           "content": ""
+        },
+        "notMappedBannerMirakl": {
+          "title": "",
+          "content": ""
+        },
+        "duplicate": {
+          "eyebrow": "",
+          "selectorLabel": "",
+          "submitting": "",
+          "error": "",
+          "validation": {
+            "required": "",
+            "sameValue": ""
+          },
+          "mirakl": {
+            "title": "",
+            "description": "",
+            "prompt": "",
+            "help": "",
+            "submit": "",
+            "success": ""
+          }
         },
         "bulkAssign": "",
         "bulkAssignTitle": "",

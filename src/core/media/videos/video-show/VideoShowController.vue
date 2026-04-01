@@ -22,6 +22,7 @@ import IconTrash from "../../../../shared/components/atoms/icons/icon-trash.vue"
 import { TYPE_VIDEO } from "../../files/media";
 import { Tabs } from "../../../../shared/components/molecules/tabs";
 import { ProductsTabView } from "../../images/image-show/containers/products-tab-view";
+import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
 
 const router = useRouter();
 const route = useRoute();
@@ -42,7 +43,8 @@ const editView = ref(route.query.editView === '1')
 const selectedTab = ref('general');
 const tabItems = ref([
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' },
-  { name: 'products', label: t('products.title'), icon: 'box' }
+  { name: 'products', label: t('products.title'), icon: 'box' },
+  { name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' }
 ]);
 const activeTab = TYPE_VIDEO;
 const id = ref(String(route.params.id));
@@ -134,6 +136,9 @@ const onTabChanged = (newValue) => {
                             </template>
                             <template v-slot:products>
                               <ProductsTabView :id="id" />
+                            </template>
+                            <template v-slot:collaboration>
+                              <CollaborationTab :target-id="id" />
                             </template>
                           </Tabs>
                         </Card>

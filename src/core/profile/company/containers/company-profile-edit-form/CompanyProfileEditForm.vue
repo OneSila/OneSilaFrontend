@@ -95,6 +95,7 @@ onMounted(async () => {
   const { data } = await apolloClient.query({ query: languagesQuery });
 
   if (data?.languages) {
+    console.log(data.languages)
     languages.value = data.languages
   }
 });
@@ -102,10 +103,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="space-y-12">
-    <!-- Company Profile Section -->
-    <div class="border-b border-gray-900/10 pb-20">
-      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+  <div class="space-y-8">
+    <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-5 shadow-sm sm:p-6 dark:border-slate-700/60 dark:bg-slate-900/40">
+      <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <!-- Company Name -->
         <div class="sm:col-span-6">
           <TextInputPrepend
@@ -262,8 +262,7 @@ onMounted(async () => {
     </div>
 
 
-    <!-- Submit Button, Right-Aligned -->
-    <div class="flex items-center justify-end">
+    <div class="flex items-center justify-end border-t border-slate-200 pt-2 dark:border-slate-700/60">
       <ApolloMutation
         :mutation="updateMyCompanyMutation"
         :variables="getMutationVariables()"

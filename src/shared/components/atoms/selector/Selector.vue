@@ -369,8 +369,7 @@ const getTruncatedLabel = (option: any) => {
 .selector .vs__selected-options {
   align-items: flex-start;
   align-content: flex-start;
-  min-width: 100px;
-
+  min-width: 0;
 }
 
 /* .selector .vs__search {
@@ -385,16 +384,21 @@ const getTruncatedLabel = (option: any) => {
   justify-content: space-between;
 }
 
+.selector .vs__selected {
+  max-width: 100%;
+}
+
 .vs--multiple .vs__selected {
   width: 100%;
 }
 
 @media (max-width: 768px) {
   .selector .vs__selected {
-    display: block;               /* Make it block-level so it takes full width */
-    white-space: normal !important;  /* Allow wrapping instead of preserving whitespace */
-    word-break: normal;           /* Prevent breaking words arbitrarily */
-    overflow-wrap: break-word;    /* Break long words only if absolutely necessary */
+    display: block;
+    width: 100%;
+    white-space: normal !important;
+    word-break: normal;
+    overflow-wrap: break-word;
   }
 }
 

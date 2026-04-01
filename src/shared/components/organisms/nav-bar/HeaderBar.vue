@@ -83,7 +83,7 @@ const allowCreateDropdown = () => {
                     </a>
                 </div>
                 <div
-                    class="sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]"
+                    class="flex flex-1 items-center space-x-1.5 ltr:sm:ml-0 rtl:space-x-reverse sm:rtl:mr-0 lg:space-x-2 dark:text-[#d0d2d6]"
                 >
                   <GeneralSearch />
 

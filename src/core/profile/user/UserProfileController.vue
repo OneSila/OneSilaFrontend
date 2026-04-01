@@ -79,25 +79,29 @@ const getMe = (result) => {
     <template v-slot:info>
       <div class="pt-5">
         <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-5 mb-5">
-          <div class="panel">
-            <Flex between class="mb-5">
-              <FlexCell>
-                <h5 class="font-semibold text-lg dark:text-white-light">{{ t('profile.labels.editProfile') }}</h5>
-              </FlexCell>
-              <FlexCell>
-                <Flex center>
-                  <FlexCell>
-                    <Button :customClass="'ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full'" @click="toggleEditView">
-                      <IconPencilPaper v-if="!editView"/>
-                      <IconX v-else/>
-                    </Button>
-                  </FlexCell>
-                  <FlexCell>
-                    <LanguageDropdown :show="true" class="ms-auto mt-0.5 w-max ltr:ml-5 rtl:mr-5"/>
-                  </FlexCell>
-                </Flex>
-              </FlexCell>
-            </Flex>
+          <div class="panel overflow-hidden">
+            <div class="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-indigo-50/80 px-6 py-5 dark:border-slate-700/60 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div class="max-w-2xl">
+                  <h5 class="text-xl font-semibold text-slate-900 dark:text-white-light">
+                    {{ editView ? t('profile.labels.editDetails') : t('profile.labels.profileDetails') }}
+                  </h5>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                  <Button
+                    :customClass="'inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-white-light dark:hover:bg-slate-800'"
+                    @click="toggleEditView"
+                  >
+                    <IconPencilPaper v-if="!editView"/>
+                    <IconX v-else/>
+                    <span>
+                      {{ editView ? t('profile.actions.closeEditor') : t('profile.actions.editDetails') }}
+                    </span>
+                  </Button>
+                  <LanguageDropdown :show="true" class="w-max"/>
+                </div>
+              </div>
+            </div>
 
             <ApolloSubscription :subscription="meSubscription">
               <template v-slot:default="{ loading, error, result }">

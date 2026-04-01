@@ -54,38 +54,70 @@ const select = (val: string) => emit('update:modelValue', val);
 </script>
 
 <template>
-  <div class="lg:border-l lg:border-gray-200">
+  <div class="w-full min-w-0">
     <div
-      class="
-        flex overflow-x-auto custom-scrollbar
-        lg:block lg:overflow-y-auto lg:max-h-[500px] gap-2 lg:gap-0
-        max-w-[200px] sm:max-w-none
-      "
+      class="flex max-h-[280px] min-w-0 flex-col gap-3 overflow-y-auto pr-1 custom-scrollbar md:max-h-[340px] lg:max-h-[620px]"
     >
-      <!-- Default channel -->
-      <div
-        class="cursor-pointer flex items-center gap-2 p-2"
-        :class="{ 'bg-primary text-white': modelValue === 'default' }"
+      <button
+        type="button"
+        class="group flex w-full min-w-0 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition"
+        :class="modelValue === 'default'
+          ? 'border-primary bg-primary text-white shadow-sm'
+          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'"
         @click="select('default')"
       >
-        <Icon name="store" class="w-4 h-4" />
-        {{ t('shared.labels.default') }}
-      </div>
-      <!-- Other channels -->
-      <div
+        <span
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          :class="modelValue === 'default' ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500'"
+        >
+          <Icon name="store" class="h-4.5 w-4.5" />
+        </span>
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-semibold">
+            {{ t('shared.labels.default') }}
+          </span>
+        </span>
+      </button>
+
+      <button
         v-for="channel in channels"
         :key="channel.id"
-        class="cursor-pointer flex items-center gap-2 p-2"
-        :class="{ 'bg-primary text-white': modelValue === channel.id }"
+        type="button"
+        class="group flex w-full min-w-0 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition"
+        :class="modelValue === channel.id
+          ? 'border-primary bg-primary text-white shadow-sm'
+          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'"
         @click="select(channel.id)"
       >
-        <Icon v-if="channel.type == 'default'" :name="channel.type" class="w-4 h-4" />
-        <img v-else class="w-4 h-4"
-          :src="resolveIcon(channel)"
-          :alt="channel.type"
-        />
-        {{ resolveLabel(channel) }}
-      </div>
+        <span
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          :class="modelValue === channel.id ? 'bg-white/15' : 'bg-slate-100'"
+        >
+          <Icon
+            v-if="channel.type == 'default'"
+            :name="channel.type"
+            class="h-4.5 w-4.5"
+            :class="modelValue === channel.id ? 'text-white' : 'text-slate-500'"
+          />
+          <img
+            v-else
+            class="h-4.5 w-4.5 object-contain"
+            :src="resolveIcon(channel)"
+            :alt="channel.type"
+          />
+        </span>
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-semibold">
+            {{ resolveLabel(channel) }}
+          </span>
+          <span
+            class="block truncate text-xs"
+            :class="modelValue === channel.id ? 'text-white/75' : 'text-slate-400'"
+          >
+            {{ channel.type }}
+          </span>
+        </span>
+      </button>
     </div>
   </div>
 </template>

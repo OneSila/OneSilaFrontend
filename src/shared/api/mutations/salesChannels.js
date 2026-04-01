@@ -166,6 +166,26 @@ export const updateMiraklSalesChannelMutation = gql`
   }
 `;
 
+export const duplicateSalesChannelSelectValueMappingMutation = gql`
+  mutation duplicateSalesChannelSelectValueMapping(
+    $salesChannel: SalesChannelPartialInput!
+    $remotePropertySelectValue: RemotePropertySelectValuePartialInput!
+    $localInstance: PropertySelectValuePartialInput!
+  ) {
+    duplicateSalesChannelSelectValueMapping(
+      salesChannel: $salesChannel
+      remotePropertySelectValue: $remotePropertySelectValue
+      localInstance: $localInstance
+    ) {
+      id
+      proxyId
+      localInstance {
+        id
+      }
+    }
+  }
+`;
+
 
 // Sales Channel Mutations
 export const createSalesChannelMutation = gql`

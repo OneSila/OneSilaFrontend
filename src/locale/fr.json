@@ -14,6 +14,7 @@
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "",
       "import": "Import",
+      "preview": "",
       "saveAll": "Tout enregistrer",
       "createAndContinue": ""
     },
@@ -386,10 +387,12 @@
           "paste": ""
         }
       },
-      "tabs": {
-        "amazon": "Amazon",
-        "ebay": "",
-        "shein": "",
+    "tabs": {
+      "mapping": "",
+      "collaboration": "",
+      "amazon": "Amazon",
+      "ebay": "",
+      "shein": "",
         "mirakl": "",
         "marketplace": ""
       },
@@ -2094,6 +2097,28 @@
           "title": "",
           "content": ""
         },
+        "notMappedBannerMirakl": {
+          "title": "",
+          "content": ""
+        },
+        "duplicate": {
+          "eyebrow": "",
+          "selectorLabel": "",
+          "submitting": "",
+          "error": "",
+          "validation": {
+            "required": "",
+            "sameValue": ""
+          },
+          "mirakl": {
+            "title": "",
+            "description": "",
+            "prompt": "",
+            "help": "",
+            "submit": "",
+            "success": ""
+          }
+        },
         "bulkAssign": "",
         "bulkAssignTitle": "",
         "assignSuccess": ""
@@ -3115,6 +3140,211 @@
         "createSectionTitle": "",
         "unknownUser": ""
       }
+    }
+  }
+  ,
+  "profile": {
+    "actions": {
+      "editDetails": "",
+      "closeEditor": ""
+    },
+    "dropdown": {
+      "profile": "",
+      "company": "",
+      "signOut": ""
+    },
+    "notifications": {
+      "title": "",
+      "description": "",
+      "summary": "",
+      "dropdown": {
+        "description": "",
+        "badge": ""
+      },
+      "actions": {
+        "open": "",
+        "markAsOpened": "",
+        "viewAll": "",
+        "markAllAsRead": "",
+        "enableDesktopNotifications": "",
+        "disableDesktopNotifications": ""
+      },
+      "browser": {
+        "defaultTitle": "",
+        "enabledBadge": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "openFailed": "",
+        "markAllFailed": "",
+        "desktopNotificationsEnabled": "",
+        "desktopNotificationsDisabled": "",
+        "desktopNotificationsDenied": "",
+        "desktopNotificationsFailed": ""
+      }
+    },
+    "tabs": {
+      "general": "",
+      "security": ""
+    },
+    "labels": {
+      "profileDetails": "",
+      "editDetails": "",
+      "joined": "",
+      "phone": "",
+      "whatsApp": "",
+      "telegram": "",
+      "timezone": "",
+      "updateButton": "",
+      "editProfile": "",
+      "mobileNumber": "",
+      "whatsappNumber": "",
+      "telegramNumber": "",
+      "firstName": "",
+      "lastName": "",
+      "avatar": "",
+      "generalInformation": "",
+      "changePassword": "",
+      "newPassword": "",
+      "confirmNewPassword": ""
+    },
+    "placeholders": {
+      "mobileNumber": "",
+      "whatsappNumber": "",
+      "telegramNumber": "",
+      "firstName": "",
+      "lastName": "",
+      "newPassword": "",
+      "confirmNewPassword": ""
+    },
+    "unsavedChanges": "",
+    "changesMade": "",
+    "messages": {
+      "changePasswordMatch": ""
+    }
+  },
+  "companyProfile": {
+    "labels": {
+      "companyDetails": "",
+      "editCompanyDetails": "",
+      "companyName": "",
+      "address": "",
+      "email": "",
+      "phoneNumber": "",
+      "address1": "",
+      "address2": "",
+      "postcode": "",
+      "city": "",
+      "vatNumber": "",
+      "defaultLanguage": "",
+      "companyLanguages": "",
+      "website": "",
+      "updateButton": "",
+      "editProfile": "",
+      "members": ""
+    },
+    "actions": {
+      "editCompanyDetails": "",
+      "closeEditor": ""
+    },
+    "descriptions": {
+      "companyProfile": ""
+    },
+    "placeholders": {
+      "companyName": "",
+      "email": "",
+      "phoneNumber": "",
+      "address1": "",
+      "address2": "",
+      "postcode": "",
+      "city": "",
+      "vatNumber": "",
+      "defaultLanguage": "",
+      "companyLanguages": "",
+      "website": ""
+    },
+    "messages": {
+      "unsavedChanges": "",
+      "changePasswordMatch": "",
+      "changesMade": "",
+      "joined": ""
+    }
+  },
+  "collaboration": {
+    "title": "",
+    "description": "",
+    "subtitle": "",
+    "summary": "",
+    "actions": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": "",
+      "submit": ""
+    },
+    "types": {
+      "comment": "",
+      "askApproval": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "labels": {
+      "unknownUser": "",
+      "entryType": "",
+      "comment": "",
+      "allMembers": "",
+      "mentionSuggestions": "",
+      "mentions": "",
+      "selectedMentions": ""
+    },
+    "placeholders": {
+      "entryType": "",
+      "comment": ""
+    },
+    "help": {
+      "mentions": ""
+    },
+    "hints": {
+      "mentions": "",
+      "allMention": ""
+    },
+    "validation": {
+      "commentRequired": "",
+      "askApprovalMentionRequired": "",
+      "mentionRequired": ""
+    },
+    "timeline": {
+      "title": "",
+      "orderHint": "",
+      "comment": "",
+      "askApproval": "",
+      "askApprovalWithMentions": "",
+      "approved": "",
+      "rejected": ""
+    },
+    "composer": {
+      "title": "",
+      "subtitle": ""
+    },
+    "members": {
+      "loading": "",
+      "error": "",
+      "empty": ""
+    },
+    "button": {
+      "submit": ""
+    },
+    "empty": {
+      "title": "",
+      "description": ""
+    },
+    "messages": {
+      "loadFailed": "",
+      "membersFailed": "",
+      "createFailed": ""
     }
   }
   ,

@@ -1,108 +1,146 @@
-<template>
-  <div class="dropdown shrink-0">
-      <Popper :placement="'bottom-start'" offsetDistance="8">
-          <button
-              type="button"
-              class="relative block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-          >
-              <Icon name="bell" />
-
-              <span class="flex absolute w-3 h-3 ltr:right-0 rtl:left-0 top-0">
-                  <span
-                      class="animate-ping absolute ltr:-left-[3px] rtl:-right-[3px] -top-[3px] inline-flex h-full w-full rounded-full bg-success/50 opacity-75"
-                  ></span>
-                  <span class="relative inline-flex rounded-full w-[6px] h-[6px] bg-success"></span>
-              </span>
-          </button>
-          <template #content="{ close }">
-              <ul class="!py-0 text-dark dark:text-white-dark w-[300px] sm:w-[350px] divide-y dark:divide-white/10">
-                  <li>
-                      <div class="flex items-center px-4 py-2 justify-between font-semibold">
-                          <h4 class="text-lg">Notification</h4>
-                          <template v-if="notifications.length">
-                              <span class="badge bg-primary/80" v-text="notifications.length + 'New'"></span>
-                          </template>
-                      </div>
-                  </li>
-                  <template v-for="notification in notifications" :key="notification.id">
-                      <li class="dark:text-white-light/90">
-                          <div class="group flex items-center px-4 py-2">
-                              <div class="grid place-content-center rounded">
-                                  <div class="w-12 h-12 relative">
-                                      <img
-                                          class="w-12 h-12 rounded-full object-cover"
-                                          :src="`/assets/images/${notification.profile}`"
-                                          alt=""
-                                      />
-                                      <span class="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span>
-                                  </div>
-                              </div>
-                              <div class="ltr:pl-3 rtl:pr-3 flex flex-auto">
-                                  <div class="ltr:pr-3 rtl:pl-3">
-                                      <h6 v-html="notification.message"></h6>
-                                      <span class="text-xs block font-normal dark:text-gray-500" v-text="notification.time"></span>
-                                  </div>
-                                  <button
-                                      type="button"
-                                      class="ltr:ml-auto rtl:mr-auto text-neutral-300 hover:text-danger opacity-0 group-hover:opacity-100"
-                                      @click="removeNotification(notification.id)"
-                                  >
-                                      <Icon name="envelope" />
-                                  </button>
-                              </div>
-                          </div>
-                      </li>
-                  </template>
-                  <template v-if="notifications.length">
-                      <li>
-                          <div class="p-4">
-                              <button class="btn btn-primary block w-full btn-small" @click="close()">Read All Notifications</button>
-                          </div>
-                      </li>
-                  </template>
-                  <template v-if="!notifications.length">
-                      <li>
-                          <div class="!grid place-content-center hover:!bg-transparent text-lg min-h-[200px]">
-                              <div class="mx-auto ring-4 ring-primary/30 rounded-full mb-4 text-primary">
-                                  <Icon name="envelope" :fill="true" class="w-10 h-10" />
-                              </div>
-                              No data available.
-                          </div>
-                      </li>
-                  </template>
-              </ul>
-          </template>
-      </Popper>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { Icon } from "../../atoms/icon";
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { Button } from '../../atoms/button';
+import { Icon } from '../../atoms/icon';
+import { Loader } from '../../atoms/loader';
 
-const notifications = ref([
-    {
-        id: 1,
-        profile: 'user-profile.jpeg',
-        message: '<strong class="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-        time: '45 min ago',
-    },
-    {
-        id: 2,
-        profile: 'profile-34.jpeg',
-        message: '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-        time: '9h Ago',
-    },
-    {
-        id: 3,
-        profile: 'profile-16.jpeg',
-        message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
-        time: '9h Ago',
-    },
-]);
-
-const removeNotification = (value: number) => {
-    notifications.value = notifications.value.filter((d) => d.id !== value);
+type NotificationItem = {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  url?: string | null;
+  opened: boolean;
+  metadata?: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt?: string;
 };
 
+const props = withDefaults(defineProps<{
+  notifications: NotificationItem[];
+  loading?: boolean;
+  openingId?: string | null;
+  compact?: boolean;
+  maxItems?: number | null;
+  showViewAll?: boolean;
+}>(), {
+  loading: false,
+  openingId: null,
+  compact: false,
+  maxItems: null,
+  showViewAll: false,
+});
+
+const emit = defineEmits<{
+  (e: 'open', notification: NotificationItem): void;
+  (e: 'view-all'): void;
+}>();
+
+const { t } = useI18n();
+
+const visibleNotifications = computed(() => {
+  if (props.maxItems === null) {
+    return props.notifications;
+  }
+
+  return props.notifications.slice(0, props.maxItems);
+});
+
+const unopenedCount = computed(() => props.notifications.filter((notification) => !notification.opened).length);
+
+const formatDate = (value?: string | null) => {
+  if (!value) {
+    return '—';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
+};
 </script>
+
+<template>
+  <div :class="compact ? 'space-y-3' : 'space-y-4'">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-base font-semibold text-slate-900">
+          {{ t('profile.notifications.title') }}
+        </h3>
+        <p class="text-sm text-slate-500">
+          {{ t('profile.notifications.description') }}
+        </p>
+      </div>
+      <span
+        v-if="unopenedCount"
+        class="inline-flex items-center rounded-full bg-sky-100 px-2.5 py-1 text-xs font-semibold text-sky-700"
+      >
+        {{ t('profile.notifications.summary', { count: unopenedCount }) }}
+      </span>
+    </div>
+
+    <Loader :loading="loading" />
+
+    <div
+      v-if="!loading && !visibleNotifications.length"
+      class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center"
+    >
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+        <Icon name="bell" class="h-5 w-5 text-slate-500" />
+      </div>
+      <p class="mt-4 text-sm font-semibold text-slate-900">{{ t('profile.notifications.empty.title') }}</p>
+      <p class="mt-2 text-sm text-slate-500">{{ t('profile.notifications.empty.description') }}</p>
+    </div>
+
+    <div v-else-if="!loading" class="space-y-3">
+      <button
+        v-for="notification in visibleNotifications"
+        :key="notification.id"
+        type="button"
+        class="block w-full rounded-xl border p-4 text-left transition"
+        :class="notification.opened ? 'border-slate-200 bg-white hover:border-slate-300' : 'border-sky-200 bg-sky-50 hover:border-sky-300'"
+        @click="$emit('open', notification)"
+      >
+        <div class="flex items-start gap-3">
+          <div
+            class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full"
+            :class="notification.opened ? 'bg-slate-100 text-slate-500' : 'bg-sky-100 text-sky-600'"
+          >
+            <Icon name="bell" class="h-4 w-4" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <p class="text-sm font-semibold text-slate-900">{{ notification.title }}</p>
+                  <span v-if="!notification.opened" class="inline-flex h-2.5 w-2.5 rounded-full bg-sky-500"></span>
+                </div>
+                <p class="mt-1 whitespace-pre-wrap text-sm leading-5 text-slate-600">{{ notification.message }}</p>
+              </div>
+              <div class="flex shrink-0 items-center gap-2 text-xs text-slate-500">
+                <span v-if="openingId === notification.id">{{ t('shared.labels.processing') }}</span>
+                <time>{{ formatDate(notification.createdAt) }}</time>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <div v-if="showViewAll" class="pt-1">
+      <Button type="button" class="btn btn-outline-primary w-full" @click="$emit('view-all')">
+        {{ t('profile.notifications.actions.viewAll') }}
+      </Button>
+    </div>
+  </div>
+</template>

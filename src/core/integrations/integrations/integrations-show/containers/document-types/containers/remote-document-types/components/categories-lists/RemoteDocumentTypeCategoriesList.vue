@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import AmazonDocumentTypeCategoriesList from './AmazonDocumentTypeCategoriesList.vue';
 import EbayDocumentTypeCategoriesList from './EbayDocumentTypeCategoriesList.vue';
+import MiraklDocumentTypeCategoriesList from './MiraklDocumentTypeCategoriesList.vue';
 import SheinDocumentTypeCategoriesList from './SheinDocumentTypeCategoriesList.vue';
 
 type CategoryId = string | number;
@@ -24,6 +25,8 @@ const currentComponent = computed(() => {
       return AmazonDocumentTypeCategoriesList;
     case 'ebay':
       return EbayDocumentTypeCategoriesList;
+    case 'mirakl':
+      return MiraklDocumentTypeCategoriesList;
     case 'shein':
       return SheinDocumentTypeCategoriesList;
     default:
@@ -36,7 +39,7 @@ const updateValue = (value: CategoryId[]) => {
 };
 
 const componentProps = computed(() =>
-  props.type === 'ebay' || props.type === 'amazon' || props.type === 'shein'
+  props.type === 'ebay' || props.type === 'amazon' || props.type === 'mirakl' || props.type === 'shein'
     ? {
       salesChannelId: props.salesChannelId ?? null,
       errorMessage: props.errorMessage ?? '',

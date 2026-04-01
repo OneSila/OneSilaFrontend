@@ -17,6 +17,7 @@ import SheinView from "../../tabs/shein/SheinView.vue";
 import MiraklView from "../../tabs/mirakl/MiraklView.vue";
 import { injectAuth } from "../../../../../../../shared/modules/auth";
 import Swal from 'sweetalert2';
+import { CollaborationTab } from "../../../../../../../shared/components/organisms/collaboration-tab";
 
 const props = defineProps<{ product: Product }>();
 const { t } = useI18n();
@@ -83,7 +84,7 @@ const tabItems = computed(() => {
 
   items.push(
     { name: 'variations', label: t('products.products.tabs.variations'), icon: 'sitemap' },
-    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' }
+    { name: 'websites', label: t('products.products.tabs.websites'), icon: 'globe' },
   );
 
   const marketplaceTabs: Array<{
@@ -138,6 +139,8 @@ const tabItems = computed(() => {
     items.push(...marketplaceTabs);
   }
 
+    items.push({ name: 'collaboration', label: t('shared.tabs.collaboration'), icon: 'comment-dots' })
+
   return items;
 });
 
@@ -171,6 +174,9 @@ const tabItems = computed(() => {
           @assign-added="handleWebsiteAssignChange"
           @assign-deleted="handleWebsiteAssignChange"
         />
+      </template>
+      <template v-slot:collaboration>
+        <CollaborationTab :target-id="product.id" />
       </template>
       <template v-if="auth.user.company?.hasAmazonIntegration" v-slot:amazon>
         <AmazonView

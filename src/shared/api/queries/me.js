@@ -49,6 +49,7 @@ export const myMultiTenantCompanyQuery = gql`
         firstName
         lastName
         email
+        avatarResizedFullUrl
         isActive
         invitationAccepted
         isMultiTenantCompanyOwner
