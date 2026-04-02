@@ -1140,10 +1140,10 @@
       "members": "Members"
     },
     "mcpApiKey": {
-      "title": "MCP API key",
-      "description": "Manage the API key your company uses to connect MCP clients securely.",
+      "title": "Company API token",
+      "description": "Manage the company API token used to authenticate both MCP clients and feed exports.",
       "labels": {
-        "apiKey": "API key",
+        "apiKey": "API token",
         "status": "Status",
         "accessControl": "Access control"
       },
@@ -1162,24 +1162,24 @@
       "help": {
         "rawKeyAvailable": "This is the real key returned by the latest create or regenerate action. Store it now because you will not be able to see it again later.",
         "rawKeyUnavailable": "For security, the real key is only shown once when you create or regenerate it. After that, only the masked key remains visible here.",
-        "active": "The key currently accepts requests from MCP clients.",
-        "inactive": "The key is stored, but requests using it are blocked until you activate it again.",
+        "active": "The token currently accepts requests from MCP clients and feed export consumers.",
+        "inactive": "The token is stored, but requests using it for MCP clients and feed exports are blocked until you activate it again.",
         "copyNow": "Copy and store this key now. If you lose it, the only way to get a new real key is to regenerate it."
       },
       "placeholders": {
         "key": "No key available"
       },
       "empty": {
-        "title": "No MCP API key created yet",
-        "description": "Create a company key to allow MCP-enabled tools or clients to authenticate against your workspace."
+        "title": "No company API token created yet",
+        "description": "Create a company API token to allow MCP-enabled tools and feed exports to authenticate against your workspace."
       },
       "messages": {
-        "createSuccess": "MCP API key created successfully.",
-        "regenerateSuccess": "MCP API key regenerated successfully.",
-        "activateSuccess": "MCP API key activated successfully.",
-        "deactivateSuccess": "MCP API key deactivated successfully.",
-        "copySuccess": "MCP API key copied to clipboard.",
-        "copyError": "We could not copy the MCP API key. Please try again.",
+        "createSuccess": "Company API token created successfully.",
+        "regenerateSuccess": "Company API token regenerated successfully.",
+        "activateSuccess": "Company API token activated successfully.",
+        "deactivateSuccess": "Company API token deactivated successfully.",
+        "copySuccess": "Company API token copied to clipboard.",
+        "copyError": "We could not copy the company API token. Please try again.",
         "copyUnavailable": "The real key is only available immediately after create or regenerate. Regenerate the key if you need a new copy."
       }
     },
