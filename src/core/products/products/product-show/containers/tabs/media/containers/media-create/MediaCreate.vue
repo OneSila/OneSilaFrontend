@@ -90,61 +90,63 @@ const openFilteredExistingModal = () => {
 </script>
 
 <template>
-  <div class="inline-flex items-center">
-    <Popper v-if="!hasSpecificTypeFilter" :placement="'bottom-end'" offsetDistance="8" class="!inline-block">
-      <Button class="btn btn-primary" :disabled="disabled">
-        <Icon class="mr-2" name="plus" />
-        {{ t('shared.button.add') }}
+  <div>
+    <div :class="['inline-flex items-center', hasSpecificTypeFilter ? 'gap-2' : '']">
+      <Popper v-if="!hasSpecificTypeFilter" :placement="'bottom-end'" offsetDistance="8" class="!inline-block">
+        <Button class="btn btn-primary" :disabled="disabled">
+          <Icon class="mr-2" name="plus" />
+          {{ t('shared.button.add') }}
+        </Button>
+        <template #content="{ close }">
+          <ul class="text-dark dark:text-white-dark !py-0 w-[230px] dark:text-white-light/90 bg-white border border-gray-300 rounded-md">
+            <li>
+              <Button @click="openModal('EXISTING', close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+                <Icon name="images" class="w-4.5 h-4.5 mr-2 shrink-0" />
+                {{ t('media.media.labels.addExistingFiles') }}
+              </Button>
+            </li>
+            <li>
+              <Button @click="openModal(TYPE_IMAGE, close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+                <Icon name="image" class="w-4.5 h-4.5 mr-2 shrink-0" />
+                {{ t('media.images.labels.addImages') }}
+              </Button>
+            </li>
+            <li>
+              <Button @click="openModal(TYPE_VIDEO, close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+                <Icon name="video" class="w-4.5 h-4.5 mr-2 shrink-0" />
+                {{ t('media.videos.upload') }}
+              </Button>
+            </li>
+            <li>
+              <Button @click="openModal(TYPE_DOCUMENT, close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
+                <Icon name="file-text" class="w-4.5 h-4.5 mr-2 shrink-0" />
+                {{ t('media.documents.labels.addDocuments') }}
+              </Button>
+            </li>
+          </ul>
+        </template>
+      </Popper>
+
+      <Button
+        v-else
+        class="btn btn-primary"
+        :disabled="disabled"
+        @click="openModal(resolvedMediaTypeFilter)"
+      >
+        <Icon class="mr-2" :name="specificAddIcon" />
+        {{ specificAddLabel }}
       </Button>
-      <template #content="{ close }">
-        <ul class="text-dark dark:text-white-dark !py-0 w-[230px] dark:text-white-light/90 bg-white border border-gray-300 rounded-md">
-          <li>
-            <Button @click="openModal('EXISTING', close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
-              <Icon name="images" class="w-4.5 h-4.5 mr-2 shrink-0" />
-              {{ t('media.media.labels.addExistingFiles') }}
-            </Button>
-          </li>
-          <li>
-            <Button @click="openModal(TYPE_IMAGE, close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
-              <Icon name="image" class="w-4.5 h-4.5 mr-2 shrink-0" />
-              {{ t('media.images.labels.addImages') }}
-            </Button>
-          </li>
-          <li>
-            <Button @click="openModal(TYPE_VIDEO, close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
-              <Icon name="video" class="w-4.5 h-4.5 mr-2 shrink-0" />
-              {{ t('media.videos.upload') }}
-            </Button>
-          </li>
-          <li>
-            <Button @click="openModal(TYPE_DOCUMENT, close)" class="flex items-center w-full px-4 py-2 hover:bg-gray-100">
-              <Icon name="file-text" class="w-4.5 h-4.5 mr-2 shrink-0" />
-              {{ t('media.documents.labels.addDocuments') }}
-            </Button>
-          </li>
-        </ul>
-      </template>
-    </Popper>
 
-    <Button
-      v-else
-      class="btn btn-primary"
-      :disabled="disabled"
-      @click="openModal(resolvedMediaTypeFilter)"
-    >
-      <Icon class="mr-2" :name="specificAddIcon" />
-      {{ specificAddLabel }}
-    </Button>
-
-    <Button
-      v-if="hasSpecificTypeFilter"
-      class="btn btn-outline-primary"
-      :disabled="disabled"
-      @click="openFilteredExistingModal"
-    >
-      <Icon class="mr-2" name="images" />
-      {{ t('media.media.labels.addExistingFiles') }}
-    </Button>
+      <Button
+        v-if="hasSpecificTypeFilter"
+        class="btn btn-outline-primary"
+        :disabled="disabled"
+        @click="openFilteredExistingModal"
+      >
+        <Icon class="mr-2" name="images" />
+        {{ t('media.media.labels.addExistingFiles') }}
+      </Button>
+    </div>
 
     <UploadMediaModal
       v-model="uploadModalVisible"

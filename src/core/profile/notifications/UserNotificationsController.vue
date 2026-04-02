@@ -11,7 +11,10 @@ import { Card } from '../../../shared/components/atoms/card';
 import { Badge } from '../../../shared/components/atoms/badge';
 import { Icon } from '../../../shared/components/atoms/icon';
 import { Loader } from '../../../shared/components/atoms/loader';
-import { markAllNotificationsAsViewMutation } from '../../../shared/api/mutations/notifications.js';
+import {
+  markAllNotificationsAsViewMutation,
+  markNotificationAsUnreadMutation,
+} from '../../../shared/api/mutations/notifications.js';
 import { notificationsQuery } from '../../../shared/api/queries/notifications.js';
 import { Toast } from '../../../shared/modules/toast';
 import {
@@ -41,6 +44,7 @@ const notifications = ref<FrontendNotification[]>([]);
 const localOpenedState = ref<Record<string, boolean>>({});
 const openingIds = ref<string[]>([]);
 const markingAllAsRead = ref(false);
+const markingUnreadIds = ref<string[]>([]);
 const loading = ref(true);
 const pageInfo = ref<NotificationPageInfo | null>(null);
 const totalCount = ref(0);
@@ -182,6 +186,36 @@ const markAllAsRead = async () => {
   }
 };
 
+const markAsUnread = async (notification: FrontendNotification) => {
+  if (markingUnreadIds.value.includes(notification.id) || !notification.opened) {
+    return;
+  }
+
+  try {
+    markingUnreadIds.value = [...markingUnreadIds.value, notification.id];
+
+    const { data } = await apolloClient.mutate({
+      mutation: markNotificationAsUnreadMutation,
+      variables: { id: notification.id },
+      fetchPolicy: 'network-only',
+    });
+
+    if (!data?.markNotificationAsUnread) {
+      throw new Error('markNotificationAsUnread returned false');
+    }
+
+    localOpenedState.value = {
+      ...localOpenedState.value,
+      [notification.id]: false,
+    };
+  } catch (error) {
+    console.error('Failed to mark notification as unread', error);
+    Toast.error(t('profile.notifications.messages.markAsUnreadFailed'));
+  } finally {
+    markingUnreadIds.value = markingUnreadIds.value.filter((id) => id !== notification.id);
+  }
+};
+
 const formatDate = (value: string) => {
   if (!value) {
     return '';
@@ -301,13 +335,16 @@ onMounted(() => {
           </div>
 
           <div v-else-if="!loading" class="space-y-3">
-            <button
+            <div
               v-for="notification in sortedNotifications"
               :key="notification.id"
-              type="button"
+              role="button"
+              tabindex="0"
               class="w-full rounded-2xl border px-5 py-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50/40"
               :class="notification.opened ? 'border-slate-200 bg-white' : 'border-indigo-200 bg-indigo-50/60'"
               @click="openNotification(notification)"
+              @keydown.enter.prevent="openNotification(notification)"
+              @keydown.space.prevent="openNotification(notification)"
             >
               <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0">
@@ -328,14 +365,24 @@ onMounted(() => {
                   <span class="text-xs text-slate-500">
                     {{ formatDate(notification.createdAt) }}
                   </span>
+                  <button
+                    v-if="notification.opened"
+                    type="button"
+                    class="inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+                    :disabled="markingUnreadIds.includes(notification.id)"
+                    @click.stop.prevent="markAsUnread(notification)"
+                  >
+                    {{ t('profile.notifications.actions.markAsUnseen') }}
+                  </button>
                   <span
+                    v-else
                     class="inline-flex items-center rounded-md border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600"
                   >
                     {{ notification.url ? t('profile.notifications.actions.open') : t('profile.notifications.actions.markAsOpened') }}
                   </span>
                 </div>
               </div>
-            </button>
+            </div>
 
             <Pagination
               v-if="pageInfo"

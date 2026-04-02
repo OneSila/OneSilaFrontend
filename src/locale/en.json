@@ -981,6 +981,7 @@
       "actions": {
         "open": "Open",
         "markAsOpened": "Mark as opened",
+        "markAsUnseen": "Mark as unseen",
         "viewAll": "View all notifications",
         "markAllAsRead": "Mark all as read",
         "enableDesktopNotifications": "Enable desktop notifications",
@@ -996,6 +997,7 @@
       },
       "messages": {
         "openFailed": "We could not open that notification. Please try again.",
+        "markAsUnreadFailed": "We could not mark that notification as unseen. Please try again.",
         "markAllFailed": "We could not mark all notifications as read. Please try again.",
         "desktopNotificationsEnabled": "Desktop notifications are enabled.",
         "desktopNotificationsDisabled": "Desktop notifications are disabled.",
@@ -1061,26 +1063,26 @@
       "approved": "Approved",
       "rejected": "Rejected"
     },
-      "labels": {
-        "unknownUser": "Unknown user",
-        "entryType": "Update type",
-        "comment": "Comment",
-        "allMembers": "All teammates",
-        "mentionSuggestions": "Mention a teammate",
-        "mentions": "Mentions",
-        "selectedMentions": "Selected teammates"
-      },
-      "placeholders": {
-        "entryType": "Select an update type",
-        "comment": "Write a comment to mention a teammate..."
-      },
-      "help": {
-        "mentions": "Use the mention list to add a teammate to your comment."
-      },
-      "hints": {
-        "mentions": "Mentions are sent explicitly with the selected teammates.",
-        "allMention": "Use the all teammates option to notify everyone except you."
-      },
+    "labels": {
+      "unknownUser": "Unknown user",
+      "entryType": "Update type",
+      "comment": "Comment",
+      "allMembers": "{symbol}all",
+      "mentionSuggestions": "Mention a teammate",
+      "mentions": "Mentions",
+      "selectedMentions": "Selected teammates"
+    },
+    "placeholders": {
+      "entryType": "Select an update type",
+      "comment": "Write a comment or type {symbol} to mention a teammate..."
+    },
+    "help": {
+      "mentions": "Type {symbol} in the comment box to mention a teammate, then select them from the list."
+    },
+    "hints": {
+      "mentions": "Mentions are sent explicitly with the selected teammates.",
+      "allMention": "Type {symbol}all to notify every teammate except you."
+    },
     "validation": {
       "commentRequired": "Comments need a message before you can post them.",
       "askApprovalMentionRequired": "Select at least one teammate before asking for approval.",

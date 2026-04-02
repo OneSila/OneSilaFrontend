@@ -23,25 +23,36 @@ import ProductPreviewTrigger from "../shared/ProductPreviewTrigger.vue";
 const {t} = useI18n();
 const props = defineProps<{ product: Product }>();
 
-const initialForm = ref({
+type ProductContentFormState = {
+  name: string;
+  subtitle: string;
+  shortDescription: string;
+  description: string;
+  urlKey: string;
+};
+
+const emptyHtml = '<p><br></p>';
+
+const createEmptyFormState = (): ProductContentFormState => ({
   name: '',
   subtitle: '',
-  shortDescription: '',
-  description: '',
+  shortDescription: emptyHtml,
+  description: emptyHtml,
   urlKey: ''
 });
 
-const form = reactive({...initialForm.value});
+const initialForm = ref(createEmptyFormState());
+const form = reactive(createEmptyFormState());
 const currentLanguage = ref(null);
 const currentSalesChannel = ref<'default' | string>('default');
 const mutation = ref(null);
 const translationId = ref(null);
-const oldLang = ref(currentLanguage.value);
-const oldChannel = ref(currentSalesChannel.value);
 const salesChannels = ref<any[]>([]);
 const fieldErrors = ref<Record<string, string>>({});
 const bulletPointsRef = ref<any>(null);
 const defaultLanguageCode = ref('en');
+const formRenderKey = ref(0);
+let latestFormRequestId = 0;
 
 const currentChannelType = computed(() => {
   if (currentSalesChannel.value === 'default') return 'default';
@@ -50,6 +61,31 @@ const currentChannelType = computed(() => {
 });
 
 const fieldRules = computed(() => getContentFieldRules(currentChannelType.value));
+
+const applyFormState = (nextState: ProductContentFormState) => {
+  form.name = nextState.name;
+  form.subtitle = nextState.subtitle;
+  form.shortDescription = nextState.shortDescription;
+  form.description = nextState.description;
+  form.urlKey = nextState.urlKey;
+};
+
+const resetFormState = () => {
+  applyFormState(createEmptyFormState());
+  fieldErrors.value = {};
+  translationId.value = null;
+  mutation.value = createProductTranslationMutation;
+  bulletPointsRef.value = null;
+  formRenderKey.value += 1;
+};
+
+const mapTranslationToFormState = (translation: Partial<ProductContentFormState> | null | undefined): ProductContentFormState => ({
+  name: translation?.name || '',
+  subtitle: translation?.subtitle || '',
+  shortDescription: translation?.shortDescription || emptyHtml,
+  description: translation?.description || emptyHtml,
+  urlKey: translation?.urlKey || '',
+});
 
 
 const handleLanguageOptionsLoaded = (rawData) => {
@@ -84,6 +120,13 @@ onMounted(async () => {
 });
 
 const setFormAndMutation = async (language, channel) => {
+  if (!language) {
+    return;
+  }
+
+  const requestId = ++latestFormRequestId;
+  resetFormState();
+
   try {
     if (channel === 'default') {
       // Query where salesChannel is null (Default)
@@ -93,25 +136,16 @@ const setFormAndMutation = async (language, channel) => {
         fetchPolicy: 'network-only'
       });
 
-      if (data && data.productTranslations.edges.length === 1) {
-        const translation = data.productTranslations.edges[0].node;
-        form.name = translation.name;
-        form.subtitle = translation.subtitle;
-        form.shortDescription = translation.shortDescription;
-        form.description = translation.description;
-        form.urlKey = translation.urlKey;
-        translationId.value = translation.id;
-        mutation.value = updateProductTranslationMutation;
-      } else {
-        form.name = '';
-        form.subtitle = '';
-        form.shortDescription = '<p><br></p>';
-        form.description = '<p><br></p>';
-        form.urlKey = '';
-        translationId.value = null;
-        mutation.value = createProductTranslationMutation;
+      if (requestId !== latestFormRequestId) {
+        return;
       }
 
+      if (data && data.productTranslations.edges.length === 1) {
+        const translation = data.productTranslations.edges[0].node;
+        applyFormState(mapTranslationToFormState(translation));
+        translationId.value = translation.id;
+        mutation.value = updateProductTranslationMutation;
+      }
     } else {
       // Query with specific salesChannelId
       const { data } = await apolloClient.query({
@@ -124,27 +158,27 @@ const setFormAndMutation = async (language, channel) => {
         fetchPolicy: 'network-only'
       });
 
+      if (requestId !== latestFormRequestId) {
+        return;
+      }
+
       if (data && data.productTranslations.edges.length === 1) {
         const translation = data.productTranslations.edges[0].node;
-        form.name = translation.name;
-        form.subtitle = translation.subtitle;
-        form.shortDescription = translation.shortDescription;
-        form.description = translation.description;
-        form.urlKey = translation.urlKey;
+        applyFormState(mapTranslationToFormState(translation));
         translationId.value = translation.id;
         mutation.value = updateProductTranslationMutation;
-      } else {
-        form.name = '';
-        form.subtitle = '';
-        form.shortDescription = '<p><br></p>';
-        form.description = '<p><br></p>';
-        form.urlKey = '';
-        translationId.value = null;
-        mutation.value = createProductTranslationMutation;
       }
     }
   } catch (error) {
+    if (requestId !== latestFormRequestId) {
+      return;
+    }
+
     console.error("Error fetching translation:", error);
+  }
+
+  if (requestId !== latestFormRequestId) {
+    return;
   }
 
   await nextTick();
@@ -155,48 +189,38 @@ const setFormAndMutation = async (language, channel) => {
 watch(currentLanguage, async (newLanguage, oldLanguage) => {
   if (oldLanguage === null) {
     await setFormAndMutation(newLanguage, currentSalesChannel.value);
-    oldLang.value = newLanguage;
-  }
-});
-
-watch(currentSalesChannel, async (newChannel, oldChannelVal) => {
-  if (oldChannelVal === null) {
-    await setFormAndMutation(currentLanguage.value, newChannel);
-    oldChannel.value = newChannel;
-  }
-});
-
-watch(currentChannelType, (newType) => {
-  if (!getContentFieldRules(newType).bulletPoints) {
-    return;
   }
 });
 
 const handleLanguageSelection = async (newLanguage) => {
+  if (newLanguage === currentLanguage.value) {
+    return;
+  }
 
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
     const confirmChange = confirm(t('products.translation.confirmLanguageChange'));
     if (!confirmChange) {
-      currentLanguage.value = oldLang.value;
       return;
     }
   }
 
-  oldLang.value = newLanguage;
+  currentLanguage.value = newLanguage;
   await setFormAndMutation(newLanguage, currentSalesChannel.value);
 };
 
 const handleSalesChannelSelection = async (newChannel) => {
+  if (newChannel === currentSalesChannel.value) {
+    return;
+  }
 
   if (JSON.stringify(form) !== JSON.stringify(initialForm.value)) {
     const confirmChange = confirm(t('products.products.messages.unsavedChanges'));
     if (!confirmChange) {
-      currentSalesChannel.value = oldChannel.value;
       return;
     }
   }
 
-  oldChannel.value = newChannel;
+  currentSalesChannel.value = newChannel;
   await setFormAndMutation(currentLanguage.value, newChannel);
 };
 
@@ -278,49 +302,42 @@ const shortDescriptionToolbarOptions = [
 
 <template>
 
-  <Flex end class="gap-2 flex-wrap">
-    <FlexCell>
-      <ProductPreviewTrigger
-        :product="product"
-        :sales-channel-id="currentSalesChannel"
-        :sales-channels="salesChannels"
-        :language-code="currentLanguage"
-      />
-    </FlexCell>
-    <FlexCell>
-      <AdvancedContentGenerator
-        :product-ids="[product.id]"
-        :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
-        :small="false"
-      />
-    </FlexCell>
-    <FlexCell>
-      <ProductContentImportModal
-        :product-ids="[product.id]"
-        :current-language="currentLanguage"
-        :current-sales-channel="currentSalesChannel"
-        :sales-channels="salesChannels"
-        @imported="handleImportCompleted"
-      />
-    </FlexCell>
-    <FlexCell>
-      <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
-        <template v-slot="{ mutate, loading }">
-          <Button :customClass="'btn btn-primary'" :disabled="loading" @click="handleSave(mutate)">
-            {{ t('shared.button.save') }}
-          </Button>
-        </template>
-      </ApolloMutation>
-    </FlexCell>
-    <FlexCell>
+  <div class="flex flex-wrap items-center justify-end gap-2">
+    <ProductPreviewTrigger
+      :product="product"
+      :sales-channel-id="currentSalesChannel"
+      :sales-channels="salesChannels"
+      :language-code="currentLanguage"
+    />
+    <AdvancedContentGenerator
+      :product-ids="[product.id]"
+      :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
+      :small="false"
+    />
+    <ProductContentImportModal
+      :product-ids="[product.id]"
+      :current-language="currentLanguage"
+      :current-sales-channel="currentSalesChannel"
+      :sales-channels="salesChannels"
+      btn-class="btn-outline-primary"
+      @imported="handleImportCompleted"
+    />
+    <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
+      <template v-slot="{ mutate, loading }">
+        <Button :customClass="'btn btn-primary'" :disabled="loading" @click="handleSave(mutate)">
+          {{ t('shared.button.save') }}
+        </Button>
+      </template>
+    </ApolloMutation>
+    <div class="shrink-0">
       <LanguageSelector
-        v-model="currentLanguage"
+        :model-value="currentLanguage"
         selector-class="w-full min-w-[12rem] sm:min-w-[14rem]"
         @loaded="handleLanguageOptionsLoaded"
         @update:modelValue="handleLanguageSelection"
       />
-    </FlexCell>
-  </Flex>
+    </div>
+  </div>
 
   <Flex v-if="currentSalesChannel !== 'default'" class=" mt-2 block lg:hidden">
     <FlexCell>
@@ -338,13 +355,17 @@ const shortDescriptionToolbarOptions = [
       mt-4
       grid gap-4
       grid-cols-1
-      lg:grid-cols-[220px_minmax(0,1fr)]
-      xl:grid-cols-[360px_minmax(0,1fr)]
-      2xl:grid-cols-[420px_minmax(0,1fr)]
+      lg:grid-cols-[200px_minmax(0,1fr)]
+      xl:grid-cols-[280px_minmax(0,1fr)]
+      2xl:grid-cols-[340px_minmax(0,1fr)]
     "
   >
     <div>
-      <SalesChannelTabs v-model="currentSalesChannel" :channels="salesChannels" @update:modelValue="handleSalesChannelSelection" />
+      <SalesChannelTabs
+        :model-value="currentSalesChannel"
+        :channels="salesChannels"
+        @update:modelValue="handleSalesChannelSelection"
+      />
     </div>
 
     <!-- Product Content Form -->
@@ -355,6 +376,7 @@ const shortDescriptionToolbarOptions = [
     >
       <div class="p-2 bg-white">
         <ProductContentForm
+          :key="formRenderKey"
           :form="form"
           :field-errors="fieldErrors"
           :product-id="product.id"

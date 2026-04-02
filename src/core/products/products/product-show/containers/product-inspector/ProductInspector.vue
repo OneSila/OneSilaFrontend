@@ -230,7 +230,7 @@ const refreshInspector = async () => {
   <ApolloSubscription :subscription="inspectorSubscription" :variables="{ pk: product.inspector?.id }">
     <template v-slot:default="{ loading, error, result }">
       <template v-if="!loading && result && refetchData(result)">
-        <div class="p-2" :class="['shadow sm:rounded-lg relative', bgColorClass(color)]">
+        <div class="p-2" :class="['shadow rounded-lg relative ', bgColorClass(color)]">
           <div class="px-4 py-4 sm:p-4 flex justify-between items-center">
             <h3 class="text-lg font-semibold leading-6 text-white">
               {{ getInspectorLabel(color) }}
