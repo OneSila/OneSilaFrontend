@@ -808,6 +808,50 @@
       "editProfile": "Profiel bewerken",
       "members": "Gebruikers"
     },
+    "mcpApiKey": {
+      "title": "",
+      "description": "",
+      "labels": {
+        "apiKey": "",
+        "status": "",
+        "accessControl": ""
+      },
+      "actions": {
+        "create": "",
+        "copy": "",
+        "regenerate": "",
+        "activate": "",
+        "deactivate": ""
+      },
+      "status": {
+        "active": "",
+        "inactive": "",
+        "notCreated": ""
+      },
+      "help": {
+        "rawKeyAvailable": "",
+        "rawKeyUnavailable": "",
+        "active": "",
+        "inactive": "",
+        "copyNow": ""
+      },
+      "placeholders": {
+        "key": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "createSuccess": "",
+        "regenerateSuccess": "",
+        "activateSuccess": "",
+        "deactivateSuccess": "",
+        "copySuccess": "",
+        "copyError": "",
+        "copyUnavailable": ""
+      }
+    },
     "actions": {
       "editCompanyDetails": "",
       "closeEditor": ""

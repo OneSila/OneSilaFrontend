@@ -33,6 +33,7 @@ export const meSubscription = gql`
 export const meCompanySubscription = gql`
   subscription meCompany {
     myMultiTenantCompany {
+      id
       name
       language
       address1
@@ -48,6 +49,11 @@ export const meCompanySubscription = gql`
       languageDetail {
          code
          name
+      }
+      mcpApiKey {
+        id
+        maskedKey
+        isActive
       }
       languages
       multitenantuserSet {

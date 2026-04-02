@@ -44,6 +44,11 @@ export const myMultiTenantCompanyQuery = gql`
     myMultiTenantCompany {
       id
       name
+      mcpApiKey {
+        id
+        maskedKey
+        isActive
+      }
       multitenantuserSet {
         id
         firstName

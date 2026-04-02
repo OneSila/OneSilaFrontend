@@ -1139,6 +1139,50 @@
       "editProfile": "Edit Profile",
       "members": "Members"
     },
+    "mcpApiKey": {
+      "title": "MCP API key",
+      "description": "Manage the API key your company uses to connect MCP clients securely.",
+      "labels": {
+        "apiKey": "API key",
+        "status": "Status",
+        "accessControl": "Access control"
+      },
+      "actions": {
+        "create": "Create key",
+        "copy": "Copy key",
+        "regenerate": "Regenerate key",
+        "activate": "Activate key",
+        "deactivate": "Deactivate key"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "notCreated": "Not created"
+      },
+      "help": {
+        "rawKeyAvailable": "This is the real key returned by the latest create or regenerate action. Store it now because you will not be able to see it again later.",
+        "rawKeyUnavailable": "For security, the real key is only shown once when you create or regenerate it. After that, only the masked key remains visible here.",
+        "active": "The key currently accepts requests from MCP clients.",
+        "inactive": "The key is stored, but requests using it are blocked until you activate it again.",
+        "copyNow": "Copy and store this key now. If you lose it, the only way to get a new real key is to regenerate it."
+      },
+      "placeholders": {
+        "key": "No key available"
+      },
+      "empty": {
+        "title": "No MCP API key created yet",
+        "description": "Create a company key to allow MCP-enabled tools or clients to authenticate against your workspace."
+      },
+      "messages": {
+        "createSuccess": "MCP API key created successfully.",
+        "regenerateSuccess": "MCP API key regenerated successfully.",
+        "activateSuccess": "MCP API key activated successfully.",
+        "deactivateSuccess": "MCP API key deactivated successfully.",
+        "copySuccess": "MCP API key copied to clipboard.",
+        "copyError": "We could not copy the MCP API key. Please try again.",
+        "copyUnavailable": "The real key is only available immediately after create or regenerate. Regenerate the key if you need a new copy."
+      }
+    },
     "actions": {
       "editCompanyDetails": "Edit details",
       "closeEditor": "Close editor"
