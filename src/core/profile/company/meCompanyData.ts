@@ -43,7 +43,7 @@ export interface MeCompanyData {
   website?: string;
   multitenantuserSet: CompanyUser[];
   languageDetail: LanguageDetail;
-  mcpApiKey?: McpApiKeyData | null;
+  // mcpApiKey?: McpApiKeyData | null;
 }
 
 export interface MeCompanySubscriptionResult {
@@ -61,7 +61,7 @@ export interface MeCompanySubscriptionResult {
     website: string;
     multitenantuserSet: MultiTenantUser[];
     languageDetail: LanguageDetail;
-    mcpApiKey?: McpApiKeyData | null;
+    // mcpApiKey?: McpApiKeyData | null;
   };
 }
 

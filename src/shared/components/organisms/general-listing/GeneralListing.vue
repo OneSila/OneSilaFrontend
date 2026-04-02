@@ -45,6 +45,7 @@ const props = withDefaults(
 const slots = defineSlots<{
   bulkActions?: (scope: { selectedEntities: string[]; viewType: string; query: any }) => any;
   additionalButtons?: (scope: { item: any }) => any;
+  headerActions?: () => any;
 }>();
 
 const identifierField = computed(() => props.config.identifierKey || 'id');
@@ -701,7 +702,7 @@ watch(
               @remove="removeFilter"
               @create="() => openCreateDashboardCardModal(buildQueryVariables(filterVariables, orderVariables, pagination))"
             />
-            <div class="flex justify-end items-center my-1 mx-4 space-x-4">
+            <div class="my-1 mx-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
               <div class="flex items-center space-x-2">
                 <span class="text-sm font-semibold text-gray-900">
@@ -717,6 +718,9 @@ watch(
                 </Button>
                 <Loader :loading="selectingAll" />
               </div>
+
+              <div class="flex flex-wrap items-center justify-end gap-3">
+                <slot name="headerActions" />
 
               <template v-if="props.config.addGridView" >
               <!-- Bulk action buttons (only if any items are selected) -->
@@ -751,6 +755,7 @@ watch(
                 </button>
               </div>
               </template>
+              </div>
 
             </div>
 

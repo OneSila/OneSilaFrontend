@@ -50,11 +50,11 @@ export const meCompanySubscription = gql`
          code
          name
       }
-      mcpApiKey {
-        id
-        maskedKey
-        isActive
-      }
+#      mcpApiKey {
+#        id
+#        maskedKey
+#        isActive
+#      }
       languages
       multitenantuserSet {
           id

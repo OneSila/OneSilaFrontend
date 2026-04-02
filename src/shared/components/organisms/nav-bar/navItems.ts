@@ -67,6 +67,21 @@ export const navSections: NavSection[] = [
                     },
                 ]
             },
+            {
+                title: 'importsExports.title',
+                icon: 'file-import',
+                subItemsKey: 'importsExports',
+                subItems: [
+                    {
+                        route: { name: 'importsExports.mappedImports.list' },
+                        title: 'importsExports.mappedImports.title',
+                    },
+                    {
+                        route: { name: 'importsExports.exports.list' },
+                        title: 'importsExports.exports.title',
+                    },
+                ]
+            },
         ]
     }
 ];
