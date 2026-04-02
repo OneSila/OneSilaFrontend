@@ -12,6 +12,7 @@ import {FieldWebsite} from "./containers/field-website";
 import {FieldBadge} from "./containers/field-badge";
 import {FieldIcon} from "./containers/field-icon";
 import {FieldIndividualFile} from "./containers/field-individual-file";
+import {FieldProgressBar} from "./containers/field-progress-bar";
 import {FieldInspectorProgress} from "./containers/field-inspector-progress";
 import { FieldInlineItems } from "./containers/field-inline-items";
 
@@ -101,6 +102,10 @@ export interface IconField extends ShowBaseField {
   iconMap: Record<string, Icon>;
 }
 
+export interface ProgressBarField extends ShowBaseField {
+  type: FieldType.ProgressBar;
+}
+
 export interface InspectorProgressField extends ShowBaseField {
   type: FieldType.InspectorProgress;
 }
@@ -110,7 +115,7 @@ export interface InlineItemsField extends ShowBaseField {
   color?: string;
 }
 
-export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | IndividualFileField | InspectorProgressField | InlineItemsField;
+export type ShowField = DateField | PhoneField | ArrayField | TextField | BooleanField | ImageField | NestedTextField | EmailField | WebsiteField | BadgeField | IconField | ProgressBarField | IndividualFileField | InspectorProgressField | InlineItemsField;
 
 export const updateField = (showConfig, fieldName, newConfig) => {
   const fieldIndex = showConfig.fields.findIndex(field => field.name === fieldName);
@@ -132,6 +137,7 @@ export const getFieldComponent = (type) => {
     case FieldType.Website: return FieldWebsite;
     case FieldType.Icon: return FieldIcon;
     case FieldType.Badge: return FieldBadge;
+    case FieldType.ProgressBar: return FieldProgressBar;
     case FieldType.IndividualFile: return FieldIndividualFile;
     case FieldType.InspectorProgress: return FieldInspectorProgress;
     case FieldType.InlineItems: return FieldInlineItems;

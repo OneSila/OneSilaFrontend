@@ -808,6 +808,50 @@
       "editProfile": "Profiel bewerken",
       "members": "Gebruikers"
     },
+    "mcpApiKey": {
+      "title": "",
+      "description": "",
+      "labels": {
+        "apiKey": "",
+        "status": "",
+        "accessControl": ""
+      },
+      "actions": {
+        "create": "",
+        "copy": "",
+        "regenerate": "",
+        "activate": "",
+        "deactivate": ""
+      },
+      "status": {
+        "active": "",
+        "inactive": "",
+        "notCreated": ""
+      },
+      "help": {
+        "rawKeyAvailable": "",
+        "rawKeyUnavailable": "",
+        "active": "",
+        "inactive": "",
+        "copyNow": ""
+      },
+      "placeholders": {
+        "key": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "createSuccess": "",
+        "regenerateSuccess": "",
+        "activateSuccess": "",
+        "deactivateSuccess": "",
+        "copySuccess": "",
+        "copyError": "",
+        "copyUnavailable": ""
+      }
+    },
     "actions": {
       "editCompanyDetails": "",
       "closeEditor": ""
@@ -5067,8 +5111,222 @@
         "unknownUser": ""
       }
     }
-  }
-  ,
+  },
+  "importsExports": {
+    "title": "",
+    "alerts": {
+      "languagesLoadError": ""
+    },
+    "shared": {
+      "none": "",
+      "unnamed": "",
+      "source": "",
+      "jsonViewerHint": ""
+    },
+    "placeholders": {
+      "intervalHours": "",
+      "ids": "",
+      "url": ""
+    },
+    "validation": {
+      "required": "",
+      "fileRequired": "",
+      "urlRequired": "",
+      "invalidUrl": "",
+      "intervalHoursPositive": ""
+    },
+    "helpers": {
+      "createOnly": "",
+      "updateOnly": "",
+      "overrideOnly": "",
+      "skipBrokenRecords": ""
+    },
+    "progressColors": {
+      "red": "",
+      "orange": "",
+      "green": ""
+    },
+    "statuses": {
+      "NEW": "",
+      "PENDING": "",
+      "RUNNING": "",
+      "PROCESSING": "",
+      "FAILED": "",
+      "ERROR": "",
+      "SUCCESS": "",
+      "COMPLETED": "",
+      "PARTIAL": "",
+      "CANCELLED": ""
+    },
+    "fields": {
+      "kind": "",
+      "progressState": "",
+      "percentageColor": "",
+      "createOnly": "",
+      "updateOnly": "",
+      "overrideOnly": "",
+      "skipBrokenRecords": "",
+      "isPeriodic": "",
+      "intervalHours": "",
+      "totalRecords": "",
+      "processedRecords": "",
+      "lastRunAt": "",
+      "columns": "",
+      "ids": "",
+      "parameters": "",
+      "feedKey": "",
+      "feedUrl": "",
+      "fileUrl": "",
+      "jsonFile": "",
+      "jsonUrl": "",
+      "brokenRecords": "",
+      "cleanedErrors": "",
+      "errorTraceback": ""
+    },
+    "mappedImports": {
+      "title": "",
+      "types": {
+        "property": "",
+        "property_select_value": "",
+        "property_rule": "",
+        "product": "",
+        "ean_code": ""
+      },
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "show": {
+        "title": ""
+      },
+      "form": {
+        "subtitle": "",
+        "typeLocked": "",
+        "languageOptional": "",
+        "sourceHint": "",
+        "fileHint": "",
+        "urlHint": "",
+        "isPeriodicHint": ""
+      },
+      "tutorial": {
+        "title": "",
+        "purpose": "",
+        "minimumRule": "",
+        "importantNotes": "",
+        "exampleJson": "",
+        "empty": "",
+        "table": {
+          "field": "",
+          "required": "",
+          "type": "",
+          "meaning": "",
+          "behavior": ""
+        }
+      },
+      "tabs": {
+        "overview": "",
+        "brokenRecords": ""
+      },
+      "sections": {
+        "general": "",
+        "runtime": ""
+      },
+      "actions": {
+        "downloadFile": "",
+        "openUrl": ""
+      },
+      "brokenRecords": {
+        "empty": "",
+        "modalTitle": "",
+        "record": "",
+        "error": ""
+      },
+      "alerts": {
+        "createSuccess": "",
+        "createError": "",
+        "loadError": "",
+        "updateSuccess": "",
+        "updateError": "",
+        "resyncSuccess": "",
+        "resyncError": "",
+        "bulkDeleteSuccess": "",
+        "bulkDeleteError": ""
+      }
+    },
+    "exports": {
+      "title": "",
+      "types": {
+        "json_feed": "",
+        "json": "",
+        "csv": "",
+        "excel": ""
+      },
+      "kinds": {
+        "products": "",
+        "product_properties": "",
+        "properties": "",
+        "property_select_values": "",
+        "images": "",
+        "documents": "",
+        "videos": "",
+        "sales_prices": "",
+        "price_lists": "",
+        "price_list_prices": "",
+        "rules": "",
+        "ean_codes": ""
+      },
+      "create": {
+        "title": ""
+      },
+      "edit": {
+        "title": ""
+      },
+      "show": {
+        "title": ""
+      },
+      "form": {
+        "subtitle": "",
+        "columnsHint": "",
+        "emptyColumnsHint": "",
+        "kindLocked": "",
+        "parametersTitle": "",
+        "parametersSubtitle": "",
+        "idsHint": "",
+        "booleanParameterHint": ""
+      },
+      "columnsBuilder": {
+        "title": "",
+        "subtitle": "",
+        "useDefaults": "",
+        "selectAll": "",
+        "clearAll": "",
+        "defaultBadge": "",
+        "allSelectedNotice": ""
+      },
+      "sections": {
+        "general": "",
+        "outputs": "",
+        "generatedFile": ""
+      },
+      "actions": {
+        "downloadFile": "",
+        "openFeed": ""
+      },
+      "alerts": {
+        "createSuccess": "",
+        "createError": "",
+        "loadError": "",
+        "updateSuccess": "",
+        "updateError": "",
+        "resyncSuccess": "",
+        "resyncError": "",
+        "bulkDeleteSuccess": "",
+        "bulkDeleteError": ""
+      }
+    }
+  },
   "generalSearch": {
     "filterModal": {
       "convertToDashboardCard": ""

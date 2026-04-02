@@ -62,7 +62,7 @@ const getIntegrationShowRoute = (item: any) => {
   };
 };
 
-export const listingConfigConstructor = (t: Function): ListingConfig => ({
+export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
   headers: [
     t('integrations.labels.hostname'),
     t('shared.labels.type'),
@@ -95,6 +95,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
   addEdit: false,
   addShow: true,
   addDelete: true,
+  isMainPage: isMainPage,
 });
 
 export function cleanShopHostname(input: string): string {

@@ -1139,6 +1139,50 @@
       "editProfile": "Edit Profile",
       "members": "Members"
     },
+    "mcpApiKey": {
+      "title": "MCP API key",
+      "description": "Manage the API key your company uses to connect MCP clients securely.",
+      "labels": {
+        "apiKey": "API key",
+        "status": "Status",
+        "accessControl": "Access control"
+      },
+      "actions": {
+        "create": "Create key",
+        "copy": "Copy key",
+        "regenerate": "Regenerate key",
+        "activate": "Activate key",
+        "deactivate": "Deactivate key"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "notCreated": "Not created"
+      },
+      "help": {
+        "rawKeyAvailable": "This is the real key returned by the latest create or regenerate action. Store it now because you will not be able to see it again later.",
+        "rawKeyUnavailable": "For security, the real key is only shown once when you create or regenerate it. After that, only the masked key remains visible here.",
+        "active": "The key currently accepts requests from MCP clients.",
+        "inactive": "The key is stored, but requests using it are blocked until you activate it again.",
+        "copyNow": "Copy and store this key now. If you lose it, the only way to get a new real key is to regenerate it."
+      },
+      "placeholders": {
+        "key": "No key available"
+      },
+      "empty": {
+        "title": "No MCP API key created yet",
+        "description": "Create a company key to allow MCP-enabled tools or clients to authenticate against your workspace."
+      },
+      "messages": {
+        "createSuccess": "MCP API key created successfully.",
+        "regenerateSuccess": "MCP API key regenerated successfully.",
+        "activateSuccess": "MCP API key activated successfully.",
+        "deactivateSuccess": "MCP API key deactivated successfully.",
+        "copySuccess": "MCP API key copied to clipboard.",
+        "copyError": "We could not copy the MCP API key. Please try again.",
+        "copyUnavailable": "The real key is only available immediately after create or regenerate. Regenerate the key if you need a new copy."
+      }
+    },
     "actions": {
       "editCompanyDetails": "Edit details",
       "closeEditor": "Close editor"
@@ -5993,8 +6037,222 @@
         "unknownUser": "Team member"
       }
     }
-  }
-  ,
+  },
+  "importsExports": {
+    "title": "Imports / Exports",
+    "alerts": {
+      "languagesLoadError": "Failed to load company languages."
+    },
+    "shared": {
+      "none": "None",
+      "unnamed": "Unnamed",
+      "source": "Source",
+      "jsonViewerHint": "Structured values are shown as formatted JSON for easier review."
+    },
+    "placeholders": {
+      "intervalHours": "e.g. 24",
+      "ids": "Paste one ID per line or separate them with commas",
+      "url": "https://example.com/feed.json"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "fileRequired": "Upload a JSON file to continue.",
+      "urlRequired": "Enter a JSON URL to continue.",
+      "invalidUrl": "Enter a valid HTTP or HTTPS URL.",
+      "intervalHoursPositive": "Interval hours must be greater than zero."
+    },
+    "helpers": {
+      "createOnly": "Create records, do not update existing ones.",
+      "updateOnly": "Update existing records and fail when they do not exist.",
+      "overrideOnly": "Only fill empty values and do not overwrite existing values.",
+      "skipBrokenRecords": "Continue the import even if some rows fail."
+    },
+    "progressColors": {
+      "red": "Failed",
+      "orange": "In progress",
+      "green": "Completed"
+    },
+    "statuses": {
+      "NEW": "New",
+      "PENDING": "Pending",
+      "RUNNING": "Running",
+      "PROCESSING": "Processing",
+      "FAILED": "Failed",
+      "ERROR": "Error",
+      "SUCCESS": "Success",
+      "COMPLETED": "Completed",
+      "PARTIAL": "Partial",
+      "CANCELLED": "Cancelled"
+    },
+    "fields": {
+      "kind": "Kind",
+      "progressState": "Progress state",
+      "percentageColor": "Progress state",
+      "createOnly": "Create only",
+      "updateOnly": "Update only",
+      "overrideOnly": "Override only",
+      "skipBrokenRecords": "Skip broken records",
+      "isPeriodic": "Periodic",
+      "intervalHours": "Interval hours",
+      "totalRecords": "Total records",
+      "processedRecords": "Processed records",
+      "lastRunAt": "Last run at",
+      "columns": "Columns",
+      "ids": "IDs",
+      "parameters": "Parameters",
+      "feedKey": "Feed key",
+      "feedUrl": "Feed URL",
+      "fileUrl": "File URL",
+      "jsonFile": "JSON file",
+      "jsonUrl": "JSON URL",
+      "brokenRecords": "Broken records",
+      "cleanedErrors": "Cleaned errors",
+      "errorTraceback": "Error traceback"
+    },
+    "mappedImports": {
+      "title": "Mapped Imports",
+      "types": {
+        "property": "Property",
+        "property_select_value": "Property Select Value",
+        "property_rule": "Property Rule",
+        "product": "Product",
+        "ean_code": "EAN Code"
+      },
+      "create": {
+        "title": "Create Mapped Import"
+      },
+      "edit": {
+        "title": "Edit Mapped Import"
+      },
+      "show": {
+        "title": "Mapped Import Details"
+      },
+      "form": {
+        "subtitle": "Configure the import source, runtime behavior, and the backend schema expected for this payload.",
+        "typeLocked": "Type cannot be changed after creation.",
+        "languageOptional": "Optional. Used as the default language context when the payload omits language.",
+        "sourceHint": "Provide exactly one source: either an uploaded JSON file or a JSON URL.",
+        "fileHint": "Accepts `.json` uploads only.",
+        "urlHint": "Use a reachable JSON endpoint or file URL.",
+        "isPeriodicHint": "Enable this to rerun the mapped import automatically on a schedule."
+      },
+      "tutorial": {
+        "title": "Import Tutorial",
+        "purpose": "Purpose",
+        "minimumRule": "Minimum valid payload",
+        "importantNotes": "Important behavior",
+        "exampleJson": "Example JSON",
+        "empty": "Select an import type to review the full payload schema, backend behavior, and example JSON.",
+        "table": {
+          "field": "Field",
+          "required": "Required",
+          "type": "Data type",
+          "meaning": "Meaning",
+          "behavior": "Backend behavior"
+        }
+      },
+      "tabs": {
+        "overview": "Overview",
+        "brokenRecords": "Broken Records"
+      },
+      "sections": {
+        "general": "General",
+        "runtime": "Runtime and sources"
+      },
+      "actions": {
+        "downloadFile": "Download JSON file",
+        "openUrl": "Open JSON URL"
+      },
+      "brokenRecords": {
+        "empty": "No broken records were captured for this import.",
+        "modalTitle": "Broken record payload",
+        "record": "Record",
+        "error": "Error"
+      },
+      "alerts": {
+        "createSuccess": "Mapped import created.",
+        "createError": "Failed to create mapped import.",
+        "loadError": "Failed to load mapped import details.",
+        "updateSuccess": "Mapped import updated.",
+        "updateError": "Failed to update mapped import.",
+        "resyncSuccess": "Mapped import resync started.",
+        "resyncError": "Failed to resync mapped import.",
+        "bulkDeleteSuccess": "Mapped imports deleted.",
+        "bulkDeleteError": "Failed to delete mapped imports."
+      }
+    },
+    "exports": {
+      "title": "Exports",
+      "types": {
+        "json_feed": "JSON feed",
+        "json": "JSON",
+        "csv": "CSV",
+        "excel": "Excel"
+      },
+      "kinds": {
+        "products": "Products",
+        "product_properties": "Product properties",
+        "properties": "Properties",
+        "property_select_values": "Property select values",
+        "images": "Images",
+        "documents": "Documents",
+        "videos": "Videos",
+        "sales_prices": "Sales prices",
+        "price_lists": "Price lists",
+        "price_list_prices": "Price list prices",
+        "rules": "Rules",
+        "ean_codes": "EAN codes"
+      },
+      "create": {
+        "title": "Create Export"
+      },
+      "edit": {
+        "title": "Edit Export"
+      },
+      "show": {
+        "title": "Export Details"
+      },
+      "form": {
+        "subtitle": "Choose the export kind, output format, and only the parameters the backend supports for that kind.",
+        "columnsHint": "Leave columns empty to export every supported column for the selected kind.",
+        "emptyColumnsHint": "No selection means all supported columns will be included.",
+        "kindLocked": "Kind cannot be changed after creation.",
+        "parametersTitle": "Export parameters",
+        "parametersSubtitle": "Only parameters supported by the selected kind are shown here.",
+        "idsHint": "Create only. Limit the export to these node IDs when needed.",
+        "booleanParameterHint": "Enable or disable {parameter} for this export."
+      },
+      "columnsBuilder": {
+        "title": "Columns",
+        "subtitle": "Build the export payload by selecting the columns this kind should include.",
+        "useDefaults": "Use defaults",
+        "selectAll": "Select all",
+        "clearAll": "Clear all",
+        "defaultBadge": "Default",
+        "allSelectedNotice": "All supported columns will be exported."
+      },
+      "sections": {
+        "general": "General",
+        "outputs": "Generated output",
+        "generatedFile": "Generated file"
+      },
+      "actions": {
+        "downloadFile": "Download file",
+        "openFeed": "Open feed"
+      },
+      "alerts": {
+        "createSuccess": "Export created.",
+        "createError": "Failed to create export.",
+        "loadError": "Failed to load export details.",
+        "updateSuccess": "Export updated.",
+        "updateError": "Failed to update export.",
+        "resyncSuccess": "Export resync started.",
+        "resyncError": "Failed to resync export.",
+        "bulkDeleteSuccess": "Exports deleted.",
+        "bulkDeleteError": "Failed to delete exports."
+      }
+    }
+  },
   "generalSearch": {
     "filterModal": {
       "convertToDashboardCard": "Convert into dashboard card"
