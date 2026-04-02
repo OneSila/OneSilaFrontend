@@ -29,6 +29,7 @@ export enum FieldType {
   Website = "Website",
   Icon = "Icon",
   Badge = "Badge",
+  ProgressBar = "ProgressBar",
   InspectorProgress = "InspectorProgress",
   InlineItems = "InlineItems",
   IndividualFile = "IndividualFile", // not from the media app but adding individually

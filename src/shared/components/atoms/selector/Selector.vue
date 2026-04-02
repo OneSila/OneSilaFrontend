@@ -314,7 +314,7 @@ const getTruncatedLabel = (option: any) => {
 </template>
 
   <!-- Show loading for single when value is still an ID -->
-  <template v-else-if="getLabel(modelValue) === null" #selected-option>
+  <template v-else-if="modelValue !== null && modelValue !== undefined && getLabel(modelValue) === null" #selected-option>
     <span class="text-gray-400 italic flex items-center gap-1">
       <Icon name="spinner" class="animate-spin" />
       {{ t('shared.labels.loading') }}
@@ -342,13 +342,9 @@ const getTruncatedLabel = (option: any) => {
   color: #9ca3af;
 }
 
-.selector,
 .selector .vs__dropdown-toggle {
-  height: 100%;
-}
-
-.selector .vs__dropdown-toggle {
-  padding: 7px 0;
+  min-height: 42px;
+  padding: 4px 0;
 }
 
 .selector .vs__dropdown-menu {
@@ -367,9 +363,13 @@ const getTruncatedLabel = (option: any) => {
 }
 
 .selector .vs__selected-options {
+  align-items: center;
+  min-width: 0;
+}
+
+.vs--multiple .vs__selected-options {
   align-items: flex-start;
   align-content: flex-start;
-  min-width: 0;
 }
 
 /* .selector .vs__search {
@@ -409,8 +409,8 @@ const getTruncatedLabel = (option: any) => {
 }
 
 .selector .vs__actions {
-  padding-top: 5px;
-  align-items: flex-start;
+  padding-top: 0;
+  align-items: center;
 }
 
 .selector.vs--open .vs__dropdown-toggle {

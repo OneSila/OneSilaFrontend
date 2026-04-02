@@ -4,6 +4,7 @@ import CompanyProfileTemplate from "./CompanyProfileTemplate.vue";
 import { ShowCompanyProfile } from './containers/show-company-profile';
 import { CompanyProfileEditForm } from "./containers/company-profile-edit-form";
 import { CompanyMembersList } from "./containers/company-members-list";
+// import McpApiKeyPanel from "./containers/mcp-api-key-panel/McpApiKeyPanel.vue";
 import { Button } from "../../../shared/components/atoms/button";
 import { ApolloSubscription } from "./../../../shared/components/molecules/apollo-subscription";
 import { meCompanySubscription } from "./../../../shared/api/subscriptions/me.js";
@@ -100,6 +101,11 @@ const getUsers = (result) => {
                                             @update-complete="handleUpdateComplete"/>
                   </div>
               </div>
+<!--              <McpApiKeyPanel-->
+<!--                class="mt-3"-->
+<!--                :company-data="getCompany(result)"-->
+<!--                @refresh-requested="handleRefreshRequested"-->
+<!--              />-->
               <div class="panel mt-3">
                 <CompanyMembersList :members="getUsers(result)" :language="getLanguage(result)" @refresh-requested="handleRefreshRequested" />
               </div>

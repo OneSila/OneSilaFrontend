@@ -8,7 +8,7 @@ import {useI18n} from "vue-i18n";
 const emit = defineEmits(['update:model-value']);
 const { t } = useI18n();
 
-const props = defineProps<{ modelValue?: File | null; formats?: string[] }>();
+const props = defineProps<{ modelValue?: File | Record<string, any> | null; formats?: string[] }>();
 const file = ref(props.modelValue);
 const uploadNewFileVisible = ref(false);
 const objectUrl = ref<string | null>(null);
