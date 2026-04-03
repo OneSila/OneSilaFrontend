@@ -42,6 +42,7 @@ onMounted(async () => {
     initialValue.value = exportNode ? {
       name: exportNode.name || '',
       kind: exportNode.kind,
+      ids: exportNode.parameters?.ids || [],
       type: exportNode.type,
       columns: exportNode.columns || [],
       language: exportNode.language || null,

@@ -558,6 +558,7 @@
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "Force Update",
       "import": "Import",
+      "export": "Export",
       "preview": "Preview",
       "download": "Download",
       "downloadConfirmation": "Download Confirmation",
@@ -6240,6 +6241,12 @@
         "downloadFile": "Download file",
         "openFeed": "Open feed"
       },
+      "selected": {
+        "title": "Selected records ({count})",
+        "subtitle": "These records will be included in the export scope.",
+        "loadError": "Failed to load the selected records preview.",
+        "empty": "No selected records could be loaded for preview."
+      },
       "alerts": {
         "createSuccess": "Export created.",
         "createError": "Failed to create export.",
@@ -6248,6 +6255,7 @@
         "updateError": "Failed to update export.",
         "resyncSuccess": "Export resync started.",
         "resyncError": "Failed to resync export.",
+        "selectedLimitExceeded": "You can export up to {count} selected records at a time.",
         "bulkDeleteSuccess": "Exports deleted.",
         "bulkDeleteError": "Failed to delete exports."
       }

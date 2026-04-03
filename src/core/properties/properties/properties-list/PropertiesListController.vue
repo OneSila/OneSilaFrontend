@@ -8,6 +8,7 @@ import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import {ref} from "vue";
 
 const { t } = useI18n();
@@ -50,7 +51,10 @@ const clearSelection = () => {
          :query-key="listingQueryKey"
          :fixed-filter-variables="{'isProductType': { exact: false }}">
       <template #bulkActions="{ selectedEntities }">
-        <AiBulkTranslator :type="'properties'" :selected-entities="selectedEntities" @started="clearSelection" />
+        <div class="flex items-center gap-2">
+          <AiBulkTranslator :type="'properties'" :selected-entities="selectedEntities" @started="clearSelection" />
+          <BulkExportAction kind="properties" :selected-entities="selectedEntities" />
+        </div>
       </template>
     </GeneralListing>
    </template>

@@ -9,6 +9,7 @@ import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import PropertySelectValuesMerge from './PropertySelectValuesMerge.vue';
 
 const { t } = useI18n();
@@ -62,6 +63,7 @@ const clearSelectionAndRefetch = (query) => {
             :selected-entities="selectedEntities"
             @started="clearSelection"
           />
+          <BulkExportAction kind="property_select_values" :selected-entities="selectedEntities" />
           <PropertySelectValuesMerge
             :selected-entities="selectedEntities"
             @merged="clearSelectionAndRefetch(query)"

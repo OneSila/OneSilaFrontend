@@ -45,6 +45,9 @@ const props = defineProps<{
 
 
 const emit = defineEmits(['refetched', 'assign-media', 'assign-medias']);
+defineSlots<{
+  bulkActions?: (scope: { selectedEntities: string[]; query: any }) => any;
+}>();
 const viewType = ref(props.defaultViewType || 'table');
 const selectedEntities = ref<string[]>([]);
 const selectedAssignedMedia = ref<any[]>([]);
@@ -554,6 +557,8 @@ const deleteAll = async (query) => {
                   <Button @click="deleteAll(query)" class="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     {{ t('shared.button.deleteAll') }}
                   </Button>
+
+                  <slot name="bulkActions" v-bind="{ selectedEntities, query }" />
                 </div>
 
                 <div v-if="viewType === 'table'" class="overflow-x-auto">

@@ -12,6 +12,7 @@ import { companyLanguagesQuery } from "../../../../shared/api/queries/languages.
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { TYPE_DOCUMENT } from "../../files/media";
 import { deleteFilesMutation } from "../../../../shared/api/mutations/media.js"
 
@@ -108,7 +109,11 @@ const handleRefeched = () => {
                           :bulk-delete-success-alert="t('media.documents.alert.toast.bulkDeleteSuccess')"
                           :bulk-delete-error-alert="t('media.documents.alert.toast.bulkDeleteError')"
                           @refetched="handleRefeched"
-                      />
+                      >
+                        <template #bulkActions="{ selectedEntities }">
+                          <BulkExportAction kind="documents" :selected-entities="selectedEntities" />
+                        </template>
+                      </FilesList>
                   </div>
               </div>
           </div>

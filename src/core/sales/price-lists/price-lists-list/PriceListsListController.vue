@@ -6,6 +6,7 @@ import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
 import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery} from "../configs";
 
 const { t } = useI18n();
@@ -39,7 +40,11 @@ const listingConfig = listingConfigConstructor(t, true);
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
-      />
+      >
+       <template #bulkActions="{ selectedEntities }">
+         <BulkExportAction kind="price_lists" :selected-entities="selectedEntities" />
+       </template>
+      </GeneralListing>
    </template>
   </GeneralTemplate>
 </template>

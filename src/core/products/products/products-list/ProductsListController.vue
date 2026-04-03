@@ -20,6 +20,7 @@ import { bulkRefreshInspectorMutation } from "../../../../shared/api/mutations/p
 import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import { BulkProductPropertyAssigner } from "../../../../shared/components/organisms/bulk=product-property-assigner";
 import { BulkProductWebsiteAssigner } from "../../../../shared/components/organisms/bulk=product-website-assigner";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { IntegrationTypes } from "../../../integrations/integrations/integrations";
 
 const { t } = useI18n();
@@ -31,7 +32,7 @@ const generalListingRef = ref<any>(null);
 const salesChannels = ref<any[]>([]);
 const bulkActionsVisibleCount = ref(1);
 const bulkActionsIndex = ref(0);
-const bulkActionsTotal = 7;
+const bulkActionsTotal = 8;
 
 const updateBulkActionsVisibleCount = () => {
   const width = window.innerWidth;
@@ -254,6 +255,13 @@ onBeforeUnmount(() => {
                   <Icon name="refresh" size="sm" class="mr-2 text-amber-600" />
                   {{ t('products.products.inspector.actions.bulkRefresh') }}
                 </button>
+              </div>
+
+              <div v-show="isBulkActionVisible(7)">
+                <BulkExportAction
+                  kind="products"
+                  :selected-entities="selectedEntities"
+                />
               </div>
             </div>
 

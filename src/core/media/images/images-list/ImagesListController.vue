@@ -9,6 +9,7 @@ import { imageQuery } from "../../../../shared/api/queries/media.js";
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { FieldType } from "../../../../shared/utils/constants";
 import { IMAGE_TYPE_COLOR, IMAGE_TYPE_MOOD, IMAGE_TYPE_PACK, TYPE_IMAGE } from "../../files/media";
 import { deleteImagesMutation } from "../../../../shared/api/mutations/media.js"
@@ -82,7 +83,11 @@ const handleRefeched = () => {
                                  :bulk-delete-mutation="deleteImagesMutation"
                                  :bulk-delete-success-alert="t('media.images.alert.toast.bulkDeleteSuccess')"
                                  :bulk-delete-error-alert="t('media.images.alert.toast.bulkDeleteError')"
-                                 @refetched="handleRefeched" />
+                                 @refetched="handleRefeched">
+                        <template #bulkActions="{ selectedEntities }">
+                          <BulkExportAction kind="images" :selected-entities="selectedEntities" />
+                        </template>
+                      </FilesList>
                   </div>
               </div>
           </div>

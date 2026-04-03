@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import apolloClient from '../../../../../apollo-client';
 import GeneralTemplate from '../../../../shared/templates/GeneralTemplate.vue';
 import { Breadcrumbs } from '../../../../shared/components/molecules/breadcrumbs';
@@ -10,13 +10,21 @@ import { Toast } from '../../../../shared/modules/toast';
 import { companyLanguagesQuery } from '../../../../shared/api/queries/languages.js';
 import { createExportMutation } from '../../../../shared/api/mutations/importsExports.js';
 import ExportForm from '../components/ExportForm.vue';
+import {
+  normalizeSelectedExportKind,
+  parseSelectedExportIds,
+  SELECTED_EXPORT_LIMIT,
+} from '../selectedExportConfig';
 
 const { t } = useI18n();
+const route = useRoute();
 const router = useRouter();
 
 const loading = ref(true);
 const submitting = ref(false);
 const languageOptions = ref<Array<{ code: string; name?: string; nameLocal?: string; nameTranslated?: string }>>([]);
+const initialValue = ref<Record<string, any> | null>(null);
+const lockKind = ref(false);
 
 onMounted(async () => {
   try {
@@ -25,6 +33,25 @@ onMounted(async () => {
       fetchPolicy: 'cache-first',
     });
     languageOptions.value = data?.companyLanguages || [];
+
+    const selectedKind = normalizeSelectedExportKind(route.query.kind);
+    const selectedIds = parseSelectedExportIds(route.query.ids);
+    const rawIds = Array.isArray(route.query.ids) ? route.query.ids[0] : route.query.ids;
+
+    if (selectedKind) {
+      initialValue.value = {
+        kind: selectedKind,
+        ids: selectedIds,
+      };
+      lockKind.value = true;
+    }
+
+    if (typeof rawIds === 'string' && rawIds.trim()) {
+      const requestedCount = rawIds.split(',').map((id) => id.trim()).filter((id) => id.length > 0).length;
+      if (requestedCount > SELECTED_EXPORT_LIMIT) {
+        Toast.error(t('importsExports.exports.alerts.selectedLimitExceeded', { count: SELECTED_EXPORT_LIMIT }));
+      }
+    }
   } catch (error) {
     console.error(error);
     Toast.error(t('importsExports.alerts.languagesLoadError'));
@@ -42,6 +69,7 @@ const handleSubmit = async (form: any) => {
       kind: form.kind,
       type: form.type,
       columns: form.columns.length ? form.columns : null,
+      ids: form.ids.length ? form.ids : null,
       language: form.language || null,
       isPeriodic: form.type === 'json_feed' ? form.isPeriodic : false,
       intervalHours: form.type === 'json_feed' && form.isPeriodic ? form.intervalHours : null,
@@ -102,7 +130,9 @@ const handleSubmit = async (form: any) => {
       <ExportForm
         v-if="!loading"
         mode="create"
+        :initial-value="initialValue"
         :language-options="languageOptions"
+        :lock-kind="lockKind"
         :submitting="submitting"
         @cancel="router.push({ name: 'importsExports.exports.list' })"
         @details="router.push({ name: 'importsExports.exports.list' })"
