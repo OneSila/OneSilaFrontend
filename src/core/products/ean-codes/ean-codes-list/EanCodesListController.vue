@@ -6,6 +6,7 @@ import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
 import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import {useRoute} from "vue-router";
 
@@ -41,7 +42,11 @@ const listingConfig = listingConfigConstructor(t, route.params.productId ? route
          :config="listingConfig"
          :query="listingQuery"
          :query-key="listingQueryKey"
-      />
+      >
+       <template #bulkActions="{ selectedEntities }">
+         <BulkExportAction kind="ean_codes" :selected-entities="selectedEntities" />
+       </template>
+      </GeneralListing>
    </template>
   </GeneralTemplate>
 </template>

@@ -8,6 +8,7 @@ import { videoQuery } from "../../../../shared/api/queries/media.js";
 import FilesSideBar from "../../files/containers/FilesSideBar.vue";
 import FilesList from "../../files/containers/FilesList.vue";
 import MediaCards from "../../files/containers/MediaCards.vue";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { ref } from "vue";
 import { TYPE_VIDEO } from "../../files/media";
 import { deleteVideosMutation } from "../../../../shared/api/mutations/media.js"
@@ -64,7 +65,11 @@ const handleRefeched = () => {
                                  :bulk-delete-success-alert="t('media.videos.alert.toast.bulkDeleteSuccess')"
                                  :bulk-delete-error-alert="t('media.videos.alert.toast.bulkDeleteError')"
                                  @refetched="handleRefeched"
-                      />
+                      >
+                        <template #bulkActions="{ selectedEntities }">
+                          <BulkExportAction kind="videos" :selected-entities="selectedEntities" />
+                        </template>
+                      </FilesList>
                   </div>
               </div>
           </div>

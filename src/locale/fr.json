@@ -14,6 +14,7 @@
       "fetchIssues": "Fetch Issues",
       "forceUpdate": "",
       "import": "Import",
+      "export": "",
       "preview": "",
       "saveAll": "Tout enregistrer",
       "createAndContinue": ""
@@ -3595,6 +3596,12 @@
         "downloadFile": "",
         "openFeed": ""
       },
+      "selected": {
+        "title": "",
+        "subtitle": "",
+        "loadError": "",
+        "empty": ""
+      },
       "alerts": {
         "createSuccess": "",
         "createError": "",
@@ -3603,6 +3610,7 @@
         "updateError": "",
         "resyncSuccess": "",
         "resyncError": "",
+        "selectedLimitExceeded": "",
         "bulkDeleteSuccess": "",
         "bulkDeleteError": ""
       }

@@ -308,6 +308,7 @@
       "refresh": "",
       "add": "Toevoegen",
       "download": "Downloaden",
+      "export": "",
       "uploadNew": "Uploaden",
       "create": "Aanmaken",
       "select": "Selecteer",
@@ -5314,6 +5315,12 @@
         "downloadFile": "",
         "openFeed": ""
       },
+      "selected": {
+        "title": "",
+        "subtitle": "",
+        "loadError": "",
+        "empty": ""
+      },
       "alerts": {
         "createSuccess": "",
         "createError": "",
@@ -5322,6 +5329,7 @@
         "updateError": "",
         "resyncSuccess": "",
         "resyncError": "",
+        "selectedLimitExceeded": "",
         "bulkDeleteSuccess": "",
         "bulkDeleteError": ""
       }

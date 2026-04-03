@@ -15,6 +15,7 @@ import { salesPriceListsQuerySelector } from '../../../../shared/api/queries/sal
 import { salesChannelsQuerySelector } from '../../../../shared/api/queries/salesChannels.js';
 import FormFieldShell from '../../components/FormFieldShell.vue';
 import ExportColumnsBuilder from './ExportColumnsBuilder.vue';
+import ExportSelectedRecords from './ExportSelectedRecords.vue';
 import {
   EXPORT_KIND_COLUMNS,
   EXPORT_KIND_DEFAULT_COLUMNS,
@@ -29,6 +30,7 @@ type SubmitAction = 'save' | 'continue';
 type ExportFormValue = {
   name: string;
   kind: string;
+  ids: string[];
   type: string;
   columns: string[];
   language: string | null;
@@ -52,9 +54,11 @@ const props = withDefaults(defineProps<{
   mode: 'create' | 'edit';
   initialValue?: Partial<ExportFormValue> | null;
   languageOptions: Array<{ code: string; name?: string; nameLocal?: string; nameTranslated?: string }>;
+  lockKind?: boolean;
   submitting?: boolean;
 }>(), {
   initialValue: null,
+  lockKind: false,
   submitting: false,
 });
 
@@ -69,6 +73,7 @@ const { t } = useI18n();
 const defaultFormState = (): ExportFormValue => ({
   name: '',
   kind: 'products',
+  ids: [],
   type: 'json_feed',
   columns: [...(EXPORT_KIND_DEFAULT_COLUMNS.products || [])],
   language: null,
@@ -96,10 +101,12 @@ const fieldErrors = reactive<Record<string, string | null>>({
 });
 
 const isEdit = computed(() => props.mode === 'edit');
+const isKindLocked = computed(() => isEdit.value || props.lockKind);
 const kindOptions = computed(() => getExportKindOptionsWithCurrent(t, form.kind));
 const typeOptions = computed(() => getExportTypeOptions(t));
 const languageSelectorOptions = computed(() => getLanguageOptions(props.languageOptions, true, t('importsExports.shared.none')));
-const allowedParameters = computed(() => (EXPORT_KIND_PARAMETERS[form.kind as keyof typeof EXPORT_KIND_PARAMETERS] || []).filter((name) => name !== 'ids'));
+const supportedParameters = computed(() => EXPORT_KIND_PARAMETERS[form.kind as keyof typeof EXPORT_KIND_PARAMETERS] || []);
+const allowedParameters = computed(() => supportedParameters.value.filter((name) => name !== 'ids'));
 
 const relationField = (
   name: string,
@@ -172,7 +179,7 @@ watch(
         return;
       }
 
-      if (!parameterVisible(key)) {
+      if (!supportedParameters.value.includes(key)) {
         (form as Record<string, any>)[key] = Array.isArray((form as Record<string, any>)[key]) ? [] : null;
       }
     });
@@ -238,13 +245,13 @@ const handleSubmit = (action: SubmitAction) => {
           </FormFieldShell>
         </div>
 
-        <FormFieldShell :label="t('importsExports.fields.kind')" required :hint="isEdit ? t('importsExports.exports.form.kindLocked') : null" :error="fieldErrors.kind">
+        <FormFieldShell :label="t('importsExports.fields.kind')" required :hint="isKindLocked ? t('importsExports.exports.form.kindLocked') : null" :error="fieldErrors.kind">
           <Selector
             v-model="form.kind"
             :options="kindOptions"
             label-by="label"
             value-by="value"
-            :disabled="isEdit"
+            :disabled="isKindLocked"
           />
         </FormFieldShell>
 
@@ -272,6 +279,8 @@ const handleSubmit = (action: SubmitAction) => {
       <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
         <ExportColumnsBuilder v-model="form.columns" :kind="form.kind" />
       </div>
+
+      <ExportSelectedRecords :kind="form.kind" :ids="form.ids" />
 
       <div v-if="form.type === 'json_feed'" class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
         <div class="grid gap-6 md:grid-cols-2">

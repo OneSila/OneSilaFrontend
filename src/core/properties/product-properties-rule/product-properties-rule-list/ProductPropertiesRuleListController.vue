@@ -10,6 +10,7 @@ import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, lis
 import apolloClient from "../../../../../apollo-client";
 import {propertiesQuerySelector} from "../../../../shared/api/queries/properties.js";
 import { computed, onMounted, ref } from "vue";
+import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 
 const { t } = useI18n();
 const productTypeId = ref<string | null>(null);
@@ -58,7 +59,11 @@ onMounted(fetchProductType);
          :query="listingQuery"
          :query-key="listingQueryKey"
          :fixed-filter-variables="fixedFilters"
-      />
+      >
+       <template #bulkActions="{ selectedEntities }">
+         <BulkExportAction kind="rules" :selected-entities="selectedEntities" />
+       </template>
+      </GeneralListing>
    </template>
   </GeneralTemplate>
 </template>
