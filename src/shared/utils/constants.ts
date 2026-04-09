@@ -134,7 +134,7 @@ export const PropertyTypes = {
   MULTISELECT: 'MULTISELECT',
 };
 
-export const flagMapping: { [key: string]: string } = {
+const legacyFlagMapping: { [key: string]: string } = {
   'en': '🇬🇧', // English (UK)
   'fr': '🇫🇷', // French
   'nl': '🇳🇱', // Dutch
@@ -173,6 +173,49 @@ export const flagMapping: { [key: string]: string } = {
   'vi': '🇻🇳', // Vietnamese
   'fa': '🇮🇷', // Persian (Iran)
   'ur': '🇵🇰', // Urdu (Pakistan)
+};
+
+export const flagMapping: { [key: string]: string } = {
+  'en-gb': '🇬🇧', // English (United Kingdom)
+  'en-us': '🇺🇸', // English (United States)
+  'fr-fr': '🇫🇷', // French (France)
+  'nl-nl': '🇳🇱', // Dutch (Netherlands)
+  'de-de': '🇩🇪', // German (Germany)
+  'it-it': '🇮🇹', // Italian (Italy)
+  'es-es': '🇪🇸', // Spanish (Spain)
+  'pt-pt': '🇵🇹', // Portuguese (Portugal)
+  'pl-pl': '🇵🇱', // Polish (Poland)
+  'ro-ro': '🇷🇴', // Romanian (Romania)
+  'bg-bg': '🇧🇬', // Bulgarian (Bulgaria)
+  'hr-hr': '🇭🇷', // Croatian (Croatia)
+  'cs-cz': '🇨🇿', // Czech (Czech Republic)
+  'da-dk': '🇩🇰', // Danish (Denmark)
+  'et-ee': '🇪🇪', // Estonian (Estonia)
+  'fi-fi': '🇫🇮', // Finnish (Finland)
+  'el-gr': '🇬🇷', // Greek (Greece)
+  'hu-hu': '🇭🇺', // Hungarian (Hungary)
+  'lv-lv': '🇱🇻', // Latvian (Latvia)
+  'lt-lt': '🇱🇹', // Lithuanian (Lithuania)
+  'sk-sk': '🇸🇰', // Slovak (Slovakia)
+  'sl-si': '🇸🇮', // Slovenian (Slovenia)
+  'sv-se': '🇸🇪', // Swedish (Sweden)
+  'th-th': '🇹🇭', // Thai (Thailand)
+  'ja-jp': '🇯🇵', // Japanese (Japan)
+  'zh-cn': '🇨🇳', // Chinese (Simplified)
+  'hi-in': '🇮🇳', // Hindi (India)
+  'pt-br': '🇧🇷', // Portuguese (Brazil)
+  'ru-ru': '🇷🇺', // Russian (Russia)
+  'af-za': '🇿🇦', // Afrikaans (South Africa)
+  'ar-sa': '🇸🇦', // Arabic (Saudi Arabia)
+  'he-il': '🇮🇱', // Hebrew (Israel)
+  'tr-tr': '🇹🇷', // Turkish (Turkey)
+  'id-id': '🇮🇩', // Indonesian (Indonesia)
+  'ko-kr': '🇰🇷', // Korean (South Korea)
+  'ms-my': '🇲🇾', // Malay (Malaysia)
+  'vi-vn': '🇻🇳', // Vietnamese (Vietnam)
+  'fa-ir': '🇮🇷', // Persian (Iran)
+  'ur-pk': '🇵🇰', // Urdu (Pakistan)
+  ...legacyFlagMapping,
 };
 
 
@@ -249,6 +292,11 @@ export const PROGRESS_BAR_UI_BY_STATUS: Record<string, ProgressBarUi> = {
     labelKey: 'integrations.show.products.statuses.pendingApproval',
     labelColor: 'text-yellow-500',
     barColor: 'bg-yellow-400',
+  },
+  STATUS_PENDING_EXTERNAL_DOCUMENTS: {
+    labelKey: 'integrations.show.products.statuses.pendingExternalDocuments',
+    labelColor: 'text-orange-600',
+    barColor: 'bg-orange-500',
   },
   PENDING_CREATION: {
     labelKey: 'shared.labels.pendingCreation',

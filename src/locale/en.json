@@ -4643,6 +4643,7 @@
         "statuses": {
           "partiallyListed": "Approved on main marketplace",
           "pendingApproval": "Pending external approval",
+          "pendingExternalDocuments": "Pending external documents",
           "approvalRejected": "Rejected by external approval"
         }
       },

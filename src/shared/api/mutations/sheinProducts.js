@@ -25,12 +25,3 @@ export const deleteSheinProductCategoryMutation = gql`
     }
   }
 `;
-
-export const createSheinProductMutation = gql`
-  mutation createSheinProduct(
-    $product: ProductPartialInput!
-    $salesChannel: SheinSalesChannelPartialInput!
-  ) {
-    createSheinProduct(product: $product, salesChannel: $salesChannel)
-  }
-`;

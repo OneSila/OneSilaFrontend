@@ -1841,6 +1841,7 @@
         "statuses": {
           "partiallyListed": "",
           "pendingApproval": "",
+          "pendingExternalDocuments": "",
           "approvalRejected": ""
         }
       },

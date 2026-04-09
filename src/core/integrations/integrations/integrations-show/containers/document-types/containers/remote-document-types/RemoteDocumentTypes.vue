@@ -25,7 +25,7 @@ const listingConfig = remoteDocumentTypesListingConfigConstructor(t, props.id, p
         :config="listingConfig"
         :query="listingQuery"
         :query-key="listingQueryKey"
-        :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } } }"
+        :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } }, uploadable: {exact: true} }"
         @pull-data="emit('pull-data')"
       />
     </template>

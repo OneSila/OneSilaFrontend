@@ -599,14 +599,6 @@ export const bulkUpdateRemoteLanguagesMutation = gql`
   }
 `;
 
-export const bulkCreateSheinProductFromAssignsMutation = gql`
-  mutation bulkCreateSheinProductFromAssigns(
-    $assigns: [SalesChannelViewAssignPartialInput!]!
-  ) {
-    bulkCreateSheinProductFromAssigns(assigns: $assigns)
-  }
-`;
-
 export const bulkResyncAmazonProductFromAssignsMutation = gql`
   mutation bulkResyncAmazonProductFromAssigns(
     $assigns: [SalesChannelViewAssignPartialInput!]!
