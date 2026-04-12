@@ -226,7 +226,7 @@ const fetchSelectedIssueProductIds = async () => {
   }
 
   const requestId = ++selectedIssueProductIdsRequestId;
-  const variationIds: string[] = [];
+  const issueProductIds: string[] = [sourceProduct.id];
   let after: string | null = null;
   let hasNextPage = true;
 
@@ -249,7 +249,7 @@ const fetchSelectedIssueProductIds = async () => {
       const connection = data?.configurableVariations;
       const edges = connection?.edges ?? [];
 
-      variationIds.push(
+      issueProductIds.push(
         ...edges
           .map((edge: any) => edge?.node?.variation?.id)
           .filter((id: string | null | undefined): id is string => Boolean(id)),
@@ -259,7 +259,7 @@ const fetchSelectedIssueProductIds = async () => {
       after = connection?.pageInfo?.endCursor ?? null;
     }
 
-    selectedIssueProductIds.value = Array.from(new Set(variationIds));
+    selectedIssueProductIds.value = Array.from(new Set(issueProductIds));
   } catch (_error) {
     if (requestId === selectedIssueProductIdsRequestId) {
       selectedIssueProductIds.value = [];
