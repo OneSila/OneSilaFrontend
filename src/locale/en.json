@@ -1153,7 +1153,8 @@
         "copy": "Copy key",
         "regenerate": "Regenerate key",
         "activate": "Activate key",
-        "deactivate": "Deactivate key"
+        "deactivate": "Deactivate key",
+        "whatIsThisUsedFor": "What is this used for?"
       },
       "status": {
         "active": "Active",
@@ -1182,6 +1183,27 @@
         "copySuccess": "Company API token copied to clipboard.",
         "copyError": "We could not copy the company API token. Please try again.",
         "copyUnavailable": "The real key is only available immediately after create or regenerate. Regenerate the key if you need a new copy."
+      },
+      "info": {
+        "eyebrow": "Company API token",
+        "title": "What is this used for?",
+        "description": "Use this token as a bearer token when connecting external MCP clients or protected JSON export feeds to this workspace.",
+        "tabs": {
+          "claude": "Claude",
+          "exportFeed": "Export Feed"
+        },
+        "claude": {
+          "title": "Claude Desktop MCP setup",
+          "instructions": "Open Settings > Developer > Edit Config, then add this section under the mcpServers key.",
+          "fullExampleTitle": "Full config example",
+          "fullExampleDisclaimer": "This full example can overwrite existing Claude settings. Merge it into your current config instead of replacing the whole file unless that is intentional."
+        },
+        "exportFeed": {
+          "title": "JSON export feed requests",
+          "description": "Export feed URLs require an Authorization header with this token as a bearer token. Replace the feed URL placeholder with the Feed URL from the export page.",
+          "pythonTitle": "Python example",
+          "phpTitle": "PHP example"
+        }
       }
     },
     "actions": {

@@ -6,6 +6,7 @@ import { MeCompanyData } from '../../meCompanyData';
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { TextInput } from '../../../../../shared/components/atoms/input-text';
 import { Button } from '../../../../../shared/components/atoms/button';
+import { Modal } from '../../../../../shared/components/atoms/modal';
 import { Toast } from '../../../../../shared/modules/toast';
 import { processGraphQLErrors } from '../../../../../shared/utils';
 import {
@@ -31,6 +32,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const isSubmitting = ref(false);
+const showInfoModal = ref(false);
+const activeInfoTab = ref<'claude' | 'exportFeed'>('claude');
 const rawKey = ref<string | null>(null);
 const localApiKey = ref(props.companyData.mcpApiKey ? { ...props.companyData.mcpApiKey } : null);
 
@@ -51,9 +54,82 @@ const keyStatusLabel = computed(() => (
     ? t('companyProfile.mcpApiKey.status.active')
     : t('companyProfile.mcpApiKey.status.inactive')
 ));
+const infoTabs = computed<{ name: 'claude' | 'exportFeed'; label: string }[]>(() => [
+  { name: 'claude', label: t('companyProfile.mcpApiKey.info.tabs.claude') },
+  { name: 'exportFeed', label: t('companyProfile.mcpApiKey.info.tabs.exportFeed') },
+]);
 const neutralActionClass = 'inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-white-light dark:hover:bg-slate-800';
 const primaryActionClass = 'inline-flex items-center justify-center rounded-2xl border border-slate-900 bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200';
 const dangerActionClass = 'inline-flex items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-100 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20';
+const codeBlockClass = 'mt-3 max-h-80 overflow-auto rounded-2xl border border-slate-200 bg-slate-950 p-4 text-xs leading-5 text-slate-100 dark:border-slate-700';
+const appOrigin = computed(() => (typeof window !== 'undefined' ? window.location.origin : 'https://hostname'));
+const sampleApiToken = computed(() => rawKey.value || 'YOUR_API_TOKEN');
+const exportFeedUrl = 'https://hostname/path/to/feed/feed_key';
+const mcpServerConfig = computed(() => ({
+  command: 'npx',
+  args: [
+    'mcp-remote',
+    `${appOrigin.value}/mcp/`,
+    '--header',
+    'Authorization:${MCP_AUTH_TOKEN}',
+  ],
+  env: {
+    MCP_AUTH_TOKEN: `Bearer ${sampleApiToken.value}`,
+  },
+}));
+const claudeServerSnippet = computed(() => JSON.stringify(mcpServerConfig.value, null, 2)
+  .split('\n')
+  .map((line, index) => (index === 0 ? `"onesila": ${line}` : line))
+  .join('\n'));
+const claudeFullConfigSnippet = computed(() => JSON.stringify({
+  mcpServers: {
+    onesila: mcpServerConfig.value,
+  },
+  preferences: {
+    coworkScheduledTasksEnabled: true,
+    ccdScheduledTasksEnabled: true,
+    sidebarMode: 'chat',
+    coworkWebSearchEnabled: true,
+  },
+}, null, 2));
+const pythonExportFeedSnippet = computed(() => `import requests
+
+feed_url = "${exportFeedUrl}"
+api_token = "${sampleApiToken.value}"
+
+response = requests.get(
+    feed_url,
+    headers={"Authorization": f"Bearer {api_token}"},
+    timeout=30,
+)
+response.raise_for_status()
+
+data = response.json()
+print(data)`);
+const phpExportFeedSnippet = computed(() => `<?php
+
+$feedUrl = '${exportFeedUrl}';
+$apiToken = '${sampleApiToken.value}';
+
+$ch = curl_init($feedUrl);
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => [
+        'Authorization: Bearer ' . $apiToken,
+    ],
+]);
+
+$response = curl_exec($ch);
+$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+if ($response === false || $statusCode >= 400) {
+    throw new RuntimeException(curl_error($ch) ?: 'Export feed request failed.');
+}
+
+curl_close($ch);
+
+$data = json_decode($response, true);
+print_r($data);`);
 
 const syncLocalState = (response?: McpApiKeyMutationResponse | null) => {
   if (!response) {
@@ -127,6 +203,16 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
             </p>
           </div>
         </div>
+
+        <Button
+          :custom-class="neutralActionClass"
+          @click="showInfoModal = true"
+        >
+          <span class="mr-2">
+            <Icon name="info-circle" class="h-4 w-4" />
+          </span>
+          {{ t('companyProfile.mcpApiKey.actions.whatIsThisUsedFor') }}
+        </Button>
       </div>
     </div>
 
@@ -230,5 +316,94 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
         </div>
       </template>
     </div>
+
+    <Modal v-if="showInfoModal" v-model="showInfoModal" @closed="showInfoModal = false">
+      <div class="w-[min(62rem,calc(100vw-2rem))] rounded-3xl bg-white p-6 shadow-xl dark:bg-slate-900 sm:p-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold uppercase text-primary">
+              {{ t('companyProfile.mcpApiKey.info.eyebrow') }}
+            </p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-900 dark:text-white-light">
+              {{ t('companyProfile.mcpApiKey.info.title') }}
+            </h2>
+            <p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-300">
+              {{ t('companyProfile.mcpApiKey.info.description') }}
+            </p>
+          </div>
+
+          <Button
+            :custom-class="neutralActionClass"
+            @click="showInfoModal = false"
+          >
+            {{ t('shared.button.cancel') }}
+          </Button>
+        </div>
+
+        <div class="mt-6 border-b border-slate-200 dark:border-slate-700">
+          <div class="flex gap-2 overflow-x-auto">
+            <button
+              v-for="tab in infoTabs"
+              :key="tab.name"
+              type="button"
+              class="border-b-2 px-4 py-3 text-sm font-semibold transition"
+              :class="activeInfoTab === tab.name ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white-light'"
+              @click="activeInfoTab = tab.name"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6 max-h-[65vh] overflow-y-auto pr-1">
+          <div v-if="activeInfoTab === 'claude'" class="space-y-5">
+            <section class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/40">
+              <h3 class="text-lg font-semibold text-slate-900 dark:text-white-light">
+                {{ t('companyProfile.mcpApiKey.info.claude.title') }}
+              </h3>
+              <p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-300">
+                {{ t('companyProfile.mcpApiKey.info.claude.instructions') }}
+              </p>
+              <pre :class="codeBlockClass"><code>{{ claudeServerSnippet }}</code></pre>
+            </section>
+
+            <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+              <h3 class="text-lg font-semibold">
+                {{ t('companyProfile.mcpApiKey.info.claude.fullExampleTitle') }}
+              </h3>
+              <p class="mt-3 text-sm leading-6">
+                {{ t('companyProfile.mcpApiKey.info.claude.fullExampleDisclaimer') }}
+              </p>
+              <pre :class="codeBlockClass"><code>{{ claudeFullConfigSnippet }}</code></pre>
+            </section>
+          </div>
+
+          <div v-else class="space-y-5">
+            <section class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/40">
+              <h3 class="text-lg font-semibold text-slate-900 dark:text-white-light">
+                {{ t('companyProfile.mcpApiKey.info.exportFeed.title') }}
+              </h3>
+              <p class="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-300">
+                {{ t('companyProfile.mcpApiKey.info.exportFeed.description') }}
+              </p>
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/40">
+              <h3 class="text-lg font-semibold text-slate-900 dark:text-white-light">
+                {{ t('companyProfile.mcpApiKey.info.exportFeed.pythonTitle') }}
+              </h3>
+              <pre :class="codeBlockClass"><code>{{ pythonExportFeedSnippet }}</code></pre>
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/40">
+              <h3 class="text-lg font-semibold text-slate-900 dark:text-white-light">
+                {{ t('companyProfile.mcpApiKey.info.exportFeed.phpTitle') }}
+              </h3>
+              <pre :class="codeBlockClass"><code>{{ phpExportFeedSnippet }}</code></pre>
+            </section>
+          </div>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
