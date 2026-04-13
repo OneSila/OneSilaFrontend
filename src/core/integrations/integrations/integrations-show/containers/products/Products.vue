@@ -8,7 +8,6 @@ import { Link } from "../../../../../../shared/components/atoms/link";
 import { AmazonButtonsInfo } from "../../../../../../shared/components/atoms/amazon-buttons-info";
 import { productsSearchConfigConstructor, productsListingConfigConstructor, listingQuery, listingQueryKey } from "./configs";
 import {
-  bulkCreateSheinProductFromAssignsMutation,
   bulkRefreshAmazonLatestIssuesFromAssignsMutation,
   bulkResyncAmazonProductFromAssignsMutation,
   bulkUpdateSheinProductFromAssignsMutation,
@@ -93,37 +92,6 @@ const confirmBulkAction = async ({
 
   const result = await swalWithBootstrapButtons.fire(defaultSwalOptions as SweetAlertOptions);
   return result.isConfirmed;
-};
-
-const handleBulkSheinCreate = async (selectedEntities: string[]) => {
-  if (!selectedEntities.length) return;
-
-  const confirmed = await confirmBulkAction({
-    title: t('integrations.shein.actions.bulkCreate.title'),
-    text: t('integrations.shein.actions.bulkCreate.description'),
-    confirmButtonText: t('integrations.shein.actions.bulkCreate.confirmButtonText'),
-  });
-  if (!confirmed) return;
-
-  const assigns = selectedEntities.map((id) => ({ id }));
-
-  try {
-    const { data } = await apolloClient.mutate({
-      mutation: bulkCreateSheinProductFromAssignsMutation,
-      variables: { assigns },
-    });
-
-    const ok = data?.bulkCreateSheinProductFromAssigns;
-
-    if (ok) {
-      Toast.success(t('integrations.shein.actions.bulkCreate.success'));
-    } else {
-      Toast.error(t('integrations.shein.actions.bulkCreate.noneEligible'));
-    }
-    clearSelection();
-  } catch (e) {
-    displayApolloError(e);
-  }
 };
 
 const handleBulkResync = async (selectedEntities: string[]) => {
@@ -329,15 +297,6 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
               >
                 <Icon name="arrows-rotate" size="sm" class="mr-2 text-fuchsia-600" />
                 {{ t('integrations.shein.actions.bulkUpdate.title') }}
-              </button>
-              <button
-                v-if="type == IntegrationTypes.Shein"
-                class="inline-flex items-center rounded bg-pink-50 px-4 py-1 text-sm font-semibold text-pink-800 shadow-sm ring-1 ring-inset ring-pink-300 hover:bg-pink-100 disabled:opacity-50"
-                :disabled="!selectedEntities.length"
-                @click="handleBulkSheinCreate(selectedEntities)"
-              >
-                <Icon name="cloud-upload" size="sm" class="mr-2 text-pink-600" />
-                {{ t('integrations.shein.actions.bulkCreate.title') }}
               </button>
             </div>
           </div>

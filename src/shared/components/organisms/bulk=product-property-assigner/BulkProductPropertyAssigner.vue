@@ -43,7 +43,6 @@ const propertyField = computed(() => ({
   labelBy: 'name',
   valueBy: 'id',
   query: propertiesQuerySelector,
-  queryVariables: {filter: {isProductType: {exact: false}}},
   dataKey: 'properties',
   isEdge: true,
   multiple: false,

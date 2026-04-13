@@ -822,7 +822,8 @@
         "copy": "",
         "regenerate": "",
         "activate": "",
-        "deactivate": ""
+        "deactivate": "",
+        "whatIsThisUsedFor": ""
       },
       "status": {
         "active": "",
@@ -851,6 +852,27 @@
         "copySuccess": "",
         "copyError": "",
         "copyUnavailable": ""
+      },
+      "info": {
+        "eyebrow": "",
+        "title": "",
+        "description": "",
+        "tabs": {
+          "claude": "",
+          "exportFeed": ""
+        },
+        "claude": {
+          "title": "",
+          "instructions": "",
+          "fullExampleTitle": "",
+          "fullExampleDisclaimer": ""
+        },
+        "exportFeed": {
+          "title": "",
+          "description": "",
+          "pythonTitle": "",
+          "phpTitle": ""
+        }
       }
     },
     "actions": {
@@ -3810,6 +3832,7 @@
         "statuses": {
           "partiallyListed": "",
           "pendingApproval": "",
+          "pendingExternalDocuments": "",
           "approvalRejected": ""
         }
       },

@@ -19,7 +19,6 @@ import { IntegrationTypes } from '../../../../../../integrations/integrations/in
 import { sheinChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
 import SheinStatusSection from './components/SheinStatusSection.vue';
 import { refreshLatestSheinIssuesMutation, updateSheinProductMutation } from '../../../../../../../shared/api/mutations/salesChannels.js';
-import { createSheinProductMutation } from '../../../../../../../shared/api/mutations/sheinProducts.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
 import Swal from 'sweetalert2';
@@ -438,11 +437,7 @@ const onFetchIssuesSuccess = () => {
 
 const onForceUpdateSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.forceUpdateSuccess'));
-};
-
-const onCreateSuccess = () => {
-  Toast.success(t('shared.alert.toast.submitSuccessCreate'));
-  fetchSheinRemoteProduct();
+  void fetchSheinRemoteProduct();
 };
 
 const onError = (error) => {
@@ -481,10 +476,8 @@ const onError = (error) => {
               :sales-channel-id="selectedSheinSalesChannelId"
               :remote-product-id="selectedSheinRemoteProductId"
               :refresh-latest-shein-issues-mutation="refreshLatestSheinIssuesMutation"
-              :create-shein-product-mutation="createSheinProductMutation"
               :update-shein-product-mutation="updateSheinProductMutation"
               @fetch-issues-success="onFetchIssuesSuccess"
-              @create-success="onCreateSuccess"
               @force-update-success="onForceUpdateSuccess"
               @error="onError"
             />

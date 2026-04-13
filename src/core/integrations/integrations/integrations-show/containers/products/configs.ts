@@ -19,6 +19,7 @@ const getStatusBadgeMap = (t: Function) => ({
   PENDING_CREATION: { text: t('shared.labels.pendingCreation'), color: 'blue' },
   PARTIALLY_LISTED: { text: t('integrations.show.products.statuses.partiallyListed'), color: 'orange' },
   PENDING_APPROVAL: { text: t('integrations.show.products.statuses.pendingApproval'), color: 'yellow' },
+  STATUS_PENDING_EXTERNAL_DOCUMENTS: { text: t('integrations.show.products.statuses.pendingExternalDocuments'), color: 'orange' },
   APPROVAL_REJECTED: { text: t('integrations.show.products.statuses.approvalRejected'), color: 'red' },
 });
 
@@ -94,6 +95,7 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId: str
         { label: t('shared.labels.pendingCreation'), value: 'PENDING_CREATION' },
         { label: t('integrations.show.products.statuses.partiallyListed'), value: 'PARTIALLY_LISTED' },
         { label: t('integrations.show.products.statuses.pendingApproval'), value: 'PENDING_APPROVAL' },
+        { label: t('integrations.show.products.statuses.pendingExternalDocuments'), value: 'STATUS_PENDING_EXTERNAL_DOCUMENTS' },
         { label: t('integrations.show.products.statuses.approvalRejected'), value: 'APPROVAL_REJECTED' },
       ],
       removable: true,
