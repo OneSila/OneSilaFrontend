@@ -3303,6 +3303,43 @@
           "exportFeed": ""
         },
         "claude": {
+          "requirements": {
+            "title": "",
+            "description": "",
+            "checkFirstTitle": "",
+            "checkFirstDescription": "",
+            "skipIfVersions": "",
+            "nodeDownloadLabel": "",
+            "tabs": {
+              "mac": "",
+              "windows": ""
+            },
+            "mac": {
+              "title": "",
+              "steps": {
+                "openTerminal": "",
+                "runArchitectureCommand": "",
+                "chooseArchitecture": "",
+                "downloadInstaller": "",
+                "runInstaller": "",
+                "verifyAgain": ""
+              },
+              "appleSilicon": "",
+              "intel": ""
+            },
+            "windows": {
+              "title": "",
+              "steps": {
+                "openCommandPrompt": "",
+                "openSettings": "",
+                "openAbout": "",
+                "chooseInstaller": "",
+                "downloadInstaller": "",
+                "runInstaller": "",
+                "verifyAgain": ""
+              }
+            }
+          },
           "title": "",
           "instructions": "",
           "fullExampleTitle": "",
@@ -3311,6 +3348,7 @@
         "exportFeed": {
           "title": "",
           "description": "",
+          "curlTitle": "",
           "pythonTitle": "",
           "phpTitle": ""
         }
