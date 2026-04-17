@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Modal } from '../../../shared/components/atoms/modal';
 import { Card } from '../../../shared/components/atoms/card';
 import { SecondaryButton } from '../../../shared/components/atoms/button-secondary';
+import { RecursiveAccordion } from '../../../shared/components/molecules/recursive-accordion';
 
 const props = defineProps<{
   modelValue: boolean;
@@ -13,14 +13,6 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue']);
 const { t } = useI18n();
-
-const formattedValue = computed(() => {
-  try {
-    return JSON.stringify(props.value ?? {}, null, 2);
-  } catch (_error) {
-    return String(props.value ?? '');
-  }
-});
 </script>
 
 <template>
@@ -36,7 +28,9 @@ const formattedValue = computed(() => {
         </SecondaryButton>
       </div>
 
-      <pre class="mt-4 max-h-[65vh] overflow-auto rounded-xl bg-slate-950 p-4 text-xs text-slate-100">{{ formattedValue }}</pre>
+      <div class="mt-4 max-h-[65vh] overflow-auto rounded-xl bg-slate-50 p-4">
+        <RecursiveAccordion :value="value" :start-expanded="true" />
+      </div>
     </Card>
   </Modal>
 </template>

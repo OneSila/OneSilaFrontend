@@ -1,5 +1,17 @@
 export const routes = [
   {
+    path: '/imports_exports/ai-imports',
+    name: 'importsExports.aiImports.list',
+    meta: { title: 'importsExports.aiImports.title' },
+    component: () => import('./ai-imports/ai-imports-list/AIImportsListController.vue'),
+  },
+  {
+    path: '/imports_exports/ai-imports/:id',
+    name: 'importsExports.aiImports.show',
+    meta: { title: 'importsExports.aiImports.show.title' },
+    component: () => import('./ai-imports/ai-import-show/AIImportShowController.vue'),
+  },
+  {
     path: '/imports_exports/mapped-imports',
     name: 'importsExports.mappedImports.list',
     meta: { title: 'importsExports.mappedImports.title' },

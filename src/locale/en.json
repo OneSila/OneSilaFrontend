@@ -6109,7 +6109,11 @@
       "none": "None",
       "unnamed": "Unnamed",
       "source": "Source",
-      "jsonViewerHint": "Structured values are shown as formatted JSON for easier review."
+      "jsonViewerHint": "Structured values are shown in expandable sections for easier review.",
+      "emptyValue": "Empty value",
+      "emptyArray": "No items",
+      "emptyObject": "No fields",
+      "item": "Item"
     },
     "placeholders": {
       "intervalHours": "e.g. 24",
@@ -6241,6 +6245,44 @@
         "resyncError": "Failed to resync mapped import.",
         "bulkDeleteSuccess": "Mapped imports deleted.",
         "bulkDeleteError": "Failed to delete mapped imports."
+      }
+    },
+    "aiImports": {
+      "title": "AI Imports",
+      "show": {
+        "title": "AI Import Details"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "brokenRecords": "Broken Records"
+      },
+      "fields": {
+        "tool": "Tool",
+        "toolName": "Tool name",
+        "assignedViews": "Assigned views"
+      },
+      "sections": {
+        "payloadContent": "Payload Content",
+        "responseContent": "Response Content"
+      },
+      "empty": {
+        "assignedViews": "No assigned views"
+      },
+      "tools": {
+        "GET_COMPANY_DETAILS": "Get company details",
+        "SEARCH_PRODUCTS": "Search products",
+        "GET_PRODUCT": "Get product",
+        "SEARCH_SALES_CHANNELS": "Search sales channels",
+        "CREATE_PRODUCT": "Create product",
+        "UPSERT_PRODUCT": "Upsert product",
+        "SEARCH_PROPERTIES": "Search properties",
+        "GET_PROPERTY": "Get property",
+        "SEARCH_PROPERTY_SELECT_VALUES": "Search property select values",
+        "GET_PROPERTY_SELECT_VALUE": "Get property select value",
+        "CREATE_PROPERTY": "Create property",
+        "EDIT_PROPERTY": "Edit property",
+        "CREATE_PROPERTY_SELECT_VALUE": "Create property select value",
+        "EDIT_PROPERTY_SELECT_VALUE": "Edit property select value"
       }
     },
     "exports": {

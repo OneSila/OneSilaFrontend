@@ -80,6 +80,10 @@ export const navSections: NavSection[] = [
                         route: { name: 'importsExports.exports.list' },
                         title: 'importsExports.exports.title',
                     },
+                    {
+                        route: { name: 'importsExports.aiImports.list' },
+                        title: 'importsExports.aiImports.title',
+                    },
                 ]
             },
         ]

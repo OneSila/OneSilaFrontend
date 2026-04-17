@@ -24,7 +24,7 @@ import { Toast } from '../../../../shared/modules/toast';
 import { getLanguageLabel, getStatusBadgeMap } from '../../configs';
 import { mappedImportSubscription } from '../../../../shared/api/subscriptions/importsExports.js';
 import { deleteMappedImportMutation, resyncMappedImportMutation } from '../../../../shared/api/mutations/importsExports.js';
-import MappedImportBrokenRecordsTab from '../components/MappedImportBrokenRecordsTab.vue';
+import ImportBrokenRecordsTab from '../../components/ImportBrokenRecordsTab.vue';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -215,7 +215,7 @@ onMounted(async () => {
 
               <template #brokenRecords>
                 <div class="p-4">
-                  <MappedImportBrokenRecordsTab :import-process-id="getMappedImportNode(result).proxyId" />
+                  <ImportBrokenRecordsTab :import-process-id="getMappedImportNode(result).proxyId" />
                 </div>
               </template>
             </Tabs>

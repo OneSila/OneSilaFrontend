@@ -3470,7 +3470,11 @@
       "none": "",
       "unnamed": "",
       "source": "",
-      "jsonViewerHint": ""
+      "jsonViewerHint": "",
+      "emptyValue": "",
+      "emptyArray": "",
+      "emptyObject": "",
+      "item": ""
     },
     "placeholders": {
       "intervalHours": "",
@@ -3602,6 +3606,44 @@
         "resyncError": "",
         "bulkDeleteSuccess": "",
         "bulkDeleteError": ""
+      }
+    },
+    "aiImports": {
+      "title": "",
+      "show": {
+        "title": ""
+      },
+      "tabs": {
+        "overview": "",
+        "brokenRecords": ""
+      },
+      "fields": {
+        "tool": "",
+        "toolName": "",
+        "assignedViews": ""
+      },
+      "sections": {
+        "payloadContent": "",
+        "responseContent": ""
+      },
+      "empty": {
+        "assignedViews": ""
+      },
+      "tools": {
+        "GET_COMPANY_DETAILS": "",
+        "SEARCH_PRODUCTS": "",
+        "GET_PRODUCT": "",
+        "SEARCH_SALES_CHANNELS": "",
+        "CREATE_PRODUCT": "",
+        "UPSERT_PRODUCT": "",
+        "SEARCH_PROPERTIES": "",
+        "GET_PROPERTY": "",
+        "SEARCH_PROPERTY_SELECT_VALUES": "",
+        "GET_PROPERTY_SELECT_VALUE": "",
+        "CREATE_PROPERTY": "",
+        "EDIT_PROPERTY": "",
+        "CREATE_PROPERTY_SELECT_VALUE": "",
+        "EDIT_PROPERTY_SELECT_VALUE": ""
       }
     },
     "exports": {
