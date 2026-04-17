@@ -526,10 +526,10 @@ export const aiImportsListingConfigConstructor = (t: Function): ListingConfig =>
       name: 'tool',
       type: FieldType.Badge,
       badgeMap: getMcpToolBadgeMap(t),
-      accessor: (node) => node.tool || {
+      accessor: (node) => ({
         text: getMcpToolLabel(t, node.tool, node.toolName),
         color: 'indigo',
-      },
+      }),
     },
     { name: 'percentage', type: FieldType.Text, accessor: (node) => `${node.percentage ?? 0}%` },
     { name: 'totalRecords', type: FieldType.Text },
