@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import apolloClient from '../../../../../../apollo-client';
-import { MeCompanyData } from '../../meCompanyData';
+import { MeData } from '../../../user/meData';
 import { Icon } from '../../../../../shared/components/atoms/icon';
 import { TextInput } from '../../../../../shared/components/atoms/input-text';
 import { Button } from '../../../../../shared/components/atoms/button';
@@ -24,7 +24,7 @@ interface McpApiKeyMutationResponse {
   isActive: boolean;
 }
 
-const props = defineProps<{ companyData: MeCompanyData }>();
+const props = defineProps<{ meData: MeData }>();
 
 const emit = defineEmits<{
   (e: 'refreshRequested'): void;
@@ -35,10 +35,10 @@ const { t } = useI18n();
 const isSubmitting = ref(false);
 const showInfoModal = ref(false);
 const rawKey = ref<string | null>(null);
-const localApiKey = ref(props.companyData.mcpApiKey ? { ...props.companyData.mcpApiKey } : null);
+const localApiKey = ref(props.meData.mcpApiKey ? { ...props.meData.mcpApiKey } : null);
 
 watch(
-  () => props.companyData.mcpApiKey,
+  () => props.meData.mcpApiKey,
   (nextValue) => {
     localApiKey.value = nextValue ? { ...nextValue } : null;
   },
@@ -51,8 +51,8 @@ const hasRawKey = computed(() => Boolean(rawKey.value));
 const isActive = computed(() => Boolean(localApiKey.value?.isActive));
 const keyStatusLabel = computed(() => (
   isActive.value
-    ? t('companyProfile.mcpApiKey.status.active')
-    : t('companyProfile.mcpApiKey.status.inactive')
+    ? t('profile.mcpApiKey.status.active')
+    : t('profile.mcpApiKey.status.inactive')
 ));
 const neutralActionClass = 'inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-white-light dark:hover:bg-slate-800';
 const primaryActionClass = 'inline-flex items-center justify-center rounded-2xl border border-slate-900 bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200';
@@ -73,15 +73,15 @@ const syncLocalState = (response?: McpApiKeyMutationResponse | null) => {
 
 const copyKey = async () => {
   if (!rawKey.value) {
-    Toast.error(t('companyProfile.mcpApiKey.messages.copyUnavailable'));
+    Toast.error(t('profile.mcpApiKey.messages.copyUnavailable'));
     return;
   }
 
   try {
     await navigator.clipboard.writeText(rawKey.value);
-    Toast.success(t('companyProfile.mcpApiKey.messages.copySuccess'));
+    Toast.success(t('profile.mcpApiKey.messages.copySuccess'));
   } catch {
-    Toast.error(t('companyProfile.mcpApiKey.messages.copyError'));
+    Toast.error(t('profile.mcpApiKey.messages.copyError'));
   }
 };
 
@@ -116,17 +116,17 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
           <div class="max-w-2xl">
             <div class="flex flex-wrap items-center gap-3">
               <h5 class="text-lg font-semibold text-slate-900 dark:text-white-light">
-                {{ t('companyProfile.mcpApiKey.title') }}
+                {{ t('profile.mcpApiKey.title') }}
               </h5>
               <span
                 class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
                 :class="isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'"
               >
-                {{ hasKey ? keyStatusLabel : t('companyProfile.mcpApiKey.status.notCreated') }}
+                {{ hasKey ? keyStatusLabel : t('profile.mcpApiKey.status.notCreated') }}
               </span>
             </div>
             <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-300">
-              {{ t('companyProfile.mcpApiKey.description') }}
+              {{ t('profile.mcpApiKey.description') }}
             </p>
           </div>
         </div>
@@ -138,7 +138,7 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
           <span class="mr-2">
             <Icon name="info-circle" class="h-4 w-4" />
           </span>
-          {{ t('companyProfile.mcpApiKey.actions.whatIsThisUsedFor') }}
+          {{ t('profile.mcpApiKey.actions.whatIsThisUsedFor') }}
         </Button>
       </div>
     </div>
@@ -150,14 +150,14 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
             <div>
               <div class="flex items-center gap-2">
                 <p class="text-sm font-semibold text-slate-900 dark:text-white-light">
-                  {{ t('companyProfile.mcpApiKey.labels.apiKey') }}
+                  {{ t('profile.mcpApiKey.labels.apiKey') }}
                 </p>
                 <span class="text-xs font-medium text-slate-400">
                   {{ keyStatusLabel }}
                 </span>
               </div>
               <p class="mt-1 text-sm text-slate-500 dark:text-slate-300">
-                {{ hasRawKey ? t('companyProfile.mcpApiKey.help.rawKeyAvailable') : t('companyProfile.mcpApiKey.help.rawKeyUnavailable') }}
+                {{ hasRawKey ? t('profile.mcpApiKey.help.rawKeyAvailable') : t('profile.mcpApiKey.help.rawKeyUnavailable') }}
               </p>
               <div class="mt-3">
                 <TextInput
@@ -165,7 +165,7 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
                   :secret="hasRawKey"
                   disabled
                   class="w-full"
-                  :placeholder="t('companyProfile.mcpApiKey.placeholders.key')"
+                  :placeholder="t('profile.mcpApiKey.placeholders.key')"
                 />
               </div>
             </div>
@@ -179,16 +179,16 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
                 <span class="mr-2">
                   <Icon name="clipboard" class="h-4 w-4" />
                 </span>
-                {{ t('companyProfile.mcpApiKey.actions.copy') }}
+                {{ t('profile.mcpApiKey.actions.copy') }}
               </Button>
 
               <Button
                 :loading="isSubmitting"
                 :disabled="isSubmitting"
                 :custom-class="neutralActionClass"
-                @click="runMutation(regenerateMcpApiKeyMutation, 'regenerateMcpApiKey', t('companyProfile.mcpApiKey.messages.regenerateSuccess'))"
+                @click="runMutation(regenerateMcpApiKeyMutation, 'regenerateMcpApiKey', t('profile.mcpApiKey.messages.regenerateSuccess'))"
               >
-                {{ t('companyProfile.mcpApiKey.actions.regenerate') }}
+                {{ t('profile.mcpApiKey.actions.regenerate') }}
               </Button>
 
               <Button
@@ -196,9 +196,9 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
                 :loading="isSubmitting"
                 :disabled="isSubmitting"
                 :custom-class="primaryActionClass"
-                @click="runMutation(activateMcpApiKeyMutation, 'activateMcpApiKey', t('companyProfile.mcpApiKey.messages.activateSuccess'))"
+                @click="runMutation(activateMcpApiKeyMutation, 'activateMcpApiKey', t('profile.mcpApiKey.messages.activateSuccess'))"
               >
-                {{ t('companyProfile.mcpApiKey.actions.activate') }}
+                {{ t('profile.mcpApiKey.actions.activate') }}
               </Button>
 
               <Button
@@ -206,16 +206,16 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
                 :loading="isSubmitting"
                 :disabled="isSubmitting"
                 :custom-class="dangerActionClass"
-                @click="runMutation(deactivateMcpApiKeyMutation, 'deactivateMcpApiKey', t('companyProfile.mcpApiKey.messages.deactivateSuccess'))"
+                @click="runMutation(deactivateMcpApiKeyMutation, 'deactivateMcpApiKey', t('profile.mcpApiKey.messages.deactivateSuccess'))"
               >
-                {{ t('companyProfile.mcpApiKey.actions.deactivate') }}
+                {{ t('profile.mcpApiKey.actions.deactivate') }}
               </Button>
             </div>
           </div>
         </div>
 
         <div v-if="hasRawKey" class="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
-          {{ t('companyProfile.mcpApiKey.help.copyNow') }}
+          {{ t('profile.mcpApiKey.help.copyNow') }}
         </div>
       </template>
 
@@ -224,10 +224,10 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
           <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="max-w-2xl">
               <p class="text-sm font-semibold text-slate-900 dark:text-white-light">
-                {{ t('companyProfile.mcpApiKey.empty.title') }}
+                {{ t('profile.mcpApiKey.empty.title') }}
               </p>
               <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-300">
-                {{ t('companyProfile.mcpApiKey.empty.description') }}
+                {{ t('profile.mcpApiKey.empty.description') }}
               </p>
             </div>
 
@@ -235,9 +235,9 @@ const runMutation = async (mutation, responseKey: string, successMessage: string
               :loading="isSubmitting"
               :disabled="isSubmitting"
               :custom-class="primaryActionClass"
-              @click="runMutation(createMcpApiKeyMutation, 'createMcpApiKey', t('companyProfile.mcpApiKey.messages.createSuccess'))"
+              @click="runMutation(createMcpApiKeyMutation, 'createMcpApiKey', t('profile.mcpApiKey.messages.createSuccess'))"
             >
-              {{ t('companyProfile.mcpApiKey.actions.create') }}
+              {{ t('profile.mcpApiKey.actions.create') }}
             </Button>
           </div>
         </div>

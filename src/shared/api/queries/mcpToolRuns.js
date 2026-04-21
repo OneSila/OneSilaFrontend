@@ -12,15 +12,16 @@ const mcpToolRunListFields = `
   id
   proxyId
   name
+  userFullName
   toolName
   tool
-  percentage
   totalRecords
   createdAt
 `;
 
 const mcpToolRunDetailFields = `
   ${mcpToolRunListFields}
+  percentage
   percentageColor
   payloadContent
   responseContent

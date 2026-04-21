@@ -21,12 +21,6 @@ export interface LanguageDetail {
     name: string;
 }
 
-export interface McpApiKeyData {
-  id: string;
-  maskedKey: string;
-  isActive: boolean;
-}
-
 export interface MeCompanyData {
   name: string;
   language: string;
@@ -43,7 +37,6 @@ export interface MeCompanyData {
   website?: string;
   multitenantuserSet: CompanyUser[];
   languageDetail: LanguageDetail;
-  mcpApiKey?: McpApiKeyData | null;
 }
 
 export interface MeCompanySubscriptionResult {
@@ -59,10 +52,9 @@ export interface MeCompanySubscriptionResult {
     phoneNumber: string;
     vatNumber: string;
     website: string;
-    multitenantuserSet: MultiTenantUser[];
-    languageDetail: LanguageDetail;
-    mcpApiKey?: McpApiKeyData | null;
-  };
+      multitenantuserSet: MultiTenantUser[];
+      languageDetail: LanguageDetail;
+    };
 }
 
 export interface MultiTenantUser {

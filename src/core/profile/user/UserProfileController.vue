@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import ProfileTemplate from "./ProfileTemplate.vue";
 import { ShowProfile } from './containers/show-profile';
 import { ProfileEdit } from "./containers/profile-edit";
+import McpApiKeyPanel from "../company/containers/mcp-api-key-panel/McpApiKeyPanel.vue";
 import { Button } from "../../../shared/components/atoms/button";
 import { ApolloSubscription } from "./../../../shared/components/molecules/apollo-subscription";
 import { meSubscription } from "../../../shared/api/subscriptions/me.js";
@@ -17,6 +18,7 @@ const route = useRoute();
 const editView = ref(false);
 const unsavedChanges = ref(false);
 const tabItems = ref();
+const apolloSubRef = ref();
 
 interface MeSubscriptionResult {
   me: {
@@ -31,6 +33,11 @@ interface MeSubscriptionResult {
     isActive: boolean;
     dateJoined: string;
     avatarResizedFullUrl: string;
+    mcpApiKey?: {
+      id: string;
+      maskedKey: string;
+      isActive: boolean;
+    } | null;
   };
 }
 
@@ -68,9 +75,15 @@ if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
 }
 
 const getMe = (result) => {
- const r: MeSubscriptionResult = result;
- return r.me;
+  const r: MeSubscriptionResult = result;
+  return r.me;
 }
+
+const handleRefreshRequested = () => {
+  if (apolloSubRef.value && apolloSubRef.value.refresh) {
+    apolloSubRef.value.refresh();
+  }
+};
 
 </script>
 
@@ -103,7 +116,7 @@ const getMe = (result) => {
               </div>
             </div>
 
-            <ApolloSubscription :subscription="meSubscription">
+            <ApolloSubscription :subscription="meSubscription" ref="apolloSubRef">
               <template v-slot:default="{ loading, error, result }">
                 <template v-if="!loading && result">
                   <div v-if="!editView">
@@ -112,6 +125,11 @@ const getMe = (result) => {
                   <div v-else>
                     <ProfileEdit :me-data="getMe(result)" :tabs="tabItems" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
                   </div>
+                  <McpApiKeyPanel
+                    class="mt-3"
+                    :me-data="getMe(result)"
+                    @refresh-requested="handleRefreshRequested"
+                  />
                 </template>
               </template>
             </ApolloSubscription>

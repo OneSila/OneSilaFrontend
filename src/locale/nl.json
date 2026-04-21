@@ -715,7 +715,57 @@
       "confirmNewPassword": "Bevestig uw nieuw wachtwoord"
     },
     "unsavedChanges": "U heeft niet opgeslagen wijzigingen.  Zeker dat u verder wilt gaan?",
-    "changesMade": "Er zijn veranderingen"
+    "changesMade": "Er zijn veranderingen",
+    "mcpApiKey": {
+      "title": "",
+      "description": "",
+      "labels": {
+        "apiKey": "",
+        "status": "",
+        "accessControl": ""
+      },
+      "actions": {
+        "create": "",
+        "copy": "",
+        "regenerate": "",
+        "activate": "",
+        "deactivate": "",
+        "whatIsThisUsedFor": ""
+      },
+      "status": {
+        "active": "",
+        "inactive": "",
+        "notCreated": ""
+      },
+      "help": {
+        "rawKeyAvailable": "",
+        "rawKeyUnavailable": "",
+        "active": "",
+        "inactive": "",
+        "copyNow": ""
+      },
+      "placeholders": {
+        "key": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "createSuccess": "",
+        "regenerateSuccess": "",
+        "activateSuccess": "",
+        "deactivateSuccess": "",
+        "copySuccess": "",
+        "copyError": "",
+        "copyUnavailable": ""
+      },
+      "info": {
+        "eyebrow": "",
+        "title": "",
+        "description": ""
+      }
+    }
   },
   "collaboration": {
     "title": "",
@@ -5333,7 +5383,8 @@
       "fields": {
         "tool": "",
         "toolName": "",
-        "assignedViews": ""
+        "assignedViews": "",
+        "userFullName": ""
       },
       "sections": {
         "payloadContent": "",

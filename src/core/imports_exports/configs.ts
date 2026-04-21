@@ -516,7 +516,7 @@ export const aiImportsListingConfigConstructor = (t: Function): ListingConfig =>
   headers: [
     t('shared.labels.name'),
     t('importsExports.aiImports.fields.tool'),
-    t('importsExports.fields.progressState'),
+    t('importsExports.aiImports.fields.userFullName'),
     t('importsExports.fields.totalRecords'),
     t('shared.labels.createdAt'),
   ],
@@ -531,7 +531,7 @@ export const aiImportsListingConfigConstructor = (t: Function): ListingConfig =>
         color: 'indigo',
       }),
     },
-    { name: 'percentage', type: FieldType.Text, accessor: (node) => `${node.percentage ?? 0}%` },
+    { name: 'userFullName', type: FieldType.Text, accessor: (node) => node.userFullName || '-' },
     { name: 'totalRecords', type: FieldType.Text },
     { name: 'createdAt', type: FieldType.Date },
   ],

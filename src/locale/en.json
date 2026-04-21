@@ -1044,6 +1044,110 @@
     "changesMade": "Changes were made",
     "messages": {
       "changePasswordMatch": "The passwords should match in order to update!"
+    },
+    "mcpApiKey": {
+      "title": "Personal API token",
+      "description": "Manage your personal API token used to authenticate both MCP clients and feed exports.",
+      "labels": {
+        "apiKey": "API token",
+        "status": "Status",
+        "accessControl": "Access control"
+      },
+      "actions": {
+        "create": "Create key",
+        "copy": "Copy key",
+        "regenerate": "Regenerate key",
+        "activate": "Activate key",
+        "deactivate": "Deactivate key",
+        "whatIsThisUsedFor": "What is this used for?"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "notCreated": "Not created"
+      },
+      "help": {
+        "rawKeyAvailable": "This is the real key returned by the latest create or regenerate action. Store it now because you will not be able to see it again later.",
+        "rawKeyUnavailable": "For security, the real key is only shown once when you create or regenerate it. After that, only the masked key remains visible here.",
+        "active": "The token currently accepts requests from MCP clients and feed export consumers.",
+        "inactive": "The token is stored, but requests using it for MCP clients and feed exports are blocked until you activate it again.",
+        "copyNow": "Copy and store this key now. If you lose it, the only way to get a new real key is to regenerate it."
+      },
+      "placeholders": {
+        "key": "No key available"
+      },
+      "empty": {
+        "title": "No personal API token created yet",
+        "description": "Create a personal API token to allow MCP-enabled tools and feed exports to authenticate against your account."
+      },
+      "messages": {
+        "createSuccess": "API token created successfully.",
+        "regenerateSuccess": "API token regenerated successfully.",
+        "activateSuccess": "API token activated successfully.",
+        "deactivateSuccess": "API token deactivated successfully.",
+        "copySuccess": "API token copied to clipboard.",
+        "copyError": "We could not copy the API token. Please try again.",
+        "copyUnavailable": "The real key is only available immediately after create or regenerate. Regenerate the key if you need a new copy."
+      },
+      "info": {
+        "eyebrow": "API token",
+        "title": "What is this used for?",
+        "description": "Use this token as a bearer token when connecting external MCP clients or protected JSON export feeds to your account.",
+        "tabs": {
+          "claude": "Claude",
+          "exportFeed": "Export Feed"
+        },
+        "claude": {
+          "requirements": {
+            "title": "Before you set up Claude",
+            "description": "Claude needs Node.js on your computer before it can use the OneSila connection. Start with the quick check below.",
+            "checkFirstTitle": "First, check if you already have it",
+            "checkFirstDescription": "On a Mac, press Command + Space, type Terminal, and press Enter. On Windows, click Start, type Command Prompt, and press Enter. Then copy and paste these commands one at a time.",
+            "skipIfVersions": "If all three commands show version numbers, you can skip the install steps and continue with the Claude setup below.",
+            "nodeDownloadLabel": "Open the Node.js download page here:",
+            "tabs": {
+              "mac": "MacBook",
+              "windows": "Windows"
+            },
+            "mac": {
+              "title": "Install Node.js on a MacBook",
+              "steps": {
+                "openTerminal": "Open Terminal: press Command + Space on your keyboard, type Terminal, then press Enter.",
+                "runArchitectureCommand": "Run the command below to check your Mac type.",
+                "chooseArchitecture": "If it says arm64, choose Apple Silicon. If it says x86_64, choose Intel.",
+                "downloadInstaller": "Go to the Node.js download page, choose macOS, choose Installer, and select the architecture that matches your Mac.",
+                "runInstaller": "After the download finishes, open the installer file and follow the steps on screen.",
+                "verifyAgain": "When the installer is done, open Terminal again with Command + Space, type Terminal, press Enter, and run the three version commands to check that it worked."
+              },
+              "appleSilicon": "arm64 means your Mac uses Apple Silicon.",
+              "intel": "x86_64 means your Mac uses Intel."
+            },
+            "windows": {
+              "title": "Install Node.js on Windows",
+              "steps": {
+                "openCommandPrompt": "Open Command Prompt first: click the Start button at the bottom of the screen, type Command Prompt, then press Enter.",
+                "openSettings": "Open Settings from the Start menu.",
+                "openAbout": "Go to System, then About, and look for System type.",
+                "chooseInstaller": "If System type says ARM-based processor or ARM64, choose Windows ARM64 Installer. Otherwise, choose Windows x64 Installer.",
+                "downloadInstaller": "Go to the Node.js download page and download the correct Windows Installer (.msi).",
+                "runInstaller": "Open the downloaded .msi file and follow the steps on screen.",
+                "verifyAgain": "After installation, open Command Prompt: click Start, type Command Prompt, press Enter, and run the three version commands to check that it worked."
+              }
+            }
+          },
+          "title": "Claude Desktop MCP setup",
+          "instructions": "Open Settings > Developer > Edit Config, then add this section under the mcpServers key.",
+          "fullExampleTitle": "Full config example",
+          "fullExampleDisclaimer": "This full example can overwrite existing Claude settings. Merge it into your current config instead of replacing the whole file unless that is intentional."
+        },
+        "exportFeed": {
+          "title": "JSON export feed requests",
+          "description": "Export feed URLs require an Authorization header with this token as a bearer token. Replace the feed URL placeholder with the Feed URL from the export page.",
+          "curlTitle": "cURL example",
+          "pythonTitle": "Python example",
+          "phpTitle": "PHP example"
+        }
+      }
     }
   },
   "collaboration": {
@@ -6259,7 +6363,8 @@
       "fields": {
         "tool": "Tool",
         "toolName": "Tool name",
-        "assignedViews": "Assigned views"
+        "assignedViews": "Assigned views",
+        "userFullName": "User full name"
       },
       "sections": {
         "payloadContent": "Payload Content",
