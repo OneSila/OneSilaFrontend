@@ -3,6 +3,7 @@ import type { ListingConfig } from '../../shared/components/organisms/general-li
 import type { SearchConfig } from '../../shared/components/organisms/general-search/searchConfig';
 import { companyLanguagesQuery } from '../../shared/api/queries/languages.js';
 import { mappedImportsQuery, exportsQuery, importBrokenRecordsQuery } from '../../shared/api/queries/importsExports.js';
+import { mcpToolRunsQuery } from '../../shared/api/queries/mcpToolRuns.js';
 import {
   deleteExportMutation,
   deleteExportsMutation,
@@ -19,6 +20,22 @@ export const MAPPED_IMPORT_TYPES = [
 ] as const;
 
 export const EXPORT_TYPES = ['json_feed', 'json', 'csv', 'excel'] as const;
+export const MCP_TOOL_TYPES = [
+  'GET_COMPANY_DETAILS',
+  'SEARCH_PRODUCTS',
+  'GET_PRODUCT',
+  'SEARCH_SALES_CHANNELS',
+  'CREATE_PRODUCT',
+  'UPSERT_PRODUCT',
+  'SEARCH_PROPERTIES',
+  'GET_PROPERTY',
+  'SEARCH_PROPERTY_SELECT_VALUES',
+  'GET_PROPERTY_SELECT_VALUE',
+  'CREATE_PROPERTY',
+  'EDIT_PROPERTY',
+  'CREATE_PROPERTY_SELECT_VALUE',
+  'EDIT_PROPERTY_SELECT_VALUE',
+] as const;
 
 export const EXPORT_KINDS = [
   'products',
@@ -38,6 +55,7 @@ export const EXPORT_KINDS = [
 export type MappedImportType = typeof MAPPED_IMPORT_TYPES[number];
 export type ExportType = typeof EXPORT_TYPES[number];
 export type ExportKind = typeof EXPORT_KINDS[number];
+export type McpToolType = typeof MCP_TOOL_TYPES[number];
 
 export const VISIBLE_EXPORT_KINDS: ExportKind[] = [
   'products',
@@ -136,8 +154,23 @@ export const MAPPED_IMPORT_LISTING_QUERY = mappedImportsQuery;
 export const MAPPED_IMPORT_LISTING_QUERY_KEY = 'mappedImports';
 export const EXPORTS_LISTING_QUERY = exportsQuery;
 export const EXPORTS_LISTING_QUERY_KEY = 'exports';
+export const MCP_TOOL_RUNS_LISTING_QUERY = mcpToolRunsQuery;
+export const MCP_TOOL_RUNS_LISTING_QUERY_KEY = 'mcpToolRuns';
 export const IMPORT_BROKEN_RECORDS_QUERY = importBrokenRecordsQuery;
 export const IMPORT_BROKEN_RECORDS_QUERY_KEY = 'importBrokenRecords';
+
+export const humanizeEnumValue = (value?: string | null) => {
+  if (!value) {
+    return '-';
+  }
+
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (match) => match.toUpperCase());
+};
 
 const statusText = (t: Function, value: string) => {
   const key = `importsExports.statuses.${value}`;
@@ -174,6 +207,19 @@ export const getPercentageColorBadgeMap = (t: Function) => ({
   GREEN: { text: t('importsExports.progressColors.green'), color: 'green' },
 });
 
+export const getMcpToolLabel = (t: Function, tool?: string | null, toolName?: string | null) => {
+  if (tool) {
+    const key = `importsExports.aiImports.tools.${tool}`;
+    const translated = t(key);
+
+    if (translated !== key) {
+      return translated;
+    }
+  }
+
+  return humanizeEnumValue(toolName || tool);
+};
+
 export const getMappedImportTypeOptions = (t: Function) =>
   MAPPED_IMPORT_TYPES.map((value) => ({
     value,
@@ -185,6 +231,21 @@ export const getExportTypeOptions = (t: Function) =>
     value,
     label: t(`importsExports.exports.types.${value}`),
   }));
+
+export const getMcpToolOptions = (t: Function) =>
+  MCP_TOOL_TYPES.map((value) => ({
+    value,
+    label: getMcpToolLabel(t, value, value.toLowerCase()),
+  }));
+
+export const getMcpToolBadgeMap = (t: Function) =>
+  MCP_TOOL_TYPES.reduce((accumulator, value) => {
+    accumulator[value] = {
+      text: getMcpToolLabel(t, value, value.toLowerCase()),
+      color: 'indigo',
+    };
+    return accumulator;
+  }, {} as Record<string, { text: string; color: string }>);
 
 export const getExportKindOptions = (t: Function) =>
   VISIBLE_EXPORT_KINDS.map((value) => ({
@@ -346,6 +407,39 @@ export const exportsSearchConfigConstructor = (t: Function): SearchConfig => ({
   orders: [],
 });
 
+export const aiImportsSearchConfigConstructor = (t: Function): SearchConfig => ({
+  search: true,
+  orderKey: 'sort',
+  filters: [
+    {
+      type: FieldType.Choice,
+      name: 'status',
+      label: t('shared.labels.status'),
+      options: Object.keys(getStatusBadgeMap(t)).filter((value) => value === value.toUpperCase()).map((value) => ({
+        label: statusText(t, value),
+        value,
+      })),
+      labelBy: 'label',
+      valueBy: 'value',
+      filterable: true,
+      multiple: true,
+      removable: true,
+    },
+    {
+      type: FieldType.Choice,
+      name: 'tool',
+      label: t('importsExports.aiImports.fields.tool'),
+      options: getMcpToolOptions(t),
+      labelBy: 'label',
+      valueBy: 'value',
+      filterable: true,
+      multiple: true,
+      removable: true,
+    },
+  ],
+  orders: [],
+});
+
 export const mappedImportsListingConfigConstructor = (t: Function): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
@@ -416,6 +510,39 @@ export const exportsListingConfigConstructor = (t: Function): ListingConfig => (
   bulkDeleteMutation: deleteExportsMutation,
   bulkDeleteSuccessAlert: t('importsExports.exports.alerts.bulkDeleteSuccess'),
   bulkDeleteErrorAlert: t('importsExports.exports.alerts.bulkDeleteError'),
+});
+
+export const aiImportsListingConfigConstructor = (t: Function): ListingConfig => ({
+  headers: [
+    t('shared.labels.name'),
+    t('importsExports.aiImports.fields.tool'),
+    t('importsExports.aiImports.fields.userFullName'),
+    t('importsExports.fields.totalRecords'),
+    t('shared.labels.createdAt'),
+  ],
+  fields: [
+    { name: 'name', type: FieldType.Text },
+    {
+      name: 'tool',
+      type: FieldType.Badge,
+      badgeMap: getMcpToolBadgeMap(t),
+      accessor: (node) => ({
+        text: getMcpToolLabel(t, node.tool, node.toolName),
+        color: 'indigo',
+      }),
+    },
+    { name: 'userFullName', type: FieldType.Text, accessor: (node) => node.userFullName || '-' },
+    { name: 'totalRecords', type: FieldType.Text },
+    { name: 'createdAt', type: FieldType.Date },
+  ],
+  identifierKey: 'id',
+  addActions: true,
+  addEdit: false,
+  addShow: true,
+  showUrlName: 'importsExports.aiImports.show',
+  addDelete: false,
+  addPagination: true,
+  isMainPage: true,
 });
 
 export const brokenRecordsSearchConfigConstructor = (_t: Function): SearchConfig => ({

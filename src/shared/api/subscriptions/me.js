@@ -15,6 +15,11 @@ export const meSubscription = gql`
         isActive
         dateJoined
         avatarResizedFullUrl
+        mcpApiKey {
+          id
+          maskedKey
+          isActive
+        }
         notifications {
           id
           type
@@ -49,11 +54,6 @@ export const meCompanySubscription = gql`
       languageDetail {
          code
          name
-      }
-      mcpApiKey {
-        id
-        maskedKey
-        isActive
       }
       languages
       multitenantuserSet {

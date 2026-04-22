@@ -293,7 +293,7 @@ export const PROGRESS_BAR_UI_BY_STATUS: Record<string, ProgressBarUi> = {
     labelColor: 'text-yellow-500',
     barColor: 'bg-yellow-400',
   },
-  STATUS_PENDING_EXTERNAL_DOCUMENTS: {
+  PENDING_EXTERNAL_DOCUMENTS: {
     labelKey: 'integrations.show.products.statuses.pendingExternalDocuments',
     labelColor: 'text-orange-600',
     barColor: 'bg-orange-500',

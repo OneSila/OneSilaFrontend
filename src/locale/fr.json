@@ -3228,6 +3228,56 @@
     "changesMade": "",
     "messages": {
       "changePasswordMatch": ""
+    },
+    "mcpApiKey": {
+      "title": "",
+      "description": "",
+      "labels": {
+        "apiKey": "",
+        "status": "",
+        "accessControl": ""
+      },
+      "actions": {
+        "create": "",
+        "copy": "",
+        "regenerate": "",
+        "activate": "",
+        "deactivate": "",
+        "whatIsThisUsedFor": ""
+      },
+      "status": {
+        "active": "",
+        "inactive": "",
+        "notCreated": ""
+      },
+      "help": {
+        "rawKeyAvailable": "",
+        "rawKeyUnavailable": "",
+        "active": "",
+        "inactive": "",
+        "copyNow": ""
+      },
+      "placeholders": {
+        "key": ""
+      },
+      "empty": {
+        "title": "",
+        "description": ""
+      },
+      "messages": {
+        "createSuccess": "",
+        "regenerateSuccess": "",
+        "activateSuccess": "",
+        "deactivateSuccess": "",
+        "copySuccess": "",
+        "copyError": "",
+        "copyUnavailable": ""
+      },
+      "info": {
+        "eyebrow": "",
+        "title": "",
+        "description": ""
+      }
     }
   },
   "companyProfile": {
@@ -3303,6 +3353,43 @@
           "exportFeed": ""
         },
         "claude": {
+          "requirements": {
+            "title": "",
+            "description": "",
+            "checkFirstTitle": "",
+            "checkFirstDescription": "",
+            "skipIfVersions": "",
+            "nodeDownloadLabel": "",
+            "tabs": {
+              "mac": "",
+              "windows": ""
+            },
+            "mac": {
+              "title": "",
+              "steps": {
+                "openTerminal": "",
+                "runArchitectureCommand": "",
+                "chooseArchitecture": "",
+                "downloadInstaller": "",
+                "runInstaller": "",
+                "verifyAgain": ""
+              },
+              "appleSilicon": "",
+              "intel": ""
+            },
+            "windows": {
+              "title": "",
+              "steps": {
+                "openCommandPrompt": "",
+                "openSettings": "",
+                "openAbout": "",
+                "chooseInstaller": "",
+                "downloadInstaller": "",
+                "runInstaller": "",
+                "verifyAgain": ""
+              }
+            }
+          },
           "title": "",
           "instructions": "",
           "fullExampleTitle": "",
@@ -3311,6 +3398,7 @@
         "exportFeed": {
           "title": "",
           "description": "",
+          "curlTitle": "",
           "pythonTitle": "",
           "phpTitle": ""
         }
@@ -3426,7 +3514,11 @@
       "none": "",
       "unnamed": "",
       "source": "",
-      "jsonViewerHint": ""
+      "jsonViewerHint": "",
+      "emptyValue": "",
+      "emptyArray": "",
+      "emptyObject": "",
+      "item": ""
     },
     "placeholders": {
       "intervalHours": "",
@@ -3558,6 +3650,45 @@
         "resyncError": "",
         "bulkDeleteSuccess": "",
         "bulkDeleteError": ""
+      }
+    },
+    "aiImports": {
+      "title": "",
+      "show": {
+        "title": ""
+      },
+      "tabs": {
+        "overview": "",
+        "brokenRecords": ""
+      },
+      "fields": {
+        "tool": "",
+        "toolName": "",
+        "assignedViews": "",
+        "userFullName": ""
+      },
+      "sections": {
+        "payloadContent": "",
+        "responseContent": ""
+      },
+      "empty": {
+        "assignedViews": ""
+      },
+      "tools": {
+        "GET_COMPANY_DETAILS": "",
+        "SEARCH_PRODUCTS": "",
+        "GET_PRODUCT": "",
+        "SEARCH_SALES_CHANNELS": "",
+        "CREATE_PRODUCT": "",
+        "UPSERT_PRODUCT": "",
+        "SEARCH_PROPERTIES": "",
+        "GET_PROPERTY": "",
+        "SEARCH_PROPERTY_SELECT_VALUES": "",
+        "GET_PROPERTY_SELECT_VALUE": "",
+        "CREATE_PROPERTY": "",
+        "EDIT_PROPERTY": "",
+        "CREATE_PROPERTY_SELECT_VALUE": "",
+        "EDIT_PROPERTY_SELECT_VALUE": ""
       }
     },
     "exports": {

@@ -1,22 +1,31 @@
 <script lang="ts" setup>
-import { ref, watch, onMounted } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import ProfileTemplate from "./ProfileTemplate.vue";
 import { ShowProfile } from './containers/show-profile';
 import { ProfileEdit } from "./containers/profile-edit";
+import McpApiKeyPanel from "../company/containers/mcp-api-key-panel/McpApiKeyPanel.vue";
 import { Button } from "../../../shared/components/atoms/button";
+import { Link } from "../../../shared/components/atoms/link";
+import { Icon } from "../../../shared/components/atoms/icon";
 import { ApolloSubscription } from "./../../../shared/components/molecules/apollo-subscription";
 import { meSubscription } from "../../../shared/api/subscriptions/me.js";
 import IconPencilPaper from '../../../shared/components/atoms/icons/icon-pencil-paper.vue';
 import IconX from '../../../shared/components/atoms/icons/icon-x.vue';
 import { useI18n } from 'vue-i18n';
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
+import { injectAuth } from "../../../shared/modules/auth";
 
 const { t } = useI18n();
 const route = useRoute();
+const auth = injectAuth();
 const editView = ref(false);
 const unsavedChanges = ref(false);
 const tabItems = ref();
+const apolloSubRef = ref();
+const unreadNotificationCount = computed(() =>
+  (auth.user.notifications || []).filter((notification: any) => !notification.opened).length,
+);
 
 interface MeSubscriptionResult {
   me: {
@@ -31,6 +40,11 @@ interface MeSubscriptionResult {
     isActive: boolean;
     dateJoined: string;
     avatarResizedFullUrl: string;
+    mcpApiKey?: {
+      id: string;
+      maskedKey: string;
+      isActive: boolean;
+    } | null;
   };
 }
 
@@ -68,9 +82,15 @@ if (tabItems.value.some(tab => tab.name === tabQueryParam)) {
 }
 
 const getMe = (result) => {
- const r: MeSubscriptionResult = result;
- return r.me;
+  const r: MeSubscriptionResult = result;
+  return r.me;
 }
+
+const handleRefreshRequested = () => {
+  if (apolloSubRef.value && apolloSubRef.value.refresh) {
+    apolloSubRef.value.refresh();
+  }
+};
 
 </script>
 
@@ -99,11 +119,25 @@ const getMe = (result) => {
                     </span>
                   </Button>
                   <LanguageDropdown :show="true" class="w-max"/>
+                  <Link
+                    :path="{ name: 'profile.notifications' }"
+                    :aria-label="t('profile.notifications.actions.viewAll')"
+                    :title="t('profile.notifications.actions.viewAll')"
+                    class="relative inline-flex h-[46px] w-[46px] items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-900 dark:text-white-light dark:hover:bg-slate-800"
+                  >
+                    <Icon name="bell" class="h-5 w-5" />
+                    <span
+                      v-if="unreadNotificationCount"
+                      class="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white dark:ring-slate-900"
+                    >
+                      {{ unreadNotificationCount }}
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>
 
-            <ApolloSubscription :subscription="meSubscription">
+            <ApolloSubscription :subscription="meSubscription" ref="apolloSubRef">
               <template v-slot:default="{ loading, error, result }">
                 <template v-if="!loading && result">
                   <div v-if="!editView">
@@ -112,6 +146,11 @@ const getMe = (result) => {
                   <div v-else>
                     <ProfileEdit :me-data="getMe(result)" :tabs="tabItems" @unsaved-changes="handleUnsavedChanges" @update-complete="handleUpdateComplete" />
                   </div>
+                  <McpApiKeyPanel
+                    class="mt-3"
+                    :me-data="getMe(result)"
+                    @refresh-requested="handleRefreshRequested"
+                  />
                 </template>
               </template>
             </ApolloSubscription>

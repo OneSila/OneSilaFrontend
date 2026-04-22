@@ -9,4 +9,11 @@ export interface MeData {
   timezone: string;
   isMultiTenantCompanyOwner: boolean;
   avatarResizedFullUrl?: string;
+  mcpApiKey?: McpApiKeyData | null;
+}
+
+export interface McpApiKeyData {
+  id: string;
+  maskedKey: string;
+  isActive: boolean;
 }
