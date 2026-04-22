@@ -163,7 +163,8 @@ import {
   faFolder,
   faFolderPlus,
   faBookOpen,
-  faBroom
+  faBroom,
+  faHandSparkles
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faBell as IconDefinition);
@@ -327,6 +328,7 @@ library.add(faFolder as IconDefinition);
 library.add(faFolderPlus as IconDefinition);
 library.add(faBookOpen as IconDefinition);
 library.add(faBroom as IconDefinition);
+library.add(faHandSparkles as IconDefinition);
 
 
 export default {

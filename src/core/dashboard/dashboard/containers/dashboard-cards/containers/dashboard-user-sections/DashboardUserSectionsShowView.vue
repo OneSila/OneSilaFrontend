@@ -93,7 +93,7 @@ const handleToggle = (sectionId: string, value: boolean) => {
   </div>
 
   <div v-else class="flex flex-col items-center gap-2 py-10 text-center text-gray-500">
-    <Icon name="sparkles" class="h-10 w-10 text-primary" />
+    <Icon name="hand-sparkles" class="h-10 w-10 text-primary" />
     <p class="text-base font-semibold text-gray-900">
       {{ t('dashboard.cards.userSections.emptyTitle') }}
     </p>
