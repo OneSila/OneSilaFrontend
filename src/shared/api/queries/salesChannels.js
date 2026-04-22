@@ -339,7 +339,6 @@ export const amazonChannelsQuery = gql`
           }
           saleschannelPtr {
             id
-            proxyId
           }
         }
         cursor

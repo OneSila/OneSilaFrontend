@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {Ref, ref, watch} from 'vue';
-import {useI18n} from "vue-i18n";
-import {Card} from "../../../../../../../../../shared/components/atoms/card";
-import {Button} from "../../../../../../../../../shared/components/atoms/button";
-import {Modal} from "../../../../../../../../../shared/components/atoms/modal";
-import {Loader} from "../../../../../../../../../shared/components/atoms/loader";
+import { Ref, ref, watch } from 'vue';
+import { useI18n } from "vue-i18n";
+import { Card } from "../../../../../../../../../shared/components/atoms/card";
+import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
+import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { remoteLogsQuery, amazonRemoteLogsQuery } from "../../../../../../../../../shared/api/queries/salesChannels.js";
+import { displayApolloError } from "../../../../../../../../../shared/utils";
 
 export interface RemoteLog {
   id: string;
@@ -27,13 +28,11 @@ export interface RemoteLogEdge {
   cursor: string;
 }
 
-
 const props = defineProps<{ modelValue: boolean; id?: string | null; integrationType?: string }>();
 const emit = defineEmits(['modal-closed']);
 const localShowModal = ref(props.modelValue);
 const loading = ref(false);
 const logs: Ref<RemoteLogEdge[]> = ref([]);
-
 
 const ActionTypes = {
   CREATE: 'CREATE',
@@ -45,37 +44,41 @@ const StatusTypes = {
   SUCCESS: 'SUCCESS',
   FAILED: 'FAILED',
 };
-
-
-const {t} = useI18n();
+const { t } = useI18n();
 
 const fetchLogs = async () => {
-
   if (props.id == null || props.id == undefined) {
+    logs.value = [];
     return;
   }
 
   loading.value = true;
-  const query = props.integrationType === 'amazon' ? amazonRemoteLogsQuery : remoteLogsQuery;
+  logs.value = [];
 
-  const {data} = await apolloClient.query({
-    query,
-    variables: {filter: {remoteProduct: {id: {exact: props.id }}}},
-    fetchPolicy: 'cache-first'
-  });
+  try {
+    const query = props.integrationType === 'amazon' ? amazonRemoteLogsQuery : remoteLogsQuery;
+    const { data } = await apolloClient.query({
+      query,
+      variables: { filter: { remoteProduct: { id: { exact: props.id } } } },
+      fetchPolicy: 'cache-first'
+    });
 
-  const logsData = props.integrationType === 'amazon' ? data?.amazonRemoteLogs : data?.remoteLogs;
-
-  if (logsData && logsData.edges.length > 0) {
-    logs.value = logsData.edges;
+    const logsData = props.integrationType === 'amazon' ? data?.amazonRemoteLogs : data?.remoteLogs;
+    logs.value = logsData?.edges ?? [];
+  } catch (error) {
+    displayApolloError(error);
+    logs.value = [];
+  } finally {
+    loading.value = false;
   }
-  loading.value = false;
-}
+};
 
 watch(() => props.modelValue, (newVal) => {
   localShowModal.value = newVal;
   if (newVal) {
     fetchLogs();
+  } else {
+    logs.value = [];
   }
 });
 
@@ -84,17 +87,17 @@ const closeModal = () => {
   emit('modal-closed');
 };
 
-const formatDate = (dateString) => {
-    const date = new Date(dateString);
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
 
-    return new Intl.DateTimeFormat('en-GB', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    }).format(date);
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(date);
 };
 
 const actionBadge = {
@@ -106,6 +109,22 @@ const actionBadge = {
 const statusBadge = {
   [StatusTypes.SUCCESS]: { text: t('shared.labels.completed'), color: 'green' },
   [StatusTypes.FAILED]: { text: t('shared.labels.failed'), color: 'red' },
+};
+
+const getActionBadge = (action?: string | null) => {
+  if (!action) {
+    return { text: '-', color: 'gray' };
+  }
+
+  return actionBadge[action] ?? { text: action, color: 'gray' };
+};
+
+const getStatusBadge = (status?: string | null) => {
+  if (!status) {
+    return { text: '-', color: 'gray' };
+  }
+
+  return statusBadge[status] ?? { text: status, color: 'gray' };
 };
 
 </script>
@@ -159,10 +178,10 @@ const statusBadge = {
                 <td>{{ log.node.frontendName }}</td>
                 <td class="capitalize">{{ log.node.type }}</td>
                 <td>
-                  <Badge :color="actionBadge[log.node.action].color" :text="actionBadge[log.node.action].text"/>
+                  <Badge :color="getActionBadge(log.node.action).color" :text="getActionBadge(log.node.action).text"/>
                 </td>
                 <td>
-                  <Badge :color="statusBadge[log.node.status].color" :text="statusBadge[log.node.status].text"/>
+                  <Badge :color="getStatusBadge(log.node.status).color" :text="getStatusBadge(log.node.status).text"/>
                 </td>
                 <td>{{ formatDate(log.node.createdAt) }}</td>
                 <td>
