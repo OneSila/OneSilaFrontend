@@ -5566,7 +5566,10 @@
       },
       "modal": {
         "logs": {
-          "title": "Logs"
+          "title": "Logs",
+          "types": {
+            "miraklProductFeed": "Mirakl product feed"
+          }
         },
         "issues": {
           "title": "Issues"

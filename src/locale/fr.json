@@ -1454,6 +1454,17 @@
       },
       "toast": {
         "forceUpdateSuccess": ""
+      },
+      "modal": {
+        "logs": {
+          "title": "",
+          "types": {
+            "miraklProductFeed": ""
+          }
+        },
+        "issues": {
+          "title": ""
+        }
       }
     },
     "show": {

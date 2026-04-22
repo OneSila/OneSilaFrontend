@@ -111,6 +111,10 @@ const statusBadge = {
   [StatusTypes.FAILED]: { text: t('shared.labels.failed'), color: 'red' },
 };
 
+const typeLabels = {
+  mirakl_product_feed: t('integrations.salesChannel.modal.logs.types.miraklProductFeed'),
+};
+
 const getActionBadge = (action?: string | null) => {
   if (!action) {
     return { text: '-', color: 'gray' };
@@ -126,6 +130,19 @@ const getStatusBadge = (status?: string | null) => {
 
   return statusBadge[status] ?? { text: status, color: 'gray' };
 };
+
+const getTypeLabel = (type?: string | null) => {
+  if (!type) {
+    return '-';
+  }
+
+  return typeLabels[type] ?? type;
+};
+
+const getTypeBadge = (type?: string | null) => ({
+  text: getTypeLabel(type),
+  color: 'gray',
+});
 
 </script>
 
@@ -153,7 +170,7 @@ const getStatusBadge = (status?: string | null) => {
                 {{ t('shared.labels.type') }}
               </th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                {{ t('shared.labels.name') }}
+                {{ t('shared.labels.status') }}
               </th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                 {{ t('shared.labels.createdAt') }}
@@ -176,9 +193,11 @@ const getStatusBadge = (status?: string | null) => {
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="log in logs" :key="log.node.id">
                 <td>{{ log.node.frontendName }}</td>
-                <td class="capitalize">{{ log.node.type }}</td>
                 <td>
                   <Badge :color="getActionBadge(log.node.action).color" :text="getActionBadge(log.node.action).text"/>
+                </td>
+                <td>
+                  <Badge :color="getTypeBadge(log.node.type).color" :text="getTypeBadge(log.node.type).text"/>
                 </td>
                 <td>
                   <Badge :color="getStatusBadge(log.node.status).color" :text="getStatusBadge(log.node.status).text"/>
