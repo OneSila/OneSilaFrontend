@@ -6476,5 +6476,64 @@
     "filterModal": {
       "convertToDashboardCard": "Convert into dashboard card"
     }
+  },
+  "publicIssues": {
+    "title": "Common Integration Errors",
+    "list": {
+      "description": "Search known integration errors by code, platform, cause, or recommended fix."
+    },
+    "show": {
+      "title": "Common Error Details",
+      "images": "Reference images",
+      "emptySection": "No information available yet."
+    },
+    "request": {
+      "title": "Send Issue",
+      "subtitle": "Send this integration error to the team so it can be documented as a common issue.",
+      "integrationTypeMissing": "Could not find the public integration type for this issue.",
+      "help": {
+        "title": "What to include",
+        "content": "Describe when the error appeared and what action triggered it.",
+        "examples": "Examples: during product creation, after a manual resync, after a live update, or during an import."
+      }
+    },
+    "labels": {
+      "code": "Code",
+      "integrationType": "Integration",
+      "issue": "Issue",
+      "cause": "Cause",
+      "recommendedFix": "Recommended fix",
+      "description": "How it happened"
+    },
+    "filters": {
+      "integrationType": "Integration",
+      "category": "Category"
+    },
+    "tabs": {
+      "all": "All"
+    },
+    "placeholders": {
+      "description": "Describe what you were doing when this happened."
+    },
+    "actions": {
+      "sendIssue": "Send Issue",
+      "searchIssue": "Search common errors",
+      "seeCommonErrors": "See common errors",
+      "backToProduct": "Back to product",
+      "previousImage": "Previous",
+      "nextImage": "Next"
+    },
+    "alerts": {
+      "requestSent": "Issue sent."
+    },
+    "integrationTypes": {
+      "amazon": "Amazon",
+      "ebay": "eBay",
+      "mirakl": "Mirakl",
+      "shein": "Shein",
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "WooCommerce"
+    }
   }
 }

@@ -45,7 +45,7 @@ onMounted(subscribe);
 
 onUnmounted(unsubscribe);
 
-onBeforeRouteLeave(unsubscribe);
+// onBeforeRouteLeave(unsubscribe);
 
 defineExpose({ refresh });
 

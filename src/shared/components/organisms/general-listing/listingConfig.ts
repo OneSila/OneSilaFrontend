@@ -18,6 +18,7 @@ export interface ListingConfig {
   secondIdentifierKey?: string;
   secondIdentifierParam?: string;
   showRouteResolver?: (item: any) => Url | undefined;
+  showClickableFieldNames?: string[];
   addEdit?: boolean;
   editUrlName?: string;
   addShow?: boolean;

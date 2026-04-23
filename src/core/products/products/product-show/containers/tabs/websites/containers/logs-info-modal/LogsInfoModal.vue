@@ -3,9 +3,11 @@ import { Ref, ref, watch } from 'vue';
 import { useI18n } from "vue-i18n";
 import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
+import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { Modal } from "../../../../../../../../../shared/components/atoms/modal";
 import { Loader } from "../../../../../../../../../shared/components/atoms/loader";
 import { Badge } from "../../../../../../../../../shared/components/atoms/badge";
+import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
 import apolloClient from "../../../../../../../../../../apollo-client";
 import { remoteLogsQuery, amazonRemoteLogsQuery } from "../../../../../../../../../shared/api/queries/salesChannels.js";
 import { displayApolloError } from "../../../../../../../../../shared/utils";
@@ -28,7 +30,13 @@ export interface RemoteLogEdge {
   cursor: string;
 }
 
-const props = defineProps<{ modelValue: boolean; id?: string | null; integrationType?: string }>();
+const props = defineProps<{
+  modelValue: boolean;
+  id?: string | null;
+  integrationType?: string;
+  productId?: string | null;
+  productSku?: string | null;
+}>();
 const emit = defineEmits(['modal-closed']);
 const localShowModal = ref(props.modelValue);
 const loading = ref(false);
@@ -144,6 +152,37 @@ const getTypeBadge = (type?: string | null) => ({
   color: 'gray',
 });
 
+const trimWords = (value?: string | null, words = 15) => {
+  if (!value) {
+    return '';
+  }
+
+  const parts = value.trim().split(/\s+/);
+  return parts.slice(0, words).join(' ');
+};
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const getSearchIssue = (issue?: string | null) => {
+  if (!issue || !props.productSku) {
+    return issue || '';
+  }
+
+  return issue.replace(new RegExp(escapeRegExp(props.productSku), 'gi'), 'SKU');
+};
+
+const publicIssueRoute = (issue?: string | null, log?: RemoteLog) => ({
+  name: 'integrations.publicIssues.list',
+  query: {
+    search: trimWords(getSearchIssue(issue)),
+    issue: issue || '',
+    integrationType: props.integrationType || '',
+    productId: props.productId || '',
+    productSku: props.productSku || '',
+    submissionId: log?.submissionId || '',
+  },
+});
+
 </script>
 
 <template>
@@ -204,8 +243,17 @@ const getTypeBadge = (type?: string | null) => ({
                 </td>
                 <td>{{ formatDate(log.node.createdAt) }}</td>
                 <td>
-                  <div class="whitespace-pre-wrap break-words">
-                    {{ log.node.frontendError }}
+                  <div class="flex items-start gap-2">
+                    <div class="whitespace-pre-wrap break-words">
+                      {{ log.node.frontendError }}
+                    </div>
+                    <Link
+                      v-if="log.node.frontendError"
+                      :path="publicIssueRoute(log.node.frontendError, log.node)"
+                      :title="t('publicIssues.actions.searchIssue')"
+                    >
+                      <Icon name="magnifying-glass" size="lg" class="mt-1 text-blue-600" />
+                    </Link>
                   </div>
                 </td>
                 <td v-if="props.integrationType === 'amazon'">{{ log.node.submissionId }}</td>
@@ -213,7 +261,16 @@ const getTypeBadge = (type?: string | null) => ({
                 <td v-if="props.integrationType === 'amazon'">
                   <ul v-if="log.node.formattedIssues && log.node.formattedIssues.length" class="list-disc ml-4">
                     <li v-for="(issue, index) in log.node.formattedIssues" :key="index">
-                      {{ issue.message }}
+                      <span>{{ issue.message }}</span>
+                      <Link
+                        v-if="issue.message"
+                        :path="publicIssueRoute(issue.message, log.node)"
+                        :title="t('publicIssues.actions.searchIssue')"
+                        inline-block
+                        class="ml-2"
+                      >
+                        <Icon name="magnifying-glass" size="sm" class="text-blue-600" />
+                      </Link>
                     </li>
                   </ul>
                 </td>

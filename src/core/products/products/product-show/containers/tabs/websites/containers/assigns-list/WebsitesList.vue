@@ -145,6 +145,13 @@ const getAssignStatus = (item: any) => {
           </tbody>
         </table>
       </div>
-      <LogsInfoModal v-model="showInfoModal" :id="infoId" :integration-type="infoIntegrationType" @modal-closed="modalColsed()" />
+      <LogsInfoModal
+        v-model="showInfoModal"
+        :id="infoId"
+        :integration-type="infoIntegrationType"
+        :product-id="product.id"
+        :product-sku="product.sku"
+        @modal-closed="modalColsed()"
+      />
     </div>
 </template>

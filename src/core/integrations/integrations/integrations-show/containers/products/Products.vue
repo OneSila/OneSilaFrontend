@@ -29,6 +29,8 @@ const props = defineProps<{ salesChannelId: string }>();
 const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
 const infoIntegrationType = ref<string | undefined>(undefined);
+const infoProductId = ref<string | null>(null);
+const infoProductSku = ref<string | null>(null);
 const type = ref(String(route.params.type));
 const listingRef = ref<{ clearSelected?: () => void } | null>(null);
 
@@ -43,15 +45,19 @@ const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
 };
 
-const setInfoId = (id: string | null, type: string | null) => {
+const setInfoId = (id: string | null, type: string | null, productId?: string | null, productSku?: string | null) => {
   infoId.value = id;
   infoIntegrationType.value = type || undefined;
+  infoProductId.value = productId || null;
+  infoProductSku.value = productSku || null;
   showInfoModal.value = true;
 };
 
 const modalClosed = () => {
   infoId.value = null;
   infoIntegrationType.value = undefined;
+  infoProductId.value = null;
+  infoProductSku.value = null;
   showInfoModal.value = false;
 };
 
@@ -236,6 +242,15 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
 
 <template>
   <div>
+    <div class="mb-4 flex justify-end">
+      <Link :path="{ name: 'integrations.publicIssues.list', query: { integrationType: type } }">
+        <Button type="button" class="btn btn-outline-primary">
+          <Icon name="magnifying-glass" size="sm" class="mr-2" />
+          {{ t('publicIssues.actions.seeCommonErrors') }}
+        </Button>
+      </Link>
+    </div>
+
     <GeneralListing
       ref="listingRef"
       :search-config="searchConfig"
@@ -303,7 +318,10 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
         </template>
 
       <template #additionalButtons="{ item }">
-        <Button :disabled="!item.node.remoteProduct?.id" @click="setInfoId(item.node.remoteProduct?.id, item.node.integrationType)">
+        <Button
+          :disabled="!item.node.remoteProduct?.id"
+          @click="setInfoId(item.node.remoteProduct?.id, item.node.integrationType, item.node.product?.id, item.node.product?.sku)"
+        >
           <Icon name="clipboard-list" size="lg" class="text-gray-500" />
         </Button>
 
@@ -331,6 +349,8 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
       v-model="showInfoModal"
       :id="infoId"
       :integration-type="infoIntegrationType"
+      :product-id="infoProductId"
+      :product-sku="infoProductSku"
       @modal-closed="modalClosed()"
     />
   </div>

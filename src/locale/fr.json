@@ -3785,5 +3785,64 @@
     "filterModal": {
       "convertToDashboardCard": ""
     }
+  },
+  "publicIssues": {
+    "title": "",
+    "list": {
+      "description": ""
+    },
+    "show": {
+      "title": "",
+      "images": "",
+      "emptySection": ""
+    },
+    "request": {
+      "title": "",
+      "subtitle": "",
+      "integrationTypeMissing": "",
+      "help": {
+        "title": "",
+        "content": "",
+        "examples": ""
+      }
+    },
+    "labels": {
+      "code": "",
+      "integrationType": "",
+      "issue": "",
+      "cause": "",
+      "recommendedFix": "",
+      "description": ""
+    },
+    "filters": {
+      "integrationType": "",
+      "category": ""
+    },
+    "tabs": {
+      "all": ""
+    },
+    "placeholders": {
+      "description": ""
+    },
+    "actions": {
+      "sendIssue": "",
+      "searchIssue": "",
+      "seeCommonErrors": "",
+      "backToProduct": "",
+      "previousImage": "",
+      "nextImage": ""
+    },
+    "alerts": {
+      "requestSent": ""
+    },
+    "integrationTypes": {
+      "amazon": "",
+      "ebay": "",
+      "mirakl": "",
+      "shein": "",
+      "magento": "",
+      "shopify": "",
+      "woocommerce": ""
+    }
   }
 }
