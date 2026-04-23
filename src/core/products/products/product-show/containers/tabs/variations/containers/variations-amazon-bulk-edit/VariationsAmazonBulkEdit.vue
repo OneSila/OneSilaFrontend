@@ -53,6 +53,8 @@ import {
 import { FieldValue } from '../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-value';
 import { FieldChoice } from '../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-choice';
 import { ValueFormField, ChoiceFormField } from '../../../../../../../../../shared/components/organisms/general-form/formConfig';
+import type { ProductPropertiesRuleReference } from '../../../../../../../../../shared/utils/productPropertiesRules';
+import { getProductPropertiesRuleId } from '../../../../../../../../../shared/utils/productPropertiesRules';
 
 interface ExternalProductIdSelection {
   id: string | null;
@@ -91,7 +93,7 @@ interface VariationRow {
   gtinExemptions: Record<string, GtinExemptionSelection>;
   browseNodes: Record<string, BrowseNodeSelection>;
   variationThemes: Record<string, VariationThemeSelection>;
-  productTypeRuleId: string | null;
+  productTypeRules: ProductPropertiesRuleReference[];
 }
 
 interface BrowseNode {
@@ -208,6 +210,9 @@ const externalIdModalView = computed(() =>
 );
 
 const browseNodeMarketplaceId = computed(() => browseNodeModalView.value?.remoteId ?? null);
+const selectedViewSalesChannelId = computed(() =>
+  selectedViewId.value ? viewById.value[selectedViewId.value]?.salesChannel?.id || null : null,
+);
 
 const configurableRows = computed(() =>
   variations.value.filter((row) => row.variation.type === ProductType.Configurable),
@@ -216,7 +221,12 @@ const configurableRows = computed(() =>
 const variationThemeRuleIds = computed(() => {
   const ids = new Set<string | null>();
   configurableRows.value.forEach((row) => {
-    ids.add(row.productTypeRuleId ?? null);
+    ids.add(
+      getProductPropertiesRuleId(
+        row.productTypeRules,
+        selectedViewSalesChannelId.value,
+      ),
+    );
   });
   return ids;
 });
@@ -641,7 +651,7 @@ const fetchVariations = async (policy: FetchPolicy = 'cache-first') => {
       gtinExemptions: {},
       browseNodes: {},
       variationThemes: {},
-      productTypeRuleId: null,
+      productTypeRules: [],
     } as VariationRow;
   });
 };
@@ -688,7 +698,7 @@ const fetchProducts = async (policy: FetchPolicy = 'cache-first') => {
     gtinExemptions: {},
     browseNodes: {},
     variationThemes: {},
-    productTypeRuleId: null,
+    productTypeRules: [],
   })) as VariationRow[];
 };
 
@@ -713,7 +723,7 @@ const fetchProductTypeProperty = async (policy: FetchPolicy) => {
 };
 
 const fetchProductTypeRules = async (productIds: string[], policy: FetchPolicy) => {
-  const rulesByProductId = new Map<string, string | null>();
+  const rulesByProductId = new Map<string, ProductPropertiesRuleReference[]>();
   if (!productIds.length) {
     return rulesByProductId;
   }
@@ -743,8 +753,10 @@ const fetchProductTypeRules = async (productIds: string[], policy: FetchPolicy) 
       const node = edge?.node;
       const productId = node?.product?.id;
       if (!productId) return;
-      const ruleId = node?.valueSelect?.productpropertiesruleSet?.[0]?.id ?? null;
-      rulesByProductId.set(String(productId), ruleId);
+      rulesByProductId.set(
+        String(productId),
+        node?.valueSelect?.productpropertiesruleSet ?? [],
+      );
     });
     const pageInfo = data?.productProperties?.pageInfo;
     hasNextPage = Boolean(pageInfo?.hasNextPage && pageInfo?.endCursor);
@@ -1093,7 +1105,7 @@ const loadData = async (policy: FetchPolicy = 'cache-first') => {
         gtinExemptions,
         browseNodes,
         variationThemes,
-        productTypeRuleId: productTypeRulesByProductId.get(row.variation.id) ?? null,
+        productTypeRules: productTypeRulesByProductId.get(row.variation.id) ?? [],
       };
     });
 

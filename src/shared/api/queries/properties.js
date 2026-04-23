@@ -302,6 +302,10 @@ query ProductProperties($first: Int, $last: Int, $after: String, $before: String
             value
             productpropertiesruleSet {
                 id
+                salesChannel {
+                  id
+                  proxyId
+                }
             }
           }
           valueMultiSelect {

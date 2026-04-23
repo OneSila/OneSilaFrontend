@@ -13,6 +13,7 @@ import EbayCategorySection from './components/EbayCategorySection.vue';
 import EbayStoreCategorySection from './components/EbayStoreCategorySection.vue';
 import type { FetchPolicy } from '@apollo/client';
 import { Icon } from '../../../../../../../shared/components/atoms/icon';
+import { getProductPropertiesRuleId } from '../../../../../../../shared/utils/productPropertiesRules';
 import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
@@ -43,9 +44,9 @@ const storeCategoriesBySalesChannel = ref<
   }>
 >({});
 
-const productTypeRuleId = computed(() => {
+const productTypeRules = computed(() => {
   const typeProp = props.product?.productpropertySet?.find((property: any) => property.property?.isProductType);
-  return typeProp?.valueSelect?.productpropertiesruleSet?.[0]?.id || null;
+  return typeProp?.valueSelect?.productpropertiesruleSet || [];
 });
 
 const fetchViews = async () => {
@@ -134,7 +135,7 @@ const fetchEbayProductStoreCategories = async (fetchPolicy: FetchPolicy = 'cache
 
 let defaultCategoriesRequestId = 0;
 const fetchDefaultCategories = async () => {
-  if (!productTypeRuleId.value || !views.value.length) {
+  if (!views.value.length) {
     defaultCategoriesByView.value = {};
     return;
   }
@@ -146,13 +147,22 @@ const fetchDefaultCategories = async () => {
         return [view?.id ?? '', { remoteId: null, name: null }] as const;
       }
 
+      const ruleId = getProductPropertiesRuleId(
+        productTypeRules.value,
+        view?.salesChannel?.id || null,
+      );
+
+      if (!ruleId) {
+        return [view.id, { remoteId: null, name: null }] as const;
+      }
+
       try {
         const { data } = await apolloClient.query({
           query: ebayProductTypesQuery,
           variables: {
             first: 1,
             filter: {
-              localInstance: { id: { exact: productTypeRuleId.value } },
+              localInstance: { id: { exact: ruleId } },
               marketplace: { id: { exact: view.id } },
             },
           },
@@ -227,7 +237,7 @@ watch(
 );
 
 watch(
-  [views, productTypeRuleId],
+  [views, productTypeRules],
   () => {
     void fetchDefaultCategories();
   },

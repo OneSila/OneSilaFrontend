@@ -21,6 +21,7 @@ import SheinStatusSection from './components/SheinStatusSection.vue';
 import { refreshLatestSheinIssuesMutation, updateSheinProductMutation } from '../../../../../../../shared/api/mutations/salesChannels.js';
 import { Toast } from '../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../shared/utils';
+import { getProductPropertiesRuleId } from '../../../../../../../shared/utils/productPropertiesRules';
 import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
@@ -51,9 +52,9 @@ const sheinIssues = ref<{ id: string; createdAt?: string | null; failedReason?: 
 const sheinViewSalesChannelByViewId = ref<Record<string, string>>({});
 const sheinRemoteProductId = ref<string | null>(null);
 
-const productTypeRuleId = computed(() => {
+const productTypeRules = computed(() => {
   const typeProp = props.product?.productpropertySet?.find((property: any) => property.property?.isProductType);
-  return typeProp?.valueSelect?.productpropertiesruleSet?.[0]?.id || null;
+  return typeProp?.valueSelect?.productpropertiesruleSet || [];
 });
 
 const fetchSheinIssues = async () => {
@@ -239,7 +240,7 @@ const resolveCategoryForChannel = (channel: any) => {
 
 let defaultCategoriesRequestId = 0;
 const fetchDefaultCategories = async () => {
-  if (!productTypeRuleId.value || !channels.value.length) {
+  if (!channels.value.length) {
     defaultCategoriesByChannel.value = {};
     return;
   }
@@ -250,8 +251,12 @@ const fetchDefaultCategories = async () => {
       const channelKey = channel?.id ?? '';
       const salesChannelPtrId = channel?.saleschannelPtr?.id || null;
       const filterSalesChannelId = salesChannelPtrId || channel?.id || null;
+      const ruleId = getProductPropertiesRuleId(
+        productTypeRules.value,
+        filterSalesChannelId,
+      );
 
-      if (!filterSalesChannelId || !productTypeRuleId.value) {
+      if (!filterSalesChannelId || !ruleId) {
         return [channelKey, { remoteId: null, name: null }] as const;
       }
 
@@ -261,7 +266,7 @@ const fetchDefaultCategories = async () => {
           variables: {
             first: 1,
             filter: {
-              localInstance: { id: { exact: productTypeRuleId.value } },
+              localInstance: { id: { exact: ruleId } },
               salesChannel: { id: { exact: filterSalesChannelId } },
             },
           },
@@ -345,7 +350,7 @@ watch(
 );
 
 watch(
-  [channels, productTypeRuleId],
+  [channels, productTypeRules],
   () => {
     void fetchDefaultCategories();
   },
