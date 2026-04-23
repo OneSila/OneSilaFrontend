@@ -1224,7 +1224,12 @@ export interface ProductProperty {
   valueSelect?: {
     id: string;
     value: string;
-    productpropertiesruleSet?: { id: string }[];
+    productpropertiesruleSet?: {
+      id: string;
+      salesChannel?: {
+        id: string;
+      } | null;
+    }[];
   } | null;
   valueMultiSelect?: {
     id: string;

@@ -339,6 +339,7 @@ export const amazonChannelsQuery = gql`
           }
           saleschannelPtr {
             id
+            proxyId
           }
         }
         cursor
@@ -546,6 +547,7 @@ export const ebayChannelsQuery = gql`
           }
           saleschannelPtr {
             id
+            proxyId
           }
         }
         cursor

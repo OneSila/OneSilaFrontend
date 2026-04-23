@@ -17,6 +17,7 @@ import MiraklMarketplaceTabs from './components/MiraklMarketplaceTabs.vue';
 import MiraklCategorySection from './components/MiraklCategorySection.vue';
 import MiraklIssuesSection from './components/MiraklIssuesSection.vue';
 import { ProductType } from '../../../../../../../shared/utils/constants';
+import { getProductPropertiesRuleId } from '../../../../../../../shared/utils/productPropertiesRules';
 
 const props = defineProps<{ product: Product }>();
 
@@ -33,9 +34,9 @@ const defaultCategoriesByChannel = ref<
   Record<string, { remoteId: string | null; name: string | null }>
 >({});
 
-const productTypeRuleId = computed(() => {
+const productTypeRules = computed(() => {
   const typeProp = props.product?.productpropertySet?.find((property: any) => property.property?.isProductType);
-  return typeProp?.valueSelect?.productpropertiesruleSet?.[0]?.id || null;
+  return typeProp?.valueSelect?.productpropertiesruleSet || [];
 });
 
 const fetchChannels = async () => {
@@ -94,7 +95,7 @@ const resolveCategoryForChannel = (channel: any) => {
 
 let defaultCategoriesRequestId = 0;
 const fetchDefaultCategories = async () => {
-  if (!productTypeRuleId.value || !channels.value.length) {
+  if (!channels.value.length) {
     defaultCategoriesByChannel.value = {};
     return;
   }
@@ -105,8 +106,12 @@ const fetchDefaultCategories = async () => {
       const channelKey = channel?.id ?? '';
       const salesChannelPtrId = channel?.saleschannelPtr?.id || null;
       const filterSalesChannelId = salesChannelPtrId || channel?.id || null;
+      const ruleId = getProductPropertiesRuleId(
+        productTypeRules.value,
+        filterSalesChannelId,
+      );
 
-      if (!filterSalesChannelId || !productTypeRuleId.value) {
+      if (!filterSalesChannelId || !ruleId) {
         return [channelKey, { remoteId: null, name: null }] as const;
       }
 
@@ -116,7 +121,7 @@ const fetchDefaultCategories = async () => {
           variables: {
             first: 1,
             filter: {
-              localInstance: { id: { exact: productTypeRuleId.value } },
+              localInstance: { id: { exact: ruleId } },
               salesChannel: { id: { exact: filterSalesChannelId } },
             },
           },
@@ -171,7 +176,7 @@ watch(
 );
 
 watch(
-  [channels, productTypeRuleId],
+  [channels, productTypeRules],
   () => {
     void fetchDefaultCategories();
   },

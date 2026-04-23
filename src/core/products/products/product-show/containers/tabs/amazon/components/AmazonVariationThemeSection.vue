@@ -8,6 +8,7 @@ import { Icon } from '../../../../../../../../shared/components/atoms/icon';
 import apolloClient from '../../../../../../../../../apollo-client';
 import { Toast } from '../../../../../../../../shared/modules/toast';
 import { displayApolloError } from '../../../../../../../../shared/utils';
+import { getProductPropertiesRuleId } from '../../../../../../../../shared/utils/productPropertiesRules';
 import { amazonProductTypesQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
 import { amazonVariationThemesQuery } from '../../../../../../../../shared/api/queries/amazonVariationThemes.js';
 import {
@@ -28,7 +29,10 @@ const recordId = ref<string | null>(null);
 
 const productTypeRuleId = computed(() => {
   const typeProp = props.product?.productpropertySet?.find((p: any) => p.property?.isProductType);
-  return typeProp?.valueSelect?.productpropertiesruleSet?.[0]?.id || null;
+  return getProductPropertiesRuleId(
+    typeProp?.valueSelect?.productpropertiesruleSet,
+    props.view?.salesChannel?.id || null,
+  );
 });
 
 const fetchOptions = async () => {

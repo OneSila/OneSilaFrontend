@@ -24,6 +24,10 @@ export const productSubscription = gql`
             value
             productpropertiesruleSet {
                 id
+                salesChannel {
+                  id
+                  proxyId
+                }
             }
           }
           valueMultiSelect {
