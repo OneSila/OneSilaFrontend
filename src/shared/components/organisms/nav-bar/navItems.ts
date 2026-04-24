@@ -49,6 +49,11 @@ export const navSections: NavSection[] = [
                 route: { name: 'integrations.integrations.list' }
             },
             {
+                title: 'products.workflows.title',
+                icon: 'sitemap',
+                route: { name: 'workflows.list' }
+            },
+            {
                 title: 'properties.title',
                 icon: 'screwdriver-wrench',
                 subItemsKey: 'properties',

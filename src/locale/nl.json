@@ -1075,6 +1075,49 @@
   },
   "products": {
     "title": "Producten",
+    "workflows": {
+      "title": "Workflows",
+      "buttons": {
+        "addProduct": "Add Product"
+      },
+      "sidebar": {
+        "title": "Workflows",
+        "description": "Select a workflow to manage its product assignments.",
+        "productCount": "{count} products"
+      },
+      "labels": {
+        "defaultState": "Default",
+        "productCount": "Products",
+        "stateProductCount": "{count} products",
+        "untitledProduct": "Untitled product"
+      },
+      "messages": {
+        "boardDescription": "Manage {count} products across the workflow states.",
+        "noDefaultState": "This workflow has no default state, so new products cannot be added from this board yet.",
+        "assignmentCreated": "Product added to workflow.",
+        "assignmentCreateError": "We could not add this product to the workflow.",
+        "assignmentDeleted": "Product removed from workflow.",
+        "assignmentDeleteError": "We could not remove this product from the workflow.",
+        "assignmentUpdateError": "We could not move this product to the selected state.",
+        "removeAssignmentTitle": "Remove product from workflow?",
+        "removeAssignmentText": "This will remove {name} from the workflow.",
+        "removeAssignmentConfirm": "Remove",
+        "removeAssignmentCancel": "Cancel"
+      },
+      "empty": {
+        "noWorkflows": "No workflows available yet. Create one in Settings first.",
+        "noWorkflowSelected": "Select a workflow to view its board.",
+        "noProductsInState": "No products in this state yet."
+      },
+      "modals": {
+        "addProduct": {
+          "title": "Add product to workflow",
+          "description": "Only products that are not already assigned to this workflow are available here.",
+          "placeholder": "Search a product",
+          "empty": "No more products are available to add."
+        }
+      }
+    },
     "hsCodes": {
       "title": "HS Codes",
       "create": {
@@ -1996,14 +2039,18 @@
             "title": "",
             "help": ""
           },
-          "contentQuality": {
-            "title": "",
-            "help": ""
-          },
-          "integrations": {
-            "title": "",
-            "help": ""
-          },
+        "contentQuality": {
+          "title": "",
+          "help": ""
+        },
+        "workflow": {
+          "title": "Workflow",
+          "help": "Filter products by their workflow state assignments."
+        },
+        "integrations": {
+          "title": "",
+          "help": ""
+        },
           "properties": {
             "title": "",
             "help": ""
@@ -2042,6 +2089,7 @@
           "missingInformation": "",
           "inspectorError": "",
           "excludeInspectorError": "",
+          "workflowState": "Workflow State",
           "assignedToStore": "",
           "notAssignedToStore": "",
           "presentOnStore": "",
@@ -2094,6 +2142,7 @@
           "priceList": "",
           "missingPriceList": "",
           "missingInformation": "",
+          "workflowState": "Select workflow state",
           "presentOnStore": "",
           "notPresentOnStore": "",
           "rejectedForStoreView": "",
@@ -2133,6 +2182,7 @@
           "excludeSkus": "",
           "missingRequiredInformation": "",
           "missingInformation": "",
+          "workflowState": "Filters products that currently have an assignment in the selected workflow state.",
           "assignedToStore": "",
           "notAssignedToStore": "",
           "rejectedForStoreView": "",
@@ -2231,6 +2281,43 @@
         "createAsAlias": "Als aliasproduct aanmaken?",
         "createRelationships": "",
         "createRelationshipsHelp": ""
+      },
+      "workflowCard": {
+        "title": "",
+        "subtitle": "",
+        "buttons": {
+          "add": ""
+        },
+        "labels": {
+          "workflow": "",
+          "state": ""
+        },
+        "placeholders": {
+          "workflow": "",
+          "state": ""
+        },
+        "empty": {
+          "noAssignments": "",
+          "noAvailableWorkflows": ""
+        },
+        "messages": {
+          "added": "",
+          "addError": "",
+          "updated": "",
+          "updateError": "",
+          "removed": "",
+          "removeError": "",
+          "removeTitle": "",
+          "removeText": "",
+          "removeConfirm": "",
+          "removeCancel": ""
+        },
+        "modals": {
+          "add": {
+            "title": "",
+            "description": ""
+          }
+        }
       },
       "duplicateSuccessfully": "Product succesvol gedupliceerd!"
     }
@@ -3039,6 +3126,84 @@
       "placeholders": {
         "name": "Naam",
         "rate": "Tarief invoegen"
+      }
+    },
+    "workflows": {
+      "title": "Workflows",
+      "create": {
+        "title": "Create Workflow"
+      },
+      "edit": {
+        "title": "Edit Workflow"
+      },
+      "labels": {
+        "name": "Name",
+        "code": "Code",
+        "sortOrder": "Sort Order",
+        "autoAddOnProduct": "Auto Add On Product",
+        "stateCount": "States",
+        "assignmentCount": "Assignments"
+      },
+      "placeholders": {
+        "name": "Enter workflow name",
+        "code": "Enter workflow code",
+        "codeGenerated": "Generated by backend",
+        "sortOrder": "Enter sort order"
+      },
+      "filters": {
+        "labels": {
+          "name": "Name",
+          "code": "Code"
+        },
+        "placeholders": {
+          "name": "Filter by name",
+          "code": "Filter by code"
+        }
+      },
+      "sort": {
+        "sortOrderAsc": "Sort order ascending",
+        "sortOrderDesc": "Sort order descending",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A"
+      },
+      "actions": {
+        "inUse": "In use"
+      },
+      "messages": {
+        "createIntro": "Create the workflow first, then manage its technical states on the edit page.",
+        "editIntro": "Manage the workflow settings and keep its states ordered for product assignment flows.",
+        "requiredFields": "Workflow name is required.",
+        "stateRequiredFields": "Each workflow state needs a value.",
+        "codeGeneratedHelp": "The workflow code is generated automatically by the backend.",
+        "autoAddNeedsStates": "Add at least one state before enabling automatic product assignment.",
+        "autoAddToggle": "Automatically assign this workflow to newly created products.",
+        "autoAddHelp": "When enabled, OneSila uses the default state for new product assignments.",
+        "deleteBlockedWorkflow": "This workflow cannot be deleted because it still has product assignments.",
+        "deleteBlockedState": "This state cannot be deleted because it is already used by product assignments.",
+        "confirmStateDelete": "Delete this workflow state from the workflow configuration?",
+        "assignmentSummary": "Current assignments: {count}"
+      },
+      "states": {
+        "title": "Workflow States",
+        "description": "States are technical and define the ordered steps inside the workflow.",
+        "sortOrderHelp": "Sort order follows the row position. Drag rows or use the arrows to reorder them.",
+        "add": "Add state",
+        "empty": "No states yet. Add the first state to finish the workflow setup.",
+        "inUse": "{count} assignments",
+        "labels": {
+          "value": "Value",
+          "code": "Code",
+          "isDefault": "Default",
+          "move": "Move"
+        },
+        "placeholders": {
+          "value": "Enter state value",
+          "code": "Enter state code",
+          "codeGenerated": "Generated after save"
+        },
+        "messages": {
+          "codeGenerated": "The state code is generated automatically by the backend."
+        }
       }
     },
     "documentTypes": {

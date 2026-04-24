@@ -230,7 +230,7 @@ const refreshInspector = async () => {
   <ApolloSubscription :subscription="inspectorSubscription" :variables="{ pk: product.inspector?.id }">
     <template v-slot:default="{ loading, error, result }">
       <template v-if="!loading && result && refetchData(result)">
-        <div class="p-2" :class="['shadow rounded-lg relative ', bgColorClass(color)]">
+        <div class="relative flex h-full min-h-0 flex-col overflow-hidden rounded-lg p-2 shadow" :class="[bgColorClass(color)]">
           <div class="px-4 py-4 sm:p-4 flex justify-between items-center">
             <h3 class="text-lg font-semibold leading-6 text-white">
               {{ getInspectorLabel(color) }}
@@ -240,7 +240,7 @@ const refreshInspector = async () => {
             </Button>
           </div>
           <hr>
-          <div class="mt-1 space-y-4">
+          <div class="mt-1 flex min-h-0 flex-1 flex-col overflow-hidden">
             <template v-if="errors.length === 0">
               <div class="rounded-md bg-white hover:bg-green-100 p-5 flex items-center">
                 <Icon name="check-circle" class="h-6 w-6 text-green-500" />
@@ -248,7 +248,7 @@ const refreshInspector = async () => {
               </div>
             </template>
             <template v-else>
-            <div class="custom-scrollbar overflow-y-auto max-h-48 space-y-4">
+              <div class="custom-scrollbar min-h-0 flex-1 space-y-4 overflow-y-auto pr-2">
                 <div v-for="(errorItem, index) in errors" :key="getErrorKey(errorItem, index)" class="rounded-md p-3 my-1 flex items-start justify-between bg-white group" :class="bgColorHoverClass(color)">
                   <div class="flex items-start">
                     <Icon name="circle-exclamation" class="h-6 w-6" :class="iconColorClass(color)" />

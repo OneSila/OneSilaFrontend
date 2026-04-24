@@ -74,6 +74,25 @@ export const productSubscription = gql`
         name
       }
       allowBackorder
+      workflowproductassignmentSet {
+        id
+        workflow {
+          id
+          name
+          states {
+            id
+            value
+            sortOrder
+            isDefault
+          }
+        }
+        workflowState {
+          id
+          value
+          sortOrder
+          isDefault
+        }
+      }
       saleschannelviewassignSet {
           id
           status

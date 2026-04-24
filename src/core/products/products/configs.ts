@@ -22,6 +22,7 @@ import { sheinCategoriesQuerySelector } from "../../../shared/api/queries/sheinC
 import { companyContentViewsQuery } from "../../../shared/api/queries/contentViews.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 import { salesPriceListsQuerySelector } from "../../../shared/api/queries/salesPrices.js";
+import { workflowStatesQuerySelector } from "../../../shared/api/queries/workflows.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -458,6 +459,22 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       isNot: true,
       filterKey: 'inspectorNotSuccessfullyCodeError',
       options: getInspectorErrors(t)
+    },
+    {
+      type: FieldType.Query,
+      name: 'workflowStateId',
+      query: workflowStatesQuerySelector,
+      label: t('products.products.filters.labels.workflowState'),
+      labelBy: 'fullName',
+      valueBy: 'id',
+      dataKey: 'workflowStates',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      placeholder: t('products.products.filters.placeholders.workflowState'),
+      helpText: t('products.products.filters.help.workflowState'),
+      queryVariables: { order: { sortOrder: 'ASC' } },
     },
     {
       type: FieldType.Query,
@@ -1053,6 +1070,13 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
         'missingInformation',
         'inspectorNotSuccessfullyCodeError',
         'excludeInspectorNotSuccessfullyCodeError',
+      ],
+    },
+    {
+      title: t('products.products.filters.sections.workflow.title'),
+      helpText: t('products.products.filters.sections.workflow.help'),
+      filters: [
+        'workflowStateId',
       ],
     },
     {
