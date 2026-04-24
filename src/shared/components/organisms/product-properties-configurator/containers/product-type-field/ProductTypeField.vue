@@ -7,6 +7,7 @@ import { useI18n } from "vue-i18n";
 import { defineEmits, onMounted, Ref, ref, watch } from "vue";
 import { FieldQuery } from "../../../general-form/containers/form-fields/field-query";
 import { Selector } from "../../../../atoms/selector";
+import { Link } from "../../../../atoms/link";
 import apolloClient from "../../../../../../../apollo-client";
 
 const props = withDefaults(defineProps<{ productType: { id: string, value: string } | null; widthClass?: string }>(), {
@@ -74,7 +75,18 @@ onMounted(setField);
 
 <template>
   <div class="my-4">
-    <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">{{  t('properties.properties.labels.isProductType') }}</label>
+    <div class="flex items-center justify-between gap-3 px-1">
+      <label class="font-semibold block text-sm leading-6 text-gray-900">{{  t('properties.properties.labels.isProductType') }}</label>
+      <Link
+        v-if="productType?.id"
+        :path="{ name: 'properties.values.edit', params: { id: productType.id } }"
+        target="_blank"
+      >
+        <span class="text-sm font-medium text-primary">
+          {{ t('properties.rule.labels.editProductTypeName') }}
+        </span>
+      </Link>
+    </div>
     <template v-if="productType == null">
       <FieldQuery v-if="productTypeField !== null" :class="props.widthClass" v-model="localProductType" :field="productTypeField"  />
     </template>

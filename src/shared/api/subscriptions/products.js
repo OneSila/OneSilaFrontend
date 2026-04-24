@@ -89,6 +89,7 @@ export const productSubscription = gql`
             id
             name
             active
+            includeInTodo
           }
           remoteProduct {
             id
@@ -96,6 +97,15 @@ export const productSubscription = gql`
             status
           }
         }
+      rejectedsaleschannelviewassignSet {
+        id
+        salesChannelView {
+          id
+          name
+          active
+          includeInTodo
+        }
+      }
     }
   }
 `;

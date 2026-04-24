@@ -16,7 +16,6 @@ import { getProductPropertiesRuleQuery, productPropertiesRulesQuery } from "../.
 import { completeCreateProductPropertiesRuleMutation, completeUpdateProductPropertiesRuleMutation, deleteProductPropertiesRuleMutation, duplicatePropertiesRuleMutation } from "../../../../shared/api/mutations/properties.js";
 import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import {DangerButton} from "../../../../shared/components/atoms/button-danger";
-import {FormType} from "../../../../shared/components/organisms/general-form/formConfig";
 import {ApolloAlertMutation} from "../../../../shared/components/molecules/apollo-alert-mutation";
 import { Property } from "../../../../shared/components/organisms/product-properties-configurator/ProductPropertiesConfigurator.vue";
 import {Link} from "../../../../shared/components/atoms/link";
@@ -37,6 +36,7 @@ interface RuleCacheEntry {
   requireEanCode: boolean;
   items: Property[];
   itemsMap: Record<string, Item>;
+  templateSourceKey?: string | null;
   salesChannel: {
     id: string | null;
     name?: string | null;
@@ -65,6 +65,7 @@ const requireEanCode = ref(false);
 const ruleName = ref('');
 const selectedSalesChannel = ref<'default' | string>('default');
 const previousSalesChannel = ref<'default' | string>('default');
+const selectedTemplateSource = ref<'default' | string>('default');
 const rulesCache: Ref<Record<string, RuleCacheEntry>> = ref({});
 const rawSalesChannels = ref<{ label: string; value: string }[]>([]);
 const ignoreNextRouteChange = ref(false);
@@ -87,6 +88,30 @@ const disableActions = computed(() =>
   integrationsLoading.value || rightLoading.value || saveLoading.value
 );
 
+const templateSourceOptions = computed(() => {
+  const options = Object.entries(rulesCache.value)
+    .filter(([, entry]) => Boolean(entry?.id))
+    .map(([key, entry]) => ({
+      value: key,
+      label: key === 'default'
+        ? t('properties.rule.labels.defaultSalesChannel')
+        : formatSalesChannelLabel(entry.salesChannel || undefined),
+    }))
+    .sort((a, b) => {
+      if (a.value === 'default') return -1;
+      if (b.value === 'default') return 1;
+      return a.label.localeCompare(b.label);
+    });
+
+  return options;
+});
+
+const showTemplateSourceSelector = computed(() =>
+  selectedSalesChannel.value !== 'default'
+  && !currentRuleId.value
+  && templateSourceOptions.value.length > 0
+);
+
 const getCacheKey = (salesChannelId: string | null | undefined) =>
   salesChannelId ?? 'default';
 
@@ -106,6 +131,7 @@ const formatSalesChannelLabel = (channel?: { id?: string | null; hostname?: stri
 const cloneRuleEntry = (entry: RuleCacheEntry): RuleCacheEntry => ({
   id: entry.id,
   requireEanCode: entry.requireEanCode,
+  templateSourceKey: entry.templateSourceKey ?? null,
   items: entry.items.map((item) => ({ ...item })),
   itemsMap: Object.fromEntries(
     Object.entries(entry.itemsMap).map(([key, value]) => [key, { ...value }])
@@ -136,8 +162,12 @@ const addSalesChannelOptionIfMissing = (entry: RuleCacheEntry) => {
   }
 };
 
-const createRuleFromDefault = (defaultEntry: RuleCacheEntry, salesChannelId: string | null): RuleCacheEntry => {
-  const items = defaultEntry.items.map((item, index) => ({
+const createRuleFromTemplate = (
+  templateEntry: RuleCacheEntry,
+  salesChannelId: string | null,
+  templateSourceKey: string | null,
+): RuleCacheEntry => {
+  const items = templateEntry.items.map((item, index) => ({
     ...item,
     sortOrder: index + 1,
   }));
@@ -153,7 +183,8 @@ const createRuleFromDefault = (defaultEntry: RuleCacheEntry, salesChannelId: str
 
   return {
     id: null,
-    requireEanCode: defaultEntry.requireEanCode,
+    requireEanCode: templateEntry.requireEanCode,
+    templateSourceKey,
     items,
     itemsMap,
     salesChannel: salesChannelId
@@ -190,6 +221,7 @@ const transformRuleNode = (node: any): RuleCacheEntry => {
     requireEanCode: !!node.requireEanCode,
     items,
     itemsMap,
+    templateSourceKey: null,
     salesChannel: node.salesChannel
       ? {
           id: node.salesChannel.id ?? null,
@@ -234,12 +266,73 @@ const fetchRuleBySalesChannel = async (channelKey: string): Promise<RuleCacheEnt
   return entry;
 };
 
+const getPreferredTemplateSourceKey = () =>
+  templateSourceOptions.value.find((option) => option.value === 'default')?.value
+  || templateSourceOptions.value[0]?.value
+  || 'default';
+
 const ensureDefaultRule = async () => {
   if (rulesCache.value['default']) {
     return;
   }
 
   await fetchRuleBySalesChannel('default');
+};
+
+const loadRuleTemplates = async (productTypeId: string) => {
+  const { data } = await apolloClient.query({
+    query: productPropertiesRulesQuery,
+    variables: {
+      filter: { productType: { id: { exact: productTypeId } } },
+      first: 100,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const nodes = data?.productPropertiesRules?.edges?.map((edge: any) => edge.node) ?? [];
+  nodes.forEach((node: any) => {
+    const entry = transformRuleNode(node);
+    const key = getCacheKey(entry.salesChannel?.id ?? null);
+    rulesCache.value[key] = entry;
+    addSalesChannelOptionIfMissing(entry);
+  });
+};
+
+const createMissingRuleEntry = async (
+  channelKey: string,
+  templateSourceKey: string,
+): Promise<RuleCacheEntry> => {
+  const normalizedTemplateSource = templateSourceKey || getPreferredTemplateSourceKey();
+  let templateEntry: RuleCacheEntry | null = rulesCache.value[normalizedTemplateSource] ?? null;
+
+  if (!templateEntry && normalizedTemplateSource === 'default') {
+    await ensureDefaultRule();
+    templateEntry = rulesCache.value.default ?? null;
+  }
+
+  if (!templateEntry && normalizedTemplateSource !== 'default') {
+    templateEntry = await fetchRuleBySalesChannel(normalizedTemplateSource);
+  }
+
+  if (templateEntry) {
+    return createRuleFromTemplate(
+      templateEntry,
+      channelKey === 'default' ? null : channelKey,
+      normalizedTemplateSource,
+    );
+  }
+
+  return {
+    id: null,
+    requireEanCode: false,
+    templateSourceKey: normalizedTemplateSource,
+    items: [],
+    itemsMap: {},
+    salesChannel:
+      channelKey === 'default'
+        ? null
+        : { id: channelKey, name: null, type: null, hostname: null },
+  };
 };
 
 const loadSalesChannels = async () => {
@@ -287,7 +380,7 @@ const updateRouteId = async (newRuleId: string) => {
   }
 
   ignoreNextRouteChange.value = true;
-  await router.replace({ name: 'properties.rule.edit', params: { id: newId } });
+  await router.replace({ name: 'properties.rule.edit', params: { id: newId }, query: route.query });
   id.value = newId;
 };
 
@@ -388,23 +481,9 @@ const handleSalesChannelUpdated = async (newValue: string) => {
     }
 
     if (!entry) {
-      await ensureDefaultRule();
-      const defaultEntry = rulesCache.value['default'];
-      if (defaultEntry) {
-        entry = createRuleFromDefault(defaultEntry, normalizedValue === 'default' ? null : normalizedValue);
-      } else {
-        entry = {
-          id: null,
-          requireEanCode: false,
-          items: [],
-          itemsMap: {},
-          salesChannel:
-            normalizedValue === 'default'
-              ? null
-              : { id: normalizedValue, name: null, type: null, hostname: null },
-        };
-      }
-
+      const templateKey = getPreferredTemplateSourceKey();
+      selectedTemplateSource.value = templateKey;
+      entry = await createMissingRuleEntry(normalizedValue, templateKey);
       rulesCache.value[normalizedValue] = entry;
     }
 
@@ -412,6 +491,7 @@ const handleSalesChannelUpdated = async (newValue: string) => {
       return;
     }
 
+    selectedTemplateSource.value = entry.templateSourceKey || getPreferredTemplateSourceKey();
     applyRuleState(entry);
 
     if (entry.salesChannel?.id) {
@@ -476,6 +556,7 @@ const persistRule = async (): Promise<RuleCacheEntry | null> => {
   addSalesChannelOptionIfMissing(entry);
   selectedSalesChannel.value = key;
   previousSalesChannel.value = key;
+  selectedTemplateSource.value = entry.templateSourceKey || getPreferredTemplateSourceKey();
   applyRuleState(entry);
 
   if (entry.id) {
@@ -487,9 +568,11 @@ const persistRule = async (): Promise<RuleCacheEntry | null> => {
 
 const fetchData = async () => {
   rightLoading.value = true;
+  rulesCache.value = {};
   propertiesItemsMap.value = {};
   initialItems.value = [];
   updatedAddedProperties.value = [];
+  selectedTemplateSource.value = 'default';
 
   try {
     const { data } = await apolloClient.query({
@@ -504,12 +587,14 @@ const fetchData = async () => {
     }
 
     initialProductType.value = rule.productType;
+    await loadRuleTemplates(rule.productType.id);
     const entry = transformRuleNode(rule);
     const key = getCacheKey(entry.salesChannel?.id ?? null);
     rulesCache.value[key] = entry;
     addSalesChannelOptionIfMissing(entry);
     selectedSalesChannel.value = key;
     previousSalesChannel.value = key;
+    selectedTemplateSource.value = entry.templateSourceKey || getPreferredTemplateSourceKey();
     applyRuleState(entry);
 
     if (key !== 'default') {
@@ -565,6 +650,24 @@ const handleRequireEanCodeUpdated = (newVal: boolean) => {
 const handleDelete = () => {
    router.push({name: 'properties.rule.list'});
 }
+
+const handleTemplateSourceUpdated = async (newValue: string) => {
+  if (disableActions.value || selectedSalesChannel.value === 'default' || currentRuleId.value) {
+    return;
+  }
+
+  const normalizedValue = newValue && newValue !== '' ? newValue : getPreferredTemplateSourceKey();
+  selectedTemplateSource.value = normalizedValue;
+
+  rightLoading.value = true;
+  try {
+    const entry = await createMissingRuleEntry(selectedSalesChannel.value, normalizedValue);
+    rulesCache.value[selectedSalesChannel.value] = entry;
+    applyRuleState(entry);
+  } finally {
+    rightLoading.value = false;
+  }
+};
 
 const openDuplicateModal = () => {
   ruleName.value = '';
@@ -667,11 +770,15 @@ watch(
             :require-ean-code="requireEanCode"
             :sales-channel-options="salesChannelOptions"
             :selected-sales-channel="selectedSalesChannel"
+            :template-source-options="templateSourceOptions"
+            :selected-template-source="selectedTemplateSource"
+            :show-template-source-selector="showTemplateSourceSelector"
             :integrations-loading="integrationsLoading"
             :right-loading="rightLoading || saveLoading"
             @update:added-properties="handleAddedProperties"
             @update:require-ean-code="handleRequireEanCodeUpdated"
             @update:sales-channel="handleSalesChannelUpdated"
+            @update:template-source="handleTemplateSourceUpdated"
              />
 
         <div class="flex items-center justify-end gap-x-3 border-t border-gray-900/10 px-4 py-4 sm:px-8">

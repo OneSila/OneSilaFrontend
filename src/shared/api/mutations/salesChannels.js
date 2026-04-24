@@ -333,6 +333,17 @@ export const createSalesChannelViewAssignMutation = gql`
   }
 `;
 
+export const changeProductViewStatusMutation = gql`
+  mutation ChangeProductViewStatus($status: ProductViewStatus!, $assignObject: SalesChannelViewAssignObjectInput!) {
+    changeProductViewStatus(status: $status, assignObject: $assignObject) {
+      status
+      productsCount
+      viewsCount
+      createdCount
+      deletedCount
+    }
+  }
+`;
 
 export const createSalesChannelViewAssignsMutation = gql`
   mutation createSalesChannelViewAssigns($data: [SalesChannelViewAssignInput!]!) {
@@ -346,6 +357,18 @@ export const createSalesChannelViewAssignsMutation = gql`
         id
         name
       }
+    }
+  }
+`;
+
+export const changeProductViewsStatusMutation = gql`
+  mutation ChangeProductViewsStatus($changes: [ProductViewStatusChangeInput!]!) {
+    changeProductViewsStatus(changes: $changes) {
+      status
+      productsCount
+      viewsCount
+      createdCount
+      deletedCount
     }
   }
 `;
@@ -412,6 +435,8 @@ export const updateSalesChannelViewMutation = gql`
       id
       name
       active
+      includeInTodo
+      todoSortOrder
     }
   }
 `;
@@ -423,6 +448,8 @@ export const updateAmazonSalesChannelViewMutation = gql`
       name
       active
       isDefault
+      includeInTodo
+      todoSortOrder
     }
   }
 `;
@@ -433,6 +460,8 @@ export const updateEbaySalesChannelViewMutation = gql`
       id
       name
       url
+      includeInTodo
+      todoSortOrder
       fulfillmentPolicyId
       fulfillmentPolicyChoices
       paymentPolicyId
@@ -454,6 +483,8 @@ export const updateSheinSalesChannelViewMutation = gql`
       id
       name
       url
+      includeInTodo
+      todoSortOrder
       siteStatus
       storeType
       isDefault
@@ -470,6 +501,8 @@ export const updateMiraklSalesChannelViewMutation = gql`
       name
       description
       active
+      includeInTodo
+      todoSortOrder
     }
   }
 `;

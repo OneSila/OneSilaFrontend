@@ -29,7 +29,7 @@ const propertyField = {
   labelBy: 'name',
   valueBy: 'id',
   query: propertiesQuerySelector,
-  queryVariables: { filter: { isProductType: { exact: false } } },
+  queryVariables: {},
   dataKey: 'properties',
   isEdge: true,
   multiple: false,

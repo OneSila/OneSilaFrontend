@@ -138,6 +138,10 @@
           "128": {
             "title": "",
             "description": ""
+          },
+          "129": {
+            "title": "",
+            "description": ""
           }
         }
       }
@@ -466,26 +470,33 @@
           "title": "",
           "button": "",
           "description": "",
-          "disclaimer": "",
           "viewsLabel": "",
           "viewsPlaceholder": "",
+          "statusLabel": "",
           "selectedViewsTitle": "",
           "selectedViewsEmpty": "",
           "noActiveViews": "",
-          "summaryReady": "",
+          "summaryProducts": "",
+          "summaryViews": "",
           "summarySkipped": "",
-          "summaryExisting": "",
           "summaryPlanned": "",
           "loadingProducts": "",
           "noProductsSelected": "",
-          "processingNote": "",
           "missingSelection": "",
-          "nothingToAssign": "",
+          "nothingToChange": "",
           "assignButton": "",
           "success": "",
-          "skippedRed": "",
-          "skippedExisting": "",
-          "error": ""
+          "destructiveWarning": "",
+          "destructiveConfirm": {
+            "title": "",
+            "text": "",
+            "confirmButtonText": ""
+          },
+          "statuses": {
+            "todo": "",
+            "reject": "",
+            "added": ""
+          }
         },
         "advancedContentGenerator": {
           "button": "",
@@ -1226,6 +1237,65 @@
       "marketplaceSelector": {
         "label": ""
       },
+      "websites": {
+        "columns": {
+          "state": ""
+        },
+        "guidance": {
+          "title": "",
+          "description": ""
+        },
+        "tutorial": {
+          "title": "",
+          "description": "",
+          "added": "",
+          "todo": "",
+          "reject": "",
+          "transitionsTitle": "",
+          "transitionAddedToTodo": {
+            "title": "",
+            "description": ""
+          },
+          "transitionAddedToReject": {
+            "title": "",
+            "description": ""
+          },
+          "transitionTodoToAdded": {
+            "title": "",
+            "description": ""
+          },
+          "transitionRejectToTodo": {
+            "title": "",
+            "description": ""
+          },
+          "configurableWarning": {
+            "title": "",
+            "description": ""
+          }
+        },
+        "statuses": {
+          "todo": "",
+          "reject": "",
+          "added": ""
+        },
+        "progress": {
+          "todo": "",
+          "rejected": ""
+        },
+        "actions": {
+          "availableOnlyWhenAdded": ""
+        },
+        "confirmation": {
+          "title": "",
+          "text": "",
+          "confirmButtonText": ""
+        },
+        "toast": {
+          "statusUpdated": ""
+        },
+        "loadingViews": "",
+        "empty": ""
+      },
       "priceLists": {
         "add": {
           "placeholder": "",
@@ -1851,7 +1921,8 @@
           "123": "Configureerbaar product heeft duplicate variaties",
           "124": "Configureerbaar product kon geen product eigenschap regel vinden",
           "127": "",
-          "128": ""
+          "128": "",
+          "129": ""
         },
         "help": {
           "101": "Voeg op minimaal één afbeelding toe",
@@ -1880,6 +1951,7 @@
           "124": "",
           "127": "",
           "128": "",
+          "129": "",
           "generic": ""
         },
         "alert": {
@@ -1974,6 +2046,9 @@
           "notAssignedToStore": "",
           "presentOnStore": "",
           "notPresentOnStore": "",
+          "rejectedForStoreView": "",
+          "todoForStoreView": "",
+          "hasTodoSalesChannelView": "",
           "amazonBrowseNode": "",
           "excludeAmazonBrowseNode": "",
           "ebayProductCategory": "",
@@ -2021,6 +2096,8 @@
           "missingInformation": "",
           "presentOnStore": "",
           "notPresentOnStore": "",
+          "rejectedForStoreView": "",
+          "todoForStoreView": "",
           "amazonBrowseNode": "",
           "excludeAmazonBrowseNode": "",
           "ebayProductCategory": "",
@@ -2058,6 +2135,9 @@
           "missingInformation": "",
           "assignedToStore": "",
           "notAssignedToStore": "",
+          "rejectedForStoreView": "",
+          "todoForStoreView": "",
+          "hasTodoSalesChannelView": "",
           "amazonBrowseNode": "",
           "excludeAmazonBrowseNode": "",
           "ebayProductCategory": "",
@@ -3426,12 +3506,15 @@
       "labels": {
         "type": "Regel Type",
         "propertyType": "Type Eigenschap",
+        "editProductTypeName": "",
+        "createFromSalesChannel": "",
         "salesChannel": "",
         "defaultSalesChannel": "",
         "unknownSalesChannel": ""
       },
       "placeholders": {
         "type": "Selecteer Type Regel",
+        "createFromSalesChannel": "",
         "salesChannel": ""
       },
       "help": {
@@ -3511,8 +3594,18 @@
       },
       "stores": {
         "labels": {
+          "description": "",
           "siteStatus": "",
-          "storeType": ""
+          "storeType": "",
+          "includeInTodo": "",
+          "todoSortOrder": ""
+        },
+        "help": {
+          "includeInTodo": "",
+          "todoSortOrder": ""
+        },
+        "placeholders": {
+          "todoSortOrder": ""
         },
         "shein": {
           "storeType": {
@@ -4812,6 +4905,20 @@
       },
       "actions": {
         "bulkResync": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "noneEligible": ""
+        },
+        "bulkReject": {
+          "title": "",
+          "description": "",
+          "confirmButtonText": "",
+          "success": "",
+          "noneEligible": ""
+        },
+        "bulkTodo": {
           "title": "",
           "description": "",
           "confirmButtonText": "",
