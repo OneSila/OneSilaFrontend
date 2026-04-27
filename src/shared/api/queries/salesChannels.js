@@ -1726,8 +1726,6 @@ export const getMiraklPropertyQuery = gql`
       originalType
       allowsUnmappedValues
       defaultValue
-      valueListCode
-      valueListLabel
       yesTextValue
       noTextValue
       descriptionTranslations
@@ -2418,8 +2416,6 @@ export const getMiraklPropertySelectValueQuery = gql`
       mappedRemotely
       labelTranslations
       valueLabelTranslations
-      valueListCode
-      valueListLabel
       rawData
       remoteProperty {
         id
