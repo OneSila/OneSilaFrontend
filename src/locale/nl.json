@@ -2295,7 +2295,8 @@
       },
       "bulkEditModal": {
         "textTitle": "Waarde bewerken",
-        "descriptionTitle": "Beschrijving bewerken"
+        "descriptionTitle": "Beschrijving bewerken",
+        "useSku": ""
       },
       "duplicateModal": {
         "description": "Geef een SKU op voor het gedupliceerde product of laat leeg om automatisch te genereren.",

@@ -1120,6 +1120,13 @@ const saveModal = () => {
   cancelModal()
 }
 
+const useSkuAndSaveModal = () => {
+  if (selectedIndex.value === null) return
+  const sku = variations.value[selectedIndex.value]?.variation?.sku ?? ''
+  modalValue.value = sku
+  saveModal()
+}
+
 const fetchSourceText = async () => {
   if (!defaultLanguageCode.value) return ''
   if (selectedIndex.value === null) return ''
@@ -1492,6 +1499,9 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
             @translated="handleTranslated"
           />
           <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+          <Button class="btn btn-outline-dark" @click="useSkuAndSaveModal">
+            {{ t('products.products.bulkEditModal.useSku') }}
+          </Button>
           <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
         </div>
       </Card>
@@ -1514,6 +1524,9 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
             @translated="handleTranslated"
           />
           <Button class="btn btn-outline-dark" @click="cancelModal">{{ t('shared.button.cancel') }}</Button>
+          <Button class="btn btn-outline-dark" @click="useSkuAndSaveModal">
+            {{ t('products.products.bulkEditModal.useSku') }}
+          </Button>
           <Button class="btn btn-primary" @click="saveModal">{{ t('shared.button.edit') }}</Button>
         </div>
       </Card>

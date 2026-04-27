@@ -733,6 +733,11 @@
         "createRelationships": "",
         "createRelationshipsHelp": ""
       },
+      "bulkEditModal": {
+        "textTitle": "",
+        "descriptionTitle": "",
+        "useSku": ""
+      },
       "workflowCard": {
         "title": "",
         "subtitle": "",

@@ -2719,7 +2719,8 @@
       },
       "bulkEditModal": {
         "textTitle": "Edit value",
-        "descriptionTitle": "Edit description"
+        "descriptionTitle": "Edit description",
+        "useSku": "Use sku"
       },
       "workflowCard": {
         "title": "Workflows",
