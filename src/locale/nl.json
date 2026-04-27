@@ -498,6 +498,21 @@
             "added": ""
           }
         },
+        "bulkWorkflowStateAssigner": {
+          "title": "",
+          "button": "",
+          "description": "",
+          "workflowLabel": "",
+          "workflowPlaceholder": "",
+          "stateLabel": "",
+          "statePlaceholder": "",
+          "noWorkflows": "",
+          "noStates": "",
+          "replaceWarning": "",
+          "assignButton": "",
+          "success": "",
+          "error": ""
+        },
         "advancedContentGenerator": {
           "button": "",
           "title": "",
@@ -1222,6 +1237,12 @@
         "subtitle": "",
         "description": "Beschrijving",
         "urlKey": "URL Sleutel"
+      },
+      "cleanField": {
+        "button": "",
+        "confirm": "",
+        "success": "",
+        "error": ""
       },
       "warning": {
         "inheritFromDefault": "Lege velden worden overgenomen van de standaardversie voor deze taal in de uiteindelijke productinhoud."
@@ -2286,18 +2307,21 @@
         "title": "",
         "subtitle": "",
         "buttons": {
-          "add": ""
+          "add": "",
+          "change": "",
+          "saveAndNext": "",
+          "saveAndStay": "",
+          "saveAndBackToListing": ""
         },
         "labels": {
           "workflow": "",
+          "workflows": "",
           "state": ""
         },
         "placeholders": {
-          "workflow": "",
-          "state": ""
+          "workflow": ""
         },
         "empty": {
-          "noAssignments": "",
           "noAvailableWorkflows": ""
         },
         "messages": {
@@ -2316,6 +2340,10 @@
           "add": {
             "title": "",
             "description": ""
+          },
+          "transition": {
+            "description": "",
+            "confirm": ""
           }
         }
       },

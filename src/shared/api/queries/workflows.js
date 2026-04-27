@@ -56,6 +56,7 @@ export const workflowAssignmentOptionsQuery = gql`
         node {
           id
           name
+          sortOrder
           states {
             id
             value
@@ -146,6 +147,24 @@ export const workflowBoardQuery = gql`
           sku
           createdAt
           thumbnailUrl
+        }
+      }
+    }
+  }
+`;
+
+export const workflowStateTransitionCandidatesQuery = gql`
+  query WorkflowStateTransitionCandidates($id: GlobalID!) {
+    workflow(id: $id) {
+      id
+      productAssignments {
+        id
+        createdAt
+        workflowState {
+          id
+        }
+        product {
+          id
         }
       }
     }

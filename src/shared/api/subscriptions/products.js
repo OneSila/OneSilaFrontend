@@ -79,6 +79,7 @@ export const productSubscription = gql`
         workflow {
           id
           name
+          sortOrder
           states {
             id
             value

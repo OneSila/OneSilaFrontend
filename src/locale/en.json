@@ -773,6 +773,21 @@
             "added": "Added"
           }
         },
+        "bulkWorkflowStateAssigner": {
+          "title": "Assign workflow state to {count} product(s)",
+          "button": "Set Workflow State",
+          "description": "Select a workflow and state to apply in bulk.",
+          "workflowLabel": "Workflow",
+          "workflowPlaceholder": "Select workflow",
+          "stateLabel": "Workflow state",
+          "statePlaceholder": "Select workflow state",
+          "noWorkflows": "No workflows are available.",
+          "noStates": "No states are available for this workflow.",
+          "replaceWarning": "This action replaces existing workflow assignments on the selected products with the selected workflow and state.",
+          "assignButton": "Apply workflow state",
+          "success": "Updated {count} product(s) to {workflow} / {state}.",
+          "error": "We could not update workflow assignments."
+        },
         "aiBulkTranslator": {
           "button": "AI Translate",
           "title": "Translate {count} {type}",
@@ -1643,6 +1658,12 @@
         "description": "Description",
         "urlKey": "URL Key",
         "bulletPoints": "Bullet Points"
+      },
+      "cleanField": {
+        "button": "Clean field",
+        "confirm": "Are you sure you want to clean this field? This action cannot be undone.",
+        "success": "Field cleaned successfully.",
+        "error": "Failed to clean this field. Please try again."
       },
       "warning": {
         "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
@@ -2704,18 +2725,21 @@
         "title": "Workflows",
         "subtitle": "Track the workflow assignments for this product.",
         "buttons": {
-          "add": "Add workflow"
+          "add": "Add workflow",
+          "change": "Change",
+          "saveAndNext": "Save and next",
+          "saveAndStay": "Save and stay here",
+          "saveAndBackToListing": "Save and go back to listing"
         },
         "labels": {
           "workflow": "Workflow",
+          "workflows": "Workflows",
           "state": "State"
         },
         "placeholders": {
-          "workflow": "Select workflow",
-          "state": "Select state"
+          "workflow": "Select workflow"
         },
         "empty": {
-          "noAssignments": "This product is not assigned to any workflow yet.",
           "noAvailableWorkflows": "No workflows are available in this project."
         },
         "messages": {
@@ -2733,7 +2757,11 @@
         "modals": {
           "add": {
             "title": "Add workflow to product",
-            "description": "Select a workflow and the state you want to assign to this product."
+            "description": "Select a workflow to assign to this product."
+          },
+          "transition": {
+            "description": "You are about to send this product in the stage {newStage} of the workflow {workflow}.",
+            "confirm": "Confirm your next action:"
           }
         }
       },

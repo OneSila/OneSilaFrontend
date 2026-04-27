@@ -2,6 +2,8 @@
 import { Label } from '../../../../../../../shared/components/atoms/label';
 import { TextInput } from '../../../../../../../shared/components/atoms/input-text';
 import { TextHtmlEditor } from '../../../../../../../shared/components/atoms/input-text-html-editor';
+import { Button } from '../../../../../../../shared/components/atoms/button';
+import { Icon } from '../../../../../../../shared/components/atoms/icon';
 import { AiContentTranslator } from '../../../../../../../shared/components/organisms/ai-content-translator';
 import { AiContentGenerator } from '../../../../../../../shared/components/organisms/ai-content-generator';
 import { PropType, computed } from 'vue';
@@ -11,6 +13,7 @@ import type { ContentFieldLimitConfig, ContentFieldLimitRange } from './contentF
 const { t } = useI18n();
 
 type CountedField = 'name' | 'subtitle' | 'shortDescription' | 'description';
+type ContentField = 'SUBTITLE' | 'SHORT_DESCRIPTION' | 'DESCRIPTION' | 'URL_KEY' | 'BULLET_POINTS';
 
 const props = defineProps({
   form: {
@@ -61,6 +64,14 @@ const props = defineProps({
     type: Object as PropType<ContentFieldLimitConfig>,
     default: () => ({}),
   },
+  translationId: {
+    type: [String, null] as unknown as PropType<string | null>,
+    default: null,
+  },
+  cleaningField: {
+    type: [String, null] as unknown as PropType<ContentField | null>,
+    default: null,
+  },
 });
 
 const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
@@ -68,6 +79,7 @@ const defaultLanguage = computed(() => props.defaultLanguageCode || 'en');
 const emit = defineEmits<{
   (e: 'description', val: string): void;
   (e: 'shortDescription', val: string): void;
+  (e: 'clean-field', field: ContentField): void;
 }>();
 
 const fieldCharacterCounts = computed<Record<CountedField, number>>(() => ({
@@ -91,6 +103,9 @@ const isFieldLimitExceeded = (field: CountedField) => {
 };
 const getFieldCounterClass = (field: CountedField) =>
   isFieldLimitExceeded(field) ? 'text-red-500' : 'text-gray-400';
+const canCleanField = computed(() => !!props.translationId);
+const isFieldCleaning = (field: ContentField) => props.cleaningField === field;
+const emitCleanField = (field: ContentField) => emit('clean-field', field);
 
 </script>
 
@@ -147,6 +162,17 @@ const getFieldCounterClass = (field: CountedField) =>
                 @translated="val => form.subtitle = val"
               />
             </FlexCell>
+            <FlexCell v-if="canCleanField" center>
+              <Button
+                class="btn btn-sm btn-outline-warning"
+                :loading="isFieldCleaning('SUBTITLE')"
+                :disabled="isFieldCleaning('SUBTITLE')"
+                :title="t('products.translation.cleanField.button')"
+                @click="emitCleanField('SUBTITLE')"
+              >
+                <Icon name="broom" size="lg" />
+              </Button>
+            </FlexCell>
           </Flex>
         </FlexCell>
         <FlexCell v-if="hasFieldLimit('subtitle')" center class="text-right">
@@ -193,6 +219,17 @@ const getFieldCounterClass = (field: CountedField) =>
                 @translated="val => emit('shortDescription', val)"
               />
             </FlexCell>
+            <FlexCell v-if="canCleanField" center>
+              <Button
+                class="btn btn-sm btn-outline-warning"
+                :loading="isFieldCleaning('SHORT_DESCRIPTION')"
+                :disabled="isFieldCleaning('SHORT_DESCRIPTION')"
+                :title="t('products.translation.cleanField.button')"
+                @click="emitCleanField('SHORT_DESCRIPTION')"
+              >
+                <Icon name="broom" size="lg" />
+              </Button>
+            </FlexCell>
           </Flex>
         </FlexCell>
         <FlexCell v-if="hasFieldLimit('shortDescription')" center class="text-right">
@@ -238,6 +275,17 @@ const getFieldCounterClass = (field: CountedField) =>
                 @translated="val => emit('description', val)"
               />
             </FlexCell>
+            <FlexCell v-if="canCleanField" center>
+              <Button
+                class="btn btn-sm btn-outline-warning"
+                :loading="isFieldCleaning('DESCRIPTION')"
+                :disabled="isFieldCleaning('DESCRIPTION')"
+                :title="t('products.translation.cleanField.button')"
+                @click="emitCleanField('DESCRIPTION')"
+              >
+                <Icon name="broom" size="lg" />
+              </Button>
+            </FlexCell>
           </Flex>
         </FlexCell>
         <FlexCell v-if="hasFieldLimit('description')" center class="text-right">
@@ -256,7 +304,22 @@ const getFieldCounterClass = (field: CountedField) =>
       </div>
     </FlexCell>
     <FlexCell v-if="showUrlKey">
-      <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
+      <Flex class="gap-4">
+        <FlexCell center>
+          <Label semi-bold>{{ t('products.translation.labels.urlKey') }}</Label>
+        </FlexCell>
+        <FlexCell v-if="canCleanField" center>
+          <Button
+            class="btn btn-sm btn-outline-warning"
+            :loading="isFieldCleaning('URL_KEY')"
+            :disabled="isFieldCleaning('URL_KEY')"
+            :title="t('products.translation.cleanField.button')"
+            @click="emitCleanField('URL_KEY')"
+          >
+            <Icon name="broom" size="lg" />
+          </Button>
+        </FlexCell>
+      </Flex>
       <TextInput v-model="form.urlKey" :placeholder="t('products.translation.placeholders.urlKey')" class="mt-2 w-full"/>
       <div class="mb-1 text-sm leading-6">
         <p class="text-red-500" v-if="fieldErrors['urlKey']">{{ fieldErrors['urlKey'] }}</p>

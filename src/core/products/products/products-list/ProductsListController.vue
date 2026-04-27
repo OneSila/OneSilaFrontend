@@ -20,6 +20,7 @@ import { bulkRefreshInspectorMutation } from "../../../../shared/api/mutations/p
 import { integrationsQuery } from "../../../../shared/api/queries/integrations.js";
 import { BulkProductPropertyAssigner } from "../../../../shared/components/organisms/bulk=product-property-assigner";
 import { BulkProductWebsiteAssigner } from "../../../../shared/components/organisms/bulk=product-website-assigner";
+import { BulkWorkflowStateAssigner } from "../../../../shared/components/organisms/bulk=workflow-state-assigner";
 import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { IntegrationTypes } from "../../../integrations/integrations/integrations";
 
@@ -32,7 +33,7 @@ const generalListingRef = ref<any>(null);
 const salesChannels = ref<any[]>([]);
 const bulkActionsVisibleCount = ref(1);
 const bulkActionsIndex = ref(0);
-const bulkActionsTotal = 8;
+const bulkActionsTotal = 9;
 
 const updateBulkActionsVisibleCount = () => {
   const width = window.innerWidth;
@@ -212,6 +213,13 @@ onBeforeUnmount(() => {
               </div>
 
               <div v-show="isBulkActionVisible(3)">
+                <BulkWorkflowStateAssigner
+                  :selected-entities="selectedEntities"
+                  @started="clearSelection"
+                />
+              </div>
+
+              <div v-show="isBulkActionVisible(4)">
                 <AdvancedContentGenerator
                   :product-ids="selectedEntities"
                   :use-default-button-styles="false"
@@ -221,7 +229,7 @@ onBeforeUnmount(() => {
                 />
               </div>
 
-              <div v-show="isBulkActionVisible(4)">
+              <div v-show="isBulkActionVisible(5)">
                 <ProductContentImportModal
                   :product-ids="selectedEntities"
                   :current-language="null"
@@ -235,7 +243,7 @@ onBeforeUnmount(() => {
                 />
               </div>
 
-              <div v-show="isBulkActionVisible(5)">
+              <div v-show="isBulkActionVisible(6)">
                 <button
                   class="inline-flex items-center rounded bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-800 shadow-sm ring-1 ring-inset ring-blue-300 hover:bg-blue-100 disabled:opacity-50"
                   :disabled="!selectedEntities.length"
@@ -246,7 +254,7 @@ onBeforeUnmount(() => {
                 </button>
               </div>
 
-              <div v-show="isBulkActionVisible(6)">
+              <div v-show="isBulkActionVisible(7)">
                 <button
                   class="inline-flex items-center rounded bg-amber-50 px-4 py-1 text-sm font-semibold text-amber-800 shadow-sm ring-1 ring-inset ring-amber-300 hover:bg-amber-100 disabled:opacity-50"
                   :disabled="!selectedEntities.length"
@@ -257,7 +265,7 @@ onBeforeUnmount(() => {
                 </button>
               </div>
 
-              <div v-show="isBulkActionVisible(7)">
+              <div v-show="isBulkActionVisible(8)">
                 <BulkExportAction
                   kind="products"
                   :selected-entities="selectedEntities"

@@ -95,6 +95,21 @@
             "added": ""
           }
         },
+        "bulkWorkflowStateAssigner": {
+          "title": "",
+          "button": "",
+          "description": "",
+          "workflowLabel": "",
+          "workflowPlaceholder": "",
+          "stateLabel": "",
+          "statePlaceholder": "",
+          "noWorkflows": "",
+          "noStates": "",
+          "replaceWarning": "",
+          "assignButton": "",
+          "success": "",
+          "error": ""
+        },
         "advancedContentGenerator": {
           "button": "",
           "title": "",
@@ -406,6 +421,12 @@
       },
       "labels": {
         "subtitle": ""
+      },
+      "cleanField": {
+        "button": "",
+        "confirm": "",
+        "success": "",
+        "error": ""
       }
     },
     "products": {
@@ -719,18 +740,21 @@
         "title": "",
         "subtitle": "",
         "buttons": {
-          "add": ""
+          "add": "",
+          "change": "",
+          "saveAndNext": "",
+          "saveAndStay": "",
+          "saveAndBackToListing": ""
         },
         "labels": {
           "workflow": "",
+          "workflows": "",
           "state": ""
         },
         "placeholders": {
-          "workflow": "",
-          "state": ""
+          "workflow": ""
         },
         "empty": {
-          "noAssignments": "",
           "noAvailableWorkflows": ""
         },
         "messages": {
@@ -749,6 +773,10 @@
           "add": {
             "title": "",
             "description": ""
+          },
+          "transition": {
+            "description": "",
+            "confirm": ""
           }
         }
       },

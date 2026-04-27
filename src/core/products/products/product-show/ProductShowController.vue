@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
@@ -33,7 +33,10 @@ import { ProductInspector } from './containers/product-inspector';
 import apolloClient from '../../../../../apollo-client';
 import { DuplicateProductModal } from './containers/duplicate-product-modal';
 import { Toast } from '../../../../shared/modules/toast';
-import { workflowAssignmentOptionsQuery } from '../../../../shared/api/queries/workflows.js';
+import {
+  workflowAssignmentOptionsQuery,
+  workflowStateTransitionCandidatesQuery,
+} from '../../../../shared/api/queries/workflows.js';
 import {
   createWorkflowProductAssignmentMutation,
   deleteWorkflowProductAssignmentMutation,
@@ -50,6 +53,7 @@ interface ProductWorkflowState {
 interface ProductWorkflow {
   id: string;
   name: string;
+  sortOrder?: number | null;
   states: ProductWorkflowState[];
 }
 
@@ -87,8 +91,31 @@ interface ProductSubscriptionResult {
 interface WorkflowAssignmentOption {
   id: string;
   name: string;
+  sortOrder?: number | null;
   states: ProductWorkflowState[];
 }
+
+interface WorkflowTransitionCandidate {
+  id: string;
+  createdAt: string | null;
+  workflowState: {
+    id: string;
+  } | null;
+  product: {
+    id: string;
+  } | null;
+}
+
+interface PendingWorkflowTransition {
+  assignmentId: string;
+  workflowId: string;
+  workflowName: string;
+  targetStateId: string;
+  targetStateName: string;
+  previousStateId: string;
+}
+
+type WorkflowTransitionAction = 'stay' | 'next' | 'list';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -98,14 +125,22 @@ const apolloSubRef = ref<any>(null);
 const currentProduct = ref<ProductSubscriptionProduct | null>(null);
 const showDuplicateModal = ref(false);
 const isConfigurableProduct = ref(false);
+
 const showWorkflowModal = ref(false);
+const showWorkflowTransitionModal = ref(false);
 const workflowOptionsLoading = ref(false);
 const hasLoadedWorkflowOptions = ref(false);
 const workflowOptions = ref<WorkflowAssignmentOption[]>([]);
 const selectedWorkflowOptionId = ref<string | null>(null);
-const selectedWorkflowStateId = ref<string | null>(null);
 const creatingWorkflowAssignment = ref(false);
 const mutatingWorkflowAssignmentIds = ref<string[]>([]);
+
+const selectedWorkflowAssignmentId = ref<string | null>(null);
+const showWorkflowSelector = ref(false);
+const pendingWorkflowTransition = ref<PendingWorkflowTransition | null>(null);
+const loadingWorkflowTransitionCandidate = ref(false);
+const workflowTransitionNextProductId = ref<string | null>(null);
+const workflowStatesScrollerRef = ref<HTMLElement | null>(null);
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -118,12 +153,122 @@ const swalWithBootstrapButtons = Swal.mixin({
 
 const productWorkflowAssignments = computed(() =>
   [...(currentProduct.value?.workflowproductassignmentSet || [])].sort((left, right) =>
+    (left.workflow?.sortOrder ?? Number.POSITIVE_INFINITY) - (right.workflow?.sortOrder ?? Number.POSITIVE_INFINITY) ||
     (left.workflow?.name || '').localeCompare(right.workflow?.name || '')
   )
 );
 
 const assignedWorkflowIds = computed(() =>
   productWorkflowAssignments.value.map((assignment) => assignment.workflow?.id).filter(Boolean)
+);
+
+const availableWorkflowOptions = computed(() =>
+  workflowOptions.value
+    .filter((workflow) => !assignedWorkflowIds.value.includes(workflow.id))
+    .map((workflow) => ({
+      id: workflow.id,
+      label: workflow.name,
+    }))
+);
+
+const assignedWorkflowSelectorOptions = computed(() =>
+  productWorkflowAssignments.value
+    .filter((assignment) => assignment.workflow)
+    .map((assignment) => ({
+      id: assignment.id,
+      label: assignment.workflow?.name || '',
+    }))
+);
+
+const showWorkflowBar = computed(() => productWorkflowAssignments.value.length > 0);
+
+const topSectionGridClass = computed(() => 'mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2');
+
+const productCardClass = computed(() => 'order-1 xl:h-[290px]');
+
+const inspectorCardClass = computed(() => 'order-2 xl:h-[290px] [&>div]:h-full');
+
+const selectedWorkflowOption = computed(() =>
+  workflowOptions.value.find((workflow) => workflow.id === selectedWorkflowOptionId.value) || null
+);
+
+const selectedWorkflowAssignment = computed(() =>
+  productWorkflowAssignments.value.find((assignment) => assignment.id === selectedWorkflowAssignmentId.value) || null
+);
+
+const selectedWorkflowStates = computed(() => {
+  if (!selectedWorkflowAssignment.value?.workflow?.states?.length) {
+    return [];
+  }
+
+  return [...selectedWorkflowAssignment.value.workflow.states].sort((left, right) => (left.sortOrder ?? 0) - (right.sortOrder ?? 0));
+});
+
+const selectedWorkflowStateId = computed(() => selectedWorkflowAssignment.value?.workflowState?.id || null);
+const selectedWorkflowStateIndex = computed(() =>
+  selectedWorkflowStates.value.findIndex((state) => state.id === selectedWorkflowStateId.value)
+);
+
+const isPendingTransitionMutating = computed(() => {
+  if (!pendingWorkflowTransition.value) {
+    return false;
+  }
+
+  return isWorkflowAssignmentMutating(pendingWorkflowTransition.value.assignmentId);
+});
+
+const canSaveAndNext = computed(
+  () =>
+    !!workflowTransitionNextProductId.value &&
+    !loadingWorkflowTransitionCandidate.value &&
+    !isPendingTransitionMutating.value
+);
+
+const getWorkflowStateButtonClass = (stateIndex: number) => {
+  const currentIndex = selectedWorkflowStateIndex.value;
+  const isCurrent = currentIndex === stateIndex;
+
+  if (isCurrent) {
+    return 'border-primary bg-primary text-white shadow-md scale-100 text-base sm:text-lg font-semibold px-5 py-2';
+  }
+
+  const isNearCurrent = currentIndex >= 0 && Math.abs(stateIndex - currentIndex) === 1;
+  if (isNearCurrent) {
+    return 'border-gray-300 bg-white text-gray-700 hover:border-primary hover:text-primary scale-95 text-sm px-4 py-1.5';
+  }
+
+  return 'border-gray-200 bg-white text-gray-500 hover:border-primary hover:text-primary scale-90 text-sm px-3 py-1';
+};
+
+watch(
+  productWorkflowAssignments,
+  (assignments) => {
+    if (!assignments.length) {
+      selectedWorkflowAssignmentId.value = null;
+      showWorkflowSelector.value = false;
+      return;
+    }
+
+    if (!assignments.some((assignment) => assignment.id === selectedWorkflowAssignmentId.value)) {
+      selectedWorkflowAssignmentId.value = assignments[0].id;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  [selectedWorkflowAssignmentId, selectedWorkflowStateId],
+  async () => {
+    await nextTick();
+    const scroller = workflowStatesScrollerRef.value;
+    if (!scroller) {
+      return;
+    }
+
+    const activeStateButton = scroller.querySelector('[data-current-state="true"]') as HTMLElement | null;
+    activeStateButton?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  },
+  { flush: 'post' }
 );
 
 const getSortedWorkflowStates = (workflow: WorkflowAssignmentOption | ProductWorkflow | null | undefined) => {
@@ -137,41 +282,6 @@ const getSortedWorkflowStates = (workflow: WorkflowAssignmentOption | ProductWor
 const getDefaultState = (workflow: WorkflowAssignmentOption | ProductWorkflow | null | undefined) => {
   return getSortedWorkflowStates(workflow).find((state) => state.isDefault) || null;
 };
-
-const availableWorkflowOptions = computed(() =>
-  workflowOptions.value
-    .filter((workflow) => !assignedWorkflowIds.value.includes(workflow.id))
-    .map((workflow) => ({
-      id: workflow.id,
-      label: workflow.name,
-    }))
-);
-
-const showWorkflowCard = computed(() => {
-  if (!hasLoadedWorkflowOptions.value) {
-    return true;
-  }
-
-  return workflowOptions.value.length > 0 || productWorkflowAssignments.value.length > 0;
-});
-
-const topSectionGridClass = computed(() =>
-  showWorkflowCard.value ? 'mb-6 grid grid-cols-1 gap-6 xl:grid-cols-10' : 'mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2'
-);
-
-const productCardClass = computed(() =>
-  showWorkflowCard.value ? 'order-2 xl:order-1 xl:col-span-4 xl:h-[290px]' : 'order-1 xl:h-[290px]'
-);
-
-const inspectorCardClass = computed(() =>
-  showWorkflowCard.value ? 'order-3 xl:order-2 xl:col-span-4 xl:h-[290px] [&>div]:h-full' : 'order-2 xl:h-[290px] [&>div]:h-full'
-);
-
-const workflowCardClass = computed(() => 'order-1 xl:order-3 xl:col-span-2 xl:h-[290px]');
-
-const selectedWorkflowOption = computed(() =>
-  workflowOptions.value.find((workflow) => workflow.id === selectedWorkflowOptionId.value) || null
-);
 
 const handleResultUpdated = (data: ProductSubscriptionResult) => {
   currentProduct.value = data.product;
@@ -216,19 +326,6 @@ const getProductComponent = (type, aliasParentProduct: ProductWithAliasFields | 
   if (type == ProductType.Simple) {
     return ProductVariation;
   }
-};
-
-const getWorkflowStateOptions = (workflow: ProductWorkflow | null | undefined) => {
-  if (!workflow?.states?.length) {
-    return [];
-  }
-
-  return [...workflow.states]
-    .sort((left, right) => (left.sortOrder ?? 0) - (right.sortOrder ?? 0))
-    .map((state) => ({
-      id: state.id,
-      label: state.value,
-    }));
 };
 
 const markWorkflowAssignmentMutation = (assignmentId: string, active: boolean) => {
@@ -277,6 +374,7 @@ const loadWorkflowOptions = async () => {
     workflowOptions.value = data?.workflows?.edges?.map((edge: any) => ({
       id: edge.node.id,
       name: edge.node.name,
+      sortOrder: edge.node.sortOrder,
       states: edge.node.states || [],
     })) || [];
   } catch (error) {
@@ -297,31 +395,28 @@ const ensureWorkflowOptionsLoaded = async () => {
 
 const openWorkflowModal = async () => {
   await ensureWorkflowOptionsLoaded();
-  selectedWorkflowOptionId.value = null;
-  selectedWorkflowStateId.value = null;
+  selectedWorkflowOptionId.value = availableWorkflowOptions.value[0]?.id || null;
   showWorkflowModal.value = true;
 };
 
 const closeWorkflowModal = () => {
   showWorkflowModal.value = false;
   selectedWorkflowOptionId.value = null;
-  selectedWorkflowStateId.value = null;
 };
 
 const updateSelectedWorkflowOption = (workflowId: string | null) => {
   selectedWorkflowOptionId.value = workflowId;
-  const workflow = workflowOptions.value.find((entry) => entry.id === workflowId);
-  const defaultState = getDefaultState(workflow);
-  selectedWorkflowStateId.value = defaultState?.id || getSortedWorkflowStates(workflow)[0]?.id || null;
 };
 
 const createWorkflowAssignment = async () => {
-  if (!currentProduct.value || !selectedWorkflowOptionId.value || !selectedWorkflowStateId.value || creatingWorkflowAssignment.value) {
+  if (!currentProduct.value || !selectedWorkflowOptionId.value || creatingWorkflowAssignment.value) {
     return;
   }
 
   const workflow = workflowOptions.value.find((entry) => entry.id === selectedWorkflowOptionId.value);
-  const state = workflow?.states.find((entry) => entry.id === selectedWorkflowStateId.value) || null;
+  const defaultState = getDefaultState(workflow);
+  const fallbackState = getSortedWorkflowStates(workflow)[0] || null;
+  const state = defaultState || fallbackState;
 
   if (!workflow || !state) {
     Toast.error(t('products.products.workflowCard.messages.addError'));
@@ -343,18 +438,22 @@ const createWorkflowAssignment = async () => {
 
     const assignmentId = data?.createWorkflowProductAssignment?.id;
     if (assignmentId) {
-      setLocalWorkflowAssignments([
+      const nextAssignments = [
         ...(currentProduct.value.workflowproductassignmentSet || []),
         {
           id: assignmentId,
           workflow: {
             id: workflow.id,
             name: workflow.name,
+            sortOrder: workflow.sortOrder ?? null,
             states: workflow.states,
           },
           workflowState: state,
         },
-      ]);
+      ];
+      setLocalWorkflowAssignments(nextAssignments);
+      selectedWorkflowAssignmentId.value = assignmentId;
+      showWorkflowSelector.value = false;
     }
 
     Toast.success(t('products.products.workflowCard.messages.added'));
@@ -373,13 +472,109 @@ const createWorkflowAssignment = async () => {
   }
 };
 
-const updateWorkflowAssignmentState = async (assignment: ProductWorkflowAssignment, workflowStateId: string) => {
-  if (!assignment.workflow || !workflowStateId || assignment.workflowState?.id === workflowStateId || isWorkflowAssignmentMutating(assignment.id)) {
+const selectWorkflowAssignment = (assignmentId: string | null) => {
+  selectedWorkflowAssignmentId.value = assignmentId;
+  showWorkflowSelector.value = false;
+};
+
+const closeWorkflowTransitionModal = () => {
+  showWorkflowTransitionModal.value = false;
+  pendingWorkflowTransition.value = null;
+  workflowTransitionNextProductId.value = null;
+  loadingWorkflowTransitionCandidate.value = false;
+};
+
+const fetchNextWorkflowProductIdForTransition = async (transition: PendingWorkflowTransition) => {
+  if (!currentProduct.value) {
+    return null;
+  }
+
+  const currentProductId = currentProduct.value.id;
+  try {
+    loadingWorkflowTransitionCandidate.value = true;
+    const { data } = await apolloClient.query({
+      query: workflowStateTransitionCandidatesQuery,
+      variables: { id: transition.workflowId },
+      fetchPolicy: 'network-only',
+    });
+
+    const candidates: WorkflowTransitionCandidate[] = data?.workflow?.productAssignments || [];
+    const nextCandidate = candidates
+      .filter(
+        (candidate) =>
+          candidate?.workflowState?.id === transition.previousStateId &&
+          candidate?.product?.id &&
+          candidate.id !== transition.assignmentId &&
+          candidate.product.id !== currentProductId &&
+          candidate.createdAt
+      )
+      .sort((left, right) => {
+        const leftDate = left.createdAt ? new Date(left.createdAt).getTime() : Number.POSITIVE_INFINITY;
+        const rightDate = right.createdAt ? new Date(right.createdAt).getTime() : Number.POSITIVE_INFINITY;
+        return leftDate - rightDate;
+      })[0];
+
+    return nextCandidate?.product?.id || null;
+  } catch (error) {
+    return null;
+  } finally {
+    loadingWorkflowTransitionCandidate.value = false;
+  }
+};
+
+const loadWorkflowTransitionCandidate = async () => {
+  if (!pendingWorkflowTransition.value) {
+    workflowTransitionNextProductId.value = null;
     return;
   }
 
-  const nextState = assignment.workflow.states.find((state) => state.id === workflowStateId);
-  if (!nextState || !currentProduct.value) {
+  workflowTransitionNextProductId.value = await fetchNextWorkflowProductIdForTransition(pendingWorkflowTransition.value);
+};
+
+const openWorkflowTransitionModal = async (assignment: ProductWorkflowAssignment, targetStateId: string) => {
+  if (!assignment.workflow || !assignment.workflowState || !targetStateId || assignment.workflowState.id === targetStateId) {
+    return;
+  }
+
+  const targetState = assignment.workflow.states.find((state) => state.id === targetStateId);
+  if (!targetState) {
+    return;
+  }
+
+  pendingWorkflowTransition.value = {
+    assignmentId: assignment.id,
+    workflowId: assignment.workflow.id,
+    workflowName: assignment.workflow.name,
+    targetStateId: targetState.id,
+    targetStateName: targetState.value,
+    previousStateId: assignment.workflowState.id,
+  };
+
+  showWorkflowTransitionModal.value = true;
+  await loadWorkflowTransitionCandidate();
+};
+
+const executeWorkflowTransition = async (action: WorkflowTransitionAction) => {
+  if (!currentProduct.value || !pendingWorkflowTransition.value) {
+    return;
+  }
+
+  const transition = pendingWorkflowTransition.value;
+  if (action === 'next') {
+    workflowTransitionNextProductId.value = await fetchNextWorkflowProductIdForTransition(transition);
+  }
+  const assignment = currentProduct.value.workflowproductassignmentSet.find((entry) => entry.id === transition.assignmentId);
+
+  if (!assignment?.workflow || isWorkflowAssignmentMutating(assignment.id)) {
+    return;
+  }
+
+  if (action === 'next' && !workflowTransitionNextProductId.value) {
+    return;
+  }
+
+  const nextState = assignment.workflow.states.find((state) => state.id === transition.targetStateId);
+  if (!nextState) {
     return;
   }
 
@@ -402,12 +597,25 @@ const updateWorkflowAssignmentState = async (assignment: ProductWorkflowAssignme
       variables: {
         data: {
           id: assignment.id,
-          workflowState: { id: workflowStateId },
+          workflowState: { id: transition.targetStateId },
         },
       },
     });
 
     Toast.success(t('products.products.workflowCard.messages.updated'));
+    const nextProductId = action === 'next' ? workflowTransitionNextProductId.value : null;
+    closeWorkflowTransitionModal();
+
+    if (action === 'next' && nextProductId) {
+      await router.push({ name: 'products.products.show', params: { id: nextProductId } });
+      return;
+    }
+
+    if (action === 'list') {
+      await router.push({ name: 'products.products.list' });
+      return;
+    }
+
     await refreshProductWorkflowData();
   } catch (error) {
     setLocalWorkflowAssignments(previousAssignments);
@@ -446,7 +654,12 @@ const deleteWorkflowAssignment = async (assignment: ProductWorkflowAssignment) =
   }
 
   const previousAssignments = [...currentProduct.value.workflowproductassignmentSet];
-  setLocalWorkflowAssignments(currentProduct.value.workflowproductassignmentSet.filter((entry) => entry.id !== assignment.id));
+  const nextAssignments = currentProduct.value.workflowproductassignmentSet.filter((entry) => entry.id !== assignment.id);
+  setLocalWorkflowAssignments(nextAssignments);
+
+  if (selectedWorkflowAssignmentId.value === assignment.id) {
+    selectedWorkflowAssignmentId.value = nextAssignments[0]?.id || null;
+  }
 
   try {
     markWorkflowAssignmentMutation(assignment.id, true);
@@ -531,6 +744,63 @@ const copySkuToClipboard = async (sku: string) => {
             <Loader :loading="loading" />
             <template v-if="!loading && result">
               <Card>
+                <div
+                  v-if="showWorkflowBar && selectedWorkflowAssignment"
+                  class="mb-6 rounded-lg border border-[#e0e6ed] bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none"
+                >
+                  <div class="flex justify-center border-b border-gray-200 pb-4">
+                    <div class="flex w-full items-center justify-center gap-2 sm:w-auto">
+                      <Selector
+                        v-if="showWorkflowSelector"
+                        :model-value="selectedWorkflowAssignmentId"
+                        :options="assignedWorkflowSelectorOptions"
+                        label-by="label"
+                        value-by="id"
+                        :placeholder="t('products.products.workflowCard.placeholders.workflow')"
+                        :removable="false"
+                        class="w-full min-w-[220px]"
+                        @update:model-value="selectWorkflowAssignment"
+                      />
+
+                      <Link
+                        v-else
+                        :path="{ name: 'workflows.kanban', params: { id: selectedWorkflowAssignment.workflow?.id } }"
+                        class="truncate text-lg font-bold text-primary sm:text-xl"
+                      >
+                        {{ selectedWorkflowAssignment.workflow?.name }}
+                      </Link>
+
+                      <button
+                        type="button"
+                        v-if="assignedWorkflowSelectorOptions.length > 1"
+                        class="shrink-0 text-primary transition hover:text-primary/80"
+                        @click="showWorkflowSelector = !showWorkflowSelector"
+                      >
+                        <Icon :name="showWorkflowSelector ? 'circle-xmark' : 'pen-to-square'" size="lg" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="mt-4">
+                    <div ref="workflowStatesScrollerRef" class="overflow-x-auto">
+                      <div class="flex min-w-max items-center justify-center gap-3 px-1 py-1">
+                        <button
+                          v-for="(state, stateIndex) in selectedWorkflowStates"
+                          :key="state.id"
+                          type="button"
+                          class="rounded-full border transition duration-200"
+                          :class="getWorkflowStateButtonClass(stateIndex)"
+                          :data-current-state="selectedWorkflowStateId === state.id ? 'true' : 'false'"
+                          :disabled="isWorkflowAssignmentMutating(selectedWorkflowAssignment.id)"
+                          @click="openWorkflowTransitionModal(selectedWorkflowAssignment, state.id)"
+                        >
+                          {{ state.value }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div :class="topSectionGridClass">
                   <div :class="productCardClass">
                     <div class="h-full w-full rounded-lg border border-[#e0e6ed] bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
@@ -602,6 +872,42 @@ const copySkuToClipboard = async (sku: string) => {
                             </FlexCell>
                           </Flex>
 
+                          <Flex class="mt-1 items-start gap-2">
+                            <FlexCell>
+                              <Label semi-bold>{{ t('products.products.workflowCard.labels.workflows') }}:</Label>
+                            </FlexCell>
+                            <FlexCell class="w-full">
+                              <div class="flex items-start justify-between gap-2">
+                                <div class="flex flex-wrap items-center gap-2">
+                                  <div
+                                    v-for="assignment in productWorkflowAssignments"
+                                    :key="assignment.id"
+                                    class="inline-flex items-center gap-1 rounded-full border border-gray-300 px-2.5 py-1 text-sm"
+                                    :class="{ 'opacity-60': isWorkflowAssignmentMutating(assignment.id) }"
+                                  >
+                                    <span class="max-w-[220px] truncate">{{ assignment.workflow?.name || '—' }}</span>
+                                    <button
+                                      type="button"
+                                      class="p-0 text-red-500 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                      :disabled="isWorkflowAssignmentMutating(assignment.id)"
+                                      @click="deleteWorkflowAssignment(assignment)"
+                                    >
+                                      <Icon name="circle-xmark" size="sm" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <Button
+                                  v-if="availableWorkflowOptions.length"
+                                  class="btn btn-sm btn-outline-primary h-8 px-2.5 py-1.5"
+                                  @click="openWorkflowModal"
+                                >
+                                  <Icon name="plus" size="sm" />
+                                </Button>
+                              </div>
+                            </FlexCell>
+                          </Flex>
+
                           <Flex>
                             <FlexCell v-if="getResultData(result, 'type') == ProductType.Alias">
                               <Flex>
@@ -623,68 +929,6 @@ const copySkuToClipboard = async (sku: string) => {
 
                   <div :class="inspectorCardClass">
                     <ProductInspector :product="getResultData(result)" />
-                  </div>
-
-                  <div v-if="showWorkflowCard" :class="workflowCardClass">
-                    <div class="flex h-full flex-col rounded-lg border border-[#e0e6ed] bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                      <div class="flex items-center justify-between gap-3">
-                        <h3 class="text-base font-semibold text-[#3b3f5c] dark:text-white-light">
-                          {{ t('products.products.workflowCard.title') }}
-                        </h3>
-                        <Button
-                          v-if="availableWorkflowOptions.length"
-                          class="btn btn-sm btn-outline-primary h-8 px-2.5 py-1.5"
-                          @click="openWorkflowModal"
-                        >
-                          <Icon name="plus" size="sm" />
-                        </Button>
-                      </div>
-
-                      <div class="mt-3 flex-1 space-y-2 overflow-y-auto pr-1">
-                        <div
-                          v-for="assignment in productWorkflowAssignments"
-                          :key="assignment.id"
-                          class="rounded-lg border border-gray-200 p-2.5"
-                          :class="{ 'opacity-60': isWorkflowAssignmentMutating(assignment.id) }"
-                        >
-                          <div class="flex items-start justify-between gap-2">
-                            <div class="min-w-0 flex-1">
-                              <div class="truncate text-sm font-semibold text-[#3b3f5c] dark:text-white-light">
-                                {{ assignment.workflow?.name || '—' }}
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              class="shrink-0 p-0 text-red-500 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                              :disabled="isWorkflowAssignmentMutating(assignment.id)"
-                              @click="deleteWorkflowAssignment(assignment)"
-                            >
-                              <Icon name="circle-xmark" size="lg" />
-                            </button>
-                          </div>
-
-                          <div class="mt-2">
-                            <Selector
-                              class="text-sm"
-                              :model-value="assignment.workflowState?.id || null"
-                              :options="getWorkflowStateOptions(assignment.workflow)"
-                              label-by="label"
-                              value-by="id"
-                              :placeholder="t('products.products.workflowCard.placeholders.state')"
-                              :removable="false"
-                              @update:model-value="(value) => updateWorkflowAssignmentState(assignment, value)"
-                            />
-                          </div>
-                        </div>
-
-                        <div
-                          v-if="!productWorkflowAssignments.length"
-                          class="rounded-lg border border-dashed border-gray-300 px-3 py-5 text-sm text-gray-500"
-                        >
-                          {{ t('products.products.workflowCard.empty.noAssignments') }}
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -742,19 +986,6 @@ const copySkuToClipboard = async (sku: string) => {
           />
         </div>
 
-        <div class="mt-5">
-          <Selector
-            v-model="selectedWorkflowStateId"
-            class="mt-2"
-            :options="getWorkflowStateOptions(selectedWorkflowOption)"
-            label-by="label"
-            value-by="id"
-            :placeholder="t('products.products.workflowCard.placeholders.state')"
-            :removable="false"
-            :is-loading="workflowOptionsLoading"
-          />
-        </div>
-
         <p v-if="!workflowOptionsLoading && !workflowOptions.length" class="mt-3 text-sm text-gray-500">
           {{ t('products.products.workflowCard.empty.noAvailableWorkflows') }}
         </p>
@@ -763,8 +994,55 @@ const copySkuToClipboard = async (sku: string) => {
           <CancelButton @click="closeWorkflowModal">
             {{ t('shared.button.cancel') }}
           </CancelButton>
-          <PrimaryButton :loading="creatingWorkflowAssignment" :disabled="!selectedWorkflowOptionId || !selectedWorkflowStateId" @click="createWorkflowAssignment">
+          <PrimaryButton :loading="creatingWorkflowAssignment" :disabled="!selectedWorkflowOption" @click="createWorkflowAssignment">
             {{ t('products.products.workflowCard.buttons.add') }}
+          </PrimaryButton>
+        </div>
+      </div>
+    </Modal>
+
+    <Modal v-model="showWorkflowTransitionModal" @closed="closeWorkflowTransitionModal">
+      <div class="w-full max-w-3xl rounded-2xl bg-white p-8">
+        <p class="text-lg text-gray-900">
+          {{
+            t('products.products.workflowCard.modals.transition.description', {
+              newStage: pendingWorkflowTransition?.targetStateName || '',
+              workflow: pendingWorkflowTransition?.workflowName || '',
+            })
+          }}
+        </p>
+
+        <p class="mt-3 text-base text-gray-600">
+          {{ t('products.products.workflowCard.modals.transition.confirm') }}
+        </p>
+
+        <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+          <PrimaryButton
+            class="justify-self-end sm:col-start-2 sm:row-start-1 sm:min-w-[240px]"
+            :loading="isPendingTransitionMutating"
+            :disabled="!canSaveAndNext"
+            @click="executeWorkflowTransition('next')"
+          >
+            {{ t('products.products.workflowCard.buttons.saveAndNext') }}
+          </PrimaryButton>
+          <CancelButton class="justify-self-start sm:col-start-1 sm:row-start-2" @click="closeWorkflowTransitionModal">
+            {{ t('shared.button.cancel') }}
+          </CancelButton>
+          <PrimaryButton
+            class="justify-self-end sm:col-start-2 sm:row-start-2 sm:min-w-[240px]"
+            :loading="isPendingTransitionMutating"
+            :disabled="isPendingTransitionMutating"
+            @click="executeWorkflowTransition('stay')"
+          >
+            {{ t('products.products.workflowCard.buttons.saveAndStay') }}
+          </PrimaryButton>
+          <PrimaryButton
+            class="justify-self-end sm:col-start-2 sm:row-start-3 sm:min-w-[240px]"
+            :loading="isPendingTransitionMutating"
+            :disabled="isPendingTransitionMutating"
+            @click="executeWorkflowTransition('list')"
+          >
+            {{ t('products.products.workflowCard.buttons.saveAndBackToListing') }}
           </PrimaryButton>
         </div>
       </div>

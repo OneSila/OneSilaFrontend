@@ -119,3 +119,11 @@ export const deleteWorkflowProductAssignmentMutation = gql`
     }
   }
 `;
+
+export const bulkAssignWorkflowStateMutation = gql`
+  mutation BulkAssignWorkflowState($workflowState: WorkflowStatePartialInput!, $products: [ProductPartialInput!]!) {
+    bulkAssignWorkflowState(workflowState: $workflowState, products: $products) {
+      id
+    }
+  }
+`;
