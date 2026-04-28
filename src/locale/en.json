@@ -1739,7 +1739,7 @@
         },
         "guidance": {
           "title": "Channel status workflow",
-          "description": "Every included channel view can now be marked as Added, Rejected, or left Undecided."
+          "description": "Every included channel view can now be marked as Added, Rejected or left Undecided."
         },
         "tutorial": {
           "title": "How channel states work",

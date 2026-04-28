@@ -182,11 +182,11 @@ const assignedWorkflowSelectorOptions = computed(() =>
 
 const showWorkflowBar = computed(() => productWorkflowAssignments.value.length > 0);
 
-const topSectionGridClass = computed(() => 'mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2');
+const topSectionGridClass = computed(() => 'mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2 xl:items-stretch');
 
-const productCardClass = computed(() => 'order-1 xl:h-[290px]');
+const productCardClass = computed(() => 'order-1 h-full');
 
-const inspectorCardClass = computed(() => 'order-2 xl:h-[290px] [&>div]:h-full');
+const inspectorCardClass = computed(() => 'order-2 h-full [&>*]:h-full');
 
 const selectedWorkflowOption = computed(() =>
   workflowOptions.value.find((workflow) => workflow.id === selectedWorkflowOptionId.value) || null
