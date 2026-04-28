@@ -145,6 +145,8 @@ export const workflowBoardQuery = gql`
           id
           name
           sku
+          type
+          active
           createdAt
           thumbnailUrl
         }

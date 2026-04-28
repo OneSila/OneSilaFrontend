@@ -17,6 +17,7 @@ import { Selector } from '../../../shared/components/atoms/selector';
 import { Icon } from '../../../shared/components/atoms/icon';
 import { Image } from '../../../shared/components/atoms/image';
 import { Link } from '../../../shared/components/atoms/link';
+import { Badge } from '../../../shared/components/atoms/badge';
 import { LocalLoader } from '../../../shared/components/atoms/local-loader';
 import { ApolloSubscription } from '../../../shared/components/molecules/apollo-subscription';
 import { workflowAssignableProductsQuery, workflowBoardQuery } from '../../../shared/api/queries/workflows.js';
@@ -29,6 +30,7 @@ import {
 import apolloClient from '../../../../apollo-client';
 import { processGraphQLErrors } from '../../../shared/utils';
 import { Toast } from '../../../shared/modules/toast';
+import { getProductTypeBadgeMap } from '../products/configs';
 
 interface WorkflowStateNode {
   id: string;
@@ -41,6 +43,8 @@ interface WorkflowProductNode {
   id: string;
   name: string | null;
   sku: string | null;
+  type: string | null;
+  active: boolean;
   createdAt: string | null;
   thumbnailUrl: string | null;
 }
@@ -94,6 +98,7 @@ const assignableProductId = ref<string | null>(null);
 const assignableProductsLoading = ref(false);
 const creatingAssignment = ref(false);
 const mutatingAssignmentIds = ref<string[]>([]);
+const clearingColumnId = ref<string | null>(null);
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -135,6 +140,7 @@ const hasDefaultState = computed(() => !!defaultStateId.value);
 const assignedProductIds = computed(() =>
   boardColumns.value.flatMap((column) => column.assignments.map((assignment) => assignment.product.id))
 );
+const productTypeBadgeMap = computed(() => getProductTypeBadgeMap(t));
 const formatDate = (dateString?: string | null) => {
   if (!dateString) {
     return '—';
@@ -385,6 +391,60 @@ const deleteAssignment = async (assignment: BoardAssignment) => {
   }
 };
 
+const clearColumnAssignments = async (column: BoardColumn) => {
+  if (!column.assignments.length || clearingColumnId.value) {
+    return;
+  }
+
+  const result = await swalWithBootstrapButtons.fire({
+    title: t('products.workflows.messages.clearColumnTitle'),
+    text: t('products.workflows.messages.clearColumnText', {
+      state: column.value,
+      count: column.assignments.length,
+    }),
+    confirmButtonText: t('products.workflows.messages.clearColumnConfirm'),
+    cancelButtonText: t('products.workflows.messages.clearColumnCancel'),
+    icon: 'warning',
+    showCancelButton: true,
+    reverseButtons: true,
+    padding: '2em',
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  try {
+    clearingColumnId.value = column.id;
+    const assignmentIds = column.assignments.map((assignment) => assignment.id);
+    mutatingAssignmentIds.value = [...new Set([...mutatingAssignmentIds.value, ...assignmentIds])];
+
+    await Promise.all(
+      assignmentIds.map((id) =>
+        apolloClient.mutate({
+          mutation: deleteWorkflowProductAssignmentMutation,
+          variables: { id },
+        })
+      )
+    );
+
+    Toast.success(t('products.workflows.messages.columnCleared'));
+    await loadWorkflow();
+    apolloSubRef.value?.refresh?.();
+  } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    const messages = Object.values(validationErrors);
+    if (messages.length) {
+      messages.forEach((message) => Toast.error(String(message)));
+    } else {
+      Toast.error(t('products.workflows.messages.columnClearError'));
+    }
+  } finally {
+    clearingColumnId.value = null;
+    mutatingAssignmentIds.value = mutatingAssignmentIds.value.filter((id) => !column.assignments.some((assignment) => assignment.id === id));
+  }
+};
+
 const updateAssignmentState = async (assignment: BoardAssignment, stateId: string) => {
   const previousWorkflow = lastWorkflowSnapshot.value;
   const previousStateId = assignment.workflowStateId;
@@ -478,15 +538,15 @@ watch(selectedWorkflowId, () => {
             </div>
 
             <template v-else-if="selectedWorkflow">
-              <div class="flex flex-col gap-6 border-b border-gray-100 pb-6 sm:flex-row sm:items-start sm:justify-between">
+              <div class="flex flex-col gap-4 border-b border-gray-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h1 class="text-3xl font-semibold text-gray-900">
+                  <h1 class="text-2xl font-semibold text-gray-900">
                     {{ selectedWorkflow.name }}
                   </h1>
-                  <p v-if="selectedWorkflow.description" class="mt-3 max-w-4xl text-base leading-7 text-gray-500">
+                  <p v-if="selectedWorkflow.description" class="mt-2 max-w-4xl text-sm leading-6 text-gray-500">
                     {{ selectedWorkflow.description }}
                   </p>
-                  <p v-if="!hasDefaultState" class="mt-3 text-base text-amber-600">
+                  <p v-if="!hasDefaultState" class="mt-2 text-sm text-amber-600">
                     {{ t('products.workflows.messages.noDefaultState') }}
                   </p>
                 </div>
@@ -494,33 +554,41 @@ watch(selectedWorkflowId, () => {
                   :disabled="!hasDefaultState"
                   @click="openAddModal"
                 >
-                  <span class="inline-flex items-center gap-2 text-base">
+                  <span class="inline-flex items-center gap-2 text-sm">
                     <Icon name="plus" />
                     {{ t('products.workflows.buttons.addProduct') }}
                   </span>
                 </PrimaryButton>
               </div>
 
-              <div class="mt-5 overflow-x-auto pb-1">
-                <div class="flex min-w-max items-start gap-3">
+              <div class="mt-4 overflow-x-auto pb-1">
+                <div class="flex min-w-max items-start gap-2.5">
                   <div
                     v-for="column in boardColumns"
                     :key="column.id"
-                    class="flex w-[360px] shrink-0 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 md:w-[420px] xl:w-[460px]"
+                    class="flex w-[320px] shrink-0 flex-col overflow-hidden rounded-xl border border-gray-200 bg-gray-50 md:w-[360px] xl:w-[390px]"
                   >
-                    <div class="flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3">
+                    <div class="flex items-center justify-between gap-2 border-b border-gray-200 bg-white px-3 py-2.5">
                       <div class="min-w-0">
-                        <div class="truncate text-xl font-semibold text-gray-900">
+                        <div class="truncate text-base font-semibold text-gray-900">
                           {{ column.value }}
                         </div>
                       </div>
-                      <div class="flex shrink-0 items-center gap-2">
-                        <span class="rounded-full bg-gray-100 px-3.5 py-1.5 text-base font-medium text-gray-700">
+                      <div class="flex shrink-0 items-center gap-1.5">
+                        <Button
+                          v-if="column.assignments.length"
+                          :disabled="clearingColumnId === column.id"
+                          custom-class="h-7 w-7 rounded-full bg-amber-100 p-0 text-amber-700 hover:bg-amber-200 disabled:opacity-50"
+                          @click="clearColumnAssignments(column)"
+                        >
+                          <Icon name="broom" size="xs" />
+                        </Button>
+                        <span class="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
                           {{ column.assignments.length }}
                         </span>
                         <span
                           v-if="column.isDefault"
-                          class="rounded-full bg-primary/10 px-3.5 py-1.5 text-base font-medium text-primary"
+                          class="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
                         >
                           {{ t('products.workflows.labels.defaultState') }}
                         </span>
@@ -534,61 +602,79 @@ watch(selectedWorkflowId, () => {
                       :animation="150"
                       :scroll="true"
                       :scroll-sensitivity="120"
-                      class="kanban-column flex max-h-[calc(100vh-260px)] min-h-[500px] flex-1 flex-col gap-2.5 overflow-y-auto p-2.5"
+                      class="kanban-column flex max-h-[calc(100vh-240px)] min-h-[420px] flex-1 flex-col gap-2 overflow-y-auto p-2"
                       @change="handleColumnChange(column.id, $event)"
                     >
                       <div
                         v-for="element in column.assignments"
                         :key="element.id"
-                        class="relative cursor-grab rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm transition hover:border-primary/40 hover:shadow-md"
+                        class="relative cursor-grab rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm transition hover:border-primary/40 hover:shadow"
                         :class="{ 'opacity-60': isAssignmentMutating(element.id) }"
                       >
                         <Button
                           :disabled="isAssignmentMutating(element.id)"
-                          custom-class="absolute right-2.5 top-2.5 h-6 w-6 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
+                          custom-class="absolute right-2 top-2 h-5 w-5 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
                           @click="deleteAssignment(element)"
                         >
                           <Icon name="circle-xmark" size="xs" />
                         </Button>
 
-                        <div class="flex min-h-[124px] flex-col justify-between gap-3 pr-7">
-                          <div class="flex items-start justify-between gap-3">
-                            <div class="min-w-0 flex-1 pr-2 text-[17px] font-semibold leading-6 text-gray-900 line-clamp-3">
-                              {{ element.product.name || t('products.workflows.labels.untitledProduct') }}
+                        <div class="flex min-h-[96px] flex-col gap-2 pr-5">
+                          <div class="flex items-start gap-2.5">
+                            <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                              <Image
+                                v-if="element.product.thumbnailUrl"
+                                :source="element.product.thumbnailUrl"
+                                :alt="element.product.name || element.product.sku || t('shared.labels.product')"
+                                class="h-14 w-14 rounded-md object-cover"
+                              />
+                              <Icon
+                                v-else
+                                name="box"
+                                class="text-base text-gray-400"
+                              />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                              <div class="text-sm font-semibold leading-5 text-gray-900 line-clamp-2">
+                                {{ element.product.name || t('products.workflows.labels.untitledProduct') }}
+                              </div>
+                              <div class="mt-1">
+                                <Link
+                                  v-if="element.product.sku"
+                                  :path="{ name: 'products.products.show', params: { id: element.product.id } }"
+                                  class="text-sm font-medium text-primary hover:underline"
+                                >
+                                  {{ element.product.sku }}
+                                </Link>
+                                <div v-else class="text-sm text-gray-500">
+                                  —
+                                </div>
+                              </div>
                             </div>
                           </div>
-
-                          <div class="flex items-center gap-4">
-                            <div class="flex shrink-0 items-start">
-                              <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl bg-gray-100">
-                                <Image
-                                  v-if="element.product.thumbnailUrl"
-                                  :source="element.product.thumbnailUrl"
-                                  :alt="element.product.name || element.product.sku || t('shared.labels.product')"
-                                  class="h-20 w-20 rounded-xl object-cover"
+                          <div class="flex items-center justify-between gap-2 text-xs text-gray-400">
+                            <div class="inline-flex items-center gap-2">
+                              <div class="inline-flex items-center gap-1">
+                                <span>{{ t('shared.labels.active') }}:</span>
+                                <Icon
+                                  v-if="element.product.active"
+                                  name="check-circle"
+                                  class="text-green-500"
                                 />
                                 <Icon
                                   v-else
-                                  name="box"
-                                  class="text-xl text-gray-400"
+                                  name="times-circle"
+                                  class="text-red-500"
                                 />
                               </div>
+                              <Badge
+                                v-if="element.product.type && productTypeBadgeMap[element.product.type]"
+                                :text="productTypeBadgeMap[element.product.type].text"
+                                :color="productTypeBadgeMap[element.product.type].color"
+                              />
                             </div>
-
-                            <div class="min-w-0 flex-1">
-                              <Link
-                                v-if="element.product.sku"
-                                :path="{ name: 'products.products.show', params: { id: element.product.id } }"
-                                class="text-lg font-medium text-primary hover:underline"
-                              >
-                                {{ element.product.sku }}
-                              </Link>
-                              <div v-else class="text-lg text-gray-500">
-                                —
-                              </div>
-                              <div class="mt-1 text-base text-gray-400">
-                                {{ formatDate(element.product.createdAt) }}
-                              </div>
+                            <div class="text-right">
+                              {{ formatDate(element.product.createdAt) }}
                             </div>
                           </div>
                         </div>
@@ -597,7 +683,7 @@ watch(selectedWorkflowId, () => {
 
                     <div
                       v-if="!column.assignments.length"
-                      class="px-2.5 pb-2.5 text-base text-gray-400"
+                      class="px-2 pb-2 text-sm text-gray-400"
                     >
                       {{ t('products.workflows.empty.noProductsInState') }}
                     </div>

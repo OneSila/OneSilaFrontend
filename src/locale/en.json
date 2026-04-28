@@ -1506,7 +1506,13 @@
         "removeAssignmentTitle": "Remove product from workflow?",
         "removeAssignmentText": "This will remove {name} from the workflow.",
         "removeAssignmentConfirm": "Remove",
-        "removeAssignmentCancel": "Cancel"
+        "removeAssignmentCancel": "Cancel",
+        "clearColumnTitle": "Clear this column?",
+        "clearColumnText": "This will remove {count} product assignments from {state}.",
+        "clearColumnConfirm": "Clear column",
+        "clearColumnCancel": "Cancel",
+        "columnCleared": "Column cleared successfully.",
+        "columnClearError": "We could not clear this column."
       },
       "empty": {
         "noWorkflows": "No workflows available yet. Create one in Settings first.",
@@ -2730,12 +2736,14 @@
           "change": "Change",
           "saveAndNext": "Save and next",
           "saveAndStay": "Save and stay here",
-          "saveAndBackToListing": "Save and go back to listing"
+          "saveAndBackToListing": "Save and go back to listing",
+          "saveAndGoToWorkflowPage": "Save and go to workflow page"
         },
         "labels": {
           "workflow": "Workflow",
           "workflows": "Workflows",
-          "state": "State"
+          "state": "State",
+          "workflowSuffix": "workflow"
         },
         "placeholders": {
           "workflow": "Select workflow"
@@ -2761,7 +2769,8 @@
             "description": "Select a workflow to assign to this product."
           },
           "transition": {
-            "description": "You are about to send this product in the stage {newStage} of the workflow {workflow}.",
+            "descriptionPrefix": "You are about to send this product to the ",
+            "descriptionSuffix": " stage.",
             "confirm": "Confirm your next action:"
           }
         }

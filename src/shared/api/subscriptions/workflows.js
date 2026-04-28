@@ -21,6 +21,8 @@ export const workflowSubscription = gql`
           id
           name
           sku
+          type
+          active
           createdAt
           thumbnailUrl
         }

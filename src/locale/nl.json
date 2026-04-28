@@ -1117,7 +1117,13 @@
         "removeAssignmentTitle": "Remove product from workflow?",
         "removeAssignmentText": "This will remove {name} from the workflow.",
         "removeAssignmentConfirm": "Remove",
-        "removeAssignmentCancel": "Cancel"
+        "removeAssignmentCancel": "Cancel",
+        "clearColumnTitle": "",
+        "clearColumnText": "",
+        "clearColumnConfirm": "",
+        "clearColumnCancel": "",
+        "columnCleared": "",
+        "columnClearError": ""
       },
       "empty": {
         "noWorkflows": "No workflows available yet. Create one in Settings first.",
@@ -2312,12 +2318,14 @@
           "change": "",
           "saveAndNext": "",
           "saveAndStay": "",
-          "saveAndBackToListing": ""
+          "saveAndBackToListing": "",
+          "saveAndGoToWorkflowPage": ""
         },
         "labels": {
           "workflow": "",
           "workflows": "",
-          "state": ""
+          "state": "",
+          "workflowSuffix": ""
         },
         "placeholders": {
           "workflow": ""
@@ -2343,7 +2351,8 @@
             "description": ""
           },
           "transition": {
-            "description": "",
+            "descriptionPrefix": "",
+            "descriptionSuffix": "",
             "confirm": ""
           }
         }

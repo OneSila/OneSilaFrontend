@@ -115,7 +115,7 @@ interface PendingWorkflowTransition {
   previousStateId: string;
 }
 
-type WorkflowTransitionAction = 'stay' | 'next' | 'list';
+type WorkflowTransitionAction = 'stay' | 'next' | 'workflow';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -224,20 +224,11 @@ const canSaveAndNext = computed(
     !isPendingTransitionMutating.value
 );
 
-const getWorkflowStateButtonClass = (stateIndex: number) => {
-  const currentIndex = selectedWorkflowStateIndex.value;
-  const isCurrent = currentIndex === stateIndex;
-
-  if (isCurrent) {
-    return 'border-primary bg-primary text-white shadow-md scale-100 text-base sm:text-lg font-semibold px-5 py-2';
-  }
-
-  const isNearCurrent = currentIndex >= 0 && Math.abs(stateIndex - currentIndex) === 1;
-  if (isNearCurrent) {
-    return 'border-gray-300 bg-white text-gray-700 hover:border-primary hover:text-primary scale-95 text-sm px-4 py-1.5';
-  }
-
-  return 'border-gray-200 bg-white text-gray-500 hover:border-primary hover:text-primary scale-90 text-sm px-3 py-1';
+const getWorkflowStateButtonClass = (stateId: string) => {
+  const isCurrent = selectedWorkflowStateId.value === stateId;
+  return isCurrent
+    ? 'border-primary text-primary'
+    : 'border-transparent text-gray-600 hover:border-primary hover:text-primary';
 };
 
 watch(
@@ -611,8 +602,8 @@ const executeWorkflowTransition = async (action: WorkflowTransitionAction) => {
       return;
     }
 
-    if (action === 'list') {
-      await router.push({ name: 'products.products.list' });
+    if (action === 'workflow') {
+      await router.push({ name: 'workflows.kanban', params: { id: transition.workflowId } });
       return;
     }
 
@@ -746,9 +737,9 @@ const copySkuToClipboard = async (sku: string) => {
               <Card>
                 <div
                   v-if="showWorkflowBar && selectedWorkflowAssignment"
-                  class="mb-6 rounded-lg border border-[#e0e6ed] bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none"
+                  class="mb-4 rounded-lg border border-[#e0e6ed] bg-white p-3 shadow-sm dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none"
                 >
-                  <div class="flex justify-center border-b border-gray-200 pb-4">
+                  <div class="flex justify-center border-b border-gray-200 pb-2">
                     <div class="flex w-full items-center justify-center gap-2 sm:w-auto">
                       <Selector
                         v-if="showWorkflowSelector"
@@ -762,13 +753,18 @@ const copySkuToClipboard = async (sku: string) => {
                         @update:model-value="selectWorkflowAssignment"
                       />
 
-                      <Link
-                        v-else
-                        :path="{ name: 'workflows.kanban', params: { id: selectedWorkflowAssignment.workflow?.id } }"
-                        class="truncate text-lg font-bold text-primary sm:text-xl"
-                      >
-                        {{ selectedWorkflowAssignment.workflow?.name }}
-                      </Link>
+                      <template v-else>
+                        <span class="truncate text-lg font-bold text-[#3b3f5c] dark:text-white-light sm:text-xl">
+                          {{ selectedWorkflowAssignment.workflow?.name }} {{ t('products.products.workflowCard.labels.workflowSuffix') }}
+                        </span>
+                        <Link
+                          :path="{ name: 'workflows.kanban', params: { id: selectedWorkflowAssignment.workflow?.id } }"
+                          target="_blank"
+                          class="shrink-0 text-primary transition hover:text-primary/80"
+                        >
+                          <Icon name="eye" size="lg" />
+                        </Link>
+                      </template>
 
                       <button
                         type="button"
@@ -781,15 +777,15 @@ const copySkuToClipboard = async (sku: string) => {
                     </div>
                   </div>
 
-                  <div class="mt-4">
+                  <div class="mt-2">
                     <div ref="workflowStatesScrollerRef" class="overflow-x-auto">
-                      <div class="flex min-w-max items-center justify-center gap-3 px-1 py-1">
+                      <div class="flex min-w-max items-center justify-center border-b border-[#ebedf2] dark:border-[#191e3a]">
                         <button
-                          v-for="(state, stateIndex) in selectedWorkflowStates"
+                          v-for="state in selectedWorkflowStates"
                           :key="state.id"
                           type="button"
-                          class="rounded-full border transition duration-200"
-                          :class="getWorkflowStateButtonClass(stateIndex)"
+                          class="border-b px-3 py-2 text-sm font-semibold whitespace-nowrap !outline-none transition"
+                          :class="getWorkflowStateButtonClass(state.id)"
                           :data-current-state="selectedWorkflowStateId === state.id ? 'true' : 'false'"
                           :disabled="isWorkflowAssignmentMutating(selectedWorkflowAssignment.id)"
                           @click="openWorkflowTransitionModal(selectedWorkflowAssignment, state.id)"
@@ -816,27 +812,27 @@ const copySkuToClipboard = async (sku: string) => {
                         <div v-else class="mb-5 flex h-20 w-20 items-center justify-center rounded-md bg-gray-300">
                           <Icon class="text-white" size="xl" name="question" />
                         </div>
-                        <div class="flex-1 text-left ltr:sm:pl-5 rtl:sm:pr-5">
+                        <div class="flex-1 space-y-2 text-left ltr:sm:pl-5 rtl:sm:pr-5">
                           <h5 class="mb-2 text-[15px] text-xl font-semibold text-[#3b3f5c] dark:text-white-light" :title="getResultData(result, 'name')">
                             {{ shortenText(getResultData(result, 'name'), 64) }}
                           </h5>
                           <Flex>
                             <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
-                            <p class="text-white-dark">{{ getResultData(result, 'sku') }}</p>
+                            <p class="text-sm text-white-dark">{{ getResultData(result, 'sku') }}</p>
                             <Button class="ml-1" @click="copySkuToClipboard(getResultData(result, 'sku'))">
                               <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
                             </Button>
                           </Flex>
                           <Flex v-if="getResultData(result, null, 'name')">
                             <Label semi-bold>{{ t('products.products.labels.vatRate') }}:</Label>
-                            <p class="text-white-dark">{{ getResultData(result, null, 'name') }}</p>
+                            <p class="text-sm text-white-dark">{{ getResultData(result, null, 'name') }}</p>
                           </Flex>
                           <Flex>
                             <FlexCell>
                               <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
                             </FlexCell>
                             <FlexCell>
-                              <Flex>
+                              <Flex class="[&>div>span]:!text-sm">
                                 <FlexCell>
                                   <Badge
                                     :text="getProductTypeBadgeMap(t)[getResultData(result, 'type')].text"
@@ -872,37 +868,35 @@ const copySkuToClipboard = async (sku: string) => {
                             </FlexCell>
                           </Flex>
 
-                          <Flex class="mt-1 items-start gap-2">
-                            <FlexCell>
+                          <Flex class="mt-2 items-center gap-3">
+                            <FlexCell class="shrink-0">
                               <Label semi-bold>{{ t('products.products.workflowCard.labels.workflows') }}:</Label>
                             </FlexCell>
                             <FlexCell class="w-full">
-                              <div class="flex items-start justify-between gap-2">
-                                <div class="flex flex-wrap items-center gap-2">
-                                  <div
-                                    v-for="assignment in productWorkflowAssignments"
-                                    :key="assignment.id"
-                                    class="inline-flex items-center gap-1 rounded-full border border-gray-300 px-2.5 py-1 text-sm"
-                                    :class="{ 'opacity-60': isWorkflowAssignmentMutating(assignment.id) }"
+                              <div class="flex flex-wrap items-center gap-2">
+                                <div
+                                  v-for="assignment in productWorkflowAssignments"
+                                  :key="assignment.id"
+                                  class="inline-flex cursor-pointer items-center rounded-full border border-gray-400 bg-gray-100 px-3 py-1 text-sm text-gray-800 transition-colors duration-200 hover:bg-gray-200"
+                                  :class="{ 'opacity-60': isWorkflowAssignmentMutating(assignment.id) }"
+                                >
+                                  <span class="max-w-[220px] truncate">{{ assignment.workflow?.name || '—' }}</span>
+                                  <button
+                                    type="button"
+                                    class="ml-2 p-0 text-gray-500 transition-colors duration-200 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                    :disabled="isWorkflowAssignmentMutating(assignment.id)"
+                                    @click="deleteWorkflowAssignment(assignment)"
                                   >
-                                    <span class="max-w-[220px] truncate">{{ assignment.workflow?.name || '—' }}</span>
-                                    <button
-                                      type="button"
-                                      class="p-0 text-red-500 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                      :disabled="isWorkflowAssignmentMutating(assignment.id)"
-                                      @click="deleteWorkflowAssignment(assignment)"
-                                    >
-                                      <Icon name="circle-xmark" size="sm" />
-                                    </button>
-                                  </div>
+                                    <Icon name="circle-xmark" size="sm" />
+                                  </button>
                                 </div>
 
                                 <Button
                                   v-if="availableWorkflowOptions.length"
-                                  class="btn btn-sm btn-outline-primary h-8 px-2.5 py-1.5"
+                                  class="btn btn-xs btn-outline-primary h-7 px-2 py-1 text-sm"
                                   @click="openWorkflowModal"
                                 >
-                                  <Icon name="plus" size="sm" />
+                                  <Icon name="plus" size="xs" />
                                 </Button>
                               </div>
                             </FlexCell>
@@ -915,7 +909,7 @@ const copySkuToClipboard = async (sku: string) => {
                                   <Label semi-bold>{{ t('products.products.labels.aliasParentProduct') }}:</Label>
                                 </FlexCell>
                                 <FlexCell>
-                                  <Link :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }" :title="getResultData(result, 'name', null, 'name')">
+                                  <Link class="text-sm" :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }" :title="getResultData(result, 'name', null, 'name')">
                                     {{ shortenText(getResultData(result, 'name', null, 'name'), 64) }}
                                   </Link>
                                 </FlexCell>
@@ -1004,46 +998,47 @@ const copySkuToClipboard = async (sku: string) => {
     <Modal v-model="showWorkflowTransitionModal" @closed="closeWorkflowTransitionModal">
       <div class="w-full max-w-3xl rounded-2xl bg-white p-8">
         <p class="text-lg text-gray-900">
-          {{
-            t('products.products.workflowCard.modals.transition.description', {
-              newStage: pendingWorkflowTransition?.targetStateName || '',
-              workflow: pendingWorkflowTransition?.workflowName || '',
-            })
-          }}
+          {{ t('products.products.workflowCard.modals.transition.descriptionPrefix') }}
+          <strong>{{ pendingWorkflowTransition?.targetStateName || '' }}</strong>
+          {{ t('products.products.workflowCard.modals.transition.descriptionSuffix') }}
         </p>
 
         <p class="mt-3 text-base text-gray-600">
           {{ t('products.products.workflowCard.modals.transition.confirm') }}
         </p>
 
-        <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-          <PrimaryButton
-            class="justify-self-end sm:col-start-2 sm:row-start-1 sm:min-w-[240px]"
-            :loading="isPendingTransitionMutating"
-            :disabled="!canSaveAndNext"
-            @click="executeWorkflowTransition('next')"
-          >
-            {{ t('products.products.workflowCard.buttons.saveAndNext') }}
-          </PrimaryButton>
-          <CancelButton class="justify-self-start sm:col-start-1 sm:row-start-2" @click="closeWorkflowTransitionModal">
-            {{ t('shared.button.cancel') }}
-          </CancelButton>
-          <PrimaryButton
-            class="justify-self-end sm:col-start-2 sm:row-start-2 sm:min-w-[240px]"
-            :loading="isPendingTransitionMutating"
-            :disabled="isPendingTransitionMutating"
-            @click="executeWorkflowTransition('stay')"
-          >
-            {{ t('products.products.workflowCard.buttons.saveAndStay') }}
-          </PrimaryButton>
-          <PrimaryButton
-            class="justify-self-end sm:col-start-2 sm:row-start-3 sm:min-w-[240px]"
-            :loading="isPendingTransitionMutating"
-            :disabled="isPendingTransitionMutating"
-            @click="executeWorkflowTransition('list')"
-          >
-            {{ t('products.products.workflowCard.buttons.saveAndBackToListing') }}
-          </PrimaryButton>
+        <div class="mt-8">
+          <div class="flex items-center justify-between gap-3">
+            <CancelButton @click="closeWorkflowTransitionModal">
+              {{ t('shared.button.cancel') }}
+            </CancelButton>
+            <PrimaryButton
+              :loading="isPendingTransitionMutating"
+              :disabled="!canSaveAndNext"
+              @click="executeWorkflowTransition('next')"
+            >
+              {{ t('products.products.workflowCard.buttons.saveAndNext') }}
+            </PrimaryButton>
+          </div>
+
+          <div class="mt-4 flex flex-col items-end gap-1.5">
+            <button
+              type="button"
+              class="text-sm text-primary underline-offset-2 transition hover:text-primary/80 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+              :disabled="isPendingTransitionMutating"
+              @click="executeWorkflowTransition('stay')"
+            >
+              {{ t('products.products.workflowCard.buttons.saveAndStay') }}
+            </button>
+            <button
+              type="button"
+              class="text-sm text-primary underline-offset-2 transition hover:text-primary/80 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+              :disabled="isPendingTransitionMutating"
+              @click="executeWorkflowTransition('workflow')"
+            >
+              {{ t('products.products.workflowCard.buttons.saveAndGoToWorkflowPage') }}
+            </button>
+          </div>
         </div>
       </div>
     </Modal>
