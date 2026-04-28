@@ -119,8 +119,6 @@ const metadataFields = computed<Array<{ key: string; label: string; boolean?: bo
   { key: 'description', label: t('integrations.show.mirakl.properties.labels.description') },
   { key: 'example', label: t('integrations.show.mirakl.properties.labels.example') },
   { key: 'defaultValue', label: t('integrations.show.mirakl.properties.labels.defaultValue') },
-  { key: 'valueListCode', label: t('integrations.show.mirakl.properties.labels.valueListCode') },
-  { key: 'valueListLabel', label: t('integrations.show.mirakl.properties.labels.valueListLabel') },
 ]);
 
 const jsonSections = computed(() => [
