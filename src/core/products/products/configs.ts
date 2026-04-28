@@ -22,6 +22,7 @@ import { sheinCategoriesQuerySelector } from "../../../shared/api/queries/sheinC
 import { companyContentViewsQuery } from "../../../shared/api/queries/contentViews.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 import { salesPriceListsQuerySelector } from "../../../shared/api/queries/salesPrices.js";
+import { workflowStatesQuerySelector } from "../../../shared/api/queries/workflows.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -60,6 +61,7 @@ export const getInspectorErrors = (t) => [
   { code: "124", name: t(`dashboard.cards.products.inspector.124.title`) },
   { code: "127", name: t(`dashboard.cards.products.inspector.127.title`) },
   { code: "128", name: t(`dashboard.cards.products.inspector.128.title`) },
+  { code: "129", name: t(`dashboard.cards.products.inspector.129.title`) },
   // { code: "125", name: t(`dashboard.cards.products.inspector.125.title`) },
   // { code: "126", name: t(`dashboard.cards.products.inspector.126.title`) },
 ];
@@ -460,6 +462,22 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
     },
     {
       type: FieldType.Query,
+      name: 'workflowStateId',
+      query: workflowStatesQuerySelector,
+      label: t('products.products.filters.labels.workflowState'),
+      labelBy: 'fullName',
+      valueBy: 'id',
+      dataKey: 'workflowStates',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      placeholder: t('products.products.filters.placeholders.workflowState'),
+      helpText: t('products.products.filters.help.workflowState'),
+      queryVariables: { order: { sortOrder: 'ASC' } },
+    },
+    {
+      type: FieldType.Query,
       name: 'assignedToSalesChannelViewId',
       query: salesChannelViewsQuerySelector,
       label: t('products.products.filters.labels.assignedToStore'),
@@ -515,6 +533,43 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       addLookup: false,
       placeholder: t('products.products.filters.placeholders.notPresentOnStore'),
       helpText: t('products.products.filters.help.notPresentOnStore'),
+    },
+    {
+      type: FieldType.Query,
+      name: 'rejectedForSalesChannelViewId',
+      query: salesChannelViewsQuerySelector,
+      label: t('products.products.filters.labels.rejectedForStoreView'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'salesChannelViews',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      placeholder: t('products.products.filters.placeholders.rejectedForStoreView'),
+      helpText: t('products.products.filters.help.rejectedForStoreView'),
+    },
+    {
+      type: FieldType.Query,
+      name: 'todoForSalesChannelViewId',
+      query: salesChannelViewsQuerySelector,
+      label: t('products.products.filters.labels.todoForStoreView'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'salesChannelViews',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      placeholder: t('products.products.filters.placeholders.todoForStoreView'),
+      helpText: t('products.products.filters.help.todoForStoreView'),
+    },
+    {
+      type: FieldType.Boolean,
+      name: 'hasTodoSalesChannelView',
+      label: t('products.products.filters.labels.hasTodoSalesChannelView'),
+      helpText: t('products.products.filters.help.hasTodoSalesChannelView'),
+      strict: true,
     },
     {
       type: FieldType.Query,
@@ -1018,6 +1073,13 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       ],
     },
     {
+      title: t('products.products.filters.sections.workflow.title'),
+      helpText: t('products.products.filters.sections.workflow.help'),
+      filters: [
+        'workflowStateId',
+      ],
+    },
+    {
       title: t('products.products.filters.sections.integrations.title'),
       helpText: t('products.products.filters.sections.integrations.help'),
       filters: [
@@ -1025,6 +1087,9 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
         'notAssignedToSalesChannelViewId',
         'presentOnStoreSalesChannelId',
         'notPresentOnStoreSalesChannelId',
+        'rejectedForSalesChannelViewId',
+        'todoForSalesChannelViewId',
+        'hasTodoSalesChannelView',
         'amazonBrowserNodeId',
         'excludeAmazonBrowserNodeId',
         'ebayProductCategoryId',
@@ -1196,21 +1261,30 @@ export interface SalesChannelView {
   id: string;
   name: string;
   active: boolean;
+  includeInTodo?: boolean;
+  todoSortOrder?: number | null;
 }
 
 export interface RemoteProduct {
   id: string;
   hasErrors: boolean;
+  status?: string;
 }
 
 export interface SalesChannelViewAssign {
   id: string;
-  remoteUrl: string;
+  status?: string;
+  remoteUrl?: string | null;
   remoteProductPercentage: number;
   integrationType: string;
   product: SalesChannelViewAssignProduct;
   salesChannelView: SalesChannelView;
-  remoteProduct: RemoteProduct;
+  remoteProduct?: RemoteProduct | null;
+}
+
+export interface RejectedSalesChannelViewAssign {
+  id: string;
+  salesChannelView: SalesChannelView;
 }
 
 export interface ProductProperty {
@@ -1257,6 +1331,7 @@ export interface Product {
   vatRate?: VatRate;
   allowBackorder: boolean;
   saleschannelviewassignSet: SalesChannelViewAssign[];
+  rejectedsaleschannelviewassignSet: RejectedSalesChannelViewAssign[];
   productpropertySet: ProductProperty[];
 }
 

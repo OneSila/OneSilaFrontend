@@ -13,6 +13,24 @@ export const routes = [
     component: () => import('./integrations/integrations-create/IntegrationCreateController.vue')
   },
   {
+    path: '/integrations/public-issues',
+    name: 'integrations.publicIssues.list',
+    meta: { title: 'publicIssues.title' },
+    component: () => import('./public-issues/PublicIssuesListController.vue'),
+  },
+  {
+    path: '/integrations/public-issues/request/create',
+    name: 'integrations.publicIssues.request.create',
+    meta: { title: 'publicIssues.request.title' },
+    component: () => import('./public-issues/PublicIssueRequestCreateController.vue'),
+  },
+  {
+    path: '/integrations/public-issues/:id',
+    name: 'integrations.publicIssues.show',
+    meta: { title: 'publicIssues.show.title' },
+    component: () => import('./public-issues/PublicIssueShowController.vue'),
+  },
+  {
     path: '/integrations/:type/:id',
     name: 'integrations.integrations.show',
     meta: { title: 'integrations.show.title' },

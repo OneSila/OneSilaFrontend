@@ -25,6 +25,8 @@ interface SheinStoreForm {
   id: string;
   name: string;
   url: string | null;
+  includeInTodo: boolean;
+  todoSortOrder: number | null;
   siteStatus: number | null;
   storeType: number | null;
   isDefault: boolean;
@@ -102,6 +104,8 @@ const withDefaults = (data: any): SheinStoreForm => ({
   id: data.id,
   name: data.name ?? '',
   url: data.url ?? '',
+  includeInTodo: data.includeInTodo ?? true,
+  todoSortOrder: typeof data.todoSortOrder === 'number' ? data.todoSortOrder : 10,
   siteStatus: typeof data.siteStatus === 'number' ? data.siteStatus : null,
   storeType: typeof data.storeType === 'number' ? data.storeType : null,
   isDefault: data.isDefault ?? false,
@@ -179,7 +183,12 @@ const buildPayload = () => {
   const { merchantLocationChoices, siteStatus, storeType, ...payload } = formData.value;
   const normalizedUrl = payload.url === '' ? null : payload.url;
   const normalizedMerchantLocationKey = payload.merchantLocationKey === '' ? null : payload.merchantLocationKey;
-  return { ...payload, url: normalizedUrl, merchantLocationKey: normalizedMerchantLocationKey };
+  return {
+    ...payload,
+    url: normalizedUrl,
+    merchantLocationKey: normalizedMerchantLocationKey,
+    todoSortOrder: payload.todoSortOrder ?? 0,
+  };
 };
 
 const mutateStore = async () => {
@@ -256,6 +265,32 @@ watch(() => props.storeId, (newId, oldId) => {
           </Label>
           <TextInput v-model="formData.url" class="w-full" />
           <p v-if="fieldErrors.url" class="mt-1 text-sm text-red-500">{{ fieldErrors.url }}</p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between">
+            <Label class="font-semibold text-sm text-gray-900">
+              {{ t('integrations.show.stores.labels.includeInTodo') }}
+            </Label>
+            <Toggle v-model="formData.includeInTodo" />
+          </div>
+          <p class="mt-1 text-xs text-gray-500">{{ t('integrations.show.stores.help.includeInTodo') }}</p>
+          <p v-if="fieldErrors.includeInTodo" class="mt-1 text-sm text-red-500">{{ fieldErrors.includeInTodo }}</p>
+        </div>
+
+        <div>
+          <Label class="font-semibold block text-sm leading-6 text-gray-900 mb-1">
+            {{ t('integrations.show.stores.labels.todoSortOrder') }}
+          </Label>
+          <TextInput
+            v-model="formData.todoSortOrder"
+            class="w-full"
+            :number="true"
+            :min-number="0"
+            :placeholder="t('integrations.show.stores.placeholders.todoSortOrder')"
+          />
+          <p class="mt-1 text-xs text-gray-500">{{ t('integrations.show.stores.help.todoSortOrder') }}</p>
+          <p v-if="fieldErrors.todoSortOrder" class="mt-1 text-sm text-red-500">{{ fieldErrors.todoSortOrder }}</p>
         </div>
 
         <div>

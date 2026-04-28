@@ -333,6 +333,12 @@ export const productsBulkWebsiteAssignQuery = gql`
               id
             }
           }
+          rejectedsaleschannelviewassignSet {
+            id
+            salesChannelView {
+              id
+            }
+          }
         }
       }
     }

@@ -65,7 +65,12 @@ const getShowRoute = (item: any) => {
 
 // Local getUpdatedField for grid view.
 const getUpdatedField = (field: any, item: any, index: number) => {
-  if (index === 0 && props.config.addShow) {
+  const clickableFieldNames = props.config.showClickableFieldNames;
+  const isClickableShowField = Array.isArray(clickableFieldNames) && clickableFieldNames.length > 0
+    ? clickableFieldNames.includes(field.name)
+    : index === 0;
+
+  if (isClickableShowField && props.config.addShow) {
     return {
       ...field,
       clickable: true,

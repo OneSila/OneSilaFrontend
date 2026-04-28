@@ -236,6 +236,19 @@ export const updateProductTranslationMutation = gql`
   }
 `;
 
+export const cleanProductTranslationFieldMutation = gql`
+  mutation cleanProductTranslationField($translation: ProductTranslationPartialInput!, $field: ContentField!) {
+    cleanTranslationField(translation: $translation, field: $field) {
+      id
+      name
+      subtitle
+      shortDescription
+      description
+      urlKey
+    }
+  }
+`;
+
 export const createProductContentMutation = gql`
   mutation createProductContent($data: ProductContentInput!) {
     createProductContent(data: $data) {

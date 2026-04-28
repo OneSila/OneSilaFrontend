@@ -8,13 +8,15 @@ import { Link } from "../../../../../../shared/components/atoms/link";
 import { AmazonButtonsInfo } from "../../../../../../shared/components/atoms/amazon-buttons-info";
 import { productsSearchConfigConstructor, productsListingConfigConstructor, listingQuery, listingQueryKey } from "./configs";
 import {
+  changeProductViewsStatusMutation,
   bulkRefreshAmazonLatestIssuesFromAssignsMutation,
   bulkResyncAmazonProductFromAssignsMutation,
   bulkUpdateSheinProductFromAssignsMutation,
   resyncSalesChannelViewAssignMutation,
   resyncSalesChannelViewAssignsMutation
 } from "../../../../../../shared/api/mutations/salesChannels.js";
-import { displayApolloError } from "../../../../../../shared/utils";
+import { salesChannelViewAssignsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
+import { displayApolloError, PRODUCT_VIEW_STATUS } from "../../../../../../shared/utils";
 import { Toast } from "../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../../../../../products/products/product-show/containers/tabs/websites/containers/logs-info-modal";
 import { useRoute } from "vue-router";
@@ -29,6 +31,8 @@ const props = defineProps<{ salesChannelId: string }>();
 const infoId = ref<string | null>(null);
 const showInfoModal = ref(false);
 const infoIntegrationType = ref<string | undefined>(undefined);
+const infoProductId = ref<string | null>(null);
+const infoProductSku = ref<string | null>(null);
 const type = ref(String(route.params.type));
 const listingRef = ref<{ clearSelected?: () => void } | null>(null);
 
@@ -43,15 +47,19 @@ const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
 };
 
-const setInfoId = (id: string | null, type: string | null) => {
+const setInfoId = (id: string | null, type: string | null, productId?: string | null, productSku?: string | null) => {
   infoId.value = id;
   infoIntegrationType.value = type || undefined;
+  infoProductId.value = productId || null;
+  infoProductSku.value = productSku || null;
   showInfoModal.value = true;
 };
 
 const modalClosed = () => {
   infoId.value = null;
   infoIntegrationType.value = undefined;
+  infoProductId.value = null;
+  infoProductSku.value = null;
   showInfoModal.value = false;
 };
 
@@ -232,10 +240,74 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
   }
 };
 
+const fetchSelectedAssignRows = async (selectedEntities: string[]) => {
+  const { data } = await apolloClient.query({
+    query: salesChannelViewAssignsQuery,
+    variables: {
+      first: selectedEntities.length,
+      filter: {
+        id: { inList: selectedEntities },
+      },
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  return data?.salesChannelViewAssigns?.edges?.map((edge) => edge.node) ?? [];
+};
+
+const handleBulkStatusChange = async (selectedEntities: string[], status: string, query: any) => {
+  if (!selectedEntities.length) return;
+
+  const translationKey = status === PRODUCT_VIEW_STATUS.REJECT ? 'bulkReject' : 'bulkTodo';
+
+  const confirmed = await confirmBulkAction({
+    title: t(`integrations.salesChannel.actions.${translationKey}.title`),
+    text: t(`integrations.salesChannel.actions.${translationKey}.description`),
+    confirmButtonText: t(`integrations.salesChannel.actions.${translationKey}.confirmButtonText`),
+  });
+  if (!confirmed) return;
+
+  try {
+    const assigns = await fetchSelectedAssignRows(selectedEntities);
+    if (!assigns.length) {
+      Toast.warning(t(`integrations.salesChannel.actions.${translationKey}.noneEligible`));
+      return;
+    }
+
+    await apolloClient.mutate({
+      mutation: changeProductViewsStatusMutation,
+      variables: {
+        changes: assigns.map((assign) => ({
+          status,
+          assignObject: {
+            product: { id: assign.product.id },
+            view: { id: assign.salesChannelView.id },
+          },
+        })),
+      },
+    });
+
+    Toast.success(t(`integrations.salesChannel.actions.${translationKey}.success`));
+    clearSelection();
+    await query?.refetch?.();
+  } catch (e) {
+    displayApolloError(e);
+  }
+};
+
 </script>
 
 <template>
   <div>
+    <div class="mb-4 flex justify-end">
+      <Link :path="{ name: 'integrations.publicIssues.list', query: { integrationType: type } }">
+        <Button type="button" class="btn btn-outline-primary">
+          <Icon name="magnifying-glass" size="sm" class="mr-2" />
+          {{ t('publicIssues.actions.seeCommonErrors') }}
+        </Button>
+      </Link>
+    </div>
+
     <GeneralListing
       ref="listingRef"
       :search-config="searchConfig"
@@ -244,9 +316,25 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
       :query-key="listingQueryKey"
       :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } } }"
     >
-        <template #bulkActions="{ selectedEntities }">
+        <template #bulkActions="{ selectedEntities, query }">
           <div class="overflow-x-auto">
             <div class="flex min-w-max items-center gap-2 py-1 pr-2 scroll-smooth">
+              <button
+                class="inline-flex items-center rounded bg-rose-50 px-4 py-1 text-sm font-semibold text-rose-800 shadow-sm ring-1 ring-inset ring-rose-300 hover:bg-rose-100 disabled:opacity-50"
+                :disabled="!selectedEntities.length"
+                @click="handleBulkStatusChange(selectedEntities, PRODUCT_VIEW_STATUS.REJECT, query)"
+              >
+                <Icon name="times-circle" size="sm" class="mr-2 text-rose-600" />
+                {{ t('integrations.salesChannel.actions.bulkReject.title') }}
+              </button>
+              <button
+                class="inline-flex items-center rounded bg-amber-50 px-4 py-1 text-sm font-semibold text-amber-800 shadow-sm ring-1 ring-inset ring-amber-300 hover:bg-amber-100 disabled:opacity-50"
+                :disabled="!selectedEntities.length"
+                @click="handleBulkStatusChange(selectedEntities, PRODUCT_VIEW_STATUS.TODO, query)"
+              >
+                <Icon name="circle-info" size="sm" class="mr-2 text-amber-600" />
+                {{ t('integrations.salesChannel.actions.bulkTodo.title') }}
+              </button>
               <button
                 v-if="type !== IntegrationTypes.Amazon && type !== IntegrationTypes.Shein"
                 class="inline-flex items-center rounded bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-800 shadow-sm ring-1 ring-inset ring-blue-300 hover:bg-blue-100 disabled:opacity-50"
@@ -303,7 +391,10 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
         </template>
 
       <template #additionalButtons="{ item }">
-        <Button :disabled="!item.node.remoteProduct?.id" @click="setInfoId(item.node.remoteProduct?.id, item.node.integrationType)">
+        <Button
+          :disabled="!item.node.remoteProduct?.id"
+          @click="setInfoId(item.node.remoteProduct?.id, item.node.integrationType, item.node.product?.id, item.node.product?.sku)"
+        >
           <Icon name="clipboard-list" size="lg" class="text-gray-500" />
         </Button>
 
@@ -331,6 +422,8 @@ const handleBulkSheinUpdate = async (selectedEntities: string[]) => {
       v-model="showInfoModal"
       :id="infoId"
       :integration-type="infoIntegrationType"
+      :product-id="infoProductId"
+      :product-sku="infoProductSku"
       @modal-closed="modalClosed()"
     />
   </div>

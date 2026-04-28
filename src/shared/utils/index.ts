@@ -132,6 +132,8 @@ export const getSrcImage = (path: string) => {
   }
 };
 
+export * from './productViewStatus';
+
 
 const matchComplexError = (message, t) => {
 

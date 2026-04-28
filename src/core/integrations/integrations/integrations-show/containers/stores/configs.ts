@@ -14,6 +14,7 @@ import {
   updateSalesChannelViewMutation,
   updateAmazonSalesChannelViewMutation,
   updateEbaySalesChannelViewMutation,
+  updateSheinSalesChannelViewMutation,
   updateMiraklSalesChannelViewMutation,
 } from "../../../../../../shared/api/mutations/salesChannels.js";
 import { IntegrationTypes } from "../../../integrations";
@@ -35,6 +36,8 @@ export const storeEditFormConfigConstructor = (
       ? updateAmazonSalesChannelViewMutation
       : type === IntegrationTypes.Ebay
         ? updateEbaySalesChannelViewMutation
+        : type === IntegrationTypes.Shein
+          ? updateSheinSalesChannelViewMutation
         : type === IntegrationTypes.Mirakl
           ? updateMiraklSalesChannelViewMutation
         : updateSalesChannelViewMutation,
@@ -43,6 +46,8 @@ export const storeEditFormConfigConstructor = (
       ? 'updateAmazonSalesChannelView'
       : type === IntegrationTypes.Ebay
         ? 'updateEbaySalesChannelView'
+        : type === IntegrationTypes.Shein
+          ? 'updateSheinSalesChannelView'
         : type === IntegrationTypes.Mirakl
           ? 'updateMiraklSalesChannelView'
         : 'updateSalesChannelView',
@@ -79,6 +84,24 @@ export const storeEditFormConfigConstructor = (
         number: false,
       },
       {
+        type: FieldType.Checkbox,
+        name: 'includeInTodo',
+        label: t('integrations.show.stores.labels.includeInTodo'),
+        uncheckedValue: 'false',
+        default: true,
+        optional: true,
+        help: t('integrations.show.stores.help.includeInTodo'),
+      },
+      {
+        type: FieldType.Text,
+        name: 'todoSortOrder',
+        label: t('integrations.show.stores.labels.todoSortOrder'),
+        placeholder: t('integrations.show.stores.placeholders.todoSortOrder'),
+        number: true,
+        minNumber: 0,
+        help: t('integrations.show.stores.help.todoSortOrder'),
+      },
+      {
         type: FieldType.Text,
         name: 'url',
         label: t('shared.labels.url'),
@@ -90,6 +113,8 @@ export const storeEditFormConfigConstructor = (
       return [
         baseFields[0],
         baseFields[1],
+        baseFields[2],
+        baseFields[3],
         {
           type: FieldType.Text,
           name: 'description',

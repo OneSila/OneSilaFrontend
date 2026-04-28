@@ -7,6 +7,7 @@ import { routes as contactsRoutes } from '../../../core/contacts/routes';
 import { routes as salesRoutes } from '../../../core/sales/routes';
 import { routes as inventoryRoutes } from '../../../core/inventory/routes';
 import { routes as productsRoutes } from '../../../core/products/routes';
+import { routes as workflowsRoutes } from '../../../core/workflows/routes';
 import { routes as integrationsRoutes } from '../../../core/integrations/routes';
 import { routes as settingsRoutes } from '../../../core/settings/routes';
 import { routes as mediaRoutes } from '../../../core/media/routes';
@@ -27,6 +28,7 @@ export function buildRouter() {
       ...profileRoutes,
       ...salesRoutes,
       ...productsRoutes,
+      ...workflowsRoutes,
       ...integrationsRoutes,
       ...settingsRoutes,
       ...mediaRoutes,

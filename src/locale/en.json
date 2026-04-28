@@ -130,6 +130,10 @@
           "128": {
             "title": "Products Missing Optional Document Types",
             "description": "Optional document types are missing for one or more assigned marketplaces."
+          },
+          "129": {
+            "title": "Products With Undecided Channel Views",
+            "description": "Decide whether these products should be added, rejected, or kept undecided for at least one included channel view."
           }
         }
       },
@@ -738,28 +742,51 @@
           "overrideIfExistsCheckbox": "Override if property already exists"
         },
         "bulkProductWebsiteAssigner": {
-          "title": "Assign to {count} product(s)",
-          "button": "Assign to Websites",
-          "description": "Select one or more website views. Each selected product will be assigned to each selected view.",
+          "title": "Set website states for {count} product(s)",
+          "button": "Set Website States",
+          "description": "Select one or more channel views and choose which status should be applied to every selected product/view pair.",
           "viewsLabel": "Website views",
           "viewsPlaceholder": "Select website views",
+          "statusLabel": "Target status",
           "selectedViewsTitle": "Selected website views",
           "selectedViewsEmpty": "No website views selected yet.",
           "noActiveViews": "No active website views available.",
-          "summaryReady": "Ready products: {count}",
-          "summarySkipped": "Skipped (red): {count}",
-          "summaryExisting": "Already assigned: {count}",
-          "summaryPlanned": "Planned assignments: {count}",
-          "loadingProducts": "Loading product readiness...",
-          "noProductsSelected": "Select products to assign.",
-          "processingNote": "Assignments run in the background. Errors will be shown after processing.",
+          "summaryProducts": "Selected products: {count}",
+          "summaryViews": "Selected views: {count}",
+          "summaryPlanned": "Pairs to change: {count}",
+          "summarySkipped": "Already in target state: {count}",
+          "loadingProducts": "Loading current product/view states...",
+          "noProductsSelected": "Select products to update.",
           "missingSelection": "Select at least one website view.",
-          "nothingToAssign": "Nothing to assign. All selected products are already assigned.",
-          "assignButton": "Assign",
-          "success": "Assigned {created} product(s) to {views} website view(s).",
-          "skippedRed": "Skipped {count} product(s) with missing required data.",
-          "skippedExisting": "Skipped {count} existing assignment(s).",
-          "error": "Failed to assign {count} product(s): {skus}."
+          "nothingToChange": "Nothing to update. All selected pairs already match the chosen status.",
+          "assignButton": "Apply status",
+          "destructiveWarning": "Choosing Undecided or Rejected will remove products from the selected website views.",
+          "destructiveConfirm": {
+            "title": "Remove products from these views?",
+            "text": "The selected products will be removed from the chosen website views where they are currently added.",
+            "confirmButtonText": "Continue"
+          },
+          "success": "Updated {count} product(s) across {views} view(s) to {status}.",
+          "statuses": {
+            "todo": "Undecided",
+            "reject": "Rejected",
+            "added": "Added"
+          }
+        },
+        "bulkWorkflowStateAssigner": {
+          "title": "Assign workflow state to {count} product(s)",
+          "button": "Set Workflow State",
+          "description": "Select a workflow and state to apply in bulk.",
+          "workflowLabel": "Workflow",
+          "workflowPlaceholder": "Select workflow",
+          "stateLabel": "Workflow state",
+          "statePlaceholder": "Select workflow state",
+          "noWorkflows": "No workflows are available.",
+          "noStates": "No states are available for this workflow.",
+          "replaceWarning": "This action replaces existing workflow assignments on the selected products with the selected workflow and state.",
+          "assignButton": "Apply workflow state",
+          "success": "Updated {count} product(s) to {workflow} / {state}.",
+          "error": "We could not update workflow assignments."
         },
         "aiBulkTranslator": {
           "button": "AI Translate",
@@ -1452,6 +1479,55 @@
   },
   "products": {
     "title": "Products",
+    "workflows": {
+      "title": "Workflows",
+      "buttons": {
+        "addProduct": "Add Product"
+      },
+      "sidebar": {
+        "title": "Workflows",
+        "description": "Select a workflow to manage its product assignments.",
+        "productCount": "{count} products"
+      },
+      "labels": {
+        "defaultState": "Default",
+        "productCount": "Products",
+        "stateProductCount": "{count} products",
+        "untitledProduct": "Untitled product"
+      },
+      "messages": {
+        "boardDescription": "Manage {count} products across the workflow states.",
+        "noDefaultState": "This workflow has no default state, so new products cannot be added from this board yet.",
+        "assignmentCreated": "Product added to workflow.",
+        "assignmentCreateError": "We could not add this product to the workflow.",
+        "assignmentDeleted": "Product removed from workflow.",
+        "assignmentDeleteError": "We could not remove this product from the workflow.",
+        "assignmentUpdateError": "We could not move this product to the selected state.",
+        "removeAssignmentTitle": "Remove product from workflow?",
+        "removeAssignmentText": "This will remove {name} from the workflow.",
+        "removeAssignmentConfirm": "Remove",
+        "removeAssignmentCancel": "Cancel",
+        "clearColumnTitle": "Clear this column?",
+        "clearColumnText": "This will remove {count} product assignments from {state}.",
+        "clearColumnConfirm": "Clear column",
+        "clearColumnCancel": "Cancel",
+        "columnCleared": "Column cleared successfully.",
+        "columnClearError": "We could not clear this column."
+      },
+      "empty": {
+        "noWorkflows": "No workflows available yet. Create one in Settings first.",
+        "noWorkflowSelected": "Select a workflow to view its board.",
+        "noProductsInState": "No products in this state yet."
+      },
+      "modals": {
+        "addProduct": {
+          "title": "Add product to workflow",
+          "description": "Only products that are not already assigned to this workflow are available here.",
+          "placeholder": "Search a product",
+          "empty": "No more products are available to add."
+        }
+      }
+    },
     "hsCodes": {
       "title": "Hs Codes",
       "create": {
@@ -1589,6 +1665,12 @@
         "urlKey": "URL Key",
         "bulletPoints": "Bullet Points"
       },
+      "cleanField": {
+        "button": "Clean field",
+        "confirm": "Are you sure you want to clean this field? This action cannot be undone.",
+        "success": "Field cleaned successfully.",
+        "error": "Failed to clean this field. Please try again."
+      },
       "warning": {
         "inheritFromDefault": "Fields left empty will be inherited from the Default version for this language in the final product content."
       },
@@ -1656,6 +1738,65 @@
       },
       "marketplaceSelector": {
         "label": "Select marketplace"
+      },
+      "websites": {
+        "columns": {
+          "state": "State"
+        },
+        "guidance": {
+          "title": "Channel status workflow",
+          "description": "Every included channel view can now be marked as Added, Rejected or left Undecided."
+        },
+        "tutorial": {
+          "title": "How channel states work",
+          "description": "Added behaves like the old assign flow. Switching an added product to Undecided or Rejected removes it from the remote channel.",
+          "added": "The product should exist on this view. This creates or keeps the active assign.",
+          "todo": "No decision yet. There is no assign and no rejection marker for this view.",
+          "reject": "The product should not be present on this view. This removes any assign and keeps a rejection marker.",
+          "transitionsTitle": "What happens when you switch states",
+          "transitionAddedToTodo": {
+            "title": "Added → Undecided",
+            "description": "Deletes the existing assign. The product is removed from the remote channel and the pair becomes undecided again."
+          },
+          "transitionAddedToReject": {
+            "title": "Added → Rejected",
+            "description": "Deletes the existing assign and creates a rejection marker. The product is removed from the remote channel."
+          },
+          "transitionTodoToAdded": {
+            "title": "Undecided → Added",
+            "description": "Creates the assign just like the old add flow and starts using the normal assign-based process again."
+          },
+          "transitionRejectToTodo": {
+            "title": "Rejected → Undecided",
+            "description": "Removes the rejection marker. Nothing is added remotely until the state is changed to Added."
+          },
+          "configurableWarning": {
+            "title": "Configurable products and variations",
+            "description": "If a configurable product is added to a view, its child variations are automatically treated as rejected for that view because they live inside the parent product. Setting those variations to Added manually can create channel issues, so manage the state from the configurable product instead."
+          }
+        },
+        "statuses": {
+          "todo": "Undecided",
+          "reject": "Rejected",
+          "added": "Added"
+        },
+        "progress": {
+          "todo": "Undecided",
+          "rejected": "Rejected"
+        },
+        "actions": {
+          "availableOnlyWhenAdded": "Available only when the product is currently added on this view."
+        },
+        "confirmation": {
+          "title": "Remove this product from the channel?",
+          "text": "Changing {view} from Added will remove the product from the remote channel.",
+          "confirmButtonText": "Continue"
+        },
+        "toast": {
+          "statusUpdated": "{view} was updated to {status}."
+        },
+        "loadingViews": "Loading available channel views...",
+        "empty": "No channel views are configured for the undecided workflow."
       },
       "priceLists": {
         "add": {
@@ -2239,7 +2380,8 @@
           "125": "Product has Amazon validation issues",
           "126": "Product on Amazon has remote issues",
           "127": "Product is missing required document types",
-          "128": "Product is missing optional document types"
+          "128": "Product is missing optional document types",
+          "129": "Product has undecided sales channel views"
         },
         "help": {
           "101": "add at least one image to the product",
@@ -2270,6 +2412,7 @@
           "126": "Check the Amazon tab for remote issues reported by Amazon",
           "127": "upload the required documents in the Media tab to clear the inspector issue",
           "128": "upload the optional documents in the Media tab if needed",
+          "129": "review the Websites tab and decide Added, Rejected, or Undecided for the remaining included views",
           "generic": "open the relevant product section and resolve the missing data"
         },
         "labels": {
@@ -2323,14 +2466,18 @@
             "title": "General",
             "help": "Core identifiers, pricing, and lifecycle filters."
           },
-          "contentQuality": {
-            "title": "Content Quality",
-            "help": "Focus on inspector status and missing information."
-          },
-          "integrations": {
-            "title": "Integrations",
-            "help": "Store assignment, marketplace presence, and channel issues."
-          },
+        "contentQuality": {
+          "title": "Content Quality",
+          "help": "Focus on inspector status and missing information."
+        },
+        "workflow": {
+          "title": "Workflow",
+          "help": "Filter products by their workflow state assignments."
+        },
+        "integrations": {
+          "title": "Integrations",
+          "help": "Store assignment, marketplace presence, and channel issues."
+        },
           "properties": {
             "title": "Properties",
             "help": "Filter by attribute values and assignments."
@@ -2369,10 +2516,14 @@
           "missingInformation": "Missing Information",
           "inspectorError": "Product Inspector Error",
           "excludeInspectorError": "Exclude Inspector Error",
+          "workflowState": "Workflow State",
           "assignedToStore": "Assigned To Store",
           "notAssignedToStore": "Not Assigned To Store",
           "presentOnStore": "Present On Channel",
           "notPresentOnStore": "Not Present On Channel",
+          "rejectedForStoreView": "Rejected For Store View",
+          "todoForStoreView": "Undecided For Store View",
+          "hasTodoSalesChannelView": "Has Undecided Channel View",
           "amazonBrowseNode": "Amazon Browser Node",
           "excludeAmazonBrowseNode": "Exclude Amazon Browser Node",
           "ebayProductCategory": "Ebay Product Category",
@@ -2418,8 +2569,11 @@
           "priceList": "Enter value",
           "missingPriceList": "Enter value",
           "missingInformation": "Enter value",
+          "workflowState": "Select workflow state",
           "presentOnStore": "Enter value",
           "notPresentOnStore": "Enter value",
+          "rejectedForStoreView": "Select store view",
+          "todoForStoreView": "Select store view",
           "amazonBrowseNode": "Enter browse node",
           "excludeAmazonBrowseNode": "Enter browse node",
           "ebayProductCategory": "Enter category",
@@ -2455,8 +2609,12 @@
           "excludeSkus": "",
           "missingRequiredInformation": "Missing required fields tracked by the inspector.",
           "missingInformation": "Missing any information (required or optional).",
+          "workflowState": "Filters products that currently have an assignment in the selected workflow state.",
           "assignedToStore": "Assigned in OneSila to a store view.",
           "notAssignedToStore": "Not assigned in OneSila to a store view.",
+          "rejectedForStoreView": "Explicitly rejected for the selected store view.",
+          "todoForStoreView": "Still undecided for the selected store view.",
+          "hasTodoSalesChannelView": "Has at least one undecided view among channel views included in the todo workflow.",
           "amazonBrowseNode": "Prefer remote IDs when selecting browse nodes (names can repeat).",
           "excludeAmazonBrowseNode": "Prefer remote IDs when excluding browse nodes (names can repeat).",
           "ebayProductCategory": "Prefer remote IDs when selecting categories (names can repeat).",
@@ -2567,7 +2725,55 @@
       },
       "bulkEditModal": {
         "textTitle": "Edit value",
-        "descriptionTitle": "Edit description"
+        "descriptionTitle": "Edit description",
+        "useSku": "Use sku"
+      },
+      "workflowCard": {
+        "title": "Workflows",
+        "subtitle": "Track the workflow assignments for this product.",
+        "buttons": {
+          "add": "Add workflow",
+          "change": "Change",
+          "saveAndNext": "Save and next",
+          "saveAndStay": "Save and stay here",
+          "saveAndBackToListing": "Save and go back to listing",
+          "saveAndGoToWorkflowPage": "Save and go to workflow page"
+        },
+        "labels": {
+          "workflow": "Workflow",
+          "workflows": "Workflows",
+          "state": "State",
+          "workflowSuffix": "workflow"
+        },
+        "placeholders": {
+          "workflow": "Select workflow"
+        },
+        "empty": {
+          "noAvailableWorkflows": "No workflows are available in this project."
+        },
+        "messages": {
+          "added": "Workflow assigned to product.",
+          "addError": "We could not assign this workflow to the product.",
+          "updated": "Workflow state updated.",
+          "updateError": "We could not update the workflow state.",
+          "removed": "Workflow removed from product.",
+          "removeError": "We could not remove this workflow from the product.",
+          "removeTitle": "Remove workflow from product?",
+          "removeText": "This will remove the {workflow} assignment from this product.",
+          "removeConfirm": "Remove",
+          "removeCancel": "Cancel"
+        },
+        "modals": {
+          "add": {
+            "title": "Add workflow to product",
+            "description": "Select a workflow to assign to this product."
+          },
+          "transition": {
+            "descriptionPrefix": "You are about to send this product to the ",
+            "descriptionSuffix": " stage.",
+            "confirm": "Confirm your next action:"
+          }
+        }
       },
       "duplicateSuccessfully": "Product was successfully duplicated!"
     }
@@ -3408,6 +3614,84 @@
         "rate": "Enter rate"
       }
     },
+    "workflows": {
+      "title": "Workflows",
+      "create": {
+        "title": "Create Workflow"
+      },
+      "edit": {
+        "title": "Edit Workflow"
+      },
+      "labels": {
+        "name": "Name",
+        "code": "Code",
+        "sortOrder": "Sort Order",
+        "autoAddOnProduct": "Auto Add On Product",
+        "stateCount": "States",
+        "assignmentCount": "Assignments"
+      },
+      "placeholders": {
+        "name": "Enter workflow name",
+        "code": "Enter workflow code",
+        "codeGenerated": "Generated by backend",
+        "sortOrder": "Enter sort order"
+      },
+      "filters": {
+        "labels": {
+          "name": "Name",
+          "code": "Code"
+        },
+        "placeholders": {
+          "name": "Filter by name",
+          "code": "Filter by code"
+        }
+      },
+      "sort": {
+        "sortOrderAsc": "Sort order ascending",
+        "sortOrderDesc": "Sort order descending",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A"
+      },
+      "actions": {
+        "inUse": "In use"
+      },
+      "messages": {
+        "createIntro": "Create the workflow first, then manage its technical states on the edit page.",
+        "editIntro": "Manage the workflow settings and keep its states ordered for product assignment flows.",
+        "requiredFields": "Workflow name is required.",
+        "stateRequiredFields": "Each workflow state needs a value.",
+        "codeGeneratedHelp": "The workflow code is generated automatically by the backend.",
+        "autoAddNeedsStates": "Add at least one state before enabling automatic product assignment.",
+        "autoAddToggle": "Automatically assign this workflow to newly created products.",
+        "autoAddHelp": "When enabled, OneSila uses the default state for new product assignments.",
+        "deleteBlockedWorkflow": "This workflow cannot be deleted because it still has product assignments.",
+        "deleteBlockedState": "This state cannot be deleted because it is already used by product assignments.",
+        "confirmStateDelete": "Delete this workflow state from the workflow configuration?",
+        "assignmentSummary": "Current assignments: {count}"
+      },
+      "states": {
+        "title": "Workflow States",
+        "description": "States are technical and define the ordered steps inside the workflow.",
+        "sortOrderHelp": "Sort order follows the row position. Drag rows or use the arrows to reorder them.",
+        "add": "Add state",
+        "empty": "No states yet. Add the first state to finish the workflow setup.",
+        "inUse": "{count} assignments",
+        "labels": {
+          "value": "Value",
+          "code": "Code",
+          "isDefault": "Default",
+          "move": "Move"
+        },
+        "placeholders": {
+          "value": "Enter state value",
+          "code": "Enter state code",
+          "codeGenerated": "Generated after save"
+        },
+        "messages": {
+          "codeGenerated": "The state code is generated automatically by the backend."
+        }
+      }
+    },
     "documentTypes": {
       "title": "Document Types",
       "create": {
@@ -3890,12 +4174,15 @@
       "labels": {
         "type": "Rule Type",
         "propertyType": "Property Type",
+        "editProductTypeName": "Edit name",
+        "createFromSalesChannel": "Create from sales channel",
         "salesChannel": "Sales Channel",
         "defaultSalesChannel": "Default",
         "unknownSalesChannel": "Unknown sales channel"
       },
       "placeholders": {
         "type": "Select rule type",
+        "createFromSalesChannel": "Select a sales channel rule",
         "salesChannel": "Select a sales channel"
       },
       "help": {
@@ -4588,7 +4875,16 @@
           "isDefault": "Is Default Store",
           "description": "Description",
           "siteStatus": "Site status",
-          "storeType": "Store type"
+          "storeType": "Store type",
+          "includeInTodo": "Include in undecided workflow",
+          "todoSortOrder": "Undecided sort order"
+        },
+        "help": {
+          "includeInTodo": "When enabled, this view is included in the product Websites tab and in the undecided product filters.",
+          "todoSortOrder": "Lower numbers appear first in the undecided websites flow."
+        },
+        "placeholders": {
+          "todoSortOrder": "10"
         },
         "shein": {
           "storeType": {
@@ -5515,6 +5811,20 @@
           "description": "This will resync the selected assignments.",
           "confirmButtonText": "Start bulk resync",
           "success": "Bulk resync started.",
+          "noneEligible": "No eligible assignments were found."
+        },
+        "bulkReject": {
+          "title": "Mark as Not Wanted",
+          "description": "This will remove the selected products from the website and mark those product/view pairs as rejected.",
+          "confirmButtonText": "Mark as Not Wanted",
+          "success": "Selected assignments were marked as not wanted.",
+          "noneEligible": "No eligible assignments were found."
+        },
+        "bulkTodo": {
+          "title": "Mark as Undecided",
+          "description": "This will remove the selected products from the website and reset those product/view pairs back to undecided.",
+          "confirmButtonText": "Mark as Undecided",
+          "success": "Selected assignments were marked as undecided.",
           "noneEligible": "No eligible assignments were found."
         }
       },
@@ -6475,6 +6785,65 @@
   "generalSearch": {
     "filterModal": {
       "convertToDashboardCard": "Convert into dashboard card"
+    }
+  },
+  "publicIssues": {
+    "title": "Common Integration Errors",
+    "list": {
+      "description": "Search known integration errors by code, platform, cause, or recommended fix."
+    },
+    "show": {
+      "title": "Common Error Details",
+      "images": "Reference images",
+      "emptySection": "No information available yet."
+    },
+    "request": {
+      "title": "Send Issue",
+      "subtitle": "Send this integration error to the team so it can be documented as a common issue.",
+      "integrationTypeMissing": "Could not find the public integration type for this issue.",
+      "help": {
+        "title": "What to include",
+        "content": "Describe when the error appeared and what action triggered it.",
+        "examples": "Examples: during product creation, after a manual resync, after a live update, or during an import."
+      }
+    },
+    "labels": {
+      "code": "Code",
+      "integrationType": "Integration",
+      "issue": "Issue",
+      "cause": "Cause",
+      "recommendedFix": "Recommended fix",
+      "description": "How it happened"
+    },
+    "filters": {
+      "integrationType": "Integration",
+      "category": "Category"
+    },
+    "tabs": {
+      "all": "All"
+    },
+    "placeholders": {
+      "description": "Describe what you were doing when this happened."
+    },
+    "actions": {
+      "sendIssue": "Send Issue",
+      "searchIssue": "Search common errors",
+      "seeCommonErrors": "See common errors",
+      "backToProduct": "Back to product",
+      "previousImage": "Previous",
+      "nextImage": "Next"
+    },
+    "alerts": {
+      "requestSent": "Issue sent."
+    },
+    "integrationTypes": {
+      "amazon": "Amazon",
+      "ebay": "eBay",
+      "mirakl": "Mirakl",
+      "shein": "Shein",
+      "magento": "Magento",
+      "shopify": "Shopify",
+      "woocommerce": "WooCommerce"
     }
   }
 }

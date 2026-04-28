@@ -28,10 +28,12 @@ const props = defineProps<{
   salesChannelId?: string;
   defaultLanguageCode?: string;
   bulletPointLimit?: number | { min?: number; max?: number };
+  cleaning?: boolean;
 }>();
 const emit = defineEmits<{
   (e: 'update:bulletPoints', value: any[]): void;
   (e: 'initial-bullet-points', value: any[]): void;
+  (e: 'clean-field'): void;
 }>();
 
 const bulletPoints = ref<any[]>([]);
@@ -262,6 +264,17 @@ defineExpose({save, fetchPoints, hasChanges});
               :sales-channel-id="props.salesChannelId"
               @translated="handleTranslatedBulletPoints"
             />
+          </FlexCell>
+          <FlexCell v-if="props.translationId">
+            <Button
+              class="btn btn-sm btn-outline-warning"
+              :loading="props.cleaning"
+              :disabled="props.cleaning"
+              :title="t('products.translation.cleanField.button')"
+              @click="emit('clean-field')"
+            >
+              <Icon name="broom" size="lg" />
+            </Button>
           </FlexCell>
         </Flex>
       </FlexCell>

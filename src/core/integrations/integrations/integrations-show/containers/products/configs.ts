@@ -2,12 +2,7 @@ import { FieldType } from "../../../../../../shared/utils/constants";
 import { salesChannelViewAssignsQuery, salesChannelViewsQuerySelector } from "../../../../../../shared/api/queries/salesChannels.js";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
 import { OrderType, SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
-import {
-  deleteSalesChannelViewAssignMutation,
-  deleteSalesChannelViewAssignsMutation
-} from "../../../../../../shared/api/mutations/salesChannels.js";
 import { getProductTypeBadgeMap } from "../../../../../products/products/configs";
-import {deletePropertiesMutation} from "../../../../../../shared/api/mutations/properties";
 
 const getStatusBadgeMap = (t: Function) => ({
   completed: { text: t('shared.labels.completed'), color: 'green' },
@@ -177,12 +172,10 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
   addActions: true,
   addEdit: false,
   addShow: false,
-  addDelete: true,
-  deleteMutation: deleteSalesChannelViewAssignMutation,
+  addDelete: false,
   addPagination: true,
   addBulkActions: true,
-  addBulkDelete: true,
-  bulkDeleteMutation: deleteSalesChannelViewAssignsMutation,
+  addBulkDelete: false,
 });
 
 export const listingQuery = salesChannelViewAssignsQuery;

@@ -77,7 +77,12 @@ const getShowRoute = (item) => {
 };
 
 const getUpdatedField = (field, item, index) => {
-  if (index === 0 && props.config.addShow) {
+  const clickableFieldNames = props.config.showClickableFieldNames;
+  const isClickableShowField = Array.isArray(clickableFieldNames) && clickableFieldNames.length > 0
+    ? clickableFieldNames.includes(field.name)
+    : index === 0;
+
+  if (isClickableShowField && props.config.addShow) {
     return {
       ...field,
       clickable: true,

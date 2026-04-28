@@ -34,7 +34,7 @@ const propertyField = {
   labelBy: 'name',
   valueBy: 'id',
   query: propertiesQuerySelector,
-  queryVariables: { filter: { isProductType: { exact: false }, type: { exact: PropertyTypes.SELECT } } },
+  queryVariables: { filter: { type: { exact: PropertyTypes.SELECT } } },
   dataKey: 'properties',
   isEdge: true,
   multiple: false,

@@ -1,22 +1,26 @@
 <script setup lang="ts">
+import apolloClient from '../../../../../apollo-client';
+import Swal, { SweetAlertOptions } from 'sweetalert2';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { changeProductViewsStatusMutation } from '../../../api/mutations/salesChannels.js';
+import { productsBulkWebsiteAssignQuery } from '../../../api/queries/products.js';
+import { salesChannelViewsQuerySelector } from '../../../api/queries/salesChannels.js';
+import { Button } from '../../atoms/button';
 import { Icon } from '../../atoms/icon';
 import { Label } from '../../atoms/label';
 import { Selector } from '../../atoms/selector';
-import { Button } from '../../atoms/button';
-import apolloClient from '../../../../../apollo-client';
-import { salesChannelViewsQuerySelector } from '../../../api/queries/salesChannels.js';
-import { productsBulkWebsiteAssignQuery } from '../../../api/queries/products.js';
-import { createSalesChannelViewAssignsMutation } from '../../../api/mutations/salesChannels.js';
+import { TriStateToggle } from '../../atoms/tri-state-toggle';
 import { Toast } from '../../../modules/toast';
+import { displayApolloError, getProductViewStatus, PRODUCT_VIEW_STATUS } from '../../../utils';
+import type { ProductViewStatus } from '../../../utils';
 
 interface SalesChannelView {
   id: string;
   name: string;
-  salesChannel: {
-    id: string;
-  };
+  active: boolean;
+  includeInTodo?: boolean;
+  todoSortOrder?: number | null;
 }
 
 interface SalesChannelViewAssignSummary {
@@ -30,6 +34,7 @@ interface ProductSummary {
   id: string;
   sku: string;
   saleschannelviewassignSet?: SalesChannelViewAssignSummary[];
+  rejectedsaleschannelviewassignSet?: SalesChannelViewAssignSummary[];
 }
 
 const props = defineProps<{ selectedEntities: string[] }>();
@@ -44,54 +49,67 @@ const selectedViews = ref<string[]>([]);
 const products = ref<ProductSummary[]>([]);
 const loadingViews = ref(false);
 const loadingProducts = ref(false);
-const assigning = ref(false);
+const submitting = ref(false);
+const selectedStatus = ref<ProductViewStatus>(PRODUCT_VIEW_STATUS.ADDED);
+
+const statusOptions = computed(() => [
+  {
+    id: PRODUCT_VIEW_STATUS.TODO,
+    label: t('shared.components.organisms.bulkProductWebsiteAssigner.statuses.todo'),
+    value: PRODUCT_VIEW_STATUS.TODO,
+    tone: 'yellow' as const,
+  },
+  {
+    id: PRODUCT_VIEW_STATUS.REJECT,
+    label: t('shared.components.organisms.bulkProductWebsiteAssigner.statuses.reject'),
+    value: PRODUCT_VIEW_STATUS.REJECT,
+    tone: 'red' as const,
+  },
+  {
+    id: PRODUCT_VIEW_STATUS.ADDED,
+    label: t('shared.components.organisms.bulkProductWebsiteAssigner.statuses.added'),
+    value: PRODUCT_VIEW_STATUS.ADDED,
+    tone: 'green' as const,
+  },
+]);
 
 const viewsById = computed(() => new Map(views.value.map((view) => [view.id, view])));
 const selectedViewItems = computed(() => selectedViews.value
   .map((id) => viewsById.value.get(id))
   .filter((view): view is SalesChannelView => !!view));
 
-const existingAssignments = computed(() => {
-  const set = new Set<string>();
-  products.value.forEach((product) => {
-    (product.saleschannelviewassignSet ?? []).forEach((assign) => {
-      if (assign.salesChannelView?.id) {
-        set.add(`${product.id}:${assign.salesChannelView.id}`);
-      }
-    });
+const totalPairsCount = computed(() => products.value.length * selectedViews.value.length);
+const isDestructiveSelection = computed(() => selectedStatus.value !== PRODUCT_VIEW_STATUS.ADDED);
+
+const plannedChanges = computed(() => {
+  return products.value.flatMap((product) => {
+    return selectedViews.value
+      .filter((viewId) => getProductViewStatus(product, viewId) !== selectedStatus.value)
+      .map((viewId) => ({
+        status: selectedStatus.value,
+        assignObject: {
+          product: { id: product.id },
+          view: { id: viewId },
+        },
+      }));
   });
-  return set;
 });
 
-const existingAssignmentsCount = computed(() => {
-  if (!products.value.length || !selectedViews.value.length) return 0;
-  let count = 0;
-  products.value.forEach((product) => {
-    selectedViews.value.forEach((viewId) => {
-      if (existingAssignments.value.has(`${product.id}:${viewId}`)) {
-        count += 1;
-      }
-    });
-  });
-  return count;
+const plannedChangesCount = computed(() => plannedChanges.value.length);
+const skippedCount = computed(() => totalPairsCount.value - plannedChangesCount.value);
+
+const isSubmitDisabled = computed(() => {
+  return submitting.value || !props.selectedEntities.length || !selectedViews.value.length;
 });
 
-const assignmentTargets = computed(() => {
-  const targets: Array<{ productId: string; sku: string; viewId: string }> = [];
-  const existing = existingAssignments.value;
-  products.value.forEach((product) => {
-    selectedViews.value.forEach((viewId) => {
-      if (!existing.has(`${product.id}:${viewId}`)) {
-        targets.push({ productId: product.id, sku: product.sku, viewId });
-      }
-    });
-  });
-  return targets;
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    popup: 'sweet-alerts',
+    confirmButton: 'btn btn-secondary',
+    cancelButton: 'btn btn-dark ltr:mr-3 rtl:ml-3',
+  },
+  buttonsStyling: false,
 });
-
-const plannedAssignmentsCount = computed(() => assignmentTargets.value.length);
-
-const isSubmitDisabled = computed(() => assigning.value || !props.selectedEntities.length || !selectedViews.value.length);
 
 const removeSelectedView = (viewId: string) => {
   selectedViews.value = selectedViews.value.filter((id) => id !== viewId);
@@ -99,13 +117,29 @@ const removeSelectedView = (viewId: string) => {
 
 const fetchViews = async () => {
   loadingViews.value = true;
+
   try {
     const { data } = await apolloClient.query({
       query: salesChannelViewsQuerySelector,
-      variables: { filter: { salesChannel: { active: { exact: true } } } },
+      variables: {
+        filter: {
+          includeInTodo: { exact: true },
+          salesChannel: { active: { exact: true } },
+        },
+      },
       fetchPolicy: 'cache-first',
     });
-    views.value = data?.salesChannelViews?.edges?.map((edge) => edge.node) ?? [];
+
+    views.value = (data?.salesChannelViews?.edges?.map((edge) => edge.node) ?? []).sort((first, second) => {
+      const firstOrder = typeof first.todoSortOrder === 'number' ? first.todoSortOrder : Number.MAX_SAFE_INTEGER;
+      const secondOrder = typeof second.todoSortOrder === 'number' ? second.todoSortOrder : Number.MAX_SAFE_INTEGER;
+
+      if (firstOrder !== secondOrder) {
+        return firstOrder - secondOrder;
+      }
+
+      return first.name.localeCompare(second.name);
+    });
   } finally {
     loadingViews.value = false;
   }
@@ -116,13 +150,16 @@ const fetchProducts = async () => {
     products.value = [];
     return;
   }
+
   loadingProducts.value = true;
+
   try {
     const { data } = await apolloClient.query({
       query: productsBulkWebsiteAssignQuery,
       variables: { filter: { id: { inList: props.selectedEntities } }, first: props.selectedEntities.length },
       fetchPolicy: 'network-only',
     });
+
     products.value = data?.products?.edges?.map((edge) => edge.node) ?? [];
   } finally {
     loadingProducts.value = false;
@@ -133,80 +170,94 @@ const handleGlobalClick = (event: MouseEvent) => {
   const clickedEl = event.target as HTMLElement;
   const clickedInsidePanel = panelRef.value?.contains(clickedEl);
   const clickedInsideSelectorDropdown = !!clickedEl.closest('.vs__dropdown-menu');
+
   if (!clickedInsidePanel && !clickedInsideSelectorDropdown) {
     showPanel.value = false;
   }
 };
 
+const confirmDestructiveStatusChange = async () => {
+  if (!isDestructiveSelection.value) {
+    return true;
+  }
+
+  const result = await swalWithBootstrapButtons.fire({
+    title: t('shared.components.organisms.bulkProductWebsiteAssigner.destructiveConfirm.title'),
+    text: t('shared.components.organisms.bulkProductWebsiteAssigner.destructiveConfirm.text'),
+    confirmButtonText: t('shared.components.organisms.bulkProductWebsiteAssigner.destructiveConfirm.confirmButtonText'),
+    cancelButtonText: t('shared.alert.mutationAlert.cancelButtonText'),
+    icon: 'warning',
+    showCancelButton: true,
+    reverseButtons: true,
+    padding: '2em',
+  } as SweetAlertOptions);
+
+  return result.isConfirmed;
+};
+
 const handleAssign = async () => {
-  if (assigning.value) return;
+  if (submitting.value) return;
+
   if (!selectedViews.value.length) {
     Toast.warning(t('shared.components.organisms.bulkProductWebsiteAssigner.missingSelection'));
     return;
   }
 
-  const targets = assignmentTargets.value;
-  if (!targets.length) {
-    Toast.warning(t('shared.components.organisms.bulkProductWebsiteAssigner.nothingToAssign'));
+  if (!plannedChanges.value.length) {
+    Toast.warning(t('shared.components.organisms.bulkProductWebsiteAssigner.nothingToChange'));
     return;
   }
 
-  const selectedViewsCount = selectedViews.value.length;
-  const existingCount = existingAssignmentsCount.value;
+  const confirmed = await confirmDestructiveStatusChange();
+  if (!confirmed) {
+    return;
+  }
 
-  assigning.value = true;
-  emit('started');
-
-  const uniqueSkus = Array.from(new Set(targets.map((target) => target.sku)));
+  submitting.value = true;
 
   try {
-    const dataPayload = targets
-      .map((target) => {
-        const view = viewsById.value.get(target.viewId);
-        if (!view) return null;
-        return {
-          product: { id: target.productId },
-          salesChannelView: { id: view.id },
-          salesChannel: { id: view.salesChannel.id },
-        };
-      })
-      .filter((item): item is NonNullable<typeof item> => !!item);
-
     const { data } = await apolloClient.mutate({
-      mutation: createSalesChannelViewAssignsMutation,
-      variables: { data: dataPayload },
+      mutation: changeProductViewsStatusMutation,
+      variables: {
+        changes: plannedChanges.value,
+      },
     });
 
-    const createdCount = data?.createSalesChannelViewAssigns?.length ?? 0;
+    Toast.success(
+      t('shared.components.organisms.bulkProductWebsiteAssigner.success', {
+        count: data?.changeProductViewsStatus?.productsCount ?? products.value.length,
+        views: data?.changeProductViewsStatus?.viewsCount ?? selectedViews.value.length,
+        status: t(`shared.components.organisms.bulkProductWebsiteAssigner.statuses.${selectedStatus.value.toLowerCase()}`),
+      }),
+    );
 
-    if (createdCount > 0) {
-      Toast.success(t('shared.components.organisms.bulkProductWebsiteAssigner.success', { created: createdCount, views: selectedViewsCount }));
-    }
-
-    if (existingCount > 0) {
-      Toast.info(t('shared.components.organisms.bulkProductWebsiteAssigner.skippedExisting', { count: existingCount }));
-    }
+    emit('started');
+    showPanel.value = false;
+    selectedViews.value = [];
+    selectedStatus.value = PRODUCT_VIEW_STATUS.ADDED;
   } catch (error) {
-    Toast.error(t('shared.components.organisms.bulkProductWebsiteAssigner.error', { count: uniqueSkus.length, skus: uniqueSkus.join(', ') }));
+    displayApolloError(error);
   } finally {
-    assigning.value = false;
+    submitting.value = false;
   }
 };
 
 watch(showPanel, (open) => {
   if (!open) return;
+
   fetchViews();
   fetchProducts();
 });
 
 watch(() => props.selectedEntities, () => {
-  if (showPanel.value && !assigning.value) {
+  if (showPanel.value && !submitting.value) {
     fetchProducts();
   }
 }, { deep: true });
 
 watch(views, () => {
   const available = new Set(views.value.map((view) => view.id));
+
   if (selectedViews.value.some((id) => !available.has(id))) {
     selectedViews.value = selectedViews.value.filter((id) => available.has(id));
   }
@@ -222,37 +273,33 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="relative inline-block text-left" ref="panelRef">
+  <div ref="panelRef" class="relative inline-block text-left">
     <button
-      @click="showPanel = !showPanel"
       class="inline-flex items-center rounded bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-800 shadow-sm ring-1 ring-inset ring-blue-300 hover:bg-blue-100"
+      @click="showPanel = !showPanel"
     >
       <Icon name="store" size="sm" class="mr-2 text-blue-600" />
       {{ t('shared.components.organisms.bulkProductWebsiteAssigner.button') }}
     </button>
 
-    <div v-if="showPanel" class="absolute z-50 mt-2 left-0 rounded-xl bg-white shadow-lg border border-gray-200 p-4 w-[520px]">
-      <div class="flex justify-between items-start mb-4 border-b border-gray-200 pb-4">
-        <h3 class="text-sm font-semibold text-gray-800">
-          {{ t('shared.components.organisms.bulkProductWebsiteAssigner.title', { count: props.selectedEntities.length }) }}
-        </h3>
-        <button class="text-gray-400 hover:text-gray-600 ml-auto" @click="showPanel = false">
+    <div v-if="showPanel" class="absolute left-0 z-50 mt-2 w-[560px] rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+      <div class="mb-4 flex items-start justify-between border-b border-gray-200 pb-4">
+        <div>
+          <h3 class="text-sm font-semibold text-gray-800">
+            {{ t('shared.components.organisms.bulkProductWebsiteAssigner.title', { count: props.selectedEntities.length }) }}
+          </h3>
+          <p class="mt-1 text-xs text-gray-500">
+            {{ t('shared.components.organisms.bulkProductWebsiteAssigner.description') }}
+          </p>
+        </div>
+        <button class="ml-auto text-gray-400 hover:text-gray-600" @click="showPanel = false">
           <Icon name="x" size="sm" />
         </button>
       </div>
 
       <div class="space-y-4">
-        <div class="space-y-1">
-          <p class="text-sm text-gray-600">
-            {{ t('shared.components.organisms.bulkProductWebsiteAssigner.description') }}
-          </p>
-          <p class="text-xs text-gray-500">
-            {{ t('shared.components.organisms.bulkProductWebsiteAssigner.processingNote') }}
-          </p>
-        </div>
-
         <div>
-          <Label class="block text-sm font-semibold text-gray-700 mb-1">
+          <Label class="mb-1 block text-sm font-semibold text-gray-700">
             {{ t('shared.components.organisms.bulkProductWebsiteAssigner.viewsLabel') }}
           </Label>
           <Selector
@@ -271,10 +318,26 @@ onUnmounted(() => {
         </div>
 
         <div>
+          <Label class="mb-2 block text-sm font-semibold text-gray-700">
+            {{ t('shared.components.organisms.bulkProductWebsiteAssigner.statusLabel') }}
+          </Label>
+          <TriStateToggle
+            :model-value="selectedStatus"
+            :options="statusOptions"
+            name="bulk-product-website-status"
+            @update:modelValue="selectedStatus = $event as ProductViewStatus"
+          />
+        </div>
+
+        <div v-if="isDestructiveSelection" class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800">
+          {{ t('shared.components.organisms.bulkProductWebsiteAssigner.destructiveWarning') }}
+        </div>
+
+        <div>
           <Label class="block text-sm font-semibold text-gray-700">
             {{ t('shared.components.organisms.bulkProductWebsiteAssigner.selectedViewsTitle') }}
           </Label>
-          <div v-if="selectedViewItems.length" class="flex flex-wrap gap-2 mt-2">
+          <div v-if="selectedViewItems.length" class="mt-2 flex flex-wrap gap-2">
             <span
               v-for="view in selectedViewItems"
               :key="view.id"
@@ -291,9 +354,11 @@ onUnmounted(() => {
           </p>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600 space-y-1">
-          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryExisting', { count: existingAssignmentsCount }) }}</p>
-          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryPlanned', { count: plannedAssignmentsCount }) }}</p>
+        <div class="space-y-1 rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryProducts', { count: products.length }) }}</p>
+          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryViews', { count: selectedViews.length }) }}</p>
+          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summaryPlanned', { count: plannedChangesCount }) }}</p>
+          <p>{{ t('shared.components.organisms.bulkProductWebsiteAssigner.summarySkipped', { count: skippedCount }) }}</p>
         </div>
 
         <p v-if="loadingProducts" class="text-xs text-gray-500">
@@ -304,11 +369,11 @@ onUnmounted(() => {
         </p>
       </div>
 
-      <div class="mt-4 pt-4 border-t border-gray-200">
+      <div class="mt-4 border-t border-gray-200 pt-4">
         <Button
+          class="w-full rounded bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           :disabled="isSubmitDisabled"
-          :loading="assigning"
-          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm font-semibold"
+          :loading="submitting"
           @click="handleAssign"
         >
           {{ t('shared.components.organisms.bulkProductWebsiteAssigner.assignButton') }}

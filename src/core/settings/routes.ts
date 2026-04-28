@@ -37,6 +37,24 @@ export const routes = [
         component: () => import('./vat-rates/vat-rate-edit/VatRateEditController.vue')
     },
     {
+        path: '/settings/workflows',
+        name: 'settings.workflows.list',
+        meta: { title: 'settings.title' },
+        component: () => import('./workflows/workflows-list/WorkflowsListController.vue')
+    },
+    {
+        path: '/settings/workflow/create',
+        name: 'settings.workflow.create',
+        meta: { title: 'settings.title' },
+        component: () => import('./workflows/workflow-create/WorkflowCreateController.vue')
+    },
+    {
+        path: '/settings/workflow/edit/:id',
+        name: 'settings.workflow.edit',
+        meta: { title: 'settings.title' },
+        component: () => import('./workflows/workflow-edit/WorkflowEditController.vue')
+    },
+    {
         path: '/settings/document-types',
         name: 'settings.documentTypes.list',
         meta: { title: 'settings.title' },

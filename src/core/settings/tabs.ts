@@ -24,6 +24,12 @@ export const getTabsConfig = (t: Function): TabItem[] => [
     url: 'settings.vatRates.list',
   },
   {
+    name: 'workflows',
+    label: t('settings.workflows.title'),
+    icon: 'sitemap',
+    url: 'settings.workflows.list',
+  },
+  {
     name: 'brandIdentity',
     label: t('settings.brandIdentity.title'),
     icon: 'comment-dots',

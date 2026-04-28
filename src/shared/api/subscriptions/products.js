@@ -74,6 +74,26 @@ export const productSubscription = gql`
         name
       }
       allowBackorder
+      workflowproductassignmentSet {
+        id
+        workflow {
+          id
+          name
+          sortOrder
+          states {
+            id
+            value
+            sortOrder
+            isDefault
+          }
+        }
+        workflowState {
+          id
+          value
+          sortOrder
+          isDefault
+        }
+      }
       saleschannelviewassignSet {
           id
           status
@@ -89,6 +109,7 @@ export const productSubscription = gql`
             id
             name
             active
+            includeInTodo
           }
           remoteProduct {
             id
@@ -96,6 +117,15 @@ export const productSubscription = gql`
             status
           }
         }
+      rejectedsaleschannelviewassignSet {
+        id
+        salesChannelView {
+          id
+          name
+          active
+          includeInTodo
+        }
+      }
     }
   }
 `;

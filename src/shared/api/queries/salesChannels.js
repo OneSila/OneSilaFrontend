@@ -875,6 +875,8 @@ export const salesChannelViewsQuery = gql`
           id
           name
           active
+          includeInTodo
+          todoSortOrder
           salesChannel {
             id
           }
@@ -899,6 +901,9 @@ export const salesChannelViewsQuerySelector = gql`
         node {
           id
           name
+          active
+          includeInTodo
+          todoSortOrder
           salesChannel {
              id
           }
@@ -921,6 +926,8 @@ export const getSalesChannelViewQuery = gql`
     salesChannelView(id: $id) {
       id
       active
+      includeInTodo
+      todoSortOrder
       url
       name
       salesChannel {
@@ -942,6 +949,8 @@ export const amazonChannelViewsQuery = gql`
           url
           active
           isDefault
+          includeInTodo
+          todoSortOrder
           salesChannel {
             id
             hostname
@@ -969,6 +978,8 @@ export const ebayChannelViewsQuery = gql`
           name
           active
           isDefault
+          includeInTodo
+          todoSortOrder
           defaultCategoryTreeId
           salesChannel {
             id
@@ -998,6 +1009,8 @@ export const sheinChannelViewsQuery = gql`
           url
           active
           isDefault
+          includeInTodo
+          todoSortOrder
           siteStatus
           storeType
           merchantLocationKey
@@ -1027,6 +1040,8 @@ export const miraklChannelViewsQuery = gql`
           name
           description
           active
+          includeInTodo
+          todoSortOrder
           salesChannel {
             id
           }
@@ -1049,6 +1064,8 @@ export const getAmazonChannelViewQuery = gql`
     amazonChannelView(id: $id) {
       id
       active
+      includeInTodo
+      todoSortOrder
       url
       name
       isDefault
@@ -1066,6 +1083,8 @@ export const getEbaySalesChannelViewQuery = gql`
       id
       name
       url
+      includeInTodo
+      todoSortOrder
       fulfillmentPolicyId
       fulfillmentPolicyChoices
       paymentPolicyId
@@ -1089,6 +1108,8 @@ export const getSheinSalesChannelViewQuery = gql`
           id
           name
           url
+          includeInTodo
+          todoSortOrder
           siteStatus
           storeType
           isDefault
@@ -1107,6 +1128,8 @@ export const getMiraklSalesChannelViewQuery = gql`
       name
       description
       active
+      includeInTodo
+      todoSortOrder
     }
   }
 `;

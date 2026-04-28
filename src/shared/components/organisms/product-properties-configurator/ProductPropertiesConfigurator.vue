@@ -11,12 +11,11 @@ import {getPropertySelectValueQuery, propertiesQuery} from '../../../api/queries
 import {AddPropertyModal} from "./containers/add-property-modal";
 import {Badge} from "../../atoms/badge";
 import {getPropertyTypeBadgeMap} from "../../../../core/properties/properties/configs";
-import {ConfigTypes, PropertyTypes} from "../../../utils/constants";
+import {ConfigTypes} from "../../../utils/constants";
 import {ProductTypeField} from "./containers/product-type-field";
 import {Selector} from "../../atoms/selector";
 import {PreviewView} from "./containers/preview-view";
 import {Accordion} from "../../atoms/accordion";
-import {Label} from "../../atoms/label";
 import {useRouter} from "vue-router";
 import {Toggle} from "../../atoms/toggle";
 import { LocalLoader } from "../../atoms/local-loader";
@@ -38,16 +37,26 @@ const props = defineProps<{
   addedProperties: Property[],
   salesChannelOptions?: { label: string; value: string }[],
   selectedSalesChannel?: string,
+  templateSourceOptions?: { label: string; value: string }[],
+  selectedTemplateSource?: string,
+  showTemplateSourceSelector?: boolean,
   integrationsLoading?: boolean,
   rightLoading?: boolean,
 }>();
 
-const emit = defineEmits(['update:addedProperties', 'update:productType', 'update:requireEanCode', 'update:salesChannel']);
+const emit = defineEmits([
+  'update:addedProperties',
+  'update:productType',
+  'update:requireEanCode',
+  'update:salesChannel',
+  'update:templateSource',
+]);
 const toAddProperty: Ref<Property | null> = ref(null);
 const availableProperties: Ref<Property[]> = ref([]);
 const addedPropertiesRef: Ref<Property[]> = ref(props.addedProperties.map((property) => ({ ...property })));
 const localProductType: Ref<{ id: string, value: string } | null> = ref(props.productType);
 const localSalesChannel = ref(props.selectedSalesChannel ?? 'default');
+const localTemplateSource = ref(props.selectedTemplateSource ?? 'default');
 const configTypes: Ref<string[]> = ref(props.addedProperties.map(property => property.configType ?? ''));
 
 const leftLoading = ref(false);
@@ -56,12 +65,18 @@ const search = ref('');
 const pageInfo = ref(null);
 const draggingItemId = ref(null);
 const draggingOverItemId = ref(null);
+const leftListRef = ref<HTMLElement | null>(null);
+const rightListRef = ref<HTMLElement | null>(null);
 const limit = ref(30);
 const fetchPaginationData = ref({});
 const rawRequireEanCode = ref(props.requireEanCode);
 const salesChannelOptions = computed(() => props.salesChannelOptions ?? []);
+const templateSourceOptions = computed(() => props.templateSourceOptions ?? []);
 const integrationsLoading = computed(() => props.integrationsLoading ?? false);
 const rightLoading = computed(() => props.rightLoading ?? false);
+
+const AUTO_SCROLL_THRESHOLD = 96;
+const AUTO_SCROLL_MAX_STEP = 32;
 
 fetchPaginationData.value['first'] = limit.value;
 
@@ -83,10 +98,28 @@ watch(
 );
 
 watch(
+  () => props.selectedTemplateSource,
+  (newVal) => {
+    if (newVal !== undefined && newVal !== localTemplateSource.value) {
+      localTemplateSource.value = newVal ?? 'default';
+    }
+  }
+);
+
+watch(
   localSalesChannel,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
       emit('update:salesChannel', newVal ?? 'default');
+    }
+  }
+);
+
+watch(
+  localTemplateSource,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      emit('update:templateSource', newVal ?? 'default');
     }
   }
 );
@@ -165,8 +198,30 @@ const dragOver = (id) => {
 };
 
 
-const allowDrop = (event) => {
+const autoScrollContainer = (event: DragEvent, container: HTMLElement | null) => {
+  if (!container) {
+    return;
+  }
+
+  const rect = container.getBoundingClientRect();
+  const topDistance = event.clientY - rect.top;
+  const bottomDistance = rect.bottom - event.clientY;
+
+  if (topDistance < AUTO_SCROLL_THRESHOLD) {
+    const ratio = (AUTO_SCROLL_THRESHOLD - topDistance) / AUTO_SCROLL_THRESHOLD;
+    container.scrollTop -= Math.ceil(ratio * AUTO_SCROLL_MAX_STEP);
+    return;
+  }
+
+  if (bottomDistance < AUTO_SCROLL_THRESHOLD) {
+    const ratio = (AUTO_SCROLL_THRESHOLD - bottomDistance) / AUTO_SCROLL_THRESHOLD;
+    container.scrollTop += Math.ceil(ratio * AUTO_SCROLL_MAX_STEP);
+  }
+};
+
+const allowDrop = (event: DragEvent, container: 'left' | 'right') => {
   event.preventDefault();
+  autoScrollContainer(event, container === 'left' ? leftListRef.value : rightListRef.value);
 };
 
 const handleDrop = (event) => {
@@ -380,6 +435,24 @@ onMounted(fetchData);
           </div>
         </div>
       </div>
+      <div
+        v-if="showTemplateSourceSelector && templateSourceOptions.length"
+        class="mt-5 mb-10"
+      >
+        <label class="font-semibold block text-sm leading-6 text-gray-900 px-1">
+          {{ t('properties.rule.labels.createFromSalesChannel') }}
+        </label>
+        <Selector
+          v-model="localTemplateSource"
+          class="h-10"
+          :options="templateSourceOptions"
+          label-by="label"
+          value-by="value"
+          :placeholder="t('properties.rule.placeholders.createFromSalesChannel')"
+          :removable="false"
+          filterable
+        />
+      </div>
       <FlexCell center>
         <Flex>
           <FlexCell center>
@@ -421,7 +494,7 @@ onMounted(fetchData);
 
     <div class="my-4 grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-4">
       <div>
-        <div class="relative p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300" @dragover.prevent="allowDrop"
+        <div ref="leftListRef" class="relative p-2 border-dashed border-2 rounded-md min-h-[200px] max-h-[75vh] overflow-y-auto border-gray-300" @dragover.prevent="allowDrop($event, 'left')"
              @drop="handleDropAvailable">
           <div
             v-if="leftLoading"
@@ -471,8 +544,8 @@ onMounted(fetchData);
                     @query-changed="handleQueryChanged"/>
       </div>
 
-      <div class="relative p-2 border-dashed border-2 rounded-md min-h-[200px] border-gray-300 mb-12"
-           @dragover.prevent="allowDrop" @drop="handleDrop">
+      <div ref="rightListRef" class="relative p-2 border-dashed border-2 rounded-md min-h-[200px] max-h-[75vh] overflow-y-auto border-gray-300 mb-12"
+           @dragover.prevent="allowDrop($event, 'right')" @drop="handleDrop">
         <div
           v-if="rightLoading || integrationsLoading"
           class="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-white/70"
@@ -497,7 +570,7 @@ onMounted(fetchData);
               class="cursor-grab"
               draggable="true"
               @dragstart="dragStart(item.id)"
-              @dragover.prevent="dragOver(item.id)"
+              @dragover.prevent="(event) => { dragOver(item.id); allowDrop(event, 'right'); }"
               @dragend="dragEnd"
           >
             <td>

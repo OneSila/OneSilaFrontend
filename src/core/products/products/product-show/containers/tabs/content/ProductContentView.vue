@@ -1,11 +1,16 @@
 <script setup lang="ts">
 
 import {useI18n} from 'vue-i18n';
+import Swal from 'sweetalert2';
 import {Product} from "../../../../configs";
 import {Button} from "../../../../../../../shared/components/atoms/button";
 import apolloClient from "../../../../../../../../apollo-client";
 import { getProductContentByLanguageAndChannelQuery, getProductContentByLanguageAndDefaultQuery } from "../../../../../../../shared/api/queries/products.js";
-import { createProductTranslationMutation, updateProductTranslationMutation } from "../../../../../../../shared/api/mutations/products.js";
+import {
+  cleanProductTranslationFieldMutation,
+  createProductTranslationMutation,
+  updateProductTranslationMutation,
+} from "../../../../../../../shared/api/mutations/products.js";
 import { integrationsQuery } from "../../../../../../../shared/api/queries/integrations.js";
 import { reactive, watch, ref, onMounted, computed, nextTick } from "vue";
 import { Toast } from "../../../../../../../shared/modules/toast";
@@ -30,6 +35,7 @@ type ProductContentFormState = {
   description: string;
   urlKey: string;
 };
+type ContentField = 'DESCRIPTION' | 'SHORT_DESCRIPTION' | 'SUBTITLE' | 'BULLET_POINTS' | 'URL_KEY';
 
 const emptyHtml = '<p><br></p>';
 
@@ -52,6 +58,7 @@ const fieldErrors = ref<Record<string, string>>({});
 const bulletPointsRef = ref<any>(null);
 const defaultLanguageCode = ref('en');
 const formRenderKey = ref(0);
+const cleaningField = ref<ContentField | null>(null);
 let latestFormRequestId = 0;
 
 const currentChannelType = computed(() => {
@@ -61,6 +68,14 @@ const currentChannelType = computed(() => {
 });
 
 const fieldRules = computed(() => getContentFieldRules(currentChannelType.value));
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    popup: 'sweet-alerts',
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-outline-primary ltr:mr-3 rtl:ml-3',
+  },
+  buttonsStyling: false,
+});
 
 const applyFormState = (nextState: ProductContentFormState) => {
   form.name = nextState.name;
@@ -267,6 +282,65 @@ const handleImportCompleted = async () => {
   await setFormAndMutation(currentLanguage.value, currentSalesChannel.value);
 };
 
+const cleanFieldMap: Record<Exclude<ContentField, 'BULLET_POINTS'>, keyof ProductContentFormState> = {
+  DESCRIPTION: 'description',
+  SHORT_DESCRIPTION: 'shortDescription',
+  SUBTITLE: 'subtitle',
+  URL_KEY: 'urlKey',
+};
+
+const handleCleanField = async (field: ContentField) => {
+  if (!translationId.value || cleaningField.value) {
+    return;
+  }
+
+  const result = await swalWithBootstrapButtons.fire({
+    icon: 'warning',
+    text: t('products.translation.cleanField.confirm'),
+    showCancelButton: true,
+    reverseButtons: true,
+  });
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  cleaningField.value = field;
+
+  try {
+    const { data } = await apolloClient.mutate({
+      mutation: cleanProductTranslationFieldMutation,
+      variables: {
+        translation: { id: translationId.value },
+        field,
+      },
+    });
+
+    const cleanedTranslation = data?.cleanTranslationField;
+    if (cleanedTranslation) {
+      applyFormState(mapTranslationToFormState(cleanedTranslation));
+    } else if (field !== 'BULLET_POINTS') {
+      const mappedField = cleanFieldMap[field as Exclude<ContentField, 'BULLET_POINTS'>];
+      if (mappedField) {
+        const htmlFields: Array<keyof ProductContentFormState> = ['description', 'shortDescription'];
+        form[mappedField] = htmlFields.includes(mappedField) ? emptyHtml : '';
+      }
+    }
+
+    if (field === 'BULLET_POINTS') {
+      await bulletPointsRef.value?.fetchPoints?.();
+    }
+
+    initialForm.value = { ...form };
+    fieldErrors.value = {};
+    Toast.success(t('products.translation.cleanField.success'));
+  } catch (e) {
+    handleError(e);
+    Toast.error(t('products.translation.cleanField.error'));
+  } finally {
+    cleaningField.value = null;
+  }
+};
+
 const handleSave = async (mutate) => {
   try {
     const response = await mutate();
@@ -379,6 +453,8 @@ const shortDescriptionToolbarOptions = [
           :key="formRenderKey"
           :form="form"
           :field-errors="fieldErrors"
+          :translation-id="translationId"
+          :cleaning-field="cleaningField"
           :product-id="product.id"
           :current-language="currentLanguage"
           :default-language-code="defaultLanguageCode"
@@ -391,6 +467,7 @@ const shortDescriptionToolbarOptions = [
           :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
           @description="handleGeneratedDescriptionContent"
           @shortDescription="handleGeneratedShortDescriptionContent"
+          @clean-field="handleCleanField"
         >
           <template #bullet-points>
             <ProductTranslationBulletPoints
@@ -402,6 +479,8 @@ const shortDescriptionToolbarOptions = [
               :default-language-code="defaultLanguageCode"
               :sales-channel-id="currentSalesChannel !== 'default' ? currentSalesChannel : undefined"
               :bullet-point-limit="fieldRules.limits.bulletPoints"
+              :cleaning="cleaningField === 'BULLET_POINTS'"
+              @clean-field="handleCleanField('BULLET_POINTS')"
             />
           </template>
         </ProductContentForm>
