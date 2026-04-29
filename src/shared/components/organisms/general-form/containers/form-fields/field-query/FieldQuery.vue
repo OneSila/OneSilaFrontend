@@ -270,14 +270,22 @@ const handleSubmit = (data) => {
 
   processAndCleanData(rawDataRef.value);
 
-if (props.field.multiple) {
-  updateValue([
-    ...(selectedValue.value || []),
-    data[props.field.valueBy]
-  ]);
-} else {
-  updateValue(data[props.field.valueBy]);
-}
+  const createdId = props.field.valueBy ? data?.[props.field.valueBy] : data;
+  const createdLabel = props.field.labelBy ? data?.[props.field.labelBy] : null;
+
+  if (props.field.multiple) {
+    updateValue([
+      ...(selectedValue.value || []),
+      createdId
+    ]);
+  } else {
+    updateValue(createdId);
+  }
+
+  if (createdId != null && createdLabel != null) {
+    emit('label-selected', { id: createdId, label: createdLabel });
+  }
+
   showCreateOnFlyModal.value = false;
 };
 

@@ -19,10 +19,6 @@ const hasSheinIntegration = computed(() => Boolean(auth.user.company?.hasSheinIn
 <template>
   <div>
     <DashboardUserSections />
-    <DashboardSectionAmazon v-if="hasAmazonIntegration" />
-    <DashboardSectionEbay v-if="hasEbayIntegration" />
-    <DashboardSectionMirakl v-if="hasMiraklIntegration" />
-    <DashboardSectionShein v-if="hasSheinIntegration" />
   </div>
 </template>
 

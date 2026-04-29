@@ -32,14 +32,6 @@ export const dashboardOngoingReturns = gql`
     }
 `;
 
-export const dashboardIncompleteShippingAddress = gql`
-    query IncompleteShippingAddress {
-      shippingAddresses(filters: {company: { isSupplier: { exact: true }}, OR: {company: {isInternalCompany: {exact: true }}}, leadtimeforshippingaddress: { id: { isNull: true } } }) {
-        totalCount
-      }
-    }
-`;
-
 export const dashboardNotMatchingSalesPricesList = gql`
     query NotMatchingSalesPricesList {
       salesPriceLists (filters: {currencyMatchWithCustomers: false}) {

@@ -1170,13 +1170,18 @@ const ensureProp = (index: number, key: string) => {
   return item.propertyValues[key]
 }
 
+const normalizeOptionLabel = (label: any) => {
+  const text = typeof label === 'string' ? label : ''
+  return text.trim() ? text : '(empty)'
+}
+
 const normalizeSelectOption = (option: any) =>
-  option?.id ? [{ id: option.id, value: option.value ?? '' }] : []
+  option?.id ? [{ id: option.id, value: normalizeOptionLabel(option.value) }] : []
 
 const normalizeMultiSelectOptions = (options: any[] | null | undefined) =>
   (options ?? [])
     .filter((option) => option?.id)
-    .map((option) => ({ id: option.id, value: option.value ?? '' }))
+    .map((option) => ({ id: option.id, value: normalizeOptionLabel(option.value) }))
 
 const updateSelectValue = (index: number, key: string, value: any) => {
   const item = variations.value[index]
@@ -1200,7 +1205,7 @@ const updateMultiSelectValue = (index: number, key: string, value: any[]) => {
   const labelMap = new Map<string, any>(
     existing
       .filter((entry: any) => entry?.id)
-      .map((entry: any) => [entry.id, entry.value ?? null])
+      .map((entry: any) => [entry.id, normalizeOptionLabel(entry.value)])
   )
   prop.valueMultiSelect = value.map((id) => ({ id, value: labelMap.get(id) ?? null }))
 }
@@ -1213,9 +1218,10 @@ const handleLabelSelected = (
   if (!payload?.id) return
   const prop = ensureProp(index, key)
   const type = getPropertyType(key)
+  const nextLabel = normalizeOptionLabel(payload.label)
 
   if (type === PropertyTypes.SELECT) {
-    prop.valueSelect = { id: payload.id, value: payload.label }
+    prop.valueSelect = { id: payload.id, value: nextLabel }
     return
   }
 
@@ -1224,7 +1230,7 @@ const handleLabelSelected = (
       prop.valueMultiSelect = []
     }
     const currentIndex = prop.valueMultiSelect.findIndex((entry: any) => entry?.id === payload.id)
-    const nextEntry = { id: payload.id, value: payload.label }
+    const nextEntry = { id: payload.id, value: nextLabel }
     if (currentIndex >= 0) {
       prop.valueMultiSelect.splice(currentIndex, 1, nextEntry)
     } else {
