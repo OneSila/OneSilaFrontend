@@ -1388,7 +1388,8 @@
       "amazon": "Amazon",
       "ebay": "Ebay",
       "webhook": "Webhook",
-      "mirakl": ""
+      "mirakl": "",
+      "manual": ""
     },
     "shopify": {
       "entry": {
@@ -1904,6 +1905,9 @@
         }
       },
       "stores": {
+        "create": {
+          "title": ""
+        },
         "labels": {
           "description": "",
           "siteStatus": "",
@@ -4161,7 +4165,8 @@
       "shein": "",
       "magento": "",
       "shopify": "",
-      "woocommerce": ""
+      "woocommerce": "",
+      "manual": ""
     }
   }
 }

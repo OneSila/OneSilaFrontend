@@ -4273,7 +4273,8 @@
       "ebay": "Ebay",
       "webhook": "Webhook",
       "shein": "Shein",
-      "mirakl": "Mirakl"
+      "mirakl": "Mirakl",
+      "manual": "Manual"
     },
     "shein": {
       "installed": {
@@ -4871,6 +4872,9 @@
       },
       "stores": {
         "title": "Store",
+        "create": {
+          "title": "Create store"
+        },
         "labels": {
           "isDefault": "Is Default Store",
           "description": "Description",
@@ -6843,7 +6847,8 @@
       "shein": "Shein",
       "magento": "Magento",
       "shopify": "Shopify",
-      "woocommerce": "WooCommerce"
+      "woocommerce": "WooCommerce",
+      "manual": "Manual"
     }
   }
 }

@@ -868,7 +868,7 @@ const copySkuToClipboard = async (sku: string) => {
                             </FlexCell>
                           </Flex>
 
-                          <Flex class="mt-2 items-center gap-3">
+                          <Flex v-if="availableWorkflowOptions.length" class="mt-2 items-center gap-3">
                             <FlexCell class="shrink-0">
                               <Label semi-bold>{{ t('products.products.workflowCard.labels.workflows') }}:</Label>
                             </FlexCell>

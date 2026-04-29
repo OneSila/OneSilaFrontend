@@ -7,12 +7,17 @@ import { Toggle } from "../../../../../../shared/components/atoms/toggle";
 import { IntegrationGeneralInfo, IntegrationTypes } from "../../../integrations";
 import {Accordion} from "../../../../../../shared/components/atoms/accordion";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   generalInfo: IntegrationGeneralInfo,
   maxRequestsPerMinute: number | undefined,
   showSsl: boolean,
+  showThrottling?: boolean,
+  showActive?: boolean,
   integrationType: IntegrationTypes
-}>();
+}>(), {
+  showThrottling: true,
+  showActive: false,
+});
 
 const { t } = useI18n();
 
@@ -22,12 +27,14 @@ const accordionItems = [
 
 const hostnameLabel = computed(() => {
   return [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay, IntegrationTypes.Shein].includes(props.integrationType)
+    || props.integrationType === IntegrationTypes.Manual
     ? t('shared.labels.name')
     : t('integrations.labels.hostname');
 });
 
 const hostnamePlaceholder = computed(() => {
   return [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay, IntegrationTypes.Shein].includes(props.integrationType)
+    || props.integrationType === IntegrationTypes.Manual
     ? t('shared.placeholders.name')
     : 'https://example.com';
 });
@@ -68,11 +75,25 @@ const hostnamePlaceholder = computed(() => {
             </Flex>
           </FlexCell>
         </Flex>
+        <Flex v-if="showActive" class="mt-4 gap-4" center>
+          <FlexCell center>
+            <Flex class="gap-2 w-96">
+              <FlexCell>
+                <Label class="font-semibold block text-sm leading-6 text-gray-900">
+                  {{ t('shared.labels.active') }}
+                </Label>
+              </FlexCell>
+              <FlexCell>
+                <Toggle v-model="generalInfo.active" />
+              </FlexCell>
+            </Flex>
+          </FlexCell>
+        </Flex>
       </FlexCell>
 
-      <FlexCell class="py-8 px-96"><hr /></FlexCell>
+      <FlexCell v-if="showThrottling" class="py-8 px-96"><hr /></FlexCell>
 
-      <FlexCell>
+      <FlexCell v-if="showThrottling">
         <Flex class="mt-4 gap-4" center>
           <FlexCell center>
             <Accordion :items="accordionItems">

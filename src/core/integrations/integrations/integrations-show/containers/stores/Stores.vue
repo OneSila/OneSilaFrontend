@@ -11,6 +11,8 @@ import {
 } from "./configs"
 import { useRoute } from "vue-router";
 import { Button } from "../../../../../../shared/components/atoms/button";
+import { Link } from "../../../../../../shared/components/atoms/link";
+import { IntegrationTypes } from "../../../integrations";
 
 
 const { t } = useI18n();
@@ -24,15 +26,26 @@ const searchConfig = storesSearchConfigConstructor(t);
 const listingConfig = storesListingConfigConstructor(t, props.id, integrationType.value);
 const listingQuery = computed(() => listingQueryConstructor(integrationType.value));
 const listingQueryKey = computed(() => listingQueryKeyConstructor(integrationType.value));
+const isManualIntegration = computed(() => integrationType.value === IntegrationTypes.Manual);
 
 </script>
 
 <template>
   <GeneralTemplate>
     <template v-slot:buttons>
-      <Button type="button" class="btn btn-primary" @click="$emit('pull-data')">
-        {{ t('integrations.labels.pullData') }}
-      </Button>
+      <div class="flex gap-2 flex-wrap justify-end">
+        <Link
+          v-if="isManualIntegration"
+          :path="{ name: 'integrations.stores.create', params: { type: integrationType, integrationId: id }, query: { salesChannelId: salesChannelId } }"
+        >
+          <Button type="button" class="btn btn-primary">
+            {{ t('integrations.show.stores.create.title') }}
+          </Button>
+        </Link>
+        <Button v-else type="button" class="btn btn-primary" @click="$emit('pull-data')">
+          {{ t('integrations.labels.pullData') }}
+        </Button>
+      </div>
     </template>
 
     <template v-slot:content>

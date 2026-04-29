@@ -39,6 +39,7 @@ import {
   createAmazonSalesChannelMutation,
   createEbaySalesChannelMutation,
   createMagentoSalesChannelMutation,
+  createManualSalesChannelMutation,
   createMiraklSalesChannelMutation,
   createSheinSalesChannelMutation,
   createShopifySalesChannelMutation,
@@ -205,13 +206,17 @@ const wizardSteps = computed(() => {
     { title: t('integrations.create.wizard.step2.title'), name: 'generalInfoStep' },
   ];
 
-  if (resolvedIntegrationType.value !== IntegrationTypes.Webhook) {
+  if (
+    resolvedIntegrationType.value !== IntegrationTypes.Webhook &&
+    resolvedIntegrationType.value !== IntegrationTypes.Manual
+  ) {
     steps.push({ title: t('integrations.create.wizard.step3.title'), name: 'salesChannelStep' });
   }
 
   if (
     resolvedIntegrationType.value !== IntegrationTypes.Ebay &&
-    resolvedIntegrationType.value !== IntegrationTypes.Shein
+    resolvedIntegrationType.value !== IntegrationTypes.Shein &&
+    resolvedIntegrationType.value !== IntegrationTypes.Manual
   ) {
     steps.push({ title: stepFourLabel.value, name: 'specificChannelStep' });
   }
@@ -280,7 +285,7 @@ const allowNextStep = computed(() => {
       return false;
     }
 
-    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay, IntegrationTypes.Shein];
+    const excludedTypes = [IntegrationTypes.Amazon, IntegrationTypes.Webhook, IntegrationTypes.Ebay, IntegrationTypes.Shein, IntegrationTypes.Manual];
     if (!excludedTypes.includes(resolvedIntegrationType.value)) {
       const urlPattern = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/;
       if (!urlPattern.test(hostname)) {
@@ -390,6 +395,8 @@ const getIntegrationMutation = () => {
       return createAmazonSalesChannelMutation;
     case IntegrationTypes.Mirakl:
       return createMiraklSalesChannelMutation;
+    case IntegrationTypes.Manual:
+      return createManualSalesChannelMutation;
     case IntegrationTypes.Webhook:
       return createWebhookIntegrationMutation;
     case IntegrationTypes.Ebay:
@@ -413,6 +420,8 @@ const getIntegrationMutationKey = () => {
       return 'createAmazonSalesChannel';
     case IntegrationTypes.Mirakl:
       return 'createMiraklSalesChannel';
+    case IntegrationTypes.Manual:
+      return 'createManualSalesChannel';
     case IntegrationTypes.Webhook:
       return 'createWebhookIntegration';
     case IntegrationTypes.Ebay:
@@ -452,11 +461,16 @@ const handleFinish = async () => {
       delete (salesChannelData as any).startingStock;
     }
 
-    const dataInput = {
-      ...form.generalInfo,
-      ...salesChannelData,
-      ...specificChannelInfo.value
-    };
+    const dataInput = resolvedIntegrationType.value === IntegrationTypes.Manual
+      ? {
+          hostname: form.generalInfo.hostname,
+          active: form.generalInfo.active,
+        }
+      : {
+          ...form.generalInfo,
+          ...salesChannelData,
+          ...specificChannelInfo.value
+        };
 
     if (
       resolvedIntegrationType.value === IntegrationTypes.Shopify &&
@@ -643,6 +657,14 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
     return;
   }
 
+  if (integrationType === IntegrationTypes.Manual) {
+    router.push({
+      name: 'integrations.integrations.show',
+      params: { type: IntegrationTypes.Manual, id: channelData.id },
+    });
+    return;
+  }
+
   // Fallback: all other integrations
   router.push({ name: 'integrations.integrations.list' });
 };
@@ -693,8 +715,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
               :show-ssl="
                 resolvedIntegrationType !== IntegrationTypes.Shopify &&
                 resolvedIntegrationType !== IntegrationTypes.Amazon &&
-                resolvedIntegrationType !== IntegrationTypes.Mirakl
+                resolvedIntegrationType !== IntegrationTypes.Mirakl &&
+                resolvedIntegrationType !== IntegrationTypes.Manual
               "
+              :show-throttling="resolvedIntegrationType !== IntegrationTypes.Manual"
+              :show-active="resolvedIntegrationType === IntegrationTypes.Manual"
           />
         </template>
 
@@ -707,7 +732,11 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
 
         <template #specificChannelStep>
           <component
-            v-if="resolvedIntegrationType !== IntegrationTypes.Ebay && resolvedIntegrationType !== IntegrationTypes.Shein"
+            v-if="
+              resolvedIntegrationType !== IntegrationTypes.Ebay &&
+              resolvedIntegrationType !== IntegrationTypes.Shein &&
+              resolvedIntegrationType !== IntegrationTypes.Manual
+            "
             :is="getIntegrationComponent()"
             :channel-info="specificChannelInfo"
             v-bind="resolvedIntegrationType === IntegrationTypes.Mirakl

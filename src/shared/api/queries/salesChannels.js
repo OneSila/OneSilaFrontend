@@ -83,6 +83,80 @@ export const getSalesChannelQuery = gql`
   }
 `;
 
+export const getManualSalesChannelQuery = gql`
+  query getManualSalesChannel($id: GlobalID!) {
+    manualSalesChannel(id: $id) {
+      id
+      hostname
+      active
+      type
+      proxyId
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
+      gptFeed {
+        id
+        fileUrl
+        lastSyncedAt
+        file {
+          url
+        }
+      }
+      views {
+        id
+        name
+        url
+        includeInTodo
+        todoSortOrder
+        active
+      }
+    }
+  }
+`;
+
+export const manualSalesChannelsQuery = gql`
+  query ManualSalesChannels(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $order: ManualSalesChannelOrder
+    $filters: ManualSalesChannelFilter
+  ) {
+    manualSalesChannels(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+      order: $order
+      filters: $filters
+    ) {
+      edges {
+        node {
+          id
+          hostname
+          active
+          type
+          proxyId
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const getMagentoChannelQuery = gql`
   query getMagentoChannel($id: GlobalID!) {
     magentoChannel(id: $id) {
@@ -894,6 +968,34 @@ export const salesChannelViewsQuery = gql`
   }
 `;
 
+export const manualSalesChannelViewsQuery = gql`
+  query ManualSalesChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: ManualSalesChannelViewOrder, $filter: ManualSalesChannelViewFilter) {
+    manualSalesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+          url
+          active
+          includeInTodo
+          todoSortOrder
+          salesChannel {
+            id
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const salesChannelViewsQuerySelector = gql`
   query SalesChannelViews($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelViewOrder, $filter: SalesChannelViewFilter) {
     salesChannelViews(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
@@ -924,6 +1026,22 @@ export const salesChannelViewsQuerySelector = gql`
 export const getSalesChannelViewQuery = gql`
   query getSalesChannelView($id: GlobalID!) {
     salesChannelView(id: $id) {
+      id
+      active
+      includeInTodo
+      todoSortOrder
+      url
+      name
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const getManualSalesChannelViewQuery = gql`
+  query getManualSalesChannelView($id: GlobalID!) {
+    manualSalesChannelView(id: $id) {
       id
       active
       includeInTodo

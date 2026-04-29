@@ -19,6 +19,10 @@ const getStatusBadgeMap = (t: Function) => ({
 });
 
 const getAssignStatus = (node: any) => {
+  if (node.integrationType === 'manual') {
+    return 'COMPLETED';
+  }
+
   const remoteStatus = node.remoteProduct?.status;
 
   if (node.status === 'PENDING_CREATION') {

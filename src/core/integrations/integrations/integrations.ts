@@ -7,6 +7,7 @@ export enum IntegrationTypes {
   Mirakl = 'mirakl',
   Webhook = 'webhook',
   Shein = 'shein',
+  Manual = 'manual',
   None = 'none',
 }
 
