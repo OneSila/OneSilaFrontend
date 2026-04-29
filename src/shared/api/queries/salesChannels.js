@@ -56,6 +56,8 @@ export const salesChannelsLimitsQuery = gql`
           id
           minNameLength
           minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
         }
         cursor
       }
@@ -174,6 +176,8 @@ export const getMagentoChannelQuery = gql`
       startingStock
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       hostApiUsername
       hostApiKey
       authenticationMethod
@@ -226,6 +230,8 @@ export const getShopifyChannelQuery = gql`
       accessToken
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -276,6 +282,8 @@ export const getWoocommerceChannelQuery = gql`
       startingStock
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -366,6 +374,8 @@ export const getAmazonChannelQuery = gql`
       startingStock
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       accessToken
       refreshTokenExpiration
       expirationDate
@@ -516,6 +526,8 @@ export const getEbayChannelQuery = gql`
       startingStock
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       firstImportComplete
       isImporting
       accessToken
@@ -546,6 +558,8 @@ export const getSheinChannelQuery = gql`
       startingStock
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       firstImportComplete
       isImporting
       openKeyId
@@ -578,6 +592,8 @@ export const getMiraklChannelQuery = gql`
       startingStock
       minNameLength
       minDescriptionLength
+          maxNameLength
+          maxDescriptionLength
       shopId
       apiKey
       connected
