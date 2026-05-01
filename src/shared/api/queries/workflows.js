@@ -49,6 +49,27 @@ export const workflowsOverviewQuery = gql`
   }
 `;
 
+export const workflowsQuerySelector = gql`
+  query WorkflowsSelector($first: Int, $last: Int, $after: String, $before: String, $order: WorkflowOrder, $filter: WorkflowFilter) {
+    workflows(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          name
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const workflowAssignmentOptionsQuery = gql`
   query WorkflowAssignmentOptions($first: Int, $last: Int, $after: String, $before: String, $order: WorkflowOrder, $filter: WorkflowFilter) {
     workflows(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {

@@ -22,7 +22,7 @@ import { sheinCategoriesQuerySelector } from "../../../shared/api/queries/sheinC
 import { companyContentViewsQuery } from "../../../shared/api/queries/contentViews.js";
 import { deleteProductsMutation } from "../../../shared/api/mutations/products.js";
 import { salesPriceListsQuerySelector } from "../../../shared/api/queries/salesPrices.js";
-import { workflowStatesQuerySelector } from "../../../shared/api/queries/workflows.js";
+import { workflowsQuerySelector, workflowStatesQuerySelector } from "../../../shared/api/queries/workflows.js";
 
 export const vatRateOnTheFlyConfig = (t: Function):CreateOnTheFly => ({
   config: {
@@ -462,6 +462,38 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
     },
     {
       type: FieldType.Query,
+      name: 'workflowId',
+      query: workflowsQuerySelector,
+      label: t('products.products.filters.labels.workflow'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'workflows',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      placeholder: t('products.products.filters.placeholders.workflow'),
+      helpText: t('products.products.filters.help.workflow'),
+      queryVariables: { order: { sortOrder: 'ASC' } },
+    },
+    {
+      type: FieldType.Query,
+      name: 'excludeWorkflowId',
+      query: workflowsQuerySelector,
+      label: t('products.products.filters.labels.excludeWorkflow'),
+      labelBy: 'name',
+      valueBy: 'id',
+      dataKey: 'workflows',
+      filterable: true,
+      multiple: false,
+      isEdge: true,
+      addLookup: false,
+      placeholder: t('products.products.filters.placeholders.excludeWorkflow'),
+      helpText: t('products.products.filters.help.excludeWorkflow'),
+      queryVariables: { order: { sortOrder: 'ASC' } },
+    },
+    {
+      type: FieldType.Query,
       name: 'workflowStateId',
       query: workflowStatesQuerySelector,
       label: t('products.products.filters.labels.workflowState'),
@@ -475,6 +507,13 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       placeholder: t('products.products.filters.placeholders.workflowState'),
       helpText: t('products.products.filters.help.workflowState'),
       queryVariables: { order: { sortOrder: 'ASC' } },
+    },
+    {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'hasWorkflowAssigned',
+      label: t('products.products.filters.labels.hasWorkflowAssigned'),
+      helpText: t('products.products.filters.help.hasWorkflowAssigned'),
     },
     {
       type: FieldType.Query,
@@ -1076,7 +1115,10 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       title: t('products.products.filters.sections.workflow.title'),
       helpText: t('products.products.filters.sections.workflow.help'),
       filters: [
+        'workflowId',
+        'excludeWorkflowId',
         'workflowStateId',
+        'hasWorkflowAssigned',
       ],
     },
     {
