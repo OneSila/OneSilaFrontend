@@ -51,16 +51,19 @@ const getIssueSections = (issue: any) => [
     key: 'issue',
     label: t('publicIssues.labels.issue'),
     value: issue.issue,
+    renderAsHtml: false,
   },
   {
     key: 'cause',
     label: t('publicIssues.labels.cause'),
     value: issue.cause || t('publicIssues.show.emptySection'),
+    renderAsHtml: true,
   },
   {
     key: 'recommendedFix',
     label: t('publicIssues.labels.recommendedFix'),
     value: issue.recommendedFix || t('publicIssues.show.emptySection'),
+    renderAsHtml: true,
   },
 ];
 
@@ -138,9 +141,14 @@ const previousImage = (images: string[]) => {
                     class="p-6"
                   >
                     <h2 class="text-base font-semibold text-slate-950">{{ section.label }}</h2>
-                    <p class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                    <p v-if="!section.renderAsHtml" class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
                       {{ section.value }}
                     </p>
+                    <div
+                      v-else
+                      class="mt-3 text-sm leading-7 text-slate-700"
+                      v-html="section.value"
+                    />
                   </section>
                 </div>
 

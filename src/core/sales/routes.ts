@@ -1,16 +1,4 @@
 export const routes = [
-
-    {
-        path: '/sales/orders',
-        name: 'sales.orders.list',
-        component: () => import('./orders/orders-list/OrdersListController.vue')
-    },
-    {
-        path: '/sales/orders/show/:id',
-        name: 'sales.orders.show',
-        component: () => import('./orders/order-show/OrderShowController.vue')
-    },
-
     {
         path: '/sales/price-lists',
         name: 'sales.priceLists.list',

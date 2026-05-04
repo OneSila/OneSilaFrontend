@@ -43,6 +43,12 @@ export const routes = [
     component: () => import('./integrations/integrations-show/containers/stores/containers/IntegrationsStoreEditController.vue'),
   },
   {
+    path: '/integrations/:type/store/:integrationId/create',
+    name: 'integrations.stores.create',
+    meta: { title: 'integrations.show.stores.create.title' },
+    component: () => import('./integrations/integrations-show/containers/stores/containers/IntegrationsStoreCreateController.vue'),
+  },
+  {
     path: '/integrations/:type/language/:id',
     name: 'integrations.languages.edit',
     meta: { title: 'integrations.show.languages.title' },

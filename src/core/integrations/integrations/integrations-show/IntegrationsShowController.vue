@@ -15,7 +15,8 @@ import {
   getAmazonChannelQuery,
   getEbayChannelQuery,
   getSheinChannelQuery,
-  getMiraklChannelQuery
+  getMiraklChannelQuery,
+  getManualSalesChannelQuery
 } from "../../../../shared/api/queries/salesChannels.js";
 import { getWebhookIntegrationQuery } from "../../../../shared/api/queries/webhookIntegrations.js";
 import { AmazonGeneralInfoTab } from "./containers/general/amazon-general-tab";
@@ -26,6 +27,7 @@ import { WebhookGeneralInfoTab } from "./containers/general/webhook-general-tab"
 import { EbayGeneralInfoTab } from "./containers/general/ebay-general-tab";
 import { SheinGeneralInfoTab } from "./containers/general/shein-general-tab";
 import { MiraklGeneralInfoTab } from "./containers/general/mirakl-general-tab";
+import { ManualGeneralInfoTab } from "./containers/general/manual-general-tab";
 import apolloClient from "../../../../../apollo-client";
 import { Loader } from "../../../../shared/components/atoms/loader";
 import { Products } from "./containers/products";
@@ -75,7 +77,12 @@ const tabItems = ref<IntegrationTabItem[]>([
   { name: 'general', label: t('shared.tabs.general'), icon: 'circle-info' }
 ]);
 
-if (type.value !== IntegrationTypes.Webhook) {
+if (type.value === IntegrationTypes.Manual) {
+  tabItems.value.push(
+    { name: 'products', label: t('products.title'), icon: 'box' },
+    { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
+  );
+} else if (type.value !== IntegrationTypes.Webhook) {
   tabItems.value.push(
     { name: 'products', label: t('products.title'), icon: 'box' },
     { name: 'stores', label: t('shared.tabs.stores'), icon: 'store' },
@@ -153,6 +160,8 @@ const getIntegrationQuery = () => {
       return getSheinChannelQuery;
     case IntegrationTypes.Mirakl:
       return getMiraklChannelQuery;
+    case IntegrationTypes.Manual:
+      return getManualSalesChannelQuery;
     case IntegrationTypes.Webhook:
       return getWebhookIntegrationQuery;
     default:
@@ -178,6 +187,8 @@ const getIntegrationQueryKey = () => {
       return "sheinChannel";
     case IntegrationTypes.Mirakl:
       return "miraklChannel";
+    case IntegrationTypes.Manual:
+      return "manualSalesChannel";
     default:
       return "salesChannel";
   }
@@ -201,6 +212,8 @@ const getGeneralComponent = () => {
       return SheinGeneralInfoTab;
     case IntegrationTypes.Mirakl:
       return MiraklGeneralInfoTab;
+    case IntegrationTypes.Manual:
+      return ManualGeneralInfoTab;
     default:
       return null;
   }
@@ -223,6 +236,14 @@ const fetchIntegrationData = async () => {
       integrationId.value = rawData.id;
       salesChannelId.value = null;
       firstImportCompleteRef.value = true;
+    } else if (type.value === IntegrationTypes.Manual) {
+      const { __typename, gptFeed: rawGptFeed, views, ...cleanData } = rawData;
+      integrationData.value = cleanData;
+      integrationId.value = rawData.proxyId || rawData.id;
+      salesChannelId.value = rawData.id;
+      firstImportCompleteRef.value = true;
+      gptFeed.value = rawGptFeed ?? null;
+      initialGptEnabled.value = cleanData.gptEnable ?? false;
     } else {
       const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = rawData;
 
@@ -257,6 +278,7 @@ const supportsGptFeed = computed(() => [
   IntegrationTypes.Magento,
   IntegrationTypes.Shopify,
   IntegrationTypes.Woocommerce,
+  IntegrationTypes.Manual,
 ].includes(type.value as IntegrationTypes));
 
 const gptComponentProps = computed(() => supportsGptFeed.value ? {
@@ -271,7 +293,7 @@ const gptComponentListeners = computed(() => supportsGptFeed.value ? {
 
 onMounted(async () => {
   await fetchIntegrationData();
-    if (!firstImportCompleteRef.value && type.value != IntegrationTypes.Amazon) {
+    if (!firstImportCompleteRef.value && type.value != IntegrationTypes.Amazon && type.value != IntegrationTypes.Manual) {
     router.replace({
       query: {
         ...route.query,

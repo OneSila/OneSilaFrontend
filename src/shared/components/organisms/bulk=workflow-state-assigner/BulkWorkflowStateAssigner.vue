@@ -30,6 +30,7 @@ const emit = defineEmits<{ (e: 'started'): void }>();
 const { t } = useI18n();
 
 const showPanel = ref(false);
+const showAdvanced = ref(false);
 const panelRef = ref<HTMLElement | null>(null);
 const workflowOptions = ref<WorkflowOption[]>([]);
 const loadingWorkflows = ref(false);
@@ -61,6 +62,11 @@ const workflowSelectorOptions = computed(() =>
 const isSubmitDisabled = computed(() => {
   return submitting.value || !props.selectedEntities.length || !selectedWorkflowId.value || !selectedWorkflowStateId.value;
 });
+
+const selectedWorkflowHasStates = computed(() => selectedWorkflowStateOptions.value.length > 0);
+const selectedWorkflowHasDefaultState = computed(() =>
+  Boolean(selectedWorkflow.value?.states?.some((state) => state.isDefault)),
+);
 
 const handleGlobalClick = (event: MouseEvent) => {
   const clickedEl = event.target as HTMLElement;
@@ -102,7 +108,7 @@ const onWorkflowChange = (workflowId: string | null) => {
   const workflow = workflowOptions.value.find((entry) => entry.id === workflowId);
   const states = sortedStates(workflow?.states || []);
   const defaultState = states.find((state) => state.isDefault);
-  selectedWorkflowStateId.value = defaultState?.id || states[0]?.id || null;
+  selectedWorkflowStateId.value = defaultState?.id || null;
 };
 
 const handleAssign = async () => {
@@ -132,6 +138,7 @@ const handleAssign = async () => {
     );
 
     showPanel.value = false;
+    showAdvanced.value = false;
     emit('started');
   } catch (error) {
     const validationErrors = processGraphQLErrors(error, t);
@@ -149,6 +156,7 @@ const handleAssign = async () => {
 
 watch(showPanel, (open) => {
   if (!open) {
+    showAdvanced.value = false;
     return;
   }
 
@@ -226,7 +234,25 @@ onUnmounted(() => {
           </p>
         </div>
 
+        <p v-if="selectedWorkflowId && !loadingWorkflows && !selectedWorkflowHasStates" class="text-xs text-gray-500">
+          {{ t('shared.components.organisms.bulkWorkflowStateAssigner.noStates') }}
+        </p>
+        <p v-else-if="selectedWorkflowId && !loadingWorkflows && !selectedWorkflowHasDefaultState" class="text-xs text-gray-500">
+          {{ t('shared.components.organisms.bulkWorkflowStateAssigner.noDefaultState') }}
+        </p>
+
         <div>
+          <button
+            class="inline-flex items-center text-sm font-semibold text-cyan-700 hover:text-cyan-800"
+            type="button"
+            @click="showAdvanced = !showAdvanced"
+          >
+            <Icon :name="showAdvanced ? 'chevron-up' : 'chevron-down'" size="sm" class="mr-1 text-cyan-600" />
+            {{ t(showAdvanced ? 'shared.components.organisms.bulkWorkflowStateAssigner.hideAdvanced' : 'shared.components.organisms.bulkWorkflowStateAssigner.showAdvanced') }}
+          </button>
+        </div>
+
+        <div v-if="showAdvanced">
           <Label class="mb-1 block text-sm font-semibold text-gray-700">
             {{ t('shared.components.organisms.bulkWorkflowStateAssigner.stateLabel') }}
           </Label>
@@ -239,9 +265,6 @@ onUnmounted(() => {
             :is-loading="loadingWorkflows"
             :removable="false"
           />
-          <p v-if="selectedWorkflowId && !loadingWorkflows && !selectedWorkflowStateOptions.length" class="mt-2 text-xs text-gray-500">
-            {{ t('shared.components.organisms.bulkWorkflowStateAssigner.noStates') }}
-          </p>
         </div>
 
         <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800">

@@ -84,6 +84,18 @@ export const createMiraklSalesChannelMutation = gql`
   }
 `;
 
+export const createManualSalesChannelMutation = gql`
+  mutation createManualSalesChannel($data: ManualSalesChannelInput!) {
+    createManualSalesChannel(data: $data) {
+      id
+      hostname
+      active
+      type
+      proxyId
+    }
+  }
+`;
+
 export const updateWoocommerceSalesChannelMutation = gql`
   mutation updateWoocommerceSalesChannel($data: WoocommerceSalesChannelPartialInput!) {
     updateWoocommerceSalesChannel(data: $data) {
@@ -162,6 +174,26 @@ export const updateMiraklSalesChannelMutation = gql`
       hostname
       shopId
       apiKey
+    }
+  }
+`;
+
+export const updateManualSalesChannelMutation = gql`
+  mutation updateManualSalesChannel($data: ManualSalesChannelPartialInput!) {
+    updateManualSalesChannel(data: $data) {
+      id
+      hostname
+      active
+      type
+      proxyId
+      gptEnable
+      gptEnableCheckout
+      gptSellerName
+      gptSellerUrl
+      gptSellerPrivacyPolicy
+      gptSellerTos
+      gptReturnPolicy
+      gptReturnWindow
     }
   }
 `;
@@ -437,6 +469,43 @@ export const updateSalesChannelViewMutation = gql`
       active
       includeInTodo
       todoSortOrder
+    }
+  }
+`;
+
+export const createManualSalesChannelViewMutation = gql`
+  mutation createManualSalesChannelView($data: ManualSalesChannelViewInput!) {
+    createManualSalesChannelView(data: $data) {
+      id
+      name
+      url
+      active
+      includeInTodo
+      todoSortOrder
+      salesChannel {
+        id
+      }
+    }
+  }
+`;
+
+export const updateManualSalesChannelViewMutation = gql`
+  mutation updateManualSalesChannelView($data: ManualSalesChannelViewPartialInput!) {
+    updateManualSalesChannelView(data: $data) {
+      id
+      name
+      url
+      active
+      includeInTodo
+      todoSortOrder
+    }
+  }
+`;
+
+export const deleteManualSalesChannelViewMutation = gql`
+  mutation deleteManualSalesChannelView($id: GlobalID!) {
+    deleteManualSalesChannelView(id: $id) {
+      id
     }
   }
 `;
@@ -1092,11 +1161,9 @@ export const updateAmazonProductTypeMutation = gql`
   }
 `;
 
-export const createAmazonProductTypesFromLocalRulesMutation = gql`
-  mutation createAmazonProductTypesFromLocalRules($data: AmazonSalesChannelPartialInput!) {
-    createAmazonProductTypesFromLocalRules(instance: $data) {
-      id
-    }
+export const createSalesChannelProductTypesFromLocalRulesMutation = gql`
+  mutation createSalesChannelProductTypesFromLocalRules($data: SalesChannelPartialInput!) {
+    createSalesChannelProductTypesFromLocalRules(salesChannel: $data)
   }
 `;
 
@@ -1106,14 +1173,6 @@ export const updateEbayProductTypeMutation = gql`
       id
       mappedLocally
       mappedRemotely
-    }
-  }
-`;
-
-export const createEbayProductTypesFromLocalRulesMutation = gql`
-  mutation createEbayProductTypesFromLocalRules($data: EbaySalesChannelPartialInput!) {
-    createEbayProductTypesFromLocalRules(instance: $data) {
-      id
     }
   }
 `;
@@ -1128,20 +1187,22 @@ export const updateSheinProductTypeMutation = gql`
   }
 `;
 
-export const createSheinProductTypesFromLocalRulesMutation = gql`
-  mutation createSheinProductTypesFromLocalRules($data: SheinSalesChannelPartialInput!) {
-    createSheinProductTypesFromLocalRules(instance: $data) {
-      id
-    }
-  }
-`;
-
 export const updateMiraklProductTypeMutation = gql`
   mutation updateMiraklProductType($data: MiraklProductTypePartialInput!) {
     updateMiraklProductType(data: $data) {
       id
       mappedLocally
       mappedRemotely
+    }
+  }
+`;
+
+export const suggestMiraklCategoryMutation = gql`
+  mutation suggestMiraklCategory($instance: MiraklSalesChannelPartialInput!) {
+    suggestMiraklCategory(instance: $instance) {
+      id
+      remoteId
+      name
     }
   }
 `;

@@ -774,18 +774,21 @@
           }
         },
         "bulkWorkflowStateAssigner": {
-          "title": "Assign workflow state to {count} product(s)",
-          "button": "Set Workflow State",
-          "description": "Select a workflow and state to apply in bulk.",
+          "title": "Assign workflow to {count} product(s)",
+          "button": "Set workflow",
+          "description": "Select a workflow to apply in bulk. Products are added to the default state automatically.",
           "workflowLabel": "Workflow",
           "workflowPlaceholder": "Select workflow",
           "stateLabel": "Workflow state",
           "statePlaceholder": "Select workflow state",
           "noWorkflows": "No workflows are available.",
           "noStates": "No states are available for this workflow.",
-          "replaceWarning": "This action replaces existing workflow assignments on the selected products with the selected workflow and state.",
-          "assignButton": "Apply workflow state",
-          "success": "Updated {count} product(s) to {workflow} / {state}.",
+          "noDefaultState": "This workflow has no default state. Choose a state in Advanced to continue.",
+          "showAdvanced": "Show Advanced",
+          "hideAdvanced": "Hide Advanced",
+          "replaceWarning": "This action replaces existing workflow assignments on the selected products with the selected workflow.",
+          "assignButton": "Apply workflow",
+          "success": "Updated {count} product(s) to {workflow}.",
           "error": "We could not update workflow assignments."
         },
         "aiBulkTranslator": {
@@ -2745,7 +2748,9 @@
           "saveAndNext": "Save and next",
           "saveAndStay": "Save and stay here",
           "saveAndBackToListing": "Save and go back to listing",
-          "saveAndGoToWorkflowPage": "Save and go to workflow page"
+          "saveAndGoToWorkflowPage": "Save and go to workflow page",
+          "previousState": "Move to previous workflow state",
+          "nextState": "Move to next workflow state"
         },
         "labels": {
           "workflow": "Workflow",
@@ -4281,7 +4286,8 @@
       "ebay": "Ebay",
       "webhook": "Webhook",
       "shein": "Shein",
-      "mirakl": "Mirakl"
+      "mirakl": "Mirakl",
+      "manual": "Manual"
     },
     "shein": {
       "installed": {
@@ -4879,6 +4885,9 @@
       },
       "stores": {
         "title": "Store",
+        "create": {
+          "title": "Create store"
+        },
         "labels": {
           "isDefault": "Is Default Store",
           "description": "Description",
@@ -5607,6 +5616,8 @@
       "startingStock": "Starting Stock",
       "minNameLength": "Minimum Name Length",
       "minDescriptionLength": "Minimum Description Length",
+      "maxNameLength": "Maximum Name Length",
+      "maxDescriptionLength": "Maximum Description Length",
       "hostname": "Hostname",
       "verifySSL": "Verify SSL",
       "successfullyConnected": "Connected",
@@ -5870,6 +5881,8 @@
         "startingStock": "Set the initial stock level for new products sent to this integration. Leave empty to avoid sending a stock quantity.",
         "minNameLength": "Set the minimum name length (in characters) required for Amazon listings.",
         "minDescriptionLength": "Set the minimum description length (in characters) required for Amazon listings.",
+        "maxNameLength": "Set the maximum name length (in characters) allowed for Amazon listings.",
+        "maxDescriptionLength": "Set the maximum description length (in characters) allowed for Amazon listings.",
         "cannotAssign": "Please fix the content quality before adding a new website assign.",
         "requestsPerMinute": "Set the max API requests per minute. This helps prevent throttling while keeping your connection smooth.",
         "maxRequestsPerMinute": "This store only allows up to {max} requests per minute.",
@@ -6851,7 +6864,8 @@
       "shein": "Shein",
       "magento": "Magento",
       "shopify": "Shopify",
-      "woocommerce": "WooCommerce"
+      "woocommerce": "WooCommerce",
+      "manual": "Manual"
     }
   }
 }

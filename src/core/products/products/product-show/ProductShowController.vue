@@ -208,6 +208,20 @@ const selectedWorkflowStateId = computed(() => selectedWorkflowAssignment.value?
 const selectedWorkflowStateIndex = computed(() =>
   selectedWorkflowStates.value.findIndex((state) => state.id === selectedWorkflowStateId.value)
 );
+const selectedWorkflowPreviousState = computed(() =>
+  selectedWorkflowStateIndex.value > 0 ? selectedWorkflowStates.value[selectedWorkflowStateIndex.value - 1] : null
+);
+const selectedWorkflowNextState = computed(() =>
+  selectedWorkflowStateIndex.value >= 0 && selectedWorkflowStateIndex.value < selectedWorkflowStates.value.length - 1
+    ? selectedWorkflowStates.value[selectedWorkflowStateIndex.value + 1]
+    : null
+);
+const canMoveWorkflowStatePrevious = computed(() =>
+  Boolean(selectedWorkflowAssignment.value && selectedWorkflowPreviousState.value && !isWorkflowAssignmentMutating(selectedWorkflowAssignment.value.id))
+);
+const canMoveWorkflowStateNext = computed(() =>
+  Boolean(selectedWorkflowAssignment.value && selectedWorkflowNextState.value && !isWorkflowAssignmentMutating(selectedWorkflowAssignment.value.id))
+);
 
 const isPendingTransitionMutating = computed(() => {
   if (!pendingWorkflowTransition.value) {
@@ -545,6 +559,17 @@ const openWorkflowTransitionModal = async (assignment: ProductWorkflowAssignment
   await loadWorkflowTransitionCandidate();
 };
 
+const openAdjacentWorkflowStateTransition = async (direction: 'previous' | 'next') => {
+  const assignment = selectedWorkflowAssignment.value;
+  const targetState = direction === 'previous' ? selectedWorkflowPreviousState.value : selectedWorkflowNextState.value;
+
+  if (!assignment || !targetState || isWorkflowAssignmentMutating(assignment.id)) {
+    return;
+  }
+
+  await openWorkflowTransitionModal(assignment, targetState.id);
+};
+
 const executeWorkflowTransition = async (action: WorkflowTransitionAction) => {
   if (!currentProduct.value || !pendingWorkflowTransition.value) {
     return;
@@ -739,8 +764,18 @@ const copySkuToClipboard = async (sku: string) => {
                   v-if="showWorkflowBar && selectedWorkflowAssignment"
                   class="mb-4 rounded-lg border border-[#e0e6ed] bg-white p-3 shadow-sm dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none"
                 >
-                  <div class="flex justify-center border-b border-gray-200 pb-2">
-                    <div class="flex w-full items-center justify-center gap-2 sm:w-auto">
+                  <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-gray-200 pb-2">
+                    <button
+                      type="button"
+                      class="justify-self-start rounded-md px-3 py-2 text-primary transition hover:bg-primary/10 hover:text-primary/80 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-transparent dark:disabled:text-gray-600"
+                      :disabled="!canMoveWorkflowStatePrevious"
+                      :aria-label="t('products.products.workflowCard.buttons.previousState')"
+                      @click="openAdjacentWorkflowStateTransition('previous')"
+                    >
+                      <Icon name="arrow-left" size="xl" />
+                    </button>
+
+                    <div class="flex min-w-0 items-center justify-center gap-2">
                       <Selector
                         v-if="showWorkflowSelector"
                         :model-value="selectedWorkflowAssignmentId"
@@ -775,6 +810,16 @@ const copySkuToClipboard = async (sku: string) => {
                         <Icon :name="showWorkflowSelector ? 'circle-xmark' : 'pen-to-square'" size="lg" />
                       </button>
                     </div>
+
+                    <button
+                      type="button"
+                      class="justify-self-end rounded-md px-3 py-2 text-primary transition hover:bg-primary/10 hover:text-primary/80 disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-transparent dark:disabled:text-gray-600"
+                      :disabled="!canMoveWorkflowStateNext"
+                      :aria-label="t('products.products.workflowCard.buttons.nextState')"
+                      @click="openAdjacentWorkflowStateTransition('next')"
+                    >
+                      <Icon name="arrow-right" size="xl" />
+                    </button>
                   </div>
 
                   <div class="mt-2">
@@ -868,7 +913,7 @@ const copySkuToClipboard = async (sku: string) => {
                             </FlexCell>
                           </Flex>
 
-                          <Flex class="mt-2 items-center gap-3">
+                          <Flex v-if="availableWorkflowOptions.length" class="mt-2 items-center gap-3">
                             <FlexCell class="shrink-0">
                               <Label semi-bold>{{ t('products.products.workflowCard.labels.workflows') }}:</Label>
                             </FlexCell>

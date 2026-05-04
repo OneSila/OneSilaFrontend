@@ -9,6 +9,8 @@ import {
   sheinChannelViewsQuery,
   miraklChannelViewsQuery,
   getMiraklSalesChannelViewQuery,
+  manualSalesChannelViewsQuery,
+  getManualSalesChannelViewQuery,
 } from "../../../../../../shared/api/queries/salesChannels.js";
 import {
   updateSalesChannelViewMutation,
@@ -16,6 +18,9 @@ import {
   updateEbaySalesChannelViewMutation,
   updateSheinSalesChannelViewMutation,
   updateMiraklSalesChannelViewMutation,
+  createManualSalesChannelViewMutation,
+  updateManualSalesChannelViewMutation,
+  deleteManualSalesChannelViewMutation,
 } from "../../../../../../shared/api/mutations/salesChannels.js";
 import { IntegrationTypes } from "../../../integrations";
 import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
@@ -40,6 +45,8 @@ export const storeEditFormConfigConstructor = (
           ? updateSheinSalesChannelViewMutation
         : type === IntegrationTypes.Mirakl
           ? updateMiraklSalesChannelViewMutation
+        : type === IntegrationTypes.Manual
+          ? updateManualSalesChannelViewMutation
         : updateSalesChannelViewMutation,
   mutationKey:
     type === IntegrationTypes.Amazon
@@ -50,14 +57,18 @@ export const storeEditFormConfigConstructor = (
           ? 'updateSheinSalesChannelView'
         : type === IntegrationTypes.Mirakl
           ? 'updateMiraklSalesChannelView'
+        : type === IntegrationTypes.Manual
+          ? 'updateManualSalesChannelView'
         : 'updateSalesChannelView',
   query:
     type === IntegrationTypes.Amazon
       ? getAmazonChannelViewQuery
       : type === IntegrationTypes.Ebay
         ? getEbaySalesChannelViewQuery
-        : type === IntegrationTypes.Mirakl
+      : type === IntegrationTypes.Mirakl
           ? getMiraklSalesChannelViewQuery
+        : type === IntegrationTypes.Manual
+          ? getManualSalesChannelViewQuery
         : getSalesChannelViewQuery,
   queryVariables: { id: storeId },
   queryDataKey:
@@ -65,8 +76,10 @@ export const storeEditFormConfigConstructor = (
       ? 'amazonChannelView'
       : type === IntegrationTypes.Ebay
         ? 'ebaySalesChannelView'
-        : type === IntegrationTypes.Mirakl
+      : type === IntegrationTypes.Mirakl
           ? 'miraklSalesChannelView'
+        : type === IntegrationTypes.Manual
+          ? 'manualSalesChannelView'
         : 'salesChannelView',
   submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'stores' } },
   fields: (() => {
@@ -141,6 +154,58 @@ export const storeEditFormConfigConstructor = (
   })(),
 });
 
+export const storeCreateFormConfigConstructor = (
+  t: Function,
+  type: string,
+  salesChannelId: string,
+  integrationId: string,
+): FormConfig => ({
+  cols: 1,
+  type: FormType.CREATE,
+  mutation: createManualSalesChannelViewMutation,
+  mutationKey: 'createManualSalesChannelView',
+  submitUrl: { name: 'integrations.integrations.show', params: { type: type, id: integrationId }, query: { tab: 'stores' } },
+  fields: [
+    {
+      type: FieldType.Hidden,
+      name: 'salesChannel',
+      value: { id: salesChannelId },
+    },
+    {
+      type: FieldType.Text,
+      name: 'name',
+      label: t('shared.labels.name'),
+      placeholder: t('shared.placeholders.name'),
+      number: false,
+    },
+    {
+      type: FieldType.Text,
+      name: 'url',
+      label: t('shared.labels.url'),
+      number: false,
+      optional: true,
+    },
+    {
+      type: FieldType.Checkbox,
+      name: 'includeInTodo',
+      label: t('integrations.show.stores.labels.includeInTodo'),
+      uncheckedValue: 'false',
+      default: true,
+      optional: true,
+      help: t('integrations.show.stores.help.includeInTodo'),
+    },
+    {
+      type: FieldType.Text,
+      name: 'todoSortOrder',
+      label: t('integrations.show.stores.labels.todoSortOrder'),
+      placeholder: t('integrations.show.stores.placeholders.todoSortOrder'),
+      number: true,
+      minNumber: 0,
+      help: t('integrations.show.stores.help.todoSortOrder'),
+    },
+  ],
+});
+
 export const storesSearchConfigConstructor = (t: Function): SearchConfig  => ({
   search: true,
   orderKey: "sort",
@@ -188,7 +253,8 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
     addActions: true,
     addEdit: true,
     addShow: true,
-    addDelete: false,
+    addDelete: type === IntegrationTypes.Manual,
+    deleteMutation: type === IntegrationTypes.Manual ? deleteManualSalesChannelViewMutation : undefined,
     addPagination: true,
   };
 };
@@ -206,6 +272,9 @@ export const listingQueryConstructor = (type: string) => {
   if (type === IntegrationTypes.Mirakl) {
     return miraklChannelViewsQuery;
   }
+  if (type === IntegrationTypes.Manual) {
+    return manualSalesChannelViewsQuery;
+  }
   return salesChannelViewsQuery;
 };
 
@@ -221,6 +290,9 @@ export const listingQueryKeyConstructor = (type: string) => {
   }
   if (type === IntegrationTypes.Mirakl) {
     return 'miraklSalesChannelViews';
+  }
+  if (type === IntegrationTypes.Manual) {
+    return 'manualSalesChannelViews';
   }
   return 'salesChannelViews';
 };

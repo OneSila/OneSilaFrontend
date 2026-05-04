@@ -167,6 +167,10 @@ const modalClosed = () => {
 };
 
 const getAssignStatus = (item: SalesChannelViewAssign) => {
+  if (item.integrationType === 'manual') {
+    return 'COMPLETED';
+  }
+
   const remoteStatus = item.remoteProduct?.status;
 
   if (item.status === 'PENDING_CREATION') {
@@ -195,9 +199,10 @@ const getAssignStatus = (item: SalesChannelViewAssign) => {
 const getProgressProps = (row: WebsiteRow) => {
   if (row.assign && row.status === PRODUCT_VIEW_STATUS.ADDED) {
     const ui = getProgressBarUiForStatus(getAssignStatus(row.assign));
+    const progress = row.assign.integrationType === 'manual' ? 100 : row.assign.remoteProductPercentage;
 
     return {
-      progress: row.assign.remoteProductPercentage,
+      progress,
       label: t(ui.labelKey),
       labelColor: ui.labelColor,
       barColor: ui.barColor,

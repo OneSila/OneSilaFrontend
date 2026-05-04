@@ -105,6 +105,9 @@
           "statePlaceholder": "",
           "noWorkflows": "",
           "noStates": "",
+          "noDefaultState": "",
+          "showAdvanced": "",
+          "hideAdvanced": "",
           "replaceWarning": "",
           "assignButton": "",
           "success": "",
@@ -761,7 +764,9 @@
           "saveAndNext": "",
           "saveAndStay": "",
           "saveAndBackToListing": "",
-          "saveAndGoToWorkflowPage": ""
+          "saveAndGoToWorkflowPage": "",
+          "previousState": "",
+          "nextState": ""
         },
         "labels": {
           "workflow": "",
@@ -1393,7 +1398,8 @@
       "amazon": "Amazon",
       "ebay": "Ebay",
       "webhook": "Webhook",
-      "mirakl": ""
+      "mirakl": "",
+      "manual": ""
     },
     "shopify": {
       "entry": {
@@ -1634,6 +1640,8 @@
       "startingStock": "",
       "minNameLength": "",
       "minDescriptionLength": "",
+      "maxNameLength": "",
+      "maxDescriptionLength": "",
       "gptEnable": "",
       "gptEnableCheckout": "",
       "gptSellerName": "",
@@ -1678,6 +1686,8 @@
         "startingStock": "",
         "minNameLength": "",
         "minDescriptionLength": "",
+      "maxNameLength": "",
+      "maxDescriptionLength": "",
         "gptEnable": "",
         "gptSellerUrl": "",
         "gptReturnWindow": "",
@@ -1909,6 +1919,9 @@
         }
       },
       "stores": {
+        "create": {
+          "title": ""
+        },
         "labels": {
           "description": "",
           "siteStatus": "",
@@ -4163,7 +4176,8 @@
       "shein": "",
       "magento": "",
       "shopify": "",
-      "woocommerce": ""
+      "woocommerce": "",
+      "manual": ""
     }
   }
 }

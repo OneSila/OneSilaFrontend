@@ -39,6 +39,8 @@ interface EditShopifyForm {
   importOrders: boolean;
   minNameLength: number | null;
   minDescriptionLength: number | null;
+  maxNameLength: number | null;
+  maxDescriptionLength: number | null;
   accessToken?: string;
   state?: string;
   gptEnable: boolean;
@@ -73,6 +75,8 @@ const normalizeShopifyFormData = (data: any): EditShopifyForm => {
     ...rest,
     minNameLength: data.minNameLength ?? null,
     minDescriptionLength: data.minDescriptionLength ?? null,
+    maxNameLength: data.maxNameLength ?? null,
+    maxDescriptionLength: data.maxDescriptionLength ?? null,
     gptEnable: data.gptEnable ?? false,
     gptEnableCheckout: data.gptEnableCheckout ?? false,
     gptSellerName: data.gptSellerName ?? '',
@@ -334,6 +338,54 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
             <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
               {{ t('integrations.salesChannel.helpText.minDescriptionLength') }}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.maxNameLength') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                    :model-value="formData.maxNameLength ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full md:w-24"
+                    @update:modelValue="(value) => { formData.maxNameLength = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['maxNameLength']">{{ fieldErrors['maxNameLength'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.maxNameLength') }}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.maxDescriptionLength') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                    :model-value="formData.maxDescriptionLength ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full md:w-24"
+                    @update:modelValue="(value) => { formData.maxDescriptionLength = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['maxDescriptionLength']">{{ fieldErrors['maxDescriptionLength'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.maxDescriptionLength') }}
             </div>
           </div>
         </div>

@@ -3,7 +3,6 @@ import { FieldType } from '../../../shared/utils/constants.js'
 import { SearchConfig } from "../../../shared/components/organisms/general-search/searchConfig";
 import {ListingConfig} from "../../../shared/components/organisms/general-listing/listingConfig";
 import { salesPriceListsQuery } from "../../../shared/api/queries/salesPrices.js"
-import {companiesQuerySelector} from "../../../shared/api/queries/contacts.js";
 import { currenciesQuerySelector } from "../../../shared/api/queries/currencies.js";
 import {ShowConfig} from "../../../shared/components/organisms/general-show/showConfig";
 import {salesPriceListSubscription} from "../../../shared/api/subscriptions/salesPrices.js";
@@ -43,21 +42,7 @@ const getCustomerField = (customerId, t, type): FormField | null => {
     }
     return null;
   } else {
-    return {
-        type: FieldType.Query,
-        name: 'customers',
-        label: t('sales.customers.title'),
-        labelBy: 'name',
-        valueBy: 'id',
-        query: companiesQuerySelector,
-        queryVariables: { filter: { 'isInternalCompany': { exact: false } }},
-        dataKey: 'companies',
-        isEdge: true,
-        multiple: true,
-        filterable: true,
-        optional: true,
-        formMapIdentifier: 'id',
-    };
+    return null;
   }
 }
 
@@ -336,5 +321,4 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
 
 export const listingQueryKey = 'salesPriceLists';
 export const listingQuery = salesPriceListsQuery;
-
 

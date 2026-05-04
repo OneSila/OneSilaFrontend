@@ -43,6 +43,8 @@ interface EditAmazonForm {
   startingStock: number | null;
   minNameLength: number | null;
   minDescriptionLength: number | null;
+  maxNameLength: number | null;
+  maxDescriptionLength: number | null;
   accessToken?: string;
   expirationDate?: string;
   region: string | null;
@@ -58,7 +60,9 @@ const formData = ref<EditAmazonForm>({
   ...props.data,
   startingStock: props.data.startingStock ?? null,
   minNameLength: props.data.minNameLength ?? null,
-  minDescriptionLength: props.data.minDescriptionLength ?? null
+  minDescriptionLength: props.data.minDescriptionLength ?? null,
+  maxNameLength: props.data.maxNameLength ?? null,
+  maxDescriptionLength: props.data.maxDescriptionLength ?? null
 });
 const fieldErrors = ref<Record<string, string>>({});
 const submitButtonRef = ref();
@@ -68,7 +72,9 @@ watch(() => props.data, (newData) => {
     ...newData,
     startingStock: newData.startingStock ?? null,
     minNameLength: newData.minNameLength ?? null,
-    minDescriptionLength: newData.minDescriptionLength ?? null
+    minDescriptionLength: newData.minDescriptionLength ?? null,
+    maxNameLength: newData.maxNameLength ?? null,
+    maxDescriptionLength: newData.maxDescriptionLength ?? null
   };
 }, { deep: true });
 
@@ -356,6 +362,54 @@ useShiftBackspaceKeyboardListener(goBack);
             </div>
             <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
               {{ t('integrations.salesChannel.helpText.minDescriptionLength') }}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.maxNameLength') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                    :model-value="formData.maxNameLength ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full md:w-24"
+                    @update:modelValue="(value) => { formData.maxNameLength = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['maxNameLength']">{{ fieldErrors['maxNameLength'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.maxNameLength') }}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-4 items-start">
+            <div class="md:col-span-4 col-span-12">
+              <Flex class="items-center" gap="2">
+                <FlexCell>
+                  <Label class="font-semibold text-sm text-gray-900">
+                    {{ t('integrations.labels.maxDescriptionLength') }}
+                  </Label>
+                </FlexCell>
+                <FlexCell>
+                  <TextInput
+                    :model-value="formData.maxDescriptionLength ?? ''"
+                    :number="true"
+                    :min-number="0"
+                    class="w-full md:w-24"
+                    @update:modelValue="(value) => { formData.maxDescriptionLength = Number.isNaN(value) ? null : value; }"
+                  />
+                </FlexCell>
+              </Flex>
+              <p class="text-red-500 text-sm mt-1" v-if="fieldErrors['maxDescriptionLength']">{{ fieldErrors['maxDescriptionLength'] }}</p>
+            </div>
+            <div class="md:col-span-8 col-span-12 text-sm text-gray-400">
+              {{ t('integrations.salesChannel.helpText.maxDescriptionLength') }}
             </div>
           </div>
         </div>

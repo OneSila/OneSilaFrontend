@@ -36,7 +36,8 @@ export const listingIntegrationTypeBadgeMap = (t: Function) => ({
   [IntegrationTypes.Webhook]: { text: t('integrations.integrationTypes.webhook'), color: 'indigo' },
   [IntegrationTypes.Ebay]: { text: 'Ebay', color: 'purple' },
   [IntegrationTypes.Shein]: { text: 'Shein', color: 'pink' },
-  [IntegrationTypes.Mirakl]: { text: 'Mirakl', color: 'indigo' }
+  [IntegrationTypes.Mirakl]: { text: 'Mirakl', color: 'indigo' },
+  [IntegrationTypes.Manual]: { text: t('integrations.integrationTypes.manual'), color: 'gray' }
 });
 
 const getIntegrationListingBadge = (item: any, t: Function) => {

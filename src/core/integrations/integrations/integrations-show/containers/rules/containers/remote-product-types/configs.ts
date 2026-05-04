@@ -13,9 +13,7 @@ import {
 } from "../../../../../../../../shared/api/queries/salesChannels.js";
 import { productPropertiesRulesListingQuery } from "../../../../../../../../shared/api/queries/properties.js";
 import {
-  createAmazonProductTypesFromLocalRulesMutation,
-  createEbayProductTypesFromLocalRulesMutation,
-  createSheinProductTypesFromLocalRulesMutation,
+  createSalesChannelProductTypesFromLocalRulesMutation,
   suggestAmazonProductTypeMutation,
   suggestEbayCategoryMutation,
   updateAmazonProductTypeMutation,
@@ -553,14 +551,8 @@ export const getUpdateProductTypeMutation = (integrationType: string) =>
         ? updateMiraklProductTypeMutation
       : updateAmazonProductTypeMutation;
 
-export const getCreateProductTypesFromLocalRulesMutation = (integrationType: string) =>
-  integrationType === IntegrationTypes.Ebay
-    ? createEbayProductTypesFromLocalRulesMutation
-    : integrationType === IntegrationTypes.Shein
-      ? createSheinProductTypesFromLocalRulesMutation
-      : integrationType === IntegrationTypes.Mirakl
-        ? null
-      : createAmazonProductTypesFromLocalRulesMutation;
+export const getCreateProductTypesFromLocalRulesMutation = (_integrationType: string) =>
+  createSalesChannelProductTypesFromLocalRulesMutation;
 
 export const listingQueryKey = getListingQueryKey(IntegrationTypes.Amazon);
 export const listingQuery = getListingQuery(IntegrationTypes.Amazon);
