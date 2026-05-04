@@ -508,6 +508,9 @@
           "statePlaceholder": "",
           "noWorkflows": "",
           "noStates": "",
+          "noDefaultState": "",
+          "showAdvanced": "",
+          "hideAdvanced": "",
           "replaceWarning": "",
           "assignButton": "",
           "success": "",
@@ -2327,7 +2330,9 @@
           "saveAndNext": "",
           "saveAndStay": "",
           "saveAndBackToListing": "",
-          "saveAndGoToWorkflowPage": ""
+          "saveAndGoToWorkflowPage": "",
+          "previousState": "",
+          "nextState": ""
         },
         "labels": {
           "workflow": "",
