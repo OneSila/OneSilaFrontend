@@ -1888,7 +1888,6 @@ export const getMiraklPropertyQuery = gql`
       descriptionTranslations
       labelTranslations
       typeParameters
-      validations
       transformations
       rawData
       localInstance {
