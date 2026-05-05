@@ -123,7 +123,6 @@ const metadataFields = computed<Array<{ key: string; label: string; boolean?: bo
 
 const jsonSections = computed(() => [
   { key: 'typeParameters', label: t('integrations.show.mirakl.properties.labels.typeParameters') },
-  { key: 'validations', label: t('integrations.show.mirakl.properties.labels.validations') },
   { key: 'transformations', label: t('integrations.show.mirakl.properties.labels.transformations') },
   { key: 'rawData', label: t('integrations.show.mirakl.properties.labels.rawData') },
 ]);

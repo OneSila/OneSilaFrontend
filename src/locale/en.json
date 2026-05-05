@@ -4577,7 +4577,6 @@
             "valueListCode": "Value list code",
             "valueListLabel": "Value list label",
             "typeParameters": "Type parameters",
-            "validations": "Validations",
             "transformations": "Transformations",
             "rawData": "Raw data",
             "labelTranslations": "Label translations",
