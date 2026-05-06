@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const collaborationThreadByTargetQuery = gql`
-  query CollaborationThreadByTarget($targetId: GlobalID!) {
+  query CollaborationThreadByTarget($targetId: ID!) {
     collaborationThreadByTarget(targetId: $targetId) {
       id
       url

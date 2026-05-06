@@ -45,7 +45,7 @@ export const updateHsCodeMutation = gql`
 `;
 
 export const deleteHsCodeMutation = gql`
-  mutation deleteHsCode($id: GlobalID!) {
+  mutation deleteHsCode($id: ID!) {
     deleteHsCode(data: {id: $id}) {
       id
     }
@@ -53,7 +53,7 @@ export const deleteHsCodeMutation = gql`
 `;
 
 export const deleteHsCodesMutation = gql`
-  mutation deleteHsCodes($ids: [GlobalID!]!) {
+  mutation deleteHsCodes($ids: [ID!]!) {
     deleteHsCodes(data: {ids: $ids}) {
       id
     }

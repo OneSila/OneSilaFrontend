@@ -162,7 +162,7 @@ export const updateBrandCustomPromptMutation = gql`
 `;
 
 export const deleteBrandCustomPromptMutation = gql`
-  mutation deleteBrandCustomPrompt($id: GlobalID!) {
+  mutation deleteBrandCustomPrompt($id: ID!) {
     deleteBrandCustomPrompt(data: { id: $id }) {
       id
     }
@@ -170,7 +170,7 @@ export const deleteBrandCustomPromptMutation = gql`
 `;
 
 export const deleteBrandCustomPromptsMutation = gql`
-  mutation deleteBrandCustomPrompts($ids: [GlobalID!]!) {
+  mutation deleteBrandCustomPrompts($ids: [ID!]!) {
     deleteBrandCustomPrompts(data: { ids: $ids }) {
       id
     }

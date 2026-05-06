@@ -31,7 +31,7 @@ export const updateVatRateMutation = gql`
 `;
 
 export const deleteVatRateMutation = gql`
-  mutation deleteVatRate($id: GlobalID!) {
+  mutation deleteVatRate($id: ID!) {
     deleteVatRate(data: {id: $id}) {
       id
     }
@@ -39,7 +39,7 @@ export const deleteVatRateMutation = gql`
 `;
 
 export const deleteVatRatesMutation = gql`
-  mutation deleteVatRates($ids: [GlobalID!]!) {
+  mutation deleteVatRates($ids: [ID!]!) {
     deleteVatRates(data: {ids: $ids}) {
       id
     }

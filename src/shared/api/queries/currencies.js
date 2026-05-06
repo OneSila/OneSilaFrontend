@@ -55,7 +55,7 @@ export const currenciesQuerySelector = gql`
 `;
 
 export const getCurrencyQuery = gql`
-  query getCurrency($id: GlobalID!) {
+  query getCurrency($id: ID!) {
     currency(id: $id) {
       id
       isoCode

@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const openNotificationMutation = gql`
-  mutation OpenNotification($id: GlobalID!) {
+  mutation OpenNotification($id: ID!) {
     openNotification(data: { id: $id }) {
       id
       opened
@@ -14,7 +14,7 @@ export const openNotificationMutation = gql`
 `;
 
 export const markNotificationAsUnreadMutation = gql`
-  mutation MarkNotificationAsUnread($id: GlobalID!) {
+  mutation MarkNotificationAsUnread($id: ID!) {
     markNotificationAsUnread(data: { id: $id }) {
       id
       opened

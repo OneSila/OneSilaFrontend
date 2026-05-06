@@ -2,12 +2,12 @@ import { gql } from 'graphql-tag';
 
 export const createCollaborationEntryMutation = gql`
   mutation CreateCollaborationEntry(
-    $targetId: GlobalID!
+    $targetId: ID!
     $type: String!
     $comment: String
     $url: String
     $metadata: JSON
-    $mentionedUserIds: [GlobalID!]
+    $mentionedUserIds: [ID!]
   ) {
     createCollaborationEntry(
       data: {

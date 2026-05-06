@@ -68,7 +68,7 @@ export const miraklFeedsQuery = gql`
 `;
 
 export const miraklFeedShowQuery = gql`
-  query MiraklFeedShow($id: GlobalID!) {
+  query MiraklFeedShow($id: ID!) {
     miraklFeed(id: $id) {
       id
       type

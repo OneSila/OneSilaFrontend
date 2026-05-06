@@ -28,7 +28,7 @@ export const brandCustomPromptsQuery = gql`
 `;
 
 export const getBrandCustomPromptQuery = gql`
-  query getBrandCustomPrompt($id: GlobalID!) {
+  query getBrandCustomPrompt($id: ID!) {
     brandCustomPrompt(id: $id) {
       id
       language

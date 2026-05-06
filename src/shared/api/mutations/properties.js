@@ -48,7 +48,7 @@ export const updatePropertyMutation = gql`
 `;
 
 export const deletePropertyMutation = gql`
-  mutation deleteProperty($id: GlobalID!) {
+  mutation deleteProperty($id: ID!) {
     deleteProperty(data: {id: $id}) {
       id
     }
@@ -95,7 +95,7 @@ export const updatePropertyTranslationMutation = gql`
 `;
 
 export const deletePropertyTranslationMutation = gql`
-  mutation deletePropertyTranslation($id: GlobalID!) {
+  mutation deletePropertyTranslation($id: ID!) {
     deletePropertyTranslation(data: {id: $id}) {
       id
     }
@@ -103,7 +103,7 @@ export const deletePropertyTranslationMutation = gql`
 `;
 
 export const deletePropertyTranslationsMutation = gql`
-  mutation deletePropertyTranslations($ids: [GlobalID!]!) {
+  mutation deletePropertyTranslations($ids: [ID!]!) {
     deletePropertyTranslations(data: {ids: $ids}) {
       id
     }
@@ -151,7 +151,7 @@ export const updatePropertySelectValueMutation = gql`
 `;
 
 export const deletePropertySelectValueMutation = gql`
-  mutation deletePropertySelectValue($id: GlobalID!) {
+  mutation deletePropertySelectValue($id: ID!) {
     deletePropertySelectValue(data: {id: $id}) {
       id
     }
@@ -261,7 +261,7 @@ export const updateProductPropertyMutation = gql`
 `;
 
 export const deleteProductPropertyMutation = gql`
-  mutation deleteProductProperty($id: GlobalID!) {
+  mutation deleteProductProperty($id: ID!) {
     deleteProductProperty(data: {id: $id}) {
       id
     }
@@ -311,7 +311,7 @@ export const updateProductPropertyTextTranslationMutation = gql`
 `;
 
 export const deleteProductPropertyTextTranslationMutation = gql`
-  mutation deleteProductPropertyTextTranslation($id: GlobalID!) {
+  mutation deleteProductPropertyTextTranslation($id: ID!) {
     deleteProductPropertyTextTranslation(data: {id: $id}) {
       id
     }
@@ -319,7 +319,7 @@ export const deleteProductPropertyTextTranslationMutation = gql`
 `;
 
 export const deleteProductPropertyTextTranslationsMutation = gql`
-  mutation deleteProductPropertyTextTranslations($ids: [GlobalID!]!) {
+  mutation deleteProductPropertyTextTranslations($ids: [ID!]!) {
     deleteProductPropertyTextTranslations(data: {ids: $ids}) {
       id
     }
@@ -358,7 +358,7 @@ export const updatePropertySelectValueTranslationMutation = gql`
 `;
 
 export const deletePropertySelectValueTranslationMutation = gql`
-  mutation deletePropertySelectValueTranslation($id: GlobalID!) {
+  mutation deletePropertySelectValueTranslation($id: ID!) {
     deletePropertySelectValueTranslation(data: {id: $id}) {
       id
     }
@@ -366,7 +366,7 @@ export const deletePropertySelectValueTranslationMutation = gql`
 `;
 
 export const deletePropertySelectValueTranslationsMutation = gql`
-  mutation deletePropertySelectValueTranslations($ids: [GlobalID!]!) {
+  mutation deletePropertySelectValueTranslations($ids: [ID!]!) {
     deletePropertySelectValueTranslations(data: {ids: $ids}) {
       id
     }
@@ -460,7 +460,7 @@ export const completeUpdateProductPropertiesRuleMutation = gql`
 `;
 
 export const deleteProductPropertiesRuleMutation = gql`
-  mutation deleteProductPropertiesRule($id: GlobalID!) {
+  mutation deleteProductPropertiesRule($id: ID!) {
     deleteProductPropertiesRule(data: {id: $id}) {
       id
     }
@@ -548,7 +548,7 @@ export const updateProductPropertiesRuleItemMutation = gql`
 `;
 
 export const deleteProductPropertiesRuleItemMutation = gql`
-  mutation deleteProductPropertiesRuleItem($id: GlobalID!) {
+  mutation deleteProductPropertiesRuleItem($id: ID!) {
     deleteProductPropertiesRuleItem(data: {id: $id}) {
       id
     }
@@ -556,7 +556,7 @@ export const deleteProductPropertiesRuleItemMutation = gql`
 `;
 
 export const deleteProductPropertiesRuleItemsMutation = gql`
-  mutation deleteProductPropertiesRuleItems($ids: [GlobalID!]!) {
+  mutation deleteProductPropertiesRuleItems($ids: [ID!]!) {
     deleteProductPropertiesRuleItems(data: {ids: $ids}) {
       id
     }

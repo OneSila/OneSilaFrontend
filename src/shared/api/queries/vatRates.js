@@ -44,7 +44,7 @@ export const vatRatesQuerySelector = gql`
 `;
 
 export const getVatRateQuery = gql`
-  query getVatRate($id: GlobalID!) {
+  query getVatRate($id: ID!) {
     vatRate(id: $id) {
       id
       rate

@@ -83,7 +83,7 @@ export const mappedImportsQuery = gql`
 `;
 
 export const mappedImportQuery = gql`
-  query MappedImport($id: GlobalID!) {
+  query MappedImport($id: ID!) {
     mappedImport(id: $id) {
       ${mappedImportFields}
     }
@@ -118,7 +118,7 @@ export const exportsQuery = gql`
 `;
 
 export const exportQuery = gql`
-  query Export($id: GlobalID!) {
+  query Export($id: ID!) {
     export(id: $id) {
       ${exportFields}
     }
@@ -156,7 +156,7 @@ export const importBrokenRecordsQuery = gql`
 `;
 
 export const importBrokenRecordQuery = gql`
-  query ImportBrokenRecord($id: GlobalID!) {
+  query ImportBrokenRecord($id: ID!) {
     importBrokenRecord(id: $id) {
       id
       record

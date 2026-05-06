@@ -112,7 +112,7 @@ export const assignEanCodesMutation = gql`
 `;
 
 export const deleteEanCodeMutation = gql`
-  mutation deleteEanCode($id: GlobalID!) {
+  mutation deleteEanCode($id: ID!) {
     deleteEanCode(data: {id: $id}) {
       id
     }

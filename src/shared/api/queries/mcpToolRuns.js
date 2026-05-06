@@ -57,7 +57,7 @@ export const mcpToolRunsQuery = gql`
 `;
 
 export const mcpToolRunQuery = gql`
-  query McpToolRun($id: GlobalID!) {
+  query McpToolRun($id: ID!) {
     mcpToolRun(id: $id) {
       ${mcpToolRunDetailFields}
     }

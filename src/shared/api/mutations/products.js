@@ -44,7 +44,7 @@ export const updateProductMutation = gql`
 `;
 
 export const deleteProductMutation = gql`
-  mutation deleteProduct($id: GlobalID!) {
+  mutation deleteProduct($id: ID!) {
     deleteProduct(data: {id: $id}) {
       id
     }
@@ -90,7 +90,7 @@ export const updateBundleProductMutation = gql`
 `;
 
 export const deleteBundleProductMutation = gql`
-  mutation deleteBundleProduct($id: GlobalID!) {
+  mutation deleteBundleProduct($id: ID!) {
     deleteBundleProduct(data: {id: $id}) {
       id
     }
@@ -98,7 +98,7 @@ export const deleteBundleProductMutation = gql`
 `;
 
 export const deleteBundleProductsMutation = gql`
-  mutation deleteBundleProducts($ids: [GlobalID!]!) {
+  mutation deleteBundleProducts($ids: [ID!]!) {
     deleteBundleProducts(data: {ids: $ids}) {
       id
     }
@@ -136,7 +136,7 @@ export const updateConfigurableProductMutation = gql`
 `;
 
 export const deleteConfigurableProductMutation = gql`
-  mutation deleteConfigurableProduct($id: GlobalID!) {
+  mutation deleteConfigurableProduct($id: ID!) {
     deleteConfigurableProduct(data: {id: $id}) {
       id
     }
@@ -144,7 +144,7 @@ export const deleteConfigurableProductMutation = gql`
 `;
 
 export const deleteConfigurableProductsMutation = gql`
-  mutation deleteConfigurableProducts($ids: [GlobalID!]!) {
+  mutation deleteConfigurableProducts($ids: [ID!]!) {
     deleteConfigurableProducts(data: {ids: $ids}) {
       id
     }
@@ -182,7 +182,7 @@ export const updateProductVariationMutation = gql`
 `;
 
 export const deleteProductVariationMutation = gql`
-  mutation deleteProductVariation($id: GlobalID!) {
+  mutation deleteProductVariation($id: ID!) {
     deleteProductVariation(data: {id: $id}) {
       id
     }
@@ -190,7 +190,7 @@ export const deleteProductVariationMutation = gql`
 `;
 
 export const deleteProductVariationsMutation = gql`
-  mutation deleteProductVariations($ids: [GlobalID!]!) {
+  mutation deleteProductVariations($ids: [ID!]!) {
     deleteProductVariations(data: {ids: $ids}) {
       id
     }
@@ -276,7 +276,7 @@ export const updateProductContentMutation = gql`
 `;
 
 export const deleteProductTranslationMutation = gql`
-  mutation deleteProductTranslation($id: GlobalID!) {
+  mutation deleteProductTranslation($id: ID!) {
     deleteProductTranslation(data: {id: $id}) {
       id
     }
@@ -284,7 +284,7 @@ export const deleteProductTranslationMutation = gql`
 `;
 
 export const deleteProductTranslationsMutation = gql`
-  mutation deleteProductTranslations($ids: [GlobalID!]!) {
+  mutation deleteProductTranslations($ids: [ID!]!) {
     deleteProductTranslations(data: {ids: $ids}) {
       id
     }
@@ -340,7 +340,7 @@ export const updateConfigurableVariationMutation = gql`
 `;
 
 export const deleteConfigurableVariationMutation = gql`
-  mutation deleteConfigurableVariation($id: GlobalID!) {
+  mutation deleteConfigurableVariation($id: ID!) {
     deleteConfigurableVariation(data: {id: $id}) {
       id
       variation {
@@ -351,7 +351,7 @@ export const deleteConfigurableVariationMutation = gql`
 `;
 
 export const deleteConfigurableVariationsMutation = gql`
-  mutation deleteConfigurableVariations($ids: [GlobalID!]!) {
+  mutation deleteConfigurableVariations($ids: [ID!]!) {
     deleteConfigurableVariations(data: {ids: $ids}) {
       id
     }
@@ -410,7 +410,7 @@ export const updateBundleVariationMutation = gql`
 `;
 
 export const deleteBundleVariationMutation = gql`
-  mutation deleteBundleVariation($id: GlobalID!) {
+  mutation deleteBundleVariation($id: ID!) {
     deleteBundleVariation(data: {id: $id}) {
       id
       variation {
@@ -421,7 +421,7 @@ export const deleteBundleVariationMutation = gql`
 `;
 
 export const deleteBundleVariationsMutation = gql`
-  mutation deleteBundleVariations($ids: [GlobalID!]!) {
+  mutation deleteBundleVariations($ids: [ID!]!) {
     deleteBundleVariations(data: {ids: $ids}) {
       id
     }
@@ -459,7 +459,7 @@ export const updateManufacturableProductMutation = gql`
 `;
 
 export const deleteManufacturableProductMutation = gql`
-  mutation deleteManufacturableProduct($id: GlobalID!) {
+  mutation deleteManufacturableProduct($id: ID!) {
     deleteManufacturableProduct(data: {id: $id}) {
       id
     }
@@ -467,7 +467,7 @@ export const deleteManufacturableProductMutation = gql`
 `;
 
 export const deleteManufacturableProductsMutation = gql`
-  mutation deleteManufacturableProducts($ids:  [GlobalID!]!) {
+  mutation deleteManufacturableProducts($ids:  [ID!]!) {
     deleteManufacturableProducts(data: {ids: $ids}) {
       id
     }
@@ -502,7 +502,7 @@ export const updateDropshipProductMutation = gql`
 `;
 
 export const deleteDropshipProductMutation = gql`
-  mutation deleteDropshipProduct($id: GlobalID!) {
+  mutation deleteDropshipProduct($id: ID!) {
     deleteDropshipProduct(data: {id: $id}) {
       id
     }
@@ -510,7 +510,7 @@ export const deleteDropshipProductMutation = gql`
 `;
 
 export const deleteDropshipProductsMutation = gql`
-  mutation deleteDropshipProducts($ids:  [GlobalID!]!) {
+  mutation deleteDropshipProducts($ids:  [ID!]!) {
     deleteDropshipProducts(data: {ids: $ids}) {
       id
     }
@@ -545,7 +545,7 @@ export const updateBillOfMaterialMutation = gql`
 `;
 
 export const deleteBillOfMaterialMutation = gql`
-  mutation deleteBillOfMaterial($id: GlobalID!) {
+  mutation deleteBillOfMaterial($id: ID!) {
     deleteBillOfMaterial(data: {id: $id}) {
       id
     }
@@ -553,7 +553,7 @@ export const deleteBillOfMaterialMutation = gql`
 `;
 
 export const deleteBillsOfMaterialMutation = gql`
-  mutation deleteBillsOfMaterial($ids:  [GlobalID!]!) {
+  mutation deleteBillsOfMaterial($ids:  [ID!]!) {
     deleteBillsOfMaterial(data: {ids: $ids}) {
       id
     }
@@ -615,7 +615,7 @@ export const updateProductTranslationBulletPointMutation = gql`
 `;
 
 export const deleteProductTranslationBulletPointMutation = gql`
-  mutation deleteProductTranslationBulletPoint($id: GlobalID!) {
+  mutation deleteProductTranslationBulletPoint($id: ID!) {
     deleteProductTranslationBulletPoint(data: {id: $id}) {
       id
     }

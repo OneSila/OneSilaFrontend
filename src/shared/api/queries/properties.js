@@ -53,7 +53,7 @@ query Properties($first: Int, $last: Int, $after: String, $before: String, $orde
 `;
 
 export const getPropertyQuery = gql`
-  query getProperty($id: GlobalID!) {
+  query getProperty($id: ID!) {
     property(id: $id) {
       id
       name
@@ -92,7 +92,7 @@ query PropertyTranslations($first: Int, $last: Int, $after: String, $before: Str
 `;
 
 export const getPropertyTranslationQuery = gql`
-  query getPropertyTranslation($id: GlobalID!) {
+  query getPropertyTranslation($id: ID!) {
     propertyTranslation(id: $id) {
       id
       name
@@ -197,7 +197,7 @@ query PropertySelectValues($first: Int, $last: Int, $after: String, $before: Str
 `;
 
 export const getPropertySelectValueQuery = gql`
-  query getPropertySelectValue($id: GlobalID!) {
+  query getPropertySelectValue($id: ID!) {
     propertySelectValue(id: $id) {
       id
       value
@@ -364,7 +364,7 @@ export const productPropertiesCountQuery = gql`
 `;
 
 export const getProductPropertyQuery = gql`
-  query getProductProperty($id: GlobalID!) {
+  query getProductProperty($id: ID!) {
     productProperty(id: $id) {
       id
       product {
@@ -415,7 +415,7 @@ query ProductPropertyTextTranslations($first: Int, $last: Int, $after: String, $
 `;
 
 export const getProductPropertyTextTranslationQuery = gql`
-  query getProductPropertyTextTranslation($id: GlobalID!) {
+  query getProductPropertyTextTranslation($id: ID!) {
     productPropertyTextTranslation(id: $id) {
       id
       valueText
@@ -467,7 +467,7 @@ query PropertySelectValueTranslations($first: Int, $last: Int, $after: String, $
 `;
 
 export const getPropertySelectValueTranslationQuery = gql`
-  query getPropertySelectValueTranslation($id: GlobalID!) {
+  query getPropertySelectValueTranslation($id: ID!) {
     propertySelectValueTranslation(id: $id) {
       id
       value
@@ -561,7 +561,7 @@ query ProductPropertiesRules($first: Int, $last: Int, $after: String, $before: S
 `;
 
 export const getProductPropertiesRuleQuery = gql`
-  query getProductPropertiesRule($id: GlobalID!) {
+  query getProductPropertiesRule($id: ID!) {
     productPropertiesRule(id: $id) {
       id
       requireEanCode
@@ -622,7 +622,7 @@ query ProductPropertiesRuleItems($first: Int, $last: Int, $after: String, $befor
 `;
 
 export const getProductPropertiesRuleItemQuery = gql`
-  query getProductPropertiesRuleItem($id: GlobalID!) {
+  query getProductPropertiesRuleItem($id: ID!) {
     productPropertiesRuleItem(id: $id) {
       id
       rule {

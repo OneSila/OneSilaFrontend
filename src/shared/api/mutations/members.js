@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const disableMemberMutation = gql`
-mutation disableUser($id: GlobalID!) {
+mutation disableUser($id: ID!) {
   disableUser(data: {id: $id}) {
     id
     isActive
@@ -10,7 +10,7 @@ mutation disableUser($id: GlobalID!) {
 `;
 
 export const enableMemberMutation = gql`
-mutation enableUser($id: GlobalID!) {
+mutation enableUser($id: ID!) {
   enableUser(data: {id: $id}) {
     id
     isActive
@@ -18,7 +18,7 @@ mutation enableUser($id: GlobalID!) {
 }`;
 
 export const resendInviteMutation = gql`
-mutation resendInvite($id: GlobalID!) {
+mutation resendInvite($id: ID!) {
   resendInvite(data: {id: $id}) {
     id
   }

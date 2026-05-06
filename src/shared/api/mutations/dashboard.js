@@ -31,7 +31,7 @@ export const updateDashboardSectionMutation = gql`
 `;
 
 export const deleteDashboardSectionMutation = gql`
-  mutation DeleteDashboardSection($id: GlobalID!) {
+  mutation DeleteDashboardSection($id: ID!) {
     deleteDashboardSection(data: { id: $id }) {
       id
     }
@@ -51,7 +51,7 @@ export const updateDashboardCardMutation = gql`
 `;
 
 export const deleteDashboardCardMutation = gql`
-  mutation DeleteDashboardCard($id: GlobalID!) {
+  mutation DeleteDashboardCard($id: ID!) {
     deleteDashboardCard(data: { id: $id }) {
       id
     }

@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const amazonProductsQuery = gql`
-  query AmazonProducts($localInstance: GlobalID!) {
+  query AmazonProducts($localInstance: ID!) {
     amazonProducts(filters: { localInstance: { id: { exact: $localInstance } } }) {
       edges {
         node {
@@ -138,7 +138,7 @@ export const amazonProductBrowseNodesBulkQuery = gql`
 `;
 
 export const amazonChildRemoteProductsQuery = gql`
-  query AmazonChildRemoteProducts($remoteParentProductId: GlobalID!) {
+  query AmazonChildRemoteProducts($remoteParentProductId: ID!) {
     amazonProducts(
       filters: { remoteParentProduct: { id: { exact: $remoteParentProductId } } }
     ) {

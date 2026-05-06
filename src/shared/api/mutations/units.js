@@ -31,7 +31,7 @@ export const updateUnitMutation = gql`
 `;
 
 export const deleteUnitMutation = gql`
-  mutation deleteUnit($id: GlobalID!) {
+  mutation deleteUnit($id: ID!) {
     deleteUnit(data: {id: $id}) {
       id
     }
@@ -39,7 +39,7 @@ export const deleteUnitMutation = gql`
 `;
 
 export const deleteUnitsMutation = gql`
-  mutation deleteUnits($ids: [GlobalID!]!) {
+  mutation deleteUnits($ids: [ID!]!) {
     deleteUnits(data: {ids: $ids}) {
       id
     }

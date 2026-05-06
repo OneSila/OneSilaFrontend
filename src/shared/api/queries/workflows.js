@@ -120,7 +120,7 @@ export const workflowStatesQuerySelector = gql`
 `;
 
 export const getWorkflowQuery = gql`
-  query GetWorkflow($id: GlobalID!) {
+  query GetWorkflow($id: ID!) {
     workflow(id: $id) {
       id
       name
@@ -146,7 +146,7 @@ export const getWorkflowQuery = gql`
 `;
 
 export const workflowBoardQuery = gql`
-  query WorkflowBoard($id: GlobalID!) {
+  query WorkflowBoard($id: ID!) {
     workflow(id: $id) {
       id
       name
@@ -177,7 +177,7 @@ export const workflowBoardQuery = gql`
 `;
 
 export const workflowStateTransitionCandidatesQuery = gql`
-  query WorkflowStateTransitionCandidates($id: GlobalID!) {
+  query WorkflowStateTransitionCandidates($id: ID!) {
     workflow(id: $id) {
       id
       productAssignments {
