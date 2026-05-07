@@ -18,7 +18,7 @@ const isTemplateMissing = (productType: MiraklCategoryNode['productTypes'][numbe
   !productType.readyToPush && !productType.templateUrl;
 
 const getMiraklIntegrationShowId = () =>
-  props.channel?.id || props.channel?.saleschannelPtr?.proxyId || props.channel?.integrationPtr?.id || null;
+  props.channel?.id || null;
 
 const productTypePath = (productType: MiraklCategoryNode['productTypes'][number]) => {
   if (!productType.id) {

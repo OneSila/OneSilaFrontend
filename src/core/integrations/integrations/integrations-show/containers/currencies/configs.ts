@@ -91,7 +91,7 @@ export const currenciesListingConfigConstructor = (t: Function, specificIntegrat
   identifierKey: 'id',
   addActions: true,
   addEdit: type !== IntegrationTypes.Mirakl,
-  urlQueryParams: {integrationId: specificIntegrationId },
+  urlQueryParams: {},
   editUrlName: 'integrations.currencies.edit',
   showUrlName: 'integrations.currencies.edit',
   addShow: type !== IntegrationTypes.Mirakl,

@@ -221,7 +221,7 @@ const save = async () => {
 
     const { nextId, last } = await fetchNextUnmapped();
     if (nextId) {
-      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { integrationId: integrationShowId.value, salesChannelId, wizard: '1' } });
+      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { wizard: '1' } });
     } else if (last) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationShowId.value }, query: { tab: 'productRules' } });
     } else {

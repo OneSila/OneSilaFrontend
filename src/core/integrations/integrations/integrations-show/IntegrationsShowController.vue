@@ -239,13 +239,13 @@ const fetchIntegrationData = async () => {
     } else if (type.value === IntegrationTypes.Manual) {
       const { __typename, gptFeed: rawGptFeed, views, ...cleanData } = rawData;
       integrationData.value = cleanData;
-      integrationId.value = rawData.proxyId || rawData.id;
+      integrationId.value = rawData.id;
       salesChannelId.value = rawData.id;
       firstImportCompleteRef.value = true;
       gptFeed.value = rawGptFeed ?? null;
       initialGptEnabled.value = cleanData.gptEnable ?? false;
     } else {
-      const { __typename, integrationPtr, saleschannelPtr, firstImportComplete,  ...cleanData } = rawData;
+      const { __typename, gptFeed: rawGptFeed, firstImportComplete,  ...cleanData } = rawData;
 
       if (type.value == IntegrationTypes.Shopify) {
         if (cleanData.vendorProperty && typeof cleanData.vendorProperty === 'object') {
@@ -257,10 +257,10 @@ const fetchIntegrationData = async () => {
       }
 
       integrationData.value = cleanData;
-      salesChannelId.value = saleschannelPtr.id
-      integrationId.value = integrationPtr.id
+      salesChannelId.value = rawData.id
+      integrationId.value = rawData.id
       firstImportCompleteRef.value = firstImportComplete
-      gptFeed.value = saleschannelPtr.gptFeed ?? null;
+      gptFeed.value = rawGptFeed ?? null;
       initialGptEnabled.value = cleanData.gptEnable ?? false;
     }
   } catch (error) {

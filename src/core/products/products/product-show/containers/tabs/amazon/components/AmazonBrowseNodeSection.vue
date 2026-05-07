@@ -594,7 +594,6 @@ defineExpose({ hasUnsavedChanges });
                         :path="{
                           name: 'integrations.remoteProductTypes.edit',
                           params: { type: 'amazon', id: type.id },
-                          query: { integrationId: props.salesChannelId },
                         }"
                         class="hover:underline"
                       >
@@ -656,7 +655,6 @@ defineExpose({ hasUnsavedChanges });
                     :path="{
                       name: 'integrations.remoteProductTypes.edit',
                       params: { type: 'amazon', id: type.id },
-                      query: { integrationId: props.salesChannelId },
                     }"
                     class="hover:underline"
                   >

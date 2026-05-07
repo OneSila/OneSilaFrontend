@@ -57,7 +57,7 @@ const getIntegrationShowRoute = (item: any) => {
   return {
     name: 'integrations.integrations.show',
     params: {
-      id: item.node.proxyId,
+      id: item.node.id,
       type: isMiraklLike ? IntegrationTypes.Mirakl : integrationType
     }
   };
@@ -88,7 +88,7 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
   showUrlName: 'integrations.integrations.show',
   showRouteResolver: getIntegrationShowRoute,
   deleteMutation: deleteIntegrationMutation,
-  identifierKey: 'proxyId',
+  identifierKey: 'id',
   deleteIdentifierKey: 'id',
   secondIdentifierKey: 'type',
   secondIdentifierParam: 'type',

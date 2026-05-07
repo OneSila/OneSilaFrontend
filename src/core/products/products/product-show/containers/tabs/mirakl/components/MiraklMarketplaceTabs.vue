@@ -24,9 +24,7 @@ const select = (val: string) => emit('update:modelValue', val);
 
 const channelEntries = computed(() =>
   props.channels.map((channel: any) => {
-    const ptrId = channel?.saleschannelPtr?.id || null;
-    const category =
-      props.categories[channel.id] || (ptrId ? props.categories[ptrId] : null) || null;
+    const category = props.categories[channel.id] || null;
     return {
       id: channel.id,
       channel,
@@ -67,7 +65,7 @@ const channelEntries = computed(() =>
             class="text-xs"
             :path="{
               name: 'integrations.integrations.show',
-              params: { type: IntegrationTypes.Mirakl, id: entry.channel.saleschannelPtr?.proxyId || entry.channel.id },
+              params: { type: IntegrationTypes.Mirakl, id: entry.channel.id },
             }"
           >
             ({{ t('products.products.mirakl.openIntegration') }})

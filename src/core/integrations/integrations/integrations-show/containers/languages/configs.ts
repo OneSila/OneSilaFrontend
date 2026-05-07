@@ -78,7 +78,7 @@ export const languagesListingConfigConstructor = (
     ...(type === IntegrationTypes.Mirakl ? [{ name: 'isDefault', type: FieldType.Boolean as const }] : []),
   ],
   identifierKey: 'id',
-  urlQueryParams: {integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: type !== IntegrationTypes.Mirakl,
   addShow: type !== IntegrationTypes.Mirakl,

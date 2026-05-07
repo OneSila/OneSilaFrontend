@@ -193,7 +193,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: props.config.editRouteName,
       params: {type: type.value, id: nextId},
-      query: {integrationId: integrationShowId.value, salesChannelId, wizard: '1'},
+      query: { wizard: '1' },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   } else if (last) {

@@ -55,7 +55,7 @@ const config: RemoteSelectValueEditPropertyConfig = {
   valueQuery: getMiraklPropertySelectValueQuery,
   valueDataKey: 'miraklPropertySelectValue',
   mapValueData: valueData => ({
-    valueProxyId: valueData?.proxyId || null,
+    valueProxyId: valueData?.id || null,
     salesChannelId: valueData?.salesChannel?.id || null,
     form: {
       remoteProperty: valueData?.remoteProperty?.name || '',
@@ -81,7 +81,6 @@ const config: RemoteSelectValueEditPropertyConfig = {
       ? {
           name: 'integrations.remoteProperties.edit',
           params: { type: ctx.type, id: ctx.propertyId },
-          query: { integrationId: ctx.integrationId },
         }
       : null,
   remoteFields: [

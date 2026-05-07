@@ -178,9 +178,6 @@ const viewKeyById = computed(() =>
     if (view?.id) {
       acc[view.id] = view.id;
     }
-    if (view?.proxyId) {
-      acc[view.proxyId] = view.id;
-    }
     return acc;
   }, {}),
 );
@@ -189,7 +186,7 @@ const getViewFilterIds = () =>
   Array.from(
     new Set(
       amazonViews.value
-        .flatMap((view) => [view?.id, view?.proxyId])
+        .flatMap((view) => [view?.id])
         .filter((id): id is string => typeof id === 'string' && id.length > 0),
     ),
   );

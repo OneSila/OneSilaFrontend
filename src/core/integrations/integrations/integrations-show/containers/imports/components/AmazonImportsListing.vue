@@ -86,7 +86,7 @@ const retryImport = async (importId: string) => {
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="importItem in (result as SalesChannelSubscriptionResult).salesChannel.amazonImports" :key="importItem.id" class="border-b dark:border-[#191e3a]">
                 <td class="p-2">
-                  <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: (importItem as any).proxyId } }">
+                  <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: importItem.id } }">
                     {{ formatDate(importItem.createdAt) }}
                   </Link>
                 </td>

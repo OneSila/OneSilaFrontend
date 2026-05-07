@@ -63,7 +63,7 @@ export const sheinInternalPropertiesListingConfigConstructor = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId, fromTab: 'internalFields' },
+  urlQueryParams: { fromTab: 'internalFields' },
   addActions: true,
   addEdit: true,
   addShow: true,

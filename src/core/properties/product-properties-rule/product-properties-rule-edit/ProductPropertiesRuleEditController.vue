@@ -353,7 +353,7 @@ const loadSalesChannels = async () => {
         return;
       }
 
-      const label = formatSalesChannelLabel(node.saleschannelPtr || node);
+      const label = formatSalesChannelLabel(node);
       optionsMap.set(channelId, { value: channelId, label });
     });
 

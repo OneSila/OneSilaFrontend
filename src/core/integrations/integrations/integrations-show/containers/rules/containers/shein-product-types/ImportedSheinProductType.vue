@@ -355,7 +355,7 @@ const save = async () => {
       router.push({
         name: 'integrations.remoteProductTypes.edit',
         params: { type: type.value, id: nextId },
-        query: { integrationId, salesChannelId, wizard: '1' },
+        query: { wizard: '1' },
       });
     } else if (last) {
       router.push({

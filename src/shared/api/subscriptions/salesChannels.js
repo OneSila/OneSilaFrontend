@@ -16,7 +16,6 @@ export const salesChannelSubscription = gql`
       }
       amazonImports {
         id
-        proxyId
         type
         status
         percentage
@@ -24,7 +23,6 @@ export const salesChannelSubscription = gql`
       }
       ebayImports {
         id
-        proxyId
         type
         status
         percentage
@@ -32,7 +30,6 @@ export const salesChannelSubscription = gql`
       }
       sheinImports {
         id
-        proxyId
         type
         status
         percentage
@@ -40,7 +37,6 @@ export const salesChannelSubscription = gql`
       }
       miraklImports {
         id
-        proxyId
         type
         status
         percentage

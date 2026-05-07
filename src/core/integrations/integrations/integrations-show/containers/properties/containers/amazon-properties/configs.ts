@@ -117,7 +117,7 @@ export const amazonPropertiesListingConfigConstructor = (t: Function, specificIn
     }
   ],
   identifierKey: 'id',
-  urlQueryParams: {integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

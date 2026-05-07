@@ -78,9 +78,9 @@ const fetchIntegrationData = async () => {
       variables: { id: props.integrationId },
       fetchPolicy: 'cache-first'
     });
-    const { __typename, integrationPtr, saleschannelPtr,  ...cleanData } = data['shopifyChannel'];
+    const { __typename, ...cleanData } = data['shopifyChannel'];
 
-    salesChannelId.value = saleschannelPtr.id
+    salesChannelId.value = cleanData.id
   } catch (error) {
     console.error("Error fetching integration data:", error);
   } finally {

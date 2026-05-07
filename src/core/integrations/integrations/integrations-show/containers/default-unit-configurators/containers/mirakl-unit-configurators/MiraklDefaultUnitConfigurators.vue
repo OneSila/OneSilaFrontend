@@ -53,7 +53,7 @@ const startMapping = async () => {
   router.push({
     name: 'integrations.miraklDefaultUnitConfigurators.edit',
     params: { type: 'mirakl', id },
-    query: { integrationId: props.id, salesChannelId: props.salesChannelId, wizard: '1' },
+    query: { wizard: '1' },
   });
 };
 

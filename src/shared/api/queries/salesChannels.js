@@ -92,7 +92,6 @@ export const getManualSalesChannelQuery = gql`
       hostname
       active
       type
-      proxyId
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -144,7 +143,6 @@ export const manualSalesChannelsQuery = gql`
           hostname
           active
           type
-          proxyId
         }
         cursor
       }
@@ -193,20 +191,12 @@ export const getMagentoChannelQuery = gql`
       gptReturnWindow
       firstImportComplete
       isImporting
-      integrationPtr {
+      gptFeed {
         id
-      }
-      saleschannelPtr {
-        id
-        ... on SalesChannelType {
-          gptFeed {
-            id
-            fileUrl
-            lastSyncedAt
-            file {
-              url
-            }
-          }
+        fileUrl
+        lastSyncedAt
+        file {
+          url
         }
       }
     }
@@ -242,20 +232,12 @@ export const getShopifyChannelQuery = gql`
       gptReturnWindow
       firstImportComplete
       isImporting
-      integrationPtr {
+      gptFeed {
         id
-      }
-      saleschannelPtr {
-        id
-        ... on SalesChannelType {
-          gptFeed {
-            id
-            fileUrl
-            lastSyncedAt
-            file {
-              url
-            }
-          }
+        fileUrl
+        lastSyncedAt
+        file {
+          url
         }
       }
       vendorProperty {
@@ -296,20 +278,12 @@ export const getWoocommerceChannelQuery = gql`
       apiSecret
       firstImportComplete
       isImporting
-      integrationPtr {
+      gptFeed {
         id
-      }
-      saleschannelPtr {
-        id
-        ... on SalesChannelType {
-          gptFeed {
-            id
-            fileUrl
-            lastSyncedAt
-            file {
-              url
-            }
-          }
+        fileUrl
+        lastSyncedAt
+        file {
+          url
         }
       }
     }
@@ -340,9 +314,6 @@ export const getShopifyChannelsQuery = gql`
           active
           state
           createdAt
-          integrationPtr {
-            id
-          }
         }
         cursor
       }
@@ -383,12 +354,6 @@ export const getAmazonChannelQuery = gql`
       country
       firstImportComplete
       isImporting
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
@@ -418,13 +383,6 @@ export const amazonChannelsQuery = gql`
           region
           country
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-            proxyId
-          }
         }
         cursor
       }
@@ -531,12 +489,6 @@ export const getEbayChannelQuery = gql`
       firstImportComplete
       isImporting
       accessToken
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
@@ -563,12 +515,6 @@ export const getSheinChannelQuery = gql`
       firstImportComplete
       isImporting
       openKeyId
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
@@ -599,12 +545,6 @@ export const getMiraklChannelQuery = gql`
       connected
       firstImportComplete
       isImporting
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
@@ -632,13 +572,6 @@ export const ebayChannelsQuery = gql`
           hostname
           active
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-            proxyId
-          }
         }
         cursor
       }
@@ -676,12 +609,6 @@ export const sheinChannelsQuery = gql`
           hostname
           active
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-          }
         }
         cursor
       }
@@ -724,12 +651,6 @@ export const miraklChannelsQuery = gql`
           lastFullIssuesFetch
           lastProductImportsRequestDate
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-          }
         }
         cursor
       }
@@ -1077,7 +998,6 @@ export const amazonChannelViewsQuery = gql`
       edges {
         node {
           id
-          proxyId
           remoteId
           name
           url
@@ -1468,7 +1388,6 @@ export const ebayRemoteCurrenciesQuery = gql`
       edges {
         node {
           id
-          proxyId
           remoteCode
           salesChannelView {
             id
@@ -1553,7 +1472,6 @@ export const getMiraklImportProcessQuery = gql`
   query getMiraklImportProcess($id: ID!) {
     miraklImportProcess(id: $id) {
       id
-      proxyId
       type
       status
       percentage
@@ -2560,7 +2478,6 @@ export const getMiraklPropertySelectValueQuery = gql`
   query getMiraklPropertySelectValue($id: ID!) {
     miraklPropertySelectValue(id: $id) {
       id
-      proxyId
       salesChannel {
         id
       }
@@ -2702,7 +2619,6 @@ export const miraklImportProcessesQuery = gql`
       edges {
         node {
           id
-          proxyId
           type
           status
           percentage

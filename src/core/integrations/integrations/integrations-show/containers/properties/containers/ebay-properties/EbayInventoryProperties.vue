@@ -19,7 +19,7 @@ const internalListingConfig = ebayInternalPropertiesListingConfigConstructor(t, 
 const buildInternalStartMappingRoute = ({ id, integrationId, salesChannelId }: { id: string; integrationId: string; salesChannelId: string }) => ({
   name: 'integrations.remoteInternalProperties.edit',
   params: { type: 'ebay', id },
-  query: { integrationId, salesChannelId, wizard: '1', fromTab: 'inventoryFields' },
+  query: { wizard: '1', fromTab: 'inventoryFields' },
 });
 </script>
 

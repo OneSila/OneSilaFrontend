@@ -426,7 +426,6 @@ const submitDuplicateMapping = async () => {
     await router.push({
       name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: newMappingId },
-      query: { integrationId, salesChannelId: resolvedSalesChannelId.value },
     });
   } catch (error: any) {
     const graphQLError = error?.graphQLErrors?.[0]?.message;
@@ -536,7 +535,7 @@ onMounted(async () => {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId: resolvedSalesChannelId.value || routeSalesChannelId, wizard: '1' },
+      query: { wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t(props.config.wizardSubmitLabelKey ?? 'integrations.show.mapping.saveAndMapNext');
     return;

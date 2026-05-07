@@ -111,9 +111,6 @@ const channelIdAliasMap = computed(() =>
     if (channel?.id) {
       acc[channel.id] = channel.id;
     }
-    if (channel?.saleschannelPtr?.id) {
-      acc[channel.saleschannelPtr.id] = channel.id;
-    }
     return acc;
   }, {}),
 );
@@ -201,7 +198,7 @@ const resolveDisplayChannelId = (salesChannelId: string | null | undefined) =>
   salesChannelId ? channelIdAliasMap.value[salesChannelId] || null : null;
 
 const getEffectiveSalesChannelId = (channelId: string) =>
-  channelById.value[channelId]?.saleschannelPtr?.id || channelId;
+  channelId;
 
 const getCategorySelection = (row: VariationRow, channelId: string | null = selectedChannelId.value) => {
   if (!channelId) return null;

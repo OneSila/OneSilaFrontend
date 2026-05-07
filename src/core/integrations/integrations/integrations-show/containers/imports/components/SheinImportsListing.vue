@@ -88,7 +88,7 @@ const retryImport = async (importId: string) => {
                 class="border-b dark:border-[#191e3a]"
               >
                 <td class="p-2">
-                  <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: (importItem as any).proxyId } }">
+                  <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: importItem.id } }">
                     {{ formatDate(importItem.createdAt) }}
                   </Link>
                 </td>

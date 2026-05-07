@@ -117,7 +117,7 @@ const fetchCurrencies = async () => {
           (remoteCodeKey ? localCurrencyMap[remoteCodeKey] ?? null : null);
 
         return {
-          id: node.proxyId,
+          id: node.id,
           remoteCode: node.remoteCode,
           name: node.name,
           marketplaceName: node?.salesChannelView?.name || null,

@@ -382,7 +382,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
       params: { type: type.value, id: amazonCreateValue },
-      query: { integrationId, salesChannelId, ...(isWizard ? { wizard: '1' } : {}) },
+      query: { ...(isWizard ? { wizard: '1' } : {}) },
     };
     return;
   }
@@ -404,7 +404,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.remoteProperties.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { wizard: '1' },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   } else if (last) {

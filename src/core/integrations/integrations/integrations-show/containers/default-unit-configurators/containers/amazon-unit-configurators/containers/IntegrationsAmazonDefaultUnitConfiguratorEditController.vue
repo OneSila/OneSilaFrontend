@@ -75,7 +75,7 @@ const marketplaceEditPath = computed(() =>
     ? {
         name: 'integrations.stores.edit',
         params: { type: type.value, id: form.marketplaceId },
-        query: { integrationId },
+        query: {},
       }
     : null,
 );
@@ -111,7 +111,7 @@ onMounted(async () => {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.amazonDefaultUnitConfigurators.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   } else if (last) {

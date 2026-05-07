@@ -186,7 +186,7 @@ onMounted(async () => {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.miraklDefaultUnitConfigurators.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
     return;

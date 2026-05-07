@@ -230,12 +230,7 @@ const fetchSheinProductCategories = async (fetchPolicy: FetchPolicy = 'cache-fir
 const resolveCategoryForChannel = (channel: any) => {
   if (!channel) return null;
   const channelId = channel.id;
-  const ptrId = channel?.saleschannelPtr?.id || null;
-  return (
-    categoriesByChannel.value[channelId] ||
-    (ptrId ? categoriesByChannel.value[ptrId] : null) ||
-    null
-  );
+  return categoriesByChannel.value[channelId] || null;
 };
 
 let defaultCategoriesRequestId = 0;
@@ -249,8 +244,7 @@ const fetchDefaultCategories = async () => {
   const entries = await Promise.all(
     channels.value.map(async (channel: any) => {
       const channelKey = channel?.id ?? '';
-      const salesChannelPtrId = channel?.saleschannelPtr?.id || null;
-      const filterSalesChannelId = salesChannelPtrId || channel?.id || null;
+      const filterSalesChannelId = channel?.id || null;
       const ruleId = getProductPropertiesRuleId(
         productTypeRules.value,
         filterSalesChannelId,
@@ -491,7 +485,7 @@ const onError = (error) => {
             <SheinCategorySection
               ref="categorySectionRef"
               :product-id="product.id"
-              :sales-channel-id="selectedCategory?.salesChannelId || selectedChannel?.saleschannelPtr?.id || selectedChannel?.id || null"
+              :sales-channel-id="selectedCategory?.salesChannelId || selectedChannel?.id || null"
               :channel="selectedChannel"
               :category="selectedCategory"
               :default-category="selectedDefaultCategory"

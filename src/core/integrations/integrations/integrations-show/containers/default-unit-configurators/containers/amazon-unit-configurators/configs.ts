@@ -40,7 +40,7 @@ export const amazonDefaultUnitConfiguratorsListingConfigConstructor = (t: Functi
     { name: 'selectedUnit', type: FieldType.Text }
   ],
   identifierKey: 'id',
-  urlQueryParams: {integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

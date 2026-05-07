@@ -61,7 +61,7 @@ export const priceListsListingConfigConstructor = (t: Function, specificIntegrat
     { name: 'priceList', type: FieldType.NestedText, keys: ['name'] },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: false,
   addShow: false,

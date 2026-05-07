@@ -91,7 +91,6 @@ export const createManualSalesChannelMutation = gql`
       hostname
       active
       type
-      proxyId
     }
   }
 `;
@@ -185,7 +184,6 @@ export const updateManualSalesChannelMutation = gql`
       hostname
       active
       type
-      proxyId
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -210,7 +208,6 @@ export const duplicateSalesChannelSelectValueMappingMutation = gql`
       localInstance: $localInstance
     ) {
       id
-      proxyId
       localInstance {
         id
       }

@@ -85,7 +85,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.remoteInternalProperties.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1', fromTab: returnTab },
+      query: { wizard: '1', fromTab: returnTab },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
     return;
