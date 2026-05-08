@@ -4,7 +4,7 @@ import {useI18n} from 'vue-i18n';
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
-import {computed, reactive, ref} from "vue";
+import { computed, reactive, ref } from "vue";
 import { PropertyTypes } from "../../../../shared/utils/constants";
 import {Loader} from "../../../../shared/components/atoms/loader";
 import {Wizard} from "../../../../shared/components/molecules/wizard";

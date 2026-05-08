@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {ref, onMounted, watch, computed} from 'vue';
-import { defineProps, defineEmits } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
+
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import apolloClient from "../../../../../../apollo-client";

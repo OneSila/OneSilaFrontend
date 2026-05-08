@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps, defineSlots, computed} from 'vue';
+import { computed } from 'vue';
 import {Button} from '../../../../atoms/button';
 import {ApolloAlertMutation} from '../../../../molecules/apollo-alert-mutation';
 import {Link} from '../../../../atoms/link';
@@ -148,7 +148,7 @@ const getModelValue = (field: any, item: any) => {
           <td class="font-semibold pr-2 py-1">{{ config.headers[index] }}</td>
           <td>
             <component :is="getFieldComponent(field.type)"
-                       :field="getUpdatedField(field, item, index)"
+                       :field="getUpdatedField(field, item, Number(index))"
                        :model-value="getModelValue(field, item)"
                        :hide-image="true"/>
           </td>

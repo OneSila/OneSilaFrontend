@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {defineProps, Ref, ref, watch} from 'vue';
+import { Ref, ref, watch } from 'vue';
 import { useI18n } from "vue-i18n";
 import {AdditonalFormFields, FormType, RelatedProduct} from "../product";
 import { PRODUCT_BUNDLE, PRODUCT_CONFIGURABLE } from "../../../../../../shared/utils/constants";

@@ -2,7 +2,7 @@
 
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {computed, ref} from "vue";
+import { computed, ref } from "vue";
 import {Tabs} from "../../../../../../../shared/components/molecules/tabs";
 import {Product} from "../../../../configs"
 import ProductEditView from "../../tabs/general/ProductEditView.vue";

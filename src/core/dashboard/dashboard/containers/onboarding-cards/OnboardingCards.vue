@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits, defineProps, onMounted, ref, watch, computed } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { OnboardingCard } from './../onboarding-card';
 import { productsQuerySelector } from "../../../../../shared/api/queries/products.js";

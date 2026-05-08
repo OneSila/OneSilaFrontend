@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
-import {computed} from "vue";
+import { computed } from "vue";
 import {Product} from "../../../../configs";
 import {useI18n} from "vue-i18n";
 import TabContentTemplate from "../TabContentTemplate.vue";
-import {defineProps, onMounted, Ref, ref} from "vue";
+import { onMounted, Ref, ref } from "vue";
 import {Label} from "../../../../../../../shared/components/atoms/label";
 import {eanCodesQuery} from "../../../../../../../shared/api/queries/eanCodes.js";
 import apolloClient from "../../../../../../../../apollo-client";

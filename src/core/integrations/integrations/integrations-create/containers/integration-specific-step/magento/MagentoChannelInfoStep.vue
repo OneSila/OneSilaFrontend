@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, watch} from 'vue';
+import { watch } from 'vue';
 import {useI18n} from 'vue-i18n';
 import {Label} from "../../../../../../../shared/components/atoms/label";
 import {TextInput} from "../../../../../../../shared/components/atoms/input-text";

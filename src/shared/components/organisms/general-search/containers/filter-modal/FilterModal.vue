@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n';
 
 import { reactive, computed } from 'vue';
+import type { Component } from 'vue';
 import { Card } from '../../../../../components/atoms/card';
 import { Button } from '../../../../../components/atoms/button';
 import { FilterSection, SearchFilter } from "../../searchConfig";
@@ -31,7 +32,7 @@ const filterValues = reactive({});
 const updateFilterValue = (name, value) => {
   filterValues[name] = value;
 };
-const getFilterComponent = (type) => {
+const getFilterComponent = (type): Component | null => {
   switch (type) {
     case FieldType.Boolean: return FilterBoolean;
     case FieldType.Text: return FilterValue;

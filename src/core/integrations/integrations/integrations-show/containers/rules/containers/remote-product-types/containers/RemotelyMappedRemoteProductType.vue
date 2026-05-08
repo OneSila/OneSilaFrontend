@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref} from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import {useRouter, useRoute} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";

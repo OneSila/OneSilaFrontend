@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref} from 'vue';
+import { ref } from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {Link} from './../../../../atoms/link';
 import {cleanUpDataForMutation, FormConfig, FormType} from '../../formConfig';

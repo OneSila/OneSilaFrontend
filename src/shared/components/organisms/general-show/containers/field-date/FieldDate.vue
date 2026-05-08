@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {accessNestedProperty, DateField, TextField} from '../../showConfig';
-import {computed} from "vue";
+import { computed } from "vue";
 import {FieldType} from "../../../../../utils/constants";
 import {FieldText} from "../field-text";
 

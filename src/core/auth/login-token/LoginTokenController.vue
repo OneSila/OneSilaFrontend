@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import {Ref, ref} from 'vue';
+import { Ref, ref } from 'vue';
 import LanguageDropdown from "../../../shared/components/molecules/languages-dropdown/LanguageDropdown.vue";
 import { Link } from "../../../shared/components/atoms/link";
 import AuthTemplate from "../AuthTemplate.vue";

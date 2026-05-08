@@ -19,7 +19,7 @@ import {
 import {Image} from "../../../../../../../../../shared/components/atoms/image";
 import {TextInput} from "../../../../../../../../../shared/components/atoms/input-text";
 import { shortenText } from "../../../../../../../../../shared/utils";
-import {ref, computed} from "vue";
+import { ref, computed } from "vue";
 import debounce from 'lodash.debounce'
 import apolloClient from "../../../../../../../../../../apollo-client";
 import {Toast} from "../../../../../../../../../shared/modules/toast";

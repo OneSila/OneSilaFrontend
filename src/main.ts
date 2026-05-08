@@ -11,9 +11,18 @@ import { reactive } from 'vue';
 import { AuthKey, detectAuth } from "./shared/modules/auth";
 import VueApolloComponents from '@vue/apollo-components'
 import { createApolloProvider } from "@vue/apollo-option";
+import { updateApolloOptionLoading } from './shared/modules/apollo-loading';
 
 const apolloProvider = createApolloProvider({
   defaultClient: apolloClient,
+  defaultOptions: {
+    $query: {
+      notifyOnNetworkStatusChange: true,
+    },
+  },
+  watchLoading(_isLoading, countModifier) {
+    updateApolloOptionLoading(countModifier);
+  },
 })
 
 const app = createApp({

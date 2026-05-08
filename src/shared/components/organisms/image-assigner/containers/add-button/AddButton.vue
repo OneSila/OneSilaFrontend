@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import {ref} from 'vue';
+import { ref } from 'vue';
 import { Button } from '../../../../../components/atoms/button';
 import {Icon} from "../../../../atoms/icon";
 import {PrimaryButton} from "../../../../atoms/button-primary";

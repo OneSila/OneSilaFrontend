@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { useI18n } from 'vue-i18n';
 import { Toggle } from '../../../../../../shared/components/atoms/toggle';
 import { Label } from '../../../../../../shared/components/atoms/label';

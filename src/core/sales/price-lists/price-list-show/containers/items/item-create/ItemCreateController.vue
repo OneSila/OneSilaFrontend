@@ -6,7 +6,7 @@ import { filterAndExtractIds, FormConfig, FormType } from '../../../../../../../
 import { createSalesPriceListItemMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
 import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
-import { ref, onMounted, Ref} from "vue";
+import { ref, onMounted, Ref } from "vue";
 import { useRoute } from "vue-router";
 import { baseFormConfigConstructor} from "../configs";
 import apolloClient from "../../../../../../../../apollo-client";

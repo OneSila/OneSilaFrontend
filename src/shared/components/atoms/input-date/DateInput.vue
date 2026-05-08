@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VueDatePicker from '@vuepic/vue-datepicker';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ref, watch } from 'vue';
 import { Label } from "../label";

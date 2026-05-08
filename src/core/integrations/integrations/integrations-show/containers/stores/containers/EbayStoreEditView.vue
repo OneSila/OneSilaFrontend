@@ -63,7 +63,7 @@ const storesRoute = computed(() => ({
   query: { tab: 'stores' },
 }));
 
-const withDefaults = (data: any): EbayStoreForm => ({
+const applyStoreDefaults = (data: any): EbayStoreForm => ({
   id: data.id,
   name: data.name ?? '',
   url: data.url ?? '',
@@ -154,7 +154,7 @@ const loadStore = async () => {
       Toast.error(t('shared.alert.toast.unexpectedResult'));
       return;
     }
-    formData.value = withDefaults(storeView);
+    formData.value = applyStoreDefaults(storeView);
   } catch (errors) {
     formData.value = null;
     Toast.error(t('shared.alert.toast.unexpectedResult'));
@@ -198,7 +198,7 @@ const mutateStore = async () => {
       Toast.error(t('shared.alert.toast.unexpectedResult'));
       return null;
     }
-    formData.value = withDefaults(result);
+    formData.value = applyStoreDefaults(result);
     return result;
   } catch (errors) {
     handleError(errors);

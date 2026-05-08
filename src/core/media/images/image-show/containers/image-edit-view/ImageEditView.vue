@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import { ref, defineProps, watch } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Selector } from "../../../../../../shared/components/atoms/selector";
 import { Image } from "../../../../../../shared/components/atoms/image";

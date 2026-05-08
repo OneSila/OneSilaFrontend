@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, defineSlots } from 'vue';
+
 import { Button } from '../../../../atoms/button';
 import { ApolloAlertMutation } from '../../../../molecules/apollo-alert-mutation';
 import { Link } from '../../../../atoms/link';
@@ -72,13 +72,13 @@ const getEditRoute = (item: any) => {
       <component
         v-if="field.type === FieldType.Text && field.addImage && field.imageField"
         :is="getFieldComponent(field.type)"
-        :field="getUpdatedField(field, item, index)"
+        :field="getUpdatedField(field, item, Number(index))"
         :model-value="getModelValue(field, item)"
         :image-value="getImageValue(field, item)" />
       <component
         v-else
         :is="getFieldComponent(field.type)"
-        :field="getUpdatedField(field, item, index)"
+        :field="getUpdatedField(field, item, Number(index))"
         :model-value="getModelValue(field, item)" />
     </td>
     <td v-if="config.addActions">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, watch} from 'vue';
+import { ref, watch } from 'vue';
 import { Modal } from '../../../../../../../../../shared/components/atoms/modal';
 import { mediaQuery } from "../../../../../../../../../shared/api/queries/media.js";
 import FilesList from "../../../../../../../../media/files/containers/FilesList.vue";

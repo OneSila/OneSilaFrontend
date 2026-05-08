@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import { computed, ref } from 'vue';
+import type { Component } from 'vue';
 import { ApolloSubscription } from '../../molecules/apollo-subscription';
 import { ShowConfig, getFieldComponent } from './showConfig';
 import {useRouter} from "vue-router";
@@ -28,6 +29,9 @@ const updateData = (newData) => {
   return true
 }
 
+const getResolvedFieldComponent = (type: FieldType): Component | null =>
+  getFieldComponent(type) as Component | null;
+
 </script>
 
 
@@ -50,7 +54,7 @@ const updateData = (newData) => {
                       <label v-if="field.label">{{ field.label }}</label>
                   </dt>
                   <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    <component :is="getFieldComponent(field.type)" :field="field" :model-value="result[config.subscriptionKey][field.name]" />
+                    <component :is="getResolvedFieldComponent(field.type)" :field="field" :model-value="result[config.subscriptionKey][field.name]" />
                   </dd>
               </div>
               </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, watch, computed } from 'vue';
+import { watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { Selector } from "../../../../../../../shared/components/atoms/selector";

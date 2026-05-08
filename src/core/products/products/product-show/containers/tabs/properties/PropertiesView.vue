@@ -2,7 +2,7 @@
 
 import {useI18n} from 'vue-i18n';
 import {Product, ProductPropertyValue} from "../../../../configs";
-import {onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive} from "vue";
+import { onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive } from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
   getPropertySelectValueQuery,

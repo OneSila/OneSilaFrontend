@@ -93,7 +93,6 @@ module.exports = {
     },
   },
   plugins: [
-      require('prettier-plugin-tailwindcss'),
         require('@tailwindcss/forms')({
             strategy: 'class',
         }),

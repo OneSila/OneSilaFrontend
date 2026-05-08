@@ -12,6 +12,7 @@ import apolloClient from '../../../../../../../apollo-client';
 import { webhookReportsKpiQuery, webhookReportsSeriesQuery } from '../../../../../../shared/api/queries/webhooks.js';
 import ApexChart from 'vue3-apexcharts';
 import KpiCards from './components/KpiCards.vue';
+import type { ApexOptions } from 'apexcharts';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -247,7 +248,7 @@ const deliveryOutcomeSeries = computed(() => {
   ];
 });
 
-const deliveryOutcomeOptions = computed(() => ({
+const deliveryOutcomeOptions = computed<ApexOptions>(() => ({
   chart: { type: 'area', stacked: true, toolbar: { show: false } },
   xaxis: { type: 'datetime' },
   colors: ['#22c55e', '#ef4444', '#f97316', '#3b82f6'],
@@ -267,7 +268,7 @@ const latencySeries = computed(() => {
   ];
 });
 
-const latencyOptions = computed(() => ({
+const latencyOptions = computed<ApexOptions>(() => ({
   chart: { type: 'line', toolbar: { show: false } },
   xaxis: { type: 'datetime' },
 }));
@@ -288,7 +289,7 @@ const topicsSeries = computed(() => {
   ];
 });
 
-const topicsOptions = computed(() => ({
+const topicsOptions = computed<ApexOptions>(() => ({
   chart: {
     toolbar: { show: false },
     events: {
@@ -325,7 +326,7 @@ const responseCodesSeries = computed(() => {
   ];
 });
 
-const responseCodesOptions = computed(() => {
+const responseCodesOptions = computed<ApexOptions>(() => {
   const categories = seriesData.value
     ? seriesData.value.responseCodesBreakdown.map((b: any) => b.codeBucket)
     : [];
@@ -365,7 +366,7 @@ const retriesSeries = computed(() => {
   ];
 });
 
-const retriesOptions = computed(() => {
+const retriesOptions = computed<ApexOptions>(() => {
   const categories = seriesData.value
     ? seriesData.value.retriesDistribution.map((b: any) => b.attempts.toString())
     : [];
@@ -413,7 +414,7 @@ const heatmapSeries = computed(() => {
   });
 });
 
-const heatmapOptions = computed(() => ({
+const heatmapOptions = computed<ApexOptions>(() => ({
   chart: { type: 'heatmap', toolbar: { show: false } },
   dataLabels: { enabled: false },
 }));
@@ -532,4 +533,3 @@ const topOffenders = computed(() => seriesData.value?.topOffenders || []);
     </div>
   </div>
 </template>
-

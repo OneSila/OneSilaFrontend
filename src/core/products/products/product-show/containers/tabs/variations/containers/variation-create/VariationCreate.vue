@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { watch, ref, Ref} from 'vue';
+import { watch, ref, Ref } from 'vue';
 import {Product} from "../../../../../../configs";
 import {useI18n} from "vue-i18n";
 import {Button} from "../../../../../../../../../shared/components/atoms/button";

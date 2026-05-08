@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
+import type { Component } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { Breadcrumbs } from '../../../../shared/components/molecules/breadcrumbs';
@@ -133,6 +134,9 @@ const form = reactive<IntegrationCreateWizardForm>({
 });
 
 const specificChannelInfo = ref<ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | WebhookChannelInfo | EbayChannelInfo | MiraklChannelInfo | {}>({});
+const specificComponentChannelInfo = computed(() =>
+  specificChannelInfo.value as ShopifyChannelInfo | MagentoChannelInfo | WoocommerceChannelInfo | AmazonChannelInfo | WebhookChannelInfo | MiraklChannelInfo
+);
 
 watch(resolvedIntegrationType, (newType) => {
   for (const key in specificChannelInfo.value) {
@@ -361,7 +365,7 @@ const hasInfoCard = computed(() =>
   resolvedIntegrationType.value === IntegrationTypes.Webhook
 );
 
-const getIntegrationComponent = () => {
+const getIntegrationComponent = (): Component | null => {
   if (resolvedIntegrationType.value === IntegrationTypes.Magento) {
     return MagentoChannelInfoStep;
   }
@@ -738,7 +742,7 @@ const handleSalesChannelSuccess = async (channelData: any, integrationType: stri
               resolvedIntegrationType !== IntegrationTypes.Manual
             "
             :is="getIntegrationComponent()"
-            :channel-info="specificChannelInfo"
+            :channel-info="specificComponentChannelInfo"
             v-bind="resolvedIntegrationType === IntegrationTypes.Mirakl
               ? { marketplaceName: selectedIntegrationDisplayName }
               : {}"

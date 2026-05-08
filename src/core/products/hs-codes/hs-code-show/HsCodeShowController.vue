@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n} from 'vue-i18n';
 import { useRoute, useRouter} from "vue-router";
-import { ref} from "vue";
+import { ref } from "vue";
 import { GeneralShow } from "../../../../shared/components/organisms/general-show";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Card } from "../../../../shared/components/atoms/card";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref, watchEffect, watch, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watchEffect, watch, onMounted, onUnmounted } from 'vue';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";
 import { Link } from "../../../../../../../shared/components/atoms/link";
 import { useI18n } from 'vue-i18n';

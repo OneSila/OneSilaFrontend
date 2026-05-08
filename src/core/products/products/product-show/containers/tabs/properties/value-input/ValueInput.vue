@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref, onMounted, watch, Ref, computed} from 'vue';
+import { ref, onMounted, watch, Ref, computed } from 'vue';
 import {ProductPropertyValue} from "../../../../../configs";
 import {ConfigTypes, FieldType, flagMapping, PropertyTypes} from "../../../../../../../../shared/utils/constants";
 import {FieldQuery} from "../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";

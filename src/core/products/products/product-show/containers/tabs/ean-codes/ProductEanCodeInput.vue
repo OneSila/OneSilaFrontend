@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, ref, watchEffect } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal, { SweetAlertOptions } from 'sweetalert2';
 import apolloClient from "../../../../../../../../apollo-client";

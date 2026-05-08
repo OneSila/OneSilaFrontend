@@ -2,7 +2,7 @@
 import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import { createPopper, Placement } from '@popperjs/core';
-import {computed, onMounted, Ref, ref, watchEffect} from 'vue';
+import { computed, onMounted, Ref, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from "../icon";
 

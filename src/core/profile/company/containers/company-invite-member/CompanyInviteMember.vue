@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
+import { ref } from 'vue';
 import { Button } from '../../../../../shared/components/atoms/button';
 import { TextInputPrepend } from '../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from '../../../../../shared/components/atoms/icon';

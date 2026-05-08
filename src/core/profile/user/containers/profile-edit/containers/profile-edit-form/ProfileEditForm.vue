@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, Ref, ref, watch} from 'vue';
+import { computed, Ref, ref, watch } from 'vue';
 import { updateMeMutation } from "./../../../../../../../shared/api/mutations/me.js";
 import { TextInputPrepend } from '../../../../../../../shared/components/atoms/input-text-prepend';
 import { Icon } from "../../../../../../../shared/components/atoms/icon";

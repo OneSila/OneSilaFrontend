@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {computed, ref, watch} from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Switch } from '@headlessui/vue';
 
 const props = defineProps<{ modelValue?: boolean }>();

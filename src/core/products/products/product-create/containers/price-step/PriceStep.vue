@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from "vue-i18n";
 import {AdditonalFormFields, FormType} from "../product";
 import {TextInput} from "../../../../../../shared/components/atoms/input-text";

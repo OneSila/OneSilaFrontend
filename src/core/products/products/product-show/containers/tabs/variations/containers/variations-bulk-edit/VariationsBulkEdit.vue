@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, nextTick, withDefaults } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue';
 import type { FetchPolicy } from '@apollo/client'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'

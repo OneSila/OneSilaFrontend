@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { TextInput } from "../../../../../../shared/components/atoms/input-text";
 import { Label } from "../../../../../../shared/components/atoms/label";

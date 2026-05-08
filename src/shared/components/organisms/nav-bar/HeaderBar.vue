@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref, onMounted, computed, reactive, watch, Ref} from 'vue';
+import { ref, onMounted, computed, reactive, watch, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { Icon } from "../../atoms/icon";

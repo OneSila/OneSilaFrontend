@@ -4,7 +4,7 @@ import {useI18n} from 'vue-i18n';
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
-import {onMounted, Ref, ref} from "vue";
+import { onMounted, Ref, ref } from "vue";
 import {ProductPropertiesConfigurator} from "../../../../shared/components/organisms/product-properties-configurator";
 import {Card} from "../../../../shared/components/atoms/card";
 import {CancelButton} from "../../../../shared/components/atoms/button-cancel";

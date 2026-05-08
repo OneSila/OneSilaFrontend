@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { ref, defineExpose } from 'vue';
+import { ref } from 'vue';
 import { Icon } from "../../atoms/icon";
 import { useI18n } from "vue-i18n";
 import { CancelButton } from "../../atoms/button-cancel";

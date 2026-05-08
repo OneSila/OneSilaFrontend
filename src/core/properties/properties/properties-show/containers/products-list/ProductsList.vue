@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, Ref, ref} from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from "../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../shared/components/atoms/link";

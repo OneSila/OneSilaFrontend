@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, Ref, ref} from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from '../../../../shared/components/organisms/general-form/formConfig';
