@@ -12,7 +12,7 @@ const route = useRoute();
 
 const propertyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId?.toString() || '';
+const integrationId = route.params.integrationId?.toString() || route.query.integrationId?.toString() || '';
 const returnTab = route.query.fromTab?.toString() || 'inventoryFields';
 
 const formConfig = computed(() =>

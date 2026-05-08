@@ -25,10 +25,10 @@ const allowedTypes = new Set([
 const buildIntegrationRoute = (item: any): RouteLocationRaw | undefined => {
   const salesChannel = item?.node?.salesChannel || {};
   const type = salesChannel?.type;
-  const salesChannelProxyId = salesChannel?.proxyId;
+  const salesChannelId = salesChannel?.id;
   const propertyProxyId = item?.node?.proxyId;
 
-  if (!type || !salesChannelProxyId || !propertyProxyId) {
+  if (!type || !salesChannelId || !propertyProxyId) {
     return undefined;
   }
 
@@ -38,8 +38,7 @@ const buildIntegrationRoute = (item: any): RouteLocationRaw | undefined => {
 
   return {
     name: 'integrations.remoteProperties.edit',
-    params: { type, id: propertyProxyId },
-    query: { integrationId: salesChannelProxyId, salesChannelId: salesChannelProxyId },
+    params: { type, integrationId: salesChannelId, id: propertyProxyId },
   };
 };
 

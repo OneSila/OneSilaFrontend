@@ -15,7 +15,7 @@ import {
 import { MIRAKL_REPRESENTATION_TYPE_UNIT } from '../../../properties/containers/mirakl-properties/representationTypes';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
-const emit = defineEmits(['pull-data']);
+defineEmits(['pull-data']);
 const { t } = useI18n();
 const router = useRouter();
 
@@ -52,7 +52,7 @@ const startMapping = async () => {
 
   router.push({
     name: 'integrations.miraklDefaultUnitConfigurators.edit',
-    params: { type: 'mirakl', id },
+    params: { type: 'mirakl', integrationId: props.id, id },
     query: { wizard: '1' },
   });
 };
@@ -76,7 +76,6 @@ const listingConfig = miraklDefaultUnitConfiguratorsListingConfigConstructor(t, 
         :query="listingQuery"
         :query-key="listingQueryKey"
         :fixed-filter-variables="fixedFilterVariables"
-        @pull-data="emit('pull-data')"
       />
     </template>
   </GeneralTemplate>

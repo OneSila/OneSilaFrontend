@@ -89,30 +89,18 @@ const getSubmitUrl = (
         const { id: selectValueId, integrationId, salesChannelId, type, wizard } = parseRemoteIdentifier(remoteSelectValueId);
         const url: any = {
             name: 'integrations.remotePropertySelectValues.edit',
-            params: { type: remoteSelectValueType ?? (type || 'amazon'), id: selectValueId }
+            params: { type: remoteSelectValueType ?? (type || 'amazon'), integrationId: integrationId || salesChannelId, id: selectValueId }
         };
-        if (integrationId) {
-            url.query = { integrationId } as any;
-            if (salesChannelId) {
-                url.query.salesChannelId = salesChannelId;
-            }
-            if (wizard) {
-                url.query.wizard = wizard;
-            }
+        if (wizard) {
+            url.query = { wizard } as any;
         }
         return url;
     }
     if (redirectToRules && remoteRuleId) {
         const { id: ruleId, integrationId, salesChannelId, type, wizard } = parseRemoteIdentifier(remoteRuleId);
-        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: type || 'amazon', id: ruleId } };
-        if (integrationId) {
-            url.query = { integrationId } as any;
-            if (salesChannelId) {
-                url.query.salesChannelId = salesChannelId;
-            }
-            if (wizard) {
-                url.query.wizard = wizard;
-            }
+        const url: any = { name: 'integrations.remoteProductTypes.edit', params: { type: type || 'amazon', integrationId: integrationId || salesChannelId, id: ruleId } };
+        if (wizard) {
+            url.query = { wizard } as any;
         }
         return url;
     }

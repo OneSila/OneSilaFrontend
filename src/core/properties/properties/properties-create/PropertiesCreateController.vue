@@ -171,14 +171,6 @@ const createProperty = async () => {
         wizard: isRemoteWizard ? '1' : '0',
       };
 
-      if (integrationIdFromRule) {
-        query.integrationId = integrationIdFromRule;
-      }
-
-      if (salesChannelIdFromRule) {
-        query.salesChannelId = salesChannelIdFromRule;
-      }
-
       if (amazonCreateValue) {
         query.amazonCreateValue = amazonCreateValue;
       }
@@ -187,7 +179,7 @@ const createProperty = async () => {
 
       router.push({
         name: remoteRuleRoute || 'integrations.remoteProperties.edit',
-        params: { type: remoteIntegrationType, id: ruleId },
+        params: { type: remoteIntegrationType, integrationId: integrationIdFromRule || salesChannelIdFromRule, id: ruleId },
         query,
       });
     } else {

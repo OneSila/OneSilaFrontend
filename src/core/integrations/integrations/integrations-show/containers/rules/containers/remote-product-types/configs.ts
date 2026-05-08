@@ -774,18 +774,9 @@ export const sheinMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<S
       return null;
     }
 
-    const query: Record<string, string> = {};
-    if (integrationId) {
-      query.integrationId = integrationId;
-    }
-    if (salesChannelId) {
-      query.salesChannelId = salesChannelId;
-    }
-
     return {
       name: 'integrations.remoteProperties.edit',
-      params: { type, id: propertyId },
-      ...(Object.keys(query).length ? { query } : {}),
+      params: { type, integrationId: integrationId || salesChannelId, id: propertyId },
     };
   },
   shouldShowAdditionalButton: shouldShowProductTypeButton,
@@ -813,18 +804,9 @@ export const miraklMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
       return null;
     }
 
-    const query: Record<string, string> = {};
-    if (integrationId) {
-      query.integrationId = integrationId;
-    }
-    if (salesChannelId) {
-      query.salesChannelId = salesChannelId;
-    }
-
     return {
       name: 'integrations.remoteProperties.edit',
-      params: { type, id: propertyId },
-      ...(Object.keys(query).length ? { query } : {}),
+      params: { type, integrationId: integrationId || salesChannelId, id: propertyId },
     };
   },
   shouldShowAdditionalButton: () => false,

@@ -32,8 +32,8 @@ const props = defineProps<{
 
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
-const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
+const integrationId = route.params.integrationId?.toString() || (route.query.integrationId ? route.query.integrationId.toString() : '');
+const salesChannelId = route.params.integrationId?.toString() || (route.query.salesChannelId ? route.query.salesChannelId.toString() : '');
 const isWizard = route.query.wizard === '1';
 const defaultRuleId = route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null;
 const integrationShowId = computed(() => integrationId || props.productType?.salesChannel?.id || '');

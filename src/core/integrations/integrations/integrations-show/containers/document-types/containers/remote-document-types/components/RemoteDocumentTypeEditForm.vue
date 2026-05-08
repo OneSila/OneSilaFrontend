@@ -52,9 +52,9 @@ const queryParamToString = (value: unknown): string | null => {
 
 const documentTypeId = computed(() => String(route.params.id || ''));
 const type = computed(() => String(route.params.type || ''));
-const integrationId = computed(() => queryParamToString(route.query.integrationId) || '');
+const integrationId = computed(() => queryParamToString(route.params.integrationId) || queryParamToString(route.query.integrationId) || '');
 const salesChannelId = computed(
-  () => queryParamToString(route.query.salesChannelId) || queryParamToString(route.query.integrationId),
+  () => queryParamToString(route.params.integrationId) || queryParamToString(route.query.salesChannelId) || queryParamToString(route.query.integrationId),
 );
 const updateMutation = computed(() =>
   type.value === 'ebay' ? updateEbayDocumentTypeMutation : updateRemoteDocumentTypeMutation,

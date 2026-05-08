@@ -49,6 +49,13 @@ import {
   faImage,
   faVideo,
   faList,
+  faBold,
+  faItalic,
+  faUnderline,
+  faListOl,
+  faListUl,
+  faQuoteLeft,
+  faRemoveFormat,
   faThList,
   faRecycle,
   faInfoCircle,
@@ -213,6 +220,13 @@ library.add(faCircleCheck as IconDefinition);
 library.add(faImage as IconDefinition);
 library.add(faVideo as IconDefinition);
 library.add(faList as IconDefinition);
+library.add(faBold as IconDefinition);
+library.add(faItalic as IconDefinition);
+library.add(faUnderline as IconDefinition);
+library.add(faListOl as IconDefinition);
+library.add(faListUl as IconDefinition);
+library.add(faQuoteLeft as IconDefinition);
+library.add(faRemoveFormat as IconDefinition);
 library.add(faThList as IconDefinition);
 library.add(faRecycle as IconDefinition);
 library.add(faInfoCircle as IconDefinition);

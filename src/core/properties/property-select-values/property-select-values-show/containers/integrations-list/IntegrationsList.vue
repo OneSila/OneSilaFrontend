@@ -43,10 +43,10 @@ const fetchMirrors = async () => {
 const buildIntegrationRoute = (item: any): RouteLocationRaw | undefined => {
   const salesChannel = item?.remoteProperty?.salesChannel || {};
   const type = salesChannel?.type;
-  const salesChannelProxyId = salesChannel?.proxyId;
+  const salesChannelId = salesChannel?.id;
   const selectValueProxyId = item?.proxyId;
 
-  if (!type || !salesChannelProxyId || !selectValueProxyId) {
+  if (!type || !salesChannelId || !selectValueProxyId) {
     return undefined;
   }
 
@@ -56,8 +56,7 @@ const buildIntegrationRoute = (item: any): RouteLocationRaw | undefined => {
 
   return {
     name: 'integrations.remotePropertySelectValues.edit',
-    params: { type, id: selectValueProxyId },
-    query: { integrationId: salesChannelProxyId, salesChannelId: salesChannelProxyId },
+    params: { type, integrationId: salesChannelId, id: selectValueProxyId },
   };
 };
 

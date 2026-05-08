@@ -59,7 +59,19 @@
     "components": {
       "atoms": {
         "textHtmlEditor": {
-          "placeholder": ""
+          "placeholder": "",
+          "invalidHtml": "",
+          "toolbar": {
+            "normal": "",
+            "heading": "",
+            "bold": "",
+            "italic": "",
+            "underline": "",
+            "orderedList": "",
+            "bulletList": "",
+            "blockquote": "",
+            "clean": ""
+          }
         }
       },
       "organisms": {

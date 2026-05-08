@@ -37,7 +37,7 @@ type ProductContentFormState = {
 };
 type ContentField = 'DESCRIPTION' | 'SHORT_DESCRIPTION' | 'SUBTITLE' | 'BULLET_POINTS' | 'URL_KEY';
 
-const emptyHtml = '<p><br></p>';
+const emptyHtml = '';
 
 const createEmptyFormState = (): ProductContentFormState => ({
   name: '',

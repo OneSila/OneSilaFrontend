@@ -39,8 +39,8 @@ const { t } = useI18n();
 
 const valueId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
-const routeSalesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
+const integrationId = route.params.integrationId?.toString() || (route.query.integrationId ? route.query.integrationId.toString() : '');
+const routeSalesChannelId = route.params.integrationId?.toString() || (route.query.salesChannelId ? route.query.salesChannelId.toString() : '');
 const isWizard = route.query.wizard === '1';
 
 const valueProxyId = ref<string | null>(null);
@@ -425,7 +425,7 @@ const submitDuplicateMapping = async () => {
 
     await router.push({
       name: 'integrations.remotePropertySelectValues.edit',
-      params: { type: type.value, id: newMappingId },
+      params: { type: type.value, integrationId, id: newMappingId },
     });
   } catch (error: any) {
     const graphQLError = error?.graphQLErrors?.[0]?.message;
@@ -534,7 +534,7 @@ onMounted(async () => {
   if (nextId) {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.remotePropertySelectValues.edit',
-      params: { type: type.value, id: nextId },
+      params: { type: type.value, integrationId, id: nextId },
       query: { wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t(props.config.wizardSubmitLabelKey ?? 'integrations.show.mapping.saveAndMapNext');

@@ -123,7 +123,7 @@ const htmlModal = reactive({
   visible: false,
   rowIndex: -1,
   field: '' as 'shortDescription' | 'description',
-  value: '<p><br></p>',
+  value: '',
 });
 
 const textModal = reactive({
@@ -215,7 +215,7 @@ const shortDescriptionToolbarOptions = [
   ['clean'],
 ];
 
-const emptyHtml = '<p><br></p>';
+const emptyHtml = '';
 
 const createEmptyTranslation = (): TranslationData => ({
   id: null,

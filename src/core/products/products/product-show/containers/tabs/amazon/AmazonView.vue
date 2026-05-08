@@ -620,6 +620,7 @@ const formatDate = (dateString?: string | null) => {
                 :is-configurable="isConfigurable"
                 :variation-validation-issues="variationValidationIssues"
                 :variation-other-issues="variationOtherIssues"
+                :integration-id="selectedView?.salesChannel.id"
               />
 
               <div class="border-t my-4"></div>

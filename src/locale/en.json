@@ -731,7 +731,18 @@
       "atoms": {
         "textHtmlEditor": {
           "placeholder": "Type here...",
-          "invalidHtml": "Contains broken HTML"
+          "invalidHtml": "Contains broken HTML",
+          "toolbar": {
+            "normal": "Normal",
+            "heading": "Heading",
+            "bold": "Bold",
+            "italic": "Italic",
+            "underline": "Underline",
+            "orderedList": "Ordered list",
+            "bulletList": "Bullet list",
+            "blockquote": "Quote",
+            "clean": "Remove formatting"
+          }
         }
       },
       "organisms": {

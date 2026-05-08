@@ -38,7 +38,13 @@ const route = useRoute();
 
 const issueId = ref(String(route.params.issueId));
 const type = ref(String(route.params.type));
-const integrationId = computed(() => (typeof route.query.integrationId === 'string' ? route.query.integrationId : null));
+const integrationId = computed(() =>
+  typeof route.params.integrationId === 'string'
+    ? route.params.integrationId
+    : typeof route.query.integrationId === 'string'
+      ? route.query.integrationId
+      : null
+);
 
 const loading = ref(false);
 const issue = ref<IssueNode | null>(null);

@@ -24,6 +24,7 @@ import { print, visit } from 'graphql';
 import { useAppStore } from '../../../plugins/store';
 import { Button } from "../../atoms/button";
 import { Loader } from "../../atoms/loader";
+import { withIntegrationRouteContext } from "../../../utils/integrationRoutes";
 
 const { t } = useI18n();
 const SELECT_ALL_PAGE_SIZE = 100;
@@ -71,7 +72,7 @@ const getShowRoute = (item) => {
 
   return {
     name: props.config.showUrlName,
-    params,
+    params: withIntegrationRouteContext(route, props.config.showUrlName, params),
     query: {...props.config.urlQueryParams}
   };
 };

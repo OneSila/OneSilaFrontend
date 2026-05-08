@@ -84,7 +84,13 @@ const { t } = useI18n();
 
 const feedId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = computed(() => (typeof route.query.integrationId === 'string' ? route.query.integrationId : null));
+const integrationId = computed(() =>
+  typeof route.params.integrationId === 'string'
+    ? route.params.integrationId
+    : typeof route.query.integrationId === 'string'
+      ? route.query.integrationId
+      : null
+);
 
 const loading = ref(false);
 const resyncing = ref(false);

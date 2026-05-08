@@ -19,8 +19,8 @@ const route = useRoute();
 
 const internalPropertyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId?.toString() || '';
-const salesChannelId = route.query.salesChannelId?.toString() || '';
+const integrationId = route.params.integrationId?.toString() || route.query.integrationId?.toString() || '';
+const salesChannelId = route.params.integrationId?.toString() || route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
 const returnTab = route.query.fromTab?.toString() || 'internalFields';

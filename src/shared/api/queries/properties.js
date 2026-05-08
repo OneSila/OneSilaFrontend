@@ -243,7 +243,7 @@ export const remotePropertiesQuery = gql`
           allowsUnmappedValues
           proxyId
           salesChannel {
-            proxyId
+            id
             type
           }
         }
@@ -273,7 +273,7 @@ export const remotePropertySelectValueMirrorsQuery = gql`
       remoteProperty {
         remoteName
         salesChannel {
-          proxyId
+          id
           type
         }
       }
@@ -304,7 +304,6 @@ query ProductProperties($first: Int, $last: Int, $after: String, $before: String
                 id
                 salesChannel {
                   id
-                  proxyId
                 }
             }
           }

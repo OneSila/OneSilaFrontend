@@ -10,7 +10,7 @@ import {
 } from './configs';
 
 const props = defineProps<{ id: string; salesChannelId: string }>();
-const emit = defineEmits(['pull-data']);
+defineEmits(['pull-data']);
 const { t } = useI18n();
 
 const searchConfig = remoteDocumentTypesSearchConfigConstructor(t);
@@ -26,7 +26,6 @@ const listingConfig = remoteDocumentTypesListingConfigConstructor(t, props.id, p
         :query="listingQuery"
         :query-key="listingQueryKey"
         :fixed-filter-variables="{ salesChannel: { id: { exact: salesChannelId } }, uploadable: {exact: true} }"
-        @pull-data="emit('pull-data')"
       />
     </template>
   </GeneralTemplate>

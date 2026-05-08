@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { withIntegrationRouteContext } from '../../../utils/integrationRoutes';
 
 const props = defineProps<{
   path?: string | object;
@@ -13,6 +15,20 @@ const props = defineProps<{
   target?: string;
   selectable?: boolean;
 }>();
+
+const route = useRoute();
+
+const resolvedPath = computed(() => {
+  if (!props.path || typeof props.path === 'string') {
+    return props.path;
+  }
+
+  const path = props.path as { name?: unknown; params?: Record<string, any> };
+  return {
+    ...path,
+    params: withIntegrationRouteContext(route, path.name, path.params),
+  } as any;
+});
 
 const externalHref = computed(() => {
   if (props.external && typeof props.path === 'string') {
@@ -69,7 +85,7 @@ const onClicked = (event, navigationCallback) => {
     <router-link
       v-if="!external && path && !disabled"
       v-slot="{ href, navigate }"
-      :to="path"
+      :to="resolvedPath"
       custom
     >
       <a

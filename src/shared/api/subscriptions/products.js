@@ -26,7 +26,6 @@ export const productSubscription = gql`
                 id
                 salesChannel {
                   id
-                  proxyId
                 }
             }
           }

@@ -13,7 +13,6 @@ import { formatIntegrationLabel } from '../../../utils';
 
 interface IntegrationChannel {
   id: string;
-  proxyId?: string | null;
   hostname?: string | null;
   type?: string | null;
   active?: boolean | null;
