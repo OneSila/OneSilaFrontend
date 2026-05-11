@@ -999,6 +999,135 @@ export const getProductQuery = gql`
   }
 `;
 
+export const getProductShowQuery = gql`
+  query getProductShow($id: ID!) {
+    product(id: $id) {
+      id
+      sku
+      active
+      type
+      proxyId
+      name
+      thumbnailUrl
+      hasParents
+      productpropertySet {
+          id
+          property {
+            id
+            name
+            type
+            isProductType
+          }
+          valueSelect {
+            id
+            value
+            productpropertiesruleSet {
+                id
+                salesChannel {
+                  id
+                }
+            }
+          }
+          valueMultiSelect {
+             id
+             value
+          }
+          valueBoolean
+          valueInt
+          valueFloat
+          valueDate
+          valueDatetime
+      }
+      aliasParentProduct {
+        id
+        name
+        sku
+        type
+      }
+      aliasProducts {
+        id
+        name
+        type
+        sku
+        active
+        thumbnailUrl
+        inspectorStatus
+      }
+      percentageInspectorStatus {
+        percentage
+        inspectorStatus
+        blocks {
+          code
+          completed
+          fixingMessage
+        }
+      }
+      inspector {
+        id
+        hasMissingInformation
+      }
+      vatRate {
+        id
+        rate
+        name
+      }
+      allowBackorder
+      workflowproductassignmentSet {
+        id
+        workflow {
+          id
+          name
+          sortOrder
+          states {
+            id
+            value
+            sortOrder
+            isDefault
+          }
+        }
+        workflowState {
+          id
+          value
+          sortOrder
+          isDefault
+        }
+      }
+      saleschannelviewassignSet {
+          id
+          status
+          remoteId
+          remoteUrl
+          remoteProductPercentage
+          integrationType
+          product {
+            id
+            name
+          }
+          salesChannelView {
+            id
+            name
+            active
+            includeInTodo
+          }
+          remoteProduct {
+            id
+            hasErrors
+            status
+          }
+        }
+      rejectedsaleschannelviewassignSet {
+        id
+        salesChannelView {
+          id
+          name
+          active
+          includeInTodo
+        }
+      }
+    }
+  }
+`;
+
 export const getBundleProductQuery = gql`
   query getBundleProduct($id: ID!) {
     bundleProduct(id: $id) {

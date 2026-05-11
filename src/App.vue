@@ -6,26 +6,20 @@ import {
   injectAuth,
   isActive,
   isAuthenticated,
-  isChangingAuthState,
   isUserPageLoading,
   removeAuth,
   resetLoadingStates
 } from './shared/modules/auth';
-import { computed, onMounted, onUpdated, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import {useAppStore} from './shared/plugins/store';
-import { useGlobalQueryLoading } from '@vue/apollo-composable';
-import { useApolloOptionLoading } from './shared/modules/apollo-loading';
 import SideBar from './shared/components/organisms/nav-bar/SideBar.vue';
 import HeaderBar from './shared/components/organisms/nav-bar/HeaderBar.vue';
 import {Loader} from "./shared/components/atoms/loader";
-import {DiscreteLoader} from "./shared/components/atoms/discrete-loader";
 
 const {t} = useI18n();
 const route = useRoute();
 const auth = injectAuth();
 const app = useAppStore();
-const compositionQueryLoading = useGlobalQueryLoading();
-const optionQueryLoading = useApolloOptionLoading();
 
 const defaultTitle = 'OneSila';
 
@@ -75,11 +69,6 @@ const isLoggedIn = computed(() =>
     isActive(auth)
 );
 
-const isApolloLoading = computed(() =>
-    compositionQueryLoading.value ||
-    optionQueryLoading.value
-);
-
 onMounted(() => {
   window.addEventListener('storage', (e: StorageEvent) => {
     if (e.key === 'auth_user') {
@@ -109,7 +98,7 @@ onMounted(() => {
             <HeaderBar :sidebar="sidebar" @show-sidebar="toggleSidebar()"/>
 
             <div class="p-6 animation">
-              <DiscreteLoader :loading="isUserPageLoading(auth) || isApolloLoading"/>
+              <Loader :loading="isUserPageLoading(auth)"/>
               <router-view :key="route.path"/>
             </div>
           </div>

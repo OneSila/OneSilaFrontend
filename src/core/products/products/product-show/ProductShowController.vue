@@ -8,6 +8,7 @@ import GeneralTemplate from '../../../../shared/templates/GeneralTemplate.vue';
 import { Breadcrumbs } from '../../../../shared/components/molecules/breadcrumbs';
 import { Card } from '../../../../shared/components/atoms/card';
 import { productSubscription } from '../../../../shared/api/subscriptions/products.js';
+import { getProductShowQuery } from '../../../../shared/api/queries/products.js';
 import { ApolloSubscription } from '../../../../shared/components/molecules/apollo-subscription';
 import { Icon } from '../../../../shared/components/atoms/icon';
 import { Label } from '../../../../shared/components/atoms/label';
@@ -754,6 +755,8 @@ const copySkuToClipboard = async (sku: string) => {
           ref="apolloSubRef"
           :subscription="productSubscription"
           :variables="{ pk: id }"
+          :initial-query="getProductShowQuery"
+          :initial-query-variables="{ id }"
           @result-updated="handleResultUpdated"
         >
           <template #default="{ loading, result }">
