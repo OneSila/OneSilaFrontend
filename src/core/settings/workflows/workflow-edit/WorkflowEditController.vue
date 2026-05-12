@@ -9,7 +9,7 @@ import { Breadcrumbs } from '../../../../shared/components/molecules/breadcrumbs
 import { Card } from '../../../../shared/components/atoms/card';
 import { TextInput } from '../../../../shared/components/atoms/input-text';
 import { TextEditor } from '../../../../shared/components/atoms/input-text-editor';
-import { Checkbox } from '../../../../shared/components/atoms/checkbox';
+import { Toggle } from '../../../../shared/components/atoms/toggle';
 import { Label } from '../../../../shared/components/atoms/label';
 import { Icon } from '../../../../shared/components/atoms/icon';
 import { PrimaryButton } from '../../../../shared/components/atoms/button-primary';
@@ -38,8 +38,16 @@ interface WorkflowFormState {
   description: string;
   code: string;
   sortOrder: number;
-  autoAddOnProduct: boolean;
+  autoAddConfigurableProducts: boolean;
+  autoAddSimpleProducts: boolean;
+  autoAddBundleProducts: boolean;
+  autoAddAliasProducts: boolean;
 }
+
+type AutoAddProductTypeField = keyof Pick<
+  WorkflowFormState,
+  'autoAddConfigurableProducts' | 'autoAddSimpleProducts' | 'autoAddBundleProducts' | 'autoAddAliasProducts'
+>;
 
 interface WorkflowStateSnapshot {
   value: string;
@@ -65,18 +73,28 @@ const saving = ref(false);
 const refreshKey = ref(0);
 const nextClientId = ref(1);
 const deleteStateIds = ref<string[]>([]);
+const autoAddProductTypeFields: { name: AutoAddProductTypeField; labelKey: string }[] = [
+  { name: 'autoAddConfigurableProducts', labelKey: 'settings.workflows.labels.autoAddConfigurableProducts' },
+  { name: 'autoAddSimpleProducts', labelKey: 'settings.workflows.labels.autoAddSimpleProducts' },
+  { name: 'autoAddBundleProducts', labelKey: 'settings.workflows.labels.autoAddBundleProducts' },
+  { name: 'autoAddAliasProducts', labelKey: 'settings.workflows.labels.autoAddAliasProducts' },
+];
 const workflowForm = reactive<WorkflowFormState>({
   name: '',
   description: '',
   code: '',
   sortOrder: 0,
-  autoAddOnProduct: false,
+  autoAddConfigurableProducts: false,
+  autoAddSimpleProducts: false,
+  autoAddBundleProducts: false,
+  autoAddAliasProducts: false,
 });
 const initialWorkflow = ref<WorkflowFormState | null>(null);
 const states = ref<EditableWorkflowState[]>([]);
 
 const activeStates = computed(() => states.value);
 const hasStates = computed(() => activeStates.value.length > 0);
+const hasAutoAddEnabled = computed(() => autoAddProductTypeFields.some((field) => workflowForm[field.name]));
 const totalAssignments = computed(() => activeStates.value.reduce((sum, state) => sum + state.assignmentCount, 0));
 
 const createClientId = () => `workflow-state-${nextClientId.value++}`;
@@ -86,7 +104,10 @@ const cloneWorkflow = (value: WorkflowFormState): WorkflowFormState => ({
   description: value.description,
   code: value.code,
   sortOrder: value.sortOrder,
-  autoAddOnProduct: value.autoAddOnProduct,
+  autoAddConfigurableProducts: value.autoAddConfigurableProducts,
+  autoAddSimpleProducts: value.autoAddSimpleProducts,
+  autoAddBundleProducts: value.autoAddBundleProducts,
+  autoAddAliasProducts: value.autoAddAliasProducts,
 });
 
 const createSnapshot = (state: EditableWorkflowState, index: number): WorkflowStateSnapshot => ({
@@ -117,7 +138,7 @@ const hasWorkflowChanges = computed(() => {
     workflowForm.name !== initialWorkflow.value.name
     || workflowForm.description !== initialWorkflow.value.description
     || Number(workflowForm.sortOrder) !== Number(initialWorkflow.value.sortOrder)
-    || workflowForm.autoAddOnProduct !== initialWorkflow.value.autoAddOnProduct
+    || autoAddProductTypeFields.some((field) => workflowForm[field.name] !== initialWorkflow.value?.[field.name])
   );
 });
 
@@ -136,7 +157,10 @@ const hydrateWorkflow = (workflow: any) => {
   workflowForm.description = workflow?.description ?? '';
   workflowForm.code = workflow?.code ?? '';
   workflowForm.sortOrder = workflow?.sortOrder ?? 0;
-  workflowForm.autoAddOnProduct = !!workflow?.autoAddOnProduct;
+  workflowForm.autoAddConfigurableProducts = !!workflow?.autoAddConfigurableProducts;
+  workflowForm.autoAddSimpleProducts = !!workflow?.autoAddSimpleProducts;
+  workflowForm.autoAddBundleProducts = !!workflow?.autoAddBundleProducts;
+  workflowForm.autoAddAliasProducts = !!workflow?.autoAddAliasProducts;
   initialWorkflow.value = cloneWorkflow(workflowForm);
 
   states.value = [...(workflow?.states ?? [])]
@@ -193,11 +217,13 @@ const setExclusiveDefault = (clientId: string) => {
 
 const syncAutoAddConstraints = () => {
   if (activeStates.value.length === 0) {
-    workflowForm.autoAddOnProduct = false;
+    autoAddProductTypeFields.forEach((field) => {
+      workflowForm[field.name] = false;
+    });
     return;
   }
 
-  if (!workflowForm.autoAddOnProduct) {
+  if (!hasAutoAddEnabled.value) {
     return;
   }
 
@@ -248,13 +274,13 @@ const onDragEnd = () => {
   syncAutoAddConstraints();
 };
 
-const toggleAutoAdd = (value: boolean) => {
+const toggleAutoAdd = (fieldName: AutoAddProductTypeField, value: boolean) => {
   if (!hasStates.value) {
-    workflowForm.autoAddOnProduct = false;
+    workflowForm[fieldName] = false;
     return;
   }
 
-  workflowForm.autoAddOnProduct = value;
+  workflowForm[fieldName] = value;
   syncAutoAddConstraints();
 };
 
@@ -345,7 +371,10 @@ const saveWorkflow = async () => {
           name: workflowForm.name.trim(),
           description: workflowForm.description?.trim() || '',
           sortOrder: Number(workflowForm.sortOrder) || 0,
-          autoAddOnProduct: workflowForm.autoAddOnProduct,
+          autoAddConfigurableProducts: workflowForm.autoAddConfigurableProducts,
+          autoAddSimpleProducts: workflowForm.autoAddSimpleProducts,
+          autoAddBundleProducts: workflowForm.autoAddBundleProducts,
+          autoAddAliasProducts: workflowForm.autoAddAliasProducts,
         },
       },
     });
@@ -477,9 +506,13 @@ loadWorkflow();
               </div>
 
               <div class="grid gap-6 md:grid-cols-2">
-                <div>
+                <div class="md:col-span-2">
                   <Label semi-bold>{{ t('settings.workflows.labels.name') }}</Label>
                   <TextInput v-model="workflowForm.name" :placeholder="t('settings.workflows.placeholders.name')" class="mt-2 w-full" />
+                </div>
+                <div>
+                  <Label semi-bold>{{ t('settings.workflows.labels.sortOrder') }}</Label>
+                  <TextInput v-model="workflowForm.sortOrder" :placeholder="t('settings.workflows.placeholders.sortOrder')" number class="mt-2 w-full" />
                 </div>
                 <div>
                   <Label semi-bold>{{ t('settings.workflows.labels.code') }}</Label>
@@ -488,20 +521,25 @@ loadWorkflow();
                     {{ t('settings.workflows.messages.codeGeneratedHelp') }}
                   </p>
                 </div>
-                <div>
-                  <Label semi-bold>{{ t('settings.workflows.labels.sortOrder') }}</Label>
-                  <TextInput v-model="workflowForm.sortOrder" :placeholder="t('settings.workflows.placeholders.sortOrder')" number class="mt-2 w-full" />
-                </div>
-                <div>
-                  <Label semi-bold>{{ t('settings.workflows.labels.autoAddOnProduct') }}</Label>
-                  <div class="mt-3 rounded-lg border border-gray-200 px-4 py-3">
-                    <Checkbox :model-value="workflowForm.autoAddOnProduct" :disabled="!hasStates" @update:model-value="toggleAutoAdd">
-                      {{ t('settings.workflows.messages.autoAddToggle') }}
-                    </Checkbox>
-                    <p class="mt-2 text-xs text-gray-500">
-                      {{ hasStates ? t('settings.workflows.messages.autoAddHelp') : t('settings.workflows.messages.autoAddNeedsStates') }}
-                    </p>
+                <div class="md:col-span-2">
+                  <Label semi-bold>{{ t('settings.workflows.labels.autoAddProductTypes') }}</Label>
+                  <div class="mt-3 grid gap-3 md:grid-cols-2">
+                    <div
+                      v-for="field in autoAddProductTypeFields"
+                      :key="field.name"
+                      class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
+                    >
+                      <span class="text-sm font-medium text-gray-700">{{ t(field.labelKey) }}</span>
+                      <Toggle
+                        :model-value="workflowForm[field.name]"
+                        :disabled="!hasStates"
+                        @update:model-value="toggleAutoAdd(field.name, $event)"
+                      />
+                    </div>
                   </div>
+                  <p class="mt-2 text-xs text-gray-500">
+                    {{ hasStates ? t('settings.workflows.messages.autoAddHelp') : t('settings.workflows.messages.autoAddNeedsStates') }}
+                  </p>
                 </div>
                 <div class="md:col-span-2">
                   <Label semi-bold>{{ t('shared.labels.description') }}</Label>

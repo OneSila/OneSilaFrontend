@@ -479,6 +479,8 @@
         }
       },
       "matrix": {
+        "loadedRows": "Loaded {visible} rows",
+        "visibleRows": "Showing {visible} of {total} rows",
         "rowActions": {
           "copy": "",
           "paste": ""
@@ -1403,6 +1405,12 @@
     }
   },
   "integrations": {
+    "assignments": {
+      "title": "",
+      "alerts": {
+        "bulkDeleteSuccess": ""
+      }
+    },
     "integrationTypes": {
       "magento": "Magento",
       "shopify": "Shopify",
@@ -2103,6 +2111,7 @@
       },
       "products": {
         "labels": {
+          "salesChannel": "",
           "store": "",
           "excludeStores": "",
           "hasSyncRequests": ""
@@ -3165,7 +3174,11 @@
         "name": "Name",
         "code": "Code",
         "sortOrder": "Sort Order",
-        "autoAddOnProduct": "Auto Add On Product",
+        "autoAddProductTypes": "",
+        "autoAddConfigurableProducts": "",
+        "autoAddSimpleProducts": "",
+        "autoAddBundleProducts": "",
+        "autoAddAliasProducts": "",
         "stateCount": "States",
         "assignmentCount": "Assignments"
       },

@@ -1,7 +1,14 @@
 import { FieldType } from "../../../../../../shared/utils/constants";
-import { salesChannelViewAssignsQuery, salesChannelViewsQuerySelector } from "../../../../../../shared/api/queries/salesChannels.js";
-import { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
-import { OrderType, SearchConfig } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import {
+  salesChannelViewAssignsQuery,
+  salesChannelViewAssignsWithSalesChannelQuery,
+  salesChannelsQuerySelector,
+  salesChannelViewsQuerySelector
+} from "../../../../../../shared/api/queries/salesChannels.js";
+import type { ListingConfig } from "../../../../../../shared/components/organisms/general-listing/listingConfig";
+import { OrderType } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import type { SearchConfig, SearchFilter } from "../../../../../../shared/components/organisms/general-search/searchConfig";
+import type { ShowField } from "../../../../../../shared/components/organisms/general-show/showConfig";
 import { getProductTypeBadgeMap } from "../../../../../products/products/configs";
 
 const getStatusBadgeMap = (t: Function) => ({
@@ -43,92 +50,122 @@ const getAssignStatus = (node: any) => {
   return 'PROCESSING';
 };
 
-export const productsSearchConfigConstructor = (t: Function, salesChannelId: string): SearchConfig => ({
-  search: true,
-  orderKey: "sort",
-  filters: [
-    {
-      type: FieldType.Query,
-      name: 'salesChannelView',
-      label: t('integrations.show.products.labels.store'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: salesChannelViewsQuerySelector,
-      dataKey: 'salesChannelViews',
-      isEdge: true,
-      multiple: true,
-      filterable: true,
-      removable: true,
-      addLookup: true,
-      lookupKeys: ['id'],
-      lookupType: 'inList',
-      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
-    },
-    {
-      type: FieldType.Query,
-      name: 'notSalesChannelView',
-      isNot: true,
-      label: t('integrations.show.products.labels.excludeStores'),
-      labelBy: 'name',
-      valueBy: 'id',
-      query: salesChannelViewsQuerySelector,
-      dataKey: 'salesChannelViews',
-      isEdge: true,
-      multiple: false,
-      filterable: true,
-      removable: true,
-      addLookup: true,
-      filterKey: 'salesChannelView',
-      lookupKeys: ['id'],
-      lookupType: 'exact',
-      queryVariables: { filter: { salesChannel: { id: { exact: salesChannelId } } } },
-    },
-    {
-      type: FieldType.Choice,
-      name: 'status',
-      label: t('shared.labels.status'),
-      labelBy: 'label',
-      valueBy: 'value',
-      options: [
-        { label: t('shared.labels.completed'), value: 'completed' },
-        { label: t('shared.labels.processing'), value: 'processing' },
-        { label: t('shared.labels.failed'), value: 'failed' },
-        { label: t('shared.labels.pendingCreation'), value: 'PENDING_CREATION' },
-        { label: t('integrations.show.products.statuses.partiallyListed'), value: 'PARTIALLY_LISTED' },
-        { label: t('integrations.show.products.statuses.pendingApproval'), value: 'PENDING_APPROVAL' },
-        { label: t('integrations.show.products.statuses.pendingExternalDocuments'), value: 'PENDING_EXTERNAL_DOCUMENTS' },
-        { label: t('integrations.show.products.statuses.approvalRejected'), value: 'APPROVAL_REJECTED' },
-      ],
-      removable: true,
-    },
-    {
-      type: FieldType.Boolean,
-      name: 'hasSyncRequests',
-      label: t('integrations.show.products.labels.hasSyncRequests'),
-      strict: true,
-    },
-  ],
-  orders: [
-    {
-      name: 'createdAt',
-      label: t('shared.labels.createdAt'),
-      type: OrderType.DESC
-    },
-    {
-      name: 'createdAt',
-      label: t('shared.labels.createdAt'),
-      type: OrderType.ASC
-    },
-  ],
-});
+export const productsSearchConfigConstructor = (t: Function, salesChannelId?: string | null): SearchConfig => {
+  const salesChannelFilter: SearchFilter[] = salesChannelId
+    ? []
+    : [
+        {
+          type: FieldType.Query,
+          name: 'salesChannel',
+          label: t('integrations.show.products.labels.salesChannel'),
+          labelBy: 'hostname',
+          valueBy: 'id',
+          query: salesChannelsQuerySelector,
+          dataKey: 'salesChannels',
+          isEdge: true,
+          multiple: false,
+          filterable: true,
+          removable: true,
+          addLookup: true,
+          lookupKeys: ['id'],
+        },
+      ];
+  const salesChannelViewQueryVariables = salesChannelId
+    ? { filter: { salesChannel: { id: { exact: salesChannelId } } } }
+    : undefined;
 
-export const productsListingConfigConstructor = (t: Function): ListingConfig => ({
+  return {
+    search: true,
+    orderKey: "sort",
+    filters: [
+      ...salesChannelFilter,
+      {
+        type: FieldType.Query,
+        name: 'salesChannelView',
+        label: t('integrations.show.products.labels.store'),
+        labelBy: 'name',
+        valueBy: 'id',
+        query: salesChannelViewsQuerySelector,
+        dataKey: 'salesChannelViews',
+        isEdge: true,
+        multiple: true,
+        filterable: true,
+        removable: true,
+        addLookup: true,
+        lookupKeys: ['id'],
+        lookupType: 'inList',
+        queryVariables: salesChannelViewQueryVariables,
+      },
+      {
+        type: FieldType.Query,
+        name: 'notSalesChannelView',
+        isNot: true,
+        label: t('integrations.show.products.labels.excludeStores'),
+        labelBy: 'name',
+        valueBy: 'id',
+        query: salesChannelViewsQuerySelector,
+        dataKey: 'salesChannelViews',
+        isEdge: true,
+        multiple: false,
+        filterable: true,
+        removable: true,
+        addLookup: true,
+        filterKey: 'salesChannelView',
+        lookupKeys: ['id'],
+        lookupType: 'exact',
+        queryVariables: salesChannelViewQueryVariables,
+      },
+      {
+        type: FieldType.Choice,
+        name: 'status',
+        label: t('shared.labels.status'),
+        labelBy: 'label',
+        valueBy: 'value',
+        options: [
+          { label: t('shared.labels.completed'), value: 'completed' },
+          { label: t('shared.labels.processing'), value: 'processing' },
+          { label: t('shared.labels.failed'), value: 'failed' },
+          { label: t('shared.labels.pendingCreation'), value: 'PENDING_CREATION' },
+          { label: t('integrations.show.products.statuses.partiallyListed'), value: 'PARTIALLY_LISTED' },
+          { label: t('integrations.show.products.statuses.pendingApproval'), value: 'PENDING_APPROVAL' },
+          { label: t('integrations.show.products.statuses.pendingExternalDocuments'), value: 'PENDING_EXTERNAL_DOCUMENTS' },
+          { label: t('integrations.show.products.statuses.approvalRejected'), value: 'APPROVAL_REJECTED' },
+        ],
+        removable: true,
+      },
+      {
+        type: FieldType.Boolean,
+        name: 'hasSyncRequests',
+        label: t('integrations.show.products.labels.hasSyncRequests'),
+        strict: true,
+        filterKey: 'remoteProduct',
+        lookupKeys: ['hasSyncRequests'],
+        lookupType: 'none',
+      },
+    ],
+    orders: [
+      {
+        name: 'createdAt',
+        label: t('shared.labels.createdAt'),
+        type: OrderType.DESC
+      },
+      {
+        name: 'createdAt',
+        label: t('shared.labels.createdAt'),
+        type: OrderType.ASC
+      },
+    ],
+  };
+};
+
+export const productsListingConfigConstructor = (t: Function, includeSalesChannel: boolean = false): ListingConfig => ({
   headers: [
     t('shared.labels.name'),
     t('products.products.labels.type.title'),
     t('shared.labels.active'),
     t('shared.labels.status'),
     t('shared.labels.sku'),
+    ...(includeSalesChannel ? [t('integrations.show.products.labels.salesChannel')] : []),
     t('integrations.show.products.labels.store'),
     t('shared.labels.createdAt'),
   ],
@@ -162,6 +199,15 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
       keys: ['sku'],
       shortenAfter: 14,
     },
+    ...(includeSalesChannel
+      ? [
+          {
+            name: 'salesChannel',
+            type: FieldType.NestedText,
+            keys: ['hostname'],
+          } as ShowField,
+        ]
+      : []),
     {
       name: 'salesChannelView',
       type: FieldType.NestedText,
@@ -183,4 +229,5 @@ export const productsListingConfigConstructor = (t: Function): ListingConfig => 
 });
 
 export const listingQuery = salesChannelViewAssignsQuery;
+export const assignmentsListingQuery = salesChannelViewAssignsWithSalesChannelQuery;
 export const listingQueryKey = 'salesChannelViewAssigns';

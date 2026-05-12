@@ -1292,6 +1292,8 @@
         }
       },
       "matrix": {
+        "loadedRows": "Loaded {visible} rows",
+        "visibleRows": "Showing {visible} of {total} rows",
         "rowActions": {
           "copy": "",
           "paste": ""
@@ -3202,7 +3204,11 @@
         "name": "Name",
         "code": "Code",
         "sortOrder": "Sort Order",
-        "autoAddOnProduct": "Auto Add On Product",
+        "autoAddProductTypes": "",
+        "autoAddConfigurableProducts": "",
+        "autoAddSimpleProducts": "",
+        "autoAddBundleProducts": "",
+        "autoAddAliasProducts": "",
         "stateCount": "States",
         "assignmentCount": "Assignments"
       },
@@ -3815,6 +3821,12 @@
     }
   },
   "integrations": {
+    "assignments": {
+      "title": "",
+      "alerts": {
+        "bulkDeleteSuccess": ""
+      }
+    },
     "show": {
       "tabs": {
         "issues": ""
@@ -4233,6 +4245,7 @@
       },
       "products": {
         "labels": {
+          "salesChannel": "",
           "store": "Winkel",
           "excludeStores": "Winkels uitsluiten",
           "hasSyncRequests": ""

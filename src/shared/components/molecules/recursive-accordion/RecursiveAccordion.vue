@@ -106,7 +106,7 @@ const defaultActiveItem = computed(() => {
         {{ t('importsExports.shared.emptyArray') }}
       </div>
 
-      <Accordion v-else :items="accordionItems" :default-active="defaultActiveItem">
+      <Accordion v-else :items="accordionItems" :default-active="defaultActiveItem" scrollable>
         <template
           v-for="(item, index) in arrayValue"
           :key="`array-item-${depth}-${index}`"

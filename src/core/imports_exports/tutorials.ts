@@ -172,6 +172,7 @@ const tutorialDefinitions: Record<string, TutorialDefinition> = {
           { name: 'alias_parent_sku', required: 'Optional', dataType: 'string', meaning: 'SKU of the alias parent product.', behavior: 'Resolved when type is ALIAS and no object reference is passed.' },
           { name: 'product_type', required: 'Optional', dataType: 'string', meaning: 'Human product type value.', behavior: 'Backend creates or updates a product rule from this value.' },
           { name: 'properties', required: 'Optional', dataType: 'array', meaning: 'Product property values.', behavior: 'Imported after product save.' },
+          { name: 'workflows', required: 'Optional', dataType: 'array', meaning: 'Workflow assignments for the product.', behavior: 'Each row assigns the product to a workflow state.' },
           { name: 'translations', required: 'Optional', dataType: 'array', meaning: 'Localized product content.', behavior: 'Creates or updates product translations.' },
           { name: 'images', required: 'Optional', dataType: 'array', meaning: 'Product images.', behavior: 'Imported and linked through product-media relations.' },
           { name: 'documents', required: 'Optional', dataType: 'array', meaning: 'Product files and documents.', behavior: 'Imported and linked through media relations.' },
@@ -216,6 +217,13 @@ const tutorialDefinitions: Record<string, TutorialDefinition> = {
           { name: 'language', required: 'Required', dataType: 'string', meaning: 'Language code for the translated property value.', behavior: 'Used as the translation key.' },
           { name: 'value', required: 'Conditional', dataType: 'string', meaning: 'Translated short text value.', behavior: 'Used for text-like translated property values.' },
           { name: 'description', required: 'Conditional', dataType: 'string', meaning: 'Translated long description value.', behavior: 'Used for description-like translated property values.' },
+        ],
+      },
+      {
+        title: 'workflows[]',
+        fields: [
+          { name: 'code', required: 'Required', dataType: 'string', meaning: 'Workflow code.', behavior: 'Used to resolve the workflow.' },
+          { name: 'state', required: 'Required', dataType: 'string', meaning: 'Workflow state code or value.', behavior: 'Used to resolve the target state inside the workflow.' },
         ],
       },
       {
@@ -314,6 +322,12 @@ const tutorialDefinitions: Record<string, TutorialDefinition> = {
         "type": "SELECT"
       },
       "value": "Red"
+    }
+  ],
+  "workflows": [
+    {
+      "code": "content-review",
+      "state": "ready-for-review"
     }
   ],
   "images": [

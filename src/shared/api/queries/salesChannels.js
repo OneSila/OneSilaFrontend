@@ -788,6 +788,52 @@ export const salesChannelViewAssignsQuery = gql`
   }
 `;
 
+export const salesChannelViewAssignsWithSalesChannelQuery = gql`
+  query SalesChannelViewAssignsWithSalesChannel($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelViewAssignOrder, $filter: SalesChannelViewAssignFilter) {
+    salesChannelViewAssigns(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          status
+          remoteUrl
+          remoteProductPercentage
+          integrationType
+          createdAt
+          product {
+            id
+            name
+            sku
+            active
+            type
+          }
+          salesChannel {
+            id
+            hostname
+          }
+          remoteProduct {
+            id
+            hasErrors
+            status
+          }
+          salesChannelView {
+            id
+            name
+            active
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const remoteLogsQuery = gql`
   query RemoteLogs(
     $first: Int, 

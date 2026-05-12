@@ -13,4 +13,5 @@ export interface MatrixColumn {
 
 export interface MatrixEditorExpose {
   resetHistory: (rows?: any[]) => void
+  showAllRows: () => void
 }

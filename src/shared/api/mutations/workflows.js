@@ -8,7 +8,10 @@ export const createWorkflowMutation = gql`
       description
       code
       sortOrder
-      autoAddOnProduct
+      autoAddConfigurableProducts
+      autoAddSimpleProducts
+      autoAddBundleProducts
+      autoAddAliasProducts
     }
   }
 `;
@@ -21,7 +24,10 @@ export const updateWorkflowMutation = gql`
       description
       code
       sortOrder
-      autoAddOnProduct
+      autoAddConfigurableProducts
+      autoAddSimpleProducts
+      autoAddBundleProducts
+      autoAddAliasProducts
     }
   }
 `;

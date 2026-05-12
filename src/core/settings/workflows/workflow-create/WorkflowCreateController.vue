@@ -28,8 +28,18 @@ const form = reactive({
   name: '',
   description: '',
   sortOrder: 0,
-  autoAddOnProduct: false,
+  autoAddConfigurableProducts: false,
+  autoAddSimpleProducts: false,
+  autoAddBundleProducts: false,
+  autoAddAliasProducts: false,
 });
+
+const autoAddProductTypeFields = [
+  { name: 'autoAddConfigurableProducts', labelKey: 'settings.workflows.labels.autoAddConfigurableProducts' },
+  { name: 'autoAddSimpleProducts', labelKey: 'settings.workflows.labels.autoAddSimpleProducts' },
+  { name: 'autoAddBundleProducts', labelKey: 'settings.workflows.labels.autoAddBundleProducts' },
+  { name: 'autoAddAliasProducts', labelKey: 'settings.workflows.labels.autoAddAliasProducts' },
+] as const;
 
 const submit = async () => {
   if (!form.name.trim()) {
@@ -46,7 +56,10 @@ const submit = async () => {
           name: form.name.trim(),
           description: form.description?.trim() || '',
           sortOrder: Number(form.sortOrder) || 0,
-          autoAddOnProduct: false,
+          autoAddConfigurableProducts: false,
+          autoAddSimpleProducts: false,
+          autoAddBundleProducts: false,
+          autoAddAliasProducts: false,
         },
       },
     });
@@ -108,11 +121,19 @@ const submit = async () => {
               <TextInput v-model="form.sortOrder" :placeholder="t('settings.workflows.placeholders.sortOrder')" number class="mt-2 w-full" />
             </div>
             <div>
-              <Label semi-bold>{{ t('settings.workflows.labels.autoAddOnProduct') }}</Label>
-              <div class="mt-3">
-                <Checkbox :model-value="form.autoAddOnProduct" disabled>
-                  {{ t('settings.workflows.messages.autoAddNeedsStates') }}
+              <Label semi-bold>{{ t('settings.workflows.labels.autoAddProductTypes') }}</Label>
+              <div class="mt-3 space-y-2 rounded-lg border border-gray-200 px-4 py-3">
+                <Checkbox
+                  v-for="field in autoAddProductTypeFields"
+                  :key="field.name"
+                  :model-value="form[field.name]"
+                  disabled
+                >
+                  {{ t(field.labelKey) }}
                 </Checkbox>
+                <p class="text-xs text-gray-500">
+                  {{ t('settings.workflows.messages.autoAddNeedsStates') }}
+                </p>
               </div>
             </div>
             <div class="md:col-span-2">

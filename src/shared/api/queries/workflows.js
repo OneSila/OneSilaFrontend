@@ -9,7 +9,10 @@ export const workflowsQuery = gql`
           name
           code
           sortOrder
-          autoAddOnProduct
+          autoAddConfigurableProducts
+          autoAddSimpleProducts
+          autoAddBundleProducts
+          autoAddAliasProducts
         }
         cursor
       }
@@ -31,7 +34,10 @@ export const workflowsOverviewQuery = gql`
         node {
           id
           name
-          autoAddOnProduct
+          autoAddConfigurableProducts
+          autoAddSimpleProducts
+          autoAddBundleProducts
+          autoAddAliasProducts
           productAssignments {
             id
           }
@@ -127,7 +133,10 @@ export const getWorkflowQuery = gql`
       description
       code
       sortOrder
-      autoAddOnProduct
+      autoAddConfigurableProducts
+      autoAddSimpleProducts
+      autoAddBundleProducts
+      autoAddAliasProducts
       states {
         id
         value

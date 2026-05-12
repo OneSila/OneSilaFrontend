@@ -52,12 +52,18 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 export const listingConfigConstructor = (t: Function): ListingConfig => ({
   headers: [
     t('settings.workflows.labels.name'),
-    t('settings.workflows.labels.autoAddOnProduct'),
+    t('settings.workflows.labels.autoAddConfigurableProducts'),
+    t('settings.workflows.labels.autoAddSimpleProducts'),
+    t('settings.workflows.labels.autoAddBundleProducts'),
+    t('settings.workflows.labels.autoAddAliasProducts'),
     t('products.workflows.labels.productCount'),
   ],
   fields: [
     { name: 'name', type: FieldType.Text },
-    { name: 'autoAddOnProduct', type: FieldType.Boolean },
+    { name: 'autoAddConfigurableProducts', type: FieldType.Boolean },
+    { name: 'autoAddSimpleProducts', type: FieldType.Boolean },
+    { name: 'autoAddBundleProducts', type: FieldType.Boolean },
+    { name: 'autoAddAliasProducts', type: FieldType.Boolean },
     {
       name: 'productAssignments',
       type: FieldType.Text,

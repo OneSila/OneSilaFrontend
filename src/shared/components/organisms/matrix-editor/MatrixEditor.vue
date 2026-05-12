@@ -30,6 +30,10 @@ const props = withDefaults(
     enableCellClipboard?: boolean
     enableRowClipboard?: boolean
     enableDragFill?: boolean
+    initialVisibleRows?: number
+    visibleRowsIncrement?: number
+    hasMoreRows?: boolean
+    loadingMoreRows?: boolean
     getCellValue: (rowIndex: number, columnKey: string) => any
     setCellValue: (rowIndex: number, columnKey: string, value: any) => void
     cloneCellValue: (fromRow: number, toRow: number, columnKey: string) => void
@@ -44,17 +48,23 @@ const props = withDefaults(
     enableCellClipboard: true,
     enableRowClipboard: true,
     enableDragFill: true,
+    initialVisibleRows: 20,
+    visibleRowsIncrement: 10,
+    hasMoreRows: false,
+    loadingMoreRows: false,
   }
 )
 
 const emit = defineEmits<{
   (e: 'update:rows', value: any[]): void
   (e: 'save'): void
+  (e: 'load-more'): void
 }>()
 
 const { t } = useI18n()
 
 const tableWrapper = ref<HTMLElement | null>(null)
+const loadMoreTrigger = ref<HTMLElement | null>(null)
 const selectedCell = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
 const selectedRange = ref<{ row: number | null; columns: string[] }>({ row: null, columns: [] })
 const selectionAnchor = ref<{ row: number | null; col: string | null }>({ row: null, col: null })
@@ -85,9 +95,25 @@ const lastSnapshot = ref<string>(JSON.stringify(toRaw(props.rows ?? [])))
 
 const columnWidths = reactive<Record<string, number>>({})
 const rows = computed(() => props.rows ?? [])
+const visibleRowLimit = ref(props.initialVisibleRows)
+const visibleRows = computed(() => rows.value.slice(0, visibleRowLimit.value))
+const hasHiddenLocalRows = computed(() => rows.value.length > visibleRows.value.length)
+const showRowLoadMore = computed(
+  () => hasHiddenLocalRows.value || props.hasMoreRows || props.loadingMoreRows
+)
+const rowLoadStatusMessage = computed(() => {
+  if (props.hasMoreRows && !hasHiddenLocalRows.value) {
+    return t('products.products.matrix.loadedRows', { visible: visibleRows.value.length })
+  }
+  return t('products.products.matrix.visibleRows', {
+    visible: visibleRows.value.length,
+    total: rows.value.length,
+  })
+})
 const hasRowClipboard = computed(() => rowClipboard.value !== null)
 const getValue = (rowIndex: number, columnKey: string) =>
   props.getCellValue(rowIndex, columnKey)
+let rowLoadObserver: IntersectionObserver | null = null
 
 const getDefaultColumnWidth = (column: MatrixColumn) =>
   column.initialWidth != null ? column.initialWidth : column.key === 'active' ? 60 : 150
@@ -139,7 +165,7 @@ const canRedo = computed(() => redoStack.value.length > 0)
 watch(
   rows,
   (newVal) => {
-    if (skipHistory.value) {
+    if (skipHistory.value || props.loading || props.loadingMoreRows) {
       lastSnapshot.value = JSON.stringify(toRaw(newVal))
       return
     }
@@ -149,6 +175,29 @@ watch(
     lastSnapshot.value = JSON.stringify(toRaw(newVal))
   },
   { deep: true }
+)
+
+watch(
+  () => rows.value.length,
+  (newLength, oldLength) => {
+    if (newLength < visibleRowLimit.value) {
+      visibleRowLimit.value = Math.max(props.initialVisibleRows, newLength)
+      return
+    }
+    if (newLength > oldLength && visibleRowLimit.value >= oldLength) {
+      visibleRowLimit.value = Math.min(
+        newLength,
+        visibleRowLimit.value + props.visibleRowsIncrement
+      )
+    }
+  }
+)
+
+watch(
+  () => props.initialVisibleRows,
+  (value) => {
+    visibleRowLimit.value = Math.max(value, Math.min(visibleRowLimit.value, rows.value.length))
+  }
 )
 
 const getColumnIndex = (columnKey: string) =>
@@ -744,6 +793,42 @@ const pasteRow = (rowIndex: number) => {
   Toast.success(t('products.products.alert.toast.rowPasted'))
 }
 
+const loadMoreRows = () => {
+  if (props.loading || props.saving || props.loadingMoreRows) return
+
+  if (hasHiddenLocalRows.value) {
+    visibleRowLimit.value = Math.min(
+      rows.value.length,
+      visibleRowLimit.value + props.visibleRowsIncrement
+    )
+    return
+  }
+
+  if (props.hasMoreRows) {
+    emit('load-more')
+  }
+}
+
+const observeLoadMoreTrigger = (element: HTMLElement | null) => {
+  rowLoadObserver?.disconnect()
+  rowLoadObserver = null
+  if (!element) return
+
+  rowLoadObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        loadMoreRows()
+      }
+    },
+    { rootMargin: '240px 0px' }
+  )
+  rowLoadObserver.observe(element)
+}
+
+watch(loadMoreTrigger, (element) => {
+  observeLoadMoreTrigger(element)
+})
+
 watch(
   selectedCell,
   () => {
@@ -761,6 +846,7 @@ watch(
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
+  observeLoadMoreTrigger(loadMoreTrigger.value)
 })
 
 onBeforeUnmount(() => {
@@ -770,6 +856,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('mouseup', stopSelectionDrag)
   document.removeEventListener('mousemove', onSelectionDragMove)
   stopSelectionAutoScroll()
+  rowLoadObserver?.disconnect()
 })
 
 const MIN_COLUMN_WIDTH = 100
@@ -821,9 +908,13 @@ const resetHistory = (value?: any[]) => {
   lastSnapshot.value = JSON.stringify(toRaw(value ?? rows.value))
 }
 
+const showAllRows = () => {
+  visibleRowLimit.value = rows.value.length
+}
+
 const getHeaderIconClass = (column: MatrixColumn) => column.iconColorClass || 'text-gray-400'
 
-defineExpose<MatrixEditorExpose>({ resetHistory })
+defineExpose<MatrixEditorExpose>({ resetHistory, showAllRows })
 </script>
 
 <template>
@@ -904,7 +995,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, rowIndex) in rows" :key="row?.[rowKey] ?? rowIndex" class="border-t">
+          <tr v-for="(row, rowIndex) in visibleRows" :key="row?.[rowKey] ?? rowIndex" class="border-t">
             <td
               v-for="(column, columnIndex) in columns"
               :key="column.key"
@@ -976,6 +1067,14 @@ defineExpose<MatrixEditorExpose>({ resetHistory })
           </tr>
         </tbody>
       </table>
+    </div>
+    <div
+      v-if="showRowLoadMore"
+      ref="loadMoreTrigger"
+      class="flex items-center justify-center gap-3 border-x border-b border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-600"
+    >
+      <LocalLoader v-if="loadingMoreRows" :loading="loadingMoreRows" />
+      <span>{{ rowLoadStatusMessage }}</span>
     </div>
   </div>
 </template>

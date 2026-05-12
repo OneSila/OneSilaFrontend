@@ -5,6 +5,12 @@ export const routes = [
     meta: { title: 'integrations.title' },
     component: () => import('./integrations/integrations-list/IntegrationsListController.vue'),
   },
+  {
+    path: '/integrations/assignments',
+    name: 'integrations.assignments.list',
+    meta: { title: 'integrations.assignments.title' },
+    component: () => import('./integrations/assignments-list/AssignmentsListController.vue'),
+  },
 
   {
     path: '/integrations/create',

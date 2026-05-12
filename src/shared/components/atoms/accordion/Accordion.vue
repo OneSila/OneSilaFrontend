@@ -11,6 +11,7 @@ interface AccordionItem {
 const props = defineProps<{
   items: AccordionItem[];
   defaultActive?: string | null;
+  scrollable?: boolean;
 }>();
 
 const activeIndex = ref<number | null>(null);
@@ -95,8 +96,8 @@ const isActive = (index: number) => activeIndex.value === index;
       </div>
       <div
         :id="'accordion-body-' + index"
-        class="transition-[max-height] duration-300 ease-in-out overflow-hidden"
-        :class="isActive(index) ? 'max-h-screen' : 'max-h-0'"
+        class="transition-[max-height] duration-300 ease-in-out"
+        :class="isActive(index) ? (props.scrollable ? 'max-h-[70vh] overflow-y-auto overflow-x-auto' : 'max-h-screen overflow-hidden') : 'max-h-0 overflow-hidden'"
         aria-labelledby="'accordion-heading-' + index"
       >
         <div class="p-10 border border-gray-200 dark:border-gray-700 dark:bg-gray-900">
