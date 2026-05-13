@@ -2140,6 +2140,7 @@
           "notAssignedToStore": "",
           "presentOnStore": "",
           "notPresentOnStore": "",
+          "presentOnAnyStore": "",
           "rejectedForStoreView": "",
           "todoForStoreView": "",
           "hasTodoSalesChannelView": "",
@@ -2247,6 +2248,7 @@
           "excludeSheinProductCategory": "",
           "presentOnStore": "",
           "notPresentOnStore": "",
+          "presentOnAnyStore": "",
           "hasAttribute": "",
           "missingAttribute": ""
         }

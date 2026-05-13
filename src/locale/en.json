@@ -2540,6 +2540,7 @@
           "notAssignedToStore": "Not Assigned To Store",
           "presentOnStore": "Present On Channel",
           "notPresentOnStore": "Not Present On Channel",
+          "presentOnAnyStore": "Present On Any Channel",
           "rejectedForStoreView": "Rejected For Store View",
           "todoForStoreView": "Undecided For Store View",
           "hasTodoSalesChannelView": "Has Undecided Channel View",
@@ -2647,6 +2648,7 @@
           "excludeSheinProductCategory": "Prefer remote IDs when excluding categories (names can repeat).",
           "presentOnStore": "Listing exists on the sales channel, including variations.",
           "notPresentOnStore": "Variations included.",
+          "presentOnAnyStore": "Yes shows products listed on at least one sales channel. No shows products that are not listed on any sales channel.",
           "hasAttribute": "Product has the attribute assigned (any value).",
           "missingAttribute": "Product is missing the attribute assignment."
         }
