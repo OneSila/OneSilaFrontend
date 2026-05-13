@@ -80,6 +80,7 @@ interface ProductSubscriptionProduct {
     name: string;
   } | null;
   type: string;
+  createdAt: string | null;
   active: boolean;
   allowBackorder: boolean;
   workflowproductassignmentSet: ProductWorkflowAssignment[];
@@ -736,6 +737,21 @@ const copySkuToClipboard = async (sku: string) => {
     Toast.error(t('shared.alert.toast.clipboardFail'));
   }
 };
+
+const formatDateTime = (dateString?: string | null) => {
+  if (!dateString) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date(dateString));
+};
 </script>
 
 <template>
@@ -865,19 +881,19 @@ const copySkuToClipboard = async (sku: string) => {
                             {{ shortenText(getResultData(result, 'name'), 64) }}
                           </h5>
                           <Flex>
-                            <Label semi-bold>{{ t('shared.labels.sku') }}:</Label>
+                            <Label semi-bold class="mr-1">{{ t('shared.labels.sku') }}:</Label>
                             <p class="text-sm text-white-dark">{{ getResultData(result, 'sku') }}</p>
                             <Button class="ml-1" @click="copySkuToClipboard(getResultData(result, 'sku'))">
                               <Icon name="clipboard" class="h-4 w-4 text-gray-500" aria-hidden="true" />
                             </Button>
                           </Flex>
                           <Flex v-if="getResultData(result, null, 'name')">
-                            <Label semi-bold>{{ t('products.products.labels.vatRate') }}:</Label>
+                            <Label semi-bold class="mr-1">{{ t('products.products.labels.vatRate') }}:</Label>
                             <p class="text-sm text-white-dark">{{ getResultData(result, null, 'name') }}</p>
                           </Flex>
                           <Flex>
                             <FlexCell>
-                              <Label semi-bold>{{ t('products.products.labels.type.title') }}:</Label>
+                              <Label semi-bold class="mr-1">{{ t('products.products.labels.type.title') }}:</Label>
                             </FlexCell>
                             <FlexCell>
                               <Flex class="[&>div>span]:!text-sm">
@@ -897,16 +913,20 @@ const copySkuToClipboard = async (sku: string) => {
                               </Flex>
                             </FlexCell>
                           </Flex>
+                          <Flex v-if="getResultData(result, 'createdAt')">
+                            <Label semi-bold class="mr-1">{{ t('shared.labels.createdAt') }}:</Label>
+                            <p class="text-sm text-white-dark">{{ formatDateTime(getResultData(result, 'createdAt')) }}</p>
+                          </Flex>
                           <Flex class="gap-2 flex-col sm:flex-row">
                             <FlexCell>
-                              <Label semi-bold>{{ t('shared.labels.active') }}:</Label>
+                              <Label semi-bold class="mr-1">{{ t('shared.labels.active') }}:</Label>
                               <Icon v-if="getResultData(result, 'active')" name="check-circle" class="ml-1 text-green-500" />
                               <Icon v-else name="times-circle" class="ml-1 text-red-500" />
                             </FlexCell>
                             <FlexCell v-if="getResultData(result, 'type') == ProductType.Simple || getResultData(result, 'type', null, 'type') == ProductType.Simple">
                               <Flex>
                                 <FlexCell>
-                                  <Label semi-bold>{{ t('products.products.labels.allowBackorder') }}:</Label>
+                                  <Label semi-bold class="mr-1">{{ t('products.products.labels.allowBackorder') }}:</Label>
                                 </FlexCell>
                                 <FlexCell>
                                   <Icon v-if="getResultData(result, 'allowBackorder')" name="check-circle" class="ml-1 text-green-500" />
@@ -918,7 +938,7 @@ const copySkuToClipboard = async (sku: string) => {
 
                           <Flex v-if="availableWorkflowOptions.length" class="mt-2 items-center gap-3">
                             <FlexCell class="shrink-0">
-                              <Label semi-bold>{{ t('products.products.workflowCard.labels.workflows') }}:</Label>
+                              <Label semi-bold class="mr-1">{{ t('products.products.workflowCard.labels.workflows') }}:</Label>
                             </FlexCell>
                             <FlexCell class="w-full">
                               <div class="flex flex-wrap items-center gap-2">
@@ -954,7 +974,7 @@ const copySkuToClipboard = async (sku: string) => {
                             <FlexCell v-if="getResultData(result, 'type') == ProductType.Alias">
                               <Flex>
                                 <FlexCell>
-                                  <Label semi-bold>{{ t('products.products.labels.aliasParentProduct') }}:</Label>
+                                  <Label semi-bold class="mr-1">{{ t('products.products.labels.aliasParentProduct') }}:</Label>
                                 </FlexCell>
                                 <FlexCell>
                                   <Link class="text-sm" :path="{ name: 'products.products.show', params: { id: getResultData(result, 'id', null, 'id') } }" :title="getResultData(result, 'name', null, 'name')">

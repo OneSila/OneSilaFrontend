@@ -1006,6 +1006,7 @@ export const getProductShowQuery = gql`
       sku
       active
       type
+      createdAt
       proxyId
       name
       thumbnailUrl
