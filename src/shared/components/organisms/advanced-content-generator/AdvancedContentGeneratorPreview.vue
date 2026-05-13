@@ -24,7 +24,6 @@ import AdvancedContentGeneratorPreviewActions from './AdvancedContentGeneratorPr
 
 interface IntegrationChannel {
   id: string;
-  proxyId?: string | null;
   hostname?: string | null;
   type?: string | null;
   minNameLength?: number | null;
@@ -41,8 +40,7 @@ type Status = 'pending' | 'approved' | 'rejected';
 interface PreviewItem {
   key: string;
   productSku: string;
-  integrationProxyId: string;
-  integrationId?: string | null;
+  integrationId: string;
   integrationType?: string | null;
   integrationLabel: string;
   language: string;
@@ -81,12 +79,9 @@ const saving = ref(false);
 const contentByKey = reactive<Record<string, PreviewContent>>({});
 const statusByKey = reactive<Record<string, Status>>({});
 
-const integrationByProxyId = computed(() => {
+const integrationById = computed(() => {
   const map = new Map<string, IntegrationChannel>();
   (props.salesChannels || []).forEach((channel) => {
-    if (channel.proxyId) {
-      map.set(String(channel.proxyId), channel);
-    }
     if (channel.id) {
       map.set(String(channel.id), channel);
     }
@@ -147,7 +142,7 @@ const parsePreview = (raw: any) => {
 
   list.forEach((entry) => {
     if (!entry || typeof entry !== 'object') return;
-    Object.entries(entry).forEach(([integrationProxyId, productBlock]) => {
+    Object.entries(entry).forEach(([entryIntegrationId, productBlock]) => {
       if (!productBlock || typeof productBlock !== 'object') return;
       Object.entries(productBlock as Record<string, any>).forEach(([sku, languageBlock]) => {
         if (!languageBlock || typeof languageBlock !== 'object') return;
@@ -155,15 +150,14 @@ const parsePreview = (raw: any) => {
           order.push(sku);
         }
         Object.entries(languageBlock as Record<string, any>).forEach(([language, content]) => {
-          const proxyId = String(integrationProxyId);
-          const isDefaultChannel = proxyId === 'default';
-          const channel = isDefaultChannel ? null : integrationByProxyId.value.get(proxyId);
-          const key = `${sku}::${proxyId}::${language}`;
+          const currentIntegrationId = String(entryIntegrationId);
+          const isDefaultChannel = currentIntegrationId === 'default';
+          const channel = isDefaultChannel ? null : integrationById.value.get(currentIntegrationId);
+          const key = `${sku}::${currentIntegrationId}::${language}`;
           parsedItems.push({
             key,
             productSku: sku,
-            integrationProxyId: proxyId,
-            integrationId: channel?.id || null,
+            integrationId: currentIntegrationId,
             integrationType: channel?.type || (isDefaultChannel ? 'default' : null),
             integrationLabel: isDefaultChannel ? t('shared.labels.default') : formatIntegrationLabel(channel || undefined),
             language,
@@ -214,7 +208,7 @@ const loadChannelLimits = async (ids: string[]) => {
     });
 
     items.value = items.value.map((item) => {
-      const limits = limitsMap.get(item.integrationProxyId);
+      const limits = limitsMap.get(item.integrationId);
       if (!limits) return item;
       return {
         ...item,
@@ -417,8 +411,8 @@ const saveBulletPoints = async (translationId: string, bulletPoints: string[]) =
 
 const saveItem = async (item: PreviewItem) => {
   const product = props.productMap.get(item.productSku);
-  const isDefaultChannel = item.integrationProxyId === 'default';
-  const channel = isDefaultChannel ? null : integrationByProxyId.value.get(item.integrationProxyId);
+  const isDefaultChannel = item.integrationId === 'default';
+  const channel = isDefaultChannel ? null : integrationById.value.get(item.integrationId);
   if (!product || (!channel && !isDefaultChannel)) {
     return;
   }
@@ -490,7 +484,7 @@ watch(
     parsePreview(value);
     setCurrentKeyFromProduct();
     const ids = Array.from(
-      new Set(items.value.map((item) => item.integrationProxyId).filter((id) => id && id !== 'default')),
+      new Set(items.value.map((item) => item.integrationId).filter((id) => id && id !== 'default')),
     );
     await loadChannelLimits(ids);
   },

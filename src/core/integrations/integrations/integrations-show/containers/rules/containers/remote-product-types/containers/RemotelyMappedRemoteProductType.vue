@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref} from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import {useRouter, useRoute} from 'vue-router';
 import {useI18n} from 'vue-i18n';
 import GeneralTemplate from "../../../../../../../../../shared/templates/GeneralTemplate.vue";
@@ -32,8 +32,8 @@ const props = defineProps<{
 
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
-const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
+const integrationId = route.params.integrationId?.toString() || (route.query.integrationId ? route.query.integrationId.toString() : '');
+const salesChannelId = route.params.integrationId?.toString() || (route.query.salesChannelId ? route.query.salesChannelId.toString() : '');
 const isWizard = route.query.wizard === '1';
 const defaultRuleId = route.query.createPropertySelectValueId ? route.query.createPropertySelectValueId.toString() : null;
 const integrationShowId = computed(() => integrationId || props.productType?.salesChannel?.id || '');
@@ -193,7 +193,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: props.config.editRouteName,
       params: {type: type.value, id: nextId},
-      query: {integrationId: integrationShowId.value, salesChannelId, wizard: '1'},
+      query: { wizard: '1' },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   } else if (last) {

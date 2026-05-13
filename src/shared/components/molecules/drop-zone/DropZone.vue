@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref } from 'vue'
+import { Ref, ref } from 'vue';
 import { useI18n } from 'vue-i18n'
 import { useDropzone } from 'vue3-dropzone'
 import { Icon } from '../../atoms/icon'

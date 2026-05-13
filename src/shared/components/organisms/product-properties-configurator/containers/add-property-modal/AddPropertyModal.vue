@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Ref, ref, watch, watchEffect} from 'vue';
+import { Ref, ref, watch, watchEffect } from 'vue';
 import { Modal } from '../../../../../../shared/components/atoms/modal';
 import { Card } from '../../../../../../shared/components/atoms/card';
 import { useI18n } from "vue-i18n";

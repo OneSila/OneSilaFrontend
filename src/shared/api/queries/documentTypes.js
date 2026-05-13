@@ -46,7 +46,7 @@ export const documentTypesQuerySelector = gql`
 `;
 
 export const getDocumentTypeQuery = gql`
-  query getDocumentType($id: GlobalID!) {
+  query getDocumentType($id: ID!) {
     documentType(id: $id) {
       id
       name

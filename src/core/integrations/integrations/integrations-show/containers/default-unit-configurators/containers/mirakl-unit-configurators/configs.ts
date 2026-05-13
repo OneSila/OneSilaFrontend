@@ -25,7 +25,7 @@ export const miraklDefaultUnitConfiguratorsListingConfigConstructor = (
     { name: 'defaultValue', type: FieldType.Text },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

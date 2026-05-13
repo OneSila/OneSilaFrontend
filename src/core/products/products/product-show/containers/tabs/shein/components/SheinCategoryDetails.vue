@@ -206,14 +206,9 @@ const remotePropertyPath = (propertyId: string) => {
   if (!remoteProperty?.id) {
     return undefined;
   }
-  const integrationId = props.channel?.integrationPtr?.id;
   return {
     name: 'integrations.remoteProperties.edit',
-    params: { type: 'shein', id: remoteProperty.id },
-    query: {
-      ...(integrationId ? { integrationId } : {}),
-      ...(props.salesChannelId ? { salesChannelId: props.salesChannelId } : {}),
-    },
+    params: { type: 'shein', integrationId: props.channel?.id || props.salesChannelId, id: remoteProperty.id },
   };
 };
 

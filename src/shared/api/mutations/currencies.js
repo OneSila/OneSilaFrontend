@@ -64,7 +64,7 @@ export const updateCurrencyMutation = gql`
 `;
 
 export const deleteCurrencyMutation = gql`
-  mutation deleteCurrency($id: GlobalID!) {
+  mutation deleteCurrency($id: ID!) {
     deleteCurrency(data: {id: $id}) {
       id
     }
@@ -72,7 +72,7 @@ export const deleteCurrencyMutation = gql`
 `;
 
 export const deleteCurrenciesMutation = gql`
-  mutation deleteCurrencies($ids: [GlobalID!]!) {
+  mutation deleteCurrencies($ids: [ID!]!) {
     deleteCurrencies(data: {ids: $ids}) {
       id
     }

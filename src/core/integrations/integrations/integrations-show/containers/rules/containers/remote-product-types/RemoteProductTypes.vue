@@ -58,8 +58,8 @@ const startMapping = async () => {
   if (id) {
     router.push({
       name: 'integrations.remoteProductTypes.edit',
-      params: { type: type.value, id },
-      query: { integrationId: integrationId.value, salesChannelId: salesChannelId.value, wizard: '1' },
+      params: { type: type.value, integrationId: props.id, id },
+      query: { wizard: '1' },
     });
   }
 };

@@ -2,7 +2,7 @@
 
 import {DocumentNode} from "graphql";
 import { useI18n } from 'vue-i18n';
-import {Ref, ref, computed, watch, onUnmounted} from 'vue';
+import { Ref, ref, computed, watch, onUnmounted } from 'vue';
 import { Card } from '../../../../../../atoms/card';
 import { Button } from '../../../../../../atoms/button';
 import { Link } from '../../../../../../atoms/link';

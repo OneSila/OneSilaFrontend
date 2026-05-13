@@ -21,7 +21,7 @@ const id = ref(String(route.params.id));
 const type = ref(String(route.params.type));
 const integrationId = ref('');
 const isMiraklFeedRoute = computed(() =>
-  type.value === IntegrationTypes.Mirakl && typeof route.query.integrationId === 'string'
+  type.value === IntegrationTypes.Mirakl && (typeof route.params.integrationId === 'string' || typeof route.query.integrationId === 'string')
 );
 
 const result = ref<any>(null);

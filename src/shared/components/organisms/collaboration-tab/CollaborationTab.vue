@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MarkdownIt from 'markdown-it';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
@@ -54,6 +55,36 @@ const TYPE_ASK_APPROVAL = 'ASK_APPROVAL';
 const TYPE_APPROVED = 'APPROVED';
 const TYPE_REJECTED = 'REJECTED';
 const ALL_MENTIONS_ID = '__all__';
+const markdownRenderer = new MarkdownIt({
+  breaks: true,
+  html: false,
+  linkify: true,
+});
+const defaultLinkOpenRenderer = markdownRenderer.renderer.rules.link_open;
+
+markdownRenderer.renderer.rules.link_open = (tokens, index, options, env, self) => {
+  const token = tokens[index];
+  const targetIndex = token.attrIndex('target');
+  const relIndex = token.attrIndex('rel');
+
+  if (targetIndex < 0) {
+    token.attrPush(['target', '_blank']);
+  } else {
+    token.attrs![targetIndex][1] = '_blank';
+  }
+
+  if (relIndex < 0) {
+    token.attrPush(['rel', 'noopener noreferrer']);
+  } else {
+    token.attrs![relIndex][1] = 'noopener noreferrer';
+  }
+
+  if (defaultLinkOpenRenderer) {
+    return defaultLinkOpenRenderer(tokens, index, options, env, self);
+  }
+
+  return self.renderToken(tokens, index, options);
+};
 
 const props = defineProps<{
   targetId: string;
@@ -244,6 +275,14 @@ const getEntryCardClasses = (type: string) => {
 };
 
 const shouldShowMentions = (entry: CollaborationEntry) => Boolean(entry.mentions?.length);
+
+const renderCommentMarkdown = (value?: string | null) => {
+  if (!value) {
+    return '';
+  }
+
+  return markdownRenderer.render(value);
+};
 
 const getEntrySummary = (entry: CollaborationEntry) => {
   const user = formatUserName(entry.createdByMultiTenantUser);
@@ -515,12 +554,11 @@ onMounted(loadMembers);
                     {{ getEntrySummary(entry) }}
                   </p>
 
-                  <p
+                  <div
                     v-if="entry.comment"
-                    class="mt-3 rounded-xl border border-slate-200 bg-slate-50/90 px-4 py-3 whitespace-pre-wrap text-sm leading-6 text-slate-700 shadow-sm"
-                  >
-                    {{ entry.comment }}
-                  </p>
+                    class="prose prose-sm mt-3 max-w-none break-words rounded-xl border border-slate-200 bg-slate-50/90 px-4 py-3 text-slate-700 shadow-sm prose-headings:font-semibold prose-headings:text-slate-900 prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-h4:text-sm prose-p:my-2 prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:text-indigo-500 prose-code:break-words prose-code:text-slate-800 prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
+                    v-html="renderCommentMarkdown(entry.comment)"
+                  ></div>
 
                   <div v-if="shouldShowMentions(entry)" class="mt-4 flex flex-wrap gap-2">
                     <span class="w-full text-xs font-semibold uppercase tracking-wide text-slate-400">

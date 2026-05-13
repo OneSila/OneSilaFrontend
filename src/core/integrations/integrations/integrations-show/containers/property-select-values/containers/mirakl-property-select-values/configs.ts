@@ -103,7 +103,7 @@ export const miraklPropertySelectValuesListingConfigConstructor = (
   addActions: true,
   addEdit: true,
   addShow: true,
-  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
+  urlQueryParams: {},
   editUrlName: 'integrations.remotePropertySelectValues.edit',
   showUrlName: 'integrations.remotePropertySelectValues.edit',
   addDelete: false,

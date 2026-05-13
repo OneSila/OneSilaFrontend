@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Label } from "../../../../../../../shared/components/atoms/label";
 import { TextInput } from "../../../../../../../shared/components/atoms/input-text";
-import { Icon } from "../../../../../../../shared/components/atoms/icon";
-import { Modal } from "../../../../../../../shared/components/atoms/modal";
-import { Card } from "../../../../../../../shared/components/atoms/card";
 import type { WoocommerceChannelInfo } from '../../../../integrations';
 
 const props = defineProps<{ channelInfo: WoocommerceChannelInfo }>();

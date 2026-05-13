@@ -23,7 +23,7 @@ export const updateAmazonVariationThemeMutation = gql`
 `;
 
 export const deleteAmazonVariationThemeMutation = gql`
-  mutation deleteAmazonVariationTheme($id: GlobalID!) {
+  mutation deleteAmazonVariationTheme($id: ID!) {
     deleteAmazonVariationTheme(data: { id: $id }) {
       id
     }

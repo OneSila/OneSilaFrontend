@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, onMounted, Ref, ref } from 'vue';
+import { computed, onMounted, Ref, ref } from 'vue';
 import { useI18n } from "vue-i18n";
 import {  FormType } from "../product";
 import { FieldType, ProductType } from "../../../../../../shared/utils/constants";

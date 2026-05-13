@@ -126,7 +126,7 @@ const fieldEnumMap: Record<ImportFieldKey, string> = {
   bulletPoints: 'BULLET_POINTS',
 };
 
-const emptyHtml = '<p><br></p>';
+const emptyHtml = '';
 
 const formatChannelLabel = (channel?: SalesChannel) => {
   if (!channel) return t('shared.labels.default');

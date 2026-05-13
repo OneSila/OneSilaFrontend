@@ -47,7 +47,7 @@ export const remoteDocumentTypesListingConfigConstructor = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

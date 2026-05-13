@@ -53,7 +53,7 @@ export const publicIssuesQuery = gql`
 `;
 
 export const publicIssueQuery = gql`
-  query PublicIssue($id: GlobalID!) {
+  query PublicIssue($id: ID!) {
     publicIssue(id: $id) {
       id
       code

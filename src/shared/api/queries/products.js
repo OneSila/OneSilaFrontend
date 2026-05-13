@@ -440,7 +440,7 @@ export const productTranslationsQuery = gql`
 `;
 
 export const getProductTranslationByLanguageQuery = gql`
-  query getProductTranslationByLanguageQuery($languageCode: String!, $productId: GlobalID!) {
+  query getProductTranslationByLanguageQuery($languageCode: String!, $productId: ID!) {
     productTranslations(filters: 
       {language: {exact: $languageCode},
         product: {id: {exact: $productId}}
@@ -460,7 +460,7 @@ export const getProductTranslationByLanguageQuery = gql`
 `;
 
 export const getProductContentByLanguageAndChannelQuery = gql`
-  query getProductContentByLanguageAndChannel($languageCode: String!, $productId: GlobalID!, $salesChannelId: GlobalID) {
+  query getProductContentByLanguageAndChannel($languageCode: String!, $productId: ID!, $salesChannelId: ID) {
     productTranslations(filters: {
       language: {exact: $languageCode},
       product: {id: {exact: $productId}},
@@ -483,7 +483,7 @@ export const getProductContentByLanguageAndChannelQuery = gql`
 export const getProductContentByLanguageAndDefaultQuery = gql`
   query getProductContentByLanguageAndDefault(
     $languageCode: String!
-    $productId: GlobalID!
+    $productId: ID!
   ) {
     productTranslations(filters: {
       language: {exact: $languageCode},
@@ -505,7 +505,7 @@ export const getProductContentByLanguageAndDefaultQuery = gql`
 `;
 
 export const getProductContentsByChannelQuery = gql`
-  query getProductContentsByChannel($productId: GlobalID!, $salesChannelId: GlobalID!) {
+  query getProductContentsByChannel($productId: ID!, $salesChannelId: ID!) {
     productTranslations(filters: {
       product: {id: {exact: $productId}},
       salesChannel: {id: {exact: $salesChannelId}}
@@ -526,7 +526,7 @@ export const getProductContentsByChannelQuery = gql`
 `;
 
 export const getProductContentsByDefaultQuery = gql`
-  query getProductContentsByDefault($productId: GlobalID!) {
+  query getProductContentsByDefault($productId: ID!) {
     productTranslations(filters: {
       product: {id: {exact: $productId}},
       salesChannel: {id: {isNull: true}}
@@ -958,7 +958,7 @@ export const bundleVariationsWithGeneralQuery = gql`
 `;
 
 export const getProductQuery = gql`
-  query getProduct($id: GlobalID!) {
+  query getProduct($id: ID!) {
     product(id: $id) {
       id
       sku
@@ -999,8 +999,138 @@ export const getProductQuery = gql`
   }
 `;
 
+export const getProductShowQuery = gql`
+  query getProductShow($id: ID!) {
+    product(id: $id) {
+      id
+      sku
+      active
+      type
+      createdAt
+      proxyId
+      name
+      thumbnailUrl
+      hasParents
+      productpropertySet {
+          id
+          property {
+            id
+            name
+            type
+            isProductType
+          }
+          valueSelect {
+            id
+            value
+            productpropertiesruleSet {
+                id
+                salesChannel {
+                  id
+                }
+            }
+          }
+          valueMultiSelect {
+             id
+             value
+          }
+          valueBoolean
+          valueInt
+          valueFloat
+          valueDate
+          valueDatetime
+      }
+      aliasParentProduct {
+        id
+        name
+        sku
+        type
+      }
+      aliasProducts {
+        id
+        name
+        type
+        sku
+        active
+        thumbnailUrl
+        inspectorStatus
+      }
+      percentageInspectorStatus {
+        percentage
+        inspectorStatus
+        blocks {
+          code
+          completed
+          fixingMessage
+        }
+      }
+      inspector {
+        id
+        hasMissingInformation
+      }
+      vatRate {
+        id
+        rate
+        name
+      }
+      allowBackorder
+      workflowproductassignmentSet {
+        id
+        workflow {
+          id
+          name
+          sortOrder
+          states {
+            id
+            value
+            sortOrder
+            isDefault
+          }
+        }
+        workflowState {
+          id
+          value
+          sortOrder
+          isDefault
+        }
+      }
+      saleschannelviewassignSet {
+          id
+          status
+          remoteId
+          remoteUrl
+          remoteProductPercentage
+          integrationType
+          product {
+            id
+            name
+          }
+          salesChannelView {
+            id
+            name
+            active
+            includeInTodo
+          }
+          remoteProduct {
+            id
+            hasErrors
+            status
+          }
+        }
+      rejectedsaleschannelviewassignSet {
+        id
+        salesChannelView {
+          id
+          name
+          active
+          includeInTodo
+        }
+      }
+    }
+  }
+`;
+
 export const getBundleProductQuery = gql`
-  query getBundleProduct($id: GlobalID!) {
+  query getBundleProduct($id: ID!) {
     bundleProduct(id: $id) {
       id
       sku
@@ -1010,7 +1140,7 @@ export const getBundleProductQuery = gql`
 `;
 
 export const getConfigurableProductQuery = gql`
-  query getConfigurableProduct($id: GlobalID!) {
+  query getConfigurableProduct($id: ID!) {
     configurableProduct(id: $id) {
       id
       sku
@@ -1020,7 +1150,7 @@ export const getConfigurableProductQuery = gql`
 `;
 
 export const getProductVariationQuery = gql`
-  query getProductVariation($id: GlobalID!) {
+  query getProductVariation($id: ID!) {
     productVariation(id: $id) {
       id
       sku
@@ -1030,7 +1160,7 @@ export const getProductVariationQuery = gql`
 `;
 
 export const getProductTranslationQuery = gql`
-  query getProductTranslation($id: GlobalID!) {
+  query getProductTranslation($id: ID!) {
     productTranslation(id: $id) {
       id
       product {
@@ -1045,7 +1175,7 @@ export const getProductTranslationQuery = gql`
 `;
 
 export const getConfigurableVariationQuery = gql`
-  query getConfigurableVariation($id: GlobalID!) {
+  query getConfigurableVariation($id: ID!) {
     configurableVariation(id: $id) {
       id
       parent {
@@ -1061,7 +1191,7 @@ export const getConfigurableVariationQuery = gql`
 `;
 
 export const getBundleVariationQuery = gql`
-  query getBundleVariation($id: GlobalID!) {
+  query getBundleVariation($id: ID!) {
     bundleVariation(id: $id) {
       id
       parent {
@@ -1099,7 +1229,7 @@ export const manufacturableProductsQuery = gql`
 `;
 
 export const getManufacturableProductQuery = gql`
-  query GetManufacturableProduct($id: GlobalID!) {
+  query GetManufacturableProduct($id: ID!) {
     manufacturableProduct(id: $id) {
       id
       name
@@ -1130,7 +1260,7 @@ export const dropshipProductsQuery = gql`
 `;
 
 export const getDropshipProductQuery = gql`
-  query GetDropshipProduct($id: GlobalID!) {
+  query GetDropshipProduct($id: ID!) {
     dropshipProduct(id: $id) {
       id
       name
@@ -1172,7 +1302,7 @@ export const billOfMaterialsQuery = gql`
 `;
 
 export const getBillOfMaterialQuery = gql`
-  query GetBillOfMaterial($id: GlobalID!) {
+  query GetBillOfMaterial($id: ID!) {
     billOfMaterial(id: $id) {
       id
       variation {

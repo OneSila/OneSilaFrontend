@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {onMounted, reactive, ref, computed, nextTick} from 'vue';
+import { onMounted, reactive, ref, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   CheckboxFormField, FormType,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  computed } from 'vue';
+import { computed } from 'vue';
 import { generateProductAiContentMutation } from '../../../api/mutations/llm.js'
 import { AiProcess } from "../ai-process";
 import { useI18n } from "vue-i18n";

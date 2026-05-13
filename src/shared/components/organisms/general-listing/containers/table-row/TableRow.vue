@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineProps, defineSlots } from 'vue';
+
 import { Button } from '../../../../atoms/button';
 import { ApolloAlertMutation } from '../../../../molecules/apollo-alert-mutation';
 import { Link } from '../../../../atoms/link';
@@ -7,8 +7,11 @@ import { Checkbox } from '../../../../atoms/checkbox';
 import { useI18n } from 'vue-i18n';
 import { getFieldComponent, accessNestedProperty } from '../../../general-show/showConfig';
 import { FieldType } from '../../../../../utils/constants';
+import { useRoute } from 'vue-router';
+import { withIntegrationRouteContext } from '../../../../../utils/integrationRoutes';
 
 const { t } = useI18n();
+const route = useRoute();
 
 const props = defineProps<{
   item: any;
@@ -41,6 +44,18 @@ const getImageValue = (field: any, item: any) => {
   return item.node[field.imageField];
 };
 
+const getEditRoute = (item: any) => {
+  const params = props.config.identifierKey !== undefined
+    ? { ...props.config.identifierVariables, id: item.node[props.config.identifierKey] }
+    : undefined;
+
+  return {
+    name: props.config.editUrlName,
+    params: withIntegrationRouteContext(route, props.config.editUrlName, params),
+    query: { ...props.config.urlQueryParams },
+  };
+};
+
 </script>
 
 <template>
@@ -57,13 +72,13 @@ const getImageValue = (field: any, item: any) => {
       <component
         v-if="field.type === FieldType.Text && field.addImage && field.imageField"
         :is="getFieldComponent(field.type)"
-        :field="getUpdatedField(field, item, index)"
+        :field="getUpdatedField(field, item, Number(index))"
         :model-value="getModelValue(field, item)"
         :image-value="getImageValue(field, item)" />
       <component
         v-else
         :is="getFieldComponent(field.type)"
-        :field="getUpdatedField(field, item, index)"
+        :field="getUpdatedField(field, item, Number(index))"
         :model-value="getModelValue(field, item)" />
     </td>
     <td v-if="config.addActions">
@@ -71,9 +86,7 @@ const getImageValue = (field: any, item: any) => {
         <slot name="additionalButtons" :item="item" />
         <Link
           v-if="config.addEdit"
-          :path="{ name: config.editUrlName,
-                   params: config.identifierKey !== undefined ? { ...config.identifierVariables, id: item.node[config.identifierKey] } : undefined,
-                   query: { ...config.urlQueryParams } }">
+          :path="getEditRoute(item)">
           <Button class="text-indigo-600 hover:text-indigo-900">{{ t('shared.button.edit') }}</Button>
         </Link>
         <ApolloAlertMutation

@@ -23,7 +23,7 @@ export const unitsQuery = gql`
 `;
 
 export const getUnitQuery = gql`
-  query getUnit($id: GlobalID!) {
+  query getUnit($id: ID!) {
     unit(id: $id) {
       id
       name

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {useI18n} from "vue-i18n";
-import {ref, computed} from "vue";
+import { ref, computed } from "vue";
 import {Tabs} from "../../../../../../../shared/components/molecules/tabs";
 import {Product} from "../../../../configs"
 import ProductEditView from "../../tabs/general/ProductEditView.vue";

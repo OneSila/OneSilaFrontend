@@ -40,8 +40,8 @@ const startMapping = async () => {
   if (id) {
     router.push({
       name: 'integrations.amazonDefaultUnitConfigurators.edit',
-      params: { type: 'amazon', id },
-      query: { integrationId: props.id, salesChannelId: props.salesChannelId, wizard: '1' },
+      params: { type: 'amazon', integrationId: props.id, id },
+      query: { wizard: '1' },
     });
   }
 };

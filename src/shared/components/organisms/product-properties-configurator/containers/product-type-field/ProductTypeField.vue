@@ -4,7 +4,7 @@ import { QueryFormField } from "../../../general-form/formConfig";
 import { FieldType } from "../../../../../utils/constants";
 import { productPropertiesRulesQuery, propertySelectValuesQuery } from "../../../../../api/queries/properties.js";
 import { useI18n } from "vue-i18n";
-import { defineEmits, onMounted, Ref, ref, watch } from "vue";
+import { onMounted, Ref, ref, watch } from "vue";
 import { FieldQuery } from "../../../general-form/containers/form-fields/field-query";
 import { Selector } from "../../../../atoms/selector";
 import { Link } from "../../../../atoms/link";

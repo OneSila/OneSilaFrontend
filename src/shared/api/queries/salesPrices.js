@@ -38,7 +38,7 @@ export const salesPricesQuery = gql`
 `;
 
 export const getSalesPriceByProductAndCurrencyQuery = gql`
-  query getSalesPriceByProductAndCurrency($currencyId: GlobalID!, $productId: GlobalID!) {
+  query getSalesPriceByProductAndCurrency($currencyId: ID!, $productId: ID!) {
     salesPrices(filters:  {currency: {id:{exact: $currencyId}}, product: {id: {exact: $productId}}}) {
       edges {
         node {
@@ -170,7 +170,7 @@ export const salesPriceListItemsProductIdsQuery = gql`
 `;
 
 export const getSalesPriceQuery = gql`
-  query getSalesPrice($id: GlobalID!) {
+  query getSalesPrice($id: ID!) {
     salesPrice(id: $id) {
       id
       product {
@@ -189,7 +189,7 @@ export const getSalesPriceQuery = gql`
 `;
 
 export const getSalesPriceListQuery = gql`
-  query getSalesPriceList($id: GlobalID!) {
+  query getSalesPriceList($id: ID!) {
     salesPriceList(id: $id) {
       id
       name
@@ -211,7 +211,7 @@ export const getSalesPriceListQuery = gql`
 `;
 
 export const getSalesPriceListItemQuery = gql`
-  query getSalesPriceListItem($id: GlobalID!) {
+  query getSalesPriceListItem($id: ID!) {
     salesPriceListItem(id: $id) {
       id
       salespricelist {

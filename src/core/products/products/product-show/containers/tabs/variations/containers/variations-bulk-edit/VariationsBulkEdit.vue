@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, nextTick, withDefaults } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue';
 import type { FetchPolicy } from '@apollo/client'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
@@ -18,9 +18,7 @@ import { Card } from "../../../../../../../../../shared/components/atoms/card";
 import { Button } from "../../../../../../../../../shared/components/atoms/button";
 import { Link } from "../../../../../../../../../shared/components/atoms/link";
 import { FieldQuery } from "../../../../../../../../../shared/components/organisms/general-form/containers/form-fields/field-query";
-import { Selector } from "../../../../../../../../../shared/components/atoms/selector";
 import type { QueryFormField } from "../../../../../../../../../shared/components/organisms/general-form/formConfig";
-import { Pagination } from "../../../../../../../../../shared/components/molecules/pagination";
 import { LocalLoader } from "../../../../../../../../../shared/components/atoms/local-loader";
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";
 import type { MatrixColumn, MatrixEditorExpose } from "../../../../../../../../../shared/components/organisms/matrix-editor/types";
@@ -90,6 +88,10 @@ const saving = ref(false)
 const skipHistory = ref(false)
 const matrixRef = ref<MatrixEditorExpose | null>(null)
 const readOnlyColumns = new Set(['sku', 'name', 'active'])
+const INITIAL_VARIATION_LIMIT = 20
+const LOAD_MORE_VARIATION_LIMIT = 10
+const MAX_GRAPHQL_PAGE_SIZE = 100
+const CONNECTION_HYDRATION_PAGE_SIZE = 10
 
 const copySkuToClipboard = async (sku: string) => {
   try {
@@ -101,15 +103,7 @@ const copySkuToClipboard = async (sku: string) => {
 }
 
 const pageInfo = ref<any | null>(null)
-const limit = ref(20)
-const perPageOptions = [
-  { name: '10', value: 10 },
-  { name: '20', value: 20 },
-  { name: '50', value: 50 },
-  { name: '100', value: 100 },
-]
-const fetchPaginationData = ref<Record<string, any>>({})
-fetchPaginationData.value['first'] = limit.value
+const isLoadingMoreRows = ref(false)
 
 const filteredProperties = computed(() => {
   return properties.value.filter((p) => {
@@ -584,38 +578,138 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
   return fields
 })
 
-const fetchVariationProperties = async (variationId: string) => {
-  const { data } = await apolloClient.query({
-    query: productPropertiesQuery,
-    variables: { filter: { product: { id: { exact: variationId } } }, first: 100 },
-    fetchPolicy: 'network-only',
-  })
-  const edges = data?.productProperties?.edges ?? []
-  const propertyValues: Record<string, any> = {}
-  await Promise.all(
-    edges.map(async ({ node }: any) => {
-      let translation = null
-      if ([PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(node.property.type)) {
-          const { data: tData } = await apolloClient.query({
-            query: productPropertyTextTranslationsQuery,
-            variables: {
-              filter: {
-                productProperty: { id: { exact: node.id } },
-                language: { exact: language.value },
-              },
-            },
-            fetchPolicy: 'network-only',
-          })
-        const tNode = tData?.productPropertyTextTranslations?.edges?.[0]?.node
-        translation = tNode ? { ...tNode } : { language: language.value }
-      }
-      propertyValues[node.property.id] = { ...node, translation }
-    })
+const getMatrixPropertyIds = () =>
+  Array.from(
+    new Set(
+      [
+        productTypePropertyId.value,
+        ...properties.value.map((property) => property.id),
+      ].filter(Boolean) as string[]
+    )
   )
-  return propertyValues
+
+const fetchConnectionNodes = async (
+  queryDocument: any,
+  dataKey: string,
+  variables: Record<string, any>,
+  policy: FetchPolicy = 'network-only',
+  pageSize = CONNECTION_HYDRATION_PAGE_SIZE
+) => {
+  let after: string | null = null
+  let hasNextPage = true
+  const nodes: any[] = []
+
+  while (hasNextPage) {
+    const { data } = await apolloClient.query({
+      query: queryDocument,
+      variables: {
+        ...variables,
+        first: Math.min(pageSize, MAX_GRAPHQL_PAGE_SIZE),
+        after,
+      },
+      fetchPolicy: policy,
+    })
+    const connection = data?.[dataKey]
+    const edges = connection?.edges ?? []
+    edges.forEach((edge: any) => {
+      if (edge?.node) {
+        nodes.push(edge.node)
+      }
+    })
+    hasNextPage = Boolean(connection?.pageInfo?.hasNextPage && connection?.pageInfo?.endCursor)
+    after = connection?.pageInfo?.endCursor ?? null
+  }
+
+  return nodes
 }
 
-const fetchVariationNodes = async (policy: FetchPolicy = 'network-only') => {
+const fetchVariationPropertiesBatch = async (variationIds: string[]) => {
+  const propertyValuesByProductId = new Map<string, Record<string, any>>(
+    variationIds.map((id) => [id, {}])
+  )
+  const propertyIds = getMatrixPropertyIds()
+  if (!variationIds.length || !propertyIds.length) {
+    return propertyValuesByProductId
+  }
+
+  const propertyNodes = await fetchConnectionNodes(
+    productPropertiesQuery,
+    'productProperties',
+    {
+      filter: {
+        product: { id: { inList: variationIds } },
+        property: { id: { inList: propertyIds } },
+      },
+    }
+  )
+
+  const translatablePropertyIds = new Set(
+    properties.value
+      .filter((property) =>
+        [PropertyTypes.TEXT, PropertyTypes.DESCRIPTION].includes(property.type)
+      )
+      .map((property) => property.id)
+  )
+  const translatableProductPropertyIds = propertyNodes
+    .filter((node: any) => translatablePropertyIds.has(node?.property?.id))
+    .map((node: any) => node.id)
+    .filter(Boolean)
+  const translationsByProductPropertyId = new Map<string, any>()
+
+  if (language.value && translatableProductPropertyIds.length) {
+    const translationNodes = await fetchConnectionNodes(
+      productPropertyTextTranslationsQuery,
+      'productPropertyTextTranslations',
+      {
+        filter: {
+          productProperty: { id: { inList: translatableProductPropertyIds } },
+          language: { exact: language.value },
+        },
+      }
+    )
+    translationNodes.forEach((node: any) => {
+      const productPropertyId = node?.productProperty?.id
+      if (productPropertyId && !translationsByProductPropertyId.has(productPropertyId)) {
+        translationsByProductPropertyId.set(productPropertyId, node)
+      }
+    })
+  }
+
+  propertyNodes.forEach((node: any) => {
+    const productId = node?.product?.id
+    const propertyId = node?.property?.id
+    if (!productId || !propertyId) {
+      return
+    }
+    const values = propertyValuesByProductId.get(productId) ?? {}
+    const isTranslatable = translatablePropertyIds.has(propertyId)
+    values[propertyId] = {
+      ...node,
+      translation: isTranslatable
+        ? translationsByProductPropertyId.get(node.id) ?? { language: language.value }
+        : null,
+    }
+    propertyValuesByProductId.set(productId, values)
+  })
+
+  return propertyValuesByProductId
+}
+
+const hydrateVariationRows = async (rows: any[]) => {
+  const variationIds = rows
+    .map((row) => row?.variation?.id)
+    .filter(Boolean)
+  const propertyValuesByProductId = await fetchVariationPropertiesBatch(variationIds)
+  return rows.map((row) => ({
+    ...row,
+    propertyValues: propertyValuesByProductId.get(row.variation.id) ?? {},
+  }))
+}
+
+const fetchVariationNodes = async (
+  policy: FetchPolicy = 'network-only',
+  pagination: Record<string, any> = { first: INITIAL_VARIATION_LIMIT }
+) => {
   if (!parentProduct.value || !parentType.value) {
     pageInfo.value = null
     return []
@@ -624,7 +718,7 @@ const fetchVariationNodes = async (policy: FetchPolicy = 'network-only') => {
     query: query.value,
     variables: {
       filter: { parent: { id: { exact: parentProduct.value.id } } },
-      ...fetchPaginationData.value,
+      ...pagination,
     },
     fetchPolicy: policy,
   })
@@ -634,7 +728,10 @@ const fetchVariationNodes = async (policy: FetchPolicy = 'network-only') => {
   return edges.map(({ node }: any) => node)
 }
 
-const fetchProducts = async (policy: FetchPolicy = 'network-only') => {
+const fetchProducts = async (
+  policy: FetchPolicy = 'network-only',
+  pagination: Record<string, any> = { first: INITIAL_VARIATION_LIMIT }
+) => {
   const ids = props.productIds.filter(Boolean)
   if (!ids.length) {
     pageInfo.value = null
@@ -644,7 +741,7 @@ const fetchProducts = async (policy: FetchPolicy = 'network-only') => {
     query: productsForVariationsBulkEditQuery,
     variables: {
       filter: { id: { inList: ids } },
-      ...fetchPaginationData.value,
+      ...pagination,
     },
     fetchPolicy: policy,
   })
@@ -662,32 +759,98 @@ const fetchProducts = async (policy: FetchPolicy = 'network-only') => {
   }))
 }
 
-const fetchVariations = async (policy: FetchPolicy = 'network-only') => {
+const fetchVariationRows = async (
+  policy: FetchPolicy = 'network-only',
+  pagination: Record<string, any> = { first: INITIAL_VARIATION_LIMIT },
+  includeProperties = true
+) => {
   let variationNodes: any[] = []
   if (hasProductIds.value) {
-    variationNodes = await fetchProducts(policy)
+    variationNodes = await fetchProducts(policy, pagination)
   } else if (props.product) {
-    variationNodes = await fetchVariationNodes(policy)
+    variationNodes = await fetchVariationNodes(policy, pagination)
   } else {
     pageInfo.value = null
-    variations.value = []
-    return
+    return []
   }
-  variations.value = await Promise.all(
-    variationNodes.map(async (node: any) => ({
-      ...node,
-      propertyValues: await fetchVariationProperties(node.variation.id),
-    }))
-  )
+  const rows = variationNodes.map((node: any) => ({
+    ...node,
+    propertyValues: {},
+  }))
+  return includeProperties ? hydrateVariationRows(rows) : rows
+}
+
+const replaceVariations = async (
+  policy: FetchPolicy = 'network-only',
+  first = INITIAL_VARIATION_LIMIT,
+  includeProperties = true
+) => {
+  let remaining = first
+  let after: string | null = null
+  const rows: any[] = []
+
+  while (remaining > 0) {
+    const chunkSize = Math.min(remaining, MAX_GRAPHQL_PAGE_SIZE)
+    const chunk = await fetchVariationRows(
+      policy,
+      after ? { first: chunkSize, after } : { first: chunkSize },
+      includeProperties
+    )
+    rows.push(...chunk)
+    remaining -= chunkSize
+
+    if (!pageInfo.value?.hasNextPage || !pageInfo.value?.endCursor) {
+      break
+    }
+    after = pageInfo.value.endCursor
+  }
+
+  variations.value = rows
+}
+
+const reloadLoadedVariations = async (policy: FetchPolicy = 'network-only') => {
+  const loadedCount = Math.max(variations.value.length, INITIAL_VARIATION_LIMIT)
+  await replaceVariations(policy, loadedCount)
+}
+
+const loadMoreVariations = async () => {
+  if (isLoadingMoreRows.value || loading.value || saving.value) return
+  const after = pageInfo.value?.endCursor ?? null
+  if (!pageInfo.value?.hasNextPage || !after) return
+
+  isLoadingMoreRows.value = true
+  skipHistory.value = true
+  try {
+    const nextRows = await fetchVariationRows(
+      'network-only',
+      { first: LOAD_MORE_VARIATION_LIMIT, after },
+      true
+    )
+    variations.value = [...variations.value, ...nextRows]
+    originalVariations.value = [
+      ...originalVariations.value,
+      ...JSON.parse(JSON.stringify(nextRows)),
+    ]
+    computeChanges()
+    matrixRef.value?.resetHistory(variations.value)
+  } finally {
+    skipHistory.value = false
+    isLoadingMoreRows.value = false
+  }
 }
 
 watch(language, async () => {
+  if (!variations.value.length) {
+    return
+  }
+  loading.value = true
   skipHistory.value = true
-  await fetchVariations()
+  variations.value = await hydrateVariationRows(variations.value)
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
   skipHistory.value = false
+  loading.value = false
 })
 
 watch(selectedRuleSalesChannelId, async (newVal, oldVal) => {
@@ -707,7 +870,7 @@ watch(selectedRuleSalesChannelId, async (newVal, oldVal) => {
   loading.value = true
   skipHistory.value = true
   await fetchProperties()
-  await fetchVariations()
+  variations.value = await hydrateVariationRows(variations.value)
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
@@ -728,8 +891,9 @@ onMounted(async () => {
   loading.value = true
   await fetchDefaultLanguage()
   skipHistory.value = true
-  await fetchVariations()
+  await replaceVariations('network-only', INITIAL_VARIATION_LIMIT, false)
   await fetchProperties()
+  variations.value = await hydrateVariationRows(variations.value)
   originalVariations.value = JSON.parse(JSON.stringify(variations.value))
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
@@ -888,49 +1052,6 @@ watch(
   { deep: true }
 )
 
-const setPaginationVariables = async (
-  firstVal: number | null = null,
-  lastVal: number | null = null,
-  beforeVal: string | null = null,
-  afterVal: string | null = null
-) => {
-  const fetchNewPaginationData: Record<string, any> = {}
-  if (firstVal) fetchNewPaginationData['first'] = firstVal
-  if (lastVal) fetchNewPaginationData['last'] = lastVal
-  if (beforeVal) fetchNewPaginationData['before'] = beforeVal
-  if (afterVal) fetchNewPaginationData['after'] = afterVal
-  fetchPaginationData.value = fetchNewPaginationData
-  skipHistory.value = true
-  await fetchVariations()
-  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
-  computeChanges()
-  matrixRef.value?.resetHistory(variations.value)
-  skipHistory.value = false
-}
-
-const handleQueryChanged = async (queryData) => {
-  const newQuery = queryData.query
-  const beforeValue = typeof newQuery.before === 'string' ? newQuery.before : null
-  const afterValue = typeof newQuery.after === 'string' ? newQuery.after : null
-  if (newQuery.before) {
-    await setPaginationVariables(null, limit.value, beforeValue, null)
-  }
-  if (newQuery.after) {
-    await setPaginationVariables(limit.value, null, null, afterValue)
-  }
-  if (newQuery.last === 'true') {
-    await setPaginationVariables(null, limit.value, null, null)
-  }
-  if (newQuery.first === 'true') {
-    await setPaginationVariables(limit.value, null, null, null)
-  }
-}
-
-const updateLimitPerPage = async (value: number) => {
-  limit.value = value
-  await setPaginationVariables(limit.value, null, null, null)
-}
-
 const hasChanges = computed(
   () =>
     Boolean(toCreate.value.length || toUpdate.value.length || toDelete.value.length)
@@ -991,8 +1112,8 @@ const save = async () => {
       skipHistory.value = false
       return
     }
-    await fetchVariations('network-only')
     await fetchProperties()
+    await reloadLoadedVariations('network-only')
     originalVariations.value = JSON.parse(JSON.stringify(variations.value))
     computeChanges()
     matrixRef.value?.resetHistory(variations.value)
@@ -1282,9 +1403,9 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
 
 <template>
   <div class="relative w-full min-w-0 variations-bulk-edit">
-    <template v-if="isFetchingProperties && !canRenderMatrix">
+    <template v-if="(loading || isFetchingProperties) && !canRenderMatrix">
       <div class="flex items-center justify-center py-10">
-        <LocalLoader :loading="isFetchingProperties" />
+        <LocalLoader :loading="loading || isFetchingProperties" />
       </div>
     </template>
     <template v-else-if="canRenderMatrix">
@@ -1295,11 +1416,16 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
         :loading="loading"
         :saving="saving"
         :has-changes="hasChanges"
+        :initial-visible-rows="INITIAL_VARIATION_LIMIT"
+        :visible-rows-increment="LOAD_MORE_VARIATION_LIMIT"
+        :has-more-rows="Boolean(pageInfo?.hasNextPage)"
+        :loading-more-rows="isLoadingMoreRows"
         row-key="id"
         :get-cell-value="getMatrixCellValue"
         :set-cell-value="setMatrixCellValue"
         :clone-cell-value="cloneMatrixCellValue"
         :clear-cell-value="clearMatrixCellValue"
+        @load-more="loadMoreVariations"
         @save="save"
       >
         <template #filters>
@@ -1452,26 +1578,6 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
         </template>
       </template>
       </MatrixEditor>
-      <div class="py-2 px-2 flex items-center space-x-2">
-        <Pagination
-          v-if="pageInfo"
-          :page-info="pageInfo"
-          :change-query-params="false"
-          @query-changed="handleQueryChanged"
-        />
-        <div v-if="pageInfo && (pageInfo.hasNextPage || pageInfo.hasPreviousPage)">
-          <Selector
-            :options="perPageOptions"
-            :model-value="limit"
-            :clearable="false"
-            dropdown-position="bottom"
-            value-by="value"
-            label-by="name"
-            :placeholder="t('pagination.perPage')"
-            @update:model-value="updateLimitPerPage"
-          />
-        </div>
-      </div>
     </template>
     <div
       v-else

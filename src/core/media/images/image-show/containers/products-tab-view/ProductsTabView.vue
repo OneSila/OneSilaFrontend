@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { mediaProductThroughQuery} from "../../../../../../shared/api/queries/media.js";
 import {SearchConfig} from "../../../../../../shared/components/organisms/general-search/searchConfig";

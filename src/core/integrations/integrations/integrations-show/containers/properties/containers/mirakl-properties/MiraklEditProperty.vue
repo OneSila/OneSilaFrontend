@@ -26,8 +26,8 @@ const route = useRoute();
 
 const miraklPropertyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId?.toString() || '';
-const salesChannelId = route.query.salesChannelId?.toString() || '';
+const integrationId = route.params.integrationId?.toString() || route.query.integrationId?.toString() || '';
+const salesChannelId = route.params.integrationId?.toString() || route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const propertyId = route.query.propertyId?.toString() || null;
 const returnTab = route.query.fromTab?.toString() || 'properties';
@@ -538,7 +538,7 @@ onMounted(async () => {
     formConfig.value.submitUrl = {
       name: 'integrations.remoteProperties.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1', fromTab: returnTab },
+      query: { wizard: '1', fromTab: returnTab },
     };
     formConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
     return;

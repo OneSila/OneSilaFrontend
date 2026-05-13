@@ -34,7 +34,7 @@ export const updateDocumentTypeMutation = gql`
 `;
 
 export const deleteDocumentTypeMutation = gql`
-  mutation deleteDocumentType($id: GlobalID!) {
+  mutation deleteDocumentType($id: ID!) {
     deleteDocumentType(data: { id: $id }) {
       id
     }

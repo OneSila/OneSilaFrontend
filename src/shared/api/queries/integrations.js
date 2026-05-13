@@ -6,7 +6,6 @@ export const integrationsQuery = gql`
       edges {
         node {
           id
-          proxyId
           hostname
           active
           connected

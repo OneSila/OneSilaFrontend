@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, computed, ref, onMounted, watch} from 'vue';
+import { reactive, computed, ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Wizard } from "../../../../shared/components/molecules/wizard";

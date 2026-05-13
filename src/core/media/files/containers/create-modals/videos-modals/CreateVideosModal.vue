@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, withDefaults } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {Modal} from '../../../../../../shared/components/atoms/modal';
 import {Card} from '../../../../../../shared/components/atoms/card';
 import {WebsiteInput} from "../../../../../../shared/components/atoms/input-website";

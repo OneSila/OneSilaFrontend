@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, withDefaults } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import MatrixEditor from "../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue";

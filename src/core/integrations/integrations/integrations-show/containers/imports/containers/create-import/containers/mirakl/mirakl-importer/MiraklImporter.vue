@@ -128,7 +128,7 @@ const fetchIntegrationData = async () => {
 
     const channel = data?.miraklChannel;
     hasFinishedSchema.value = Boolean(channel?.firstImportComplete);
-    salesChannelId.value = channel?.saleschannelPtr?.id ?? null;
+    salesChannelId.value = channel?.id ?? null;
   } catch (error) {
     console.error(error);
   } finally {

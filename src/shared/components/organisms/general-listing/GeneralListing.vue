@@ -20,10 +20,11 @@ import { Toast } from "../../../modules/toast";
 import Swal from 'sweetalert2';
 import { SweetAlertOptions } from 'sweetalert2';
 import type { DocumentNode, FieldNode, SelectionSetNode } from 'graphql';
-import { print, visit } from 'graphql';
+import { Kind, print, visit } from 'graphql';
 import { useAppStore } from '../../../plugins/store';
 import { Button } from "../../atoms/button";
 import { Loader } from "../../atoms/loader";
+import { withIntegrationRouteContext } from "../../../utils/integrationRoutes";
 
 const { t } = useI18n();
 const SELECT_ALL_PAGE_SIZE = 100;
@@ -71,7 +72,7 @@ const getShowRoute = (item) => {
 
   return {
     name: props.config.showUrlName,
-    params,
+    params: withIntegrationRouteContext(route, props.config.showUrlName, params),
     query: {...props.config.urlQueryParams}
   };
 };
@@ -93,18 +94,18 @@ const getUpdatedField = (field, item, index) => {
 }
 
 const createFieldNode = (name: string): FieldNode => ({
-  kind: 'Field',
-  name: { kind: 'Name', value: name }
+  kind: Kind.FIELD,
+  name: { kind: Kind.NAME, value: name }
 });
 
 const createSelectionSet = (fields: string[]): SelectionSetNode => ({
-  kind: 'SelectionSet',
+  kind: Kind.SELECTION_SET,
   selections: fields.map((field) => createFieldNode(field))
 });
 
 const createNodeField = (identifier: string): FieldNode => ({
-  kind: 'Field',
-  name: { kind: 'Name', value: 'node' },
+  kind: Kind.FIELD,
+  name: { kind: Kind.NAME, value: 'node' },
   selectionSet: createSelectionSet([identifier])
 });
 

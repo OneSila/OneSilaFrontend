@@ -16,6 +16,7 @@ import { displayApolloError } from "../../../../../../../../shared/utils";
 import { Toast } from "../../../../../../../../shared/modules/toast";
 import { PropertyTypes } from "../../../../../../../../shared/utils/constants";
 import { IntegrationTypes } from "../../../../../integrations";
+import { withIntegrationRouteContext } from "../../../../../../../../shared/utils/integrationRoutes";
 
 type RouteBuilderContext = {
   id: string;
@@ -41,7 +42,7 @@ const props = defineProps<{
   autoMapMutation?: any;
 }>();
 
-const emit = defineEmits(['pull-data']);
+defineEmits(['pull-data']);
 const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
@@ -190,6 +191,7 @@ const startMapping = async () => {
 
   router.push({
     ...baseRoute,
+    params: withIntegrationRouteContext(route, baseRoute.name, baseRoute.params),
     query: {
       ...(baseRoute.query || {}),
       ...nextQuery,
@@ -270,7 +272,6 @@ const autoMapPerfectMatches = async () => {
           :query="listingQuery"
           :query-key="listingQueryKey"
           :fixed-filter-variables="mergedFixedFilterVariables"
-          @pull-data="emit('pull-data')"
         >
           <template v-if="$slots.bulkActions" #bulkActions="slotProps">
             <slot name="bulkActions" v-bind="{ ...slotProps, clearSelection }" />

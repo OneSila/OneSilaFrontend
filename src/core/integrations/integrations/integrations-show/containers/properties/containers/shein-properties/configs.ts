@@ -130,7 +130,7 @@ export const sheinPropertiesListingConfigConstructor = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   editUrlName: 'integrations.remoteProperties.edit',

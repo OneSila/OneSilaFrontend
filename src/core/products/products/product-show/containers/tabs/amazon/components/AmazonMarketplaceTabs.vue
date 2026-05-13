@@ -24,7 +24,7 @@ const hasAssignedViewData = computed(
   () => Object.keys(props.assignedViewIds || {}).length > 0,
 );
 
-const getViewAssignmentKey = (view: any) => view?.proxyId || view?.id || null;
+const getViewAssignmentKey = (view: any) => view?.id || null;
 
 const MARKETPLACE_KEY_SEPARATOR = '::';
 const createMarketplaceKey = (viewId: string, productId?: string | null) =>

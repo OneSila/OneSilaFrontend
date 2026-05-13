@@ -53,7 +53,6 @@ const config: RemoteSelectValueEditPropertyConfig = {
       ? {
           name: 'integrations.remoteProperties.edit',
           params: { type: ctx.type, id: ctx.propertyId },
-          query: { integrationId: ctx.integrationId, salesChannelId: ctx.salesChannelId },
         }
       : null,
   remoteFields: [

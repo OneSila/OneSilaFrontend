@@ -23,7 +23,7 @@ export const updateAmazonExternalProductIdMutation = gql`
 `;
 
 export const deleteAmazonExternalProductIdMutation = gql`
-  mutation deleteAmazonExternalProductId($id: GlobalID!) {
+  mutation deleteAmazonExternalProductId($id: ID!) {
     deleteAmazonExternalProductId(data: { id: $id }) {
       id
     }

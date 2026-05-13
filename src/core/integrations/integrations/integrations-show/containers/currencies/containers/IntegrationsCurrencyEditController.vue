@@ -12,7 +12,7 @@ const route = useRoute();
 
 const currencyId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId ? route.query.integrationId.toString() : '';
+const integrationId = route.params.integrationId?.toString() || (route.query.integrationId ? route.query.integrationId.toString() : '');
 
 const formConfig = currencyEditFormConfigConstructor(t, type.value, currencyId.value, integrationId);
 </script>

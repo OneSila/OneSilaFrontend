@@ -153,7 +153,7 @@ export const ebayPropertiesListingConfigConstructor = (t: Function, specificInte
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

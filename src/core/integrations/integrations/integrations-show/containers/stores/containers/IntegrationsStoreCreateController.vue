@@ -12,7 +12,7 @@ const { t } = useI18n();
 
 const type = ref(String(route.params.type));
 const integrationId = route.params.integrationId ? route.params.integrationId.toString() : '';
-const salesChannelId = route.query.salesChannelId ? route.query.salesChannelId.toString() : '';
+const salesChannelId = integrationId;
 
 const formConfig = storeCreateFormConfigConstructor(t, type.value, salesChannelId, integrationId);
 </script>

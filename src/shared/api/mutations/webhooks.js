@@ -83,7 +83,7 @@ export const regenerateWebhookIntegrationSecretMutation = gql`
 `;
 
 export const deleteWebhookIntegrationMutation = gql`
-  mutation deleteWebhookIntegration($id: GlobalID!) {
+  mutation deleteWebhookIntegration($id: ID!) {
     deleteWebhookIntegration(data: {id: $id}) {
       id
     }
@@ -91,7 +91,7 @@ export const deleteWebhookIntegrationMutation = gql`
 `;
 
 export const deleteWebhookIntegrationsMutation = gql`
-  mutation deleteWebhookIntegrations($ids: [GlobalID!]!) {
+  mutation deleteWebhookIntegrations($ids: [ID!]!) {
     deleteWebhookIntegrations(data: {ids: $ids}) {
       id
     }

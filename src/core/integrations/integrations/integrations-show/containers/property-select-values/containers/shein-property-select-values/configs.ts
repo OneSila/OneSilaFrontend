@@ -112,7 +112,7 @@ export const sheinPropertySelectValuesListingConfigConstructor = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

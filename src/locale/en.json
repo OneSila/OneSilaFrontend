@@ -731,7 +731,18 @@
       "atoms": {
         "textHtmlEditor": {
           "placeholder": "Type here...",
-          "invalidHtml": "Contains broken HTML"
+          "invalidHtml": "Contains broken HTML",
+          "toolbar": {
+            "normal": "Normal",
+            "heading": "Heading",
+            "bold": "Bold",
+            "italic": "Italic",
+            "underline": "Underline",
+            "orderedList": "Ordered list",
+            "bulletList": "Bullet list",
+            "blockquote": "Quote",
+            "clean": "Remove formatting"
+          }
         }
       },
       "organisms": {
@@ -1708,6 +1719,8 @@
         }
       },
       "matrix": {
+        "loadedRows": "Loaded {visible} rows",
+        "visibleRows": "Showing {visible} of {total} rows",
         "rowActions": {
           "copy": "Copy row",
           "paste": "Paste row"
@@ -2527,6 +2540,7 @@
           "notAssignedToStore": "Not Assigned To Store",
           "presentOnStore": "Present On Channel",
           "notPresentOnStore": "Not Present On Channel",
+          "presentOnAnyStore": "Present On Any Channel",
           "rejectedForStoreView": "Rejected For Store View",
           "todoForStoreView": "Undecided For Store View",
           "hasTodoSalesChannelView": "Has Undecided Channel View",
@@ -2634,6 +2648,7 @@
           "excludeSheinProductCategory": "Prefer remote IDs when excluding categories (names can repeat).",
           "presentOnStore": "Listing exists on the sales channel, including variations.",
           "notPresentOnStore": "Variations included.",
+          "presentOnAnyStore": "Yes shows products listed on at least one sales channel. No shows products that are not listed on any sales channel.",
           "hasAttribute": "Product has the attribute assigned (any value).",
           "missingAttribute": "Product is missing the attribute assignment."
         }
@@ -3639,7 +3654,11 @@
         "name": "Name",
         "code": "Code",
         "sortOrder": "Sort Order",
-        "autoAddOnProduct": "Auto Add On Product",
+        "autoAddProductTypes": "Auto Add Product Types",
+        "autoAddConfigurableProducts": "Configurable Products",
+        "autoAddSimpleProducts": "Simple Products",
+        "autoAddBundleProducts": "Bundle Products",
+        "autoAddAliasProducts": "Alias Products",
         "stateCount": "States",
         "assignmentCount": "Assignments"
       },
@@ -3676,7 +3695,7 @@
         "codeGeneratedHelp": "The workflow code is generated automatically by the backend.",
         "autoAddNeedsStates": "Add at least one state before enabling automatic product assignment.",
         "autoAddToggle": "Automatically assign this workflow to newly created products.",
-        "autoAddHelp": "When enabled, OneSila uses the default state for new product assignments.",
+        "autoAddHelp": "When enabled, OneSila uses the default state for new assignments of the selected product types.",
         "deleteBlockedWorkflow": "This workflow cannot be deleted because it still has product assignments.",
         "deleteBlockedState": "This state cannot be deleted because it is already used by product assignments.",
         "confirmStateDelete": "Delete this workflow state from the workflow configuration?",
@@ -4278,6 +4297,12 @@
   },
   "integrations": {
     "title": "Integrations",
+    "assignments": {
+      "title": "Assignments",
+      "alerts": {
+        "bulkDeleteSuccess": "Assignments deleted successfully."
+      }
+    },
     "integrationTypes": {
       "magento": "Magento",
       "shopify": "Shopify",
@@ -5112,6 +5137,7 @@
       },
       "products": {
         "labels": {
+          "salesChannel": "Sales channel",
           "store": "Store",
           "excludeStores": "Exclude Stores",
           "hasSyncRequests": "Needs resync"

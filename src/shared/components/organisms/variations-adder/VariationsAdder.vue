@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, Ref, ref, watch} from 'vue';
+import { onMounted, Ref, ref, watch } from 'vue';
 import { RelatedProduct } from "../../../../core/products/products/product-create/containers/product";
 import { Button } from "../../atoms/button";
 import { Icon } from "../../atoms/icon";

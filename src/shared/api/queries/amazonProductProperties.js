@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const amazonProductPropertiesQuery = gql`
-  query AmazonProductProperties($remoteProductId: GlobalID!) {
+  query AmazonProductProperties($remoteProductId: ID!) {
     amazonProductProperties(
       filters: { remoteProduct: { id: { exact: $remoteProductId } } }
     ) {

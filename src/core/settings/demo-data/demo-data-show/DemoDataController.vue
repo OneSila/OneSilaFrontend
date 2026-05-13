@@ -5,7 +5,7 @@ import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs
 import SettingsTemplate from "../../SettingsTemplate.vue";
 import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
 import { getTabsConfig } from "../../tabs";
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
 import {hasDemoDataQuery} from "../../../../shared/api/queries/me.js";
 import {createDemoData, deleteDemoData} from "../../../../shared/api/mutations/auth.js";

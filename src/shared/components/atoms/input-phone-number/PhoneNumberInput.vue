@@ -2,7 +2,7 @@
 import MazPhoneNumberInput from 'maz-ui/components/MazPhoneNumberInput'
 import type {CountryCode} from 'maz-ui/components/MazPhoneNumberInput';
 
-import {ref} from 'vue'
+import { ref } from 'vue';
 import {useI18n} from "vue-i18n";
 import {useAppStore} from "../../../plugins/store";
 import {Label} from "../label";

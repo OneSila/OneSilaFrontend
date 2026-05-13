@@ -52,7 +52,7 @@ export const mediaQuery = gql`
 `;
 
 export const getMediaQuery = gql`
-  query getMedia($id: GlobalID!) {
+  query getMedia($id: ID!) {
     media(id: $id) {
           id
           proxyId
@@ -109,7 +109,7 @@ export const imageQuery = gql`
 `;
 
 export const getImageQuery = gql`
-  query getImage($id: GlobalID!) {
+  query getImage($id: ID!) {
     image(id: $id) {
           id
           proxyId
@@ -154,7 +154,7 @@ export const videoQuery = gql`
 `;
 
 export const getVideoQuery = gql`
-  query getVideo($id: GlobalID!) {
+  query getVideo($id: ID!) {
     video(id: $id) {
       id
       type
@@ -212,7 +212,7 @@ export const fileQuery = gql`
 `;
 
 export const getFileQuery = gql`
-  query getFile($id: GlobalID!) {
+  query getFile($id: ID!) {
     file(id: $id) {
       id
       fileUrl
@@ -317,7 +317,7 @@ export const mediaProductThroughQuery = gql`
 `;
 
 export const getMediaProductThroughQuery = gql`
-  query getMediaProductThrough($id: GlobalID!) {
+  query getMediaProductThrough($id: ID!) {
     mediaProductThrough(id: $id) {
       id
       media {

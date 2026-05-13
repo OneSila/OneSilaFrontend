@@ -9,7 +9,7 @@ import { GeneralListing } from "../../../../shared/components/organisms/general-
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery } from '../configs'
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
 import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
-import {ref} from "vue";
+import { ref } from "vue";
 
 const { t } = useI18n();
 

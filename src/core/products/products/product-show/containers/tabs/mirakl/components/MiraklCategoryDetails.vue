@@ -18,28 +18,18 @@ const isTemplateMissing = (productType: MiraklCategoryNode['productTypes'][numbe
   !productType.readyToPush && !productType.templateUrl;
 
 const getMiraklIntegrationShowId = () =>
-  props.channel?.id || props.channel?.saleschannelPtr?.proxyId || props.channel?.integrationPtr?.id || null;
+  props.channel?.id || null;
 
 const productTypePath = (productType: MiraklCategoryNode['productTypes'][number]) => {
   if (!productType.id) {
     return undefined;
   }
 
-  const query: Record<string, string> = {};
   const integrationId = getMiraklIntegrationShowId();
-
-  if (integrationId) {
-    query.integrationId = integrationId;
-  }
-
-  if (props.salesChannelId) {
-    query.salesChannelId = props.salesChannelId;
-  }
 
   return {
     name: 'integrations.remoteProductTypes.edit',
-    params: { type: IntegrationTypes.Mirakl, id: productType.id },
-    ...(Object.keys(query).length ? { query } : {}),
+    params: { type: IntegrationTypes.Mirakl, integrationId, id: productType.id },
   };
 };
 
@@ -51,11 +41,7 @@ const remotePropertyPath = (propertyId?: string | null) => {
   const integrationId = getMiraklIntegrationShowId();
   return {
     name: 'integrations.remoteProperties.edit',
-    params: { type: 'mirakl', id: propertyId },
-    query: {
-      ...(integrationId ? { integrationId } : {}),
-      ...(props.salesChannelId ? { salesChannelId: props.salesChannelId } : {}),
-    },
+    params: { type: 'mirakl', integrationId, id: propertyId },
   };
 };
 

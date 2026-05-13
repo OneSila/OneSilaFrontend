@@ -22,7 +22,7 @@ const listingConfig = priceListsListingConfigConstructor(t, props.id);
   <GeneralTemplate>
     <template v-slot:buttons>
       <div class="flex gap-2 flex-wrap justify-end">
-        <Link :path="{ name: 'integrations.priceLists.create', params: { integrationId: id }, query: { salesChannelId: salesChannelId } }">
+        <Link :path="{ name: 'integrations.priceLists.create', params: { integrationId: id } }">
           <Button type="button" class="btn btn-primary">
             {{ t('sales.priceLists.create.title') }}
           </Button>

@@ -67,7 +67,7 @@ export const ebayInternalPropertiesListingConfigConstructor = (
     { name: 'isRoot', type: FieldType.Boolean },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId, fromTab: returnTab },
+  urlQueryParams: { fromTab: returnTab },
   addActions: true,
   addEdit: true,
   addShow: true,

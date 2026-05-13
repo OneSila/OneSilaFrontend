@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineEmits, defineProps, onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch } from "vue";
 import { Toast } from "../../../../../../modules/toast";
 import { Loader } from "../../../../../atoms/loader";
 import { Icon } from "../../../../../atoms/icon";

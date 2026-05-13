@@ -113,13 +113,13 @@ const fetchIntegrationData = async () => {
       variables: { id: props.integrationId },
       fetchPolicy: 'cache-first'
     });
-    const { __typename, integrationPtr, saleschannelPtr,  ...cleanData } = data['magentoChannel'];
+    const { __typename, ...cleanData } = data['magentoChannel'];
     integrationData.value = cleanData;
 
     initialEanCodeAttribute.value = cleanData.eanCodeAttribute || null;
     initialAttributeSetId.value = cleanData.attributeSetSkeletonId || null;
 
-    salesChannelId.value = saleschannelPtr.id
+    salesChannelId.value = cleanData.id
   } catch (error) {
     console.error("Error fetching integration data:", error);
   } finally {

@@ -31,7 +31,7 @@ export const eanCodesQuery = gql`
 `;
 
 export const getEanCodeQuery = gql`
-  query getEanCode($id: GlobalID!) {
+  query getEanCode($id: ID!) {
     eanCode(id: $id) {
       id
       eanCode

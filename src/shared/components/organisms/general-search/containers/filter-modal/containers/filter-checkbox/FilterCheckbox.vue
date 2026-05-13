@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, defineProps } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Toggle } from '../../../../../../atoms/toggle';
 import Label from '../../../../../../atoms/label/Label.vue';

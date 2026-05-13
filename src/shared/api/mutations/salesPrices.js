@@ -55,7 +55,7 @@ export const updateSalesPriceMutation = gql`
 `;
 
 export const deleteSalesPriceMutation = gql`
-  mutation deleteSalesPrice($id: GlobalID!) {
+  mutation deleteSalesPrice($id: ID!) {
     deleteSalesPrice(data: {id: $id}) {
       id
     }
@@ -63,7 +63,7 @@ export const deleteSalesPriceMutation = gql`
 `;
 
 export const deleteSalesPricesMutation = gql`
-  mutation deleteSalesPrices($ids: [GlobalID!]!) {
+  mutation deleteSalesPrices($ids: [ID!]!) {
     deleteSalesPrices(data: {ids: $ids}) {
       id
     }
@@ -125,7 +125,7 @@ export const updateSalesPriceListMutation = gql`
 `;
 
 export const deleteSalesPriceListMutation = gql`
-  mutation deleteSalesPriceList($id: GlobalID!) {
+  mutation deleteSalesPriceList($id: ID!) {
     deleteSalesPriceList(data: {id: $id}) {
       id
     }
@@ -201,7 +201,7 @@ export const updateSalesPriceListItemMutation = gql`
 `;
 
 export const deleteSalesPriceListItemMutation = gql`
-  mutation deleteSalesPriceListItem($id: GlobalID!) {
+  mutation deleteSalesPriceListItem($id: ID!) {
     deleteSalesPriceListItem(data: {id: $id}) {
       id
     }
@@ -209,7 +209,7 @@ export const deleteSalesPriceListItemMutation = gql`
 `;
 
 export const deleteSalesPriceListItemsMutation = gql`
-  mutation deleteSalesPriceListItems($ids: [GlobalID!]!) {
+  mutation deleteSalesPriceListItems($ids: [ID!]!) {
     deleteSalesPriceListItems(data: {ids: $ids}) {
       id
     }

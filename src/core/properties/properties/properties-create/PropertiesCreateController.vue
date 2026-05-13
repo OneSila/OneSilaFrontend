@@ -4,7 +4,7 @@ import {useI18n} from 'vue-i18n';
 import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute, useRouter} from "vue-router";
-import {computed, reactive, ref} from "vue";
+import { computed, reactive, ref } from "vue";
 import { PropertyTypes } from "../../../../shared/utils/constants";
 import {Loader} from "../../../../shared/components/atoms/loader";
 import {Wizard} from "../../../../shared/components/molecules/wizard";
@@ -171,14 +171,6 @@ const createProperty = async () => {
         wizard: isRemoteWizard ? '1' : '0',
       };
 
-      if (integrationIdFromRule) {
-        query.integrationId = integrationIdFromRule;
-      }
-
-      if (salesChannelIdFromRule) {
-        query.salesChannelId = salesChannelIdFromRule;
-      }
-
       if (amazonCreateValue) {
         query.amazonCreateValue = amazonCreateValue;
       }
@@ -187,7 +179,7 @@ const createProperty = async () => {
 
       router.push({
         name: remoteRuleRoute || 'integrations.remoteProperties.edit',
-        params: { type: remoteIntegrationType, id: ruleId },
+        params: { type: remoteIntegrationType, integrationId: integrationIdFromRule || salesChannelIdFromRule, id: ruleId },
         query,
       });
     } else {

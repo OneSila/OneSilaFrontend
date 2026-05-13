@@ -27,7 +27,7 @@ export const updateMappedImportMutation = gql`
 `;
 
 export const resyncMappedImportMutation = gql`
-  mutation ResyncMappedImport($id: GlobalID!) {
+  mutation ResyncMappedImport($id: ID!) {
     resyncMappedImport(id: $id) {
       id
       status
@@ -38,7 +38,7 @@ export const resyncMappedImportMutation = gql`
 `;
 
 export const deleteMappedImportMutation = gql`
-  mutation DeleteMappedImport($id: GlobalID!) {
+  mutation DeleteMappedImport($id: ID!) {
     deleteMappedImport(data: { id: $id }) {
       id
     }
@@ -82,7 +82,7 @@ export const updateExportMutation = gql`
 `;
 
 export const resyncExportMutation = gql`
-  mutation ResyncExport($id: GlobalID!) {
+  mutation ResyncExport($id: ID!) {
     resyncExport(id: $id) {
       id
       status
@@ -93,7 +93,7 @@ export const resyncExportMutation = gql`
 `;
 
 export const deleteExportMutation = gql`
-  mutation DeleteExport($id: GlobalID!) {
+  mutation DeleteExport($id: ID!) {
     deleteExport(data: { id: $id }) {
       id
     }

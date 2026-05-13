@@ -422,7 +422,7 @@ onMounted(() => {
                 <tr v-for="feed in feeds" :key="feed.id" class="align-top hover:bg-slate-50/70">
                   <td class="px-4 py-4 text-sm text-gray-700">
                     <Link
-                      :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: feed.id }, query: { integrationId: props.id } }"
+                      :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: feed.id } }"
                       class="font-medium text-slate-900"
                     >
                       {{ formatDate(feed.createdAt) }}
@@ -465,7 +465,7 @@ onMounted(() => {
                   </td>
                   <td class="px-4 py-4 text-right text-sm">
                     <div class="flex items-center justify-end gap-2">
-                      <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: feed.id }, query: { integrationId: props.id } }">
+                      <Link :path="{ name: 'integrations.imports.show', params: { type: route.params.type, id: feed.id } }">
                         <Button class="btn btn-outline-primary">
                           {{ t('shared.button.show') }}
                         </Button>

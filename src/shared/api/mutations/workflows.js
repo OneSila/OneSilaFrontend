@@ -8,7 +8,10 @@ export const createWorkflowMutation = gql`
       description
       code
       sortOrder
-      autoAddOnProduct
+      autoAddConfigurableProducts
+      autoAddSimpleProducts
+      autoAddBundleProducts
+      autoAddAliasProducts
     }
   }
 `;
@@ -21,13 +24,16 @@ export const updateWorkflowMutation = gql`
       description
       code
       sortOrder
-      autoAddOnProduct
+      autoAddConfigurableProducts
+      autoAddSimpleProducts
+      autoAddBundleProducts
+      autoAddAliasProducts
     }
   }
 `;
 
 export const deleteWorkflowMutation = gql`
-  mutation DeleteWorkflow($id: GlobalID!) {
+  mutation DeleteWorkflow($id: ID!) {
     deleteWorkflow(data: { id: $id }) {
       id
     }
@@ -65,7 +71,7 @@ export const updateWorkflowStateMutation = gql`
 `;
 
 export const deleteWorkflowStateMutation = gql`
-  mutation DeleteWorkflowState($id: GlobalID!) {
+  mutation DeleteWorkflowState($id: ID!) {
     deleteWorkflowState(data: { id: $id }) {
       id
     }
@@ -113,7 +119,7 @@ export const updateWorkflowProductAssignmentMutation = gql`
 `;
 
 export const deleteWorkflowProductAssignmentMutation = gql`
-  mutation DeleteWorkflowProductAssignment($id: GlobalID!) {
+  mutation DeleteWorkflowProductAssignment($id: ID!) {
     deleteWorkflowProductAssignment(data: { id: $id }) {
       id
     }

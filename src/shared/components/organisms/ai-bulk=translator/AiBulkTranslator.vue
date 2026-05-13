@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { onMounted, ref, computed, onUnmounted, watch } from 'vue'
+import { onMounted, ref, computed, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n'
 import { Icon } from "../../atoms/icon"
 import { injectAuth } from "../../../modules/auth"

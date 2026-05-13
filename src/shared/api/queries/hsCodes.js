@@ -23,7 +23,7 @@ export const hsCodesQuery = gql`
 `;
 
 export const getHsCodeQuery = gql`
-  query getHsCode($id: GlobalID!) {
+  query getHsCode($id: ID!) {
     hsCode(id: $id) {
       id
       name

@@ -7,6 +7,7 @@ export const productSubscription = gql`
       sku
       active
       type
+      createdAt
       proxyId
       name
       thumbnailUrl
@@ -26,7 +27,6 @@ export const productSubscription = gql`
                 id
                 salesChannel {
                   id
-                  proxyId
                 }
             }
           }

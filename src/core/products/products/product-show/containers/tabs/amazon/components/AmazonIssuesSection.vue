@@ -32,6 +32,7 @@ const props = defineProps<{
   isConfigurable: boolean;
   variationValidationIssues: VariationValidationIssues[];
   variationOtherIssues: VariationOtherIssues[];
+  integrationId?: string | null;
 }>();
 
 const { t } = useI18n();
@@ -103,7 +104,7 @@ const getEnforcementActionLabel = (value: string) => {
               <td class="break-words max-w-xs">
                 <Link
                   v-if="issue.id"
-                  :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                  :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', integrationId: props.integrationId, issueId: issue.id } }"
                 >
                   {{ issue.message }}
                 </Link>
@@ -177,7 +178,7 @@ const getEnforcementActionLabel = (value: string) => {
                     <td class="break-words max-w-xs">
                       <Link
                         v-if="issue.id"
-                        :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                        :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', integrationId: props.integrationId, issueId: issue.id } }"
                       >
                         {{ issue.message }}
                       </Link>
@@ -248,7 +249,7 @@ const getEnforcementActionLabel = (value: string) => {
                     <td class="break-words max-w-xs">
                       <Link
                         v-if="issue.id"
-                        :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                        :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', integrationId: props.integrationId, issueId: issue.id } }"
                       >
                         {{ issue.message }}
                       </Link>
@@ -306,7 +307,7 @@ const getEnforcementActionLabel = (value: string) => {
               <td class="break-words max-w-xs">
                 <Link
                   v-if="issue.id"
-                  :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', issueId: issue.id } }"
+                  :path="{ name: 'integrations.amazonProductIssues.show', params: { type: 'amazon', integrationId: props.integrationId, issueId: issue.id } }"
                 >
                   {{ issue.message }}
                 </Link>

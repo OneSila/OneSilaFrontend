@@ -2,7 +2,7 @@
 
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from "vue-router";
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import { GeneralForm } from "../../../../shared/components/organisms/general-form";
 import { FormConfig, FormType } from "../../../../shared/components/organisms/general-form/formConfig";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";

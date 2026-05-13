@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref} from 'vue';
+import { ref } from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {Link} from './../../../../atoms/link';
 import {cleanUpDataForMutation, FormConfig, FormType} from '../../formConfig';
@@ -21,6 +21,7 @@ import {
 } from "../../../../../modules/keyboard";
 import { FieldType, Url } from "../../../../../utils/constants";
 import apolloClient from "../../../../../../../apollo-client";
+import { withIntegrationRouteContext } from "../../../../../utils/integrationRoutes";
 
 const props = defineProps<{ config: FormConfig; form: any;}>();
 const emit = defineEmits(['submit', 'update-errors']);
@@ -57,6 +58,7 @@ const handleSubmitDone = (response) => {
       };
     }
 
+    finalUrl.params = withIntegrationRouteContext(route, finalUrl.name, finalUrl.params as any) as any;
     router.push(finalUrl);
     emit('submit', response);
     if (props.config.type === FormType.CREATE) {
@@ -133,7 +135,11 @@ const handleSubmitAndContinueDoneCreate = (response) => {
     }
 
     if (allParamsAvailable) {
-      router.push({ name: redirectUrl.name, params: params, query: query });
+      router.push({
+        name: redirectUrl.name,
+        params: withIntegrationRouteContext(route, redirectUrl.name, params),
+        query: query,
+      });
       Toast.success(t('shared.alert.toast.submitSuccessCreate'));
     }
   }
@@ -190,7 +196,9 @@ const cleanupAndMutate = async (mutate) => {
 const handleDelete = (response) => {
 
   if (props.config.deleteUrl) {
-    router.push(props.config.deleteUrl);
+    const finalUrl: Url = { ...props.config.deleteUrl };
+    finalUrl.params = withIntegrationRouteContext(route, finalUrl.name, finalUrl.params as any) as any;
+    router.push(finalUrl);
   }
 }
 
@@ -201,7 +209,9 @@ const handleError = (errors) => {
 
 const goBack = () => {
   if (props.config.addCancel && props.config.cancelUrl !== undefined) {
-    router.push(props.config.cancelUrl);
+    const finalUrl: Url = { ...props.config.cancelUrl };
+    finalUrl.params = withIntegrationRouteContext(route, finalUrl.name, finalUrl.params as any) as any;
+    router.push(finalUrl);
   }
 }
 

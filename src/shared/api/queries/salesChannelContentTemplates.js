@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 
 export const salesChannelContentTemplateQuery = gql`
-  query salesChannelContentTemplate($salesChannelId: GlobalID!, $languageCode: String!) {
+  query salesChannelContentTemplate($salesChannelId: ID!, $languageCode: String!) {
     salesChannelContentTemplates(
       first: 1
       filters: {

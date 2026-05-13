@@ -22,8 +22,8 @@ const route = useRoute();
 
 const configuratorId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId?.toString() || '';
-const salesChannelId = route.query.salesChannelId?.toString() || '';
+const integrationId = route.params.integrationId?.toString() || route.query.integrationId?.toString() || '';
+const salesChannelId = route.params.integrationId?.toString() || route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const nextWizardId = ref<string | null>(null);
 
@@ -75,7 +75,7 @@ const marketplaceEditPath = computed(() =>
     ? {
         name: 'integrations.stores.edit',
         params: { type: type.value, id: form.marketplaceId },
-        query: { integrationId },
+        query: {},
       }
     : null,
 );
@@ -111,7 +111,7 @@ onMounted(async () => {
     enhancedConfig.value.submitUrl = {
       name: 'integrations.amazonDefaultUnitConfigurators.edit',
       params: { type: type.value, id: nextId },
-      query: { integrationId, salesChannelId, wizard: '1' },
+      query: { wizard: '1' },
     };
     enhancedConfig.value.submitLabel = t('integrations.show.mapping.saveAndMapNext');
   } else if (last) {

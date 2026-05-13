@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import {defineProps, ref} from 'vue';
+import { ref } from 'vue';
 import {Property} from "../../ProductPropertiesConfigurator.vue";
 import {Icon} from "../../../../atoms/icon";
 import {ConfigTypes} from "../../../../../utils/constants";

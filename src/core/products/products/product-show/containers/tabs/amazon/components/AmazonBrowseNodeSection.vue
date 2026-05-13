@@ -593,8 +593,7 @@ defineExpose({ hasUnsavedChanges });
                         v-if="type.exists && type.id"
                         :path="{
                           name: 'integrations.remoteProductTypes.edit',
-                          params: { type: 'amazon', id: type.id },
-                          query: { integrationId: props.salesChannelId },
+                          params: { type: 'amazon', integrationId: props.salesChannelId, id: type.id },
                         }"
                         class="hover:underline"
                       >
@@ -655,8 +654,7 @@ defineExpose({ hasUnsavedChanges });
                     v-if="type.exists && type.id"
                     :path="{
                       name: 'integrations.remoteProductTypes.edit',
-                      params: { type: 'amazon', id: type.id },
-                      query: { integrationId: props.salesChannelId },
+                      params: { type: 'amazon', integrationId: props.salesChannelId, id: type.id },
                     }"
                     class="hover:underline"
                   >

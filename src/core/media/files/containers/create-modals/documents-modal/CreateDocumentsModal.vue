@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, Ref, ref, watch, withDefaults } from 'vue';
+import { computed, onBeforeUnmount, Ref, ref, watch } from 'vue';
 import { Modal } from '../../../../../../shared/components/atoms/modal';
 import { Card } from '../../../../../../shared/components/atoms/card';
 import { Icon } from '../../../../../../shared/components/atoms/icon';

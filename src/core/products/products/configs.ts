@@ -574,6 +574,13 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
       helpText: t('products.products.filters.help.notPresentOnStore'),
     },
     {
+      type: FieldType.Boolean,
+      strict: true,
+      name: 'presentOnAnyStore',
+      label: t('products.products.filters.labels.presentOnAnyStore'),
+      helpText: t('products.products.filters.help.presentOnAnyStore'),
+    },
+    {
       type: FieldType.Query,
       name: 'rejectedForSalesChannelViewId',
       query: salesChannelViewsQuerySelector,
@@ -1129,6 +1136,7 @@ export const searchConfigConstructor = (t: Function, hasAmazon: boolean = false)
         'notAssignedToSalesChannelViewId',
         'presentOnStoreSalesChannelId',
         'notPresentOnStoreSalesChannelId',
+        'presentOnAnyStore',
         'rejectedForSalesChannelViewId',
         'todoForSalesChannelViewId',
         'hasTodoSalesChannelView',

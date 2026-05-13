@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {computed, defineProps} from 'vue';
+import { computed } from 'vue';
 import { useI18n } from "vue-i18n";
 import { Image } from "../../../../../../shared/components/atoms/image";
 import { OptionSelector } from "../../../../../../shared/components/molecules/option-selector";

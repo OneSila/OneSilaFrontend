@@ -79,7 +79,7 @@ export const amazonProductIssuesListingQuery = gql`
 `;
 
 export const amazonProductIssueShowQuery = gql`
-  query AmazonProductIssueShow($id: GlobalID!) {
+  query AmazonProductIssueShow($id: ID!) {
     amazonProductIssues(first: 1, filters: { id: { exact: $id } }) {
       edges {
         node {

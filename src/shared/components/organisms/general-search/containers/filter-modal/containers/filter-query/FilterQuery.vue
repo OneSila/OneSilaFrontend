@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref, watch, watchEffect, onMounted, Ref, computed} from 'vue';
+import { ref, watch, watchEffect, onMounted, Ref, computed } from 'vue';
 import debounce from 'lodash.debounce';
 import { useRoute } from 'vue-router';
 import { Selector } from '../../../../../../atoms/selector';

@@ -91,8 +91,7 @@ const severityBadge = (severity?: string | null) => {
               <Link
                 :path="{
                   name: 'integrations.miraklProductIssues.show',
-                  params: { type: 'mirakl', issueId: issue.id },
-                  query: integrationId ? { integrationId } : undefined,
+                  params: { type: 'mirakl', integrationId, issueId: issue.id },
                 }"
               >
                 {{ issue.code || issue.mainCode || '-' }}

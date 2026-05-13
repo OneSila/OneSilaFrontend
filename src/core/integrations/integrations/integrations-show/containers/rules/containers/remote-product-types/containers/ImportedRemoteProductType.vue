@@ -31,8 +31,8 @@ const props = defineProps<{
 
 const productTypeId = ref(String(route.params.id));
 const type = ref(String(route.params.type));
-const integrationId = route.query.integrationId?.toString() || '';
-const salesChannelId = route.query.salesChannelId?.toString() || '';
+const integrationId = route.params.integrationId?.toString() || route.query.integrationId?.toString() || '';
+const salesChannelId = route.params.integrationId?.toString() || route.query.salesChannelId?.toString() || '';
 const isWizard = route.query.wizard === '1';
 const integrationShowId = computed(() => integrationId || props.productType?.salesChannel?.id || '');
 
@@ -221,7 +221,7 @@ const save = async () => {
 
     const { nextId, last } = await fetchNextUnmapped();
     if (nextId) {
-      router.push({ name: props.config.editRouteName, params: { type: type.value, id: nextId }, query: { integrationId: integrationShowId.value, salesChannelId, wizard: '1' } });
+      router.push({ name: props.config.editRouteName, params: { type: type.value, integrationId: integrationShowId.value, id: nextId }, query: { wizard: '1' } });
     } else if (last) {
       router.push({ name: 'integrations.integrations.show', params: { type: type.value, id: integrationShowId.value }, query: { tab: 'productRules' } });
     } else {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch, withDefaults } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import MatrixEditor from '../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue';
@@ -178,9 +178,6 @@ const viewKeyById = computed(() =>
     if (view?.id) {
       acc[view.id] = view.id;
     }
-    if (view?.proxyId) {
-      acc[view.proxyId] = view.id;
-    }
     return acc;
   }, {}),
 );
@@ -189,7 +186,7 @@ const getViewFilterIds = () =>
   Array.from(
     new Set(
       amazonViews.value
-        .flatMap((view) => [view?.id, view?.proxyId])
+        .flatMap((view) => [view?.id])
         .filter((id): id is string => typeof id === 'string' && id.length > 0),
     ),
   );

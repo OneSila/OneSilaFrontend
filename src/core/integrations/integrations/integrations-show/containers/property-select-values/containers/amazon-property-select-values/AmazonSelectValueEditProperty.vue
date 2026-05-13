@@ -56,11 +56,11 @@ const config: RemoteSelectValueEditPropertyConfig = {
   marketplaceLabelKey: 'integrations.show.propertySelectValues.labels.marketplace',
   marketplaceEditPath: ctx =>
     ctx.marketplaceId
-      ? { name: 'integrations.stores.edit', params: { type: ctx.type, id: ctx.marketplaceId }, query: { integrationId: ctx.integrationId } }
+      ? { name: 'integrations.stores.edit', params: { type: ctx.type, id: ctx.marketplaceId } }
       : null,
   propertyEditPath: ctx =>
     ctx.propertyId
-      ? { name: 'integrations.remoteProperties.edit', params: { type: ctx.type, id: ctx.propertyId }, query: { integrationId: ctx.integrationId, salesChannelId: ctx.salesChannelId } }
+      ? { name: 'integrations.remoteProperties.edit', params: { type: ctx.type, id: ctx.propertyId } }
       : null,
   remoteFields: [
     {

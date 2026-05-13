@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineEmits, defineExpose, defineProps, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import apolloClient from "../../../../../../../../../../../../../apollo-client";
 import { DiscreteLoader } from "../../../../../../../../../../../../shared/components/atoms/discrete-loader";
@@ -117,7 +117,7 @@ const fetchCurrencies = async () => {
           (remoteCodeKey ? localCurrencyMap[remoteCodeKey] ?? null : null);
 
         return {
-          id: node.proxyId,
+          id: node.id,
           remoteCode: node.remoteCode,
           name: node.name,
           marketplaceName: node?.salesChannelView?.name || null,

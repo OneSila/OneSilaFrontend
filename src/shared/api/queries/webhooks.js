@@ -33,7 +33,7 @@ export const webhookIntegrationsQuery = gql`
 `;
 
 export const getWebhookIntegrationQuery = gql`
-  query GetWebhookIntegration($id: GlobalID!) {
+  query GetWebhookIntegration($id: ID!) {
     webhookIntegration(id: $id) {
       id
       hostname
@@ -82,7 +82,7 @@ export const webhookOutboxesQuery = gql`
 `;
 
 export const getWebhookOutboxQuery = gql`
-  query GetWebhookOutbox($id: GlobalID!) {
+  query GetWebhookOutbox($id: ID!) {
     webhookOutbox(id: $id) {
       id
       webhookIntegration {
@@ -161,7 +161,7 @@ export const webhookDeliveriesQuery = gql`
 `;
 
 export const getWebhookDeliveryQuery = gql`
-  query GetWebhookDelivery($id: GlobalID!) {
+  query GetWebhookDelivery($id: ID!) {
     webhookDelivery(id: $id) {
       id
       outbox {
@@ -215,7 +215,7 @@ export const webhookDeliveryAttemptsQuery = gql`
 `;
 
 export const getWebhookDeliveryAttemptQuery = gql`
-  query GetWebhookDeliveryAttempt($id: GlobalID!) {
+  query GetWebhookDeliveryAttempt($id: ID!) {
     webhookDeliveryAttempt(id: $id) {
       id
       delivery {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
 import { GeneralListing } from "../../../../../../shared/components/organisms/general-listing";

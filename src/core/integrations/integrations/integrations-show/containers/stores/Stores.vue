@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch, computed} from 'vue';
+import { ref, watch, computed } from 'vue';
 import {useI18n} from 'vue-i18n';
 import {GeneralListing} from "../../../../../../shared/components/organisms/general-listing";
 import GeneralTemplate from "../../../../../../shared/templates/GeneralTemplate.vue";
@@ -36,7 +36,7 @@ const isManualIntegration = computed(() => integrationType.value === Integration
       <div class="flex gap-2 flex-wrap justify-end">
         <Link
           v-if="isManualIntegration"
-          :path="{ name: 'integrations.stores.create', params: { type: integrationType, integrationId: id }, query: { salesChannelId: salesChannelId } }"
+          :path="{ name: 'integrations.stores.create', params: { type: integrationType, integrationId: id } }"
         >
           <Button type="button" class="btn btn-primary">
             {{ t('integrations.show.stores.create.title') }}

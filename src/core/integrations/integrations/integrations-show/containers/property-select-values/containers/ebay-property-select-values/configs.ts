@@ -118,7 +118,7 @@ export const ebayPropertySelectValuesListingConfigConstructor = (t: Function, sp
     { name: 'localInstance', type: FieldType.NestedText, keys: ['value'], showLabel: true, clickable: true, clickIdentifiers: [{ id: ['id'] }], clickUrl: { name: 'properties.values.show' } }
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,

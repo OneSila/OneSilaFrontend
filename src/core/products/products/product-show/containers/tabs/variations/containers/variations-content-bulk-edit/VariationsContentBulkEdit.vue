@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch, withDefaults } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Swal from 'sweetalert2';
 import type { FetchPolicy } from '@apollo/client';
@@ -123,7 +123,7 @@ const htmlModal = reactive({
   visible: false,
   rowIndex: -1,
   field: '' as 'shortDescription' | 'description',
-  value: '<p><br></p>',
+  value: '',
 });
 
 const textModal = reactive({
@@ -215,7 +215,7 @@ const shortDescriptionToolbarOptions = [
   ['clean'],
 ];
 
-const emptyHtml = '<p><br></p>';
+const emptyHtml = '';
 
 const createEmptyTranslation = (): TranslationData => ({
   id: null,

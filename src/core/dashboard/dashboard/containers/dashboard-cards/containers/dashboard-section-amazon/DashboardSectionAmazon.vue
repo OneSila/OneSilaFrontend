@@ -159,12 +159,12 @@ const fetchAmazonIntegrations = async () => {
     for (const edge of edges) {
       const channel = edge.node;
 
-      if (channel?.saleschannelPtr?.id) {
-        const counts = await fetchCounts(channel.saleschannelPtr.id);
+      if (channel?.id) {
+        const counts = await fetchCounts(channel.id);
         integrations.value.push({
           integrationId: channel.id,
           hostname: channel.hostname,
-          salesChannelId: channel.saleschannelPtr.id,
+          salesChannelId: channel.id,
           ...counts,
         });
       }

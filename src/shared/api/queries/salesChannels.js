@@ -73,7 +73,7 @@ export const salesChannelsLimitsQuery = gql`
 `;
 
 export const getSalesChannelQuery = gql`
-  query getSalesChannel($id: GlobalID!) {
+  query getSalesChannel($id: ID!) {
     salesChannel(id: $id) {
       id
       active
@@ -86,13 +86,12 @@ export const getSalesChannelQuery = gql`
 `;
 
 export const getManualSalesChannelQuery = gql`
-  query getManualSalesChannel($id: GlobalID!) {
+  query getManualSalesChannel($id: ID!) {
     manualSalesChannel(id: $id) {
       id
       hostname
       active
       type
-      proxyId
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -144,7 +143,6 @@ export const manualSalesChannelsQuery = gql`
           hostname
           active
           type
-          proxyId
         }
         cursor
       }
@@ -160,7 +158,7 @@ export const manualSalesChannelsQuery = gql`
 `;
 
 export const getMagentoChannelQuery = gql`
-  query getMagentoChannel($id: GlobalID!) {
+  query getMagentoChannel($id: ID!) {
     magentoChannel(id: $id) {
       id
       hostname
@@ -193,20 +191,12 @@ export const getMagentoChannelQuery = gql`
       gptReturnWindow
       firstImportComplete
       isImporting
-      integrationPtr {
+      gptFeed {
         id
-      }
-      saleschannelPtr {
-        id
-        ... on SalesChannelType {
-          gptFeed {
-            id
-            fileUrl
-            lastSyncedAt
-            file {
-              url
-            }
-          }
+        fileUrl
+        lastSyncedAt
+        file {
+          url
         }
       }
     }
@@ -214,7 +204,7 @@ export const getMagentoChannelQuery = gql`
 `;
 
 export const getShopifyChannelQuery = gql`
-  query getShopifyChannel($id: GlobalID!) {
+  query getShopifyChannel($id: ID!) {
     shopifyChannel(id: $id) {
       id
       hostname
@@ -242,20 +232,12 @@ export const getShopifyChannelQuery = gql`
       gptReturnWindow
       firstImportComplete
       isImporting
-      integrationPtr {
+      gptFeed {
         id
-      }
-      saleschannelPtr {
-        id
-        ... on SalesChannelType {
-          gptFeed {
-            id
-            fileUrl
-            lastSyncedAt
-            file {
-              url
-            }
-          }
+        fileUrl
+        lastSyncedAt
+        file {
+          url
         }
       }
       vendorProperty {
@@ -266,7 +248,7 @@ export const getShopifyChannelQuery = gql`
 `;
 
 export const getWoocommerceChannelQuery = gql`
-  query getWoocommerceChannel($id: GlobalID!) {
+  query getWoocommerceChannel($id: ID!) {
     woocommerceChannel(id: $id) {
       id
       hostname
@@ -296,20 +278,12 @@ export const getWoocommerceChannelQuery = gql`
       apiSecret
       firstImportComplete
       isImporting
-      integrationPtr {
+      gptFeed {
         id
-      }
-      saleschannelPtr {
-        id
-        ... on SalesChannelType {
-          gptFeed {
-            id
-            fileUrl
-            lastSyncedAt
-            file {
-              url
-            }
-          }
+        fileUrl
+        lastSyncedAt
+        file {
+          url
         }
       }
     }
@@ -340,9 +314,6 @@ export const getShopifyChannelsQuery = gql`
           active
           state
           createdAt
-          integrationPtr {
-            id
-          }
         }
         cursor
       }
@@ -358,7 +329,7 @@ export const getShopifyChannelsQuery = gql`
 `;
 
 export const getAmazonChannelQuery = gql`
-  query getAmazonChannel($id: GlobalID!) {
+  query getAmazonChannel($id: ID!) {
     amazonChannel(id: $id) {
       id
       hostname
@@ -383,12 +354,6 @@ export const getAmazonChannelQuery = gql`
       country
       firstImportComplete
       isImporting
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
@@ -418,13 +383,6 @@ export const amazonChannelsQuery = gql`
           region
           country
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-            proxyId
-          }
         }
         cursor
       }
@@ -510,7 +468,7 @@ export const sheinChannelsQuerySelector = gql`
 `;
 
 export const getEbayChannelQuery = gql`
-  query getEbayChannel($id: GlobalID!) {
+  query getEbayChannel($id: ID!) {
     ebayChannel(id: $id) {
       id
       hostname
@@ -531,18 +489,12 @@ export const getEbayChannelQuery = gql`
       firstImportComplete
       isImporting
       accessToken
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
 
 export const getSheinChannelQuery = gql`
-  query getSheinChannel($id: GlobalID!) {
+  query getSheinChannel($id: ID!) {
     sheinChannel(id: $id) {
       id
       hostname
@@ -563,18 +515,12 @@ export const getSheinChannelQuery = gql`
       firstImportComplete
       isImporting
       openKeyId
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
 
 export const getMiraklChannelQuery = gql`
-  query getMiraklChannel($id: GlobalID!) {
+  query getMiraklChannel($id: ID!) {
     miraklChannel(id: $id) {
       id
       hostname
@@ -599,12 +545,6 @@ export const getMiraklChannelQuery = gql`
       connected
       firstImportComplete
       isImporting
-      integrationPtr {
-        id
-      }
-      saleschannelPtr {
-        id
-      }
     }
   }
 `;
@@ -632,13 +572,6 @@ export const ebayChannelsQuery = gql`
           hostname
           active
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-            proxyId
-          }
         }
         cursor
       }
@@ -676,12 +609,6 @@ export const sheinChannelsQuery = gql`
           hostname
           active
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-          }
         }
         cursor
       }
@@ -724,12 +651,6 @@ export const miraklChannelsQuery = gql`
           lastFullIssuesFetch
           lastProductImportsRequestDate
           createdAt
-          integrationPtr {
-            id
-          }
-          saleschannelPtr {
-            id
-          }
         }
         cursor
       }
@@ -810,7 +731,7 @@ export const salesChannelIntegrationPricelistsQuery = gql`
 `;
 
 export const getSalesChannelIntegrationPricelistQuery = gql`
-  query getSalesChannelIntegrationPricelist($id: GlobalID!) {
+  query getSalesChannelIntegrationPricelist($id: ID!) {
     salesChannelIntegrationPricelist(id: $id) {
       id
       salesChannel {
@@ -842,6 +763,52 @@ export const salesChannelViewAssignsQuery = gql`
             sku
             active
             type
+          }
+          remoteProduct {
+            id
+            hasErrors
+            status
+          }
+          salesChannelView {
+            id
+            name
+            active
+          }
+        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const salesChannelViewAssignsWithSalesChannelQuery = gql`
+  query SalesChannelViewAssignsWithSalesChannel($first: Int, $last: Int, $after: String, $before: String, $order: SalesChannelViewAssignOrder, $filter: SalesChannelViewAssignFilter) {
+    salesChannelViewAssigns(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          status
+          remoteUrl
+          remoteProductPercentage
+          integrationType
+          createdAt
+          product {
+            id
+            name
+            sku
+            active
+            type
+          }
+          salesChannel {
+            id
+            hostname
           }
           remoteProduct {
             id
@@ -940,7 +907,7 @@ export const amazonRemoteLogsQuery = gql`
 `;
 
 export const getSalesChannelViewAssignQuery = gql`
-  query getSalesChannelViewAssign($id: GlobalID!) {
+  query getSalesChannelViewAssign($id: ID!) {
     salesChannelViewAssign(id: $id) {
       id
       integrationType
@@ -1040,7 +1007,7 @@ export const salesChannelViewsQuerySelector = gql`
 `;
 
 export const getSalesChannelViewQuery = gql`
-  query getSalesChannelView($id: GlobalID!) {
+  query getSalesChannelView($id: ID!) {
     salesChannelView(id: $id) {
       id
       active
@@ -1056,7 +1023,7 @@ export const getSalesChannelViewQuery = gql`
 `;
 
 export const getManualSalesChannelViewQuery = gql`
-  query getManualSalesChannelView($id: GlobalID!) {
+  query getManualSalesChannelView($id: ID!) {
     manualSalesChannelView(id: $id) {
       id
       active
@@ -1077,7 +1044,6 @@ export const amazonChannelViewsQuery = gql`
       edges {
         node {
           id
-          proxyId
           remoteId
           name
           url
@@ -1194,7 +1160,7 @@ export const miraklChannelViewsQuery = gql`
 `;
 
 export const getAmazonChannelViewQuery = gql`
-  query getAmazonChannelView($id: GlobalID!) {
+  query getAmazonChannelView($id: ID!) {
     amazonChannelView(id: $id) {
       id
       active
@@ -1212,7 +1178,7 @@ export const getAmazonChannelViewQuery = gql`
 `;
 
 export const getEbaySalesChannelViewQuery = gql`
-  query getEbaySalesChannelView($id: GlobalID!) {
+  query getEbaySalesChannelView($id: ID!) {
     ebaySalesChannelView(id: $id) {
       id
       name
@@ -1235,7 +1201,7 @@ export const getEbaySalesChannelViewQuery = gql`
 `;
 
 export const getSheinSalesChannelViewQuery = gql`
-  query getSheinSalesChannelView($id: GlobalID!) {
+  query getSheinSalesChannelView($id: ID!) {
     sheinSalesChannelViews(first: 1, filters: { id: { exact: $id } }) {
       edges {
         node {
@@ -1256,7 +1222,7 @@ export const getSheinSalesChannelViewQuery = gql`
 `;
 
 export const getMiraklSalesChannelViewQuery = gql`
-  query getMiraklSalesChannelView($id: GlobalID!) {
+  query getMiraklSalesChannelView($id: ID!) {
     miraklSalesChannelView(id: $id) {
       id
       name
@@ -1269,7 +1235,7 @@ export const getMiraklSalesChannelViewQuery = gql`
 `;
 
 export const getRemoteLanguageQuery = gql`
-  query getRemoteLanguageQueryQuery($id: GlobalID!) {
+  query getRemoteLanguageQueryQuery($id: ID!) {
     remoteLanguage(id: $id) {
       id
       localInstance
@@ -1279,7 +1245,7 @@ export const getRemoteLanguageQuery = gql`
 `;
 
 export const getRemoteCurrencyQuery = gql`
-  query getrRmoteLanguageQueryQuery($id: GlobalID!) {
+  query getrRmoteLanguageQueryQuery($id: ID!) {
     remoteCurrency(id: $id) {
       id
       localInstance {
@@ -1428,7 +1394,7 @@ export const miraklRemoteCurrenciesQuery = gql`
 `;
 
 export const getMiraklRemoteLanguageQuery = gql`
-  query getMiraklRemoteLanguage($id: GlobalID!) {
+  query getMiraklRemoteLanguage($id: ID!) {
     miraklRemoteLanguage(id: $id) {
       id
       remoteCode
@@ -1440,7 +1406,7 @@ export const getMiraklRemoteLanguageQuery = gql`
 `;
 
 export const getMiraklRemoteCurrencyQuery = gql`
-  query getMiraklRemoteCurrency($id: GlobalID!) {
+  query getMiraklRemoteCurrency($id: ID!) {
     miraklRemoteCurrency(id: $id) {
       id
       remoteCode
@@ -1468,7 +1434,6 @@ export const ebayRemoteCurrenciesQuery = gql`
       edges {
         node {
           id
-          proxyId
           remoteCode
           salesChannelView {
             id
@@ -1529,7 +1494,7 @@ export const salesChannelImportsQuery = gql`
 `;
 
 export const getSalesChannelImportQuery = gql`
-  query getSalesChannelImport($id: GlobalID!) {
+  query getSalesChannelImport($id: ID!) {
     salesChannelImport(id: $id) {
       id
       status
@@ -1550,10 +1515,9 @@ export const getSalesChannelImportQuery = gql`
 `;
 
 export const getMiraklImportProcessQuery = gql`
-  query getMiraklImportProcess($id: GlobalID!) {
+  query getMiraklImportProcess($id: ID!) {
     miraklImportProcess(id: $id) {
       id
-      proxyId
       type
       status
       percentage
@@ -1844,7 +1808,7 @@ export const sheinPropertiesByRemoteIdsQuery = gql`
 `;
 
 export const getSheinPropertyQuery = gql`
-  query getSheinProperty($id: GlobalID!) {
+  query getSheinProperty($id: ID!) {
     sheinProperty(id: $id) {
       id
       mappedLocally
@@ -1867,7 +1831,7 @@ export const getSheinPropertyQuery = gql`
 `;
 
 export const getMiraklPropertyQuery = gql`
-  query getMiraklProperty($id: GlobalID!) {
+  query getMiraklProperty($id: ID!) {
     miraklProperty(id: $id) {
       id
       code
@@ -1987,7 +1951,7 @@ export const ebayInternalPropertyOptionsQuery = gql`
 `;
 
 export const getEbayInternalPropertyQuery = gql`
-  query getEbayInternalProperty($id: GlobalID!) {
+  query getEbayInternalProperty($id: ID!) {
     ebayInternalProperty(id: $id) {
       id
       code
@@ -2006,7 +1970,7 @@ export const getEbayInternalPropertyQuery = gql`
 `;
 
 export const getAmazonPropertyQuery = gql`
-  query getAmazonProperty($id: GlobalID!) {
+  query getAmazonProperty($id: ID!) {
     amazonProperty(id: $id) {
       id
       mappedLocally
@@ -2028,7 +1992,7 @@ export const getAmazonPropertyQuery = gql`
 `;
 
 export const getEbayPropertyQuery = gql`
-  query getEbayProperty($id: GlobalID!) {
+  query getEbayProperty($id: ID!) {
     ebayProperty(id: $id) {
       id
       mappedLocally
@@ -2109,7 +2073,7 @@ export const amazonPropertySelectValuesQuery = gql`
 `;
 
 export const getAmazonPropertySelectValueQuery = gql`
-  query getAmazonPropertySelectValue($id: GlobalID!) {
+  query getAmazonPropertySelectValue($id: ID!) {
     amazonPropertySelectValue(id: $id) {
       id
       mappedLocally
@@ -2280,7 +2244,7 @@ export const miraklInternalPropertiesQuery = gql`
 `;
 
 export const getSheinInternalPropertyQuery = gql`
-  query getSheinInternalProperty($id: GlobalID!) {
+  query getSheinInternalProperty($id: ID!) {
     sheinInternalProperty(id: $id) {
       id
       code
@@ -2298,7 +2262,7 @@ export const getSheinInternalPropertyQuery = gql`
 `;
 
 export const getMiraklInternalPropertyQuery = gql`
-  query getMiraklInternalProperty($id: GlobalID!) {
+  query getMiraklInternalProperty($id: ID!) {
     miraklInternalProperty(id: $id) {
       id
       name
@@ -2495,7 +2459,7 @@ export const miraklPropertySelectValuesQuerySelector = gql`
 `;
 
 export const getEbayPropertySelectValueQuery = gql`
-  query getEbayPropertySelectValue($id: GlobalID!) {
+  query getEbayPropertySelectValue($id: ID!) {
     ebayPropertySelectValue(id: $id) {
       id
       mappedLocally
@@ -2527,7 +2491,7 @@ export const getEbayPropertySelectValueQuery = gql`
 `;
 
 export const getSheinPropertySelectValueQuery = gql`
-  query getSheinPropertySelectValue($id: GlobalID!) {
+  query getSheinPropertySelectValue($id: ID!) {
     sheinPropertySelectValue(id: $id) {
       id
       mappedLocally
@@ -2557,10 +2521,9 @@ export const getSheinPropertySelectValueQuery = gql`
 `;
 
 export const getMiraklPropertySelectValueQuery = gql`
-  query getMiraklPropertySelectValue($id: GlobalID!) {
+  query getMiraklPropertySelectValue($id: ID!) {
     miraklPropertySelectValue(id: $id) {
       id
-      proxyId
       salesChannel {
         id
       }
@@ -2641,7 +2604,7 @@ export const miraklProductTypesQuery = gql`
 `;
 
 export const getMiraklProductTypeQuery = gql`
-  query getMiraklProductType($id: GlobalID!) {
+  query getMiraklProductType($id: ID!) {
     miraklProductType(id: $id) {
       id
       remoteId
@@ -2702,7 +2665,6 @@ export const miraklImportProcessesQuery = gql`
       edges {
         node {
           id
-          proxyId
           type
           status
           percentage
@@ -2761,7 +2723,7 @@ export const remoteDocumentTypesQuery = gql`
 `;
 
 export const getRemoteDocumentTypeQuery = gql`
-  query getRemoteDocumentType($id: GlobalID!) {
+  query getRemoteDocumentType($id: ID!) {
     remoteDocumentType(id: $id) {
       id
       name
@@ -2827,7 +2789,7 @@ export const amazonProductTypesQuery = gql`
 `;
 
 export const getAmazonProductTypeQuery = gql`
-  query getAmazonProductType($id: GlobalID!) {
+  query getAmazonProductType($id: ID!) {
     amazonProductType(id: $id) {
       id
       mappedLocally
@@ -2912,7 +2874,7 @@ export const ebayProductTypesQuery = gql`
 `;
 
 export const getEbayProductTypeQuery = gql`
-  query getEbayProductType($id: GlobalID!) {
+  query getEbayProductType($id: ID!) {
     ebayProductType(id: $id) {
       id
       mappedLocally
@@ -2950,7 +2912,7 @@ export const getEbayProductTypeQuery = gql`
 `;
 
 export const getSheinProductTypeQuery = gql`
-  query getSheinProductType($id: GlobalID!) {
+  query getSheinProductType($id: ID!) {
     sheinProductType(id: $id) {
       id
       mappedLocally
@@ -3177,7 +3139,7 @@ export const amazonDefaultUnitConfiguratorsQuery = gql`
 `;
 
 export const getAmazonDefaultUnitConfiguratorQuery = gql`
-  query getAmazonDefaultUnitConfigurator($id: GlobalID!) {
+  query getAmazonDefaultUnitConfigurator($id: ID!) {
     amazonDefaultUnitConfigurator(id: $id) {
       id
       name

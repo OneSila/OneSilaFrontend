@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Image } from "../../atoms/image";
 import {AddButton} from "./containers/add-button";
-import {ref} from "vue";
+import { ref } from "vue";
 
 interface Image {
   id: string;

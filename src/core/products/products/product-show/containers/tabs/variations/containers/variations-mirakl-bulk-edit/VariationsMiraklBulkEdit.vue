@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch, withDefaults } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import type { FetchPolicy } from '@apollo/client';
 import { useI18n } from 'vue-i18n';
 import MatrixEditor from '../../../../../../../../../shared/components/organisms/matrix-editor/MatrixEditor.vue';
@@ -111,9 +111,6 @@ const channelIdAliasMap = computed(() =>
     if (channel?.id) {
       acc[channel.id] = channel.id;
     }
-    if (channel?.saleschannelPtr?.id) {
-      acc[channel.saleschannelPtr.id] = channel.id;
-    }
     return acc;
   }, {}),
 );
@@ -201,7 +198,7 @@ const resolveDisplayChannelId = (salesChannelId: string | null | undefined) =>
   salesChannelId ? channelIdAliasMap.value[salesChannelId] || null : null;
 
 const getEffectiveSalesChannelId = (channelId: string) =>
-  channelById.value[channelId]?.saleschannelPtr?.id || channelId;
+  channelId;
 
 const getCategorySelection = (row: VariationRow, channelId: string | null = selectedChannelId.value) => {
   if (!channelId) return null;

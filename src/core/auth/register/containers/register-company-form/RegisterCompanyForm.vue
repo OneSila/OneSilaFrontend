@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {reactive, computed, ref } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { setCompanyToUser, injectAuth, removeAuth } from '../../../../../shared/modules/auth';

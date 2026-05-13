@@ -245,7 +245,7 @@ export const storesListingConfigConstructor = (t: Function, specificIntegrationI
     headers,
     fields,
     identifierKey: 'id',
-    urlQueryParams: {integrationId: specificIntegrationId },
+    urlQueryParams: {},
     editUrlName: 'integrations.stores.edit',
     showUrlName: 'integrations.stores.edit',
     secondIdentifierKey: 'type',

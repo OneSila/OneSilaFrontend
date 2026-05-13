@@ -91,7 +91,6 @@ export const createManualSalesChannelMutation = gql`
       hostname
       active
       type
-      proxyId
     }
   }
 `;
@@ -115,7 +114,7 @@ export const updateAmazonSalesChannelMutation = gql`
 `;
 
 export const syncAmazonSalesChannelMappingsMutation = gql`
-  mutation syncAmazonSalesChannelMappings($sourceId: GlobalID!, $targetId: GlobalID!) {
+  mutation syncAmazonSalesChannelMappings($sourceId: ID!, $targetId: ID!) {
     syncAmazonSalesChannelMappings(
       sourceSalesChannel: { id: $sourceId }
       targetSalesChannel: { id: $targetId }
@@ -126,7 +125,7 @@ export const syncAmazonSalesChannelMappingsMutation = gql`
 `;
 
 export const syncSheinSalesChannelMappingsMutation = gql`
-  mutation syncSheinSalesChannelMappings($sourceId: GlobalID!, $targetId: GlobalID!) {
+  mutation syncSheinSalesChannelMappings($sourceId: ID!, $targetId: ID!) {
     syncSheinSalesChannelMappings(
       sourceSalesChannel: { id: $sourceId }
       targetSalesChannel: { id: $targetId }
@@ -146,7 +145,7 @@ export const updateEbaySalesChannelMutation = gql`
 `;
 
 export const resyncSalesChannelGptFeedMutation = gql`
-  mutation resyncSalesChannelGptFeed($id: GlobalID!) {
+  mutation resyncSalesChannelGptFeed($id: ID!) {
     resyncSalesChannelGptFeed(instance: { id: $id }) {
       id
       fileUrl
@@ -185,7 +184,6 @@ export const updateManualSalesChannelMutation = gql`
       hostname
       active
       type
-      proxyId
       gptEnable
       gptEnableCheckout
       gptSellerName
@@ -210,7 +208,6 @@ export const duplicateSalesChannelSelectValueMappingMutation = gql`
       localInstance: $localInstance
     ) {
       id
-      proxyId
       localInstance {
         id
       }
@@ -263,7 +260,7 @@ export const updateSalesChannelMutation = gql`
 `;
 
 export const deleteSalesChannelMutation = gql`
-  mutation deleteSalesChannel($id: GlobalID!) {
+  mutation deleteSalesChannel($id: ID!) {
     deleteSalesChannel(data: { id: $id }) {
       id
     }
@@ -271,7 +268,7 @@ export const deleteSalesChannelMutation = gql`
 `;
 
 export const deleteIntegrationMutation = gql`
-  mutation deleteIntegration($id: GlobalID!) {
+  mutation deleteIntegration($id: ID!) {
     deleteIntegration(data: { id: $id }) {
       id
     }
@@ -279,7 +276,7 @@ export const deleteIntegrationMutation = gql`
 `;
 
 export const deleteSalesChannelsMutation = gql`
-  mutation deleteSalesChannels($ids: [GlobalID!]!) {
+  mutation deleteSalesChannels($ids: [ID!]!) {
     deleteSalesChannels(data: { ids: $ids }) {
       id
     }
@@ -333,7 +330,7 @@ export const updateSalesChannelIntegrationPricelistMutation = gql`
 `;
 
 export const deleteSalesChannelIntegrationPricelistMutation = gql`
-  mutation deleteSalesChannelIntegrationPricelist($id: GlobalID!) {
+  mutation deleteSalesChannelIntegrationPricelist($id: ID!) {
     deleteSalesChannelIntegrationPricelist(data: { id: $id }) {
       id
     }
@@ -341,7 +338,7 @@ export const deleteSalesChannelIntegrationPricelistMutation = gql`
 `;
 
 export const deleteSalesChannelIntegrationPricelistsMutation = gql`
-  mutation deleteSalesChannelIntegrationPricelists($ids: [GlobalID!]!) {
+  mutation deleteSalesChannelIntegrationPricelists($ids: [ID!]!) {
     deleteSalesChannelIntegrationPricelists(data: { ids: $ids }) {
       id
     }
@@ -503,7 +500,7 @@ export const updateManualSalesChannelViewMutation = gql`
 `;
 
 export const deleteManualSalesChannelViewMutation = gql`
-  mutation deleteManualSalesChannelView($id: GlobalID!) {
+  mutation deleteManualSalesChannelView($id: ID!) {
     deleteManualSalesChannelView(id: $id) {
       id
     }
@@ -743,7 +740,7 @@ export const bulkUpdateRemoteCurrenciesMutation = gql`
 
 
 export const deleteSalesChannelViewAssignMutation = gql`
-  mutation deleteSalesChannelViewAssign($id: GlobalID!) {
+  mutation deleteSalesChannelViewAssign($id: ID!) {
     deleteSalesChannelViewAssign(data: { id: $id }) {
       id
     }

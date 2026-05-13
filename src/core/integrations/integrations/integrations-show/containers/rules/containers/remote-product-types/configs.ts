@@ -367,7 +367,7 @@ const amazonProductTypesListingConfig = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId: salesChannelId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -410,7 +410,7 @@ const ebayProductTypesListingConfig = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId: salesChannelId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -446,7 +446,7 @@ const sheinProductTypesListingConfig = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -482,7 +482,7 @@ const miraklProductTypesListingConfig = (
     },
   ],
   identifierKey: 'id',
-  urlQueryParams: { integrationId: specificIntegrationId, salesChannelId },
+  urlQueryParams: {},
   addActions: true,
   addEdit: true,
   addShow: true,
@@ -719,7 +719,6 @@ export const amazonMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
     return {
       name: 'integrations.remoteProperties.edit',
       params: { type, id: property.id },
-      query: { integrationId, salesChannelId },
     };
   },
   shouldShowAdditionalButton: shouldShowProductTypeButton,
@@ -775,18 +774,9 @@ export const sheinMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<S
       return null;
     }
 
-    const query: Record<string, string> = {};
-    if (integrationId) {
-      query.integrationId = integrationId;
-    }
-    if (salesChannelId) {
-      query.salesChannelId = salesChannelId;
-    }
-
     return {
       name: 'integrations.remoteProperties.edit',
-      params: { type, id: propertyId },
-      ...(Object.keys(query).length ? { query } : {}),
+      params: { type, integrationId: integrationId || salesChannelId, id: propertyId },
     };
   },
   shouldShowAdditionalButton: shouldShowProductTypeButton,
@@ -814,18 +804,9 @@ export const miraklMappedRemoteProductTypeConfig: MappedRemoteProductTypeConfig<
       return null;
     }
 
-    const query: Record<string, string> = {};
-    if (integrationId) {
-      query.integrationId = integrationId;
-    }
-    if (salesChannelId) {
-      query.salesChannelId = salesChannelId;
-    }
-
     return {
       name: 'integrations.remoteProperties.edit',
-      params: { type, id: propertyId },
-      ...(Object.keys(query).length ? { query } : {}),
+      params: { type, integrationId: integrationId || salesChannelId, id: propertyId },
     };
   },
   shouldShowAdditionalButton: () => false,
