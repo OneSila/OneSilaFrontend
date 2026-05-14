@@ -64,11 +64,7 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     { name: 'autoAddSimpleProducts', type: FieldType.Boolean },
     { name: 'autoAddBundleProducts', type: FieldType.Boolean },
     { name: 'autoAddAliasProducts', type: FieldType.Boolean },
-    {
-      name: 'productAssignments',
-      type: FieldType.Text,
-      accessor: (item) => item.productAssignments?.length ?? 0,
-    },
+    { name: 'productsCount', type: FieldType.Text },
   ],
   identifierKey: 'id',
   addActions: false,

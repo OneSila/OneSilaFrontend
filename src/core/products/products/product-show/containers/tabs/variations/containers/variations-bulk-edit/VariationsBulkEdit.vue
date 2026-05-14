@@ -3,7 +3,11 @@ import { computed, ref, onMounted, watch, nextTick } from 'vue';
 import type { FetchPolicy } from '@apollo/client'
 import { useI18n } from 'vue-i18n'
 import { Product } from '../../../../../../configs'
-import { bundleVariationsQuery, configurableVariationsQuery, productsForVariationsBulkEditQuery } from '../../../../../../../../../shared/api/queries/products.js'
+import {
+  bundleVariationsForBulkEditQuery,
+  configurableVariationsForBulkEditQuery,
+  productsForVariationsBulkEditQuery,
+} from '../../../../../../../../../shared/api/queries/products.js'
 import { ProductType, PropertyTypes, FieldType, ConfigTypes } from '../../../../../../../../../shared/utils/constants'
 import { PropertyFilters } from '../../../../../../../../../shared/components/molecules/property-filters'
 import { Icon } from "../../../../../../../../../shared/components/atoms/icon";
@@ -84,14 +88,16 @@ const hasUnresolvedProductTypes = ref(false)
 const variations = ref<any[]>([])
 const originalVariations = ref<any[]>([])
 const loading = ref(true)
+const matrixHydrating = ref(false)
 const saving = ref(false)
 const skipHistory = ref(false)
+const matrixHistoryPaused = ref(false)
 const matrixRef = ref<MatrixEditorExpose | null>(null)
 const readOnlyColumns = new Set(['sku', 'name', 'active'])
 const INITIAL_VARIATION_LIMIT = 20
-const LOAD_MORE_VARIATION_LIMIT = 10
+const LOAD_MORE_VARIATION_LIMIT = 20
 const MAX_GRAPHQL_PAGE_SIZE = 100
-const CONNECTION_HYDRATION_PAGE_SIZE = 10
+const CONNECTION_HYDRATION_PAGE_SIZE = MAX_GRAPHQL_PAGE_SIZE
 
 const copySkuToClipboard = async (sku: string) => {
   try {
@@ -104,6 +110,8 @@ const copySkuToClipboard = async (sku: string) => {
 
 const pageInfo = ref<any | null>(null)
 const isLoadingMoreRows = ref(false)
+const isBackgroundLoadingRows = ref(false)
+const isMatrixLoading = computed(() => loading.value || matrixHydrating.value)
 
 const filteredProperties = computed(() => {
   return properties.value.filter((p) => {
@@ -172,12 +180,13 @@ const getPropertyType = (id: string) => {
 }
 
 const completedPropertyIds = computed(() => {
-  if (!hideFullyCompleted.value || !variations.value.length) {
+  const committedRows = originalVariations.value
+  if (!hideFullyCompleted.value || !committedRows.length) {
     return new Set<string>()
   }
   const completed = new Set<string>()
   properties.value.forEach((property) => {
-    const allFilled = variations.value.every(
+    const allFilled = committedRows.every(
       (row) => !isPropEmpty(row.propertyValues?.[property.id], property.type)
     )
     if (allFilled) {
@@ -252,7 +261,7 @@ const parentProduct = computed(() => {
 const parentId = computed(() => parentProduct.value?.id ?? null)
 const parentType = computed(() => parentProduct.value?.type ?? null)
 const query = computed(() =>
-  parentType.value === ProductType.Bundle ? bundleVariationsQuery : configurableVariationsQuery
+  parentType.value === ProductType.Bundle ? bundleVariationsForBulkEditQuery : configurableVariationsForBulkEditQuery
 )
 const queryKey = computed(() =>
   parentType.value === ProductType.Bundle ? 'bundleVariations' : 'configurableVariations'
@@ -623,11 +632,17 @@ const fetchConnectionNodes = async (
   return nodes
 }
 
-const fetchVariationPropertiesBatch = async (variationIds: string[]) => {
+let hydrationRunId = 0
+
+const cloneRows = (rows: any[]) => JSON.parse(JSON.stringify(rows))
+
+const fetchVariationPropertiesBatch = async (
+  variationIds: string[],
+  propertyIds = getMatrixPropertyIds()
+) => {
   const propertyValuesByProductId = new Map<string, Record<string, any>>(
     variationIds.map((id) => [id, {}])
   )
-  const propertyIds = getMatrixPropertyIds()
   if (!variationIds.length || !propertyIds.length) {
     return propertyValuesByProductId
   }
@@ -693,6 +708,91 @@ const fetchVariationPropertiesBatch = async (variationIds: string[]) => {
   })
 
   return propertyValuesByProductId
+}
+
+const mergeHydratedPropertyValues = (
+  rows: any[],
+  variationIds: string[],
+  propertyIds: string[],
+  propertyValuesByProductId: Map<string, Record<string, any>>
+) => {
+  const variationIdSet = new Set(variationIds)
+  return rows.map((row) => {
+    const variationId = row?.variation?.id
+    if (!variationIdSet.has(variationId)) {
+      return row
+    }
+    const propertyValues = { ...(row.propertyValues ?? {}) }
+    propertyIds.forEach((propertyId) => {
+      delete propertyValues[propertyId]
+    })
+    Object.assign(propertyValues, propertyValuesByProductId.get(variationId) ?? {})
+    return {
+      ...row,
+      propertyValues,
+    }
+  })
+}
+
+const applyHydratedPropertyValues = async (
+  variationIds: string[],
+  propertyIds: string[],
+  propertyValuesByProductId: Map<string, Record<string, any>>
+) => {
+  matrixHistoryPaused.value = true
+  skipHistory.value = true
+  variations.value = mergeHydratedPropertyValues(
+    variations.value,
+    variationIds,
+    propertyIds,
+    propertyValuesByProductId
+  )
+  originalVariations.value = mergeHydratedPropertyValues(
+    originalVariations.value,
+    variationIds,
+    propertyIds,
+    propertyValuesByProductId
+  )
+  computeChanges()
+  await nextTick()
+  skipHistory.value = false
+  matrixHistoryPaused.value = false
+}
+
+const appendVariationRows = async (rows: any[]) => {
+  if (!rows.length) return
+  matrixHistoryPaused.value = true
+  skipHistory.value = true
+  variations.value = [...variations.value, ...rows]
+  originalVariations.value = [...originalVariations.value, ...cloneRows(rows)]
+  computeChanges()
+  await nextTick()
+  skipHistory.value = false
+  matrixHistoryPaused.value = false
+}
+
+const hydrateVariationRowsBatch = async (
+  rows: any[],
+  propertyIds = getMatrixPropertyIds(),
+  runId = hydrationRunId
+) => {
+  const variationIds = rows
+    .map((row) => row?.variation?.id)
+    .filter(Boolean)
+
+  if (!variationIds.length || !propertyIds.length) {
+    return
+  }
+
+  if (runId !== hydrationRunId) {
+    return
+  }
+
+  const propertyValuesByProductId = await fetchVariationPropertiesBatch(variationIds, propertyIds)
+  if (runId !== hydrationRunId) {
+    return
+  }
+  await applyHydratedPropertyValues(variationIds, propertyIds, propertyValuesByProductId)
 }
 
 const hydrateVariationRows = async (rows: any[]) => {
@@ -813,29 +913,73 @@ const reloadLoadedVariations = async (policy: FetchPolicy = 'network-only') => {
   await replaceVariations(policy, loadedCount)
 }
 
+const loadRemainingVariationsInBackground = async (runId: number) => {
+  isBackgroundLoadingRows.value = true
+  try {
+    while (runId === hydrationRunId && pageInfo.value?.hasNextPage && pageInfo.value?.endCursor) {
+      const after = pageInfo.value.endCursor
+      const nextRows = await fetchVariationRows(
+        'network-only',
+        { first: LOAD_MORE_VARIATION_LIMIT, after },
+        false
+      )
+      if (runId !== hydrationRunId || !nextRows.length) {
+        return
+      }
+      await appendVariationRows(nextRows)
+      await hydrateVariationRowsBatch(nextRows, getMatrixPropertyIds(), runId)
+    }
+  } finally {
+    isBackgroundLoadingRows.value = false
+  }
+}
+
+const hydrateVisibleRowsThenRest = async () => {
+  if (!canRenderMatrix.value) {
+    matrixHydrating.value = false
+    return
+  }
+  const runId = ++hydrationRunId
+  matrixHydrating.value = true
+  try {
+    await hydrateVariationRowsBatch(variations.value, getMatrixPropertyIds(), runId)
+    if (runId === hydrationRunId) {
+      await loadRemainingVariationsInBackground(runId)
+    }
+  } catch (error) {
+    displayGraphqlErrors(error)
+  } finally {
+    if (runId === hydrationRunId) {
+      matrixHydrating.value = false
+    }
+  }
+}
+
 const loadMoreVariations = async () => {
-  if (isLoadingMoreRows.value || loading.value || saving.value) return
+  if (isLoadingMoreRows.value || isBackgroundLoadingRows.value || isMatrixLoading.value || saving.value) return
   const after = pageInfo.value?.endCursor ?? null
   if (!pageInfo.value?.hasNextPage || !after) return
 
   isLoadingMoreRows.value = true
-  skipHistory.value = true
+  const runId = ++hydrationRunId
+  matrixHydrating.value = true
   try {
     const nextRows = await fetchVariationRows(
       'network-only',
       { first: LOAD_MORE_VARIATION_LIMIT, after },
-      true
+      false
     )
-    variations.value = [...variations.value, ...nextRows]
-    originalVariations.value = [
-      ...originalVariations.value,
-      ...JSON.parse(JSON.stringify(nextRows)),
-    ]
-    computeChanges()
-    matrixRef.value?.resetHistory(variations.value)
+    await appendVariationRows(nextRows)
+    try {
+      await hydrateVariationRowsBatch(nextRows, getMatrixPropertyIds(), runId)
+    } catch (error) {
+      displayGraphqlErrors(error)
+    }
   } finally {
-    skipHistory.value = false
     isLoadingMoreRows.value = false
+    if (runId === hydrationRunId) {
+      matrixHydrating.value = false
+    }
   }
 }
 
@@ -843,14 +987,17 @@ watch(language, async () => {
   if (!variations.value.length) {
     return
   }
-  loading.value = true
-  skipHistory.value = true
-  variations.value = await hydrateVariationRows(variations.value)
-  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
-  computeChanges()
-  matrixRef.value?.resetHistory(variations.value)
-  skipHistory.value = false
-  loading.value = false
+  const runId = ++hydrationRunId
+  matrixHydrating.value = true
+  try {
+    await hydrateVariationRowsBatch(variations.value, getMatrixPropertyIds(), runId)
+  } catch (error) {
+    displayGraphqlErrors(error)
+  } finally {
+    if (runId === hydrationRunId) {
+      matrixHydrating.value = false
+    }
+  }
 })
 
 watch(selectedRuleSalesChannelId, async (newVal, oldVal) => {
@@ -867,15 +1014,18 @@ watch(selectedRuleSalesChannelId, async (newVal, oldVal) => {
     return
   }
 
-  loading.value = true
-  skipHistory.value = true
-  await fetchProperties()
-  variations.value = await hydrateVariationRows(variations.value)
-  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
-  computeChanges()
-  matrixRef.value?.resetHistory(variations.value)
-  skipHistory.value = false
-  loading.value = false
+  const runId = ++hydrationRunId
+  matrixHydrating.value = true
+  try {
+    await fetchProperties()
+    await hydrateVariationRowsBatch(variations.value, getMatrixPropertyIds(), runId)
+  } catch (error) {
+    displayGraphqlErrors(error)
+  } finally {
+    if (runId === hydrationRunId) {
+      matrixHydrating.value = false
+    }
+  }
 })
 
 const fetchDefaultLanguage = async () => {
@@ -893,12 +1043,14 @@ onMounted(async () => {
   skipHistory.value = true
   await replaceVariations('network-only', INITIAL_VARIATION_LIMIT, false)
   await fetchProperties()
-  variations.value = await hydrateVariationRows(variations.value)
-  originalVariations.value = JSON.parse(JSON.stringify(variations.value))
+  originalVariations.value = cloneRows(variations.value)
   computeChanges()
   matrixRef.value?.resetHistory(variations.value)
   skipHistory.value = false
+  matrixHydrating.value = canRenderMatrix.value
   loading.value = false
+  await nextTick()
+  void hydrateVisibleRowsThenRest()
 })
 
 const toCreate = ref<any[]>([])
@@ -1413,9 +1565,10 @@ const updateDateTimeValue = (index: number, key: string, value: any) => {
         ref="matrixRef"
         v-model:rows="variations"
         :columns="columns"
-        :loading="loading"
+        :loading="isMatrixLoading"
         :saving="saving"
         :has-changes="hasChanges"
+        :history-paused="matrixHistoryPaused"
         :initial-visible-rows="INITIAL_VARIATION_LIMIT"
         :visible-rows-increment="LOAD_MORE_VARIATION_LIMIT"
         :has-more-rows="Boolean(pageInfo?.hasNextPage)"

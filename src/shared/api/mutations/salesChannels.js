@@ -365,9 +365,7 @@ export const createSalesChannelViewAssignMutation = gql`
 export const changeProductViewStatusMutation = gql`
   mutation ChangeProductViewStatus($status: ProductViewStatus!, $assignObject: SalesChannelViewAssignObjectInput!) {
     changeProductViewStatus(status: $status, assignObject: $assignObject) {
-      status
-      productsCount
-      viewsCount
+      changesCount
       createdCount
       deletedCount
     }
@@ -393,9 +391,7 @@ export const createSalesChannelViewAssignsMutation = gql`
 export const changeProductViewsStatusMutation = gql`
   mutation ChangeProductViewsStatus($changes: [ProductViewStatusChangeInput!]!) {
     changeProductViewsStatus(changes: $changes) {
-      status
-      productsCount
-      viewsCount
+      changesCount
       createdCount
       deletedCount
     }

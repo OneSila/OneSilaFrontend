@@ -806,6 +806,7 @@ const fetchVariationImages = async (
   let after: string | null = null;
   const nodes: any[] = [];
   let hasNextPage = true;
+  const variationIdSet = new Set(variationIds);
 
   while (hasNextPage) {
     const { data } = await apolloClient.query({
@@ -813,9 +814,10 @@ const fetchVariationImages = async (
       variables: {
         first: pageSize,
         after,
+        order: { id: 'ASC' },
         filter: {
           product: { id: { inList: variationIds } },
-          media: { type: { exact: 'IMAGE' } },
+          media: { type: { exact: TYPE_IMAGE } },
           salesChannel:
             salesChannelId === 'default'
               ? { id: { isNull: true } }
@@ -835,7 +837,8 @@ const fetchVariationImages = async (
 
   const map = new Map<string, VariationImageSlot[]>();
   nodes.forEach((node: any) => {
-    const productId = node.productId ?? node.product?.id;
+    const productIdCandidates = [node.product?.id, node.productId].filter(Boolean);
+    const productId = productIdCandidates.find((id: string) => variationIdSet.has(id)) ?? productIdCandidates[0];
     const mediaId = node.media?.id;
     if (!productId || !mediaId) return;
     if (!map.has(productId)) {
