@@ -34,6 +34,7 @@ const props = withDefaults(
     visibleRowsIncrement?: number
     hasMoreRows?: boolean
     loadingMoreRows?: boolean
+    historyPaused?: boolean
     getCellValue: (rowIndex: number, columnKey: string) => any
     setCellValue: (rowIndex: number, columnKey: string, value: any) => void
     cloneCellValue: (fromRow: number, toRow: number, columnKey: string) => void
@@ -52,6 +53,7 @@ const props = withDefaults(
     visibleRowsIncrement: 10,
     hasMoreRows: false,
     loadingMoreRows: false,
+    historyPaused: false,
   }
 )
 
@@ -165,7 +167,7 @@ const canRedo = computed(() => redoStack.value.length > 0)
 watch(
   rows,
   (newVal) => {
-    if (skipHistory.value || props.loading || props.loadingMoreRows) {
+    if (skipHistory.value || props.loading || props.loadingMoreRows || props.historyPaused) {
       lastSnapshot.value = JSON.stringify(toRaw(newVal))
       return
     }
@@ -951,7 +953,7 @@ defineExpose<MatrixEditorExpose>({ resetHistory, showAllRows })
         </Button>
       </FlexCell>
     </Flex>
-    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full" :class="{ 'pointer-events-none': saving }">
+    <div ref="tableWrapper" class="overflow-x-auto w-full max-w-full" :class="{ 'pointer-events-none': loading || saving }">
       <table v-if="rows.length" class="min-w-max border border-gray-300 border-collapse select-none">
         <thead class="bg-gray-100 sticky top-0">
           <tr>

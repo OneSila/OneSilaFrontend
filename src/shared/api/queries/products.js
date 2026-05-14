@@ -595,6 +595,31 @@ export const configurableVariationsQuery = gql`
   }
 `;
 
+export const configurableVariationsForBulkEditQuery = gql`
+  query ConfigurableVariationsForBulkEdit($first: Int, $last: Int, $after: String, $before: String, $order: ConfigurableVariationOrder, $filter: ConfigurableVariationFilter) {
+    configurableVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
 export const bundleVariationsQuery = gql`
   query BundleVariations($first: Int, $last: Int, $after: String, $before: String, $order: BundleVariationOrder, $filter: BundleVariationFilter) {
     bundleVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
@@ -633,6 +658,31 @@ export const bundleVariationsQuery = gql`
         cursor
       }
       totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`;
+
+export const bundleVariationsForBulkEditQuery = gql`
+  query BundleVariationsForBulkEdit($first: Int, $last: Int, $after: String, $before: String, $order: BundleVariationOrder, $filter: BundleVariationFilter) {
+    bundleVariations(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
+          id
+          variation {
+            id
+            sku
+            name
+            active
+          }
+        }
+        cursor
+      }
       pageInfo {
         endCursor
         startCursor

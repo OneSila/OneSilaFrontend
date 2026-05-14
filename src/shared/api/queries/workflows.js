@@ -38,9 +38,7 @@ export const workflowsOverviewQuery = gql`
           autoAddSimpleProducts
           autoAddBundleProducts
           autoAddAliasProducts
-          productAssignments {
-            id
-          }
+          productsCount
         }
         cursor
       }
@@ -166,20 +164,37 @@ export const workflowBoardQuery = gql`
         sortOrder
         isDefault
       }
-      productAssignments {
-        id
-        workflowState {
+    }
+  }
+`;
+
+export const workflowProductAssignmentsQuery = gql`
+  query WorkflowProductAssignments($first: Int, $last: Int, $after: String, $before: String, $order: WorkflowProductAssignmentOrder, $filter: WorkflowProductAssignmentFilter) {
+    workflowProductAssignments(first: $first, last: $last, after: $after, before: $before, order: $order, filters: $filter) {
+      edges {
+        node {
           id
+          workflowState {
+            id
+          }
+          product {
+            id
+            name
+            sku
+            type
+            active
+            createdAt
+            thumbnailUrl
+          }
         }
-        product {
-          id
-          name
-          sku
-          type
-          active
-          createdAt
-          thumbnailUrl
-        }
+        cursor
+      }
+      totalCount
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
       }
     }
   }

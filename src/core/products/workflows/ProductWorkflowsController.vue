@@ -20,7 +20,11 @@ import { Link } from '../../../shared/components/atoms/link';
 import { Badge } from '../../../shared/components/atoms/badge';
 import { LocalLoader } from '../../../shared/components/atoms/local-loader';
 import { ApolloSubscription } from '../../../shared/components/molecules/apollo-subscription';
-import { workflowAssignableProductsQuery, workflowBoardQuery } from '../../../shared/api/queries/workflows.js';
+import {
+  workflowAssignableProductsQuery,
+  workflowBoardQuery,
+  workflowProductAssignmentsQuery,
+} from '../../../shared/api/queries/workflows.js';
 import { workflowSubscription } from '../../../shared/api/subscriptions/workflows.js';
 import {
   createWorkflowProductAssignmentMutation,
@@ -62,7 +66,6 @@ interface WorkflowSubscriptionNode {
   name: string;
   description: string | null;
   states: WorkflowStateNode[];
-  productAssignments: WorkflowAssignmentNode[];
 }
 
 interface BoardAssignment {
@@ -76,6 +79,13 @@ interface BoardColumn {
   value: string;
   isDefault: boolean;
   assignments: BoardAssignment[];
+  totalCount: number;
+  pageInfo: {
+    endCursor: string | null;
+    hasNextPage: boolean;
+  };
+  loading: boolean;
+  loadingMore: boolean;
 }
 
 interface AssignableProductOption {
@@ -86,6 +96,8 @@ interface AssignableProductOption {
 
 const { t } = useI18n();
 const route = useRoute();
+const WORKFLOW_ASSIGNMENTS_PAGE_SIZE = 100;
+const LOAD_MORE_SCROLL_OFFSET = 160;
 
 const workflowLoading = ref(true);
 const boardColumns = ref<BoardColumn[]>([]);
@@ -99,6 +111,7 @@ const assignableProductsLoading = ref(false);
 const creatingAssignment = ref(false);
 const mutatingAssignmentIds = ref<string[]>([]);
 const clearingColumnId = ref<string | null>(null);
+const boardLoadToken = ref(0);
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -137,9 +150,6 @@ const defaultStateId = computed(() =>
   selectedWorkflow.value?.states?.find((state) => state.isDefault)?.id || null
 );
 const hasDefaultState = computed(() => !!defaultStateId.value);
-const assignedProductIds = computed(() =>
-  boardColumns.value.flatMap((column) => column.assignments.map((assignment) => assignment.product.id))
-);
 const productTypeBadgeMap = computed(() => getProductTypeBadgeMap(t));
 const formatDate = (dateString?: string | null) => {
   if (!dateString) {
@@ -158,53 +168,141 @@ const buildBoardColumns = (workflow: WorkflowSubscriptionNode) => {
     (left, right) => (left.sortOrder ?? 0) - (right.sortOrder ?? 0)
   );
 
-  const assignmentsByStateId = new Map<string, BoardAssignment[]>();
-
-  sortedStates.forEach((state) => {
-    assignmentsByStateId.set(state.id, []);
-  });
-
-  (workflow.productAssignments || []).forEach((assignment) => {
-    const stateId = assignment.workflowState?.id;
-    const product = assignment.product;
-
-    if (!stateId || !product || !assignmentsByStateId.has(stateId)) {
-      return;
-    }
-
-    assignmentsByStateId.get(stateId)?.push({
-      id: assignment.id,
-      workflowStateId: stateId,
-      product,
-    });
-  });
-
   boardColumns.value = sortedStates.map((state) => ({
     id: state.id,
     value: state.value,
     isDefault: !!state.isDefault,
-    assignments: assignmentsByStateId.get(state.id) || [],
+    assignments: [],
+    totalCount: 0,
+    pageInfo: {
+      endCursor: null,
+      hasNextPage: false,
+    },
+    loading: false,
+    loadingMore: false,
   }));
 };
 
-const handleWorkflowResultUpdated = (data: { workflow: WorkflowSubscriptionNode | null }) => {
+const toBoardAssignment = (assignment: WorkflowAssignmentNode): BoardAssignment | null => {
+  const stateId = assignment.workflowState?.id;
+  const product = assignment.product;
+
+  if (!stateId || !product) {
+    return null;
+  }
+
+  return {
+    id: assignment.id,
+    workflowStateId: stateId,
+    product,
+  };
+};
+
+const mergeAssignments = (currentAssignments: BoardAssignment[], nextAssignments: BoardAssignment[]) => {
+  const assignmentsById = new Map<string, BoardAssignment>();
+
+  currentAssignments.forEach((assignment) => assignmentsById.set(assignment.id, assignment));
+  nextAssignments.forEach((assignment) => assignmentsById.set(assignment.id, assignment));
+
+  return Array.from(assignmentsById.values());
+};
+
+const loadWorkflowAssignmentsForState = async (
+  stateId: string,
+  options: { reset?: boolean; token?: number } = {}
+) => {
+  if (!selectedWorkflowId.value) {
+    return;
+  }
+
+  const token = options.token ?? boardLoadToken.value;
+  const column = boardColumns.value.find((candidate) => candidate.id === stateId);
+
+  if (!column || token !== boardLoadToken.value) {
+    return;
+  }
+
+  const reset = !!options.reset;
+
+  if (!reset && (!column.pageInfo.hasNextPage || column.loading || column.loadingMore)) {
+    return;
+  }
+
+  column.loading = reset;
+  column.loadingMore = !reset;
+
+  try {
+    const { data } = await apolloClient.query({
+      query: workflowProductAssignmentsQuery,
+      variables: {
+        first: WORKFLOW_ASSIGNMENTS_PAGE_SIZE,
+        after: reset ? null : column.pageInfo.endCursor,
+        order: { id: 'DESC' },
+        filter: {
+          workflow: { id: { exact: selectedWorkflowId.value } },
+          workflowState: { id: { exact: stateId } },
+        },
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (token !== boardLoadToken.value) {
+      return;
+    }
+
+    const connection = data?.workflowProductAssignments;
+    const assignments = (connection?.edges || [])
+      .map((edge: any) => toBoardAssignment(edge.node))
+      .filter(Boolean) as BoardAssignment[];
+
+    column.assignments = reset ? assignments : mergeAssignments(column.assignments, assignments);
+    column.totalCount = connection?.totalCount ?? column.assignments.length;
+    column.pageInfo = {
+      endCursor: connection?.pageInfo?.endCursor ?? null,
+      hasNextPage: !!connection?.pageInfo?.hasNextPage,
+    };
+  } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    Object.values(validationErrors).forEach((message) => Toast.error(String(message)));
+  } finally {
+    if (token === boardLoadToken.value) {
+      column.loading = false;
+      column.loadingMore = false;
+    }
+  }
+};
+
+const loadInitialWorkflowAssignments = async (token: number) => {
+  await Promise.all(
+    boardColumns.value.map((column) =>
+      loadWorkflowAssignmentsForState(column.id, { reset: true, token })
+    )
+  );
+};
+
+const handleWorkflowResultUpdated = async (data: { workflow: WorkflowSubscriptionNode | null }) => {
   workflowLoading.value = false;
 
   if (!data?.workflow) {
+    boardLoadToken.value += 1;
     selectedWorkflow.value = null;
     lastWorkflowSnapshot.value = null;
     boardColumns.value = [];
     return;
   }
 
+  const token = boardLoadToken.value + 1;
+  boardLoadToken.value = token;
   selectedWorkflow.value = data.workflow;
   lastWorkflowSnapshot.value = data.workflow;
   buildBoardColumns(data.workflow);
+  await loadInitialWorkflowAssignments(token);
 };
 
 const loadWorkflow = async () => {
   if (!selectedWorkflowId.value) {
     workflowLoading.value = false;
+    boardLoadToken.value += 1;
     selectedWorkflow.value = null;
     lastWorkflowSnapshot.value = null;
     boardColumns.value = [];
@@ -219,9 +317,10 @@ const loadWorkflow = async () => {
       fetchPolicy: 'network-only',
     });
 
-    handleWorkflowResultUpdated({ workflow: data?.workflow ?? null });
+    await handleWorkflowResultUpdated({ workflow: data?.workflow ?? null });
   } catch (error) {
     workflowLoading.value = false;
+    boardLoadToken.value += 1;
     selectedWorkflow.value = null;
     lastWorkflowSnapshot.value = null;
     boardColumns.value = [];
@@ -239,15 +338,9 @@ const fetchAssignableProducts = async (search = '') => {
 
   try {
     assignableProductsLoading.value = true;
-    const filter: Record<string, any> = {};
-
-    if (assignedProductIds.value.length) {
-      filter.NOT = {
-        id: {
-          inList: assignedProductIds.value,
-        },
-      };
-    }
+    const filter: Record<string, any> = {
+      excludeWorkflowId: selectedWorkflowId.value,
+    };
 
     if (search.trim()) {
       filter.search = search.trim();
@@ -392,7 +485,7 @@ const deleteAssignment = async (assignment: BoardAssignment) => {
 };
 
 const clearColumnAssignments = async (column: BoardColumn) => {
-  if (!column.assignments.length || clearingColumnId.value) {
+  if (!canClearColumn(column) || clearingColumnId.value) {
     return;
   }
 
@@ -470,7 +563,7 @@ const updateAssignmentState = async (assignment: BoardAssignment, stateId: strin
   } catch (error) {
     assignment.workflowStateId = previousStateId;
     if (previousWorkflow) {
-      buildBoardColumns(previousWorkflow);
+      await handleWorkflowResultUpdated({ workflow: previousWorkflow });
     }
 
     const validationErrors = processGraphQLErrors(error, t);
@@ -495,8 +588,26 @@ const handleColumnChange = async (stateId: string, event: any) => {
 };
 
 const isAssignmentMutating = (assignmentId: string) => mutatingAssignmentIds.value.includes(assignmentId);
+const columnCount = (column: BoardColumn) => column.totalCount || column.assignments.length;
+const canClearColumn = (column: BoardColumn) =>
+  !!column.assignments.length && column.assignments.length >= column.totalCount && !column.loading && !column.loadingMore;
+
+const handleColumnScroll = (column: BoardColumn, event: Event) => {
+  const target = event.target as HTMLElement | null;
+
+  if (!target) {
+    return;
+  }
+
+  const reachedLoadMoreThreshold = target.scrollTop + target.clientHeight >= target.scrollHeight - LOAD_MORE_SCROLL_OFFSET;
+
+  if (reachedLoadMoreThreshold) {
+    void loadWorkflowAssignmentsForState(column.id);
+  }
+};
 
 watch(selectedWorkflowId, () => {
+  boardLoadToken.value += 1;
   workflowLoading.value = !!selectedWorkflowId.value;
   selectedWorkflow.value = null;
   lastWorkflowSnapshot.value = null;
@@ -577,14 +688,14 @@ watch(selectedWorkflowId, () => {
                       <div class="flex shrink-0 items-center gap-1.5">
                         <Button
                           v-if="column.assignments.length"
-                          :disabled="clearingColumnId === column.id"
+                          :disabled="clearingColumnId === column.id || !canClearColumn(column)"
                           custom-class="h-7 w-7 rounded-full bg-amber-100 p-0 text-amber-700 hover:bg-amber-200 disabled:opacity-50"
                           @click="clearColumnAssignments(column)"
                         >
                           <Icon name="broom" size="xs" />
                         </Button>
                         <span class="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
-                          {{ column.assignments.length }}
+                          {{ columnCount(column) }}
                         </span>
                         <span
                           v-if="column.isDefault"
@@ -595,97 +706,106 @@ watch(selectedWorkflowId, () => {
                       </div>
                     </div>
 
-                    <VueDraggableNext
-                      tag="div"
-                      :list="column.assignments"
-                      group="workflow-kanban"
-                      :animation="150"
-                      :scroll="true"
-                      :scroll-sensitivity="120"
-                      class="kanban-column flex max-h-[calc(100vh-240px)] min-h-[420px] flex-1 flex-col gap-2 overflow-y-auto p-2"
-                      @change="handleColumnChange(column.id, $event)"
+                    <div
+                      class="kanban-column max-h-[calc(100vh-240px)] min-h-[420px] flex-1 overflow-y-auto p-2"
+                      @scroll.passive="handleColumnScroll(column, $event)"
                     >
-                      <div
-                        v-for="element in column.assignments"
-                        :key="element.id"
-                        class="relative cursor-grab rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm transition hover:border-primary/40 hover:shadow"
-                        :class="{ 'opacity-60': isAssignmentMutating(element.id) }"
+                      <VueDraggableNext
+                        tag="div"
+                        :list="column.assignments"
+                        group="workflow-kanban"
+                        :animation="150"
+                        :scroll="true"
+                        :scroll-sensitivity="120"
+                        class="flex min-h-[420px] flex-col gap-2"
+                        @change="handleColumnChange(column.id, $event)"
                       >
-                        <Button
-                          :disabled="isAssignmentMutating(element.id)"
-                          custom-class="absolute right-2 top-2 h-5 w-5 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
-                          @click="deleteAssignment(element)"
+                        <div
+                          v-for="element in column.assignments"
+                          :key="element.id"
+                          class="relative cursor-grab rounded-xl border border-gray-200 bg-white p-2.5 shadow-sm transition hover:border-primary/40 hover:shadow"
+                          :class="{ 'opacity-60': isAssignmentMutating(element.id) }"
                         >
-                          <Icon name="circle-xmark" size="xs" />
-                        </Button>
+                          <Button
+                            :disabled="isAssignmentMutating(element.id)"
+                            custom-class="absolute right-2 top-2 h-5 w-5 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
+                            @click="deleteAssignment(element)"
+                          >
+                            <Icon name="circle-xmark" size="xs" />
+                          </Button>
 
-                        <div class="flex min-h-[96px] flex-col gap-2 pr-5">
-                          <div class="flex items-start gap-2.5">
-                            <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                              <Image
-                                v-if="element.product.thumbnailUrl"
-                                :source="element.product.thumbnailUrl"
-                                :alt="element.product.name || element.product.sku || t('shared.labels.product')"
-                                class="h-14 w-14 rounded-md object-cover"
-                              />
-                              <Icon
-                                v-else
-                                name="box"
-                                class="text-base text-gray-400"
-                              />
-                            </div>
-                            <div class="min-w-0 flex-1">
-                              <div class="text-sm font-semibold leading-5 text-gray-900 line-clamp-2">
-                                {{ element.product.name || t('products.workflows.labels.untitledProduct') }}
-                              </div>
-                              <div class="mt-1">
-                                <Link
-                                  v-if="element.product.sku"
-                                  :path="{ name: 'products.products.show', params: { id: element.product.id } }"
-                                  class="text-sm font-medium text-primary hover:underline"
-                                >
-                                  {{ element.product.sku }}
-                                </Link>
-                                <div v-else class="text-sm text-gray-500">
-                                  —
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="flex items-center justify-between gap-2 text-xs text-gray-400">
-                            <div class="inline-flex items-center gap-2">
-                              <div class="inline-flex items-center gap-1">
-                                <span>{{ t('shared.labels.active') }}:</span>
-                                <Icon
-                                  v-if="element.product.active"
-                                  name="check-circle"
-                                  class="text-green-500"
+                          <div class="flex min-h-[96px] flex-col gap-2 pr-5">
+                            <div class="flex items-start gap-2.5">
+                              <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                                <Image
+                                  v-if="element.product.thumbnailUrl"
+                                  :source="element.product.thumbnailUrl"
+                                  :alt="element.product.name || element.product.sku || t('shared.labels.product')"
+                                  class="h-14 w-14 rounded-md object-cover"
                                 />
                                 <Icon
                                   v-else
-                                  name="times-circle"
-                                  class="text-red-500"
+                                  name="box"
+                                  class="text-base text-gray-400"
                                 />
                               </div>
-                              <Badge
-                                v-if="element.product.type && productTypeBadgeMap[element.product.type]"
-                                :text="productTypeBadgeMap[element.product.type].text"
-                                :color="productTypeBadgeMap[element.product.type].color"
-                              />
+                              <div class="min-w-0 flex-1">
+                                <div class="text-sm font-semibold leading-5 text-gray-900 line-clamp-2">
+                                  {{ element.product.name || t('products.workflows.labels.untitledProduct') }}
+                                </div>
+                                <div class="mt-1">
+                                  <Link
+                                    v-if="element.product.sku"
+                                    :path="{ name: 'products.products.show', params: { id: element.product.id } }"
+                                    class="text-sm font-medium text-primary hover:underline"
+                                  >
+                                    {{ element.product.sku }}
+                                  </Link>
+                                  <div v-else class="text-sm text-gray-500">
+                                    —
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div class="text-right">
-                              {{ formatDate(element.product.createdAt) }}
+                            <div class="flex items-center justify-between gap-2 text-xs text-gray-400">
+                              <div class="inline-flex items-center gap-2">
+                                <div class="inline-flex items-center gap-1">
+                                  <span>{{ t('shared.labels.active') }}:</span>
+                                  <Icon
+                                    v-if="element.product.active"
+                                    name="check-circle"
+                                    class="text-green-500"
+                                  />
+                                  <Icon
+                                    v-else
+                                    name="times-circle"
+                                    class="text-red-500"
+                                  />
+                                </div>
+                                <Badge
+                                  v-if="element.product.type && productTypeBadgeMap[element.product.type]"
+                                  :text="productTypeBadgeMap[element.product.type].text"
+                                  :color="productTypeBadgeMap[element.product.type].color"
+                                />
+                              </div>
+                              <div class="text-right">
+                                {{ formatDate(element.product.createdAt) }}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </VueDraggableNext>
+                      </VueDraggableNext>
 
-                    <div
-                      v-if="!column.assignments.length"
-                      class="px-2 pb-2 text-sm text-gray-400"
-                    >
-                      {{ t('products.workflows.empty.noProductsInState') }}
+                      <div v-if="column.loading || column.loadingMore" class="flex justify-center py-4">
+                        <LocalLoader :loading="true" />
+                      </div>
+
+                      <div
+                        v-if="!column.loading && !column.assignments.length"
+                        class="px-2 pb-2 text-sm text-gray-400"
+                      >
+                        {{ t('products.workflows.empty.noProductsInState') }}
+                      </div>
                     </div>
                   </div>
                 </div>

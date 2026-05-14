@@ -12,21 +12,6 @@ export const workflowSubscription = gql`
         sortOrder
         isDefault
       }
-      productAssignments {
-        id
-        workflowState {
-          id
-        }
-        product {
-          id
-          name
-          sku
-          type
-          active
-          createdAt
-          thumbnailUrl
-        }
-      }
     }
   }
 `;
