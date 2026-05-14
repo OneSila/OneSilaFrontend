@@ -13,6 +13,7 @@ import type { QueryFormField } from '../../../../shared/components/organisms/gen
 import { FieldType } from '../../../../shared/utils/constants';
 import { salesPriceListsQuerySelector } from '../../../../shared/api/queries/salesPrices.js';
 import { salesChannelsQuerySelector } from '../../../../shared/api/queries/salesChannels.js';
+import { currenciesQuerySelector } from '../../../../shared/api/queries/currencies.js';
 import FormFieldShell from '../../components/FormFieldShell.vue';
 import ExportColumnsBuilder from './ExportColumnsBuilder.vue';
 import ExportSelectedRecords from './ExportSelectedRecords.vue';
@@ -37,6 +38,7 @@ type ExportFormValue = {
   isPeriodic: boolean;
   intervalHours: number | null;
   salesChannel: string | null;
+  currency: string | null;
   salespricelist: string[];
   activeOnly: boolean | null;
   flat: boolean | null;
@@ -80,6 +82,7 @@ const defaultFormState = (): ExportFormValue => ({
   isPeriodic: false,
   intervalHours: null,
   salesChannel: null,
+  currency: null,
   salespricelist: [],
   activeOnly: null,
   flat: null,
@@ -129,6 +132,7 @@ const relationField = (
 
 const salesPricelistField = relationField('salespricelist', salesPriceListsQuerySelector, 'salesPriceLists', 'name');
 const salesChannelField = relationField('salesChannel', salesChannelsQuerySelector, 'salesChannels', 'hostname', false);
+const currencyField = relationField('currency', currenciesQuerySelector, 'currencies', 'isoCode', false);
 
 const humanize = (value: string) =>
   value
@@ -309,9 +313,13 @@ const handleSubmit = (action: SubmitAction) => {
           <p class="mt-1 text-sm text-slate-500">{{ t('importsExports.exports.form.parametersSubtitle') }}</p>
         </div>
 
-        <div v-if="parameterVisible('salesChannel') || parameterVisible('salespricelist')" class="grid items-start gap-6 md:grid-cols-2">
+        <div v-if="parameterVisible('salesChannel') || parameterVisible('currency') || parameterVisible('salespricelist')" class="grid items-start gap-6 md:grid-cols-2">
           <FormFieldShell v-if="parameterVisible('salesChannel')" :label="humanize('salesChannel')">
             <FieldQuery :field="salesChannelField" :model-value="form.salesChannel" @update:model-value="form.salesChannel = $event" />
+          </FormFieldShell>
+
+          <FormFieldShell v-if="parameterVisible('currency')" :label="t('shared.labels.currency')">
+            <FieldQuery :field="currencyField" :model-value="form.currency" @update:model-value="form.currency = $event" />
           </FormFieldShell>
 
           <FormFieldShell v-if="parameterVisible('salespricelist')" :label="humanize('salespricelist')">
@@ -321,7 +329,7 @@ const handleSubmit = (action: SubmitAction) => {
 
         <div class="grid items-start gap-4 md:grid-cols-2">
           <div
-            v-for="parameterName in allowedParameters.filter((name) => !['salesChannel', 'salespricelist'].includes(name))"
+            v-for="parameterName in allowedParameters.filter((name) => !['salesChannel', 'currency', 'salespricelist'].includes(name))"
             :key="parameterName"
             class="rounded-2xl border border-slate-200 bg-white p-4"
           >

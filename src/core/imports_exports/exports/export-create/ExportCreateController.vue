@@ -10,6 +10,7 @@ import { Toast } from '../../../../shared/modules/toast';
 import { companyLanguagesQuery } from '../../../../shared/api/queries/languages.js';
 import { createExportMutation } from '../../../../shared/api/mutations/importsExports.js';
 import ExportForm from '../components/ExportForm.vue';
+import { EXPORT_KIND_PARAMETERS } from '../../configs';
 import {
   normalizeSelectedExportKind,
   parseSelectedExportIds,
@@ -86,6 +87,10 @@ const handleSubmit = async (form: any) => {
       productPropertiesAddValueIds: form.productPropertiesAddValueIds,
       propertySelectValuesAddValueIds: form.propertySelectValuesAddValueIds,
     };
+
+    if (EXPORT_KIND_PARAMETERS[form.kind]?.includes('currency')) {
+      payload.currency = form.currency || null;
+    }
 
     const { data } = await apolloClient.mutate({
       mutation: createExportMutation,
