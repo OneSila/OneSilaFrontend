@@ -6586,6 +6586,7 @@
     "validation": {
       "required": "This field is required.",
       "fileRequired": "Upload a JSON file to continue.",
+      "tabularFileRequired": "Upload a tabular file to continue.",
       "urlRequired": "Enter a JSON URL to continue.",
       "invalidUrl": "Enter a valid HTTP or HTTPS URL.",
       "intervalHoursPositive": "Interval hours must be greater than zero."
@@ -6634,6 +6635,7 @@
       "fileUrl": "File URL",
       "jsonFile": "JSON file",
       "jsonUrl": "JSON URL",
+      "tabularFile": "Tabular file",
       "brokenRecords": "Broken records",
       "cleanedErrors": "Cleaned errors",
       "errorTraceback": "Error traceback"
@@ -6661,9 +6663,11 @@
         "typeLocked": "Type cannot be changed after creation.",
         "languageOptional": "Optional. Used as the default language context when the payload omits language.",
         "sourceHint": "Provide exactly one source: either an uploaded JSON file or a JSON URL.",
+        "productSourceHint": "Choose a JSON file, a tabular product file, or a JSON URL.",
         "fileHint": "Accepts `.json` uploads only.",
-        "urlHint": "Use a reachable JSON endpoint or file URL.",
-        "isPeriodicHint": "Enable this to rerun the mapped import automatically on a schedule."
+        "tabularFileHint": "Accepts `.csv`, `.xlsx`, and `.xlsm` uploads for product imports.",
+        "urlHint": "Use a reachable JSON endpoint.",
+        "isPeriodicHint": "Only JSON URL imports can rerun automatically on a schedule."
       },
       "tutorial": {
         "title": "Import Tutorial",

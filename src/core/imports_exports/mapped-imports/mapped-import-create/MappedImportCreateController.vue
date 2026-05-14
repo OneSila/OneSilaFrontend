@@ -37,6 +37,7 @@ const handleSubmit = async (form: any) => {
   submitting.value = true;
 
   try {
+    const isJsonUrlImport = form.sourceMode === 'url';
     const payload: Record<string, any> = {
       name: form.name || null,
       createOnly: form.createOnly,
@@ -44,11 +45,11 @@ const handleSubmit = async (form: any) => {
       overrideOnly: form.overrideOnly,
       skipBrokenRecords: form.skipBrokenRecords,
       type: form.type,
-      isPeriodic: form.isPeriodic,
-      intervalHours: form.isPeriodic ? form.intervalHours : null,
+      isPeriodic: isJsonUrlImport ? form.isPeriodic : false,
+      intervalHours: isJsonUrlImport && form.isPeriodic ? form.intervalHours : null,
       language: form.language || null,
-      jsonUrl: form.sourceMode === 'url' ? form.jsonUrl || null : null,
-      jsonFile: form.sourceMode === 'file' ? form.jsonFile : null,
+      jsonUrl: isJsonUrlImport ? form.jsonUrl || null : null,
+      jsonFile: isJsonUrlImport ? null : form.jsonFile,
     };
 
     const { data } = await apolloClient.mutate({

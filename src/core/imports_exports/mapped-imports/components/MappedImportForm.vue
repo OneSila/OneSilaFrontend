@@ -13,7 +13,7 @@ import FormFieldShell from '../../components/FormFieldShell.vue';
 import MappedImportTutorialPanel from './MappedImportTutorialPanel.vue';
 import { getLanguageOptions, getMappedImportTypeOptions } from '../../configs';
 
-type SourceMode = 'file' | 'url';
+type SourceMode = 'jsonFile' | 'tabularFile' | 'url';
 type SubmitAction = 'save' | 'continue';
 type UploadedJsonFile = File | { name?: string; url?: string; notUpdated?: boolean } | null;
 
@@ -50,10 +50,12 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const typeOptions = computed(() => getMappedImportTypeOptions(t));
 const languageSelectorOptions = computed(() => getLanguageOptions(props.languageOptions, true, t('importsExports.shared.none')));
+const jsonFileFormats = ['.json'];
+const tabularFileFormats = ['.csv', '.xlsx', '.xlsm'];
 
 const defaultFormState = (): MappedImportFormValue => ({
   name: '',
-  type: 'property',
+  type: 'product',
   language: null,
   createOnly: false,
   updateOnly: false,
@@ -66,7 +68,7 @@ const defaultFormState = (): MappedImportFormValue => ({
 });
 
 const form = reactive<MappedImportFormValue>(defaultFormState());
-const sourceMode = ref<SourceMode>('file');
+const sourceMode = ref<SourceMode>('jsonFile');
 const fieldErrors = reactive<Record<string, string | null>>({
   type: null,
   source: null,
@@ -76,15 +78,62 @@ const fieldErrors = reactive<Record<string, string | null>>({
 
 const selectedType = computed(() => form.type || null);
 const isEdit = computed(() => props.mode === 'edit');
+const isProductImport = computed(() => form.type === 'product');
+const acceptedFileFormats = computed(() => sourceMode.value === 'tabularFile' ? tabularFileFormats : jsonFileFormats);
+const fileUploaderKey = computed(() => `${sourceMode.value}:${acceptedFileFormats.value.join('|')}`);
+const fileSourceLabel = computed(() => sourceMode.value === 'tabularFile' ? t('importsExports.fields.tabularFile') : t('importsExports.fields.jsonFile'));
+const sourceHint = computed(() => isProductImport.value ? t('importsExports.mappedImports.form.productSourceHint') : t('importsExports.mappedImports.form.sourceHint'));
+const fileHint = computed(() => sourceMode.value === 'tabularFile' ? t('importsExports.mappedImports.form.tabularFileHint') : t('importsExports.mappedImports.form.fileHint'));
+const canUsePeriodic = computed(() => sourceMode.value === 'url');
+
+const getUploadedFileName = (value: UploadedJsonFile) => {
+  if (!value) {
+    return null;
+  }
+
+  return value instanceof File ? value.name : value.name || value.url || null;
+};
+
+const getFileExtension = (value: UploadedJsonFile) => {
+  const fileName = getUploadedFileName(value);
+  const extension = fileName?.split('?')[0].split('.').pop();
+  return extension ? `.${extension.toLowerCase()}` : null;
+};
+
+const isFileCompatibleWithType = (value: UploadedJsonFile) => {
+  const extension = getFileExtension(value);
+  return !extension || acceptedFileFormats.value.includes(extension);
+};
+
+const getInitialSourceMode = (): SourceMode => {
+  if (form.jsonUrl) {
+    return 'url';
+  }
+
+  const extension = getFileExtension(form.jsonFile);
+  if (isProductImport.value && extension && tabularFileFormats.includes(extension)) {
+    return 'tabularFile';
+  }
+
+  return 'jsonFile';
+};
+
+const resetPeriodic = () => {
+  form.isPeriodic = false;
+  form.intervalHours = null;
+  fieldErrors.intervalHours = null;
+};
 
 const applyInitialValue = () => {
   const next = defaultFormState();
   Object.assign(next, props.initialValue || {});
   Object.assign(form, next);
 
-  sourceMode.value = form.jsonUrl ? 'url' : 'file';
+  sourceMode.value = getInitialSourceMode();
 
-  if (!form.isPeriodic) {
+  if (!canUsePeriodic.value) {
+    resetPeriodic();
+  } else if (!form.isPeriodic) {
     form.intervalHours = null;
   }
 };
@@ -99,13 +148,34 @@ watch(sourceMode, (nextMode) => {
   fieldErrors.source = null;
   fieldErrors.jsonUrl = null;
 
-  if (nextMode === 'file') {
+  if (nextMode !== 'url') {
     form.jsonUrl = '';
+    resetPeriodic();
+    if (!isFileCompatibleWithType(form.jsonFile)) {
+      form.jsonFile = null;
+    }
     return;
   }
 
   form.jsonFile = null;
 });
+
+watch(
+  () => form.type,
+  () => {
+    if (!isProductImport.value && sourceMode.value === 'tabularFile') {
+      sourceMode.value = 'jsonFile';
+      form.jsonFile = null;
+      fieldErrors.source = null;
+      return;
+    }
+
+    if (sourceMode.value !== 'url' && !isFileCompatibleWithType(form.jsonFile)) {
+      form.jsonFile = null;
+      fieldErrors.source = null;
+    }
+  },
+);
 
 watch(
   () => form.isPeriodic,
@@ -139,13 +209,17 @@ const selectSource = (nextMode: SourceMode) => {
 const handleSubmit = (action: SubmitAction) => {
   resetErrors();
 
+  if (!canUsePeriodic.value) {
+    resetPeriodic();
+  }
+
   if (!form.type) {
     fieldErrors.type = t('importsExports.validation.required');
   }
 
-  if (sourceMode.value === 'file') {
+  if (sourceMode.value !== 'url') {
     if (!form.jsonFile) {
-      fieldErrors.source = t('importsExports.validation.fileRequired');
+      fieldErrors.source = t(sourceMode.value === 'tabularFile' ? 'importsExports.validation.tabularFileRequired' : 'importsExports.validation.fileRequired');
     }
   } else if (!form.jsonUrl) {
     fieldErrors.jsonUrl = t('importsExports.validation.urlRequired');
@@ -153,7 +227,7 @@ const handleSubmit = (action: SubmitAction) => {
     fieldErrors.jsonUrl = t('importsExports.validation.invalidUrl');
   }
 
-  if (form.isPeriodic && (!form.intervalHours || form.intervalHours <= 0)) {
+  if (canUsePeriodic.value && form.isPeriodic && (!form.intervalHours || form.intervalHours <= 0)) {
     fieldErrors.intervalHours = t('importsExports.validation.intervalHoursPositive');
   }
 
@@ -208,15 +282,24 @@ const handleSubmit = (action: SubmitAction) => {
         </div>
 
         <div class="space-y-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-          <FormFieldShell :label="t('importsExports.shared.source')" required :hint="t('importsExports.mappedImports.form.sourceHint')" :error="fieldErrors.source">
-            <div class="grid gap-3 sm:grid-cols-2">
+          <FormFieldShell :label="t('importsExports.shared.source')" required :hint="sourceHint" :error="fieldErrors.source">
+            <div :class="isProductImport ? 'grid gap-3 sm:grid-cols-3' : 'grid gap-3 sm:grid-cols-2'">
               <button
                 type="button"
                 class="rounded-xl border px-4 py-3 text-left text-sm font-semibold transition"
-                :class="sourceMode === 'file' ? 'border-primary bg-primary/5 text-primary shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'"
-                @click="selectSource('file')"
+                :class="sourceMode === 'jsonFile' ? 'border-primary bg-primary/5 text-primary shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'"
+                @click="selectSource('jsonFile')"
               >
                 {{ t('importsExports.fields.jsonFile') }}
+              </button>
+              <button
+                v-if="isProductImport"
+                type="button"
+                class="rounded-xl border px-4 py-3 text-left text-sm font-semibold transition"
+                :class="sourceMode === 'tabularFile' ? 'border-primary bg-primary/5 text-primary shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'"
+                @click="selectSource('tabularFile')"
+              >
+                {{ t('importsExports.fields.tabularFile') }}
               </button>
               <button
                 type="button"
@@ -230,14 +313,15 @@ const handleSubmit = (action: SubmitAction) => {
           </FormFieldShell>
 
           <FormFieldShell
-            v-if="sourceMode === 'file'"
-            :label="t('importsExports.fields.jsonFile')"
+            v-if="sourceMode !== 'url'"
+            :label="fileSourceLabel"
             required
-            :hint="t('importsExports.mappedImports.form.fileHint')"
+            :hint="fileHint"
           >
             <FileUploader
+              :key="fileUploaderKey"
               :model-value="form.jsonFile"
-              :formats="['.json']"
+              :formats="acceptedFileFormats"
               @update:model-value="form.jsonFile = $event; fieldErrors.source = null"
             />
           </FormFieldShell>
@@ -252,7 +336,7 @@ const handleSubmit = (action: SubmitAction) => {
             <TextInput v-model:model-value="form.jsonUrl" class="w-full" :placeholder="t('importsExports.placeholders.url')" />
           </FormFieldShell>
 
-          <div class="grid items-start gap-6 md:grid-cols-2">
+          <div v-if="canUsePeriodic" class="grid items-start gap-6 md:grid-cols-2">
             <FormFieldShell :label="t('importsExports.fields.isPeriodic')" :hint="t('importsExports.mappedImports.form.isPeriodicHint')">
               <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3">
                 <span class="text-sm text-slate-700">{{ t('importsExports.fields.isPeriodic') }}</span>
