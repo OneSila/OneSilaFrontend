@@ -136,14 +136,14 @@ export const EXPORT_KIND_DEFAULT_COLUMNS: Record<ExportKind, string[]> = {
 };
 
 export const EXPORT_KIND_PARAMETERS: Record<ExportKind, string[]> = {
-  products: ['salesChannel', 'activeOnly', 'flat', 'ids', 'productPropertiesAddValueIds'],
+  products: ['salesChannel', 'currency', 'activeOnly', 'flat', 'ids', 'productPropertiesAddValueIds'],
   product_properties: ['ids', 'salesChannel', 'addTranslations', 'valuesAreIds', 'addValueIds'],
   properties: ['ids', 'propertySelectValuesAddValueIds'],
   property_select_values: ['ids', 'addValueIds', 'valuesAreIds'],
   images: ['ids', 'salesChannel', 'addProductSku', 'addTitle', 'addDescription'],
   documents: ['ids', 'salesChannel', 'addProductSku', 'addTitle', 'addDescription'],
   videos: ['ids', 'salesChannel', 'addProductSku', 'addTitle', 'addDescription'],
-  sales_prices: ['ids', 'addProductSku'],
+  sales_prices: ['ids', 'currency', 'addProductSku'],
   price_lists: ['ids'],
   price_list_prices: ['ids', 'salespricelist', 'addProductSku'],
   rules: ['ids', 'salesChannel'],

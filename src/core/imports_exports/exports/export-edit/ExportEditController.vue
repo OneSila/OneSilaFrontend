@@ -11,6 +11,7 @@ import { companyLanguagesQuery } from '../../../../shared/api/queries/languages.
 import { exportQuery } from '../../../../shared/api/queries/importsExports.js';
 import { updateExportMutation } from '../../../../shared/api/mutations/importsExports.js';
 import ExportForm from '../components/ExportForm.vue';
+import { EXPORT_KIND_PARAMETERS } from '../../configs';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -49,6 +50,7 @@ onMounted(async () => {
       isPeriodic: Boolean(exportNode.isPeriodic),
       intervalHours: exportNode.intervalHours ?? null,
       salesChannel: exportNode.parameters?.salesChannel ?? null,
+      currency: exportNode.parameters?.currency ?? null,
       salespricelist: exportNode.parameters?.salespricelist || [],
       activeOnly: exportNode.parameters?.activeOnly ?? null,
       flat: exportNode.parameters?.flat ?? null,
@@ -94,6 +96,10 @@ const handleSubmit = async (form: any) => {
       productPropertiesAddValueIds: form.productPropertiesAddValueIds,
       propertySelectValuesAddValueIds: form.propertySelectValuesAddValueIds,
     };
+
+    if (EXPORT_KIND_PARAMETERS[form.kind]?.includes('currency')) {
+      payload.currency = form.currency || null;
+    }
 
     await apolloClient.mutate({
       mutation: updateExportMutation,

@@ -365,7 +365,6 @@ export const createSalesChannelViewAssignMutation = gql`
 export const changeProductViewStatusMutation = gql`
   mutation ChangeProductViewStatus($status: ProductViewStatus!, $assignObject: SalesChannelViewAssignObjectInput!) {
     changeProductViewStatus(status: $status, assignObject: $assignObject) {
-      changesCount
       createdCount
       deletedCount
     }
