@@ -32,6 +32,7 @@ const createMarketplaceKey = (viewId: string, productId?: string | null) =>
 
 const doesProductMatchView = (product: any, view: any) => {
   if (!view || !product?.createdMarketplaces?.length) return false;
+  if (product.salesChannel?.id !== view.salesChannel?.id) return false;
   if (hasAssignedViewData.value) {
     const assignmentKey = getViewAssignmentKey(view);
     if (!assignmentKey || !props.assignedViewIds?.[assignmentKey]) {
