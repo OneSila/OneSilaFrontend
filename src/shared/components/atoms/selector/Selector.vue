@@ -2,7 +2,7 @@
 import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import { createPopper, Placement } from '@popperjs/core';
-import { computed, onMounted, Ref, ref, watchEffect } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref, watch, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from "../icon";
 
@@ -20,7 +20,12 @@ const props = withDefaults(
     filterable?: boolean;
     removable?: boolean;
     limit?: number;
+    controlMinWidth?: number;
+    dropdownMinWidth?: number;
+    dropdownMaxWidth?: number;
     isLoading?: boolean;
+    isLoadingMore?: boolean;
+    hasMoreOptions?: boolean;
     showAddEntry?: boolean;
     reverse?: boolean;
   }>(),
@@ -32,6 +37,7 @@ const emit = defineEmits<{
   (e: 'selected', event): void;
   (e: 'deselected', event): void;
   (e: 'searched', search, loading): void;
+  (e: 'load-more'): void;
   (e: 'update:modelValue', event): void;
   (e: 'label-selected', payload: { id: any; label: string }): void;
 }>();
@@ -39,7 +45,30 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const selectorRef: Ref<any> = ref(null);
+const loadMoreTriggerRef: Ref<HTMLElement | null> = ref(null);
 const dropdownOptions: Ref<any[]> = ref(props.options);
+const cachedOptions: Ref<any[]> = ref([]);
+const DEFAULT_DROPDOWN_VIEWPORT_GUTTER = 16;
+let loadMoreObserver: IntersectionObserver | null = null;
+let pendingScrollRestore: { scrollTop: number } | null = null;
+
+const baseOptions = computed(() => {
+  if (props.options.length) {
+    return props.options;
+  }
+
+  if (props.isLoading && cachedOptions.value.length) {
+    return cachedOptions.value;
+  }
+
+  return props.options;
+});
+
+watchEffect(() => {
+  if (props.options.length) {
+    cachedOptions.value = [...props.options];
+  }
+});
 
 const sanitizeSearchTerm = (term: string | undefined): string => {
   if (!term) {
@@ -53,6 +82,10 @@ const sanitizeSearchTerm = (term: string | undefined): string => {
 };
 
 const filterBy = (_option: any, label: any, search: string | undefined) => {
+  if (props.isLoading) {
+    return true;
+  }
+
   if (typeof label === 'number') {
     label = label.toString();
   }
@@ -67,8 +100,142 @@ const filterBy = (_option: any, label: any, search: string | undefined) => {
   return normalizedLabel.includes(normalizedSearch);
 };
 
+const isOptionSelectable = () => !props.isLoading;
+
+const dropdownShouldOpen = ({ noDrop, open }) => {
+  return !noDrop && open;
+};
+
+const canLoadMore = computed(() => {
+  return Boolean(props.hasMoreOptions && !props.isLoading && !props.isLoadingMore);
+});
+
+const selectorStyle = computed(() => {
+  if (!props.controlMinWidth) {
+    return undefined;
+  }
+
+  return {
+    minWidth: `${props.controlMinWidth}px`,
+  };
+});
+
+const getDropdownMenu = (): HTMLElement | null => {
+  return selectorRef.value?.$refs?.dropdownMenu ?? null;
+};
+
+const captureDropdownScroll = () => {
+  const menu = getDropdownMenu();
+
+  if (!menu) {
+    return;
+  }
+
+  pendingScrollRestore = {
+    scrollTop: menu.scrollTop,
+  };
+};
+
+const restoreDropdownScroll = () => {
+  if (!pendingScrollRestore) {
+    return;
+  }
+
+  const snapshot = pendingScrollRestore;
+  pendingScrollRestore = null;
+
+  nextTick(() => {
+    const menu = getDropdownMenu();
+
+    if (!menu) {
+      return;
+    }
+
+    menu.scrollTop = snapshot.scrollTop;
+  });
+};
+
+const loadMoreOptions = () => {
+  if (!canLoadMore.value) {
+    return;
+  }
+
+  captureDropdownScroll();
+  emit('load-more');
+};
+
+const observeLoadMoreTrigger = (element: HTMLElement | null) => {
+  loadMoreObserver?.disconnect();
+  loadMoreObserver = null;
+
+  if (!element) {
+    return;
+  }
+
+  loadMoreObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        loadMoreOptions();
+      }
+    },
+    { rootMargin: '120px 0px' }
+  );
+
+  loadMoreObserver.observe(element);
+};
+
+watch(loadMoreTriggerRef, (element) => {
+  observeLoadMoreTrigger(element);
+});
+
+watch(canLoadMore, () => {
+  nextTick(() => {
+    observeLoadMoreTrigger(loadMoreTriggerRef.value);
+  });
+});
+
+watch(
+  () => props.options.length,
+  () => {
+    restoreDropdownScroll();
+  }
+);
+
+watch(
+  () => props.isLoadingMore,
+  (isLoadingMore, wasLoadingMore) => {
+    if (wasLoadingMore && !isLoadingMore) {
+      restoreDropdownScroll();
+    }
+  }
+);
+
+onMounted(() => {
+  observeLoadMoreTrigger(loadMoreTriggerRef.value);
+});
+
+onBeforeUnmount(() => {
+  loadMoreObserver?.disconnect();
+});
+
 const calculatePosition = (dropdownList, component, { width }) => {
-  dropdownList.style.width = width;
+  dropdownList.classList.add('selector-dropdown');
+
+  const inputWidth = Number.parseFloat(width) || 0;
+  const viewportWidth = typeof window !== 'undefined'
+    ? window.innerWidth - DEFAULT_DROPDOWN_VIEWPORT_GUTTER
+    : inputWidth;
+  const minWidth = props.dropdownMinWidth ?? inputWidth;
+  const maxWidth = props.dropdownMaxWidth ?? Math.max(minWidth, inputWidth);
+  const targetWidth = Math.min(
+    Math.max(inputWidth, minWidth),
+    maxWidth,
+    Math.max(inputWidth, viewportWidth)
+  );
+
+  dropdownList.style.width = `${targetWidth}px`;
+  dropdownList.style.minWidth = width;
+  dropdownList.style.maxWidth = `calc(100vw - ${DEFAULT_DROPDOWN_VIEWPORT_GUTTER}px)`;
 
   const popper = createPopper(component.$refs.toggle, dropdownList, {
     placement: props.dropdownPosition as Placement,
@@ -94,7 +261,7 @@ const calculatePosition = (dropdownList, component, { width }) => {
 };
 
 watchEffect(() => {
-  dropdownOptions.value = [...props.options];
+  dropdownOptions.value = [...baseOptions.value];
 
   if (props.showAddEntry && props.valueBy && props.labelBy) {
     const valueBy = props.valueBy;
@@ -135,7 +302,8 @@ watchEffect(() => {
       dropdownOptions.value
     }
   } else if (selectorRef.value && !selectorRef.value.search && props.limit) {
-    const selectedOptions = props.options.filter((option) => {
+    const options = baseOptions.value;
+    const selectedOptions = options.filter((option) => {
       const optionValue = props.valueBy ? option[props.valueBy] : option;
 
       return Array.isArray(props.modelValue)
@@ -143,7 +311,7 @@ watchEffect(() => {
         : optionValue === props.modelValue;
     });
 
-    const limitedOptions = props.options.slice(0, props.limit);
+    const limitedOptions = options.slice(0, props.limit);
 
     const missingSelectedOptions = selectedOptions.filter((selectedOption) => {
       const selectedOptionValue = props.valueBy
@@ -159,11 +327,11 @@ watchEffect(() => {
       });
     });
 
-    dropdownOptions.value = props.options
+    dropdownOptions.value = options
       .slice(0, props.limit)
       .concat(missingSelectedOptions);
   } else {
-    dropdownOptions.value = props.options;
+    dropdownOptions.value = baseOptions.value;
   }
 });
 
@@ -268,6 +436,7 @@ const getTruncatedLabel = (option: any) => {
   <VueSelect
     ref="selectorRef"
     class="selector w-full md:min-w-38 text-sm bg-white"
+    :style="selectorStyle"
     @keydown.enter="handleKeydown"
     :placeholder="placeholder || t('shared.components.molecules.selector.defaultPlaceholder')"
     :model-value="modelValue"
@@ -278,8 +447,11 @@ const getTruncatedLabel = (option: any) => {
     :multiple="multiple"
     :filterable="filterable"
     :filter-by="filterBy"
+    :selectable="isOptionSelectable"
     :clearable="removable"
     :loading="isLoading"
+    :autoscroll="false"
+    :dropdown-should-open="dropdownShouldOpen"
     close-on-select
     append-to-body
     searchable
@@ -289,13 +461,31 @@ const getTruncatedLabel = (option: any) => {
     @option:deselected="(event) => emit('deselected', event)"
   >
 
+    <template #list-header>
+      <li v-if="isLoading" class="selector__loading-row">
+        <Icon name="spinner" class="animate-spin selector__loading-icon" />
+        <span>{{ t('shared.labels.loading') }}</span>
+      </li>
+    </template>
+
+    <template #list-footer>
+      <li
+        v-if="(!isLoading && hasMoreOptions) || isLoadingMore"
+        ref="loadMoreTriggerRef"
+        class="selector__load-more-row"
+      >
+        <Icon name="spinner" class="animate-spin selector__loading-icon" />
+        <span>{{ t('shared.labels.loading') }}</span>
+      </li>
+    </template>
+
 <!-- Pills for multiple -->
 <template v-if="multiple" #selected-option-container="{ option, deselect, disabled }">
   <span
-    class="inline-flex items-center rounded-full bg-gray-100 text-sm text-gray-800 px-3 py-1 mr-1 mb-1 border border-gray-400 transition-colors duration-200 hover:bg-gray-200 cursor-pointer"
+    class="inline-flex min-w-0 max-w-full items-center rounded-full bg-gray-100 text-sm text-gray-800 px-3 py-1 mr-1 mb-1 border border-gray-400 transition-colors duration-200 hover:bg-gray-200 cursor-pointer"
   >
     <span v-if="getLabel(option) != null" :title="getLabel(option) || undefined">
-      {{ getTruncatedLabel(option) }}
+      <span class="selector__selected-label">{{ getTruncatedLabel(option) }}</span>
     </span>
     <span v-else class="text-gray-400 italic flex items-center gap-1">
       <Icon name="spinner" class="animate-spin" />
@@ -322,14 +512,18 @@ const getTruncatedLabel = (option: any) => {
   </template>
   <template v-else #selected-option>
     <span v-if="getLabel(modelValue) != null" :title="getLabel(modelValue) || undefined">
-      {{ getTruncatedLabel(modelValue) }}
+      <span class="selector__selected-label">{{ getTruncatedLabel(modelValue) }}</span>
     </span>
   </template>
 
 
 
     <template #no-options>
-      <div class="w-full px-2 text-left text-opacity-50">
+      <div v-if="isLoading" class="selector__loading-empty">
+        <Icon name="spinner" class="animate-spin selector__loading-icon" />
+        <span>{{ t('shared.labels.loading') }}</span>
+      </div>
+      <div v-else class="w-full px-2 text-left text-opacity-50">
         <em>{{ t('shared.components.molecules.selector.typeToSearch') }}.</em>
       </div>
     </template>
@@ -343,23 +537,99 @@ const getTruncatedLabel = (option: any) => {
 }
 
 .selector .vs__dropdown-toggle {
-  min-height: 42px;
-  padding: 4px 0;
+  min-height: 40px;
+  padding: 4px 2px;
+  border-color: #d1d5db;
+  border-radius: 6px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.selector .vs__dropdown-menu {
+.selector:focus-within .vs__dropdown-toggle,
+.selector.vs--open .vs__dropdown-toggle {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);
+}
+
+.selector-dropdown.vs__dropdown-menu {
   max-width: none;
   overflow-x: hidden;
+  border-color: #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
 }
 
-.selector .vs__dropdown-option {
-  white-space: normal;
-  word-break: break-word;
+.selector__loading-row,
+.selector__loading-empty,
+.selector__load-more-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 12px;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  font-weight: 500;
+  overflow: hidden;
 }
 
-.vs__dropdown-option--highlight {
-  white-space: normal;
-  word-break: break-word;
+.selector__loading-empty {
+  border-bottom: 0;
+}
+
+.selector__loading-row::after,
+.selector__loading-empty::after,
+.selector__load-more-row::after {
+  content: '';
+  position: absolute;
+  left: -35%;
+  bottom: 0;
+  width: 35%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #2563eb, transparent);
+  animation: selector-loading-sweep 1.15s ease-in-out infinite;
+}
+
+.selector__load-more-row {
+  justify-content: center;
+  border-top: 1px solid #bfdbfe;
+  border-bottom: 0;
+}
+
+.selector__loading-icon {
+  flex-shrink: 0;
+}
+
+@keyframes selector-loading-sweep {
+  from {
+    left: -35%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+.selector-dropdown .vs__dropdown-option {
+  min-height: 34px;
+  padding: 8px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.selector-dropdown .vs__dropdown-option--highlight {
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.selector-dropdown .vs__dropdown-option--disabled {
+  cursor: wait;
+  color: #6b7280;
+  background-color: #f9fafb;
+  opacity: 0.68;
 }
 
 .selector .vs__selected-options {
@@ -386,10 +656,32 @@ const getTruncatedLabel = (option: any) => {
 
 .selector .vs__selected {
   max-width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .vs--multiple .vs__selected {
   width: 100%;
+}
+
+.selector.vs--single .vs__selected-options {
+  flex-wrap: nowrap;
+}
+
+.selector.vs--single .vs__selected {
+  width: 100%;
+}
+
+.selector .vs__search {
+  min-width: 0;
+}
+
+.selector__selected-label {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -414,9 +706,7 @@ const getTruncatedLabel = (option: any) => {
 }
 
 .selector.vs--open .vs__dropdown-toggle {
-  border-radius: 0 0 4px 4px;
-  /* border-top-color: transparent; */
-  border-bottom-color: rgba(60, 60, 60, 0.26);
+  border-bottom-color: #3b82f6;
 }
 
 
@@ -426,9 +716,9 @@ const getTruncatedLabel = (option: any) => {
 }
 
 [data-popper-placement='top'] {
-  border-radius: 4px 4px 0 0;
+  border-radius: 6px;
   border-top-style: solid;
   border-bottom-style: none;
-  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 -12px 30px rgba(15, 23, 42, 0.16);
 }
 </style>

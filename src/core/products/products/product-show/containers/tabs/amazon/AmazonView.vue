@@ -66,6 +66,7 @@ const createMarketplaceKey = (viewId: string, productId?: string | null) =>
 
 const doesProductMatchView = (product: AmazonProduct, view: any) => {
   if (!view || !product?.createdMarketplaces?.length) return false;
+  if (product.salesChannel?.id !== view.salesChannel?.id) return false;
   if (hasAmazonAssignmentData.value) {
     const assignmentKey = getViewAssignmentKey(view);
     if (!assignmentKey || !amazonViewAssignments.value[assignmentKey]) {
@@ -121,6 +122,9 @@ interface AmazonProduct {
     sku?: string | null;
   } | null;
   createdMarketplaces: string[];
+  salesChannel?: {
+    id: string;
+  } | null;
   lastSyncAt?: string | null;
   syncingCurrentPercentage?: number | null;
   issues: AmazonProductIssue[];

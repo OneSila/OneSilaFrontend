@@ -12,6 +12,9 @@ export const amazonProductsQuery = gql`
             sku
           }
           createdMarketplaces
+          salesChannel {
+            id
+          }
           lastSyncAt
           syncingCurrentPercentage
           remoteParentProduct {

@@ -22,6 +22,14 @@ const submitting = ref(false);
 const languageOptions = ref<Array<{ code: string; name?: string; nameLocal?: string; nameTranslated?: string }>>([]);
 const initialValue = ref<Record<string, any> | null>(null);
 
+const getUploadedFileName = (url?: string | null) => {
+  if (!url) {
+    return 'import.json';
+  }
+
+  return url.split('?')[0].split('/').pop() || 'import.json';
+};
+
 onMounted(async () => {
   try {
     const [{ data: languagesData }, { data: mappedImportData }] = await Promise.all([
@@ -50,7 +58,7 @@ onMounted(async () => {
       intervalHours: mappedImport.intervalHours ?? null,
       jsonUrl: mappedImport.jsonUrl || '',
       jsonFile: mappedImport.jsonFile || (mappedImport.jsonFileUrl ? {
-        name: mappedImport.jsonFile?.name || 'import.json',
+        name: mappedImport.jsonFile?.name || getUploadedFileName(mappedImport.jsonFileUrl),
         url: mappedImport.jsonFileUrl,
       } : null),
     } : null;
@@ -66,6 +74,7 @@ const handleSubmit = async (form: any) => {
   submitting.value = true;
 
   try {
+    const isJsonUrlImport = form.sourceMode === 'url';
     const payload: Record<string, any> = {
       id: id.value,
       name: form.name || null,
@@ -73,12 +82,12 @@ const handleSubmit = async (form: any) => {
       updateOnly: form.updateOnly,
       overrideOnly: form.overrideOnly,
       skipBrokenRecords: form.skipBrokenRecords,
-      isPeriodic: form.isPeriodic,
-      intervalHours: form.isPeriodic ? form.intervalHours : null,
+      isPeriodic: isJsonUrlImport ? form.isPeriodic : false,
+      intervalHours: isJsonUrlImport && form.isPeriodic ? form.intervalHours : null,
       language: form.language || null,
     };
 
-    if (form.sourceMode === 'url') {
+    if (isJsonUrlImport) {
       payload.jsonUrl = form.jsonUrl || null;
       payload.jsonFile = null;
     } else {

@@ -172,6 +172,8 @@ export interface QueryFormField extends BaseFormField {
   filterable?: boolean;
   removable?: boolean;
   limit?: number;
+  dropdownMinWidth?: number;
+  dropdownMaxWidth?: number;
   minSearchLength?: number;
   autocompleteIfOneResult?: boolean;
   isLiveUpdate?: boolean;
