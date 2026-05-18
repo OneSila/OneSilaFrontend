@@ -2122,7 +2122,8 @@
           "partiallyListed": "",
           "pendingApproval": "",
           "pendingExternalDocuments": "",
-          "approvalRejected": ""
+          "approvalRejected": "",
+          "manualInterventionRequired": ""
         }
       },
       "properties": {

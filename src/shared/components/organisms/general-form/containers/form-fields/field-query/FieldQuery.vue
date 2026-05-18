@@ -19,8 +19,8 @@ const props = defineProps<{
 const DEFAULT_LIMIT = 50;
 const DEFAULT_DROPDOWN_MIN_WIDTH = 320;
 const DEFAULT_DROPDOWN_MAX_WIDTH = 720;
-const DEFAULT_SELECTED_CONTROL_MIN_WIDTH = 180;
-const DEFAULT_SELECTED_CONTROL_MAX_WIDTH = 420;
+const DEFAULT_CONTROL_MIN_WIDTH = 180;
+const DEFAULT_CONTROL_MAX_WIDTH = 360;
 
 const limit = computed(() => props.field.limit ?? DEFAULT_LIMIT);
 const DEFAULT_MIN_SEARCH_LENGTH = 3;
@@ -119,20 +119,28 @@ const hasMoreOptions = computed(() => {
 
 const dropdownMaxWidth = computed(() => props.field.dropdownMaxWidth ?? DEFAULT_DROPDOWN_MAX_WIDTH);
 
-const controlMinWidth = computed(() => {
+const longestResolvedLabelLength = computed(() => {
   const values = Array.isArray(selectedValue.value)
     ? selectedValue.value
     : selectedValue.value != null ? [selectedValue.value] : [];
 
-  const longestSelectedLabel = values.reduce((longest, value) => {
+  const longestSelectedLabelLength = values.reduce((longest, value) => {
     return Math.max(longest, getSelectedLabel(value).length);
   }, 0);
 
-  const estimatedWidth = longestSelectedLabel * 8 + 76;
+  const longestOptionLabelLength = cleanedData.value.reduce((longest, option) => {
+    return Math.max(longest, getOptionLabel(option).length);
+  }, 0);
+
+  return Math.max(longestOptionLabelLength, longestSelectedLabelLength);
+});
+
+const controlMinWidth = computed(() => {
+  const estimatedWidth = longestResolvedLabelLength.value * 8 + 76;
 
   return Math.min(
-    DEFAULT_SELECTED_CONTROL_MAX_WIDTH,
-    Math.max(DEFAULT_SELECTED_CONTROL_MIN_WIDTH, estimatedWidth)
+    DEFAULT_CONTROL_MAX_WIDTH,
+    Math.max(DEFAULT_CONTROL_MIN_WIDTH, estimatedWidth)
   );
 });
 
@@ -141,13 +149,11 @@ const dropdownMinWidth = computed(() => {
     return props.field.dropdownMinWidth;
   }
 
-  const longestLabelLength = cleanedData.value.reduce((longest, option) => {
-    return Math.max(longest, getOptionLabel(option).length);
-  }, 0);
+  const longestLabelLength = longestResolvedLabelLength.value;
   const estimatedWidth = longestLabelLength * 8 + 96;
 
   if (longestLabelLength === 0) {
-    return undefined;
+    return DEFAULT_DROPDOWN_MIN_WIDTH;
   }
 
   return Math.min(
@@ -613,6 +619,7 @@ const showAddEntry = computed(() => !!props.field.createOnFlyConfig);
             :control-min-width="controlMinWidth"
             :dropdown-min-width="dropdownMinWidth"
             :dropdown-max-width="dropdownMaxWidth"
+            wrap-options
             :disabled="field.disabled"
             :show-add-entry="showAddEntry"
             :is-loading="selectorLoading"

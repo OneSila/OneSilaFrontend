@@ -298,6 +298,11 @@ export const PROGRESS_BAR_UI_BY_STATUS: Record<string, ProgressBarUi> = {
     labelColor: 'text-orange-600',
     barColor: 'bg-orange-500',
   },
+  MANUAL_INTERVENTION_REQUIRED: {
+    labelKey: 'integrations.show.products.statuses.manualInterventionRequired',
+    labelColor: 'text-red-600',
+    barColor: 'bg-red-500',
+  },
   PENDING_CREATION: {
     labelKey: 'shared.labels.pendingCreation',
     labelColor: 'text-blue-600',

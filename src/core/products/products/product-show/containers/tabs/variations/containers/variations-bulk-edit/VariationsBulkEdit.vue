@@ -635,6 +635,7 @@ const fetchConnectionNodes = async (
 let hydrationRunId = 0
 
 const cloneRows = (rows: any[]) => JSON.parse(JSON.stringify(rows))
+const cloneValue = <T,>(value: T): T => JSON.parse(JSON.stringify(value))
 
 const fetchVariationPropertiesBatch = async (
   variationIds: string[],
@@ -726,7 +727,7 @@ const mergeHydratedPropertyValues = (
     propertyIds.forEach((propertyId) => {
       delete propertyValues[propertyId]
     })
-    Object.assign(propertyValues, propertyValuesByProductId.get(variationId) ?? {})
+    Object.assign(propertyValues, cloneValue(propertyValuesByProductId.get(variationId) ?? {}))
     return {
       ...row,
       propertyValues,
@@ -802,7 +803,7 @@ const hydrateVariationRows = async (rows: any[]) => {
   const propertyValuesByProductId = await fetchVariationPropertiesBatch(variationIds)
   return rows.map((row) => ({
     ...row,
-    propertyValues: propertyValuesByProductId.get(row.variation.id) ?? {},
+    propertyValues: cloneValue(propertyValuesByProductId.get(row.variation.id) ?? {}),
   }))
 }
 
@@ -1381,15 +1382,17 @@ const saveModal = () => {
   const key = selectedColKey.value
   if (!item.propertyValues) item.propertyValues = {}
   if (!item.propertyValues[key]) item.propertyValues[key] = {}
-  if (!item.propertyValues[key].translation)
-    item.propertyValues[key].translation = { language: language.value }
-  if (!item.propertyValues[key].translation.language)
-    item.propertyValues[key].translation.language = language.value
-  if (showTextModal.value) {
-    item.propertyValues[key].translation.valueText = modalValue.value
-  } else if (showDescriptionModal.value) {
-    item.propertyValues[key].translation.valueDescription = modalValue.value
+  const currentTranslation = item.propertyValues[key].translation ?? {}
+  const nextTranslation = {
+    ...currentTranslation,
+    language: currentTranslation.language || language.value,
   }
+  if (showTextModal.value) {
+    nextTranslation.valueText = modalValue.value
+  } else if (showDescriptionModal.value) {
+    nextTranslation.valueDescription = modalValue.value
+  }
+  item.propertyValues[key].translation = nextTranslation
   cancelModal()
 }
 

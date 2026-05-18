@@ -18,11 +18,11 @@ const getStatusBadgeMap = (t: Function) => ({
   FAILED: { text: t('shared.labels.failed'), color: 'red' },
   processing: { text: t('shared.labels.processing'), color: 'yellow' },
   PROCESSING: { text: t('shared.labels.processing'), color: 'yellow' },
-  PENDING_CREATION: { text: t('shared.labels.pendingCreation'), color: 'blue' },
   PARTIALLY_LISTED: { text: t('integrations.show.products.statuses.partiallyListed'), color: 'orange' },
   PENDING_APPROVAL: { text: t('integrations.show.products.statuses.pendingApproval'), color: 'yellow' },
   PENDING_EXTERNAL_DOCUMENTS: { text: t('integrations.show.products.statuses.pendingExternalDocuments'), color: 'orange' },
   APPROVAL_REJECTED: { text: t('integrations.show.products.statuses.approvalRejected'), color: 'red' },
+  MANUAL_INTERVENTION_REQUIRED: { text: t('integrations.show.products.statuses.manualInterventionRequired'), color: 'red' },
 });
 
 const getAssignStatus = (node: any) => {
@@ -36,7 +36,7 @@ const getAssignStatus = (node: any) => {
     if (remoteStatus === 'FAILED') {
       return 'FAILED';
     }
-    return remoteStatus || 'PENDING_CREATION';
+    return remoteStatus || 'PROCESSING';
   }
   if (remoteStatus) {
     return remoteStatus;
@@ -125,7 +125,7 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId?: st
           { label: t('shared.labels.completed'), value: 'completed' },
           { label: t('shared.labels.processing'), value: 'processing' },
           { label: t('shared.labels.failed'), value: 'failed' },
-          { label: t('shared.labels.pendingCreation'), value: 'PENDING_CREATION' },
+          { label: t('integrations.show.products.statuses.manualInterventionRequired'), value: 'MANUAL_INTERVENTION_REQUIRED' },
           { label: t('integrations.show.products.statuses.partiallyListed'), value: 'PARTIALLY_LISTED' },
           { label: t('integrations.show.products.statuses.pendingApproval'), value: 'PENDING_APPROVAL' },
           { label: t('integrations.show.products.statuses.pendingExternalDocuments'), value: 'PENDING_EXTERNAL_DOCUMENTS' },
