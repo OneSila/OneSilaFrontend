@@ -160,9 +160,17 @@ onUnmounted(() => {
                 >
                   {{ displayCounter }}
                 </span>
-                <span v-else class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold text-transparent">0</span>
+                <span v-else class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold text-green-700">0</span>
               </transition>
             </div>
+            <Link
+              v-if="isCompleted && url"
+              :path="url"
+              class="card-link-overlay"
+              :external="externalLink"
+            >
+              <span class="sr-only">{{ title }}</span>
+            </Link>
           </div>
 
           <!-- Card Back -->
@@ -195,6 +203,14 @@ onUnmounted(() => {
         <template v-else>
           <div class="card-mobile" :class="cardColorClass">
             <div class="p-4">
+              <Link
+                v-if="isCompleted && url"
+                :path="url"
+                class="card-link-overlay"
+                :external="externalLink"
+              >
+                <span class="sr-only">{{ title }}</span>
+              </Link>
               <Icon :name="iconName" class="h-12 w-12 text-white mx-auto" />
               <Link v-if="url" :path="url" :external="externalLink">
                 <h4 class="text-white text-center text-xl font-semibold mt-4">{{ title }}</h4>
@@ -220,11 +236,11 @@ onUnmounted(() => {
                   >
                     {{ displayCounter }}
                   </span>
-                  <span v-else class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold text-transparent">0</span>
+                  <span v-else class="inline-block px-3 py-1 rounded-md bg-white text-2xl font-bold text-green-700">0</span>
                 </transition>
               </div>
               <p class="text-white mt-4">{{ description }}</p>
-              <div class="mt-4">
+              <div v-if="!isCompleted" class="mt-4">
                 <Link v-if="url" :path="url" class="text-gray-700 inline-block" :external="externalLink">
                   {{ t('shared.button.details') }}
                   <Icon name="circle-arrow-right" />
@@ -335,6 +351,20 @@ onUnmounted(() => {
 }
 
 .card-mobile {
+  position: relative;
   border-radius: 8px;
+}
+
+.card-link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.card-link-overlay :deep(a) {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>

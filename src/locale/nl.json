@@ -4256,7 +4256,8 @@
           "partiallyListed": "",
           "pendingApproval": "",
           "pendingExternalDocuments": "",
-          "approvalRejected": ""
+          "approvalRejected": "",
+          "manualInterventionRequired": ""
         }
       },
       "productRules": {

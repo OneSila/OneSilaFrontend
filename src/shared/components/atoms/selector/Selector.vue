@@ -23,6 +23,7 @@ const props = withDefaults(
     controlMinWidth?: number;
     dropdownMinWidth?: number;
     dropdownMaxWidth?: number;
+    wrapOptions?: boolean;
     isLoading?: boolean;
     isLoadingMore?: boolean;
     hasMoreOptions?: boolean;
@@ -116,6 +117,7 @@ const selectorStyle = computed(() => {
   }
 
   return {
+    width: `${props.controlMinWidth}px`,
     minWidth: `${props.controlMinWidth}px`,
   };
 });
@@ -220,6 +222,7 @@ onBeforeUnmount(() => {
 
 const calculatePosition = (dropdownList, component, { width }) => {
   dropdownList.classList.add('selector-dropdown');
+  dropdownList.classList.toggle('selector-dropdown--wrap-options', props.wrapOptions === true);
 
   const inputWidth = Number.parseFloat(width) || 0;
   const viewportWidth = typeof window !== 'undefined'
@@ -484,7 +487,7 @@ const getTruncatedLabel = (option: any) => {
   <span
     class="inline-flex min-w-0 max-w-full items-center rounded-full bg-gray-100 text-sm text-gray-800 px-3 py-1 mr-1 mb-1 border border-gray-400 transition-colors duration-200 hover:bg-gray-200 cursor-pointer"
   >
-    <span v-if="getLabel(option) != null" :title="getLabel(option) || undefined">
+    <span v-if="getLabel(option) != null" class="selector__selected-content" :title="getLabel(option) || undefined">
       <span class="selector__selected-label">{{ getTruncatedLabel(option) }}</span>
     </span>
     <span v-else class="text-gray-400 italic flex items-center gap-1">
@@ -511,7 +514,7 @@ const getTruncatedLabel = (option: any) => {
     </span>
   </template>
   <template v-else #selected-option>
-    <span v-if="getLabel(modelValue) != null" :title="getLabel(modelValue) || undefined">
+    <span v-if="getLabel(modelValue) != null" class="selector__selected-content" :title="getLabel(modelValue) || undefined">
       <span class="selector__selected-label">{{ getTruncatedLabel(modelValue) }}</span>
     </span>
   </template>
@@ -625,6 +628,18 @@ const getTruncatedLabel = (option: any) => {
   word-break: normal;
 }
 
+.selector-dropdown.selector-dropdown--wrap-options .vs__dropdown-option {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.selector-dropdown.selector-dropdown--wrap-options .vs__dropdown-option--highlight {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
 .selector-dropdown .vs__dropdown-option--disabled {
   cursor: wait;
   color: #6b7280;
@@ -635,6 +650,7 @@ const getTruncatedLabel = (option: any) => {
 .selector .vs__selected-options {
   align-items: center;
   min-width: 0;
+  overflow: hidden;
 }
 
 .vs--multiple .vs__selected-options {
@@ -658,6 +674,7 @@ const getTruncatedLabel = (option: any) => {
   max-width: 100%;
   min-width: 0;
   flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .vs--multiple .vs__selected {
@@ -672,8 +689,36 @@ const getTruncatedLabel = (option: any) => {
   width: 100%;
 }
 
+.selector.vs--single.vs--open .vs__search,
+.selector.vs--single.vs--searching .vs__search {
+  width: 100%;
+  min-width: 100%;
+}
+
+.selector.vs--single.vs--open:not(.vs--searching) .vs__search {
+  min-width: 0;
+  width: 0;
+}
+
+.selector.vs--single.vs--open .vs__selected,
+.selector.vs--single.vs--loading .vs__selected {
+  max-width: calc(100% - 8px);
+}
+
+.selector.vs--single.vs--open:not(.vs--searching) .vs__selected {
+  position: static;
+  opacity: 1;
+}
+
 .selector .vs__search {
   min-width: 0;
+}
+
+.selector__selected-content {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .selector__selected-label {
