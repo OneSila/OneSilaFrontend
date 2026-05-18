@@ -136,6 +136,14 @@ const longestResolvedLabelLength = computed(() => {
 });
 
 const controlMinWidth = computed(() => {
+  if (props.field.controlMinWidth) {
+    return props.field.controlMinWidth;
+  }
+
+  if (!props.field.fitControlToContent) {
+    return undefined;
+  }
+
   const estimatedWidth = longestResolvedLabelLength.value * 8 + 76;
 
   return Math.min(

@@ -557,6 +557,7 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
         order: { usageCount: 'DESC' },
         first: 100
       },
+      fitControlToContent: true,
       multiple: false,
       removable: true,
       autocompleteIfOneResult: false,
@@ -577,6 +578,7 @@ const selectFields = computed<Record<string, QueryFormField>>(() => {
           order: { usageCount: 'DESC' },
           first: 100
         },
+        fitControlToContent: true,
         multiple: p.type === PropertyTypes.MULTISELECT,
         removable: true,
         autocompleteIfOneResult: false,
