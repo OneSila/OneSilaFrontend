@@ -111,10 +111,26 @@ export const getFields = (customerId, t, type, showPcnt: boolean = true): FormFi
     } : null,
     showPcnt ? {
       type: FieldType.Text,
+      name: 'priceFixedModifier',
+      label: t('sales.priceLists.labels.priceFixedModifier'),
+      placeholder: t('sales.priceLists.placeholders.priceFixedModifier'),
+      float: true,
+      optional: true,
+    } : null,
+    showPcnt ? {
+      type: FieldType.Text,
       name: 'discountPcnt',
       label: t('sales.prices.labels.discountPercentage'),
       placeholder: t('sales.prices.placeholders.discountPercentage'),
       number: true,
+      optional: true,
+    } : null,
+    showPcnt ? {
+      type: FieldType.Text,
+      name: 'discountPriceFixedModifier',
+      label: t('sales.priceLists.labels.discountPriceFixedModifier'),
+      placeholder: t('sales.priceLists.placeholders.discountPriceFixedModifier'),
+      float: true,
       optional: true,
     } : null,
     {
@@ -166,12 +182,24 @@ export const baseFormConfigConstructor = (
       content: t('sales.priceLists.helpSection.autoUpdatePrices.content')
     },
     {
+      header: t('sales.priceLists.helpSection.modifierDisclaimer.header'),
+      content: t('sales.priceLists.helpSection.modifierDisclaimer.content')
+    },
+    {
       header: t('sales.priceLists.helpSection.priceChangePcnt.header'),
       content: t('sales.priceLists.helpSection.priceChangePcnt.content')
     },
     {
+      header: t('sales.priceLists.helpSection.priceFixedModifier.header'),
+      content: t('sales.priceLists.helpSection.priceFixedModifier.content')
+    },
+    {
       header: t('sales.priceLists.helpSection.discountPercentage.header'),
       content: t('sales.priceLists.helpSection.discountPercentage.content')
+    },
+    {
+      header: t('sales.priceLists.helpSection.discountPriceFixedModifier.header'),
+      content: t('sales.priceLists.helpSection.discountPriceFixedModifier.content')
     },
 
   ],
@@ -215,7 +243,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.prices.labels.discountPercentage'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
+  headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.priceLists.labels.priceFixedModifier'), t('sales.prices.labels.discountPercentage'), t('sales.priceLists.labels.discountPriceFixedModifier'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
   fields: [
     {
       name: 'name',
@@ -226,7 +254,15 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
       type: FieldType.Text,
     },
     {
+      name: 'priceFixedModifier',
+      type: FieldType.Text,
+    },
+    {
       name: 'discountPcnt',
+      type: FieldType.Text,
+    },
+    {
+      name: 'discountPriceFixedModifier',
       type: FieldType.Text,
     },
     {
@@ -286,9 +322,21 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
       showLabel: true
     },
     {
+      name: 'priceFixedModifier',
+      type: FieldType.Text,
+      label: t('sales.priceLists.labels.priceFixedModifier'),
+      showLabel: true
+    },
+    {
       name: 'discountPcnt',
       type: FieldType.Text,
       label: t('sales.prices.labels.discountPercentage'),
+      showLabel: true
+    },
+    {
+      name: 'discountPriceFixedModifier',
+      type: FieldType.Text,
+      label: t('sales.priceLists.labels.discountPriceFixedModifier'),
       showLabel: true
     },
     {
@@ -321,4 +369,3 @@ export const showConfigConstructor = (t: Function, id): ShowConfig => ({
 
 export const listingQueryKey = 'salesPriceLists';
 export const listingQuery = salesPriceListsQuery;
-

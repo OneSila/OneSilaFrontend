@@ -1208,7 +1208,13 @@
         "variationThemeDescription": "Wählen Sie aus, welche Feldeigenschaften Nutzer auswählen sollen, wenn sie das richtige Produkt wählen.",
         "variationThemePlaceholder": "Variationsthema auswählen",
         "variationThemeSaved": "Variation theme saved",
-        "variationThemeDeleted": "Variation theme deleted"
+        "variationThemeDeleted": "Variation theme deleted",
+        "usingProductTypeDefaultVariationTheme": "",
+        "productTypeDefaultVariationTheme": "",
+        "productTypeDefaultVariationThemeWithValue": "",
+        "usingProductTypeDefaultBrowseNode": "",
+        "productTypeDefaultBrowseNode": "",
+        "productTypeDefaultBrowseNodeWithValue": ""
       },
       "ebay": {
         "defaultMarketplace": "",
@@ -1736,6 +1742,19 @@
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "amazon": {
+        "productRules": {
+          "defaultsTitle": "",
+          "defaultsDescription": "",
+          "defaultVariationThemeDescription": "",
+          "defaultVariationThemeSaved": "",
+          "noVariationThemes": "",
+          "defaultBrowseNode": "",
+          "defaultBrowseNodeDescription": "",
+          "defaultBrowseNodeSaved": "",
+          "defaultBrowseNodeDeleted": ""
+        }
       },
       "properties": {
         "actions": {
@@ -2495,6 +2514,7 @@
       },
       "productRules": {
         "title": "",
+        "noSchemaItems": "",
         "labels": {
           "productTypeCode": "",
           "productRule": "",
@@ -4149,6 +4169,32 @@
         "selectedLimitExceeded": "",
         "bulkDeleteSuccess": "",
         "bulkDeleteError": ""
+      }
+    }
+  },
+  "sales": {
+    "priceLists": {
+      "helpSection": {
+        "modifierDisclaimer": {
+          "header": "",
+          "content": ""
+        },
+        "priceFixedModifier": {
+          "header": "",
+          "content": ""
+        },
+        "discountPriceFixedModifier": {
+          "header": "",
+          "content": ""
+        }
+      },
+      "labels": {
+        "priceFixedModifier": "",
+        "discountPriceFixedModifier": ""
+      },
+      "placeholders": {
+        "priceFixedModifier": "",
+        "discountPriceFixedModifier": ""
       }
     }
   },

@@ -25,6 +25,7 @@ const saving = ref(false);
 const themeOptions = ref<{ id: string; name: string }[]>([]);
 const selectedTheme = ref<string | null>(null);
 const originalTheme = ref<string | null>(null);
+const defaultTheme = ref<string | null>(null);
 const recordId = ref<string | null>(null);
 
 const productTypeRuleId = computed(() => {
@@ -38,6 +39,7 @@ const productTypeRuleId = computed(() => {
 const fetchOptions = async () => {
   if (!productTypeRuleId.value) {
     themeOptions.value = [];
+    defaultTheme.value = null;
     return;
   }
   const { data } = await apolloClient.query({
@@ -48,6 +50,7 @@ const fetchOptions = async () => {
   const node = data?.amazonProductTypes?.edges?.[0]?.node;
   const themes: string[] = node?.variationThemes || [];
   themeOptions.value = themes.map((t: string) => ({ id: t, name: t }));
+  defaultTheme.value = node?.defaultVariationTheme || null;
 };
 
 const fetchCurrent = async () => {
@@ -137,6 +140,7 @@ const showAlert = computed(
 );
 
 const hasUnsavedChanges = computed(() => hasChanges.value);
+const isUsingDefaultTheme = computed(() => Boolean(!selectedTheme.value && defaultTheme.value));
 
 defineExpose({ hasUnsavedChanges });
 </script>
@@ -158,23 +162,28 @@ defineExpose({ hasUnsavedChanges });
     </Flex>
     <p class="text-xs text-gray-500 mb-2">{{ t('products.products.amazon.variationThemeDescription') }}</p>
     <LocalLoader :loading="loading" />
-    <Flex v-if="!loading" gap="2" middle>
-      <FlexCell class="min-w-96">
-        <Selector
-          class="w-72"
-          :options="themeOptions"
-          v-model="selectedTheme"
-          label-by="name"
-          value-by="id"
-          :filterable="true"
-          :placeholder="t('products.products.amazon.variationThemePlaceholder')"
-        />
-      </FlexCell>
-      <FlexCell>
-        <Button class="btn btn-sm btn-primary" :disabled="!hasChanges || saving" @click="save">
-        {{ t('shared.button.save') }}
-      </Button>
-      </FlexCell>
-    </Flex>
+    <div v-if="!loading">
+      <div class="flex items-center gap-2">
+        <div class="min-w-96">
+          <Selector
+            class="w-72"
+            :options="themeOptions"
+            v-model="selectedTheme"
+            label-by="name"
+            value-by="id"
+            :filterable="true"
+            :placeholder="t('products.products.amazon.variationThemePlaceholder')"
+          />
+        </div>
+        <Button class="btn btn-primary" :disabled="!hasChanges || saving" @click="save">
+          {{ t('shared.button.save') }}
+        </Button>
+      </div>
+      <div class="min-w-96">
+        <p v-if="isUsingDefaultTheme" class="mt-1 text-xs text-amber-700">
+          {{ t('products.products.amazon.usingProductTypeDefaultVariationTheme', { theme: defaultTheme }) }}
+        </p>
+      </div>
+    </div>
   </div>
 </template>

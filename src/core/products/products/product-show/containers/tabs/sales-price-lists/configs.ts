@@ -22,7 +22,10 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
     {
       name: 'salespricelist',
       type: FieldType.NestedText,
-      keys: ['name']
+      keys: ['name'],
+      clickable: true,
+      clickIdentifiers: [{ id: ['id'] }],
+      clickUrl: { name: 'sales.priceLists.show' }
     },
     {
       name: 'price',
@@ -49,4 +52,3 @@ export const listingConfigConstructor = (t: Function): ListingConfig => ({
 
 export const listingQuery = salesPriceListItemsQuery;
 export const listingQueryKey = 'salesPriceListItems';
-

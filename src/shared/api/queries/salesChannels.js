@@ -2765,6 +2765,7 @@ export const amazonProductTypesQuery = gql`
           mappedRemotely
           productTypeCode
           name
+          defaultVariationTheme
           localInstance {
             id
             value
@@ -2797,6 +2798,11 @@ export const getAmazonProductTypeQuery = gql`
       imported
       productTypeCode
       name
+      defaultVariationTheme
+      salesChannel {
+        id
+        hostname
+      }
       localInstance {
         id
         value
@@ -2818,6 +2824,30 @@ export const getAmazonProductTypeQuery = gql`
         remoteType
       }
       variationThemes
+    }
+  }
+`;
+
+export const amazonProductTypeDefaultBrowseNodesQuery = gql`
+  query AmazonProductTypeDefaultBrowseNodes($productTypeId: ID!) {
+    amazonProductTypeDefaultBrowseNodes(
+      filters: { productType: { id: { exact: $productTypeId } } }
+    ) {
+      edges {
+        node {
+          id
+          remoteId
+          view {
+            id
+            name
+            remoteId
+          }
+          productType {
+            id
+            productTypeCode
+          }
+        }
+      }
     }
   }
 `;

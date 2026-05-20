@@ -70,6 +70,8 @@ export const salesPriceListsQuery = gql`
           name
           discountPcnt
           priceChangePcnt
+          priceFixedModifier
+          discountPriceFixedModifier
           notes
           currency {
             id
@@ -194,7 +196,9 @@ export const getSalesPriceListQuery = gql`
       id
       name
       priceChangePcnt
+      priceFixedModifier
       discountPcnt
+      discountPriceFixedModifier
       autoAddProducts
       notes
       currency {

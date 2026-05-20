@@ -1149,6 +1149,39 @@ export const updateAmazonProductTypeMutation = gql`
       id
       mappedLocally
       mappedRemotely
+      variationThemes
+      defaultVariationTheme
+    }
+  }
+`;
+
+export const createAmazonProductTypeDefaultBrowseNodeMutation = gql`
+  mutation createAmazonProductTypeDefaultBrowseNode($data: AmazonProductTypeDefaultBrowseNodeInput!) {
+    createAmazonProductTypeDefaultBrowseNode(data: $data) {
+      id
+      remoteId
+      view {
+        id
+        name
+        remoteId
+      }
+    }
+  }
+`;
+
+export const updateAmazonProductTypeDefaultBrowseNodeMutation = gql`
+  mutation updateAmazonProductTypeDefaultBrowseNode($data: AmazonProductTypeDefaultBrowseNodePartialInput!) {
+    updateAmazonProductTypeDefaultBrowseNode(data: $data) {
+      id
+      remoteId
+    }
+  }
+`;
+
+export const deleteAmazonProductTypeDefaultBrowseNodeMutation = gql`
+  mutation deleteAmazonProductTypeDefaultBrowseNode($data: NodeInput!) {
+    deleteAmazonProductTypeDefaultBrowseNode(data: $data) {
+      id
     }
   }
 `;

@@ -14,13 +14,21 @@ import {
   amazonBrowseNodesQuery,
   amazonProductBrowseNodesQuery,
 } from '../../../../../../../../shared/api/queries/amazonProducts.js';
-import { amazonProductTypesQuery } from '../../../../../../../../shared/api/queries/salesChannels.js';
+import {
+  amazonProductTypeDefaultBrowseNodesQuery,
+  amazonProductTypesQuery,
+} from '../../../../../../../../shared/api/queries/salesChannels.js';
 import {
   createAmazonProductBrowseNodeMutation,
   updateAmazonProductBrowseNodeMutation,
   deleteAmazonProductBrowseNodeMutation,
 } from '../../../../../../../../shared/api/mutations/amazonProducts.js';
 import { createAndMapAmazonProductTypeMutation } from '../../../../../../../../shared/api/mutations/amazonProducts.js';
+import {
+  createAmazonProductTypeDefaultBrowseNodeMutation,
+  updateAmazonProductTypeDefaultBrowseNodeMutation,
+  deleteAmazonProductTypeDefaultBrowseNodeMutation,
+} from '../../../../../../../../shared/api/mutations/salesChannels.js';
 
 interface BrowseNode {
   id: string;
@@ -33,9 +41,11 @@ interface BrowseNode {
 
 const props = defineProps<{
   productId: string | null;
+  productTypeId?: string | null;
   salesChannelId: string | null;
   salesChannelViewId: string | null;
   marketplaceId: string | null;
+  defaultBrowseNodeRemoteId?: string | null;
   view?: any | null;
 }>();
 
@@ -46,6 +56,7 @@ const loadingNodes = ref(false);
 const currentParentId = ref<string | null>(null);
 const pathStack = ref<BrowseNode[]>([]);
 const selectedNodeDetails = ref<BrowseNode | null>(null);
+const defaultNodeDetails = ref<BrowseNode | null>(null);
 const pendingNode = ref<BrowseNode | null>(null);
 const productBrowseNodeId = ref<string | null>(null);
 const loadingSelected = ref(false);
@@ -54,6 +65,7 @@ const manualBrowseNodeInput = ref('');
 const manualSelectionLoading = ref(false);
 const manualSelectionError = ref<string | null>(null);
 
+const isProductTypeDefault = computed(() => Boolean(props.productTypeId));
 const displayedNode = computed(() => pendingNode.value || selectedNodeDetails.value);
 const manualBrowseNodeId = computed(() => manualBrowseNodeInput.value.trim());
 
@@ -103,23 +115,35 @@ watch([
 ], fetchNodes, { immediate: true });
 
 const fetchSelected = async () => {
-  if (!props.productId || !props.salesChannelViewId) {
+  if (!props.salesChannelViewId || (!props.productId && !props.productTypeId)) {
     selectedNodeDetails.value = null;
     pendingNode.value = null;
     productBrowseNodeId.value = null;
     return;
   }
   loadingSelected.value = true;
-  const filter = {
-    product: { id: { exact: props.productId } },
-    view: { id: { exact: props.salesChannelViewId } },
-  };
-  const { data } = await apolloClient.query({
-    query: amazonProductBrowseNodesQuery,
-    variables: { filter },
-    fetchPolicy: 'cache-first',
-  });
-  const node = data?.amazonProductBrowseNodes?.edges?.[0]?.node;
+  const { data } = props.productTypeId
+    ? await apolloClient.query({
+      query: amazonProductTypeDefaultBrowseNodesQuery,
+      variables: { productTypeId: props.productTypeId },
+      fetchPolicy: 'network-only',
+    })
+    : await apolloClient.query({
+      query: amazonProductBrowseNodesQuery,
+      variables: {
+        filter: {
+          product: { id: { exact: props.productId } },
+          view: { id: { exact: props.salesChannelViewId } },
+        },
+      },
+      fetchPolicy: 'cache-first',
+    });
+  const edges = props.productTypeId
+    ? data?.amazonProductTypeDefaultBrowseNodes?.edges || []
+    : data?.amazonProductBrowseNodes?.edges || [];
+  const node = props.productTypeId
+    ? edges.find((edge: any) => edge.node?.view?.id === props.salesChannelViewId)?.node
+    : edges[0]?.node;
   if (node) {
     productBrowseNodeId.value = node.id;
     await fetchSelectedNodeDetails(node.remoteId);
@@ -154,6 +178,15 @@ const fetchSelectedNodeDetails = async (remoteId: string) => {
   selectedNodeDetails.value = await fetchBrowseNodeDetails(remoteId);
 };
 
+const fetchDefaultNodeDetails = async () => {
+  if (isProductTypeDefault.value || !props.defaultBrowseNodeRemoteId) {
+    defaultNodeDetails.value = null;
+    return;
+  }
+
+  defaultNodeDetails.value = await fetchBrowseNodeDetails(props.defaultBrowseNodeRemoteId);
+};
+
 const formatTypeName = (code: string) =>
   code
     .toLowerCase()
@@ -163,7 +196,7 @@ const formatTypeName = (code: string) =>
 
 const fetchRecommendedTypes = async () => {
   const codes = displayedNode.value?.productTypeDefinitions || [];
-  if (!props.salesChannelId || !codes.length) {
+  if (isProductTypeDefault.value || !props.salesChannelId || !codes.length) {
     recommendedTypes.value = [];
     return;
   }
@@ -268,9 +301,15 @@ const confirmCreateType = (type: RecommendedType) =>
 
 watch([
   () => props.productId,
+  () => props.productTypeId,
   () => props.salesChannelViewId,
   () => props.marketplaceId,
 ], fetchSelected, { immediate: true });
+
+watch([
+  () => props.defaultBrowseNodeRemoteId,
+  () => props.marketplaceId,
+], fetchDefaultNodeDetails, { immediate: true });
 
 watch(
   () => props.marketplaceId,
@@ -354,12 +393,14 @@ const setManualBrowseNode = async () => {
 
 const saveSelection = async () => {
   const node = pendingNode.value;
-  if (!node || !props.productId || !props.salesChannelId || !props.salesChannelViewId) return;
+  if (!node || !props.salesChannelViewId || (!props.productId && !props.productTypeId)) return;
   saving.value = true;
   try {
     if (productBrowseNodeId.value) {
       await apolloClient.mutate({
-        mutation: updateAmazonProductBrowseNodeMutation,
+        mutation: props.productTypeId
+          ? updateAmazonProductTypeDefaultBrowseNodeMutation
+          : updateAmazonProductBrowseNodeMutation,
         variables: {
           data: {
             id: productBrowseNodeId.value,
@@ -369,21 +410,39 @@ const saveSelection = async () => {
       });
     } else {
       const { data } = await apolloClient.mutate({
-        mutation: createAmazonProductBrowseNodeMutation,
-        variables: {
-          data: {
-            product: { id: props.productId },
-            salesChannel: { id: props.salesChannelId },
-            view: { id: props.salesChannelViewId },
-            remoteId: node.remoteId,
+        mutation: props.productTypeId
+          ? createAmazonProductTypeDefaultBrowseNodeMutation
+          : createAmazonProductBrowseNodeMutation,
+        variables: props.productTypeId
+          ? {
+            data: {
+              productType: { id: props.productTypeId },
+              view: { id: props.salesChannelViewId },
+              remoteId: node.remoteId,
+            },
+          }
+          : {
+            data: {
+              product: { id: props.productId },
+              salesChannel: { id: props.salesChannelId },
+              view: { id: props.salesChannelViewId },
+              remoteId: node.remoteId,
+            },
           },
-        },
       });
-      productBrowseNodeId.value = data?.createAmazonProductBrowseNode?.id || null;
+      productBrowseNodeId.value = props.productTypeId
+        ? data?.createAmazonProductTypeDefaultBrowseNode?.id || null
+        : data?.createAmazonProductBrowseNode?.id || null;
     }
     await fetchSelectedNodeDetails(node.remoteId);
     pendingNode.value = null;
-    Toast.success(t('products.products.amazon.browseNodeSaved'));
+    Toast.success(
+      t(
+        isProductTypeDefault.value
+          ? 'integrations.show.amazon.productRules.defaultBrowseNodeSaved'
+          : 'products.products.amazon.browseNodeSaved',
+      ),
+    );
   } catch (error) {
     displayApolloError(error);
   } finally {
@@ -396,13 +455,21 @@ const removeSelection = async () => {
   saving.value = true;
   try {
     await apolloClient.mutate({
-      mutation: deleteAmazonProductBrowseNodeMutation,
+      mutation: props.productTypeId
+        ? deleteAmazonProductTypeDefaultBrowseNodeMutation
+        : deleteAmazonProductBrowseNodeMutation,
       variables: { data: { id: productBrowseNodeId.value } },
     });
     productBrowseNodeId.value = null;
     selectedNodeDetails.value = null;
     pendingNode.value = null;
-    Toast.success(t('products.products.amazon.browseNodeDeleted'));
+    Toast.success(
+      t(
+        isProductTypeDefault.value
+          ? 'integrations.show.amazon.productRules.defaultBrowseNodeDeleted'
+          : 'products.products.amazon.browseNodeDeleted',
+      ),
+    );
   } catch (error) {
     displayApolloError(error);
   } finally {
@@ -423,10 +490,20 @@ watch([
 
 const showAlert = computed(
   () =>
-    props.view && !props.view.isDefault && !loadingSelected.value && !productBrowseNodeId.value,
+    props.view && !props.view.isDefault && !loadingSelected.value && !productBrowseNodeId.value && !defaultNodeDetails.value,
 );
 
 const hasUnsavedChanges = computed(() => pendingNode.value !== null);
+const descriptionKey = computed(() =>
+  isProductTypeDefault.value
+    ? 'integrations.show.amazon.productRules.defaultBrowseNodeDescription'
+    : 'products.products.amazon.browseNodeDescription',
+);
+const showRecommendedTypes = computed(() => !isProductTypeDefault.value);
+const currentNodeDisplay = computed(() => selectedNodeDetails.value || defaultNodeDetails.value);
+const isUsingDefaultNode = computed(() =>
+  Boolean(!selectedNodeDetails.value && defaultNodeDetails.value),
+);
 
 defineExpose({ hasUnsavedChanges });
 </script>
@@ -447,38 +524,40 @@ defineExpose({ hasUnsavedChanges });
       </FlexCell>
     </Flex>
     <p class="text-xs text-gray-500 mb-2">
-      {{ t('products.products.amazon.browseNodeDescription') }}
+      {{ t(descriptionKey) }}
     </p>
 
-    <div class="bg-blue-50 border rounded mt-4 p-6">
-      <div class="flex flex-col lg:flex-row gap-6">
-        <div class="lg:w-1/2">
-          <div class="flex items-center gap-2 text-sm mb-2">
-            <span
-              class="cursor-pointer hover:underline"
-              @click="goToLevel(null)"
-            >
-              {{ t('products.products.amazon.browseNodeRoot') }}
-            </span>
-            <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
-              <span>&gt;</span>
+    <div class="bg-blue-50 border rounded mt-4 p-4 sm:p-6">
+      <div class="flex flex-col xl:flex-row gap-6">
+        <div class="xl:w-1/2">
+          <div class="text-sm mb-3">
+            <div class="flex flex-wrap items-center gap-2">
               <span
                 class="cursor-pointer hover:underline"
-                @click="goToLevel(index)"
+                @click="goToLevel(null)"
               >
-                {{ crumb.name }}
+                {{ t('products.products.amazon.browseNodeRoot') }}
               </span>
-            </template>
-            <div v-if="pathStack.length" class="flex gap-1 ml-auto">
-              <Button
-                class="btn btn-sm btn-outline-primary"
-                @click="selectCurrent"
-              >
-                {{ t('products.products.amazon.selectCurrentNode') }}
-              </Button>
-              <Button class="btn btn-sm btn-outline-primary" @click="goBack">
-                {{ t('shared.button.back') }}
-              </Button>
+              <template v-for="(crumb, index) in pathStack" :key="crumb.remoteId">
+                <span>&gt;</span>
+                <span
+                  class="cursor-pointer hover:underline"
+                  @click="goToLevel(index)"
+                >
+                  {{ crumb.name }}
+                </span>
+              </template>
+              <div v-if="pathStack.length" class="flex flex-wrap gap-2 ml-auto">
+                <Button
+                  class="btn btn-sm btn-outline-primary"
+                  @click="selectCurrent"
+                >
+                  {{ t('products.products.amazon.selectCurrentNode') }}
+                </Button>
+                <Button class="btn btn-sm btn-outline-primary" @click="goBack">
+                  {{ t('shared.button.back') }}
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -550,7 +629,7 @@ defineExpose({ hasUnsavedChanges });
           </div>
         </div>
 
-        <div class="lg:w-1/2 space-y-4">
+        <div class="xl:w-1/2 space-y-4">
           <div>
             <h5 class="font-semibold text-sm mb-1">
               {{ t('products.products.amazon.currentSelection') }}
@@ -559,22 +638,25 @@ defineExpose({ hasUnsavedChanges });
               <div v-if="loadingSelected">
                 <LocalLoader :loading="true" />
               </div>
-              <div v-else-if="selectedNodeDetails">
-                <div class="text-sm font-medium">{{ selectedNodeDetails.name }}</div>
+              <div v-else-if="currentNodeDisplay">
+                <div class="text-sm font-medium">{{ currentNodeDisplay.name }}</div>
                 <div class="text-xs text-gray-500 flex items-center gap-2">
-                  <span>{{ selectedNodeDetails.remoteId }}</span>
+                  <span>{{ currentNodeDisplay.remoteId }}</span>
                   <button
                     class="p-1 rounded hover:bg-gray-100"
                     type="button"
-                    @click="copyBrowseNodeId(selectedNodeDetails.remoteId)"
+                    @click="copyBrowseNodeId(currentNodeDisplay.remoteId)"
                   >
                     <Icon name="clipboard" class="w-3.5 h-3.5 text-gray-500" />
                   </button>
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
-                  {{ selectedNodeDetails.browsePathByName.join(' > ') }}
+                <div v-if="isUsingDefaultNode" class="text-xs text-amber-700 mt-1">
+                  {{ t('products.products.amazon.usingProductTypeDefaultBrowseNode') }}
                 </div>
-                <div v-if="!pendingNode && recommendedTypes.length" class="mt-3">
+                <div class="text-xs text-gray-500 mt-1">
+                  {{ currentNodeDisplay.browsePathByName.join(' > ') }}
+                </div>
+                <div v-if="!pendingNode && showRecommendedTypes && recommendedTypes.length" class="mt-3">
                   <h6 class="font-semibold text-xs text-gray-700 mb-1">
                     {{ t('products.products.amazon.recommendedProductTypes') }}
                   </h6>
@@ -635,7 +717,7 @@ defineExpose({ hasUnsavedChanges });
             <div class="text-xs text-gray-500 mt-1">
               {{ pendingNode.browsePathByName.join(' > ') }}
             </div>
-            <div v-if="recommendedTypes.length" class="mt-3">
+            <div v-if="showRecommendedTypes && recommendedTypes.length" class="mt-3">
               <h6 class="font-semibold text-xs text-gray-700 mb-1">
                 {{ t('products.products.amazon.recommendedProductTypes') }}
               </h6>

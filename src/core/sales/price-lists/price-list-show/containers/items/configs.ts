@@ -135,7 +135,10 @@ export const listingConfigConstructor = (t: Function, salesPriceListId: string):
     {
       name: 'product',
       type: FieldType.NestedText,
-      keys: ['name']
+      keys: ['name'],
+      clickable: true,
+      clickIdentifiers: [{ id: ['id'] }],
+      clickUrl: { name: 'products.products.show' }
     },
     {
       name: 'price',

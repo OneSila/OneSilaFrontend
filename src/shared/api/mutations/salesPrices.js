@@ -75,7 +75,10 @@ export const createSalesPriceListMutation = gql`
     createSalesPriceList(data: $data) {
       id
       name
+      priceChangePcnt
+      priceFixedModifier
       discountPcnt
+      discountPriceFixedModifier
       notes
       currency {
         id
@@ -94,7 +97,10 @@ export const createSalesPriceListsMutation = gql`
     createSalesPriceLists(data: $data) {
       id
       name
+      priceChangePcnt
+      priceFixedModifier
       discountPcnt
+      discountPriceFixedModifier
       currency {
         id
         symbol
@@ -110,7 +116,10 @@ export const updateSalesPriceListMutation = gql`
     updateSalesPriceList(data: $data) {
       id
       name
+      priceChangePcnt
+      priceFixedModifier
       discountPcnt
+      discountPriceFixedModifier
       notes
       currency {
         id

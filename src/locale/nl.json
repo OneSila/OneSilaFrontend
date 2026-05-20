@@ -1737,6 +1737,9 @@
         "variationThemePlaceholder": "Selecteer variatiethema",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted",
+        "usingProductTypeDefaultVariationTheme": "",
+        "productTypeDefaultVariationTheme": "",
+        "productTypeDefaultVariationThemeWithValue": "",
         "asin": "ASIN",
         "asinDescription": "Voer het Amazon Standard Identification Number (ASIN) voor dit product in.",
         "asinPlaceholder": "Voer ASIN in",
@@ -1764,6 +1767,9 @@
         "selectCurrentNode": "Select current",
         "currentSelection": "",
         "pendingSelection": "",
+        "usingProductTypeDefaultBrowseNode": "",
+        "productTypeDefaultBrowseNode": "",
+        "productTypeDefaultBrowseNodeWithValue": "",
         "leafRestriction": "",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
@@ -2804,9 +2810,21 @@
           "header": "Automatische prijs updates",
           "content": "Selecteer indien prijzen up-to-date dienen te blijven met de valuta fluctuaties."
         },
+        "modifierDisclaimer": {
+          "header": "",
+          "content": ""
+        },
         "priceChangePcnt": {
           "header": "Percentage prijsverandering",
           "content": "Hoe wilt u de maximum prijs beïnvloeden?  Om ze omhoog te doen met 20%, vul 20 in.  Omlaag met 20%, vul -20 in."
+        },
+        "priceFixedModifier": {
+          "header": "",
+          "content": ""
+        },
+        "discountPriceFixedModifier": {
+          "header": "",
+          "content": ""
         }
       },
       "create": {
@@ -2862,13 +2880,17 @@
         "autoUpdate": "Auto Update",
         "autoUpdatePrices": "Automatische prijs updates",
         "autoAddProducts": "Automatisch producten toevoegen",
-        "priceChangePcnt": "Percentage prijsverandering"
+        "priceChangePcnt": "Percentage prijsverandering",
+        "priceFixedModifier": "",
+        "discountPriceFixedModifier": ""
       },
       "edit": {
         "title": "Prijslijst bewerken"
       },
       "placeholders": {
-        "priceChangePcnt": "Vul percentage van de prijsverandering in"
+        "priceChangePcnt": "Vul percentage van de prijsverandering in",
+        "priceFixedModifier": "",
+        "discountPriceFixedModifier": ""
       }
     },
     "tabs": {
@@ -4262,6 +4284,7 @@
       },
       "productRules": {
         "title": "",
+        "noSchemaItems": "",
         "labels": {
           "productTypeCode": "",
           "productRule": "",
@@ -4809,6 +4832,19 @@
     "show": {
       "tabs": {
         "issues": ""
+      },
+      "amazon": {
+        "productRules": {
+          "defaultsTitle": "",
+          "defaultsDescription": "",
+          "defaultVariationThemeDescription": "",
+          "defaultVariationThemeSaved": "",
+          "noVariationThemes": "",
+          "defaultBrowseNode": "",
+          "defaultBrowseNodeDescription": "",
+          "defaultBrowseNodeSaved": "",
+          "defaultBrowseNodeDeleted": ""
+        }
       },
       "properties": {
         "title": "",

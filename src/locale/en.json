@@ -2132,6 +2132,9 @@
         "variationThemePlaceholder": "Select variation theme",
         "variationThemeSaved": "Variation theme saved",
         "variationThemeDeleted": "Variation theme deleted",
+        "usingProductTypeDefaultVariationTheme": "Using product type default: {theme}",
+        "productTypeDefaultVariationTheme": "Product type default",
+        "productTypeDefaultVariationThemeWithValue": "Product type default: {theme}",
         "asin": "ASIN",
         "asinDescription": "Provide the Amazon Standard Identification Number for this product.",
         "asinPlaceholder": "Enter ASIN",
@@ -2157,6 +2160,9 @@
         "selectCurrentNode": "Select current",
         "currentSelection": "Current browse node",
         "pendingSelection": "Pending selection",
+        "usingProductTypeDefaultBrowseNode": "Using product type default browse node",
+        "productTypeDefaultBrowseNode": "Product type default browse node",
+        "productTypeDefaultBrowseNodeWithValue": "Product type default: {name} ({id})",
         "leafRestriction": "Only leaf nodes can be selected from the list. Use Select current to choose a parent.",
         "recommendedProductTypes": "Recommended product types",
         "createProductTypeTitle": "Create product type",
@@ -3223,7 +3229,7 @@
         },
         "discountPercentage": {
           "header": "Discount Percentage",
-          "content": "What percentage discount would you like to apply to the products assigned to this list?  For a 20% discount, write 20."
+          "content": "What percentage discount would you like to apply to the products assigned to this list?  For a 20% discount, write 20. Do not use this together with Discount Price Fixed Modifier."
         },
         "dateRange": {
           "header": "Date Range",
@@ -3233,9 +3239,21 @@
           "header": "Auto Update Prices",
           "content": "Enable it if you want to keep prices updated based on currency changes."
         },
+        "modifierDisclaimer": {
+          "header": "Price Modifier Disclaimer",
+          "content": "Use either Price Change Percentage (%) or Price Fixed Modifier, not both. Use either Discount Percentage (%) or Discount Price Fixed Modifier, not both."
+        },
         "priceChangePcnt": {
           "header": "Price Change Percentage",
-          "content": "How would you like to influence the maximum price?  Write 20 to increase it with 20%.  Or -20 to decrease with 20%"
+          "content": "How would you like to influence the maximum price?  Write 20 to increase it with 20%.  Or -20 to decrease with 20%. Do not use this together with Price Fixed Modifier."
+        },
+        "priceFixedModifier": {
+          "header": "Price Fixed Modifier",
+          "content": "Fixed amount to add to or subtract from the auto-generated price after currency rounding. Use a positive value to increase the price, or a negative value to decrease it. Do not use this together with Price Change Percentage (%)."
+        },
+        "discountPriceFixedModifier": {
+          "header": "Discount Price Fixed Modifier",
+          "content": "Fixed amount to add to or subtract from the auto-generated discount price after currency rounding. Use a positive value to increase the discount price, or a negative value to decrease it. Do not use this together with Discount Percentage (%)."
         }
       },
       "create": {
@@ -3292,13 +3310,17 @@
         "autoUpdatePrices": "Auto Update Prices",
         "currencyMatchWithCustomers": "Currency Match with Customers",
         "autoAddProducts": "Auto Add Products",
-        "priceChangePcnt": "Price Change Percentage (%)"
+        "priceChangePcnt": "Price Change Percentage (%)",
+        "priceFixedModifier": "Price Fixed Modifier",
+        "discountPriceFixedModifier": "Discount Price Fixed Modifier"
       },
       "edit": {
         "title": "Edit Price List"
       },
       "placeholders": {
-        "priceChangePcnt": "Enter price change percentage"
+        "priceChangePcnt": "Enter price change percentage",
+        "priceFixedModifier": "Enter fixed price modifier",
+        "discountPriceFixedModifier": "Enter fixed discount price modifier"
       }
     },
     "tabs": {
@@ -4343,7 +4365,18 @@
         "issues": "Issues"
       },
       "amazon": {
-        "title": "Amazon Integration"
+        "title": "Amazon Integration",
+        "productRules": {
+          "defaultsTitle": "Amazon product type defaults",
+          "defaultsDescription": "Configure fallback values used by products mapped to this Amazon product type.",
+          "defaultVariationThemeDescription": "Choose the default variation theme from the themes Amazon allows for this product type.",
+          "defaultVariationThemeSaved": "Default variation theme saved",
+          "noVariationThemes": "No variation themes are available for this product type.",
+          "defaultBrowseNode": "Default browse node",
+          "defaultBrowseNodeDescription": "Select the default browse node for this product type and marketplace.",
+          "defaultBrowseNodeSaved": "Default browse node saved",
+          "defaultBrowseNodeDeleted": "Default browse node deleted"
+        }
       },
       "amazonIssues": {
         "show": {
@@ -5152,6 +5185,7 @@
       },
       "productRules": {
         "title": "Amazon Rules",
+        "noSchemaItems": "No schema properties are available for this product type.",
         "labels": {
           "productTypeCode": "Product Type Code",
           "productRule": "Product Rule",

@@ -12,7 +12,11 @@ import AmazonGtinExemptionSection from './components/AmazonGtinExemptionSection.
 import AmazonBrowseNodeSection from './components/AmazonBrowseNodeSection.vue';
 import AmazonUnmappedValuesSection from './components/AmazonUnmappedValuesSection.vue';
 import AmazonVariationThemeSection from './components/AmazonVariationThemeSection.vue';
-import { amazonChannelViewsQuery } from '../../../../../../../shared/api/queries/salesChannels.js';
+import {
+  amazonChannelViewsQuery,
+  amazonProductTypeDefaultBrowseNodesQuery,
+  amazonProductTypesQuery,
+} from '../../../../../../../shared/api/queries/salesChannels.js';
 import {
   amazonProductsQuery,
   amazonChildRemoteProductsQuery,
@@ -30,6 +34,7 @@ import apolloClient from '../../../../../../../../apollo-client';
 import type { FetchPolicy } from '@apollo/client';
 import { ProductType } from '../../../../../../../shared/utils/constants';
 import { IntegrationTypes } from '../../../../../../integrations/integrations/integrations';
+import { getProductPropertiesRuleId } from '../../../../../../../shared/utils/productPropertiesRules';
 import Swal from 'sweetalert2';
 
 const props = defineProps<{ product: Product }>();
@@ -271,6 +276,76 @@ const otherIssues = computed(() => {
   );
 });
 const isConfigurable = computed(() => props.product.type === ProductType.Configurable);
+
+const productTypeRules = computed(() => {
+  const typeProp = props.product?.productpropertySet?.find((property: any) => property.property?.isProductType);
+  return typeProp?.valueSelect?.productpropertiesruleSet || [];
+});
+
+const selectedProductTypeRuleId = computed(() =>
+  getProductPropertiesRuleId(
+    productTypeRules.value,
+    selectedView.value?.salesChannel?.id || null,
+  ),
+);
+
+const defaultBrowseNodeRemoteId = ref<string | null>(null);
+let defaultBrowseNodeRequestId = 0;
+
+const fetchDefaultBrowseNode = async () => {
+  if (!selectedView.value?.id || !selectedView.value?.salesChannel?.id || !selectedProductTypeRuleId.value) {
+    defaultBrowseNodeRemoteId.value = null;
+    return;
+  }
+
+  const requestId = ++defaultBrowseNodeRequestId;
+  try {
+    const { data: productTypeData } = await apolloClient.query({
+      query: amazonProductTypesQuery,
+      variables: {
+        first: 1,
+        filter: {
+          localInstance: { id: { exact: selectedProductTypeRuleId.value } },
+          salesChannel: { id: { exact: selectedView.value.salesChannel?.id } },
+        },
+      },
+      fetchPolicy: 'cache-first',
+    });
+
+    const productTypeId = productTypeData?.amazonProductTypes?.edges?.[0]?.node?.id || null;
+    if (!productTypeId) {
+      if (requestId === defaultBrowseNodeRequestId) {
+        defaultBrowseNodeRemoteId.value = null;
+      }
+      return;
+    }
+
+    const { data } = await apolloClient.query({
+      query: amazonProductTypeDefaultBrowseNodesQuery,
+      variables: { productTypeId },
+      fetchPolicy: 'cache-first',
+    });
+
+    if (requestId !== defaultBrowseNodeRequestId) {
+      return;
+    }
+
+    const node = (data?.amazonProductTypeDefaultBrowseNodes?.edges || [])
+      .map((edge: any) => edge.node)
+      .find((entry: any) => entry?.view?.id === selectedView.value?.id);
+    defaultBrowseNodeRemoteId.value = node?.remoteId || null;
+  } catch (error) {
+    if (requestId === defaultBrowseNodeRequestId) {
+      defaultBrowseNodeRemoteId.value = null;
+    }
+  }
+};
+
+watch(
+  [() => selectedView.value?.id, selectedProductTypeRuleId],
+  fetchDefaultBrowseNode,
+  { immediate: true },
+);
 
 interface VariationValidationIssues {
   productId: string;
@@ -663,6 +738,7 @@ const formatDate = (dateString?: string | null) => {
                 :sales-channel-id="selectedView?.salesChannel.id"
                 :sales-channel-view-id="selectedView?.id"
                 :marketplace-id="selectedView?.remoteId"
+                :default-browse-node-remote-id="defaultBrowseNodeRemoteId"
                 :view="selectedView"
               />
 

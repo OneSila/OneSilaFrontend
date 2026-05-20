@@ -312,7 +312,7 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
 
       <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 mt-4">
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-          <Accordion v-if="items.length" :items="accordionItems">
+          <Accordion :items="accordionItems">
             <template #items>
               <slot
                 name="schema"
@@ -322,7 +322,7 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
                 :show-code-column="showCodeColumn"
                 :config-type-choices="configTypeChoices"
               >
-                <div class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar overflow-x-auto">
+                <div v-if="items.length" class="max-h-[700px] overflow-y-auto  rounded-md custom-scrollbar overflow-x-auto">
                   <table class="w-full min-w-max divide-y divide-gray-300 table-hover">
                     <thead>
                     <tr>
@@ -353,11 +353,16 @@ const showCodeColumn = computed(() => typeof props.config.getItemCode === 'funct
                     </tbody>
                   </table>
                 </div>
+                <div v-else class="px-4 py-6 text-sm text-gray-500">
+                  {{ t('integrations.show.productRules.noSchemaItems') }}
+                </div>
               </slot>
             </template>
           </Accordion>
         </div>
       </div>
+
+      <slot name="after-content" :product-type="props.productType" />
     </template>
   </GeneralTemplate>
 </template>
