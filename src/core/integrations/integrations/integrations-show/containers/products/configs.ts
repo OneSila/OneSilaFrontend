@@ -138,9 +138,6 @@ export const productsSearchConfigConstructor = (t: Function, salesChannelId?: st
         name: 'hasSyncRequests',
         label: t('integrations.show.products.labels.hasSyncRequests'),
         strict: true,
-        filterKey: 'remoteProduct',
-        lookupKeys: ['hasSyncRequests'],
-        lookupType: 'none',
       },
     ],
     orders: [
