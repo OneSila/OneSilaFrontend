@@ -243,7 +243,7 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 
 export const listingConfigConstructor = (t: Function, isMainPage: boolean = false): ListingConfig => ({
-  headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.priceLists.labels.priceFixedModifier'), t('sales.prices.labels.discountPercentage'), t('sales.priceLists.labels.discountPriceFixedModifier'), t('shared.labels.currency'),t('sales.priceLists.labels.vatIncluded'),  t('sales.priceLists.labels.autoUpdatePrices')],
+  headers: [t('shared.labels.name'), t('sales.priceLists.labels.priceChangePcnt'), t('sales.priceLists.labels.priceFixedModifier'), t('sales.prices.labels.discountPercentage'), t('sales.priceLists.labels.discountPriceFixedModifier'), t('shared.labels.currency')],
   fields: [
     {
       name: 'name',
@@ -269,14 +269,6 @@ export const listingConfigConstructor = (t: Function, isMainPage: boolean = fals
       name: 'currency',
       type: FieldType.NestedText,
       keys: ['isoCode'],
-    },
-    {
-      name: 'vatIncluded',
-      type: FieldType.Boolean,
-    },
-    {
-      name: 'autoUpdatePrices',
-      type: FieldType.Boolean,
     }
   ],
   identifierKey: 'id',

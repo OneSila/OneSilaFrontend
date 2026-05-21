@@ -196,7 +196,8 @@ const fetchViews = async () => {
     query: amazonChannelViewsQuery,
     fetchPolicy: 'cache-first',
   });
-  views.value = data.amazonChannelViews?.edges?.map((edge: any) => edge.node) || [];
+  views.value = (data.amazonChannelViews?.edges?.map((edge: any) => edge.node) || [])
+    .filter((view: any) => view.includeInTodo === true);
   loading.value = false;
 };
 

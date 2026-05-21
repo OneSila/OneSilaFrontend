@@ -16,7 +16,7 @@ import {
   resyncSalesChannelViewAssignsMutation
 } from "../../../../../../shared/api/mutations/salesChannels.js";
 import { salesChannelViewAssignsQuery } from "../../../../../../shared/api/queries/salesChannels.js";
-import { displayApolloError, PRODUCT_VIEW_STATUS } from "../../../../../../shared/utils";
+import { canResyncSalesChannelViewAssign, displayApolloError, PRODUCT_VIEW_STATUS } from "../../../../../../shared/utils";
 import { Toast } from "../../../../../../shared/modules/toast";
 import { LogsInfoModal } from "../../../../../products/products/product-show/containers/tabs/websites/containers/logs-info-modal";
 import { useRoute } from "vue-router";
@@ -45,6 +45,11 @@ const onResyncError = (error) => {
 
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
+};
+
+const resyncAssignment = (assign: any, mutate: () => void) => {
+  if (!canResyncSalesChannelViewAssign(assign)) return;
+  mutate();
 };
 
 const setInfoId = (id: string | null, type: string | null, productId?: string | null, productSku?: string | null) => {
@@ -400,7 +405,7 @@ const handleBulkStatusChange = async (selectedEntities: string[], status: string
 
         <ApolloMutation :mutation="resyncSalesChannelViewAssignMutation" :variables="{ data: { id: item.node.id } }" @done="onResyncSuccess" @error="onResyncError">
           <template #default="{ mutate, loading }">
-            <Button :disabled="item.node.remoteProductPercentage !== 100 || loading" @click="mutate()">
+            <Button :disabled="!canResyncSalesChannelViewAssign(item.node) || loading" @click="resyncAssignment(item.node, mutate)">
               <Icon name="clock-rotate-left" size="lg" class="text-gray-500" />
             </Button>
           </template>

@@ -40,6 +40,7 @@ const onClicked = (event) => {
   <button
     :class="classs"
     :style="{ opacity: props.disabled ? 0.6 : 1 }"
+    :disabled="props.disabled"
     type="button"
     @click="onClicked"
   >

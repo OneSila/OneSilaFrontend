@@ -78,8 +78,6 @@ export const salesPriceListsQuery = gql`
             symbol
             isoCode
           }
-          vatIncluded
-          autoUpdatePrices
         }
         cursor
       }

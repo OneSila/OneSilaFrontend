@@ -13,7 +13,7 @@ import type { ListingConfig } from '../../../../shared/components/organisms/gene
 import type { ShowField } from '../../../../shared/components/organisms/general-show/showConfig';
 import { LogsInfoModal } from '../../../products/products/product-show/containers/tabs/websites/containers/logs-info-modal';
 import { Toast } from '../../../../shared/modules/toast';
-import { displayApolloError } from '../../../../shared/utils';
+import { canResyncSalesChannelViewAssign, displayApolloError } from '../../../../shared/utils';
 import { FieldType } from '../../../../shared/utils/constants';
 import {
   deleteSalesChannelViewAssignsMutation,
@@ -84,11 +84,13 @@ const modalClosed = () => {
   showInfoModal.value = false;
 };
 
-const resyncAssignment = async (id: string) => {
+const resyncAssignment = async (assign: any) => {
+  if (!canResyncSalesChannelViewAssign(assign)) return;
+
   try {
     await apolloClient.mutate({
       mutation: resyncSalesChannelViewAssignMutation,
-      variables: { data: { id } },
+      variables: { data: { id: assign.id } },
     });
     Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
   } catch (error) {
@@ -189,8 +191,8 @@ const handleBulkResync = async (selectedEntities: string[], query: any) => {
           </Button>
 
           <Button
-            :disabled="item.node.remoteProductPercentage !== 100"
-            @click="resyncAssignment(item.node.id)"
+            :disabled="!canResyncSalesChannelViewAssign(item.node)"
+            @click="resyncAssignment(item.node)"
           >
             <Icon name="clock-rotate-left" size="lg" class="text-gray-500" />
           </Button>

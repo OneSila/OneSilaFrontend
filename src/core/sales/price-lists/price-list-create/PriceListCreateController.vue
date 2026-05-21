@@ -7,8 +7,10 @@ import { FormConfig, FormType } from '../../../../shared/components/organisms/ge
 import { createSalesPriceListMutation } from "../../../../shared/api/mutations/salesPrices.js"
 import {baseFormConfigConstructor, getFields} from "../configs";
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
-import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import {useRoute} from "vue-router";
+import SettingsTemplate from "../../../settings/SettingsTemplate.vue";
+import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
+import { getTabsConfig } from "../../../settings/tabs";
 
 const formConfig: Ref<FormConfig | null> = ref(null);
 const { t } = useI18n();
@@ -42,7 +44,11 @@ const handleFormUpdate = async (form) => {
 </script>
 
 <template>
-  <GeneralTemplate>
+  <SettingsTemplate>
+
+    <template v-slot:tabs>
+      <TabsMenu :tabs="getTabsConfig(t)" :activeName="'priceLists'" />
+    </template>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
@@ -53,5 +59,5 @@ const handleFormUpdate = async (form) => {
    <template v-slot:content>
      <GeneralForm v-if="formConfig"  :config="formConfig as FormConfig" @form-updated="handleFormUpdate" />
    </template>
-  </GeneralTemplate>
+  </SettingsTemplate>
 </template>

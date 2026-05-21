@@ -237,7 +237,7 @@ const loadWorkflowAssignmentsForState = async (
       variables: {
         first: WORKFLOW_ASSIGNMENTS_PAGE_SIZE,
         after: reset ? null : column.pageInfo.endCursor,
-        order: { id: 'DESC' },
+        order: { updatedAt: 'DESC' },
         filter: {
           workflow: { id: { exact: selectedWorkflowId.value } },
           workflowState: { id: { exact: stateId } },

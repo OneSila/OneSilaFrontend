@@ -13,6 +13,7 @@ import { InfoModal } from '../../../../../../../../../shared/components/molecule
 import { ProgressBar } from '../../../../../../../../../shared/components/molecules/progress-bar';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import {
+  canResyncSalesChannelViewAssign,
   displayApolloError,
   getProductViewStatus,
   isProductViewRemovalTransition,
@@ -232,6 +233,11 @@ const onResyncError = (error) => {
 
 const onResyncSuccess = () => {
   Toast.success(t('integrations.salesChannel.toast.resyncSuccess'));
+};
+
+const resyncAssignment = (assign: SalesChannelViewAssign | null, mutate: () => void) => {
+  if (!canResyncSalesChannelViewAssign(assign)) return;
+  mutate();
 };
 
 const confirmStatusChange = async (row: WebsiteRow, nextStatus: ProductViewStatus) => {
@@ -508,9 +514,9 @@ onMounted(fetchViews);
                 >
                   <template #default="{ mutate, loading }">
                     <Button
-                      :disabled="!row.assign || row.assign.remoteProductPercentage !== 100 || loading"
+                      :disabled="!canResyncSalesChannelViewAssign(row.assign) || loading"
                       :title="!row.assign ? t('products.products.websites.actions.availableOnlyWhenAdded') : ''"
-                      @click="mutate()"
+                      @click="resyncAssignment(row.assign, mutate)"
                     >
                       <Icon name="clock-rotate-left" size="lg" class="text-gray-500" />
                     </Button>

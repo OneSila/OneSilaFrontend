@@ -4,10 +4,12 @@ import { useI18n } from 'vue-i18n';
 import { Breadcrumbs } from "../../../../shared/components/molecules/breadcrumbs";
 import { Button } from "../../../../shared/components/atoms/button";
 import { Link } from "../../../../shared/components/atoms/link";
-import GeneralTemplate  from "../../../../shared/templates/GeneralTemplate.vue"
 import { GeneralListing } from "../../../../shared/components/organisms/general-listing";
 import BulkExportAction from "../../../../shared/components/organisms/bulk-export-action/BulkExportAction.vue";
 import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, listingQuery} from "../configs";
+import SettingsTemplate from "../../../settings/SettingsTemplate.vue";
+import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
+import { getTabsConfig } from "../../../settings/tabs";
 
 const { t } = useI18n();
 
@@ -17,7 +19,11 @@ const listingConfig = listingConfigConstructor(t, true);
 </script>
 
 <template>
-  <GeneralTemplate>
+  <SettingsTemplate>
+
+    <template v-slot:tabs>
+      <TabsMenu :tabs="getTabsConfig(t)" :activeName="'priceLists'" />
+    </template>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs :links="[{ path: { name: 'sales.priceLists.list' }, name: t('sales.priceLists.title') }]" />
@@ -46,5 +52,5 @@ const listingConfig = listingConfigConstructor(t, true);
        </template>
       </GeneralListing>
    </template>
-  </GeneralTemplate>
+  </SettingsTemplate>
 </template>

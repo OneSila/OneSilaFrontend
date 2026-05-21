@@ -4,13 +4,15 @@ import { useI18n } from 'vue-i18n';
 import { GeneralForm } from "../../../../../../../shared/components/organisms/general-form";
 import { filterAndExtractIds, FormConfig, FormType } from '../../../../../../../shared/components/organisms/general-form/formConfig';
 import { createSalesPriceListItemMutation } from "../../../../../../../shared/api/mutations/salesPrices.js";
-import GeneralTemplate from "../../../../../../../shared/templates/GeneralTemplate.vue";
 import { Breadcrumbs } from "../../../../../../../shared/components/molecules/breadcrumbs";
 import { ref, onMounted, Ref } from "vue";
 import { useRoute } from "vue-router";
 import { baseFormConfigConstructor} from "../configs";
 import apolloClient from "../../../../../../../../apollo-client";
 import { getSalesPriceListQuery, salesPriceListItemsProductIdsQuery } from "../../../../../../../shared/api/queries/salesPrices.js";
+import SettingsTemplate from "../../../../../../settings/SettingsTemplate.vue";
+import { TabsMenu } from "../../../../../../../shared/components/molecules/tabs-menu";
+import { getTabsConfig } from "../../../../../../settings/tabs";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -63,7 +65,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <GeneralTemplate>
+  <SettingsTemplate>
+
+    <template v-slot:tabs>
+      <TabsMenu :tabs="getTabsConfig(t)" :activeName="'priceLists'" />
+    </template>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
@@ -75,5 +81,5 @@ onMounted(async () => {
    <template v-slot:content>
      <GeneralForm v-if="formConfig" :config="formConfig as FormConfig" />
    </template>
-  </GeneralTemplate>
+  </SettingsTemplate>
 </template>

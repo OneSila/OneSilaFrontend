@@ -589,7 +589,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
               >
                 <tr v-for="item in filteredItems" :key="item.id">
                   <td class="p-3.5 text-sm text-gray-700 dark:text-gray-400">
-                    <Link :path="getPath(item.media)">
+                    <Link :path="getPath(item.media)" target="_blank">
                       {{ getFileName(item.media) }}
                     </Link>
                   </td>
@@ -662,7 +662,7 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
               <Icon name="arrows-up-down-left-right" class="h-4 w-4 text-blue-900" />
             </Button>
             <template v-if="item.media.type === TYPE_IMAGE">
-              <Link :path="getPath(item.media)">
+              <Link :path="getPath(item.media)" target="_blank">
                 <div class="flex h-48 w-56 items-center justify-center overflow-hidden rounded-md">
                   <Image
                     :source="item.media.imageWebUrl"
@@ -673,12 +673,12 @@ const prepareDelete = async (item: Item, confirm: () => Promise<void>) => {
               </Link>
             </template>
             <template v-else-if="item.media.type === TYPE_VIDEO">
-              <Link :path="getPath(item.media)">
+              <Link :path="getPath(item.media)" target="_blank">
                 <VideoListingPreview :video-url="item.media.videoUrl" />
               </Link>
             </template>
             <template v-else-if="item.media.type === TYPE_DOCUMENT">
-              <Link :path="getPath(item.media)">
+              <Link :path="getPath(item.media)" target="_blank">
                 <div class="flex h-48 w-56 items-center justify-center overflow-hidden rounded-md bg-gray-200">
                   <Image
                     v-if="getDocumentThumbnailSource(item.media)"

@@ -6,6 +6,8 @@ export const PRODUCT_VIEW_STATUS = {
 
 export type ProductViewStatus = typeof PRODUCT_VIEW_STATUS[keyof typeof PRODUCT_VIEW_STATUS];
 
+const PENDING_APPROVAL_STATUS = 'PENDING_APPROVAL';
+
 interface ViewReference {
   salesChannelView?: {
     id?: string | null;
@@ -45,4 +47,24 @@ export const isProductViewRemovalTransition = (
   nextStatus: ProductViewStatus,
 ): boolean => {
   return previousStatus === PRODUCT_VIEW_STATUS.ADDED && nextStatus !== PRODUCT_VIEW_STATUS.ADDED;
+};
+
+interface SalesChannelViewAssignResyncSource {
+  status?: string | null;
+  remoteProductPercentage?: number | null;
+  remoteProduct?: {
+    status?: string | null;
+  } | null;
+}
+
+const getSalesChannelViewAssignCurrentStatus = (
+  assign?: SalesChannelViewAssignResyncSource | null,
+) => assign?.remoteProduct?.status || assign?.status || '';
+
+export const canResyncSalesChannelViewAssign = (
+  assign?: SalesChannelViewAssignResyncSource | null,
+) => {
+  return Boolean(assign)
+    && assign?.remoteProductPercentage === 100
+    && getSalesChannelViewAssignCurrentStatus(assign) !== PENDING_APPROVAL_STATUS;
 };

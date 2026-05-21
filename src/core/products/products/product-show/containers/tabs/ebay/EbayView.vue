@@ -57,7 +57,7 @@ const fetchViews = async () => {
       fetchPolicy: 'cache-first',
     });
     const list = data?.ebaySalesChannelViews?.edges?.map((edge: any) => edge.node) || [];
-    views.value = list.sort((a: any, b: any) => {
+    views.value = list.filter((view: any) => view.includeInTodo === true).sort((a: any, b: any) => {
       if (a.isDefault === b.isDefault) return 0;
       return a.isDefault ? -1 : 1;
     });

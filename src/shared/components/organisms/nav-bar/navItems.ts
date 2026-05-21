@@ -34,11 +34,6 @@ export const navSections: NavSection[] = [
                 route: { name: 'products.eanCodes.list' }
             },
             {
-                title: 'sales.priceLists.title',
-                icon: 'tag',
-                route: { name: 'sales.priceLists.list' }
-            },
-            {
                 title: 'media.title',
                 icon: 'photo-film',
                 route: { name: 'media.files' }

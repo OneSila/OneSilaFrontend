@@ -7,10 +7,12 @@ import {Breadcrumbs} from "../../../../shared/components/molecules/breadcrumbs";
 import {Card} from "../../../../shared/components/atoms/card";
 import { showConfigConstructor } from "../configs";
 import { Tabs} from "../../../../shared/components/molecules/tabs";
-import GeneralTemplate from "../../../../shared/templates/GeneralTemplate.vue";
 import ItemsList from "./containers/items/items-list/ItemsList.vue";
 import {updateField} from "../../../../shared/components/organisms/general-show/showConfig";
 import { CollaborationTab } from "../../../../shared/components/organisms/collaboration-tab";
+import SettingsTemplate from "../../../settings/SettingsTemplate.vue";
+import { TabsMenu } from "../../../../shared/components/molecules/tabs-menu";
+import { getTabsConfig } from "../../../settings/tabs";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -29,7 +31,11 @@ const showConfig = showConfigConstructor(t, id.value);
 </script>
 
 <template>
-    <GeneralTemplate>
+    <SettingsTemplate>
+
+    <template v-slot:tabs>
+      <TabsMenu :tabs="getTabsConfig(t)" :activeName="'priceLists'" />
+    </template>
 
     <template v-slot:breadcrumbs>
       <Breadcrumbs
@@ -52,5 +58,5 @@ const showConfig = showConfigConstructor(t, id.value);
         </Tabs>
       </Card>
    </template>
-  </GeneralTemplate>
+  </SettingsTemplate>
 </template>
