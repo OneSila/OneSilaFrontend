@@ -646,3 +646,11 @@ export const duplicateProductMutation = gql`
       }
     }
 `;
+
+export const syncAliasProductPropertiesMutation = gql`
+  mutation syncAliasProductProperties($product: ProductPartialInput!) {
+    syncAliasProductProperties(product: $product) {
+      id
+    }
+  }
+`;

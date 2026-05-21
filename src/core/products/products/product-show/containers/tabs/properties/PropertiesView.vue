@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import {useI18n} from 'vue-i18n';
-import {Product, ProductPropertyValue} from "../../../../configs";
+import Swal from 'sweetalert2';
+import { useI18n } from 'vue-i18n';
+import { Product, ProductPropertyValue } from "../../../../configs";
 import { onMounted, ref, Ref, watch, computed, onBeforeUpdate, reactive } from "vue";
 import apolloClient from "../../../../../../../../apollo-client";
 import {
@@ -10,16 +11,19 @@ import {
   productPropertiesRulesQuery, productPropertyTextTranslationsQuery,
   propertiesQuery
 } from "../../../../../../../shared/api/queries/properties.js";
-import {ConfigTypes, ProductType, PropertyTypes} from "../../../../../../../shared/utils/constants";
-import {ValueInput} from "./value-input";
-import {Loader} from "../../../../../../../shared/components/atoms/loader";
-import {translationLanguagesQuery} from "../../../../../../../shared/api/queries/languages.js";
-import {Selector} from "../../../../../../../shared/components/atoms/selector";
-import {Icon} from "../../../../../../../shared/components/atoms/icon";
-import {Pagination} from "../../../../../../../shared/components/molecules/pagination";
-import {Button} from "../../../../../../../shared/components/atoms/button";
-import {PropertyFilters} from "../../../../../../../shared/components/molecules/property-filters";
+import { syncAliasProductPropertiesMutation } from "../../../../../../../shared/api/mutations/products.js";
+import { ConfigTypes, ProductType, PropertyTypes } from "../../../../../../../shared/utils/constants";
+import { ValueInput } from "./value-input";
+import { Loader } from "../../../../../../../shared/components/atoms/loader";
+import { translationLanguagesQuery } from "../../../../../../../shared/api/queries/languages.js";
+import { Selector } from "../../../../../../../shared/components/atoms/selector";
+import { Icon } from "../../../../../../../shared/components/atoms/icon";
+import { Pagination } from "../../../../../../../shared/components/molecules/pagination";
+import { Button } from "../../../../../../../shared/components/atoms/button";
+import { PropertyFilters } from "../../../../../../../shared/components/molecules/property-filters";
 import LanguageSelector from "../../../../../../../shared/components/molecules/language-selector/LanguageSelector.vue";
+import { Toast } from "../../../../../../../shared/modules/toast";
+import { processGraphQLErrors } from "../../../../../../../shared/utils";
 
 
 const {t} = useI18n();
@@ -27,6 +31,7 @@ const props = defineProps<{ product: Product }>();
 const ruleId: Ref<string | null> = ref(null);
 const selectedRuleSalesChannelId: Ref<string | null> = ref(null);
 const isUpdatingSalesChannel = ref(false);
+const syncingParentProperties = ref(false);
 
 const values: Ref<ProductPropertyValue[]> = ref([]);
 const lastSavedValues: Ref<ProductPropertyValue[]> = ref([]);
@@ -99,6 +104,25 @@ const isFilled = (val: ProductPropertyValue) => {
 };
 
 const productTypeValue = computed(() => values.value.find(v => v.property.isProductType));
+const isAliasProduct = computed(() => props.product.type === ProductType.Alias);
+const aliasParentProductLabel = computed(() => {
+  const parent = props.product.aliasParentProduct;
+
+  if (!parent) {
+    return '';
+  }
+
+  return parent.name || parent.sku || '';
+});
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    popup: 'sweet-alerts',
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-outline-primary ltr:mr-3 rtl:ml-3',
+  },
+  buttonsStyling: false,
+});
 
 const sortedValues = computed(() => {
   const req: ProductPropertyValue[] = [];
@@ -463,6 +487,54 @@ const fetchRequiredAttributesValues = async (fetchPolicy = 'cache-first') => {
   loading.value = false
 }
 
+const syncParentProperties = async () => {
+  if (syncingParentProperties.value) {
+    return;
+  }
+
+  const result = await swalWithBootstrapButtons.fire({
+    title: t('products.products.properties.syncParentProperties.confirmTitle'),
+    text: t('products.products.properties.syncParentProperties.confirmText', {
+      parent: aliasParentProductLabel.value,
+    }),
+    confirmButtonText: t('products.products.properties.syncParentProperties.confirmButton'),
+    cancelButtonText: t('shared.button.cancel'),
+    icon: 'warning',
+    showCancelButton: true,
+    reverseButtons: true,
+    padding: '2em',
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  try {
+    syncingParentProperties.value = true;
+    await apolloClient.mutate({
+      mutation: syncAliasProductPropertiesMutation,
+      variables: {
+        product: {
+          id: props.product.id,
+        },
+      },
+    });
+
+    Toast.success(t('products.products.properties.syncParentProperties.success'));
+    await fetchRequiredAttributesValues('network-only');
+  } catch (error) {
+    const validationErrors = processGraphQLErrors(error, t);
+    const messages = Object.values(validationErrors);
+    if (messages.length) {
+      messages.forEach((message) => Toast.error(String(message)));
+    } else {
+      Toast.error(t('products.products.properties.syncParentProperties.error'));
+    }
+  } finally {
+    syncingParentProperties.value = false;
+  }
+};
+
 const handleUpdatedId = ({oldId, newId, isTranslation}) => {
   const index = values.value.findIndex(v => v.property.id === oldId);
   if (index !== -1) {
@@ -664,6 +736,16 @@ const handleValueUpdate = ({id, type, value, language}) => {
           v-model="language"
           selector-class="w-full min-w-[11rem] sm:min-w-[12rem]"
         />
+      </FlexCell>
+      <FlexCell v-if="isAliasProduct">
+        <Button
+          class="btn btn-outline-primary"
+          :disabled="syncingParentProperties"
+          :loading="syncingParentProperties"
+          @click="syncParentProperties"
+        >
+          {{ t('products.products.properties.syncParentProperties.button') }}
+        </Button>
       </FlexCell>
       <FlexCell>
         <Button class="btn btn-primary" :disabled="!hasUnsavedChanges" @click="saveAll">

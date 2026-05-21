@@ -19,7 +19,7 @@ import { AiContentGenerator } from '../../../../../../../../../shared/components
 import { AiContentTranslator } from '../../../../../../../../../shared/components/organisms/ai-content-translator';
 import { AiBulletPointsGenerator } from '../../../../../../../../../shared/components/organisms/ai-bullet-points-generator';
 import { AdvancedContentGenerator } from '../../../../../../../../../shared/components/organisms/advanced-content-generator';
-import ProductContentImportModal from '../../../../../../../../../shared/components/organisms/import-content/ProductContentImportModal.vue';
+import ProductContentTransferModal from '../../../../../../../../../shared/components/organisms/transfer-content/ProductContentTransferModal.vue';
 import ProductContentPreview from '../../../content/ProductContentPreview.vue';
 import { Toast } from '../../../../../../../../../shared/modules/toast';
 import { processGraphQLErrors, shortenText } from '../../../../../../../../../shared/utils';
@@ -1189,13 +1189,13 @@ defineExpose({ hasUnsavedChanges });
             :small="false"
             btn-class="btn-outline-primary whitespace-nowrap"
           />
-          <ProductContentImportModal
+          <ProductContentTransferModal
             :product-ids="variationProductIds"
             :current-language="language"
             :current-sales-channel="currentSalesChannel"
             :sales-channels="salesChannels"
             btn-class="btn-outline-primary whitespace-nowrap"
-            @imported="handleImportCompleted"
+            @transferred="handleImportCompleted"
           />
           <Selector
             v-if="salesChannelOptions.length"

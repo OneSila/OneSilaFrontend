@@ -11,7 +11,7 @@ import { searchConfigConstructor, listingConfigConstructor, listingQueryKey, lis
 import { injectAuth } from "../../../../shared/modules/auth";
 import { AiBulkTranslator } from "../../../../shared/components/organisms/ai-bulk=translator";
 import { AdvancedContentGenerator } from "../../../../shared/components/organisms/advanced-content-generator";
-import ProductContentImportModal from "../../../../shared/components/organisms/import-content/ProductContentImportModal.vue";
+import ProductContentTransferModal from "../../../../shared/components/organisms/transfer-content/ProductContentTransferModal.vue";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import apolloClient from "../../../../../apollo-client";
 import { Toast } from "../../../../shared/modules/toast";
@@ -230,16 +230,16 @@ onBeforeUnmount(() => {
               </div>
 
               <div v-show="isBulkActionVisible(5)">
-                <ProductContentImportModal
+                <ProductContentTransferModal
                   :product-ids="selectedEntities"
                   :current-language="null"
                   :current-sales-channel="null"
                   :sales-channels="salesChannels"
                   :use-default-button-styles="false"
-                  btn-class="inline-flex items-center rounded bg-emerald-50 px-4 py-1 text-sm font-semibold text-emerald-800 shadow-sm ring-1 ring-inset ring-emerald-300 hover:bg-emerald-100 disabled:opacity-50 whitespace-nowrap"
-                  icon-name="file-import"
-                  icon-class="text-emerald-600 mr-2"
-                  @imported="clearSelection"
+                  btn-class="inline-flex items-center rounded bg-blue-50 px-4 py-1 text-sm font-semibold text-blue-800 shadow-sm ring-1 ring-inset ring-blue-300 hover:bg-blue-100 disabled:opacity-50 whitespace-nowrap"
+                  icon-name="exchange-alt"
+                  icon-class="text-blue-600 mr-2"
+                  @transferred="clearSelection"
                 />
               </div>
 

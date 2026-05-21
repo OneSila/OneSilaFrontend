@@ -437,6 +437,55 @@
         "success": "",
         "multiStarted": ""
       },
+      "transfer": {
+        "button": "",
+        "title": "",
+        "descriptionSingle": "",
+        "descriptionMulti": "",
+        "modeHeading": "",
+        "modeHelp": "",
+        "modes": {
+          "import": {
+            "title": "",
+            "description": "",
+            "detail": ""
+          },
+          "export": {
+            "title": "",
+            "description": "",
+            "detail": ""
+          }
+        },
+        "importTargetLabel": "",
+        "importTargetPlaceholder": "",
+        "importSourceLabel": "",
+        "importSourcePlaceholder": "",
+        "exportSourceLabel": "",
+        "exportSourcePlaceholder": "",
+        "exportTargetLabel": "",
+        "exportTargetPlaceholder": "",
+        "exportTargetsBadge": "",
+        "overrideLabel": "",
+        "overrideHelp": "",
+        "allLanguagesLabel": "",
+        "allLanguagesImportHelp": "",
+        "allLanguagesExportHelp": "",
+        "currentLanguageBadge": "",
+        "availableLanguagesBadge": "",
+        "advancedOptionsTitle": "",
+        "fieldsLabel": "",
+        "fieldsHelp": "",
+        "previewTitle": "",
+        "previewTitleWithTarget": "",
+        "missingSource": "",
+        "missingSourceMultiLanguage": "",
+        "importAction": "",
+        "importActionWithSource": "",
+        "exportAction": "",
+        "exportActionWithCount": "",
+        "success": "",
+        "multiStarted": ""
+      },
       "placeholders": {
         "subtitle": ""
       },
@@ -1078,7 +1127,15 @@
       },
       "properties": {
         "searchPlaceholder": "Eigenschaften suchen",
-        "typePlaceholder": "Nach Typ filtern"
+        "typePlaceholder": "Nach Typ filtern",
+        "syncParentProperties": {
+          "button": "Sync Parent Properties",
+          "confirmTitle": "Sync parent properties?",
+          "confirmText": "This will add all properties from {parent} to this product and override any existing values.",
+          "confirmButton": "Sync properties",
+          "success": "Parent properties were synced successfully.",
+          "error": "We could not sync parent properties."
+        }
       },
       "labels": {
         "configuratorValue": ""

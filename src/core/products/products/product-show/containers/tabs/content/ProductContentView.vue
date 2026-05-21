@@ -22,7 +22,7 @@ import LanguageSelector from "../../../../../../../shared/components/molecules/l
 import ProductContentForm from "./ProductContentForm.vue";
 import ProductTranslationBulletPoints from "./ProductTranslationBulletPoints.vue";
 import { AdvancedContentGenerator } from "../../../../../../../shared/components/organisms/advanced-content-generator";
-import ProductContentImportModal from "../../../../../../../shared/components/organisms/import-content/ProductContentImportModal.vue";
+import ProductContentTransferModal from "../../../../../../../shared/components/organisms/transfer-content/ProductContentTransferModal.vue";
 import ProductPreviewTrigger from "../shared/ProductPreviewTrigger.vue";
 
 const {t} = useI18n();
@@ -388,13 +388,13 @@ const shortDescriptionToolbarOptions = [
       :initial-sales-channel-ids="currentSalesChannel !== 'default' ? [currentSalesChannel] : []"
       :small="false"
     />
-    <ProductContentImportModal
+    <ProductContentTransferModal
       :product-ids="[product.id]"
       :current-language="currentLanguage"
       :current-sales-channel="currentSalesChannel"
       :sales-channels="salesChannels"
       btn-class="btn-outline-primary"
-      @imported="handleImportCompleted"
+      @transferred="handleImportCompleted"
     />
     <ApolloMutation v-if="mutation" :mutation="mutation" :variables="getVariables()">
       <template v-slot="{ mutate, loading }">

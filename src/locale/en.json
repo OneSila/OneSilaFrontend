@@ -1640,8 +1640,8 @@
       "confirmLanguageChange": "You have unsaved changes. Are you sure you want to change the language? This will discard any unsaved changes.",
       "successfullyUpdated": "The product translation has been successfully updated.",
       "import": {
-        "button": "Import Content",
-        "title": "Import content",
+        "button": "Transfer Content",
+        "title": "Transfer content",
         "descriptionSingle": "Copy content from one channel to another for this product. Existing translations are updated or created based on your selection.",
         "descriptionMulti": "Copy content from one channel to another for the selected products. Items will be updated or created in the background.",
         "targetLabel": "Import to",
@@ -1664,6 +1664,55 @@
         "importActionWithSource": "Import from {source}",
         "success": "Content imported successfully.",
         "multiStarted": "Import started. Eligible content will be processed in the background."
+      },
+      "transfer": {
+        "button": "Transfer Content",
+        "title": "Transfer content",
+        "descriptionSingle": "Transfer product content between sales channels for the current or selected language. Choose whether this screen receives content or sends its current content elsewhere.",
+        "descriptionMulti": "Transfer content between sales channels for the selected products and language selection. Bulk transfers are processed in the background.",
+        "modeHeading": "Import or export",
+        "modeHelp": "Choose the direction before selecting channels. Import pulls content into the current destination; export pushes the current source out to other destinations.",
+        "modes": {
+          "import": {
+            "title": "Import",
+            "description": "Bring content from another sales channel into the current or selected destination.",
+            "detail": "Use this when the destination is missing content and another channel already has the version you want."
+          },
+          "export": {
+            "title": "Export",
+            "description": "Send content from the current language and sales channel to every selected destination channel.",
+            "detail": "Use this when the content you are viewing is the correct source and other channels should receive it. In bulk lists, choose the source first."
+          }
+        },
+        "importTargetLabel": "Import to",
+        "importTargetPlaceholder": "Select a channel to import to",
+        "importSourceLabel": "Import from",
+        "importSourcePlaceholder": "Select a channel to import from",
+        "exportSourceLabel": "Export from",
+        "exportSourcePlaceholder": "Select a channel to export from",
+        "exportTargetLabel": "Export to",
+        "exportTargetPlaceholder": "Select destination channels",
+        "exportTargetsBadge": "{count} selected",
+        "overrideLabel": "Override existing content",
+        "overrideHelp": "When off, only empty fields are filled. When on, allowed fields are replaced with the source values.",
+        "allLanguagesLabel": "Transfer all languages",
+        "allLanguagesImportHelp": "When enabled, content is imported for every language available on the source channel.",
+        "allLanguagesExportHelp": "When enabled, every language available on the source channel is exported to the selected destinations.",
+        "currentLanguageBadge": "Current: {code}",
+        "availableLanguagesBadge": "{count} languages available",
+        "advancedOptionsTitle": "Advanced options",
+        "fieldsLabel": "Fields to transfer",
+        "fieldsHelp": "Select which fields should be copied from the source to the destination.",
+        "previewTitle": "Preview (current language)",
+        "previewTitleWithTarget": "Preview (first destination: {target})",
+        "missingSource": "No source content exists for the current language in the selected source.",
+        "missingSourceMultiLanguage": "No source content exists for the current language. The transfer can still run for other available languages.",
+        "importAction": "Import",
+        "importActionWithSource": "Import from {source}",
+        "exportAction": "Export",
+        "exportActionWithCount": "Export to {count} destinations",
+        "success": "Content transferred successfully.",
+        "multiStarted": "Transfer started. Eligible content will be processed in the background."
       },
       "placeholders": {
         "language": "Select a language",
@@ -2105,10 +2154,18 @@
           }
         }
       },
-        "properties": {
-          "searchPlaceholder": "Search properties",
-          "typePlaceholder": "Filter by type"
-        },
+      "properties": {
+        "searchPlaceholder": "Search properties",
+        "typePlaceholder": "Filter by type",
+        "syncParentProperties": {
+          "button": "Sync Parent Properties",
+          "confirmTitle": "Sync parent properties?",
+          "confirmText": "This will add all properties from {parent} to this product and override any existing values.",
+          "confirmButton": "Sync properties",
+          "success": "Parent properties were synced successfully.",
+          "error": "We could not sync parent properties."
+        }
+      },
       "amazon": {
         "validationIssues": "Detected Validation Issues",
         "validationIssuesDescription": "Likely Amazon validation issues based on the product structure Amazon expects",
